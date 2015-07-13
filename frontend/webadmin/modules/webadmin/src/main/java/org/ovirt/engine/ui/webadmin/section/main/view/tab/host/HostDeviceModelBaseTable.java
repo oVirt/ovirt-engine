@@ -36,16 +36,16 @@ public abstract class HostDeviceModelBaseTable<M extends HostDeviceListModelBase
                 return object.getCapability();
             }
         });
-        addColumn(constants.product(), "350px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$
-            @Override
-            public String getValue(HostDeviceView object) {
-                return HostDeviceColumnHelper.renderNameId(object.getProductName(), object.getProductId());
-            }
-        });
         addColumn(constants.vendor(), "200px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$
             @Override
             public String getValue(HostDeviceView object) {
                 return HostDeviceColumnHelper.renderNameId(object.getVendorName(), object.getVendorId());
+            }
+        });
+        addColumn(constants.product(), "350px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$
+            @Override
+            public String getValue(HostDeviceView object) {
+                return HostDeviceColumnHelper.renderNameId(object.getProductName(), object.getProductId());
             }
         });
         addColumn(constants.currentlyUsedByVm(), "150px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$

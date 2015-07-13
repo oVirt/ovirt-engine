@@ -92,21 +92,21 @@ public class AddVmHostDevicePopupView extends AbstractModelBoundPopupView<AddVmH
             }
         });
 
-        addHostDeviceColumn(hostDeviceTable, constants.product(), "350px", new AbstractTextColumn<EntityModel<HostDeviceView>>() { //$NON-NLS-1$
-            @Override
-            public String getValue(EntityModel<HostDeviceView> hostDevice) {
-                return HostDeviceColumnHelper.renderNameId(
-                        hostDevice.getEntity().getProductName(),
-                        hostDevice.getEntity().getProductId());
-            }
-        });
-
         addHostDeviceColumn(hostDeviceTable, constants.vendor(), "200px", new AbstractTextColumn<EntityModel<HostDeviceView>>() { //$NON-NLS-1$
             @Override
             public String getValue(EntityModel<HostDeviceView> hostDevice) {
                 return HostDeviceColumnHelper.renderNameId(
                         hostDevice.getEntity().getVendorName(),
                         hostDevice.getEntity().getVendorId());
+            }
+        });
+
+        addHostDeviceColumn(hostDeviceTable, constants.product(), "350px", new AbstractTextColumn<EntityModel<HostDeviceView>>() { //$NON-NLS-1$
+            @Override
+            public String getValue(EntityModel<HostDeviceView> hostDevice) {
+                return HostDeviceColumnHelper.renderNameId(
+                        hostDevice.getEntity().getProductName(),
+                        hostDevice.getEntity().getProductId());
             }
         });
 
