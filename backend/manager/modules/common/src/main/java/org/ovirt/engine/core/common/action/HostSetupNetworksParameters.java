@@ -17,7 +17,7 @@ public class HostSetupNetworksParameters extends VdsActionParameters {
     private static final long serialVersionUID = 6819278948636850828L;
 
     /*This field cannot be validated via bean validation due to validation conflict:
-    {@link NetworkAttachment} in this class is present as new entity and entity to be removed, both requiring different
+    {@link NetworkAttachment} in this class is present as new entity and entity to be updated, both requiring different
     conflicting validations. So {@link NetworkAttachment} will be validated manually in
      {@link org.ovirt.engine.core.bll.CommandBase#canDoAction}*/
     private List<NetworkAttachment> networkAttachments;
