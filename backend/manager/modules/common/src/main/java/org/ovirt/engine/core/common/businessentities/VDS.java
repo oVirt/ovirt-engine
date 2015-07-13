@@ -1408,4 +1408,25 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
     public boolean isHostDevicePassthroughEnabled() {
         return vdsDynamic.isHostDevicePassthroughEnabled();
     }
+
+    public boolean shouldVdsBeFenced() {
+        boolean result = false;
+
+        switch (this.getStatus()) {
+        case Down:
+        case InstallFailed:
+        case Maintenance:
+        case NonOperational:
+        case NonResponsive:
+        case Kdumping:  // it should happen only after restart when host is stuck in status Kdumping
+            result = true;
+            break;
+
+        default:
+            break;
+        }
+
+        return result;
+    }
+
 }

@@ -7,7 +7,6 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
-import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
@@ -54,8 +53,7 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
             getReturnValue().setSucceeded(false);
         }
         else {
-            HostValidator validator = new HostValidator(getVds());
-            if (validator.shouldVdsBeFenced()) {
+            if (getVds().shouldVdsBeFenced()) {
                 boolean result = executeSshSoftFencingCommand(getVds().getVdsGroupCompatibilityVersion().toString());
                 if (result) {
                     // SSH Soft Fencing executed successfully, check if host become Up

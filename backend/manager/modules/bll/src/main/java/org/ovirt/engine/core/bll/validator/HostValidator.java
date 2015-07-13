@@ -120,30 +120,6 @@ public class HostValidator {
                 .when(!addPending && authMethod == AuthenticationMethod.Password && StringUtils.isEmpty(password));
     }
 
-    public boolean shouldVdsBeFenced() {
-        boolean result = false;
-        // Not using exists() here in order not to add canDoAction message
-        if (host == null) {
-            return false;
-        }
-
-        switch (host.getStatus()) {
-        case Down:
-        case InstallFailed:
-        case Maintenance:
-        case NonOperational:
-        case NonResponsive:
-        case Kdumping:  // it should happen only after restart when host is stuck in status Kdumping
-            result = true;
-            break;
-
-        default:
-            break;
-        }
-
-        return result;
-    }
-
     public ValidationResult validateStatusForActivation() {
         ValidationResult existsValidation = hostExists();
         if (!existsValidation.isValid()) {

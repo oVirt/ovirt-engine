@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.validator;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -280,17 +279,6 @@ public class HostValidatorTest {
         assertThat(validator.provisioningHostGroupValid(false, new ExternalHostGroup()), isValid());
         assertThat(validator.provisioningComputeResourceValid(true, new ExternalComputeResource()), isValid());
         assertThat(validator.provisioningHostGroupValid(true, new ExternalHostGroup()), isValid());
-    }
-
-    @Test
-    public void testHostShouldBeFenced() {
-        validator = mockHostForActivation(VDSStatus.Down);
-        assertTrue(validator.shouldVdsBeFenced());
-    }
-    @Test
-    public void testHostShouldNotBeFenced() {
-        validator = mockHostForActivation(VDSStatus.Installing);
-        assertFalse(validator.shouldVdsBeFenced());
     }
 
     @Test

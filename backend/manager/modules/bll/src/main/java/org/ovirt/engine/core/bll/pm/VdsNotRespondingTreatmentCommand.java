@@ -10,7 +10,6 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.validator.FenceValidator;
-import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -113,8 +112,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             return;
         }
 
-        HostValidator validator = new HostValidator(getVds());
-        boolean shouldBeFenced = validator.shouldVdsBeFenced();
+        boolean shouldBeFenced = getVds().shouldVdsBeFenced();
         if (shouldBeFenced) {
             getParameters().setParentCommand(VdcActionType.VdsNotRespondingTreatment);
             VdcReturnValueBase retVal;
