@@ -90,12 +90,8 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     }
 
     private boolean isRemovingVmPool() {
-        Guid poolId = getVm().getVmPoolId();
-        if (poolId == null) {
-            return false;
-        }
-        VmPool vmPool = DbFacade.getInstance().getVmPoolDao().get(poolId);
-        return vmPool.isBeingDestroyed();
+        VmPool vmPool = getVmPoolCached();
+        return vmPool != null ? vmPool.isBeingDestroyed() : false;
     }
 
     @Override
