@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -338,8 +337,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
      */
     private void notifyAsyncTasks() {
         final List<Guid> asyncTasks =
-                getDbFacade().getAsyncTaskDao()
-                .getAsyncTaskIdsByEntity(getParameters().getStorageDomainId());
+                getAsyncTaskDao().getAsyncTaskIdsByEntity(getParameters().getStorageDomainId());
 
         if (!asyncTasks.isEmpty()) {
             AuditLogableBase auditLogableBase = new AuditLogableBase();
@@ -395,9 +393,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     }
 
     private void updateStorageDomainStaticData(StorageDomainStatic storageDomainStatic) {
-        DbFacade.getInstance()
-                .getStorageDomainStaticDao()
-                .update(storageDomainStatic);
+        getStorageDomainStaticDao().update(storageDomainStatic);
     }
 
     @Override

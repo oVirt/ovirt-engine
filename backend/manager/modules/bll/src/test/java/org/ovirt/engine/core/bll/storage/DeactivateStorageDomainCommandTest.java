@@ -18,7 +18,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.CommandMocks;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -38,7 +37,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AsyncTaskDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -54,9 +52,6 @@ public class DeactivateStorageDomainCommandTest {
 
     @Rule
     public MockEJBStrategyRule ejbRule = new MockEJBStrategyRule(BeanType.EVENTQUEUE_MANAGER, mock(EventQueue.class));
-
-    @Mock
-    private DbFacade dbFacade;
     @Mock
     private StoragePoolIsoMapDao isoMapDao;
     @Mock
@@ -93,18 +88,17 @@ public class DeactivateStorageDomainCommandTest {
     @Before
     public void setup() {
         map = new StoragePoolIsoMap();
-        CommandMocks.mockDbFacade(cmd, dbFacade);
-        when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDao);
-        when(dbFacade.getStorageDomainDao()).thenReturn(storageDomainDao);
+        doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
+        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         doReturn(eventQueue).when(cmd).getEventQueue();
     }
 
     @Test
     public void statusSetInMap() {
         doReturn(mock(IStorageHelper.class)).when(cmd).getStorageHelper(any(StorageDomain.class));
-        when(dbFacade.getStoragePoolIsoMapDao()).thenReturn(isoMapDao);
-        when(dbFacade.getVdsDao()).thenReturn(vdsDao);
-        when(dbFacade.getAsyncTaskDao()).thenReturn(asyncTaskDao);
+        doReturn(isoMapDao).when(cmd).getStoragePoolIsoMapDao();
+        doReturn(vdsDao).when(cmd).getVdsDao();
+        doReturn(asyncTaskDao).when(cmd).getAsyncTaskDao();
         when(storagePoolDao.get(any(Guid.class))).thenReturn(new StoragePool());
         when(isoMapDao.get(any(StoragePoolIsoMapId.class))).thenReturn(map);
         when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new StorageDomain());
@@ -128,7 +122,7 @@ public class DeactivateStorageDomainCommandTest {
     public void testVmsWithNoIsoAttached() {
         mockDomain();
         doReturn(domain).when(cmd).getStorageDomain();
-        when(dbFacade.getVmStaticDao()).thenReturn(vmStaticDao);
+        doReturn(vmStaticDao).when(cmd).getVmStaticDao();
         when(vmStaticDao.getAllByStoragePoolId(any(Guid.class))).thenReturn(Collections.<VmStatic>emptyList());
         assertTrue(cmd.isRunningVmsWithIsoAttached());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().isEmpty());
@@ -139,8 +133,8 @@ public class DeactivateStorageDomainCommandTest {
         setup();
         mockDomain();
         doReturn(domain).when(cmd).getStorageDomain();
-        when(dbFacade.getVmStaticDao()).thenReturn(vmStaticDao);
-        when(dbFacade.getVmDynamicDao()).thenReturn(vmDynamicDao);
+        doReturn(vmStaticDao).when(cmd).getVmStaticDao();
+        doReturn(vmDynamicDao).when(cmd).getVmDynamicDao();
 
         VmStatic vmStatic = new VmStatic();
         vmStatic.setName("TestVM");
