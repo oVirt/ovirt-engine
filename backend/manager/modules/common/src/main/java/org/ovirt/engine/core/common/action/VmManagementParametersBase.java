@@ -65,13 +65,14 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private VmPayload payload;
     private boolean clearPayload;
-    private Boolean balloonEnabled;
     private VM vm;
     private boolean copyTemplatePermissions;
     private boolean applyChangesLater;
     private boolean updateNuma;
     private String vmLargeIcon;
 
+    @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.BALLOON, type = VmDeviceType.MEMBALLOON)
+    private Boolean balloonEnabled;
 
     private Optional<VmWatchdog> watchdog = new Optional<>();
 
