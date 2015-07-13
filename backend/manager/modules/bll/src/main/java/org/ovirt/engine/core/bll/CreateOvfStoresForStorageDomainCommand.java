@@ -31,6 +31,10 @@ public class CreateOvfStoresForStorageDomainCommand<T extends CreateOvfStoresFor
 
     @Override
     protected void executeCommand() {
+        if (getStorageDomain().getStorageType().isCinderDomain()) {
+            setSucceeded(true);
+            return;
+        }
         for (int i = 0; i < getParameters().getStoresCount(); i++) {
             CreateOvfVolumeForStorageDomainCommandParameters parameters = createCreateOvfVolumeForStorageDomainParams();
 
