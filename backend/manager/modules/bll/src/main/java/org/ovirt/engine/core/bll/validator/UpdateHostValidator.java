@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.validator;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VdsHandler;
+import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -20,8 +21,9 @@ public class UpdateHostValidator extends HostValidator {
     private final ProviderDao providerDao;
     private Provider<?> provider;
 
-    public UpdateHostValidator(DbFacade dbFacade, VDS oldHost, VDS updatedHost, boolean installHost) {
-        super(dbFacade, updatedHost);
+    public UpdateHostValidator(DbFacade dbFacade,
+            VDS oldHost, VDS updatedHost, boolean installHost, HostedEngineHelper hostedEngineHelper) {
+        super(dbFacade, updatedHost, hostedEngineHelper);
         this.oldHost = oldHost;
         this.installHost = installHost;
         providerDao = dbFacade.getProviderDao();

@@ -20,10 +20,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
+import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -33,7 +36,9 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
@@ -61,32 +66,39 @@ public class HostValidatorTest {
     @Mock
     private VDS host;
 
+    @Mock
+    private HostedEngineHelper hostedEngineHelper;
+
+    @Mock
+    private ClusterDao clusterDao;
+
     private HostValidator validator;
 
     private HostValidator mockHostForActivation(VDSStatus status) {
         VDS host = mock(VDS.class);
         when(host.getStatus()).thenReturn(status);
-        return new HostValidator(dbFacade, host);
+        return new HostValidator(dbFacade, host, hostedEngineHelper);
     }
 
     private HostValidator mockHostForUniqueId(String value) {
         mockConfigRule.mockConfigValue(ConfigValues.InstallVds, Boolean.TRUE);
         VDS host = mock(VDS.class);
         when(host.getUniqueId()).thenReturn(value);
-        return new HostValidator(dbFacade, host);
+        return new HostValidator(dbFacade, host, hostedEngineHelper);
     }
 
     private HostValidator mockHostForProtocol(VdsProtocol protocol) {
         VDS host = mock(VDS.class);
         when(host.getProtocol()).thenReturn(protocol);
-        return new HostValidator(dbFacade, host);
+        return new HostValidator(dbFacade, host, hostedEngineHelper);
     }
 
     @Before
     public void setup() {
         mockConfigRule.mockConfigValue(ConfigValues.MaxVdsNameLength, HOST_NAME_SIZE);
         mockConfigRule.mockConfigValue(ConfigValues.EncryptHostCommunication, Boolean.TRUE);
-        validator = new HostValidator(dbFacade, host);
+        when(dbFacade.getClusterDao()).thenReturn(clusterDao);
+        validator = new HostValidator(dbFacade, host, hostedEngineHelper);
     }
 
     @Test
@@ -127,7 +139,7 @@ public class HostValidatorTest {
     public void nameNotUsed() {
         when(hostDao.getByName(any(String.class))).thenReturn(null);
         when(dbFacade.getVdsDao()).thenReturn(hostDao);
-        validator = new HostValidator(dbFacade, host);
+        validator = new HostValidator(dbFacade, host, hostedEngineHelper);
 
         assertThat(validator.nameNotUsed(), isValid());
     }
@@ -136,7 +148,7 @@ public class HostValidatorTest {
     public void nameIsUsed() {
         when(hostDao.getByName(any(String.class))).thenReturn(mock(VDS.class));
         when(dbFacade.getVdsDao()).thenReturn(hostDao);
-        validator = new HostValidator(dbFacade, host);
+        validator = new HostValidator(dbFacade, host, hostedEngineHelper);
 
         assertThat(validator.nameNotUsed(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
     }
@@ -145,7 +157,7 @@ public class HostValidatorTest {
     public void hostNameNotUsed() {
         when(hostDao.getAllForHostname(any(String.class))).thenReturn(Collections.<VDS> emptyList());
         when(dbFacade.getVdsDao()).thenReturn(hostDao);
-        validator = new HostValidator(dbFacade, host);
+        validator = new HostValidator(dbFacade, host, hostedEngineHelper);
 
         assertThat(validator.hostNameNotUsed(), isValid());
     }
@@ -154,7 +166,7 @@ public class HostValidatorTest {
     public void hostNameIsUsed() {
         when(hostDao.getAllForHostname(any(String.class))).thenReturn(Collections.singletonList(mock(VDS.class)));
         when(dbFacade.getVdsDao()).thenReturn(hostDao);
-        validator = new HostValidator(dbFacade, host);
+        validator = new HostValidator(dbFacade, host, hostedEngineHelper);
 
         assertThat(validator.hostNameNotUsed(), failsWith(EngineMessage.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST));
     }
@@ -186,7 +198,7 @@ public class HostValidatorTest {
     public void hostAttachedToLocalStorageWithoutDataCenter() {
         when(storagePoolDao.getForCluster(any(Guid.class))).thenReturn(null);
         when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDao);
-        validator = new HostValidator(dbFacade, host);
+        validator = new HostValidator(dbFacade, host, hostedEngineHelper);
 
         assertThat(validator.validateSingleHostAttachedToLocalStorage(), isValid());
     }
@@ -199,7 +211,7 @@ public class HostValidatorTest {
         when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDao);
         when(hostStaticDao.getAllForCluster(any(Guid.class))).thenReturn(Collections.<VdsStatic> emptyList());
         when(dbFacade.getVdsStaticDao()).thenReturn(hostStaticDao);
-        validator = new HostValidator(dbFacade, host);
+        validator = new HostValidator(dbFacade, host, hostedEngineHelper);
 
         assertThat(validator.validateSingleHostAttachedToLocalStorage(), isValid());
     }
@@ -213,7 +225,7 @@ public class HostValidatorTest {
         when(hostStaticDao.getAllForCluster(any(Guid.class)))
                 .thenReturn(Collections.<VdsStatic> singletonList(mock(VdsStatic.class)));
         when(dbFacade.getVdsStaticDao()).thenReturn(hostStaticDao);
-        validator = new HostValidator(dbFacade, host);
+        validator = new HostValidator(dbFacade, host, hostedEngineHelper);
 
         assertThat(validator.validateSingleHostAttachedToLocalStorage(),
                 failsWith(EngineMessage.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE));
@@ -221,7 +233,7 @@ public class HostValidatorTest {
 
     @Test
     public void securityKeysExists() {
-        validator = spy(new HostValidator(dbFacade, host));
+        validator = spy(new HostValidator(dbFacade, host, hostedEngineHelper));
         doReturn(true).when(validator).haveSecurityKey();
 
         assertThat(validator.securityKeysExists(), isValid());
@@ -229,7 +241,7 @@ public class HostValidatorTest {
 
     @Test
     public void securityKeysDoesNotExist() {
-        validator = spy(new HostValidator(dbFacade, host));
+        validator = spy(new HostValidator(dbFacade, host, hostedEngineHelper));
         doReturn(false).when(validator).haveSecurityKey();
 
         assertThat(validator.securityKeysExists(),
@@ -341,5 +353,37 @@ public class HostValidatorTest {
         validator = mockHostForProtocol(VdsProtocol.XML);
         assertThat(validator.protocolIsNotXmlrpc(),
                 failsWith(EngineMessage.NOT_SUPPORTED_PROTOCOL_FOR_CLUSTER_VERSION));
+    }
+
+    @Test
+    public void supportsHostedEngineDeploy() {
+        when(hostedEngineHelper.isVmManaged()).thenReturn(true);
+        mockCluster(Version.v4_0);
+        assertThat(validator.supportsDeployingHostedEngine(new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.DEPLOY)),
+                isValid());
+    }
+
+    @Test
+    public void unsupportedHostedEngineDeployWhenNoHostedEngine() {
+        when(hostedEngineHelper.isVmManaged()).thenReturn(false);
+        mockCluster(Version.v4_0);
+        when(host.getClusterId()).thenReturn(Guid.Empty);
+        assertThat(validator.supportsDeployingHostedEngine(new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.DEPLOY)),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_UNMANAGED_HOSTED_ENGINE));
+    }
+
+    @Test
+    public void unsupportedHostedEngineDeployWhenClusterLevelIsUnsupported() {
+        when(hostedEngineHelper.isVmManaged()).thenReturn(false);
+        mockCluster(Version.v3_6);
+        when(host.getClusterId()).thenReturn(Guid.Empty);
+        assertThat(validator.supportsDeployingHostedEngine(new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.DEPLOY)),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_DEPLOYMENT_UNSUPPORTED));
+    }
+
+    public void mockCluster(Version version) {
+        Cluster cluster = new Cluster();
+        cluster.setCompatibilityVersion(version);
+        when(clusterDao.get(any(Guid.class))).thenReturn(cluster);
     }
 }

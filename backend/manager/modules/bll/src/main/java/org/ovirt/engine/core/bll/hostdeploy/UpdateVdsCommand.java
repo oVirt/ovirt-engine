@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.validator.UpdateHostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -44,6 +45,9 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
 
     @Inject
     private ResourceManager resourceManager;
+
+    @Inject
+    private HostedEngineHelper hostedEngineHelper;
 
     private VDS oldHost;
     private static final List<String> UPDATE_FIELDS_VDS_BROKER = Arrays.asList(
@@ -80,7 +84,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                 new UpdateHostValidator(getDbFacade(),
                         oldHost,
                         getParameters().getvds(),
-                        getParameters().isInstallHost());
+                        getParameters().isInstallHost(),
+                        hostedEngineHelper);
 
         return validate(validator.hostExists())
                 && validate(validator.hostStatusValid())
@@ -101,7 +106,9 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                 && isPowerManagementLegal(getParameters().getVdsStaticData().isPmEnabled(),
                         getParameters().getFenceAgents(),
                         oldHost.getClusterCompatibilityVersion().toString())
-                && validate(validator.protocolIsNotXmlrpc());
+                && validate(validator.protocolIsNotXmlrpc())
+                && validate(validator.supportsDeployingHostedEngine(
+                        getParameters().getHostedEngineDeployConfiguration()));
     }
 
     private boolean validateNetworkProviderConfiguration() {
@@ -141,6 +148,11 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             tempVar.setNetworkProviderId(getParameters().getVdsStaticData().getOpenstackNetworkProviderId());
             tempVar.setNetworkMappings(getParameters().getNetworkMappings());
             tempVar.setAuthMethod(getParameters().getAuthMethod());
+            if (getParameters().getHostedEngineDeployConfiguration() != null) {
+                tempVar.setHostedEngineConfiguration(
+                        hostedEngineHelper.createVdsDeployParams(getVdsId(),
+                                getParameters().getHostedEngineDeployConfiguration().getDeployAction()));
+            }
             ArrayList<VdcReturnValueBase> resultList = runInternalMultipleActions(
                     actionType, new ArrayList<>(Arrays.asList(tempVar)));
 

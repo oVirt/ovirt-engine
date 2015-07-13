@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.action.hostdeploy;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -10,6 +12,7 @@ public class InstallVdsParameters extends VdsOperationActionParameters {
     private boolean reinstallOrUpgrade;
     private String oVirtIsoFile;
     private Guid networkProviderId;
+    private Map<String, String> hostedEngineConfiguration;
 
     public InstallVdsParameters() {
     }
@@ -47,5 +50,13 @@ public class InstallVdsParameters extends VdsOperationActionParameters {
 
     public void setNetworkProviderId(Guid networkProviderId) {
         this.networkProviderId = networkProviderId;
+    }
+
+    public void setHostedEngineConfiguration(Map<String, String> hostedEngineConfiguration) {
+        this.hostedEngineConfiguration = hostedEngineConfiguration;
+    }
+
+    public Map<String, String> getHostedEngineConfiguration() {
+        return hostedEngineConfiguration;
     }
 }
