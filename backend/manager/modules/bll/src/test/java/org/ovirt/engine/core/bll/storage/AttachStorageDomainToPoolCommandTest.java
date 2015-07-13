@@ -73,7 +73,7 @@ public class AttachStorageDomainToPoolCommandTest {
     private VDSBrokerFrontend vdsBrokerFrontend;
     @Mock
     private VDS vds;
-    StoragePoolIsoMap map = null;
+    private StoragePoolIsoMap map;
 
     @ClassRule
     public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
