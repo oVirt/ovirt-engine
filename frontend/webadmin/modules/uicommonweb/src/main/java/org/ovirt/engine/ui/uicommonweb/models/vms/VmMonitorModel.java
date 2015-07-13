@@ -12,32 +12,26 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class VmMonitorModel extends EntityModel
-{
+public class VmMonitorModel extends EntityModel {
 
     private UICommand privateRefreshCommand;
 
-    public UICommand getRefreshCommand()
-    {
+    public UICommand getRefreshCommand() {
         return privateRefreshCommand;
     }
 
-    private void setRefreshCommand(UICommand value)
-    {
+    private void setRefreshCommand(UICommand value) {
         privateRefreshCommand = value;
     }
 
     private int cpuUsage;
 
-    public int getCpuUsage()
-    {
+    public int getCpuUsage() {
         return cpuUsage;
     }
 
-    public void setCpuUsage(int value)
-    {
-        if (cpuUsage != value)
-        {
+    public void setCpuUsage(int value) {
+        if (cpuUsage != value) {
             cpuUsage = value;
             onPropertyChanged(new PropertyChangedEventArgs("CpuUsage")); //$NON-NLS-1$
         }
@@ -45,15 +39,12 @@ public class VmMonitorModel extends EntityModel
 
     private int memoryUsage;
 
-    public int getMemoryUsage()
-    {
+    public int getMemoryUsage() {
         return memoryUsage;
     }
 
-    public void setMemoryUsage(int value)
-    {
-        if (memoryUsage != value)
-        {
+    public void setMemoryUsage(int value) {
+        if (memoryUsage != value) {
             memoryUsage = value;
             onPropertyChanged(new PropertyChangedEventArgs("MemoryUsage")); //$NON-NLS-1$
         }
@@ -61,15 +52,12 @@ public class VmMonitorModel extends EntityModel
 
     private int networkUsage;
 
-    public int getNetworkUsage()
-    {
+    public int getNetworkUsage() {
         return networkUsage;
     }
 
-    public void setNetworkUsage(int value)
-    {
-        if (networkUsage != value)
-        {
+    public void setNetworkUsage(int value) {
+        if (networkUsage != value) {
             networkUsage = value;
             onPropertyChanged(new PropertyChangedEventArgs("NetworkUsage")); //$NON-NLS-1$
         }
@@ -77,10 +65,8 @@ public class VmMonitorModel extends EntityModel
 
     private GridTimer refreshTimer;
 
-    private GridTimer getRefreshTimer()
-    {
-        if (refreshTimer == null)
-        {
+    private GridTimer getRefreshTimer() {
+        if (refreshTimer == null) {
             refreshTimer = new GridTimer("VmMonitorModel", getEventBus()) { //$NON-NLS-1$
                         @Override
                         public void execute() {
@@ -93,8 +79,7 @@ public class VmMonitorModel extends EntityModel
         return refreshTimer;
     }
 
-    public VmMonitorModel()
-    {
+    public VmMonitorModel() {
         setTitle(ConstantsManager.getInstance().getConstants().monitorTitle());
         setHelpTag(HelpTag.monitor);
         setHashName("monitor"); //$NON-NLS-1$
@@ -103,12 +88,10 @@ public class VmMonitorModel extends EntityModel
     }
 
     @Override
-    public void setEntity(Object value)
-    {
+    public void setEntity(Object value) {
         super.setEntity(value);
 
-        if (value != null)
-        {
+        if (value != null) {
             getRefreshTimer().start();
         } else {
             getRefreshTimer().stop();
@@ -116,20 +99,16 @@ public class VmMonitorModel extends EntityModel
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getRefreshCommand())
-        {
+        if (command == getRefreshCommand()) {
             refresh();
         }
     }
 
-    private void refresh()
-    {
-        if (getEntity() == null)
-        {
+    private void refresh() {
+        if (getEntity() == null) {
             return;
         }
 
@@ -138,8 +117,7 @@ public class VmMonitorModel extends EntityModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 VM vm1 = (VM) result;
                 VmMonitorModel vmMonitorModel = (VmMonitorModel) model;
                 vmMonitorModel.setCpuUsage((vm1.getUsageCpuPercent() == null ? 0 : vm1.getUsageCpuPercent()));

@@ -12,8 +12,7 @@ public class ReplaceBrickModel extends Model {
     ListModel<VDS> servers;
     EntityModel<String> brickDirectory;
 
-    public ReplaceBrickModel()
-    {
+    public ReplaceBrickModel() {
         setServers(new ListModel<VDS>());
         setBrickDirectory(new EntityModel<String>());
     }
@@ -34,8 +33,7 @@ public class ReplaceBrickModel extends Model {
         this.brickDirectory = brickDirectory;
     }
 
-    public boolean validate()
-    {
+    public boolean validate() {
         getBrickDirectory().validateEntity(new IValidation[] { new NotEmptyValidation() });
 
         return getServers().getIsValid() && getBrickDirectory().getIsValid();

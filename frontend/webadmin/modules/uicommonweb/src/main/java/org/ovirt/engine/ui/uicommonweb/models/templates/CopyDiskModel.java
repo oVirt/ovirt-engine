@@ -22,8 +22,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-public class CopyDiskModel extends MoveOrCopyDiskModel
-{
+public class CopyDiskModel extends MoveOrCopyDiskModel {
     public CopyDiskModel() {
         super();
 

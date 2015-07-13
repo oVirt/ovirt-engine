@@ -1,8 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 
 @SuppressWarnings("unused")
-public class UserGroup
-{
+public class UserGroup {
     private String groupName;
     private String authz;
     private String namespace;
@@ -15,23 +14,19 @@ public class UserGroup
         this.namespace = namespace;
     }
 
-    public String getGroupName()
-    {
+    public String getGroupName() {
         return groupName;
     }
 
-    public void setGroupName(String value)
-    {
+    public void setGroupName(String value) {
         groupName = value;
     }
 
-    public String getAuthz()
-    {
+    public String getAuthz() {
         return authz;
     }
 
-    public void setAuthz(String value)
-    {
+    public void setAuthz(String value) {
         authz = value;
     }
 }

@@ -6,22 +6,18 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public abstract class ItemBehavior
-{
+public abstract class ItemBehavior {
     private UserPortalItemModel privateItem;
 
-    protected UserPortalItemModel getItem()
-    {
+    protected UserPortalItemModel getItem() {
         return privateItem;
     }
 
-    private void setItem(UserPortalItemModel value)
-    {
+    private void setItem(UserPortalItemModel value) {
         privateItem = value;
     }
 
-    protected ItemBehavior(UserPortalItemModel item)
-    {
+    protected ItemBehavior(UserPortalItemModel item) {
         setItem(item);
     }
 

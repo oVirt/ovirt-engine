@@ -9,39 +9,32 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class StorageDomainModel extends EntityModel
-{
+public class StorageDomainModel extends EntityModel {
 
     private StorageDomain privateStorageDomain;
 
-    public StorageDomain getStorageDomain()
-    {
+    public StorageDomain getStorageDomain() {
         return privateStorageDomain;
     }
 
-    public void setStorageDomain(StorageDomain value)
-    {
+    public void setStorageDomain(StorageDomain value) {
         privateStorageDomain = value;
     }
 
     private ArrayList<DiskImage> disks;
 
-    public ArrayList<DiskImage> getDisks()
-    {
+    public ArrayList<DiskImage> getDisks() {
         return disks;
     }
 
-    public void setDisks(ArrayList<DiskImage> value)
-    {
-        if (disks != value)
-        {
+    public void setDisks(ArrayList<DiskImage> value) {
+        if (disks != value) {
             disks = value;
             onPropertyChanged(new PropertyChangedEventArgs("Disks")); //$NON-NLS-1$
         }
     }
 
-    public StorageDomainModel()
-    {
+    public StorageDomainModel() {
 
     }
 

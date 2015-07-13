@@ -53,13 +53,11 @@ public class VolumeParameterModel extends EntityModel {
         this.keyList = keyList;
     }
 
-    public EntityModel<String> getSelectedKey()
-    {
+    public EntityModel<String> getSelectedKey() {
         return selectedKey;
     }
 
-    public void setSelectedKey(EntityModel<String> value)
-    {
+    public void setSelectedKey(EntityModel<String> value) {
         this.selectedKey = value;
     }
 
@@ -88,8 +86,7 @@ public class VolumeParameterModel extends EntityModel {
     }
 
     private void keyItemChanged() {
-        if (getIsNew() && getKeyList().getSelectedItem() != null)
-        {
+        if (getIsNew() && getKeyList().getSelectedItem() != null) {
             getSelectedKey().setEntity(getKeyList().getSelectedItem().getKey());
         }
     }
@@ -98,40 +95,31 @@ public class VolumeParameterModel extends EntityModel {
         String key = getSelectedKey().getEntity();
         List<GlusterVolumeOptionInfo> options = (List<GlusterVolumeOptionInfo>) getKeyList().getItems();
         GlusterVolumeOptionInfo selectedOption = null;
-        for (GlusterVolumeOptionInfo option : options)
-        {
-            if (option.getKey().equals(key.trim()))
-            {
+        for (GlusterVolumeOptionInfo option : options) {
+            if (option.getKey().equals(key.trim())) {
                 selectedOption = option;
                 break;
             }
         }
 
-        if (selectedOption != null)
-        {
-            if (selectedOption.getDescription() == null || selectedOption.getDescription().equals(NULL_CONST))
-            {
+        if (selectedOption != null) {
+            if (selectedOption.getDescription() == null || selectedOption.getDescription().equals(NULL_CONST)) {
                 getDescription().setEntity(null);
             }
-            else
-            {
+            else {
                 getDescription().setEntity(selectedOption.getDescription());
             }
 
-            if (getIsNew())
-            {
-                if (selectedOption.getDefaultValue() == null || selectedOption.getDefaultValue().equals(NULL_CONST))
-                {
+            if (getIsNew()) {
+                if (selectedOption.getDefaultValue() == null || selectedOption.getDefaultValue().equals(NULL_CONST)) {
                     getValue().setEntity(null);
                 }
-                else
-                {
+                else {
                     getValue().setEntity(selectedOption.getDefaultValue());
                 }
             }
         }
-        else if (getIsNew())
-        {
+        else if (getIsNew()) {
             getDescription().setEntity(null);
             getValue().setEntity(null);
         }

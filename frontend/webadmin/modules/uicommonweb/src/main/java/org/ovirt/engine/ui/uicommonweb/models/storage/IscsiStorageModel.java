@@ -4,11 +4,9 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class IscsiStorageModel extends SanStorageModel
-{
+public class IscsiStorageModel extends SanStorageModel {
     @Override
-    public StorageType getType()
-    {
+    public StorageType getType() {
         return StorageType.ISCSI;
     }
 

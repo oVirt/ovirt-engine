@@ -94,8 +94,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }

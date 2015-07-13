@@ -5,8 +5,7 @@ import java.util.Arrays;
 import org.ovirt.engine.core.common.validation.MaskValidator;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class SubnetMaskValidation implements IValidation
-{
+public class SubnetMaskValidation implements IValidation {
     private final boolean isPrefixAllowed;
 
     public SubnetMaskValidation() {

@@ -33,27 +33,22 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
     public static final EventDefinition updateCompleteEventDefinition;
     private Event<EventArgs> privateUpdateCompleteEvent;
 
-    public Event<EventArgs> getUpdateCompleteEvent()
-    {
+    public Event<EventArgs> getUpdateCompleteEvent() {
         return privateUpdateCompleteEvent;
     }
 
-    private void setUpdateCompleteEvent(Event<EventArgs> value)
-    {
+    private void setUpdateCompleteEvent(Event<EventArgs> value) {
         privateUpdateCompleteEvent = value;
     }
 
     private String name;
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName(String value)
-    {
-        if (!ObjectUtils.objectsEqual(name, value))
-        {
+    public void setName(String value) {
+        if (!ObjectUtils.objectsEqual(name, value)) {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
@@ -61,15 +56,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private String description;
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(String value)
-    {
-        if (!ObjectUtils.objectsEqual(description, value))
-        {
+    public void setDescription(String value) {
+        if (!ObjectUtils.objectsEqual(description, value)) {
             description = value;
             onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
@@ -77,15 +69,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private String template;
 
-    public String getTemplate()
-    {
+    public String getTemplate() {
         return template;
     }
 
-    public void setTemplate(String value)
-    {
-        if (!ObjectUtils.objectsEqual(template, value))
-        {
+    public void setTemplate(String value) {
+        if (!ObjectUtils.objectsEqual(template, value)) {
             template = value;
             onPropertyChanged(new PropertyChangedEventArgs("Template")); //$NON-NLS-1$
         }
@@ -93,15 +82,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private String definedMemory;
 
-    public String getDefinedMemory()
-    {
+    public String getDefinedMemory() {
         return definedMemory;
     }
 
-    public void setDefinedMemory(String value)
-    {
-        if (!ObjectUtils.objectsEqual(definedMemory, value))
-        {
+    public void setDefinedMemory(String value) {
+        if (!ObjectUtils.objectsEqual(definedMemory, value)) {
             definedMemory = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefinedMemory")); //$NON-NLS-1$
         }
@@ -109,15 +95,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private String guestFreeCachedBufferedMemInfo;
 
-    public String getGuestFreeCachedBufferedMemInfo()
-    {
+    public String getGuestFreeCachedBufferedMemInfo() {
         return guestFreeCachedBufferedMemInfo;
     }
 
-    public void setGuestFreeCachedBufferedMemInfo(String value)
-    {
-        if (!ObjectUtils.objectsEqual(guestFreeCachedBufferedMemInfo, value))
-        {
+    public void setGuestFreeCachedBufferedMemInfo(String value) {
+        if (!ObjectUtils.objectsEqual(guestFreeCachedBufferedMemInfo, value)) {
             guestFreeCachedBufferedMemInfo = value;
             onPropertyChanged(new PropertyChangedEventArgs("GuestFreeCachedBufferedMemInfo")); //$NON-NLS-1$
         }
@@ -125,15 +108,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private String minAllocatedMemory;
 
-    public String getMinAllocatedMemory()
-    {
+    public String getMinAllocatedMemory() {
         return minAllocatedMemory;
     }
 
-    public void setMinAllocatedMemory(String value)
-    {
-        if (!ObjectUtils.objectsEqual(minAllocatedMemory, value))
-        {
+    public void setMinAllocatedMemory(String value) {
+        if (!ObjectUtils.objectsEqual(minAllocatedMemory, value)) {
             minAllocatedMemory = value;
             onPropertyChanged(new PropertyChangedEventArgs("MinAllocatedMemory")); //$NON-NLS-1$
         }
@@ -141,15 +121,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private String os;
 
-    public String getOS()
-    {
+    public String getOS() {
         return os;
     }
 
-    public void setOS(String value)
-    {
-        if (!ObjectUtils.objectsEqual(os, value))
-        {
+    public void setOS(String value) {
+        if (!ObjectUtils.objectsEqual(os, value)) {
             os = value;
             onPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
         }
@@ -158,15 +135,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private String defaultDisplayType;
 
-    public String getDefaultDisplayType()
-    {
+    public String getDefaultDisplayType() {
         return defaultDisplayType;
     }
 
-    public void setDefaultDisplayType(String value)
-    {
-        if (!ObjectUtils.objectsEqual(defaultDisplayType, value))
-        {
+    public void setDefaultDisplayType(String value) {
+        if (!ObjectUtils.objectsEqual(defaultDisplayType, value)) {
             defaultDisplayType = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefaultDisplayType")); //$NON-NLS-1$
         }
@@ -174,15 +148,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private String origin;
 
-    public String getOrigin()
-    {
+    public String getOrigin() {
         return origin;
     }
 
-    public void setOrigin(String value)
-    {
-        if (!ObjectUtils.objectsEqual(origin, value))
-        {
+    public void setOrigin(String value) {
+        if (!ObjectUtils.objectsEqual(origin, value)) {
             origin = value;
             onPropertyChanged(new PropertyChangedEventArgs("Origin")); //$NON-NLS-1$
         }
@@ -210,15 +181,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private int monitorCount;
 
-    public int getMonitorCount()
-    {
+    public int getMonitorCount() {
         return monitorCount;
     }
 
-    public void setMonitorCount(int value)
-    {
-        if (monitorCount != value)
-        {
+    public void setMonitorCount(int value) {
+        if (monitorCount != value) {
             monitorCount = value;
             onPropertyChanged(new PropertyChangedEventArgs("MonitorCount")); //$NON-NLS-1$
         }
@@ -226,15 +194,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private boolean hasDomain;
 
-    public boolean getHasDomain()
-    {
+    public boolean getHasDomain() {
         return hasDomain;
     }
 
-    public void setHasDomain(boolean value)
-    {
-        if (hasDomain != value)
-        {
+    public void setHasDomain(boolean value) {
+        if (hasDomain != value) {
             hasDomain = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasDomain")); //$NON-NLS-1$
         }
@@ -242,15 +207,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private boolean hasTimeZone;
 
-    public boolean getHasTimeZone()
-    {
+    public boolean getHasTimeZone() {
         return hasTimeZone;
     }
 
-    public void setHasTimeZone(boolean value)
-    {
-        if (hasTimeZone != value)
-        {
+    public void setHasTimeZone(boolean value) {
+        if (hasTimeZone != value) {
             hasTimeZone = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasTimeZone")); //$NON-NLS-1$
         }
@@ -258,15 +220,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private String usbPolicy;
 
-    public String getUsbPolicy()
-    {
+    public String getUsbPolicy() {
         return usbPolicy;
     }
 
-    public void setUsbPolicy(String value)
-    {
-        if (!ObjectUtils.objectsEqual(usbPolicy, value))
-        {
+    public void setUsbPolicy(String value) {
+        if (!ObjectUtils.objectsEqual(usbPolicy, value)) {
             usbPolicy = value;
             onPropertyChanged(new PropertyChangedEventArgs("UsbPolicy")); //$NON-NLS-1$
         }
@@ -274,15 +233,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private String cpuInfo;
 
-    public String getCpuInfo()
-    {
+    public String getCpuInfo() {
         return cpuInfo;
     }
 
-    public void setCpuInfo(String value)
-    {
-        if (!ObjectUtils.objectsEqual(cpuInfo, value))
-        {
+    public void setCpuInfo(String value) {
+        if (!ObjectUtils.objectsEqual(cpuInfo, value)) {
             cpuInfo = value;
             onPropertyChanged(new PropertyChangedEventArgs("CpuInfo")); //$NON-NLS-1$
         }
@@ -304,15 +260,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private boolean isHighlyAvailable;
 
-    public boolean getIsHighlyAvailable()
-    {
+    public boolean getIsHighlyAvailable() {
         return isHighlyAvailable;
     }
 
-    public void setIsHighlyAvailable(boolean value)
-    {
-        if (isHighlyAvailable != value)
-        {
+    public void setIsHighlyAvailable(boolean value) {
+        if (isHighlyAvailable != value) {
             isHighlyAvailable = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsHighlyAvailable")); //$NON-NLS-1$
         }
@@ -320,15 +273,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private String priority;
 
-    public String getPriority()
-    {
+    public String getPriority() {
         return priority;
     }
 
-    public void setPriority(String value)
-    {
-        if (!ObjectUtils.objectsEqual(priority, value))
-        {
+    public void setPriority(String value) {
+        if (!ObjectUtils.objectsEqual(priority, value)) {
             priority = value;
             onPropertyChanged(new PropertyChangedEventArgs("Priority")); //$NON-NLS-1$
         }
@@ -336,15 +286,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private boolean hasAlert;
 
-    public boolean getHasAlert()
-    {
+    public boolean getHasAlert() {
         return hasAlert;
     }
 
-    public void setHasAlert(boolean value)
-    {
-        if (hasAlert != value)
-        {
+    public void setHasAlert(boolean value) {
+        if (hasAlert != value) {
             hasAlert = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasAlert")); //$NON-NLS-1$
         }
@@ -352,15 +299,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private String alert;
 
-    public String getAlert()
-    {
+    public String getAlert() {
         return alert;
     }
 
-    public void setAlert(String value)
-    {
-        if (!ObjectUtils.objectsEqual(alert, value))
-        {
+    public void setAlert(String value) {
+        if (!ObjectUtils.objectsEqual(alert, value)) {
             alert = value;
             onPropertyChanged(new PropertyChangedEventArgs("Alert")); //$NON-NLS-1$
         }
@@ -368,15 +312,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private String domain;
 
-    public String getDomain()
-    {
+    public String getDomain() {
         return domain;
     }
 
-    public void setDomain(String value)
-    {
-        if (!ObjectUtils.objectsEqual(domain, value))
-        {
+    public void setDomain(String value) {
+        if (!ObjectUtils.objectsEqual(domain, value)) {
             domain = value;
             onPropertyChanged(new PropertyChangedEventArgs("Domain")); //$NON-NLS-1$
         }
@@ -384,15 +325,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private String storageDomain;
 
-    public String getStorageDomain()
-    {
+    public String getStorageDomain() {
         return storageDomain;
     }
 
-    public void setStorageDomain(String value)
-    {
-        if (!ObjectUtils.objectsEqual(storageDomain, value))
-        {
+    public void setStorageDomain(String value) {
+        if (!ObjectUtils.objectsEqual(storageDomain, value)) {
             storageDomain = value;
             onPropertyChanged(new PropertyChangedEventArgs("StorageDomain")); //$NON-NLS-1$
         }
@@ -400,15 +338,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private String timeZone;
 
-    public String getTimeZone()
-    {
+    public String getTimeZone() {
         return timeZone;
     }
 
-    public void setTimeZone(String value)
-    {
-        if (!ObjectUtils.objectsEqual(timeZone, value))
-        {
+    public void setTimeZone(String value) {
+        if (!ObjectUtils.objectsEqual(timeZone, value)) {
             timeZone = value;
             onPropertyChanged(new PropertyChangedEventArgs("TimeZone")); //$NON-NLS-1$
         }
@@ -416,15 +351,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private boolean hasDefaultHost;
 
-    public boolean getHasDefaultHost()
-    {
+    public boolean getHasDefaultHost() {
         return hasDefaultHost;
     }
 
-    public void setHasDefaultHost(boolean value)
-    {
-        if (hasDefaultHost != value)
-        {
+    public void setHasDefaultHost(boolean value) {
+        if (hasDefaultHost != value) {
             hasDefaultHost = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasDefaultHost")); //$NON-NLS-1$
         }
@@ -432,15 +364,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private String defaultHost;
 
-    public String getDefaultHost()
-    {
+    public String getDefaultHost() {
         return defaultHost;
     }
 
-    public void setDefaultHost(String value)
-    {
-        if (!ObjectUtils.objectsEqual(defaultHost, value))
-        {
+    public void setDefaultHost(String value) {
+        if (!ObjectUtils.objectsEqual(defaultHost, value)) {
             defaultHost = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefaultHost")); //$NON-NLS-1$
         }
@@ -448,15 +377,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private boolean hasCustomProperties;
 
-    public boolean getHasCustomProperties()
-    {
+    public boolean getHasCustomProperties() {
         return hasCustomProperties;
     }
 
-    public void setHasCustomProperties(boolean value)
-    {
-        if (hasCustomProperties != value)
-        {
+    public void setHasCustomProperties(boolean value) {
+        if (hasCustomProperties != value) {
             hasCustomProperties = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasCustomProperties")); //$NON-NLS-1$
         }
@@ -464,15 +390,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private String customProperties;
 
-    public String getCustomProperties()
-    {
+    public String getCustomProperties() {
         return customProperties;
     }
 
-    public void setCustomProperties(String value)
-    {
-        if (!ObjectUtils.objectsEqual(customProperties, value))
-        {
+    public void setCustomProperties(String value) {
+        if (!ObjectUtils.objectsEqual(customProperties, value)) {
             customProperties = value;
             onPropertyChanged(new PropertyChangedEventArgs("CustomProperties")); //$NON-NLS-1$
         }
@@ -480,15 +403,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private String vmId;
 
-    public String getVmId()
-    {
+    public String getVmId() {
         return vmId;
     }
 
-    public void setVmId(String value)
-    {
-        if (!ObjectUtils.objectsEqual(vmId, value))
-        {
+    public void setVmId(String value) {
+        if (!ObjectUtils.objectsEqual(vmId, value)) {
             vmId = value;
             onPropertyChanged(new PropertyChangedEventArgs("VmId")); //$NON-NLS-1$
         }
@@ -496,15 +416,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private String fqdn;
 
-    public String getFqdn()
-    {
+    public String getFqdn() {
         return fqdn;
     }
 
-    public void setFqdn(String value)
-    {
-        if (!ObjectUtils.objectsEqual(fqdn, value))
-        {
+    public void setFqdn(String value) {
+        if (!ObjectUtils.objectsEqual(fqdn, value)) {
             fqdn = value;
             onPropertyChanged(new PropertyChangedEventArgs("FQDN")); //$NON-NLS-1$
         }
@@ -512,27 +429,22 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private String compatibilityVersion;
 
-    public String getCompatibilityVersion()
-    {
+    public String getCompatibilityVersion() {
         return compatibilityVersion;
     }
 
-    public void setCompatibilityVersion(String value)
-    {
-        if (!ObjectUtils.objectsEqual(compatibilityVersion, value))
-        {
+    public void setCompatibilityVersion(String value) {
+        if (!ObjectUtils.objectsEqual(compatibilityVersion, value)) {
             compatibilityVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("CompatibilityVersion")); //$NON-NLS-1$
         }
     }
 
-    static
-    {
+    static {
         updateCompleteEventDefinition = new EventDefinition("UpdateComplete", VmGeneralModel.class); //$NON-NLS-1$
     }
 
-    public VmGeneralModel()
-    {
+    public VmGeneralModel() {
         setUpdateCompleteEvent(new Event<EventArgs>(updateCompleteEventDefinition));
 
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
@@ -541,19 +453,16 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             updateProperties();
         }
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
         updateProperties();
@@ -624,18 +533,15 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         setFqdn(vm.getVmFQDN());
 
         setHasAlert(vm.getVmPauseStatus() != VmPauseStatus.NONE && vm.getVmPauseStatus() != VmPauseStatus.NOERR);
-        if (getHasAlert())
-        {
+        if (getHasAlert()) {
             setAlert(translator.translate(vm.getVmPauseStatus()));
         }
-        else
-        {
+        else {
             setAlert(null);
         }
 
         setHasDefaultHost(vm.getDedicatedVmForVdsList().size() > 0);
-        if (getHasDefaultHost())
-        {
+        if (getHasDefaultHost()) {
             Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + vm.getVdsGroupName() //$NON-NLS-1$
                     + " sortby name", SearchType.VDS).withoutRefresh(), new AsyncQuery(this, //$NON-NLS-1$
                     new INewAsyncCallback() {
@@ -644,8 +550,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
                             VmGeneralModel model = (VmGeneralModel) target;
                             VM localVm = model.getEntity();
-                            if (localVm == null)
-                            {
+                            if (localVm == null) {
                                 return;
                             }
                             ArrayList<VDS> hosts = ((VdcQueryReturnValue) returnValue).getReturnValue();
@@ -661,8 +566,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
                         }
                     }));
         }
-        else
-        {
+        else {
             setDefaultHost(ConstantsManager.getInstance().getConstants().anyHostInCluster());
         }
     }

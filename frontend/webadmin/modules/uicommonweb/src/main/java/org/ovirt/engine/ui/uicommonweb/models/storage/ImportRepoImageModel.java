@@ -71,8 +71,7 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
         startProgress(null);

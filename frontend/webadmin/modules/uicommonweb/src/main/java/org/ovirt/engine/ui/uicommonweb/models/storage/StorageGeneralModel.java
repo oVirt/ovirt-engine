@@ -14,20 +14,16 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class StorageGeneralModel extends EntityModel<StorageDomain>
-{
+public class StorageGeneralModel extends EntityModel<StorageDomain> {
 
     private boolean isNfs;
 
-    public boolean getIsNfs()
-    {
+    public boolean getIsNfs() {
         return isNfs;
     }
 
-    public void setIsNfs(boolean value)
-    {
-        if (isNfs != value)
-        {
+    public void setIsNfs(boolean value) {
+        if (isNfs != value) {
             isNfs = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsNfs")); //$NON-NLS-1$
         }
@@ -35,15 +31,12 @@ public class StorageGeneralModel extends EntityModel<StorageDomain>
 
     private boolean isLocalS;
 
-    public boolean getIsLocalS()
-    {
+    public boolean getIsLocalS() {
         return isLocalS;
     }
 
-    public void setIsLocalS(boolean value)
-    {
-        if (isLocalS != value)
-        {
+    public void setIsLocalS(boolean value) {
+        if (isLocalS != value) {
             isLocalS = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsLocalS")); //$NON-NLS-1$
         }
@@ -51,15 +44,12 @@ public class StorageGeneralModel extends EntityModel<StorageDomain>
 
     private boolean isPosix;
 
-    public boolean getIsPosix()
-    {
+    public boolean getIsPosix() {
         return isPosix;
     }
 
-    public void setIsPosix(boolean value)
-    {
-        if (isPosix != value)
-        {
+    public void setIsPosix(boolean value) {
+        if (isPosix != value) {
             isPosix = value;
             onPropertyChanged(new PropertyChangedEventArgs("isPosix")); //$NON-NLS-1$
         }
@@ -67,15 +57,12 @@ public class StorageGeneralModel extends EntityModel<StorageDomain>
 
     private String path;
 
-    public String getPath()
-    {
+    public String getPath() {
         return path;
     }
 
-    public void setPath(String value)
-    {
-        if (!ObjectUtils.objectsEqual(path, value))
-        {
+    public void setPath(String value) {
+        if (!ObjectUtils.objectsEqual(path, value)) {
             path = value;
             onPropertyChanged(new PropertyChangedEventArgs("Path")); //$NON-NLS-1$
         }
@@ -146,34 +133,29 @@ public class StorageGeneralModel extends EntityModel<StorageDomain>
         }
     }
 
-    public StorageGeneralModel()
-    {
+    public StorageGeneralModel() {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
         setHelpTag(HelpTag.general);
         setHashName("general"); //$NON-NLS-1$
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             StorageDomain storageDomain = (StorageDomain) getEntity();
 
             setIsNfs(storageDomain.getStorageType() == StorageType.NFS);
             setIsLocalS(storageDomain.getStorageType() == StorageType.LOCALFS);
             setIsPosix(storageDomain.getStorageType() == StorageType.POSIXFS);
 
-            if (getIsNfs() || getIsLocalS() || getIsPosix())
-            {
+            if (getIsNfs() || getIsLocalS() || getIsPosix()) {
                 AsyncQuery _asyncQuery = new AsyncQuery();
                 _asyncQuery.setModel(this);
                 _asyncQuery.asyncCallback = new INewAsyncCallback() {
                     @Override
-                    public void onSuccess(Object model, Object ReturnValue)
-                    {
+                    public void onSuccess(Object model, Object ReturnValue) {
                         StorageServerConnections connection = (StorageServerConnections) ReturnValue;
                         StorageGeneralModel generalModel = (StorageGeneralModel) model;
 
@@ -193,8 +175,7 @@ public class StorageGeneralModel extends EntityModel<StorageDomain>
                 };
                 AsyncDataProvider.getInstance().getStorageConnectionById(_asyncQuery, storageDomain.getStorage(), true);
             }
-            else
-            {
+            else {
                 setPath(null);
             }
 

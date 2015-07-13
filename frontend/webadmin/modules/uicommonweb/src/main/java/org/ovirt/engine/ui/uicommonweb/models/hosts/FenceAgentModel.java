@@ -266,8 +266,7 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
         // Assume Validate method was called before this getter.
         String pmOptions = options.getEntity();
         if (!StringUtils.isEmpty(pmOptions)) {
-            for (String pair : pmOptions.split("[,]", -1)) //$NON-NLS-1$
-            {
+            for (String pair : pmOptions.split("[,]", -1)) { //$NON-NLS-1$
                 String[] array = pair.split("[=]", -1); //$NON-NLS-1$
                 if (array.length == 2) {
                     dict.put(array[0], array[1]);

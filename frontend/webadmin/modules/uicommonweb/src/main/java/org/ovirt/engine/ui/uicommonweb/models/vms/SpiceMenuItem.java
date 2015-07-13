@@ -1,34 +1,28 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 @SuppressWarnings("unused")
-public abstract class SpiceMenuItem
-{
+public abstract class SpiceMenuItem {
     private int privateId;
 
-    public int getId()
-    {
+    public int getId() {
         return privateId;
     }
 
-    public void setId(int value)
-    {
+    public void setId(int value) {
         privateId = value;
     }
 
     private boolean privateIsEnabled;
 
-    public boolean getIsEnabled()
-    {
+    public boolean getIsEnabled() {
         return privateIsEnabled;
     }
 
-    public void setIsEnabled(boolean value)
-    {
+    public void setIsEnabled(boolean value) {
         privateIsEnabled = value;
     }
 
-    protected SpiceMenuItem()
-    {
+    protected SpiceMenuItem() {
         setIsEnabled(true);
     }
 }

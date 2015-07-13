@@ -57,8 +57,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
 @SuppressWarnings("unused")
-public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
-{
+public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
     // This constant is intendend to be exported to a generic UTILS class later on
     private final static String DATE_FORMAT = "yyyy-MM-dd, HH:mm"; //$NON-NLS-1$
 
@@ -68,80 +67,67 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
         return privateNewCommand;
     }
 
-    private void setNewCommand(UICommand value)
-    {
+    private void setNewCommand(UICommand value) {
         privateNewCommand = value;
     }
 
     private UICommand privatePreviewCommand;
 
-    public UICommand getPreviewCommand()
-    {
+    public UICommand getPreviewCommand() {
         return privatePreviewCommand;
     }
 
-    private void setPreviewCommand(UICommand value)
-    {
+    private void setPreviewCommand(UICommand value) {
         privatePreviewCommand = value;
     }
 
     private UICommand customPreviewCommand;
 
-    public UICommand getCustomPreviewCommand()
-    {
+    public UICommand getCustomPreviewCommand() {
         return customPreviewCommand;
     }
 
-    private void setCustomPreviewCommand(UICommand value)
-    {
+    private void setCustomPreviewCommand(UICommand value) {
         customPreviewCommand = value;
     }
 
     private UICommand privateCommitCommand;
 
-    public UICommand getCommitCommand()
-    {
+    public UICommand getCommitCommand() {
         return privateCommitCommand;
     }
 
-    private void setCommitCommand(UICommand value)
-    {
+    private void setCommitCommand(UICommand value) {
         privateCommitCommand = value;
     }
 
     private UICommand privateUndoCommand;
 
-    public UICommand getUndoCommand()
-    {
+    public UICommand getUndoCommand() {
         return privateUndoCommand;
     }
 
-    private void setUndoCommand(UICommand value)
-    {
+    private void setUndoCommand(UICommand value) {
         privateUndoCommand = value;
     }
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
     private UICommand privateCloneVmCommand;
 
-    public UICommand getCloneVmCommand()
-    {
+    public UICommand getCloneVmCommand() {
         return privateCloneVmCommand;
     }
 
-    private void setCloneVmCommand(UICommand value)
-    {
+    private void setCloneVmCommand(UICommand value) {
         privateCloneVmCommand = value;
     }
 
@@ -157,53 +143,44 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
 
     private EntityModel privateCanSelectSnapshot;
 
-    public EntityModel getCanSelectSnapshot()
-    {
+    public EntityModel getCanSelectSnapshot() {
         return privateCanSelectSnapshot;
     }
 
-    private void setCanSelectSnapshot(EntityModel value)
-    {
+    private void setCanSelectSnapshot(EntityModel value) {
         privateCanSelectSnapshot = value;
     }
 
     private SystemTreeItemModel systemTreeSelectedItem;
 
-    public SystemTreeItemModel getSystemTreeSelectedItem()
-    {
+    public SystemTreeItemModel getSystemTreeSelectedItem() {
         return systemTreeSelectedItem;
     }
 
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value)
-    {
+    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
         systemTreeSelectedItem = value;
         onPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem")); //$NON-NLS-1$
     }
 
     private HashMap<Guid, SnapshotModel> snapshotsMap;
 
-    public HashMap<Guid, SnapshotModel> getSnapshotsMap()
-    {
+    public HashMap<Guid, SnapshotModel> getSnapshotsMap() {
         return snapshotsMap;
     }
 
-    public void setSnapshotsMap(HashMap<Guid, SnapshotModel> value)
-    {
+    public void setSnapshotsMap(HashMap<Guid, SnapshotModel> value) {
         snapshotsMap = value;
         onPropertyChanged(new PropertyChangedEventArgs("SnapshotsMap")); //$NON-NLS-1$
     }
 
     private boolean isCloneVmSupported;
 
-    public boolean getIsCloneVmSupported()
-    {
+    public boolean getIsCloneVmSupported() {
         return isCloneVmSupported;
     }
 
-    private void setIsCloneVmSupported(boolean value)
-    {
-        if (isCloneVmSupported != value)
-        {
+    private void setIsCloneVmSupported(boolean value) {
+        if (isCloneVmSupported != value) {
             isCloneVmSupported = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsCloneVmSupported")); //$NON-NLS-1$
         }
@@ -211,15 +188,12 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
 
     private boolean memorySnapshotSupported;
 
-    public boolean isMemorySnapshotSupported()
-    {
+    public boolean isMemorySnapshotSupported() {
         return memorySnapshotSupported;
     }
 
-    private void setMemorySnapshotSupported(boolean value)
-    {
-        if (memorySnapshotSupported != value)
-        {
+    private void setMemorySnapshotSupported(boolean value) {
+        if (memorySnapshotSupported != value) {
             memorySnapshotSupported = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsMemorySnapshotSupported")); //$NON-NLS-1$
         }
@@ -227,15 +201,12 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
 
     private boolean liveMergeSupported;
 
-    public boolean isLiveMergeSupported()
-    {
+    public boolean isLiveMergeSupported() {
         return liveMergeSupported;
     }
 
-    private void setLiveMergeSupported(boolean value)
-    {
-        if (liveMergeSupported != value)
-        {
+    private void setLiveMergeSupported(boolean value) {
+        if (liveMergeSupported != value) {
             liveMergeSupported = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsLiveMergeSupported")); //$NON-NLS-1$
         }
@@ -251,8 +222,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
         vmDisks = value;
     }
 
-    public VmSnapshotListModel()
-    {
+    public VmSnapshotListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().snapshotsTitle());
         setHelpTag(HelpTag.snapshots);
         setHashName("snapshots"); //$NON-NLS-1$
@@ -274,8 +244,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
     }
 
     @Override
-    public void setItems(Collection value)
-    {
+    public void setItems(Collection value) {
         ArrayList<Snapshot> snapshots =
                 value != null ? Linq.<Snapshot> cast(value) : new ArrayList<Snapshot>();
 
@@ -328,22 +297,18 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             getSearchCommand().execute();
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         VM vm = getEntity();
-        if (vm == null)
-        {
+        if (vm == null) {
             return;
         }
 
@@ -351,25 +316,20 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
-    private void remove()
-    {
-        if (getEntity() != null)
-        {
-            if (getWindow() != null)
-            {
+    private void remove() {
+        if (getEntity() != null) {
+            if (getWindow() != null) {
                 return;
             }
 
@@ -390,18 +350,15 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
         }
     }
 
-    private void onRemove()
-    {
+    private void onRemove() {
         Snapshot snapshot = getSelectedItem();
-        if (snapshot == null)
-        {
+        if (snapshot == null) {
             cancel();
             return;
         }
 
         VM vm = getEntity();
-        if (vm != null)
-        {
+        if (vm != null) {
             Frontend.getInstance().runAction(VdcActionType.RemoveSnapshot,
                     new RemoveSnapshotParameters(snapshot.getId(), vm.getId()), null, null);
         }
@@ -411,11 +368,9 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
         cancel();
     }
 
-    private void undo()
-    {
+    private void undo() {
         VM vm = getEntity();
-        if (vm != null)
-        {
+        if (vm != null) {
             Frontend.getInstance().runAction(VdcActionType.RestoreAllSnapshots,
                     new RestoreAllSnapshotsParameters(vm.getId(), SnapshotActionEnum.UNDO),
                     null,
@@ -423,11 +378,9 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
         }
     }
 
-    private void commit()
-    {
+    private void commit() {
         VM vm = getEntity();
-        if (vm != null)
-        {
+        if (vm != null) {
             Frontend.getInstance().runAction(VdcActionType.RestoreAllSnapshots,
                     new RestoreAllSnapshotsParameters(vm.getId(), SnapshotActionEnum.COMMIT),
                     null,
@@ -510,8 +463,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
         updateItems(snapshots);
     }
 
-    private void customPreview()
-    {
+    private void customPreview() {
         VM vm = getEntity();
         if (vm == null) {
             return;
@@ -604,8 +556,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
             });
     }
 
-    private void newEntity()
-    {
+    private void newEntity() {
         VM vm = getEntity();
         if (vm == null || getWindow() != null) {
             return;
@@ -633,20 +584,17 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
         model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
     }
 
-    private void cancel()
-    {
+    private void cancel() {
         setWindow(null);
     }
 
     private void cloneTemplate() {
         Snapshot snapshot = getSelectedItem();
-        if (snapshot == null)
-        {
+        if (snapshot == null) {
             return;
         }
 
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -689,23 +637,20 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
         final UnitVmModel model = (UnitVmModel) getWindow();
         NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) model.getBehavior();
         Snapshot snapshot = getSelectedItem();
-        if (snapshot == null)
-        {
+        if (snapshot == null) {
             cancel();
             return;
         }
 
         final VM vm = behavior.getVm();
 
-        if (!model.validate(false))
-        {
+        if (!model.validate(false)) {
             model.setIsValid(false);
         }
         else  if (model.getIsSubTemplate().getEntity()) {
             postNameUniqueCheck(vm);
         }
-        else
-        {
+        else {
             String name = model.getName().getEntity();
 
             // Check name unicitate.
@@ -715,8 +660,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
                         public void onSuccess(Object target, Object returnValue) {
 
                             boolean isNameUnique = (Boolean) returnValue;
-                            if (!isNameUnique)
-                            {
+                            if (!isNameUnique) {
                                 model.getInvalidityReasons().clear();
                                 model.getName()
                                         .getInvalidityReasons()
@@ -726,8 +670,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
                                 model.getName().setIsValid(false);
                                 model.setIsValid(false);
                             }
-                            else
-                            {
+                            else {
                                 postNameUniqueCheck(vm);
                             }
 
@@ -737,8 +680,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
         }
     }
 
-    private void postNameUniqueCheck(VM vm)
-    {
+    private void postNameUniqueCheck(VM vm) {
         UnitVmModel model = (UnitVmModel) getWindow();
 
         VM newVm = buildVmOnNewTemplate(model, vm);
@@ -775,16 +717,13 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
         return resultVm;
     }
 
-    private void cloneVM()
-    {
+    private void cloneVM() {
         Snapshot snapshot = getSelectedItem();
-        if (snapshot == null)
-        {
+        if (snapshot == null) {
             return;
         }
 
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -827,19 +766,16 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
         }), snapshot.getId());
     }
 
-    private void onCloneVM()
-    {
+    private void onCloneVM() {
         UnitVmModel model = (UnitVmModel) getWindow();
         CloneVmFromSnapshotModelBehavior behavior = (CloneVmFromSnapshotModelBehavior) model.getBehavior();
         Snapshot snapshot = getSelectedItem();
-        if (snapshot == null)
-        {
+        if (snapshot == null) {
             cancel();
             return;
         }
 
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
 
@@ -880,8 +816,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
                         VmSnapshotListModel vmSnapshotListModel = (VmSnapshotListModel) result.getState();
                         vmSnapshotListModel.getWindow().stopProgress();
                         VdcReturnValueBase returnValueBase = result.getReturnValue();
-                        if (returnValueBase != null && returnValueBase.getSucceeded())
-                        {
+                        if (returnValueBase != null && returnValueBase.getSucceeded()) {
                             vmSnapshotListModel.cancel();
                             vmSnapshotListModel.updateActionAvailability();
                         }
@@ -898,8 +833,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
         // do nothing - no additional setup needed
     }
 
-    public void updateActionAvailability()
-    {
+    public void updateActionAvailability() {
         if (getItems() == null) {
             // no need to update action availability
             return;
@@ -985,10 +919,8 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
         return null;
     }
 
-    protected void updateIsCloneVmSupported()
-    {
-        if (getEntity() == null)
-        {
+    protected void updateIsCloneVmSupported() {
+        if (getEntity() == null) {
             return;
         }
 
@@ -1049,64 +981,49 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getNewCommand())
-        {
+        if (command == getNewCommand()) {
             newEntity();
         }
-        else if (command == getPreviewCommand())
-        {
+        else if (command == getPreviewCommand()) {
             preview();
         }
-        else if (command == getCustomPreviewCommand())
-        {
+        else if (command == getCustomPreviewCommand()) {
             customPreview();
         }
-        else if (command == getCommitCommand())
-        {
+        else if (command == getCommitCommand()) {
             commit();
         }
-        else if (command == getUndoCommand())
-        {
+        else if (command == getUndoCommand()) {
             undo();
         }
-        else if (command == getRemoveCommand())
-        {
+        else if (command == getRemoveCommand()) {
             remove();
         }
-        else if (command == getCloneVmCommand())
-        {
+        else if (command == getCloneVmCommand()) {
             cloneVM();
         }
-        else if (command == getCloneTemplateCommand())
-        {
+        else if (command == getCloneTemplateCommand()) {
             cloneTemplate();
         }
-        else if ("OnNewTemplate".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnNewTemplate".equals(command.getName())) { //$NON-NLS-1$
             onCloneTemplate();
         }
-        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
-        else if ("OnCloneVM".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnCloneVM".equals(command.getName())) { //$NON-NLS-1$
             onCloneVM();
         }
-        else if ("OnPreview".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnPreview".equals(command.getName())) { //$NON-NLS-1$
             onPreview();
         }
-        else if ("OnCustomPreview".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnCustomPreview".equals(command.getName())) { //$NON-NLS-1$
             onCustomPreview();
         }
     }

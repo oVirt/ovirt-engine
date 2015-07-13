@@ -27,35 +27,29 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
-public class SystemPermissionListModel extends SearchableListModel
-{
+public class SystemPermissionListModel extends SearchableListModel {
 
     private UICommand privateAddCommand;
 
-    public UICommand getAddCommand()
-    {
+    public UICommand getAddCommand() {
         return privateAddCommand;
     }
 
-    private void setAddCommand(UICommand value)
-    {
+    private void setAddCommand(UICommand value) {
         privateAddCommand = value;
     }
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
-    public SystemPermissionListModel()
-    {
+    public SystemPermissionListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().systemPermissionTitle());
 
         setAddCommand(new UICommand("Add", this)); //$NON-NLS-1$
@@ -67,16 +61,14 @@ public class SystemPermissionListModel extends SearchableListModel
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         super.syncSearch();
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 SystemPermissionListModel systemPermissionListModel = (SystemPermissionListModel) model;
                 systemPermissionListModel.setItems((Collection) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
@@ -87,29 +79,24 @@ public class SystemPermissionListModel extends SearchableListModel
         Frontend.getInstance().runQuery(VdcQueryType.GetSystemPermissions, params, _asyncQuery);
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
-    private void add()
-    {
-        if (getWindow() != null)
-        {
+    private void add() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -128,27 +115,22 @@ public class SystemPermissionListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    private void onAttach()
-    {
+    private void onAttach() {
         AdElementListModel model = (AdElementListModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
-        if (model.getSelectedItems() == null)
-        {
+        if (model.getSelectedItems() == null) {
             cancel();
             return;
         }
 
         ArrayList<DbUser> items = new ArrayList<DbUser>();
-        for (Object item : model.getItems())
-        {
+        for (Object item : model.getItems()) {
             EntityModel entityModel = (EntityModel) item;
-            if (entityModel.getIsSelected())
-            {
+            if (entityModel.getIsSelected()) {
                 items.add((DbUser) entityModel.getEntity());
             }
         }
@@ -156,12 +138,10 @@ public class SystemPermissionListModel extends SearchableListModel
         Role role = model.getRole().getSelectedItem();
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (DbUser user : items)
-        {
+        for (DbUser user : items) {
             Permission perm = new Permission(user.getId(), role.getId(), null, null);
 
-            if (user.isGroup())
-            {
+            if (user.isGroup()) {
                 DbGroup group = new DbGroup();
                 group.setId(user.getId());
                 group.setName(user.getFirstName());
@@ -173,8 +153,7 @@ public class SystemPermissionListModel extends SearchableListModel
                 tempVar2.setGroup(group);
                 list.add(tempVar2);
             }
-            else
-            {
+            else {
                 PermissionsOperationsParameters tempVar3 = new PermissionsOperationsParameters();
                 tempVar3.setPermission(perm);
                 tempVar3.setUser(user);
@@ -197,19 +176,15 @@ public class SystemPermissionListModel extends SearchableListModel
                 }, model);
     }
 
-    private void onSave()
-    {
+    private void onSave() {
     }
 
-    public void cancel()
-    {
+    public void cancel() {
         setWindow(null);
     }
 
-    private void remove()
-    {
-        if (getWindow() != null)
-        {
+    private void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -226,20 +201,16 @@ public class SystemPermissionListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    private void onRemove()
-    {
-        if (getSelectedItems() != null && getSelectedItems().size() > 0)
-        {
+    private void onRemove() {
+        if (getSelectedItems() != null && getSelectedItems().size() > 0) {
             ConfirmationModel model = (ConfirmationModel) getWindow();
 
-            if (model.getProgress() != null)
-            {
+            if (model.getProgress() != null) {
                 return;
             }
 
             ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-            for (Object perm : getSelectedItems())
-            {
+            for (Object perm : getSelectedItems()) {
                 PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters();
                 tempVar.setPermission((Permission) perm);
                 list.add(tempVar);
@@ -262,33 +233,26 @@ public class SystemPermissionListModel extends SearchableListModel
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getAddCommand())
-        {
+        if (command == getAddCommand()) {
             add();
         }
-        else if ("OnSave".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
         }
-        else if ("OnAttach".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnAttach".equals(command.getName())) { //$NON-NLS-1$
             onAttach();
             getForceRefreshCommand().execute();
         }
-        else if (command == getRemoveCommand())
-        {
+        else if (command == getRemoveCommand()) {
             remove();
         }
-        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

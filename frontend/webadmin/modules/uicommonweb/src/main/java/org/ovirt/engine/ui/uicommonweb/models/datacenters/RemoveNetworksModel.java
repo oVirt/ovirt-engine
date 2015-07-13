@@ -29,8 +29,7 @@ public class RemoveNetworksModel extends ConfirmationModel {
 
         ArrayList<String> list = new ArrayList<String>();
         boolean externalNetworksWillBeRemoved = false;
-        for (Network network : (Iterable<Network>) sourceListModel.getSelectedItems())
-        {
+        for (Network network : (Iterable<Network>) sourceListModel.getSelectedItems()) {
             if (network instanceof NetworkView) {
                 NetworkView netView = (NetworkView) network;
                 if (netView.getDescription() == null
@@ -72,12 +71,10 @@ public class RemoveNetworksModel extends ConfirmationModel {
         getCommands().add(tempVar2);
     }
 
-    public void onRemove()
-    {
+    public void onRemove() {
         ArrayList<VdcActionParametersBase> pb = new ArrayList<VdcActionParametersBase>();
 
-        for (Object a : sourceListModel.getSelectedItems())
-        {
+        for (Object a : sourceListModel.getSelectedItems()) {
             Network network = (Network) a;
             if (network.isExternal()) {
                 pb.add(new RemoveNetworkParameters(network.getId(), (Boolean) getForce().getEntity()));
@@ -97,12 +94,10 @@ public class RemoveNetworksModel extends ConfirmationModel {
     @Override
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
-        if ("onRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("onRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
-        else if ("cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

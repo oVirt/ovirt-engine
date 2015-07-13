@@ -32,8 +32,7 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
         this.fullMsg = isFullMsg;
 
         ArrayList<String> items = new ArrayList<String>();
-        for (VnicProfileView profile : profiles)
-        {
+        for (VnicProfileView profile : profiles) {
             if (isFullMsg) {
                 items.add(getRemoveVnicProfileFullMsg(profile));
             } else {
@@ -48,16 +47,13 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
         getCommands().add(tempVar2);
     }
 
-    private void onRemove()
-    {
-        if (getProgress() != null)
-        {
+    private void onRemove() {
+        if (getProgress() != null) {
             return;
         }
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (VnicProfileView profile : getProfiles())
-        {
+        for (VnicProfileView profile : getProfiles()) {
             VdcActionParametersBase parameters = getRemoveVnicProfileParams(profile);
             list.add(parameters);
 
@@ -95,23 +91,19 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
         return fullMsg;
     }
 
-    private void cancel()
-    {
+    private void cancel() {
         sourceListModel.setWindow(null);
         sourceListModel.setConfirmWindow(null);
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
-        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
     }

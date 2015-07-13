@@ -48,25 +48,21 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
 
     private UICommand privateAddCommand;
 
-    public UICommand getAddCommand()
-    {
+    public UICommand getAddCommand() {
         return privateAddCommand;
     }
 
-    private void setAddCommand(UICommand value)
-    {
+    private void setAddCommand(UICommand value) {
         privateAddCommand = value;
     }
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
@@ -86,8 +82,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
         getSearchCommand().execute();
@@ -95,17 +90,14 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
     }
 
     @Override
-    public void search()
-    {
-        if (getEntity() != null)
-        {
+    public void search() {
+        if (getEntity() != null) {
             super.search();
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         VdcObjectType objType = getObjectType();
         boolean directOnly = (objType == VdcObjectType.VM ? true : false);
         GetPermissionsForObjectParameters tempVar = new GetPermissionsForObjectParameters();
@@ -121,10 +113,8 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
         return false;
     }
 
-    private void add()
-    {
-        if (getWindow() != null)
-        {
+    private void add() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -140,10 +130,8 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
         model.getCommands().add(tempVar2);
     }
 
-    private void remove()
-    {
-        if (getWindow() != null)
-        {
+    private void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -160,20 +148,16 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
         model.getCommands().add(tempVar2);
     }
 
-    private void onRemove()
-    {
-        if (getSelectedItems() != null && getSelectedItems().size() > 0)
-        {
+    private void onRemove() {
+        if (getSelectedItems() != null && getSelectedItems().size() > 0) {
             ConfirmationModel model = (ConfirmationModel) getWindow();
 
-            if (model.getProgress() != null)
-            {
+            if (model.getProgress() != null) {
                 return;
             }
 
             ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-            for (Object perm : getSelectedItems())
-            {
+            for (Object perm : getSelectedItems()) {
                 PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters();
                 tempVar.setPermission((Permission) perm);
                 list.add(tempVar);
@@ -196,35 +180,28 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
 
     }
 
-    private void onAdd()
-    {
+    private void onAdd() {
         AdElementListModel model = (AdElementListModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
-        if (!model.getIsEveryoneSelected() && model.getSelectedItems() == null)
-        {
+        if (!model.getIsEveryoneSelected() && model.getSelectedItems() == null) {
             cancel();
             return;
         }
 
         ArrayList<DbUser> items = new ArrayList<DbUser>();
-        if (model.getIsEveryoneSelected())
-        {
+        if (model.getIsEveryoneSelected()) {
             DbUser tempVar = new DbUser();
             tempVar.setId(ApplicationGuids.everyone.asGuid());
             items.add(tempVar);
         }
-        else
-        {
-            for (Object item : model.getItems())
-            {
+        else {
+            for (Object item : model.getItems()) {
                 EntityModel entityModel = (EntityModel) item;
-                if (entityModel.getIsSelected())
-                {
+                if (entityModel.getIsSelected()) {
                     items.add((DbUser) entityModel.getEntity());
                 }
             }
@@ -234,11 +211,9 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
         // adGroup/user
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (DbUser user : items)
-        {
+        for (DbUser user : items) {
             Permission perm = new Permission(user.getId(), role.getId(), getEntityGuid(), getObjectType());
-            if (user.isGroup())
-            {
+            if (user.isGroup()) {
                 DbGroup group = new DbGroup();
                 group.setId(user.getId());
                 group.setExternalId(user.getExternalId());
@@ -250,8 +225,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
                 tempVar3.setGroup(group);
                 list.add(tempVar3);
             }
-            else
-            {
+            else {
                 PermissionsOperationsParameters tempVar4 = new PermissionsOperationsParameters();
                 tempVar4.setPermission(perm);
                 tempVar4.setUser(user);
@@ -274,91 +248,72 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
                 }, model);
     }
 
-    private void cancel()
-    {
+    private void cancel() {
         setWindow(null);
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("status")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("status")) { //$NON-NLS-1$
             updateActionAvailability();
         }
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         getRemoveCommand().setIsExecutionAllowed((getSelectedItems() != null && getSelectedItems().size() > 0));
-        if (getRemoveCommand().getIsExecutionAllowed() == false)
-        {
+        if (getRemoveCommand().getIsExecutionAllowed() == false) {
             return;
         }
         Guid entityGuid = getEntityGuid();
-        for (Object p : getSelectedItems())
-        {
-            if (!entityGuid.equals(((Permission) p).getObjectId()))
-            {
+        for (Object p : getSelectedItems()) {
+            if (!entityGuid.equals(((Permission) p).getObjectId())) {
                 getRemoveCommand().setIsExecutionAllowed(false);
                 return;
             }
         }
     }
 
-    protected Guid getEntityGuid()
-    {
+    protected Guid getEntityGuid() {
         return AsyncDataProvider.getInstance().getEntityGuid(getEntity());
     }
 
-    protected VdcObjectType getObjectType()
-    {
-        if (getEntity() instanceof VM)
-        {
+    protected VdcObjectType getObjectType() {
+        if (getEntity() instanceof VM) {
             return VdcObjectType.VM;
         }
-        if (getEntity() instanceof StoragePool)
-        {
+        if (getEntity() instanceof StoragePool) {
             return VdcObjectType.StoragePool;
         }
-        if (getEntity() instanceof VDSGroup)
-        {
+        if (getEntity() instanceof VDSGroup) {
             return VdcObjectType.VdsGroups;
         }
-        if (getEntity() instanceof VDS)
-        {
+        if (getEntity() instanceof VDS) {
             return VdcObjectType.VDS;
         }
-        if (getEntity() instanceof StorageDomain)
-        {
+        if (getEntity() instanceof StorageDomain) {
             return VdcObjectType.Storage;
         }
-        if (getEntity() instanceof VmTemplate)
-        {
+        if (getEntity() instanceof VmTemplate) {
             return VdcObjectType.VmTemplate;
         }
-        if (getEntity() instanceof VmPool)
-        {
+        if (getEntity() instanceof VmPool) {
             return VdcObjectType.VmPool;
         }
-        if (getEntity() instanceof Quota)
-        {
+        if (getEntity() instanceof Quota) {
             return VdcObjectType.Quota;
         }
         if (getEntity() instanceof GlusterVolumeEntity) {
@@ -386,28 +341,22 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getAddCommand())
-        {
+        if (command == getAddCommand()) {
             add();
         }
-        else if (command == getRemoveCommand())
-        {
+        else if (command == getRemoveCommand()) {
             remove();
         }
-        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
-        else if ("OnAdd".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnAdd".equals(command.getName())) { //$NON-NLS-1$
             onAdd();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

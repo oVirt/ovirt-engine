@@ -32,8 +32,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     private InstanceTypeManager instanceTypeManager;
 
     @Override
-    public void initialize(SystemTreeItemModel systemTreeSelectedItem)
-    {
+    public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
         super.initialize(systemTreeSelectedItem);
 
         getModel().getIsSoundcardEnabled().setIsChangeable(true);
@@ -170,8 +169,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     @Override
-    public void postDataCenterWithClusterSelectedItemChanged()
-    {
+    public void postDataCenterWithClusterSelectedItemChanged() {
         deactivateInstanceTypeManager(new InstanceTypeManager.ActivatedListener() {
             @Override
             public void activated() {
@@ -202,14 +200,12 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     @Override
-    public void defaultHost_SelectedItemChanged()
-    {
+    public void defaultHost_SelectedItemChanged() {
         updateCdImage();
     }
 
     @Override
-    public void provisioning_SelectedItemChanged()
-    {
+    public void provisioning_SelectedItemChanged() {
         boolean provisioning = getModel().getProvisioning().getEntity();
         getModel().getProvisioningThin_IsSelected().setEntity(!provisioning);
         getModel().getProvisioningClone_IsSelected().setEntity(provisioning);
@@ -234,8 +230,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     @Override
-    public void updateMinAllocatedMemory()
-    {
+    public void updateMinAllocatedMemory() {
         DataCenterWithCluster dataCenterWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
         VDSGroup cluster = dataCenterWithCluster == null ? null : dataCenterWithCluster.getCluster();
         if (cluster == null) {
@@ -247,8 +242,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                 .setEntity((int) (getModel().getMemSize().getEntity() * overCommitFactor));
     }
 
-    private void updateTemplate()
-    {
+    private void updateTemplate() {
         final DataCenterWithCluster dataCenterWithCluster =
                 getModel().getDataCenterWithClustersList().getSelectedItem();
         StoragePool dataCenter = dataCenterWithCluster == null ? null : dataCenterWithCluster.getDataCenter();
@@ -257,8 +251,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         }
 
         // Filter according to system tree selection.
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
-        {
+        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
             final StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
 
             AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(null,
@@ -277,8 +270,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                                             VmTemplate blankTemplate =
                                                     Linq.firstOrDefault(templatesByDataCenter,
                                                             new Linq.TemplatePredicate(Guid.Empty));
-                                            if (blankTemplate != null)
-                                            {
+                                            if (blankTemplate != null) {
                                                 templatesByStorage.add(0, blankTemplate);
                                             }
 
@@ -295,8 +287,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     }),
                     dataCenter.getId());
         }
-        else
-        {
+        else {
             AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(null,
                     new INewAsyncCallback() {
                         @Override
@@ -317,8 +308,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         updateIsDisksAvailable();
     }
 
-    public void initCdImage()
-    {
+    public void initCdImage() {
         DataCenterWithCluster dataCenterWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
         if (dataCenterWithCluster == null || dataCenterWithCluster.getDataCenter() == null) {
             return;
@@ -328,8 +318,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     @Override
-    public void updateIsDisksAvailable()
-    {
+    public void updateIsDisksAvailable() {
         getModel().setIsDisksAvailable(getModel().getDisks() != null && !getModel().getDisks().isEmpty()
                 && getModel().getProvisioning().getIsChangable());
     }

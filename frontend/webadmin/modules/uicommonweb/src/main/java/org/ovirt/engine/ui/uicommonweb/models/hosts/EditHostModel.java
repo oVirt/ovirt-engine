@@ -20,8 +20,7 @@ public class EditHostModel extends HostModel {
 
     @Override
     protected void updateModelDataCenterFromVds(ArrayList<StoragePool> dataCenters, VDS vds) {
-        if (dataCenters != null)
-        {
+        if (dataCenters != null) {
             getDataCenter().setItems(dataCenters);
             getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters,
                     new Linq.DataCenterPredicate(vds.getStoragePoolId())));
@@ -92,8 +91,7 @@ public class EditHostModel extends HostModel {
 
     public void setSelectedCluster(VDS host) {
         ArrayList<VDSGroup> clusters;
-        if (getCluster().getItems() == null)
-        {
+        if (getCluster().getItems() == null) {
             VDSGroup tempVar = new VDSGroup();
             tempVar.setName(host.getVdsGroupName());
             tempVar.setId(host.getVdsGroupId());
@@ -103,8 +101,7 @@ public class EditHostModel extends HostModel {
         }
         clusters = (ArrayList<VDSGroup>) getCluster().getItems();
         updateModelClusterFromVds(clusters, host);
-        if (getCluster().getSelectedItem() == null)
-        {
+        if (getCluster().getSelectedItem() == null) {
             getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
         }
     }

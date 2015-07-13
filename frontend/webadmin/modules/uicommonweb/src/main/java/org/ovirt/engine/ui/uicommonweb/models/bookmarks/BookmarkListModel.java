@@ -30,8 +30,7 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 @SuppressWarnings("unused")
-public class BookmarkListModel extends SearchableListModel
-{
+public class BookmarkListModel extends SearchableListModel {
 
     private static class BookmarksComparator implements Comparator<Bookmark>, Serializable {
 
@@ -54,85 +53,71 @@ public class BookmarkListModel extends SearchableListModel
 
     private Event<EventArgs> privateNavigatedEvent;
 
-    public Event<EventArgs> getNavigatedEvent()
-    {
+    public Event<EventArgs> getNavigatedEvent() {
         return privateNavigatedEvent;
     }
 
-    private void setNavigatedEvent(Event<EventArgs> value)
-    {
+    private void setNavigatedEvent(Event<EventArgs> value) {
         privateNavigatedEvent = value;
     }
 
     private UICommand privateNewCommand;
 
-    public UICommand getNewCommand()
-    {
+    public UICommand getNewCommand() {
         return privateNewCommand;
     }
 
-    private void setNewCommand(UICommand value)
-    {
+    private void setNewCommand(UICommand value) {
         privateNewCommand = value;
     }
 
     private UICommand privateEditCommand;
 
     @Override
-    public UICommand getEditCommand()
-    {
+    public UICommand getEditCommand() {
         return privateEditCommand;
     }
 
-    private void setEditCommand(UICommand value)
-    {
+    private void setEditCommand(UICommand value) {
         privateEditCommand = value;
     }
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
     private boolean privateIsBookmarkInitiated;
 
-    public boolean getIsBookmarkInitiated()
-    {
+    public boolean getIsBookmarkInitiated() {
         return privateIsBookmarkInitiated;
     }
 
-    private void setIsBookmarkInitiated(boolean value)
-    {
+    private void setIsBookmarkInitiated(boolean value) {
         privateIsBookmarkInitiated = value;
     }
 
     private Event<EventArgs> privateItemSavedEvent;
 
-    public Event<EventArgs> getItemSavedEvent()
-    {
+    public Event<EventArgs> getItemSavedEvent() {
         return privateItemSavedEvent;
     }
 
-    private void setItemSavedEvent(Event<EventArgs> value)
-    {
+    private void setItemSavedEvent(Event<EventArgs> value) {
         privateItemSavedEvent = value;
     }
 
-    static
-    {
+    static {
         navigatedEventDefinition = new EventDefinition("Navigated", BookmarkListModel.class); //$NON-NLS-1$
         savedEventDefinition = new EventDefinition("Saved", BookmarkListModel.class); //$NON-NLS-1$
     }
 
-    public BookmarkListModel()
-    {
+    public BookmarkListModel() {
         setNavigatedEvent(new Event<EventArgs>(navigatedEventDefinition));
         setItemSavedEvent(new Event<EventArgs>(savedEventDefinition));
 
@@ -152,16 +137,14 @@ public class BookmarkListModel extends SearchableListModel
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         super.syncSearch();
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 SearchableListModel bookmarkListModel = (BookmarkListModel) model;
                 List<Bookmark> resultList = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 if (resultList != null) {
@@ -178,10 +161,8 @@ public class BookmarkListModel extends SearchableListModel
         Frontend.getInstance().runQuery(VdcQueryType.GetAllBookmarks, new VdcQueryParametersBase(), _asyncQuery);
     }
 
-    public void remove()
-    {
-        if (getWindow() != null)
-        {
+    public void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -192,8 +173,7 @@ public class BookmarkListModel extends SearchableListModel
         model.setHashName("remove_bookmark"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<String>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             org.ovirt.engine.core.common.businessentities.Bookmark i =
                     (org.ovirt.engine.core.common.businessentities.Bookmark) item;
             list.add(i.getbookmark_name());
@@ -206,8 +186,7 @@ public class BookmarkListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    public void onRemove()
-    {
+    public void onRemove() {
 
         Bookmark selectedBookmark = (Bookmark) getSelectedItem();
         BookmarksParametersBase parameters = new BookmarksParametersBase(selectedBookmark.getbookmark_id());
@@ -224,13 +203,11 @@ public class BookmarkListModel extends SearchableListModel
         Frontend.getInstance().runAction(VdcActionType.RemoveBookmark, parameters, async);
     }
 
-    public void edit()
-    {
+    public void edit() {
         org.ovirt.engine.core.common.businessentities.Bookmark bookmark =
                 (org.ovirt.engine.core.common.businessentities.Bookmark) getSelectedItem();
 
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -249,10 +226,8 @@ public class BookmarkListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    public void newEntity()
-    {
-        if (getWindow() != null)
-        {
+    public void newEntity() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -270,17 +245,14 @@ public class BookmarkListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    public void onSave()
-    {
+    public void onSave() {
         BookmarkModel model = (BookmarkModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
 
@@ -308,12 +280,10 @@ public class BookmarkListModel extends SearchableListModel
                 this);
     }
 
-    public void postOnSave(VdcReturnValueBase returnValue)
-    {
+    public void postOnSave(VdcReturnValueBase returnValue) {
         getWindow().stopProgress();
 
-        if (returnValue != null && returnValue.getSucceeded())
-        {
+        if (returnValue != null && returnValue.getSucceeded()) {
             cancel();
             //Refresh the bookmarks.
             getSearchCommand().execute();
@@ -322,19 +292,16 @@ public class BookmarkListModel extends SearchableListModel
         privateItemSavedEvent.raise(this, EventArgs.EMPTY);
     }
 
-    public void cancel()
-    {
+    public void cancel() {
         setWindow(null);
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
 
-        if (getSelectedItem() != null && !getIsBookmarkInitiated())
-        {
+        if (getSelectedItem() != null && !getIsBookmarkInitiated()) {
             // Don't fire navigation events in response to the bookmark list updating itself
             setIsBookmarkInitiated(true);
             getNavigatedEvent().raise(this,
@@ -344,47 +311,38 @@ public class BookmarkListModel extends SearchableListModel
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         getEditCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1);
         getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getNewCommand())
-        {
+        if (command == getNewCommand()) {
             newEntity();
         }
-        else if (command == getEditCommand())
-        {
+        else if (command == getEditCommand()) {
             edit();
         }
-        else if (command == getRemoveCommand())
-        {
+        else if (command == getRemoveCommand()) {
             remove();
         }
 
-        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
 
-        else if ("OnSave".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

@@ -3,22 +3,18 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
-public class VmImportInterfaceListModel extends SearchableListModel
-{
+public class VmImportInterfaceListModel extends SearchableListModel {
     public VmImportInterfaceListModel() {
         setIsTimerDisabled(true);
     }
 
     @Override
-    protected void onEntityChanged()
-    {
-        if (getEntity() != null)
-        {
+    protected void onEntityChanged() {
+        if (getEntity() != null) {
             VM vm = (VM) getEntity();
             setItems(vm.getInterfaces());
         }
-        else
-        {
+        else {
             setItems(null);
         }
     }

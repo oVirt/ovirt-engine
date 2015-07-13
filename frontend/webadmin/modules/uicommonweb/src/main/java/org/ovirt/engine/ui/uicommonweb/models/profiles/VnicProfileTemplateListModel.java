@@ -17,8 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class VnicProfileTemplateListModel extends SearchableListModel<VnicProfileView, VmTemplate>
-{
+public class VnicProfileTemplateListModel extends SearchableListModel<VnicProfileView, VmTemplate> {
 
     public VnicProfileTemplateListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
@@ -38,24 +37,21 @@ public class VnicProfileTemplateListModel extends SearchableListModel<VnicProfil
 
     @Override
     public void search() {
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             super.search();
         }
     }
 
     @Override
     protected void syncSearch() {
-        if (getEntity() == null)
-        {
+        if (getEntity() == null) {
             return;
         }
 
         AsyncQuery asyncQuery = new AsyncQuery();
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 setItems((Collection<VmTemplate>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
@@ -72,8 +68,7 @@ public class VnicProfileTemplateListModel extends SearchableListModel<VnicProfil
     protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("name")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("name")) { //$NON-NLS-1$
             getSearchCommand().execute();
         }
     }

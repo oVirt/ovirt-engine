@@ -16,38 +16,32 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 @SuppressWarnings("unused")
-public class VmBasicDiskListModel extends SearchableListModel<Object, DiskImage>
-{
+public class VmBasicDiskListModel extends SearchableListModel<Object, DiskImage> {
     public VmBasicDiskListModel() {
         setIsTimerDisabled(true);
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             getSearchCommand().execute();
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         super.syncSearch();
 
-        if (getEntity() instanceof VM)
-        {
+        if (getEntity() instanceof VM) {
             VM vm = (VM) getEntity();
 
             AsyncQuery _asyncQuery = new AsyncQuery();
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object ReturnValue)
-                {
+                public void onSuccess(Object model, Object ReturnValue) {
                     List<DiskImage> disks = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                     Collections.sort(disks, new Linq.DiskByAliasComparer());
 
@@ -60,16 +54,13 @@ public class VmBasicDiskListModel extends SearchableListModel<Object, DiskImage>
             Frontend.getInstance().runQuery(VdcQueryType.GetAllDisksPartialDataByVmId, queryParameters,
                     _asyncQuery);
         }
-        else if (getEntity() instanceof VmPool)
-        {
+        else if (getEntity() instanceof VmPool) {
             AsyncQuery _asyncQuery = new AsyncQuery();
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object result)
-                {
-                    if (result != null)
-                    {
+                public void onSuccess(Object model, Object result) {
+                    if (result != null) {
                         VM vm = ((VdcQueryReturnValue) result).getReturnValue();
                         if (vm == null) {
                             return;
@@ -80,8 +71,7 @@ public class VmBasicDiskListModel extends SearchableListModel<Object, DiskImage>
                         _asyncQuery1.setModel(poolDiskListModel);
                         _asyncQuery1.asyncCallback = new INewAsyncCallback() {
                             @Override
-                            public void onSuccess(Object model1, Object ReturnValue)
-                            {
+                            public void onSuccess(Object model1, Object ReturnValue) {
                                 List<DiskImage> disks = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                                 Collections.sort(disks, new Linq.DiskByAliasComparer());
 

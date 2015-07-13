@@ -106,18 +106,15 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         privateModel = value;
     }
 
-    public SystemTreeItemModel getSystemTreeSelectedItem()
-    {
+    public SystemTreeItemModel getSystemTreeSelectedItem() {
         return privateSystemTreeSelectedItem;
     }
 
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value)
-    {
+    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
         privateSystemTreeSelectedItem = value;
     }
 
-    public void initialize(SystemTreeItemModel systemTreeSelectedItem)
-    {
+    public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
         this.setSystemTreeSelectedItem(systemTreeSelectedItem);
         commonInitialize();
     }
@@ -343,8 +340,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void isSubTemplateEntityChanged() {
     }
 
-    public boolean validate()
-    {
+    public boolean validate() {
         return true;
     }
 
@@ -385,11 +381,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         updateCdImage(false);
     }
 
-    protected void updateCdImage(boolean forceRefresh)
-    {
+    protected void updateCdImage(boolean forceRefresh) {
         StoragePool dataCenter = getModel().getSelectedDataCenter();
-        if (dataCenter == null)
-        {
+        if (dataCenter == null) {
             return;
         }
 
@@ -408,8 +402,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     }
 
-    protected void updateTimeZone(final String selectedTimeZone)
-    {
+    protected void updateTimeZone(final String selectedTimeZone) {
         if (StringHelper.isNullOrEmpty(selectedTimeZone)) {
             updateDefaultTimeZone();
         } else {
@@ -417,8 +410,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
-    protected void updateDefaultTimeZone()
-    {
+    protected void updateDefaultTimeZone() {
         doUpdateTimeZone(null);
     }
 
@@ -453,8 +445,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 : TimeZoneType.GENERAL_TIMEZONE;
     }
 
-    protected void changeDefualtHost()
-    {
+    protected void changeDefualtHost() {
 
     }
 
@@ -475,13 +466,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
-    protected void updateDefaultHost()
-    {
+    protected void updateDefaultHost() {
         VDSGroup cluster = getModel().getSelectedCluster();
         final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
-        if (cluster == null)
-        {
+        if (cluster == null) {
             getModel().getDefaultHost().setItems(new ArrayList<VDS>());
             getModel().getDefaultHost().setSelectedItem(null);
 
@@ -530,13 +519,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
                         VDS oldDefaultHost = model.getDefaultHost().getSelectedItem();
                         if (model.getBehavior().getSystemTreeSelectedItem() != null
-                                && model.getBehavior().getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host)
-                        {
+                                && model.getBehavior().getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host) {
                             VDS host = (VDS) model.getBehavior().getSystemTreeSelectedItem().getEntity();
-                            for (VDS vds : hosts)
-                            {
-                                if (host.getId().equals(vds.getId()))
-                                {
+                            for (VDS vds : hosts) {
+                                if (host.getId().equals(vds.getId())) {
                                     model.getDefaultHost()
                                             .setItems(new ArrayList<VDS>(Arrays.asList(new VDS[] { vds })));
                                     model.getDefaultHost().setSelectedItem(vds);
@@ -546,8 +532,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                 }
                             }
                         }
-                        else
-                        {
+                        else {
                             model.getDefaultHost().setItems(hosts);
 
                             if (oldDefaultHost != null) {
@@ -684,20 +669,17 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     }
 
-    public void initStorageDomains()
-    {
+    public void initStorageDomains() {
         if (getModel().getDisks() == null) {
             return;
         }
 
         TemplateWithVersion templateWithVersion = getModel().getTemplateWithVersion().getSelectedItem();
 
-        if (templateWithVersion != null && !templateWithVersion.getTemplateVersion().getId().equals(Guid.Empty))
-        {
+        if (templateWithVersion != null && !templateWithVersion.getTemplateVersion().getId().equals(Guid.Empty)) {
             postInitStorageDomains();
         }
-        else
-        {
+        else {
             getModel().getStorageDomain().setItems(new ArrayList<StorageDomain>());
             getModel().getStorageDomain().setSelectedItem(null);
             getModel().getStorageDomain().setIsChangeable(false);
@@ -761,21 +743,17 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
-    public ArrayList<StorageDomain> filterStorageDomains(ArrayList<StorageDomain> storageDomains)
-    {
+    public ArrayList<StorageDomain> filterStorageDomains(ArrayList<StorageDomain> storageDomains) {
         // filter only the Active storage domains (Active regarding the relevant storage pool).
         ArrayList<StorageDomain> list = new ArrayList<StorageDomain>();
-        for (StorageDomain a : storageDomains)
-        {
-            if (Linq.isDataActiveStorageDomain(a))
-            {
+        for (StorageDomain a : storageDomains) {
+            if (Linq.isDataActiveStorageDomain(a)) {
                 list.add(a);
             }
         }
 
         // Filter according to system tree selection.
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
-        {
+        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
             StorageDomain selectStorage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
             StorageDomain sd = Linq.firstOrDefault(list, new Linq.StoragePredicate(selectStorage.getId()));
             list = new ArrayList<StorageDomain>(Arrays.asList(new StorageDomain[] { sd }));
@@ -1151,8 +1129,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         list.setSelectedItem(1);
     }
 
-    protected void updateNumOfSockets()
-    {
+    protected void updateNumOfSockets() {
         Version version = getClusterCompatibilityVersion();
         if (version == null) {
             return;

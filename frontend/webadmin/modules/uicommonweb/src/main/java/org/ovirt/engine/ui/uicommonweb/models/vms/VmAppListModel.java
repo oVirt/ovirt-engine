@@ -18,13 +18,10 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class VmAppListModel<E> extends SearchableListModel<E, String>
-{
+public class VmAppListModel<E> extends SearchableListModel<E, String> {
     @Override
-    public void setItems(Collection<String> value)
-    {
-        if (items != value)
-        {
+    public void setItems(Collection<String> value) {
+        if (items != value) {
             itemsChanging(value, items);
             items = value;
             itemsChanged();
@@ -33,26 +30,22 @@ public class VmAppListModel<E> extends SearchableListModel<E, String>
         }
     }
 
-    public VmAppListModel()
-    {
+    public VmAppListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().applicationsTitle());
         setHelpTag(HelpTag.applications);
         setHashName("applications"); //$NON-NLS-1$
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
-        if (e.propertyName.equals("appList")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("appList")) { //$NON-NLS-1$
             updateAppList();
         }
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
         updateAppList();
@@ -63,16 +56,13 @@ public class VmAppListModel<E> extends SearchableListModel<E, String>
             updateAppListFromVm((VM) getEntity());
         } else {
             VmPool pool = (VmPool) getEntity();
-            if (pool != null)
-            {
+            if (pool != null) {
                 AsyncQuery _asyncQuery = new AsyncQuery();
                 _asyncQuery.setModel(this);
                 _asyncQuery.asyncCallback = new INewAsyncCallback() {
                     @Override
-                    public void onSuccess(Object model, Object result)
-                    {
-                        if (result != null)
-                        {
+                    public void onSuccess(Object model, Object result) {
+                        if (result != null) {
                             VM vm = (VM) ((VdcQueryReturnValue) result).getReturnValue();
                             if (vm != null) {
                                 updateAppListFromVm(vm);
@@ -89,13 +79,11 @@ public class VmAppListModel<E> extends SearchableListModel<E, String>
 
     private void updateAppListFromVm(VM vm) {
         setItems(null);
-        if (vm != null && vm.getAppList() != null)
-        {
+        if (vm != null && vm.getAppList() != null) {
             ArrayList<String> list = new ArrayList<String>();
 
             String[] array = vm.getAppList().split("[,]", -1); //$NON-NLS-1$
-            for (String item : array)
-            {
+            for (String item : array) {
                 list.add(item);
             }
             Collections.sort(list);
@@ -107,8 +95,7 @@ public class VmAppListModel<E> extends SearchableListModel<E, String>
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         updateAppList();
         setIsQueryFirstTime(false);
     }

@@ -7,61 +7,51 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 
 @SuppressWarnings("unused")
-public class ChangeCDModel extends Model
-{
+public class ChangeCDModel extends Model {
 
     // public event EventHandler Executed = delegate { };
 
     public static final EventDefinition executedEventDefinition;
     private Event<EventArgs> privateExecutedEvent;
 
-    public Event<EventArgs> getExecutedEvent()
-    {
+    public Event<EventArgs> getExecutedEvent() {
         return privateExecutedEvent;
     }
 
-    private void setExecutedEvent(Event<EventArgs> value)
-    {
+    private void setExecutedEvent(Event<EventArgs> value) {
         privateExecutedEvent = value;
     }
 
     private UICommand privateDoCommand;
 
-    public UICommand getDoCommand()
-    {
+    public UICommand getDoCommand() {
         return privateDoCommand;
     }
 
-    private void setDoCommand(UICommand value)
-    {
+    private void setDoCommand(UICommand value) {
         privateDoCommand = value;
     }
 
-    static
-    {
+    static {
         executedEventDefinition = new EventDefinition("Executed", ChangeCDModel.class); //$NON-NLS-1$
     }
 
-    public ChangeCDModel()
-    {
+    public ChangeCDModel() {
         setExecutedEvent(new Event<EventArgs>(executedEventDefinition));
 
         setDoCommand(new UICommand("Do", this)); //$NON-NLS-1$
     }
 
-    private void doAction()
-    {
+    private void doAction() {
         getExecutedEvent().raise(this, EventArgs.EMPTY);
         // Executed(this, EventArgs.Empty);
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getDoCommand())
-        {
+        if (command == getDoCommand()) {
             doAction();
         }
     }

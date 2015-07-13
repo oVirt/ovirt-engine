@@ -129,8 +129,7 @@ public class ClusterServiceModel extends EntityModel<VDSGroup> {
         asyncQuery.setModel(this);
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 List<VDS> hostList = (List<VDS>) result;
                 hostList.add(0, null);
                 getHostList().setItems(hostList);
@@ -152,8 +151,7 @@ public class ClusterServiceModel extends EntityModel<VDSGroup> {
         asyncQuery.setModel(this);
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 GlusterVolumeAdvancedDetails details = (GlusterVolumeAdvancedDetails) result;
                 if (details.getServiceInfo() != null) {
                     setActualServiceList(details.getServiceInfo());
@@ -201,12 +199,10 @@ public class ClusterServiceModel extends EntityModel<VDSGroup> {
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getFilterServicesCommand())
-        {
+        if (command == getFilterServicesCommand()) {
             filterServices();
         }
-        else if (command == getClearFilterServicesCommand())
-        {
+        else if (command == getClearFilterServicesCommand()) {
             clearFilters();
         }
     }

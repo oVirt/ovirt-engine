@@ -3,37 +3,30 @@ package org.ovirt.engine.ui.uicommonweb.validation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class LengthValidation implements IValidation
-{
+public class LengthValidation implements IValidation {
     private int privateMaxLength;
 
-    public int getMaxLength()
-    {
+    public int getMaxLength() {
         return privateMaxLength;
     }
 
-    public void setMaxLength(int value)
-    {
+    public void setMaxLength(int value) {
         privateMaxLength = value;
     }
 
-    public LengthValidation()
-    {
+    public LengthValidation() {
         setMaxLength(Integer.MAX_VALUE);
     }
 
-    public LengthValidation(int maxLength)
-    {
+    public LengthValidation(int maxLength) {
         setMaxLength(maxLength);
     }
 
     @Override
-    public ValidationResult validate(Object value)
-    {
+    public ValidationResult validate(Object value) {
         ValidationResult result = new ValidationResult();
 
-        if (value != null && value instanceof String && ((String) value).length() > getMaxLength())
-        {
+        if (value != null && value instanceof String && ((String) value).length() > getMaxLength()) {
             result.setSuccess(false);
             result.getReasons().add(ConstantsManager.getInstance()
                     .getMessages()

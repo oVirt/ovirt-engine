@@ -16,8 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class UserQuotaListModel extends SearchableListModel<DbUser, Quota>
-{
+public class UserQuotaListModel extends SearchableListModel<DbUser, Quota> {
     public UserQuotaListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().quotaTitle());
         setHelpTag(HelpTag.quota);
@@ -26,17 +25,14 @@ public class UserQuotaListModel extends SearchableListModel<DbUser, Quota>
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
         getSearchCommand().execute();
     }
 
     @Override
-    public void search()
-    {
-        if (getEntity() != null)
-        {
+    public void search() {
+        if (getEntity() != null) {
             super.search();
         }
     }

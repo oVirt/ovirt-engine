@@ -6,32 +6,26 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class HostVLan extends Model
-{
+public class HostVLan extends Model {
 
     private VdsNetworkInterface privateInterface;
 
-    public VdsNetworkInterface getInterface()
-    {
+    public VdsNetworkInterface getInterface() {
         return privateInterface;
     }
 
-    public void setInterface(VdsNetworkInterface value)
-    {
+    public void setInterface(VdsNetworkInterface value) {
         privateInterface = value;
     }
 
     private String name;
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName(String value)
-    {
-        if (!ObjectUtils.objectsEqual(name, value))
-        {
+    public void setName(String value) {
+        if (!ObjectUtils.objectsEqual(name, value)) {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
@@ -39,15 +33,12 @@ public class HostVLan extends Model
 
     private String networkName;
 
-    public String getNetworkName()
-    {
+    public String getNetworkName() {
         return networkName;
     }
 
-    public void setNetworkName(String value)
-    {
-        if (!ObjectUtils.objectsEqual(networkName, value))
-        {
+    public void setNetworkName(String value) {
+        if (!ObjectUtils.objectsEqual(networkName, value)) {
             networkName = value;
             onPropertyChanged(new PropertyChangedEventArgs("NetworkName")); //$NON-NLS-1$
         }
@@ -55,15 +46,12 @@ public class HostVLan extends Model
 
     private String address;
 
-    public String getAddress()
-    {
+    public String getAddress() {
         return address;
     }
 
-    public void setAddress(String value)
-    {
-        if (!ObjectUtils.objectsEqual(address, value))
-        {
+    public void setAddress(String value) {
+        if (!ObjectUtils.objectsEqual(address, value)) {
             address = value;
             onPropertyChanged(new PropertyChangedEventArgs("Address")); //$NON-NLS-1$
         }

@@ -181,8 +181,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                    _asyncQuery.setModel(this);
                    _asyncQuery.asyncCallback = new INewAsyncCallback() {
                        @Override
-                       public void onSuccess(Object model, Object ReturnValue)
-                       {
+                       public void onSuccess(Object model, Object ReturnValue) {
                            StorageServerConnections connection = (StorageServerConnections) ReturnValue;
                            setExportPath(connection == null ? null : connection.getconnection());
                            stopProgress();

@@ -31,87 +31,72 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class TagListModel extends SearchableListModel<Void, TagModel>
-{
+public class TagListModel extends SearchableListModel<Void, TagModel> {
 
     public static final EventDefinition resetRequestedEventDefinition;
     private Event<EventArgs> privateResetRequestedEvent;
 
-    public Event<EventArgs> getResetRequestedEvent()
-    {
+    public Event<EventArgs> getResetRequestedEvent() {
         return privateResetRequestedEvent;
     }
 
-    private void setResetRequestedEvent(Event<EventArgs> value)
-    {
+    private void setResetRequestedEvent(Event<EventArgs> value) {
         privateResetRequestedEvent = value;
     }
 
     private UICommand privateNewCommand;
 
-    public UICommand getNewCommand()
-    {
+    public UICommand getNewCommand() {
         return privateNewCommand;
     }
 
-    private void setNewCommand(UICommand value)
-    {
+    private void setNewCommand(UICommand value) {
         privateNewCommand = value;
     }
 
     private UICommand privateEditCommand;
 
     @Override
-    public UICommand getEditCommand()
-    {
+    public UICommand getEditCommand() {
         return privateEditCommand;
     }
 
-    private void setEditCommand(UICommand value)
-    {
+    private void setEditCommand(UICommand value) {
         privateEditCommand = value;
     }
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
     private UICommand privateResetCommand;
 
-    public UICommand getResetCommand()
-    {
+    public UICommand getResetCommand() {
         return privateResetCommand;
     }
 
-    private void setResetCommand(UICommand value)
-    {
+    private void setResetCommand(UICommand value) {
         privateResetCommand = value;
     }
 
     @Override
-    public TagModel getSelectedItem()
-    {
+    public TagModel getSelectedItem() {
         return super.getSelectedItem();
     }
 
-    public void setSelectedItem(TagModel value)
-    {
+    public void setSelectedItem(TagModel value) {
         super.setSelectedItem(value);
     }
 
     @Override
-    public void setItems(Collection<TagModel> value)
-    {
-        if (items != value)
-        {
+    public void setItems(Collection<TagModel> value) {
+        if (items != value) {
             itemsChanging(value, items);
             items = value;
             itemsChanged();
@@ -122,15 +107,12 @@ public class TagListModel extends SearchableListModel<Void, TagModel>
 
     private ArrayList<SelectionTreeNodeModel> selectionNodeList;
 
-    public ArrayList<SelectionTreeNodeModel> getSelectionNodeList()
-    {
+    public ArrayList<SelectionTreeNodeModel> getSelectionNodeList() {
         return selectionNodeList;
     }
 
-    public void setSelectionNodeList(ArrayList<SelectionTreeNodeModel> value)
-    {
-        if (selectionNodeList != value)
-        {
+    public void setSelectionNodeList(ArrayList<SelectionTreeNodeModel> value) {
+        if (selectionNodeList != value) {
             selectionNodeList = value;
             onPropertyChanged(new PropertyChangedEventArgs("SelectionNodeList")); //$NON-NLS-1$
         }
@@ -138,28 +120,23 @@ public class TagListModel extends SearchableListModel<Void, TagModel>
 
     private Map<Guid, Boolean> attachedTagsToEntities;
 
-    public Map<Guid, Boolean> getAttachedTagsToEntities()
-    {
+    public Map<Guid, Boolean> getAttachedTagsToEntities() {
         return attachedTagsToEntities;
     }
 
-    public void setAttachedTagsToEntities(Map<Guid, Boolean> value)
-    {
-        if (attachedTagsToEntities != value)
-        {
+    public void setAttachedTagsToEntities(Map<Guid, Boolean> value) {
+        if (attachedTagsToEntities != value) {
             attachedTagsToEntities = value;
             attachedTagsToEntitiesChanged();
             onPropertyChanged(new PropertyChangedEventArgs("AttachedTagsToEntities")); //$NON-NLS-1$
         }
     }
 
-    static
-    {
+    static {
         resetRequestedEventDefinition = new EventDefinition("ResetRequested", SystemTreeModel.class); //$NON-NLS-1$
     }
 
-    public TagListModel()
-    {
+    public TagListModel() {
         setResetRequestedEvent(new Event<EventArgs>(resetRequestedEventDefinition));
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
@@ -180,8 +157,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel>
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         super.syncSearch();
 
         AsyncDataProvider.getInstance().getRootTag(new AsyncQuery(this,
@@ -202,57 +178,45 @@ public class TagListModel extends SearchableListModel<Void, TagModel>
     }
 
     @Override
-    protected void itemsChanged()
-    {
+    protected void itemsChanged() {
         super.itemsChanged();
 
-        if (getSelectionNodeList() != null && getSelectionNodeList().isEmpty() && getAttachedTagsToEntities() != null)
-        {
+        if (getSelectionNodeList() != null && getSelectionNodeList().isEmpty() && getAttachedTagsToEntities() != null) {
             attachedTagsToEntitiesChanged();
         }
     }
 
-    protected void attachedTagsToEntitiesChanged()
-    {
+    protected void attachedTagsToEntitiesChanged() {
         ArrayList<TagModel> tags = (ArrayList<TagModel>) getItems();
 
-        if (tags != null)
-        {
+        if (tags != null) {
             TagModel root = tags.get(0);
 
-            if (getAttachedTagsToEntities() != null)
-            {
+            if (getAttachedTagsToEntities() != null) {
                 recursiveSetSelection(root, getAttachedTagsToEntities());
             }
 
-            if (getSelectionNodeList().isEmpty())
-            {
+            if (getSelectionNodeList().isEmpty()) {
                 setSelectionNodeList(new ArrayList<SelectionTreeNodeModel>(Arrays.asList(new SelectionTreeNodeModel[] { createTree(root) })));
             }
         }
     }
 
-    public void recursiveSetSelection(TagModel tagModel, Map<Guid, Boolean> attachedEntities)
-    {
-        if (attachedEntities.containsKey(tagModel.getId()) && attachedEntities.get(tagModel.getId()))
-        {
+    public void recursiveSetSelection(TagModel tagModel, Map<Guid, Boolean> attachedEntities) {
+        if (attachedEntities.containsKey(tagModel.getId()) && attachedEntities.get(tagModel.getId())) {
             tagModel.setSelection(true);
         }
-        else
-        {
+        else {
             tagModel.setSelection(false);
         }
-        if (tagModel.getChildren() != null)
-        {
-            for (TagModel subModel : tagModel.getChildren())
-            {
+        if (tagModel.getChildren() != null) {
+            for (TagModel subModel : tagModel.getChildren()) {
                 recursiveSetSelection(subModel, attachedEntities);
             }
         }
     }
 
-    public SelectionTreeNodeModel createTree(TagModel tag)
-    {
+    public SelectionTreeNodeModel createTree(TagModel tag) {
         SelectionTreeNodeModel node = new SelectionTreeNodeModel();
         node.setDescription(tag.getName().getEntity());
         node.setIsSelectedNullable(tag.getSelection());
@@ -261,14 +225,12 @@ public class TagListModel extends SearchableListModel<Void, TagModel>
         node.setEntity(tag);
         node.getPropertyChangedEvent().addListener(this);
 
-        if (tag.getChildren().isEmpty())
-        {
+        if (tag.getChildren().isEmpty()) {
             getSelectionNodeList().add(node);
             return node;
         }
 
-        for (TagModel childTag : tag.getChildren())
-        {
+        for (TagModel childTag : tag.getChildren()) {
             SelectionTreeNodeModel childNode = createTree(childTag);
             childNode.setParent(node);
             node.getChildren().add(childNode);
@@ -277,11 +239,9 @@ public class TagListModel extends SearchableListModel<Void, TagModel>
         return node;
     }
 
-    public TagModel cloneTagModel(TagModel tag)
-    {
+    public TagModel cloneTagModel(TagModel tag) {
         ArrayList<TagModel> children = new ArrayList<TagModel>();
-        for (TagModel child : tag.getChildren())
-        {
+        for (TagModel child : tag.getChildren()) {
             children.add(cloneTagModel(child));
         }
 
@@ -302,8 +262,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel>
         return model;
     }
 
-    public TagModel tagToModel(Tags tag)
-    {
+    public TagModel tagToModel(Tags tag) {
         EntityModel tempVar = new EntityModel();
         tempVar.setEntity(tag.gettag_name());
         EntityModel name = tempVar;
@@ -312,8 +271,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel>
         EntityModel description = tempVar2;
 
         ArrayList<TagModel> children = new ArrayList<TagModel>();
-        for (Tags a : tag.getChildren())
-        {
+        for (Tags a : tag.getChildren()) {
             children.add(tagToModel(a));
         }
 
@@ -337,22 +295,18 @@ public class TagListModel extends SearchableListModel<Void, TagModel>
     }
 
     @Override
-    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args)
-    {
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(TagModel.selectionChangedEventDefinition))
-        {
+        if (ev.matchesDefinition(TagModel.selectionChangedEventDefinition)) {
             onTagSelectionChanged(sender, args);
         }
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
-        if (e.propertyName.equals("IsSelectedNullable")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("IsSelectedNullable")) { //$NON-NLS-1$
             SelectionTreeNodeModel selectionTreeNodeModel = (SelectionTreeNodeModel) sender;
             TagModel tagModel = (TagModel) selectionTreeNodeModel.getEntity();
 
@@ -361,39 +315,31 @@ public class TagListModel extends SearchableListModel<Void, TagModel>
         }
     }
 
-    private void onTagSelectionChanged(Object sender, EventArgs e)
-    {
+    private void onTagSelectionChanged(Object sender, EventArgs e) {
         TagModel model = (TagModel) sender;
 
         ArrayList<TagModel> list = new ArrayList<TagModel>();
-        if (getSelectedItems() != null)
-        {
-            for (Object item : getSelectedItems())
-            {
+        if (getSelectedItems() != null) {
+            for (Object item : getSelectedItems()) {
                 list.add((TagModel) item);
             }
         }
 
-        if ((model.getSelection() == null ? false : model.getSelection()))
-        {
+        if ((model.getSelection() == null ? false : model.getSelection())) {
             list.add(model);
         }
-        else
-        {
+        else {
             list.remove(model);
         }
 
         setSelectedItems(list);
     }
 
-    private void reset()
-    {
+    private void reset() {
         setSelectedItems(new ArrayList<TagModel>());
 
-        if (getItems() != null)
-        {
-            for (Object item : getItems())
-            {
+        if (getItems() != null) {
+            for (Object item : getItems()) {
                 resetInternal((TagModel) item);
             }
         }
@@ -404,19 +350,15 @@ public class TagListModel extends SearchableListModel<Void, TagModel>
         getResetRequestedEvent().raise(this, EventArgs.EMPTY);
     }
 
-    private void resetInternal(TagModel root)
-    {
+    private void resetInternal(TagModel root) {
         root.setSelection(false);
-        for (TagModel item : root.getChildren())
-        {
+        for (TagModel item : root.getChildren()) {
             resetInternal(item);
         }
     }
 
-    public void remove()
-    {
-        if (getWindow() != null)
-        {
+    public void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -438,12 +380,10 @@ public class TagListModel extends SearchableListModel<Void, TagModel>
         model.getCommands().add(tempVar2);
     }
 
-    public void onRemove()
-    {
+    public void onRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
@@ -457,8 +397,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel>
                         TagListModel tagListModel = (TagListModel) result.getState();
                         VdcReturnValueBase returnVal = result.getReturnValue();
                         boolean success = returnVal != null && returnVal.getSucceeded();
-                        if (success)
-                        {
+                        if (success) {
                             tagListModel.getSearchCommand().execute();
                         }
                         tagListModel.cancel();
@@ -468,10 +407,8 @@ public class TagListModel extends SearchableListModel<Void, TagModel>
                 }, this);
     }
 
-    public void edit()
-    {
-        if (getWindow() != null)
-        {
+    public void edit() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -492,10 +429,8 @@ public class TagListModel extends SearchableListModel<Void, TagModel>
         model.getCommands().add(tempVar2);
     }
 
-    public void newEntity()
-    {
-        if (getWindow() != null)
-        {
+    public void newEntity() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -512,17 +447,14 @@ public class TagListModel extends SearchableListModel<Void, TagModel>
         model.getCommands().add(tempVar2);
     }
 
-    public void onSave()
-    {
+    public void onSave() {
         TagModel model = (TagModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
 
@@ -550,33 +482,28 @@ public class TagListModel extends SearchableListModel<Void, TagModel>
                 this);
     }
 
-    public void postOnSave(VdcReturnValueBase returnValue)
-    {
+    public void postOnSave(VdcReturnValueBase returnValue) {
         TagModel model = (TagModel) getWindow();
 
         model.stopProgress();
 
-        if (returnValue != null && returnValue.getSucceeded())
-        {
+        if (returnValue != null && returnValue.getSucceeded()) {
             cancel();
             getSearchCommand().execute();
         }
     }
 
-    public void cancel()
-    {
+    public void cancel() {
         setWindow(null);
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         getNewCommand().setIsExecutionAllowed(getSelectedItem() != null);
         getEditCommand().setIsExecutionAllowed(getSelectedItem() != null
                 && getSelectedItem().getType() == TagModelType.Regular);
@@ -585,36 +512,28 @@ public class TagListModel extends SearchableListModel<Void, TagModel>
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getResetCommand())
-        {
+        if (command == getResetCommand()) {
             reset();
         }
-        else if (command == getNewCommand())
-        {
+        else if (command == getNewCommand()) {
             newEntity();
         }
-        else if (command == getEditCommand())
-        {
+        else if (command == getEditCommand()) {
             edit();
         }
-        else if (command == getRemoveCommand())
-        {
+        else if (command == getRemoveCommand()) {
             remove();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
-        else if ("OnSave".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
         }
-        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
     }

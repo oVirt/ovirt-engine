@@ -206,8 +206,7 @@ public class DataCenterIscsiBondListModel extends SearchableListModel<StoragePoo
         asyncQuery.setModel(this);
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ret)
-            {
+            public void onSuccess(Object model, Object ret) {
                 ArrayList<IscsiBond> items = ((VdcQueryReturnValue) ret).getReturnValue();
                 setItems(items);
             }

@@ -34,39 +34,32 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
     private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
 
-    public Event<EventArgs> getUpdateCompleteEvent()
-    {
+    public Event<EventArgs> getUpdateCompleteEvent() {
         return privateUpdateCompleteEvent;
     }
 
-    private void setUpdateCompleteEvent(Event<EventArgs> value)
-    {
+    private void setUpdateCompleteEvent(Event<EventArgs> value) {
         privateUpdateCompleteEvent = value;
     }
 
     private VM privatevm;
 
-    public VM getvm()
-    {
+    public VM getvm() {
         return privatevm;
     }
 
-    public void setvm(VM value)
-    {
+    public void setvm(VM value) {
         privatevm = value;
     }
 
     private String name;
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName(String value)
-    {
-        if (!ObjectUtils.objectsEqual(name, value))
-        {
+    public void setName(String value) {
+        if (!ObjectUtils.objectsEqual(name, value)) {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
@@ -74,15 +67,12 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
     private String description;
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(String value)
-    {
-        if (!ObjectUtils.objectsEqual(description, value))
-        {
+    public void setDescription(String value) {
+        if (!ObjectUtils.objectsEqual(description, value)) {
             description = value;
             onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
@@ -90,15 +80,12 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
     private int os;
 
-    public int getOS()
-    {
+    public int getOS() {
         return os;
     }
 
-    public void setOS(int value)
-    {
-        if (os != value)
-        {
+    public void setOS(int value) {
+        if (os != value) {
             os = value;
             onPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
         }
@@ -106,15 +93,12 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
     private String defaultDisplayType;
 
-    public String getDefaultDisplayType()
-    {
+    public String getDefaultDisplayType() {
         return defaultDisplayType;
     }
 
-    public void setDefaultDisplayType(String value)
-    {
-        if (!ObjectUtils.objectsEqual(defaultDisplayType, value))
-        {
+    public void setDefaultDisplayType(String value) {
+        if (!ObjectUtils.objectsEqual(defaultDisplayType, value)) {
             defaultDisplayType = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefaultDisplayType")); //$NON-NLS-1$
         }
@@ -122,15 +106,12 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
     private String origin;
 
-    public String getOrigin()
-    {
+    public String getOrigin() {
         return origin;
     }
 
-    public void setOrigin(String value)
-    {
-        if (!ObjectUtils.objectsEqual(origin, value))
-        {
+    public void setOrigin(String value) {
+        if (!ObjectUtils.objectsEqual(origin, value)) {
             origin = value;
             onPropertyChanged(new PropertyChangedEventArgs("Origin")); //$NON-NLS-1$
         }
@@ -138,15 +119,12 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
     private String template;
 
-    public String getTemplate()
-    {
+    public String getTemplate() {
         return template;
     }
 
-    public void setTemplate(String value)
-    {
-        if (!ObjectUtils.objectsEqual(template, value))
-        {
+    public void setTemplate(String value) {
+        if (!ObjectUtils.objectsEqual(template, value)) {
             template = value;
             onPropertyChanged(new PropertyChangedEventArgs("Template")); //$NON-NLS-1$
         }
@@ -154,15 +132,12 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
     private int cpuCount;
 
-    public int getCpuCount()
-    {
+    public int getCpuCount() {
         return cpuCount;
     }
 
-    public void setCpuCount(int value)
-    {
-        if (cpuCount != value)
-        {
+    public void setCpuCount(int value) {
+        if (cpuCount != value) {
             cpuCount = value;
             onPropertyChanged(new PropertyChangedEventArgs("CpuCount")); //$NON-NLS-1$
         }
@@ -170,15 +145,12 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
     private int monitorCount;
 
-    public int getMonitorCount()
-    {
+    public int getMonitorCount() {
         return monitorCount;
     }
 
-    public void setMonitorCount(int value)
-    {
-        if (monitorCount != value)
-        {
+    public void setMonitorCount(int value) {
+        if (monitorCount != value) {
             monitorCount = value;
             onPropertyChanged(new PropertyChangedEventArgs("MonitorCount")); //$NON-NLS-1$
         }
@@ -186,15 +158,12 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
     private String definedMemory;
 
-    public String getDefinedMemory()
-    {
+    public String getDefinedMemory() {
         return definedMemory;
     }
 
-    public void setDefinedMemory(String value)
-    {
-        if (!ObjectUtils.objectsEqual(definedMemory, value))
-        {
+    public void setDefinedMemory(String value) {
+        if (!ObjectUtils.objectsEqual(definedMemory, value)) {
             definedMemory = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefinedMemory")); //$NON-NLS-1$
         }
@@ -202,15 +171,12 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
     private String minAllocatedMemory;
 
-    public String getMinAllocatedMemory()
-    {
+    public String getMinAllocatedMemory() {
         return minAllocatedMemory;
     }
 
-    public void setMinAllocatedMemory(String value)
-    {
-        if (!ObjectUtils.objectsEqual(minAllocatedMemory, value))
-        {
+    public void setMinAllocatedMemory(String value) {
+        if (!ObjectUtils.objectsEqual(minAllocatedMemory, value)) {
             minAllocatedMemory = value;
             onPropertyChanged(new PropertyChangedEventArgs("MinAllocatedMemory")); //$NON-NLS-1$
         }
@@ -218,15 +184,12 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
     private boolean hasDomain;
 
-    public boolean getHasDomain()
-    {
+    public boolean getHasDomain() {
         return hasDomain;
     }
 
-    public void setHasDomain(boolean value)
-    {
-        if (hasDomain != value)
-        {
+    public void setHasDomain(boolean value) {
+        if (hasDomain != value) {
             hasDomain = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasDomain")); //$NON-NLS-1$
         }
@@ -234,15 +197,12 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
     private boolean hasTimeZone;
 
-    public boolean getHasTimeZone()
-    {
+    public boolean getHasTimeZone() {
         return hasTimeZone;
     }
 
-    public void setHasTimeZone(boolean value)
-    {
-        if (hasTimeZone != value)
-        {
+    public void setHasTimeZone(boolean value) {
+        if (hasTimeZone != value) {
             hasTimeZone = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasTimeZone")); //$NON-NLS-1$
         }
@@ -250,15 +210,12 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
     private String usbPolicy;
 
-    public String getUsbPolicy()
-    {
+    public String getUsbPolicy() {
         return usbPolicy;
     }
 
-    public void setUsbPolicy(String value)
-    {
-        if (!ObjectUtils.objectsEqual(usbPolicy, value))
-        {
+    public void setUsbPolicy(String value) {
+        if (!ObjectUtils.objectsEqual(usbPolicy, value)) {
             usbPolicy = value;
             onPropertyChanged(new PropertyChangedEventArgs("UsbPolicy")); //$NON-NLS-1$
         }
@@ -266,15 +223,12 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
     private String domain;
 
-    public String getDomain()
-    {
+    public String getDomain() {
         return domain;
     }
 
-    public void setDomain(String value)
-    {
-        if (!ObjectUtils.objectsEqual(domain, value))
-        {
+    public void setDomain(String value) {
+        if (!ObjectUtils.objectsEqual(domain, value)) {
             domain = value;
             onPropertyChanged(new PropertyChangedEventArgs("Domain")); //$NON-NLS-1$
         }
@@ -282,15 +236,12 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
     private String timeZone;
 
-    public String getTimeZone()
-    {
+    public String getTimeZone() {
         return timeZone;
     }
 
-    public void setTimeZone(String value)
-    {
-        if (!ObjectUtils.objectsEqual(timeZone, value))
-        {
+    public void setTimeZone(String value) {
+        if (!ObjectUtils.objectsEqual(timeZone, value)) {
             timeZone = value;
             onPropertyChanged(new PropertyChangedEventArgs("TimeZone")); //$NON-NLS-1$
         }
@@ -298,15 +249,12 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
     private String cpuInfo;
 
-    public String getCpuInfo()
-    {
+    public String getCpuInfo() {
         return cpuInfo;
     }
 
-    public void setCpuInfo(String value)
-    {
-        if (!ObjectUtils.objectsEqual(cpuInfo, value))
-        {
+    public void setCpuInfo(String value) {
+        if (!ObjectUtils.objectsEqual(cpuInfo, value)) {
             cpuInfo = value;
             onPropertyChanged(new PropertyChangedEventArgs("CpuInfo")); //$NON-NLS-1$
         }
@@ -314,15 +262,12 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
     private boolean hasDefaultHost;
 
-    public boolean getHasDefaultHost()
-    {
+    public boolean getHasDefaultHost() {
         return hasDefaultHost;
     }
 
-    public void setHasDefaultHost(boolean value)
-    {
-        if (hasDefaultHost != value)
-        {
+    public void setHasDefaultHost(boolean value) {
+        if (hasDefaultHost != value) {
             hasDefaultHost = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasDefaultHost")); //$NON-NLS-1$
         }
@@ -330,15 +275,12 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
     private String defaultHost;
 
-    public String getDefaultHost()
-    {
+    public String getDefaultHost() {
         return defaultHost;
     }
 
-    public void setDefaultHost(String value)
-    {
-        if (!ObjectUtils.objectsEqual(defaultHost, value))
-        {
+    public void setDefaultHost(String value) {
+        if (!ObjectUtils.objectsEqual(defaultHost, value)) {
             defaultHost = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefaultHost")); //$NON-NLS-1$
         }
@@ -346,15 +288,12 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
     private boolean isStateless;
 
-    public boolean getIsStateless()
-    {
+    public boolean getIsStateless() {
         return isStateless;
     }
 
-    public void setIsStateless(boolean value)
-    {
-        if (isStateless != value)
-        {
+    public void setIsStateless(boolean value) {
+        if (isStateless != value) {
             isStateless = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsStateless")); //$NON-NLS-1$
         }
@@ -373,13 +312,11 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
         return quotaName;
     }
 
-    static
-    {
+    static {
         updateCompleteEventDefinition = new EventDefinition("UpdateComplete", PoolGeneralModel.class); //$NON-NLS-1$
     }
 
-    public PoolGeneralModel()
-    {
+    public PoolGeneralModel() {
         setUpdateCompleteEvent(new Event<EventArgs>(updateCompleteEventDefinition));
 
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
@@ -388,25 +325,21 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             updateProperties();
         }
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
         updateProperties();
     }
 
-    private void updateProperties()
-    {
+    private void updateProperties() {
         final VmPool pool = getEntity();
 
 
@@ -419,8 +352,7 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 // currently, only query that is being invoked asynchrounously in
                 // this context is GetVmDataByPoolIdQuery. If more async queries will be needed,
                 // refactor to "switch ... case...".
@@ -428,8 +360,7 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
                     setvm((VM) ((VdcQueryReturnValue) result).getReturnValue());
                 }
                 PoolGeneralModel poolGeneralModel = (PoolGeneralModel) model;
-                if (getvm() != null)
-                {
+                if (getvm() != null) {
                     poolGeneralModel.setTemplate(vmTemplateNameRenderer.render(getvm()));
                     poolGeneralModel.setCpuInfo(ConstantsManager.getInstance().getMessages().cpuInfoLabel(
                             getvm().getNumOfCpus(),
@@ -458,20 +389,16 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
                     poolGeneralModel.setQuotaName(getvm().getQuotaName());
 
                     poolGeneralModel.setHasDefaultHost(getvm().getDedicatedVmForVdsList().size() > 0);
-                    if (poolGeneralModel.getHasDefaultHost())
-                    {
+                    if (poolGeneralModel.getHasDefaultHost()) {
                         AsyncQuery _asyncQuery1 = new AsyncQuery();
                         _asyncQuery1.setModel(poolGeneralModel);
                         _asyncQuery1.asyncCallback = new INewAsyncCallback() {
                             @Override
-                            public void onSuccess(Object model1, Object ReturnValue1)
-                            {
+                            public void onSuccess(Object model1, Object ReturnValue1) {
                                 PoolGeneralModel poolGeneralModel1 = (PoolGeneralModel) model1;
                                 ArrayList<VDS> hosts = ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
-                                for (VDS host : hosts)
-                                {
-                                    if (poolGeneralModel1.getvm().getDedicatedVmForVdsList().contains(host.getId()))
-                                    {
+                                for (VDS host : hosts) {
+                                    if (poolGeneralModel1.getvm().getDedicatedVmForVdsList().contains(host.getId())) {
                                         poolGeneralModel1.setDefaultHost(host.getName());
                                         break;
                                     }
@@ -482,8 +409,7 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
                         Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " //$NON-NLS-1$
                                 + getvm().getVdsGroupName() + " sortby name", SearchType.VDS), _asyncQuery1); //$NON-NLS-1$
                     }
-                    else
-                    {
+                    else {
                         poolGeneralModel.setDefaultHost(ConstantsManager.getInstance()
                                 .getConstants()
                                 .anyHostInCluster());
@@ -492,8 +418,7 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
                         PoolGeneralModel.super.updateProperties(getvm().getId());
                     }
                 }
-                else
-                {
+                else {
                     poolGeneralModel.setTemplate(null);
                     poolGeneralModel.setCpuCount(0);
                     poolGeneralModel.setMonitorCount(0);

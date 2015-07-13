@@ -37,13 +37,11 @@ public class NewNetworkModel extends NetworkModel {
         init();
     }
 
-    public ListModel<NetworkClusterModel> getNetworkClusterList()
-    {
+    public ListModel<NetworkClusterModel> getNetworkClusterList() {
         return privateNetworkClusterList;
     }
 
-    public void setNetworkClusterList(ListModel<NetworkClusterModel> value)
-    {
+    public void setNetworkClusterList(ListModel<NetworkClusterModel> value) {
         privateNetworkClusterList = value;
     }
 
@@ -62,8 +60,7 @@ public class NewNetworkModel extends NetworkModel {
         AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(NewNetworkModel.this,
                 new INewAsyncCallback() {
                     @Override
-                    public void onSuccess(Object model, Object ReturnValue)
-                    {
+                    public void onSuccess(Object model, Object ReturnValue) {
                         onGetClusterList((ArrayList<VDSGroup>) ReturnValue);
                     }
                 }), getSelectedDc().getId());
@@ -72,8 +69,7 @@ public class NewNetworkModel extends NetworkModel {
     protected void onGetClusterList(ArrayList<VDSGroup> clusterList) {
         // Cluster list
         List<NetworkClusterModel> items = new ArrayList<NetworkClusterModel>();
-        for (VDSGroup cluster : clusterList)
-        {
+        for (VDSGroup cluster : clusterList) {
             items.add(createNetworkClusterModel(cluster));
         }
         getNetworkClusterList().setItems(items);
@@ -135,8 +131,7 @@ public class NewNetworkModel extends NetworkModel {
             public void executed(FrontendActionAsyncResult result1) {
                 VdcReturnValueBase retVal = result1.getReturnValue();
                 boolean succeeded = false;
-                if (retVal != null && retVal.getSucceeded())
-                {
+                if (retVal != null && retVal.getSucceeded()) {
                     succeeded = true;
                 }
                 postSaveAction(succeeded ? (Guid) retVal.getActionReturnValue()
@@ -211,8 +206,7 @@ public class NewNetworkModel extends NetworkModel {
         return false;
     }
 
-    public ArrayList<NetworkClusterModel> getClustersToAttach()
-    {
+    public ArrayList<NetworkClusterModel> getClustersToAttach() {
         ArrayList<NetworkClusterModel> clusterToAttach = new ArrayList<>();
 
         for (NetworkClusterModel networkClusterModel : getNetworkClusterList().getItems()) {

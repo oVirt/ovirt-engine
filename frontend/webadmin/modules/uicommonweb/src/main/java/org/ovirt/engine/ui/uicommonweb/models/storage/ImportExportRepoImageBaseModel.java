@@ -70,23 +70,19 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
         onPropertyChanged(new PropertyChangedEventArgs("ImportExportEntities")); //$NON-NLS-1$
     }
 
-    public ListModel<StoragePool> getDataCenter()
-    {
+    public ListModel<StoragePool> getDataCenter() {
         return dataCenter;
     }
 
-    public void setDataCenter(ListModel<StoragePool> value)
-    {
+    public void setDataCenter(ListModel<StoragePool> value) {
        dataCenter = value;
     }
 
-    public ListModel<VDSGroup> getCluster()
-    {
+    public ListModel<VDSGroup> getCluster() {
         return cluster;
     }
 
-    public void setCluster(ListModel<VDSGroup> value)
-    {
+    public void setCluster(ListModel<VDSGroup> value) {
         cluster = value;
     }
 
@@ -274,8 +270,7 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
-    {
+    public void eventRaised(Event ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
         if (ev.matchesDefinition(selectedItemChangedEventDefinition)) {

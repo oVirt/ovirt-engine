@@ -5,34 +5,28 @@ import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public final class ValidationResult
-{
+public final class ValidationResult {
     private boolean privateSuccess;
 
-    public boolean getSuccess()
-    {
+    public boolean getSuccess() {
         return privateSuccess;
     }
 
-    public void setSuccess(boolean value)
-    {
+    public void setSuccess(boolean value) {
         privateSuccess = value;
     }
 
     private List<String> privateReasons;
 
-    public List<String> getReasons()
-    {
+    public List<String> getReasons() {
         return privateReasons;
     }
 
-    public void setReasons(List<String> value)
-    {
+    public void setReasons(List<String> value) {
         privateReasons = value;
     }
 
-    public ValidationResult()
-    {
+    public ValidationResult() {
         this(true, new ArrayList<String>(0));
     }
 

@@ -71,8 +71,7 @@ public class ClusterGuideModel extends GuideModel {
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
         updateOptions();
     }

@@ -59,8 +59,7 @@ public abstract class ProfileBehavior {
         AsyncQuery networksQuery = new AsyncQuery();
         networksQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model1, Object result1)
-            {
+            public void onSuccess(Object model1, Object result1) {
                 List<Network> clusterNetworks = (List<Network>) result1;
                 managementNetworkName = Linq.findManagementNetwork(clusterNetworks).getName();
 

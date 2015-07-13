@@ -1,8 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
 @SuppressWarnings("unused")
-public enum SystemTreeItemType
-{
+public enum SystemTreeItemType {
     System,
     DataCenters,
     DataCenter,
@@ -24,13 +23,11 @@ public enum SystemTreeItemType
     Provider,
     Sessions;
 
-    public int getValue()
-    {
+    public int getValue() {
         return this.ordinal();
     }
 
-    public static SystemTreeItemType forValue(int value)
-    {
+    public static SystemTreeItemType forValue(int value) {
         return values()[value];
     }
 }

@@ -237,8 +237,7 @@ public class ClusterPolicyListModel extends ListWithSimpleDetailsModel<Object, C
         model.getCommands().add(tempVar2);
     }
 
-    public void onRemove()
-    {
+    public void onRemove() {
         for (Object item : getSelectedItems()) {
             ClusterPolicy clusterPolicy = (ClusterPolicy) item;
             Frontend.getInstance().runAction(VdcActionType.RemoveClusterPolicy,

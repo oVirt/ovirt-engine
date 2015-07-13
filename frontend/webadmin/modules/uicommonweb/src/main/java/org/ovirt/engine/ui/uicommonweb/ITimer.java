@@ -1,8 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb;
 
 @SuppressWarnings("unused")
-public interface ITimer extends IProvideTickEvent
-{
+public interface ITimer extends IProvideTickEvent {
     int getInterval();
 
     void setInterval(int value);

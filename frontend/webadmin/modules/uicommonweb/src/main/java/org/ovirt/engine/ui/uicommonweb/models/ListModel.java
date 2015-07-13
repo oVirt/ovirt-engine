@@ -16,59 +16,49 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ProvideCollectionChangedEvent;
 import org.ovirt.engine.ui.uicompat.ProvidePropertyChangedEvent;
 
-public class ListModel<T> extends Model
-{
+public class ListModel<T> extends Model {
 
     public static final EventDefinition selectedItemChangedEventDefinition;
     private Event<EventArgs> privateSelectedItemChangedEvent;
 
-    public Event<EventArgs> getSelectedItemChangedEvent()
-    {
+    public Event<EventArgs> getSelectedItemChangedEvent() {
         return privateSelectedItemChangedEvent;
     }
 
-    private void setSelectedItemChangedEvent(Event<EventArgs> value)
-    {
+    private void setSelectedItemChangedEvent(Event<EventArgs> value) {
         privateSelectedItemChangedEvent = value;
     }
 
     public static final EventDefinition selectedItemsChangedEventDefinition;
     private Event<EventArgs> privateSelectedItemsChangedEvent;
 
-    public Event<EventArgs> getSelectedItemsChangedEvent()
-    {
+    public Event<EventArgs> getSelectedItemsChangedEvent() {
         return privateSelectedItemsChangedEvent;
     }
 
-    private void setSelectedItemsChangedEvent(Event<EventArgs> value)
-    {
+    private void setSelectedItemsChangedEvent(Event<EventArgs> value) {
         privateSelectedItemsChangedEvent = value;
     }
 
     public static final EventDefinition itemsChangedEventDefinition;
     private Event<EventArgs> privateItemsChangedEvent;
 
-    public Event<EventArgs> getItemsChangedEvent()
-    {
+    public Event<EventArgs> getItemsChangedEvent() {
         return privateItemsChangedEvent;
     }
 
-    private void setItemsChangedEvent(Event<EventArgs> value)
-    {
+    private void setItemsChangedEvent(Event<EventArgs> value) {
         privateItemsChangedEvent = value;
     }
 
     protected List<T> selectedItems;
 
-    public List<T> getSelectedItems()
-    {
+    public List<T> getSelectedItems() {
         return selectedItems;
     }
 
-    public void setSelectedItems(List<T> value)
-    {
-        if (selectedItems != value)
-        {
+    public void setSelectedItems(List<T> value) {
+        if (selectedItems != value) {
             selectedItemsChanging(value, selectedItems);
             selectedItems = value;
             selectedItemsChanged();
@@ -79,8 +69,7 @@ public class ListModel<T> extends Model
 
     protected T selectedItem;
 
-    public T getSelectedItem()
-    {
+    public T getSelectedItem() {
         return selectedItem;
     }
 
@@ -100,8 +89,7 @@ public class ListModel<T> extends Model
 
     protected Collection<T> items;
 
-    public Collection<T> getItems()
-    {
+    public Collection<T> getItems() {
         return items;
     }
 
@@ -109,10 +97,8 @@ public class ListModel<T> extends Model
         setItems(value, null);
     }
 
-    public void setItems(Collection<T> value, T selectedItem)
-    {
-        if (items != value)
-        {
+    public void setItems(Collection<T> value, T selectedItem) {
+        if (items != value) {
             itemsChanging(value, items);
             items = value;
             itemsChanged(selectedItem);
@@ -127,15 +113,12 @@ public class ListModel<T> extends Model
      * Gets or sets the value indicating whether this model is empty. Notice, that this value is not updated
      * automatically.
      */
-    public boolean getIsEmpty()
-    {
+    public boolean getIsEmpty() {
         return isEmpty;
     }
 
-    public void setIsEmpty(boolean value)
-    {
-        if (isEmpty != value)
-        {
+    public void setIsEmpty(boolean value) {
+        if (isEmpty != value) {
             isEmpty = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsEmpty")); //$NON-NLS-1$
         }
@@ -146,44 +129,36 @@ public class ListModel<T> extends Model
      * only for selected ones. Pay attention, when property change occurs either SelectedItemPropertyChanged or
      * ItemPropertyChanged will be called but not both of them.
      */
-    protected boolean getNotifyPropertyChangeForAnyItem()
-    {
+    protected boolean getNotifyPropertyChangeForAnyItem() {
         return false;
     }
 
-    static
-    {
+    static {
         selectedItemChangedEventDefinition = new EventDefinition("SelectedItemChanged", ListModel.class); //$NON-NLS-1$
         selectedItemsChangedEventDefinition = new EventDefinition("SelectedItemsChanged", ListModel.class); //$NON-NLS-1$
         itemsChangedEventDefinition = new EventDefinition("ItemsChanged", ListModel.class); //$NON-NLS-1$
     }
 
-    public ListModel()
-    {
+    public ListModel() {
         setSelectedItemChangedEvent(new Event<EventArgs>(selectedItemChangedEventDefinition));
         setSelectedItemsChangedEvent(new Event<EventArgs>(selectedItemsChangedEventDefinition));
         setItemsChangedEvent(new Event<EventArgs>(itemsChangedEventDefinition));
     }
 
-    protected void onSelectedItemChanging(T newValue, T oldValue)
-    {
+    protected void onSelectedItemChanging(T newValue, T oldValue) {
     }
 
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
     }
 
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
     }
 
-    protected void selectedItemsChanging(List<T> newValue, List<T> oldValue)
-    {
+    protected void selectedItemsChanging(List<T> newValue, List<T> oldValue) {
         // Skip this method when notifying on property change for any
         // item but not only for selected ones is requested.
         // Subscribtion to the event will be done in ItemsCollectionChanged method.
-        if (getNotifyPropertyChangeForAnyItem())
-        {
+        if (getNotifyPropertyChangeForAnyItem()) {
             return;
         }
 
@@ -192,46 +167,36 @@ public class ListModel<T> extends Model
     }
 
     @Override
-    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args)
-    {
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(ProvidePropertyChangedEvent.definition))
-        {
-            if (getNotifyPropertyChangeForAnyItem())
-            {
+        if (ev.matchesDefinition(ProvidePropertyChangedEvent.definition)) {
+            if (getNotifyPropertyChangeForAnyItem()) {
                 // If notification on property change for any item was requested,
                 // check whether the event was sent by a selected item or not.
                 boolean anyOfSelectedItem = false;
-                if (getSelectedItems() != null)
-                {
-                    for (T item : getSelectedItems())
-                    {
-                        if (item == sender)
-                        {
+                if (getSelectedItems() != null) {
+                    for (T item : getSelectedItems()) {
+                        if (item == sender) {
                             anyOfSelectedItem = true;
                             break;
                         }
                     }
                 }
 
-                if (anyOfSelectedItem)
-                {
+                if (anyOfSelectedItem) {
                     selectedItemPropertyChanged(sender, (PropertyChangedEventArgs) args);
                 }
-                else
-                {
+                else {
                     itemPropertyChanged(sender, (PropertyChangedEventArgs) args);
                 }
             }
-            else
-            {
+            else {
                 // In this case a sender always will be a one of selected item.
                 selectedItemPropertyChanged(sender, (PropertyChangedEventArgs) args);
             }
         }
-        else if (ev.matchesDefinition(ProvideCollectionChangedEvent.Definition))
-        {
+        else if (ev.matchesDefinition(ProvideCollectionChangedEvent.Definition)) {
             itemsCollectionChanged(sender, (NotifyCollectionChangedEventArgs<T>) args);
         }
     }
@@ -239,16 +204,14 @@ public class ListModel<T> extends Model
     /**
      * Invoked whenever some property of any selected item was changed.
      */
-    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e) {
     }
 
     /**
      * Invoked whenever some property of any item was changed. For performance considerations, in order to get this
      * method called, override NotifyPropertyChangeForAnyItem property and return true.
      */
-    protected void itemPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void itemPropertyChanged(Object sender, PropertyChangedEventArgs e) {
     }
 
     protected void itemsChanged(T selectedItem) {
@@ -262,28 +225,24 @@ public class ListModel<T> extends Model
         }
     }
 
-    protected void itemsChanged()
-    {
+    protected void itemsChanged() {
         // if Items are updated, SelectedItem and SelectedItems become irrelevant:
         setSelectedItem(null);
         setSelectedItems(null);
     }
 
-    protected void itemsChanging(Collection<T> newValue, Collection<T> oldValue)
-    {
+    protected void itemsChanging(Collection<T> newValue, Collection<T> oldValue) {
         IProvideCollectionChangedEvent notifier =
                 (IProvideCollectionChangedEvent) ((oldValue instanceof IProvideCollectionChangedEvent) ? oldValue
                         : null);
-        if (notifier != null)
-        {
+        if (notifier != null) {
             notifier.getCollectionChangedEvent().removeListener(this);
         }
 
         notifier =
                 (IProvideCollectionChangedEvent) ((newValue instanceof IProvideCollectionChangedEvent) ? newValue
                         : null);
-        if (notifier != null)
-        {
+        if (notifier != null) {
             notifier.getCollectionChangedEvent().addListener(this);
         }
 
@@ -295,10 +254,8 @@ public class ListModel<T> extends Model
     /**
      * Invoked whenever items collection was changed, i.e. some items was added or removed.
      */
-    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs<T> e)
-    {
-        if (!getNotifyPropertyChangeForAnyItem())
-        {
+    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs<T> e) {
+        if (!getNotifyPropertyChangeForAnyItem()) {
             return;
         }
 
@@ -307,22 +264,17 @@ public class ListModel<T> extends Model
         subscribeList(e.newItems);
     }
 
-    public void validateSelectedItem(IValidation[] validations)
-    {
+    public void validateSelectedItem(IValidation[] validations) {
         setIsValid(true);
 
-        if (!getIsAvailable() || !getIsChangable())
-        {
+        if (!getIsAvailable() || !getIsChangable()) {
             return;
         }
 
-        for (IValidation validation : validations)
-        {
+        for (IValidation validation : validations) {
             ValidationResult result = validation.validate(getSelectedItem());
-            if (!result.getSuccess())
-            {
-                for (String reason : result.getReasons())
-                {
+            if (!result.getSuccess()) {
+                for (String reason : result.getReasons()) {
                     getInvalidityReasons().add(reason);
                 }
                 setIsValid(false);
@@ -332,37 +284,29 @@ public class ListModel<T> extends Model
         }
     }
 
-    private void subscribeList(Iterable<T> list)
-    {
-        if (list == null)
-        {
+    private void subscribeList(Iterable<T> list) {
+        if (list == null) {
             return;
         }
 
-        for (T a : list)
-        {
+        for (T a : list) {
             IProvidePropertyChangedEvent notifier =
                     (IProvidePropertyChangedEvent) ((a instanceof IProvidePropertyChangedEvent) ? a : null);
-            if (notifier != null)
-            {
+            if (notifier != null) {
                 notifier.getPropertyChangedEvent().addListener(this);
             }
         }
     }
 
-    private void unsubscribeList(Iterable<T> list)
-    {
-        if (list == null)
-        {
+    private void unsubscribeList(Iterable<T> list) {
+        if (list == null) {
             return;
         }
 
-        for (T a : list)
-        {
+        for (T a : list) {
             IProvidePropertyChangedEvent notifier =
                     (IProvidePropertyChangedEvent) ((a instanceof IProvidePropertyChangedEvent) ? a : null);
-            if (notifier != null)
-            {
+            if (notifier != null) {
                 notifier.getPropertyChangedEvent().removeListener(this);
             }
         }

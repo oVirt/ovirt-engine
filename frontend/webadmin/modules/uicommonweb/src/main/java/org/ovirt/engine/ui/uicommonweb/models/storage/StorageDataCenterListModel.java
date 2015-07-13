@@ -41,54 +41,45 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class StorageDataCenterListModel extends SearchableListModel<StorageDomain, StorageDomain>
-{
+public class StorageDataCenterListModel extends SearchableListModel<StorageDomain, StorageDomain> {
 
     private UICommand privateAttachCommand;
 
-    public UICommand getAttachCommand()
-    {
+    public UICommand getAttachCommand() {
         return privateAttachCommand;
     }
 
-    private void setAttachCommand(UICommand value)
-    {
+    private void setAttachCommand(UICommand value) {
         privateAttachCommand = value;
     }
 
     private UICommand privateDetachCommand;
 
-    public UICommand getDetachCommand()
-    {
+    public UICommand getDetachCommand() {
         return privateDetachCommand;
     }
 
-    private void setDetachCommand(UICommand value)
-    {
+    private void setDetachCommand(UICommand value) {
         privateDetachCommand = value;
     }
 
     private UICommand privateActivateCommand;
 
-    public UICommand getActivateCommand()
-    {
+    public UICommand getActivateCommand() {
         return privateActivateCommand;
     }
 
-    private void setActivateCommand(UICommand value)
-    {
+    private void setActivateCommand(UICommand value) {
         privateActivateCommand = value;
     }
 
     private UICommand privateMaintenanceCommand;
 
-    public UICommand getMaintenanceCommand()
-    {
+    public UICommand getMaintenanceCommand() {
         return privateMaintenanceCommand;
     }
 
-    private void setMaintenanceCommand(UICommand value)
-    {
+    private void setMaintenanceCommand(UICommand value) {
         privateMaintenanceCommand = value;
     }
 
@@ -97,61 +88,51 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
      */
     private boolean privateAttachMultiple;
 
-    public boolean getAttachMultiple()
-    {
+    public boolean getAttachMultiple() {
         return privateAttachMultiple;
     }
 
-    private void setAttachMultiple(boolean value)
-    {
+    private void setAttachMultiple(boolean value) {
         privateAttachMultiple = value;
     }
 
     private ArrayList<VdcActionParametersBase> privatedetachPrms;
 
-    public ArrayList<VdcActionParametersBase> getdetachPrms()
-    {
+    public ArrayList<VdcActionParametersBase> getdetachPrms() {
         return privatedetachPrms;
     }
 
-    public void setdetachPrms(ArrayList<VdcActionParametersBase> value)
-    {
+    public void setdetachPrms(ArrayList<VdcActionParametersBase> value) {
         privatedetachPrms = value;
     }
 
     private ArrayList<VdcActionParametersBase> privateremovePrms;
 
-    public ArrayList<VdcActionParametersBase> getremovePrms()
-    {
+    public ArrayList<VdcActionParametersBase> getremovePrms() {
         return privateremovePrms;
     }
 
-    public void setremovePrms(ArrayList<VdcActionParametersBase> value)
-    {
+    public void setremovePrms(ArrayList<VdcActionParametersBase> value) {
         privateremovePrms = value;
     }
 
     private ArrayList<EntityModel> privateattachCandidateDatacenters;
 
-    public ArrayList<EntityModel> getattachCandidateDatacenters()
-    {
+    public ArrayList<EntityModel> getattachCandidateDatacenters() {
         return privateattachCandidateDatacenters;
     }
 
-    public void setattachCandidateDatacenters(ArrayList<EntityModel> value)
-    {
+    public void setattachCandidateDatacenters(ArrayList<EntityModel> value) {
         privateattachCandidateDatacenters = value;
     }
 
     private ArrayList<StoragePool> privateavailableDatacenters;
 
-    public ArrayList<StoragePool> getavailableDatacenters()
-    {
+    public ArrayList<StoragePool> getavailableDatacenters() {
         return privateavailableDatacenters;
     }
 
-    public void setavailableDatacenters(ArrayList<StoragePool> value)
-    {
+    public void setavailableDatacenters(ArrayList<StoragePool> value) {
         privateavailableDatacenters = value;
     }
 
@@ -165,8 +146,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         this.selectedDataCentersForAttach = selectedDataCentersForAttach;
     }
 
-    public StorageDataCenterListModel()
-    {
+    public StorageDataCenterListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().dataCenterTitle());
         setHelpTag(HelpTag.data_center);
         setHashName("data_center"); //$NON-NLS-1$
@@ -180,8 +160,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
         getSearchCommand().execute();
@@ -189,19 +168,15 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
     }
 
     @Override
-    public void search()
-    {
-        if (getEntity() != null)
-        {
+    public void search() {
+        if (getEntity() != null) {
             super.search();
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
-        if (getEntity() == null)
-        {
+    protected void syncSearch() {
+        if (getEntity() == null) {
             return;
         }
 
@@ -211,8 +186,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 ArrayList<StorageDomain> domains =
                         ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 for (StorageDomain domain : domains) {
@@ -229,10 +203,8 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainListById, tempVar, _asyncQuery);
     }
 
-    private void attach()
-    {
-        if (getWindow() != null)
-        {
+    private void attach() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -310,28 +282,23 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
                                                                          }));
     }
 
-    public void addToAttachCandidateDatacenters(StoragePool dataCenter, boolean addDatacenter)
-    {
+    public void addToAttachCandidateDatacenters(StoragePool dataCenter, boolean addDatacenter) {
         // Add a new datacenter EntityModel
         EntityModel dcEntityModel = new EntityModel();
-        if (addDatacenter)
-        {
+        if (addDatacenter) {
             dcEntityModel.setEntity(dataCenter);
         }
         getattachCandidateDatacenters().add(dcEntityModel);
 
         // If not finished going through the datacenters list - return
-        if (getattachCandidateDatacenters().size() != getavailableDatacenters().size())
-        {
+        if (getattachCandidateDatacenters().size() != getavailableDatacenters().size()) {
             return;
         }
 
         // Filter datacenters list
         ArrayList<EntityModel> datacenters = new ArrayList<EntityModel>();
-        for (EntityModel datacenter : getattachCandidateDatacenters())
-        {
-            if (datacenter.getEntity() != null)
-            {
+        for (EntityModel datacenter : getattachCandidateDatacenters()) {
+            if (datacenter.getEntity() != null) {
                 datacenters.add(datacenter);
             }
         }
@@ -339,8 +306,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         postAttachInit(datacenters);
     }
 
-    public void postAttachInit(ArrayList<EntityModel> datacenters)
-    {
+    public void postAttachInit(ArrayList<EntityModel> datacenters) {
         ListModel model = new ListModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().attachToDataCenterTitle());
@@ -358,8 +324,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
             }
         }
 
-        if (datacenters.isEmpty())
-        {
+        if (datacenters.isEmpty()) {
             model.setMessage(ConstantsManager.getInstance()
                     .getConstants()
                     .thereAreNoDataCenterStorageDomainAttachedMsg());
@@ -370,8 +335,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
             tempVar.setIsCancel(true);
             model.getCommands().add(tempVar);
         }
-        else
-        {
+        else {
             model.setItems(datacenters, datacenters.get(0));
             UICommand tempVar2 = UICommand.createDefaultOkUiCommand("OnAttach", this); //$NON-NLS-1$
             model.getCommands().add(tempVar2);
@@ -380,31 +344,26 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         }
     }
 
-    private void onAttach()
-    {
+    private void onAttach() {
         final ListModel model = (ListModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
-        if (getEntity() == null)
-        {
+        if (getEntity() == null) {
             cancel();
             return;
         }
 
         ArrayList<StoragePool> items = new ArrayList<StoragePool>();
-        for (EntityModel a : Linq.<EntityModel> cast(model.getItems()))
-        {
+        for (EntityModel a : Linq.<EntityModel> cast(model.getItems())) {
             if (a.getIsSelected()) {
                 items.add((StoragePool) a.getEntity());
             }
         }
 
-        if (items.size() == 0)
-        {
+        if (items.size() == 0) {
             cancel();
             return;
         }
@@ -484,10 +443,8 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
                 }, model);
     }
 
-    private void detach()
-    {
-        if (getWindow() != null)
-        {
+    private void detach() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -500,8 +457,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
 
         ArrayList<String> items = new ArrayList<String>();
         boolean shouldAddressWarnning = false;
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             StorageDomain a = (StorageDomain) item;
             items.add(a.getStoragePoolName());
             if (a.getStorageDomainType().isDataDomain()) {
@@ -511,8 +467,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         }
         model.setItems(items);
 
-        if (containsLocalStorage(model))
-        {
+        if (containsLocalStorage(model)) {
             model.getLatch().setIsAvailable(true);
             model.getLatch().setIsChangeable(true);
             shouldAddressWarnning = false;
@@ -528,59 +483,47 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         model.getCommands().add(tempVar2);
     }
 
-    private String getLocalStoragesFormattedString()
-    {
+    private String getLocalStoragesFormattedString() {
         StringBuilder localStorages = new StringBuilder();
-        for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems()))
-        {
-            if (a.getStorageType() == StorageType.LOCALFS)
-            {
+        for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems())) {
+            if (a.getStorageType() == StorageType.LOCALFS) {
                 localStorages.append(a.getStorageName()).append(", "); //$NON-NLS-1$
             }
         }
         return localStorages.substring(0, localStorages.length() - 2);
     }
 
-    private boolean containsLocalStorage(ConfirmationModel model)
-    {
-        for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems()))
-        {
-            if (a.getStorageType() == StorageType.LOCALFS)
-            {
+    private boolean containsLocalStorage(ConfirmationModel model) {
+        for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems())) {
+            if (a.getStorageType() == StorageType.LOCALFS) {
                 return true;
             }
         }
         return false;
     }
 
-    private void onDetach()
-    {
+    private void onDetach() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
 
         setdetachPrms(new ArrayList<VdcActionParametersBase>());
         setremovePrms(new ArrayList<VdcActionParametersBase>());
 
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             StorageDomain storageDomain = (StorageDomain) item;
-            if (storageDomain.getStorageType() != StorageType.LOCALFS)
-            {
+            if (storageDomain.getStorageType() != StorageType.LOCALFS) {
                 DetachStorageDomainFromPoolParameters param = new DetachStorageDomainFromPoolParameters();
                 param.setStorageDomainId(getEntity().getId());
-                if (storageDomain.getStoragePoolId() != null)
-                {
+                if (storageDomain.getStoragePoolId() != null) {
                     param.setStoragePoolId(storageDomain.getStoragePoolId());
                 }
 
                 getdetachPrms().add(param);
             }
-            else
-            {
+            else {
                 AsyncDataProvider.getInstance().getLocalStorageHost(new AsyncQuery(new Object[] { this, getEntity() },
                         new INewAsyncCallback() {
                             @Override
@@ -597,8 +540,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
                                 RemoveStorageDomainParameters removeStorageDomainParameters = tempVar;
                                 listModel.getremovePrms().add(removeStorageDomainParameters);
                                 if (listModel.getremovePrms().size() + listModel.getdetachPrms().size() == listModel.getSelectedItems()
-                                        .size())
-                                {
+                                        .size()) {
                                     Frontend.getInstance().runMultipleAction(VdcActionType.RemoveStorageDomain,
                                             listModel.getremovePrms());
                                 }
@@ -608,8 +550,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
                         storageDomain.getStoragePoolName());
             }
 
-            if (getdetachPrms().size() > 0)
-            {
+            if (getdetachPrms().size() > 0) {
                 Frontend.getInstance().runMultipleAction(VdcActionType.DetachStorageDomainFromPool, getdetachPrms());
             }
         }
@@ -617,8 +558,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         cancel();
     }
 
-    private void maintenance()
-    {
+    private void maintenance() {
         ConfirmationModel model = new ConfirmationModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().maintenanceStorageDomainsTitle());
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantToPlaceFollowingStorageDomainsIntoMaintenanceModeMsg());
@@ -638,15 +578,12 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         model.getCommands().add(cancel);
     }
 
-    private void onMaintenance()
-    {
+    private void onMaintenance() {
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (StorageDomain item : getSelectedItems())
-        {
+        for (StorageDomain item : getSelectedItems()) {
             StorageDomainPoolParametersBase parameters = new StorageDomainPoolParametersBase();
             parameters.setStorageDomainId(getEntity().getId());
-            if (item.getStoragePoolId() != null)
-            {
+            if (item.getStoragePoolId() != null) {
                 parameters.setStoragePoolId(item.getStoragePoolId());
             }
 
@@ -666,17 +603,14 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
                 }, null);
     }
 
-    private void activate()
-    {
+    private void activate() {
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             StorageDomain a = (StorageDomain) item;
 
             StorageDomainPoolParametersBase parameters = new StorageDomainPoolParametersBase();
             parameters.setStorageDomainId(getEntity().getId());
-            if (a.getStoragePoolId() != null)
-            {
+            if (a.getStoragePoolId() != null) {
                 parameters.setStoragePoolId(a.getStoragePoolId());
             }
 
@@ -692,38 +626,32 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
                 }, null);
     }
 
-    private void cancel()
-    {
+    private void cancel() {
         setWindow(null);
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.selectedItemPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("status")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("status")) { //$NON-NLS-1$
             updateActionAvailability();
         }
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         ArrayList<StorageDomain> items =
                 getSelectedItems() != null ? Linq.<StorageDomain> cast(getSelectedItems())
                         : new ArrayList<StorageDomain>();
@@ -742,44 +670,34 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getAttachCommand())
-        {
+        if (command == getAttachCommand()) {
             attach();
         }
-        else if (command == getDetachCommand())
-        {
+        else if (command == getDetachCommand()) {
             detach();
         }
-        else if (command == getActivateCommand())
-        {
+        else if (command == getActivateCommand()) {
             activate();
         }
-        else if (command == getMaintenanceCommand())
-        {
+        else if (command == getMaintenanceCommand()) {
             maintenance();
         }
-        else if ("OnAttach".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnAttach".equals(command.getName())) { //$NON-NLS-1$
             onAttach();
         }
-        else if ("OnAttachApprove".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnAttachApprove".equals(command.getName())) { //$NON-NLS-1$
             onAttachApprove();
         }
-        else if ("OnDetach".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnDetach".equals(command.getName())) { //$NON-NLS-1$
             onDetach();
         }
-        else if ("OnMaintenance".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnMaintenance".equals(command.getName())) { //$NON-NLS-1$
             onMaintenance();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

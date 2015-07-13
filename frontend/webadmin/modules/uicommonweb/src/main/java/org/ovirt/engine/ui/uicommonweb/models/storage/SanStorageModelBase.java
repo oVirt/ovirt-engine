@@ -34,71 +34,60 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public abstract class SanStorageModelBase extends SearchableListModel implements IStorageModel
-{
+public abstract class SanStorageModelBase extends SearchableListModel implements IStorageModel {
 
     private UICommand privateUpdateCommand;
 
     @Override
-    public UICommand getUpdateCommand()
-    {
+    public UICommand getUpdateCommand() {
         return privateUpdateCommand;
     }
 
-    private void setUpdateCommand(UICommand value)
-    {
+    private void setUpdateCommand(UICommand value) {
         privateUpdateCommand = value;
     }
 
     private UICommand loginCommand;
 
-    public UICommand getLoginCommand()
-    {
+    public UICommand getLoginCommand() {
         return loginCommand;
     }
 
-    private void setLoginCommand(UICommand value)
-    {
+    private void setLoginCommand(UICommand value) {
         loginCommand = value;
     }
 
     private UICommand privateDiscoverTargetsCommand;
 
-    public UICommand getDiscoverTargetsCommand()
-    {
+    public UICommand getDiscoverTargetsCommand() {
         return privateDiscoverTargetsCommand;
     }
 
-    private void setDiscoverTargetsCommand(UICommand value)
-    {
+    private void setDiscoverTargetsCommand(UICommand value) {
         privateDiscoverTargetsCommand = value;
     }
 
     private StorageModel privateContainer;
 
     @Override
-    public StorageModel getContainer()
-    {
+    public StorageModel getContainer() {
         return privateContainer;
     }
 
     @Override
-    public void setContainer(StorageModel value)
-    {
+    public void setContainer(StorageModel value) {
         privateContainer = value;
     }
 
     private StorageDomainType privateRole = StorageDomainType.values()[0];
 
     @Override
-    public StorageDomainType getRole()
-    {
+    public StorageDomainType getRole() {
         return privateRole;
     }
 
     @Override
-    public void setRole(StorageDomainType value)
-    {
+    public void setRole(StorageDomainType value) {
         privateRole = value;
     }
 
@@ -107,75 +96,62 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
     private EntityModel<String> privateAddress;
 
-    public EntityModel<String> getAddress()
-    {
+    public EntityModel<String> getAddress() {
         return privateAddress;
     }
 
-    private void setAddress(EntityModel<String> value)
-    {
+    private void setAddress(EntityModel<String> value) {
         privateAddress = value;
     }
 
     private EntityModel<String> privatePort;
 
-    public EntityModel<String> getPort()
-    {
+    public EntityModel<String> getPort() {
         return privatePort;
     }
 
-    private void setPort(EntityModel<String> value)
-    {
+    private void setPort(EntityModel<String> value) {
         privatePort = value;
     }
 
     private EntityModel<String> privateUserName;
 
-    public EntityModel<String> getUserName()
-    {
+    public EntityModel<String> getUserName() {
         return privateUserName;
     }
 
-    private void setUserName(EntityModel<String> value)
-    {
+    private void setUserName(EntityModel<String> value) {
         privateUserName = value;
     }
 
     private EntityModel<String> privatePassword;
 
-    public EntityModel<String> getPassword()
-    {
+    public EntityModel<String> getPassword() {
         return privatePassword;
     }
 
-    private void setPassword(EntityModel<String> value)
-    {
+    private void setPassword(EntityModel<String> value) {
         privatePassword = value;
     }
 
     private EntityModel<Boolean> privateUseUserAuth;
 
-    public EntityModel<Boolean> getUseUserAuth()
-    {
+    public EntityModel<Boolean> getUseUserAuth() {
         return privateUseUserAuth;
     }
 
-    private void setUseUserAuth(EntityModel<Boolean> value)
-    {
+    private void setUseUserAuth(EntityModel<Boolean> value) {
         privateUseUserAuth = value;
     }
 
     private boolean proposeDiscoverTargets;
 
-    public boolean getProposeDiscoverTargets()
-    {
+    public boolean getProposeDiscoverTargets() {
         return proposeDiscoverTargets;
     }
 
-    public void setProposeDiscoverTargets(boolean value)
-    {
-        if (proposeDiscoverTargets != value)
-        {
+    public void setProposeDiscoverTargets(boolean value) {
+        if (proposeDiscoverTargets != value) {
             proposeDiscoverTargets = value;
             onPropertyChanged(new PropertyChangedEventArgs("ProposeDiscoverTargets")); //$NON-NLS-1$
         }
@@ -183,15 +159,12 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
     private boolean isAllLunsSelected;
 
-    public boolean getIsAllLunsSelected()
-    {
+    public boolean getIsAllLunsSelected() {
         return isAllLunsSelected;
     }
 
-    public void setIsAllLunsSelected(boolean value)
-    {
-        if (isAllLunsSelected != value)
-        {
+    public void setIsAllLunsSelected(boolean value) {
+        if (isAllLunsSelected != value) {
             isAllLunsSelected = value;
             isAllLunsSelectedChanged();
             onPropertyChanged(new PropertyChangedEventArgs("IsAllLunsSelected")); //$NON-NLS-1$
@@ -200,15 +173,12 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
     private boolean ignoreGrayedOut;
 
-    public boolean isIgnoreGrayedOut()
-    {
+    public boolean isIgnoreGrayedOut() {
         return ignoreGrayedOut;
     }
 
-    public void setIgnoreGrayedOut(boolean value)
-    {
-        if (ignoreGrayedOut != value)
-        {
+    public void setIgnoreGrayedOut(boolean value) {
+        if (ignoreGrayedOut != value) {
             ignoreGrayedOut = value;
             onPropertyChanged(new PropertyChangedEventArgs("IgnoreGrayedOut")); //$NON-NLS-1$
         }
@@ -216,15 +186,12 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
     private boolean multiSelection;
 
-    public boolean isMultiSelection()
-    {
+    public boolean isMultiSelection() {
         return multiSelection;
     }
 
-    public void setMultiSelection(boolean value)
-    {
-        if (multiSelection != value)
-        {
+    public void setMultiSelection(boolean value) {
+        if (multiSelection != value) {
             multiSelection = value;
             onPropertyChanged(new PropertyChangedEventArgs("MultiSelection")); //$NON-NLS-1$
         }
@@ -232,15 +199,12 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
     private String selectedLunWarning;
 
-    public String getSelectedLunWarning()
-    {
+    public String getSelectedLunWarning() {
         return selectedLunWarning;
     }
 
-    public void setSelectedLunWarning(String value)
-    {
-        if (!ObjectUtils.objectsEqual(selectedLunWarning, value))
-        {
+    public void setSelectedLunWarning(String value) {
+        if (!ObjectUtils.objectsEqual(selectedLunWarning, value)) {
             selectedLunWarning = value;
             onPropertyChanged(new PropertyChangedEventArgs("SelectedLunWarning")); //$NON-NLS-1$
         }
@@ -248,8 +212,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
     private ArrayList<SanTargetModel> targetsToConnect;
 
-    protected SanStorageModelBase()
-    {
+    protected SanStorageModelBase() {
         setHelpTag(HelpTag.SanStorageModelBase);
         setHashName("SanStorageModelBase"); //$NON-NLS-1$
 
@@ -274,16 +237,13 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
-    {
+    public void eventRaised(Event ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(SanTargetModel.loggedInEventDefinition))
-        {
+        if (ev.matchesDefinition(SanTargetModel.loggedInEventDefinition)) {
             sanTargetModel_LoggedIn(sender, args);
         }
-        else if (ev.matchesDefinition(entityChangedEventDefinition))
-        {
+        else if (ev.matchesDefinition(entityChangedEventDefinition)) {
             useUserAuth_EntityChanged(sender, args);
         }
     }
@@ -292,8 +252,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         SanTargetModel sanTargetModel = sanStorageModel.targetsToConnect.remove(0);
         boolean success = returnValue != null && returnValue.getSucceeded();
 
-        if (success)
-        {
+        if (success) {
             sanTargetModel.setIsLoggedIn(true);
             sanTargetModel.getLoginCommand().setIsExecutionAllowed(false);
         }
@@ -306,8 +265,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     private void connectTargets() {
 
         VDS host = getContainer().getHost().getSelectedItem();
-        if (host == null)
-        {
+        if (host == null) {
             return;
         }
 
@@ -342,8 +300,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         Frontend.getInstance().runMultipleActions(actionTypes, parameters, callbacks, null, target);
     }
 
-    private void sanTargetModel_LoggedIn(Object sender, EventArgs args)
-    {
+    private void sanTargetModel_LoggedIn(Object sender, EventArgs args) {
         SanTargetModel model = (SanTargetModel) sender;
         targetsToConnect = new ArrayList<>();
         targetsToConnect.add(model);
@@ -354,17 +311,14 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         loginAll();
     }
 
-    private void loginAll()
-    {
+    private void loginAll() {
         // Cast to list of SanTargetModel because we get call
         // to this method only from target/LUNs mode.
         List<SanTargetModel> items = (List<SanTargetModel>) getItems();
         targetsToConnect = new ArrayList<>();
 
-        for (SanTargetModel item : items)
-        {
-            if (!item.getIsLoggedIn())
-            {
+        for (SanTargetModel item : items) {
+            if (!item.getIsLoggedIn()) {
                 targetsToConnect.add(item);
             }
         }
@@ -372,10 +326,8 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         connectTargets();
     }
 
-    private void discoverTargets()
-    {
-        if (!validateDiscoverTargetFields())
-        {
+    private void discoverTargets() {
+        if (!validateDiscoverTargetFields()) {
             return;
         }
 
@@ -405,12 +357,10 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         Frontend.getInstance().runQuery(VdcQueryType.DiscoverSendTargets, parameters, asyncQuery);
     }
 
-    protected void postDiscoverTargetsInternal(ArrayList<StorageServerConnections> items)
-    {
+    protected void postDiscoverTargetsInternal(ArrayList<StorageServerConnections> items) {
         ArrayList<SanTargetModel> newItems = new ArrayList<>();
 
-        for (StorageServerConnections a : items)
-        {
+        for (StorageServerConnections a : items) {
             SanTargetModel model = new SanTargetModel();
             model.setAddress(a.getconnection());
             model.setPort(a.getport());
@@ -421,20 +371,17 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             newItems.add(model);
         }
 
-        if (items.isEmpty())
-        {
+        if (items.isEmpty()) {
             setMessage(ConstantsManager.getInstance().getConstants().noNewDevicesWereFoundMsg());
         }
 
         postDiscoverTargets(newItems);
     }
 
-    protected void postDiscoverTargets(ArrayList<SanTargetModel> newItems)
-    {
+    protected void postDiscoverTargets(ArrayList<SanTargetModel> newItems) {
     }
 
-    private boolean validateDiscoverTargetFields()
-    {
+    private boolean validateDiscoverTargetFields() {
         getContainer().getHost().validateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
 
         getAddress().validateEntity(new IValidation[] { new NotEmptyValidation() });
@@ -444,8 +391,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         tempVar.setMaximum(65535);
         getPort().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
 
-        if (getUseUserAuth().getEntity())
-        {
+        if (getUseUserAuth().getEntity()) {
             getUserName().validateEntity(new IValidation[] { new NotEmptyValidation() });
             getPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
         }
@@ -455,18 +401,15 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     }
 
     @Override
-    public boolean validate()
-    {
+    public boolean validate() {
         return true;
     }
 
-    private void useUserAuth_EntityChanged(Object sender, EventArgs args)
-    {
+    private void useUserAuth_EntityChanged(Object sender, EventArgs args) {
         updateUserAuthFields();
     }
 
-    private void updateUserAuthFields()
-    {
+    private void updateUserAuthFields() {
         getUserName().setIsValid(true);
         getUserName().setIsChangeable(getUseUserAuth().getEntity());
 
@@ -475,45 +418,36 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getUpdateCommand())
-        {
+        if (command == getUpdateCommand()) {
             update();
         }
-        else if (command == getLoginCommand())
-        {
+        else if (command == getLoginCommand()) {
             login();
         }
-        else if (command == getDiscoverTargetsCommand())
-        {
+        else if (command == getDiscoverTargetsCommand()) {
             discoverTargets();
         }
     }
 
-    protected void update()
-    {
+    protected void update() {
         updateInternal();
         setIsValid(true);
     }
 
-    protected void updateInternal()
-    {
+    protected void updateInternal() {
     }
 
-    protected void updateLoginAvailability()
-    {
+    protected void updateLoginAvailability() {
         List<SanTargetModel> items = (List<SanTargetModel>) getItems();
 
         // Allow login all command when there at least one target that may be logged in.
         boolean allow = false;
 
-        for (SanTargetModel item : items)
-        {
-            if (!item.getIsLoggedIn())
-            {
+        for (SanTargetModel item : items) {
+            if (!item.getIsLoggedIn()) {
                 allow = true;
                 break;
             }
@@ -522,8 +456,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         getLoginCommand().setIsExecutionAllowed(allow);
     }
 
-    protected void isAllLunsSelectedChanged()
-    {
+    protected void isAllLunsSelectedChanged() {
     }
 
     public String getLoginButtonLabel() {

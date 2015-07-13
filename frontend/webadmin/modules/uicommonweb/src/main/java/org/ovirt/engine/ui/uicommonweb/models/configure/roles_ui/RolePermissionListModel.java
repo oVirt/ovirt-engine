@@ -23,23 +23,19 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
-public class RolePermissionListModel extends SearchableListModel<Role, Permission>
-{
+public class RolePermissionListModel extends SearchableListModel<Role, Permission> {
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
-    public RolePermissionListModel()
-    {
+    public RolePermissionListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().rolesPermissionsTitle());
 
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
@@ -50,16 +46,14 @@ public class RolePermissionListModel extends SearchableListModel<Role, Permissio
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         super.syncSearch();
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 setItems((Collection) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
@@ -70,42 +64,35 @@ public class RolePermissionListModel extends SearchableListModel<Role, Permissio
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
         search();
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         getRemoveCommand().setIsExecutionAllowed(getSelectedItem() != null
                 || (getSelectedItems() != null && getSelectedItems().size() > 0));
 
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
-    public void cancel()
-    {
+    public void cancel() {
         setWindow(null);
     }
 
-    private void remove()
-    {
-        if (getWindow() != null)
-        {
+    private void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -122,20 +109,16 @@ public class RolePermissionListModel extends SearchableListModel<Role, Permissio
         model.getCommands().add(tempVar2);
     }
 
-    private void onRemove()
-    {
-        if (getSelectedItems() != null && getSelectedItems().size() > 0)
-        {
+    private void onRemove() {
+        if (getSelectedItems() != null && getSelectedItems().size() > 0) {
             ConfirmationModel model = (ConfirmationModel) getWindow();
 
-            if (model.getProgress() != null)
-            {
+            if (model.getProgress() != null) {
                 return;
             }
 
             ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-            for (Object perm : getSelectedItems())
-            {
+            for (Object perm : getSelectedItems()) {
                 PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters();
                 tempVar.setPermission((Permission) perm);
                 list.add(tempVar);
@@ -158,20 +141,16 @@ public class RolePermissionListModel extends SearchableListModel<Role, Permissio
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getRemoveCommand())
-        {
+        if (command == getRemoveCommand()) {
             remove();
         }
-        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

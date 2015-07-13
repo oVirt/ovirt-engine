@@ -48,39 +48,32 @@ public abstract class ConsoleModel extends EntityModel<VM> {
     public static final EventDefinition errorEventDefinition;
     private Event<ErrorCodeEventArgs> privateErrorEvent;
 
-    public Event<ErrorCodeEventArgs> getErrorEvent()
-    {
+    public Event<ErrorCodeEventArgs> getErrorEvent() {
         return privateErrorEvent;
     }
 
-    private void setErrorEvent(Event<ErrorCodeEventArgs> value)
-    {
+    private void setErrorEvent(Event<ErrorCodeEventArgs> value) {
         privateErrorEvent = value;
     }
 
     private UICommand privateConnectCommand;
 
-    public UICommand getConnectCommand()
-    {
+    public UICommand getConnectCommand() {
         return privateConnectCommand;
     }
 
-    private void setConnectCommand(UICommand value)
-    {
+    private void setConnectCommand(UICommand value) {
         privateConnectCommand = value;
     }
 
     private boolean isConnected;
 
-    public boolean getIsConnected()
-    {
+    public boolean getIsConnected() {
         return isConnected;
     }
 
-    public void setIsConnected(boolean value)
-    {
-        if (isConnected != value)
-        {
+    public void setIsConnected(boolean value) {
+        if (isConnected != value) {
             isConnected = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsConnected")); //$NON-NLS-1$
         }
@@ -88,15 +81,12 @@ public abstract class ConsoleModel extends EntityModel<VM> {
 
     private boolean forceVmStatusUp;
 
-    public boolean getForceVmStatusUp()
-    {
+    public boolean getForceVmStatusUp() {
         return forceVmStatusUp;
     }
 
-    public void setForceVmStatusUp(boolean value)
-    {
-        if (forceVmStatusUp != value)
-        {
+    public void setForceVmStatusUp(boolean value) {
+        if (forceVmStatusUp != value) {
             forceVmStatusUp = value;
             onPropertyChanged(new PropertyChangedEventArgs("ForceVmStatusUp")); //$NON-NLS-1$
         }
@@ -112,8 +102,7 @@ public abstract class ConsoleModel extends EntityModel<VM> {
         return parentModel;
     }
 
-    static
-    {
+    static {
         errorEventDefinition = new EventDefinition("Error", ConsoleModel.class); //$NON-NLS-1$
     }
 
@@ -194,8 +183,7 @@ public abstract class ConsoleModel extends EntityModel<VM> {
         portalUserReconnectPermissionQuery.setModel(this);
         portalUserReconnectPermissionQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 boolean returnValue = ((VdcQueryReturnValue)result).getReturnValue();
                 if (returnValue) {
                     displayConsoleConnectConfirmPopup(command);
@@ -209,8 +197,7 @@ public abstract class ConsoleModel extends EntityModel<VM> {
         consoleUserReconnectPermissionQuery.setModel(this);
         consoleUserReconnectPermissionQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 boolean returnValue = ((VdcQueryReturnValue)result).getReturnValue();
                 if (returnValue) {
                     command.execute();

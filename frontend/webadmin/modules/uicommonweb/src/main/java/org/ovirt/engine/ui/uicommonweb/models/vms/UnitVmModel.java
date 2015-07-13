@@ -155,13 +155,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.editingEnabled = editingEnabled;
     }
 
-    public boolean getIsNew()
-    {
+    public boolean getIsNew() {
         return privateIsNew;
     }
 
-    public void setIsNew(boolean value)
-    {
+    public void setIsNew(boolean value) {
         privateIsNew = value;
     }
 
@@ -330,15 +328,12 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
     private boolean isWindowsOS;
 
-    public boolean getIsWindowsOS()
-    {
+    public boolean getIsWindowsOS() {
         return isWindowsOS;
     }
 
-    public void setIsWindowsOS(boolean value)
-    {
-        if (isWindowsOS != value)
-        {
+    public void setIsWindowsOS(boolean value) {
+        if (isWindowsOS != value) {
             isWindowsOS = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsWindowsOS")); //$NON-NLS-1$
         }
@@ -346,15 +341,12 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private boolean isLinuxOS;
 
-    public boolean getIsLinuxOS()
-    {
+    public boolean getIsLinuxOS() {
         return isLinuxOS;
     }
 
-    public void setIsLinuxOS(boolean value)
-    {
-        if (isLinuxOS != value)
-        {
+    public void setIsLinuxOS(boolean value) {
+        if (isLinuxOS != value) {
             isLinuxOS = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsLinuxOS")); //$NON-NLS-1$
         }
@@ -362,15 +354,12 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private String cpuNotification;
 
-    public String getCPUNotification()
-    {
+    public String getCPUNotification() {
         return cpuNotification;
     }
 
-    public void setCPUNotification(String value)
-    {
-        if (!ObjectUtils.objectsEqual(cpuNotification, value))
-        {
+    public void setCPUNotification(String value) {
+        if (!ObjectUtils.objectsEqual(cpuNotification, value)) {
             cpuNotification = value;
             onPropertyChanged(new PropertyChangedEventArgs("CPUNotification")); //$NON-NLS-1$
         }
@@ -378,15 +367,12 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     public boolean isCPUsAmountValid;
 
-    public boolean getIsCPUsAmountValid()
-    {
+    public boolean getIsCPUsAmountValid() {
         return isCPUsAmountValid;
     }
 
-    public void setIsCPUsAmountValid(boolean value)
-    {
-        if (isCPUsAmountValid != value)
-        {
+    public void setIsCPUsAmountValid(boolean value) {
+        if (isCPUsAmountValid != value) {
             isCPUsAmountValid = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsCPUsAmountValid")); //$NON-NLS-1$
         }
@@ -394,13 +380,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private NotChangableForVmInPoolListModel<StorageDomain> privateStorageDomain;
 
-    public ListModel<StorageDomain> getStorageDomain()
-    {
+    public ListModel<StorageDomain> getStorageDomain() {
         return privateStorageDomain;
     }
 
-    private void setStorageDomain(NotChangableForVmInPoolListModel<StorageDomain> value)
-    {
+    private void setStorageDomain(NotChangableForVmInPoolListModel<StorageDomain> value) {
         privateStorageDomain = value;
     }
 
@@ -416,8 +400,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private NotChangableForVmInPoolListModel<VmTemplate> baseTemplate;
 
-    public ListModel<VmTemplate> getBaseTemplate()
-    {
+    public ListModel<VmTemplate> getBaseTemplate() {
         return baseTemplate;
     }
 
@@ -457,13 +440,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private EntityModel<String> privateName;
 
-    public EntityModel<String> getName()
-    {
+    public EntityModel<String> getName() {
         return privateName;
     }
 
-    private void setName(EntityModel<String> value)
-    {
+    private void setName(EntityModel<String> value) {
         privateName = value;
     }
 
@@ -489,230 +470,192 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private NotChangableForVmInPoolListModel<Integer> privateOSType;
 
-    public ListModel<Integer> getOSType()
-    {
+    public ListModel<Integer> getOSType() {
         return privateOSType;
     }
 
-    private void setOSType(NotChangableForVmInPoolListModel<Integer> value)
-    {
+    private void setOSType(NotChangableForVmInPoolListModel<Integer> value) {
         privateOSType = value;
     }
 
     private NotChangableForVmInPoolListModel<Integer> privateNumOfMonitors;
 
-    public ListModel<Integer> getNumOfMonitors()
-    {
+    public ListModel<Integer> getNumOfMonitors() {
         return privateNumOfMonitors;
     }
 
-    private void setNumOfMonitors(NotChangableForVmInPoolListModel<Integer> value)
-    {
+    private void setNumOfMonitors(NotChangableForVmInPoolListModel<Integer> value) {
         privateNumOfMonitors = value;
     }
 
     private NotChangableForVmInPoolEntityModel<Boolean> privateIsSingleQxlEnabled;
 
-    public EntityModel<Boolean> getIsSingleQxlEnabled()
-    {
+    public EntityModel<Boolean> getIsSingleQxlEnabled() {
         return privateIsSingleQxlEnabled;
     }
 
-    private void setIsSingleQxlEnabled(NotChangableForVmInPoolEntityModel<Boolean> value)
-    {
+    private void setIsSingleQxlEnabled(NotChangableForVmInPoolEntityModel<Boolean> value) {
         privateIsSingleQxlEnabled = value;
     }
 
 
     private NotChangableForVmInPoolEntityModel<Boolean> privateAllowConsoleReconnect;
 
-    public EntityModel<Boolean> getAllowConsoleReconnect()
-    {
+    public EntityModel<Boolean> getAllowConsoleReconnect() {
         return privateAllowConsoleReconnect;
     }
 
     private NotChangableForVmInPoolEntityModel<String> privateVmId;
 
-    public EntityModel<String> getVmId()
-    {
+    public EntityModel<String> getVmId() {
         return privateVmId;
     }
 
-    private void setVmId(NotChangableForVmInPoolEntityModel<String> value)
-    {
+    private void setVmId(NotChangableForVmInPoolEntityModel<String> value) {
         privateVmId = value;
     }
 
-    private void setAllowConsoleReconnect(NotChangableForVmInPoolEntityModel<Boolean> value)
-    {
+    private void setAllowConsoleReconnect(NotChangableForVmInPoolEntityModel<Boolean> value) {
         privateAllowConsoleReconnect = value;
     }
 
     private NotChangableForVmInPoolEntityModel<String> privateDescription;
 
-    public EntityModel<String> getDescription()
-    {
+    public EntityModel<String> getDescription() {
         return privateDescription;
     }
 
-    private void setDescription(NotChangableForVmInPoolEntityModel<String> value)
-    {
+    private void setDescription(NotChangableForVmInPoolEntityModel<String> value) {
         privateDescription = value;
     }
 
     private NotChangableForVmInPoolEntityModel<String> privateComment;
 
-    public EntityModel<String> getComment()
-    {
+    public EntityModel<String> getComment() {
         return privateComment;
     }
 
-    private void setComment(NotChangableForVmInPoolEntityModel<String> value)
-    {
+    private void setComment(NotChangableForVmInPoolEntityModel<String> value) {
         privateComment = value;
     }
 
     private NotChangableForVmInPoolEntityModel<String> templateVersionName;
 
-    public EntityModel<String> getTemplateVersionName()
-    {
+    public EntityModel<String> getTemplateVersionName() {
         return templateVersionName;
     }
 
-    private void setTemplateVersionName(NotChangableForVmInPoolEntityModel<String> value)
-    {
+    private void setTemplateVersionName(NotChangableForVmInPoolEntityModel<String> value) {
         templateVersionName = value;
     }
 
     private NotChangableForVmInPoolEntityModel<Integer> privateMemSize;
 
-    public EntityModel<Integer> getMemSize()
-    {
+    public EntityModel<Integer> getMemSize() {
         return privateMemSize;
     }
 
-    private void setMemSize(NotChangableForVmInPoolEntityModel<Integer> value)
-    {
+    private void setMemSize(NotChangableForVmInPoolEntityModel<Integer> value) {
         privateMemSize = value;
     }
 
     private NotChangableForVmInPoolEntityModel<Integer> privateMinAllocatedMemory;
 
-    public EntityModel<Integer> getMinAllocatedMemory()
-    {
+    public EntityModel<Integer> getMinAllocatedMemory() {
         return privateMinAllocatedMemory;
     }
 
-    private void setMinAllocatedMemory(NotChangableForVmInPoolEntityModel<Integer> value)
-    {
+    private void setMinAllocatedMemory(NotChangableForVmInPoolEntityModel<Integer> value) {
         privateMinAllocatedMemory = value;
     }
 
     private NotChangableForVmInPoolListModel<Quota> privateQuota;
 
-    public ListModel<Quota> getQuota()
-    {
+    public ListModel<Quota> getQuota() {
         return privateQuota;
     }
 
-    private void setQuota(NotChangableForVmInPoolListModel<Quota> value)
-    {
+    private void setQuota(NotChangableForVmInPoolListModel<Quota> value) {
         privateQuota = value;
     }
 
     private NotChangableForVmInPoolListModel<UsbPolicy> privateUsbPolicy;
 
-    public ListModel<UsbPolicy> getUsbPolicy()
-    {
+    public ListModel<UsbPolicy> getUsbPolicy() {
         return privateUsbPolicy;
     }
 
-    private void setUsbPolicy(NotChangableForVmInPoolListModel<UsbPolicy> value)
-    {
+    private void setUsbPolicy(NotChangableForVmInPoolListModel<UsbPolicy> value) {
         privateUsbPolicy = value;
     }
 
     private NotChangableForVmInPoolListModel<ConsoleDisconnectAction> consoleDisconnectAction;
 
-    public ListModel<ConsoleDisconnectAction> getConsoleDisconnectAction()
-    {
+    public ListModel<ConsoleDisconnectAction> getConsoleDisconnectAction() {
         return consoleDisconnectAction;
     }
 
-    private void setConsoleDisconnectAction(NotChangableForVmInPoolListModel<ConsoleDisconnectAction> value)
-    {
+    private void setConsoleDisconnectAction(NotChangableForVmInPoolListModel<ConsoleDisconnectAction> value) {
         consoleDisconnectAction = value;
     }
 
     private NotChangableForVmInPoolListModel<TimeZoneModel> privateTimeZone;
 
-    public ListModel<TimeZoneModel> getTimeZone()
-    {
+    public ListModel<TimeZoneModel> getTimeZone() {
         return privateTimeZone;
     }
 
-    private void setTimeZone(NotChangableForVmInPoolListModel<TimeZoneModel> value)
-    {
+    private void setTimeZone(NotChangableForVmInPoolListModel<TimeZoneModel> value) {
         privateTimeZone = value;
     }
 
     private NotChangableForVmInPoolListModel<Integer> privateNumOfSockets;
 
-    public ListModel<Integer> getNumOfSockets()
-    {
+    public ListModel<Integer> getNumOfSockets() {
         return privateNumOfSockets;
     }
 
-    private void setNumOfSockets(NotChangableForVmInPoolListModel<Integer> value)
-    {
+    private void setNumOfSockets(NotChangableForVmInPoolListModel<Integer> value) {
         privateNumOfSockets = value;
     }
 
     private NotChangableForVmInPoolEntityModel<String> privateTotalCPUCores;
 
-    public EntityModel<String> getTotalCPUCores()
-    {
+    public EntityModel<String> getTotalCPUCores() {
         return privateTotalCPUCores;
     }
 
-    private void setTotalCPUCores(NotChangableForVmInPoolEntityModel<String> value)
-    {
+    private void setTotalCPUCores(NotChangableForVmInPoolEntityModel<String> value) {
         privateTotalCPUCores = value;
     }
 
     private NotChangableForVmInPoolListModel<Integer> privateCoresPerSocket;
 
-    public ListModel<Integer> getCoresPerSocket()
-    {
+    public ListModel<Integer> getCoresPerSocket() {
         return privateCoresPerSocket;
     }
 
-    private void setCoresPerSocket(NotChangableForVmInPoolListModel<Integer> value)
-    {
+    private void setCoresPerSocket(NotChangableForVmInPoolListModel<Integer> value) {
         privateCoresPerSocket = value;
     }
 
     private NotChangableForVmInPoolListModel<VDS> privateDefaultHost;
 
-    public ListModel<VDS> getDefaultHost()
-    {
+    public ListModel<VDS> getDefaultHost() {
         return privateDefaultHost;
     }
 
-    private void setDefaultHost(NotChangableForVmInPoolListModel<VDS> value)
-    {
+    private void setDefaultHost(NotChangableForVmInPoolListModel<VDS> value) {
         privateDefaultHost = value;
     }
 
     private NotChangableForVmInPoolEntityModel<Boolean> privateisSmartcardEnabled;
 
-    public EntityModel<Boolean> getIsSmartcardEnabled()
-    {
+    public EntityModel<Boolean> getIsSmartcardEnabled() {
         return privateisSmartcardEnabled;
     }
 
-    private void setIsSmartcardEnabled(NotChangableForVmInPoolEntityModel<Boolean> value)
-    {
+    private void setIsSmartcardEnabled(NotChangableForVmInPoolEntityModel<Boolean> value) {
         privateisSmartcardEnabled = value;
     }
 
@@ -815,25 +758,21 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private NotChangableForVmInPoolEntityModel<Boolean> privateIsStateless;
 
-    public EntityModel<Boolean> getIsStateless()
-    {
+    public EntityModel<Boolean> getIsStateless() {
         return privateIsStateless;
     }
 
-    private void setIsStateless(NotChangableForVmInPoolEntityModel<Boolean> value)
-    {
+    private void setIsStateless(NotChangableForVmInPoolEntityModel<Boolean> value) {
         privateIsStateless = value;
     }
 
     private NotChangableForVmInPoolEntityModel<Boolean> privateIsRunAndPause;
 
-    public EntityModel<Boolean> getIsRunAndPause()
-    {
+    public EntityModel<Boolean> getIsRunAndPause() {
         return privateIsRunAndPause;
     }
 
-    private void setIsRunAndPause(NotChangableForVmInPoolEntityModel<Boolean> value)
-    {
+    private void setIsRunAndPause(NotChangableForVmInPoolEntityModel<Boolean> value) {
         privateIsRunAndPause = value;
     }
 
@@ -963,37 +902,31 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
      */
     private NotChangableForVmInPoolEntityModel<Boolean> privateProvisioning;
 
-    public EntityModel<Boolean> getProvisioning()
-    {
+    public EntityModel<Boolean> getProvisioning() {
         return privateProvisioning;
     }
 
-    private void setProvisioning(NotChangableForVmInPoolEntityModel<Boolean> value)
-    {
+    private void setProvisioning(NotChangableForVmInPoolEntityModel<Boolean> value) {
         privateProvisioning = value;
     }
 
     private NotChangableForVmInPoolEntityModel<Boolean> privateProvisioningThin_IsSelected;
 
-    public EntityModel<Boolean> getProvisioningThin_IsSelected()
-    {
+    public EntityModel<Boolean> getProvisioningThin_IsSelected() {
         return privateProvisioningThin_IsSelected;
     }
 
-    public void setProvisioningThin_IsSelected(NotChangableForVmInPoolEntityModel<Boolean> value)
-    {
+    public void setProvisioningThin_IsSelected(NotChangableForVmInPoolEntityModel<Boolean> value) {
         privateProvisioningThin_IsSelected = value;
     }
 
     private NotChangableForVmInPoolEntityModel<Boolean> privateProvisioningClone_IsSelected;
 
-    public EntityModel<Boolean> getProvisioningClone_IsSelected()
-    {
+    public EntityModel<Boolean> getProvisioningClone_IsSelected() {
         return privateProvisioningClone_IsSelected;
     }
 
-    public void setProvisioningClone_IsSelected(NotChangableForVmInPoolEntityModel<Boolean> value)
-    {
+    public void setProvisioningClone_IsSelected(NotChangableForVmInPoolEntityModel<Boolean> value) {
         privateProvisioningClone_IsSelected = value;
     }
 
@@ -1009,61 +942,51 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private NotChangableForVmInPoolListModel<EntityModel<Integer>> privatePriority;
 
-    public ListModel<EntityModel<Integer>> getPriority()
-    {
+    public ListModel<EntityModel<Integer>> getPriority() {
         return privatePriority;
     }
 
-    private void setPriority(NotChangableForVmInPoolListModel<EntityModel<Integer>> value)
-    {
+    private void setPriority(NotChangableForVmInPoolListModel<EntityModel<Integer>> value) {
         privatePriority = value;
     }
 
     private NotChangableForVmInPoolEntityModel<Boolean> privateIsHighlyAvailable;
 
-    public EntityModel<Boolean> getIsHighlyAvailable()
-    {
+    public EntityModel<Boolean> getIsHighlyAvailable() {
         return privateIsHighlyAvailable;
     }
 
-    private void setIsHighlyAvailable(NotChangableForVmInPoolEntityModel<Boolean> value)
-    {
+    private void setIsHighlyAvailable(NotChangableForVmInPoolEntityModel<Boolean> value) {
         privateIsHighlyAvailable = value;
     }
 
     private NotChangableForVmInPoolListModel<EntityModel<BootSequence>> privateFirstBootDevice;
 
-    public ListModel<EntityModel<BootSequence>> getFirstBootDevice()
-    {
+    public ListModel<EntityModel<BootSequence>> getFirstBootDevice() {
         return privateFirstBootDevice;
     }
 
-    private void setFirstBootDevice(NotChangableForVmInPoolListModel<EntityModel<BootSequence>> value)
-    {
+    private void setFirstBootDevice(NotChangableForVmInPoolListModel<EntityModel<BootSequence>> value) {
         privateFirstBootDevice = value;
     }
 
     private NotChangableForVmInPoolListModel<EntityModel<BootSequence>> privateSecondBootDevice;
 
-    public ListModel<EntityModel<BootSequence>> getSecondBootDevice()
-    {
+    public ListModel<EntityModel<BootSequence>> getSecondBootDevice() {
         return privateSecondBootDevice;
     }
 
-    private void setSecondBootDevice(NotChangableForVmInPoolListModel<EntityModel<BootSequence>> value)
-    {
+    private void setSecondBootDevice(NotChangableForVmInPoolListModel<EntityModel<BootSequence>> value) {
         privateSecondBootDevice = value;
     }
 
     private NotChangableForVmInPoolListModel<String> privateCdImage;
 
-    public ListModel<String> getCdImage()
-    {
+    public ListModel<String> getCdImage() {
         return privateCdImage;
     }
 
-    private void setCdImage(NotChangableForVmInPoolListModel<String> value)
-    {
+    private void setCdImage(NotChangableForVmInPoolListModel<String> value) {
         privateCdImage = value;
     }
 
@@ -1089,49 +1012,41 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private NotChangableForVmInPoolEntityModel<String> privateInitrd_path;
 
-    public EntityModel<String> getInitrd_path()
-    {
+    public EntityModel<String> getInitrd_path() {
         return privateInitrd_path;
     }
 
-    private void setInitrd_path(NotChangableForVmInPoolEntityModel<String> value)
-    {
+    private void setInitrd_path(NotChangableForVmInPoolEntityModel<String> value) {
         privateInitrd_path = value;
     }
 
     private NotChangableForVmInPoolEntityModel<String> privateKernel_path;
 
-    public EntityModel<String> getKernel_path()
-    {
+    public EntityModel<String> getKernel_path() {
         return privateKernel_path;
     }
 
-    private void setKernel_path(NotChangableForVmInPoolEntityModel<String> value)
-    {
+    private void setKernel_path(NotChangableForVmInPoolEntityModel<String> value) {
         privateKernel_path = value;
     }
 
     private NotChangableForVmInPoolEntityModel<String> privateKernel_parameters;
 
-    public EntityModel<String> getKernel_parameters()
-    {
+    public EntityModel<String> getKernel_parameters() {
         return privateKernel_parameters;
     }
 
-    private void setKernel_parameters(NotChangableForVmInPoolEntityModel<String> value)
-    {
+    private void setKernel_parameters(NotChangableForVmInPoolEntityModel<String> value) {
         privateKernel_parameters = value;
     }
 
     private NotChangableForVmInPoolEntityModel<String> privateCustomProperties;
 
-    public EntityModel<String> getCustomProperties()
-    {
+    public EntityModel<String> getCustomProperties() {
         return privateCustomProperties;
     }
 
-    private void setCustomProperties(NotChangableForVmInPoolEntityModel<String> value)
-    {
+    private void setCustomProperties(NotChangableForVmInPoolEntityModel<String> value) {
         privateCustomProperties = value;
     }
 
@@ -1188,25 +1103,21 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private Map<Version, Map<String, String>> privateCustomPropertiesKeysList;
 
-    public Map<Version, Map<String, String>> getCustomPropertiesKeysList()
-    {
+    public Map<Version, Map<String, String>> getCustomPropertiesKeysList() {
         return privateCustomPropertiesKeysList;
     }
 
-    public void setCustomPropertiesKeysList(Map<Version, Map<String, String>> value)
-    {
+    public void setCustomPropertiesKeysList(Map<Version, Map<String, String>> value) {
         privateCustomPropertiesKeysList = value;
     }
 
     private NotChangableForVmInPoolEntityModel<Boolean> privateIsAutoAssign;
 
-    public EntityModel<Boolean> getIsAutoAssign()
-    {
+    public EntityModel<Boolean> getIsAutoAssign() {
         return privateIsAutoAssign;
     }
 
-    public void setIsAutoAssign(NotChangableForVmInPoolEntityModel<Boolean> value)
-    {
+    public void setIsAutoAssign(NotChangableForVmInPoolEntityModel<Boolean> value) {
         privateIsAutoAssign = value;
     }
 
@@ -1222,13 +1133,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private NotChangableForVmInPoolListModel<MigrationSupport> migrationMode;
 
-    public ListModel<MigrationSupport> getMigrationMode()
-    {
+    public ListModel<MigrationSupport> getMigrationMode() {
         return migrationMode;
     }
 
-    public void setMigrationMode(NotChangableForVmInPoolListModel<MigrationSupport> value)
-    {
+    public void setMigrationMode(NotChangableForVmInPoolListModel<MigrationSupport> value) {
         migrationMode = value;
     }
 
@@ -1254,39 +1163,32 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private NotChangableForVmInPoolEntityModel<Boolean> privateIsTemplatePublic;
 
-    public EntityModel<Boolean> getIsTemplatePublic()
-    {
+    public EntityModel<Boolean> getIsTemplatePublic() {
         return privateIsTemplatePublic;
     }
 
-    private void setIsTemplatePublic(NotChangableForVmInPoolEntityModel<Boolean> value)
-    {
+    private void setIsTemplatePublic(NotChangableForVmInPoolEntityModel<Boolean> value) {
         privateIsTemplatePublic = value;
     }
 
     private boolean privateIsFirstRun;
 
-    public boolean getIsFirstRun()
-    {
+    public boolean getIsFirstRun() {
         return privateIsFirstRun;
     }
 
-    public void setIsFirstRun(boolean value)
-    {
+    public void setIsFirstRun(boolean value) {
         privateIsFirstRun = value;
     }
 
     private List<DiskModel> disks;
 
-    public List<DiskModel> getDisks()
-    {
+    public List<DiskModel> getDisks() {
         return disks;
     }
 
-    public void setDisks(List<DiskModel> value)
-    {
-        if (disks != value)
-        {
+    public void setDisks(List<DiskModel> value) {
+        if (disks != value) {
             disks = value;
             onPropertyChanged(new PropertyChangedEventArgs("Disks")); //$NON-NLS-1$
         }
@@ -1294,40 +1196,33 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private DisksAllocationModel disksAllocationModel;
 
-    public DisksAllocationModel getDisksAllocationModel()
-    {
+    public DisksAllocationModel getDisksAllocationModel() {
         return disksAllocationModel;
     }
 
-    private void setDisksAllocationModel(DisksAllocationModel value)
-    {
+    private void setDisksAllocationModel(DisksAllocationModel value) {
         disksAllocationModel = value;
     }
 
     private boolean isDisksAvailable;
 
-    public boolean getIsDisksAvailable()
-    {
+    public boolean getIsDisksAvailable() {
         return isDisksAvailable;
     }
 
-    public void setIsDisksAvailable(boolean value)
-    {
+    public void setIsDisksAvailable(boolean value) {
         isDisksAvailable = value;
         onPropertyChanged(new PropertyChangedEventArgs("IsDisksAvailable")); //$NON-NLS-1$
     }
 
     private boolean isCustomPropertiesTabAvailable;
 
-    public boolean getIsCustomPropertiesTabAvailable()
-    {
+    public boolean getIsCustomPropertiesTabAvailable() {
         return isCustomPropertiesTabAvailable;
     }
 
-    public void setIsCustomPropertiesTabAvailable(boolean value)
-    {
-        if (isCustomPropertiesTabAvailable != value)
-        {
+    public void setIsCustomPropertiesTabAvailable(boolean value) {
+        if (isCustomPropertiesTabAvailable != value) {
             isCustomPropertiesTabAvailable = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsCustomPropertiesTabAvailable")); //$NON-NLS-1$
         }
@@ -1778,8 +1673,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getIoThreadsEnabled().getEntityChangedEvent().addListener(this);
     }
 
-    public void initialize(SystemTreeItemModel SystemTreeSelectedItem)
-    {
+    public void initialize(SystemTreeItemModel SystemTreeSelectedItem) {
         super.initialize();
 
         getMemSize().setEntity(256);
@@ -1813,16 +1707,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     @Override
-    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args)
-    {
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition))
-        {
+        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition)) {
             if (sender == getVmType()) {
                 vmTypeChanged();
-            } else if (sender == getDataCenterWithClustersList())
-            {
+            } else if (sender == getDataCenterWithClustersList()) {
                 dataCenterWithClusterSelectedItemChanged(sender, args);
                 updateDisplayAndGraphics();
                 behavior.updateNumOfIoThreads();
@@ -1830,16 +1721,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 behavior.updateEmulatedMachines();
                 behavior.updateCustomCpu();
             }
-            else if (sender == getTemplateWithVersion())
-            {
+            else if (sender == getTemplateWithVersion()) {
                 templateWithVersion_SelectedItemChanged(sender, args);
             }
-            else if (sender == getTimeZone())
-            {
+            else if (sender == getTimeZone()) {
                 timeZone_SelectedItemChanged(sender, args);
             }
-            else if (sender == getDefaultHost())
-            {
+            else if (sender == getDefaultHost()) {
                 defaultHost_SelectedItemChanged(sender, args);
             }
             else if (sender == getOSType()) {
@@ -1861,12 +1749,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
                 getBehavior().activateInstanceTypeManager();
             }
-            else if (sender == getFirstBootDevice())
-            {
+            else if (sender == getFirstBootDevice()) {
                 firstBootDevice_SelectedItemChanged(sender, args);
             }
-            else if (sender == getDisplayType())
-            {
+            else if (sender == getDisplayType()) {
                 displayTypeSelectedItemChanged(sender, args);
                 initUsbPolicy();
             }
@@ -1874,23 +1760,19 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 upgradeGraphicsRelatedModels();
                 initUsbPolicy();
             }
-            else if (sender == getNumOfSockets())
-            {
+            else if (sender == getNumOfSockets()) {
                 numOfSockets_EntityChanged(sender, args);
             }
-            else if (sender == getCoresPerSocket())
-            {
+            else if (sender == getCoresPerSocket()) {
                 coresPerSocket_EntityChanged(sender, args);
             }
-            else if (sender == getMigrationMode())
-            {
+            else if (sender == getMigrationMode()) {
                 behavior.updateUseHostCpuAvailability();
                 behavior.updateCpuPinningVisibility();
                 behavior.updateHaAvailability();
                 behavior.updateNumaEnabled();
             }
-            else if (sender == getCpuSharesAmountSelection())
-            {
+            else if (sender == getCpuSharesAmountSelection()) {
                 behavior.updateCpuSharesAmountChangeability();
             }
             else if (sender == getBaseTemplate()) {
@@ -1900,39 +1782,32 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 watchdogModelSelectedItemChanged(sender, args);
             }
         }
-        else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition))
-        {
+        else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
             if (sender == getVmInitEnabled()) {
                 vmInitEnabledChanged();
             } else if (sender == getIoThreadsEnabled()) {
                 behavior.updateNumOfIoThreads();
-            } else if (sender == getMemSize())
-            {
+            } else if (sender == getMemSize()) {
                 memSize_EntityChanged(sender, args);
             }
-            else if (sender == getTotalCPUCores())
-            {
+            else if (sender == getTotalCPUCores()) {
                 totalCPUCores_EntityChanged(sender, args);
             }
-            else if (sender == getIsAutoAssign())
-            {
+            else if (sender == getIsAutoAssign()) {
                 behavior.updateUseHostCpuAvailability();
                 behavior.updateCpuPinningVisibility();
                 behavior.updateHaAvailability();
                 behavior.updateNumaEnabled();
             }
-            else if (sender == getProvisioning())
-            {
+            else if (sender == getProvisioning()) {
                 provisioning_SelectedItemChanged(sender, args);
             }
-            else if (sender == getProvisioningThin_IsSelected())
-            {
+            else if (sender == getProvisioningThin_IsSelected()) {
                 if (getProvisioningThin_IsSelected().getEntity()) {
                     getProvisioning().setEntity(false);
                 }
             }
-            else if (sender == getProvisioningClone_IsSelected())
-            {
+            else if (sender == getProvisioningClone_IsSelected()) {
                 if (getProvisioningClone_IsSelected().getEntity()) {
                     getProvisioning().setEntity(true);
                 }
@@ -1980,8 +1855,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
     }
 
-    protected void initNumOfMonitors()
-    {
+    protected void initNumOfMonitors() {
         AsyncDataProvider.getInstance().getNumOfMonitorList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
@@ -2067,8 +1941,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
     }
 
-    private void updateMigrationOptions()
-    {
+    private void updateMigrationOptions() {
         DataCenterWithCluster dataCenterWithCluster =
                 getDataCenterWithClustersList().getSelectedItem();
         if (dataCenterWithCluster == null) {
@@ -2124,8 +1997,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
     }
 
-    private void initFirstBootDevice()
-    {
+    private void initFirstBootDevice() {
         EntityModel tempVar = new EntityModel();
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().hardDiskTitle());
         tempVar.setEntity(BootSequence.C);
@@ -2163,8 +2035,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
     }
 
-    private void dataCenterWithClusterSelectedItemChanged(Object sender, EventArgs args)
-    {
+    private void dataCenterWithClusterSelectedItemChanged(Object sender, EventArgs args) {
         behavior.dataCenterWithClusterSelectedItemChanged();
 
         DataCenterWithCluster dataCenterWithCluster = getDataCenterWithClustersList().getSelectedItem();
@@ -2228,8 +2099,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     }
 
-    private void handleQxlChangeProhibitionReason(EntityModel<Boolean> checkbox, String version, boolean isQxl)
-    {
+    private void handleQxlChangeProhibitionReason(EntityModel<Boolean> checkbox, String version, boolean isQxl) {
         if (isQxl) {
             checkbox.setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().optionNotSupportedClusterVersionTooOld(version));
         } else {
@@ -2242,17 +2112,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         behavior.updateMigrationForLocalSD();
     }
 
-    private void timeZone_SelectedItemChanged(Object sender, EventArgs args)
-    {
+    private void timeZone_SelectedItemChanged(Object sender, EventArgs args) {
     }
 
-    private void defaultHost_SelectedItemChanged(Object sender, EventArgs args)
-    {
+    private void defaultHost_SelectedItemChanged(Object sender, EventArgs args) {
         behavior.defaultHost_SelectedItemChanged();
     }
 
-    private void oSType_SelectedItemChanged(Object sender, EventArgs args)
-    {
+    private void oSType_SelectedItemChanged(Object sender, EventArgs args) {
         Integer osType = getOSType().getSelectedItem();
 
         setIsWindowsOS(AsyncDataProvider.getInstance().isWindowsOsType(osType));
@@ -2353,17 +2220,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
     }
 
-    private void firstBootDevice_SelectedItemChanged(Object sender, EventArgs args)
-    {
+    private void firstBootDevice_SelectedItemChanged(Object sender, EventArgs args) {
         EntityModel<BootSequence> entityModel = getFirstBootDevice().getSelectedItem();
         BootSequence firstDevice = entityModel.getEntity();
         EntityModel<BootSequence> prevItem = null;
 
         List<EntityModel<BootSequence>> list = new ArrayList<EntityModel<BootSequence>>();
-        for (EntityModel<BootSequence> item : getFirstBootDevice().getItems())
-        {
-            if (item.getEntity() != firstDevice)
-            {
+        for (EntityModel<BootSequence> item : getFirstBootDevice().getItems()) {
+            if (item.getEntity() != firstDevice) {
                 list.add(item);
                 if (getSecondBootDevice().getSelectedItem() != null && item.getEntity() == getSecondBootDevice().getSelectedItem().getEntity()) {
                     prevItem = item;
@@ -2385,8 +2249,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
     }
 
-    private void provisioning_SelectedItemChanged(Object sender, EventArgs args)
-    {
+    private void provisioning_SelectedItemChanged(Object sender, EventArgs args) {
         behavior.provisioning_SelectedItemChanged();
     }
 
@@ -2453,13 +2316,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         updateNumOfMonitors();
     }
 
-    private void memSize_EntityChanged(Object sender, EventArgs args)
-    {
+    private void memSize_EntityChanged(Object sender, EventArgs args) {
         behavior.updateMinAllocatedMemory();
     }
 
-    private void numOfSockets_EntityChanged(Object sender, EventArgs args)
-    {
+    private void numOfSockets_EntityChanged(Object sender, EventArgs args) {
         behavior.numOfSocketChanged();
     }
 
@@ -2490,8 +2351,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
     }
 
-    public BootSequence getBootSequence()
-    {
+    public BootSequence getBootSequence() {
         EntityModel<BootSequence> firstSelectedItem = getFirstBootDevice().getSelectedItem();
         EntityModel<BootSequence> secondSelectedItem = getSecondBootDevice().getSelectedItem();
 
@@ -2503,19 +2363,15 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         return BootSequence.valueOf(firstSelectedString + secondSelectedString);
     }
 
-    public void setBootSequence(BootSequence value)
-    {
+    public void setBootSequence(BootSequence value) {
         ArrayList<BootSequence> items = new ArrayList<BootSequence>();
-        for (char a : value.toString().toCharArray())
-        {
+        for (char a : value.toString().toCharArray()) {
             items.add(BootSequence.valueOf(String.valueOf(a)));
         }
 
         EntityModel<BootSequence> firstBootDevice = null;
-        for (EntityModel<BootSequence> item : getFirstBootDevice().getItems())
-        {
-            if (item.getEntity() == Linq.firstOrDefault(items))
-            {
+        for (EntityModel<BootSequence> item : getFirstBootDevice().getItems()) {
+            if (item.getEntity() == Linq.firstOrDefault(items)) {
                 firstBootDevice = item;
             }
         }
@@ -2523,24 +2379,18 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         Iterable<EntityModel<BootSequence>> secondDeviceOptions = getSecondBootDevice().getItems();
 
-        if (items.size() > 1)
-        {
+        if (items.size() > 1) {
             BootSequence last = items.get(items.size() - 1);
-            for (EntityModel<BootSequence> a : secondDeviceOptions)
-            {
-                if (a.getEntity() != null && a.getEntity() == last)
-                {
+            for (EntityModel<BootSequence> a : secondDeviceOptions) {
+                if (a.getEntity() != null && a.getEntity() == last) {
                     getSecondBootDevice().setSelectedItem(a);
                     break;
                 }
             }
         }
-        else
-        {
-            for (EntityModel<BootSequence> a : secondDeviceOptions)
-            {
-                if (a.getEntity() == null)
-                {
+        else {
+            for (EntityModel<BootSequence> a : secondDeviceOptions) {
+                if (a.getEntity() == null) {
                     getSecondBootDevice().setSelectedItem(a);
                     break;
                 }
@@ -2629,10 +2479,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private StoragePool getDataCenterAccordingSystemTree(UnitVmModel model, List<StoragePool> list) {
         if (model.getBehavior().getSystemTreeSelectedItem() != null
-                && model.getBehavior().getSystemTreeSelectedItem().getType() != SystemTreeItemType.System)
-        {
-            switch (model.getBehavior().getSystemTreeSelectedItem().getType())
-            {
+                && model.getBehavior().getSystemTreeSelectedItem().getType() != SystemTreeItemType.System) {
+            switch (model.getBehavior().getSystemTreeSelectedItem().getType()) {
             case Templates:
             case DataCenter:
                 return (StoragePool) model.getBehavior().getSystemTreeSelectedItem().getEntity();
@@ -2673,10 +2521,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private List<VDSGroup> getClusterAccordingSystemTree(UnitVmModel model, List<VDSGroup> clusters) {
         if (behavior.getSystemTreeSelectedItem() != null
-                && behavior.getSystemTreeSelectedItem().getType() != SystemTreeItemType.System)
-        {
-            switch (model.getBehavior().getSystemTreeSelectedItem().getType())
-            {
+                && behavior.getSystemTreeSelectedItem().getType() != SystemTreeItemType.System) {
+            switch (model.getBehavior().getSystemTreeSelectedItem().getType()) {
             case Cluster:
             case VMs:
                 VDSGroup cluster = (VDSGroup) behavior.getSystemTreeSelectedItem().getEntity();
@@ -2953,32 +2799,27 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     }
 
-    private void validateMemorySize(EntityModel<Integer> model, int maxMemSize, int minMemSize)
-    {
+    private void validateMemorySize(EntityModel<Integer> model, int maxMemSize, int minMemSize) {
         boolean isValid = false;
 
         int memSize = model.getEntity();
 
-        if (memSize == 0)
-        {
+        if (memSize == 0) {
             model.getInvalidityReasons().add(ConstantsManager.getInstance()
                     .getMessages()
                     .memSizeBetween(minMemSize, maxMemSize));
         }
-        else if (memSize > maxMemSize)
-        {
+        else if (memSize > maxMemSize) {
             model.getInvalidityReasons().add(ConstantsManager.getInstance()
                     .getMessages()
                     .maxMemSizeIs(maxMemSize));
         }
-        else if (memSize < minMemSize)
-        {
+        else if (memSize < minMemSize) {
             model.getInvalidityReasons().add(ConstantsManager.getInstance()
                     .getMessages()
                     .minMemSizeIs(minMemSize));
         }
-        else
-        {
+        else {
             isValid = true;
         }
 
@@ -2987,37 +2828,31 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private NotChangableForVmInPoolListModel<EntityModel<VmPoolType>> poolType;
 
-    public ListModel<EntityModel<VmPoolType>> getPoolType()
-    {
+    public ListModel<EntityModel<VmPoolType>> getPoolType() {
         return poolType;
     }
 
-    protected void setPoolType(NotChangableForVmInPoolListModel<EntityModel<VmPoolType>> value)
-    {
+    protected void setPoolType(NotChangableForVmInPoolListModel<EntityModel<VmPoolType>> value) {
         poolType = value;
     }
 
     private NotChangableForVmInPoolEntityModel<Integer> numOfDesktops;
 
-    public EntityModel<Integer> getNumOfDesktops()
-    {
+    public EntityModel<Integer> getNumOfDesktops() {
         return numOfDesktops;
     }
 
-    protected void setNumOfDesktops(NotChangableForVmInPoolEntityModel<Integer> value)
-    {
+    protected void setNumOfDesktops(NotChangableForVmInPoolEntityModel<Integer> value) {
         numOfDesktops = value;
     }
 
     private NotChangableForVmInPoolEntityModel<Integer> assignedVms;
 
-    public EntityModel<Integer> getAssignedVms()
-    {
+    public EntityModel<Integer> getAssignedVms() {
         return assignedVms;
     }
 
-    public void setAssignedVms(NotChangableForVmInPoolEntityModel<Integer> value)
-    {
+    public void setAssignedVms(NotChangableForVmInPoolEntityModel<Integer> value) {
         assignedVms = value;
     }
 

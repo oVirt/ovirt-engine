@@ -1,8 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb;
 
 @SuppressWarnings("unused")
-public interface ILogger
-{
+public interface ILogger {
     void debug(String message);
 
     void info(String message);

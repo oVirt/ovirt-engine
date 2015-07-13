@@ -24,23 +24,19 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
-public class UserPermissionListModel extends SearchableListModel<DbUser, Permission>
-{
+public class UserPermissionListModel extends SearchableListModel<DbUser, Permission> {
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
-    public UserPermissionListModel()
-    {
+    public UserPermissionListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().permissionsTitle());
         setHelpTag(HelpTag.permissions);
         setHashName("permissions"); // $//$NON-NLS-1$
@@ -51,26 +47,21 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
         getSearchCommand().execute();
     }
 
     @Override
-    public void search()
-    {
-        if (getEntity() != null)
-        {
+    public void search() {
+        if (getEntity() != null) {
             super.search();
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
-        if (getEntity() == null)
-        {
+    protected void syncSearch() {
+        if (getEntity() == null) {
             return;
         }
         IdQueryParameters mlaParams = new IdQueryParameters(getEntity().getId());
@@ -79,8 +70,7 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 ArrayList<Permission> list = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 ArrayList<Permission> newList = new ArrayList<Permission>();
                 for (Permission permission : list) {
@@ -100,10 +90,8 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
 
     }
 
-    public void remove()
-    {
-        if (getWindow() != null)
-        {
+    public void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -120,20 +108,16 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
         model.getCommands().add(tempVar2);
     }
 
-    private void onRemove()
-    {
-        if (getSelectedItems() != null && getSelectedItems().size() > 0)
-        {
+    private void onRemove() {
+        if (getSelectedItems() != null && getSelectedItems().size() > 0) {
             ConfirmationModel model = (ConfirmationModel) getWindow();
 
-            if (model.getProgress() != null)
-            {
+            if (model.getProgress() != null) {
                 return;
             }
 
             ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-            for (Object perm : getSelectedItems())
-            {
+            for (Object perm : getSelectedItems()) {
                 PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters();
                 tempVar.setPermission((Permission) perm);
                 list.add(tempVar);
@@ -153,33 +137,28 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
                         }
                     }, model);
         }
-        else
-        {
+        else {
             cancel();
         }
     }
 
-    public void cancel()
-    {
+    public void cancel() {
         setWindow(null);
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         boolean isInherited = false;
 
         Permission p = getSelectedItem();
@@ -192,20 +171,16 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getRemoveCommand())
-        {
+        if (command == getRemoveCommand()) {
             remove();
         }
-        if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
-        if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

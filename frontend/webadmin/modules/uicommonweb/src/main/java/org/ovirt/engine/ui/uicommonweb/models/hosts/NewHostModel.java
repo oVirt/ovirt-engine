@@ -187,8 +187,7 @@ public class NewHostModel extends HostModel {
             AsyncQuery getHostsQuery = new AsyncQuery();
             getHostsQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object result)
-                {
+                public void onSuccess(Object model, Object result) {
                     ArrayList<VDS> hosts = (ArrayList<VDS>) result;
                     ListModel<VDS> hostNameListModel = getExternalHostName();
                     hostNameListModel.setItems(hosts);
@@ -209,8 +208,7 @@ public class NewHostModel extends HostModel {
         getProvidersQuery.asyncCallback = new INewAsyncCallback() {
             @SuppressWarnings("unchecked")
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 ArrayList<Provider<OpenstackNetworkProviderProperties>> providers =
                         (ArrayList<Provider<OpenstackNetworkProviderProperties>>) result;
                 ListModel<Provider<OpenstackNetworkProviderProperties>> providersListModel = getProviders();

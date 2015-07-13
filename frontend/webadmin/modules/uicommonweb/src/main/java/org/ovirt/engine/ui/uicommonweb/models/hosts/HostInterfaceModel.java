@@ -21,152 +21,126 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class HostInterfaceModel extends EntityModel
-{
+public class HostInterfaceModel extends EntityModel {
 
     private boolean setupNetworkMode;
 
-    public boolean isSetupNetworkMode()
-    {
+    public boolean isSetupNetworkMode() {
         return setupNetworkMode;
     }
 
-    private void setSetupNetworkMode(boolean value)
-    {
+    private void setSetupNetworkMode(boolean value) {
         setupNetworkMode = value;
     }
 
     private ListModel<VdsNetworkInterface> networkInterface;
 
-    public ListModel<VdsNetworkInterface> getInterface()
-    {
+    public ListModel<VdsNetworkInterface> getInterface() {
         return networkInterface;
     }
 
-    private void setInterface(ListModel<VdsNetworkInterface> value)
-    {
+    private void setInterface(ListModel<VdsNetworkInterface> value) {
         networkInterface = value;
     }
 
     private EntityModel<String> address;
 
-    public EntityModel<String> getAddress()
-    {
+    public EntityModel<String> getAddress() {
         return address;
     }
 
-    private void setAddress(EntityModel<String> value)
-    {
+    private void setAddress(EntityModel<String> value) {
         address = value;
     }
 
     private EntityModel<String> subnet;
 
-    public EntityModel<String> getSubnet()
-    {
+    public EntityModel<String> getSubnet() {
         return subnet;
     }
 
-    private void setSubnet(EntityModel<String> value)
-    {
+    private void setSubnet(EntityModel<String> value) {
         subnet = value;
     }
 
     private EntityModel<String> gateway;
 
-    public EntityModel<String> getGateway()
-    {
+    public EntityModel<String> getGateway() {
         return gateway;
     }
 
-    private void setGateway(EntityModel<String> value)
-    {
+    private void setGateway(EntityModel<String> value) {
         gateway = value;
     }
 
     private ListModel<Network> network;
 
-    public ListModel<Network> getNetwork()
-    {
+    public ListModel<Network> getNetwork() {
         return network;
     }
 
-    private void setNetwork(ListModel<Network> value)
-    {
+    private void setNetwork(ListModel<Network> value) {
         network = value;
     }
 
     private EntityModel<Boolean> checkConnectivity;
 
-    public EntityModel<Boolean> getCheckConnectivity()
-    {
+    public EntityModel<Boolean> getCheckConnectivity() {
         return checkConnectivity;
     }
 
-    private void setCheckConnectivity(EntityModel<Boolean> value)
-    {
+    private void setCheckConnectivity(EntityModel<Boolean> value) {
         checkConnectivity = value;
     }
 
     private ListModel<Map.Entry<String, EntityModel<String>>> bondingOptions;
 
-    public ListModel<Map.Entry<String, EntityModel<String>>> getBondingOptions()
-    {
+    public ListModel<Map.Entry<String, EntityModel<String>>> getBondingOptions() {
         return bondingOptions;
     }
 
-    private void setBondingOptions(ListModel<Map.Entry<String, EntityModel<String>>> value)
-    {
+    private void setBondingOptions(ListModel<Map.Entry<String, EntityModel<String>>> value) {
         bondingOptions = value;
     }
 
     private ArrayList<VdsNetworkInterface> networks;
 
-    public ArrayList<VdsNetworkInterface> getNetworks()
-    {
+    public ArrayList<VdsNetworkInterface> getNetworks() {
         return networks;
     }
 
-    public void setNetworks(ArrayList<VdsNetworkInterface> value)
-    {
+    public void setNetworks(ArrayList<VdsNetworkInterface> value) {
         networks = value;
     }
 
     private EntityModel<String> name;
 
-    public EntityModel<String> getName()
-    {
+    public EntityModel<String> getName() {
         return name;
     }
 
-    public void setName(EntityModel<String> value)
-    {
+    public void setName(EntityModel<String> value) {
         name = value;
     }
 
     private EntityModel<Boolean> commitChanges;
 
-    public EntityModel<Boolean> getCommitChanges()
-    {
+    public EntityModel<Boolean> getCommitChanges() {
         return commitChanges;
     }
 
-    public void setCommitChanges(EntityModel<Boolean> value)
-    {
+    public void setCommitChanges(EntityModel<Boolean> value) {
         commitChanges = value;
     }
 
     private NetworkBootProtocol bootProtocol = NetworkBootProtocol.values()[0];
 
-    public NetworkBootProtocol getBootProtocol()
-    {
+    public NetworkBootProtocol getBootProtocol() {
         return bootProtocol;
     }
 
-    public void setBootProtocol(NetworkBootProtocol value)
-    {
-        if (bootProtocol != value)
-        {
+    public void setBootProtocol(NetworkBootProtocol value) {
+        if (bootProtocol != value) {
             bootProtocol = value;
             bootProtocolChanged();
             onPropertyChanged(new PropertyChangedEventArgs("BootProtocol")); //$NON-NLS-1$
@@ -175,15 +149,12 @@ public class HostInterfaceModel extends EntityModel
 
     private boolean noneBootProtocolAvailable = true;
 
-    public boolean getNoneBootProtocolAvailable()
-    {
+    public boolean getNoneBootProtocolAvailable() {
         return noneBootProtocolAvailable;
     }
 
-    public void setNoneBootProtocolAvailable(boolean value)
-    {
-        if (noneBootProtocolAvailable != value)
-        {
+    public void setNoneBootProtocolAvailable(boolean value) {
+        if (noneBootProtocolAvailable != value) {
             noneBootProtocolAvailable = value;
             onPropertyChanged(new PropertyChangedEventArgs("NoneBootProtocolAvailable")); //$NON-NLS-1$
         }
@@ -191,35 +162,29 @@ public class HostInterfaceModel extends EntityModel
 
     private boolean bootProtocolsAvailable;
 
-    public boolean getBootProtocolsAvailable()
-    {
+    public boolean getBootProtocolsAvailable() {
         return bootProtocolsAvailable;
     }
 
-    public void setBootProtocolsAvailable(boolean value)
-    {
-        if (bootProtocolsAvailable != value)
-        {
+    public void setBootProtocolsAvailable(boolean value) {
+        if (bootProtocolsAvailable != value) {
             bootProtocolsAvailable = value;
             updateCanSpecify();
             onPropertyChanged(new PropertyChangedEventArgs("BootProtocolsAvailable")); //$NON-NLS-1$
         }
     }
 
-    public boolean getIsStaticAddress()
-    {
+    public boolean getIsStaticAddress() {
         return getBootProtocol() == NetworkBootProtocol.STATIC_IP;
     }
 
     private boolean bondingOptionsOverrideNotification;
 
-    public boolean getBondingOptionsOverrideNotification()
-    {
+    public boolean getBondingOptionsOverrideNotification() {
         return bondingOptionsOverrideNotification;
     }
 
-    public void setBondingOptionsOverrideNotification(boolean value)
-    {
+    public void setBondingOptionsOverrideNotification(boolean value) {
         bondingOptionsOverrideNotification = value;
         onPropertyChanged(new PropertyChangedEventArgs("BondingOptionsOverrideNotification")); //$NON-NLS-1$
     }
@@ -281,8 +246,7 @@ public class HostInterfaceModel extends EntityModel
         this(false);
     }
 
-    public HostInterfaceModel(boolean compactMode)
-    {
+    public HostInterfaceModel(boolean compactMode) {
         setSetupNetworkMode(compactMode);
         setInterface(new ListModel<VdsNetworkInterface>());
         setNetwork(new ListModel<Network>());
@@ -343,8 +307,7 @@ public class HostInterfaceModel extends EntityModel
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
-    {
+    public void eventRaised(Event ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
         if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getNetwork()) {
@@ -354,20 +317,16 @@ public class HostInterfaceModel extends EntityModel
         }
     }
 
-    private void network_SelectedItemChanged(EventArgs e)
-    {
+    private void network_SelectedItemChanged(EventArgs e) {
         updateCanSpecify();
 
         Network network = getNetwork().getSelectedItem();
         setBootProtocolsAvailable((network != null && "None".equals(network.getName())) ? false //$NON-NLS-1$
                 : true);
 
-        if (getNetworks() != null)
-        {
-            for (VdsNetworkInterface item : getNetworks())
-            {
-                if (ObjectUtils.objectsEqual(item.getNetworkName(), network.getName()))
-                {
+        if (getNetworks() != null) {
+            for (VdsNetworkInterface item : getNetworks()) {
+                if (ObjectUtils.objectsEqual(item.getNetworkName(), network.getName())) {
                     getAddress().setEntity(StringHelper.isNullOrEmpty(item.getAddress()) ? null : item.getAddress());
                     getSubnet().setEntity(StringHelper.isNullOrEmpty(item.getSubnet()) ? null : item.getSubnet());
                     setBootProtocol(!getNoneBootProtocolAvailable()
@@ -385,8 +344,7 @@ public class HostInterfaceModel extends EntityModel
                 && getQosOverridden().getEntity());
     }
 
-    private void bootProtocolChanged()
-    {
+    private void bootProtocolChanged() {
         updateCanSpecify();
 
         getAddress().setIsValid(true);
@@ -394,8 +352,7 @@ public class HostInterfaceModel extends EntityModel
         getGateway().setIsValid(true);
     }
 
-    private void updateCanSpecify()
-    {
+    private void updateCanSpecify() {
         boolean isChangable = bootProtocolsAvailable && getIsStaticAddress();
         getAddress().setChangeProhibitionReason(isChangable && !staticIpChangeAllowed
                 ? ConstantsManager.getInstance().getConstants().staticIpAddressSameAsHostname() : null);
@@ -404,16 +361,14 @@ public class HostInterfaceModel extends EntityModel
         getGateway().setIsChangeable(isChangable);
     }
 
-    public boolean validate()
-    {
+    public boolean validate() {
         getNetwork().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         getAddress().setIsValid(true);
         getSubnet().setIsValid(true);
         getGateway().setIsValid(true);
 
-        if (getIsStaticAddress())
-        {
+        if (getIsStaticAddress()) {
             getAddress().validateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
             getSubnet().validateEntity(new IValidation[] { new NotEmptyValidation(),
                     new SubnetMaskValidation(isSetupNetworkMode()) });

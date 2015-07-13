@@ -37,8 +37,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
-{
+public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private VM vm;
@@ -60,8 +59,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     }
 
     @Override
-    public void initialize(SystemTreeItemModel systemTreeSelectedItem)
-    {
+    public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
         super.initialize(systemTreeSelectedItem);
         getModel().getVmInitEnabled().setEntity(vm.getVmInit() != null);
         getModel().getVmInitModel().init(vm.getStaticData());
@@ -79,14 +77,12 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                     public void onSuccess(Object target, Object returnValue) {
 
                         final StoragePool dataCenter = (StoragePool) returnValue;
-                        if (dataCenter == null)
-                        {
+                        if (dataCenter == null) {
                             disableNewTemplateModel(ConstantsManager.getInstance()
                                     .getConstants()
                                     .dataCenterIsNotAccessibleMsg());
                         }
-                        else
-                        {
+                        else {
 
                             AsyncDataProvider.getInstance().getClusterListByService(
                                     new AsyncQuery(getModel(), new INewAsyncCallback() {
@@ -129,8 +125,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                 vm.getStoragePoolId());
     }
 
-    protected void updateTemplate()
-    {
+    protected void updateTemplate() {
         final DataCenterWithCluster dataCenterWithCluster =
                 (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
         StoragePool dataCenter = dataCenterWithCluster == null ? null : dataCenterWithCluster.getDataCenter();
@@ -139,8 +134,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         }
 
         // Filter according to system tree selection.
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
-        {
+        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
             final StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
 
             AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(getModel(),
@@ -164,8 +158,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                             VmTemplate blankTemplate =
                                                     Linq.firstOrDefault(templatesByDataCenter,
                                                             new Linq.TemplatePredicate(Guid.Empty));
-                                            if (blankTemplate != null)
-                                            {
+                                            if (blankTemplate != null) {
                                                 templatesByStorage.add(0, blankTemplate);
                                             }
 
@@ -182,8 +175,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                     }),
                     dataCenter.getId());
         }
-        else
-        {
+        else {
             AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(getModel(),
                     new INewAsyncCallback() {
                         @Override
@@ -234,8 +226,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     }
 
     @Override
-    public void dataCenterWithClusterSelectedItemChanged()
-    {
+    public void dataCenterWithClusterSelectedItemChanged() {
         super.dataCenterWithClusterSelectedItemChanged();
 
         // If a VM has at least one disk, present its storage domain.
@@ -270,8 +261,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                 true);
     }
 
-    private void initDisks(ArrayList<Disk> disks)
-    {
+    private void initDisks(ArrayList<Disk> disks) {
         Collections.sort(disks, new Linq.DiskByAliasComparer());
         ArrayList<DiskModel> list = new ArrayList<DiskModel>();
 
@@ -304,8 +294,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     }
 
     @Override
-    public void postDataCenterWithClusterSelectedItemChanged()
-    {
+    public void postDataCenterWithClusterSelectedItemChanged() {
         updateQuotaByCluster(null, null);
         updateMemoryBalloon();
         updateCpuSharesAvailability();
@@ -322,18 +311,15 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     }
 
     @Override
-    public void defaultHost_SelectedItemChanged()
-    {
+    public void defaultHost_SelectedItemChanged() {
     }
 
     @Override
-    public void provisioning_SelectedItemChanged()
-    {
+    public void provisioning_SelectedItemChanged() {
     }
 
     @Override
-    public void updateMinAllocatedMemory()
-    {
+    public void updateMinAllocatedMemory() {
     }
 
     private void initTemplate() {
@@ -368,8 +354,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     }
 
     @Override
-    public void initStorageDomains()
-    {
+    public void initStorageDomains() {
         AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
@@ -379,11 +364,9 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                         ArrayList<StorageDomain> activeStorageDomainList =
                                 new ArrayList<StorageDomain>();
 
-                        for (StorageDomain storageDomain : storageDomains)
-                        {
+                        for (StorageDomain storageDomain : storageDomains) {
                             if (storageDomain.getStatus() == StorageDomainStatus.Active
-                                    && storageDomain.getStorageDomainType().isDataDomain())
-                            {
+                                    && storageDomain.getStorageDomainType().isDataDomain()) {
                                 activeStorageDomainList.add(storageDomain);
                             }
                         }
@@ -405,11 +388,9 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                             }
                         }
 
-                        if (activeStorageDomainList.size() > 0)
-                        {
+                        if (activeStorageDomainList.size() > 0) {
                             if (getSystemTreeSelectedItem() != null
-                                    && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
-                            {
+                                    && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
                                 StorageDomain selectStorage =
                                         (StorageDomain) getSystemTreeSelectedItem().getEntity();
                                 StorageDomain s =
@@ -422,14 +403,12 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                 behavior.getModel().getStorageDomain().setIsChangeable(false);
                                 behavior.getModel().getStorageDomain().setSelectedItem(s);
                             }
-                            else
-                            {
+                            else {
                                 behavior.getModel().getStorageDomain().setItems(activeStorageDomainList);
                                 behavior.getModel().getStorageDomain().setIsChangeable(true);
                             }
                         }
-                        else
-                        {
+                        else {
                             behavior.disableNewTemplateModel(ConstantsManager.getInstance()
                                     .getMessages()
                                     .noActiveStorageDomain());
@@ -470,8 +449,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         }
     }
 
-    private void disableNewTemplateModel(String errMessage)
-    {
+    private void disableNewTemplateModel(String errMessage) {
         getModel().setIsValid(false);
         getModel().setMessage(errMessage);
         getModel().getName().setIsChangeable(false);

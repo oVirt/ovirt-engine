@@ -44,13 +44,11 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
     public static final EventDefinition searchCompletedEventDefinition;
     private Event<EventArgs> privateSearchCompletedEvent;
 
-    public Event<EventArgs> getSearchCompletedEvent()
-    {
+    public Event<EventArgs> getSearchCompletedEvent() {
         return privateSearchCompletedEvent;
     }
 
-    private void setSearchCompletedEvent(Event<EventArgs> value)
-    {
+    private void setSearchCompletedEvent(Event<EventArgs> value) {
         privateSearchCompletedEvent = value;
     }
 
@@ -62,49 +60,41 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
 
     private ArrayList<VM> privatevms;
 
-    public ArrayList<VM> getvms()
-    {
+    public ArrayList<VM> getvms() {
         return privatevms;
     }
 
-    public void setvms(ArrayList<VM> value)
-    {
+    public void setvms(ArrayList<VM> value) {
         privatevms = value;
     }
 
     private ArrayList<VmPool> privatepools;
 
-    public ArrayList<VmPool> getpools()
-    {
+    public ArrayList<VmPool> getpools() {
         return privatepools;
     }
 
-    public void setpools(ArrayList<VmPool> value)
-    {
+    public void setpools(ArrayList<VmPool> value) {
         privatepools = value;
     }
 
     private EntityModel<String> privateSelectedItemDefinedMemory;
 
-    public EntityModel<String> getSelectedItemDefinedMemory()
-    {
+    public EntityModel<String> getSelectedItemDefinedMemory() {
         return privateSelectedItemDefinedMemory;
     }
 
-    private void setSelectedItemDefinedMemory(EntityModel<String> value)
-    {
+    private void setSelectedItemDefinedMemory(EntityModel<String> value) {
         privateSelectedItemDefinedMemory = value;
     }
 
     private EntityModel<String> privateSelectedItemNumOfCpuCores;
 
-    public EntityModel<String> getSelectedItemNumOfCpuCores()
-    {
+    public EntityModel<String> getSelectedItemNumOfCpuCores() {
         return privateSelectedItemNumOfCpuCores;
     }
 
-    private void setSelectedItemNumOfCpuCores(EntityModel<String> value)
-    {
+    private void setSelectedItemNumOfCpuCores(EntityModel<String> value) {
         privateSelectedItemNumOfCpuCores = value;
     }
 
@@ -133,8 +123,7 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         super.syncSearch();
         VdcQueryParametersBase queryParameters = new VdcQueryParametersBase();
         queryParameters.setRefresh(getIsQueryFirstTime());
@@ -170,8 +159,7 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
 
     @Override
     public void setItems(Collection value) {
-        if (items != value)
-        {
+        if (items != value) {
             itemsChanging(value, items);
             items = value;
             getItemsChangedEvent().raise(this, EventArgs.EMPTY);
@@ -186,43 +174,35 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
     }
 
     @Override
-    protected void updateDetailsAvailability()
-    {
+    protected void updateDetailsAvailability() {
         super.updateDetailsAvailability();
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
 
         updateSelectedEntityDetails();
     }
 
-    private void updateSelectedEntityDetails()
-    {
-        if (getSelectedItem() == null)
-        {
+    private void updateSelectedEntityDetails() {
+        if (getSelectedItem() == null) {
             return;
         }
 
         Object entity = getSelectedItem().getEntity();
-        if (entity instanceof VM)
-        {
+        if (entity instanceof VM) {
             VM vm = (VM) entity;
             updateDetails(vm);
         }
-        else if (entity instanceof VmPool)
-        {
+        else if (entity instanceof VmPool) {
             AsyncQuery _asyncQuery = new AsyncQuery();
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object result)
-                {
+                public void onSuccess(Object model, Object result) {
                     UserPortalBasicListModel userPortalBasicListModel = (UserPortalBasicListModel) model;
-                    if (result != null)
-                    {
+                    if (result != null) {
                         VM vm = ((VdcQueryReturnValue) result).getReturnValue();
                         if (vm != null) {
                             userPortalBasicListModel.updateDetails(vm);
@@ -238,8 +218,7 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
         }
     }
 
-    public void updateDetails(VM vm)
-    {
+    public void updateDetails(VM vm) {
         getSelectedItemDefinedMemory().setEntity(sizeParser(vm.getVmMemSizeMb()));
         getSelectedItemNumOfCpuCores().setEntity(
                 ConstantsManager.getInstance().getMessages().cpuInfoMessage(vm.getNumOfCpus(), vm.getNumOfSockets(), vm.getCpuPerSocket())
@@ -248,14 +227,12 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
 
     // Temporarily converter
     // TODO: Use converters infrastructure in UICommon
-    public String sizeParser(int sizeInMb)
-    {
+    public String sizeParser(int sizeInMb) {
         return ((sizeInMb >= 1024 && sizeInMb % 1024 == 0) ? (sizeInMb / 1024 + "GB") : (sizeInMb + "MB")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
-    {
+    public void eventRaised(Event ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
     }
 
@@ -359,8 +336,7 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
 
     // overridden only to allow the UIBinder to access this
     @Override
-    public UserPortalItemModel getSelectedItem()
-    {
+    public UserPortalItemModel getSelectedItem() {
         return super.getSelectedItem();
     }
 

@@ -193,15 +193,12 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
 
                             VmGeneralModel model = (VmGeneralModel) target;
                             VM localVm = model.getEntity();
-                            if (localVm == null)
-                            {
+                            if (localVm == null) {
                                 return;
                             }
                             ArrayList<VDS> hosts = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                            for (VDS host : hosts)
-                            {
-                                if (localVm.getDedicatedVmForVdsList().contains(host.getId()))
-                                {
+                            for (VDS host : hosts) {
+                                if (localVm.getDedicatedVmForVdsList().contains(host.getId())) {
                                     model.setDefaultHost(host.getName());
                                     break;
                                 }
@@ -215,104 +212,82 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
         }
     }
 
-    public EntityModel<String> getName()
-    {
+    public EntityModel<String> getName() {
         return name;
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(String value)
-    {
-        if (!ObjectUtils.objectsEqual(description, value))
-        {
+    public void setDescription(String value) {
+        if (!ObjectUtils.objectsEqual(description, value)) {
             description = value;
             onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
     }
 
-    public String getTemplate()
-    {
+    public String getTemplate() {
         return template;
     }
 
-    public void setTemplate(String value)
-    {
-        if (!ObjectUtils.objectsEqual(template, value))
-        {
+    public void setTemplate(String value) {
+        if (!ObjectUtils.objectsEqual(template, value)) {
             template = value;
             onPropertyChanged(new PropertyChangedEventArgs("Template")); //$NON-NLS-1$
         }
     }
 
-    public String getDefinedMemory()
-    {
+    public String getDefinedMemory() {
         return definedMemory;
     }
 
-    public void setDefinedMemory(String value)
-    {
-        if (!ObjectUtils.objectsEqual(definedMemory, value))
-        {
+    public void setDefinedMemory(String value) {
+        if (!ObjectUtils.objectsEqual(definedMemory, value)) {
             definedMemory = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefinedMemory")); //$NON-NLS-1$
         }
     }
 
-    public String getGuestFreeCachedBufferedMemInfo()
-    {
+    public String getGuestFreeCachedBufferedMemInfo() {
         return guestFreeCachedBufferedMemInfo;
     }
 
-    public void setGuestFreeCachedBufferedMemInfo(String value)
-    {
-        if (!ObjectUtils.objectsEqual(guestFreeCachedBufferedMemInfo, value))
-        {
+    public void setGuestFreeCachedBufferedMemInfo(String value) {
+        if (!ObjectUtils.objectsEqual(guestFreeCachedBufferedMemInfo, value)) {
             guestFreeCachedBufferedMemInfo = value;
             onPropertyChanged(new PropertyChangedEventArgs("GuestFreeCachedBufferedMemInfo")); //$NON-NLS-1$
         }
     }
 
-    public String getMinAllocatedMemory()
-    {
+    public String getMinAllocatedMemory() {
         return minAllocatedMemory;
     }
 
-    public void setMinAllocatedMemory(String value)
-    {
-        if (!ObjectUtils.objectsEqual(minAllocatedMemory, value))
-        {
+    public void setMinAllocatedMemory(String value) {
+        if (!ObjectUtils.objectsEqual(minAllocatedMemory, value)) {
             minAllocatedMemory = value;
             onPropertyChanged(new PropertyChangedEventArgs("MinAllocatedMemory")); //$NON-NLS-1$
         }
     }
 
-    public String getOS()
-    {
+    public String getOS() {
         return os;
     }
 
-    public void setOS(String value)
-    {
-        if (!ObjectUtils.objectsEqual(os, value))
-        {
+    public void setOS(String value) {
+        if (!ObjectUtils.objectsEqual(os, value)) {
             os = value;
             onPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
         }
     }
 
-    public String getDefaultDisplayType()
-    {
+    public String getDefaultDisplayType() {
         return defaultDisplayType;
     }
 
-    public void setDefaultDisplayType(String value)
-    {
-        if (!ObjectUtils.objectsEqual(defaultDisplayType, value))
-        {
+    public void setDefaultDisplayType(String value) {
+        if (!ObjectUtils.objectsEqual(defaultDisplayType, value)) {
             defaultDisplayType = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefaultDisplayType")); //$NON-NLS-1$
         }
@@ -334,71 +309,56 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
         this.quotaAvailable = quotaAvailable;
     }
 
-    public int getMonitorCount()
-    {
+    public int getMonitorCount() {
         return monitorCount;
     }
 
-    public void setMonitorCount(int value)
-    {
-        if (monitorCount != value)
-        {
+    public void setMonitorCount(int value) {
+        if (monitorCount != value) {
             monitorCount = value;
             onPropertyChanged(new PropertyChangedEventArgs("MonitorCount")); //$NON-NLS-1$
         }
     }
 
-    public boolean getHasDomain()
-    {
+    public boolean getHasDomain() {
         return hasDomain;
     }
 
-    public void setHasDomain(boolean value)
-    {
-        if (hasDomain != value)
-        {
+    public void setHasDomain(boolean value) {
+        if (hasDomain != value) {
             hasDomain = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasDomain")); //$NON-NLS-1$
         }
     }
 
-    public boolean getHasTimeZone()
-    {
+    public boolean getHasTimeZone() {
         return hasTimeZone;
     }
 
-    public void setHasTimeZone(boolean value)
-    {
-        if (hasTimeZone != value)
-        {
+    public void setHasTimeZone(boolean value) {
+        if (hasTimeZone != value) {
             hasTimeZone = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasTimeZone")); //$NON-NLS-1$
         }
     }
 
-    public String getUsbPolicy()
-    {
+    public String getUsbPolicy() {
         return usbPolicy;
     }
 
-    public void setUsbPolicy(String value)
-    {
-        if (!ObjectUtils.objectsEqual(usbPolicy, value))
-        {
+    public void setUsbPolicy(String value) {
+        if (!ObjectUtils.objectsEqual(usbPolicy, value)) {
             usbPolicy = value;
             onPropertyChanged(new PropertyChangedEventArgs("UsbPolicy")); //$NON-NLS-1$
         }
     }
 
-    public String getCpuInfo()
-    {
+    public String getCpuInfo() {
         return cpuInfo;
     }
 
-    public void setCpuInfo(String value)
-    {
-        if (!ObjectUtils.objectsEqual(cpuInfo, value))
-        {
+    public void setCpuInfo(String value) {
+        if (!ObjectUtils.objectsEqual(cpuInfo, value)) {
             cpuInfo = value;
             onPropertyChanged(new PropertyChangedEventArgs("CpuInfo")); //$NON-NLS-1$
         }
@@ -416,196 +376,154 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
         guestCpuCount = value;
     }
 
-    public boolean getIsHighlyAvailable()
-    {
+    public boolean getIsHighlyAvailable() {
         return isHighlyAvailable;
     }
 
-    public void setIsHighlyAvailable(boolean value)
-    {
-        if (isHighlyAvailable != value)
-        {
+    public void setIsHighlyAvailable(boolean value) {
+        if (isHighlyAvailable != value) {
             isHighlyAvailable = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsHighlyAvailable")); //$NON-NLS-1$
         }
     }
 
-    public String getPriority()
-    {
+    public String getPriority() {
         return priority;
     }
 
-    public void setPriority(String value)
-    {
-        if (!ObjectUtils.objectsEqual(priority, value))
-        {
+    public void setPriority(String value) {
+        if (!ObjectUtils.objectsEqual(priority, value)) {
             priority = value;
             onPropertyChanged(new PropertyChangedEventArgs("Priority")); //$NON-NLS-1$
         }
     }
 
-    public boolean getHasAlert()
-    {
+    public boolean getHasAlert() {
         return hasAlert;
     }
 
-    public void setHasAlert(boolean value)
-    {
-        if (hasAlert != value)
-        {
+    public void setHasAlert(boolean value) {
+        if (hasAlert != value) {
             hasAlert = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasAlert")); //$NON-NLS-1$
         }
     }
 
-    public String getAlert()
-    {
+    public String getAlert() {
         return alert;
     }
 
-    public void setAlert(String value)
-    {
-        if (!ObjectUtils.objectsEqual(alert, value))
-        {
+    public void setAlert(String value) {
+        if (!ObjectUtils.objectsEqual(alert, value)) {
             alert = value;
             onPropertyChanged(new PropertyChangedEventArgs("Alert")); //$NON-NLS-1$
         }
     }
 
-    public String getDomain()
-    {
+    public String getDomain() {
         return domain;
     }
-    public void setDomain(String value)
-    {
-        if (!ObjectUtils.objectsEqual(domain, value))
-        {
+    public void setDomain(String value) {
+        if (!ObjectUtils.objectsEqual(domain, value)) {
             domain = value;
             onPropertyChanged(new PropertyChangedEventArgs("Domain")); //$NON-NLS-1$
         }
     }
 
-    public String getStorageDomain()
-    {
+    public String getStorageDomain() {
         return storageDomain;
     }
 
-    public void setStorageDomain(String value)
-    {
-        if (!ObjectUtils.objectsEqual(storageDomain, value))
-        {
+    public void setStorageDomain(String value) {
+        if (!ObjectUtils.objectsEqual(storageDomain, value)) {
             storageDomain = value;
             onPropertyChanged(new PropertyChangedEventArgs("StorageDomain")); //$NON-NLS-1$
         }
     }
 
-    public String getTimeZone()
-    {
+    public String getTimeZone() {
         return timeZone;
     }
 
-    public void setTimeZone(String value)
-    {
-        if (!ObjectUtils.objectsEqual(timeZone, value))
-        {
+    public void setTimeZone(String value) {
+        if (!ObjectUtils.objectsEqual(timeZone, value)) {
             timeZone = value;
             onPropertyChanged(new PropertyChangedEventArgs("TimeZone")); //$NON-NLS-1$
         }
     }
 
-    public boolean getHasDefaultHost()
-    {
+    public boolean getHasDefaultHost() {
         return hasDefaultHost;
     }
 
-    public void setHasDefaultHost(boolean value)
-    {
-        if (hasDefaultHost != value)
-        {
+    public void setHasDefaultHost(boolean value) {
+        if (hasDefaultHost != value) {
             hasDefaultHost = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasDefaultHost")); //$NON-NLS-1$
         }
     }
 
-    public String getDefaultHost()
-    {
+    public String getDefaultHost() {
         return defaultHost;
     }
 
-    public void setDefaultHost(String value)
-    {
-        if (!ObjectUtils.objectsEqual(defaultHost, value))
-        {
+    public void setDefaultHost(String value) {
+        if (!ObjectUtils.objectsEqual(defaultHost, value)) {
             defaultHost = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefaultHost")); //$NON-NLS-1$
         }
     }
 
-    public boolean getHasCustomProperties()
-    {
+    public boolean getHasCustomProperties() {
         return hasCustomProperties;
     }
 
-    public void setHasCustomProperties(boolean value)
-    {
-        if (hasCustomProperties != value)
-        {
+    public void setHasCustomProperties(boolean value) {
+        if (hasCustomProperties != value) {
             hasCustomProperties = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasCustomProperties")); //$NON-NLS-1$
         }
     }
 
-    public String getCustomProperties()
-    {
+    public String getCustomProperties() {
         return customProperties;
     }
 
-    public void setCustomProperties(String value)
-    {
-        if (!ObjectUtils.objectsEqual(customProperties, value))
-        {
+    public void setCustomProperties(String value) {
+        if (!ObjectUtils.objectsEqual(customProperties, value)) {
             customProperties = value;
             onPropertyChanged(new PropertyChangedEventArgs("CustomProperties")); //$NON-NLS-1$
         }
     }
 
-    public String getVmId()
-    {
+    public String getVmId() {
         return vmId;
     }
 
-    public void setVmId(String value)
-    {
-        if (!ObjectUtils.objectsEqual(vmId, value))
-        {
+    public void setVmId(String value) {
+        if (!ObjectUtils.objectsEqual(vmId, value)) {
             vmId = value;
             onPropertyChanged(new PropertyChangedEventArgs("VmId")); //$NON-NLS-1$
         }
     }
 
-    public String getFqdn()
-    {
+    public String getFqdn() {
         return fqdn;
     }
 
-    public void setFqdn(String value)
-    {
-        if (!ObjectUtils.objectsEqual(fqdn, value))
-        {
+    public void setFqdn(String value) {
+        if (!ObjectUtils.objectsEqual(fqdn, value)) {
             fqdn = value;
             onPropertyChanged(new PropertyChangedEventArgs("FQDN")); //$NON-NLS-1$
         }
     }
 
-    public String getCompatibilityVersion()
-    {
+    public String getCompatibilityVersion() {
         return compatibilityVersion;
     }
 
-    public void setCompatibilityVersion(String value)
-    {
-        if (!ObjectUtils.objectsEqual(compatibilityVersion, value))
-        {
+    public void setCompatibilityVersion(String value) {
+        if (!ObjectUtils.objectsEqual(compatibilityVersion, value)) {
             compatibilityVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("CompatibilityVersion")); //$NON-NLS-1$
         }

@@ -33,17 +33,14 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskImage>
-{
+public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskImage> {
     private UICommand privateCopyCommand;
 
-    public UICommand getCopyCommand()
-    {
+    public UICommand getCopyCommand() {
         return privateCopyCommand;
     }
 
-    private void setCopyCommand(UICommand value)
-    {
+    private void setCopyCommand(UICommand value) {
         privateCopyCommand = value;
     }
 
@@ -59,13 +56,11 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
 
     private UICommand privateChangeQuotaCommand;
 
-    public UICommand getChangeQuotaCommand()
-    {
+    public UICommand getChangeQuotaCommand() {
         return privateChangeQuotaCommand;
     }
 
-    private void setChangeQuotaCommand(UICommand value)
-    {
+    private void setChangeQuotaCommand(UICommand value) {
         privateChangeQuotaCommand = value;
     }
 
@@ -81,8 +76,7 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
         this.storageDomains = storageDomains;
     }
 
-    public TemplateDiskListModel()
-    {
+    public TemplateDiskListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().disksTitle());
         setHelpTag(HelpTag.disks);
         setHashName("disks"); //$NON-NLS-1$
@@ -97,12 +91,10 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             getSearchCommand().execute();
         }
 
@@ -110,19 +102,15 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
     }
 
     @Override
-    public void search()
-    {
-        if (getEntity() != null)
-        {
+    public void search() {
+        if (getEntity() != null) {
             super.search();
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
-        if (getEntity() == null)
-        {
+    protected void syncSearch() {
+        if (getEntity() == null) {
             return;
         }
 
@@ -131,8 +119,7 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
     }
 
     @Override
-    public void setItems(final Collection value)
-    {
+    public void setItems(final Collection value) {
         if (ignoreStorageDomains) {
             setDisks(value);
         }
@@ -162,32 +149,27 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("status")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("status")) { //$NON-NLS-1$
             updateActionAvailability();
         }
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         getCopyCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
                 && isCopyCommandAvailable());
 
@@ -201,10 +183,8 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
         ArrayList<DiskImage> disks =
                 getSelectedItems() != null ? Linq.<DiskImage> cast(getSelectedItems()) : new ArrayList<DiskImage>();
 
-        for (DiskImage disk : disks)
-        {
-            if (disk.getImageStatus() != ImageStatus.OK)
-            {
+        for (DiskImage disk : disks) {
+            if (disk.getImageStatus() != ImageStatus.OK) {
                 return false;
             }
         }
@@ -213,16 +193,13 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getCopyCommand())
-        {
+        if (command == getCopyCommand()) {
             copy();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         } else if (command == getChangeQuotaCommand()) {
             changeQuota();
@@ -231,17 +208,14 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
         }
     }
 
-    private void copy()
-    {
+    private void copy() {
         ArrayList<DiskImage> disks = (ArrayList<DiskImage>) getSelectedItems();
 
-        if (disks == null)
-        {
+        if (disks == null) {
             return;
         }
 
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -255,8 +229,7 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
         model.startProgress(null);
     }
 
-    private void cancel()
-    {
+    private void cancel() {
         setWindow(null);
     }
 
@@ -268,8 +241,7 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
     private void changeQuota() {
         ArrayList<DiskImage> disks = (ArrayList<DiskImage>) getSelectedItems();
 
-        if (disks == null || getWindow() != null)
-        {
+        if (disks == null || getWindow() != null) {
             return;
         }
 
@@ -289,8 +261,7 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
         ChangeQuotaModel model = (ChangeQuotaModel) getWindow();
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
 
-        for (Object item : model.getItems())
-        {
+        for (Object item : model.getItems()) {
             ChangeQuotaItemModel itemModel = (ChangeQuotaItemModel) item;
             DiskImage disk = itemModel.getEntity();
             VdcActionParametersBase parameters =

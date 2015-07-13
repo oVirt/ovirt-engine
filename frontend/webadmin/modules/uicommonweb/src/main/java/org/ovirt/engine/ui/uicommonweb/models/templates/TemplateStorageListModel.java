@@ -33,26 +33,22 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class TemplateStorageListModel extends SearchableListModel
-{
+public class TemplateStorageListModel extends SearchableListModel {
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
     ArrayList<StorageDomainModel> storageDomainModels;
     Collection value;
 
-    public TemplateStorageListModel()
-    {
+    public TemplateStorageListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().storageTitle());
         setHelpTag(HelpTag.storage);
         setHashName("storage"); //$NON-NLS-1$
@@ -63,12 +59,10 @@ public class TemplateStorageListModel extends SearchableListModel
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             getSearchCommand().execute();
         }
 
@@ -76,10 +70,8 @@ public class TemplateStorageListModel extends SearchableListModel
     }
 
     @Override
-    protected void syncSearch()
-    {
-        if (getEntity() == null)
-        {
+    protected void syncSearch() {
+        if (getEntity() == null) {
             return;
         }
 
@@ -91,10 +83,8 @@ public class TemplateStorageListModel extends SearchableListModel
     }
 
     @Override
-    public void setItems(Collection value)
-    {
-        if (storageDomainModels != null)
-        {
+    public void setItems(Collection value) {
+        if (storageDomainModels != null) {
             Collections.sort(storageDomainModels, new StorageDomainModelByNameComparer());
             itemsChanging(value, items);
             items = storageDomainModels;
@@ -103,8 +93,7 @@ public class TemplateStorageListModel extends SearchableListModel
             onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
             storageDomainModels = null;
         }
-        else
-        {
+        else {
             this.value = value;
             VmTemplate template = (VmTemplate) getEntity();
             AsyncDataProvider.getInstance().getTemplateDiskList(new AsyncQuery(this,
@@ -142,10 +131,8 @@ public class TemplateStorageListModel extends SearchableListModel
         }
     }
 
-    private void remove()
-    {
-        if (getWindow() != null)
-        {
+    private void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -158,8 +145,7 @@ public class TemplateStorageListModel extends SearchableListModel
         ArrayList<DiskModel> disks =
                 getSelectedItems() != null ? Linq.<DiskModel> cast(getSelectedItems()) : new ArrayList<DiskModel>();
         ArrayList<String> items = new ArrayList<String>();
-        for (DiskModel diskModel : disks)
-        {
+        for (DiskModel diskModel : disks) {
             items.add(ConstantsManager.getInstance().getMessages().templateDiskDescription(
                     diskModel.getDisk().getDiskAlias(),
                     ((StorageDomain) diskModel.getStorageDomain().getSelectedItem()).getStorageName()));
@@ -172,14 +158,12 @@ public class TemplateStorageListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    private void onRemove()
-    {
+    private void onRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         ArrayList<DiskModel> disks = (ArrayList<DiskModel>) getSelectedItems();
 
-        for (DiskModel diskModel : disks)
-        {
+        for (DiskModel diskModel : disks) {
             RemoveDiskParameters params =
                     new RemoveDiskParameters(diskModel.getDisk().getId(),
                             ((StorageDomain) diskModel.getStorageDomain().getSelectedItem()).getId());
@@ -201,49 +185,40 @@ public class TemplateStorageListModel extends SearchableListModel
         cancel();
     }
 
-    private void cancel()
-    {
+    private void cancel() {
         setWindow(null);
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("status")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("status")) { //$NON-NLS-1$
             updateActionAvailability();
         }
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         getRemoveCommand().setIsExecutionAllowed(isRemoveCommandAvailable());
     }
 
-    private boolean isRemoveCommandAvailable()
-    {
+    private boolean isRemoveCommandAvailable() {
         ArrayList<DiskModel> disks =
                 getSelectedItems() != null ? Linq.<DiskModel> cast(getSelectedItems()) : new ArrayList<DiskModel>();
 
-        if (disks.isEmpty())
-        {
+        if (disks.isEmpty()) {
             return false;
         }
 
-        for (DiskModel disk : disks)
-        {
+        for (DiskModel disk : disks) {
             if (((DiskImage) disk.getDisk()).getImageStatus() == ImageStatus.LOCKED
-                    || ((DiskImage) disk.getDisk()).getStorageIds().size() == 1)
-            {
+                    || ((DiskImage) disk.getDisk()).getStorageIds().size() == 1) {
                 return false;
             }
         }
@@ -252,20 +227,16 @@ public class TemplateStorageListModel extends SearchableListModel
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getRemoveCommand())
-        {
+        if (command == getRemoveCommand()) {
             remove();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
-        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
     }

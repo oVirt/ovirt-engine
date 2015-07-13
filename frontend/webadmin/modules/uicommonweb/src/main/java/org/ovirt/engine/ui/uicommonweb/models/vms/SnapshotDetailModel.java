@@ -9,19 +9,15 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class SnapshotDetailModel extends EntityModel
-{
+public class SnapshotDetailModel extends EntityModel {
     private String name;
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName(String value)
-    {
-        if (!ObjectUtils.objectsEqual(name, value))
-        {
+    public void setName(String value) {
+        if (!ObjectUtils.objectsEqual(name, value)) {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
@@ -29,22 +25,18 @@ public class SnapshotDetailModel extends EntityModel
 
     private Snapshot snapshot;
 
-    public Snapshot getSnapshot()
-    {
+    public Snapshot getSnapshot() {
         return snapshot;
     }
 
-    public void setSnapshot(Snapshot value)
-    {
-        if (snapshot != value)
-        {
+    public void setSnapshot(Snapshot value) {
+        if (snapshot != value) {
             snapshot = value;
             onPropertyChanged(new PropertyChangedEventArgs("Snapshot")); //$NON-NLS-1$
         }
     }
 
-    public SnapshotDetailModel()
-    {
+    public SnapshotDetailModel() {
         setName(""); //$NON-NLS-1$
     }
 

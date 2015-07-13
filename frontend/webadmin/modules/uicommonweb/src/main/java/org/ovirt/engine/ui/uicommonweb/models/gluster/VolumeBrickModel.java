@@ -51,8 +51,7 @@ public class VolumeBrickModel extends Model {
     private UICommand moveBricksUpCommand;
     private UICommand moveBricksDownCommand;
 
-    public VolumeBrickModel()
-    {
+    public VolumeBrickModel() {
         setVolumeType(new EntityModel<GlusterVolumeType>());
 
         setReplicaCount(new EntityModel<Integer>());
@@ -117,12 +116,10 @@ public class VolumeBrickModel extends Model {
 
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (bricks.getItems() != null && bricks.getItems().iterator().hasNext())
-                {
+                if (bricks.getItems() != null && bricks.getItems().iterator().hasNext()) {
                     getRemoveAllBricksCommand().setIsExecutionAllowed(true);
                 }
-                else
-                {
+                else {
                     getRemoveAllBricksCommand().setIsExecutionAllowed(false);
                 }
             }
@@ -167,95 +164,76 @@ public class VolumeBrickModel extends Model {
         getShowBricksList().setEntity(isBrickProvisioningSupported);
     }
 
-    private void updateSelectedBricksActions()
-    {
-        if (bricks.getSelectedItems() == null || bricks.getSelectedItems().size() == 0)
-        {
+    private void updateSelectedBricksActions() {
+        if (bricks.getSelectedItems() == null || bricks.getSelectedItems().size() == 0) {
             getRemoveBricksCommand().setIsExecutionAllowed(false);
         }
-        else
-        {
+        else {
             getRemoveBricksCommand().setIsExecutionAllowed(true);
         }
 
         if (bricks.getItems() == null || bricks.getSelectedItems() == null
-                || bricks.getSelectedItems().size() != 1)
-        {
+                || bricks.getSelectedItems().size() != 1) {
             getMoveBricksUpCommand().setIsExecutionAllowed(false);
             getMoveBricksDownCommand().setIsExecutionAllowed(false);
         }
-        else
-        {
+        else {
             EntityModel<GlusterBrickEntity> selectedItem = bricks.getSelectedItems().get(0);
             List<EntityModel<GlusterBrickEntity>> items = (List<EntityModel<GlusterBrickEntity>>) bricks.getItems();
             int position = items.indexOf(selectedItem);
-            if (position == 0)
-            {
+            if (position == 0) {
                 getMoveBricksUpCommand().setIsExecutionAllowed(false);
             }
-            else
-            {
+            else {
                 getMoveBricksUpCommand().setIsExecutionAllowed(true);
             }
 
-            if (position == (items.size() - 1))
-            {
+            if (position == (items.size() - 1)) {
                 getMoveBricksDownCommand().setIsExecutionAllowed(false);
             }
-            else
-            {
+            else {
                 getMoveBricksDownCommand().setIsExecutionAllowed(true);
             }
         }
     }
 
-    public UICommand getAddBrickCommand()
-    {
+    public UICommand getAddBrickCommand() {
         return addBrickCommand;
     }
 
-    private void setAddBrickCommand(UICommand value)
-    {
+    private void setAddBrickCommand(UICommand value) {
         addBrickCommand = value;
     }
 
-    public UICommand getRemoveBricksCommand()
-    {
+    public UICommand getRemoveBricksCommand() {
         return removeBricksCommand;
     }
 
-    private void setRemoveBricksCommand(UICommand value)
-    {
+    private void setRemoveBricksCommand(UICommand value) {
         removeBricksCommand = value;
     }
 
-    public UICommand getRemoveAllBricksCommand()
-    {
+    public UICommand getRemoveAllBricksCommand() {
         return removeAllBricksCommand;
     }
 
-    private void setRemoveAllBricksCommand(UICommand value)
-    {
+    private void setRemoveAllBricksCommand(UICommand value) {
         removeAllBricksCommand = value;
     }
 
-    public UICommand getMoveBricksUpCommand()
-    {
+    public UICommand getMoveBricksUpCommand() {
         return moveBricksUpCommand;
     }
 
-    private void setMoveBricksUpCommand(UICommand value)
-    {
+    private void setMoveBricksUpCommand(UICommand value) {
         moveBricksUpCommand = value;
     }
 
-    public UICommand getMoveBricksDownCommand()
-    {
+    public UICommand getMoveBricksDownCommand() {
         return moveBricksDownCommand;
     }
 
-    private void setMoveBricksDownCommand(UICommand value)
-    {
+    private void setMoveBricksDownCommand(UICommand value) {
         moveBricksDownCommand = value;
     }
 
@@ -323,15 +301,13 @@ public class VolumeBrickModel extends Model {
         this.force = force;
     }
 
-    public boolean validateAddBricks(GlusterVolumeType selectedVolumeType)
-    {
+    public boolean validateAddBricks(GlusterVolumeType selectedVolumeType) {
         boolean valid = true;
         valid = getBricks().getItems() != null && getBricks().getItems().iterator().hasNext();
         return valid;
     }
 
-    private void addBrick()
-    {
+    private void addBrick() {
         VDS server = servers.getSelectedItem();
         String brickDir = null;
         if (getShowBricksList().getEntity()) {
@@ -340,21 +316,18 @@ public class VolumeBrickModel extends Model {
             brickDir = getBrickDirectory().getEntity();
         }
 
-        if (server == null)
-        {
+        if (server == null) {
             setMessage(ConstantsManager.getInstance().getConstants().emptyServerBrickMsg());
             return;
         }
 
-        if (brickDir == null || brickDir.trim().length() == 0)
-        {
+        if (brickDir == null || brickDir.trim().length() == 0) {
             setMessage(ConstantsManager.getInstance().getConstants().emptyBrickDirectoryMsg());
             return;
         }
 
         brickDir = brickDir.trim();
-        if (!validateBrickDirectory(brickDir))
-        {
+        if (!validateBrickDirectory(brickDir)) {
             return;
         }
 
@@ -365,18 +338,15 @@ public class VolumeBrickModel extends Model {
 
         EntityModel<GlusterBrickEntity> entityModel = new EntityModel<GlusterBrickEntity>(brickEntity);
         List<EntityModel<GlusterBrickEntity>> items = (List<EntityModel<GlusterBrickEntity>>) bricks.getItems();
-        if (items == null)
-        {
+        if (items == null) {
             items = new ArrayList<EntityModel<GlusterBrickEntity>>();
         }
 
-        for (EntityModel<GlusterBrickEntity> model : items)
-        {
+        for (EntityModel<GlusterBrickEntity> model : items) {
             GlusterBrickEntity existingBrick = model.getEntity();
 
             if (existingBrick.getServerId().equals(brickEntity.getServerId())
-                    && existingBrick.getBrickDirectory().equals(brickEntity.getBrickDirectory()))
-            {
+                    && existingBrick.getBrickDirectory().equals(brickEntity.getBrickDirectory())) {
                 setMessage(ConstantsManager.getInstance().getConstants().duplicateBrickMsg());
                 return;
             }
@@ -392,20 +362,17 @@ public class VolumeBrickModel extends Model {
 
     private boolean validateBrickDirectory(String brickDir) {
 
-        if (brickDir.length() < 2)
-        {
+        if (brickDir.length() < 2) {
             setMessage(ConstantsManager.getInstance().getConstants().invalidBrickDirectoryAtleastTwoCharacterseMsg());
             return false;
         }
 
-        if(!brickDir.startsWith("/"))//$NON-NLS-1$
-        {
+        if(!brickDir.startsWith("/")) { //$NON-NLS-1$
             setMessage(ConstantsManager.getInstance().getConstants().invalidBrickDirectoryStartWithSlashMsg());
             return false;
         }
 
-        if (brickDir.contains(" "))//$NON-NLS-1$
-        {
+        if (brickDir.contains(" ")) { //$NON-NLS-1$
             setMessage(ConstantsManager.getInstance().getConstants().invalidBrickDirectoryContainsSpaceMsg());
             return false;
         }
@@ -413,8 +380,7 @@ public class VolumeBrickModel extends Model {
         if (brickDir.charAt(1) == '/'
                 || (brickDir.charAt(1) == '.' && brickDir.length() == 2)
                 || brickDir.charAt(1) == '*'
-                || (brickDir.length() == 3 && brickDir.charAt(1) == '.' && brickDir.charAt(2) == '.'))
-        {
+                || (brickDir.length() == 3 && brickDir.charAt(1) == '.' && brickDir.charAt(2) == '.')) {
             setMessage(ConstantsManager.getInstance().getConstants().invalidBrickDirectoryMsg());
             return false;
         }
@@ -422,18 +388,15 @@ public class VolumeBrickModel extends Model {
         return true;
     }
 
-    private void clearBrickDetails()
-    {
+    private void clearBrickDetails() {
         getBrickDirectory().setEntity(null);
         setMessage(null);
     }
 
-    private void removeBricks()
-    {
+    private void removeBricks() {
         List<EntityModel<GlusterBrickEntity>> items = (List<EntityModel<GlusterBrickEntity>>) bricks.getItems();
         List<EntityModel<GlusterBrickEntity>> selectedItems = bricks.getSelectedItems();
-        if (items == null || selectedItems == null)
-        {
+        if (items == null || selectedItems == null) {
             return;
         }
 
@@ -442,11 +405,9 @@ public class VolumeBrickModel extends Model {
         bricks.setItems(items);
     }
 
-    private void removeAllBricks()
-    {
+    private void removeAllBricks() {
         List<EntityModel<GlusterBrickEntity>> items = (List<EntityModel<GlusterBrickEntity>>) bricks.getItems();
-        if (items == null)
-        {
+        if (items == null) {
             return;
         }
 
@@ -456,32 +417,25 @@ public class VolumeBrickModel extends Model {
     }
 
     @SuppressWarnings("unchecked")
-    private void moveItemsUpDown(boolean isUp)
-    {
+    private void moveItemsUpDown(boolean isUp) {
 
         List<EntityModel<GlusterBrickEntity>> selectedItems = bricks.getSelectedItems();
         ArrayList<EntityModel<GlusterBrickEntity>> items = new ArrayList<EntityModel<GlusterBrickEntity>>(bricks.getItems());
-        for (EntityModel<GlusterBrickEntity> selectedItem : selectedItems)
-        {
+        for (EntityModel<GlusterBrickEntity> selectedItem : selectedItems) {
             int position = items.indexOf(selectedItem);
 
-            if (position == -1)
-            {
+            if (position == -1) {
                 continue;
             }
 
-            if (isUp)
-            {
-                if (position > 0)
-                {
+            if (isUp) {
+                if (position > 0) {
                     items.remove(position);
                     items.add(position - 1, selectedItem);
                 }
             }
-            else
-            {
-                if (position < items.size() - 1)
-                {
+            else {
+                if (position < items.size() - 1) {
                     items.remove(position);
                     items.add(position + 1, selectedItem);
                 }
@@ -495,8 +449,7 @@ public class VolumeBrickModel extends Model {
 
         int brickCount = 0;
 
-        if (bricks.getItems() != null)
-        {
+        if (bricks.getItems() != null) {
             brickCount = getBricks().getItems().size();
         }
 
@@ -513,8 +466,7 @@ public class VolumeBrickModel extends Model {
             int stripeCount, boolean isCreateVolume) {
         int brickCount = 0;
 
-        if (bricks.getItems() != null)
-        {
+        if (bricks.getItems() != null) {
             brickCount = ((List<?>) bricks.getItems()).size();
         }
         return validateBrickCount(selectedVolumeType, brickCount, replicaCount, stripeCount, isCreateVolume);
@@ -525,8 +477,7 @@ public class VolumeBrickModel extends Model {
             int replicaCount,
             int stripeCount, boolean isCreateVolume) {
 
-        if (brickCount < 1)
-        {
+        if (brickCount < 1) {
             return false;
         }
 
@@ -535,66 +486,55 @@ public class VolumeBrickModel extends Model {
         // At the time extending a volume, stripe volume can be converted to a distributed stripe volume
         // and a replicate volume can be converted to a distributed replicate volume
         // so the validation will be performed for the corresponding distributed types
-        if (!isCreateVolume)
-        {
-            if (selectedVolumeType == GlusterVolumeType.REPLICATE)
-            {
+        if (!isCreateVolume) {
+            if (selectedVolumeType == GlusterVolumeType.REPLICATE) {
                 selectedVolumeType = GlusterVolumeType.DISTRIBUTED_REPLICATE;
             }
-            else if (selectedVolumeType == GlusterVolumeType.STRIPE)
-            {
+            else if (selectedVolumeType == GlusterVolumeType.STRIPE) {
                 selectedVolumeType = GlusterVolumeType.DISTRIBUTED_STRIPE;
             }
         }
 
-        switch (selectedVolumeType)
-        {
+        switch (selectedVolumeType) {
 
         case DISTRIBUTE:
-            if (brickCount < 1)
-            {
+            if (brickCount < 1) {
                 valid = false;
             }
             break;
 
         case REPLICATE:
-            if (brickCount != replicaCount)
-            {
+            if (brickCount != replicaCount) {
                 valid = false;
             }
             break;
 
         case STRIPE:
-            if (brickCount != stripeCount)
-            {
+            if (brickCount != stripeCount) {
                 valid = false;
             }
             break;
 
         case DISTRIBUTED_REPLICATE:
-            if ((brickCount % replicaCount) != 0)
-            {
+            if ((brickCount % replicaCount) != 0) {
                 valid = false;
             }
             break;
 
         case DISTRIBUTED_STRIPE:
-            if ((brickCount % stripeCount) != 0)
-            {
+            if ((brickCount % stripeCount) != 0) {
                 valid = false;
             }
             break;
 
         case STRIPED_REPLICATE:
-            if (brickCount != stripeCount * replicaCount)
-            {
+            if (brickCount != stripeCount * replicaCount) {
                 valid = false;
             }
             break;
 
         case DISTRIBUTED_STRIPED_REPLICATE:
-            if (brickCount <= stripeCount * replicaCount || (brickCount % (stripeCount * replicaCount)) != 0)
-            {
+            if (brickCount <= stripeCount * replicaCount || (brickCount % (stripeCount * replicaCount)) != 0) {
                 valid = false;
             }
             break;
@@ -603,24 +543,19 @@ public class VolumeBrickModel extends Model {
         return valid;
     }
 
-    public static String getValidationFailedMsg(GlusterVolumeType selectedVolumeType, boolean isCreateVolume)
-    {
+    public static String getValidationFailedMsg(GlusterVolumeType selectedVolumeType, boolean isCreateVolume) {
         String validationMsg = null;
 
-        if (!isCreateVolume)
-        {
-            if (selectedVolumeType == GlusterVolumeType.REPLICATE)
-            {
+        if (!isCreateVolume) {
+            if (selectedVolumeType == GlusterVolumeType.REPLICATE) {
                 selectedVolumeType = GlusterVolumeType.DISTRIBUTED_REPLICATE;
             }
-            else if (selectedVolumeType == GlusterVolumeType.STRIPE)
-            {
+            else if (selectedVolumeType == GlusterVolumeType.STRIPE) {
                 selectedVolumeType = GlusterVolumeType.DISTRIBUTED_STRIPE;
             }
         }
 
-        switch (selectedVolumeType)
-        {
+        switch (selectedVolumeType) {
         case DISTRIBUTE:
             validationMsg = ConstantsManager.getInstance().getConstants().distriputedVolumeAddBricksMsg();
             break;
@@ -654,21 +589,18 @@ public class VolumeBrickModel extends Model {
         return validationMsg;
     }
 
-    public boolean validate()
-    {
+    public boolean validate() {
         getReplicaCount().setIsValid(true);
         getStripeCount().setIsValid(true);
 
-        if (getReplicaCount().getIsAvailable())
-        {
+        if (getReplicaCount().getIsAvailable()) {
             IntegerValidation replicaCountValidation = new IntegerValidation();
             replicaCountValidation.setMinimum(2);
             replicaCountValidation.setMaximum(16);
             getReplicaCount().validateEntity(new IValidation[] { new NotEmptyValidation(), replicaCountValidation });
         }
 
-        if (getStripeCount().getIsAvailable())
-        {
+        if (getStripeCount().getIsAvailable()) {
             IntegerValidation stripeCountValidation = new IntegerValidation();
             stripeCountValidation.setMinimum(4);
             stripeCountValidation.setMaximum(16);
@@ -711,8 +643,7 @@ public class VolumeBrickModel extends Model {
         else {
 
             int count = 0;
-            for (Object model : bricks.getItems())
-            {
+            for (Object model : bricks.getItems()) {
                 count++;
                 GlusterBrickEntity brick = (GlusterBrickEntity) ((EntityModel) model).getEntity();
                 if (servers.contains(brick.getServerName())) {
@@ -745,24 +676,19 @@ public class VolumeBrickModel extends Model {
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getAddBrickCommand())
-        {
+        if (command == getAddBrickCommand()) {
             addBrick();
         }
-        else if (command == getRemoveBricksCommand())
-        {
+        else if (command == getRemoveBricksCommand()) {
             removeBricks();
         }
-        else if (command == getRemoveAllBricksCommand())
-        {
+        else if (command == getRemoveAllBricksCommand()) {
             removeAllBricks();
         }
-        else if (command == getMoveBricksUpCommand())
-        {
+        else if (command == getMoveBricksUpCommand()) {
             moveItemsUpDown(true);
         }
-        else if (command == getMoveBricksDownCommand())
-        {
+        else if (command == getMoveBricksDownCommand()) {
             moveItemsUpDown(false);
         }
     }

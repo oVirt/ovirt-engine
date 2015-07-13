@@ -13,31 +13,25 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class PoolInterfaceListModel extends SearchableListModel<VmPool, VmNetworkInterface>
-{
-    public PoolInterfaceListModel()
-    {
+public class PoolInterfaceListModel extends SearchableListModel<VmPool, VmNetworkInterface> {
+    public PoolInterfaceListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().networkInterfacesTitle());
         setHelpTag(HelpTag.network_interfaces);
         setHashName("network_interfaces"); //$NON-NLS-1$
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
         VmPool pool = getEntity();
-        if (pool != null)
-        {
+        if (pool != null) {
             AsyncQuery _asyncQuery = new AsyncQuery();
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object result)
-                {
-                    if (result != null)
-                    {
+                public void onSuccess(Object model, Object result) {
+                    if (result != null) {
                         VM vm = ((VdcQueryReturnValue) result).getReturnValue();
                         if (vm == null) {
                            return;

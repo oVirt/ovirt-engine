@@ -28,15 +28,13 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
 @SuppressWarnings("unused")
-public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements IFrontendMultipleQueryAsyncCallback
-{
+public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements IFrontendMultipleQueryAsyncCallback {
     private InstanceTypeManager instanceTypeManager;
 
     private ActionGroup actionGroup;
 
     @Override
-    public void initialize(SystemTreeItemModel systemTreeSelectedItem)
-    {
+    public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
         actionGroup = getModel().isCreateInstanceOnly() ? ActionGroup.CREATE_INSTANCE : ActionGroup.CREATE_VM;
 
         commonInitialize();
@@ -86,8 +84,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
     }
 
     @Override
-    public void dataCenterWithClusterSelectedItemChanged()
-    {
+    public void dataCenterWithClusterSelectedItemChanged() {
         super.dataCenterWithClusterSelectedItemChanged();
 
         ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
@@ -107,8 +104,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
     }
 
     @Override
-    public void executed(FrontendMultipleQueryAsyncResult result)
-    {
+    public void executed(FrontendMultipleQueryAsyncResult result) {
         List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
         List<VmTemplate> templates =
                 (ArrayList<VmTemplate>) returnValueList.get(0).getReturnValue();

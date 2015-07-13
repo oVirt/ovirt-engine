@@ -24,29 +24,24 @@ public class PoolDiskListModel extends VmDiskListModelBase<VmPool> {
         this.vm = vm;
     }
 
-    public PoolDiskListModel()
-    {
+    public PoolDiskListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().disksTitle());
         setHelpTag(HelpTag.disks);
         setHashName("disks"); //$NON-NLS-1$
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
         VmPool pool = getEntity();
-        if (pool != null)
-        {
+        if (pool != null) {
             AsyncQuery _asyncQuery = new AsyncQuery();
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object result)
-                {
-                    if (result != null)
-                    {
+                public void onSuccess(Object model, Object result) {
+                    if (result != null) {
                         VM vm = ((VdcQueryReturnValue) result).getReturnValue();
                         if (vm == null) {
                             return;
@@ -64,10 +59,8 @@ public class PoolDiskListModel extends VmDiskListModelBase<VmPool> {
     }
 
     @Override
-    protected void syncSearch()
-    {
-        if (getVM() == null)
-        {
+    protected void syncSearch() {
+        if (getVM() == null) {
             return;
         }
 

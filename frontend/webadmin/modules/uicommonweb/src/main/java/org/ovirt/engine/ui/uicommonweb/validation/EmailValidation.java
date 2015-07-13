@@ -4,18 +4,14 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.MailAddress;
 
 @SuppressWarnings("unused")
-public class EmailValidation implements IValidation
-{
+public class EmailValidation implements IValidation {
     @Override
-    public ValidationResult validate(Object value)
-    {
+    public ValidationResult validate(Object value) {
         ValidationResult result = new ValidationResult();
 
-        try
-        {
+        try {
             new MailAddress((String) value);
-        } catch (RuntimeException e)
-        {
+        } catch (RuntimeException e) {
             result.setSuccess(false);
             result.getReasons().add(ConstantsManager.getInstance().getConstants().invalidEmailAddressInvalidReason());
         }

@@ -16,11 +16,9 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class HostBricksListModel extends SearchableListModel<VDS, GlusterBrickEntity>
-{
+public class HostBricksListModel extends SearchableListModel<VDS, GlusterBrickEntity> {
 
-    public HostBricksListModel()
-    {
+    public HostBricksListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().hostBricksTitle());
         setHelpTag(HelpTag.gluster_bricks);
         setHashName("gluster_bricks"); // $//$NON-NLS-1$
@@ -28,33 +26,27 @@ public class HostBricksListModel extends SearchableListModel<VDS, GlusterBrickEn
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
         getSearchCommand().execute();
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
         getSearchCommand().execute();
     }
 
     @Override
-    public void search()
-    {
-        if (getEntity() != null)
-        {
+    public void search() {
+        if (getEntity() != null) {
             super.search();
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
-        if (getEntity() == null)
-        {
+    protected void syncSearch() {
+        if (getEntity() == null) {
             return;
         }
 

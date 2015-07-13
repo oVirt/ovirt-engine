@@ -1,8 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb;
 
 @SuppressWarnings("unused")
-public enum ValidateServerCertificateEnum
-{
+public enum ValidateServerCertificateEnum {
     // Validate server certificate.
     TRUE,
     // Don't validate server certificate.
@@ -10,13 +9,11 @@ public enum ValidateServerCertificateEnum
     // Validate server certificate only if we browse in ssl.
     AUTO;
 
-    public int getValue()
-    {
+    public int getValue() {
         return this.ordinal();
     }
 
-    public static ValidateServerCertificateEnum forValue(int value)
-    {
+    public static ValidateServerCertificateEnum forValue(int value) {
         return values()[value];
     }
 }

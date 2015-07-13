@@ -50,8 +50,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-public abstract class HostModel extends Model implements HasValidatedTabs
-{
+public abstract class HostModel extends Model implements HasValidatedTabs {
     public static final int HostNameMaxLength = 255;
     public static final String BeginTestStage = "BeginTest"; //$NON-NLS-1$
     public static final String EndTestStage = "EndTest"; //$NON-NLS-1$
@@ -61,198 +60,165 @@ public abstract class HostModel extends Model implements HasValidatedTabs
 
     private UICommand privateUpdateHostsCommand;
 
-    public UICommand getUpdateHostsCommand()
-    {
+    public UICommand getUpdateHostsCommand() {
         return privateUpdateHostsCommand;
     }
 
-    private void setUpdateHostsCommand(UICommand value)
-    {
+    private void setUpdateHostsCommand(UICommand value) {
         privateUpdateHostsCommand = value;
     }
 
-    public boolean getIsNew()
-    {
+    public boolean getIsNew() {
         return getHostId() == null;
     }
 
     private Guid privateHostId;
 
-    public Guid getHostId()
-    {
+    public Guid getHostId() {
         return privateHostId;
     }
 
-    public void setHostId(Guid value)
-    {
+    public void setHostId(Guid value) {
         privateHostId = value;
     }
 
     private String privateOriginalName;
 
-    public String getOriginalName()
-    {
+    public String getOriginalName() {
         return privateOriginalName;
     }
 
-    public void setOriginalName(String value)
-    {
+    public void setOriginalName(String value) {
         privateOriginalName = value;
     }
 
     private EntityModel<String> privateName;
 
-    public EntityModel<String> getName()
-    {
+    public EntityModel<String> getName() {
         return privateName;
     }
 
-    private void setName(EntityModel<String> value)
-    {
+    private void setName(EntityModel<String> value) {
         privateName = value;
     }
 
     private EntityModel<String> privateUserName;
 
-    public EntityModel<String> getUserName()
-    {
+    public EntityModel<String> getUserName() {
         return privateUserName;
     }
 
-    private void setUserName(EntityModel<String> value)
-    {
+    private void setUserName(EntityModel<String> value) {
         privateUserName = value;
     }
 
     private EntityModel<Void> privatePkSection;
 
-    public EntityModel<Void> getPkSection()
-    {
+    public EntityModel<Void> getPkSection() {
         return privatePkSection;
     }
 
-    private void setPkSection(EntityModel<Void> value)
-    {
+    private void setPkSection(EntityModel<Void> value) {
         privatePkSection = value;
     }
 
     private EntityModel<String> privateFetchSshFingerprint;
 
-    public EntityModel<String> getFetchSshFingerprint()
-    {
+    public EntityModel<String> getFetchSshFingerprint() {
         return privateFetchSshFingerprint;
     }
 
-    private void setFetchSshFingerprint(EntityModel<String> value)
-    {
+    private void setFetchSshFingerprint(EntityModel<String> value) {
         privateFetchSshFingerprint = value;
     }
 
     private EntityModel<Integer> privateAuthSshPort;
 
-    public EntityModel<Integer> getAuthSshPort()
-    {
+    public EntityModel<Integer> getAuthSshPort() {
         return privateAuthSshPort;
     }
 
-    private void setAuthSshPort(EntityModel<Integer> value)
-    {
+    private void setAuthSshPort(EntityModel<Integer> value) {
         privateAuthSshPort = value;
     }
 
     private EntityModel<String> privateUserPassword;
 
-    public EntityModel<String> getUserPassword()
-    {
+    public EntityModel<String> getUserPassword() {
         return privateUserPassword;
     }
 
-    private void setUserPassword(EntityModel<String> value)
-    {
+    private void setUserPassword(EntityModel<String> value) {
         privateUserPassword = value;
     }
 
     private EntityModel<String> privatePublicKey;
 
-    public EntityModel<String> getPublicKey()
-    {
+    public EntityModel<String> getPublicKey() {
         return privatePublicKey;
     }
 
-    private void setPublicKey(EntityModel<String> value)
-    {
+    private void setPublicKey(EntityModel<String> value) {
         privatePublicKey = value;
     }
 
     private EntityModel<String> privateProviderSearchFilterLabel;
 
-    public EntityModel<String> getProviderSearchFilterLabel()
-    {
+    public EntityModel<String> getProviderSearchFilterLabel() {
         return privateProviderSearchFilterLabel;
     }
 
-    private void setProviderSearchFilterLabel(EntityModel<String> value)
-    {
+    private void setProviderSearchFilterLabel(EntityModel<String> value) {
         privateProviderSearchFilterLabel = value;
     }
 
     private EntityModel<String> privateProviderSearchFilter;
 
-    public EntityModel<String> getProviderSearchFilter()
-    {
+    public EntityModel<String> getProviderSearchFilter() {
         return privateProviderSearchFilter;
     }
 
-    private void setProviderSearchFilter(EntityModel<String> value)
-    {
+    private void setProviderSearchFilter(EntityModel<String> value) {
         privateProviderSearchFilter = value;
     }
 
     private EntityModel<String> privateHost;
 
-    public EntityModel<String> getHost()
-    {
+    public EntityModel<String> getHost() {
         return privateHost;
     }
 
-    private void setHost(EntityModel<String> value)
-    {
+    private void setHost(EntityModel<String> value) {
         privateHost = value;
     }
 
     private ListModel<StoragePool> privateDataCenter;
 
-    public ListModel<StoragePool> getDataCenter()
-    {
+    public ListModel<StoragePool> getDataCenter() {
         return privateDataCenter;
     }
 
-    private void setDataCenter(ListModel<StoragePool> value)
-    {
+    private void setDataCenter(ListModel<StoragePool> value) {
         privateDataCenter = value;
     }
 
     private ListModel<VDSGroup> privateCluster;
 
-    public ListModel<VDSGroup> getCluster()
-    {
+    public ListModel<VDSGroup> getCluster() {
         return privateCluster;
     }
 
-    private void setCluster(ListModel<VDSGroup> value)
-    {
+    private void setCluster(ListModel<VDSGroup> value) {
         privateCluster = value;
     }
 
     private EntityModel<Integer> privatePort;
 
-    public EntityModel<Integer> getPort()
-    {
+    public EntityModel<Integer> getPort() {
         return privatePort;
     }
 
-    private void setPort(EntityModel<Integer> value)
-    {
+    private void setPort(EntityModel<Integer> value) {
         privatePort = value;
     }
 
@@ -268,49 +234,41 @@ public abstract class HostModel extends Model implements HasValidatedTabs
 
     private EntityModel<String> privateFetchResult;
 
-    public EntityModel<String> getFetchResult()
-    {
+    public EntityModel<String> getFetchResult() {
         return privateFetchResult;
     }
 
-    private void setFetchResult(EntityModel<String> value)
-    {
+    private void setFetchResult(EntityModel<String> value) {
         privateFetchResult = value;
     }
 
     private EntityModel<Boolean> privateOverrideIpTables;
 
-    public EntityModel<Boolean> getOverrideIpTables()
-    {
+    public EntityModel<Boolean> getOverrideIpTables() {
         return privateOverrideIpTables;
     }
 
-    private void setOverrideIpTables(EntityModel<Boolean> value)
-    {
+    private void setOverrideIpTables(EntityModel<Boolean> value) {
         privateOverrideIpTables = value;
     }
 
     private EntityModel<Boolean> privateProtocol;
 
-    public EntityModel<Boolean> getProtocol()
-    {
+    public EntityModel<Boolean> getProtocol() {
         return privateProtocol;
     }
 
-    private void setProtocol(EntityModel<Boolean> value)
-    {
+    private void setProtocol(EntityModel<Boolean> value) {
         privateProtocol = value;
     }
 
     private EntityModel<Boolean> privateIsPm;
 
-    public EntityModel<Boolean> getIsPm()
-    {
+    public EntityModel<Boolean> getIsPm() {
         return privateIsPm;
     }
 
-    private void setIsPm(EntityModel<Boolean> value)
-    {
+    private void setIsPm(EntityModel<Boolean> value) {
         privateIsPm = value;
     }
 
@@ -336,13 +294,11 @@ public abstract class HostModel extends Model implements HasValidatedTabs
 
     private EntityModel<Boolean> pmKdumpDetection;
 
-    public EntityModel<Boolean> getPmKdumpDetection()
-    {
+    public EntityModel<Boolean> getPmKdumpDetection() {
         return pmKdumpDetection;
     }
 
-    private void setPmKdumpDetection(EntityModel<Boolean> value)
-    {
+    private void setPmKdumpDetection(EntityModel<Boolean> value) {
         pmKdumpDetection = value;
     }
 
@@ -358,15 +314,12 @@ public abstract class HostModel extends Model implements HasValidatedTabs
 
     private boolean isPowerManagementTabSelected;
 
-    public boolean getIsPowerManagementTabSelected()
-    {
+    public boolean getIsPowerManagementTabSelected() {
         return isPowerManagementTabSelected;
     }
 
-    public void setIsPowerManagementTabSelected(boolean value)
-    {
-        if (isPowerManagementTabSelected != value)
-        {
+    public void setIsPowerManagementTabSelected(boolean value) {
+        if (isPowerManagementTabSelected != value) {
             isPowerManagementTabSelected = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsPowerManagementTabSelected")); //$NON-NLS-1$
         }
@@ -472,13 +425,11 @@ public abstract class HostModel extends Model implements HasValidatedTabs
 
     private ListModel<VDS> privateExternalHostName;
 
-    public ListModel<VDS> getExternalHostName()
-    {
+    public ListModel<VDS> getExternalHostName() {
         return privateExternalHostName;
     }
 
-    protected void setExternalHostName(ListModel<VDS> value)
-    {
+    protected void setExternalHostName(ListModel<VDS> value) {
         privateExternalHostName = value;
     }
 
@@ -514,13 +465,11 @@ public abstract class HostModel extends Model implements HasValidatedTabs
 
     private EntityModel<String> privateComment;
 
-    public EntityModel<String> getComment()
-    {
+    public EntityModel<String> getComment() {
         return privateComment;
     }
 
-    protected void setComment(EntityModel<String> value)
-    {
+    protected void setComment(EntityModel<String> value) {
         privateComment = value;
     }
 
@@ -536,13 +485,11 @@ public abstract class HostModel extends Model implements HasValidatedTabs
 
     private ListModel<Provider<OpenstackNetworkProviderProperties>> privateProviders;
 
-    public ListModel<Provider<OpenstackNetworkProviderProperties>> getProviders()
-    {
+    public ListModel<Provider<OpenstackNetworkProviderProperties>> getProviders() {
         return privateProviders;
     }
 
-    protected void setProviders(ListModel<Provider<OpenstackNetworkProviderProperties>> value)
-    {
+    protected void setProviders(ListModel<Provider<OpenstackNetworkProviderProperties>> value) {
         privateProviders = value;
     }
 
@@ -558,13 +505,11 @@ public abstract class HostModel extends Model implements HasValidatedTabs
 
     private EntityModel<Boolean> isDiscoveredHosts;
 
-    public EntityModel<Boolean> getIsDiscoveredHosts()
-    {
+    public EntityModel<Boolean> getIsDiscoveredHosts() {
         return isDiscoveredHosts;
     }
 
-    public void setIsDiscoveredHosts(EntityModel<Boolean> value)
-    {
+    public void setIsDiscoveredHosts(EntityModel<Boolean> value) {
         isDiscoveredHosts = value;
     }
 
@@ -707,11 +652,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         aQuery.setModel(this);
         aQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 String pk = (String) result;
-                if (pk != null && pk.length() > 0)
-                {
+                if (pk != null && pk.length() > 0) {
                     getPublicKey().setEntity(pk);
                 }
             }
@@ -728,16 +671,13 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         aQuery.setModel(this);
         aQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 String fingerprint = (String) result;
-                if (fingerprint != null && fingerprint.length() > 0)
-                {
+                if (fingerprint != null && fingerprint.length() > 0) {
                     getFetchSshFingerprint().setEntity(fingerprint);
                     getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().successLoadingFingerprint());
                 }
-                else
-                {
+                else {
                     getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().errorLoadingFingerprint());
                 }
             }
@@ -862,17 +802,14 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         getConsoleAddress().setIsChangeable(enabled);
     }
 
-    private void dataCenter_SelectedItemChanged()
-    {
+    private void dataCenter_SelectedItemChanged() {
         StoragePool dataCenter = getDataCenter().getSelectedItem();
-        if (dataCenter != null)
-        {
+        if (dataCenter != null) {
             AsyncQuery _asyncQuery = new AsyncQuery();
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object result)
-                {
+                public void onSuccess(Object model, Object result) {
                     HostModel hostModel = (HostModel) model;
                     @SuppressWarnings("unchecked")
                     ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) result;
@@ -923,18 +860,15 @@ public abstract class HostModel extends Model implements HasValidatedTabs
 
         hostModel.getCluster().setItems(clusters);
 
-        if (oldCluster != null)
-        {
+        if (oldCluster != null) {
             VDSGroup newSelectedItem =
                     Linq.firstOrDefault(clusters, new Linq.ClusterPredicate(oldCluster.getId()));
-            if (newSelectedItem != null)
-            {
+            if (newSelectedItem != null) {
                 hostModel.getCluster().setSelectedItem(newSelectedItem);
             }
         }
 
-        if (hostModel.getCluster().getSelectedItem() == null)
-        {
+        if (hostModel.getCluster().getSelectedItem() == null) {
             hostModel.getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
         }
 
@@ -977,8 +911,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         getFenceAgentListModel().setPmTypes(pmTypes);
     }
 
-    public boolean validate()
-    {
+    public boolean validate() {
         getName().validateEntity(new IValidation[] { new HostnameValidation() });
 
         getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
@@ -1041,8 +974,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
     public void updateModelFromVds(VDS vds,
             ArrayList<StoragePool> dataCenters,
             boolean isEditWithPMemphasis,
-            SystemTreeItemModel selectedSystemTreeItem)
-    {
+            SystemTreeItemModel selectedSystemTreeItem) {
         setHostId(vds.getId());
         getOverrideIpTables().setIsAvailable(showInstallationProperties());
         vdsProtocol = vds.getProtocol();
@@ -1119,12 +1051,10 @@ public abstract class HostModel extends Model implements HasValidatedTabs
             vds.getStatus() != VDSStatus.InstallingOS) {
             setAllowChangeHostPlacementPropertiesWhenNotInMaintenance();
         }
-        else if (selectedSystemTreeItem != null)
-        {
+        else if (selectedSystemTreeItem != null) {
             final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
-            switch (selectedSystemTreeItem.getType())
-            {
+            switch (selectedSystemTreeItem.getType()) {
             case Host:
                 getName().setIsChangeable(false);
                 getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());

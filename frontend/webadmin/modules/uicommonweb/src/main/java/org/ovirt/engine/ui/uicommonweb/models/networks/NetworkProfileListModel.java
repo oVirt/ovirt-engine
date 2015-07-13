@@ -21,8 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveVnicProfileModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class NetworkProfileListModel extends SearchableListModel<NetworkView, VnicProfileView>
-{
+public class NetworkProfileListModel extends SearchableListModel<NetworkView, VnicProfileView> {
     private UICommand newCommand;
     private UICommand editCommand;
     private UICommand removeCommand;

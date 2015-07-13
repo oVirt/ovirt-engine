@@ -13,11 +13,9 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class ImportStorageModelBehavior extends StorageModelBehavior
-{
+public class ImportStorageModelBehavior extends StorageModelBehavior {
     @Override
-    public List<StoragePool> filterDataCenter(List<StoragePool> source)
-    {
+    public List<StoragePool> filterDataCenter(List<StoragePool> source) {
         return Linq.toList(Linq.where(source, new Linq.DataCenterStatusPredicate(StoragePoolStatus.Up)));
     }
 
@@ -38,16 +36,13 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
     }
 
     @Override
-    public void updateItemsAvailability()
-    {
+    public void updateItemsAvailability() {
         StoragePool dataCenter = getModel().getDataCenter().getSelectedItem();
 
         updateAvailabilityByDatacenter(dataCenter);
 
-        for (final IStorageModel item : Linq.<IStorageModel> cast(getModel().getItems()))
-        {
-            if (item.getRole() == StorageDomainType.ISO)
-            {
+        for (final IStorageModel item : Linq.<IStorageModel> cast(getModel().getItems())) {
+            if (item.getRole() == StorageDomainType.ISO) {
                 AsyncDataProvider.getInstance().getIsoDomainByDataCenterId(new AsyncQuery(getModel(),
                         new INewAsyncCallback() {
                             @Override
@@ -60,8 +55,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
                             }
                         }), dataCenter.getId());
             }
-            else if (item.getRole() == StorageDomainType.ImportExport)
-            {
+            else if (item.getRole() == StorageDomainType.ImportExport) {
                 AsyncDataProvider.getInstance().getExportDomainByDataCenterId(new AsyncQuery(getModel(),
                         new INewAsyncCallback() {
                             @Override
@@ -74,8 +68,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
                             }
                         }), dataCenter.getId());
             }
-            else
-            {
+            else {
                 postUpdateItemsAvailability(item, false);
             }
         }
@@ -85,8 +78,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
         getModel().getActivateDomain().setIsAvailable(!StorageModel.UnassignedDataCenterId.equals(datacenter.getId()));
     }
 
-    public void postUpdateItemsAvailability(IStorageModel item, boolean isNoStorageAttached)
-    {
+    public void postUpdateItemsAvailability(IStorageModel item, boolean isNoStorageAttached) {
         Model model = (Model) item;
         StoragePool dataCenter = getModel().getDataCenter().getSelectedItem();
 

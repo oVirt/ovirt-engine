@@ -142,8 +142,7 @@ public class StorageQosMetricParametersModel extends Model {
                 getTotal().setEntity(null);
             }
 
-            if (!getChoiceGroupReadWrite().equals(sender))
-            {
+            if (!getChoiceGroupReadWrite().equals(sender)) {
                 getChoiceGroupReadWrite().setEntity(false);
                 getRead().setEntity(null);
                 getWrite().setEntity(null);
@@ -153,13 +152,11 @@ public class StorageQosMetricParametersModel extends Model {
         }
     }
 
-    private void updateChangeability()
-    {
+    private void updateChangeability() {
         //Suppress update of changeability when entities weren't constructed yet.
         if(getChoiceGroupNone() == null || getChoiceGroupNone().getEntity() == null ||
            getChoiceGroupTotal() == null || getChoiceGroupTotal().getEntity() == null ||
-           getChoiceGroupReadWrite() == null || getChoiceGroupReadWrite().getEntity() == null)
-        {
+           getChoiceGroupReadWrite() == null || getChoiceGroupReadWrite().getEntity() == null) {
             return;
         }
 

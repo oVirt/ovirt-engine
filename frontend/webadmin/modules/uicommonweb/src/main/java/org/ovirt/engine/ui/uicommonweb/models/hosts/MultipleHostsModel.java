@@ -24,8 +24,7 @@ public class MultipleHostsModel extends Model {
 
     private UICommand applyPasswordCommand;
 
-    public MultipleHostsModel()
-    {
+    public MultipleHostsModel() {
         setHosts(new ListModel<EntityModel<HostDetailModel>>());
         setUseCommonPassword(new EntityModel<Boolean>());
         setCommonPassword(new EntityModel<String>());
@@ -83,12 +82,10 @@ public class MultipleHostsModel extends Model {
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getApplyPasswordCommand())
-        {
+        if (command == getApplyPasswordCommand()) {
             applyPassword();
         }
     }
@@ -96,8 +93,7 @@ public class MultipleHostsModel extends Model {
     private void applyPassword() {
         String password = getCommonPassword().getEntity();
         ArrayList<EntityModel<HostDetailModel>> items = new ArrayList<EntityModel<HostDetailModel>>();
-        for (Object object : getHosts().getItems())
-        {
+        for (Object object : getHosts().getItems()) {
             HostDetailModel host = (HostDetailModel) ((EntityModel) object).getEntity();
             host.setPassword(password);
 
@@ -112,25 +108,21 @@ public class MultipleHostsModel extends Model {
         boolean isValid = true;
         setMessage(null);
         Iterable<EntityModel<HostDetailModel>> items = getHosts().getItems();
-        for (EntityModel<HostDetailModel> model : items)
-        {
+        for (EntityModel<HostDetailModel> model : items) {
             HostDetailModel host = model.getEntity();
-            if (host.getName().trim().length() == 0)
-            {
+            if (host.getName().trim().length() == 0) {
                 setMessage(ConstantsManager.getInstance().getMessages().importClusterHostNameEmpty(host.getAddress()));
                 isValid = false;
                 break;
             }
-            else if (host.getPassword().trim().length() == 0)
-            {
+            else if (host.getPassword().trim().length() == 0) {
                 setMessage(ConstantsManager.getInstance()
                         .getMessages()
                         .importClusterHostPasswordEmpty(host.getAddress()));
                 isValid = false;
                 break;
             }
-            else if (host.getFingerprint().trim().length() == 0)
-            {
+            else if (host.getFingerprint().trim().length() == 0) {
                 setMessage(ConstantsManager.getInstance()
                         .getMessages()
                         .importClusterHostFingerprintEmpty(host.getAddress()));

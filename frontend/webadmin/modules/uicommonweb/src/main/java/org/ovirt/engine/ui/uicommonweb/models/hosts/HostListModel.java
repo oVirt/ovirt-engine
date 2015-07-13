@@ -100,212 +100,177 @@ import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import com.google.inject.Inject;
 
 @SuppressWarnings("unchecked")
-public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> implements ISupportSystemTreeContext
-{
+public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> implements ISupportSystemTreeContext {
     private final HostGeneralModel generalModel;
 
     private UICommand privateNewCommand;
 
-    public UICommand getNewCommand()
-    {
+    public UICommand getNewCommand() {
         return privateNewCommand;
     }
 
-    private void setNewCommand(UICommand value)
-    {
+    private void setNewCommand(UICommand value) {
         privateNewCommand = value;
     }
 
     private UICommand privateEditCommand;
 
     @Override
-    public UICommand getEditCommand()
-    {
+    public UICommand getEditCommand() {
         return privateEditCommand;
     }
 
-    private void setEditCommand(UICommand value)
-    {
+    private void setEditCommand(UICommand value) {
         privateEditCommand = value;
     }
 
     private UICommand privateEditWithPMemphasisCommand;
 
-    public UICommand getEditWithPMemphasisCommand()
-    {
+    public UICommand getEditWithPMemphasisCommand() {
         return privateEditWithPMemphasisCommand;
     }
 
-    private void setEditWithPMemphasisCommand(UICommand value)
-    {
+    private void setEditWithPMemphasisCommand(UICommand value) {
         privateEditWithPMemphasisCommand = value;
     }
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
     private UICommand selectAsSpmCommand;
 
-    public UICommand getSelectAsSpmCommand()
-    {
+    public UICommand getSelectAsSpmCommand() {
         return selectAsSpmCommand;
     }
 
-    private void setSelectAsSpmCommand(UICommand value)
-    {
+    private void setSelectAsSpmCommand(UICommand value) {
         selectAsSpmCommand = value;
     }
 
     private UICommand privateActivateCommand;
 
-    public UICommand getActivateCommand()
-    {
+    public UICommand getActivateCommand() {
         return privateActivateCommand;
     }
 
-    private void setActivateCommand(UICommand value)
-    {
+    private void setActivateCommand(UICommand value) {
         privateActivateCommand = value;
     }
 
     private UICommand privateMaintenanceCommand;
 
-    public UICommand getMaintenanceCommand()
-    {
+    public UICommand getMaintenanceCommand() {
         return privateMaintenanceCommand;
     }
 
-    private void setMaintenanceCommand(UICommand value)
-    {
+    private void setMaintenanceCommand(UICommand value) {
         privateMaintenanceCommand = value;
     }
 
     private UICommand privateApproveCommand;
 
-    public UICommand getApproveCommand()
-    {
+    public UICommand getApproveCommand() {
         return privateApproveCommand;
     }
 
-    private void setApproveCommand(UICommand value)
-    {
+    private void setApproveCommand(UICommand value) {
         privateApproveCommand = value;
     }
 
     private UICommand privateInstallCommand;
 
-    public UICommand getInstallCommand()
-    {
+    public UICommand getInstallCommand() {
         return privateInstallCommand;
     }
 
-    private void setInstallCommand(UICommand value)
-    {
+    private void setInstallCommand(UICommand value) {
         privateInstallCommand = value;
     }
 
     private UICommand privateUpgradeCommand;
 
-    public UICommand getUpgradeCommand()
-    {
+    public UICommand getUpgradeCommand() {
         return privateUpgradeCommand;
     }
 
-    private void setUpgradeCommand(UICommand value)
-    {
+    private void setUpgradeCommand(UICommand value) {
         privateUpgradeCommand = value;
     }
 
     private UICommand privateRestartCommand;
 
-    public UICommand getRestartCommand()
-    {
+    public UICommand getRestartCommand() {
         return privateRestartCommand;
     }
 
-    private void setRestartCommand(UICommand value)
-    {
+    private void setRestartCommand(UICommand value) {
         privateRestartCommand = value;
     }
 
     private UICommand privateStartCommand;
 
-    public UICommand getStartCommand()
-    {
+    public UICommand getStartCommand() {
         return privateStartCommand;
     }
 
-    private void setStartCommand(UICommand value)
-    {
+    private void setStartCommand(UICommand value) {
         privateStartCommand = value;
     }
 
     private UICommand privateStopCommand;
 
-    public UICommand getStopCommand()
-    {
+    public UICommand getStopCommand() {
         return privateStopCommand;
     }
 
-    private void setStopCommand(UICommand value)
-    {
+    private void setStopCommand(UICommand value) {
         privateStopCommand = value;
     }
 
     private UICommand privateManualFenceCommand;
 
-    public UICommand getManualFenceCommand()
-    {
+    public UICommand getManualFenceCommand() {
         return privateManualFenceCommand;
     }
 
-    private void setManualFenceCommand(UICommand value)
-    {
+    private void setManualFenceCommand(UICommand value) {
         privateManualFenceCommand = value;
     }
 
     private UICommand privateAssignTagsCommand;
 
-    public UICommand getAssignTagsCommand()
-    {
+    public UICommand getAssignTagsCommand() {
         return privateAssignTagsCommand;
     }
 
-    private void setAssignTagsCommand(UICommand value)
-    {
+    private void setAssignTagsCommand(UICommand value) {
         privateAssignTagsCommand = value;
     }
 
     private UICommand privateConfigureLocalStorageCommand;
 
-    public UICommand getConfigureLocalStorageCommand()
-    {
+    public UICommand getConfigureLocalStorageCommand() {
         return privateConfigureLocalStorageCommand;
     }
 
-    private void setConfigureLocalStorageCommand(UICommand value)
-    {
+    private void setConfigureLocalStorageCommand(UICommand value) {
         privateConfigureLocalStorageCommand = value;
     }
 
     private UICommand refreshCapabilitiesCommand;
 
-    public UICommand getRefreshCapabilitiesCommand()
-    {
+    public UICommand getRefreshCapabilitiesCommand() {
         return refreshCapabilitiesCommand;
     }
 
-    private void setRefreshCapabilitiesCommand(UICommand value)
-    {
+    private void setRefreshCapabilitiesCommand(UICommand value) {
         refreshCapabilitiesCommand = value;
     }
 
@@ -321,22 +286,18 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
     private final HostEventListModel privateHostEventListModel;
 
-    private HostEventListModel getHostEventListModel()
-    {
+    private HostEventListModel getHostEventListModel() {
         return privateHostEventListModel;
     }
 
     private boolean isPowerManagementEnabled;
 
-    public boolean getIsPowerManagementEnabled()
-    {
+    public boolean getIsPowerManagementEnabled() {
         return isPowerManagementEnabled;
     }
 
-    public void setIsPowerManagementEnabled(boolean value)
-    {
-        if (isPowerManagementEnabled != value)
-        {
+    public void setIsPowerManagementEnabled(boolean value) {
+        if (isPowerManagementEnabled != value) {
             isPowerManagementEnabled = value;
             onPropertyChanged(new PropertyChangedEventArgs("isPowerManagementEnabled")); //$NON-NLS-1$
         }
@@ -370,17 +331,13 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         return this.hostVmListModel;
     }
 
-    protected Object[] getSelectedKeys()
-    {
-        if (getSelectedItems() == null)
-        {
+    protected Object[] getSelectedKeys() {
+        if (getSelectedItems() == null) {
             return new Object[0];
         }
-        else
-        {
+        else {
             Object[] keys = new Object[getSelectedItems().size()];
-            for (int i = 0; i < getSelectedItems().size(); i++)
-            {
+            for (int i = 0; i < getSelectedItems().size(); i++) {
                 keys[i] = getSelectedItems().get(i).getId();
             }
             return keys;
@@ -469,10 +426,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         setDetailModels(list);
     }
 
-    public void assignTags()
-    {
-        if (getWindow() != null)
-        {
+    public void assignTags() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -494,12 +449,10 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     public ArrayList<Tags> allAttachedTags;
     public int selectedItemsCounter;
 
-    private void getAttachedTagsToSelectedHosts(TagListModel model)
-    {
+    private void getAttachedTagsToSelectedHosts(TagListModel model) {
         ArrayList<Guid> hostIds = new ArrayList<Guid>();
 
-        for (VDS vds : getSelectedItems())
-        {
+        for (VDS vds : getSelectedItems()) {
             hostIds.add(vds.getId());
         }
 
@@ -507,8 +460,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         allAttachedTags = new ArrayList<Tags>();
         selectedItemsCounter = 0;
 
-        for (Guid hostId : hostIds)
-        {
+        for (Guid hostId : hostIds) {
             AsyncDataProvider.getInstance().getAttachedTagsToHost(new AsyncQuery(new Object[] { this, model },
                     new INewAsyncCallback() {
                         @Override
@@ -519,8 +471,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                             TagListModel tagListModel = (TagListModel) array[1];
                             hostListModel.allAttachedTags.addAll((ArrayList<Tags>) returnValue);
                             hostListModel.selectedItemsCounter++;
-                            if (hostListModel.selectedItemsCounter == hostListModel.getSelectedItems().size())
-                            {
+                            if (hostListModel.selectedItemsCounter == hostListModel.getSelectedItems().size()) {
                                 postGetAttachedTags(hostListModel, tagListModel);
                             }
 
@@ -530,19 +481,14 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         }
     }
 
-    private void postGetAttachedTags(HostListModel<Void> hostListModel, TagListModel tagListModel)
-    {
-        if (hostListModel.getLastExecutedCommand() == getAssignTagsCommand())
-        {
+    private void postGetAttachedTags(HostListModel<Void> hostListModel, TagListModel tagListModel) {
+        if (hostListModel.getLastExecutedCommand() == getAssignTagsCommand()) {
             ArrayList<Tags> attachedTags =
                     Linq.distinct(hostListModel.allAttachedTags, new TagsEqualityComparer());
-            for (Tags tag : attachedTags)
-            {
+            for (Tags tag : attachedTags) {
                 int count = 0;
-                for (Tags tag2 : hostListModel.allAttachedTags)
-                {
-                    if (tag2.gettag_id().equals(tag.gettag_id()))
-                    {
+                for (Tags tag2 : hostListModel.allAttachedTags) {
+                    if (tag2.gettag_id().equals(tag.gettag_id())) {
                         count++;
                     }
                 }
@@ -551,26 +497,22 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             }
             tagListModel.setAttachedTagsToEntities(hostListModel.attachedTagsToEntities);
         }
-        else if ("OnAssignTags".equals(hostListModel.getLastExecutedCommand().getName())) //$NON-NLS-1$
-        {
+        else if ("OnAssignTags".equals(hostListModel.getLastExecutedCommand().getName())) { //$NON-NLS-1$
             hostListModel.postOnAssignTags(tagListModel.getAttachedTagsToEntities());
         }
     }
 
-    public void onAssignTags()
-    {
+    public void onAssignTags() {
         TagListModel model = (TagListModel) getWindow();
 
         getAttachedTagsToSelectedHosts(model);
     }
 
-    public void postOnAssignTags(Map<Guid, Boolean> attachedTags)
-    {
+    public void postOnAssignTags(Map<Guid, Boolean> attachedTags) {
         TagListModel model = (TagListModel) getWindow();
         ArrayList<Guid> hostIds = new ArrayList<Guid>();
 
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             hostIds.add(vds.getId());
         }
@@ -579,23 +521,20 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         ArrayList<Guid> tagsToAttach = new ArrayList<Guid>();
         ArrayList<Guid> tagsToDetach = new ArrayList<Guid>();
 
-        if (model.getItems() != null && model.getItems().size() > 0)
-        {
+        if (model.getItems() != null && model.getItems().size() > 0) {
             ArrayList<TagModel> tags = (ArrayList<TagModel>) model.getItems();
             TagModel rootTag = tags.get(0);
             TagModel.recursiveEditAttachDetachLists(rootTag, attachedTags, tagsToAttach, tagsToDetach);
         }
 
         ArrayList<VdcActionParametersBase> prmsToAttach = new ArrayList<VdcActionParametersBase>();
-        for (Guid tag_id : tagsToAttach)
-        {
+        for (Guid tag_id : tagsToAttach) {
             prmsToAttach.add(new AttachEntityToTagParameters(tag_id, hostIds));
         }
         Frontend.getInstance().runMultipleAction(VdcActionType.AttachVdsToTag, prmsToAttach);
 
         ArrayList<VdcActionParametersBase> prmsToDetach = new ArrayList<VdcActionParametersBase>();
-        for (Guid tag_id : tagsToDetach)
-        {
+        for (Guid tag_id : tagsToDetach) {
             prmsToDetach.add(new AttachEntityToTagParameters(tag_id, hostIds));
         }
         Frontend.getInstance().runMultipleAction(VdcActionType.DetachVdsFromTag, prmsToDetach);
@@ -603,8 +542,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         cancel();
     }
 
-    public void manualFence()
-    {
+    public void manualFence() {
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().areYouSureTitle());
@@ -623,23 +561,19 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.getCommands().add(tempVar2);
     }
 
-    public void onManualFence()
-    {
+    public void onManualFence() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             FenceVdsManualyParameters parameters = new FenceVdsManualyParameters(true);
             parameters.setStoragePoolId(vds.getStoragePoolId());
@@ -665,10 +599,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     boolean updateOverrideIpTables = true;
     boolean clusterChanging = false;
 
-    public void newEntity()
-    {
-        if (getWindow() != null)
-        {
+    public void newEntity() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -750,17 +682,14 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 HostListModel<Void> hostListModel = (HostListModel<Void>) model;
                 HostModel innerHostModel = (HostModel) hostListModel.getWindow();
                 ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
                 final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
-                if (hostListModel.getSystemTreeSelectedItem() != null)
-                {
-                    switch (hostListModel.getSystemTreeSelectedItem().getType())
-                    {
+                if (hostListModel.getSystemTreeSelectedItem() != null) {
+                    switch (hostListModel.getSystemTreeSelectedItem().getType()) {
                     case Host:
                         innerHostModel.getName().setIsChangeable(false);
                         innerHostModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
@@ -769,10 +698,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                     case Cluster:
                     case Cluster_Gluster:
                         VDSGroup cluster = (VDSGroup) hostListModel.getSystemTreeSelectedItem().getEntity();
-                        for (StoragePool dc : dataCenters)
-                        {
-                            if (dc.getId().equals(cluster.getStoragePoolId()))
-                            {
+                        for (StoragePool dc : dataCenters) {
+                            if (dc.getId().equals(cluster.getStoragePoolId())) {
                                 innerHostModel.getDataCenter()
                                         .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dc })));
                                 innerHostModel.getDataCenter().setSelectedItem(dc);
@@ -801,8 +728,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                         break;
                     }
                 }
-                else
-                {
+                else {
                     innerHostModel.getDataCenter().setItems(dataCenters);
                     innerHostModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters));
                 }
@@ -818,15 +744,12 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         AsyncDataProvider.getInstance().getDataCenterList(_asyncQuery);
     }
 
-    private void goToEventsTab()
-    {
+    private void goToEventsTab() {
         setActiveDetailModel(getHostEventListModel());
     }
 
-    public void edit(final boolean isEditWithPMemphasis)
-    {
-        if (getWindow() != null)
-        {
+    public void edit(final boolean isEditWithPMemphasis) {
+        if (getWindow() != null) {
             return;
         }
 
@@ -835,8 +758,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 HostListModel<Void> hostListModel = (HostListModel<Void>) model;
                 ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
                 VDS host = hostListModel.getSelectedItem();
@@ -880,24 +802,19 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
     }
 
-    public void onSaveFalse()
-    {
+    public void onSaveFalse() {
         onSave(false);
     }
 
-    public void onSave(boolean approveInitiated)
-    {
+    public void onSave(boolean approveInitiated) {
         HostModel model = (HostModel) getWindow();
 
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
 
-        if (!model.getIsPm().getEntity())
-        {
-            if (model.getCluster().getSelectedItem().supportsVirtService())
-            {
+        if (!model.getIsPm().getEntity()) {
+            if (model.getCluster().getSelectedItem().supportsVirtService()) {
                 ConfirmationModel confirmModel = new ConfirmationModel();
                 setConfirmWindow(confirmModel);
                 confirmModel.setTitle(ConstantsManager.getInstance().getConstants().powerManagementConfigurationTitle());
@@ -914,49 +831,40 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 cancelCommand.setIsCancel(true);
                 confirmModel.getCommands().add(cancelCommand);
             }
-            else
-            {
-                if (approveInitiated)
-                {
+            else {
+                if (approveInitiated) {
                     onSaveInternalFromApprove();
                 }
-                else
-                {
+                else {
                     onSaveInternalNotFromApprove();
                 }
             }
         }
-        else
-        {
+        else {
             onSaveInternal(approveInitiated);
         }
 
     }
 
-    public void cancelConfirmFocusPM()
-    {
+    public void cancelConfirmFocusPM() {
         HostModel hostModel = (HostModel) getWindow();
         hostModel.setIsPowerManagementTabSelected(true);
 
         setConfirmWindow(null);
     }
 
-    public void onSaveInternalNotFromApprove()
-    {
+    public void onSaveInternalNotFromApprove() {
         onSaveInternal(false);
     }
 
-    public void onSaveInternalFromApprove()
-    {
+    public void onSaveInternalFromApprove() {
         onSaveInternal(true);
     }
 
-    public void onSaveInternal(boolean approveInitiated)
-    {
+    public void onSaveInternal(boolean approveInitiated) {
         HostModel model = (HostModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
@@ -994,8 +902,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
         final boolean isVirt = model.getCluster().getSelectedItem().supportsVirtService();
 
-        if (model.getIsNew())
-        {
+        if (model.getIsNew()) {
             AddVdsActionParameters parameters = new AddVdsActionParameters();
             parameters.setVdsId(host.getId());
             parameters.setvds(host);
@@ -1040,8 +947,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                         }
                     }, new Object[] { this, approveInitiated });
         }
-        else // Update VDS -> consists of changing VDS cluster first and then updating rest of VDS properties:
-        {
+        else { // Update VDS -> consists of changing VDS cluster first and then updating rest of VDS properties:
             UpdateVdsActionParameters parameters = new UpdateVdsActionParameters();
             parameters.setvds(host);
             parameters.setVdsId(host.getId());
@@ -1051,8 +957,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             parameters.setAuthMethod(model.getAuthenticationMethod());
             parameters.setFenceAgents(model.getFenceAgentListModel().getFenceAgents());
 
-            if (!oldClusterId.equals(newClusterId))
-            {
+            if (!oldClusterId.equals(newClusterId)) {
                 Frontend.getInstance().runAction(VdcActionType.ChangeVDSCluster,
                         new ChangeVDSClusterParameters(newClusterId, host.getId()),
                         new IFrontendActionAsyncCallback() {
@@ -1064,12 +969,10 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                                 UpdateVdsActionParameters localParameters = (UpdateVdsActionParameters) array[1];
                                 boolean localApproveInitiated = (Boolean) array[2];
                                 VdcReturnValueBase localReturnValue = result.getReturnValue();
-                                if (localReturnValue != null && localReturnValue.getSucceeded())
-                                {
+                                if (localReturnValue != null && localReturnValue.getSucceeded()) {
                                     localModel.postOnSaveInternalChangeCluster(localParameters, localApproveInitiated);
                                 }
-                                else
-                                {
+                                else {
                                     localModel.getWindow().stopProgress();
                                 }
 
@@ -1077,15 +980,13 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                         },
                         new Object[] { this, parameters, approveInitiated });
             }
-            else
-            {
+            else {
                 postOnSaveInternalChangeCluster(parameters, approveInitiated);
             }
         }
     }
 
-    public void postOnSaveInternalChangeCluster(UpdateVdsActionParameters parameters, boolean approveInitiated)
-    {
+    public void postOnSaveInternalChangeCluster(UpdateVdsActionParameters parameters, boolean approveInitiated) {
         Frontend.getInstance().runAction(VdcActionType.UpdateVds, parameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
@@ -1100,24 +1001,20 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 }, new Object[] { this, approveInitiated });
     }
 
-    public void postOnSaveInternal(VdcReturnValueBase returnValue, boolean approveInitiated)
-    {
+    public void postOnSaveInternal(VdcReturnValueBase returnValue, boolean approveInitiated) {
         HostModel model = (HostModel) getWindow();
 
         model.stopProgress();
 
-        if (returnValue != null && returnValue.getSucceeded())
-        {
-            if (approveInitiated)
-            {
+        if (returnValue != null && returnValue.getSucceeded()) {
+            if (approveInitiated) {
                 onApproveInternal();
             }
             cancel();
         }
     }
 
-    private void onApproveInternal()
-    {
+    private void onApproveInternal() {
         HostModel model = (HostModel) getWindow();
         VDS vds = getSelectedItem();
         ApproveVdsParameters params = new ApproveVdsParameters(vds.getId());
@@ -1137,10 +1034,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 null);
     }
 
-    public void remove()
-    {
-        if (getWindow() != null)
-        {
+    public void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -1152,8 +1047,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
         Set<Guid> clusters = new HashSet<Guid>();
         ArrayList<String> list = new ArrayList<String>();
-        for (VDS item : Linq.<VDS> cast(getSelectedItems()))
-        {
+        for (VDS item : Linq.<VDS> cast(getSelectedItems())) {
             list.add(item.getName());
             clusters.add(item.getVdsGroupId());
         }
@@ -1182,19 +1076,16 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.getCommands().add(tempVar2);
     }
 
-    public void onRemove()
-    {
+    public void onRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
         boolean force = model.getForce().getEntity();
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             list.add(new RemoveVdsParameters(vds.getId(), force));
         }
@@ -1214,14 +1105,12 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 }, model);
     }
 
-    public void activate()
-    {
+    public void activate() {
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
 
         Collections.sort(getSelectedItems(), new Linq.VdsSPMPriorityComparer());
 
-        for (VDS vds : getSelectedItems())
-        {
+        for (VDS vds : getSelectedItems()) {
             list.add(new VdsActionParameters(vds.getId()));
         }
 
@@ -1236,8 +1125,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
     private Guid getClusterIdOfSelectedHosts() {
         Guid clusterId = null;
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VDS host = (VDS) item;
             if (clusterId == null) {
                 clusterId = host.getVdsGroupId();
@@ -1267,10 +1155,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         }
     }
 
-    private void maintenance(boolean isMaintenanceReasonVisible)
-    {
-        if (getConfirmWindow() != null)
-        {
+    private void maintenance(boolean isMaintenanceReasonVisible) {
+        if (getConfirmWindow() != null) {
             return;
         }
 
@@ -1285,8 +1171,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.setReasonVisible(isMaintenanceReasonVisible);
         // model.Items = SelectedItems.Cast<VDS>().Select(a => a.vds_name);
         ArrayList<String> vdss = new ArrayList<String>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             vdss.add(vds.getName());
         }
@@ -1298,20 +1183,17 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.getCommands().add(tempVar2);
     }
 
-    public void onMaintenance()
-    {
+    public void onMaintenance() {
         ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         ArrayList<Guid> vdss = new ArrayList<Guid>();
 
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             vdss.add(vds.getId());
         }
@@ -1332,16 +1214,14 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 }, model);
     }
 
-    public void approve()
-    {
+    public void approve() {
         HostModel hostModel = new EditHostModel();
         setWindow(hostModel);
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 HostListModel<Void> hostListModel = (HostListModel<Void>) model;
                 HostModel innerHostModel = (HostModel) hostListModel.getWindow();
                 ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
@@ -1360,13 +1240,11 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         AsyncDataProvider.getInstance().getDataCenterList(_asyncQuery);
     }
 
-    public void onApprove()
-    {
+    public void onApprove() {
         onSave(true);
     }
 
-    public void install()
-    {
+    public void install() {
         final VDS host = getSelectedItem();
         InstallModel model = new InstallModel();
         model.setVds(host);
@@ -1397,8 +1275,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         getWindow().stopProgress();
     }
 
-    private void addInstallCommands(InstallModel model, VDS host, boolean isOnlyClose)
-    {
+    private void addInstallCommands(InstallModel model, VDS host, boolean isOnlyClose) {
 
         if (!isOnlyClose) {
             UICommand command = UICommand.createDefaultOkUiCommand("OnInstall", this); //$NON-NLS-1$
@@ -1412,8 +1289,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.getCommands().add(command);
     }
 
-    public void onInstall()
-    {
+    public void onInstall() {
         final VDS host = getSelectedItem();
         InstallModel model = (InstallModel) getWindow();
 
@@ -1475,8 +1351,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); // $NON-NLS-1$
     }
 
-    public void restart()
-    {
+    public void restart() {
         final UIConstants constants = ConstantsManager.getInstance().getConstants();
         final UIMessages messages = ConstantsManager.getInstance().getMessages();
         ConfirmationModel model = new ConfirmationModel();
@@ -1486,8 +1361,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.setHashName("restart_host"); //$NON-NLS-1$
         model.setMessage(constants.areYouSureYouWantToRestartTheFollowingHostsMsg());
         ArrayList<String> items = new ArrayList<String>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             int runningVms = vds.getVmCount();
             if (runningVms > 0) {
@@ -1508,18 +1382,15 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.getCommands().add(tempVar2);
     }
 
-    public void onRestart()
-    {
+    public void onRestart() {
         ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             list.add(new FenceVdsActionParameters(vds.getId()));
         }
@@ -1539,11 +1410,9 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 }, model);
     }
 
-    public void start()
-    {
+    public void start() {
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             list.add(new FenceVdsActionParameters(vds.getId()));
         }
@@ -1557,8 +1426,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 }, null);
     }
 
-    public void stop()
-    {
+    public void stop() {
         ConfirmationModel model = new ConfirmationModel();
         setConfirmWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().stopHostsTitle());
@@ -1567,8 +1435,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantToStopTheFollowingHostsMsg());
         // model.Items = SelectedItems.Cast<VDS>().Select(a => a.vds_name);
         ArrayList<String> items = new ArrayList<String>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             items.add(vds.getName());
         }
@@ -1580,18 +1447,15 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.getCommands().add(tempVar2);
     }
 
-    public void onStop()
-    {
+    public void onStop() {
         ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             list.add(new FenceVdsActionParameters(vds.getId()));
         }
@@ -1724,8 +1588,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
     private void refreshCapabilities() {
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             list.add(new VdsActionParameters(vds.getId()));
         }
@@ -1848,8 +1711,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         super.itemsCollectionChanged(sender, e);
 
         // Try to select an item corresponding to the system tree selection.
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host)
-        {
+        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host) {
             VDS host = (VDS) getSystemTreeSelectedItem().getEntity();
 
             setSelectedItem(Linq.firstOrDefault(Linq.<VDS> cast(getItems()), new Linq.HostPredicate(host.getId())));
@@ -1857,18 +1719,15 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     }
 
     @Override
-    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.selectedItemPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("status") || e.propertyName.equals("pm_enabled")) //$NON-NLS-1$ //$NON-NLS-2$
-        {
+        if (e.propertyName.equals("status") || e.propertyName.equals("pm_enabled")) { //$NON-NLS-1$ //$NON-NLS-2$
             updateActionAvailability();
         }
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         ArrayList<VDS> items =
                 getSelectedItems() != null ? Linq.<VDS> cast(getSelectedItems()) : new ArrayList<VDS>();
 
@@ -2015,139 +1874,106 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getNewCommand())
-        {
+        if (command == getNewCommand()) {
             newEntity();
         }
-        else if (command == getEditCommand())
-        {
+        else if (command == getEditCommand()) {
             edit(false);
         }
-        else if (command == getEditWithPMemphasisCommand())
-        {
+        else if (command == getEditWithPMemphasisCommand()) {
             edit(true);
         }
-        else if (command == getRemoveCommand())
-        {
+        else if (command == getRemoveCommand()) {
             remove();
         }
-        else if (command == getSelectAsSpmCommand())
-        {
+        else if (command == getSelectAsSpmCommand()) {
             selectAsSPM();
         }
-        else if (command == getActivateCommand())
-        {
+        else if (command == getActivateCommand()) {
             activate();
         }
-        else if (command == getMaintenanceCommand())
-        {
+        else if (command == getMaintenanceCommand()) {
             maintenance();
         }
-        else if (command == getApproveCommand())
-        {
+        else if (command == getApproveCommand()) {
             approve();
         }
-        else if (command == getInstallCommand())
-        {
+        else if (command == getInstallCommand()) {
             install();
         }
-        else if (command == getUpgradeCommand())
-        {
+        else if (command == getUpgradeCommand()) {
             upgrade();
         }
-        else if (command == getRestartCommand())
-        {
+        else if (command == getRestartCommand()) {
             restart();
         }
-        else if (command == getStartCommand())
-        {
+        else if (command == getStartCommand()) {
             start();
         }
-        else if (command == getStopCommand())
-        {
+        else if (command == getStopCommand()) {
             stop();
         }
-        else if (command == getManualFenceCommand())
-        {
+        else if (command == getManualFenceCommand()) {
             manualFence();
         }
-        else if (command == getAssignTagsCommand())
-        {
+        else if (command == getAssignTagsCommand()) {
             assignTags();
         }
-        else if (command == getConfigureLocalStorageCommand())
-        {
+        else if (command == getConfigureLocalStorageCommand()) {
             configureLocalStorage();
         }
-        else if (command == getRefreshCapabilitiesCommand())
-        {
+        else if (command == getRefreshCapabilitiesCommand()) {
             refreshCapabilities();
         }
         else if (command == getNumaSupportCommand()) {
             numaSupport();
         }
-        else if ("OnAssignTags".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnAssignTags".equals(command.getName())) { //$NON-NLS-1$
             onAssignTags();
         }
-        else if ("OnManualFence".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnManualFence".equals(command.getName())) { //$NON-NLS-1$
             onManualFence();
         }
-        else if ("OnSaveFalse".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnSaveFalse".equals(command.getName())) { //$NON-NLS-1$
             onSaveFalse();
         }
-        else if ("OnSaveInternalFromApprove".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnSaveInternalFromApprove".equals(command.getName())) { //$NON-NLS-1$
             onSaveInternalFromApprove();
         }
-        else if ("OnSaveInternalNotFromApprove".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnSaveInternalNotFromApprove".equals(command.getName())) { //$NON-NLS-1$
             onSaveInternalNotFromApprove();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
-        else if ("CancelConfirm".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("CancelConfirm".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirm();
         }
-        else if ("CancelConfirmFocusPM".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("CancelConfirmFocusPM".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirmFocusPM();
         }
-        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
-        else if ("OnMaintenance".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnMaintenance".equals(command.getName())) { //$NON-NLS-1$
             onMaintenance();
         }
-        else if ("OnApprove".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnApprove".equals(command.getName())) { //$NON-NLS-1$
             onApprove();
         }
-        else if ("OnInstall".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnInstall".equals(command.getName())) { //$NON-NLS-1$
             onInstall();
         }
-        else if ("OnRestart".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnRestart".equals(command.getName())) { //$NON-NLS-1$
             onRestart();
         }
-        else if ("OnStop".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnStop".equals(command.getName())) { //$NON-NLS-1$
             onStop();
         }
-        else if ("OnConfigureLocalStorage".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnConfigureLocalStorage".equals(command.getName())) { //$NON-NLS-1$
             onConfigureLocalStorage();
         }
         else if (NumaSupportModel.SUBMIT_NUMA_SUPPORT.equals(command.getName())) {
@@ -2216,23 +2042,19 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     private SystemTreeItemModel systemTreeSelectedItem;
 
     @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem()
-    {
+    public SystemTreeItemModel getSystemTreeSelectedItem() {
         return systemTreeSelectedItem;
     }
 
     @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value)
-    {
-        if (systemTreeSelectedItem != value)
-        {
+    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
+        if (systemTreeSelectedItem != value) {
             systemTreeSelectedItem = value;
             onSystemTreeSelectedItemChanged();
         }
     }
 
-    private void onSystemTreeSelectedItemChanged()
-    {
+    private void onSystemTreeSelectedItemChanged() {
         updateActionAvailability();
     }
 

@@ -43,65 +43,54 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
     private Event<EventArgs> privateResetRequestedEvent;
     private Event<EventArgs> privateBeforeItemsChangedEvent;
 
-    public Event<EventArgs> getResetRequestedEvent()
-    {
+    public Event<EventArgs> getResetRequestedEvent() {
         return privateResetRequestedEvent;
     }
 
-    private void setResetRequestedEvent(Event<EventArgs> value)
-    {
+    private void setResetRequestedEvent(Event<EventArgs> value) {
         privateResetRequestedEvent = value;
     }
 
-    public Event<EventArgs> getBeforeItemsChangedEvent()
-    {
+    public Event<EventArgs> getBeforeItemsChangedEvent() {
         return privateBeforeItemsChangedEvent;
     }
 
-    private void setBeforeItemsChangedEvent(Event<EventArgs> value)
-    {
+    private void setBeforeItemsChangedEvent(Event<EventArgs> value) {
         privateBeforeItemsChangedEvent = value;
     }
 
     private UICommand privateResetCommand;
 
-    public UICommand getResetCommand()
-    {
+    public UICommand getResetCommand() {
         return privateResetCommand;
     }
 
-    private void setResetCommand(UICommand value)
-    {
+    private void setResetCommand(UICommand value) {
         privateResetCommand = value;
     }
 
     private UICommand privateExpandAllCommand;
 
-    public UICommand getExpandAllCommand()
-    {
+    public UICommand getExpandAllCommand() {
         return privateExpandAllCommand;
     }
 
-    private void setExpandAllCommand(UICommand value)
-    {
+    private void setExpandAllCommand(UICommand value) {
         privateExpandAllCommand = value;
     }
 
     private UICommand privateCollapseAllCommand;
 
-    public UICommand getCollapseAllCommand()
-    {
+    public UICommand getCollapseAllCommand() {
         return privateCollapseAllCommand;
     }
 
-    private void setCollapseAllCommand(UICommand value)
-    {
+    private void setCollapseAllCommand(UICommand value) {
         privateCollapseAllCommand = value;
     }
 
     @Override
-    public ArrayList<SystemTreeItemModel> getItems()
-    {
+    public ArrayList<SystemTreeItemModel> getItems() {
         return (ArrayList<SystemTreeItemModel>) super.getItems();
     }
 
@@ -111,10 +100,8 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
         super.setItems(value);
     }
 
-    public void setItems(ArrayList<SystemTreeItemModel> value)
-    {
-        if (items != value)
-        {
+    public void setItems(ArrayList<SystemTreeItemModel> value) {
+        if (items != value) {
             itemsChanging(value, items);
             items = value;
             itemsChanged();
@@ -125,13 +112,11 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
 
     private List<StoragePool> privateDataCenters;
 
-    public List<StoragePool> getDataCenters()
-    {
+    public List<StoragePool> getDataCenters() {
         return privateDataCenters;
     }
 
-    public void setDataCenters(List<StoragePool> value)
-    {
+    public void setDataCenters(List<StoragePool> value) {
         privateDataCenters = value;
     }
 
@@ -147,37 +132,31 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
 
     private HashMap<Guid, ArrayList<VDSGroup>> privateClusterMap;
 
-    public HashMap<Guid, ArrayList<VDSGroup>> getClusterMap()
-    {
+    public HashMap<Guid, ArrayList<VDSGroup>> getClusterMap() {
         return privateClusterMap;
     }
 
-    public void setClusterMap(HashMap<Guid, ArrayList<VDSGroup>> value)
-    {
+    public void setClusterMap(HashMap<Guid, ArrayList<VDSGroup>> value) {
         privateClusterMap = value;
     }
 
     private Map<Guid, List<Network>> networkMap;
 
-    public Map<Guid, List<Network>> getNetworkMap()
-    {
+    public Map<Guid, List<Network>> getNetworkMap() {
         return networkMap;
     }
 
-    public void setNetworkMap(Map<Guid, List<Network>> value)
-    {
+    public void setNetworkMap(Map<Guid, List<Network>> value) {
         networkMap = value;
     }
 
     private HashMap<Guid, ArrayList<VDS>> privateHostMap;
 
-    public HashMap<Guid, ArrayList<VDS>> getHostMap()
-    {
+    public HashMap<Guid, ArrayList<VDS>> getHostMap() {
         return privateHostMap;
     }
 
-    public void setHostMap(HashMap<Guid, ArrayList<VDS>> value)
-    {
+    public void setHostMap(HashMap<Guid, ArrayList<VDS>> value) {
         privateHostMap = value;
     }
 
@@ -197,15 +176,13 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
         return treeItemById.get(id);
     }
 
-    static
-    {
+    static {
         resetRequestedEventDefinition = new EventDefinition("ResetRequested", SystemTreeModel.class); //$NON-NLS-1$
         beforeItemsChangedEventDefinition = new EventDefinition("BeforeItemsChanged", //$NON-NLS-1$
                 SystemTreeModel.class);
     }
 
-    public SystemTreeModel()
-    {
+    public SystemTreeModel() {
         setResetRequestedEvent(new Event<>(resetRequestedEventDefinition));
         setBeforeItemsChangedEvent(new Event<>(beforeItemsChangedEventDefinition));
 
@@ -256,8 +233,7 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
         clusterQuery.asyncCallback = new INewAsyncCallback() {
             @SuppressWarnings("unchecked")
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 SystemTreeModel systemTreeModel = (SystemTreeModel) model;
                 List<VDSGroup> clusters = (List<VDSGroup>) result;
 
@@ -410,52 +386,42 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getResetCommand())
-        {
+        if (command == getResetCommand()) {
             reset();
         }
-        else if (command == getExpandAllCommand())
-        {
+        else if (command == getExpandAllCommand()) {
             expandAll();
         }
-        else if (command == getCollapseAllCommand())
-        {
+        else if (command == getCollapseAllCommand()) {
             collapseAll();
         }
     }
 
-    private void collapseAll()
-    {
+    private void collapseAll() {
         setIsExpandedRecursively(false, getItems().get(0));
     }
 
-    private void expandAll()
-    {
+    private void expandAll() {
         setIsExpandedRecursively(true, getItems().get(0));
     }
 
-    private void setIsExpandedRecursively(boolean value, SystemTreeItemModel root)
-    {
+    private void setIsExpandedRecursively(boolean value, SystemTreeItemModel root) {
         root.setIsExpanded(value);
 
-        for (SystemTreeItemModel model : root.getChildren())
-        {
+        for (SystemTreeItemModel model : root.getChildren()) {
             setIsExpandedRecursively(value, model);
         }
     }
 
-    private void reset()
-    {
+    private void reset() {
         getResetRequestedEvent().raise(this, EventArgs.EMPTY);
     }
 
     @Override
-    public void executed(FrontendMultipleQueryAsyncResult result)
-    {
+    public void executed(FrontendMultipleQueryAsyncResult result) {
         List<StorageDomain> storageDomains = null;
         int count = -1;
         treeItemById = new HashMap<>();

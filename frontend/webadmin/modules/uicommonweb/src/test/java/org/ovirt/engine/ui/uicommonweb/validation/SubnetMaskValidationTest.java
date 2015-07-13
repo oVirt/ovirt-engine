@@ -38,8 +38,7 @@ public class SubnetMaskValidationTest {
     }
 
     @Test
-    public void checkValidMask()
-    {
+    public void checkValidMask() {
         SubnetMaskValidation underTest = createUnderTest(isPrefixAllowed);
         assertEquals("Failed to validate mask: " + mask, isMaskValid, underTest.validate(mask).getSuccess());//$NON-NLS-1$
     }

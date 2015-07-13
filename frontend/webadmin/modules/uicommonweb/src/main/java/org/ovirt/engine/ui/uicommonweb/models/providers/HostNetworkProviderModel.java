@@ -65,8 +65,7 @@ public class HostNetworkProviderModel extends EntityModel {
         AsyncQuery getProvidersQuery = new AsyncQuery();
         getProvidersQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 stopProgress();
                 List<Provider<OpenstackNetworkProviderProperties>> providers = (List<Provider<OpenstackNetworkProviderProperties>>) result;
                 providers.add(0, null);

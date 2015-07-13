@@ -1065,8 +1065,7 @@ public class VmInitModel extends Model {
     }
 
     private String currentDomain = null;
-    protected void updateSysprepDomain(String domain)
-    {
+    protected void updateSysprepDomain(String domain) {
         // Can't use domain since onSuccess is async call and it have
         // a different stack call.
         currentDomain = domain;

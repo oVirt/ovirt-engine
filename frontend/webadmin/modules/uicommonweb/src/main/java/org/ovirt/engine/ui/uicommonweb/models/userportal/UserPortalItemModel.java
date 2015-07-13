@@ -28,13 +28,11 @@ public class UserPortalItemModel extends EntityModel {
     private final VmConsoles vmConsoles;
     private VM poolRepresentant;
 
-    public UICommand getRunCommand()
-    {
+    public UICommand getRunCommand() {
         return runCommand;
     }
 
-    private void setRunCommand(UICommand value)
-    {
+    private void setRunCommand(UICommand value) {
         getCommands().remove(runCommand);
         getCommands().add(value);
         runCommand = value;
@@ -42,13 +40,11 @@ public class UserPortalItemModel extends EntityModel {
 
     private UICommand pauseCommand;
 
-    public UICommand getPauseCommand()
-    {
+    public UICommand getPauseCommand() {
         return pauseCommand;
     }
 
-    private void setPauseCommand(UICommand value)
-    {
+    private void setPauseCommand(UICommand value) {
         getCommands().remove(pauseCommand);
         getCommands().add(value);
         pauseCommand = value;
@@ -56,13 +52,11 @@ public class UserPortalItemModel extends EntityModel {
 
     private UICommand stopCommand;
 
-    public UICommand getStopCommand()
-    {
+    public UICommand getStopCommand() {
         return stopCommand;
     }
 
-    private void setStopCommand(UICommand value)
-    {
+    private void setStopCommand(UICommand value) {
         getCommands().remove(stopCommand);
         getCommands().add(value);
         stopCommand = value;
@@ -70,13 +64,11 @@ public class UserPortalItemModel extends EntityModel {
 
     private UICommand shutdownCommand;
 
-    public UICommand getShutdownCommand()
-    {
+    public UICommand getShutdownCommand() {
         return shutdownCommand;
     }
 
-    private void setShutdownCommand(UICommand value)
-    {
+    private void setShutdownCommand(UICommand value) {
         getCommands().remove(shutdownCommand);
         getCommands().add(value);
         shutdownCommand = value;
@@ -84,13 +76,11 @@ public class UserPortalItemModel extends EntityModel {
 
     private UICommand takeVmCommand;
 
-    public UICommand getTakeVmCommand()
-    {
+    public UICommand getTakeVmCommand() {
         return takeVmCommand;
     }
 
-    private void setTakeVmCommand(UICommand value)
-    {
+    private void setTakeVmCommand(UICommand value) {
         getCommands().remove(takeVmCommand);
         getCommands().add(value);
         takeVmCommand = value;
@@ -98,13 +88,11 @@ public class UserPortalItemModel extends EntityModel {
 
     private UICommand returnVmCommand;
 
-    public UICommand getReturnVmCommand()
-    {
+    public UICommand getReturnVmCommand() {
         return returnVmCommand;
     }
 
-    private void setReturnVmCommand(UICommand value)
-    {
+    private void setReturnVmCommand(UICommand value) {
         getCommands().remove(returnVmCommand);
         getCommands().add(value);
         returnVmCommand = value;
@@ -124,15 +112,12 @@ public class UserPortalItemModel extends EntityModel {
 
     private String name;
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName(String value)
-    {
-        if (!ObjectUtils.objectsEqual(name, value))
-        {
+    public void setName(String value) {
+        if (!ObjectUtils.objectsEqual(name, value)) {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
@@ -140,15 +125,12 @@ public class UserPortalItemModel extends EntityModel {
 
     private String description;
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(String value)
-    {
-        if (!ObjectUtils.objectsEqual(description, value))
-        {
+    public void setDescription(String value) {
+        if (!ObjectUtils.objectsEqual(description, value)) {
             description = value;
             onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
@@ -156,15 +138,12 @@ public class UserPortalItemModel extends EntityModel {
 
     private boolean isPool;
 
-    public boolean isPool()
-    {
+    public boolean isPool() {
         return isPool;
     }
 
-    public void setIsPool(boolean value)
-    {
-        if (isPool != value)
-        {
+    public void setIsPool(boolean value) {
+        if (isPool != value) {
             isPool = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsPool")); //$NON-NLS-1$
         }
@@ -172,15 +151,12 @@ public class UserPortalItemModel extends EntityModel {
 
     private boolean isServer;
 
-    public boolean getIsServer()
-    {
+    public boolean getIsServer() {
         return isServer;
     }
 
-    public void setIsServer(boolean value)
-    {
-        if (isServer != value)
-        {
+    public void setIsServer(boolean value) {
+        if (isServer != value) {
             isServer = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsServer")); //$NON-NLS-1$
         }
@@ -188,15 +164,12 @@ public class UserPortalItemModel extends EntityModel {
 
     private boolean isFromPool;
 
-    public boolean getIsFromPool()
-    {
+    public boolean getIsFromPool() {
         return isFromPool;
     }
 
-    public void setIsFromPool(boolean value)
-    {
-        if (isFromPool != value)
-        {
+    public void setIsFromPool(boolean value) {
+        if (isFromPool != value) {
             isFromPool = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsFromPool")); //$NON-NLS-1$
         }
@@ -204,15 +177,12 @@ public class UserPortalItemModel extends EntityModel {
 
     private VmPoolType poolType = VmPoolType.values()[0];
 
-    public VmPoolType getPoolType()
-    {
+    public VmPoolType getPoolType() {
         return poolType;
     }
 
-    public void setPoolType(VmPoolType value)
-    {
-        if (poolType != value)
-        {
+    public void setPoolType(VmPoolType value) {
+        if (poolType != value) {
             poolType = value;
             onPropertyChanged(new PropertyChangedEventArgs("PoolType")); //$NON-NLS-1$
         }
@@ -220,15 +190,12 @@ public class UserPortalItemModel extends EntityModel {
 
     private VMStatus status = VMStatus.values()[0];
 
-    public VMStatus getStatus()
-    {
+    public VMStatus getStatus() {
         return status;
     }
 
-    public void setStatus(VMStatus value)
-    {
-        if (status != value)
-        {
+    public void setStatus(VMStatus value) {
+        if (status != value) {
             status = value;
             onPropertyChanged(new PropertyChangedEventArgs("Status")); //$NON-NLS-1$
         }
@@ -236,15 +203,12 @@ public class UserPortalItemModel extends EntityModel {
 
     private List<ChangeCDModel> cdImages;
 
-    public List<ChangeCDModel> getCdImages()
-    {
+    public List<ChangeCDModel> getCdImages() {
         return cdImages;
     }
 
-    public void setCdImages(List<ChangeCDModel> value)
-    {
-        if (cdImages != value)
-        {
+    public void setCdImages(List<ChangeCDModel> value) {
+        if (cdImages != value) {
             cdImages = value;
             onPropertyChanged(new PropertyChangedEventArgs("CdImages")); //$NON-NLS-1$
         }
@@ -319,20 +283,16 @@ public class UserPortalItemModel extends EntityModel {
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         // Change behavior to match entity type.
-        if (getEntity() instanceof VM)
-        {
+        if (getEntity() instanceof VM) {
             behavior = new VmItemBehavior(this);
         }
-        else if (getEntity() instanceof VmPool)
-        {
+        else if (getEntity() instanceof VmPool) {
             behavior = new PoolItemBehavior(this, poolRepresentant);
             poolRepresentant = null;
         }
-        else
-        {
+        else {
             throw new UnsupportedOperationException();
         }
 
@@ -366,10 +326,8 @@ public class UserPortalItemModel extends EntityModel {
         setCommands(null);
     }
 
-    public boolean isVmUp()
-    {
-        switch (getStatus())
-        {
+    public boolean isVmUp() {
+        switch (getStatus()) {
         case WaitForLaunch:
         case PoweringUp:
         case RebootInProgress:
@@ -390,22 +348,19 @@ public class UserPortalItemModel extends EntityModel {
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
         behavior.entityPropertyChanged(e);
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
-    {
+    public void eventRaised(Event ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
         behavior.eventRaised(ev, sender, args);
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
         behavior.executeCommand(command);
     }

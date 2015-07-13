@@ -286,8 +286,7 @@ public class VolumeProfileStatisticsModel extends Model {
         return messages.bytesWrittenInCurrentProfileInterval(formatSize(dataWrittenInCurrentInterval.getSecond()), dataWrittenInCurrentInterval.getFirst().toString(), formatSize(dataWritten.getSecond()), dataWritten.getFirst().toString());
     }
 
-    private String formProfileUrl(String clusterId, String volumeId, boolean isBrickProfileSelected)
-    {
+    private String formProfileUrl(String clusterId, String volumeId, boolean isBrickProfileSelected) {
         String apiMatrixParam = ((!isBrickProfileSelected) ? ";nfsStatistics=true" : "");//$NON-NLS-1$//$NON-NLS-2$
         return StringFormat.format("/ovirt-engine/api/clusters/%s/glustervolumes/%s/profilestatistics%s?accept=application/pdf", clusterId, volumeId, apiMatrixParam);//$NON-NLS-1$
     }

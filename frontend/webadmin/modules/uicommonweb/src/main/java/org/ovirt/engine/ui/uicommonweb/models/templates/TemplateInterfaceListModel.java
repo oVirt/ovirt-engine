@@ -20,49 +20,41 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, VmNetworkInterface>
-{
+public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, VmNetworkInterface> {
 
     private UICommand privateNewCommand;
 
-    public UICommand getNewCommand()
-    {
+    public UICommand getNewCommand() {
         return privateNewCommand;
     }
 
-    private void setNewCommand(UICommand value)
-    {
+    private void setNewCommand(UICommand value) {
         privateNewCommand = value;
     }
 
     private UICommand privateEditCommand;
 
-    public UICommand getEditCommand()
-    {
+    public UICommand getEditCommand() {
         return privateEditCommand;
     }
 
-    private void setEditCommand(UICommand value)
-    {
+    private void setEditCommand(UICommand value) {
         privateEditCommand = value;
     }
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
     private VDSGroup cluster = null;
 
-    public TemplateInterfaceListModel()
-    {
+    public TemplateInterfaceListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().networkInterfacesTitle());
         setHelpTag(HelpTag.network_interfaces);
         setHashName("network_interfaces"); //$NON-NLS-1$
@@ -75,8 +67,7 @@ public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, 
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
         getSearchCommand().execute();
@@ -84,19 +75,15 @@ public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, 
     }
 
     @Override
-    public void search()
-    {
-        if (getEntity() != null)
-        {
+    public void search() {
+        if (getEntity() != null) {
             super.search();
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
-        if (getEntity() == null)
-        {
+    protected void syncSearch() {
+        if (getEntity() == null) {
             return;
         }
 
@@ -104,10 +91,8 @@ public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, 
                 new IdQueryParameters(getEntity().getId()));
     }
 
-    private void newEntity()
-    {
-        if (getWindow() != null)
-        {
+    private void newEntity() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -122,10 +107,8 @@ public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, 
     }
 
 
-    private void edit()
-    {
-        if (getWindow() != null)
-        {
+    private void edit() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -139,10 +122,8 @@ public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, 
         setWindow(model);
     }
 
-    private void remove()
-    {
-        if (getWindow() != null)
-        {
+    private void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -150,27 +131,23 @@ public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, 
         setWindow(model);
     }
 
-    private void cancel()
-    {
+    private void cancel() {
         setWindow(null);
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         getNewCommand().setIsExecutionAllowed(cluster != null);
         getEditCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1
                 && getSelectedItem() != null && cluster != null);
@@ -178,24 +155,19 @@ public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, 
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getNewCommand())
-        {
+        if (command == getNewCommand()) {
             newEntity();
         }
-        else if (command == getEditCommand())
-        {
+        else if (command == getEditCommand()) {
             edit();
         }
-        else if (command == getRemoveCommand())
-        {
+        else if (command == getRemoveCommand()) {
             remove();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

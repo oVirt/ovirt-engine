@@ -16,34 +16,28 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class DiskVmListModel extends SearchableListModel<Disk, VM>
-{
+public class DiskVmListModel extends SearchableListModel<Disk, VM> {
     private HashMap diskVmMap;
 
-    public DiskVmListModel()
-    {
+    public DiskVmListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
         setHelpTag(HelpTag.virtual_machines);
         setHashName("virtual_machines"); //$NON-NLS-1$
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             getSearchCommand().execute();
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         Disk disk = getEntity();
-        if (disk == null)
-        {
+        if (disk == null) {
             return;
         }
 
@@ -51,8 +45,7 @@ public class DiskVmListModel extends SearchableListModel<Disk, VM>
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 diskVmMap = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
 
                 ArrayList<VM> vmList = new ArrayList<VM>();
@@ -77,21 +70,18 @@ public class DiskVmListModel extends SearchableListModel<Disk, VM>
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
     }
 
     @Override

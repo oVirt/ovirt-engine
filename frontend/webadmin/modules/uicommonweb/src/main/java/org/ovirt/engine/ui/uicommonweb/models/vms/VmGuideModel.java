@@ -13,19 +13,16 @@ import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-public class VmGuideModel extends GuideModel
-{
+public class VmGuideModel extends GuideModel {
     public final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     @Override
-    public VM getEntity()
-    {
+    public VM getEntity() {
         return (VM) super.getEntity();
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
         if (getEntity() != null) {
@@ -96,26 +93,21 @@ public class VmGuideModel extends GuideModel
         model.initialize();
     }
 
-    protected void cancel()
-    {
+    protected void cancel() {
         setWindow(null);
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if ("NewDisk".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("NewDisk".equals(command.getName())) { //$NON-NLS-1$
             newDisk();
         }
-        else if ("AttachDisk".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("AttachDisk".equals(command.getName())) { //$NON-NLS-1$
             attachDisk();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

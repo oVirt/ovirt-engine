@@ -82,25 +82,21 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
     private UICommand newVolumeCommand;
 
-    public UICommand getNewVolumeCommand()
-    {
+    public UICommand getNewVolumeCommand() {
         return newVolumeCommand;
     }
 
-    private void setNewVolumeCommand(UICommand value)
-    {
+    private void setNewVolumeCommand(UICommand value) {
         newVolumeCommand = value;
     }
 
     private UICommand removeVolumeCommand;
 
-    public UICommand getRemoveVolumeCommand()
-    {
+    public UICommand getRemoveVolumeCommand() {
         return removeVolumeCommand;
     }
 
-    private void setRemoveVolumeCommand(UICommand value)
-    {
+    private void setRemoveVolumeCommand(UICommand value) {
         removeVolumeCommand = value;
     }
 
@@ -344,25 +340,20 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 VolumeListModel volumeListModel = (VolumeListModel) model;
                 VolumeModel innerVolumeModel = (VolumeModel) volumeListModel.getWindow();
                 ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
                 final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
-                if (volumeListModel.getSystemTreeSelectedItem() != null)
-                {
-                    switch (volumeListModel.getSystemTreeSelectedItem().getType())
-                    {
+                if (volumeListModel.getSystemTreeSelectedItem() != null) {
+                    switch (volumeListModel.getSystemTreeSelectedItem().getType()) {
                     case Volumes:
                     case Cluster:
                     case Cluster_Gluster:
                         VDSGroup cluster = (VDSGroup) volumeListModel.getSystemTreeSelectedItem().getEntity();
-                        for (StoragePool dc : dataCenters)
-                        {
-                            if (dc.getId().equals(cluster.getStoragePoolId()))
-                            {
+                        for (StoragePool dc : dataCenters) {
+                            if (dc.getId().equals(cluster.getStoragePoolId())) {
                                 innerVolumeModel.getDataCenter()
                                         .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] {dc})));
                                 innerVolumeModel.getDataCenter().setSelectedItem(dc);
@@ -395,8 +386,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                         break;
                     }
                 }
-                else
-                {
+                else {
                     innerVolumeModel.getDataCenter().setItems(dataCenters);
                     innerVolumeModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters));
                 }
@@ -420,8 +410,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
     }
 
     private void removeVolume() {
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -441,8 +430,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         }
 
         ArrayList<String> list = new ArrayList<String>();
-        for (GlusterVolumeEntity item : Linq.<GlusterVolumeEntity> cast(getSelectedItems()))
-        {
+        for (GlusterVolumeEntity item : Linq.<GlusterVolumeEntity> cast(getSelectedItems())) {
             list.add(item.getName());
         }
         model.setItems(list);
@@ -454,15 +442,13 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
     }
 
     private void onRemoveVolume() {
-        if (getWindow() == null)
-        {
+        if (getWindow() == null) {
             return;
         }
 
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
@@ -472,8 +458,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
 
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
             list.add(new GlusterVolumeActionParameters(volume.getId(), false));
         }
@@ -800,8 +785,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         }
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
             list.add(new GlusterVolumeRebalanceParameters(volume.getId(), false, false));
         }
@@ -944,8 +928,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
     }
 
     private void cancelRebalanceStatus() {
-        if (getWindow() == null)
-        {
+        if (getWindow() == null) {
             return;
         }
         ((VolumeRebalanceStatusModel)getWindow()).cancelRefresh();
@@ -999,28 +982,24 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         aQuery.setModel(this);
         aQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, final Object result)
-            {
+            public void onSuccess(Object model, final Object result) {
                 AsyncQuery aQueryInner = new AsyncQuery();
                 aQueryInner.setModel(this);
                 aQueryInner.asyncCallback = new INewAsyncCallback() {
                     @Override
-                    public void onSuccess(Object modelInner, final Object resultInner)
-                    {
+                    public void onSuccess(Object modelInner, final Object resultInner) {
 
                         AsyncQuery aQueryInner1 = new AsyncQuery();
                         aQueryInner1.setModel(this);
                         aQueryInner1.asyncCallback = new INewAsyncCallback() {
                             @Override
-                            public void onSuccess(Object modelInner1, Object resultInner1)
-                            {
+                            public void onSuccess(Object modelInner1, Object resultInner1) {
                                 String optionGroupVirt = (String) result;
                                 String optionOwnerUserVirt = (String) resultInner;
                                 String optionOwnerGroupVirt = (String) resultInner1;
 
                                 ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-                                for (GlusterVolumeEntity volume : volumeList)
-                                {
+                                for (GlusterVolumeEntity volume : volumeList) {
                                     Guid volumeId = volume.getId();
 
                                     list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "group", optionGroupVirt)));//$NON-NLS-1$
@@ -1078,8 +1057,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
     }
 
     private void stop() {
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
         ConfirmationModel model = new ConfirmationModel();
@@ -1099,8 +1077,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         }
 
         ArrayList<String> list = new ArrayList<String>();
-        for (GlusterVolumeEntity item : Linq.<GlusterVolumeEntity> cast(getSelectedItems()))
-        {
+        for (GlusterVolumeEntity item : Linq.<GlusterVolumeEntity> cast(getSelectedItems())) {
             list.add(item.getName());
         }
         model.setItems(list);
@@ -1111,16 +1088,13 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         model.getCommands().add(tempVar2);
     }
 
-    public void onStop()
-    {
-        if (getWindow() == null)
-        {
+    public void onStop() {
+        if (getWindow() == null) {
             return;
         }
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
@@ -1129,8 +1103,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         }
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
             list.add(new GlusterVolumeActionParameters(volume.getId(), false));
         }
@@ -1156,8 +1129,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         }
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
             list.add(new GlusterVolumeActionParameters(volume.getId(), false));
         }
@@ -1168,8 +1140,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
     private void onCreateVolume() {
         VolumeModel volumeModel = (VolumeModel) getWindow();
 
-        if (!volumeModel.validate())
-        {
+        if (!volumeModel.validate()) {
             return;
         }
 
@@ -1197,8 +1168,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
         ArrayList<GlusterBrickEntity> brickList = new ArrayList<GlusterBrickEntity>();
 
-        for (Object model : volumeModel.getBricks().getItems())
-        {
+        for (Object model : volumeModel.getBricks().getItems()) {
             brickList.add((GlusterBrickEntity) ((EntityModel) model).getEntity());
         }
 
@@ -1235,14 +1205,12 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         }, this);
     }
 
-    public void postOnCreateVolume(VdcReturnValueBase returnValue, GlusterVolumeEntity volume)
-    {
+    public void postOnCreateVolume(VdcReturnValueBase returnValue, GlusterVolumeEntity volume) {
         VolumeModel model = (VolumeModel) getWindow();
 
         model.stopProgress();
 
-        if (returnValue != null && returnValue.getSucceeded())
-        {
+        if (returnValue != null && returnValue.getSucceeded()) {
             cancel();
             if (model.getOptimizeForVirtStore().getEntity()) {
                 optimizeVolumesForVirtStore(Arrays.asList(volume));
@@ -1500,23 +1468,19 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
     private SystemTreeItemModel systemTreeSelectedItem;
 
     @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem()
-    {
+    public SystemTreeItemModel getSystemTreeSelectedItem() {
         return systemTreeSelectedItem;
     }
 
     @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value)
-    {
-        if (systemTreeSelectedItem != value)
-        {
+    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
+        if (systemTreeSelectedItem != value) {
             systemTreeSelectedItem = value;
             onSystemTreeSelectedItemChanged();
         }
     }
 
-    private void onSystemTreeSelectedItemChanged()
-    {
+    private void onSystemTreeSelectedItemChanged() {
         updateActionAvailability();
     }
 

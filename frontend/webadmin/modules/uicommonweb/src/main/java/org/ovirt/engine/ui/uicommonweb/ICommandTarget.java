@@ -4,8 +4,7 @@ package org.ovirt.engine.ui.uicommonweb;
  * Defines a Command Target
  */
 @SuppressWarnings("unused")
-public interface ICommandTarget
-{
+public interface ICommandTarget {
     /**
      * Execute the command with no parameters
      *

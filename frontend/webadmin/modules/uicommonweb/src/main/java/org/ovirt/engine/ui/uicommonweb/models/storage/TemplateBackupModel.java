@@ -82,10 +82,8 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     }
 
     @Override
-    protected void remove()
-    {
-        if (getWindow() != null)
-        {
+    protected void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -253,18 +251,15 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     protected void executeImport() {
         ImportTemplateModel model = (ImportTemplateModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
         ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
-        for (Object object : importModel.getItems())
-        {
+        for (Object object : importModel.getItems()) {
             ImportTemplateData importData = (ImportTemplateData) object;
             VmTemplate template = importData.getTemplate();
 
@@ -318,14 +313,12 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
                         templateBackupModel.cancel();
                         ArrayList<VdcReturnValueBase> retVals =
                                 (ArrayList<VdcReturnValueBase>) result.getReturnValue();
-                        if (retVals != null && templateBackupModel.getSelectedItems().size() == retVals.size())
-                        {
+                        if (retVals != null && templateBackupModel.getSelectedItems().size() == retVals.size()) {
 
                             StringBuilder importedTemplates = new StringBuilder();
                             int counter = 0;
                             boolean toShowConfirmWindow = false;
-                            for (VmTemplate template : templateBackupModel.getSelectedItems())
-                            {
+                            for (VmTemplate template : templateBackupModel.getSelectedItems()) {
                                 if (retVals.get(counter) != null && retVals.get(counter).getCanDoAction()) {
                                     importedTemplates.append(template.getName()).append(", "); //$NON-NLS-1$
                                     toShowConfirmWindow = true;
@@ -353,49 +346,40 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("storage_domain_shared_status")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("storage_domain_shared_status")) { //$NON-NLS-1$
             getSearchCommand().execute();
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         if (getEntity() == null || getEntity().getStorageDomainType() != StorageDomainType.ImportExport
-                || getEntity().getStorageDomainSharedStatus() != StorageDomainSharedStatus.Active)
-        {
+                || getEntity().getStorageDomainSharedStatus() != StorageDomainSharedStatus.Active) {
             setItems(Collections.<VmTemplate>emptyList());
         }
-        else
-        {
+        else {
             AsyncQuery _asyncQuery = new AsyncQuery();
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object ReturnValue)
-                {
+                public void onSuccess(Object model, Object ReturnValue) {
                     TemplateBackupModel backupModel = (TemplateBackupModel) model;
                     ArrayList<StoragePool> list = (ArrayList<StoragePool>) ReturnValue;
-                    if (list != null && list.size() > 0)
-                    {
+                    if (list != null && list.size() > 0) {
                         StoragePool dataCenter = list.get(0);
                         AsyncQuery _asyncQuery1 = new AsyncQuery();
                         _asyncQuery1.setModel(backupModel);
                         _asyncQuery1.asyncCallback = new INewAsyncCallback() {
                             @Override
-                            public void onSuccess(Object model1, Object ReturnValue1)
-                            {
+                            public void onSuccess(Object model1, Object ReturnValue1) {
                                 ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> items =
                                         new ArrayList<Map.Entry<VmTemplate, List<DiskImage>>>();
                                 HashMap<VmTemplate, List<DiskImage>> dictionary = ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
                                 ArrayList<VmTemplate> list = new ArrayList<>();
-                                for (Map.Entry<VmTemplate, List<DiskImage>> item : dictionary.entrySet())
-                                {
+                                for (Map.Entry<VmTemplate, List<DiskImage>> item : dictionary.entrySet()) {
                                     items.add(item);
                                     VmTemplate template = item.getKey();
                                     template.setDiskList(new ArrayList<DiskImage>());
@@ -446,8 +430,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         switch (command.getName()) {
         case "OnRemove": //$NON-NLS-1$
             onRemove();

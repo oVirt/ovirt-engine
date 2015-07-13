@@ -26,8 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveVmInterfaceModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class NetworkVmListModel extends SearchableListModel<NetworkView, PairQueryable<VmNetworkInterface, VM>>
-{
+public class NetworkVmListModel extends SearchableListModel<NetworkView, PairQueryable<VmNetworkInterface, VM>> {
     private UICommand removeCommand;
     private NetworkVmFilter viewFilterType;
 
@@ -75,16 +74,14 @@ public class NetworkVmListModel extends SearchableListModel<NetworkView, PairQue
 
     @Override
     public void search() {
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             super.search();
         }
     }
 
     @Override
     protected void syncSearch() {
-        if (getEntity() == null)
-        {
+        if (getEntity() == null) {
             return;
         }
 
@@ -92,8 +89,7 @@ public class NetworkVmListModel extends SearchableListModel<NetworkView, PairQue
         asyncQuery.setModel(getViewFilterType());
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 if (model.equals(getViewFilterType())) {
                     setItems((Collection<PairQueryable<VmNetworkInterface, VM>>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
                 }
@@ -113,8 +109,7 @@ public class NetworkVmListModel extends SearchableListModel<NetworkView, PairQue
     protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("name")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("name")) { //$NON-NLS-1$ {
             getSearchCommand().execute();
         }
     }
@@ -123,8 +118,7 @@ public class NetworkVmListModel extends SearchableListModel<NetworkView, PairQue
         ArrayList<VM> vms = new ArrayList<VM>();
         Iterable<PairQueryable<VmNetworkInterface, VM>> selectedItems =
                 getSelectedItems() != null ? getSelectedItems() : new ArrayList();
-        for (PairQueryable<VmNetworkInterface, VM> item : selectedItems)
-        {
+        for (PairQueryable<VmNetworkInterface, VM> item : selectedItems) {
             vms.add(item.getSecond());
         }
 
@@ -138,11 +132,9 @@ public class NetworkVmListModel extends SearchableListModel<NetworkView, PairQue
         Iterable<PairQueryable<VmNetworkInterface, VM>> selectedItems =
                 getSelectedItems() != null ? getSelectedItems() : new ArrayList();
 
-        for (PairQueryable<VmNetworkInterface, VM> pair : selectedItems)
-        {
+        for (PairQueryable<VmNetworkInterface, VM> pair : selectedItems) {
             if (pair.getFirst().isPlugged()
-                    && !VMStatus.Down.equals(pair.getSecond().getStatus()))
-            {
+                    && !VMStatus.Down.equals(pair.getSecond().getStatus())) {
                 return false;
             }
         }
@@ -163,14 +155,12 @@ public class NetworkVmListModel extends SearchableListModel<NetworkView, PairQue
     }
 
     private void remove() {
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
         List<VmNetworkInterface> vnics = new ArrayList<VmNetworkInterface>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             PairQueryable<VmNetworkInterface, VM> pair = (PairQueryable<VmNetworkInterface, VM>) item;
             vnics.add(pair.getFirst());
         }
@@ -182,8 +172,7 @@ public class NetworkVmListModel extends SearchableListModel<NetworkView, PairQue
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getRemoveCommand())
-        {
+        if (command == getRemoveCommand()) {
             remove();
         }
     }

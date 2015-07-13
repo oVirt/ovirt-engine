@@ -122,8 +122,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 showAvailableVolumes(ReturnValue);
             }
 

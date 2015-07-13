@@ -47,66 +47,55 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.inject.Inject;
 
-public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implements ISupportSystemTreeContext
-{
+public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implements ISupportSystemTreeContext {
     private UICommand privateNewCommand;
 
-    public UICommand getNewCommand()
-    {
+    public UICommand getNewCommand() {
         return privateNewCommand;
     }
 
-    private void setNewCommand(UICommand value)
-    {
+    private void setNewCommand(UICommand value) {
         privateNewCommand = value;
     }
 
     private UICommand privateEditCommand;
 
     @Override
-    public UICommand getEditCommand()
-    {
+    public UICommand getEditCommand() {
         return privateEditCommand;
     }
 
-    private void setEditCommand(UICommand value)
-    {
+    private void setEditCommand(UICommand value) {
         privateEditCommand = value;
     }
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
     private UICommand privateMoveCommand;
 
-    public UICommand getMoveCommand()
-    {
+    public UICommand getMoveCommand() {
         return privateMoveCommand;
     }
 
-    private void setMoveCommand(UICommand value)
-    {
+    private void setMoveCommand(UICommand value) {
         privateMoveCommand = value;
     }
 
     private UICommand privateScanAlignmentCommand;
 
-    public UICommand getScanAlignmentCommand()
-    {
+    public UICommand getScanAlignmentCommand() {
         return privateScanAlignmentCommand;
     }
 
-    private void setScanAlignmentCommand(UICommand value)
-    {
+    private void setScanAlignmentCommand(UICommand value) {
         privateScanAlignmentCommand = value;
     }
 
@@ -122,25 +111,21 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
 
     private UICommand privateChangeQuotaCommand;
 
-    public UICommand getChangeQuotaCommand()
-    {
+    public UICommand getChangeQuotaCommand() {
         return privateChangeQuotaCommand;
     }
 
-    private void setChangeQuotaCommand(UICommand value)
-    {
+    private void setChangeQuotaCommand(UICommand value) {
         privateChangeQuotaCommand = value;
     }
 
     private UICommand privateCopyCommand;
 
-    public UICommand getCopyCommand()
-    {
+    public UICommand getCopyCommand() {
         return privateCopyCommand;
     }
 
-    private void setCopyCommand(UICommand value)
-    {
+    private void setCopyCommand(UICommand value) {
         privateCopyCommand = value;
     }
 
@@ -157,14 +142,12 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
     private SystemTreeItemModel systemTreeSelectedItem;
 
     @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem()
-    {
+    public SystemTreeItemModel getSystemTreeSelectedItem() {
         return systemTreeSelectedItem;
     }
 
     @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value)
-    {
+    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
         systemTreeSelectedItem = value;
         onPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem")); //$NON-NLS-1$
     }
@@ -225,8 +208,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
 
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.Disk, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(VdcQueryType.Search, tempVar);
@@ -238,8 +220,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
     }
 
     @Override
-    public void setItems(Collection<Disk> disks)
-    {
+    public void setItems(Collection<Disk> disks) {
         if (disks == null) {
             super.setItems(null);
             return;
@@ -249,10 +230,8 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
     }
 
     @Override
-    protected void updateDetailsAvailability()
-    {
-        if (getSelectedItem() != null)
-        {
+    protected void updateDetailsAvailability() {
+        if (getSelectedItem() != null) {
             Disk disk = getSelectedItem();
 
             diskVmListModel.setIsAvailable(disk.getVmEntityType() == null || !disk.getVmEntityType().isTemplateType());
@@ -262,27 +241,23 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
         }
     }
 
-    public void cancel()
-    {
+    public void cancel() {
         setWindow(null);
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
-    private void newEntity()
-    {
+    private void newEntity() {
         NewDiskModel model = new NewDiskModel(getSystemTreeSelectedItem());
         model.setTitle(ConstantsManager.getInstance().getConstants().newVirtualDiskTitle());
         model.setHelpTag(HelpTag.new_virtual_disk);
@@ -295,19 +270,16 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
         model.initialize();
     }
 
-    private void edit()
-    {
+    private void edit() {
 
     }
 
-    private void move()
-    {
+    private void move() {
 
 
         ArrayList<DiskImage> disks = (ArrayList<DiskImage>) asImages(getSelectedItems());
 
-        if (disks == null || getWindow() != null)
-        {
+        if (disks == null || getWindow() != null) {
             return;
         }
 
@@ -322,12 +294,10 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
         model.startProgress(null);
     }
 
-    private void scanAlignment()
-    {
+    private void scanAlignment() {
         ArrayList<VdcActionParametersBase> parameterList = new ArrayList<VdcActionParametersBase>();
 
-        for (Disk disk : getSelectedItems())
-        {
+        for (Disk disk : getSelectedItems()) {
             parameterList.add(new GetDiskAlignmentParameters(disk.getId()));
         }
 
@@ -340,13 +310,11 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
                 this);
     }
 
-    private void export()
-    {
+    private void export() {
         @SuppressWarnings("unchecked")
         ArrayList<DiskImage> disks = (ArrayList<DiskImage>) asImages(getSelectedItems());
 
-        if (disks == null || getWindow() != null)
-        {
+        if (disks == null || getWindow() != null) {
             return;
         }
 
@@ -365,12 +333,10 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
         model.getCommands().add(cancelCommand);
     }
 
-    private void changeQuota()
-    {
+    private void changeQuota() {
         ArrayList<DiskImage> disks = (ArrayList<DiskImage>) asImages(getSelectedItems());
 
-        if (disks == null || getWindow() != null)
-        {
+        if (disks == null || getWindow() != null) {
             return;
         }
 
@@ -391,8 +357,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
         ChangeQuotaModel model = (ChangeQuotaModel) getWindow();
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
 
-        for (ChangeQuotaItemModel item : model.getItems())
-        {
+        for (ChangeQuotaItemModel item : model.getItems()) {
             ChangeQuotaItemModel itemModel = item;
             DiskImage disk = itemModel.getEntity();
             VdcActionParametersBase parameters =
@@ -417,12 +382,10 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
                 this);
     }
 
-    private void copy()
-    {
+    private void copy() {
         ArrayList<DiskImage> disks = (ArrayList<DiskImage>) asImages(getSelectedItems());
 
-        if (disks == null || getWindow() != null)
-        {
+        if (disks == null || getWindow() != null) {
             return;
         }
 
@@ -436,10 +399,8 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
         model.startProgress(null);
     }
 
-    private void remove()
-    {
-        if (getWindow() != null)
-        {
+    private void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -449,13 +410,11 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
         model.getLatch().setIsAvailable(false);
     }
 
-    private void onRemove()
-    {
+    private void onRemove() {
         RemoveDiskModel model = (RemoveDiskModel) getWindow();
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
 
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             Disk disk = (Disk) item;
             VdcActionParametersBase parameters = new RemoveDiskParameters(disk.getId());
             paramerterList.add(parameters);
@@ -475,8 +434,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
                 this);
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         Disk disk = getSelectedItem();
         ArrayList<Disk> disks = getSelectedItems() != null ? (ArrayList) getSelectedItems() : null;
         boolean shouldAllowEdit = true;
@@ -566,8 +524,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
         ArrayList<Disk> disks =
                 getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
 
-        for (Disk disk : disks)
-        {
+        for (Disk disk : disks) {
             // check if the disk is template disk
             if (disk.getVmEntityType() != null && disk.getVmEntityType().isTemplateType()) {
                 return false;
@@ -594,8 +551,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
         ArrayList<Disk> disks =
                 getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
 
-        for (Disk disk : disks)
-        {
+        for (Disk disk : disks) {
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE &&
                     ((DiskImage) disk).getImageStatus() != ImageStatus.OK) {
                 return false;
@@ -612,8 +568,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
             return false;
         }
 
-        for (Disk disk : disks)
-        {
+        for (Disk disk : disks) {
             if (disk.getDiskStorageType() != DiskStorageType.IMAGE) {
                 return false;
             }
@@ -628,8 +583,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
         return true;
     }
 
-    private void cancelConfirm()
-    {
+    private void cancelConfirm() {
         AbstractDiskModel model = (AbstractDiskModel) getWindow();
         SanStorageModel sanStorageModel = model.getSanStorageModel();
         sanStorageModel.setForce(false);
@@ -637,48 +591,37 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getNewCommand())
-        {
+        if (command == getNewCommand()) {
             newEntity();
         }
-        else if (command == getEditCommand())
-        {
+        else if (command == getEditCommand()) {
             edit();
         }
-        else if (command == getRemoveCommand())
-        {
+        else if (command == getRemoveCommand()) {
             remove();
         }
-        else if (command == getMoveCommand())
-        {
+        else if (command == getMoveCommand()) {
             move();
         }
-        else if (command == getCopyCommand())
-        {
+        else if (command == getCopyCommand()) {
             copy();
         }
-        else if (command == getScanAlignmentCommand())
-        {
+        else if (command == getScanAlignmentCommand()) {
             scanAlignment();
         }
-        else if (command == getExportCommand())
-        {
+        else if (command == getExportCommand()) {
             export();
         }
-        else if (RemoveDiskModel.CANCEL_REMOVE.equals(command.getName()) || "Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if (RemoveDiskModel.CANCEL_REMOVE.equals(command.getName()) || "Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
-        else if ("CancelConfirm".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("CancelConfirm".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirm();
         }
-        else if (RemoveDiskModel.ON_REMOVE.equals(command.getName()))
-        {
+        else if (RemoveDiskModel.ON_REMOVE.equals(command.getName())) {
             onRemove();
         } else if (command == getChangeQuotaCommand()) {
             changeQuota();
@@ -703,8 +646,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
     }
 
     @Override
-    public boolean isSearchStringMatch(String searchString)
-    {
+    public boolean isSearchStringMatch(String searchString) {
         return searchString.trim().toLowerCase().startsWith("disk"); //$NON-NLS-1$
     }
 

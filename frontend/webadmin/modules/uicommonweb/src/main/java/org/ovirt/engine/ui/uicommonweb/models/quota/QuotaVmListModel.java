@@ -26,8 +26,7 @@ public class QuotaVmListModel extends SearchableListModel<Quota, VM> {
 
     @Override
     protected void syncSearch() {
-        if (getEntity() == null)
-        {
+        if (getEntity() == null) {
             return;
         }
 
@@ -37,8 +36,7 @@ public class QuotaVmListModel extends SearchableListModel<Quota, VM> {
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 QuotaVmListModel vmModel = (QuotaVmListModel) model;
                 vmModel.setItems((ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
                 vmModel.setIsEmpty(((List) vmModel.getItems()).size() == 0);
@@ -51,8 +49,7 @@ public class QuotaVmListModel extends SearchableListModel<Quota, VM> {
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
         getSearchCommand().execute();
     }

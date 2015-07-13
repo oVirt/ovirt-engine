@@ -34,8 +34,7 @@ public class TaskListModel extends SearchableListModel {
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 TaskListModel taskListModel = (TaskListModel) model;
                 ArrayList<Job> taskList =
                         (ArrayList<Job>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
@@ -175,8 +174,7 @@ public class TaskListModel extends SearchableListModel {
             if (guidOrCorrelationId.startsWith(_WEBADMIN_)) {
                 _asyncQuery.asyncCallback = new INewAsyncCallback() {
                     @Override
-                    public void onSuccess(Object model, Object ReturnValue)
-                    {
+                    public void onSuccess(Object model, Object ReturnValue) {
                         TaskListModel taskListModel = (TaskListModel) model;
                         ArrayList<Job> retTasks = (ArrayList<Job>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
 
@@ -233,8 +231,7 @@ public class TaskListModel extends SearchableListModel {
             } else {
                 _asyncQuery.asyncCallback = new INewAsyncCallback() {
                     @Override
-                    public void onSuccess(Object model, Object ReturnValue)
-                    {
+                    public void onSuccess(Object model, Object ReturnValue) {
                         TaskListModel taskListModel = (TaskListModel) model;
                         Job retTask = (Job) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                         if (retTask == null) {

@@ -47,74 +47,62 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
     private UICommand privateNewCommand;
 
-    public UICommand getNewCommand()
-    {
+    public UICommand getNewCommand() {
         return privateNewCommand;
     }
 
-    private void setNewCommand(UICommand value)
-    {
+    private void setNewCommand(UICommand value) {
         privateNewCommand = value;
     }
 
     private UICommand attachCommand;
 
-    public UICommand getAttachCommand()
-    {
+    public UICommand getAttachCommand() {
         return attachCommand;
     }
 
-    private void setAttachCommand(UICommand value)
-    {
+    private void setAttachCommand(UICommand value) {
         attachCommand = value;
     }
 
     private UICommand privateEditCommand;
 
     @Override
-    public UICommand getEditCommand()
-    {
+    public UICommand getEditCommand() {
         return privateEditCommand;
     }
 
-    private void setEditCommand(UICommand value)
-    {
+    private void setEditCommand(UICommand value) {
         privateEditCommand = value;
     }
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
     private UICommand privatePlugCommand;
 
-    public UICommand getPlugCommand()
-    {
+    public UICommand getPlugCommand() {
         return privatePlugCommand;
     }
 
-    private void setPlugCommand(UICommand value)
-    {
+    private void setPlugCommand(UICommand value) {
         privatePlugCommand = value;
     }
 
     private UICommand privateUnPlugCommand;
 
-    public UICommand getUnPlugCommand()
-    {
+    public UICommand getUnPlugCommand() {
         return privateUnPlugCommand;
     }
 
-    private void setUnPlugCommand(UICommand value)
-    {
+    private void setUnPlugCommand(UICommand value) {
         privateUnPlugCommand = value;
     }
 
@@ -130,37 +118,31 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
     private UICommand privateChangeQuotaCommand;
 
-    public UICommand getChangeQuotaCommand()
-    {
+    public UICommand getChangeQuotaCommand() {
         return privateChangeQuotaCommand;
     }
 
-    private void setChangeQuotaCommand(UICommand value)
-    {
+    private void setChangeQuotaCommand(UICommand value) {
         privateChangeQuotaCommand = value;
     }
 
     private UICommand privateMoveCommand;
 
-    public UICommand getMoveCommand()
-    {
+    public UICommand getMoveCommand() {
         return privateMoveCommand;
     }
 
-    private void setMoveCommand(UICommand value)
-    {
+    private void setMoveCommand(UICommand value) {
         privateMoveCommand = value;
     }
 
     private UICommand privateScanAlignmentCommand;
 
-    public UICommand getScanAlignmentCommand()
-    {
+    public UICommand getScanAlignmentCommand() {
         return privateScanAlignmentCommand;
     }
 
-    private void setScanAlignmentCommand(UICommand value)
-    {
+    private void setScanAlignmentCommand(UICommand value) {
         privateScanAlignmentCommand = value;
     }
 
@@ -170,10 +152,8 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         return privateIsDiskHotPlugSupported;
     }
 
-    private void setIsDiskHotPlugSupported(boolean value)
-    {
-        if (privateIsDiskHotPlugSupported != value)
-        {
+    private void setIsDiskHotPlugSupported(boolean value) {
+        if (privateIsDiskHotPlugSupported != value) {
             privateIsDiskHotPlugSupported = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsDiskHotPlugSupported")); //$NON-NLS-1$
         }
@@ -181,15 +161,12 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
     private boolean isLiveStorageMigrationEnabled;
 
-    public boolean getIsLiveStorageMigrationEnabled()
-    {
+    public boolean getIsLiveStorageMigrationEnabled() {
         return isLiveStorageMigrationEnabled;
     }
 
-    private void setIsLiveStorageMigrationEnabled(boolean value)
-    {
-        if (isLiveStorageMigrationEnabled != value)
-        {
+    private void setIsLiveStorageMigrationEnabled(boolean value) {
+        if (isLiveStorageMigrationEnabled != value) {
             isLiveStorageMigrationEnabled = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsLiveStorageMigrationEnabled")); //$NON-NLS-1$
         }
@@ -200,8 +177,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
                 VdcActionUtils.canExecute(Arrays.asList(getEntity()), VM.class, VdcActionType.ExtendImageSize) : false;
     }
 
-    public VmDiskListModel()
-    {
+    public VmDiskListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().disksTitle());
         setHelpTag(HelpTag.disks);
         setHashName("disks"); //$NON-NLS-1$
@@ -221,12 +197,10 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             updateDataCenterVersion();
             getSearchCommand().execute();
             updateIsDiskHotPlugAvailable();
@@ -237,10 +211,8 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     }
 
     @Override
-    protected void syncSearch()
-    {
-        if (getEntity() == null)
-        {
+    protected void syncSearch() {
+        if (getEntity() == null) {
             return;
         }
         VM vm = getEntity();
@@ -249,8 +221,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     }
 
     @Override
-    public void setItems(Collection value)
-    {
+    public void setItems(Collection value) {
         ArrayList<Disk> disks =
                 value != null ? Linq.<Disk> cast(value) : new ArrayList<Disk>();
 
@@ -297,8 +268,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     private void changeQuota() {
         ArrayList<DiskImage> disks = (ArrayList) getSelectedItems();
 
-        if (disks == null || getWindow() != null)
-        {
+        if (disks == null || getWindow() != null) {
             return;
         }
 
@@ -318,8 +288,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         ChangeQuotaModel model = (ChangeQuotaModel) getWindow();
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
 
-        for (Object item : model.getItems())
-        {
+        for (Object item : model.getItems()) {
             ChangeQuotaItemModel itemModel = (ChangeQuotaItemModel) item;
             DiskImage disk = itemModel.getEntity();
             VdcActionParametersBase parameters =
@@ -342,12 +311,10 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
                 this);
     }
 
-    private void edit()
-    {
+    private void edit() {
         final Disk disk = getSelectedItem();
 
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -365,10 +332,8 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         model.initialize();
     }
 
-    private void remove()
-    {
-        if (getWindow() != null)
-        {
+    private void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -445,17 +410,14 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         model.getCommands().add(cancel);
     }
 
-    private void move()
-    {
+    private void move() {
         ArrayList<DiskImage> disks = (ArrayList) getSelectedItems();
 
-        if (disks == null)
-        {
+        if (disks == null) {
             return;
         }
 
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -477,12 +439,10 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         model.startProgress(null);
     }
 
-    private void scanAlignment()
-    {
+    private void scanAlignment() {
         ArrayList<VdcActionParametersBase> parameterList = new ArrayList<VdcActionParametersBase>();
 
-        for (Disk disk : getSelectedItems())
-        {
+        for (Disk disk : getSelectedItems()) {
             parameterList.add(new GetDiskAlignmentParameters(disk.getId()));
         }
 
@@ -495,38 +455,32 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
                 this);
     }
 
-    private void cancel()
-    {
+    private void cancel() {
         setWindow(null);
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("status")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("status")) { //$NON-NLS-1$
             updateActionAvailability();
         }
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         Disk disk = getSelectedItem();
 
         getNewCommand().setIsExecutionAllowed(true);
@@ -591,8 +545,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         ArrayList<Disk> disks =
                 getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
 
-        for (Disk disk : disks)
-        {
+        for (Disk disk : disks) {
             boolean isLocked =
                     disk.getDiskStorageType() == DiskStorageType.IMAGE
                             && ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED;
@@ -686,55 +639,43 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getNewCommand())
-        {
+        if (command == getNewCommand()) {
             newEntity();
         }
-        else if (command == getAttachCommand())
-        {
+        else if (command == getAttachCommand()) {
             attach();
         }
-        else if (command == getEditCommand())
-        {
+        else if (command == getEditCommand()) {
             edit();
         }
-        else if (command == getRemoveCommand())
-        {
+        else if (command == getRemoveCommand()) {
             remove();
         }
-        else if (command == getMoveCommand())
-        {
+        else if (command == getMoveCommand()) {
             move();
         }
-        else if (command == getScanAlignmentCommand())
-        {
+        else if (command == getScanAlignmentCommand()) {
             scanAlignment();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
         else if (RemoveDiskModel.CANCEL_REMOVE.equals(command.getName())) {
             cancel();
         }
-        else if (RemoveDiskModel.ON_REMOVE.equals(command.getName()))
-        {
+        else if (RemoveDiskModel.ON_REMOVE.equals(command.getName())) {
             onRemove();
         }
-        else if (command == getPlugCommand())
-        {
+        else if (command == getPlugCommand()) {
             plug();
         }
-        else if (command == getUnPlugCommand())
-        {
+        else if (command == getUnPlugCommand()) {
             confirmUnplug();
         }
-        else if ("OnUnplug".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnUnplug".equals(command.getName())) { //$NON-NLS-1$
             unplug();
         }
 
@@ -745,8 +686,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         }
     }
 
-    protected void updateIsDiskHotPlugAvailable()
-    {
+    protected void updateIsDiskHotPlugAvailable() {
         VM vm = getEntity();
         Version clusterCompatibilityVersion = vm.getVdsGroupCompatibilityVersion();
         if (clusterCompatibilityVersion == null) {
@@ -757,8 +697,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         }
     }
 
-    protected void updateLiveStorageMigrationEnabled()
-    {
+    protected void updateLiveStorageMigrationEnabled() {
         final VM vm = getEntity();
 
         AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
@@ -799,8 +738,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         return false; // Should never happen but we might add other Disk types in the future
     }
 
-    protected void updateDataCenterVersion()
-    {
+    protected void updateDataCenterVersion() {
         AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
@@ -812,14 +750,11 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         AsyncDataProvider.getInstance().getDataCenterById(query, getEntity().getStoragePoolId());
     }
 
-    protected void updateExtendImageSizeSupported()
-    {
+    protected void updateExtendImageSizeSupported() {
         VM vm = getEntity();
-        AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback()
-        {
+        AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object target, Object returnValue)
-            {
+            public void onSuccess(Object target, Object returnValue) {
                 VmDiskListModel model = (VmDiskListModel) target;
                 model.setExtendImageSizeSupported((Boolean) returnValue);
             }
@@ -831,15 +766,12 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
     private Version dataCenterVersion;
 
-    public Version getDataCenterVersion()
-    {
+    public Version getDataCenterVersion() {
         return dataCenterVersion;
     }
 
-    public void setDataCenterVersion(Version dataCenterVersion)
-    {
-        if (dataCenterVersion != null && !dataCenterVersion.equals(this.dataCenterVersion))
-        {
+    public void setDataCenterVersion(Version dataCenterVersion) {
+        if (dataCenterVersion != null && !dataCenterVersion.equals(this.dataCenterVersion)) {
             this.dataCenterVersion = dataCenterVersion;
             updateExtendImageSizeSupported();
         }
@@ -847,13 +779,11 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
     private boolean extendImageSizeSupported = true;
 
-    public boolean isExtendImageSizeSupported()
-    {
+    public boolean isExtendImageSizeSupported() {
         return extendImageSizeSupported;
     }
 
-    public void setExtendImageSizeSupported(boolean extendImageSizeSupported)
-    {
+    public void setExtendImageSizeSupported(boolean extendImageSizeSupported) {
         if (this.extendImageSizeSupported != extendImageSizeSupported) {
             this.extendImageSizeSupported = extendImageSizeSupported;
             updateActionAvailability();

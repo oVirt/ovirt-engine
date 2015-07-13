@@ -7,8 +7,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 
 @SuppressWarnings("unused")
-public interface IStorageModel
-{
+public interface IStorageModel {
     StorageModel getContainer();
 
     void setContainer(StorageModel value);

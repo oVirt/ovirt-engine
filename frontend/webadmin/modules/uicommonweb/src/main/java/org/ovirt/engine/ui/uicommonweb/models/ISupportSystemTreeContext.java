@@ -5,8 +5,7 @@ package org.ovirt.engine.ui.uicommonweb.models;
  * CommonModel.
  */
 @SuppressWarnings("unused")
-public interface ISupportSystemTreeContext
-{
+public interface ISupportSystemTreeContext {
     SystemTreeItemModel getSystemTreeSelectedItem();
 
     void setSystemTreeSelectedItem(SystemTreeItemModel value);

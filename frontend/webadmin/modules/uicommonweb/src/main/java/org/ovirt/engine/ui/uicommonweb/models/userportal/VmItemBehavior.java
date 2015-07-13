@@ -41,44 +41,36 @@ public class VmItemBehavior extends ItemBehavior {
     @Override
     public void entityPropertyChanged(PropertyChangedEventArgs e) {
         updateProperties();
-        if (e.propertyName.equals("status")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("status")) { //$NON-NLS-1$
             updateActionAvailability();
         }
     }
 
     @Override
     public void executeCommand(UICommand command) {
-        if (command == getItem().getRunCommand())
-        {
+        if (command == getItem().getRunCommand()) {
             run();
         }
-        else if (command == getItem().getPauseCommand())
-        {
+        else if (command == getItem().getPauseCommand()) {
             pause();
         }
-        else if (command == getItem().getStopCommand())
-        {
+        else if (command == getItem().getStopCommand()) {
             stop();
         }
-        else if (command == getItem().getShutdownCommand())
-        {
+        else if (command == getItem().getShutdownCommand()) {
             shutdown();
         }
-        else if (command == getItem().getReturnVmCommand())
-        {
+        else if (command == getItem().getReturnVmCommand()) {
             returnVm();
         }
-        else if (command == getItem().getRebootCommand())
-        {
+        else if (command == getItem().getRebootCommand()) {
             reboot();
         }
     }
 
     @Override
     public void eventRaised(Event ev, Object sender, EventArgs args) {
-        if (ev.matchesDefinition(ChangeCDModel.executedEventDefinition))
-        {
+        if (ev.matchesDefinition(ChangeCDModel.executedEventDefinition)) {
             changeCD(sender, args);
         }
     }
@@ -91,8 +83,7 @@ public class VmItemBehavior extends ItemBehavior {
         String imageName = model.getTitle();
         if (ObjectUtils.objectsEqual(imageName, ConstantsManager.getInstance()
                 .getConstants()
-                .noCds()))
-        {
+                .noCds())) {
             return;
         }
 
@@ -108,8 +99,7 @@ public class VmItemBehavior extends ItemBehavior {
                 null, null);
     }
 
-    private void shutdown()
-    {
+    private void shutdown() {
         VM entity = (VM) getItem().getEntity();
         Frontend.getInstance().runAction(VdcActionType.ShutdownVm, new ShutdownVmParameters(entity.getId(), true));
     }
@@ -173,8 +163,7 @@ public class VmItemBehavior extends ItemBehavior {
         getItem().getRebootCommand().setIsExecutionAllowed(AsyncDataProvider.getInstance().isRebootCommandExecutionAllowed(entities));
 
         // Check whether a VM is from the manual pool.
-        if (entity.getVmPoolId() != null)
-        {
+        if (entity.getVmPoolId() != null) {
             AsyncDataProvider.getInstance().getPoolById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
@@ -188,8 +177,7 @@ public class VmItemBehavior extends ItemBehavior {
                         }
                     }), entity.getVmPoolId());
         }
-        else
-        {
+        else {
             updateCommandsAccordingToPoolType(true);
         }
     }

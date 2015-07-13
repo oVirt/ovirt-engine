@@ -19,39 +19,32 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 @SuppressWarnings("unused")
 public class StorageTemplateListModel extends SearchableListModel<StorageDomain, VmTemplate> {
 
-    public StorageTemplateListModel()
-    {
+    public StorageTemplateListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
         setHelpTag(HelpTag.templates);
         setHashName("templates"); // $//$NON-NLS-1$
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
         getSearchCommand().execute();
     }
 
     @Override
-    public void search()
-    {
-        if (getEntity() != null)
-        {
+    public void search() {
+        if (getEntity() != null) {
             super.search();
         }
-        else
-        {
+        else {
             setItems(null);
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
-        if (getEntity() == null)
-        {
+    protected void syncSearch() {
+        if (getEntity() == null) {
             return;
         }
 
@@ -61,8 +54,7 @@ public class StorageTemplateListModel extends SearchableListModel<StorageDomain,
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 ArrayList<VmTemplate> templates = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 Collections.sort(templates, new Linq.VmTemplateComparator());
                 setItems(templates);

@@ -62,13 +62,11 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
     public abstract void onVmAndPoolLoad();
 
     @Override
-    protected Object provideDetailModelEntity(UserPortalItemModel selectedItem)
-    {
+    protected Object provideDetailModelEntity(UserPortalItemModel selectedItem) {
         // Each item in this list model is not a business entity,
         // therefore select an Entity property to provide it to
         // the detail models.
-        if (selectedItem == null)
-        {
+        if (selectedItem == null) {
             return null;
         }
 
@@ -111,8 +109,7 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
 
     protected abstract ConsoleContext getConsoleContext();
 
-    public void cancel()
-    {
+    public void cancel() {
         setWindow(null);
         setConfirmWindow(null);
     }

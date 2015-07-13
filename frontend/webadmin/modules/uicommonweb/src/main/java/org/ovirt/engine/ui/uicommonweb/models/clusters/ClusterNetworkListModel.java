@@ -31,49 +31,41 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.ClusterNewNetworkModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class ClusterNetworkListModel extends SearchableListModel<VDSGroup, Network>
-{
+public class ClusterNetworkListModel extends SearchableListModel<VDSGroup, Network> {
 
     private UICommand privateNewNetworkCommand;
 
-    public UICommand getNewNetworkCommand()
-    {
+    public UICommand getNewNetworkCommand() {
         return privateNewNetworkCommand;
     }
 
-    private void setNewNetworkCommand(UICommand value)
-    {
+    private void setNewNetworkCommand(UICommand value) {
         privateNewNetworkCommand = value;
     }
 
     private UICommand privateManageCommand;
 
-    public UICommand getManageCommand()
-    {
+    public UICommand getManageCommand() {
         return privateManageCommand;
     }
 
-    private void setManageCommand(UICommand value)
-    {
+    private void setManageCommand(UICommand value) {
         privateManageCommand = value;
     }
 
     private UICommand privateSetAsDisplayCommand;
 
-    public UICommand getSetAsDisplayCommand()
-    {
+    public UICommand getSetAsDisplayCommand() {
         return privateSetAsDisplayCommand;
     }
 
-    private void setSetAsDisplayCommand(UICommand value)
-    {
+    private void setSetAsDisplayCommand(UICommand value) {
         privateSetAsDisplayCommand = value;
     }
 
     private final Network displayNetwork = null;
 
-    public ClusterNetworkListModel()
-    {
+    public ClusterNetworkListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().logicalNetworksTitle());
         setHelpTag(HelpTag.logical_networks);
         setHashName("logical_networks"); //$NON-NLS-1$
@@ -86,26 +78,21 @@ public class ClusterNetworkListModel extends SearchableListModel<VDSGroup, Netwo
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
         getSearchCommand().execute();
     }
 
     @Override
-    public void search()
-    {
-        if (getEntity() != null)
-        {
+    public void search() {
+        if (getEntity() != null) {
             super.search();
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
-        if (getEntity() == null)
-        {
+    protected void syncSearch() {
+        if (getEntity() == null) {
             return;
         }
 
@@ -115,8 +102,7 @@ public class ClusterNetworkListModel extends SearchableListModel<VDSGroup, Netwo
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 final List<Network> newItems = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 Collections.sort(newItems, new NetworkInClusterComparator());
                 for (Network network : newItems) {
@@ -152,8 +138,7 @@ public class ClusterNetworkListModel extends SearchableListModel<VDSGroup, Netwo
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 ClusterNetworkListModel clusterNetworkListModel = (ClusterNetworkListModel) model;
                 final List<Network> dcNetworks = (List<Network>) result;
 
@@ -192,33 +177,28 @@ public class ClusterNetworkListModel extends SearchableListModel<VDSGroup, Netwo
         return listModel;
     }
 
-    public void cancel()
-    {
+    public void cancel() {
         setWindow(null);
     }
 
     @Override
-    protected void entityChanging(VDSGroup newValue, VDSGroup oldValue)
-    {
+    protected void entityChanging(VDSGroup newValue, VDSGroup oldValue) {
         getNewNetworkCommand().setIsExecutionAllowed(newValue != null && newValue.getStoragePoolId() != null);
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         Network network = getSelectedItem();
 
         // CanRemove = SelectedItems != null && SelectedItems.Count > 0;
@@ -227,10 +207,8 @@ public class ClusterNetworkListModel extends SearchableListModel<VDSGroup, Netwo
                 && network.getCluster().getStatus() != NetworkStatus.NON_OPERATIONAL);
     }
 
-    public void newEntity()
-    {
-        if (getWindow() != null)
-        {
+    public void newEntity() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -238,14 +216,12 @@ public class ClusterNetworkListModel extends SearchableListModel<VDSGroup, Netwo
         setWindow(networkModel);
 
         // Set selected dc
-        if (getEntity().getStoragePoolId() != null)
-        {
+        if (getEntity().getStoragePoolId() != null) {
             AsyncQuery _asyncQuery = new AsyncQuery();
             _asyncQuery.setModel(networkModel);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object result)
-                {
+                public void onSuccess(Object model, Object result) {
                     final StoragePool dataCenter = (StoragePool) result;
                     networkModel.getDataCenters().setItems(Arrays.asList(dataCenter));
                     networkModel.getDataCenters().setSelectedItem(dataCenter);

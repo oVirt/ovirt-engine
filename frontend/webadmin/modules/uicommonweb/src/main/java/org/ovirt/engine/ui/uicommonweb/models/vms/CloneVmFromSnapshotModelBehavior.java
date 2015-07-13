@@ -6,8 +6,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 
 @SuppressWarnings("unused")
-public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior
-{
+public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior {
     public CloneVmFromSnapshotModelBehavior() {
         super(null);
     }
@@ -31,14 +30,12 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior
     }
 
     @Override
-    public void updateIsDisksAvailable()
-    {
+    public void updateIsDisksAvailable() {
         getModel().setIsDisksAvailable(getModel().getDisks() != null);
     }
 
     @Override
-    public void provisioning_SelectedItemChanged()
-    {
+    public void provisioning_SelectedItemChanged() {
         boolean provisioning = getModel().getProvisioning().getEntity();
         getModel().getProvisioningThin_IsSelected().setEntity(!provisioning);
         getModel().getProvisioningClone_IsSelected().setEntity(provisioning);
@@ -57,8 +54,7 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior
     }
 
     @Override
-    public void initStorageDomains()
-    {
+    public void initStorageDomains() {
         postInitStorageDomains();
     }
 

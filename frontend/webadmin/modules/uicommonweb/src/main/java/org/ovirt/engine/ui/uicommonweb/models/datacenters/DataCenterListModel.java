@@ -74,74 +74,62 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
 
     private UICommand privateNewCommand;
 
-    public UICommand getNewCommand()
-    {
+    public UICommand getNewCommand() {
         return privateNewCommand;
     }
 
-    private void setNewCommand(UICommand value)
-    {
+    private void setNewCommand(UICommand value) {
         privateNewCommand = value;
     }
 
     private UICommand privateEditCommand;
 
     @Override
-    public UICommand getEditCommand()
-    {
+    public UICommand getEditCommand() {
         return privateEditCommand;
     }
 
-    private void setEditCommand(UICommand value)
-    {
+    private void setEditCommand(UICommand value) {
         privateEditCommand = value;
     }
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
     private UICommand privateForceRemoveCommand;
 
-    public UICommand getForceRemoveCommand()
-    {
+    public UICommand getForceRemoveCommand() {
         return privateForceRemoveCommand;
     }
 
-    private void setForceRemoveCommand(UICommand value)
-    {
+    private void setForceRemoveCommand(UICommand value) {
         privateForceRemoveCommand = value;
     }
 
     private UICommand privateGuideCommand;
 
-    public UICommand getGuideCommand()
-    {
+    public UICommand getGuideCommand() {
         return privateGuideCommand;
     }
 
-    private void setGuideCommand(UICommand value)
-    {
+    private void setGuideCommand(UICommand value) {
         privateGuideCommand = value;
     }
 
     private UICommand privateRecoveryStorageCommand;
 
-    public UICommand getRecoveryStorageCommand()
-    {
+    public UICommand getRecoveryStorageCommand() {
         return privateRecoveryStorageCommand;
     }
 
-    private void setRecoveryStorageCommand(UICommand value)
-    {
+    private void setRecoveryStorageCommand(UICommand value) {
         privateRecoveryStorageCommand = value;
     }
 
@@ -155,17 +143,13 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         this.addMacPoolCommand = addMacPoolCommand;
     }
 
-    protected Object[] getSelectedKeys()
-    {
-        if (getSelectedItems() == null)
-        {
+    protected Object[] getSelectedKeys() {
+        if (getSelectedItems() == null) {
             return new Object[0];
         }
-        else
-        {
+        else {
             ArrayList<Object> objL = new ArrayList<>();
-            for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems()))
-            {
+            for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems())) {
                 objL.add(a.getId());
             }
             return objL.toArray(new Object[] {});
@@ -174,13 +158,11 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
 
     private Object privateGuideContext;
 
-    public Object getGuideContext()
-    {
+    public Object getGuideContext() {
         return privateGuideContext;
     }
 
-    public void setGuideContext(Object value)
-    {
+    public void setGuideContext(Object value) {
         privateGuideContext = value;
     }
 
@@ -233,8 +215,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
-    public void guide()
-    {
+    public void guide() {
         DataCenterGuideModel model = new DataCenterGuideModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newDataCenterGuideMeTitle());
@@ -288,14 +269,12 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
     }
 
     @Override
-    public boolean isSearchStringMatch(String searchString)
-    {
+    public boolean isSearchStringMatch(String searchString) {
         return searchString.trim().toLowerCase().startsWith("datacenter"); //$NON-NLS-1$
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.StoragePool,
                 isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
@@ -308,10 +287,8 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         return true;
     }
 
-    public void newEntity()
-    {
-        if (getWindow() != null)
-        {
+    public void newEntity() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -329,13 +306,11 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         model.getCommands().add(tempVar2);
     }
 
-    public void edit()
-    {
+    public void edit() {
         StoragePool dataCenter = getSelectedItem();
         final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -350,8 +325,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         model.getName().setEntity(dataCenter.getName());
 
         if (getSystemTreeSelectedItem() != null
-                && getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter)
-        {
+                && getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter) {
             model.getName().setIsChangeable(false);
             model.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
         }
@@ -403,10 +377,8 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         setConfirmWindow(macPoolModel);
     }
 
-    public void remove()
-    {
-        if (getWindow() != null)
-        {
+    public void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -418,8 +390,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         model.setHashName("remove_data_center"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<>();
-        for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems()))
-        {
+        for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems())) {
             list.add(a.getName());
 
             // If one of the Data Centers contain Storage Domain, show the warnning.
@@ -438,8 +409,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         }
     }
 
-    public void forceRemove()
-    {
+    public void forceRemove() {
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().forceRemoveDataCenterTitle());
@@ -449,8 +419,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         model.getLatch().setIsChangeable(true);
 
         ArrayList<String> list = new ArrayList<>();
-        for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems()))
-        {
+        for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems())) {
             list.add(a.getName());
         }
         model.setItems(list);
@@ -461,8 +430,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         model.getCommands().add(tempVar2);
     }
 
-    public void recoveryStorage()
-    {
+    public void recoveryStorage() {
         final ConfirmationModel windowModel = new ConfirmationModel();
         setWindow(windowModel);
         windowModel.setTitle(ConstantsManager.getInstance().getConstants().dataCenterReInitializeTitle());
@@ -517,12 +485,10 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         }));
     }
 
-    public void onRecover()
-    {
+    public void onRecover() {
 
         final ConfirmationModel windowModel = (ConfirmationModel) getWindow();
-        if (!windowModel.validate())
-        {
+        if (!windowModel.validate()) {
             return;
         }
 
@@ -530,31 +496,24 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 List<StorageDomain> storageDomainList = (List<StorageDomain>) returnValue;
-                for (StorageDomain a : storageDomainList)
-                {
-                    if (a.getStorageDomainType() == StorageDomainType.Master)
-                    {
+                for (StorageDomain a : storageDomainList) {
+                    if (a.getStorageDomainType() == StorageDomainType.Master) {
                         break;
                     }
                 }
                 List<StorageDomain> items = new ArrayList<>();
-                for (EntityModel a : Linq.<EntityModel> cast(windowModel.getItems()))
-                {
-                    if (a.getIsSelected())
-                    {
+                for (EntityModel a : Linq.<EntityModel> cast(windowModel.getItems())) {
+                    if (a.getIsSelected()) {
                         items.add((StorageDomain) a.getEntity());
                     }
                 }
-                if (items.size() > 0)
-                {
-                    if (windowModel.getProgress() != null)
-                    {
+                if (items.size() > 0) {
+                    if (windowModel.getProgress() != null) {
                         return;
                     }
                     ArrayList<VdcActionParametersBase> parameters =
                             new ArrayList<>();
-                    for (StorageDomain a : items)
-                    {
+                    for (StorageDomain a : items) {
                         parameters.add(new ReconstructMasterParameters(getSelectedItem().getId(),
                                 a.getId()));
                     }
@@ -571,8 +530,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
                                 }
                             }, windowModel);
                 }
-                else
-                {
+                else {
                     cancel();
                 }
             }
@@ -580,18 +538,15 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
                 getSelectedItem().getId());
     }
 
-    public void onRemove()
-    {
+    public void onRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
-        for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems()))
-        {
+        for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems())) {
             parameters.add(new StoragePoolParametersBase(a.getId()));
         }
 
@@ -610,11 +565,9 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
                 }, model);
     }
 
-    public void onForceRemove()
-    {
+    public void onForceRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
         StoragePoolParametersBase tempVar = new StoragePoolParametersBase(getSelectedItem().getId());
@@ -624,8 +577,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         cancel();
     }
 
-    public void cancel()
-    {
+    public void cancel() {
         cancelConfirmation();
 
         setGuideContext(null);
@@ -634,17 +586,14 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         updateActionAvailability();
     }
 
-    public void cancelConfirmation()
-    {
+    public void cancelConfirmation() {
         setConfirmWindow(null);
     }
 
-    public void onSave()
-    {
+    public void onSave() {
         final DataCenterModel dcModel = (DataCenterModel) getWindow();
 
-        if (!dcModel.validate())
-        {
+        if (!dcModel.validate()) {
             return;
         }
 
@@ -671,8 +620,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object ReturnValue)
-                {
+                public void onSuccess(Object model, Object ReturnValue) {
                     List<StorageDomain> storages = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
 
                     StorageDomain storage = null;
@@ -713,8 +661,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
             confirmModel.getCommands().add(tempVar2);
         } else if (getSelectedItem() != null
                 && getSelectedItem().getQuotaEnforcementType() != QuotaEnforcementTypeEnum.HARD_ENFORCEMENT
-                && dcModel.getQuotaEnforceTypeListModel().getSelectedItem() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT)
-        {
+                && dcModel.getQuotaEnforceTypeListModel().getSelectedItem() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT) {
             checkForQuotaInDC(dcModel.getEntity(), this);
         } else if (dcModel.getIsNew()) {
             //New data center, check for name uniqueness.
@@ -785,12 +732,10 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         getConfirmWindow().getCommands().add(tempVar2);
     }
 
-    public void onSaveInternal()
-    {
+    public void onSaveInternal() {
         DataCenterModel model = (DataCenterModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
@@ -847,8 +792,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         }
     }
 
-    public void postOnSaveInternal(VdcReturnValueBase returnValue)
-    {
+    public void postOnSaveInternal(VdcReturnValueBase returnValue) {
         DataCenterModel model = (DataCenterModel) getWindow();
 
         model.stopProgress();
@@ -864,28 +808,24 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e)
-    {
+    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e) {
         super.itemsCollectionChanged(sender, e);
 
         // Try to select an item corresponding to the system tree selection.
         if (getSystemTreeSelectedItem() != null
-                && getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter)
-        {
+                && getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter) {
             StoragePool dataCenter = (StoragePool) getSystemTreeSelectedItem().getEntity();
 
             setSelectedItem(Linq.firstOrDefault(Linq.<StoragePool> cast(getItems()),
@@ -894,12 +834,10 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
     }
 
     @Override
-    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.selectedItemPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("status")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("status")) { //$NON-NLS-1$
             updateActionAvailability();
         }
     }
@@ -915,17 +853,14 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         }
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         ArrayList<StoragePool> items =
                 getSelectedItems() != null ? new ArrayList<>(Linq.<StoragePool> cast(getSelectedItems()))
                         : new ArrayList<StoragePool>();
 
         boolean isAllDown = true;
-        for (StoragePool item : items)
-        {
-            if (item.getStatus() == StoragePoolStatus.Up || item.getStatus() == StoragePoolStatus.Contend)
-            {
+        for (StoragePool item : items) {
+            if (item.getStatus() == StoragePoolStatus.Up || item.getStatus() == StoragePoolStatus.Contend) {
                 isAllDown = false;
                 break;
             }
@@ -987,60 +922,46 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getNewCommand())
-        {
+        if (command == getNewCommand()) {
             newEntity();
         }
-        else if (command == getEditCommand())
-        {
+        else if (command == getEditCommand()) {
             edit();
         }
-        else if (command == getRemoveCommand())
-        {
+        else if (command == getRemoveCommand()) {
             remove();
         }
-        else if (command == getForceRemoveCommand())
-        {
+        else if (command == getForceRemoveCommand()) {
             forceRemove();
         }
-        else if (command == getGuideCommand())
-        {
+        else if (command == getGuideCommand()) {
             guide();
         }
-        else if (command == getRecoveryStorageCommand())
-        {
+        else if (command == getRecoveryStorageCommand()) {
             recoveryStorage();
         }
-        else if ("OnSave".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
-        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
-        else if ("OnForceRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnForceRemove".equals(command.getName())) { //$NON-NLS-1$
             onForceRemove();
         }
-        else if ("OnSaveInternal".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnSaveInternal".equals(command.getName())) { //$NON-NLS-1$
             onSaveInternal();
         }
-        else if ("CancelConfirmation".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("CancelConfirmation".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirmation();
         }
-        else if ("OnRecover".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnRecover".equals(command.getName())) { //$NON-NLS-1$
             onRecover();
         }
     }
@@ -1057,23 +978,19 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
     private SystemTreeItemModel systemTreeSelectedItem;
 
     @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem()
-    {
+    public SystemTreeItemModel getSystemTreeSelectedItem() {
         return systemTreeSelectedItem;
     }
 
     @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value)
-    {
-        if (systemTreeSelectedItem != value)
-        {
+    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
+        if (systemTreeSelectedItem != value) {
             systemTreeSelectedItem = value;
             onSystemTreeSelectedItemChanged();
         }
     }
 
-    private void onSystemTreeSelectedItemChanged()
-    {
+    private void onSystemTreeSelectedItemChanged() {
         updateActionAvailability();
     }
 

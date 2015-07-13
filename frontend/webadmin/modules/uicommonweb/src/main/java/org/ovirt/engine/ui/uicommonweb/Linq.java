@@ -82,16 +82,13 @@ import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.IEqualityComparer;
 
 @SuppressWarnings("unused")
-public final class Linq
-{
+public final class Linq {
 
-    public static class AuditLogComparer implements Comparator<AuditLog>, Serializable
-    {
+    public static class AuditLogComparer implements Comparator<AuditLog>, Serializable {
         private static final long serialVersionUID = 7488030875073130111L;
 
         @Override
-        public int compare(AuditLog x, AuditLog y)
-        {
+        public int compare(AuditLog x, AuditLog y) {
             long xid = x.getAuditLogId();
             long yid = y.getAuditLogId();
 
@@ -119,8 +116,7 @@ public final class Linq
         private static final long serialVersionUID = 1114793850392069219L;
 
         @Override
-        public int compare(VDS vds1, VDS vds2)
-        {
+        public int compare(VDS vds1, VDS vds2) {
             return (vds1.getVdsSpmPriority() < vds2.getVdsSpmPriority()) ? 1
                     : ((vds1.getVdsSpmPriority() == vds2.getVdsSpmPriority()) ? 0 : -1);
 
@@ -182,21 +178,17 @@ public final class Linq
         }
     }
 
-    public static class DiskImageByLastModifiedComparer implements Comparator<DiskImage>, Serializable
-    {
+    public static class DiskImageByLastModifiedComparer implements Comparator<DiskImage>, Serializable {
 
         private static final long serialVersionUID = -6085272225112945238L;
 
         @Override
-        public int compare(DiskImage x, DiskImage y)
-        {
-            if (x.getLastModified().before(y.getLastModified()))
-            {
+        public int compare(DiskImage x, DiskImage y) {
+            if (x.getLastModified().before(y.getLastModified())) {
                 return -1;
             }
 
-            if (x.getLastModified().after(y.getLastModified()))
-            {
+            if (x.getLastModified().after(y.getLastModified())) {
                 return 1;
             }
 
@@ -205,14 +197,12 @@ public final class Linq
 
     }
 
-    public static class DiskImageByLastModifiedTimeOfDayComparer implements Comparator<DiskImage>, Serializable
-    {
+    public static class DiskImageByLastModifiedTimeOfDayComparer implements Comparator<DiskImage>, Serializable {
 
         private static final long serialVersionUID = 7206189809641328921L;
 
         @Override
-        public int compare(DiskImage x, DiskImage y)
-        {
+        public int compare(DiskImage x, DiskImage y) {
             return DateTimeUtils.getTimeOfDay(x.getLastModified())
                     .compareTo(DateTimeUtils.getTimeOfDay(y.getLastModified()));
         }
@@ -229,37 +219,31 @@ public final class Linq
 
     }
 
-    public static class StorageDomainModelByNameComparer implements Comparator<StorageDomainModel>, Serializable
-    {
+    public static class StorageDomainModelByNameComparer implements Comparator<StorageDomainModel>, Serializable {
 
         private static final long serialVersionUID = 5142897643241941178L;
 
         @Override
-        public int compare(StorageDomainModel x, StorageDomainModel y)
-        {
+        public int compare(StorageDomainModel x, StorageDomainModel y) {
             return x.getStorageDomain().getStorageName().compareTo(y.getStorageDomain().getStorageName());
         }
 
     }
 
-    public static class DiskByAliasComparer implements Comparator<Disk>, Serializable
-    {
+    public static class DiskByAliasComparer implements Comparator<Disk>, Serializable {
 
         private static final long serialVersionUID = 7683690514569802083L;
 
         @Override
-        public int compare(Disk x, Disk y)
-        {
+        public int compare(Disk x, Disk y) {
             String xAlias = x.getDiskAlias();
             String yAlias = y.getDiskAlias();
 
-            if (xAlias == null)
-            {
+            if (xAlias == null) {
                 return 1;
             }
 
-            if (yAlias == null)
-            {
+            if (yAlias == null) {
                 return -1;
             }
 
@@ -268,25 +252,21 @@ public final class Linq
 
     }
 
-    public static class DiskModelByAliasComparer implements Comparator<DiskModel>, Serializable
-    {
+    public static class DiskModelByAliasComparer implements Comparator<DiskModel>, Serializable {
         private static final long serialVersionUID = -3838651062327707058L;
 
         @Override
-        public int compare(DiskModel x, DiskModel y)
-        {
+        public int compare(DiskModel x, DiskModel y) {
             String xAlias = x.getDisk() != null ?
                     x.getDisk().getDiskAlias() : "";
             String yAlias = y.getDisk() != null ?
                     y.getDisk().getDiskAlias() : "";
 
-            if (xAlias == null)
-            {
+            if (xAlias == null) {
                 return 1;
             }
 
-            if (yAlias == null)
-            {
+            if (yAlias == null) {
                 return -1;
             }
 
@@ -294,32 +274,26 @@ public final class Linq
         }
     }
 
-    public static class SanTargetModelComparer implements Comparator<SanTargetModel>, Serializable
-    {
+    public static class SanTargetModelComparer implements Comparator<SanTargetModel>, Serializable {
         private static final long serialVersionUID = -5674954613952206979L;
 
         @Override
-        public int compare(SanTargetModel x, SanTargetModel y)
-        {
+        public int compare(SanTargetModel x, SanTargetModel y) {
             return x.getName().compareTo(y.getName());
         }
     }
 
-    public static class DiskImageByCreationDateComparer implements Comparator<DiskImage>, Serializable
-    {
+    public static class DiskImageByCreationDateComparer implements Comparator<DiskImage>, Serializable {
 
         private static final long serialVersionUID = -5909501177227219287L;
 
         @Override
-        public int compare(DiskImage x, DiskImage y)
-        {
-            if (x.getCreationDate().before(y.getCreationDate()))
-            {
+        public int compare(DiskImage x, DiskImage y) {
+            if (x.getCreationDate().before(y.getCreationDate())) {
                 return -1;
             }
 
-            if (x.getCreationDate().after(y.getCreationDate()))
-            {
+            if (x.getCreationDate().after(y.getCreationDate())) {
                 return 1;
             }
 
@@ -328,25 +302,20 @@ public final class Linq
 
     }
 
-    public static class SnapshotByCreationDateCommparer implements Comparator<Snapshot>, Serializable
-    {
+    public static class SnapshotByCreationDateCommparer implements Comparator<Snapshot>, Serializable {
 
         private static final long serialVersionUID = -4063737182979806402L;
 
         @Override
-        public int compare(Snapshot x, Snapshot y)
-        {
+        public int compare(Snapshot x, Snapshot y) {
             return x.getCreationDate().compareTo(y.getCreationDate());
         }
 
     }
 
-    public static boolean isHostBelongsToAnyOfClusters(ArrayList<VDSGroup> clusters, VDS host)
-    {
-        for (VDSGroup cluster : clusters)
-        {
-            if (cluster.getId().equals(host.getVdsGroupId()))
-            {
+    public static boolean isHostBelongsToAnyOfClusters(ArrayList<VDSGroup> clusters, VDS host) {
+        for (VDSGroup cluster : clusters) {
+            if (cluster.getId().equals(host.getVdsGroupId())) {
                 return true;
             }
         }
@@ -360,21 +329,17 @@ public final class Linq
      * @param sdl
      * @return
      */
-    public static boolean isAnyStorageDomainIsMasterAndActive(List<StorageDomain> sdl)
-    {
-        for (StorageDomain a : sdl)
-        {
+    public static boolean isAnyStorageDomainIsMasterAndActive(List<StorageDomain> sdl) {
+        for (StorageDomain a : sdl) {
             if (a.getStorageDomainType() == StorageDomainType.Master && a.getStatus() != null
-                    && a.getStatus() == StorageDomainStatus.Active)
-            {
+                    && a.getStatus() == StorageDomainStatus.Active) {
                 return true;
             }
         }
         return false;
     }
 
-    public static boolean isDataActiveStorageDomain(StorageDomain storageDomain)
-    {
+    public static boolean isDataActiveStorageDomain(StorageDomain storageDomain) {
         boolean isData = storageDomain.getStorageDomainType().isDataDomain();
 
         boolean isActive = isActiveStorageDomain(storageDomain);
@@ -382,8 +347,7 @@ public final class Linq
         return isData && isActive;
     }
 
-    public static boolean isActiveStorageDomain(StorageDomain storageDomain)
-    {
+    public static boolean isActiveStorageDomain(StorageDomain storageDomain) {
         boolean isActive = storageDomain.getStatus() != null &&
                 storageDomain.getStatus() == StorageDomainStatus.Active;
 
@@ -397,14 +361,11 @@ public final class Linq
      *            IList to look in
      * @return Version MinVersion
      */
-    public static Version getMinVersionByClusters(List<VDSGroup> source)
-    {
+    public static Version getMinVersionByClusters(List<VDSGroup> source) {
         Version minVersion = source != null && source.size() > 0 ? source.get(0).getCompatibilityVersion() : null;
 
-        if (minVersion != null)
-        {
-            for (VDSGroup cluster : source)
-            {
+        if (minVersion != null) {
+            for (VDSGroup cluster : source) {
                 minVersion =
                         cluster.getCompatibilityVersion().compareTo(minVersion) < 0 ? (Version) cluster.getCompatibilityVersion()
                                 : minVersion;
@@ -421,12 +382,9 @@ public final class Linq
      * @param id
      * @return
      */
-    public static boolean isSDItemExistInList(ArrayList<StorageDomain> items, Guid id)
-    {
-        for (StorageDomain b : items)
-        {
-            if (b.getId().equals(id))
-            {
+    public static boolean isSDItemExistInList(ArrayList<StorageDomain> items, Guid id) {
+        for (StorageDomain b : items) {
+            if (b.getId().equals(id)) {
                 return true;
             }
         }
@@ -440,99 +398,75 @@ public final class Linq
      * @param id
      * @return
      */
-    public static boolean isClusterItemExistInList(List<VDSGroup> items, Guid id)
-    {
-        for (VDSGroup a : items)
-        {
-            if (id.equals(a.getId()))
-            {
+    public static boolean isClusterItemExistInList(List<VDSGroup> items, Guid id) {
+        for (VDSGroup a : items) {
+            if (id.equals(a.getId())) {
                 return true;
             }
         }
         return false;
     }
 
-    public static NetworkInterface findInterfaceByName(ArrayList<VdsNetworkInterface> items, String name)
-    {
-        for (NetworkInterface i : items)
-        {
-            if (ObjectUtils.objectsEqual(i.getName(), name))
-            {
+    public static NetworkInterface findInterfaceByName(ArrayList<VdsNetworkInterface> items, String name) {
+        for (NetworkInterface i : items) {
+            if (ObjectUtils.objectsEqual(i.getName(), name)) {
                 return i;
             }
         }
         return null;
     }
 
-    public static VdsNetworkInterface findInterfaceByNetworkName(ArrayList<VdsNetworkInterface> items, String name)
-    {
-        for (VdsNetworkInterface i : items)
-        {
-            if (ObjectUtils.objectsEqual(i.getNetworkName(), name))
-            {
+    public static VdsNetworkInterface findInterfaceByNetworkName(ArrayList<VdsNetworkInterface> items, String name) {
+        for (VdsNetworkInterface i : items) {
+            if (ObjectUtils.objectsEqual(i.getNetworkName(), name)) {
                 return i;
             }
         }
         return null;
     }
 
-    public static VdsNetworkInterface findInterfaceByIsBond(ArrayList<VdsNetworkInterface> items)
-    {
-        for (VdsNetworkInterface i : items)
-        {
-            if (i.getBonded() != null && i.getBonded())
-            {
+    public static VdsNetworkInterface findInterfaceByIsBond(ArrayList<VdsNetworkInterface> items) {
+        for (VdsNetworkInterface i : items) {
+            if (i.getBonded() != null && i.getBonded()) {
                 return i;
             }
         }
         return null;
     }
 
-    public static VdsNetworkInterface findInterfaceNetworkNameNotEmpty(ArrayList<VdsNetworkInterface> items)
-    {
-        for (VdsNetworkInterface i : items)
-        {
-            if (!StringHelper.isNullOrEmpty(i.getNetworkName()))
-            {
+    public static VdsNetworkInterface findInterfaceNetworkNameNotEmpty(ArrayList<VdsNetworkInterface> items) {
+        for (VdsNetworkInterface i : items) {
+            if (!StringHelper.isNullOrEmpty(i.getNetworkName())) {
                 return i;
             }
         }
         return null;
     }
 
-    public static ArrayList<VdsNetworkInterface> findAllInterfaceNetworkNameNotEmpty(ArrayList<VdsNetworkInterface> items)
-    {
+    public static ArrayList<VdsNetworkInterface> findAllInterfaceNetworkNameNotEmpty(ArrayList<VdsNetworkInterface> items) {
         ArrayList<VdsNetworkInterface> ret = new ArrayList<VdsNetworkInterface>();
-        for (VdsNetworkInterface i : items)
-        {
-            if (!StringHelper.isNullOrEmpty(i.getNetworkName()))
-            {
+        for (VdsNetworkInterface i : items) {
+            if (!StringHelper.isNullOrEmpty(i.getNetworkName())) {
                 ret.add(i);
             }
         }
         return ret;
     }
 
-    public static ArrayList<VdsNetworkInterface> findAllInterfaceBondNameIsEmpty(ArrayList<VdsNetworkInterface> items)
-    {
+    public static ArrayList<VdsNetworkInterface> findAllInterfaceBondNameIsEmpty(ArrayList<VdsNetworkInterface> items) {
         ArrayList<VdsNetworkInterface> ret = new ArrayList<VdsNetworkInterface>();
-        for (VdsNetworkInterface i : items)
-        {
-            if (StringHelper.isNullOrEmpty(i.getBondName()))
-            {
+        for (VdsNetworkInterface i : items) {
+            if (StringHelper.isNullOrEmpty(i.getBondName())) {
                 ret.add(i);
             }
         }
         return ret;
     }
 
-    public static ArrayList<VdsNetworkInterface> findAllInterfaceVlanIdIsEmpty(ArrayList<VdsNetworkInterface> items)
-    {
+    public static ArrayList<VdsNetworkInterface> findAllInterfaceVlanIdIsEmpty(ArrayList<VdsNetworkInterface> items) {
         ArrayList<VdsNetworkInterface> ret = new ArrayList<VdsNetworkInterface>();
-        for (VdsNetworkInterface i : items)
-        {
-            if (i.getVlanId() == null)
-            {
+        for (VdsNetworkInterface i : items) {
+            if (i.getVlanId() == null) {
                 ret.add(i);
             }
         }
@@ -548,12 +482,9 @@ public final class Linq
         return null;
     }
 
-    public static Network findNetworkByName(ArrayList<Network> items, String name)
-    {
-        for (Network n : items)
-        {
-            if (ObjectUtils.objectsEqual(n.getName(), name))
-            {
+    public static Network findNetworkByName(ArrayList<Network> items, String name) {
+        for (Network n : items) {
+            if (ObjectUtils.objectsEqual(n.getName(), name)) {
                 return n;
             }
         }
@@ -578,25 +509,19 @@ public final class Linq
         return NetworkModel.EMPTY_HOST_NETWORK_QOS;
     }
 
-    public static ArrayList<VDS> findAllVDSByPmEnabled(ArrayList<VDS> items)
-    {
+    public static ArrayList<VDS> findAllVDSByPmEnabled(ArrayList<VDS> items) {
         ArrayList<VDS> ret = new ArrayList<VDS>();
-        for (VDS i : items)
-        {
-            if (i.isPmEnabled())
-            {
+        for (VDS i : items) {
+            if (i.isPmEnabled()) {
                 ret.add(i);
             }
         }
         return ret;
     }
 
-    public static SanTargetModel findSanTargetByNotIsConnected(ArrayList<SanTargetModel> items)
-    {
-        for (SanTargetModel i : items)
-        {
-            if (!i.getIsLoggedIn())
-            {
+    public static SanTargetModel findSanTargetByNotIsConnected(ArrayList<SanTargetModel> items) {
+        for (SanTargetModel i : items) {
+            if (!i.getIsLoggedIn()) {
                 return i;
             }
         }
@@ -604,13 +529,10 @@ public final class Linq
     }
 
     public static ArrayList<StorageDomain> findAllStorageDomainsBySharedStatus(ArrayList<StorageDomain> items,
-            StorageDomainSharedStatus status)
-    {
+            StorageDomainSharedStatus status) {
         ArrayList<StorageDomain> ret = new ArrayList<StorageDomain>();
-        for (StorageDomain i : items)
-        {
-            if (i.getStorageDomainSharedStatus() == status)
-            {
+        for (StorageDomain i : items) {
+            if (i.getStorageDomainSharedStatus() == status) {
                 ret.add(i);
             }
         }
@@ -618,12 +540,9 @@ public final class Linq
     }
 
     public static VdcReturnValueBase findVdcReturnValueByDescription(ArrayList<VdcReturnValueBase> items,
-            String description)
-    {
-        for (VdcReturnValueBase i : items)
-        {
-            if (ObjectUtils.objectsEqual(i.getDescription(), description))
-            {
+            String description) {
+        for (VdcReturnValueBase i : items) {
+            if (ObjectUtils.objectsEqual(i.getDescription(), description)) {
                 return i;
             }
         }
@@ -646,16 +565,12 @@ public final class Linq
      * @return A sequence that contains the set difference of the elements of two sequences.
      */
     public static <TSource> ArrayList<TSource> except(ArrayList<TSource> first,
-            ArrayList<TSource> second)
-    {
+            ArrayList<TSource> second) {
         ArrayList<TSource> newIEnumerable = new ArrayList<TSource>();
 
-        if (first != null && second != null)
-        {
-            for (TSource t : first)
-            {
-                if (!second.contains(t))
-                {
+        if (first != null && second != null) {
+            for (TSource t : first) {
+                if (!second.contains(t)) {
                     newIEnumerable.add(t);
                 }
             }
@@ -664,22 +579,18 @@ public final class Linq
         return second == null ? first : newIEnumerable;
     }
 
-    public static int count(Iterable source)
-    {
+    public static int count(Iterable source) {
         int result = 0;
-        for (Object item : source)
-        {
+        for (Object item : source) {
             result++;
         }
 
         return result;
     }
 
-    public static <TSource> TSource firstOrDefault(Iterable<TSource> source)
-    {
+    public static <TSource> TSource firstOrDefault(Iterable<TSource> source) {
         if (source != null) {
-            for (TSource item : source)
-            {
+            for (TSource item : source) {
                 return item;
             }
         }
@@ -697,14 +608,11 @@ public final class Linq
         return true;
     }
 
-    public static <TSource> Collection<TSource> where(Collection<TSource> source, IPredicate<TSource> predicate)
-    {
+    public static <TSource> Collection<TSource> where(Collection<TSource> source, IPredicate<TSource> predicate) {
         ArrayList<TSource> list = new ArrayList<TSource>();
 
-        for (TSource item : source)
-        {
-            if (predicate.match(item))
-            {
+        for (TSource item : source) {
+            if (predicate.match(item)) {
                 list.add(item);
             }
         }
@@ -712,25 +620,19 @@ public final class Linq
         return list;
     }
 
-    public static Version selectHighestVersion(ArrayList<Version> versions)
-    {
+    public static Version selectHighestVersion(ArrayList<Version> versions) {
         Version retVersion = firstOrDefault(versions);
-        for (Version version : versions)
-        {
-            if (version.compareTo(retVersion) > 0)
-            {
+        for (Version version : versions) {
+            if (version.compareTo(retVersion) > 0) {
                 retVersion = version;
             }
         }
         return retVersion;
     }
 
-    public static <TSource> TSource firstOrDefault(Iterable<TSource> source, IPredicate<TSource> predicate)
-    {
-        for (TSource item : source)
-        {
-            if (predicate.match(item))
-            {
+    public static <TSource> TSource firstOrDefault(Iterable<TSource> source, IPredicate<TSource> predicate) {
+        for (TSource item : source) {
+            if (predicate.match(item)) {
                 return item;
             }
         }
@@ -741,11 +643,9 @@ public final class Linq
     /**
      * Returns a new instance of list containing all items of the provided source.
      */
-    public static <TSource> ArrayList<TSource> toList(Iterable<TSource> source)
-    {
+    public static <TSource> ArrayList<TSource> toList(Iterable<TSource> source) {
         ArrayList<TSource> list = new ArrayList<TSource>();
-        for (TSource item : source)
-        {
+        for (TSource item : source) {
             list.add(item);
         }
 
@@ -753,23 +653,18 @@ public final class Linq
     }
 
     public static <TSource> ArrayList<TSource> distinct(ArrayList<TSource> source,
-            IEqualityComparer<TSource> comparer)
-    {
+            IEqualityComparer<TSource> comparer) {
         ArrayList<TSource> list = new ArrayList<TSource>();
-        for (TSource a : source)
-        {
+        for (TSource a : source) {
             boolean found = false;
-            for (TSource b : list)
-            {
-                if (comparer.equals(a, b))
-                {
+            for (TSource b : list) {
+                if (comparer.equals(a, b)) {
                     found = true;
                     break;
                 }
             }
 
-            if (!found)
-            {
+            if (!found) {
                 list.add(a);
             }
         }
@@ -777,11 +672,9 @@ public final class Linq
         return list;
     }
 
-    public static <TResult> ArrayList<TResult> cast(Iterable source)
-    {
+    public static <TResult> ArrayList<TResult> cast(Iterable source) {
         ArrayList<TResult> list = new ArrayList<TResult>();
-        for (Object a : source)
-        {
+        for (Object a : source) {
             TResult item = (TResult) a;
             list.add(item);
         }
@@ -789,13 +682,10 @@ public final class Linq
         return list;
     }
 
-    public static List concatUnsafe(List... lists)
-    {
+    public static List concatUnsafe(List... lists) {
         List result = new ArrayList<Object>();
-        for (List list : lists)
-        {
-            for (Object item : list)
-            {
+        for (List list : lists) {
+            for (Object item : list) {
                 result.add(item);
             }
         }
@@ -808,20 +698,17 @@ public final class Linq
         return concatUnsafe(lists);
     }
 
-    public static <T> ArrayList<T> union(ArrayList<ArrayList<T>> lists)
-    {
+    public static <T> ArrayList<T> union(ArrayList<ArrayList<T>> lists) {
         HashSet<T> set = new HashSet<T>();
 
-        for (ArrayList<T> list : lists)
-        {
+        for (ArrayList<T> list : lists) {
             set.addAll(list);
         }
 
         return new ArrayList<T>(set);
     }
 
-    public static <T> ArrayList<T> intersection(ArrayList<ArrayList<T>> lists)
-    {
+    public static <T> ArrayList<T> intersection(ArrayList<ArrayList<T>> lists) {
         ArrayList<T> result = new ArrayList<T>();
 
         if (lists != null && !lists.isEmpty()) {
@@ -874,13 +761,11 @@ public final class Linq
         return list;
     }
 
-    public static <T> ArrayList<EntityModel<T>> toEntityModelList(ArrayList<T> list)
-    {
+    public static <T> ArrayList<EntityModel<T>> toEntityModelList(ArrayList<T> list) {
         ArrayList<EntityModel<T>> entityModelList = new ArrayList<EntityModel<T>>();
 
         if (list != null) {
-            for (T item : list)
-            {
+            for (T item : list) {
                 EntityModel<T> model = new EntityModel<T>();
                 model.setEntity(item);
                 entityModelList.add(model);
@@ -890,13 +775,11 @@ public final class Linq
         return entityModelList;
     }
 
-    public static ArrayList<DiskModel> filterDisksByType(ArrayList<DiskModel> diskModels, DiskStorageType type)
-    {
+    public static ArrayList<DiskModel> filterDisksByType(ArrayList<DiskModel> diskModels, DiskStorageType type) {
         ArrayList<DiskModel> filteredList = new ArrayList<DiskModel>();
 
         if (diskModels != null) {
-            for (DiskModel item : diskModels)
-            {
+            for (DiskModel item : diskModels) {
                 if (item.getDisk().getDiskStorageType() == type) {
                     filteredList.add(item);
                 }
@@ -990,50 +873,41 @@ public final class Linq
         return null;
     }
 
-    public final static class TimeZonePredicate implements IPredicate<TimeZoneModel>
-    {
+    public final static class TimeZonePredicate implements IPredicate<TimeZoneModel> {
         private final String timeZone;
 
-        public TimeZonePredicate(String timeZone)
-        {
+        public TimeZonePredicate(String timeZone) {
             this.timeZone = timeZone;
         }
 
         @Override
-        public boolean match(TimeZoneModel source)
-        {
+        public boolean match(TimeZoneModel source) {
             return ObjectUtils.objectsEqual(source.getTimeZoneKey(), timeZone);
         }
     }
 
-    public final static class ServerCpuPredicate implements IPredicate<ServerCpu>
-    {
+    public final static class ServerCpuPredicate implements IPredicate<ServerCpu> {
         private final String cpuName;
 
-        public ServerCpuPredicate(String cpuName)
-        {
+        public ServerCpuPredicate(String cpuName) {
             this.cpuName = cpuName;
         }
 
         @Override
-        public boolean match(ServerCpu source)
-        {
+        public boolean match(ServerCpu source) {
             return ObjectUtils.objectsEqual(source.getCpuName(), cpuName);
         }
     }
 
-    public final static class VersionPredicate implements IPredicate<Version>
-    {
+    public final static class VersionPredicate implements IPredicate<Version> {
         private final Version version;
 
-        public VersionPredicate(Version version)
-        {
+        public VersionPredicate(Version version) {
             this.version = version;
         }
 
         @Override
-        public boolean match(Version source)
-        {
+        public boolean match(Version source) {
             return source.equals(version);
         }
     }
@@ -1080,50 +954,41 @@ public final class Linq
 
     }
 
-    public final static class DataCenterPredicate implements IPredicate<StoragePool>
-    {
+    public final static class DataCenterPredicate implements IPredicate<StoragePool> {
         private Guid id = Guid.Empty;
 
-        public DataCenterPredicate(Guid id)
-        {
+        public DataCenterPredicate(Guid id) {
             this.id = id;
         }
 
         @Override
-        public boolean match(StoragePool source)
-        {
+        public boolean match(StoragePool source) {
             return id.equals(source.getId());
         }
     }
 
-    public final static class DataCenterStatusPredicate implements IPredicate<StoragePool>
-    {
+    public final static class DataCenterStatusPredicate implements IPredicate<StoragePool> {
         private StoragePoolStatus status = StoragePoolStatus.values()[0];
 
-        public DataCenterStatusPredicate(StoragePoolStatus status)
-        {
+        public DataCenterStatusPredicate(StoragePoolStatus status) {
             this.status = status;
         }
 
         @Override
-        public boolean match(StoragePool source)
-        {
+        public boolean match(StoragePool source) {
             return source.getStatus() == status;
         }
     }
 
-    public final static class DataCenterNotStatusPredicate implements IPredicate<StoragePool>
-    {
+    public final static class DataCenterNotStatusPredicate implements IPredicate<StoragePool> {
         private StoragePoolStatus status = StoragePoolStatus.values()[0];
 
-        public DataCenterNotStatusPredicate(StoragePoolStatus status)
-        {
+        public DataCenterNotStatusPredicate(StoragePoolStatus status) {
             this.status = status;
         }
 
         @Override
-        public boolean match(StoragePool source)
-        {
+        public boolean match(StoragePool source) {
             return source.getStatus() != status;
         }
     }
@@ -1136,66 +1001,54 @@ public final class Linq
         }
     }
 
-    public final static class ClusterPredicate implements IPredicate<VDSGroup>
-    {
+    public final static class ClusterPredicate implements IPredicate<VDSGroup> {
         private Guid id = Guid.Empty;
 
-        public ClusterPredicate(Guid id)
-        {
+        public ClusterPredicate(Guid id) {
             this.id = id;
         }
 
         @Override
-        public boolean match(VDSGroup source)
-        {
+        public boolean match(VDSGroup source) {
             return id.equals(source.getId());
         }
     }
 
-    public final static class HostPredicate implements IPredicate<VDS>
-    {
+    public final static class HostPredicate implements IPredicate<VDS> {
         private Guid id = Guid.Empty;
 
-        public HostPredicate(Guid id)
-        {
+        public HostPredicate(Guid id) {
             this.id = id;
         }
 
         @Override
-        public boolean match(VDS source)
-        {
+        public boolean match(VDS source) {
             return source.getId().equals(id);
         }
     }
 
-    public final static class HostStatusPredicate implements IPredicate<VDS>
-    {
+    public final static class HostStatusPredicate implements IPredicate<VDS> {
         private VDSStatus status = VDSStatus.values()[0];
 
-        public HostStatusPredicate(VDSStatus status)
-        {
+        public HostStatusPredicate(VDSStatus status) {
             this.status = status;
         }
 
         @Override
-        public boolean match(VDS source)
-        {
+        public boolean match(VDS source) {
             return source.getStatus().equals(status);
         }
     }
 
-    public final static class TemplatePredicate implements IPredicate<VmTemplate>
-    {
+    public final static class TemplatePredicate implements IPredicate<VmTemplate> {
         private Guid id = Guid.Empty;
 
-        public TemplatePredicate(Guid id)
-        {
+        public TemplatePredicate(Guid id) {
             this.id = id;
         }
 
         @Override
-        public boolean match(VmTemplate source)
-        {
+        public boolean match(VmTemplate source) {
             return source.getId().equals(id);
         }
     }
@@ -1220,18 +1073,15 @@ public final class Linq
         }
     }
 
-    public final static class StoragePredicate implements IPredicate<StorageDomain>
-    {
+    public final static class StoragePredicate implements IPredicate<StorageDomain> {
         private Guid id = Guid.Empty;
 
-        public StoragePredicate(Guid id)
-        {
+        public StoragePredicate(Guid id) {
             this.id = id;
         }
 
         @Override
-        public boolean match(StorageDomain source)
-        {
+        public boolean match(StorageDomain source) {
             return id.equals(source.getId());
         }
     }
@@ -1250,52 +1100,43 @@ public final class Linq
         }
     }
 
-    public final static class LunPredicate implements IPredicate<LunModel>
-    {
+    public final static class LunPredicate implements IPredicate<LunModel> {
         private final LunModel lun;
 
-        public LunPredicate(LunModel lun)
-        {
+        public LunPredicate(LunModel lun) {
             this.lun = lun;
         }
 
         @Override
-        public boolean match(LunModel source)
-        {
+        public boolean match(LunModel source) {
             return ObjectUtils.objectsEqual(source.getLunId(), lun.getLunId());
         }
     }
 
-    public final static class TargetPredicate implements IPredicate<SanTargetModel>
-    {
+    public final static class TargetPredicate implements IPredicate<SanTargetModel> {
         private final SanTargetModel target;
 
-        public TargetPredicate(SanTargetModel target)
-        {
+        public TargetPredicate(SanTargetModel target) {
             this.target = target;
         }
 
         @Override
-        public boolean match(SanTargetModel source)
-        {
+        public boolean match(SanTargetModel source) {
             return ObjectUtils.objectsEqual(source.getName(), target.getName())
                     && ObjectUtils.objectsEqual(source.getAddress(), target.getAddress())
                     && ObjectUtils.objectsEqual(source.getPort(), target.getPort());
         }
     }
 
-    public final static class DbUserPredicate implements IPredicate<DbUser>
-    {
+    public final static class DbUserPredicate implements IPredicate<DbUser> {
         private final DbUser target;
 
-        public DbUserPredicate(DbUser target)
-        {
+        public DbUserPredicate(DbUser target) {
             this.target = target;
         }
 
         @Override
-        public boolean match(DbUser source)
-        {
+        public boolean match(DbUser source) {
             String targetName = target.getLoginName();
             if (!StringHelper.isNullOrEmpty(targetName)) {
                 targetName = targetName.toLowerCase();
@@ -1307,18 +1148,15 @@ public final class Linq
         }
     }
 
-    public final static class DbGroupPredicate implements IPredicate<DbGroup>
-    {
+    public final static class DbGroupPredicate implements IPredicate<DbGroup> {
         private final DbGroup target;
 
-        public DbGroupPredicate(DbGroup target)
-        {
+        public DbGroupPredicate(DbGroup target) {
             this.target = target;
         }
 
         @Override
-        public boolean match(DbGroup source)
-        {
+        public boolean match(DbGroup source) {
             String groupName = source.getName().toLowerCase();
             String targetName = target.getName();
             if (!StringHelper.isNullOrEmpty(targetName)) {
@@ -1353,8 +1191,7 @@ public final class Linq
 
     }
 
-    public interface IPredicate<TSource>
-    {
+    public interface IPredicate<TSource> {
         boolean match(TSource source);
     }
 

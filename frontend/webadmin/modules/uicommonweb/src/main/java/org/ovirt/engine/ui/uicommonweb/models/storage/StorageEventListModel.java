@@ -7,37 +7,30 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class StorageEventListModel extends SubTabEventListModel<StorageDomain> {
 
     @Override
-    protected void onEntityContentChanged()
-    {
+    protected void onEntityContentChanged() {
         super.onEntityContentChanged();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             getSearchCommand().execute();
         }
-        else
-        {
+        else {
             setItems(null);
         }
     }
 
     @Override
-    public void search()
-    {
-        if (getEntity() != null)
-        {
+    public void search() {
+        if (getEntity() != null) {
             setSearchString("events: event_storage=" + getEntity().getStorageName()); //$NON-NLS-1$
             super.search();
         }
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("storage_name")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("storage_name")) { //$NON-NLS-1$
             getSearchCommand().execute();
         }
     }

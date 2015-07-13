@@ -30,8 +30,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.user.client.Timer;
 
 @SuppressWarnings("unused")
-public class GuideModel extends EntityModel
-{
+public class GuideModel extends EntityModel {
 
     private ErrorPopupManager errorPopupManager;
 
@@ -41,15 +40,12 @@ public class GuideModel extends EntityModel
 
     private List<UICommand> compulsoryActions;
 
-    public List<UICommand> getCompulsoryActions()
-    {
+    public List<UICommand> getCompulsoryActions() {
         return compulsoryActions;
     }
 
-    public void setCompulsoryActions(List<UICommand> value)
-    {
-        if (compulsoryActions != value)
-        {
+    public void setCompulsoryActions(List<UICommand> value) {
+        if (compulsoryActions != value) {
             compulsoryActions = value;
             onPropertyChanged(new PropertyChangedEventArgs("CompulsoryActions")); //$NON-NLS-1$
         }
@@ -57,15 +53,12 @@ public class GuideModel extends EntityModel
 
     private List<UICommand> optionalActions;
 
-    public List<UICommand> getOptionalActions()
-    {
+    public List<UICommand> getOptionalActions() {
         return optionalActions;
     }
 
-    public void setOptionalActions(List<UICommand> value)
-    {
-        if (optionalActions != value)
-        {
+    public void setOptionalActions(List<UICommand> value) {
+        if (optionalActions != value) {
             optionalActions = value;
             onPropertyChanged(new PropertyChangedEventArgs("OptionalActions")); //$NON-NLS-1$
         }
@@ -73,18 +66,15 @@ public class GuideModel extends EntityModel
 
     private EntityModel<String> note;
 
-    public EntityModel<String> getNote()
-    {
+    public EntityModel<String> getNote() {
         return note;
     }
 
-    public void setNote(EntityModel<String> value)
-    {
+    public void setNote(EntityModel<String> value) {
         note = value;
     }
 
-    public GuideModel()
-    {
+    public GuideModel() {
         setCompulsoryActions(new ObservableCollection<UICommand>());
         setOptionalActions(new ObservableCollection<UICommand>());
         setNote(new EntityModel<String>());

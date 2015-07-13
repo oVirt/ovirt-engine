@@ -17,50 +17,41 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class StorageVmListModel extends SearchableListModel<StorageDomain, VM>
-{
+public class StorageVmListModel extends SearchableListModel<StorageDomain, VM> {
 
-    public StorageVmListModel()
-    {
+    public StorageVmListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
         setHelpTag(HelpTag.virtual_machines);
         setHashName("virtual_machines"); //$NON-NLS-1$
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
         getSearchCommand().execute();
     }
 
     @Override
-    public void setEntity(StorageDomain value)
-    {
+    public void setEntity(StorageDomain value) {
         if (value == null || !value.equals(getEntity())) {
             super.setEntity(value);
         }
     }
 
     @Override
-    public void search()
-    {
-        if (getEntity() != null)
-        {
+    public void search() {
+        if (getEntity() != null) {
             super.search();
         }
-        else
-        {
+        else {
             setItems(null);
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
-        if (getEntity() == null)
-        {
+    protected void syncSearch() {
+        if (getEntity() == null) {
             return;
         }
 
@@ -70,8 +61,7 @@ public class StorageVmListModel extends SearchableListModel<StorageDomain, VM>
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 ArrayList<VM> vms = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 Collections.sort(vms, new Linq.VmComparator());
                 setItems(vms);

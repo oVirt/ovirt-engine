@@ -69,88 +69,72 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
     private UICommand privateNewCommand;
 
 
-    public UICommand getNewCommand()
-    {
+    public UICommand getNewCommand() {
         return privateNewCommand;
     }
 
-    private void setNewCommand(UICommand value)
-    {
+    private void setNewCommand(UICommand value) {
         privateNewCommand = value;
     }
 
     private UICommand privateEditCommand;
 
     @Override
-    public UICommand getEditCommand()
-    {
+    public UICommand getEditCommand() {
         return privateEditCommand;
     }
 
-    private void setEditCommand(UICommand value)
-    {
+    private void setEditCommand(UICommand value) {
         privateEditCommand = value;
     }
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
     private UICommand privateGuideCommand;
 
-    public UICommand getGuideCommand()
-    {
+    public UICommand getGuideCommand() {
         return privateGuideCommand;
     }
 
-    private void setGuideCommand(UICommand value)
-    {
+    private void setGuideCommand(UICommand value) {
         privateGuideCommand = value;
     }
 
     private UICommand resetEmulatedMachineCommand;
 
-    public UICommand getResetEmulatedMachineCommand()
-    {
+    public UICommand getResetEmulatedMachineCommand() {
         return resetEmulatedMachineCommand;
     }
 
-    private void setResetEmulatedMachineCommand(UICommand value)
-    {
+    private void setResetEmulatedMachineCommand(UICommand value) {
         resetEmulatedMachineCommand = value;
     }
 
     private UICommand privateAddMultipleHostsCommand;
 
-    public UICommand getAddMultipleHostsCommand()
-    {
+    public UICommand getAddMultipleHostsCommand() {
         return privateAddMultipleHostsCommand;
     }
 
-    private void setAddMultipleHostsCommand(UICommand value)
-    {
+    private void setAddMultipleHostsCommand(UICommand value) {
         privateAddMultipleHostsCommand = value;
     }
 
-    protected Object[] getSelectedKeys()
-    {
-        if (getSelectedItems() == null)
-        {
+    protected Object[] getSelectedKeys() {
+        if (getSelectedItems() == null) {
             return new Object[0];
         }
-        else
-        {
+        else {
             ArrayList<Object> items = new ArrayList<>();
-            for (VDSGroup vdsGroup : getSelectedItems())
-            {
+            for (VDSGroup vdsGroup : getSelectedItems()) {
                 items.add(vdsGroup.getId());
             }
             return items.toArray(new Object[] {});
@@ -159,13 +143,11 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
 
     private Object privateGuideContext;
 
-    public Object getGuideContext()
-    {
+    public Object getGuideContext() {
         return privateGuideContext;
     }
 
-    public void setGuideContext(Object value)
-    {
+    public void setGuideContext(Object value) {
         privateGuideContext = value;
     }
 
@@ -296,14 +278,12 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
     }
 
     @Override
-    public boolean isSearchStringMatch(String searchString)
-    {
+    public boolean isSearchStringMatch(String searchString) {
         return searchString.trim().toLowerCase().startsWith("cluster"); //$NON-NLS-1$
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.Cluster,
                 isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
@@ -315,10 +295,8 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         return true;
     }
 
-    public void newEntity()
-    {
-        if (getWindow() != null)
-        {
+    public void newEntity() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -334,8 +312,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 ClusterListModel<Void> clModel = (ClusterListModel<Void>) model;
                 ClusterModel cModel = (ClusterModel) clModel.getWindow();
                 List<StoragePool> dataCenters = (List<StoragePool>) result;
@@ -343,8 +320,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                 // Be aware of system tree selection.
                 // Strict data center as neccessary.
                 if (clModel.getSystemTreeSelectedItem() != null
-                        && clModel.getSystemTreeSelectedItem().getType() != SystemTreeItemType.System)
-                {
+                        && clModel.getSystemTreeSelectedItem().getType() != SystemTreeItemType.System) {
                     SystemTreeItemModel treeSelectedItem = clModel.getSystemTreeSelectedItem();
                     SystemTreeItemModel treeSelectedDc = SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, treeSelectedItem);
                     StoragePool selectDataCenter = (StoragePool) treeSelectedDc.getEntity();
@@ -354,8 +330,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                     cModel.getDataCenter().setItems(dataCenters, selectedDataCenter);
                     cModel.getDataCenter().setIsChangeable(false);
                 }
-                else
-                {
+                else {
                     cModel.getDataCenter().setItems(dataCenters, Linq.firstOrDefault(dataCenters));
                 }
 
@@ -368,12 +343,10 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         AsyncDataProvider.getInstance().getDataCenterList(_asyncQuery);
     }
 
-    public void edit()
-    {
+    public void edit() {
         final VDSGroup cluster = getSelectedItem();
 
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -406,16 +379,13 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         clusterModel.getGlusterTunedProfile().setSelectedItem(cluster.getGlusterTunedProfile());
         clusterModel.getGlusterTunedProfile().setIsChangeable(cluster.getGroupHostsAndVms().getHosts() == 0);
 
-        if (cluster.supportsTrustedService())
-        {
+        if (cluster.supportsTrustedService()) {
             clusterModel.getEnableGlusterService().setIsChangeable(false);
         }
-        if (cluster.supportsVirtService()&& !cluster.supportsGlusterService())
-        {
+        if (cluster.supportsVirtService()&& !cluster.supportsGlusterService()) {
             clusterModel.getEnableTrustedService().setIsChangeable(true);
         }
-        else
-        {
+        else {
             clusterModel.getEnableTrustedService().setIsChangeable(false);
         }
 
@@ -471,10 +441,8 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         clusterModel.getCommands().add(tempVar2);
     }
 
-    public void remove()
-    {
-        if (getWindow() != null)
-        {
+    public void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -485,8 +453,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         model.setHashName("remove_cluster"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<>();
-        for (VDSGroup a : Linq.<VDSGroup> cast(getSelectedItems()))
-        {
+        for (VDSGroup a : Linq.<VDSGroup> cast(getSelectedItems())) {
             list.add(a.getName());
         }
         model.setItems(list);
@@ -547,18 +514,15 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                 });
     }
 
-    public void onRemove()
-    {
+    public void onRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
         ArrayList<VdcActionParametersBase> prms = new ArrayList<>();
-        for (Object a : getSelectedItems())
-        {
+        for (Object a : getSelectedItems()) {
             prms.add(new VdsGroupParametersBase(((VDSGroup) a).getId()));
         }
 
@@ -577,24 +541,20 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                 }, model);
     }
 
-    public void onSave()
-    {
+    public void onSave() {
         ClusterModel model = (ClusterModel) getWindow();
 
         boolean validateCpu =
                 (model.getIsNew() && model.getEnableOvirtService().getEntity())
                         || (model.getIsEdit() && getSelectedItem().getCpuName() != null);
 
-        if (!model.validate(validateCpu))
-        {
+        if (!model.validate(validateCpu)) {
             return;
         }
-        else if (model.getIsNew())
-        {
+        else if (model.getIsNew()) {
             onPreSaveInternal(model);
         }
-        else
-        {
+        else {
             onSaveConfirmCV(model);
         }
     }
@@ -618,8 +578,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         }
     }
 
-    private void onSaveConfirmCpuThreads()
-    {
+    private void onSaveConfirmCpuThreads() {
         ClusterModel model = (ClusterModel) getWindow();
 
         // cancel confirm window if there is one
@@ -660,8 +619,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         return retVal;
     }
 
-    private void onSaveConfirmCpuLevel()
-    {
+    private void onSaveConfirmCpuLevel() {
         ClusterModel model = (ClusterModel) getWindow();
 
         // cancel confirm window if there is one
@@ -673,8 +631,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
             _asyncQuery.setModel(model);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object result)
-                {
+                public void onSuccess(Object model, Object result) {
                     ClusterModel clusterModel = (ClusterModel) model;
                     final Map<String, String> highCpuVms = (Map<String, String>)result;
                     AsyncQuery _asyncQuery = new AsyncQuery();
@@ -741,24 +698,19 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
         getConfirmWindow().getCommands().add(tempVar2);
     }
-    public void onPreSaveInternal(ClusterModel model)
-    {
-        if (model.getIsImportGlusterConfiguration().getEntity())
-        {
+    public void onPreSaveInternal(ClusterModel model) {
+        if (model.getIsImportGlusterConfiguration().getEntity()) {
             fetchAndImportClusterHosts(model);
         }
-        else
-        {
+        else {
             onSaveInternal();
         }
     }
 
-    public void onSaveInternal()
-    {
+    public void onSaveInternal() {
         ClusterModel model = (ClusterModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
@@ -777,8 +729,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         cluster.setDescription(model.getDescription().getEntity());
         cluster.setComment(model.getComment().getEntity());
         cluster.setStoragePoolId(model.getDataCenter().getSelectedItem().getId());
-        if (model.getCPU().getSelectedItem() != null)
-        {
+        if (model.getCPU().getSelectedItem() != null) {
             cluster.setCpuName(model.getCPU().getSelectedItem().getCpuName());
         }
         cluster.setMaxVdsMemoryOverCommit(model.getMemoryOverCommit());
@@ -867,16 +818,14 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                 this);
     }
 
-    private void fetchAndImportClusterHosts(final ClusterModel clusterModel)
-    {
+    private void fetchAndImportClusterHosts(final ClusterModel clusterModel) {
         getWindow().startProgress(null);
         AsyncQuery aQuery = new AsyncQuery();
         aQuery.setModel(this);
         aQuery.setHandleFailure(true);
         aQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 getWindow().stopProgress();
 
                 VdcQueryReturnValue returnValue = (VdcQueryReturnValue) result;
@@ -891,19 +840,16 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                 }
 
                 Map<String, String> hostMap = returnValue.getReturnValue();
-                if (hostMap == null)
-                {
+                if (hostMap == null) {
                     onEmptyGlusterHosts(clusterModel);
                     return;
                 }
-                if (hostMap.containsValue(null) || hostMap.containsValue(""))//$NON-NLS-1$
-                {
+                if (hostMap.containsValue(null) || hostMap.containsValue("")){ //$NON-NLS-1$
                     onGlusterHostsWithoutFingerprint(hostMap, clusterModel);
                     return;
                 }
                 ArrayList<EntityModel<HostDetailModel>> list = new ArrayList<>();
-                for (Map.Entry<String, String> host : hostMap.entrySet())
-                {
+                for (Map.Entry<String, String> host : hostMap.entrySet()) {
                     HostDetailModel hostModel = new HostDetailModel(host.getKey(), host.getValue());
                     hostModel.setName(host.getKey());
                     hostModel.setPassword("");//$NON-NLS-1$
@@ -919,18 +865,14 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                 clusterModel.getGlusterHostFingerprint().getEntity());
     }
 
-    private void onEmptyGlusterHosts(ClusterModel clusterModel)
-    {
+    private void onEmptyGlusterHosts(ClusterModel clusterModel) {
         clusterModel.setMessage(ConstantsManager.getInstance().getConstants().emptyGlusterHosts());
     }
 
-    private void onGlusterHostsWithoutFingerprint(Map<String, String> hostMap, ClusterModel clusterModel)
-    {
+    private void onGlusterHostsWithoutFingerprint(Map<String, String> hostMap, ClusterModel clusterModel) {
         ArrayList<String> problematicHosts = new ArrayList<>();
-        for (Map.Entry<String, String> host : hostMap.entrySet())
-        {
-            if (host.getValue() == null || host.getValue().equals("")) //$//$NON-NLS-1$
-            {
+        for (Map.Entry<String, String> host : hostMap.entrySet()) {
+            if (host.getValue() == null || host.getValue().equals("")) { //$NON-NLS-1$
                 problematicHosts.add(host.getKey());
             }
         }
@@ -938,8 +880,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         clusterModel.setMessage(ConstantsManager.getInstance().getMessages().unreachableGlusterHosts(problematicHosts));
     }
 
-    private void importClusterHosts(ClusterModel clusterModel, ArrayList<EntityModel<HostDetailModel>> hostList)
-    {
+    private void importClusterHosts(ClusterModel clusterModel, ArrayList<EntityModel<HostDetailModel>> hostList) {
         setWindow(null);
         getAddMultipleHostsCommand().execute();
 
@@ -957,39 +898,31 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         hostsModel.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
     }
 
-    private void onSaveHosts()
-    {
+    private void onSaveHosts() {
         MultipleHostsModel hostsModel = (MultipleHostsModel) getWindow();
-        if(hostsModel == null)
-        {
+        if(hostsModel == null) {
             return;
         }
-        if (!hostsModel.validate())
-        {
+        if (!hostsModel.validate()) {
             return;
         }
-        if (hostsModel.getClusterModel().getClusterId() != null)
-        {
+        if (hostsModel.getClusterModel().getClusterId() != null) {
             addHosts(hostsModel);
         }
-        else
-        {
+        else {
             onSaveInternalWithModel(hostsModel.getClusterModel());
         }
     }
 
-    public void postOnSaveInternal(VdcReturnValueBase returnValue)
-    {
+    public void postOnSaveInternal(VdcReturnValueBase returnValue) {
         ClusterModel model = (ClusterModel) getWindow();
 
         model.stopProgress();
 
-        if (returnValue != null && returnValue.getSucceeded())
-        {
+        if (returnValue != null && returnValue.getSucceeded()) {
             cancel();
 
-            if (model.getIsNew())
-            {
+            if (model.getIsNew()) {
                 setGuideContext(returnValue.getActionReturnValue());
                 updateActionAvailability();
                 getGuideCommand().execute();
@@ -997,11 +930,9 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         }
     }
 
-    public void postOnSaveInternalWithImport(VdcReturnValueBase returnValue)
-    {
+    public void postOnSaveInternalWithImport(VdcReturnValueBase returnValue) {
         MultipleHostsModel hostsModel = (MultipleHostsModel) getWindow();
-        if (returnValue != null && returnValue.getSucceeded())
-        {
+        if (returnValue != null && returnValue.getSucceeded()) {
             hostsModel.getClusterModel().setClusterId((Guid) returnValue.getActionReturnValue());
             addHosts(hostsModel);
         }
@@ -1044,24 +975,20 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
             public void executed(FrontendMultipleActionAsyncResult result) {
                         hostsModel.stopProgress();
                         boolean isAllCanDoPassed = true;
-                        for (VdcReturnValueBase returnValueBase : result.getReturnValue())
-                        {
+                        for (VdcReturnValueBase returnValueBase : result.getReturnValue()) {
                             isAllCanDoPassed = isAllCanDoPassed && returnValueBase.getCanDoAction();
-                            if (!isAllCanDoPassed)
-                            {
+                            if (!isAllCanDoPassed) {
                                 break;
                             }
                         }
-                        if (isAllCanDoPassed)
-                        {
+                        if (isAllCanDoPassed) {
                             cancel();
                         }
             }
         }, null);
     }
 
-    public void cancel()
-    {
+    public void cancel() {
         cancelConfirmation();
 
         setGuideContext(null);
@@ -1070,33 +997,28 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         updateActionAvailability();
     }
 
-    public void cancelConfirmation()
-    {
+    public void cancelConfirmation() {
         setConfirmWindow(null);
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e)
-    {
+    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e) {
         super.itemsCollectionChanged(sender, e);
 
         // Try to select an item corresponding to the system tree selection.
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster)
-        {
+        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster) {
             VDSGroup cluster = (VDSGroup) getSystemTreeSelectedItem().getEntity();
 
             setSelectedItem(Linq.firstOrDefault(Linq.<VDSGroup> cast(getItems()),
@@ -1104,8 +1026,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         }
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         getEditCommand().setIsExecutionAllowed(getSelectedItem() != null && getSelectedItems() != null
                 && getSelectedItems().size() == 1);
 
@@ -1128,70 +1049,55 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
 
     @Override
     public void executeCommand(UICommand command, Object... parameters) {
-        if (command == getEditCommand() && parameters.length > 0 && Boolean.TRUE.equals(parameters[0]))
-        {
+        if (command == getEditCommand() && parameters.length > 0 && Boolean.TRUE.equals(parameters[0])) {
             super.executeCommand(command, parameters);
         }
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getNewCommand())
-        {
+        if (command == getNewCommand()) {
             newEntity();
         }
-        else if (command == getEditCommand())
-        {
+        else if (command == getEditCommand()) {
             edit();
         }
-        else if (command == getRemoveCommand())
-        {
+        else if (command == getRemoveCommand()) {
             remove();
         }
-        else if (command == getGuideCommand())
-        {
+        else if (command == getGuideCommand()) {
             guide();
         }
-        else if (command == getResetEmulatedMachineCommand())
-        {
+        else if (command == getResetEmulatedMachineCommand()) {
             resetEmulatedMachine();
         }
         else if ("OnResetClusterEmulatedMachine".equals(command.getName())) { //$NON-NLS-1$
             onResetClusterEmulatedMachine();
         }
-        else if ("OnSave".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
-        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
-        else if ("OnSaveConfirmCpuThreads".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnSaveConfirmCpuThreads".equals(command.getName())) { //$NON-NLS-1$
             onSaveConfirmCpuThreads();
         }
-        else if ("OnSaveConfirmCpuLevel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnSaveConfirmCpuLevel".equals(command.getName())) { //$NON-NLS-1$
             onSaveConfirmCpuLevel();
         }
-        else if ("OnSaveInternal".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnSaveInternal".equals(command.getName())) { //$NON-NLS-1$
             onSaveInternal();
         }
-        else if ("CancelConfirmation".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("CancelConfirmation".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirmation();
         }
-        else if ("OnSaveHosts".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnSaveHosts".equals(command.getName())) { //$NON-NLS-1$
             onSaveHosts();
         }
     }
@@ -1199,23 +1105,19 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
     private SystemTreeItemModel systemTreeSelectedItem;
 
     @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem()
-    {
+    public SystemTreeItemModel getSystemTreeSelectedItem() {
         return systemTreeSelectedItem;
     }
 
     @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value)
-    {
-        if (systemTreeSelectedItem != value)
-        {
+    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
+        if (systemTreeSelectedItem != value) {
             systemTreeSelectedItem = value;
             onSystemTreeSelectedItemChanged();
         }
     }
 
-    private void onSystemTreeSelectedItemChanged()
-    {
+    private void onSystemTreeSelectedItemChanged() {
         updateActionAvailability();
     }
 

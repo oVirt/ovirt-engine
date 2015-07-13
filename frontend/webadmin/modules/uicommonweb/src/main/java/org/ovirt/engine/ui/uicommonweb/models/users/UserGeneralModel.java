@@ -8,10 +8,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class UserGeneralModel extends EntityModel<DbUser>
-{
-    public UserGeneralModel()
-    {
+public class UserGeneralModel extends EntityModel<DbUser> {
+    public UserGeneralModel() {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
         setHelpTag(HelpTag.general);
         setHashName("general"); //$NON-NLS-1$
@@ -19,15 +17,12 @@ public class UserGeneralModel extends EntityModel<DbUser>
 
     private String domain;
 
-    public String getDomain()
-    {
+    public String getDomain() {
         return domain;
     }
 
-    public void setDomain(String value)
-    {
-        if (!ObjectUtils.objectsEqual(domain, value))
-        {
+    public void setDomain(String value) {
+        if (!ObjectUtils.objectsEqual(domain, value)) {
             domain = value;
             onPropertyChanged(new PropertyChangedEventArgs("Domain")); //$NON-NLS-1$
         }
@@ -35,41 +30,34 @@ public class UserGeneralModel extends EntityModel<DbUser>
 
     private String email;
 
-    public String getEmail()
-    {
+    public String getEmail() {
         return email;
     }
 
-    public void setEmail(String value)
-    {
-        if (!ObjectUtils.objectsEqual(email, value))
-        {
+    public void setEmail(String value) {
+        if (!ObjectUtils.objectsEqual(email, value)) {
             email = value;
             onPropertyChanged(new PropertyChangedEventArgs("Email")); //$NON-NLS-1$
         }
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             updateProperties();
         }
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
         updateProperties();
     }
 
-    private void updateProperties()
-    {
+    private void updateProperties() {
         DbUser user = getEntity();
 
         setDomain(user.getDomain());

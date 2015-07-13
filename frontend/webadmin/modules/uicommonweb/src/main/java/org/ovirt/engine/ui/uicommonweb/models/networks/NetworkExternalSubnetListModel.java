@@ -12,8 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.models.providers.NewExternalSubnetModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveExternalSubnetModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class NetworkExternalSubnetListModel extends SearchableListModel<NetworkView, ExternalSubnet>
-{
+public class NetworkExternalSubnetListModel extends SearchableListModel<NetworkView, ExternalSubnet> {
 
     private UICommand newCommand;
     private UICommand removeCommand;

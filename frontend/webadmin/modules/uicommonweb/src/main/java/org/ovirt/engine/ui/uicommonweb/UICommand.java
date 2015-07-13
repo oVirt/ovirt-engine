@@ -12,8 +12,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
  * Represents a command adapted to use in model-viewmodel pattern + binding.
  */
 @SuppressWarnings("unused")
-public class UICommand extends Model implements ICommand
-{
+public class UICommand extends Model implements ICommand {
 
 
     public static UICommand createDefaultOkUiCommand(String name, ICommandTarget target) {
@@ -46,21 +45,17 @@ public class UICommand extends Model implements ICommand
     /**
      * Gets or sets the flag indicating whether this command is available but can't be executed from some reasons.
      */
-    public boolean getIsExecutionAllowed()
-    {
+    public boolean getIsExecutionAllowed() {
         return isExecutionAllowed;
     }
 
     /*
      * Call this method after adding execute prohibition reasons.
      */
-    public UICommand setIsExecutionAllowed(boolean value)
-    {
-        if (isExecutionAllowed != value)
-        {
+    public UICommand setIsExecutionAllowed(boolean value) {
+        if (isExecutionAllowed != value) {
             isExecutionAllowed = value;
-            if (value)
-            {
+            if (value) {
                 getExecuteProhibitionReasons().clear();
             }
 
@@ -72,8 +67,7 @@ public class UICommand extends Model implements ICommand
 
     private List<String> privateExecuteProhibitionReasons;
 
-    public List<String> getExecuteProhibitionReasons()
-    {
+    public List<String> getExecuteProhibitionReasons() {
         return privateExecuteProhibitionReasons;
     }
 
@@ -84,21 +78,18 @@ public class UICommand extends Model implements ICommand
 
     private boolean privateIsDefault;
 
-    public boolean getIsDefault()
-    {
+    public boolean getIsDefault() {
         return privateIsDefault;
     }
 
-    public UICommand setIsDefault(boolean value)
-    {
+    public UICommand setIsDefault(boolean value) {
         privateIsDefault = value;
         return this;
     }
 
     private boolean privateIsVisible = true;
 
-    public boolean getIsVisible()
-    {
+    public boolean getIsVisible() {
         return privateIsVisible;
     }
 
@@ -109,21 +100,18 @@ public class UICommand extends Model implements ICommand
 
     private boolean privateIsCancel;
 
-    public boolean getIsCancel()
-    {
+    public boolean getIsCancel() {
         return privateIsCancel;
     }
 
-    public UICommand setIsCancel(boolean value)
-    {
+    public UICommand setIsCancel(boolean value) {
         privateIsCancel = value;
         return this;
     }
 
     private String privateName;
 
-    public String getName()
-    {
+    public String getName() {
         return privateName;
     }
 
@@ -144,8 +132,7 @@ public class UICommand extends Model implements ICommand
     private ICommandTarget target;
     private final boolean autoRefresh;
 
-    public UICommand(String name, ICommandTarget target, boolean autoRefresh)
-    {
+    public UICommand(String name, ICommandTarget target, boolean autoRefresh) {
         this(autoRefresh);
         setName(name);
         setTitle(name);
@@ -156,8 +143,7 @@ public class UICommand extends Model implements ICommand
         this(name, target, false);
     }
 
-    private UICommand(boolean autoRefresh)
-    {
+    private UICommand(boolean autoRefresh) {
         setExecuteProhibitionReasons(new ObservableCollection<String>());
         setIsExecutionAllowed(true);
         this.autoRefresh = autoRefresh;
@@ -167,8 +153,7 @@ public class UICommand extends Model implements ICommand
         return autoRefresh;
     }
 
-    public boolean canExecute(Object parameter)
-    {
+    public boolean canExecute(Object parameter) {
         return true;
     }
 
@@ -177,15 +162,12 @@ public class UICommand extends Model implements ICommand
      *
      * @param parameters
      */
-    public void execute(Object... parameters)
-    {
-        if (!getIsAvailable() || !getIsExecutionAllowed())
-        {
+    public void execute(Object... parameters) {
+        if (!getIsAvailable() || !getIsExecutionAllowed()) {
             return;
         }
 
-        if (target != null)
-        {
+        if (target != null) {
             if (parameters == null || parameters.length == 0) {
                 target.executeCommand(this);
             } else {
@@ -197,8 +179,7 @@ public class UICommand extends Model implements ICommand
     /**
      * Execute command with no parameters
      */
-    public void execute()
-    {
+    public void execute() {
         execute(new Object[0]);
     }
 

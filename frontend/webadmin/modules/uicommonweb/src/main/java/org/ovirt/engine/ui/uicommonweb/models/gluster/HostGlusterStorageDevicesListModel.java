@@ -44,8 +44,7 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
         return super.getEntity();
     }
 
-    public void setEntity(VDS value)
-    {
+    public void setEntity(VDS value) {
         super.setEntity(value);
         updateActionAvailability();
 
@@ -78,24 +77,20 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
         getSearchCommand().execute();
     }
 
     @Override
-    public void search()
-    {
-        if (getEntity() != null)
-        {
+    public void search() {
+        if (getEntity() != null) {
             super.search();
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         if (getEntity() == null) {
             return;
         }
@@ -178,8 +173,7 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }

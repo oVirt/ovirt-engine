@@ -140,19 +140,16 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
     }
 
     @Override
-    public StoragePool getEntity()
-    {
+    public StoragePool getEntity() {
         return (StoragePool) super.getEntity();
     }
 
-    public void setEntity(StoragePool value)
-    {
+    public void setEntity(StoragePool value) {
         super.setEntity(value);
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
         updateOptions();
     }
@@ -448,13 +445,11 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         }
 
         UICommand addClusterAction = new UICommand("AddCluster", this); //$NON-NLS-1$
-        if (clusters.isEmpty())
-        {
+        if (clusters.isEmpty()) {
             addClusterAction.setTitle(DataCenterConfigureClustersAction);
             getCompulsoryActions().add(addClusterAction);
         }
-        else
-        {
+        else {
             UICommand tempVar6 = new UICommand("AddHost", this); //$NON-NLS-1$
             tempVar6.setTitle(DataCenterConfigureHostsAction);
             UICommand addHostAction = tempVar6;
@@ -464,33 +459,27 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
             boolean hasMaintenance3_0Host = false;
 
             Version version3_0 = new Version(3, 0);
-            for (VDS vds : allHosts)
-            {
+            for (VDS vds : allHosts) {
                 String[] hostVersions = vds.getSupportedClusterLevels().split("[,]", -1); //$NON-NLS-1$
-                for (String hostVersion : hostVersions)
-                {
-                    if (version3_0.compareTo(new Version(hostVersion)) <= 0)
-                    {
+                for (String hostVersion : hostVersions) {
+                    if (version3_0.compareTo(new Version(hostVersion)) <= 0) {
                         hasMaintenance3_0Host = true;
                         break;
                     }
                 }
-                if (hasMaintenance3_0Host)
-                {
+                if (hasMaintenance3_0Host) {
                     break;
                 }
             }
 
-            if (localStorageHost != null)
-            {
+            if (localStorageHost != null) {
                 String hasHostReason =
                         ConstantsManager.getInstance().getConstants().localDataCenterAlreadyContainsAHostDcGuide();
                 addHostAction.getExecuteProhibitionReasons().add(hasHostReason);
                 addHostAction.setIsExecutionAllowed(false);
                 selectHost.getExecuteProhibitionReasons().add(hasHostReason);
                 selectHost.setIsExecutionAllowed(false);
-                if (localStorageHost.getStatus() == VDSStatus.Up)
-                {
+                if (localStorageHost.getStatus() == VDSStatus.Up) {
                     UICommand tempVar8 = new UICommand("AddLocalStorage", this); //$NON-NLS-1$
                     tempVar8.setTitle(ConstantsManager.getInstance().getConstants().addLocalStorageTitle());
                     UICommand addLocalStorageAction = tempVar8;
@@ -500,8 +489,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                 getNote().setIsAvailable(true);
                 getNote().setEntity(ConstantsManager.getInstance().getConstants().attachLocalStorageDomainToFullyConfigure());
             }
-            else if (getEntity().getStatus() != StoragePoolStatus.Uninitialized)
-            {
+            else if (getEntity().getStatus() != StoragePoolStatus.Uninitialized) {
                 String dataCenterInitializeReason =
                         ConstantsManager.getInstance().getConstants().dataCenterWasAlreadyInitializedDcGuide();
                 addHostAction.getExecuteProhibitionReasons().add(dataCenterInitializeReason);
@@ -510,8 +498,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                 selectHost.setIsExecutionAllowed(false);
             }
 
-            if (hasMaintenance3_0Host)
-            {
+            if (hasMaintenance3_0Host) {
                 getOptionalActions().add(selectHost);
             }
             getCompulsoryActions().add(addHostAction);
@@ -520,21 +507,17 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         stopProgress();
     }
 
-    private void updateOptions()
-    {
+    private void updateOptions() {
         getCompulsoryActions().clear();
         getOptionalActions().clear();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             startProgress(null);
 
-            if (!getEntity().isLocal())
-            {
+            if (!getEntity().isLocal()) {
                 updateOptionsNonLocalFSData();
             }
-            else
-            {
+            else {
                 updateOptionsLocalFSData();
             }
         }
@@ -557,8 +540,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         noLocalStorageHost = false;
     }
 
-    private void addLocalStorage()
-    {
+    private void addLocalStorage() {
         StorageModel model = new StorageModel(new NewEditStorageModelBehavior());
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newLocalDomainTitle());
@@ -594,18 +576,15 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                 getEntity().getName());
     }
 
-    public void addIsoStorage()
-    {
+    public void addIsoStorage() {
         addStorageInternal(ConstantsManager.getInstance().getConstants().newISOLibraryTitle(), StorageDomainType.ISO);
     }
 
-    public void addDataStorage()
-    {
+    public void addDataStorage() {
         addStorageInternal(ConstantsManager.getInstance().getConstants().newStorageTitle(), StorageDomainType.Data);
     }
 
-    private void addStorageInternal(String title, StorageDomainType type)
-    {
+    private void addStorageInternal(String title, StorageDomainType type) {
         StorageModel model = new StorageModel(new NewEditStorageModelBehavior());
         setWindow(model);
         model.setTitle(title);
@@ -618,12 +597,10 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
         List<IStorageModel> items = null;
 
-        if (type == StorageDomainType.Data)
-        {
+        if (type == StorageDomainType.Data) {
             items = AsyncDataProvider.getInstance().getDataStorageModels();
         }
-        else if (type == StorageDomainType.ISO)
-        {
+        else if (type == StorageDomainType.ISO) {
             items = AsyncDataProvider.getInstance().getIsoStorageModels();
         }
 
@@ -637,8 +614,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         model.getCommands().add(tempVar7);
     }
 
-    public void onAddStorage()
-    {
+    public void onAddStorage() {
         StorageModel model = (StorageModel) getWindow();
         String storageName = model.getName().getEntity();
 
@@ -653,8 +629,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                         String tempVar = storageModel.getOriginalName();
                         String originalName = (tempVar != null) ? tempVar : ""; //$NON-NLS-1$
                         boolean isNameUnique = (Boolean) returnValue;
-                        if (!isNameUnique && name.compareToIgnoreCase(originalName) != 0)
-                        {
+                        if (!isNameUnique && name.compareToIgnoreCase(originalName) != 0) {
                             storageModel.getName()
                                     .getInvalidityReasons()
                                     .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
@@ -684,34 +659,27 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                 storageName);
     }
 
-    public void postOnAddStorage()
-    {
+    public void postOnAddStorage() {
         StorageModel model = (StorageModel) getWindow();
 
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
 
         // Save changes.
-        if (model.getSelectedItem() instanceof NfsStorageModel)
-        {
+        if (model.getSelectedItem() instanceof NfsStorageModel) {
             saveNfsStorage();
         }
-        else if (model.getSelectedItem() instanceof LocalStorageModel)
-        {
+        else if (model.getSelectedItem() instanceof LocalStorageModel) {
             saveLocalStorage();
         }
-        else
-        {
+        else {
             saveSanStorage();
         }
     }
 
-    private void saveLocalStorage()
-    {
-        if (getWindow().getProgress() != null)
-        {
+    private void saveLocalStorage() {
+        if (getWindow().getProgress() != null) {
             return;
         }
 
@@ -720,8 +688,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveLocal" }))).run(); //$NON-NLS-1$
     }
 
-    private void saveLocalStorage(TaskContext context)
-    {
+    private void saveLocalStorage(TaskContext context) {
         this.context = context;
         StorageModel model = (StorageModel) getWindow();
         VDS host = model.getHost().getSelectedItem();
@@ -743,8 +710,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         ArrayList<StorageDomain> storages =
                                 (ArrayList<StorageDomain>) returnValue;
-                        if (storages != null && storages.size() > 0)
-                        {
+                        if (storages != null && storages.size() > 0) {
                             String storageName = storages.get(0).getStorageName();
                             onFinish(dataCenterGuideModel.context,
                                     false,
@@ -753,8 +719,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                                             .getMessages()
                                             .createOperationFailedDcGuideMsg(storageName));
                         }
-                        else
-                        {
+                        else {
                             dataCenterGuideModel.saveNewLocalStorage();
                         }
 
@@ -764,8 +729,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                 path);
     }
 
-    public void saveNewLocalStorage()
-    {
+    public void saveNewLocalStorage() {
         StorageModel model = (StorageModel) getWindow();
         LocalStorageModel localModel = (LocalStorageModel) model.getSelectedItem();
         VDS host = model.getHost().getSelectedItem();
@@ -817,8 +781,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
                 DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
 
-                if (dataCenterGuideModel.removeConnection)
-                {
+                if (dataCenterGuideModel.removeConnection) {
                     dataCenterGuideModel.cleanConnection(dataCenterGuideModel.connection, dataCenterGuideModel.hostId);
                     dataCenterGuideModel.removeConnection = false;
                 }
@@ -835,30 +798,25 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                 this);
     }
 
-    private void cleanConnection(StorageServerConnections connection, Guid hostId)
-    {
+    private void cleanConnection(StorageServerConnections connection, Guid hostId) {
         Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
                 new StorageServerConnectionParametersBase(connection, hostId),
                 null,
                 this);
     }
 
-    public void onFinish(TaskContext context, boolean isSucceeded, IStorageModel model)
-    {
+    public void onFinish(TaskContext context, boolean isSucceeded, IStorageModel model) {
         onFinish(context, isSucceeded, model, null);
     }
 
-    public void onFinish(TaskContext context, boolean isSucceeded, IStorageModel model, String message)
-    {
+    public void onFinish(TaskContext context, boolean isSucceeded, IStorageModel model, String message) {
         context.invokeUIThread(this,
                 new ArrayList<Object>(Arrays.asList(new Object[] { "Finish", isSucceeded, model, //$NON-NLS-1$
                         message })));
     }
 
-    private void saveNfsStorage()
-    {
-        if (getWindow().getProgress() != null)
-        {
+    private void saveNfsStorage() {
+        if (getWindow().getProgress() != null) {
             return;
         }
 
@@ -867,8 +825,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveNfs" }))).run(); //$NON-NLS-1$
     }
 
-    private void saveNfsStorage(TaskContext context)
-    {
+    private void saveNfsStorage(TaskContext context) {
         this.context = context;
         StorageModel model = (StorageModel) getWindow();
         boolean isNew = model.getStorage() == null;
@@ -890,8 +847,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         ArrayList<StorageDomain> storages =
                                 (ArrayList<StorageDomain>) returnValue;
-                        if (storages != null && storages.size() > 0)
-                        {
+                        if (storages != null && storages.size() > 0) {
                             String storageName = storages.get(0).getStorageName();
                             onFinish(dataCenterGuideModel.context,
                                     false,
@@ -900,8 +856,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                                             .getMessages()
                                             .createOperationFailedDcGuideMsg(storageName));
                         }
-                        else
-                        {
+                        else {
                             dataCenterGuideModel.saveNewNfsStorage();
                         }
 
@@ -911,8 +866,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                 path);
     }
 
-    public void saveNewNfsStorage()
-    {
+    public void saveNewNfsStorage() {
         StorageModel model = (StorageModel) getWindow();
         NfsStorageModel nfsModel = (NfsStorageModel) model.getSelectedItem();
         VDS host = model.getHost().getSelectedItem();
@@ -966,8 +920,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
                 // Attach storage to data center as neccessary.
                 StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
-                if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
-                {
+                if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
                     dataCenterGuideModel.attachStorageToDataCenter(dataCenterGuideModel.storageId,
                             dataCenter.getId());
                 }
@@ -994,10 +947,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                 this);
     }
 
-    private void saveSanStorage()
-    {
-        if (getWindow().getProgress() != null)
-        {
+    private void saveSanStorage() {
+        if (getWindow().getProgress() != null) {
             return;
         }
 
@@ -1006,8 +957,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveSan" }))).run(); //$NON-NLS-1$
     }
 
-    private void saveSanStorage(TaskContext context)
-    {
+    private void saveSanStorage(TaskContext context) {
         this.context = context;
         StorageModel model = (StorageModel) getWindow();
         SanStorageModel sanModel = (SanStorageModel) model.getSelectedItem();
@@ -1026,8 +976,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         ArrayList<StorageDomain> storages =
                                 (ArrayList<StorageDomain>) returnValue;
-                        if (storages != null && storages.size() > 0)
-                        {
+                        if (storages != null && storages.size() > 0) {
                             String storageName = storages.get(0).getStorageName();
                             onFinish(dataCenterGuideModel.context,
                                     false,
@@ -1036,8 +985,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                                             .getMessages()
                                             .createOperationFailedDcGuideMsg(storageName));
                         }
-                        else
-                        {
+                        else {
                             dataCenterGuideModel.saveNewSanStorage();
                         }
 
@@ -1048,8 +996,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                 path);
     }
 
-    public void saveNewSanStorage()
-    {
+    public void saveNewSanStorage() {
         StorageModel model = (StorageModel) getWindow();
         SanStorageModel sanStorageModel = (SanStorageModel) model.getSelectedItem();
 
@@ -1063,12 +1010,10 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         }
     }
 
-    private void onSaveSanStorage()
-    {
+    private void onSaveSanStorage() {
         ConfirmationModel confirmationModel = (ConfirmationModel) getConfirmWindow();
 
-        if (confirmationModel != null && !confirmationModel.validate())
-        {
+        if (confirmationModel != null && !confirmationModel.validate()) {
             return;
         }
 
@@ -1081,8 +1026,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         boolean force = sanModel.isForce();
 
         ArrayList<String> lunIds = new ArrayList<String>();
-        for (LunModel lun : sanModel.getAddedLuns())
-        {
+        for (LunModel lun : sanModel.getAddedLuns()) {
             lunIds.add(lun.getLunId());
         }
 
@@ -1098,8 +1042,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
                         StorageModel storageModel = (StorageModel) dataCenterGuideModel.getWindow();
                         StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
-                        if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
-                        {
+                        if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
                             VdcReturnValueBase returnValue = result.getReturnValue();
                             Guid storageId = (Guid) returnValue.getActionReturnValue();
                             dataCenterGuideModel.attachStorageToDataCenter(storageId, dataCenter.getId());
@@ -1133,15 +1076,13 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         model.getCommands().add(cancelConfirmCommand);
     }
 
-    private void attachStorageInternal(List<StorageDomain> storages, String title)
-    {
+    private void attachStorageInternal(List<StorageDomain> storages, String title) {
         ListModel model = new ListModel();
         model.setTitle(title);
         setWindow(model);
 
         ArrayList<EntityModel> items = new ArrayList<EntityModel>();
-        for (StorageDomain sd : storages)
-        {
+        for (StorageDomain sd : storages) {
             EntityModel tempVar = new EntityModel();
             tempVar.setEntity(sd);
             items.add(tempVar);
@@ -1155,31 +1096,25 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         model.getCommands().add(tempVar3);
     }
 
-    private void attachStorageToDataCenter(Guid storageId, Guid dataCenterId)
-    {
+    private void attachStorageToDataCenter(Guid storageId, Guid dataCenterId) {
         Frontend.getInstance().runAction(VdcActionType.AttachStorageDomainToPool, new AttachStorageDomainToPoolParameters(storageId,
                 dataCenterId),
                 null,
                 this);
     }
 
-    public void onAttachStorage()
-    {
+    public void onAttachStorage() {
         ListModel model = (ListModel) getWindow();
 
         ArrayList<StorageDomain> items = new ArrayList<StorageDomain>();
-        for (EntityModel a : Linq.<EntityModel> cast(model.getItems()))
-        {
-            if (a.getIsSelected())
-            {
+        for (EntityModel a : Linq.<EntityModel> cast(model.getItems())) {
+            if (a.getIsSelected()) {
                 items.add((StorageDomain) a.getEntity());
             }
         }
 
-        if (items.size() > 0)
-        {
-            for (StorageDomain sd : items)
-            {
+        if (items.size() > 0) {
+            for (StorageDomain sd : items) {
                 attachStorageToDataCenter(sd.getId(), getEntity().getId());
             }
         }
@@ -1188,8 +1123,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         postAction();
     }
 
-    public void attachIsoStorage()
-    {
+    public void attachIsoStorage() {
         AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
@@ -1234,8 +1168,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                 getEntity().getId());
     }
 
-    public void attachDataStorage()
-    {
+    public void attachDataStorage() {
         AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this,
                                                                             new INewAsyncCallback() {
                                                                                 @Override
@@ -1280,8 +1213,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                                                                             }));
     }
 
-    public void addCluster()
-    {
+    public void addCluster() {
         ClusterModel model = new ClusterModel();
         model.init(false);
         setWindow(model);
@@ -1301,19 +1233,16 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         model.getCommands().add(tempVar2);
     }
 
-    public void onAddCluster()
-    {
+    public void onAddCluster() {
         ClusterModel model = (ClusterModel) getWindow();
         VDSGroup cluster = new VDSGroup();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
-        if (!model.validate(model.getEnableOvirtService().getEntity())) // CPU is mandatory only if the
+        if (!model.validate(model.getEnableOvirtService().getEntity())) { // CPU is mandatory only if the
                                                                                   // cluster is virt enabled
-        {
             return;
         }
 
@@ -1324,8 +1253,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         cluster.setDescription(model.getDescription().getEntity());
         cluster.setComment(model.getComment().getEntity());
         cluster.setStoragePoolId(model.getDataCenter().getSelectedItem().getId());
-        if (model.getCPU().getSelectedItem() != null)
-        {
+        if (model.getCPU().getSelectedItem() != null) {
             cluster.setCpuName(model.getCPU().getSelectedItem().getCpuName());
         }
         cluster.setMaxVdsMemoryOverCommit(model.getMemoryOverCommit());
@@ -1357,21 +1285,18 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                 }, this);
     }
 
-    public void postOnAddCluster(VdcReturnValueBase returnValue)
-    {
+    public void postOnAddCluster(VdcReturnValueBase returnValue) {
         ClusterModel model = (ClusterModel) getWindow();
 
         model.stopProgress();
 
-        if (returnValue != null && returnValue.getSucceeded())
-        {
+        if (returnValue != null && returnValue.getSucceeded()) {
             cancel();
             postAction();
         }
     }
 
-    public void selectHost()
-    {
+    public void selectHost() {
         MoveHost model = new MoveHost();
         model.setTitle(ConstantsManager.getInstance().getConstants().selectHostTitle());
         model.setHelpTag(HelpTag.select_host);
@@ -1407,37 +1332,30 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                 }), getEntity().getId());
     }
 
-    public void onSelectHost()
-    {
+    public void onSelectHost() {
         MoveHost model = (MoveHost) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
 
         model.setSelectedHosts(new ArrayList<MoveHostData>());
-        for (EntityModel a : Linq.<EntityModel> cast(model.getItems()))
-        {
-            if (a.getIsSelected())
-            {
+        for (EntityModel a : Linq.<EntityModel> cast(model.getItems())) {
+            if (a.getIsSelected()) {
                 model.getSelectedHosts().add((MoveHostData) a);
             }
         }
 
         VDSGroup cluster = (VDSGroup) model.getCluster().getSelectedItem();
         final List<VdcActionParametersBase> parameterList = new ArrayList<>();
-        for (MoveHostData hostData : model.getSelectedHosts())
-        {
+        for (MoveHostData hostData : model.getSelectedHosts()) {
             VDS host = hostData.getEntity();
             // Try to change host's cluster as neccessary.
-            if (host.getVdsGroupId() != null && !host.getVdsGroupId().equals(cluster.getId()))
-            {
+            if (host.getVdsGroupId() != null && !host.getVdsGroupId().equals(cluster.getId())) {
                 parameterList.add(new ChangeVDSClusterParameters(cluster.getId(), host.getId()));
 
             }
@@ -1455,15 +1373,12 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                                 ((MoveHost) dataCenterGuideModel.getWindow()).getSelectedHosts();
                         List<VdcReturnValueBase> retVals = result.getReturnValue();
                         final List<VdcActionParametersBase> activateVdsParameterList = new ArrayList<>();
-                        if (retVals != null && hosts.size() == retVals.size())
-                        {
+                        if (retVals != null && hosts.size() == retVals.size()) {
                             int i = 0;
-                            for (MoveHostData selectedHostData : hosts)
-                            {
+                            for (MoveHostData selectedHostData : hosts) {
                                 VDS selectedHost = selectedHostData.getEntity();
                                 if (selectedHost.getStatus() == VDSStatus.PendingApproval && retVals.get(i) != null
-                                        && retVals.get(i).getSucceeded())
-                                {
+                                        && retVals.get(i).getSucceeded()) {
                                     Frontend.getInstance().runAction(VdcActionType.ApproveVds,
 
                                             new ApproveVdsParameters(selectedHost.getId()),
@@ -1494,8 +1409,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                 this);
     }
 
-    public void addHost()
-    {
+    public void addHost() {
         final HostModel model = new NewHostModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newHostTitle());
@@ -1536,17 +1450,14 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         model.getCommands().add(tempVar2);
     }
 
-    public void onConfirmPMHost()
-    {
+    public void onConfirmPMHost() {
         HostModel model = (HostModel) getWindow();
 
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
 
-        if (!model.getIsPm().getEntity())
-        {
+        if (!model.getIsPm().getEntity()) {
             ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
             confirmModel.setTitle(ConstantsManager.getInstance().getConstants().powerManagementConfigurationTitle());
@@ -1559,20 +1470,17 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
             UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmWithFocus", this); //$NON-NLS-1$
             confirmModel.getCommands().add(tempVar2);
         }
-        else
-        {
+        else {
             onAddHost();
         }
     }
 
-    public void onAddHost()
-    {
+    public void onAddHost() {
         cancelConfirm();
 
         HostModel model = (HostModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
@@ -1617,40 +1525,34 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                 }, this);
     }
 
-    public void postOnAddHost(VdcReturnValueBase returnValue)
-    {
+    public void postOnAddHost(VdcReturnValueBase returnValue) {
         HostModel model = (HostModel) getWindow();
 
         model.stopProgress();
 
-        if (returnValue != null && returnValue.getSucceeded())
-        {
+        if (returnValue != null && returnValue.getSucceeded()) {
             cancel();
             postAction();
         }
     }
 
     @Override
-    protected void postAction()
-    {
+    protected void postAction() {
         resetData();
         updateOptions();
     }
 
     @Override
-    protected void cancel()
-    {
+    protected void cancel() {
         resetData();
         setWindow(null);
     }
 
-    public void cancelConfirm()
-    {
+    public void cancelConfirm() {
         setConfirmWindow(null);
     }
 
-    public void cancelConfirmWithFocus()
-    {
+    public void cancelConfirmWithFocus() {
         setConfirmWindow(null);
 
         HostModel hostModel = (HostModel) getWindow();
@@ -1658,124 +1560,98 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if ("AddCluster".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("AddCluster".equals(command.getName())) { //$NON-NLS-1$
             addCluster();
         }
 
-        if ("AddHost".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("AddHost".equals(command.getName())) { //$NON-NLS-1$
             addHost();
         }
 
-        if ("SelectHost".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("SelectHost".equals(command.getName())) { //$NON-NLS-1$
             selectHost();
         }
-        if ("AddDataStorage".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("AddDataStorage".equals(command.getName())) { //$NON-NLS-1$
             addDataStorage();
         }
-        if ("AttachDataStorage".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("AttachDataStorage".equals(command.getName())) { //$NON-NLS-1$
             attachDataStorage();
         }
-        if ("AddIsoStorage".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("AddIsoStorage".equals(command.getName())) { //$NON-NLS-1$
             addIsoStorage();
         }
-        if ("AttachIsoStorage".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("AttachIsoStorage".equals(command.getName())) { //$NON-NLS-1$
             attachIsoStorage();
         }
-        if ("OnAddCluster".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("OnAddCluster".equals(command.getName())) { //$NON-NLS-1$
             onAddCluster();
         }
-        if ("OnSelectHost".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("OnSelectHost".equals(command.getName())) { //$NON-NLS-1$
             onSelectHost();
         }
-        if ("OnAddHost".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("OnAddHost".equals(command.getName())) { //$NON-NLS-1$
             onAddHost();
         }
-        if ("OnAddStorage".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("OnAddStorage".equals(command.getName())) { //$NON-NLS-1$
             onAddStorage();
         }
 
-        if ("OnSaveSanStorage".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("OnSaveSanStorage".equals(command.getName())) { //$NON-NLS-1$
             onSaveSanStorage();
         }
 
-        if ("OnAttachStorage".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("OnAttachStorage".equals(command.getName())) { //$NON-NLS-1$
             onAttachStorage();
         }
 
-        if ("AddLocalStorage".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("AddLocalStorage".equals(command.getName())) { //$NON-NLS-1$
             addLocalStorage();
         }
 
-        if ("OnConfirmPMHost".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("OnConfirmPMHost".equals(command.getName())) { //$NON-NLS-1$
             onConfirmPMHost();
         }
 
-        if ("CancelConfirm".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("CancelConfirm".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirm();
         }
-        if ("CancelConfirmWithFocus".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("CancelConfirmWithFocus".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirmWithFocus();
         }
 
-        if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }
 
     @Override
-    public void run(TaskContext context)
-    {
+    public void run(TaskContext context) {
         ArrayList<Object> data = (ArrayList<Object>) context.getState();
         String key = (String) data.get(0);
 
-        if ("SaveNfs".equals(key)) //$NON-NLS-1$
-        {
+        if ("SaveNfs".equals(key)) { //$NON-NLS-1$
             saveNfsStorage(context);
 
         }
-        else if ("SaveLocal".equals(key)) //$NON-NLS-1$
-        {
+        else if ("SaveLocal".equals(key)) { //$NON-NLS-1$
             saveLocalStorage(context);
 
         }
-        else if ("SaveSan".equals(key)) //$NON-NLS-1$
-        {
+        else if ("SaveSan".equals(key)) { //$NON-NLS-1$
             saveSanStorage(context);
 
         }
-        else if ("Finish".equals(key)) //$NON-NLS-1$
-        {
+        else if ("Finish".equals(key)) { //$NON-NLS-1$
             getWindow().stopProgress();
 
-            if ((Boolean) data.get(1))
-            {
+            if ((Boolean) data.get(1)) {
                 cancel();
                 postAction();
             }
-            else
-            {
+            else {
                 ((Model) data.get(2)).setMessage((String) data.get(3));
             }
         }

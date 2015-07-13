@@ -22,22 +22,18 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveVmTemplateInterfaceModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class NetworkTemplateListModel extends SearchableListModel<NetworkView, PairQueryable<VmNetworkInterface, VmTemplate>>
-{
+public class NetworkTemplateListModel extends SearchableListModel<NetworkView, PairQueryable<VmNetworkInterface, VmTemplate>> {
     private UICommand removeCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return removeCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         removeCommand = value;
     }
 
-    public NetworkTemplateListModel()
-    {
+    public NetworkTemplateListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
         setHelpTag(HelpTag.templates);
         setHashName("templates"); //$NON-NLS-1$
@@ -64,35 +60,29 @@ public class NetworkTemplateListModel extends SearchableListModel<NetworkView, P
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
         getSearchCommand().execute();
     }
 
     @Override
-    public void setEntity(NetworkView value)
-    {
+    public void setEntity(NetworkView value) {
         if (value == null || !value.equals(getEntity())) {
             super.setEntity(value);
         }
     }
 
     @Override
-    public void search()
-    {
-        if (getEntity() != null)
-        {
+    public void search() {
+        if (getEntity() != null) {
             super.search();
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
-        if (getEntity() == null)
-        {
+    protected void syncSearch() {
+        if (getEntity() == null) {
             return;
         }
 
@@ -100,8 +90,7 @@ public class NetworkTemplateListModel extends SearchableListModel<NetworkView, P
         asyncQuery.setModel(this);
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 setItems((Collection<PairQueryable<VmNetworkInterface, VmTemplate>>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
@@ -112,29 +101,24 @@ public class NetworkTemplateListModel extends SearchableListModel<NetworkView, P
         Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesAndNetworkInterfacesByNetworkId, params, asyncQuery);
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && !getSelectedItems().isEmpty());
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
-    private void remove()
-    {
-        if (getWindow() != null)
-        {
+    private void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -148,12 +132,10 @@ public class NetworkTemplateListModel extends SearchableListModel<NetworkView, P
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getRemoveCommand())
-        {
+        if (command == getRemoveCommand()) {
             remove();
         }
     }

@@ -30,13 +30,11 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> implements HasDismissCommand {
     private UICommand privateRefreshCommand;
 
-    public UICommand getRefreshCommand()
-    {
+    public UICommand getRefreshCommand() {
         return privateRefreshCommand;
     }
 
-    private void setRefreshCommand(UICommand value)
-    {
+    private void setRefreshCommand(UICommand value) {
         privateRefreshCommand = value;
     }
 
@@ -71,15 +69,12 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
 
     private AuditLog lastEvent;
 
-    public AuditLog getLastEvent()
-    {
+    public AuditLog getLastEvent() {
         return lastEvent;
     }
 
-    private void setLastEvent(AuditLog value)
-    {
-        if (lastEvent != value)
-        {
+    private void setLastEvent(AuditLog value) {
+        if (lastEvent != value) {
             lastEvent = value;
             onPropertyChanged(new PropertyChangedEventArgs("LastEvent")); //$NON-NLS-1$
         }
@@ -87,22 +82,18 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
 
     private boolean isAdvancedView;
 
-    public boolean getIsAdvancedView()
-    {
+    public boolean getIsAdvancedView() {
         return isAdvancedView;
     }
 
-    public void setIsAdvancedView(boolean value)
-    {
-        if (isAdvancedView != value)
-        {
+    public void setIsAdvancedView(boolean value) {
+        if (isAdvancedView != value) {
             isAdvancedView = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsAdvancedView")); //$NON-NLS-1$
         }
     }
 
-    public EventListModel()
-    {
+    public EventListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().eventsTitle());
         setHelpTag(HelpTag.events);
         setApplicationPlace(WebAdminApplicationPlaces.eventMainTabPlace);
@@ -128,8 +119,7 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
     }
 
     @Override
-    public boolean isSearchStringMatch(String searchString)
-    {
+    public boolean isSearchStringMatch(String searchString) {
         return searchString.trim().toLowerCase().startsWith("event"); //$NON-NLS-1$
     }
 
@@ -152,8 +142,7 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
         return true;
     }
 
-    protected void refreshModel()
-    {
+    protected void refreshModel() {
         AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object outerObject, Object returnValue) {

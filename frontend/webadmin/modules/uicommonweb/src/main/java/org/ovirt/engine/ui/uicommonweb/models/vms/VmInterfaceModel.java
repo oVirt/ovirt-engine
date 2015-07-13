@@ -36,8 +36,7 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public abstract class VmInterfaceModel extends Model
-{
+public abstract class VmInterfaceModel extends Model {
     protected static final String ON_SAVE_COMMAND = "OnSave"; //$NON-NLS-1$
 
     private EntityModel<String> privateName;
@@ -73,8 +72,7 @@ public abstract class VmInterfaceModel extends Model
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
             IModel sourceModel,
-            ProfileBehavior profileBehavior)
-    {
+            ProfileBehavior profileBehavior) {
         this.dcId = dcId;
         this.profileBehavior = profileBehavior;
         this.vm = vm;
@@ -168,128 +166,103 @@ public abstract class VmInterfaceModel extends Model
         return clusterCompatibilityVersion;
     }
 
-    public EntityModel<String> getName()
-    {
+    public EntityModel<String> getName() {
         return privateName;
     }
 
-    private void setName(EntityModel<String> value)
-    {
+    private void setName(EntityModel<String> value) {
         privateName = value;
     }
 
-    public ListModel<VnicProfileView> getProfile()
-    {
+    public ListModel<VnicProfileView> getProfile() {
         return privateProfile;
     }
 
-    private void setProfile(ListModel<VnicProfileView> value)
-    {
+    private void setProfile(ListModel<VnicProfileView> value) {
         privateProfile = value;
     }
 
-    public EntityModel<Boolean> getLinked()
-    {
+    public EntityModel<Boolean> getLinked() {
         return linked;
     }
 
-    private void setLinked(EntityModel<Boolean> value)
-    {
+    private void setLinked(EntityModel<Boolean> value) {
         linked = value;
     }
 
-    public EntityModel<Boolean> getLinked_IsSelected()
-    {
+    public EntityModel<Boolean> getLinked_IsSelected() {
         return linked_IsSelected;
     }
 
-    public void setLinked_IsSelected(EntityModel<Boolean> value)
-    {
+    public void setLinked_IsSelected(EntityModel<Boolean> value) {
         linked_IsSelected = value;
     }
 
-    public EntityModel<Boolean> getUnlinked_IsSelected()
-    {
+    public EntityModel<Boolean> getUnlinked_IsSelected() {
         return unlinked_IsSelected;
     }
 
-    public void setUnlinked_IsSelected(EntityModel<Boolean> value)
-    {
+    public void setUnlinked_IsSelected(EntityModel<Boolean> value) {
         unlinked_IsSelected = value;
     }
 
-    public ListModel<VmInterfaceType> getNicType()
-    {
+    public ListModel<VmInterfaceType> getNicType() {
         return privateNicType;
     }
 
-    private void setNicType(ListModel<VmInterfaceType> value)
-    {
+    private void setNicType(ListModel<VmInterfaceType> value) {
         privateNicType = value;
     }
 
-    public EntityModel<String> getMAC()
-    {
+    public EntityModel<String> getMAC() {
         return privateMAC;
     }
 
-    private void setMAC(EntityModel<String> value)
-    {
+    private void setMAC(EntityModel<String> value) {
         privateMAC = value;
     }
 
-    public EntityModel<Boolean> getEnableMac()
-    {
+    public EntityModel<Boolean> getEnableMac() {
         return enableMac;
     }
 
-    private void setEnableMac(EntityModel<Boolean> value)
-    {
+    private void setEnableMac(EntityModel<Boolean> value) {
         enableMac = value;
     }
 
-    public EntityModel<Boolean> getPlugged()
-    {
+    public EntityModel<Boolean> getPlugged() {
         return plugged;
     }
 
-    private void setPlugged(EntityModel<Boolean> value)
-    {
+    private void setPlugged(EntityModel<Boolean> value) {
         plugged = value;
     }
 
-    public EntityModel<Boolean> getPlugged_IsSelected()
-    {
+    public EntityModel<Boolean> getPlugged_IsSelected() {
         return plugged_IsSelected;
     }
 
-    public void setPlugged_IsSelected(EntityModel<Boolean> value)
-    {
+    public void setPlugged_IsSelected(EntityModel<Boolean> value) {
         plugged_IsSelected = value;
     }
 
-    public EntityModel<Boolean> getUnplugged_IsSelected()
-    {
+    public EntityModel<Boolean> getUnplugged_IsSelected() {
         return unplugged_IsSelected;
     }
 
-    public void setUnplugged_IsSelected(EntityModel<Boolean> value)
-    {
+    public void setUnplugged_IsSelected(EntityModel<Boolean> value) {
         unplugged_IsSelected = value;
     }
 
     @Override
-    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args)
-    {
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
-        if (sender == getMAC())
-        {
+        if (sender == getMAC()) {
             mAC_PropertyChanged((PropertyChangedEventArgs) args);
         }
 
-        else if (sender == getPlugged())
-        {
+        else if (sender == getPlugged()) {
             PropertyChangedEventArgs propArgs = (PropertyChangedEventArgs) args;
             if (propArgs.propertyName.equals("Entity")) { //$NON-NLS-1$
                 boolean plugged = getPlugged().getEntity();
@@ -310,21 +283,18 @@ public abstract class VmInterfaceModel extends Model
                 getUnplugged_IsSelected().setIsAvailable(isPlugAvailable);
             }
         }
-        else if (sender == getPlugged_IsSelected())
-        {
+        else if (sender == getPlugged_IsSelected()) {
             if (getPlugged_IsSelected().getEntity()) {
                 getPlugged().setEntity(true);
             }
         }
-        else if (sender == getUnplugged_IsSelected())
-        {
+        else if (sender == getUnplugged_IsSelected()) {
             if (getUnplugged_IsSelected().getEntity()) {
                 getPlugged().setEntity(false);
             }
         }
 
-        else if (sender == getLinked())
-        {
+        else if (sender == getLinked()) {
             PropertyChangedEventArgs propArgs = (PropertyChangedEventArgs) args;
             if (propArgs.propertyName.equals("Entity")) { //$NON-NLS-1$
                 boolean linked = getLinked().getEntity();
@@ -344,30 +314,25 @@ public abstract class VmInterfaceModel extends Model
                 getUnlinked_IsSelected().setIsAvailable(isLinkedAvailable);
             }
         }
-        else if (sender == getLinked_IsSelected())
-        {
+        else if (sender == getLinked_IsSelected()) {
             if (getLinked_IsSelected().getEntity()) {
                 getLinked().setEntity(true);
             }
         }
-        else if (sender == getUnlinked_IsSelected())
-        {
+        else if (sender == getUnlinked_IsSelected()) {
             if (getUnlinked_IsSelected().getEntity()) {
                 getLinked().setEntity(false);
             }
         }
     }
 
-    private void mAC_PropertyChanged(PropertyChangedEventArgs e)
-    {
-        if (e.propertyName.equals("IsChangeAllowed") && !getMAC().getIsChangable()) //$NON-NLS-1$
-        {
+    private void mAC_PropertyChanged(PropertyChangedEventArgs e) {
+        if (e.propertyName.equals("IsChangeAllowed") && !getMAC().getIsChangable()) { //$NON-NLS-1$
             getMAC().setIsValid(true);
         }
     }
 
-    public boolean validate()
-    {
+    public boolean validate() {
         getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new NoSpecialCharactersWithDotValidation() });
 
         getNicType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
@@ -376,8 +341,7 @@ public abstract class VmInterfaceModel extends Model
                 getNicType().getSelectedItem()) });
 
         getMAC().setIsValid(true);
-        if (getMAC().getIsChangable())
-        {
+        if (getMAC().getIsChangable()) {
             getMAC().validateEntity(new IValidation[] { new NotEmptyValidation(), new MacAddressValidation() });
         }
 
@@ -387,17 +351,14 @@ public abstract class VmInterfaceModel extends Model
 
     protected abstract VmNetworkInterface createBaseNic();
 
-    protected void onSave()
-    {
+    protected void onSave() {
         VmNetworkInterface nic = createBaseNic();
 
-        if (getProgress() != null)
-        {
+        if (getProgress() != null) {
             return;
         }
 
-        if (!validate())
-        {
+        if (!validate()) {
             return;
         }
 
@@ -407,12 +368,10 @@ public abstract class VmInterfaceModel extends Model
         nic.setVnicProfileId(profile.getId());
         nic.setNetworkName(profile.getNetworkName());
         nic.setLinked(getLinked().getEntity());
-        if (getNicType().getSelectedItem() == null)
-        {
+        if (getNicType().getSelectedItem() == null) {
             nic.setType(null);
         }
-        else
-        {
+        else {
             nic.setType(getNicType().getSelectedItem().getValue());
         }
         onSaveMAC(nic);
@@ -429,8 +388,7 @@ public abstract class VmInterfaceModel extends Model
                         VdcReturnValueBase returnValue = result.getReturnValue();
                         stopProgress();
 
-                        if (returnValue != null && returnValue.getSucceeded())
-                        {
+                        if (returnValue != null && returnValue.getSucceeded()) {
                             cancel();
                             postOnSave();
                         }
@@ -439,13 +397,11 @@ public abstract class VmInterfaceModel extends Model
                 this);
     }
 
-    protected void postOnSave()
-    {
+    protected void postOnSave() {
         // Do nothing
     }
 
-    protected void cancel()
-    {
+    protected void cancel() {
         sourceModel.setWindow(null);
     }
 
@@ -457,8 +413,7 @@ public abstract class VmInterfaceModel extends Model
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model1, Object result1)
-            {
+            public void onSuccess(Object model1, Object result1) {
                 getProfile().setItems((List<VnicProfileView>) result1);
                 profileBehavior.initSelectedProfile(getProfile(), getNic());
                 updateProfileChangability();
@@ -485,16 +440,13 @@ public abstract class VmInterfaceModel extends Model
     protected abstract void initSelectedType();
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (ON_SAVE_COMMAND.equals(command.getName()))
-        {
+        if (ON_SAVE_COMMAND.equals(command.getName())) {
             onSave();
         }
-        else if (CANCEL_COMMAND.equals(command.getName()))
-        {
+        else if (CANCEL_COMMAND.equals(command.getName())) {
             cancel();
         }
     }

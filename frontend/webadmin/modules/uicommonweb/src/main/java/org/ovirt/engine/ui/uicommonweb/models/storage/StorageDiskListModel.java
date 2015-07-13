@@ -24,8 +24,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-public class StorageDiskListModel extends SearchableListModel<StorageDomain, Object>
-{
+public class StorageDiskListModel extends SearchableListModel<StorageDomain, Object> {
     private UICommand privateRemoveCommand;
 
     public UICommand getRemoveCommand() {

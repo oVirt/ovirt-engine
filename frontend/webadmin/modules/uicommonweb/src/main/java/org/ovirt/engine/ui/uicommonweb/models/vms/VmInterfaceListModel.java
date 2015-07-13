@@ -23,15 +23,13 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInterface>
-{
+public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInterface> {
 
     private UICommand privateNewCommand;
     private UICommand privateEditCommand;
     private UICommand privateRemoveCommand;
 
-    public VmInterfaceListModel()
-    {
+    public VmInterfaceListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().networkInterfacesTitle());
         setHelpTag(HelpTag.network_interfaces);
         setHashName("network_interfaces"); //$NON-NLS-1$
@@ -48,35 +46,29 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
 
     private List<VmGuestAgentInterface> selectionGuestAgentData;
 
-    public UICommand getNewCommand()
-    {
+    public UICommand getNewCommand() {
         return privateNewCommand;
     }
 
-    private void setNewCommand(UICommand value)
-    {
+    private void setNewCommand(UICommand value) {
         privateNewCommand = value;
     }
 
 
     @Override
-    public UICommand getEditCommand()
-    {
+    public UICommand getEditCommand() {
         return privateEditCommand;
     }
 
-    private void setEditCommand(UICommand value)
-    {
+    private void setEditCommand(UICommand value) {
         privateEditCommand = value;
     }
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
@@ -97,12 +89,10 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             getSearchCommand().execute();
         }
 
@@ -110,10 +100,8 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
     }
 
     @Override
-    protected void syncSearch()
-    {
-        if (getEntity() == null)
-        {
+    protected void syncSearch() {
+        if (getEntity() == null) {
             return;
         }
 
@@ -123,8 +111,7 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
         AsyncQuery getVmGuestAgentInterfacesByVmIdQuery = new AsyncQuery();
         getVmGuestAgentInterfacesByVmIdQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 setGuestAgentData((List<VmGuestAgentInterface>) result);
                 VmInterfaceListModel.super.syncSearch(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()));
             }
@@ -132,10 +119,8 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
         AsyncDataProvider.getInstance().getVmGuestAgentInterfacesByVmId(getVmGuestAgentInterfacesByVmIdQuery, vm.getId());
     }
 
-    private void newEntity()
-    {
-        if (getWindow() != null)
-        {
+    private void newEntity() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -149,10 +134,8 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
         setWindow(model);
     }
 
-    private void edit()
-    {
-        if (getWindow() != null)
-        {
+    private void edit() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -164,10 +147,8 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
         setWindow(model);
     }
 
-    private void remove()
-    {
-        if (getWindow() != null)
-        {
+    private void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -176,30 +157,25 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("status")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("status")) { //$NON-NLS-1$
             updateActionAvailability();
         }
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         VM vm = getEntity();
 
         ArrayList<VM> items = new ArrayList<VM>();
-        if (vm != null)
-        {
+        if (vm != null) {
             items.add(vm);
         }
 
@@ -223,10 +199,8 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
                 getSelectedItems() != null ? Linq.<VmNetworkInterface> cast(getSelectedItems())
                         : new ArrayList<VmNetworkInterface>();
 
-        for (VmNetworkInterface nic : nics)
-        {
-            if (nic.isPlugged())
-            {
+        for (VmNetworkInterface nic : nics) {
+            if (nic.isPlugged()) {
                 return false;
             }
         }
@@ -235,20 +209,16 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getNewCommand())
-        {
+        if (command == getNewCommand()) {
             newEntity();
         }
-        else if (command == getEditCommand())
-        {
+        else if (command == getEditCommand()) {
             edit();
         }
-        else if (command == getRemoveCommand())
-        {
+        else if (command == getRemoveCommand()) {
             remove();
         }
     }
@@ -282,8 +252,7 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }

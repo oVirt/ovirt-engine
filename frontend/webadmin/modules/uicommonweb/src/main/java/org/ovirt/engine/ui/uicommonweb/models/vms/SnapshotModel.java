@@ -36,19 +36,15 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class SnapshotModel extends EntityModel<Snapshot>
-{
+public class SnapshotModel extends EntityModel<Snapshot> {
     private VM vm;
 
-    public VM getVm()
-    {
+    public VM getVm() {
         return vm;
     }
 
-    public void setVm(VM value)
-    {
-        if (vm != value)
-        {
+    public void setVm(VM value) {
+        if (vm != value) {
             vm = value;
             onPropertyChanged(new PropertyChangedEventArgs("VM")); //$NON-NLS-1$
         }
@@ -82,15 +78,12 @@ public class SnapshotModel extends EntityModel<Snapshot>
 
     private List<VmNetworkInterface> nics;
 
-    public List<VmNetworkInterface> getNics()
-    {
+    public List<VmNetworkInterface> getNics() {
         return nics;
     }
 
-    public void setNics(List<VmNetworkInterface> value)
-    {
-        if (nics != value)
-        {
+    public void setNics(List<VmNetworkInterface> value) {
+        if (nics != value) {
             nics = value;
             onPropertyChanged(new PropertyChangedEventArgs("Nics")); //$NON-NLS-1$
         }
@@ -98,15 +91,12 @@ public class SnapshotModel extends EntityModel<Snapshot>
 
     private List<String> apps;
 
-    public List<String> getApps()
-    {
+    public List<String> getApps() {
         return apps;
     }
 
-    public void setApps(List<String> value)
-    {
-        if (apps != value)
-        {
+    public void setApps(List<String> value) {
+        if (apps != value) {
             apps = value;
             onPropertyChanged(new PropertyChangedEventArgs("Apps")); //$NON-NLS-1$
         }
@@ -114,25 +104,21 @@ public class SnapshotModel extends EntityModel<Snapshot>
 
     private EntityModel<String> privateDescription;
 
-    public EntityModel<String> getDescription()
-    {
+    public EntityModel<String> getDescription() {
         return privateDescription;
     }
 
-    public void setDescription(EntityModel<String> value)
-    {
+    public void setDescription(EntityModel<String> value) {
         privateDescription = value;
     }
 
     private EntityModel<Boolean> memory;
 
-    public EntityModel<Boolean> getMemory()
-    {
+    public EntityModel<Boolean> getMemory() {
         return memory;
     }
 
-    public void setMemory(EntityModel<Boolean> value)
-    {
+    public void setMemory(EntityModel<Boolean> value) {
         memory = value;
     }
 
@@ -148,37 +134,31 @@ public class SnapshotModel extends EntityModel<Snapshot>
 
     private ListModel<DiskImage> snapshotDisks;
 
-    public ListModel<DiskImage> getSnapshotDisks()
-    {
+    public ListModel<DiskImage> getSnapshotDisks() {
         return snapshotDisks;
     }
 
-    public void setSnapshotDisks(ListModel<DiskImage> value)
-    {
+    public void setSnapshotDisks(ListModel<DiskImage> value) {
         snapshotDisks = value;
     }
 
     private boolean showMemorySnapshotWarning;
 
-    public boolean isShowMemorySnapshotWarning()
-    {
+    public boolean isShowMemorySnapshotWarning() {
         return showMemorySnapshotWarning;
     }
 
-    public void setShowMemorySnapshotWarning(boolean value)
-    {
+    public void setShowMemorySnapshotWarning(boolean value) {
         showMemorySnapshotWarning = value;
     }
 
     private boolean showPartialSnapshotWarning;
 
-    public boolean isShowPartialSnapshotWarning()
-    {
+    public boolean isShowPartialSnapshotWarning() {
         return showPartialSnapshotWarning;
     }
 
-    public void setShowPartialSnapshotWarning(boolean value)
-    {
+    public void setShowPartialSnapshotWarning(boolean value) {
         showPartialSnapshotWarning = value;
     }
 
@@ -202,8 +182,7 @@ public class SnapshotModel extends EntityModel<Snapshot>
         this.cancelCommand = cancelCommand;
     }
 
-    public SnapshotModel()
-    {
+    public SnapshotModel() {
         setDescription(new EntityModel<String>());
         setMemory(new EntityModel<Boolean>(true));
         setDisks(new ArrayList<DiskImage>());
@@ -234,8 +213,7 @@ public class SnapshotModel extends EntityModel<Snapshot>
     }
 
     @Override
-    public void initialize()
-    {
+    public void initialize() {
         super.initialize();
 
         startProgress(null);
@@ -331,8 +309,7 @@ public class SnapshotModel extends EntityModel<Snapshot>
         return null;
     }
 
-    public boolean validate()
-    {
+    public boolean validate() {
         getDescription().validateEntity(new IValidation[] { new NotEmptyValidation(),
                 new SpecialAsciiI18NOrNoneValidation(),
                 new LengthValidation(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE) });

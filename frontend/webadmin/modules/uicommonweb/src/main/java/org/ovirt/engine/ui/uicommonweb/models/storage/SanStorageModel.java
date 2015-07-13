@@ -33,22 +33,18 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
-public abstract class SanStorageModel extends SanStorageModelBase
-{
+public abstract class SanStorageModel extends SanStorageModelBase {
     private boolean isGrouppedByTarget;
 
     /**
      * Gets or sets the value determining whether the items containing target/LUNs or LUN/targets.
      */
-    public boolean getIsGrouppedByTarget()
-    {
+    public boolean getIsGrouppedByTarget() {
         return isGrouppedByTarget;
     }
 
-    public void setIsGrouppedByTarget(boolean value)
-    {
-        if (isGrouppedByTarget != value)
-        {
+    public void setIsGrouppedByTarget(boolean value) {
+        if (isGrouppedByTarget != value) {
             isGrouppedByTarget = value;
             isGrouppedByTargetChanged();
             onPropertyChanged(new PropertyChangedEventArgs("IsGrouppedByTarget")); //$NON-NLS-1$
@@ -57,15 +53,12 @@ public abstract class SanStorageModel extends SanStorageModelBase
 
     private String getLUNsFailure;
 
-    public String getGetLUNsFailure()
-    {
+    public String getGetLUNsFailure() {
         return getLUNsFailure;
     }
 
-    public void setGetLUNsFailure(String value)
-    {
-        if (!ObjectUtils.objectsEqual(getLUNsFailure, value))
-        {
+    public void setGetLUNsFailure(String value) {
+        if (!ObjectUtils.objectsEqual(getLUNsFailure, value)) {
             getLUNsFailure = value;
             onPropertyChanged(new PropertyChangedEventArgs("GetLUNsFailure")); //$NON-NLS-1$
         }
@@ -95,8 +88,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
     private final ArrayList<SanTargetModel> lastDiscoveredTargets;
     private boolean isTargetModelList;
 
-    protected SanStorageModel()
-    {
+    protected SanStorageModel() {
         includedLUNs = new ArrayList<LunModel>();
         lastDiscoveredTargets = new ArrayList<SanTargetModel>();
 
@@ -104,8 +96,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
     }
 
     @Override
-    protected void postDiscoverTargets(ArrayList<SanTargetModel> newItems)
-    {
+    protected void postDiscoverTargets(ArrayList<SanTargetModel> newItems) {
         super.postDiscoverTargets(newItems);
 
         initializeItems(null, newItems);
@@ -116,16 +107,14 @@ public abstract class SanStorageModel extends SanStorageModelBase
     }
 
     @Override
-    protected void update()
-    {
+    protected void update() {
         lastDiscoveredTargets.clear();
 
         super.update();
     }
 
     @Override
-    protected void updateInternal()
-    {
+    protected void updateInternal() {
         super.updateInternal();
 
         if (!(getContainer().isNewStorage() || getContainer().isStorageActive())) {
@@ -133,8 +122,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
         }
 
         VDS host = (VDS) getContainer().getHost().getSelectedItem();
-        if (host == null)
-        {
+        if (host == null) {
             proposeDiscover();
             return;
         }
@@ -164,56 +152,44 @@ public abstract class SanStorageModel extends SanStorageModelBase
                 asyncQuery);
     }
 
-    private void clearItems()
-    {
-        if (getItems() == null)
-        {
+    private void clearItems() {
+        if (getItems() == null) {
             return;
         }
 
-        if (getIsGrouppedByTarget())
-        {
+        if (getIsGrouppedByTarget()) {
             List<SanTargetModel> items = (List<SanTargetModel>) getItems();
 
-            for (SanTargetModel target : Linq.toList(items))
-            {
+            for (SanTargetModel target : Linq.toList(items)) {
                 boolean found = false;
 
                 // Ensure remove targets that are not in last dicovered targets list.
-                if (Linq.firstOrDefault(lastDiscoveredTargets, new Linq.TargetPredicate(target)) != null)
-                {
+                if (Linq.firstOrDefault(lastDiscoveredTargets, new Linq.TargetPredicate(target)) != null) {
                     found = true;
                 }
-                else
-                {
+                else {
                     // Ensure remove targets that are not contain already included LUNs.
-                    for (LunModel lun : target.getLuns())
-                    {
+                    for (LunModel lun : target.getLuns()) {
                         LunModel foundItem = Linq.firstOrDefault(includedLUNs, new Linq.LunPredicate(lun));
-                        if (foundItem == null)
-                        {
+                        if (foundItem == null) {
                             found = true;
                             break;
                         }
                     }
                 }
 
-                if (!found)
-                {
+                if (!found) {
                     items.remove(target);
                 }
             }
         }
-        else
-        {
+        else {
             List<LunModel> items = (List<LunModel>) getItems();
 
             // Ensure remove targets that are not contain already included LUNs.
-            for (LunModel lun : Linq.toList(items))
-            {
+            for (LunModel lun : Linq.toList(items)) {
                 LunModel foundItem = Linq.firstOrDefault(includedLUNs, new Linq.LunPredicate(lun));
-                if (foundItem == null)
-                {
+                if (foundItem == null) {
                     items.remove(lun);
                 }
             }
@@ -223,14 +199,11 @@ public abstract class SanStorageModel extends SanStorageModelBase
     /**
      * Creates model items from the provided list of business entities.
      */
-    public void applyData(List<LUNs> source, boolean isIncluded, Collection<EntityModel<?>> selectedItems)
-    {
+    public void applyData(List<LUNs> source, boolean isIncluded, Collection<EntityModel<?>> selectedItems) {
         ArrayList<LunModel> newItems = new ArrayList<LunModel>();
 
-        for (LUNs a : source)
-        {
-            if (a.getLunType() == getType() || a.getLunType() == StorageType.UNKNOWN)
-            {
+        for (LUNs a : source) {
+            if (a.getLunType() == getType() || a.getLunType() == StorageType.UNKNOWN) {
                 ArrayList<SanTargetModel> targets = createTargetModelList(a);
 
                 LunModel lunModel = new LunModel();
@@ -256,8 +229,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
                 updateGrayedOut(lunModel);
 
                 // Remember included LUNs to prevent their removal while updating items.
-                if (isIncluded)
-                {
+                if (isIncluded) {
                     includedLUNs.add(lunModel);
                 }
             }
@@ -298,10 +270,8 @@ public abstract class SanStorageModel extends SanStorageModelBase
 
     private ArrayList<SanTargetModel> createTargetModelList(LUNs a) {
         ArrayList<SanTargetModel> targetModelList = new ArrayList<SanTargetModel>();
-        if (a.getLunConnections() != null)
-        {
-            for (StorageServerConnections b : a.getLunConnections())
-            {
+        if (a.getLunConnections() != null) {
+            for (StorageServerConnections b : a.getLunConnections()) {
                 SanTargetModel tempVar = new SanTargetModel();
                 tempVar.setAddress(b.getconnection());
                 tempVar.setPort(b.getport());
@@ -344,8 +314,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
         }
     }
 
-    private void isGrouppedByTargetChanged()
-    {
+    private void isGrouppedByTargetChanged() {
         initializeItems(null, null);
     }
 
@@ -353,20 +322,15 @@ public abstract class SanStorageModel extends SanStorageModelBase
      * Organizes items according to the current groupping flag. When new items provided takes them in account and add to
      * the Items collection.
      */
-    protected void initializeItems(List<LunModel> newLuns, List<SanTargetModel> newTargets)
-    {
-        if (getIsGrouppedByTarget())
-        {
-            if (getItems() == null)
-            {
+    protected void initializeItems(List<LunModel> newLuns, List<SanTargetModel> newTargets) {
+        if (getIsGrouppedByTarget()) {
+            if (getItems() == null) {
                 setItems(new ObservableCollection<SanTargetModel>());
                 isTargetModelList = true;
             }
-            else
-            {
+            else {
                 // Convert to list of another type as neccessary.
-                if (!isTargetModelList)
-                {
+                if (!isTargetModelList) {
                     setItems(toTargetModelList((List<LunModel>) getItems()));
                 }
             }
@@ -375,20 +339,16 @@ public abstract class SanStorageModel extends SanStorageModelBase
             items.addAll((List<SanTargetModel>) getItems());
 
             // Add new targets.
-            if (newTargets != null)
-            {
-                for (SanTargetModel newItem : newTargets)
-                {
-                    if (Linq.firstOrDefault(items, new Linq.TargetPredicate(newItem)) == null)
-                    {
+            if (newTargets != null) {
+                for (SanTargetModel newItem : newTargets) {
+                    if (Linq.firstOrDefault(items, new Linq.TargetPredicate(newItem)) == null) {
                         items.add(newItem);
                     }
                 }
             }
 
             // Merge luns into targets.
-            if (newLuns != null)
-            {
+            if (newLuns != null) {
                 mergeLunsToTargets(newLuns, items);
             }
 
@@ -396,18 +356,14 @@ public abstract class SanStorageModel extends SanStorageModelBase
 
             updateLoginAvailability();
         }
-        else
-        {
-            if (getItems() == null)
-            {
+        else {
+            if (getItems() == null) {
                 setItems(new ObservableCollection<LunModel>());
                 isTargetModelList = false;
             }
-            else
-            {
+            else {
                 // Convert to list of another type as neccessary.
-                if (isTargetModelList)
-                {
+                if (isTargetModelList) {
                     setItems(toLunModelList((List<SanTargetModel>) getItems()));
                 }
             }
@@ -416,17 +372,13 @@ public abstract class SanStorageModel extends SanStorageModelBase
             items.addAll((List<LunModel>) getItems());
 
             // Add new LUNs.
-            if (newLuns != null)
-            {
-                for (LunModel newItem : newLuns)
-                {
+            if (newLuns != null) {
+                for (LunModel newItem : newLuns) {
                     LunModel existingItem = Linq.firstOrDefault(items, new Linq.LunPredicate(newItem));
-                    if (existingItem == null)
-                    {
+                    if (existingItem == null) {
                         items.add(newItem);
                     }
-                    else
-                    {
+                    else {
                         existingItem.setIsIncluded(existingItem.getIsIncluded() || newItem.getIsIncluded());
                     }
                 }
@@ -449,15 +401,11 @@ public abstract class SanStorageModel extends SanStorageModelBase
         }
     }
 
-    private void mergeLunsToTargets(List<LunModel> newLuns, List<SanTargetModel> targets)
-    {
-        for (LunModel lun : newLuns)
-        {
-            for (SanTargetModel target : lun.getTargets())
-            {
+    private void mergeLunsToTargets(List<LunModel> newLuns, List<SanTargetModel> targets) {
+        for (LunModel lun : newLuns) {
+            for (SanTargetModel target : lun.getTargets()) {
                 SanTargetModel item = Linq.firstOrDefault(targets, new Linq.TargetPredicate(target));
-                if (item == null)
-                {
+                if (item == null) {
                     item = target;
                     targets.add(item);
                 }
@@ -534,33 +482,26 @@ public abstract class SanStorageModel extends SanStorageModelBase
         }
     };
 
-    private List<SanTargetModel> toTargetModelList(List<LunModel> source)
-    {
+    private List<SanTargetModel> toTargetModelList(List<LunModel> source) {
         ObservableCollection<SanTargetModel> list = new ObservableCollection<SanTargetModel>();
 
-        for (LunModel lun : source)
-        {
-            for (SanTargetModel target : lun.getTargets())
-            {
+        for (LunModel lun : source) {
+            for (SanTargetModel target : lun.getTargets()) {
                 SanTargetModel item = Linq.firstOrDefault(list, new Linq.TargetPredicate(target));
-                if (item == null)
-                {
+                if (item == null) {
                     item = target;
                     list.add(item);
                 }
 
-                if (Linq.firstOrDefault(item.getLuns(), new Linq.LunPredicate(lun)) == null)
-                {
+                if (Linq.firstOrDefault(item.getLuns(), new Linq.LunPredicate(lun)) == null) {
                     item.getLuns().add(lun);
                 }
             }
         }
 
         // Merge with last discovered targets list.
-        for (SanTargetModel target : lastDiscoveredTargets)
-        {
-            if (Linq.firstOrDefault(list, new Linq.TargetPredicate(target)) == null)
-            {
+        for (SanTargetModel target : lastDiscoveredTargets) {
+            if (Linq.firstOrDefault(list, new Linq.TargetPredicate(target)) == null) {
                 list.add(target);
             }
         }
@@ -570,23 +511,18 @@ public abstract class SanStorageModel extends SanStorageModelBase
         return list;
     }
 
-    private List<LunModel> toLunModelList(List<SanTargetModel> source)
-    {
+    private List<LunModel> toLunModelList(List<SanTargetModel> source) {
         ObservableCollection<LunModel> list = new ObservableCollection<LunModel>();
 
-        for (SanTargetModel target : source)
-        {
-            for (LunModel lun : target.getLuns())
-            {
+        for (SanTargetModel target : source) {
+            for (LunModel lun : target.getLuns()) {
                 LunModel item = Linq.firstOrDefault(list, new Linq.LunPredicate(lun));
-                if (item == null)
-                {
+                if (item == null) {
                     item = lun;
                     list.add(item);
                 }
 
-                if (Linq.firstOrDefault(item.getTargets(), new Linq.TargetPredicate(target)) == null)
-                {
+                if (Linq.firstOrDefault(item.getTargets(), new Linq.TargetPredicate(target)) == null) {
                     item.getTargets().add(target);
                 }
             }
@@ -602,47 +538,35 @@ public abstract class SanStorageModel extends SanStorageModelBase
     }
 
     @Override
-    protected void isAllLunsSelectedChanged()
-    {
-        if (!getIsGrouppedByTarget())
-        {
+    protected void isAllLunsSelectedChanged() {
+        if (!getIsGrouppedByTarget()) {
             List<LunModel> items = (List<LunModel>) getItems();
-            for (LunModel lun : items)
-            {
-                if (!lun.getIsIncluded() && lun.getIsAccessible())
-                {
+            for (LunModel lun : items) {
+                if (!lun.getIsIncluded() && lun.getIsAccessible()) {
                     lun.setIsSelected(getIsAllLunsSelected());
                 }
             }
         }
     }
 
-    public ArrayList<LunModel> getAddedLuns()
-    {
+    public ArrayList<LunModel> getAddedLuns() {
         ArrayList<LunModel> luns = new ArrayList<LunModel>();
-        if (getIsGrouppedByTarget())
-        {
+        if (getIsGrouppedByTarget()) {
             List<SanTargetModel> items = (List<SanTargetModel>) getItems();
-            for (SanTargetModel item : items)
-            {
-                for (LunModel lun : item.getLuns())
-                {
+            for (SanTargetModel item : items) {
+                for (LunModel lun : item.getLuns()) {
                     if (lun.getIsSelected() && !lun.getIsIncluded()
-                            && Linq.firstOrDefault(luns, new Linq.LunPredicate(lun)) == null)
-                    {
+                            && Linq.firstOrDefault(luns, new Linq.LunPredicate(lun)) == null) {
                         luns.add(lun);
                     }
                 }
             }
         }
-        else
-        {
+        else {
             List<LunModel> items = (List<LunModel>) getItems();
-            for (LunModel lun : items)
-            {
+            for (LunModel lun : items) {
                 if (lun.getIsSelected() && !lun.getIsIncluded()
-                        && Linq.firstOrDefault(luns, new Linq.LunPredicate(lun)) == null)
-                {
+                        && Linq.firstOrDefault(luns, new Linq.LunPredicate(lun)) == null) {
                     luns.add(lun);
                 }
             }
@@ -706,12 +630,10 @@ public abstract class SanStorageModel extends SanStorageModelBase
     }
 
     @Override
-    public boolean validate()
-    {
+    public boolean validate() {
         boolean isValid = getAddedLuns().size() > 0 || includedLUNs.size() > 0;
 
-        if (!isValid)
-        {
+        if (!isValid) {
             getInvalidityReasons().add(ConstantsManager.getInstance().getConstants().noLUNsSelectedInvalidReason());
         }
 

@@ -24,104 +24,86 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class HostBondInterfaceModel extends Model
-{
+public class HostBondInterfaceModel extends Model {
 
     private SortedListModel<String> privateBond;
 
-    public SortedListModel<String> getBond()
-    {
+    public SortedListModel<String> getBond() {
         return privateBond;
     }
 
-    protected void setBond(SortedListModel<String> value)
-    {
+    protected void setBond(SortedListModel<String> value) {
         privateBond = value;
     }
 
     private EntityModel<String> privateAddress;
 
-    public EntityModel<String> getAddress()
-    {
+    public EntityModel<String> getAddress() {
         return privateAddress;
     }
 
-    private void setAddress(EntityModel<String> value)
-    {
+    private void setAddress(EntityModel<String> value) {
         privateAddress = value;
     }
 
     private EntityModel<String> privateSubnet;
 
-    public EntityModel<String> getSubnet()
-    {
+    public EntityModel<String> getSubnet() {
         return privateSubnet;
     }
 
-    private void setSubnet(EntityModel<String> value)
-    {
+    private void setSubnet(EntityModel<String> value) {
         privateSubnet = value;
     }
 
     private EntityModel<String> privateGateway;
 
-    public EntityModel<String> getGateway()
-    {
+    public EntityModel<String> getGateway() {
         return privateGateway;
     }
 
-    private void setGateway(EntityModel<String> value)
-    {
+    private void setGateway(EntityModel<String> value) {
         privateGateway = value;
     }
 
     private ListModel<Network> privateNetwork;
 
-    public ListModel<Network> getNetwork()
-    {
+    public ListModel<Network> getNetwork() {
         return privateNetwork;
     }
 
-    private void setNetwork(ListModel<Network> value)
-    {
+    private void setNetwork(ListModel<Network> value) {
         privateNetwork = value;
     }
 
     private ListModel<Map.Entry<String, EntityModel<String>>> privateBondingOptions;
 
-    public ListModel<Map.Entry<String, EntityModel<String>>> getBondingOptions()
-    {
+    public ListModel<Map.Entry<String, EntityModel<String>>> getBondingOptions() {
         return privateBondingOptions;
     }
 
-    private void setBondingOptions(ListModel<Map.Entry<String, EntityModel<String>>> value)
-    {
+    private void setBondingOptions(ListModel<Map.Entry<String, EntityModel<String>>> value) {
         privateBondingOptions = value;
     }
 
     private EntityModel<Boolean> privateCheckConnectivity;
 
-    public EntityModel<Boolean> getCheckConnectivity()
-    {
+    public EntityModel<Boolean> getCheckConnectivity() {
         return privateCheckConnectivity;
     }
 
-    private void setCheckConnectivity(EntityModel<Boolean> value)
-    {
+    private void setCheckConnectivity(EntityModel<Boolean> value) {
         privateCheckConnectivity = value;
     }
 
     private NetworkBootProtocol bootProtocol = NetworkBootProtocol.values()[0];
 
-    public NetworkBootProtocol getBootProtocol()
-    {
+    public NetworkBootProtocol getBootProtocol() {
         return bootProtocol;
     }
 
-    public void setBootProtocol(NetworkBootProtocol value)
-    {
-        if (bootProtocol != value)
-        {
+    public void setBootProtocol(NetworkBootProtocol value) {
+        if (bootProtocol != value) {
             bootProtocol = value;
             bootProtocolChanged();
             onPropertyChanged(new PropertyChangedEventArgs("BootProtocol")); //$NON-NLS-1$
@@ -130,27 +112,22 @@ public class HostBondInterfaceModel extends Model
 
     private EntityModel<Boolean> privateCommitChanges;
 
-    public EntityModel<Boolean> getCommitChanges()
-    {
+    public EntityModel<Boolean> getCommitChanges() {
         return privateCommitChanges;
     }
 
-    public void setCommitChanges(EntityModel<Boolean> value)
-    {
+    public void setCommitChanges(EntityModel<Boolean> value) {
         privateCommitChanges = value;
     }
 
     private boolean noneBootProtocolAvailable = true;
 
-    public boolean getNoneBootProtocolAvailable()
-    {
+    public boolean getNoneBootProtocolAvailable() {
         return noneBootProtocolAvailable;
     }
 
-    public void setNoneBootProtocolAvailable(boolean value)
-    {
-        if (noneBootProtocolAvailable != value)
-        {
+    public void setNoneBootProtocolAvailable(boolean value) {
+        if (noneBootProtocolAvailable != value) {
             noneBootProtocolAvailable = value;
             onPropertyChanged(new PropertyChangedEventArgs("NoneBootProtocolAvailable")); //$NON-NLS-1$
         }
@@ -158,22 +135,18 @@ public class HostBondInterfaceModel extends Model
 
     private boolean bootProtocolAvailable = true;
 
-    public boolean getBootProtocolAvailable()
-    {
+    public boolean getBootProtocolAvailable() {
         return bootProtocolAvailable;
     }
 
-    public void setBootProtocolAvailable(boolean value)
-    {
-        if (bootProtocolAvailable != value)
-        {
+    public void setBootProtocolAvailable(boolean value) {
+        if (bootProtocolAvailable != value) {
             bootProtocolAvailable = value;
             onPropertyChanged(new PropertyChangedEventArgs("BootProtocolAvailable")); //$NON-NLS-1$
         }
     }
 
-    public boolean getIsStaticAddress()
-    {
+    public boolean getIsStaticAddress() {
         return getBootProtocol() == NetworkBootProtocol.STATIC_IP;
     }
 
@@ -206,8 +179,7 @@ public class HostBondInterfaceModel extends Model
         network_SelectedItemChanged(null);
     }
 
-    private void network_SelectedItemChanged(EventArgs e)
-    {
+    private void network_SelectedItemChanged(EventArgs e) {
         updateCanSpecify();
 
         // ** TODO: When BootProtocol will be added to 'network', and when
@@ -221,8 +193,7 @@ public class HostBondInterfaceModel extends Model
         // Gateway.Value = network == null ? null : network.gateway;
     }
 
-    private void bootProtocolChanged()
-    {
+    private void bootProtocolChanged() {
         updateCanSpecify();
 
         getAddress().setIsValid(true);
@@ -230,8 +201,7 @@ public class HostBondInterfaceModel extends Model
         getGateway().setIsValid(true);
     }
 
-    private void updateCanSpecify()
-    {
+    private void updateCanSpecify() {
         Network network = getNetwork().getSelectedItem();
         boolean isChangeble = getIsStaticAddress() && network != null && !network.getId().equals(Guid.Empty);
         getAddress().setIsChangeable(isChangeble);
@@ -239,8 +209,7 @@ public class HostBondInterfaceModel extends Model
         getGateway().setIsChangeable(isChangeble);
     }
 
-    public boolean validate()
-    {
+    public boolean validate() {
         getNetwork().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getBond().validateSelectedItem(new IValidation[] { new NotEmptyValidation(),
                 new LengthValidation(BusinessEntitiesDefinitions.HOST_NIC_NAME_LENGTH), new BondNameValidation() });
@@ -249,8 +218,7 @@ public class HostBondInterfaceModel extends Model
         getSubnet().setIsValid(true);
         getGateway().setIsValid(true);
 
-        if (getIsStaticAddress())
-        {
+        if (getIsStaticAddress()) {
             getAddress().validateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
             getSubnet().validateEntity(new IValidation[] { new NotEmptyValidation(), new SubnetMaskValidation() });
             getGateway().validateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });

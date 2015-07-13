@@ -104,8 +104,7 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
         ArrayList<VmInterfaceType> nicTypes = (ArrayList<VmInterfaceType>) getNicType().getItems();
         nicTypes = nicTypes == null ? new ArrayList<VmInterfaceType>() : nicTypes;
 
-        if (selectedNicType == null || !nicTypes.contains(selectedNicType))
-        {
+        if (selectedNicType == null || !nicTypes.contains(selectedNicType)) {
             selectedNicType = AsyncDataProvider.getInstance().getDefaultNicType(nicTypes);
         }
 

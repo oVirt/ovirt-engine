@@ -69,25 +69,21 @@ public class InstallModel extends Model {
 
     private EntityModel<String> privateUserName;
 
-    public EntityModel<String> getUserName()
-    {
+    public EntityModel<String> getUserName() {
         return privateUserName;
     }
 
-    private void setUserName(EntityModel<String> value)
-    {
+    private void setUserName(EntityModel<String> value) {
         privateUserName = value;
     }
 
     private EntityModel<String> privatePublicKey;
 
-    public EntityModel<String> getPublicKey()
-    {
+    public EntityModel<String> getPublicKey() {
         return privatePublicKey;
     }
 
-    private void setPublicKey(EntityModel<String> value)
-    {
+    private void setPublicKey(EntityModel<String> value) {
         privatePublicKey = value;
     }
 
@@ -181,11 +177,9 @@ public class InstallModel extends Model {
         aQuery.setModel(this);
         aQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 String pk = (String) result;
-                if (pk != null && pk.length() > 0)
-                {
+                if (pk != null && pk.length() > 0) {
                     getPublicKey().setEntity(pk);
                 }
             }

@@ -49,9 +49,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
 
     private VM privatecurrentVm;
 
-    public VM getcurrentVm()
-
-    {
+    public VM getcurrentVm() {
         return privatecurrentVm;
     }
 
@@ -95,16 +93,13 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
         model.getInstanceImages().executeDiskModifications(getcurrentVm());
     }
 
-    protected void export()
-    {
+    protected void export() {
         T selectedEntity = getSelectedItem();
-        if (selectedEntity == null)
-        {
+        if (selectedEntity == null) {
             return;
         }
 
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -123,10 +118,8 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
 
                         List<StorageDomain> filteredStorageDomains =
                                 new ArrayList<StorageDomain>();
-                        for (StorageDomain a : storageDomains)
-                        {
-                            if (a.getStorageDomainType() == StorageDomainType.ImportExport)
-                            {
+                        for (StorageDomain a : storageDomains) {
+                            if (a.getStorageDomainType() == StorageDomainType.ImportExport) {
                                 filteredStorageDomains.add(a);
                             }
                         }
@@ -139,8 +132,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
         sendWarningForNonExportableDisks(selectedEntity);
     }
 
-    private void postExportGetStorageDomainList(List<StorageDomain> storageDomains)
-    {
+    private void postExportGetStorageDomainList(List<StorageDomain> storageDomains) {
         ExportVmModel model = (ExportVmModel) getWindow();
         model.getStorage().setItems(storageDomains);
         model.getStorage().setSelectedItem(Linq.firstOrDefault(storageDomains));
@@ -305,9 +297,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
 
     protected void validateVm(final UnitVmModel model, final String vmName) {
 
-        if (!model.validate())
-
-        {
+        if (!model.validate()) {
             return;
         }
 

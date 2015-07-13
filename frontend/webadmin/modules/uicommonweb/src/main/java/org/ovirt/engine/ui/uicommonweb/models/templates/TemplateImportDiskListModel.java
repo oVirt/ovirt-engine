@@ -12,8 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 
 @SuppressWarnings("unused")
-public class TemplateImportDiskListModel extends SearchableListModel
-{
+public class TemplateImportDiskListModel extends SearchableListModel {
     private ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> extendedItems;
 
     public TemplateImportDiskListModel() {
@@ -21,12 +20,10 @@ public class TemplateImportDiskListModel extends SearchableListModel
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             ArrayList<DiskImage> list = new ArrayList<DiskImage>();
             VmTemplate template = (VmTemplate) getEntity();
             for (Map.Entry<VmTemplate, List<DiskImage>> item : extendedItems) {
@@ -38,8 +35,7 @@ public class TemplateImportDiskListModel extends SearchableListModel
                 }
             }
         }
-        else
-        {
+        else {
             setItems(null);
         }
     }

@@ -35,8 +35,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
 @SuppressWarnings("unused")
-public class HostGeneralModel extends EntityModel<VDS>
-{
+public class HostGeneralModel extends EntityModel<VDS> {
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
@@ -52,70 +51,59 @@ public class HostGeneralModel extends EntityModel<VDS>
         this.upgradeHostCommand = upgradeHostCommand;
     }
 
-    public Event<EventArgs> getRequestEditEvent()
-    {
+    public Event<EventArgs> getRequestEditEvent() {
         return privateRequestEditEvent;
     }
 
-    private void setRequestEditEvent(Event<EventArgs> value)
-    {
+    private void setRequestEditEvent(Event<EventArgs> value) {
         privateRequestEditEvent = value;
     }
 
     public static final EventDefinition requestGOToEventsTabEventDefinition;
     private Event<EventArgs> privateRequestGOToEventsTabEvent;
 
-    public Event<EventArgs> getRequestGOToEventsTabEvent()
-    {
+    public Event<EventArgs> getRequestGOToEventsTabEvent() {
         return privateRequestGOToEventsTabEvent;
     }
 
-    private void setRequestGOToEventsTabEvent(Event<EventArgs> value)
-    {
+    private void setRequestGOToEventsTabEvent(Event<EventArgs> value) {
         privateRequestGOToEventsTabEvent = value;
     }
 
     private UICommand privateSaveNICsConfigCommand;
 
-    public UICommand getSaveNICsConfigCommand()
-    {
+    public UICommand getSaveNICsConfigCommand() {
         return privateSaveNICsConfigCommand;
     }
 
-    private void setSaveNICsConfigCommand(UICommand value)
-    {
+    private void setSaveNICsConfigCommand(UICommand value) {
         privateSaveNICsConfigCommand = value;
     }
 
     private UICommand privateEditHostCommand;
 
-    public UICommand getEditHostCommand()
-    {
+    public UICommand getEditHostCommand() {
         return privateEditHostCommand;
     }
 
-    private void setEditHostCommand(UICommand value)
-    {
+    private void setEditHostCommand(UICommand value) {
         privateEditHostCommand = value;
     }
 
     private UICommand privateGoToEventsCommand;
 
-    public UICommand getGoToEventsCommand()
-    {
+    public UICommand getGoToEventsCommand() {
         return privateGoToEventsCommand;
     }
 
-    private void setGoToEventsCommand(UICommand value)
-    {
+    private void setGoToEventsCommand(UICommand value) {
         privateGoToEventsCommand = value;
     }
 
     private boolean updateUpgradeAlert;
 
     @Override
-    public void setEntity(VDS vds)
-    {
+    public void setEntity(VDS vds) {
         updateUpgradeAlert = vds == null || getEntity() == null
             || !vds.getId().equals(getEntity().getId())
             || !vds.getStatus().equals(getEntity().getStatus());
@@ -127,15 +115,12 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private String os;
 
-    public String getOS()
-    {
+    public String getOS() {
         return os;
     }
 
-    public void setOS(String value)
-    {
-        if (!ObjectUtils.objectsEqual(os, value))
-        {
+    public void setOS(String value) {
+        if (!ObjectUtils.objectsEqual(os, value)) {
             os = value;
             onPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
         }
@@ -143,15 +128,12 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private String kernelVersion;
 
-    public String getKernelVersion()
-    {
+    public String getKernelVersion() {
         return kernelVersion;
     }
 
-    public void setKernelVersion(String value)
-    {
-        if (!ObjectUtils.objectsEqual(kernelVersion, value))
-        {
+    public void setKernelVersion(String value) {
+        if (!ObjectUtils.objectsEqual(kernelVersion, value)) {
             kernelVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("KernelVersion")); //$NON-NLS-1$
         }
@@ -159,15 +141,12 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private String kvmVersion;
 
-    public String getKvmVersion()
-    {
+    public String getKvmVersion() {
         return kvmVersion;
     }
 
-    public void setKvmVersion(String value)
-    {
-        if (!ObjectUtils.objectsEqual(kvmVersion, value))
-        {
+    public void setKvmVersion(String value) {
+        if (!ObjectUtils.objectsEqual(kvmVersion, value)) {
             kvmVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("KvmVersion")); //$NON-NLS-1$
         }
@@ -188,15 +167,12 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private RpmVersion vdsmVersion;
 
-    public RpmVersion getVdsmVersion()
-    {
+    public RpmVersion getVdsmVersion() {
         return vdsmVersion;
     }
 
-    public void setVdsmVersion(RpmVersion value)
-    {
-        if (!ObjectUtils.objectsEqual(vdsmVersion, value))
-        {
+    public void setVdsmVersion(RpmVersion value) {
+        if (!ObjectUtils.objectsEqual(vdsmVersion, value)) {
             vdsmVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("VdsmVersion")); //$NON-NLS-1$
         }
@@ -204,15 +180,12 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private String spiceVersion;
 
-    public String getSpiceVersion()
-    {
+    public String getSpiceVersion() {
         return spiceVersion;
     }
 
-    public void setSpiceVersion(String value)
-    {
-        if (!ObjectUtils.objectsEqual(spiceVersion, value))
-        {
+    public void setSpiceVersion(String value) {
+        if (!ObjectUtils.objectsEqual(spiceVersion, value)) {
             spiceVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("SpiceVersion")); //$NON-NLS-1$
         }
@@ -246,15 +219,12 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private String iScsiInitiatorName;
 
-    public String getIScsiInitiatorName()
-    {
+    public String getIScsiInitiatorName() {
         return iScsiInitiatorName;
     }
 
-    public void setIScsiInitiatorName(String value)
-    {
-        if (!ObjectUtils.objectsEqual(iScsiInitiatorName, value))
-        {
+    public void setIScsiInitiatorName(String value) {
+        if (!ObjectUtils.objectsEqual(iScsiInitiatorName, value)) {
             iScsiInitiatorName = value;
             onPropertyChanged(new PropertyChangedEventArgs("IScsiInitiatorName")); //$NON-NLS-1$
         }
@@ -349,19 +319,15 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private Integer activeVms;
 
-    public Integer getActiveVms()
-    {
+    public Integer getActiveVms() {
         return activeVms;
     }
 
-    public void setActiveVms(Integer value)
-    {
-        if (activeVms == null && value == null)
-        {
+    public void setActiveVms(Integer value) {
+        if (activeVms == null && value == null) {
             return;
         }
-        if (activeVms == null || !activeVms.equals(value))
-        {
+        if (activeVms == null || !activeVms.equals(value)) {
             activeVms = value;
             onPropertyChanged(new PropertyChangedEventArgs("ActiveVms")); //$NON-NLS-1$
         }
@@ -371,19 +337,15 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private Integer sharedMemory;
 
-    public Integer getSharedMemory()
-    {
+    public Integer getSharedMemory() {
         return sharedMemory;
     }
 
-    public void setSharedMemory(Integer value)
-    {
-        if (sharedMemory == null && value == null)
-        {
+    public void setSharedMemory(Integer value) {
+        if (sharedMemory == null && value == null) {
             return;
         }
-        if (sharedMemory == null || !sharedMemory.equals(value))
-        {
+        if (sharedMemory == null || !sharedMemory.equals(value)) {
             sharedMemory = value;
             onPropertyChanged(new PropertyChangedEventArgs("SharedMemory")); //$NON-NLS-1$
         }
@@ -391,19 +353,15 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private Integer physicalMemory;
 
-    public Integer getPhysicalMemory()
-    {
+    public Integer getPhysicalMemory() {
         return physicalMemory;
     }
 
-    public void setPhysicalMemory(Integer value)
-    {
-        if (physicalMemory == null && value == null)
-        {
+    public void setPhysicalMemory(Integer value) {
+        if (physicalMemory == null && value == null) {
             return;
         }
-        if (physicalMemory == null || !physicalMemory.equals(value))
-        {
+        if (physicalMemory == null || !physicalMemory.equals(value)) {
             physicalMemory = value;
             onPropertyChanged(new PropertyChangedEventArgs("PhysicalMemory")); //$NON-NLS-1$
         }
@@ -411,19 +369,15 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private Long swapTotal;
 
-    public Long getSwapTotal()
-    {
+    public Long getSwapTotal() {
         return swapTotal;
     }
 
-    public void setSwapTotal(Long value)
-    {
-        if (swapTotal == null && value == null)
-        {
+    public void setSwapTotal(Long value) {
+        if (swapTotal == null && value == null) {
             return;
         }
-        if (swapTotal == null || !swapTotal.equals(value))
-        {
+        if (swapTotal == null || !swapTotal.equals(value)) {
             swapTotal = value;
             onPropertyChanged(new PropertyChangedEventArgs("SwapTotal")); //$NON-NLS-1$
         }
@@ -431,19 +385,15 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private Long swapFree;
 
-    public Long getSwapFree()
-    {
+    public Long getSwapFree() {
         return swapFree;
     }
 
-    public void setSwapFree(Long value)
-    {
-        if (swapFree == null && value == null)
-        {
+    public void setSwapFree(Long value) {
+        if (swapFree == null && value == null) {
             return;
         }
-        if (swapFree == null || !swapFree.equals(value))
-        {
+        if (swapFree == null || !swapFree.equals(value)) {
             swapFree = value;
             onPropertyChanged(new PropertyChangedEventArgs("SwapFree")); //$NON-NLS-1$
         }
@@ -451,19 +401,15 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private Integer freeMemory;
 
-    public Integer getFreeMemory()
-    {
+    public Integer getFreeMemory() {
         return freeMemory;
     }
 
-    public void setFreeMemory(Integer value)
-    {
-        if (freeMemory == null && value == null)
-        {
+    public void setFreeMemory(Integer value) {
+        if (freeMemory == null && value == null) {
             return;
         }
-        if (freeMemory == null || !freeMemory.equals(value))
-        {
+        if (freeMemory == null || !freeMemory.equals(value)) {
             freeMemory = value;
             onPropertyChanged(new PropertyChangedEventArgs("FreeMemory")); //$NON-NLS-1$
         }
@@ -471,19 +417,15 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private Integer usedMemory;
 
-    public Integer getUsedMemory()
-    {
+    public Integer getUsedMemory() {
         return usedMemory;
     }
 
-    public void setUsedMemory(Integer value)
-    {
-        if (usedMemory == null && value == null)
-        {
+    public void setUsedMemory(Integer value) {
+        if (usedMemory == null && value == null) {
             return;
         }
-        if (usedMemory == null || !usedMemory.equals(value))
-        {
+        if (usedMemory == null || !usedMemory.equals(value)) {
             usedMemory = value;
             onPropertyChanged(new PropertyChangedEventArgs("UsedMemory")); //$NON-NLS-1$
         }
@@ -491,19 +433,15 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private Long usedSwap;
 
-    public Long getUsedSwap()
-    {
+    public Long getUsedSwap() {
         return usedSwap;
     }
 
-    public void setUsedSwap(Long value)
-    {
-        if (usedSwap == null && value == null)
-        {
+    public void setUsedSwap(Long value) {
+        if (usedSwap == null && value == null) {
             return;
         }
-        if (usedSwap == null || !usedSwap.equals(value))
-        {
+        if (usedSwap == null || !usedSwap.equals(value)) {
             usedSwap = value;
             onPropertyChanged(new PropertyChangedEventArgs("UsedSwap")); //$NON-NLS-1$
         }
@@ -517,19 +455,15 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private Boolean memoryPageSharing;
 
-    public Boolean getMemoryPageSharing()
-    {
+    public Boolean getMemoryPageSharing() {
         return memoryPageSharing;
     }
 
-    public void setMemoryPageSharing(Boolean value)
-    {
-        if (memoryPageSharing == null && value == null)
-        {
+    public void setMemoryPageSharing(Boolean value) {
+        if (memoryPageSharing == null && value == null) {
             return;
         }
-        if (memoryPageSharing == null || !memoryPageSharing.equals(value))
-        {
+        if (memoryPageSharing == null || !memoryPageSharing.equals(value)) {
             memoryPageSharing = value;
             onPropertyChanged(new PropertyChangedEventArgs("MemoryPageSharing")); //$NON-NLS-1$
         }
@@ -537,19 +471,15 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private Boolean liveSnapshotSupport;
 
-    public Boolean getLiveSnapshotSupport()
-    {
+    public Boolean getLiveSnapshotSupport() {
         return liveSnapshotSupport;
     }
 
-    public void setLiveSnapshotSupport(Boolean value)
-    {
-        if (liveSnapshotSupport == null && value == null)
-        {
+    public void setLiveSnapshotSupport(Boolean value) {
+        if (liveSnapshotSupport == null && value == null) {
             return;
         }
-        if (liveSnapshotSupport == null || !liveSnapshotSupport.equals(value))
-        {
+        if (liveSnapshotSupport == null || !liveSnapshotSupport.equals(value)) {
             liveSnapshotSupport = value;
             onPropertyChanged(new PropertyChangedEventArgs("LiveSnapshotSupport")); //$NON-NLS-1$
         }
@@ -557,15 +487,12 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private Object automaticLargePage;
 
-    public Object getAutomaticLargePage()
-    {
+    public Object getAutomaticLargePage() {
         return automaticLargePage;
     }
 
-    public void setAutomaticLargePage(Object value)
-    {
-        if (automaticLargePage != value)
-        {
+    public void setAutomaticLargePage(Object value) {
+        if (automaticLargePage != value) {
             automaticLargePage = value;
             onPropertyChanged(new PropertyChangedEventArgs("AutomaticLargePage")); //$NON-NLS-1$
         }
@@ -573,15 +500,12 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private String kdumpStatus;
 
-    public String getKdumpStatus()
-    {
+    public String getKdumpStatus() {
         return kdumpStatus;
     }
 
-    public void setKdumpStatus(String value)
-    {
-        if (!ObjectUtils.objectsEqual(kdumpStatus, value))
-        {
+    public void setKdumpStatus(String value) {
+        if (!ObjectUtils.objectsEqual(kdumpStatus, value)) {
             kdumpStatus = value;
             onPropertyChanged(new PropertyChangedEventArgs("KdumpStatus")); //$NON-NLS-1$
         }
@@ -589,19 +513,15 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private String hostedEngineHa;
 
-    public String getHostedEngineHa()
-    {
+    public String getHostedEngineHa() {
         return hostedEngineHa;
     }
 
-    public void setHostedEngineHa(String value)
-    {
-        if (hostedEngineHa == null && value == null)
-        {
+    public void setHostedEngineHa(String value) {
+        if (hostedEngineHa == null && value == null) {
             return;
         }
-        if (hostedEngineHa == null || !hostedEngineHa.equals(value))
-        {
+        if (hostedEngineHa == null || !hostedEngineHa.equals(value)) {
             hostedEngineHa = value;
             onPropertyChanged(new PropertyChangedEventArgs("HostedEngineHa")); //$NON-NLS-1$
         }
@@ -609,19 +529,15 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private Boolean hostedEngineHaIsConfigured;
 
-    public Boolean getHostedEngineHaIsConfigured()
-    {
+    public Boolean getHostedEngineHaIsConfigured() {
         return hostedEngineHaIsConfigured;
     }
 
-    public void setHostedEngineHaIsConfigured(Boolean value)
-    {
-        if (hostedEngineHaIsConfigured == null && value == null)
-        {
+    public void setHostedEngineHaIsConfigured(Boolean value) {
+        if (hostedEngineHaIsConfigured == null && value == null) {
             return;
         }
-        if (hostedEngineHaIsConfigured == null || !hostedEngineHaIsConfigured.equals(value))
-        {
+        if (hostedEngineHaIsConfigured == null || !hostedEngineHaIsConfigured.equals(value)) {
             hostedEngineHaIsConfigured = value;
             onPropertyChanged(new PropertyChangedEventArgs("HostedEngineHaIsConfigured")); //$NON-NLS-1$
         }
@@ -631,15 +547,12 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private boolean hasAnyAlert;
 
-    public boolean getHasAnyAlert()
-    {
+    public boolean getHasAnyAlert() {
         return hasAnyAlert;
     }
 
-    public void setHasAnyAlert(boolean value)
-    {
-        if (hasAnyAlert != value)
-        {
+    public void setHasAnyAlert(boolean value) {
+        if (hasAnyAlert != value) {
             hasAnyAlert = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasAnyAlert")); //$NON-NLS-1$
         }
@@ -647,15 +560,12 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private boolean hasUpgradeAlert;
 
-    public boolean getHasUpgradeAlert()
-    {
+    public boolean getHasUpgradeAlert() {
         return hasUpgradeAlert;
     }
 
-    public void setHasUpgradeAlert(boolean value)
-    {
-        if (hasUpgradeAlert != value)
-        {
+    public void setHasUpgradeAlert(boolean value) {
+        if (hasUpgradeAlert != value) {
             hasUpgradeAlert = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasUpgradeAlert")); //$NON-NLS-1$
         }
@@ -663,15 +573,12 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private boolean hasManualFenceAlert;
 
-    public boolean getHasManualFenceAlert()
-    {
+    public boolean getHasManualFenceAlert() {
         return hasManualFenceAlert;
     }
 
-    public void setHasManualFenceAlert(boolean value)
-    {
-        if (hasManualFenceAlert != value)
-        {
+    public void setHasManualFenceAlert(boolean value) {
+        if (hasManualFenceAlert != value) {
             hasManualFenceAlert = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasManualFenceAlert")); //$NON-NLS-1$
         }
@@ -679,15 +586,12 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private boolean hasNoPowerManagementAlert;
 
-    public boolean getHasNoPowerManagementAlert()
-    {
+    public boolean getHasNoPowerManagementAlert() {
         return hasNoPowerManagementAlert;
     }
 
-    public void setHasNoPowerManagementAlert(boolean value)
-    {
-        if (hasNoPowerManagementAlert != value)
-        {
+    public void setHasNoPowerManagementAlert(boolean value) {
+        if (hasNoPowerManagementAlert != value) {
             hasNoPowerManagementAlert = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasNoPowerManagementAlert")); //$NON-NLS-1$
         }
@@ -695,15 +599,12 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private boolean hasReinstallAlertNonResponsive;
 
-    public boolean getHasReinstallAlertNonResponsive()
-    {
+    public boolean getHasReinstallAlertNonResponsive() {
         return hasReinstallAlertNonResponsive;
     }
 
-    public void setHasReinstallAlertNonResponsive(boolean value)
-    {
-        if (hasReinstallAlertNonResponsive != value)
-        {
+    public void setHasReinstallAlertNonResponsive(boolean value) {
+        if (hasReinstallAlertNonResponsive != value) {
             hasReinstallAlertNonResponsive = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasReinstallAlertNonResponsive")); //$NON-NLS-1$
         }
@@ -711,15 +612,12 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private boolean hasReinstallAlertInstallFailed;
 
-    public boolean getHasReinstallAlertInstallFailed()
-    {
+    public boolean getHasReinstallAlertInstallFailed() {
         return hasReinstallAlertInstallFailed;
     }
 
-    public void setHasReinstallAlertInstallFailed(boolean value)
-    {
-        if (hasReinstallAlertInstallFailed != value)
-        {
+    public void setHasReinstallAlertInstallFailed(boolean value) {
+        if (hasReinstallAlertInstallFailed != value) {
             hasReinstallAlertInstallFailed = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasReinstallAlertInstallFailed")); //$NON-NLS-1$
         }
@@ -727,15 +625,12 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private boolean hasReinstallAlertMaintenance;
 
-    public boolean getHasReinstallAlertMaintenance()
-    {
+    public boolean getHasReinstallAlertMaintenance() {
         return hasReinstallAlertMaintenance;
     }
 
-    public void setHasReinstallAlertMaintenance(boolean value)
-    {
-        if (hasReinstallAlertMaintenance != value)
-        {
+    public void setHasReinstallAlertMaintenance(boolean value) {
+        if (hasReinstallAlertMaintenance != value) {
             hasReinstallAlertMaintenance = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasReinstallAlertMaintenance")); //$NON-NLS-1$
         }
@@ -743,15 +638,12 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private boolean hasNICsAlert;
 
-    public boolean getHasNICsAlert()
-    {
+    public boolean getHasNICsAlert() {
         return hasNICsAlert;
     }
 
-    public void setHasNICsAlert(boolean value)
-    {
-        if (hasNICsAlert != value)
-        {
+    public void setHasNICsAlert(boolean value) {
+        if (hasNICsAlert != value) {
             hasNICsAlert = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasNICsAlert")); //$NON-NLS-1$
         }
@@ -759,15 +651,12 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     private NonOperationalReason nonOperationalReasonEntity;
 
-    public NonOperationalReason getNonOperationalReasonEntity()
-    {
+    public NonOperationalReason getNonOperationalReasonEntity() {
         return nonOperationalReasonEntity;
     }
 
-    public void setNonOperationalReasonEntity(NonOperationalReason value)
-    {
-        if (nonOperationalReasonEntity != value)
-        {
+    public void setNonOperationalReasonEntity(NonOperationalReason value) {
+        if (nonOperationalReasonEntity != value) {
             nonOperationalReasonEntity = value;
             onPropertyChanged(new PropertyChangedEventArgs("NonOperationalReasonEntity")); //$NON-NLS-1$
         }
@@ -855,14 +744,12 @@ public class HostGeneralModel extends EntityModel<VDS>
         }
     }
 
-    static
-    {
+    static {
         requestEditEventDefinition = new EventDefinition("RequestEditEvent", HostGeneralModel.class); //$NON-NLS-1$
         requestGOToEventsTabEventDefinition = new EventDefinition("RequestGOToEventsTabEvent", HostGeneralModel.class); //$NON-NLS-1$
     }
 
-    public HostGeneralModel()
-    {
+    public HostGeneralModel() {
         setRequestEditEvent(new Event<EventArgs>(requestEditEventDefinition));
         setRequestGOToEventsTabEvent(new Event<EventArgs>(requestGOToEventsTabEventDefinition));
         setTitle(constants.generalTitle());
@@ -875,8 +762,7 @@ public class HostGeneralModel extends EntityModel<VDS>
         setGoToEventsCommand(new UICommand("GoToEvents", this)); //$NON-NLS-1$
     }
 
-    public void saveNICsConfig()
-    {
+    public void saveNICsConfig() {
         Frontend.getInstance().runMultipleAction(VdcActionType.CommitNetworkChanges,
                 new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] {new VdsActionParameters(getEntity().getId())})),
                 new IFrontendMultipleActionAsyncCallback() {
@@ -888,24 +774,20 @@ public class HostGeneralModel extends EntityModel<VDS>
                 null);
     }
 
-    public void editHost()
-    {
+    public void editHost() {
         // Let's the parent model know about request.
         getRequestEditEvent().raise(this, EventArgs.EMPTY);
     }
 
-    public void cancel()
-    {
+    public void cancel() {
         setWindow(null);
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             updateAlerts();
             updateMemory();
             updateSwapUsed();
@@ -914,30 +796,25 @@ public class HostGeneralModel extends EntityModel<VDS>
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
         if (e.propertyName.equals("net_config_dirty") || e.propertyName.equals("status") //$NON-NLS-1$ //$NON-NLS-2$
-                || e.propertyName.equals("spm_status") || e.propertyName.equals("vm_active")) //$NON-NLS-1$ //$NON-NLS-2$
-        {
+                || e.propertyName.equals("spm_status") || e.propertyName.equals("vm_active")) { //$NON-NLS-1$ //$NON-NLS-2$
             updateUpgradeAlert = true;
             updateAlerts();
         }
 
-        if (e.propertyName.equals("usage_mem_percent") || e.propertyName.equals("physical_mem_mb")) //$NON-NLS-1$ //$NON-NLS-2$
-        {
+        if (e.propertyName.equals("usage_mem_percent") || e.propertyName.equals("physical_mem_mb")) { //$NON-NLS-1$ //$NON-NLS-2$
             updateMemory();
         }
 
-        if (e.propertyName.equals("swap_total") || e.propertyName.equals("swap_free")) //$NON-NLS-1$ //$NON-NLS-2$
-        {
+        if (e.propertyName.equals("swap_total") || e.propertyName.equals("swap_free")) { //$NON-NLS-1$ //$NON-NLS-2$
             updateSwapUsed();
         }
     }
 
-    private void updateProperties()
-    {
+    private void updateProperties() {
         VDS vds = getEntity();
 
         setOS(vds.getHostOs());
@@ -993,8 +870,7 @@ public class HostGeneralModel extends EntityModel<VDS>
         setOnlineCores(vds.getOnlineCpus());
     }
 
-    private void updateAlerts()
-    {
+    private void updateAlerts() {
         setHasAnyAlert(false);
         setHasUpgradeAlert(false);
         setHasManualFenceAlert(false);
@@ -1010,26 +886,21 @@ public class HostGeneralModel extends EntityModel<VDS>
         // Check manual fence alert presense.
         if (getEntity().getStatus() == VDSStatus.NonResponsive
                 && !getEntity().isPmEnabled()
-                && ((getEntity().getVmActive() == null ? 0 : getEntity().getVmActive()) > 0 || getEntity().getSpmStatus() == VdsSpmStatus.SPM))
-        {
+                && ((getEntity().getVmActive() == null ? 0 : getEntity().getVmActive()) > 0 || getEntity().getSpmStatus() == VdsSpmStatus.SPM)) {
             setHasManualFenceAlert(true);
         }
-        else if (!getEntity().isPmEnabled())
-        {
+        else if (!getEntity().isPmEnabled()) {
             setHasNoPowerManagementAlert(true);
         }
 
         // Check the reinstall alert presence.
-        if (getEntity().getStatus() == VDSStatus.NonResponsive)
-        {
+        if (getEntity().getStatus() == VDSStatus.NonResponsive) {
             setHasReinstallAlertNonResponsive(true);
         }
-        else if (getEntity().getStatus() == VDSStatus.InstallFailed)
-        {
+        else if (getEntity().getStatus() == VDSStatus.InstallFailed) {
             setHasReinstallAlertInstallFailed(true);
         }
-        else if (getEntity().getStatus() == VDSStatus.Maintenance)
-        {
+        else if (getEntity().getStatus() == VDSStatus.Maintenance) {
             setHasReinstallAlertMaintenance(true);
         }
 
@@ -1058,50 +929,40 @@ public class HostGeneralModel extends EntityModel<VDS>
                 || getHasReinstallAlertInstallFailed() || getHasReinstallAlertMaintenance());
     }
 
-    private void goToEvents()
-    {
+    private void goToEvents() {
         this.getRequestGOToEventsTabEvent().raise(this, null);
     }
 
-    private void updateMemory()
-    {
+    private void updateMemory() {
         setFreeMemory(null);
         setUsedMemory(null);
-        if (getEntity().getPhysicalMemMb() != null && getEntity().getUsageMemPercent() != null)
-        {
+        if (getEntity().getPhysicalMemMb() != null && getEntity().getUsageMemPercent() != null) {
             setUsedMemory((int) Math.round(getEntity().getPhysicalMemMb() * (getEntity().getUsageMemPercent() / 100.0)));
             setFreeMemory(getEntity().getPhysicalMemMb() - getUsedMemory());
         }
     }
 
-    private void updateSwapUsed()
-    {
+    private void updateSwapUsed() {
         setUsedSwap(null);
-        if (getEntity().getSwapTotal() != null && getEntity().getSwapFree() != null)
-        {
+        if (getEntity().getSwapTotal() != null && getEntity().getSwapFree() != null) {
             setUsedSwap(getEntity().getSwapTotal() - getEntity().getSwapFree());
         }
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getSaveNICsConfigCommand())
-        {
+        if (command == getSaveNICsConfigCommand()) {
             saveNICsConfig();
         }
-        else if (command == getEditHostCommand())
-        {
+        else if (command == getEditHostCommand()) {
             editHost();
         }
-        else if (command == getGoToEventsCommand())
-        {
+        else if (command == getGoToEventsCommand()) {
             goToEvents();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         } else if (command == getUpgradeHostCommand()) {
             upgrade();

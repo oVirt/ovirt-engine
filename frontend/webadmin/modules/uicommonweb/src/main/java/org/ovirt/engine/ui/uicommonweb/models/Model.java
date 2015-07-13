@@ -49,29 +49,24 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
     private Event<PropertyChangedEventArgs> privatePropertyChangedEvent;
 
     @Override
-    public Event<PropertyChangedEventArgs> getPropertyChangedEvent()
-    {
+    public Event<PropertyChangedEventArgs> getPropertyChangedEvent() {
         return privatePropertyChangedEvent;
     }
 
-    private void setPropertyChangedEvent(Event<PropertyChangedEventArgs> value)
-    {
+    private void setPropertyChangedEvent(Event<PropertyChangedEventArgs> value) {
         privatePropertyChangedEvent = value;
     }
 
     private Model window;
 
     @Override
-    public Model getWindow()
-    {
+    public Model getWindow() {
         return window;
     }
 
     @Override
-    public void setWindow(Model value)
-    {
-        if (window != value)
-        {
+    public void setWindow(Model value) {
+        if (window != value) {
             window = value;
             onPropertyChanged(new PropertyChangedEventArgs("Window")); //$NON-NLS-1$
         }
@@ -80,16 +75,13 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
     private Model confirmWindow;
 
     @Override
-    public Model getConfirmWindow()
-    {
+    public Model getConfirmWindow() {
         return confirmWindow;
     }
 
     @Override
-    public void setConfirmWindow(Model value)
-    {
-        if (confirmWindow != value)
-        {
+    public void setConfirmWindow(Model value) {
+        if (confirmWindow != value) {
             confirmWindow = value;
             onPropertyChanged(new PropertyChangedEventArgs("ConfirmWindow")); //$NON-NLS-1$
         }
@@ -98,15 +90,12 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
     private Model widgetModel;
 
     @Override
-    public Model getWidgetModel()
-    {
+    public Model getWidgetModel() {
         return widgetModel;
     }
 
-    public void setWidgetModel(Model value)
-    {
-        if (widgetModel != value)
-        {
+    public void setWidgetModel(Model value) {
+        if (widgetModel != value) {
             widgetModel = value;
             onPropertyChanged(new PropertyChangedEventArgs("WidgetModel")); //$NON-NLS-1$
         }
@@ -114,38 +103,32 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
 
     private Configurator privateConfigurator;
 
-    public Configurator getConfigurator()
-    {
+    public Configurator getConfigurator() {
         return privateConfigurator;
     }
 
-    private void setConfigurator(Configurator value)
-    {
+    private void setConfigurator(Configurator value) {
         privateConfigurator = value;
     }
 
     private ILogger privateLogger;
 
-    protected ILogger getLogger()
-    {
+    protected ILogger getLogger() {
         return privateLogger;
     }
 
-    private void setLogger(ILogger value)
-    {
+    private void setLogger(ILogger value) {
         privateLogger = value;
     }
 
     private UICommand privateLastExecutedCommand;
 
     @Override
-    public UICommand getLastExecutedCommand()
-    {
+    public UICommand getLastExecutedCommand() {
         return privateLastExecutedCommand;
     }
 
-    private void setLastExecutedCommand(UICommand value)
-    {
+    private void setLastExecutedCommand(UICommand value) {
         privateLastExecutedCommand = value;
     }
 
@@ -155,15 +138,12 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
      * Represents a progress operation on the model.
      */
     @Override
-    public ProgressModel getProgress()
-    {
+    public ProgressModel getProgress() {
         return progress;
     }
 
-    private void setProgress(ProgressModel value)
-    {
-        if (progress != value)
-        {
+    private void setProgress(ProgressModel value) {
+        if (progress != value) {
             progress = value;
             onPropertyChanged(new PropertyChangedEventArgs(PropertyChangedEventArgs.PROGRESS));
         }
@@ -181,24 +161,20 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
 
     private String privatehashName;
 
-    private String gethashName()
-    {
+    private String gethashName() {
         return privatehashName;
     }
 
-    private void sethashName(String value)
-    {
+    private void sethashName(String value) {
         privatehashName = value;
     }
 
     @Override
-    public String getHashName()
-    {
+    public String getHashName() {
         return gethashName();
     }
 
-    public void setHashName(String value)
-    {
+    public void setHashName(String value) {
         sethashName(value);
         onPropertyChanged(new PropertyChangedEventArgs("HashName")); //$NON-NLS-1$
     }
@@ -210,15 +186,13 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
      * <b>IMPORTANT</b>: only use values from {@code HelpTag}.
      * @param helpTag unique id from {@code HelpTag}
      */
-    public void setHelpTag(HelpTag helpTag)
-    {
+    public void setHelpTag(HelpTag helpTag) {
         this.helpTag = helpTag;
         setOpenDocumentationCommand(new UICommand("OpenDocumentation", this)); //$NON-NLS-1$
         onPropertyChanged(new PropertyChangedEventArgs("HelpTag")); //$NON-NLS-1$
     }
 
-    public HelpTag getHelpTag()
-    {
+    public HelpTag getHelpTag() {
         return helpTag;
     }
 
@@ -241,15 +215,12 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
      */
     private String title;
 
-    public String getTitle()
-    {
+    public String getTitle() {
         return title;
     }
 
-    public Model setTitle(String value)
-    {
-        if (!ObjectUtils.objectsEqual(title, value))
-        {
+    public Model setTitle(String value) {
+        if (!ObjectUtils.objectsEqual(title, value)) {
             title = value;
             onPropertyChanged(new PropertyChangedEventArgs("Title")); //$NON-NLS-1$
         }
@@ -258,20 +229,16 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
 
     private boolean isValid;
 
-    public boolean getIsValid()
-    {
+    public boolean getIsValid() {
         return isValid;
     }
 
-    public void setIsValid(boolean value)
-    {
-        if (isValid != value)
-        {
+    public void setIsValid(boolean value) {
+        if (isValid != value) {
             isValid = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsValid")); //$NON-NLS-1$
 
-            if (isValid)
-            {
+            if (isValid) {
                 getInvalidityReasons().clear();
             }
         }
@@ -279,34 +246,28 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
 
     private List<String> privateInvalidityReasons;
 
-    public List<String> getInvalidityReasons()
-    {
+    public List<String> getInvalidityReasons() {
         return privateInvalidityReasons;
     }
 
-    public void setInvalidityReasons(List<String> value)
-    {
+    public void setInvalidityReasons(List<String> value) {
         privateInvalidityReasons = value;
     }
 
     private int availableInModes;
 
-    public int getAvailableInModes()
-    {
+    public int getAvailableInModes() {
         return availableInModes;
     }
 
-    public void setAvailableInModes(int value)
-    {
-        if (availableInModes != value)
-        {
+    public void setAvailableInModes(int value) {
+        if (availableInModes != value) {
             availableInModes = value;
             onPropertyChanged(new PropertyChangedEventArgs("AvailableInModes")); //$NON-NLS-1$
         }
     }
 
-    public void setAvailableInModes(ApplicationMode uiMode)
-    {
+    public void setAvailableInModes(ApplicationMode uiMode) {
         int value = uiMode.getValue();
         setAvailableInModes(value);
     }
@@ -314,15 +275,12 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
     private boolean isAvailable;
 
     @Override
-    public boolean getIsAvailable()
-    {
+    public boolean getIsAvailable() {
         return isAvailable && ApplicationModeHelper.isAvailableInMode(getAvailableInModes());
     }
 
-    public void setIsAvailable(boolean value)
-    {
-        if (isAvailable != value)
-        {
+    public void setIsAvailable(boolean value) {
+        if (isAvailable != value) {
             isAvailable = value;
             onIsAvailableChanged();
             onPropertyChanged(new PropertyChangedEventArgs("IsAvailable")); //$NON-NLS-1$
@@ -331,20 +289,16 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
 
     private boolean isChangable;
 
-    public boolean getIsChangable()
-    {
+    public boolean getIsChangable() {
         return isChangable;
     }
 
-    public Model setIsChangeable(boolean value)
-    {
-        if (isChangable != value)
-        {
+    public Model setIsChangeable(boolean value) {
+        if (isChangable != value) {
             isChangable = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsChangable")); //$NON-NLS-1$
 
-            if (isChangable)
-            {
+            if (isChangable) {
                 setChangeProhibitionReason(null);
             }
         }
@@ -365,13 +319,11 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
 
     private String privateChangeProhibitionReason;
 
-    public String getChangeProhibitionReason()
-    {
+    public String getChangeProhibitionReason() {
         return privateChangeProhibitionReason;
     }
 
-    public void setChangeProhibitionReason(String value)
-    {
+    public void setChangeProhibitionReason(String value) {
         if (!ObjectUtils.objectsEqual(privateChangeProhibitionReason, value)) {
             privateChangeProhibitionReason = value;
             onPropertyChanged(new PropertyChangedEventArgs("ChangeProhibitionReason")); //$NON-NLS-1$
@@ -393,15 +345,12 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
 
     private boolean isSelected;
 
-    public boolean getIsSelected()
-    {
+    public boolean getIsSelected() {
         return isSelected;
     }
 
-    public void setIsSelected(boolean value)
-    {
-        if (isSelected != value)
-        {
+    public void setIsSelected(boolean value) {
+        if (isSelected != value) {
             isSelected = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsSelected")); //$NON-NLS-1$
         }
@@ -409,15 +358,12 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
 
     private boolean isSelectable;
 
-    public boolean getIsSelectable()
-    {
+    public boolean getIsSelectable() {
         return isSelectable;
     }
 
-    public void setIsSelectable(boolean value)
-    {
-        if (isSelectable != value)
-        {
+    public void setIsSelectable(boolean value) {
+        if (isSelectable != value) {
             isSelectable = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsSelectable")); //$NON-NLS-1$
         }
@@ -425,13 +371,11 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
 
     private List<UICommand> privateCommands;
 
-    public List<UICommand> getCommands()
-    {
+    public List<UICommand> getCommands() {
         return privateCommands;
     }
 
-    public void setCommands(List<UICommand> value)
-    {
+    public void setCommands(List<UICommand> value) {
         privateCommands = value;
     }
 
@@ -461,34 +405,28 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
 
     private UICommand privateOpenDocumentationCommand;
 
-    public UICommand getOpenDocumentationCommand()
-    {
+    public UICommand getOpenDocumentationCommand() {
         return privateOpenDocumentationCommand;
     }
 
-    public void setOpenDocumentationCommand(UICommand value)
-    {
+    public void setOpenDocumentationCommand(UICommand value) {
         privateOpenDocumentationCommand = value;
     }
 
     private String message;
 
-    public String getMessage()
-    {
+    public String getMessage() {
         return message;
     }
 
-    public void setMessage(String value)
-    {
-        if (!ObjectUtils.objectsEqual(message, value))
-        {
+    public void setMessage(String value) {
+        if (!ObjectUtils.objectsEqual(message, value)) {
             message = value;
             onPropertyChanged(new PropertyChangedEventArgs("Message")); //$NON-NLS-1$
         }
     }
 
-    public Model()
-    {
+    public Model() {
         setPropertyChangedEvent(new Event<PropertyChangedEventArgs>(ProvidePropertyChangedEvent.definition));
 
         // Resolve commonly used types.
@@ -520,30 +458,24 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
      * Override this method to initialize model, for example populate some properties with data here rather than in
      * constructor. But instantiation still should be done in constructor.
      */
-    public void initialize()
-    {
+    public void initialize() {
     }
 
-    protected void onIsAvailableChanged()
-    {
+    protected void onIsAvailableChanged() {
     }
 
-    protected void onPropertyChanged(PropertyChangedEventArgs e)
-    {
+    protected void onPropertyChanged(PropertyChangedEventArgs e) {
         getPropertyChangedEvent().raise(this, e);
     }
 
     @Override
-    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args)
-    {
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         setLastExecutedCommand(command);
-        if (command == getOpenDocumentationCommand())
-        {
+        if (command == getOpenDocumentationCommand()) {
             onPropertyChanged(new PropertyChangedEventArgs("OpenDocumentation")); //$NON-NLS-1$
         }
     }
@@ -558,8 +490,7 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
      *
      * @param operation
      */
-    public void startProgress(String operation)
-    {
+    public void startProgress(String operation) {
         ProgressModel tempVar = new ProgressModel();
         tempVar.setCurrentOperation(operation);
         setProgress(tempVar);
@@ -568,8 +499,7 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
     /**
      * Assigns null to the Progress property, indicating end of some operation on the model.
      */
-    public void stopProgress()
-    {
+    public void stopProgress() {
         setProgress(null);
     }
 

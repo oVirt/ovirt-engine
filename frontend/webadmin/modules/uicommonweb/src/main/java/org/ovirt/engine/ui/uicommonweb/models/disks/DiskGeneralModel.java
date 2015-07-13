@@ -13,19 +13,15 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
-public class DiskGeneralModel extends EntityModel<Disk>
-{
+public class DiskGeneralModel extends EntityModel<Disk> {
     private String privateAlias;
 
-    public String getAlias()
-    {
+    public String getAlias() {
         return privateAlias;
     }
 
-    public void setAlias(String value)
-    {
-        if (!ObjectUtils.objectsEqual(privateAlias, value))
-        {
+    public void setAlias(String value) {
+        if (!ObjectUtils.objectsEqual(privateAlias, value)) {
             privateAlias = value;
             onPropertyChanged(new PropertyChangedEventArgs("Alias")); //$NON-NLS-1$
         }
@@ -33,15 +29,12 @@ public class DiskGeneralModel extends EntityModel<Disk>
 
     private String privateDescription;
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return privateDescription;
     }
 
-    public void setDescription(String value)
-    {
-        if (!ObjectUtils.objectsEqual(privateDescription, value))
-        {
+    public void setDescription(String value) {
+        if (!ObjectUtils.objectsEqual(privateDescription, value)) {
             privateDescription = value;
             onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
@@ -49,15 +42,12 @@ public class DiskGeneralModel extends EntityModel<Disk>
 
     private String privateStorageDomain;
 
-    public String getStorageDomain()
-    {
+    public String getStorageDomain() {
         return privateStorageDomain;
     }
 
-    public void setStorageDomain(String value)
-    {
-        if (!ObjectUtils.objectsEqual(privateStorageDomain, value))
-        {
+    public void setStorageDomain(String value) {
+        if (!ObjectUtils.objectsEqual(privateStorageDomain, value)) {
             privateStorageDomain = value;
             onPropertyChanged(new PropertyChangedEventArgs("Storage Domain")); //$NON-NLS-1$
         }
@@ -65,15 +55,12 @@ public class DiskGeneralModel extends EntityModel<Disk>
 
     private String diskId;
 
-    public String getDiskId()
-    {
+    public String getDiskId() {
         return diskId;
     }
 
-    public void setDiskId(String value)
-    {
-        if (!ObjectUtils.objectsEqual(diskId, value))
-        {
+    public void setDiskId(String value) {
+        if (!ObjectUtils.objectsEqual(diskId, value)) {
             diskId = value;
             onPropertyChanged(new PropertyChangedEventArgs("ID")); //$NON-NLS-1$
         }
@@ -81,15 +68,12 @@ public class DiskGeneralModel extends EntityModel<Disk>
 
     private String privateLunId;
 
-    public String getLunId()
-    {
+    public String getLunId() {
         return privateLunId;
     }
 
-    public void setLunId(String value)
-    {
-        if (!ObjectUtils.objectsEqual(privateLunId, value))
-        {
+    public void setLunId(String value) {
+        if (!ObjectUtils.objectsEqual(privateLunId, value)) {
             privateLunId = value;
             onPropertyChanged(new PropertyChangedEventArgs("LUN ID")); //$NON-NLS-1$
         }
@@ -97,13 +81,11 @@ public class DiskGeneralModel extends EntityModel<Disk>
 
     private String privateAlignment;
 
-    public String getAlignment()
-    {
+    public String getAlignment() {
         return privateAlignment;
     }
 
-    public void setAlignment(String value)
-    {
+    public void setAlignment(String value) {
         if (!ObjectUtils.objectsEqual(privateAlignment, value)) {
             privateAlignment = value;
             onPropertyChanged(new PropertyChangedEventArgs("Alignment")); //$NON-NLS-1$
@@ -125,15 +107,12 @@ public class DiskGeneralModel extends EntityModel<Disk>
 
     private String privateDiskProfileName;
 
-    public String getDiskProfileName()
-    {
+    public String getDiskProfileName() {
         return privateDiskProfileName;
     }
 
-    public void setDiskProfileName(String value)
-    {
-        if (!ObjectUtils.objectsEqual(privateDiskProfileName, value))
-        {
+    public void setDiskProfileName(String value) {
+        if (!ObjectUtils.objectsEqual(privateDiskProfileName, value)) {
             privateDiskProfileName = value;
             onPropertyChanged(new PropertyChangedEventArgs("DiskProfile Name")); //$NON-NLS-1$
         }
@@ -141,15 +120,12 @@ public class DiskGeneralModel extends EntityModel<Disk>
 
     private String privateQuotaName;
 
-    public String getQuotaName()
-    {
+    public String getQuotaName() {
         return privateQuotaName;
     }
 
-    public void setQuotaName(String value)
-    {
-        if (!ObjectUtils.objectsEqual(privateQuotaName, value))
-        {
+    public void setQuotaName(String value) {
+        if (!ObjectUtils.objectsEqual(privateQuotaName, value)) {
             privateQuotaName = value;
             onPropertyChanged(new PropertyChangedEventArgs("Quota Name")); //$NON-NLS-1$
         }
@@ -185,34 +161,29 @@ public class DiskGeneralModel extends EntityModel<Disk>
         this.lun = lun;
     }
 
-    public DiskGeneralModel()
-    {
+    public DiskGeneralModel() {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
         setHelpTag(HelpTag.general);
         setHashName("general"); //$NON-NLS-1$
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (super.getEntity() != null)
-        {
+        if (super.getEntity() != null) {
             updateProperties();
         }
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
         updateProperties();
     }
 
-    private void updateProperties()
-    {
+    private void updateProperties() {
         Disk disk = getEntity();
 
         setImage(disk.getDiskStorageType().isInternal());

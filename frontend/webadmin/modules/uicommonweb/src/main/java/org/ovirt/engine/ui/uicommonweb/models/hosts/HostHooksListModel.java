@@ -18,11 +18,9 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class HostHooksListModel extends SearchableListModel<VDS, HashMap<String, String>>
-{
+public class HostHooksListModel extends SearchableListModel<VDS, HashMap<String, String>> {
 
-    public HostHooksListModel()
-    {
+    public HostHooksListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().hostHooksTitle());
         setHelpTag(HelpTag.host_hooks);
         setHashName("host_hooks"); // $//$NON-NLS-1$
@@ -30,43 +28,35 @@ public class HostHooksListModel extends SearchableListModel<VDS, HashMap<String,
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
         getSearchCommand().execute();
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("status")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("status")) { //$NON-NLS-1$
             getSearchCommand().execute();
         }
     }
 
     @Override
-    public void search()
-    {
-        if (getEntity() != null)
-        {
+    public void search() {
+        if (getEntity() != null) {
             super.search();
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
-        if (getEntity() == null)
-        {
+    protected void syncSearch() {
+        if (getEntity() == null) {
             return;
         }
 
-        if (!getEntity().isContainingHooks())
-        {
+        if (!getEntity().isContainingHooks()) {
             setIsEmpty(true);
             setItems(new ArrayList<HashMap<String, String>>());
             return;
@@ -79,19 +69,15 @@ public class HostHooksListModel extends SearchableListModel<VDS, HashMap<String,
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 ArrayList<HashMap<String, String>> list =
                         new ArrayList<HashMap<String, String>>();
                 HashMap<String, HashMap<String, HashMap<String, String>>> dictionary = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 HashMap<String, String> row;
-                for (Map.Entry<String, HashMap<String, HashMap<String, String>>> keyValuePair : dictionary.entrySet())
-                {
+                for (Map.Entry<String, HashMap<String, HashMap<String, String>>> keyValuePair : dictionary.entrySet()) {
                     for (Map.Entry<String, HashMap<String, String>> keyValuePair1 : keyValuePair.getValue()
-                            .entrySet())
-                    {
-                        for (Map.Entry<String, String> keyValuePair2 : keyValuePair1.getValue().entrySet())
-                        {
+                            .entrySet()) {
+                        for (Map.Entry<String, String> keyValuePair2 : keyValuePair1.getValue().entrySet()) {
                             row = new HashMap<String, String>();
                             row.put("EventName", keyValuePair.getKey()); //$NON-NLS-1$
                             row.put("ScriptName", keyValuePair1.getKey()); //$NON-NLS-1$

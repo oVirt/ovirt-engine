@@ -13,23 +13,19 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class UserGroupListModel extends SearchableListModel<DbUser, UserGroup>
-{
+public class UserGroupListModel extends SearchableListModel<DbUser, UserGroup> {
 
-    public UserGroupListModel()
-    {
+    public UserGroupListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().directoryGroupsTitle());
         setHelpTag(HelpTag.directory_groups);
         setHashName("directory_groups"); // $//$NON-NLS-1$
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             final ArrayList<UserGroup> items = new ArrayList<UserGroup>();
             AsyncDataProvider.getInstance().getAuthzGroupsByUserId(new AsyncQuery(new INewAsyncCallback() {
 
@@ -42,14 +38,12 @@ public class UserGroupListModel extends SearchableListModel<DbUser, UserGroup>
                 }
             }), getEntity().getId());
         }
-        else
-        {
+        else {
             setItems(null);
         }
     }
 
-    private UserGroup createUserGroup(String groupFullName, String namespace, String authz)
-    {
+    private UserGroup createUserGroup(String groupFullName, String namespace, String authz) {
         UserGroup tempVar = new UserGroup();
         tempVar.setGroupName(groupFullName);
         tempVar.setNamespace(namespace);

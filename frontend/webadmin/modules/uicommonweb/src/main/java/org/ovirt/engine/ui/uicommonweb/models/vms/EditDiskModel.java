@@ -25,8 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
-public class EditDiskModel extends AbstractDiskModel
-{
+public class EditDiskModel extends AbstractDiskModel {
     public EditDiskModel() {
     }
 

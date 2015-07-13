@@ -35,8 +35,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.ExistingVmInstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 
-public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
-{
+public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     private InstanceTypeManager instanceTypeManager;
 
     protected VM vm;
@@ -44,8 +43,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     private int hostCpu;
     private VDS runningOnHost;
 
-    public ExistingVmModelBehavior(VM vm)
-    {
+    public ExistingVmModelBehavior(VM vm) {
         this.vm = vm;
         dedicatedHostsNames = Collections.<String>emptyList();
     }
@@ -325,8 +323,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     }
 
     @Override
-    public void updateMinAllocatedMemory()
-    {
+    public void updateMinAllocatedMemory() {
         DataCenterWithCluster dataCenterWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
         if (dataCenterWithCluster == null) {
             return;
@@ -334,19 +331,16 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
         VDSGroup cluster = dataCenterWithCluster.getCluster();
 
-        if (cluster == null)
-        {
+        if (cluster == null) {
             return;
         }
 
-        if (getModel().getMemSize().getEntity() < vm.getVmMemSizeMb())
-        {
+        if (getModel().getMemSize().getEntity() < vm.getVmMemSizeMb()) {
             double overCommitFactor = 100.0 / cluster.getMaxVdsMemoryOverCommit();
             getModel().getMinAllocatedMemory()
                     .setEntity((int) (getModel().getMemSize().getEntity() * overCommitFactor));
         }
-        else
-        {
+        else {
             getModel().getMinAllocatedMemory().setEntity(vm.getMinAllocatedMem());
         }
     }
@@ -355,8 +349,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         setupTemplateWithVersion(vm.getVmtGuid(), vm.isUseLatestVersion(), false);
     }
 
-    public void initCdImage()
-    {
+    public void initCdImage() {
         getModel().getCdImage().setSelectedItem(vm.getIsoPath());
 
         boolean hasCd = !StringHelper.isNullOrEmpty(vm.getIsoPath());

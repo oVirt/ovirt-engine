@@ -151,22 +151,19 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
         getSearchCommand().execute();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability(getEntity());
     }
 
     @Override
-    public void search()
-    {
+    public void search() {
         if (getEntity() != null) {
             super.search();
         }
@@ -598,8 +595,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
     }
 
     @Override
-    public void setEntity(GlusterVolumeEntity value)
-    {
+    public void setEntity(GlusterVolumeEntity value) {
         super.setEntity(value);
         updateActionAvailability(value);
     }

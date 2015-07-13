@@ -59,8 +59,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-public abstract class AbstractDiskModel extends DiskModel
-{
+public abstract class AbstractDiskModel extends DiskModel {
     protected static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private EntityModel<Boolean> isWipeAfterDelete;

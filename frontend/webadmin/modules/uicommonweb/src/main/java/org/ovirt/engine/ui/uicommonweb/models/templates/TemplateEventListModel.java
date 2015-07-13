@@ -7,25 +7,20 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class TemplateEventListModel extends SubTabEventListModel<VmTemplate> {
 
     @Override
-    protected void onEntityContentChanged()
-    {
+    protected void onEntityContentChanged() {
         super.onEntityContentChanged();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             getSearchCommand().execute();
         }
-        else
-        {
+        else {
             setItems(null);
         }
     }
 
     @Override
-    public void search()
-    {
-        if (getEntity() != null)
-        {
+    public void search() {
+        if (getEntity() != null) {
             preSearchCalled(getEntity());
             super.search();
         }
@@ -36,12 +31,10 @@ public class TemplateEventListModel extends SubTabEventListModel<VmTemplate> {
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("name")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("name")) { //$NON-NLS-1$
             getSearchCommand().execute();
         }
     }

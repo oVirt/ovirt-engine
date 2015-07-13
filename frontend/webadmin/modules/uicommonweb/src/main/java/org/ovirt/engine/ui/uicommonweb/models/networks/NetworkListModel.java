@@ -35,8 +35,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, NetworkView> implements ISupportSystemTreeContext
-{
+public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, NetworkView> implements ISupportSystemTreeContext {
     private UICommand newCommand;
     private UICommand importCommand;
     private UICommand editCommand;
@@ -100,8 +99,7 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
     }
 
     public void newNetwork() {
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -123,8 +121,7 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
         final UIConstants constants = ConstantsManager.getInstance().getConstants();
         final Network network = getSelectedItem();
 
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -133,16 +130,14 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
 
         initDcList(networkModel);
 
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Network)
-        {
+        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Network) {
             networkModel.getName().setIsChangeable(false);
             networkModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
         }
     }
 
     public void remove() {
-        if (getConfirmWindow() != null)
-        {
+        if (getConfirmWindow() != null) {
             return;
         }
 
@@ -245,21 +240,17 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getNewCommand())
-        {
+        if (command == getNewCommand()) {
             newNetwork();
         }
-        else if (command == getImportCommand())
-        {
+        else if (command == getImportCommand()) {
             importNetworks();
         }
-        else if (command == getEditCommand())
-        {
+        else if (command == getEditCommand()) {
             edit();
         }
 
-        else if (command == getRemoveCommand())
-        {
+        else if (command == getRemoveCommand()) {
             remove();
         }
     }
@@ -271,8 +262,7 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
 
     @Override
     public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        if (systemTreeSelectedItem != value)
-        {
+        if (systemTreeSelectedItem != value) {
             systemTreeSelectedItem = value;
             onSystemTreeSelectedItemChanged();
         }

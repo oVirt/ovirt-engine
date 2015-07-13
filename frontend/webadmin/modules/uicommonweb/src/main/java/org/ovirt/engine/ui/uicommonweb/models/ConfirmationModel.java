@@ -7,30 +7,25 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class ConfirmationModel extends ListModel
-{
+public class ConfirmationModel extends ListModel {
 
     private EntityModel<Boolean> privateLatch;
 
-    public EntityModel<Boolean> getLatch()
-    {
+    public EntityModel<Boolean> getLatch() {
         return privateLatch;
     }
 
-    public void setLatch(EntityModel<Boolean> value)
-    {
+    public void setLatch(EntityModel<Boolean> value) {
         privateLatch = value;
     }
 
     private EntityModel<Boolean> force;
 
-    public EntityModel<Boolean> getForce()
-    {
+    public EntityModel<Boolean> getForce() {
         return force;
     }
 
-    public void setForce(EntityModel<Boolean> value)
-    {
+    public void setForce(EntityModel<Boolean> value) {
         force = value;
     }
 
@@ -41,8 +36,7 @@ public class ConfirmationModel extends ListModel
     }
 
     public void setForceLabel(String forceLabel) {
-        if (!ObjectUtils.objectsEqual(getForceLabel(), forceLabel))
-        {
+        if (!ObjectUtils.objectsEqual(getForceLabel(), forceLabel)) {
             this.forceLabel = forceLabel;
             onPropertyChanged(new PropertyChangedEventArgs("ForceLabel")); //$NON-NLS-1$
         }
@@ -50,15 +44,12 @@ public class ConfirmationModel extends ListModel
 
     private String note;
 
-    public String getNote()
-    {
+    public String getNote() {
         return note;
     }
 
-    public void setNote(String value)
-    {
-        if (!ObjectUtils.objectsEqual(note, value))
-        {
+    public void setNote(String value) {
+        if (!ObjectUtils.objectsEqual(note, value)) {
             note = value;
             onPropertyChanged(new PropertyChangedEventArgs("Note")); //$NON-NLS-1$
         }
@@ -66,35 +57,29 @@ public class ConfirmationModel extends ListModel
 
     private EntityModel<String> reason;
 
-    public EntityModel<String> getReason()
-    {
+    public EntityModel<String> getReason() {
         return reason;
     }
 
-    public void setReason(EntityModel<String> value)
-    {
+    public void setReason(EntityModel<String> value) {
         reason = value;
     }
 
     private boolean reasonVisible;
 
-    public boolean getReasonVisible()
-    {
+    public boolean getReasonVisible() {
         return reasonVisible;
     }
 
-    public void setReasonVisible(boolean value)
-    {
-        if (reasonVisible != value)
-        {
+    public void setReasonVisible(boolean value) {
+        if (reasonVisible != value) {
             reasonVisible = value;
             onPropertyChanged(new PropertyChangedEventArgs("ReasonVisible")); //$NON-NLS-1$
         }
 
     }
 
-    public ConfirmationModel()
-    {
+    public ConfirmationModel() {
         setLatch(new EntityModel<Boolean>());
         getLatch().setEntity(false);
         getLatch().setIsAvailable(false);
@@ -107,11 +92,9 @@ public class ConfirmationModel extends ListModel
         setReasonVisible(false);
     }
 
-    public boolean validate()
-    {
+    public boolean validate() {
         getLatch().setIsValid(true);
-        if (getLatch().getIsAvailable() && !getLatch().getEntity())
-        {
+        if (getLatch().getIsAvailable() && !getLatch().getEntity()) {
             getLatch().getInvalidityReasons().add(ConstantsManager.getInstance()
                     .getConstants()
                     .youMustApproveTheActionByClickingOnThisCheckboxInvalidReason());

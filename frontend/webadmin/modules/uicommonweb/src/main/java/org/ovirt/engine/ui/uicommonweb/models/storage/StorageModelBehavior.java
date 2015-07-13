@@ -14,29 +14,24 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
-public abstract class StorageModelBehavior extends Model
-{
+public abstract class StorageModelBehavior extends Model {
     private StorageModel privateModel;
 
-    public StorageModel getModel()
-    {
+    public StorageModel getModel() {
         return privateModel;
     }
 
-    public void setModel(StorageModel value)
-    {
+    public void setModel(StorageModel value) {
         privateModel = value;
     }
 
-    public List<StoragePool> filterDataCenter(List<StoragePool> source)
-    {
+    public List<StoragePool> filterDataCenter(List<StoragePool> source) {
         return Linq.toList(Linq.where(source, new Linq.DataCenterNotStatusPredicate(StoragePoolStatus.NotOperational)));
     }
 
     public abstract void updateItemsAvailability();
 
-    public void filterUnSelectableModels()
-    {
+    public void filterUnSelectableModels() {
         // Filter UnSelectable models from AvailableStorageItems list
         ArrayList<IStorageModel> items = Linq.<IStorageModel> cast(getModel().getItems());
         Set<StorageDomainType> storageDomainTypeItems = new LinkedHashSet<StorageDomainType>();
@@ -44,10 +39,8 @@ public abstract class StorageModelBehavior extends Model
 
         // This is needed as long the AvailableStorageItems List is in use. Other code parts rely on this information. See ImportStorageModelBehavior.
         ArrayList<IStorageModel> filterredItems = new ArrayList<IStorageModel>();
-        for (IStorageModel model : items)
-        {
-            if (((Model) model).getIsSelectable())
-            {
+        for (IStorageModel model : items) {
+            if (((Model) model).getIsSelectable()) {
                 filterredItems.add(model);
                 storageDomainTypeItems.add(model.getRole());
                 storageTypeItems.add(model.getType());
@@ -58,14 +51,12 @@ public abstract class StorageModelBehavior extends Model
         getModel().getAvailableStorageTypeItems().setItems(storageTypeItems);
     }
 
-    public void onStorageModelUpdated(IStorageModel model)
-    {
+    public void onStorageModelUpdated(IStorageModel model) {
         // Update models list (the list is used for checking update completion)
         getModel().updatedStorageModels.add(model);
 
         // Filter UnSelectable model from AvailableStorageItems list
-        if (getModel().updatedStorageModels.size() == Linq.<IStorageModel> cast(getModel().getItems()).size())
-        {
+        if (getModel().updatedStorageModels.size() == Linq.<IStorageModel> cast(getModel().getItems()).size()) {
             getModel().updatedStorageModels.clear();
 
             getModel().getHost().setItems(new ArrayList<VDS>());

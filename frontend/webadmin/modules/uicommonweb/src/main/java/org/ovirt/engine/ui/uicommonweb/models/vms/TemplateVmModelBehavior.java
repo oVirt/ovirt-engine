@@ -26,18 +26,15 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.NameAndDescriptionVmBaseToUni
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 
-public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
-{
+public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     private VmTemplate template;
 
-    public TemplateVmModelBehavior(VmTemplate template)
-    {
+    public TemplateVmModelBehavior(VmTemplate template) {
         this.template = template;
     }
 
     @Override
-    public void initialize(SystemTreeItemModel systemTreeSelectedItem)
-    {
+    public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
         super.initialize(systemTreeSelectedItem);
         getModel().getTemplateWithVersion().setIsChangeable(false);
         getModel().getBaseTemplate().setIsChangeable(false);
@@ -49,8 +46,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getTemplateVersionName().setIsChangeable(!template.isBaseTemplate());
         getModel().getName().setIsChangeable(template.isBaseTemplate());
 
-        if (template.getStoragePoolId() != null && !template.getStoragePoolId().equals(Guid.Empty))
-        {
+        if (template.getStoragePoolId() != null && !template.getStoragePoolId().equals(Guid.Empty)) {
             AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(null,
                     new INewAsyncCallback() {
                         @Override
@@ -154,8 +150,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     }
 
     @Override
-    public void postDataCenterWithClusterSelectedItemChanged()
-    {
+    public void postDataCenterWithClusterSelectedItemChanged() {
         updateDefaultHost();
         updateNumOfSockets();
         updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
@@ -175,19 +170,16 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     }
 
     @Override
-    public void defaultHost_SelectedItemChanged()
-    {
+    public void defaultHost_SelectedItemChanged() {
         updateCdImage();
     }
 
     @Override
-    public void provisioning_SelectedItemChanged()
-    {
+    public void provisioning_SelectedItemChanged() {
     }
 
     @Override
-    public void updateMinAllocatedMemory()
-    {
+    public void updateMinAllocatedMemory() {
     }
 
     @Override
@@ -238,8 +230,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         });
     }
 
-    private void initCdImage()
-    {
+    private void initCdImage() {
         updateSelectedCdImage(template);
 
         updateCdImage();

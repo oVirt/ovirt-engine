@@ -71,76 +71,62 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
     private UICommand privateNewDomainCommand;
 
-    public UICommand getNewDomainCommand()
-    {
+    public UICommand getNewDomainCommand() {
         return privateNewDomainCommand;
     }
 
-    private void setNewDomainCommand(UICommand value)
-    {
+    private void setNewDomainCommand(UICommand value) {
         privateNewDomainCommand = value;
     }
 
     private UICommand privateImportDomainCommand;
 
-    public UICommand getImportDomainCommand()
-    {
+    public UICommand getImportDomainCommand() {
         return privateImportDomainCommand;
     }
 
-    private void setImportDomainCommand(UICommand value)
-    {
+    private void setImportDomainCommand(UICommand value) {
         privateImportDomainCommand = value;
     }
 
     private UICommand privateEditCommand;
 
     @Override
-    public UICommand getEditCommand()
-    {
+    public UICommand getEditCommand() {
         return privateEditCommand;
     }
 
-    private void setEditCommand(UICommand value)
-    {
+    private void setEditCommand(UICommand value) {
         privateEditCommand = value;
     }
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
     private UICommand privateDestroyCommand;
 
-    public UICommand getDestroyCommand()
-    {
+    public UICommand getDestroyCommand() {
         return privateDestroyCommand;
     }
 
-    private void setDestroyCommand(UICommand value)
-    {
+    private void setDestroyCommand(UICommand value) {
         privateDestroyCommand = value;
     }
 
-    protected Object[] getSelectedKeys()
-    {
-        if (getSelectedItems() == null)
-        {
+    protected Object[] getSelectedKeys() {
+        if (getSelectedItems() == null) {
             return new Object[0];
         }
-        else
-        {
+        else {
             ArrayList<Object> items = new ArrayList<Object>();
-            for (Object item : getSelectedItems())
-            {
+            for (Object item : getSelectedItems()) {
                 StorageDomain i = (StorageDomain) item;
                 items.add(i.getId());
             }
@@ -258,14 +244,12 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     public List<StorageDomain> storageDomainsToAdd;
 
     @Override
-    public boolean isSearchStringMatch(String searchString)
-    {
+    public boolean isSearchStringMatch(String searchString) {
         return searchString.trim().toLowerCase().startsWith("storage"); //$NON-NLS-1$
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.StorageDomain, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(VdcQueryType.Search, tempVar);
@@ -276,10 +260,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         return true;
     }
 
-    private void newDomain()
-    {
-        if (getWindow() != null)
-        {
+    private void newDomain() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -309,12 +291,10 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         model.getCommands().add(command);
     }
 
-    private void edit()
-    {
+    private void edit() {
         StorageDomain storage = getSelectedItem();
 
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -363,8 +343,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
         model.initialize();
 
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
-        {
+        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
             model.getName().setIsChangeable(false);
             model.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
         }
@@ -429,10 +408,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                 || storage.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached);
     }
 
-    private void importDomain()
-    {
-        if (getWindow() != null)
-        {
+    private void importDomain() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -497,8 +474,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         }
     }
 
-    public void storageNameValidation()
-    {
+    public void storageNameValidation() {
         StorageModel model = (StorageModel) getWindow();
         String name = model.getName().getEntity();
         model.getName().setIsValid(true);
@@ -547,10 +523,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             name);
     }
 
-    public void postStorageNameValidation()
-    {
-        if (getLastExecutedCommand().getName().equals("OnSave")) //$NON-NLS-1$
-        {
+    public void postStorageNameValidation() {
+        if (getLastExecutedCommand().getName().equals("OnSave")) { //$NON-NLS-1$
             onSavePostNameValidation();
         }
     }
@@ -565,10 +539,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
     }
 
-    private void remove()
-    {
-        if (getWindow() != null)
-        {
+    private void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -612,15 +584,12 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         }), null, localFsOnly);
     }
 
-    private void onRemove()
-    {
-        if (getSelectedItem() != null)
-        {
+    private void onRemove() {
+        if (getSelectedItem() != null) {
             StorageDomain storage = getSelectedItem();
             RemoveStorageModel model = (RemoveStorageModel) getWindow();
 
-            if (!model.validate())
-            {
+            if (!model.validate()) {
                 return;
             }
 
@@ -636,8 +605,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         cancel();
     }
 
-    private void destroy()
-    {
+    private void destroy() {
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().destroyStorageDomainTitle());
@@ -659,17 +627,14 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         model.getCommands().add(command);
     }
 
-    private void onDestroy()
-    {
+    private void onDestroy() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
 
@@ -692,42 +657,33 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                 model);
     }
 
-    private void onSave()
-    {
+    private void onSave() {
         storageNameValidation();
     }
 
-    private void onSavePostNameValidation()
-    {
+    private void onSavePostNameValidation() {
         StorageModel model = (StorageModel) getWindow();
 
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
 
-        if (model.getSelectedItem() instanceof NfsStorageModel)
-        {
+        if (model.getSelectedItem() instanceof NfsStorageModel) {
             saveNfsStorage();
         }
-        else if (model.getSelectedItem() instanceof LocalStorageModel)
-        {
+        else if (model.getSelectedItem() instanceof LocalStorageModel) {
             saveLocalStorage();
         }
-        else if (model.getSelectedItem() instanceof PosixStorageModel)
-        {
+        else if (model.getSelectedItem() instanceof PosixStorageModel) {
             savePosixStorage();
         }
-        else
-        {
+        else {
             saveSanStorage();
         }
     }
 
-    private void saveLocalStorage()
-    {
-        if (getWindow().getProgress() != null)
-        {
+    private void saveLocalStorage() {
+        if (getWindow().getProgress() != null) {
             return;
         }
 
@@ -736,10 +692,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveLocal" }))).run(); //$NON-NLS-1$
     }
 
-    private void saveNfsStorage()
-    {
-        if (getWindow().getProgress() != null)
-        {
+    private void saveNfsStorage() {
+        if (getWindow().getProgress() != null) {
             return;
         }
 
@@ -759,8 +713,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] {"SavePosix"}))).run(); //$NON-NLS-1$
     }
 
-    private void saveSanStorage()
-    {
+    private void saveSanStorage() {
         StorageModel storageModel = (StorageModel) getWindow();
         SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getSelectedItem();
         ArrayList<String> usedLunsMessages = sanStorageModel.getUsedLunsMessages();
@@ -773,12 +726,10 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         }
     }
 
-    private void onSaveSanStorage()
-    {
+    private void onSaveSanStorage() {
         ConfirmationModel confirmationModel = (ConfirmationModel) getConfirmWindow();
 
-        if (confirmationModel != null && !confirmationModel.validate())
-        {
+        if (confirmationModel != null && !confirmationModel.validate()) {
             return;
         }
 
@@ -809,8 +760,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         model.getCommands().add(command);
     }
 
-    private void cancelConfirm()
-    {
+    private void cancelConfirm() {
         setConfirmWindow(null);
     }
 
@@ -833,26 +783,22 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         }
     }
 
-    private void cancel()
-    {
+    private void cancel() {
         setWindow(null);
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e)
-    {
+    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e) {
         super.itemsCollectionChanged(sender, e);
 
         // Try to select an item corresponding to the system tree selection.
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
-        {
+        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
             StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
 
             setSelectedItem(Linq.firstOrDefault(Linq.<StorageDomain> cast(getItems()),
@@ -861,10 +807,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     }
 
     @Override
-    protected void updateDetailsAvailability()
-    {
-        if (getSelectedItem() != null)
-        {
+    protected void updateDetailsAvailability() {
+        if (getSelectedItem() != null) {
             StorageDomain storage = getSelectedItem();
             boolean isBackupStorage = storage.getStorageDomainType() == StorageDomainType.ImportExport;
             boolean isDataStorage =
@@ -901,25 +845,21 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.selectedItemPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("storage_domain_shared_status")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("storage_domain_shared_status")) { //$NON-NLS-1$
             updateActionAvailability();
         }
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         ArrayList<StorageDomain> items =
                 getSelectedItems() != null ? Linq.<StorageDomain> cast(getSelectedItems())
                         : new ArrayList<StorageDomain>();
@@ -968,48 +908,37 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getNewDomainCommand())
-        {
+        if (command == getNewDomainCommand()) {
             newDomain();
         }
-        else if (command == getImportDomainCommand())
-        {
+        else if (command == getImportDomainCommand()) {
             importDomain();
         }
-        else if (command == getEditCommand())
-        {
+        else if (command == getEditCommand()) {
             edit();
         }
-        else if (command == getRemoveCommand())
-        {
+        else if (command == getRemoveCommand()) {
             remove();
         }
-        else if (command == getDestroyCommand())
-        {
+        else if (command == getDestroyCommand()) {
             destroy();
         }
-        else if ("OnSave".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
-        else if ("CancelConfirm".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("CancelConfirm".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirm();
         }
-        else if ("CancelImportConfirm".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("CancelImportConfirm".equals(command.getName())) { //$NON-NLS-1$
             cancelImportConfirm();
         }
-        else if ("OnImport".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnImport".equals(command.getName())) { //$NON-NLS-1$
             onImport();
         }
         else if ("OnImportFile".equals(command.getName())) { //$NON-NLS-1$
@@ -1026,16 +955,13 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             cancelConfirm();
             onImportSanDomainApprove();
         }
-        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
-        else if ("OnDestroy".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnDestroy".equals(command.getName())) { //$NON-NLS-1$
             onDestroy();
         }
-        else if ("OnSaveSanStorage".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnSaveSanStorage".equals(command.getName())) { //$NON-NLS-1$
             onSaveSanStorage();
         }
     }
@@ -1186,8 +1112,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             this);
     }
 
-    private void saveNfsStorage(TaskContext context)
-    {
+    private void saveNfsStorage(TaskContext context) {
         this.context = context;
 
         StorageDomain selectedItem = getSelectedItem();
@@ -1204,8 +1129,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         saveBaseStorageProperties(model);
         storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
 
-        if (isNew)
-        {
+        if (isNew) {
             AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
@@ -1220,8 +1144,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                 }
             }), null, path);
         }
-        else
-        {
+        else {
             StorageDomain storageDomain = getSelectedItem();
             if (isPathEditable(storageDomain)) {
                 updatePath();
@@ -1285,8 +1208,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
     }
 
-    public void saveNewNfsStorage()
-    {
+    public void saveNewNfsStorage() {
         StorageModel model = (StorageModel) getWindow();
         NfsStorageModel nfsModel = (NfsStorageModel) model.getSelectedItem();
         VDS host = model.getHost().getSelectedItem();
@@ -1349,8 +1271,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
                 // Attach storage to data center as necessary.
                 StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
-                if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
-                {
+                if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
                     storageListModel.attachStorageToDataCenter(storageListModel.storageId, dataCenter.getId(), storageModel.getActivateDomain().getEntity());
                 }
 
@@ -1376,16 +1297,14 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                 this);
     }
 
-    public void saveNewSanStorage()
-    {
+    public void saveNewSanStorage() {
         StorageModel model = (StorageModel) getWindow();
         SanStorageModel sanModel = (SanStorageModel) model.getSelectedItem();
         VDS host = model.getHost().getSelectedItem();
         boolean force = sanModel.isForce();
 
         ArrayList<String> lunIds = new ArrayList<String>();
-        for (LunModel lun : sanModel.getAddedLuns())
-        {
+        for (LunModel lun : sanModel.getAddedLuns()) {
             lunIds.add(lun.getLunId());
         }
 
@@ -1417,8 +1336,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             }, this);
     }
 
-    private void saveLocalStorage(TaskContext context)
-    {
+    private void saveLocalStorage(TaskContext context) {
         this.context = context;
 
         StorageDomain selectedItem = getSelectedItem();
@@ -1435,8 +1353,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
         saveBaseStorageProperties(model);
 
-        if (isNew)
-        {
+        if (isNew) {
             AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
@@ -1452,8 +1369,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                 }
             }), host.getStoragePoolId(), path);
         }
-        else
-        {
+        else {
             StorageDomain storageDomain = getSelectedItem();
             if (isPathEditable(storageDomain)) {
                 updatePath();
@@ -1471,8 +1387,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             ConstantsManager.getInstance().getMessages().createFailedDomainAlreadyExistStorageMsg(storageName));
     }
 
-    public void saveNewLocalStorage()
-    {
+    public void saveNewLocalStorage() {
         StorageModel model = (StorageModel) getWindow();
         LocalStorageModel localModel = (LocalStorageModel) model.getSelectedItem();
         VDS host = model.getHost().getSelectedItem();
@@ -1525,8 +1440,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
                 StorageListModel storageListModel = (StorageListModel) result.getState();
 
-                if (storageListModel.removeConnection)
-                {
+                if (storageListModel.removeConnection) {
                     storageListModel.cleanConnection(storageListModel.connection, storageListModel.hostId);
                     storageListModel.removeConnection = false;
                 }
@@ -1543,20 +1457,17 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                 this);
     }
 
-    public void onFinish(TaskContext context, boolean isSucceeded, IStorageModel model)
-    {
+    public void onFinish(TaskContext context, boolean isSucceeded, IStorageModel model) {
         onFinish(context, isSucceeded, model, null);
     }
 
-    public void onFinish(TaskContext context, boolean isSucceeded, IStorageModel model, String message)
-    {
+    public void onFinish(TaskContext context, boolean isSucceeded, IStorageModel model, String message) {
         context.invokeUIThread(this,
                 new ArrayList<Object>(Arrays.asList(new Object[] { "Finish", isSucceeded, model, //$NON-NLS-1$
                         message })));
     }
 
-    private void saveSanStorage(TaskContext context)
-    {
+    private void saveSanStorage(TaskContext context) {
         this.context = context;
 
         StorageModel model = (StorageModel) getWindow();
@@ -1581,12 +1492,10 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         storageDomain.setComment(model.getComment().getEntity());
         saveCommonStorageProperties(model);
 
-        if (isNew)
-        {
+        if (isNew) {
             saveNewSanStorage();
         }
-        else
-        {
+        else {
             Frontend.getInstance().runAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(storageDomain), new IFrontendActionAsyncCallback() {
                 @Override
                 public void executed(FrontendActionAsyncResult result) {
@@ -1625,8 +1534,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         }
     }
 
-    private void attachStorageToDataCenter(Guid storageId, Guid dataCenterId, Boolean activateDomain)
-    {
+    private void attachStorageToDataCenter(Guid storageId, Guid dataCenterId, Boolean activateDomain) {
         AttachStorageDomainToPoolParameters params = new AttachStorageDomainToPoolParameters(storageId, dataCenterId);
         if (activateDomain != null) {
             params.setActivate(activateDomain);
@@ -1634,8 +1542,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         Frontend.getInstance().runAction(VdcActionType.AttachStorageDomainToPool, params, null, this);
     }
 
-    private void importFileStorage(TaskContext context)
-    {
+    private void importFileStorage(TaskContext context) {
         this.context = context;
 
         ArrayList<Object> data = (ArrayList<Object>) context.getState();
@@ -1704,10 +1611,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         Frontend.getInstance().runMultipleActions(VdcActionType.AddExistingBlockStorageDomain, parametersList, callbacks);
     }
 
-    public void importFileStorageInit()
-    {
-        if (fileConnection != null)
-        {
+    public void importFileStorageInit() {
+        if (fileConnection != null) {
             // Clean nfs connection
             Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
                 new StorageServerConnectionParametersBase(fileConnection, hostId),
@@ -1727,14 +1632,12 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                 },
                 this);
         }
-        else
-        {
+        else {
             importFileStoragePostInit();
         }
     }
 
-    public void importFileStoragePostInit()
-    {
+    public void importFileStoragePostInit() {
         Guid storagePoolId = null;
         StoragePool dataCenter = storageModel.getContainer().getDataCenter().getSelectedItem();
         if (dataCenter != null && !dataCenter.getId().equals(Guid.Empty)) {
@@ -1879,8 +1782,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         }, new Object[] {this, sdToAdd});
     }
 
-    public void postImportFileStorage(TaskContext context, boolean isSucceeded, IStorageModel model, String message)
-    {
+    public void postImportFileStorage(TaskContext context, boolean isSucceeded, IStorageModel model, String message) {
         Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
             new StorageServerConnectionParametersBase(fileConnection, hostId),
             new IFrontendActionAsyncCallback() {
@@ -1956,45 +1858,35 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     }
 
     @Override
-    public void run(TaskContext context)
-    {
+    public void run(TaskContext context) {
         ArrayList<Object> data = (ArrayList<Object>) context.getState();
         String key = (String) data.get(0);
 
-        if ("SaveNfs".equals(key)) //$NON-NLS-1$
-        {
+        if ("SaveNfs".equals(key)) { //$NON-NLS-1$
             saveNfsStorage(context);
         }
-        else if ("SaveLocal".equals(key)) //$NON-NLS-1$
-        {
+        else if ("SaveLocal".equals(key)) { //$NON-NLS-1$
             saveLocalStorage(context);
         }
-        else if ("SavePosix".equals(key)) //$NON-NLS-1$
-        {
+        else if ("SavePosix".equals(key)) { //$NON-NLS-1$
             savePosixStorage(context);
         }
-        else if ("SaveSan".equals(key)) //$NON-NLS-1$
-        {
+        else if ("SaveSan".equals(key)) { //$NON-NLS-1$
             saveSanStorage(context);
         }
-        else if ("ImportFile".equals(key)) //$NON-NLS-1$
-        {
+        else if ("ImportFile".equals(key)) { //$NON-NLS-1$
             importFileStorage(context);
         }
-        else if ("ImportSan".equals(key)) //$NON-NLS-1$
-        {
+        else if ("ImportSan".equals(key)) { //$NON-NLS-1$
             importSanStorage(context);
         }
-        else if ("Finish".equals(key)) //$NON-NLS-1$
-        {
+        else if ("Finish".equals(key)) { //$NON-NLS-1$
             getWindow().stopProgress();
 
-            if ((Boolean) data.get(1))
-            {
+            if ((Boolean) data.get(1)) {
                 cancel();
             }
-            else
-            {
+            else {
                 ((Model) data.get(2)).setMessage((String) data.get(3));
             }
         }
@@ -2004,23 +1896,19 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     private SystemTreeItemModel systemTreeSelectedItem;
 
     @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem()
-    {
+    public SystemTreeItemModel getSystemTreeSelectedItem() {
         return systemTreeSelectedItem;
     }
 
     @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value)
-    {
-        if (systemTreeSelectedItem != value)
-        {
+    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
+        if (systemTreeSelectedItem != value) {
             systemTreeSelectedItem = value;
             onSystemTreeSelectedItemChanged();
         }
     }
 
-    private void onSystemTreeSelectedItemChanged()
-    {
+    private void onSystemTreeSelectedItemChanged() {
         updateActionAvailability();
     }
 

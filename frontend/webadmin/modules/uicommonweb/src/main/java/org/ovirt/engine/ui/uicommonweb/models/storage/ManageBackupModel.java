@@ -11,8 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public abstract class ManageBackupModel<T extends BusinessEntity<?>> extends SearchableListModel<StorageDomain, T>
-{
+public abstract class ManageBackupModel<T extends BusinessEntity<?>> extends SearchableListModel<StorageDomain, T> {
 
     private UICommand restoreCommand;
     private UICommand removeCommand;

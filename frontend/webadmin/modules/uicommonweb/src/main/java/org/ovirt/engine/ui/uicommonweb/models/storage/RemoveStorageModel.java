@@ -8,35 +8,29 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
 @SuppressWarnings("unused")
-public class RemoveStorageModel extends Model
-{
+public class RemoveStorageModel extends Model {
 
     private ListModel<VDS> privateHostList;
 
-    public ListModel<VDS> getHostList()
-    {
+    public ListModel<VDS> getHostList() {
         return privateHostList;
     }
 
-    private void setHostList(ListModel<VDS> value)
-    {
+    private void setHostList(ListModel<VDS> value) {
         privateHostList = value;
     }
 
     private EntityModel<Boolean> privateFormat;
 
-    public EntityModel<Boolean> getFormat()
-    {
+    public EntityModel<Boolean> getFormat() {
         return privateFormat;
     }
 
-    private void setFormat(EntityModel<Boolean> value)
-    {
+    private void setFormat(EntityModel<Boolean> value) {
         privateFormat = value;
     }
 
-    public RemoveStorageModel()
-    {
+    public RemoveStorageModel() {
         setHostList(new ListModel<VDS>());
 
         setFormat(new EntityModel<Boolean>());
@@ -45,8 +39,7 @@ public class RemoveStorageModel extends Model
     }
 
     @Override
-    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args)
-    {
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
         if (sender == getFormat()) {
@@ -58,8 +51,7 @@ public class RemoveStorageModel extends Model
         getHostList().setIsChangeable(!getFormat().getIsAvailable() || Boolean.TRUE.equals(getFormat().getEntity()));
     }
 
-    public boolean validate()
-    {
+    public boolean validate() {
         getHostList().setIsValid(getHostList().getSelectedItem() != null);
 
         return getHostList().getIsValid();

@@ -62,46 +62,39 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import com.google.inject.Inject;
 
-public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> implements ISupportSystemTreeContext
-{
+public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> implements ISupportSystemTreeContext {
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private UICommand privateNewCommand;
 
     private VmPool privateCurrentPool;
 
-    public UICommand getNewCommand()
-    {
+    public UICommand getNewCommand() {
         return privateNewCommand;
     }
 
-    private void setNewCommand(UICommand value)
-    {
+    private void setNewCommand(UICommand value) {
         privateNewCommand = value;
     }
 
     private UICommand privateEditCommand;
 
     @Override
-    public UICommand getEditCommand()
-    {
+    public UICommand getEditCommand() {
         return privateEditCommand;
     }
 
-    private void setEditCommand(UICommand value)
-    {
+    private void setEditCommand(UICommand value) {
         privateEditCommand = value;
     }
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
@@ -117,17 +110,13 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         systemTreeSelectedItem = value;
     }
 
-    protected Object[] getSelectedKeys()
-    {
-        if (getSelectedItems() == null)
-        {
+    protected Object[] getSelectedKeys() {
+        if (getSelectedItems() == null) {
             return new Object[0];
         }
-        else
-        {
+        else {
             Object[] keys = new Object[getSelectedItems().size()];
-            for (int i = 0; i < getSelectedItems().size(); i++)
-            {
+            for (int i = 0; i < getSelectedItems().size(); i++) {
                 keys[i] = getSelectedItems().get(i).getVmPoolId();
             }
             return keys;
@@ -166,14 +155,12 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
     }
 
     @Override
-    public boolean isSearchStringMatch(String searchString)
-    {
+    public boolean isSearchStringMatch(String searchString) {
         return searchString.trim().toLowerCase().startsWith("pool"); //$NON-NLS-1$
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.VmPools, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(VdcQueryType.Search, tempVar);
@@ -184,10 +171,8 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         return true;
     }
 
-    public void newEntity()
-    {
-        if (getWindow() != null)
-        {
+    public void newEntity() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -212,12 +197,10 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
     }
 
-    public void edit()
-    {
+    public void edit() {
         final VmPool pool = getSelectedItem();
 
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -237,10 +220,8 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
                             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                                 final PoolModel model = behavior.getModel();
 
-                                for (EntityModel<VmPoolType> item : model.getPoolType().getItems())
-                                {
-                                    if (item.getEntity() == pool.getVmPoolType())
-                                    {
+                                for (EntityModel<VmPoolType> item : model.getPoolType().getItems()) {
+                                    if (item.getEntity() == pool.getVmPoolType()) {
                                         model.getPoolType().setSelectedItem(item);
                                         break;
                                     }
@@ -257,8 +238,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
                                     cdImage = vm.getIsoPath();
                                     model.getVmType().setSelectedItem(vm.getVmType());
                                 }
-                                else
-                                {
+                                else {
                                     model.getDataCenterWithClustersList()
                                             .setSelectedItem(Linq.firstOrDefault(model.getDataCenterWithClustersList().getItems()));
                                 }
@@ -322,10 +302,8 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         throw new IllegalArgumentException("Expected ArrayList of storage_pools or a storage_pool. Given " + returnValue.getClass().getName()); //$NON-NLS-1$
     }
 
-    public void remove()
-    {
-        if (getWindow() != null)
-        {
+    public void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -336,8 +314,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         model.setHashName("remove_pool"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<String>();
-        for (VmPool item : Linq.<VmPool> cast(getSelectedItems()))
-        {
+        for (VmPool item : Linq.<VmPool> cast(getSelectedItems())) {
             list.add(item.getName());
         }
         model.setItems(list);
@@ -348,18 +325,15 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         model.getCommands().add(tempVar2);
     }
 
-    public void onRemove()
-    {
+    public void onRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VmPool pool = (VmPool) item;
             list.add(new VmPoolParametersBase(pool.getVmPoolId()));
         }
@@ -379,23 +353,19 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
                 }, model);
     }
 
-    public void onSave()
-    {
+    public void onSave() {
         final PoolModel model = (PoolModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
-        if (!model.getIsNew() && getSelectedItem() == null)
-        {
+        if (!model.getIsNew() && getSelectedItem() == null) {
             cancel();
             return;
         }
 
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
 
@@ -507,8 +477,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
 
         model.startProgress(null);
 
-        if (model.getIsNew())
-        {
+        if (model.getIsNew()) {
             if (model.getIcon().getEntity().isCustom()) {
                 param.setVmLargeIcon(model.getIcon().getEntity().getIcon());
             }
@@ -523,8 +492,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
                     },
                     this);
         }
-        else
-        {
+        else {
             Frontend.getInstance().runMultipleAction(VdcActionType.UpdateVmPoolWithVms,
                     new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { param })),
                     new IFrontendMultipleActionAsyncCallback() {
@@ -552,34 +520,29 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         return vm;
     }
 
-    public void cancel()
-    {
+    public void cancel() {
         setWindow(null);
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.selectedItemPropertyChanged(sender, e);
         updateActionAvailability();
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         getEditCommand().setIsExecutionAllowed(getSelectedItem() != null && getSelectedItems() != null
                 && getSelectedItems().size() == 1 && hasVms(getSelectedItem()));
 
@@ -594,41 +557,32 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getNewCommand())
-        {
+        if (command == getNewCommand()) {
             newEntity();
         }
-        if (command == getEditCommand())
-        {
+        if (command == getEditCommand()) {
             edit();
         }
-        if (command == getRemoveCommand())
-        {
+        if (command == getRemoveCommand()) {
             remove();
         }
-        if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
-        if ("OnSave".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
         }
-        if ("OnSave_Phase2".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("OnSave_Phase2".equals(command.getName())) { //$NON-NLS-1$
             savePoolPostValidation();
             setConfirmWindow(null);
         }
-        if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
-        if ("CancelConfirmation".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("CancelConfirmation".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirmation();
         }
     }
@@ -646,8 +600,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         this.privateCurrentPool = privateCurrentPool;
     }
 
-    private void cancelConfirmation()
-    {
+    private void cancelConfirmation() {
         setConfirmWindow(null);
     }
 }

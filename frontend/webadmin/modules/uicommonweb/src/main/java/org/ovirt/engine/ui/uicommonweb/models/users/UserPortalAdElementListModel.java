@@ -51,10 +51,8 @@ public class UserPortalAdElementListModel extends AdElementListModel {
         Iterable<DbGroup> filteredGroups = Linq.where((ArrayList<DbGroup>) returnValue.getReturnValue(),
                 new Linq.DbGroupPredicate(getTargetDbGroup()));
 
-        for (DbGroup group : filteredGroups)
-        {
-            if (!excludeUsers.contains(group.getId().toString()))
-            {
+        for (DbGroup group : filteredGroups) {
+            if (!excludeUsers.contains(group.getId().toString())) {
                 DbUser dbUser = new DbUser();
                 dbUser.setExternalId(group.getExternalId());
                 dbUser.setFirstName(group.getName());

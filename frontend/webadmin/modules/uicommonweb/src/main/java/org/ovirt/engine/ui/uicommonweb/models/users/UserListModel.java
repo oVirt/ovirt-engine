@@ -44,51 +44,41 @@ import com.google.inject.Inject;
 public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
     private UICommand privateAddCommand;
 
-    public UICommand getAddCommand()
-    {
+    public UICommand getAddCommand() {
         return privateAddCommand;
     }
 
-    private void setAddCommand(UICommand value)
-    {
+    private void setAddCommand(UICommand value) {
         privateAddCommand = value;
     }
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
     private UICommand privateAssignTagsCommand;
 
-    public UICommand getAssignTagsCommand()
-    {
+    public UICommand getAssignTagsCommand() {
         return privateAssignTagsCommand;
     }
 
-    private void setAssignTagsCommand(UICommand value)
-    {
+    private void setAssignTagsCommand(UICommand value) {
         privateAssignTagsCommand = value;
     }
 
-    protected Object[] getSelectedKeys()
-    {
-        if (getSelectedItems() == null)
-        {
+    protected Object[] getSelectedKeys() {
+        if (getSelectedItems() == null) {
             return new Object[0];
         }
-        else
-        {
+        else {
             ArrayList<Object> items = new ArrayList<Object>();
-            for (Object i : getSelectedItems())
-            {
+            for (Object i : getSelectedItems()) {
                 items.add(((VDSGroup) i).getId());
             }
             return items.toArray(new Object[] {});
@@ -134,10 +124,8 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
         setDetailModels(list);
     }
 
-    public void assignTags()
-    {
-        if (getWindow() != null)
-        {
+    public void assignTags() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -159,8 +147,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
     public ArrayList<Tags> allAttachedTags;
     public int selectedItemsCounter;
 
-    private void getAttachedTagsToSelectedUsers(TagListModel model)
-    {
+    private void getAttachedTagsToSelectedUsers(TagListModel model) {
         ArrayList<Guid> userIds = new ArrayList<Guid>();
         ArrayList<Guid> grpIds = new ArrayList<Guid>();
 
@@ -168,21 +155,17 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
         allAttachedTags = new ArrayList<Tags>();
         selectedItemsCounter = 0;
 
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             DbUser user = (DbUser) item;
-            if (!user.isGroup())
-            {
+            if (!user.isGroup()) {
                 userIds.add(user.getId());
             }
-            else
-            {
+            else {
                 grpIds.add(user.getId());
             }
         }
 
-        for (Guid userId : userIds)
-        {
+        for (Guid userId : userIds) {
             AsyncDataProvider.getInstance().getAttachedTagsToUser(new AsyncQuery(new Object[] { this, model },
                     new INewAsyncCallback() {
                         @Override
@@ -193,8 +176,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
                             TagListModel tagListModel = (TagListModel) array[1];
                             userListModel.allAttachedTags.addAll((ArrayList<Tags>) returnValue);
                             userListModel.selectedItemsCounter++;
-                            if (userListModel.selectedItemsCounter == userListModel.getSelectedItems().size())
-                            {
+                            if (userListModel.selectedItemsCounter == userListModel.getSelectedItems().size()) {
                                 postGetAttachedTags(userListModel, tagListModel);
                             }
 
@@ -202,8 +184,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
                     }),
                     userId);
         }
-        for (Guid grpId : grpIds)
-        {
+        for (Guid grpId : grpIds) {
             AsyncDataProvider.getInstance().getAttachedTagsToUserGroup(new AsyncQuery(new Object[] { this, model },
                     new INewAsyncCallback() {
                         @Override
@@ -214,8 +195,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
                             TagListModel tagListModel = (TagListModel) array[1];
                             userListModel.allAttachedTags.addAll((ArrayList<Tags>) returnValue);
                             userListModel.selectedItemsCounter++;
-                            if (userListModel.selectedItemsCounter == userListModel.getSelectedItems().size())
-                            {
+                            if (userListModel.selectedItemsCounter == userListModel.getSelectedItems().size()) {
                                 postGetAttachedTags(userListModel, tagListModel);
                             }
 
@@ -225,19 +205,14 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
         }
     }
 
-    private void postGetAttachedTags(UserListModel userListModel, TagListModel tagListModel)
-    {
-        if (userListModel.getLastExecutedCommand() == getAssignTagsCommand())
-        {
+    private void postGetAttachedTags(UserListModel userListModel, TagListModel tagListModel) {
+        if (userListModel.getLastExecutedCommand() == getAssignTagsCommand()) {
             ArrayList<Tags> attachedTags =
                     Linq.distinct(userListModel.allAttachedTags, new TagsEqualityComparer());
-            for (Tags a : attachedTags)
-            {
+            for (Tags a : attachedTags) {
                 int count = 0;
-                for (Tags b : allAttachedTags)
-                {
-                    if (b.gettag_id().equals(a.gettag_id()))
-                    {
+                for (Tags b : allAttachedTags) {
+                    if (b.gettag_id().equals(a.gettag_id())) {
                         count++;
                     }
                 }
@@ -247,34 +222,28 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
             }
             tagListModel.setAttachedTagsToEntities(userListModel.attachedTagsToEntities);
         }
-        else if ("OnAssignTags".equals(userListModel.getLastExecutedCommand().getName())) //$NON-NLS-1$
-        {
+        else if ("OnAssignTags".equals(userListModel.getLastExecutedCommand().getName())) { //$NON-NLS-1$
             userListModel.postOnAssignTags(tagListModel.getAttachedTagsToEntities());
         }
     }
 
-    private void onAssignTags()
-    {
+    private void onAssignTags() {
         TagListModel model = (TagListModel) getWindow();
 
         getAttachedTagsToSelectedUsers(model);
     }
 
-    public void postOnAssignTags(Map<Guid, Boolean> attachedTags)
-    {
+    public void postOnAssignTags(Map<Guid, Boolean> attachedTags) {
         TagListModel model = (TagListModel) getWindow();
         ArrayList<Guid> userIds = new ArrayList<Guid>();
         ArrayList<Guid> grpIds = new ArrayList<Guid>();
 
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             DbUser user = (DbUser) item;
-            if (user.isGroup())
-            {
+            if (user.isGroup()) {
                 grpIds.add(user.getId());
             }
-            else
-            {
+            else {
                 userIds.add(user.getId());
             }
         }
@@ -283,8 +252,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
         ArrayList<Guid> tagsToAttach = new ArrayList<Guid>();
         ArrayList<Guid> tagsToDetach = new ArrayList<Guid>();
 
-        if (model.getItems() != null && ((ArrayList<TagModel>) model.getItems()).size() > 0)
-        {
+        if (model.getItems() != null && ((ArrayList<TagModel>) model.getItems()).size() > 0) {
             ArrayList<TagModel> tags = (ArrayList<TagModel>) model.getItems();
             TagModel rootTag = tags.get(0);
             TagModel.recursiveEditAttachDetachLists(rootTag, attachedTags, tagsToAttach, tagsToDetach);
@@ -292,55 +260,43 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
 
         ArrayList<VdcActionParametersBase> usersToAttach = new ArrayList<VdcActionParametersBase>();
         ArrayList<VdcActionParametersBase> grpsToAttach = new ArrayList<VdcActionParametersBase>();
-        for (Guid tag_id : tagsToAttach)
-        {
-            if (userIds.size() > 0)
-            {
+        for (Guid tag_id : tagsToAttach) {
+            if (userIds.size() > 0) {
                 usersToAttach.add(new AttachEntityToTagParameters(tag_id, userIds));
             }
-            if (grpIds.size() > 0)
-            {
+            if (grpIds.size() > 0) {
                 grpsToAttach.add(new AttachEntityToTagParameters(tag_id, grpIds));
             }
         }
-        if (usersToAttach.size() > 0)
-        {
+        if (usersToAttach.size() > 0) {
             Frontend.getInstance().runMultipleAction(VdcActionType.AttachUserToTag, usersToAttach);
         }
-        if (grpsToAttach.size() > 0)
-        {
+        if (grpsToAttach.size() > 0) {
             Frontend.getInstance().runMultipleAction(VdcActionType.AttachUserGroupToTag, grpsToAttach);
         }
 
         ArrayList<VdcActionParametersBase> usersToDetach = new ArrayList<VdcActionParametersBase>();
         ArrayList<VdcActionParametersBase> grpsToDetach = new ArrayList<VdcActionParametersBase>();
-        for (Guid tag_id : tagsToDetach)
-        {
-            if (userIds.size() > 0)
-            {
+        for (Guid tag_id : tagsToDetach) {
+            if (userIds.size() > 0) {
                 usersToDetach.add(new AttachEntityToTagParameters(tag_id, userIds));
             }
-            if (grpIds.size() > 0)
-            {
+            if (grpIds.size() > 0) {
                 grpsToDetach.add(new AttachEntityToTagParameters(tag_id, grpIds));
             }
         }
-        if (usersToDetach.size() > 0)
-        {
+        if (usersToDetach.size() > 0) {
             Frontend.getInstance().runMultipleAction(VdcActionType.DetachUserFromTag, usersToDetach);
         }
-        if (grpsToDetach.size() > 0)
-        {
+        if (grpsToDetach.size() > 0) {
             Frontend.getInstance().runMultipleAction(VdcActionType.DetachUserGroupFromTag, grpsToDetach);
         }
 
         cancel();
     }
 
-    public void add()
-    {
-        if (getWindow() != null)
-        {
+    public void add() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -358,10 +314,8 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
         model.getCommands().add(tempVar2);
     }
 
-    public void remove()
-    {
-        if (getWindow() != null)
-        {
+    public void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -372,8 +326,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
         model.setHashName("remove_user"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<String>();
-        for (DbUser item : Linq.<DbUser> cast(getSelectedItems()))
-        {
+        for (DbUser item : Linq.<DbUser> cast(getSelectedItems())) {
             list.add(item.getFirstName());
         }
         model.setItems(list);
@@ -385,14 +338,12 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
     }
 
     @Override
-    public boolean isSearchStringMatch(String searchString)
-    {
+    public boolean isSearchStringMatch(String searchString) {
         return searchString.trim().toLowerCase().startsWith("user"); //$NON-NLS-1$
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.DBUser,
                 isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
@@ -408,42 +359,34 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
     private final UserEventNotifierListModel userEventNotifierListModel;
 
     @Override
-    protected void updateDetailsAvailability()
-    {
-        if (getSelectedItem() != null)
-        {
+    protected void updateDetailsAvailability() {
+        if (getSelectedItem() != null) {
             DbUser adUser = (DbUser) getSelectedItem();
             userGroupListModel.setIsAvailable(!adUser.isGroup());
             userEventNotifierListModel.setIsAvailable(!adUser.isGroup());
         }
     }
 
-    public void cancel()
-    {
+    public void cancel() {
         setWindow(null);
     }
 
-    public void onAdd()
-    {
+    public void onAdd() {
         AdElementListModel model = (AdElementListModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
-        if (model.getSelectedItems() == null)
-        {
+        if (model.getSelectedItems() == null) {
             cancel();
             return;
         }
 
         ArrayList<DbUser> items = new ArrayList<DbUser>();
-        for (Object item : model.getItems())
-        {
+        for (Object item : model.getItems()) {
             EntityModel entityModel = (EntityModel) item;
-            if (entityModel.getIsSelected())
-            {
+            if (entityModel.getIsSelected()) {
                 items.add((DbUser) entityModel.getEntity());
             }
         }
@@ -451,10 +394,8 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
         ArrayList<VdcActionType> actionsList = new ArrayList<VdcActionType>(items.size());
         ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>(items.size());
         VdcActionParametersBase parameters = null;
-        for (DbUser item : items)
-        {
-            if (item.isGroup())
-            {
+        for (DbUser item : items) {
+            if (item.isGroup()) {
                 actionsList.add(VdcActionType.AddGroup);
                 DbGroup grp = new DbGroup();
                 grp.setExternalId(item.getExternalId());
@@ -464,8 +405,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
                 grp.setDomain(item.getDomain());
                 parameters = new AddGroupParameters(grp);
             }
-            else
-            {
+            else {
                 actionsList.add(VdcActionType.AddUser);
                 parameters = new AddUserParameters(item);
             }
@@ -499,32 +439,26 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
         Frontend.getInstance().runMultipleActions(actionsList, parametersList, callbacksList, lastCallback, model);
     }
 
-    public void onRemove()
-    {
+    public void onRemove() {
         ArrayList<DbUser> items = Linq.<DbUser> cast(getSelectedItems());
 
         ArrayList<VdcActionParametersBase> userPrms = new ArrayList<VdcActionParametersBase>();
         ArrayList<VdcActionParametersBase> groupPrms = new ArrayList<VdcActionParametersBase>();
-        for (DbUser item : items)
-        {
-            if (!item.isGroup())
-            {
+        for (DbUser item : items) {
+            if (!item.isGroup()) {
                 userPrms.add(new IdParameters(item.getId()));
             }
-            else
-            {
+            else {
                 groupPrms.add(new IdParameters(item.getId()));
             }
         }
 
-        if (userPrms.size() > 0)
-        {
+        if (userPrms.size() > 0) {
             Frontend.getInstance().runMultipleAction(VdcActionType.RemoveUser, userPrms);
 
         }
 
-        if (groupPrms.size() > 0)
-        {
+        if (groupPrms.size() > 0) {
             Frontend.getInstance().runMultipleAction(VdcActionType.RemoveGroup, groupPrms);
         }
 
@@ -532,21 +466,18 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         ArrayList items =
                 (((ArrayList) getSelectedItems()) != null) ? (ArrayList) getSelectedItems()
                         : new ArrayList();
@@ -558,38 +489,30 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getAddCommand())
-        {
+        if (command == getAddCommand()) {
             add();
         }
-        if (command == getRemoveCommand())
-        {
+        if (command == getRemoveCommand()) {
             remove();
         }
-        if (command == getAssignTagsCommand())
-        {
+        if (command == getAssignTagsCommand()) {
             assignTags();
         }
 
-        if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
-        if ("OnAssignTags".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("OnAssignTags".equals(command.getName())) { //$NON-NLS-1$
             onAssignTags();
         }
-        if ("OnAdd".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("OnAdd".equals(command.getName())) { //$NON-NLS-1$
             onAdd();
         }
 
-        if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
     }

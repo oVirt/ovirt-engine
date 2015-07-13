@@ -61,71 +61,59 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.inject.Inject;
 
-public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> implements ISupportSystemTreeContext
-{
+public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> implements ISupportSystemTreeContext {
 
     private UICommand privateEditCommand;
 
     @Override
-    public UICommand getEditCommand()
-    {
+    public UICommand getEditCommand() {
         return privateEditCommand;
     }
 
-    private void setEditCommand(UICommand value)
-    {
+    private void setEditCommand(UICommand value) {
         privateEditCommand = value;
     }
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
     private UICommand privateExportCommand;
 
-    public UICommand getExportCommand()
-    {
+    public UICommand getExportCommand() {
         return privateExportCommand;
     }
 
-    private void setExportCommand(UICommand value)
-    {
+    private void setExportCommand(UICommand value) {
         privateExportCommand = value;
     }
 
     private UICommand privateCreateVmfromTemplateCommand;
 
-    public UICommand getCreateVmFromTemplateCommand()
-    {
+    public UICommand getCreateVmFromTemplateCommand() {
         return privateCreateVmfromTemplateCommand;
     }
 
-    private void setCreateVmFromTemplateCommand(UICommand value)
-    {
+    private void setCreateVmFromTemplateCommand(UICommand value) {
         privateCreateVmfromTemplateCommand = value;
     }
 
     private SystemTreeItemModel systemTreeSelectedItem;
 
     @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem()
-    {
+    public SystemTreeItemModel getSystemTreeSelectedItem() {
         return systemTreeSelectedItem;
     }
 
     @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value)
-    {
-        if (systemTreeSelectedItem != value)
-        {
+    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
+        if (systemTreeSelectedItem != value) {
             systemTreeSelectedItem = value;
         }
     }
@@ -212,18 +200,14 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
     }
 
     @Override
-    protected boolean entitiesSelectedOnDifferentDataCenters()
-    {
+    protected boolean entitiesSelectedOnDifferentDataCenters() {
         ArrayList<VmTemplate> templates = Linq.<VmTemplate> cast(getSelectedItems());
 
         Map<Guid, ArrayList<VmTemplate>> t =
                 new HashMap<Guid, ArrayList<VmTemplate>>();
-        for (VmTemplate a : templates)
-        {
-            if (!a.getId().equals(Guid.Empty))
-            {
-                if (!t.containsKey(a.getStoragePoolId()))
-                {
+        for (VmTemplate a : templates) {
+            if (!a.getId().equals(Guid.Empty)) {
+                if (!t.containsKey(a.getStoragePoolId())) {
                     t.put(a.getStoragePoolId(), new ArrayList<VmTemplate>());
                 }
 
@@ -252,17 +236,14 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         return ((Map<VmTemplate, ?>) returnValue).keySet();
     }
 
-    private void onExport()
-    {
+    private void onExport() {
         ExportVmModel model = (ExportVmModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
 
@@ -271,8 +252,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         getTemplatesNotPresentOnExportDomain();
     }
 
-    private void getTemplatesNotPresentOnExportDomain()
-    {
+    private void getTemplatesNotPresentOnExportDomain() {
         ExportVmModel model = (ExportVmModel) getWindow();
         Guid storageDomainId = model.getStorage().getSelectedItem().getId();
 
@@ -290,13 +270,11 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
                 }), storageDomainId);
     }
 
-    private void postGetTemplatesNotPresentOnExportDomain(StoragePool storagePool)
-    {
+    private void postGetTemplatesNotPresentOnExportDomain(StoragePool storagePool) {
         ExportVmModel model = (ExportVmModel) getWindow();
         Guid storageDomainId = model.getStorage().getSelectedItem().getId();
 
-        if (storagePool != null)
-        {
+        if (storagePool != null) {
             AsyncDataProvider.getInstance().getAllTemplatesFromExportDomain(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
@@ -333,12 +311,10 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         }
     }
 
-    private void postExportGetMissingTemplates(ArrayList<String> missingTemplatesFromVms)
-    {
+    private void postExportGetMissingTemplates(ArrayList<String> missingTemplatesFromVms) {
         ExportVmModel model = (ExportVmModel) getWindow();
 
-        if (!missingTemplatesFromVms.isEmpty())
-        {
+        if (!missingTemplatesFromVms.isEmpty()) {
             model.stopProgress();
 
             ConfirmationModel confirmModel = new ConfirmationModel();
@@ -359,22 +335,18 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
             UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
             confirmModel.getCommands().add(tempVar2);
         }
-        else
-        {
+        else {
             doExport();
         }
     }
 
-    private void doExport()
-    {
+    private void doExport() {
         ExportVmModel model = (ExportVmModel) getWindow();
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VmTemplate a = (VmTemplate) item;
-            if (a.getId().equals(Guid.Empty))
-            {
+            if (a.getId().equals(Guid.Empty)) {
                 continue;
             }
             MoveOrCopyParameters tempVar =
@@ -409,14 +381,12 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
     }
 
     @Override
-    public boolean isSearchStringMatch(String searchString)
-    {
+    public boolean isSearchStringMatch(String searchString) {
         return searchString.trim().toLowerCase().startsWith("template"); //$NON-NLS-1$
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.VmTemplate, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(VdcQueryType.Search, tempVar);
@@ -462,8 +432,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         return templateIdToBaseTemplateName.get(templateId);
     }
 
-    private void edit()
-    {
+    private void edit() {
         VmTemplate template = getSelectedItem();
 
         if (getWindow() != null) {
@@ -526,10 +495,8 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         return new ExistingBlankTemplateModelBehavior(template);
     }
 
-    private void remove()
-    {
-        if (getWindow() != null)
-        {
+    private void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -541,10 +508,8 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
 
         ArrayList<String> items = new ArrayList<String>();
         ArrayList<VmTemplate> templates = Linq.<VmTemplate> cast(getSelectedItems());
-        for (VmTemplate template : templates)
-        {
-            if (!template.getId().equals(Guid.Empty))
-            {
+        for (VmTemplate template : templates) {
+            if (!template.getId().equals(Guid.Empty)) {
                 items.add(template.getName());
             }
         }
@@ -557,18 +522,15 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         model.getCommands().add(tempVar2);
     }
 
-    private void onRemove()
-    {
+    private void onRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VmTemplate a = (VmTemplate) item;
             list.add(new VmTemplateParametersBase(a.getId()));
         }
@@ -588,12 +550,10 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
                 }, model);
     }
 
-    private void onSave()
-    {
+    private void onSave() {
         final UnitVmModel model = (UnitVmModel) getWindow();
 
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
 
@@ -675,12 +635,10 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         validateVm(model, name);
     }
 
-    public void postNameUniqueCheck()
-    {
+    public void postNameUniqueCheck() {
         final UnitVmModel model = (UnitVmModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
@@ -751,21 +709,18 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         parameters.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
     }
 
-    public void postUpdateVmTemplate(VdcReturnValueBase returnValue)
-    {
+    public void postUpdateVmTemplate(VdcReturnValueBase returnValue) {
         UnitVmModel model = (UnitVmModel) getWindow();
 
         model.stopProgress();
 
-        if (returnValue != null && returnValue.getSucceeded())
-        {
+        if (returnValue != null && returnValue.getSucceeded()) {
             cancel();
         }
     }
 
     @Override
-    protected void cancel()
-    {
+    protected void cancel() {
         cancelConfirmation();
 
         setWindow(null);
@@ -773,45 +728,36 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         updateActionsAvailability();
     }
 
-    private void cancelConfirmation()
-    {
+    private void cancelConfirmation() {
         setConfirmWindow(null);
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionsAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionsAvailability();
     }
 
     @Override
-    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.selectedItemPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("status")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("status")) { //$NON-NLS-1$
             updateActionsAvailability();
         }
     }
 
-    private boolean selectedItemsContainBlankTemplate()
-    {
-        if (getSelectedItems() != null)
-        {
+    private boolean selectedItemsContainBlankTemplate() {
+        if (getSelectedItems() != null) {
             ArrayList<VmTemplate> templates = Linq.<VmTemplate> cast(getSelectedItems());
-            for (VmTemplate template : templates)
-            {
-                if (template != null && template.getId().equals(Guid.Empty))
-                {
+            for (VmTemplate template : templates) {
+                if (template != null && template.getId().equals(Guid.Empty)) {
                     return true;
                 }
             }
@@ -821,8 +767,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
     }
 
     @Override
-    protected void updateActionsAvailability()
-    {
+    protected void updateActionsAvailability() {
         VmTemplate item = getSelectedItem();
         ArrayList items =
                 ((getSelectedItems()) != null) ? (ArrayList) getSelectedItems()
@@ -835,8 +780,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
 
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.canExecute(items, VmTemplate.class, VdcActionType.RemoveVmTemplate));
-        if (getRemoveCommand().getIsExecutionAllowed() && blankSelected)
-        {
+        if (getRemoveCommand().getIsExecutionAllowed() && blankSelected) {
             getRemoveCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
                     .getConstants()
                     .blankTemplateCannotBeRemoved());
@@ -846,8 +790,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         getExportCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.canExecute(items, VmTemplate.class, VdcActionType.ExportVmTemplate));
 
-        if (getExportCommand().getIsExecutionAllowed() && blankSelected)
-        {
+        if (getExportCommand().getIsExecutionAllowed() && blankSelected) {
             getExportCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
                     .getConstants()
                     .blankTemplateCannotBeExported());
@@ -886,56 +829,44 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getEditCommand())
-        {
+        if (command == getEditCommand()) {
             edit();
         }
-        else if (command == getRemoveCommand())
-        {
+        else if (command == getRemoveCommand()) {
             remove();
         }
-        else if (command == getExportCommand())
-        {
+        else if (command == getExportCommand()) {
             export();
         }
-        else if (command == getCreateVmFromTemplateCommand())
-        {
+        else if (command == getCreateVmFromTemplateCommand()) {
             createVMFromTemplate();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
-        else if ("OnExport".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnExport".equals(command.getName())) { //$NON-NLS-1$
             onExport();
         }
-        else if ("OnSave".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
         }
-        else if ("OnSaveVm".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnSaveVm".equals(command.getName())) { //$NON-NLS-1$
             onSaveVm();
         }
         else if ("postNameUniqueCheck".equals(command.getName())) { //$NON-NLS-1$
             postNameUniqueCheck();
             setConfirmWindow(null);
         }
-        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
-        else if ("OnExportNoTemplates".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnExportNoTemplates".equals(command.getName())) { //$NON-NLS-1$
             doExport();
         }
-        else if ("CancelConfirmation".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("CancelConfirmation".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirmation();
         }
     }

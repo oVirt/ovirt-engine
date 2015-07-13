@@ -11,37 +11,30 @@ public class QuotaEventListModel extends SubTabEventListModel<Quota> {
     }
 
     @Override
-    protected void onEntityContentChanged()
-    {
+    protected void onEntityContentChanged() {
         super.onEntityContentChanged();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             getSearchCommand().execute();
         }
-        else
-        {
+        else {
             setItems(null);
         }
     }
 
     @Override
-    public void search()
-    {
-        if (getEntity() != null)
-        {
+    public void search() {
+        if (getEntity() != null) {
             setSearchString("Events: quota=" + getEntity().getQuotaName()); //$NON-NLS-1$
             super.search();
         }
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("name")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("name")) { //$NON-NLS-1$
             getSearchCommand().execute();
         }
     }

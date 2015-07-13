@@ -38,8 +38,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
-public class DisksAllocationModel extends EntityModel
-{
+public class DisksAllocationModel extends EntityModel {
     protected static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     protected static final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
@@ -54,13 +53,11 @@ public class DisksAllocationModel extends EntityModel
 
     private List<DiskModel> disks;
 
-    public List<DiskModel> getDisks()
-    {
+    public List<DiskModel> getDisks() {
         return disks;
     }
 
-    public void setDisks(List<DiskModel> value)
-    {
+    public void setDisks(List<DiskModel> value) {
         disks = value;
 
         if (disks == null) {
@@ -96,26 +93,22 @@ public class DisksAllocationModel extends EntityModel
 
     private HashMap<Guid, DiskImage> imageToDestinationDomainMap;
 
-    public HashMap<Guid, DiskImage> getImageToDestinationDomainMap()
-    {
+    public HashMap<Guid, DiskImage> getImageToDestinationDomainMap() {
         updateImageToDestinationDomainMap();
         return imageToDestinationDomainMap;
     }
 
-    public void setImageToDestinationDomainMap(HashMap<Guid, DiskImage> imageToDestinationDomainMap)
-    {
+    public void setImageToDestinationDomainMap(HashMap<Guid, DiskImage> imageToDestinationDomainMap) {
         this.imageToDestinationDomainMap = imageToDestinationDomainMap;
     }
 
     private ArrayList<StorageDomain> activeStorageDomains;
 
-    public ArrayList<StorageDomain> getActiveStorageDomains()
-    {
+    public ArrayList<StorageDomain> getActiveStorageDomains() {
         return activeStorageDomains;
     }
 
-    public void setActiveStorageDomains(ArrayList<StorageDomain> activeStorageDomains)
-    {
+    public void setActiveStorageDomains(ArrayList<StorageDomain> activeStorageDomains) {
         this.activeStorageDomains = activeStorageDomains;
     }
 
@@ -138,8 +131,7 @@ public class DisksAllocationModel extends EntityModel
     private boolean isSourceStorageDomainNameAvailable;
     private boolean isWarningAvailable;
 
-    public DisksAllocationModel()
-    {
+    public DisksAllocationModel() {
         setImageToDestinationDomainMap(new HashMap<Guid, DiskImage>());
 
         setDynamicWarning(new EntityModel<String>());
@@ -240,18 +232,15 @@ public class DisksAllocationModel extends EntityModel
     }
 
     @Override
-    protected void onPropertyChanged(PropertyChangedEventArgs e)
-    {
+    protected void onPropertyChanged(PropertyChangedEventArgs e) {
         super.onPropertyChanged(e);
-        if (e.propertyName.equals("Disks") || e.propertyName.equals(VOLUME_TYPE)) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("Disks") || e.propertyName.equals(VOLUME_TYPE)) { //$NON-NLS-1$
             updateStorageDomainsAvailability();
             updateQuotaAvailability();
         }
     }
 
-    private void updateStorageDomainsAvailability()
-    {
+    private void updateStorageDomainsAvailability() {
         if (disks == null) {
             return;
         }
@@ -321,8 +310,7 @@ public class DisksAllocationModel extends EntityModel
     }
 
     @Override
-    public void validateEntity(IValidation[] validations)
-    {
+    public void validateEntity(IValidation[] validations) {
         super.validateEntity(validations);
 
         if (getDisks() == null) {
@@ -393,13 +381,11 @@ public class DisksAllocationModel extends EntityModel
 
     private EntityModel<String> dynamicWarning;
 
-    public EntityModel<String> getDynamicWarning()
-    {
+    public EntityModel<String> getDynamicWarning() {
         return dynamicWarning;
     }
 
-    public void setDynamicWarning(EntityModel<String> value)
-    {
+    public void setDynamicWarning(EntityModel<String> value) {
         dynamicWarning = value;
     }
 

@@ -9,8 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class NetworkGeneralModel extends EntityModel<NetworkView>
-{
+public class NetworkGeneralModel extends EntityModel<NetworkView> {
     private String name;
     private Boolean vmNetwork;
     private Integer vlan;
@@ -29,8 +28,7 @@ public class NetworkGeneralModel extends EntityModel<NetworkView>
     protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (super.getEntity() != null)
-        {
+        if (super.getEntity() != null) {
             updateProperties();
         }
     }
@@ -65,8 +63,7 @@ public class NetworkGeneralModel extends EntityModel<NetworkView>
     }
 
     public void setName(String value) {
-        if (!ObjectUtils.objectsEqual(name, value))
-        {
+        if (!ObjectUtils.objectsEqual(name, value)) {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
@@ -85,12 +82,10 @@ public class NetworkGeneralModel extends EntityModel<NetworkView>
     }
 
     public void setVlan(Integer value) {
-        if (vlan == null && value == null)
-        {
+        if (vlan == null && value == null) {
             return;
         }
-        if (vlan == null || !vlan.equals(value))
-        {
+        if (vlan == null || !vlan.equals(value)) {
             vlan = value;
             onPropertyChanged(new PropertyChangedEventArgs("Vlan")); //$NON-NLS-1$
         }
@@ -101,12 +96,10 @@ public class NetworkGeneralModel extends EntityModel<NetworkView>
     }
 
     public void setMtu(Integer value) {
-        if (mtu == null && value == null)
-        {
+        if (mtu == null && value == null) {
             return;
         }
-        if (mtu == null || !mtu.equals(value))
-        {
+        if (mtu == null || !mtu.equals(value)) {
             mtu = value;
             onPropertyChanged(new PropertyChangedEventArgs("Mtu")); //$NON-NLS-1$
         }
@@ -116,10 +109,8 @@ public class NetworkGeneralModel extends EntityModel<NetworkView>
         return description;
     }
 
-    public void setDescription(String value)
-    {
-        if (!ObjectUtils.objectsEqual(description, value))
-        {
+    public void setDescription(String value) {
+        if (!ObjectUtils.objectsEqual(description, value)) {
             description = value;
             onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
@@ -130,8 +121,7 @@ public class NetworkGeneralModel extends EntityModel<NetworkView>
     }
 
     public void setId(Guid value) {
-        if ((id == null && value != null) || (id != null && !id.equals(value)))
-        {
+        if ((id == null && value != null) || (id != null && !id.equals(value))) {
             id = value;
             onPropertyChanged(new PropertyChangedEventArgs("Id")); //$NON-NLS-1$
         }
@@ -142,8 +132,7 @@ public class NetworkGeneralModel extends EntityModel<NetworkView>
     }
 
     public void setExternalId(String value) {
-        if (!ObjectUtils.objectsEqual(externalId, value))
-        {
+        if (!ObjectUtils.objectsEqual(externalId, value)) {
             externalId = value;
             onPropertyChanged(new PropertyChangedEventArgs("External Id")); //$NON-NLS-1$
         }

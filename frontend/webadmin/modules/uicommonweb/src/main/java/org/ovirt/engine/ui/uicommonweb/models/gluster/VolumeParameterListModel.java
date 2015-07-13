@@ -68,8 +68,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
         return "VolumeParameterListModel"; //$NON-NLS-1$
     }
 
-    public VolumeParameterListModel()
-    {
+    public VolumeParameterListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().parameterTitle());
         setHelpTag(HelpTag.parameters);
         setHashName("parameters"); //$NON-NLS-1$
@@ -80,21 +79,18 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         getEditParameterCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1);
         getResetParameterCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1);
         getResetAllParameterCommand().setIsExecutionAllowed(getItems() != null && getItems().size() > 0);
@@ -106,8 +102,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
         }
 
         GlusterVolumeEntity volume = getEntity();
-        if (volume == null)
-        {
+        if (volume == null) {
             return;
         }
 
@@ -123,8 +118,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
         _asyncQuery.setHandleFailure(true);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 VolumeParameterListModel volumeParameterListModel = (VolumeParameterListModel) model;
                 VolumeParameterModel innerParameterModel = (VolumeParameterModel) getWindow();
 
@@ -162,8 +156,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
 
         VolumeParameterModel model = (VolumeParameterModel) getWindow();
 
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
 
@@ -186,14 +179,12 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
                 }, this);
     }
 
-    public void postOnSetParameter(VdcReturnValueBase returnValue)
-    {
+    public void postOnSetParameter(VdcReturnValueBase returnValue) {
         VolumeParameterModel model = (VolumeParameterModel) getWindow();
 
         model.stopProgress();
 
-        if (returnValue != null && returnValue.getSucceeded())
-        {
+        if (returnValue != null && returnValue.getSucceeded()) {
             cancel();
         }
     }
@@ -208,8 +199,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
         }
 
         GlusterVolumeEntity volume = getEntity();
-        if (volume == null)
-        {
+        if (volume == null) {
             return;
         }
 
@@ -229,8 +219,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
         _asyncQuery.setHandleFailure(true);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 VolumeParameterListModel volumeParameterListModel = (VolumeParameterListModel) model;
                 VolumeParameterModel innerParameterModel = (VolumeParameterModel) getWindow();
 
@@ -273,13 +262,11 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
     }
 
     private void resetParameter() {
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
-        if (getSelectedItem() == null)
-        {
+        if (getSelectedItem() == null) {
             return;
         }
         GlusterVolumeOptionEntity selectedOption = getSelectedItem();
@@ -304,13 +291,11 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
     private void onResetParameter() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
-        if (getSelectedItem() == null)
-        {
+        if (getSelectedItem() == null) {
             return;
         }
         GlusterVolumeOptionEntity selectedOption = getSelectedItem();
@@ -334,8 +319,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
     }
 
     private void resetAllParameters() {
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -355,13 +339,11 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
     private void onResetAllParameters() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
-        if (getEntity() == null)
-        {
+        if (getEntity() == null) {
             return;
         }
         GlusterVolumeEntity volume = getEntity();
@@ -391,8 +373,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         if (getEntity() == null) {
             return;
         }

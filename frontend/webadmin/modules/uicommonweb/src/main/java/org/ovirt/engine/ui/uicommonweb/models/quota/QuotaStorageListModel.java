@@ -41,8 +41,7 @@ public class QuotaStorageListModel extends SearchableListModel<Quota, Quota> {
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
         if (getEntity() == null) {
             return;

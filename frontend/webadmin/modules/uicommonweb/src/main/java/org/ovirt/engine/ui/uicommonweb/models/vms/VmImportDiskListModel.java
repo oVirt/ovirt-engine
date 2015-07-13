@@ -9,15 +9,13 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.uicommonweb.Linq.DiskByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
-public class VmImportDiskListModel extends SearchableListModel
-{
+public class VmImportDiskListModel extends SearchableListModel {
     public VmImportDiskListModel() {
         setIsTimerDisabled(true);
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         if (getEntity() != null) {
             VM vm = (VM) getEntity();
             if (vm != null && vm.getDiskMap() != null) {

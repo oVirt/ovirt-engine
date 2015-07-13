@@ -4,34 +4,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class SpiceMenuContainerItem extends SpiceMenuItem
-{
+public class SpiceMenuContainerItem extends SpiceMenuItem {
     private String privateText;
 
-    public String getText()
-    {
+    public String getText() {
         return privateText;
     }
 
-    public void setText(String value)
-    {
+    public void setText(String value) {
         privateText = value;
     }
 
     private List<SpiceMenuItem> items;
 
-    public List<SpiceMenuItem> getItems()
-    {
-        if (items == null)
-        {
+    public List<SpiceMenuItem> getItems() {
+        if (items == null) {
             items = new ArrayList<SpiceMenuItem>();
         }
 
         return items;
     }
 
-    public SpiceMenuContainerItem(int id, String text)
-    {
+    public SpiceMenuContainerItem(int id, String text) {
         setId(id);
         setText(text);
     }

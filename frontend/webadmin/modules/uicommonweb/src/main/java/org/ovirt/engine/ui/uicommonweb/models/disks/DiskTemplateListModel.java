@@ -17,32 +17,26 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class DiskTemplateListModel extends SearchableListModel<DiskImage, VmTemplate>
-{
-    public DiskTemplateListModel()
-    {
+public class DiskTemplateListModel extends SearchableListModel<DiskImage, VmTemplate> {
+    public DiskTemplateListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
         setHelpTag(HelpTag.templates);
         setHashName("templates"); //$NON-NLS-1$
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             getSearchCommand().execute();
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         DiskImage diskImage = getEntity();
-        if (diskImage == null)
-        {
+        if (diskImage == null) {
             return;
         }
 
@@ -50,8 +44,7 @@ public class DiskTemplateListModel extends SearchableListModel<DiskImage, VmTemp
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 HashMap<Boolean, VmTemplate> map = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 List<VmTemplate> templates = new ArrayList<VmTemplate>();
                 templates.add(map.get(true));
@@ -68,21 +61,18 @@ public class DiskTemplateListModel extends SearchableListModel<DiskImage, VmTemp
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
     }
 
     @Override

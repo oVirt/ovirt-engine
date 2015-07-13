@@ -231,15 +231,13 @@ public class ClusterGlusterHookListModel extends SearchableListModel<VDSGroup, G
     }
 
     private void resolveConflicts() {
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
         final GlusterHookEntity hookEntity = getSelectedItem();
 
-        if (hookEntity == null)
-        {
+        if (hookEntity == null) {
             return;
         }
 

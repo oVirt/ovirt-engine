@@ -150,73 +150,61 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     private UICommand privateEditCommand;
 
     @Override
-    public UICommand getEditCommand()
-    {
+    public UICommand getEditCommand() {
         return privateEditCommand;
     }
 
-    private void setEditCommand(UICommand value)
-    {
+    private void setEditCommand(UICommand value) {
         privateEditCommand = value;
     }
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
     private UICommand privateRunCommand;
 
-    public UICommand getRunCommand()
-    {
+    public UICommand getRunCommand() {
         return privateRunCommand;
     }
 
-    private void setRunCommand(UICommand value)
-    {
+    private void setRunCommand(UICommand value) {
         privateRunCommand = value;
     }
 
     private UICommand privatePauseCommand;
 
-    public UICommand getPauseCommand()
-    {
+    public UICommand getPauseCommand() {
         return privatePauseCommand;
     }
 
-    private void setPauseCommand(UICommand value)
-    {
+    private void setPauseCommand(UICommand value) {
         privatePauseCommand = value;
     }
 
     private UICommand privateStopCommand;
 
-    public UICommand getStopCommand()
-    {
+    public UICommand getStopCommand() {
         return privateStopCommand;
     }
 
-    private void setStopCommand(UICommand value)
-    {
+    private void setStopCommand(UICommand value) {
         privateStopCommand = value;
     }
 
     private UICommand privateShutdownCommand;
 
-    public UICommand getShutdownCommand()
-    {
+    public UICommand getShutdownCommand() {
         return privateShutdownCommand;
     }
 
-    private void setShutdownCommand(UICommand value)
-    {
+    private void setShutdownCommand(UICommand value) {
         privateShutdownCommand = value;
     }
 
@@ -242,133 +230,111 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
     private UICommand privateMigrateCommand;
 
-    public UICommand getMigrateCommand()
-    {
+    public UICommand getMigrateCommand() {
         return privateMigrateCommand;
     }
 
-    private void setMigrateCommand(UICommand value)
-    {
+    private void setMigrateCommand(UICommand value) {
         privateMigrateCommand = value;
     }
 
     private UICommand privateNewTemplateCommand;
 
-    public UICommand getNewTemplateCommand()
-    {
+    public UICommand getNewTemplateCommand() {
         return privateNewTemplateCommand;
     }
 
-    private void setNewTemplateCommand(UICommand value)
-    {
+    private void setNewTemplateCommand(UICommand value) {
         privateNewTemplateCommand = value;
     }
 
     private UICommand privateRunOnceCommand;
 
-    public UICommand getRunOnceCommand()
-    {
+    public UICommand getRunOnceCommand() {
         return privateRunOnceCommand;
     }
 
-    private void setRunOnceCommand(UICommand value)
-    {
+    private void setRunOnceCommand(UICommand value) {
         privateRunOnceCommand = value;
     }
 
     private UICommand privateExportCommand;
 
-    public UICommand getExportCommand()
-    {
+    public UICommand getExportCommand() {
         return privateExportCommand;
     }
 
-    private void setExportCommand(UICommand value)
-    {
+    private void setExportCommand(UICommand value) {
         privateExportCommand = value;
     }
 
     private UICommand privateCreateSnapshotCommand;
 
-    public UICommand getCreateSnapshotCommand()
-    {
+    public UICommand getCreateSnapshotCommand() {
         return privateCreateSnapshotCommand;
     }
 
-    private void setCreateSnapshotCommand(UICommand value)
-    {
+    private void setCreateSnapshotCommand(UICommand value) {
         privateCreateSnapshotCommand = value;
     }
 
     private UICommand privateRetrieveIsoImagesCommand;
 
-    public UICommand getRetrieveIsoImagesCommand()
-    {
+    public UICommand getRetrieveIsoImagesCommand() {
         return privateRetrieveIsoImagesCommand;
     }
 
-    private void setRetrieveIsoImagesCommand(UICommand value)
-    {
+    private void setRetrieveIsoImagesCommand(UICommand value) {
         privateRetrieveIsoImagesCommand = value;
     }
 
     private UICommand privateGuideCommand;
 
-    public UICommand getGuideCommand()
-    {
+    public UICommand getGuideCommand() {
         return privateGuideCommand;
     }
 
-    private void setGuideCommand(UICommand value)
-    {
+    private void setGuideCommand(UICommand value) {
         privateGuideCommand = value;
     }
 
     private UICommand privateChangeCdCommand;
 
-    public UICommand getChangeCdCommand()
-    {
+    public UICommand getChangeCdCommand() {
         return privateChangeCdCommand;
     }
 
-    private void setChangeCdCommand(UICommand value)
-    {
+    private void setChangeCdCommand(UICommand value) {
         privateChangeCdCommand = value;
     }
 
     private UICommand privateAssignTagsCommand;
 
-    public UICommand getAssignTagsCommand()
-    {
+    public UICommand getAssignTagsCommand() {
         return privateAssignTagsCommand;
     }
 
-    private void setAssignTagsCommand(UICommand value)
-    {
+    private void setAssignTagsCommand(UICommand value) {
         privateAssignTagsCommand = value;
     }
 
     private UICommand privateEnableGlobalHaMaintenanceCommand;
 
-    public UICommand getEnableGlobalHaMaintenanceCommand()
-    {
+    public UICommand getEnableGlobalHaMaintenanceCommand() {
         return privateEnableGlobalHaMaintenanceCommand;
     }
 
-    private void setEnableGlobalHaMaintenanceCommand(UICommand value)
-    {
+    private void setEnableGlobalHaMaintenanceCommand(UICommand value) {
         privateEnableGlobalHaMaintenanceCommand = value;
     }
 
     private UICommand privateDisableGlobalHaMaintenanceCommand;
 
-    public UICommand getDisableGlobalHaMaintenanceCommand()
-    {
+    public UICommand getDisableGlobalHaMaintenanceCommand() {
         return privateDisableGlobalHaMaintenanceCommand;
     }
 
-    private void setDisableGlobalHaMaintenanceCommand(UICommand value)
-    {
+    private void setDisableGlobalHaMaintenanceCommand(UICommand value) {
         privateDisableGlobalHaMaintenanceCommand = value;
     }
 
@@ -404,15 +370,12 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
     public ObservableCollection<ChangeCDModel> isoImages;
 
-    public ObservableCollection<ChangeCDModel> getIsoImages()
-    {
+    public ObservableCollection<ChangeCDModel> getIsoImages() {
         return isoImages;
     }
 
-    private void setIsoImages(ObservableCollection<ChangeCDModel> value)
-    {
-        if ((isoImages == null && value != null) || (isoImages != null && !isoImages.equals(value)))
-        {
+    private void setIsoImages(ObservableCollection<ChangeCDModel> value) {
+        if ((isoImages == null && value != null) || (isoImages != null && !isoImages.equals(value))) {
             isoImages = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsoImages")); //$NON-NLS-1$
         }
@@ -420,13 +383,11 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
     private Object privateGuideContext;
 
-    public Object getGuideContext()
-    {
+    public Object getGuideContext() {
         return privateGuideContext;
     }
 
-    public void setGuideContext(Object value)
-    {
+    public void setGuideContext(Object value) {
         privateGuideContext = value;
     }
 
@@ -533,10 +494,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         this.errorPopupManager = (ErrorPopupManager) TypeResolver.getInstance().resolve(ErrorPopupManager.class);
     }
 
-    private void assignTags()
-    {
-        if (getWindow() != null)
-        {
+    private void assignTags() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -558,11 +517,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     public ArrayList<Tags> allAttachedTags;
     public int selectedItemsCounter;
 
-    private void getAttachedTagsToSelectedVMs(TagListModel model)
-    {
+    private void getAttachedTagsToSelectedVMs(TagListModel model) {
         ArrayList<Guid> vmIds = new ArrayList<>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VM vm = (VM) item;
             vmIds.add(vm.getId());
         }
@@ -571,8 +528,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         allAttachedTags = new ArrayList<>();
         selectedItemsCounter = 0;
 
-        for (Guid id : vmIds)
-        {
+        for (Guid id : vmIds) {
             AsyncDataProvider.getInstance().getAttachedTagsToVm(new AsyncQuery(new Object[] { this, model },
                     new INewAsyncCallback() {
                         @Override
@@ -583,8 +539,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                             TagListModel tagListModel = (TagListModel) array[1];
                             vmListModel.allAttachedTags.addAll((ArrayList<Tags>) returnValue);
                             vmListModel.selectedItemsCounter++;
-                            if (vmListModel.selectedItemsCounter == vmListModel.getSelectedItems().size())
-                            {
+                            if (vmListModel.selectedItemsCounter == vmListModel.getSelectedItems().size()) {
                                 postGetAttachedTags(vmListModel, tagListModel);
                             }
 
@@ -594,19 +549,14 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         }
     }
 
-    private void postGetAttachedTags(VmListModel<Void> vmListModel, TagListModel tagListModel)
-    {
-        if (vmListModel.getLastExecutedCommand() == getAssignTagsCommand())
-        {
+    private void postGetAttachedTags(VmListModel<Void> vmListModel, TagListModel tagListModel) {
+        if (vmListModel.getLastExecutedCommand() == getAssignTagsCommand()) {
             ArrayList<Tags> attachedTags =
                     Linq.distinct(vmListModel.allAttachedTags, new TagsEqualityComparer());
-            for (Tags tag : attachedTags)
-            {
+            for (Tags tag : attachedTags) {
                 int count = 0;
-                for (Tags tag2 : vmListModel.allAttachedTags)
-                {
-                    if (tag2.gettag_id().equals(tag.gettag_id()))
-                    {
+                for (Tags tag2 : vmListModel.allAttachedTags) {
+                    if (tag2.gettag_id().equals(tag.gettag_id())) {
                         count++;
                     }
                 }
@@ -614,26 +564,22 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             }
             tagListModel.setAttachedTagsToEntities(vmListModel.attachedTagsToEntities);
         }
-        else if ("OnAssignTags".equals(vmListModel.getLastExecutedCommand().getName())) //$NON-NLS-1$
-        {
+        else if ("OnAssignTags".equals(vmListModel.getLastExecutedCommand().getName())) { //$NON-NLS-1$
             vmListModel.postOnAssignTags(tagListModel.getAttachedTagsToEntities());
         }
     }
 
-    private void onAssignTags()
-    {
+    private void onAssignTags() {
         TagListModel model = (TagListModel) getWindow();
 
         getAttachedTagsToSelectedVMs(model);
     }
 
-    public void postOnAssignTags(Map<Guid, Boolean> attachedTags)
-    {
+    public void postOnAssignTags(Map<Guid, Boolean> attachedTags) {
         TagListModel model = (TagListModel) getWindow();
         ArrayList<Guid> vmIds = new ArrayList<>();
 
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VM vm = (VM) item;
             vmIds.add(vm.getId());
         }
@@ -642,23 +588,20 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         ArrayList<Guid> tagsToAttach = new ArrayList<>();
         ArrayList<Guid> tagsToDetach = new ArrayList<>();
 
-        if (model.getItems() != null && model.getItems().size() > 0)
-        {
+        if (model.getItems() != null && model.getItems().size() > 0) {
             ArrayList<TagModel> tags = (ArrayList<TagModel>) model.getItems();
             TagModel rootTag = tags.get(0);
             TagModel.recursiveEditAttachDetachLists(rootTag, attachedTags, tagsToAttach, tagsToDetach);
         }
 
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
-        for (Guid a : tagsToAttach)
-        {
+        for (Guid a : tagsToAttach) {
             parameters.add(new AttachEntityToTagParameters(a, vmIds));
         }
         Frontend.getInstance().runMultipleAction(VdcActionType.AttachVmsToTag, parameters);
 
         parameters = new ArrayList<>();
-        for (Guid a : tagsToDetach)
-        {
+        for (Guid a : tagsToDetach) {
             parameters.add(new AttachEntityToTagParameters(a, vmIds));
         }
         Frontend.getInstance().runMultipleAction(VdcActionType.DetachVmFromTag, parameters);
@@ -666,8 +609,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         cancel();
     }
 
-    private void guide()
-    {
+    private void guide() {
         VmGuideModel model = new VmGuideModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newVirtualMachineGuideMeTitle());
@@ -697,8 +639,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     }
 
     @Override
-    public boolean isSearchStringMatch(String searchString)
-    {
+    public boolean isSearchStringMatch(String searchString) {
         return searchString.trim().toLowerCase().startsWith("vm"); //$NON-NLS-1$
     }
 
@@ -749,13 +690,11 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
     private void edit() {
         VM vm = getSelectedItem();
-        if (vm == null)
-        {
+        if (vm == null) {
             return;
         }
 
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -801,10 +740,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
     private Map<Guid, EntityModel> vmsRemoveMap;
 
-    private void remove()
-    {
-        if (getWindow() != null)
-        {
+    private void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -816,8 +753,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
         vmsRemoveMap = new HashMap<>();
 
-        for (Object selectedItem : getSelectedItems())
-        {
+        for (Object selectedItem : getSelectedItems()) {
             VM vm = (VM) selectedItem;
             EntityModel removeDisksCheckbox = new EntityModel(true);
             removeDisksCheckbox.setTitle(ConstantsManager.getInstance().getConstants().removeDisksTitle());
@@ -952,20 +888,16 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     }
 
     @Override
-    protected boolean entitiesSelectedOnDifferentDataCenters()
-    {
+    protected boolean entitiesSelectedOnDifferentDataCenters() {
         ArrayList<VM> vms = new ArrayList<>();
-        for (Object selectedItem : getSelectedItems())
-        {
+        for (Object selectedItem : getSelectedItems()) {
             VM a = (VM) selectedItem;
             vms.add(a);
         }
 
         Map<Guid, ArrayList<VM>> t = new HashMap<>();
-        for (VM a : vms)
-        {
-            if (!t.containsKey(a.getStoragePoolId()))
-            {
+        for (VM a : vms) {
+            if (!t.containsKey(a.getStoragePoolId())) {
                 t.put(a.getStoragePoolId(), new ArrayList<VM>());
             }
 
@@ -998,8 +930,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         return (List<VM>) returnValue;
     }
 
-    private void getTemplatesNotPresentOnExportDomain()
-    {
+    private void getTemplatesNotPresentOnExportDomain() {
         ExportVmModel model = (ExportVmModel) getWindow();
         Guid storageDomainId = model.getStorage().getSelectedItem().getId();
 
@@ -1017,13 +948,11 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 }), storageDomainId);
     }
 
-    private void postGetTemplatesNotPresentOnExportDomain(StoragePool storagePool)
-    {
+    private void postGetTemplatesNotPresentOnExportDomain(StoragePool storagePool) {
         ExportVmModel model = (ExportVmModel) getWindow();
         Guid storageDomainId = model.getStorage().getSelectedItem().getId();
 
-        if (storagePool != null)
-        {
+        if (storagePool != null) {
             AsyncDataProvider.getInstance().getAllTemplatesFromExportDomain(new AsyncQuery(this,
                             new INewAsyncCallback() {
                                 @Override
@@ -1077,16 +1006,14 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         }
     }
 
-    private void postExportGetMissingTemplates(ArrayList<String> missingTemplatesFromVms)
-    {
+    private void postExportGetMissingTemplates(ArrayList<String> missingTemplatesFromVms) {
         ExportVmModel model = (ExportVmModel) getWindow();
         Guid storageDomainId = model.getStorage().getSelectedItem().getId();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
 
         model.stopProgress();
 
-        for (Object a : getSelectedItems())
-        {
+        for (Object a : getSelectedItems()) {
             VM vm = (VM) a;
             MoveVmParameters parameter = new MoveVmParameters(vm.getId(), storageDomainId);
             parameter.setForceOverride(model.getForceOverride().getEntity());
@@ -1096,10 +1023,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             parameters.add(parameter);
         }
 
-        if (!model.getCollapseSnapshots().getEntity())
-        {
-            if ((missingTemplatesFromVms == null || missingTemplatesFromVms.size() > 0))
-            {
+        if (!model.getCollapseSnapshots().getEntity()) {
+            if ((missingTemplatesFromVms == null || missingTemplatesFromVms.size() > 0)) {
                 ConfirmationModel confirmModel = new ConfirmationModel();
                 setConfirmWindow(confirmModel);
                 confirmModel.setTitle(ConstantsManager.getInstance()
@@ -1121,10 +1046,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
                 confirmModel.getCommands().add(tempVar2);
             }
-            else
-            {
-                if (model.getProgress() != null)
-                {
+            else {
+                if (model.getProgress() != null) {
                     return;
                 }
 
@@ -1141,15 +1064,12 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                         }, model);
             }
         }
-        else
-        {
-            if (model.getProgress() != null)
-            {
+        else {
+            if (model.getProgress() != null) {
                 return;
             }
 
-            for (VdcActionParametersBase item : parameters)
-            {
+            for (VdcActionParametersBase item : parameters) {
                 MoveVmParameters parameter = (MoveVmParameters) item;
                 parameter.setTemplateMustExists(false);
             }
@@ -1176,11 +1096,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         model.setHashName("export_virtual_machine"); //$NON-NLS-1$
     }
 
-    public void onExport()
-    {
+    public void onExport() {
         ExportVmModel model = (ExportVmModel) getWindow();
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
 
@@ -1189,19 +1107,16 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         getTemplatesNotPresentOnExportDomain();
     }
 
-    private void onExportNoTemplates()
-    {
+    private void onExportNoTemplates() {
         ExportVmModel model = (ExportVmModel) getWindow();
         Guid storageDomainId = model.getStorage().getSelectedItem().getId();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VM a = (VM) item;
             MoveVmParameters parameters = new MoveVmParameters(a.getId(), storageDomainId);
             parameters.setForceOverride(model.getForceOverride().getEntity());
@@ -1244,8 +1159,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 entity.getId());
     }
 
-    private void runOnce()
-    {
+    private void runOnce() {
         VM vm = getSelectedItem();
         // populating VMInit
         AsyncQuery getVmInitQuery = new AsyncQuery();
@@ -1263,11 +1177,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
     }
 
-    private void newTemplate()
-    {
+    private void newTemplate() {
         VM vm = getSelectedItem();
-        if (vm == null || getWindow() != null)
-        {
+        if (vm == null || getWindow() != null) {
             return;
         }
 
@@ -1293,30 +1205,25 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         model.getIsHighlyAvailable().setEntity(vm.getStaticData().isAutoStartup());
     }
 
-    private void onNewTemplate()
-    {
+    private void onNewTemplate() {
         UnitVmModel model = (UnitVmModel) getWindow();
         VM vm = getSelectedItem();
-        if (vm == null)
-        {
+        if (vm == null) {
             cancel();
             return;
         }
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
-        if (!model.validate(false))
-        {
+        if (!model.validate(false)) {
             model.setIsValid(false);
         }
         else  if (model.getIsSubTemplate().getEntity()) {
             postNameUniqueCheck();
         }
-        else
-        {
+        else {
             String name = model.getName().getEntity();
 
             // Check name unicitate.
@@ -1327,8 +1234,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
                             VmListModel<Void> vmListModel = (VmListModel<Void>) target;
                             boolean isNameUnique = (Boolean) returnValue;
-                            if (!isNameUnique)
-                            {
+                            if (!isNameUnique) {
                                 UnitVmModel VmModel = (UnitVmModel) vmListModel.getWindow();
                                 VmModel.getInvalidityReasons().clear();
                                 VmModel.getName()
@@ -1339,8 +1245,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                                 VmModel.getName().setIsValid(false);
                                 VmModel.setIsValid(false);
                             }
-                            else
-                            {
+                            else {
                                 vmListModel.postNameUniqueCheck();
                             }
 
@@ -1350,8 +1255,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         }
     }
 
-    private void postNameUniqueCheck()
-    {
+    private void postNameUniqueCheck() {
         UnitVmModel model = (UnitVmModel) getWindow();
         VM vm = getSelectedItem();
 
@@ -1387,16 +1291,13 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         return resultVm;
     }
 
-    private void migrate()
-    {
+    private void migrate() {
         VM vm = getSelectedItem();
-        if (vm == null)
-        {
+        if (vm == null) {
             return;
         }
 
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -1412,8 +1313,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         model.initializeModel();
     }
 
-    private void cancelMigration()
-    {
+    private void cancelMigration() {
         ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VM a = (VM) item;
@@ -1429,12 +1329,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                                                  }, null);
     }
 
-    private void onMigrate()
-    {
+    private void onMigrate() {
         MigrateModel model = (MigrateModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
@@ -1442,11 +1340,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
         Guid targetClusterId = model.getClusters().getSelectedItem() != null ? model.getClusters().getSelectedItem().getId() : null;
 
-        if (model.getIsAutoSelect())
-        {
+        if (model.getIsAutoSelect()) {
             ArrayList<VdcActionParametersBase> list = new ArrayList<>();
-            for (Object item : getSelectedItems())
-            {
+            for (Object item : getSelectedItems()) {
                 VM a = (VM) item;
                 list.add(new MigrateVmParameters(true, a.getId(), targetClusterId));
             }
@@ -1463,15 +1359,12 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                         }
                     }, model);
         }
-        else
-        {
+        else {
             ArrayList<VdcActionParametersBase> list = new ArrayList<>();
-            for (Object item : getSelectedItems())
-            {
+            for (Object item : getSelectedItems()) {
                 VM a = (VM) item;
 
-                if (a.getRunOnVds().equals(model.getHosts().getSelectedItem().getId()))
-                {
+                if (a.getRunOnVds().equals(model.getHosts().getSelectedItem().getId())) {
                     continue;
                 }
 
@@ -1517,8 +1410,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
      */
     private Guid getClusterIdOfSelectedVms() {
         Guid clusterId = null;
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VM a = (VM) item;
             if (clusterId == null) {
                 clusterId = a.getVdsGroupId();
@@ -1553,8 +1445,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         ArrayList<String> items = new ArrayList<>();
         boolean stoppingSingleVM = getSelectedItems().size() == 1 &&
                 (actionName.equals(SHUTDOWN) || actionName.equals(STOP));
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VM vm = (VM) item;
             items.add(vm.getName());
             // If a single VM in status PoweringDown is being stopped the reason field
@@ -1658,11 +1549,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         });
     }
 
-    private void pause()
-    {
+    private void pause() {
         ArrayList<VdcActionParametersBase> list = new ArrayList<>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VM a = (VM) item;
             list.add(new VmOperationParameterBase(a.getId()));
         }
@@ -1676,11 +1565,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 }, null);
     }
 
-    private void run()
-    {
+    private void run() {
         ArrayList<VdcActionParametersBase> list = new ArrayList<>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             VM a = (VM) item;
             list.add(new RunVmParams(a.getId()));
         }
@@ -1694,12 +1581,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 }, null);
     }
 
-    private void onRemove()
-    {
+    private void onRemove() {
         final ConfirmationModel model = (ConfirmationModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
@@ -1732,11 +1617,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         model.onSetConsoleKey(this, this);
     }
 
-    private void changeCD()
-    {
+    private void changeCD() {
         final VM vm = getSelectedItem();
-        if (vm == null)
-        {
+        if (vm == null) {
             return;
         }
 
@@ -1759,15 +1642,13 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
         getIrsImageListCallback.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 VmListModel<Void> vmListModel2 = (VmListModel<Void>) model;
                 AttachCdModel _attachCdModel = (AttachCdModel) vmListModel2.getWindow();
                 ArrayList<String> images = (ArrayList<String>) result;
                 images.add(0, ConsoleModel.getEjectLabel());
                 _attachCdModel.getIsoImage().setItems(images);
-                if (_attachCdModel.getIsoImage().getIsChangable())
-                {
+                if (_attachCdModel.getIsoImage().getIsChangable()) {
                     String selectedIso = Linq.firstOrDefault(images, new Linq.IPredicate<String>() {
                         @Override
                         public boolean match(String s) {
@@ -1786,18 +1667,15 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         model.getCommands().add(tempVar2);
     }
 
-    private void onChangeCD()
-    {
+    private void onChangeCD() {
         VM vm = getSelectedItem();
-        if (vm == null)
-        {
+        if (vm == null) {
             cancel();
             return;
         }
 
         AttachCdModel model = (AttachCdModel) getWindow();
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
@@ -1825,8 +1703,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 }, model);
     }
 
-    private void setGlobalHaMaintenance(boolean enabled)
-    {
+    private void setGlobalHaMaintenance(boolean enabled) {
         VM vm = getSelectedItem();
         if (vm == null) {
             return;
@@ -1839,12 +1716,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         Frontend.getInstance().runAction(VdcActionType.SetHaMaintenance, params);
     }
 
-    private void preSave()
-    {
+    private void preSave() {
         final UnitVmModel model = (UnitVmModel) getWindow();
 
-        if (model.getIsNew() == false && selectedItem == null)
-        {
+        if (model.getIsNew() == false && selectedItem == null) {
             cancel();
             return;
         }
@@ -1875,8 +1750,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         setConfirmWindow(confirmModel);
     }
 
-    private void preSavePhase2()
-    {
+    private void preSavePhase2() {
         final UnitVmModel model = (UnitVmModel) getWindow();
         final String name = model.getName().getEntity();
         validateVm(model, name);
@@ -1928,8 +1802,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     private void updateExistingVm(final boolean applyCpuChangesLater) {
         final UnitVmModel model = (UnitVmModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
@@ -1938,8 +1811,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         VM selectedItem = getSelectedItem();
         Guid oldClusterID = selectedItem.getVdsGroupId();
         Guid newClusterID = model.getSelectedCluster().getId();
-        if (oldClusterID.equals(newClusterID) == false)
-        {
+        if (oldClusterID.equals(newClusterID) == false) {
             ChangeVMClusterParameters parameters =
                     new ChangeVMClusterParameters(newClusterID, getcurrentVm().getId());
 
@@ -1952,15 +1824,13 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
                             final VmListModel<Void> vmListModel = (VmListModel<Void>) result.getState();
                             VdcReturnValueBase returnValueBase = result.getReturnValue();
-                            if (returnValueBase != null && returnValueBase.getSucceeded())
-                            {
+                            if (returnValueBase != null && returnValueBase.getSucceeded()) {
                                 VM vm = vmListModel.getcurrentVm();
                                 VmManagementParametersBase updateVmParams = vmListModel.getUpdateVmParameters(applyCpuChangesLater);
                                 Frontend.getInstance().runAction(VdcActionType.UpdateVm,
                                         updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, vm.getId()), vmListModel);
                             }
-                            else
-                            {
+                            else {
                                 vmListModel.getWindow().stopProgress();
                             }
 
@@ -1968,8 +1838,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                     },
                     this);
         }
-        else
-        {
+        else {
             model.startProgress(null);
             VmManagementParametersBase updateVmParams = getUpdateVmParameters(applyCpuChangesLater);
             Frontend.getInstance().runAction(VdcActionType.UpdateVm, updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
@@ -1997,12 +1866,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         return updateVmParams;
     }
 
-    private void retrieveIsoImages()
-    {
+    private void retrieveIsoImages() {
         Object tempVar = getSelectedItem();
         VM vm = (VM) ((tempVar instanceof VM) ? tempVar : null);
-        if (vm == null)
-        {
+        if (vm == null) {
             return;
         }
 
@@ -2019,23 +1886,20 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         getIsoImages().add(tempVar4);
     }
 
-    private void changeCD(Object sender, EventArgs e)
-    {
+    private void changeCD(Object sender, EventArgs e) {
         ChangeCDModel model = (ChangeCDModel) sender;
 
         // TODO: Patch!
         String isoName = model.getTitle();
         if (ObjectUtils.objectsEqual(isoName, ConstantsManager.getInstance()
                 .getConstants()
-                .noCds()))
-        {
+                .noCds())) {
             return;
         }
 
         Object tempVar = getSelectedItem();
         VM vm = (VM) ((tempVar instanceof VM) ? tempVar : null);
-        if (vm == null)
-        {
+        if (vm == null) {
             return;
         }
 
@@ -2052,8 +1916,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     }
 
     @Override
-    public void cancel()
-    {
+    public void cancel() {
         cancelConfirmation();
 
         setGuideContext(null);
@@ -2062,14 +1925,12 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         updateActionsAvailability();
     }
 
-    private void cancelConfirmation()
-    {
+    private void cancelConfirmation() {
         setConfirmWindow(null);
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
 
         updateActionsAvailability();
@@ -2194,75 +2055,59 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
-    {
+    public void eventRaised(Event ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(ChangeCDModel.executedEventDefinition))
-        {
+        if (ev.matchesDefinition(ChangeCDModel.executedEventDefinition)) {
             changeCD(sender, args);
         }
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getNewVmCommand())
-        {
+        if (command == getNewVmCommand()) {
             newVm();
         } else if (command == getImportVmCommand()) {
             importVms();
-        } else if (command == getCloneVmCommand())
-        {
+        } else if (command == getCloneVmCommand()) {
             cloneVm();
-        } else if (command == getEditCommand())
-        {
+        } else if (command == getEditCommand()) {
             edit();
         }
         else if (command == getEditConsoleCommand()) {
             editConsole();
         }
-        else if (command == getConsoleConnectCommand())
-        {
+        else if (command == getConsoleConnectCommand()) {
             connectToConsoles();
         }
-        else if (command == getRemoveCommand())
-        {
+        else if (command == getRemoveCommand()) {
             remove();
         }
-        else if (command == getRunCommand())
-        {
+        else if (command == getRunCommand()) {
             run();
         }
-        else if (command == getPauseCommand())
-        {
+        else if (command == getPauseCommand()) {
             pause();
-        } else if (command == getStopCommand())
-        {
+        } else if (command == getStopCommand()) {
             stop();
-        } else if (command == getShutdownCommand())
-        {
+        } else if (command == getShutdownCommand()) {
             shutdown();
         }
         else if (command == getRebootCommand()) {
             reboot();
-        } else if (command == getMigrateCommand())
-        {
+        } else if (command == getMigrateCommand()) {
             migrate();
         }
-        else if (command == getNewTemplateCommand())
-        {
+        else if (command == getNewTemplateCommand()) {
             newTemplate();
-        } else if (command == getRunOnceCommand())
-        {
+        } else if (command == getRunOnceCommand()) {
             runOnce();
         } else if (command == getExportCommand()) {
             export();
         }
-        else if (command == getCreateSnapshotCommand())
-        {
+        else if (command == getCreateSnapshotCommand()) {
             createSnapshot();
         }
         else if (command == getGuideCommand()) {
@@ -2271,94 +2116,72 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         else if (command == getRetrieveIsoImagesCommand()) {
             retrieveIsoImages();
         }
-        else if (command == getChangeCdCommand())
-        {
+        else if (command == getChangeCdCommand()) {
             changeCD();
         }
-        else if (command == getEnableGlobalHaMaintenanceCommand())
-        {
+        else if (command == getEnableGlobalHaMaintenanceCommand()) {
             setGlobalHaMaintenance(true);
         }
-        else if (command == getDisableGlobalHaMaintenanceCommand())
-        {
+        else if (command == getDisableGlobalHaMaintenanceCommand()) {
             setGlobalHaMaintenance(false);
         }
-        else if (command == getAssignTagsCommand())
-        {
+        else if (command == getAssignTagsCommand()) {
             assignTags();
         }
-        else if (command == getSetConsoleKeyCommand())
-        {
+        else if (command == getSetConsoleKeyCommand()) {
             editConsoleKey();
         }
-        else if ("OnAssignTags".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnAssignTags".equals(command.getName())) { //$NON-NLS-1$
             onAssignTags();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
-        else if ("OnSave".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             preSave();
         }
-        else if ("PreSavePhase2".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("PreSavePhase2".equals(command.getName())) { //$NON-NLS-1$
             preSavePhase2();
             cancelConfirmation();
         }
-        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
-        else if ("OnClone".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnClone".equals(command.getName())) { //$NON-NLS-1$
             onClone();
         }
-        else if ("OnExport".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnExport".equals(command.getName())) { //$NON-NLS-1$
             onExport();
         }
-        else if ("OnExportNoTemplates".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnExportNoTemplates".equals(command.getName())) { //$NON-NLS-1$
             onExportNoTemplates();
         }
-        else if ("CancelConfirmation".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("CancelConfirmation".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirmation();
         }
-        else if ("OnRunOnce".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnRunOnce".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
-        else if ("OnNewTemplate".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnNewTemplate".equals(command.getName())) { //$NON-NLS-1$
 
             onNewTemplate();
         }
-        else if ("OnMigrate".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnMigrate".equals(command.getName())) { //$NON-NLS-1$
             onMigrate();
         }
-        else if (command == getCancelMigrateCommand())
-        {
+        else if (command == getCancelMigrateCommand()) {
             cancelMigration();
         }
-        else if ("OnShutdown".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnShutdown".equals(command.getName())) { //$NON-NLS-1$
             onShutdown();
         }
-        else if ("OnStop".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnStop".equals(command.getName())) { //$NON-NLS-1$
             onStop();
         }
-        else if ("OnReboot".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnReboot".equals(command.getName())) { //$NON-NLS-1$
             onReboot();
         }
-        else if ("OnChangeCD".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnChangeCD".equals(command.getName())) { //$NON-NLS-1$
             onChangeCD();
         }
         else if ("OnSetConsoleKey".equals(command.getName())) { //$NON-NLS-1$
@@ -2500,14 +2323,12 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     private SystemTreeItemModel systemTreeSelectedItem;
 
     @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem()
-    {
+    public SystemTreeItemModel getSystemTreeSelectedItem() {
         return systemTreeSelectedItem;
     }
 
     @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value)
-    {
+    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
         systemTreeSelectedItem = value;
         onPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem")); //$NON-NLS-1$
     }

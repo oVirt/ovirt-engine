@@ -17,22 +17,18 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
 @SuppressWarnings("unused")
-public class HostHardwareGeneralModel extends EntityModel<VDS>
-{
+public class HostHardwareGeneralModel extends EntityModel<VDS> {
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
     private String hardwareManufacturer;
 
-    public String getHardwareManufacturer()
-    {
+    public String getHardwareManufacturer() {
         return hardwareManufacturer;
     }
 
-    public void setHardwareManufacturer(String value)
-    {
-        if (!ObjectUtils.objectsEqual(hardwareManufacturer, value))
-        {
+    public void setHardwareManufacturer(String value) {
+        if (!ObjectUtils.objectsEqual(hardwareManufacturer, value)) {
             hardwareManufacturer = value;
             onPropertyChanged(new PropertyChangedEventArgs("manufacturer")); //$NON-NLS-1$
         }
@@ -40,15 +36,12 @@ public class HostHardwareGeneralModel extends EntityModel<VDS>
 
     private String hardwareProductName;
 
-    public String getHardwareProductName()
-    {
+    public String getHardwareProductName() {
         return hardwareProductName;
     }
 
-    public void setHardwareProductName(String value)
-    {
-        if (!ObjectUtils.objectsEqual(hardwareProductName, value))
-        {
+    public void setHardwareProductName(String value) {
+        if (!ObjectUtils.objectsEqual(hardwareProductName, value)) {
             hardwareProductName = value;
             onPropertyChanged(new PropertyChangedEventArgs("productName")); //$NON-NLS-1$
         }
@@ -56,15 +49,12 @@ public class HostHardwareGeneralModel extends EntityModel<VDS>
 
     private String hardwareSerialNumber;
 
-    public String getHardwareSerialNumber()
-    {
+    public String getHardwareSerialNumber() {
         return hardwareSerialNumber;
     }
 
-    public void setHardwareSerialNumber(String value)
-    {
-        if (!ObjectUtils.objectsEqual(hardwareSerialNumber, value))
-        {
+    public void setHardwareSerialNumber(String value) {
+        if (!ObjectUtils.objectsEqual(hardwareSerialNumber, value)) {
             hardwareSerialNumber = value;
             onPropertyChanged(new PropertyChangedEventArgs("serialNumber")); //$NON-NLS-1$
         }
@@ -72,15 +62,12 @@ public class HostHardwareGeneralModel extends EntityModel<VDS>
 
     private String hardwareVersion;
 
-    public String getHardwareVersion()
-    {
+    public String getHardwareVersion() {
         return hardwareVersion;
     }
 
-    public void setHardwareVersion(String value)
-    {
-        if (!ObjectUtils.objectsEqual(hardwareVersion, value))
-        {
+    public void setHardwareVersion(String value) {
+        if (!ObjectUtils.objectsEqual(hardwareVersion, value)) {
             hardwareVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("hardwareVersion")); //$NON-NLS-1$
         }
@@ -88,15 +75,12 @@ public class HostHardwareGeneralModel extends EntityModel<VDS>
 
     private String hardwareUUID;
 
-    public String getHardwareUUID()
-    {
+    public String getHardwareUUID() {
         return hardwareUUID;
     }
 
-    public void setHardwareUUID(String value)
-    {
-        if (!ObjectUtils.objectsEqual(hardwareUUID, value))
-        {
+    public void setHardwareUUID(String value) {
+        if (!ObjectUtils.objectsEqual(hardwareUUID, value)) {
             hardwareUUID = value;
             onPropertyChanged(new PropertyChangedEventArgs("uuid")); //$NON-NLS-1$
         }
@@ -104,16 +88,13 @@ public class HostHardwareGeneralModel extends EntityModel<VDS>
 
     private String hardwareFamily;
 
-    public String getHardwareFamily()
-    {
+    public String getHardwareFamily() {
         return hardwareFamily;
     }
 
     @SuppressWarnings("deprecation")
-    public void setHardwareFamily(String value)
-    {
-        if (!ObjectUtils.objectsEqual(hardwareFamily, value))
-        {
+    public void setHardwareFamily(String value) {
+        if (!ObjectUtils.objectsEqual(hardwareFamily, value)) {
             hardwareFamily = value;
             onPropertyChanged(new PropertyChangedEventArgs("family")); //$NON-NLS-1$
         }
@@ -122,13 +103,11 @@ public class HostHardwareGeneralModel extends EntityModel<VDS>
 
     private String cpuType;
 
-    public String getCpuType()
-    {
+    public String getCpuType() {
         return cpuType;
     }
 
-    public void setCpuType(String value)
-    {
+    public void setCpuType(String value) {
         if (!ObjectUtils.objectsEqual(cpuType, value)) {
             cpuType = value;
             onPropertyChanged(new PropertyChangedEventArgs("CpuType")); //$NON-NLS-1$
@@ -137,13 +116,11 @@ public class HostHardwareGeneralModel extends EntityModel<VDS>
 
     private String cpuModel;
 
-    public String getCpuModel()
-    {
+    public String getCpuModel() {
         return cpuModel;
     }
 
-    public void setCpuModel(String value)
-    {
+    public void setCpuModel(String value) {
         if (!ObjectUtils.objectsEqual(cpuModel, value)) {
             cpuModel = value;
             onPropertyChanged(new PropertyChangedEventArgs("CpuModel")); //$NON-NLS-1$
@@ -152,13 +129,11 @@ public class HostHardwareGeneralModel extends EntityModel<VDS>
 
     private Integer numberOfSockets;
 
-    public Integer getNumberOfSockets()
-    {
+    public Integer getNumberOfSockets() {
         return numberOfSockets;
     }
 
-    public void setNumberOfSockets(Integer value)
-    {
+    public void setNumberOfSockets(Integer value) {
         if (numberOfSockets == null && value == null) {
             return;
         } if (numberOfSockets == null || !numberOfSockets.equals(value)) {
@@ -169,13 +144,11 @@ public class HostHardwareGeneralModel extends EntityModel<VDS>
 
     private String coresPerSocket;
 
-    public String getCoresPerSocket()
-    {
+    public String getCoresPerSocket() {
         return coresPerSocket;
     }
 
-    public void setCoresPerSocket(String value)
-    {
+    public void setCoresPerSocket(String value) {
         if (coresPerSocket == null && value == null) {
             return;
         } if (coresPerSocket == null || !coresPerSocket.equals(value)) {
@@ -186,13 +159,11 @@ public class HostHardwareGeneralModel extends EntityModel<VDS>
 
     private String threadsPerCore;
 
-    public String getThreadsPerCore()
-    {
+    public String getThreadsPerCore() {
         return threadsPerCore;
     }
 
-    public void setThreadsPerCore(String value)
-    {
+    public void setThreadsPerCore(String value) {
         if (threadsPerCore == null && value == null) {
             return;
         } if (threadsPerCore == null || !threadsPerCore.equals(value)) {
@@ -217,8 +188,7 @@ public class HostHardwareGeneralModel extends EntityModel<VDS>
         this.hbaDevices = hbaDevices;
     }
 
-    public HostHardwareGeneralModel()
-    {
+    public HostHardwareGeneralModel() {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
         setHelpTag(HelpTag.hardware);
         setHashName("hardware"); //$NON-NLS-1$
@@ -226,13 +196,11 @@ public class HostHardwareGeneralModel extends EntityModel<VDS>
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
     }
 
-    private void updateProperties()
-    {
+    private void updateProperties() {
         VDS vds = getEntity();
         setHardwareManufacturer(vds.getHardwareManufacturer());
         setHardwareVersion(vds.getHardwareVersion());
@@ -294,12 +262,10 @@ public class HostHardwareGeneralModel extends EntityModel<VDS>
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             updateProperties();
         }
     }

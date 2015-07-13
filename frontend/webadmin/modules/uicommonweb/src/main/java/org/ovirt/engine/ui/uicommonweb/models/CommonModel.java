@@ -299,8 +299,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
         }
     }
 
-    private void bookmarkListModel_Navigated(Object sender, final BookmarkEventArgs e)
-    {
+    private void bookmarkListModel_Navigated(Object sender, final BookmarkEventArgs e) {
         // Reset tags tree to the root item.
         getTagList().getSelectedItemsChangedEvent().removeListener(this);
         getTagList().getResetCommand().execute();

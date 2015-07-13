@@ -21,15 +21,12 @@ public class SystemTreeItemModel extends EntityModel implements TreeNodeInfo {
         this.applicationMode = applicationMode;
     }
 
-    public SystemTreeItemType getType()
-    {
+    public SystemTreeItemType getType() {
         return type;
     }
 
-    public void setType(SystemTreeItemType value)
-    {
-        if (type != value)
-        {
+    public void setType(SystemTreeItemType value) {
+        if (type != value) {
             type = value;
             onPropertyChanged(new PropertyChangedEventArgs("Type")); //$NON-NLS-1$
         }
@@ -38,13 +35,11 @@ public class SystemTreeItemModel extends EntityModel implements TreeNodeInfo {
     private List<SystemTreeItemModel> privateChildren;
 
     @Override
-    public List<SystemTreeItemModel> getChildren()
-    {
+    public List<SystemTreeItemModel> getChildren() {
         return privateChildren;
     }
 
-    public void setChildren(List<SystemTreeItemModel> value)
-    {
+    public void setChildren(List<SystemTreeItemModel> value) {
         privateChildren = value;
     }
 
@@ -58,43 +53,34 @@ public class SystemTreeItemModel extends EntityModel implements TreeNodeInfo {
     private SystemTreeItemModel privateParent;
 
     @Override
-    public SystemTreeItemModel getParent()
-    {
+    public SystemTreeItemModel getParent() {
         return privateParent;
     }
 
-    private void setParent(SystemTreeItemModel value)
-    {
+    private void setParent(SystemTreeItemModel value) {
         privateParent = value;
     }
 
     private boolean isExpanded;
 
-    public boolean getIsExpanded()
-    {
+    public boolean getIsExpanded() {
         return isExpanded;
     }
 
-    public void setIsExpanded(boolean value)
-    {
-        if (isExpanded != value)
-        {
+    public void setIsExpanded(boolean value) {
+        if (isExpanded != value) {
             isExpanded = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsExpanded")); //$NON-NLS-1$
         }
     }
 
-    public SystemTreeItemModel()
-    {
+    public SystemTreeItemModel() {
         setChildren(new ObservableCollection<SystemTreeItemModel>());
     }
 
-    public static SystemTreeItemModel findAncestor(SystemTreeItemType type, SystemTreeItemModel root)
-    {
-        if (root != null && root.getType() != type)
-        {
-            if (root.getParent() != null)
-            {
+    public static SystemTreeItemModel findAncestor(SystemTreeItemType type, SystemTreeItemModel root) {
+        if (root != null && root.getType() != type) {
+            if (root.getParent() != null) {
                 return findAncestor(type, root.getParent());
             }
 

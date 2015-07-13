@@ -9,8 +9,7 @@ public class DetachGlusterHostsModel extends Model {
     ListModel<EntityModel<String>> hosts;
     EntityModel<Boolean> force;
 
-    public DetachGlusterHostsModel()
-    {
+    public DetachGlusterHostsModel() {
         setHosts(new ListModel<EntityModel<String>>());
         setForce(new EntityModel<Boolean>());
         getForce().setEntity(Boolean.FALSE);

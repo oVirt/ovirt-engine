@@ -26,70 +26,53 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.Version;
 
-public final class Cloner
-{
-    public static Object clone(Object instance)
-    {
-        if (instance instanceof VM)
-        {
+public final class Cloner {
+    public static Object clone(Object instance) {
+        if (instance instanceof VM) {
             return cloneVM((VM) instance);
         }
-        if (instance instanceof VDS)
-        {
+        if (instance instanceof VDS) {
             return cloneVDS((VDS) instance);
         }
-        if (instance instanceof VDSGroup)
-        {
+        if (instance instanceof VDSGroup) {
             return cloneVDSGroup((VDSGroup) instance);
         }
-        if (instance instanceof StoragePool)
-        {
+        if (instance instanceof StoragePool) {
             return cloneStorage_pool((StoragePool) instance);
         }
-        if (instance instanceof Network)
-        {
+        if (instance instanceof Network) {
             return cloneNetwork((Network) instance);
         }
-        if (instance instanceof NetworkCluster)
-        {
+        if (instance instanceof NetworkCluster) {
             return cloneNetworkCluster((NetworkCluster) instance);
         }
-        if (instance instanceof ProviderNetwork)
-        {
+        if (instance instanceof ProviderNetwork) {
             return cloneProviderNetwork((ProviderNetwork) instance);
         }
-        if (instance instanceof VmPool)
-        {
+        if (instance instanceof VmPool) {
             return cloneVmPool((VmPool) instance);
         }
-        if (instance instanceof StorageDomainStatic)
-        {
+        if (instance instanceof StorageDomainStatic) {
             return cloneStorageDomainStatic((StorageDomainStatic) instance);
         }
-        if (instance instanceof VmTemplate)
-        {
+        if (instance instanceof VmTemplate) {
             return cloneVmTemplate((VmTemplate) instance);
         }
-        if (instance instanceof VmStatic)
-        {
+        if (instance instanceof VmStatic) {
             return cloneVmStatic((VmStatic) instance);
         }
-        if (instance instanceof Version)
-        {
+        if (instance instanceof Version) {
             return cloneVersion((Version) instance);
         }
-        if (instance instanceof ClusterPolicy)
-        {
+        if (instance instanceof ClusterPolicy) {
             return cloneClusterPolicy((ClusterPolicy) instance);
         }
         // Throw exception to determine development needs.
         throw new NotImplementedException();
     }
 
-    private static Object cloneVM(VM instance)
-    {
-        if (instance == null)
-        {
+    private static Object cloneVM(VM instance) {
+        if (instance == null) {
             return null;
         }
 
@@ -226,13 +209,11 @@ public final class Cloner
         return vm;
     }
 
-    private static Object cloneVersion(Version instance)
-    {
+    private static Object cloneVersion(Version instance) {
         return new Version(instance.toString());
     }
 
-    private static Object cloneVDS(VDS instance)
-    {
+    private static Object cloneVDS(VDS instance) {
         VDS obj = new VDS();
 
         obj.setHostName(instance.getHostName());
@@ -283,8 +264,7 @@ public final class Cloner
         return clonedAgent;
     }
 
-    private static StoragePool cloneStorage_pool(StoragePool instance)
-    {
+    private static StoragePool cloneStorage_pool(StoragePool instance) {
         StoragePool obj = new StoragePool();
 
         obj.setdescription(instance.getdescription());
@@ -303,8 +283,7 @@ public final class Cloner
         return obj;
     }
 
-    private static VDSGroup cloneVDSGroup(VDSGroup instance)
-    {
+    private static VDSGroup cloneVDSGroup(VDSGroup instance) {
         VDSGroup obj = new VDSGroup();
         obj.setId(instance.getId());
         obj.setName(instance.getName());
@@ -331,8 +310,7 @@ public final class Cloner
         return obj;
     }
 
-    private static Network cloneNetwork(Network instance)
-    {
+    private static Network cloneNetwork(Network instance) {
         Network obj = new Network();
 
         obj.setAddr(instance.getAddr());
@@ -357,8 +335,7 @@ public final class Cloner
         return obj;
     }
 
-    private static NetworkCluster cloneNetworkCluster(NetworkCluster instance)
-    {
+    private static NetworkCluster cloneNetworkCluster(NetworkCluster instance) {
         NetworkCluster obj = new NetworkCluster();
 
         obj.setId(instance.getId());
@@ -371,8 +348,7 @@ public final class Cloner
         return obj;
     }
 
-    private static ProviderNetwork cloneProviderNetwork(ProviderNetwork instance)
-    {
+    private static ProviderNetwork cloneProviderNetwork(ProviderNetwork instance) {
         ProviderNetwork obj = new ProviderNetwork();
 
         obj.setExternalId(instance.getExternalId());
@@ -380,8 +356,7 @@ public final class Cloner
         return obj;
     }
 
-    private static VmPool cloneVmPool(VmPool instance)
-    {
+    private static VmPool cloneVmPool(VmPool instance) {
         VmPool obj = new VmPool();
 
         obj.setVmPoolId(instance.getVmPoolId());
@@ -405,8 +380,7 @@ public final class Cloner
         return obj;
     }
 
-    private static StorageDomainStatic cloneStorageDomainStatic(StorageDomainStatic instance)
-    {
+    private static StorageDomainStatic cloneStorageDomainStatic(StorageDomainStatic instance) {
         StorageDomainStatic obj = new StorageDomainStatic();
         obj.setConnection(instance.getConnection());
         obj.setId(instance.getId());
@@ -424,8 +398,7 @@ public final class Cloner
         return obj;
     }
 
-    private static VmTemplate cloneVmTemplate(VmTemplate instance)
-    {
+    private static VmTemplate cloneVmTemplate(VmTemplate instance) {
         VmTemplate obj = new VmTemplate();
         obj.setStoragePoolId(instance.getStoragePoolId());
         obj.setStoragePoolName(instance.getStoragePoolName());
@@ -484,8 +457,7 @@ public final class Cloner
         return obj;
     }
 
-    private static VmStatic cloneVmStatic(VmStatic instance)
-    {
+    private static VmStatic cloneVmStatic(VmStatic instance) {
         VmStatic obj = new VmStatic();
 
         obj.setFailBack(instance.isFailBack());

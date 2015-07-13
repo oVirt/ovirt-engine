@@ -18,8 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class AlertListModel extends SearchableListModel<Void, AuditLog> implements HasDismissCommand
-{
+public class AlertListModel extends SearchableListModel<Void, AuditLog> implements HasDismissCommand {
     private UICommand dismissCommand;
 
     public UICommand getDismissCommand() {
@@ -50,8 +49,7 @@ public class AlertListModel extends SearchableListModel<Void, AuditLog> implemen
         clearAllCommand = value;
     }
 
-    public AlertListModel()
-    {
+    public AlertListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().alertsTitle());
         setIsTimerDisabled(false);
         setDismissCommand(new UICommand("Dismiss Alert", this)); //$NON-NLS-1$
@@ -62,29 +60,24 @@ public class AlertListModel extends SearchableListModel<Void, AuditLog> implemen
     @Override
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
-        if (command == getDismissCommand())
-        {
+        if (command == getDismissCommand()) {
             dismissAlert();
         }
-        else if (command == getDisplayAllCommand())
-        {
+        else if (command == getDisplayAllCommand()) {
              displayAllAlerts();
         }
-        else if (command == getClearAllCommand())
-        {
+        else if (command == getClearAllCommand()) {
             clearAllAlerts();
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 AlertListModel alertListModel = (AlertListModel) model;
                 ArrayList<AuditLog> list = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 alertListModel.setItems(list);

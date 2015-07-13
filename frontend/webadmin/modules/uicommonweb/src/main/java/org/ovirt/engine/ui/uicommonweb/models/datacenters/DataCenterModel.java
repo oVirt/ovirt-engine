@@ -33,126 +33,105 @@ import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidati
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
-public class DataCenterModel extends Model
-{
+public class DataCenterModel extends Model {
     private StoragePool privateEntity;
 
-    public StoragePool getEntity()
-    {
+    public StoragePool getEntity() {
         return privateEntity;
     }
 
-    public void setEntity(StoragePool value)
-    {
+    public void setEntity(StoragePool value) {
         privateEntity = value;
         initSelectedMacPool();
     }
 
     private Guid privateDataCenterId;
 
-    public Guid getDataCenterId()
-    {
+    public Guid getDataCenterId() {
         return privateDataCenterId;
     }
 
-    public void setDataCenterId(Guid value)
-    {
+    public void setDataCenterId(Guid value) {
         privateDataCenterId = value;
     }
 
     private boolean privateIsNew;
 
-    public boolean getIsNew()
-    {
+    public boolean getIsNew() {
         return privateIsNew;
     }
 
-    public void setIsNew(boolean value)
-    {
+    public void setIsNew(boolean value) {
         privateIsNew = value;
     }
 
     private String privateOriginalName;
 
-    public String getOriginalName()
-    {
+    public String getOriginalName() {
         return privateOriginalName;
     }
 
-    public void setOriginalName(String value)
-    {
+    public void setOriginalName(String value) {
         privateOriginalName = value;
     }
 
     private EntityModel<String> privateName;
 
-    public EntityModel<String> getName()
-    {
+    public EntityModel<String> getName() {
         return privateName;
     }
 
-    public void setName(EntityModel<String> value)
-    {
+    public void setName(EntityModel<String> value) {
         privateName = value;
     }
 
     private EntityModel<String> privateDescription;
 
-    public EntityModel<String> getDescription()
-    {
+    public EntityModel<String> getDescription() {
         return privateDescription;
     }
 
-    public void setDescription(EntityModel<String> value)
-    {
+    public void setDescription(EntityModel<String> value) {
         privateDescription = value;
     }
 
     private EntityModel<String> privateComment;
 
-    public EntityModel<String> getComment()
-    {
+    public EntityModel<String> getComment() {
         return privateComment;
     }
 
-    public void setComment(EntityModel<String> value)
-    {
+    public void setComment(EntityModel<String> value) {
         privateComment = value;
     }
 
     private ListModel<Boolean> storagePoolType;
 
-    public ListModel<Boolean> getStoragePoolType()
-    {
+    public ListModel<Boolean> getStoragePoolType() {
         return storagePoolType;
     }
 
-    public void setStoragePoolType(ListModel<Boolean> value)
-    {
+    public void setStoragePoolType(ListModel<Boolean> value) {
         this.storagePoolType = value;
     }
 
     private ListModel<Version> privateVersion;
 
-    public ListModel<Version> getVersion()
-    {
+    public ListModel<Version> getVersion() {
         return privateVersion;
     }
 
-    public void setVersion(ListModel<Version> value)
-    {
+    public void setVersion(ListModel<Version> value) {
         privateVersion = value;
     }
 
     private int privateMaxNameLength;
 
-    public int getMaxNameLength()
-    {
+    public int getMaxNameLength() {
         return privateMaxNameLength;
     }
 
-    public void setMaxNameLength(int value)
-    {
+    public void setMaxNameLength(int value) {
         privateMaxNameLength = value;
     }
 
@@ -196,8 +175,7 @@ public class DataCenterModel extends Model
         this.addMacPoolCommand = addMacPoolCommand;
     }
 
-    public DataCenterModel()
-    {
+    public DataCenterModel() {
         setName(new EntityModel<String>());
         setDescription(new EntityModel<String>());
         setComment(new EntityModel<String>());
@@ -233,8 +211,7 @@ public class DataCenterModel extends Model
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 DataCenterModel dataCenterModel = (DataCenterModel) model;
                 dataCenterModel.setMaxNameLength((Integer) result);
             }
@@ -244,8 +221,7 @@ public class DataCenterModel extends Model
     }
 
     @Override
-    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args)
-    {
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
         if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getStoragePoolType()) {
@@ -259,14 +235,12 @@ public class DataCenterModel extends Model
         }
     }
 
-    private void storagePoolType_SelectedItemChanged()
-    {
+    private void storagePoolType_SelectedItemChanged() {
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 DataCenterModel dataCenterModel = (DataCenterModel) model;
                 ArrayList<Version> versions = (ArrayList<Version>) result;
 
@@ -274,46 +248,37 @@ public class DataCenterModel extends Model
                 ArrayList<Version> list = new ArrayList<Version>();
                 Boolean isLocalType = dataCenterModel.getStoragePoolType().getSelectedItem();
 
-                for (Version item : versions)
-                {
-                    if (AsyncDataProvider.getInstance().isVersionMatchStorageType(item, isLocalType))
-                    {
+                for (Version item : versions) {
+                    if (AsyncDataProvider.getInstance().isVersionMatchStorageType(item, isLocalType)) {
                         list.add(item);
                     }
                 }
 
                 Version selectedVersion = null;
-                if (dataCenterModel.getVersion().getSelectedItem() != null)
-                {
+                if (dataCenterModel.getVersion().getSelectedItem() != null) {
                     selectedVersion = dataCenterModel.getVersion().getSelectedItem();
                     boolean hasSelectedVersion = false;
-                    for (Version version : list)
-                    {
-                        if (selectedVersion.equals(version))
-                        {
+                    for (Version version : list) {
+                        if (selectedVersion.equals(version)) {
                             selectedVersion = version;
                             hasSelectedVersion = true;
                             break;
                         }
                     }
-                    if (!hasSelectedVersion)
-                    {
+                    if (!hasSelectedVersion) {
                         selectedVersion = null;
                     }
                 }
 
                 dataCenterModel.getVersion().setItems(list);
 
-                if (selectedVersion == null)
-                {
+                if (selectedVersion == null) {
                     dataCenterModel.getVersion().setSelectedItem(Linq.selectHighestVersion(list));
-                    if (getEntity() != null)
-                    {
+                    if (getEntity() != null) {
                         initVersion();
                     }
                 }
-                else
-                {
+                else {
                     dataCenterModel.getVersion().setSelectedItem(selectedVersion);
                 }
 
@@ -324,15 +289,11 @@ public class DataCenterModel extends Model
 
     private boolean isVersionInit = false;
 
-    private void initVersion()
-    {
-        if (!isVersionInit)
-        {
+    private void initVersion() {
+        if (!isVersionInit) {
             isVersionInit = true;
-            for (Version item : getVersion().getItems())
-            {
-                if (item.equals(getEntity().getCompatibilityVersion()))
-                {
+            for (Version item : getVersion().getItems()) {
+                if (item.equals(getEntity().getCompatibilityVersion())) {
                     getVersion().setSelectedItem(item);
                     break;
                 }
@@ -354,8 +315,7 @@ public class DataCenterModel extends Model
         }
     }
 
-    public boolean validate()
-    {
+    public boolean validate() {
         getName().validateEntity(new IValidation[] {
                 new NotEmptyValidation(),
                 new LengthValidation(40),

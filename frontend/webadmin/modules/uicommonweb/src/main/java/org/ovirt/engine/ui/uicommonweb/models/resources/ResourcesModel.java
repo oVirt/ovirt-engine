@@ -24,8 +24,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 
 @SuppressWarnings("unused")
-public class ResourcesModel extends SearchableListModel
-{
+public class ResourcesModel extends SearchableListModel {
 
     private static class ResourceComparator implements Comparator<VM>, Serializable {
 
@@ -41,157 +40,131 @@ public class ResourcesModel extends SearchableListModel
 
     private EntityModel privateDefinedVMs;
 
-    public EntityModel getDefinedVMs()
-    {
+    public EntityModel getDefinedVMs() {
         return privateDefinedVMs;
     }
 
-    private void setDefinedVMs(EntityModel value)
-    {
+    private void setDefinedVMs(EntityModel value) {
         privateDefinedVMs = value;
     }
 
     private EntityModel privateRunningVMs;
 
-    public EntityModel getRunningVMs()
-    {
+    public EntityModel getRunningVMs() {
         return privateRunningVMs;
     }
 
-    private void setRunningVMs(EntityModel value)
-    {
+    private void setRunningVMs(EntityModel value) {
         privateRunningVMs = value;
     }
 
     private EntityModel privateRunningVMsPercentage;
 
-    public EntityModel getRunningVMsPercentage()
-    {
+    public EntityModel getRunningVMsPercentage() {
         return privateRunningVMsPercentage;
     }
 
-    private void setRunningVMsPercentage(EntityModel value)
-    {
+    private void setRunningVMsPercentage(EntityModel value) {
         privateRunningVMsPercentage = value;
     }
 
     private EntityModel privateDefinedCPUs;
 
-    public EntityModel getDefinedCPUs()
-    {
+    public EntityModel getDefinedCPUs() {
         return privateDefinedCPUs;
     }
 
-    private void setDefinedCPUs(EntityModel value)
-    {
+    private void setDefinedCPUs(EntityModel value) {
         privateDefinedCPUs = value;
     }
 
     private EntityModel privateUsedCPUs;
 
-    public EntityModel getUsedCPUs()
-    {
+    public EntityModel getUsedCPUs() {
         return privateUsedCPUs;
     }
 
-    private void setUsedCPUs(EntityModel value)
-    {
+    private void setUsedCPUs(EntityModel value) {
         privateUsedCPUs = value;
     }
 
     private EntityModel privateUsedCPUsPercentage;
 
-    public EntityModel getUsedCPUsPercentage()
-    {
+    public EntityModel getUsedCPUsPercentage() {
         return privateUsedCPUsPercentage;
     }
 
-    private void setUsedCPUsPercentage(EntityModel value)
-    {
+    private void setUsedCPUsPercentage(EntityModel value) {
         privateUsedCPUsPercentage = value;
     }
 
     private EntityModel privateDefinedMemory;
 
-    public EntityModel getDefinedMemory()
-    {
+    public EntityModel getDefinedMemory() {
         return privateDefinedMemory;
     }
 
-    private void setDefinedMemory(EntityModel value)
-    {
+    private void setDefinedMemory(EntityModel value) {
         privateDefinedMemory = value;
     }
 
     private EntityModel privateUsedMemory;
 
-    public EntityModel getUsedMemory()
-    {
+    public EntityModel getUsedMemory() {
         return privateUsedMemory;
     }
 
-    private void setUsedMemory(EntityModel value)
-    {
+    private void setUsedMemory(EntityModel value) {
         privateUsedMemory = value;
     }
 
     private EntityModel privateUsedMemoryPercentage;
 
-    public EntityModel getUsedMemoryPercentage()
-    {
+    public EntityModel getUsedMemoryPercentage() {
         return privateUsedMemoryPercentage;
     }
 
-    private void setUsedMemoryPercentage(EntityModel value)
-    {
+    private void setUsedMemoryPercentage(EntityModel value) {
         privateUsedMemoryPercentage = value;
     }
 
     private EntityModel privateTotalDisksSize;
 
-    public EntityModel getTotalDisksSize()
-    {
+    public EntityModel getTotalDisksSize() {
         return privateTotalDisksSize;
     }
 
-    private void setTotalDisksSize(EntityModel value)
-    {
+    private void setTotalDisksSize(EntityModel value) {
         privateTotalDisksSize = value;
     }
 
     private EntityModel privateNumOfSnapshots;
 
-    public EntityModel getNumOfSnapshots()
-    {
+    public EntityModel getNumOfSnapshots() {
         return privateNumOfSnapshots;
     }
 
-    private void setNumOfSnapshots(EntityModel value)
-    {
+    private void setNumOfSnapshots(EntityModel value) {
         privateNumOfSnapshots = value;
     }
 
     private EntityModel privateTotalSnapshotsSize;
 
-    public EntityModel getTotalSnapshotsSize()
-    {
+    public EntityModel getTotalSnapshotsSize() {
         return privateTotalSnapshotsSize;
     }
 
-    private void setTotalSnapshotsSize(EntityModel value)
-    {
+    private void setTotalSnapshotsSize(EntityModel value) {
         privateTotalSnapshotsSize = value;
     }
 
     private EntityModel privateUsedQuotaPercentage;
 
-    public EntityModel getUsedQuotaPercentage()
-    {
+    public EntityModel getUsedQuotaPercentage() {
         return privateUsedQuotaPercentage;
     }
 
-    private void setUsedQuotaPercentage(EntityModel value)
-    {
+    private void setUsedQuotaPercentage(EntityModel value) {
         privateUsedQuotaPercentage = value;
     }
 
@@ -214,16 +187,14 @@ public class ResourcesModel extends SearchableListModel
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         super.syncSearch();
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 ResourcesModel resourcesModel = (ResourcesModel) model;
                 final ArrayList<VM> list =
                         (ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
@@ -238,22 +209,18 @@ public class ResourcesModel extends SearchableListModel
                 long totalSnapshotsSize = 0;
                 int numOfSnapshots = 0;
 
-                for (VM vm : list)
-                {
+                for (VM vm : list) {
                     definedCPUs += vm.getNumOfCpus();
                     definedMemory += vm.getVmMemSizeMb();
 
-                    if (vm.isRunning())
-                    {
+                    if (vm.isRunning()) {
                         runningVMs++;
                         usedCPUs += vm.getNumOfCpus();
                         usedMemory += vm.getVmMemSizeMb();
                     }
 
-                    if (vm.getDiskList() != null)
-                    {
-                        for (DiskImage disk : vm.getDiskList())
-                        {
+                    if (vm.getDiskList() != null) {
+                        for (DiskImage disk : vm.getDiskList()) {
                             totalDisksSize += disk.getSizeInGigabytes();
                             totalSnapshotsSize += (long) disk.getActualDiskWithSnapshotsSize();
                             numOfSnapshots += disk.getSnapshots().size();
@@ -339,8 +306,7 @@ public class ResourcesModel extends SearchableListModel
 
     // Temporarily converter
     // TODO: Use converters infrastructure in UICommon
-    public String sizeParser(long sizeInMb)
-    {
+    public String sizeParser(long sizeInMb) {
         return ((sizeInMb >= 1024 && sizeInMb % 1024 == 0) ? (sizeInMb / 1024 + "GB") : (sizeInMb + "MB")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 

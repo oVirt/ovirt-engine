@@ -591,19 +591,16 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
         setConfirmWindow(null);
     }
 
-    public void onRemove()
-    {
+    public void onRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
         ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
         QuotaCRUDParameters crudParameters;
-        for (Quota a : Linq.<Quota> cast(getSelectedItems()))
-        {
+        for (Quota a : Linq.<Quota> cast(getSelectedItems())) {
             crudParameters = new QuotaCRUDParameters();
             crudParameters.setQuotaId(a.getId());
             prms.add(crudParameters);
@@ -624,10 +621,8 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
                 }, model);
     }
 
-    public void remove()
-    {
-        if (getWindow() != null)
-        {
+    public void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -638,8 +633,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
         model.setHashName("remove_quota"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<String>();
-        for (Quota a : Linq.<Quota> cast(getSelectedItems()))
-        {
+        for (Quota a : Linq.<Quota> cast(getSelectedItems())) {
             list.add(a.getQuotaName());
         }
         model.setItems(list);
@@ -711,8 +705,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
     }
 
     @Override
-    public boolean isSearchStringMatch(String searchString)
-    {
+    public boolean isSearchStringMatch(String searchString) {
         return searchString.trim().toLowerCase().startsWith("quota"); //$NON-NLS-1$
     }
 

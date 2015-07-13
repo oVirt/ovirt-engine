@@ -8,32 +8,26 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class HostInterfaceLineModel extends Model
-{
+public class HostInterfaceLineModel extends Model {
 
     private VdsNetworkInterface privateInterface;
 
-    public VdsNetworkInterface getInterface()
-    {
+    public VdsNetworkInterface getInterface() {
         return privateInterface;
     }
 
-    public void setInterface(VdsNetworkInterface value)
-    {
+    public void setInterface(VdsNetworkInterface value) {
         privateInterface = value;
     }
 
     private boolean isBonded;
 
-    public boolean getIsBonded()
-    {
+    public boolean getIsBonded() {
         return isBonded;
     }
 
-    public void setIsBonded(boolean value)
-    {
-        if (isBonded != value)
-        {
+    public void setIsBonded(boolean value) {
+        if (isBonded != value) {
             isBonded = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsBonded")); //$NON-NLS-1$
         }
@@ -41,15 +35,12 @@ public class HostInterfaceLineModel extends Model
 
     private String bondName;
 
-    public String getBondName()
-    {
+    public String getBondName() {
         return bondName;
     }
 
-    public void setBondName(String value)
-    {
-        if (!ObjectUtils.objectsEqual(bondName, value))
-        {
+    public void setBondName(String value) {
+        if (!ObjectUtils.objectsEqual(bondName, value)) {
             bondName = value;
             onPropertyChanged(new PropertyChangedEventArgs("BondName")); //$NON-NLS-1$
         }
@@ -57,15 +48,12 @@ public class HostInterfaceLineModel extends Model
 
     private String address;
 
-    public String getAddress()
-    {
+    public String getAddress() {
         return address;
     }
 
-    public void setAddress(String value)
-    {
-        if (!ObjectUtils.objectsEqual(address, value))
-        {
+    public void setAddress(String value) {
+        if (!ObjectUtils.objectsEqual(address, value)) {
             address = value;
             onPropertyChanged(new PropertyChangedEventArgs("Address")); //$NON-NLS-1$
         }
@@ -73,15 +61,12 @@ public class HostInterfaceLineModel extends Model
 
     private ArrayList<HostInterface> interfaces;
 
-    public ArrayList<HostInterface> getInterfaces()
-    {
+    public ArrayList<HostInterface> getInterfaces() {
         return interfaces;
     }
 
-    public void setInterfaces(ArrayList<HostInterface> value)
-    {
-        if (interfaces != value)
-        {
+    public void setInterfaces(ArrayList<HostInterface> value) {
+        if (interfaces != value) {
             interfaces = value;
             onPropertyChanged(new PropertyChangedEventArgs("Interfaces")); //$NON-NLS-1$
         }
@@ -89,15 +74,12 @@ public class HostInterfaceLineModel extends Model
 
     private ArrayList<HostVLan> vLans;
 
-    public ArrayList<HostVLan> getVLans()
-    {
+    public ArrayList<HostVLan> getVLans() {
         return vLans;
     }
 
-    public void setVLans(ArrayList<HostVLan> value)
-    {
-        if (vLans != value)
-        {
+    public void setVLans(ArrayList<HostVLan> value) {
+        if (vLans != value) {
             vLans = value;
             onPropertyChanged(new PropertyChangedEventArgs("VLans")); //$NON-NLS-1$
         }
@@ -109,15 +91,12 @@ public class HostInterfaceLineModel extends Model
 
     private String networkName;
 
-    public String getNetworkName()
-    {
+    public String getNetworkName() {
         return networkName;
     }
 
-    public void setNetworkName(String value)
-    {
-        if (!ObjectUtils.objectsEqual(networkName, value))
-        {
+    public void setNetworkName(String value) {
+        if (!ObjectUtils.objectsEqual(networkName, value)) {
             networkName = value;
             onPropertyChanged(new PropertyChangedEventArgs("NetworkName")); //$NON-NLS-1$
         }
@@ -125,15 +104,12 @@ public class HostInterfaceLineModel extends Model
 
     private boolean isManagement;
 
-    public boolean getIsManagement()
-    {
+    public boolean getIsManagement() {
         return isManagement;
     }
 
-    public void setIsManagement(boolean value)
-    {
-        if (isManagement != value)
-        {
+    public void setIsManagement(boolean value) {
+        if (isManagement != value) {
             isManagement = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsManagement")); //$NON-NLS-1$
         }

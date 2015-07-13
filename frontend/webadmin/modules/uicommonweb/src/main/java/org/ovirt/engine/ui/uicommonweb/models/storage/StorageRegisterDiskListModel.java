@@ -22,8 +22,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-public class StorageRegisterDiskListModel extends SearchableListModel
-{
+public class StorageRegisterDiskListModel extends SearchableListModel {
     private UICommand registerCommand;
 
     public UICommand getRegisterCommand() {
@@ -50,13 +49,11 @@ public class StorageRegisterDiskListModel extends SearchableListModel
     }
 
     @Override
-    public StorageDomain getEntity()
-    {
+    public StorageDomain getEntity() {
         return (StorageDomain) super.getEntity();
     }
 
-    public void setEntity(StorageDomain value)
-    {
+    public void setEntity(StorageDomain value) {
         super.setEntity(value);
     }
 

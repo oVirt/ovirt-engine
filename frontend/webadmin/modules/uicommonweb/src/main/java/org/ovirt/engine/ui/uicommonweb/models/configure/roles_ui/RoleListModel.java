@@ -40,105 +40,88 @@ import com.google.inject.Inject;
 public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
     public static final String COPY_OF = "Copy_of_"; //$NON-NLS-1$
 
-    public enum CommandType
-    {
+    public enum CommandType {
         New,
         Edit,
         Clone;
 
-        public int getValue()
-        {
+        public int getValue() {
             return this.ordinal();
         }
 
-        public static CommandType forValue(int value)
-        {
+        public static CommandType forValue(int value) {
             return values()[value];
         }
     }
 
     private UICommand privateNewCommand;
 
-    public UICommand getNewCommand()
-    {
+    public UICommand getNewCommand() {
         return privateNewCommand;
     }
 
-    private void setNewCommand(UICommand value)
-    {
+    private void setNewCommand(UICommand value) {
         privateNewCommand = value;
     }
 
     private UICommand privateEditCommand;
 
     @Override
-    public UICommand getEditCommand()
-    {
+    public UICommand getEditCommand() {
         return privateEditCommand;
     }
 
-    private void setEditCommand(UICommand value)
-    {
+    private void setEditCommand(UICommand value) {
         privateEditCommand = value;
     }
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
     private UICommand privateCloneCommand;
 
-    public UICommand getCloneCommand()
-    {
+    public UICommand getCloneCommand() {
         return privateCloneCommand;
     }
 
-    private void setCloneCommand(UICommand value)
-    {
+    private void setCloneCommand(UICommand value) {
         privateCloneCommand = value;
     }
 
     private UICommand privateSearchAllRolesCommand;
 
-    public UICommand getSearchAllRolesCommand()
-    {
+    public UICommand getSearchAllRolesCommand() {
         return privateSearchAllRolesCommand;
     }
 
-    private void setSearchAllRolesCommand(UICommand value)
-    {
+    private void setSearchAllRolesCommand(UICommand value) {
         privateSearchAllRolesCommand = value;
     }
 
     private UICommand privateSearchAdminRolesCommand;
 
-    public UICommand getSearchAdminRolesCommand()
-    {
+    public UICommand getSearchAdminRolesCommand() {
         return privateSearchAdminRolesCommand;
     }
 
-    private void setSearchAdminRolesCommand(UICommand value)
-    {
+    private void setSearchAdminRolesCommand(UICommand value) {
         privateSearchAdminRolesCommand = value;
     }
 
     private UICommand privateSearchUserRolesCommand;
 
-    public UICommand getSearchUserRolesCommand()
-    {
+    public UICommand getSearchUserRolesCommand() {
         return privateSearchUserRolesCommand;
     }
 
-    private void setSearchUserRolesCommand(UICommand value)
-    {
+    private void setSearchUserRolesCommand(UICommand value) {
         privateSearchUserRolesCommand = value;
     }
 
@@ -149,13 +132,11 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
     public Role role;
     private RoleType privateItemsFilter;
 
-    public RoleType getItemsFilter()
-    {
+    public RoleType getItemsFilter() {
         return privateItemsFilter;
     }
 
-    public void setItemsFilter(RoleType value)
-    {
+    public void setItemsFilter(RoleType value) {
         privateItemsFilter = value;
     }
 
@@ -185,26 +166,22 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         super.syncSearch();
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 RoleListModel roleListModel = (RoleListModel) model;
                 ArrayList<Role> filteredList = new ArrayList<Role>();
-                for (Role item : (ArrayList<Role>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
-                {
+                for (Role item : (ArrayList<Role>) ((VdcQueryReturnValue) ReturnValue).getReturnValue()) {
                     // ignore CONSUME_QUOTA_ROLE in UI
                     if (item.getId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
                         continue;
                     }
-                    if (roleListModel.getItemsFilter() == null || roleListModel.getItemsFilter() == item.getType())
-                    {
+                    if (roleListModel.getItemsFilter() == null || roleListModel.getItemsFilter() == item.getType()) {
                         filteredList.add(item);
                     }
                 }
@@ -219,28 +196,23 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         setIsQueryFirstTime(false);
     }
 
-    private void searchAllRoles()
-    {
+    private void searchAllRoles() {
         setItemsFilter(null);
         getSearchCommand().execute();
     }
 
-    private void searchUserRoles()
-    {
+    private void searchUserRoles() {
         setItemsFilter(RoleType.USER);
         getSearchCommand().execute();
     }
 
-    private void searchAdminRoles()
-    {
+    private void searchAdminRoles() {
         setItemsFilter(RoleType.ADMIN);
         getSearchCommand().execute();
     }
 
-    public void remove()
-    {
-        if (getWindow() != null)
-        {
+    public void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -251,8 +223,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         model.setHashName("remove_role"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<String>();
-        for (Role role : Linq.<Role> cast(getSelectedItems()))
-        {
+        for (Role role : Linq.<Role> cast(getSelectedItems())) {
             list.add(role.getName());
         }
         model.setItems(list);
@@ -263,10 +234,8 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         model.getCommands().add(tempVar2);
     }
 
-    public void onRemove()
-    {
-        for (Object item : getSelectedItems())
-        {
+    public void onRemove() {
+        for (Object item : getSelectedItems()) {
             Role role = (Role) item;
             Frontend.getInstance().runAction(VdcActionType.RemoveRole, new RolesParameterBase(role.getId()));
         }
@@ -277,30 +246,26 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         getSearchCommand().execute();
     }
 
-    public void edit()
-    {
+    public void edit() {
         commandType = CommandType.Edit;
         Role role = getSelectedItem();
         initRoleDialog(role);
     }
 
-    public void newEntity()
-    {
+    public void newEntity() {
         commandType = CommandType.New;
         Role role = new Role();
         initRoleDialog(role);
     }
 
-    public void cloneRole()
-    {
+    public void cloneRole() {
         commandType = CommandType.Clone;
         Role role = getSelectedItem();
         initRoleDialog(role);
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
-    {
+    public void eventRaised(Event ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
         if (getWindow() != null
@@ -338,26 +303,21 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         ArrayList<SelectionTreeNodeModel> selectionTree =
                 RoleTreeView.getRoleTreeView((model.getIsNew() ? false : role.isReadonly()),
                         model.getIsAdminRole().getEntity());
-        for (SelectionTreeNodeModel sm : selectionTree)
-        {
-            for (SelectionTreeNodeModel smChild : sm.getChildren())
-            {
+        for (SelectionTreeNodeModel sm : selectionTree) {
+            for (SelectionTreeNodeModel smChild : sm.getChildren()) {
                 smChild.setParent(sm);
                 smChild.setIsSelectedNotificationPrevent(false);
 
-                for (SelectionTreeNodeModel smGrandChild : smChild.getChildren())
-                {
+                for (SelectionTreeNodeModel smGrandChild : smChild.getChildren()) {
                     smGrandChild.setParent(smChild);
                     smGrandChild.setIsSelectedNotificationPrevent(false);
 
-                    if (attachedActions.contains(ActionGroup.valueOf(smGrandChild.getTitle())))
-                    {
+                    if (attachedActions.contains(ActionGroup.valueOf(smGrandChild.getTitle()))) {
                         smGrandChild.setIsSelectedNullable(true);
                         smGrandChild.updateParentSelection();
                     }
 
-                    if (smChild.getChildren().get(0).equals(smGrandChild))
-                    {
+                    if (smChild.getChildren().get(0).equals(smGrandChild)) {
                         smGrandChild.updateParentSelection();
                     }
                 }
@@ -366,35 +326,29 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         model.setPermissionGroupModels(selectionTree);
     }
 
-    private void initRoleDialog(Role role)
-    {
-        if (getWindow() != null)
-        {
+    private void initRoleDialog(Role role) {
+        if (getWindow() != null) {
             return;
         }
 
         RoleModel model = new RoleModel();
         setWindow(model);
         model.setIsNew(commandType != CommandType.Edit);
-        if (commandType == CommandType.New)
-        {
+        if (commandType == CommandType.New) {
             role.setType(RoleType.USER);
         }
         model.getIsAdminRole().getEntityChangedEvent().addListener(this);
         model.getIsAdminRole().setEntity(RoleType.ADMIN.equals(role.getType()));
         model.getName().setEntity(role.getName());
-        if (commandType == CommandType.Clone)
-        {
+        if (commandType == CommandType.Clone) {
             model.getName().setEntity(COPY_OF + role.getName());
         }
         model.getDescription().setEntity(role.getDescription());
-        if (commandType == CommandType.Edit)
-        {
+        if (commandType == CommandType.Edit) {
             model.getName().setIsChangeable(!role.isReadonly());
             model.getDescription().setIsChangeable(!role.isReadonly());
         }
-        switch (commandType)
-        {
+        switch (commandType) {
             case New:
                 model.setTitle(ConstantsManager.getInstance().getConstants().newRoleTitle());
                 model.setHelpTag(HelpTag.new_role);
@@ -414,8 +368,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
                 break;
         }
 
-        if (!role.isReadonly() || commandType == CommandType.Clone)
-        {
+        if (!role.isReadonly() || commandType == CommandType.Clone) {
             UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
             model.getCommands().add(tempVar);
             UICommand tempVar2 = new UICommand("OnReset", this); //$NON-NLS-1$
@@ -431,39 +384,32 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         model.getCommands().add(tempVar3);
     }
 
-    public void onReset()
-    {
+    public void onReset() {
         RoleModel model = (RoleModel) getWindow();
 
         ArrayList<ActionGroup> attachedActions =
                 commandType == CommandType.New ? new ArrayList<ActionGroup>() : publicAttachedActions;
 
-        for (SelectionTreeNodeModel sm : model.getPermissionGroupModels())
-        {
-            for (SelectionTreeNodeModel smChild : sm.getChildren())
-            {
-                for (SelectionTreeNodeModel smGrandChild : smChild.getChildren())
-                {
+        for (SelectionTreeNodeModel sm : model.getPermissionGroupModels()) {
+            for (SelectionTreeNodeModel smChild : sm.getChildren()) {
+                for (SelectionTreeNodeModel smGrandChild : smChild.getChildren()) {
                     smGrandChild.setIsSelectedNullable(attachedActions.contains(ActionGroup.valueOf(smGrandChild.getTitle())));
                 }
             }
         }
     }
 
-    public void onSave()
-    {
+    public void onSave() {
         RoleModel model = (RoleModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
         role = commandType != CommandType.Edit ? new Role() : getSelectedItem();
         role.setType((model.getIsAdminRole().getEntity() ? RoleType.ADMIN : RoleType.USER));
 
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
 
@@ -480,19 +426,13 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         ArrayList<ActionGroup> actions = new ArrayList<ActionGroup>();
         HashMap<ActionGroup, ActionGroup> actionDistinctSet =
                 new HashMap<ActionGroup, ActionGroup>();
-        for (SelectionTreeNodeModel sm : model.getPermissionGroupModels())
-        {
-            for (SelectionTreeNodeModel smChild : sm.getChildren())
-            {
-                if (smChild.getIsSelectedNullable() == null || smChild.getIsSelectedNullable())
-                {
-                    for (SelectionTreeNodeModel smGrandChild : smChild.getChildren())
-                    {
-                        if (smGrandChild.getIsSelectedNullable())
-                        {
+        for (SelectionTreeNodeModel sm : model.getPermissionGroupModels()) {
+            for (SelectionTreeNodeModel smChild : sm.getChildren()) {
+                if (smChild.getIsSelectedNullable() == null || smChild.getIsSelectedNullable()) {
+                    for (SelectionTreeNodeModel smGrandChild : smChild.getChildren()) {
+                        if (smGrandChild.getIsSelectedNullable()) {
                             ActionGroup actionGroup = ActionGroup.valueOf(smGrandChild.getTitle());
-                            if (actionDistinctSet.containsKey(actionGroup))
-                            {
+                            if (actionDistinctSet.containsKey(actionGroup)) {
                                 continue;
                             }
                             actionDistinctSet.put(actionGroup, actionGroup);
@@ -507,8 +447,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
 
         model.startProgress(null);
 
-        if (commandType != CommandType.Edit)
-        {
+        if (commandType != CommandType.Edit) {
             // Add a new role.
             RoleWithActionGroupsParameters tempVar = new RoleWithActionGroupsParameters();
             tempVar.setRole(role);
@@ -524,8 +463,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
                         }
                     }, this);
         }
-        else
-        {
+        else {
 
             detachActionGroup = Linq.except(publicAttachedActions, actions);
             attachActionGroup = Linq.except(actions, publicAttachedActions);
@@ -537,17 +475,14 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
 
                             RoleListModel roleListModel = (RoleListModel) result.getState();
                             VdcReturnValueBase retVal = result.getReturnValue();
-                            if (retVal != null && retVal.getSucceeded())
-                            {
-                                if (roleListModel.detachActionGroup.size() > 0)
-                                {
+                            if (retVal != null && retVal.getSucceeded()) {
+                                if (roleListModel.detachActionGroup.size() > 0) {
                                     ActionGroupsToRoleParameter tempVar2 = new ActionGroupsToRoleParameter();
                                     tempVar2.setActionGroups(roleListModel.detachActionGroup);
                                     tempVar2.setRoleId(roleListModel.role.getId());
                                     Frontend.getInstance().runAction(VdcActionType.DetachActionGroupsFromRole, tempVar2);
                                 }
-                                if (roleListModel.attachActionGroup.size() > 0)
-                                {
+                                if (roleListModel.attachActionGroup.size() > 0) {
                                     ActionGroupsToRoleParameter tempVar3 = new ActionGroupsToRoleParameter();
                                     tempVar3.setActionGroups(roleListModel.attachActionGroup);
                                     tempVar3.setRoleId(roleListModel.role.getId());
@@ -556,8 +491,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
                                 roleListModel.getWindow().stopProgress();
                                 roleListModel.cancel();
                             }
-                            else
-                            {
+                            else {
                                 roleListModel.getWindow().stopProgress();
                             }
 
@@ -566,40 +500,34 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         }
     }
 
-    public void postOnSaveNew(VdcReturnValueBase returnValue)
-    {
+    public void postOnSaveNew(VdcReturnValueBase returnValue) {
         RoleModel model = (RoleModel) getWindow();
 
         model.stopProgress();
 
-        if (returnValue != null && returnValue.getSucceeded())
-        {
+        if (returnValue != null && returnValue.getSucceeded()) {
             cancel();
             getSearchCommand().execute();
         }
     }
 
-    public void cancel()
-    {
+    public void cancel() {
         setWindow(null);
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         boolean temp = getSelectedItems() != null && getSelectedItems().size() == 1;
 
         getCloneCommand().setIsExecutionAllowed(temp);
@@ -608,13 +536,10 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
                 && !isAnyRoleReadOnly(getSelectedItems()));
     }
 
-    private boolean isAnyRoleReadOnly(List roles)
-    {
-        for (Object item : roles)
-        {
+    private boolean isAnyRoleReadOnly(List roles) {
+        for (Object item : roles) {
             Role r = (Role) item;
-            if (r.isReadonly())
-            {
+            if (r.isReadonly()) {
                 return true;
             }
         }
@@ -622,52 +547,40 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getNewCommand())
-        {
+        if (command == getNewCommand()) {
             newEntity();
         }
-        else if (command == getEditCommand())
-        {
+        else if (command == getEditCommand()) {
             edit();
         }
-        else if (command == getRemoveCommand())
-        {
+        else if (command == getRemoveCommand()) {
             remove();
         }
-        else if (command == getSearchAllRolesCommand())
-        {
+        else if (command == getSearchAllRolesCommand()) {
             searchAllRoles();
         }
-        else if (command == getSearchAdminRolesCommand())
-        {
+        else if (command == getSearchAdminRolesCommand()) {
             searchAdminRoles();
         }
-        else if (command == getSearchUserRolesCommand())
-        {
+        else if (command == getSearchUserRolesCommand()) {
             searchUserRoles();
         }
-        else if ("OnSave".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
-        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
-        else if ("OnReset".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnReset".equals(command.getName())) { //$NON-NLS-1$
             onReset();
         }
-        else if ("Clone".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Clone".equals(command.getName())) { //$NON-NLS-1$
             cloneRole();
         }
     }

@@ -20,8 +20,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class LoginModel extends Model
-{
+public class LoginModel extends Model {
 
     public static final String BeginLoginStage = "BeginTest"; //$NON-NLS-1$
     public static final String EndLoginStage = "EndTest"; //$NON-NLS-1$
@@ -29,88 +28,73 @@ public class LoginModel extends Model
     public static final EventDefinition loggedInEventDefinition;
     private Event<EventArgs> privateLoggedInEvent;
 
-    public Event<EventArgs> getLoggedInEvent()
-    {
+    public Event<EventArgs> getLoggedInEvent() {
         return privateLoggedInEvent;
     }
 
-    private void setLoggedInEvent(Event<EventArgs> value)
-    {
+    private void setLoggedInEvent(Event<EventArgs> value) {
         privateLoggedInEvent = value;
     }
 
     public static final EventDefinition loginFailedEventDefinition;
     private Event<EventArgs> privateLoginFailedEvent;
 
-    public Event<EventArgs> getLoginFailedEvent()
-    {
+    public Event<EventArgs> getLoginFailedEvent() {
         return privateLoginFailedEvent;
     }
 
-    private void setLoginFailedEvent(Event<EventArgs> value)
-    {
+    private void setLoginFailedEvent(Event<EventArgs> value) {
         privateLoginFailedEvent = value;
     }
 
     private UICommand privateLoginCommand;
 
-    public UICommand getLoginCommand()
-    {
+    public UICommand getLoginCommand() {
         return privateLoginCommand;
     }
 
-    public void setLoginCommand(UICommand value)
-    {
+    public void setLoginCommand(UICommand value) {
         privateLoginCommand = value;
     }
 
     private ListModel<String> privateProfile;
 
-    public ListModel<String> getProfile()
-    {
+    public ListModel<String> getProfile() {
         return privateProfile;
     }
 
-    private void setProfile(ListModel<String> value)
-    {
+    private void setProfile(ListModel<String> value) {
         privateProfile = value;
     }
 
     private EntityModel<String> privateUserName;
 
-    public EntityModel<String> getUserName()
-    {
+    public EntityModel<String> getUserName() {
         return privateUserName;
     }
 
-    private void setUserName(EntityModel<String> value)
-    {
+    private void setUserName(EntityModel<String> value) {
         privateUserName = value;
     }
 
     private EntityModel<String> privatePassword;
 
-    public EntityModel<String> getPassword()
-    {
+    public EntityModel<String> getPassword() {
         return privatePassword;
     }
 
-    private void setPassword(EntityModel<String> value)
-    {
+    private void setPassword(EntityModel<String> value) {
         privatePassword = value;
     }
 
     private boolean isConnecting;
 
-    public boolean getIsConnecting()
-    {
+    public boolean getIsConnecting() {
         return isConnecting;
     }
 
-    public void setIsConnecting(boolean value)
-    {
-        if (isConnecting != value)
-        {
+    public void setIsConnecting(boolean value) {
+        if (isConnecting != value) {
             isConnecting = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsConnecting")); //$NON-NLS-1$
         }
@@ -131,18 +115,15 @@ public class LoginModel extends Model
     // If true, indicates that the model is in the process of logging in automatically
     private boolean loggingInAutomatically = false;
 
-    public DbUser getLoggedUser()
-    {
+    public DbUser getLoggedUser() {
         return privateLoggedUser;
     }
 
-    protected void setLoggedUser(DbUser value)
-    {
+    protected void setLoggedUser(DbUser value) {
         privateLoggedUser = value;
     }
 
-    static
-    {
+    static {
         loggedInEventDefinition = new EventDefinition("LoggedIn", LoginModel.class); //$NON-NLS-1$
         loginFailedEventDefinition = new EventDefinition("LoginFailed", LoginModel.class); //$NON-NLS-1$
     }
@@ -153,17 +134,14 @@ public class LoginModel extends Model
         return messages;
     }
 
-    public void setMessages(List<String> value)
-    {
-        if (!ObjectUtils.objectsEqual(messages, value))
-        {
+    public void setMessages(List<String> value) {
+        if (!ObjectUtils.objectsEqual(messages, value)) {
             messages = value;
             onPropertyChanged(new PropertyChangedEventArgs("Message")); //$NON-NLS-1$
         }
     }
 
-    public LoginModel()
-    {
+    public LoginModel() {
         setLoggedInEvent(new Event<EventArgs>(loggedInEventDefinition));
         setLoginFailedEvent(new Event<EventArgs>(loginFailedEventDefinition));
 
@@ -190,14 +168,12 @@ public class LoginModel extends Model
         _asyncQuery.setHandleFailure(true);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
 
                 setIsConnecting(false);
 
                 LoginModel loginModel = (LoginModel) model;
-                if (ReturnValue == null)
-                {
+                if (ReturnValue == null) {
                     loginModel.setMessages(Arrays.asList(ConstantsManager.getInstance()
                             .getConstants()
                             .couldNotConnectToOvirtEngineServiceMsg()));
@@ -223,10 +199,8 @@ public class LoginModel extends Model
         AsyncDataProvider.getInstance().getAAAProfilesListViaPublic(_asyncQuery, true);
     }
 
-    public void login()
-    {
-        if (!validate())
-        {
+    public void login() {
+        if (!validate()) {
             getLoginFailedEvent().raise(this, EventArgs.EMPTY);
             return;
         }
@@ -238,20 +212,16 @@ public class LoginModel extends Model
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 LoginModel loginModel = (LoginModel) model;
                 DbUser user = null;
-                if (result != null)
-                {
+                if (result != null) {
                     VdcReturnValueBase returnValue = (VdcReturnValueBase) result;
-                    if (returnValue.getSucceeded())
-                    {
+                    if (returnValue.getSucceeded()) {
                         user = (DbUser) returnValue.getActionReturnValue();
                         loginModel.setLoggedUser(user);
                     }
-                    if (user == null)
-                    {
+                    if (user == null) {
                         loginModel.getPassword().setEntity(""); //$NON-NLS-1$
                         loginModel.setMessages(returnValue.getCanDoActionMessages());
                         loginModel.getUserName().setIsChangeable(true);
@@ -260,8 +230,7 @@ public class LoginModel extends Model
                         loginModel.getLoginCommand().setIsExecutionAllowed(true);
                         loginModel.getLoginFailedEvent().raise(this, EventArgs.EMPTY);
                     }
-                    else
-                    {
+                    else {
                         raiseLoggedInEvent();
                     }
                     stopProgress();
@@ -279,8 +248,7 @@ public class LoginModel extends Model
         AsyncDataProvider.getInstance().initCache(this);
     }
 
-    public void autoLogin(DbUser user)
-    {
+    public void autoLogin(DbUser user) {
         loggingInAutomatically = true;
         getUserName().setEntity(user.getLoginName());
         getProfile().setSelectedItem(user.getDomain());
@@ -297,8 +265,7 @@ public class LoginModel extends Model
         getLoginCommand().setIsExecutionAllowed(false);
     }
 
-    protected boolean validate()
-    {
+    protected boolean validate() {
         getUserName().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getProfile().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
@@ -307,22 +274,18 @@ public class LoginModel extends Model
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getLoginCommand())
-        {
+        if (command == getLoginCommand()) {
             login();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }
 
-    public void cancel()
-    {
+    public void cancel() {
         setWindow(null);
     }
 

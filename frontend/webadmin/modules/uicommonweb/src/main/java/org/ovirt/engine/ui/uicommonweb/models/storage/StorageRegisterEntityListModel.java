@@ -23,13 +23,11 @@ public abstract class StorageRegisterEntityListModel<T extends IVdcQueryable> ex
 
     private UICommand importCommand;
 
-    public UICommand getImportCommand()
-    {
+    public UICommand getImportCommand() {
         return importCommand;
     }
 
-    private void setImportCommand(UICommand value)
-    {
+    private void setImportCommand(UICommand value) {
         importCommand = value;
     }
 

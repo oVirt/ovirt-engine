@@ -24,8 +24,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
-public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQueryable<VdsNetworkInterface, VDS>>
-{
+public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQueryable<VdsNetworkInterface, VDS>> {
     private UICommand setupNetworksCommand;
     private NetworkHostFilter viewFilterType;
 
@@ -65,16 +64,14 @@ public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQ
 
     @Override
     public void search() {
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             super.search();
         }
     }
 
     @Override
     protected void syncSearch() {
-        if (getEntity() == null)
-        {
+        if (getEntity() == null) {
             return;
         }
 
@@ -157,8 +154,7 @@ public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQ
     protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("name")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("name")) { //$NON-NLS-1$
             getSearchCommand().execute();
         }
     }
@@ -167,8 +163,7 @@ public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQ
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getSetupNetworksCommand())
-        {
+        if (command == getSetupNetworksCommand()) {
             setupNetworks();
         }
 

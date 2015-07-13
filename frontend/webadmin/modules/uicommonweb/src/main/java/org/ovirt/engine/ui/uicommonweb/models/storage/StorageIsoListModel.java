@@ -21,11 +21,9 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class StorageIsoListModel extends SearchableListModel<StorageDomain, RepoImage>
-{
+public class StorageIsoListModel extends SearchableListModel<StorageDomain, RepoImage> {
 
-    public StorageIsoListModel()
-    {
+    public StorageIsoListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().imagesTitle());
         setHelpTag(HelpTag.images);
         setHashName("images"); //$NON-NLS-1$
@@ -47,19 +45,16 @@ public class StorageIsoListModel extends SearchableListModel<StorageDomain, Repo
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (getIsAvailable())
-        {
+        if (getIsAvailable()) {
             getSearchCommand().execute();
         }
     }
 
     @Override
-    public void setEntity(StorageDomain value)
-    {
+    public void setEntity(StorageDomain value) {
         if (value == null || !value.equals(getEntity())) {
             super.setEntity(value);
             updateActionAvailability();
@@ -67,23 +62,18 @@ public class StorageIsoListModel extends SearchableListModel<StorageDomain, Repo
     }
 
     @Override
-    public void search()
-    {
-        if (getEntity() != null)
-        {
+    public void search() {
+        if (getEntity() != null) {
             super.search();
         }
-        else
-        {
+        else {
             setItems(null);
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
-        if (getEntity() == null)
-        {
+    protected void syncSearch() {
+        if (getEntity() == null) {
             return;
         }
 
@@ -108,8 +98,7 @@ public class StorageIsoListModel extends SearchableListModel<StorageDomain, Repo
         _asyncQuery.setHandleFailure(true);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnObject)
-            {
+            public void onSuccess(Object model, Object returnObject) {
                 VdcQueryReturnValue returnValue = (VdcQueryReturnValue) returnObject;
 
                 stopProgress();

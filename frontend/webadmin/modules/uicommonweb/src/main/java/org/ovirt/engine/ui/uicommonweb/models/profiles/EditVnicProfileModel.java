@@ -64,8 +64,7 @@ public class EditVnicProfileModel extends VnicProfileModel {
         AsyncQuery asyncQuery = new AsyncQuery();
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 Collection<VM> vms = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 if (vms != null && !vms.isEmpty()) {
                     getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()

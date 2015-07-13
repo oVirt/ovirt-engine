@@ -126,12 +126,10 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
     }
 
     @Override
-    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args)
-    {
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
-        if (sender == getPlugged())
-        {
+        if (sender == getPlugged()) {
             PropertyChangedEventArgs propArgs = (PropertyChangedEventArgs) args;
             if (propArgs.propertyName.equals("Entity")) { //$NON-NLS-1$
                 onPlugChange();

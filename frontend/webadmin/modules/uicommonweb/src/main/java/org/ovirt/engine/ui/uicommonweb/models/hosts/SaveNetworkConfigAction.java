@@ -16,8 +16,7 @@ public class SaveNetworkConfigAction {
     private final Model windowModel;
     private final VDS host;
 
-    public SaveNetworkConfigAction(SearchableListModel listModel, Model windowModel, VDS host)
-    {
+    public SaveNetworkConfigAction(SearchableListModel listModel, Model windowModel, VDS host) {
         this.listModel = listModel;
         this.windowModel = windowModel;
         this.host = host;
@@ -30,10 +29,8 @@ public class SaveNetworkConfigAction {
                     public void executed(FrontendActionAsyncResult result) {
 
                         VdcReturnValueBase returnValueBase = result.getReturnValue();
-                        if (returnValueBase != null && returnValueBase.getSucceeded())
-                        {
-                            if (windowModel != null)
-                            {
+                        if (returnValueBase != null && returnValueBase.getSucceeded()) {
+                            if (windowModel != null) {
                                 windowModel.stopProgress();
                                 listModel.setWindow(null);
                                 listModel.setConfirmWindow(null);

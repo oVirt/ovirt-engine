@@ -40,20 +40,16 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implements ICommandTarget
-{
+public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implements ICommandTarget {
     private ArrayList<DiskModel> allDisks;
     private StoragePool dataCenter;
 
-    public ArrayList<DiskModel> getAllDisks()
-    {
+    public ArrayList<DiskModel> getAllDisks() {
         return allDisks;
     }
 
-    public void setAllDisks(ArrayList<DiskModel> value)
-    {
-        if (allDisks != value)
-        {
+    public void setAllDisks(ArrayList<DiskModel> value) {
+        if (allDisks != value) {
             allDisks = value;
             onPropertyChanged(new PropertyChangedEventArgs("All Disks")); //$NON-NLS-1$
         }
@@ -69,15 +65,12 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         this.dataCenter = dataCenter;
     }
 
-    public ArrayList<DiskImage> getDiskImages()
-    {
+    public ArrayList<DiskImage> getDiskImages() {
         return diskImages;
     }
 
-    public void setDiskImages(ArrayList<DiskImage> value)
-    {
-        if (diskImages != value)
-        {
+    public void setDiskImages(ArrayList<DiskImage> value) {
+        if (diskImages != value) {
             diskImages = value;
             onPropertyChanged(new PropertyChangedEventArgs("Disk Images")); //$NON-NLS-1$
         }
@@ -114,8 +107,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         List<VdcQueryType> queries = new ArrayList<VdcQueryType>();
         List<VdcQueryParametersBase> params = new ArrayList<VdcQueryParametersBase>();
 
-        for (DiskImage disk : getDiskImages())
-        {
+        for (DiskImage disk : getDiskImages()) {
             disks.add(Linq.diskToModel(disk));
             queries.add(VdcQueryType.GetVmsByDiskGuid);
             params.add(new IdQueryParameters(disk.getId()));
@@ -153,8 +145,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     }
 
     protected void onInitAllDisks(ArrayList<Disk> disks) {
-        for (Disk disk : disks)
-        {
+        for (Disk disk : disks) {
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                 allDisks.add(Linq.diskToModel(disk));
             }
@@ -310,8 +301,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             closeCommand.setIsCancel(true);
             getCommands().add(closeCommand);
         }
-        else
-        {
+        else {
             if (!problematicDisks.isEmpty()) {
                 setMessage(getWarning(problematicDisks));
             }
@@ -340,8 +330,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     }
 
     protected final void onExecute() {
-        if (this.getProgress() != null)
-        {
+        if (this.getProgress() != null) {
             return;
         }
 
@@ -358,8 +347,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
     protected ArrayList<VdcActionParametersBase> getParameters() {
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
-        for (DiskModel diskModel : getDisks())
-        {
+        for (DiskModel diskModel : getDisks()) {
             StorageDomain destStorageDomain = diskModel.getStorageDomain().getSelectedItem();
             StorageDomain sourceStorageDomain =
                     diskModel.getSourceStorageDomain().getSelectedItem();
@@ -405,8 +393,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
         onExecute();

@@ -51,8 +51,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public abstract class NetworkModel extends Model implements HasValidatedTabs
-{
+public abstract class NetworkModel extends Model implements HasValidatedTabs {
     private static final String CMD_APPROVE = "OnApprove"; //$NON-NLS-1$
     private static final String CMD_ABORT = "OnAbort"; //$NON-NLS-1$
 
@@ -92,13 +91,11 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
     private boolean isVnicProfileTabValid;
     private boolean isSubnetTabValid;
 
-    public NetworkModel(ListModel sourceListModel)
-    {
+    public NetworkModel(ListModel sourceListModel) {
         this(new Network(), sourceListModel);
     }
 
-    public NetworkModel(Network network, ListModel sourceListModel)
-    {
+    public NetworkModel(Network network, ListModel sourceListModel) {
         addCommands();
         this.network = network;
         this.sourceListModel = sourceListModel;
@@ -247,23 +244,19 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
         AsyncDataProvider.getInstance().getAllNetworkProviders(getProvidersQuery);
     }
 
-    public EntityModel<String> getName()
-    {
+    public EntityModel<String> getName() {
         return privateName;
     }
 
-    private void setName(EntityModel<String> value)
-    {
+    private void setName(EntityModel<String> value) {
         privateName = value;
     }
 
-    public EntityModel<String> getDescription()
-    {
+    public EntityModel<String> getDescription() {
         return privateDescription;
     }
 
-    private void setDescription(EntityModel<String> value)
-    {
+    private void setDescription(EntityModel<String> value) {
         privateDescription = value;
     }
 
@@ -307,63 +300,51 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
         privateComment = value;
     }
 
-    public EntityModel<Integer> getVLanTag()
-    {
+    public EntityModel<Integer> getVLanTag() {
         return privateVLanTag;
     }
 
-    private void setVLanTag(EntityModel<Integer> value)
-    {
+    private void setVLanTag(EntityModel<Integer> value) {
         privateVLanTag = value;
     }
 
-    public EntityModel<Boolean> getIsStpEnabled()
-    {
+    public EntityModel<Boolean> getIsStpEnabled() {
         return privateIsStpEnabled;
     }
 
-    private void setIsStpEnabled(EntityModel<Boolean> value)
-    {
+    private void setIsStpEnabled(EntityModel<Boolean> value) {
         privateIsStpEnabled = value;
     }
 
-    public EntityModel<Boolean> getHasVLanTag()
-    {
+    public EntityModel<Boolean> getHasVLanTag() {
         return privateHasVLanTag;
     }
 
-    private void setHasVLanTag(EntityModel<Boolean> value)
-    {
+    private void setHasVLanTag(EntityModel<Boolean> value) {
         privateHasVLanTag = value;
     }
 
-    public ListModel<MtuSelector> getMtuSelector()
-    {
+    public ListModel<MtuSelector> getMtuSelector() {
         return mtuSelector;
     }
 
-    private void setMtuSelector(ListModel<MtuSelector> value)
-    {
+    private void setMtuSelector(ListModel<MtuSelector> value) {
         mtuSelector = value;
     }
 
-    public EntityModel<Integer> getMtu()
-    {
+    public EntityModel<Integer> getMtu() {
         return mtu;
     }
 
-    private void setMtu(EntityModel<Integer> value)
-    {
+    private void setMtu(EntityModel<Integer> value) {
         mtu = value;
     }
 
-    public EntityModel<Boolean> getIsVmNetwork()
-    {
+    public EntityModel<Boolean> getIsVmNetwork() {
         return privateIsVmNetwork;
     }
 
-    public void setIsVmNetwork(EntityModel<Boolean> value)
-    {
+    public void setIsVmNetwork(EntityModel<Boolean> value) {
         privateIsVmNetwork = value;
     }
 
@@ -403,23 +384,19 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
         updateMtuSelectorsChangeability();
     }
 
-    public ListModel<StoragePool> getDataCenters()
-    {
+    public ListModel<StoragePool> getDataCenters() {
         return privateDataCenters;
     }
 
-    private void setDataCenters(ListModel<StoragePool> value)
-    {
+    private void setDataCenters(ListModel<StoragePool> value) {
         privateDataCenters = value;
     }
 
-    public NetworkProfilesModel getProfiles()
-    {
+    public NetworkProfilesModel getProfiles() {
         return profiles;
     }
 
-    private void setProfiles(NetworkProfilesModel value)
-    {
+    private void setProfiles(NetworkProfilesModel value) {
         profiles = value;
     }
 
@@ -484,8 +461,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
         }
     }
 
-    private boolean validate()
-    {
+    private boolean validate() {
         RegexValidation tempVar = new RegexValidation();
         tempVar.setExpression("^[A-Za-z0-9_-]{1,15}$"); //$NON-NLS-1$
         tempVar.setMessage(ConstantsManager.getInstance().getConstants().nameMustContainAlphanumericMaxLenMsg());
@@ -502,8 +478,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
         getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
 
         getVLanTag().setIsValid(true);
-        if (getHasVLanTag().getEntity())
-        {
+        if (getHasVLanTag().getEntity()) {
             IntegerValidation tempVar4 = new IntegerValidation();
             tempVar4.setMinimum(0);
             tempVar4.setMaximum(4094);
@@ -608,14 +583,12 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
         network.setLabel(label == null || !label.isEmpty() ? label : null);
 
         network.setMtu(0);
-        if (getMtu().getIsChangable())
-        {
+        if (getMtu().getIsChangable()) {
             network.setMtu(Integer.parseInt(getMtu().getEntity().toString()));
         }
 
         network.setVlanId(null);
-        if (getHasVLanTag().getEntity())
-        {
+        if (getHasVLanTag().getEntity()) {
             network.setVlanId(Integer.parseInt(getVLanTag().getEntity().toString()));
         }
 
@@ -647,8 +620,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
 
         networkGuid = networkGuid == null ? getNetwork().getId() : networkGuid;
         ArrayList<VdcActionParametersBase> paramlist = new ArrayList<VdcActionParametersBase>();
-        for (VnicProfileModel profileModel : profileModels)
-        {
+        for (VnicProfileModel profileModel : profileModels) {
             if (!StringHelper.isNullOrEmpty(profileModel.getProfile().getName())) {
                 VnicProfile vnicProfile = profileModel.getProfile();
                 vnicProfile.setNetworkId(networkGuid);
@@ -695,10 +667,8 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
         sourceListModel.setConfirmWindow(qosModel);
     }
 
-    public void onSave()
-    {
-        if (!validate())
-        {
+    public void onSave() {
+        if (!validate()) {
             return;
         }
 
@@ -728,8 +698,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
         if ("OnSave".equals(command.getName())) { //$NON-NLS-1$

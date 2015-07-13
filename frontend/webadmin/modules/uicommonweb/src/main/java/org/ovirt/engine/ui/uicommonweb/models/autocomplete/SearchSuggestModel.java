@@ -24,25 +24,21 @@ public class SearchSuggestModel extends SearchableListModel {
     private final List<String> exceptions = Arrays.asList("DESCRIPTION"); //$NON-NLS-1$
 
     @Override
-    public List getItems()
-    {
+    public List getItems() {
         return (List) super.getItems();
     }
 
-    public void setItems(List value)
-    {
+    public void setItems(List value) {
         super.setItems(value);
     }
 
     private String privatePrefix;
 
-    public String getPrefix()
-    {
+    public String getPrefix() {
         return privatePrefix;
     }
 
-    public void setPrefix(String value)
-    {
+    public void setPrefix(String value) {
         privatePrefix = value;
     }
 
@@ -51,50 +47,42 @@ public class SearchSuggestModel extends SearchableListModel {
      */
     private String[] privateFilter;
 
-    public String[] getFilter()
-    {
+    public String[] getFilter() {
         return privateFilter;
     }
 
-    public void setFilter(String[] value)
-    {
+    public void setFilter(String[] value) {
         privateFilter = value;
     }
 
     private String[] searchObjectFilter;
 
-    public String[] getSearchObjectFilter()
-    {
+    public String[] getSearchObjectFilter() {
         return searchObjectFilter;
     }
 
-    public void setSearchObjectFilter(String[] value)
-    {
+    public void setSearchObjectFilter(String[] value) {
         searchObjectFilter = value;
     }
 
-    public SearchSuggestModel()
-    {
+    public SearchSuggestModel() {
         setItems(new ObservableCollection<Object>());
         setIsTimerDisabled(true);
     }
 
     @Override
-    protected void searchStringChanged()
-    {
+    protected void searchStringChanged() {
         super.searchStringChanged();
         getSearchCommand().execute();
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         super.syncSearch();
         updateOptionsAsync(getPrefix() + getSearchString());
     }
 
-    public void updateOptionsAsync(String search)
-    {
+    public void updateOptionsAsync(String search) {
         getItems().clear();
 
         ISyntaxChecker syntaxChecker = getConfigurator().getSyntaxChecker();
@@ -121,8 +109,7 @@ public class SearchSuggestModel extends SearchableListModel {
             }
         }
 
-        if (syntax.getError() == SyntaxError.NO_ERROR)
-        {
+        if (syntax.getError() == SyntaxError.NO_ERROR) {
             List<String> actualItems = new ArrayList<String>(Arrays.asList(suggestedItems));
 
             // Filter search object suggestions
@@ -142,31 +129,25 @@ public class SearchSuggestModel extends SearchableListModel {
                 }
             }
 
-            for (String item : actualItems)
-            {
+            for (String item : actualItems) {
                 // Apply filter
-                if (getFilter() != null)
-                {
+                if (getFilter() != null) {
                     boolean skipItem = false;
-                    for (String value : getFilter())
-                    {
-                        if (ObjectUtils.objectsEqual(value.toLowerCase(), item.toLowerCase()))
-                        {
+                    for (String value : getFilter()) {
+                        if (ObjectUtils.objectsEqual(value.toLowerCase(), item.toLowerCase())) {
                             skipItem = true;
                             break;
                         }
                     }
 
-                    if (skipItem)
-                    {
+                    if (skipItem) {
                         continue;
                     }
                 }
 
                 String space = ""; //$NON-NLS-1$
                 if ((pf.length() > 0) && (!pf.substring(pf.length() - 1, pf.length() - 1 + 1).equals(".")) //$NON-NLS-1$
-                        && (!".".equals(item))) //$NON-NLS-1$
-                {
+                        && (!".".equals(item))) { //$NON-NLS-1$
                     space = StringConstants.SPACE;
                 }
 
@@ -179,8 +160,7 @@ public class SearchSuggestModel extends SearchableListModel {
                 }
             }
         }
-        else
-        {
+        else {
             addSuggestItem(pf, SuggestItemPartType.Valid, notHandled, SuggestItemPartType.Erroneous);
         }
     }
@@ -225,24 +205,20 @@ public class SearchSuggestModel extends SearchableListModel {
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
 
         List selectedItem = (List) getSelectedItem();
-        if (selectedItem != null)
-        {
+        if (selectedItem != null) {
             ArrayList<String> items = new ArrayList<String>();
-            for (Object item : selectedItem)
-            {
+            for (Object item : selectedItem) {
                 SuggestItemPartModel i = (SuggestItemPartModel) item;
                 items.add(i.getPartString());
             }
 
             String searchString = StringHelper.join("", items.toArray(new String[] {})); //$NON-NLS-1$
             // If there prefix exist, don't transfer it back as a part of search string.
-            if (getPrefix() != null)
-            {
+            if (getPrefix() != null) {
                 searchString = searchString.substring(getPrefix().length());
             }
 

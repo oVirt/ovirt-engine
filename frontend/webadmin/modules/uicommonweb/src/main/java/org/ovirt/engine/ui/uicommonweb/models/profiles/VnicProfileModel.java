@@ -54,23 +54,19 @@ public abstract class VnicProfileModel extends Model {
     private final Guid defaultQosId;
     private NetworkQoS defaultQos;
 
-    public EntityModel<String> getName()
-    {
+    public EntityModel<String> getName() {
         return name;
     }
 
-    private void setName(EntityModel<String> value)
-    {
+    private void setName(EntityModel<String> value) {
         name = value;
     }
 
-    public EntityModel<Boolean> getPortMirroring()
-    {
+    public EntityModel<Boolean> getPortMirroring() {
         return portMirroring;
     }
 
-    public void setPortMirroring(EntityModel<Boolean> value)
-    {
+    public void setPortMirroring(EntityModel<Boolean> value) {
         portMirroring = value;
     }
 
@@ -179,15 +175,12 @@ public abstract class VnicProfileModel extends Model {
         getCommands().add(cancelCommand);
     }
 
-    private void onSave()
-    {
-        if (getProgress() != null)
-        {
+    private void onSave() {
+        if (getProgress() != null) {
             return;
         }
 
-        if (!validate())
-        {
+        if (!validate()) {
             return;
         }
 
@@ -204,8 +197,7 @@ public abstract class VnicProfileModel extends Model {
                         VdcReturnValueBase returnValue = result.getReturnValue();
                         stopProgress();
 
-                        if (returnValue != null && returnValue.getSucceeded())
-                        {
+                        if (returnValue != null && returnValue.getSucceeded()) {
                             cancel();
                         }
                     }
@@ -237,22 +229,18 @@ public abstract class VnicProfileModel extends Model {
         vnicProfile.setDescription(getDescription().getEntity());
     }
 
-    private void cancel()
-    {
+    private void cancel() {
         sourceModel.setWindow(null);
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if ("OnSave".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }
@@ -295,8 +283,7 @@ public abstract class VnicProfileModel extends Model {
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 List<NetworkQoS> networkQoSes = (List<NetworkQoS>) ReturnValue;
                 getNetworkQoS().setItems(networkQoSes);
                 defaultQos = Linq.findNetworkQosById(networkQoSes, defaultQosId);
@@ -332,8 +319,7 @@ public abstract class VnicProfileModel extends Model {
         });
     }
 
-    public boolean validate()
-    {
+    public boolean validate() {
         getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new AsciiNameValidation() });
 
         return getName().getIsValid() && getCustomPropertySheet().validate();

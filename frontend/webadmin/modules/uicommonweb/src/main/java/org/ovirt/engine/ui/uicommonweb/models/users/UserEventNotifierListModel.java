@@ -32,23 +32,19 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.Translator;
 
 @SuppressWarnings("unused")
-public class UserEventNotifierListModel extends SearchableListModel<DbUser, event_subscriber>
-{
+public class UserEventNotifierListModel extends SearchableListModel<DbUser, event_subscriber> {
 
     private UICommand privateManageEventsCommand;
 
-    public UICommand getManageEventsCommand()
-    {
+    public UICommand getManageEventsCommand() {
         return privateManageEventsCommand;
     }
 
-    private void setManageEventsCommand(UICommand value)
-    {
+    private void setManageEventsCommand(UICommand value) {
         privateManageEventsCommand = value;
     }
 
-    public UserEventNotifierListModel()
-    {
+    public UserEventNotifierListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().eventNotifierTitle());
         setHelpTag(HelpTag.event_notifier);
         setHashName("event_notifier"); //$NON-NLS-1$
@@ -57,26 +53,21 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, even
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
         getSearchCommand().execute();
     }
 
     @Override
-    public void search()
-    {
-        if (getEntity() != null)
-        {
+    public void search() {
+        if (getEntity() != null) {
             super.search();
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
-        if (getEntity() == null)
-        {
+    protected void syncSearch() {
+        if (getEntity() == null) {
             return;
         }
 
@@ -86,8 +77,7 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, even
                 new IdQueryParameters(getEntity().getId()));
     }
 
-    public void manageEvents()
-    {
+    public void manageEvents() {
         EventNotificationModel model = new EventNotificationModel();
         setWindow(model);
 
@@ -107,15 +97,13 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, even
         ArrayList<event_subscriber> items =
                 getItems() == null ? new ArrayList<event_subscriber>()
                         : Linq.<event_subscriber> cast(getItems());
-        for (EventNotificationEntity eventType : eventTypes)
-        {
+        for (EventNotificationEntity eventType : eventTypes) {
             SelectionTreeNodeModel stnm = new SelectionTreeNodeModel();
             stnm.setTitle(eventType.toString());
             stnm.setDescription(translator.translate(eventType));
             list.add(stnm);
 
-            for (AuditLogType logtype : availableEvents.get(eventType))
-            {
+            for (AuditLogType logtype : availableEvents.get(eventType)) {
                 SelectionTreeNodeModel eventGrp = new SelectionTreeNodeModel();
 
                 String description;
@@ -130,10 +118,8 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, even
                 eventGrp.setParent(list.get(list.size() - 1));
                 eventGrp.setIsSelectedNotificationPrevent(true);
                 eventGrp.setIsSelectedNullable(false);
-                for (event_subscriber es : items)
-                {
-                    if (es.getevent_up_name().equals(logtype.toString()))
-                    {
+                for (event_subscriber es : items) {
+                    if (es.getevent_up_name().equals(logtype.toString())) {
                         eventGrp.setIsSelectedNullable(true);
                         break;
                     }
@@ -142,19 +128,16 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, even
                 list.get(list.size() - 1).getChildren().add(eventGrp);
                 eventGrp.setIsSelectedNotificationPrevent(false);
             }
-            if (list.get(list.size() - 1).getChildren().size() > 0)
-            {
+            if (list.get(list.size() - 1).getChildren().size() > 0) {
                 list.get(list.size() - 1).getChildren().get(0).updateParentSelection();
             }
         }
 
         model.setEventGroupModels(list);
-        if (!StringHelper.isNullOrEmpty(getEntity().getEmail()))
-        {
+        if (!StringHelper.isNullOrEmpty(getEntity().getEmail())) {
             model.getEmail().setEntity(getEntity().getEmail());
         }
-        else if (items.size() > 0)
-        {
+        else if (items.size() > 0) {
             model.getEmail().setEntity(items.get(0).getmethod_address());
         }
 
@@ -166,12 +149,10 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, even
         model.getCommands().add(tempVar2);
     }
 
-    public void onSave()
-    {
+    public void onSave() {
         EventNotificationModel model = (EventNotificationModel) getWindow();
 
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
 
@@ -180,12 +161,9 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, even
 
         // var selected = model.EventGroupModels.SelectMany(a => a.Children).Where(a => a.IsSelected == true);
         ArrayList<SelectionTreeNodeModel> selected = new ArrayList<SelectionTreeNodeModel>();
-        for (SelectionTreeNodeModel node : model.getEventGroupModels())
-        {
-            for (SelectionTreeNodeModel child : node.getChildren())
-            {
-                if (child.getIsSelectedNullable() != null && child.getIsSelectedNullable().equals(true))
-                {
+        for (SelectionTreeNodeModel node : model.getEventGroupModels()) {
+            for (SelectionTreeNodeModel child : node.getChildren()) {
+                if (child.getIsSelectedNullable() != null && child.getIsSelectedNullable().equals(true)) {
                     selected.add(child);
                 }
             }
@@ -198,72 +176,58 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, even
         ArrayList<event_subscriber> removed = new ArrayList<event_subscriber>();
 
         // check what has been added:
-        for (SelectionTreeNodeModel selectedEvent : selected)
-        {
+        for (SelectionTreeNodeModel selectedEvent : selected) {
             boolean selectedInExisting = false;
-            for (event_subscriber existingEvent : existing)
-            {
-                if (selectedEvent.getTitle().equals(existingEvent.getevent_up_name()))
-                {
+            for (event_subscriber existingEvent : existing) {
+                if (selectedEvent.getTitle().equals(existingEvent.getevent_up_name())) {
                     selectedInExisting = true;
                     break;
                 }
             }
 
-            if (!selectedInExisting)
-            {
+            if (!selectedInExisting) {
                 added.add(selectedEvent);
             }
         }
 
         // check what has been deleted:
-        for (event_subscriber existingEvent : existing)
-        {
+        for (event_subscriber existingEvent : existing) {
             boolean existingInSelected = false;
-            for (SelectionTreeNodeModel selectedEvent : selected)
-            {
-                if (selectedEvent.getTitle().equals(existingEvent.getevent_up_name()))
-                {
+            for (SelectionTreeNodeModel selectedEvent : selected) {
+                if (selectedEvent.getTitle().equals(existingEvent.getevent_up_name())) {
                     existingInSelected = true;
                     break;
                 }
             }
 
-            if (!existingInSelected)
-            {
+            if (!existingInSelected) {
                 removed.add(existingEvent);
             }
         }
         if (!StringHelper.isNullOrEmpty(model.getOldEmail())
-                && !model.getOldEmail().equals(model.getEmail().getEntity()))
-        {
-            for (event_subscriber a : existing)
-            {
+                && !model.getOldEmail().equals(model.getEmail().getEntity())) {
+            for (event_subscriber a : existing) {
                 toRemoveList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getevent_up_name(),
                         EventNotificationMethod.SMTP,
                         a.getmethod_address(),
                         a.getsubscriber_id(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            for (SelectionTreeNodeModel a : selected)
-            {
+            for (SelectionTreeNodeModel a : selected) {
                 toAddList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getTitle(),
                         EventNotificationMethod.SMTP,
                         (String) model.getEmail().getEntity(),
                         getEntity().getId(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
-        else
-        {
-            for (SelectionTreeNodeModel a : added)
-            {
+        else {
+            for (SelectionTreeNodeModel a : added) {
                 toAddList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getTitle(),
                         EventNotificationMethod.SMTP,
                         (String) model.getEmail().getEntity(),
                         getEntity().getId(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
-            for (event_subscriber a : removed)
-            {
+            for (event_subscriber a : removed) {
                 toRemoveList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getevent_up_name(),
                         EventNotificationMethod.SMTP,
                         a.getmethod_address(),
@@ -271,15 +235,12 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, even
             }
         }
 
-        if (toRemoveList.size() > 0)
-        {
+        if (toRemoveList.size() > 0) {
             EventSubscriptionFrontendActionAsyncCallback callback = new EventSubscriptionFrontendActionAsyncCallback(toAddList, toRemoveList);
-            for (VdcActionParametersBase param : toRemoveList)
-            {
+            for (VdcActionParametersBase param : toRemoveList) {
                 Frontend.getInstance().runAction(VdcActionType.RemoveEventSubscription, param, callback);
             }
-        } else if (toAddList.size() > 0)
-        {
+        } else if (toAddList.size() > 0) {
             Frontend.getInstance().runMultipleAction(VdcActionType.AddEventSubscription, toAddList);
         }
         cancel();
@@ -309,45 +270,36 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, even
         }
     }
 
-    public void cancel()
-    {
+    public void cancel() {
         setWindow(null);
     }
 
     @Override
-    protected void itemsChanged()
-    {
+    protected void itemsChanged() {
         super.itemsChanged();
         updateActionAvailability();
     }
 
-    private void updateActionAvailability()
-    {
-        if (getEntity() == null || getEntity().isGroup() == true)
-        {
+    private void updateActionAvailability() {
+        if (getEntity() == null || getEntity().isGroup() == true) {
             getManageEventsCommand().setIsExecutionAllowed(false);
         }
-        else
-        {
+        else {
             getManageEventsCommand().setIsExecutionAllowed(true);
         }
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getManageEventsCommand())
-        {
+        if (command == getManageEventsCommand()) {
             manageEvents();
         }
-        if ("OnSave".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
         }
-        if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

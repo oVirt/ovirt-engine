@@ -21,47 +21,39 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class DataCenterNetworkListModel extends SearchableListModel<StoragePool, Network>
-{
+public class DataCenterNetworkListModel extends SearchableListModel<StoragePool, Network> {
 
     private UICommand privateNewCommand;
 
-    public UICommand getNewCommand()
-    {
+    public UICommand getNewCommand() {
         return privateNewCommand;
     }
 
-    private void setNewCommand(UICommand value)
-    {
+    private void setNewCommand(UICommand value) {
         privateNewCommand = value;
     }
 
     private UICommand privateEditCommand;
 
-    public UICommand getEditCommand()
-    {
+    public UICommand getEditCommand() {
         return privateEditCommand;
     }
 
-    private void setEditCommand(UICommand value)
-    {
+    private void setEditCommand(UICommand value) {
         privateEditCommand = value;
     }
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
-    public DataCenterNetworkListModel()
-    {
+    public DataCenterNetworkListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().logicalNetworksTitle());
         setHelpTag(HelpTag.logical_networks);
         setHashName("logical_networks"); //$NON-NLS-1$
@@ -74,26 +66,21 @@ public class DataCenterNetworkListModel extends SearchableListModel<StoragePool,
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
         getSearchCommand().execute();
     }
 
     @Override
-    public void search()
-    {
-        if (getEntity() != null)
-        {
+    public void search() {
+        if (getEntity() != null) {
             super.search();
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
-        if (getEntity() == null)
-        {
+    protected void syncSearch() {
+        if (getEntity() == null) {
             return;
         }
 
@@ -103,8 +90,7 @@ public class DataCenterNetworkListModel extends SearchableListModel<StoragePool,
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 ArrayList<Network> newItems = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 Collections.sort(newItems, new NameableComparator());
                 setItems(newItems);
@@ -116,10 +102,8 @@ public class DataCenterNetworkListModel extends SearchableListModel<StoragePool,
         Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworks, tempVar, _asyncQuery);
     }
 
-    public void remove()
-    {
-        if (getConfirmWindow() != null)
-        {
+    public void remove() {
+        if (getConfirmWindow() != null) {
             return;
         }
 
@@ -127,12 +111,10 @@ public class DataCenterNetworkListModel extends SearchableListModel<StoragePool,
         setConfirmWindow(model);
     }
 
-    public void edit()
-    {
+    public void edit() {
         final Network network = getSelectedItem();
 
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -144,10 +126,8 @@ public class DataCenterNetworkListModel extends SearchableListModel<StoragePool,
 
     }
 
-    public void newNetwork()
-    {
-        if (getWindow() != null)
-        {
+    public void newNetwork() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -159,21 +139,18 @@ public class DataCenterNetworkListModel extends SearchableListModel<StoragePool,
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         List tempVar = getSelectedItems();
         ArrayList selectedItems =
                 (ArrayList) ((tempVar != null) ? tempVar : new ArrayList());
@@ -183,20 +160,16 @@ public class DataCenterNetworkListModel extends SearchableListModel<StoragePool,
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getNewCommand())
-        {
+        if (command == getNewCommand()) {
             newNetwork();
         }
-        else if (command == getEditCommand())
-        {
+        else if (command == getEditCommand()) {
             edit();
         }
-        else if (command == getRemoveCommand())
-        {
+        else if (command == getRemoveCommand()) {
             remove();
         }
     }

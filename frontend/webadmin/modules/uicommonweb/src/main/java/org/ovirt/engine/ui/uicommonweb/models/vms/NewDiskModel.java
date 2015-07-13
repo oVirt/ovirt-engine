@@ -35,8 +35,7 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
-public class NewDiskModel extends AbstractDiskModel
-{
+public class NewDiskModel extends AbstractDiskModel {
     private boolean descriptionDerivedFromLunId;
 
     private IEventListener lunSelectionChangedEventListener = new IEventListener() {
@@ -113,10 +112,8 @@ public class NewDiskModel extends AbstractDiskModel
         boolean isStatusUp = dataCenter.getStatus() == StoragePoolStatus.Up;
 
         boolean isInTreeContext = true;
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() != SystemTreeItemType.System)
-        {
-            switch (getSystemTreeSelectedItem().getType())
-            {
+        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() != SystemTreeItemType.System) {
+            switch (getSystemTreeSelectedItem().getType()) {
             case DataCenter:
                 StoragePool selectedDataCenter = (StoragePool) getSystemTreeSelectedItem().getEntity();
                 isInTreeContext = selectedDataCenter.getId().equals(dataCenter.getId());

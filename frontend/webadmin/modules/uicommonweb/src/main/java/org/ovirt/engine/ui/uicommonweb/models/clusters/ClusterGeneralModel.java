@@ -81,8 +81,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
     }
 
     public void setNumberOfVms(Integer numberOfVms) {
-        if (!ObjectUtils.objectsEqual(this.numberOfVms, numberOfVms))
-        {
+        if (!ObjectUtils.objectsEqual(this.numberOfVms, numberOfVms)) {
             this.numberOfVms = numberOfVms;
             onPropertyChanged(new PropertyChangedEventArgs("numberOfVms")); //$NON-NLS-1$
         }
@@ -110,15 +109,12 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
 
     private boolean hasAnyAlert;
 
-    public boolean getHasAnyAlert()
-    {
+    public boolean getHasAnyAlert() {
         return hasAnyAlert;
     }
 
-    public void setHasAnyAlert(boolean value)
-    {
-        if (hasAnyAlert != value)
-        {
+    public void setHasAnyAlert(boolean value) {
+        if (hasAnyAlert != value) {
             hasAnyAlert = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasAnyAlert")); //$NON-NLS-1$
         }
@@ -126,15 +122,12 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
 
     private boolean hasGlusterHostsAlert;
 
-    public boolean getHasNewGlusterHostsAlert()
-    {
+    public boolean getHasNewGlusterHostsAlert() {
         return hasGlusterHostsAlert;
     }
 
-    public void setHasNewGlusterHostsAlert(boolean value)
-    {
-        if (hasGlusterHostsAlert != value)
-        {
+    public void setHasNewGlusterHostsAlert(boolean value) {
+        if (hasGlusterHostsAlert != value) {
             hasGlusterHostsAlert = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasNewGlusterHostsAlert")); //$NON-NLS-1$
         }
@@ -142,25 +135,21 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
 
     private UICommand importNewGlusterHostsCommand;
 
-    public UICommand getImportNewGlusterHostsCommand()
-    {
+    public UICommand getImportNewGlusterHostsCommand() {
         return importNewGlusterHostsCommand;
     }
 
-    private void setImportNewGlusterHostsCommand(UICommand value)
-    {
+    private void setImportNewGlusterHostsCommand(UICommand value) {
         importNewGlusterHostsCommand = value;
     }
 
     private UICommand detachNewGlusterHostsCommand;
 
-    public UICommand getDetachNewGlusterHostsCommand()
-    {
+    public UICommand getDetachNewGlusterHostsCommand() {
         return detachNewGlusterHostsCommand;
     }
 
-    private void setDetachNewGlusterHostsCommand(UICommand value)
-    {
+    private void setDetachNewGlusterHostsCommand(UICommand value) {
         detachNewGlusterHostsCommand = value;
     }
 
@@ -187,8 +176,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
         return consoleAddressPartiallyOverridden == null ? Boolean.FALSE : consoleAddressPartiallyOverridden;
     }
 
-    public ClusterGeneralModel()
-    {
+    public ClusterGeneralModel() {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
         setHelpTag(HelpTag.general);
         setHashName("general"); //$NON-NLS-1$
@@ -207,12 +195,10 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             updateGlusterDetails();
             updateAlerts();
             updateConsoleAddressPartiallyOverridden(getEntity());
@@ -426,8 +412,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
     }
 
     public void fetchAndImportNewGlusterHosts() {
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -449,19 +434,15 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 Map<String, String> hostMap = (Map<String, String>) result;
 
-                if (hostMap == null || hostMap.isEmpty())
-                {
+                if (hostMap == null || hostMap.isEmpty()) {
                     hostsModel.setMessage(ConstantsManager.getInstance().getConstants().emptyNewGlusterHosts());
                 }
-                else
-                {
+                else {
                     ArrayList<EntityModel<HostDetailModel>> list = new ArrayList<EntityModel<HostDetailModel>>();
-                    for (Map.Entry<String, String> host : hostMap.entrySet())
-                    {
+                    for (Map.Entry<String, String> host : hostMap.entrySet()) {
                         HostDetailModel hostModel = new HostDetailModel(host.getKey(), host.getValue());
                         hostModel.setName(host.getKey());
                         hostModel.setPassword("");//$NON-NLS-1$
@@ -479,12 +460,10 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
 
     public void onSaveHosts() {
         final MultipleHostsModel hostsModel = (MultipleHostsModel) getWindow();
-        if (hostsModel == null)
-        {
+        if (hostsModel == null) {
             return;
         }
-        if (!hostsModel.validate())
-        {
+        if (!hostsModel.validate()) {
             return;
         }
 
@@ -522,16 +501,13 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
                     public void executed(FrontendMultipleActionAsyncResult result) {
                         hostsModel.stopProgress();
                         boolean isAllCanDoPassed = true;
-                        for (VdcReturnValueBase returnValueBase : result.getReturnValue())
-                        {
+                        for (VdcReturnValueBase returnValueBase : result.getReturnValue()) {
                             isAllCanDoPassed = isAllCanDoPassed && returnValueBase.getCanDoAction();
-                            if (!isAllCanDoPassed)
-                            {
+                            if (!isAllCanDoPassed) {
                                 break;
                             }
                         }
-                        if (isAllCanDoPassed)
-                        {
+                        if (isAllCanDoPassed) {
                             updateAlerts();
                             cancel();
                         }
@@ -539,10 +515,8 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
                 }, null);
     }
 
-    public void detachNewGlusterHosts()
-    {
-        if (getWindow() != null)
-        {
+    public void detachNewGlusterHosts() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -564,19 +538,15 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 Map<String, String> hostMap = (Map<String, String>) result;
 
-                if (hostMap == null || hostMap.isEmpty())
-                {
+                if (hostMap == null || hostMap.isEmpty()) {
                     hostsModel.setMessage(ConstantsManager.getInstance().getConstants().emptyNewGlusterHosts());
                 }
-                else
-                {
+                else {
                     ArrayList<EntityModel<String>> hostList = new ArrayList<EntityModel<String>>();
-                    for (String host : hostMap.keySet())
-                    {
+                    for (String host : hostMap.keySet()) {
                         hostList.add(new EntityModel<String>(host));
                     }
                     hostsModel.getHosts().setItems(hostList);
@@ -587,16 +557,13 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
         AsyncDataProvider.getInstance().getGlusterHostsNewlyAdded(_asyncQuery, getEntity().getId(), true);
     }
 
-    public void onDetachNewGlusterHosts()
-    {
-        if (getWindow() == null)
-        {
+    public void onDetachNewGlusterHosts() {
+        if (getWindow() == null) {
             return;
         }
 
         final DetachGlusterHostsModel hostsModel = (DetachGlusterHostsModel) getWindow();
-        if (!hostsModel.validate())
-        {
+        if (!hostsModel.validate()) {
             return;
         }
         boolean force = hostsModel.getForce().getEntity();
@@ -609,31 +576,25 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
         cancel();
     }
 
-    public void cancel()
-    {
+    public void cancel() {
         setWindow(null);
     }
 
 
-    private void updateGlusterDetails()
-    {
+    private void updateGlusterDetails() {
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 ArrayList<GlusterVolumeEntity> volumeList = (ArrayList<GlusterVolumeEntity>) result;
                 int volumesUp = 0;
                 int volumesDown = 0;
-                for (GlusterVolumeEntity volumeEntity : volumeList)
-                {
-                    if (volumeEntity.getStatus() == GlusterStatus.UP)
-                    {
+                for (GlusterVolumeEntity volumeEntity : volumeList) {
+                    if (volumeEntity.getStatus() == GlusterStatus.UP) {
                         volumesUp++;
                     }
-                    else
-                    {
+                    else {
                         volumesDown++;
                     }
                 }
@@ -660,25 +621,20 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
         }), getEntity().getId());
     }
 
-    private void updateAlerts()
-    {
-        if (getEntity().supportsGlusterService())
-        {
+    private void updateAlerts() {
+        if (getEntity().supportsGlusterService()) {
             AsyncQuery _asyncQuery = new AsyncQuery();
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object result)
-                {
+                public void onSuccess(Object model, Object result) {
                     ClusterGeneralModel innerGeneralModel = (ClusterGeneralModel) model;
                     Map<String, String> serverMap = (Map<String, String>) result;
-                    if (!serverMap.isEmpty())
-                    {
+                    if (!serverMap.isEmpty()) {
                         innerGeneralModel.setHasNewGlusterHostsAlert(true);
                         innerGeneralModel.setHasAnyAlert(true);
                     }
-                    else
-                    {
+                    else {
                         setHasNewGlusterHostsAlert(false);
                         setHasAnyAlert(false);
                     }
@@ -686,44 +642,35 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
             };
             AsyncDataProvider.getInstance().getGlusterHostsNewlyAdded(_asyncQuery, getEntity().getId(), false);
         }
-        else
-        {
+        else {
             setHasNewGlusterHostsAlert(false);
             setHasAnyAlert(false);
         }
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getManageGlusterSwiftCommand())
-        {
+        if (command == getManageGlusterSwiftCommand()) {
             manageGlusterSwiftServices();
         }
-        else if (command == getImportNewGlusterHostsCommand())
-        {
+        else if (command == getImportNewGlusterHostsCommand()) {
             fetchAndImportNewGlusterHosts();
         }
-        else if (command == getDetachNewGlusterHostsCommand())
-        {
+        else if (command == getDetachNewGlusterHostsCommand()) {
             detachNewGlusterHosts();
         }
-        else if ("OnSaveHosts".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnSaveHosts".equals(command.getName())) { //$NON-NLS-1$
             onSaveHosts();
         }
-        else if ("OnDetachGlusterHosts".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnDetachGlusterHosts".equals(command.getName())) { //$NON-NLS-1$
             onDetachNewGlusterHosts();
         }
-        else if ("OnManageGlusterSwift".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("OnManageGlusterSwift".equals(command.getName())) { //$NON-NLS-1$
             onManageGlusterSwiftServices();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

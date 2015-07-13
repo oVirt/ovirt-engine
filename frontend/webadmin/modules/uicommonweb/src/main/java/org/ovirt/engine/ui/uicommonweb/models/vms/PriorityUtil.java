@@ -20,8 +20,7 @@ public class PriorityUtil {
         this.model = model;
     }
 
-    public void initPriority(final int priority, final PriorityUpdatingCallbacks callbacks)
-    {
+    public void initPriority(final int priority, final PriorityUpdatingCallbacks callbacks) {
         AsyncDataProvider.getInstance().getMaxVmPriority(new AsyncQuery(model,
                                                                         new INewAsyncCallback() {
                                                                             @Override
@@ -42,10 +41,8 @@ public class PriorityUtil {
                                                                         }));
     }
 
-    private void updatePriority(final PriorityUpdatingCallbacks callbacks)
-    {
-        if (cachedMaxPriority == null)
-        {
+    private void updatePriority(final PriorityUpdatingCallbacks callbacks) {
+        if (cachedMaxPriority == null) {
             AsyncDataProvider.getInstance().getMaxVmPriority(new AsyncQuery(model,
                                                                             new INewAsyncCallback() {
                                                                                 @Override
@@ -56,14 +53,12 @@ public class PriorityUtil {
                                                                                 }
                                                                             }));
         }
-        else
-        {
+        else {
             postUpdatePriority(callbacks);
         }
     }
 
-    private void postUpdatePriority(PriorityUpdatingCallbacks callbacks)
-    {
+    private void postUpdatePriority(PriorityUpdatingCallbacks callbacks) {
         before(callbacks);
         List<EntityModel<Integer>> items = new ArrayList<EntityModel<Integer>>();
         EntityModel tempVar = new EntityModel();
@@ -84,21 +79,17 @@ public class PriorityUtil {
 
         model.getPriority().setItems(items);
 
-        if (oldPriority != null)
-        {
-            for (EntityModel<Integer> item : items)
-            {
+        if (oldPriority != null) {
+            for (EntityModel<Integer> item : items) {
                 Integer val1 = item.getEntity();
                 Integer val2 = oldPriority.getEntity();
-                if (val1 != null && val1.equals(val2))
-                {
+                if (val1 != null && val1.equals(val2)) {
                     model.getPriority().setSelectedItem(item);
                     break;
                 }
             }
         }
-        else
-        {
+        else {
             model.getPriority().setSelectedItem(Linq.firstOrDefault(items));
         }
 

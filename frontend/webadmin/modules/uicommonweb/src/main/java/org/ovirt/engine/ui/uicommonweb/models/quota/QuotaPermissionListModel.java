@@ -40,8 +40,7 @@ public class QuotaPermissionListModel extends PermissionListModel<Quota> {
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 ArrayList<Permission> list = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 ArrayList<Permission> newList = new ArrayList<Permission>();
                 for (Permission permission : list) {
@@ -61,8 +60,7 @@ public class QuotaPermissionListModel extends PermissionListModel<Quota> {
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
         getSearchCommand().execute();
     }

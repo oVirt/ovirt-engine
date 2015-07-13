@@ -58,8 +58,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
  * @param <T> The type of list items.
  */
 // TODO once all the children of this class will be refactored to use generics, change from <T> to <T extends IVdcQueryable>
-public abstract class SearchableListModel<E, T> extends SortedListModel<T> implements HasEntity<E>, GridController
-{
+public abstract class SearchableListModel<E, T> extends SortedListModel<T> implements HasEntity<E>, GridController {
     private static final int UnknownInteger = -1;
     private static final Logger logger = Logger.getLogger(SearchableListModel.class.getName());
     private static final String PAGE_STRING_REGEX = "[\\s]+page[\\s]+[1-9]+[0-9]*[\\s]*$"; //$NON-NLS-1$
@@ -68,49 +67,41 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     private UICommand privateSearchCommand;
     private HandlerRegistration timerChangeHandler;
 
-    public UICommand getSearchCommand()
-    {
+    public UICommand getSearchCommand() {
         return privateSearchCommand;
     }
 
-    private void setSearchCommand(UICommand value)
-    {
+    private void setSearchCommand(UICommand value) {
         privateSearchCommand = value;
     }
 
     private UICommand privateSearchNextPageCommand;
 
-    public UICommand getSearchNextPageCommand()
-    {
+    public UICommand getSearchNextPageCommand() {
         return privateSearchNextPageCommand;
     }
 
-    private void setSearchNextPageCommand(UICommand value)
-    {
+    private void setSearchNextPageCommand(UICommand value) {
         privateSearchNextPageCommand = value;
     }
 
     private UICommand privateSearchPreviousPageCommand;
 
-    public UICommand getSearchPreviousPageCommand()
-    {
+    public UICommand getSearchPreviousPageCommand() {
         return privateSearchPreviousPageCommand;
     }
 
-    private void setSearchPreviousPageCommand(UICommand value)
-    {
+    private void setSearchPreviousPageCommand(UICommand value) {
         privateSearchPreviousPageCommand = value;
     }
 
     private UICommand privateForceRefreshCommand;
 
-    public UICommand getForceRefreshCommand()
-    {
+    public UICommand getForceRefreshCommand() {
         return privateForceRefreshCommand;
     }
 
-    private void setForceRefreshCommand(UICommand value)
-    {
+    private void setForceRefreshCommand(UICommand value) {
         privateForceRefreshCommand = value;
     }
 
@@ -120,10 +111,8 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         return addOpenReportCommand(new ReportCommand("OpenReport", idParamName, isMultiple, uriId, this)); //$NON-NLS-1$
     }
 
-    private ReportCommand addOpenReportCommand(ReportCommand reportCommand)
-    {
-        if (openReportCommands.add(reportCommand))
-        {
+    private ReportCommand addOpenReportCommand(ReportCommand reportCommand) {
+        if (openReportCommands.add(reportCommand)) {
             List<IVdcQueryable> items =
                     getSelectedItems() != null ? Linq.<IVdcQueryable> cast(getSelectedItems())
                             : new ArrayList<IVdcQueryable>();
@@ -137,75 +126,62 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
 
     private boolean privateIsQueryFirstTime;
 
-    public boolean getIsQueryFirstTime()
-    {
+    public boolean getIsQueryFirstTime() {
         return privateIsQueryFirstTime;
     }
 
-    public void setIsQueryFirstTime(boolean value)
-    {
+    public void setIsQueryFirstTime(boolean value) {
         privateIsQueryFirstTime = value;
     }
 
     private boolean privateIsTimerDisabled;
 
-    public boolean getIsTimerDisabled()
-    {
+    public boolean getIsTimerDisabled() {
         return privateIsTimerDisabled;
     }
 
-    public void setIsTimerDisabled(boolean value)
-    {
+    public void setIsTimerDisabled(boolean value) {
         privateIsTimerDisabled = value;
     }
 
     private String privateDefaultSearchString;
 
-    public String getDefaultSearchString()
-    {
+    public String getDefaultSearchString() {
         return privateDefaultSearchString;
     }
 
-    public void setDefaultSearchString(String value)
-    {
+    public void setDefaultSearchString(String value) {
         privateDefaultSearchString = value;
     }
 
     private String[] searchObjects;
 
-    public String[] getSearchObjects()
-    {
+    public String[] getSearchObjects() {
         return searchObjects;
     }
 
-    public void setSearchObjects(String[] value)
-    {
+    public void setSearchObjects(String[] value) {
         searchObjects = value;
     }
 
     private int privateSearchPageSize;
 
-    public int getSearchPageSize()
-    {
+    public int getSearchPageSize() {
         return privateSearchPageSize;
     }
 
-    public void setSearchPageSize(int value)
-    {
+    public void setSearchPageSize(int value) {
         privateSearchPageSize = value;
     }
 
     private String searchString;
 
-    public String getSearchString()
-    {
+    public String getSearchString() {
         return searchString;
     }
 
-    public void setSearchString(String value)
-    {
-        if (!ObjectUtils.objectsEqual(searchString, value))
-        {
+    public void setSearchString(String value) {
+        if (!ObjectUtils.objectsEqual(searchString, value)) {
             searchString = value;
             pagingSearchString = null;
             searchStringChanged();
@@ -243,13 +219,11 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         return fromItemCount + "-" + toItemCount; //$NON-NLS-1$
     }
 
-    public int getNextSearchPageNumber()
-    {
+    public int getNextSearchPageNumber() {
         return getSearchPageNumber() + 1;
     }
 
-    public int getPreviousSearchPageNumber()
-    {
+    public int getPreviousSearchPageNumber() {
         return getSearchPageNumber() == 1 ? 1 : getSearchPageNumber() - 1;
     }
 
@@ -257,8 +231,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
 
     private final EntityModel<E> entityModel;
 
-    protected SearchableListModel()
-    {
+    protected SearchableListModel() {
         setSearchCommand(new UICommand("Search", this)); //$NON-NLS-1$
         setSearchNextPageCommand(new UICommand("SearchNextPage", this)); //$NON-NLS-1$
         setSearchPreviousPageCommand(new UICommand("SearchPreviousPage", this)); //$NON-NLS-1$
@@ -342,8 +315,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     /**
      * Returns value indicating whether the specified search string is matching this list model.
      */
-    public boolean isSearchStringMatch(String searchString)
-    {
+    public boolean isSearchStringMatch(String searchString) {
         return true;
     }
 
@@ -441,37 +413,30 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
 
     protected abstract String getListName();
 
-    protected void searchStringChanged()
-    {
+    protected void searchStringChanged() {
     }
 
-    public void search()
-    {
+    public void search() {
         // Defer search if there max result limit was not yet retrieved.
-        if (getSearchPageSize() == UnknownInteger)
-        {
+        if (getSearchPageSize() == UnknownInteger) {
             asyncCallback.requestSearch();
         }
-        else
-        {
+        else {
             stopRefresh();
 
-            if (getIsQueryFirstTime())
-            {
+            if (getIsQueryFirstTime()) {
                 setSelectedItem(null);
                 setSelectedItems(null);
             }
 
-            if (getIsTimerDisabled() == false)
-            {
+            if (getIsTimerDisabled() == false) {
                 setIsQueryFirstTime(true);
                 onPropertyChanged(new PropertyChangedEventArgs(PropertyChangedEventArgs.PROGRESS));
                 syncSearch();
                 setIsQueryFirstTime(false);
                 startGridTimer();
             }
-            else
-            {
+            else {
                 syncSearch();
             }
         }
@@ -500,14 +465,12 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         }
     }
 
-    public void forceRefresh()
-    {
+    public void forceRefresh() {
         stopRefresh();
         setIsQueryFirstTime(true);
         syncSearch();
 
-        if (!getIsTimerDisabled())
-        {
+        if (!getIsTimerDisabled()) {
             startRefresh();
         }
     }
@@ -516,8 +479,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
 
     }
 
-    protected void openReport()
-    {
+    protected void openReport() {
         setWidgetModel(createReportModel());
     }
 
@@ -565,70 +527,57 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         return date.getYear() + "-" + date.getMonth() + "-" + date.getDate(); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    private void asyncResultChanging(RegistrationResult newValue, RegistrationResult oldValue)
-    {
-        if (oldValue != null)
-        {
+    private void asyncResultChanging(RegistrationResult newValue, RegistrationResult oldValue) {
+        if (oldValue != null) {
             oldValue.getRetrievedEvent().removeListener(this);
         }
 
-        if (newValue != null)
-        {
+        if (newValue != null) {
             newValue.getRetrievedEvent().addListener(this);
         }
     }
 
     @Override
-    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args)
-    {
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(RegistrationResult.RetrievedEventDefinition))
-        {
+        if (ev.matchesDefinition(RegistrationResult.RetrievedEventDefinition)) {
             asyncResult_Retrieved();
         }
-        if (ev.matchesDefinition(ProvideTickEvent.definition))
-        {
+        if (ev.matchesDefinition(ProvideTickEvent.definition)) {
             syncSearch();
         }
     }
 
-    private void asyncResult_Retrieved()
-    {
+    private void asyncResult_Retrieved() {
         // Update IsEmpty flag.
 
         // Note: Do NOT use IList. 'Items' is not necissarily IList
         // (e.g in Monitor models, the different ListModels' Items are
         // of type 'valueObjectEnumerableList', which is not IList).
-        if (getItems() != null)
-        {
+        if (getItems() != null) {
             Iterator enumerator = getItems().iterator();
             setIsEmpty(enumerator.hasNext() ? false : true);
         }
-        else
-        {
+        else {
             setIsEmpty(true);
         }
     }
 
-    private void resetIsEmpty()
-    {
+    private void resetIsEmpty() {
         // Note: Do NOT use IList: 'Items' is not necissarily IList
         // (e.g in Monitor models, the different ListModels' Items are
         // of type 'valueObjectEnumerableList', which is not IList).
-        if (getItems() != null)
-        {
+        if (getItems() != null) {
             Iterator enumerator = getItems().iterator();
-            if (enumerator.hasNext())
-            {
+            if (enumerator.hasNext()) {
                 setIsEmpty(false);
             }
         }
     }
 
     @Override
-    protected void itemsChanged()
-    {
+    protected void itemsChanged() {
         super.itemsChanged();
 
         resetIsEmpty();
@@ -636,8 +585,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     }
 
     @Override
-    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs<T> e)
-    {
+    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs<T> e) {
         super.itemsCollectionChanged(sender, e);
 
         resetIsEmpty();
@@ -671,14 +619,12 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
                 getSelectedItems() != null ? getSelectedItems()
                         : Collections.emptyList();
 
-        for (ReportCommand reportCommand : openReportCommands)
-        {
+        for (ReportCommand reportCommand : openReportCommands) {
             updateReportCommandAvailability(reportCommand, items);
         }
     }
 
-    protected void updatePagingAvailability()
-    {
+    protected void updatePagingAvailability() {
         getSearchNextPageCommand().setIsExecutionAllowed(getSearchNextPageCommand().getIsAvailable()
                 && getNextSearchPageAllowed());
         getSearchPreviousPageCommand().setIsExecutionAllowed(getSearchPreviousPageCommand().getIsAvailable()
@@ -690,15 +636,13 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
        this.currentPageNumber = newSearchPageNumber;
     }
 
-    protected void searchNextPage()
-    {
+    protected void searchNextPage() {
         searchString = stripPageKeyword(searchString);
         setSearchStringPage(getNextSearchPageNumber());
         getSearchCommand().execute();
     }
 
-    protected void searchPreviousPage()
-    {
+    protected void searchPreviousPage() {
         searchString = stripPageKeyword(searchString);
         setSearchStringPage(getPreviousSearchPageNumber());
         getSearchCommand().execute();
@@ -712,11 +656,9 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         return str.substring(0, index);
     }
 
-    protected boolean getNextSearchPageAllowed()
-    {
+    protected boolean getNextSearchPageAllowed() {
         if (!getSearchNextPageCommand().getIsAvailable() || getItems() == null
-                || !getItems().iterator().hasNext())
-        {
+                || !getItems().iterator().hasNext()) {
             return false;
         }
 
@@ -724,10 +666,8 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
 
         int pageSize = getSearchPageSize();
 
-        if (pageSize > 0)
-        {
-            if (getItems().size() < pageSize)
-            {
+        if (pageSize > 0) {
+            if (getItems().size() < pageSize) {
                 // current page contains results quantity smaller than
                 // the pageSize -> there is no next page:
                 retValue = false;
@@ -737,8 +677,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         return retValue;
     }
 
-    protected boolean getPreviousSearchPageAllowed()
-    {
+    protected boolean getPreviousSearchPageAllowed() {
         return getSearchPreviousPageCommand().getIsAvailable() && getSearchPageNumber() > 1;
     }
 
@@ -858,17 +797,13 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     }
 
     @Override
-    public void setItems(Collection<T> value)
-    {
-        if (items != value)
-        {
+    public void setItems(Collection<T> value) {
+        if (items != value) {
             T lastSelectedItem = getSelectedItem();
             List<T> lastSelectedItems = new ArrayList<T>();
 
-            if (getSelectedItems() != null)
-            {
-                for (T item : getSelectedItems())
-                {
+            if (getSelectedItems() != null) {
+                for (T item : getSelectedItems()) {
                     lastSelectedItems.add(item);
                 }
             }
@@ -889,31 +824,25 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
 
             selectedItem = null;
 
-            if (getSelectedItems() != null)
-            {
+            if (getSelectedItems() != null) {
                 getSelectedItems().clear();
             }
 
-            if (lastSelectedItem != null && items != null)
-            {
+            if (lastSelectedItem != null && items != null) {
                 T newSelectedItem = null;
                 List<T> newItems = new ArrayList<T>();
 
-                for (T item : items)
-                {
+                for (T item : items) {
                     newItems.add(item);
                 }
 
-                if (newItems != null)
-                {
+                if (newItems != null) {
                     newSelectedItem = determineSelectedItems(newItems, lastSelectedItem, lastSelectedItems);
                 }
-                if (newSelectedItem != null)
-                {
+                if (newSelectedItem != null) {
                     selectedItem = newSelectedItem;
 
-                    if (selectedItems != null)
-                    {
+                    if (selectedItems != null) {
                         selectedItems.add(newSelectedItem);
                     }
                 }
@@ -941,14 +870,12 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         return newSelectedItem;
     }
 
-    public void syncSearch(VdcQueryType vdcQueryType, VdcQueryParametersBase vdcQueryParametersBase)
-    {
+    public void syncSearch(VdcQueryType vdcQueryType, VdcQueryParametersBase vdcQueryParametersBase) {
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 setItems((Collection<T>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
@@ -960,8 +887,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         setIsQueryFirstTime(false);
     }
 
-    public void stopRefresh()
-    {
+    public void stopRefresh() {
         if (getTimer() != null) {
             //Timer can be null if the event bus hasn't been set yet. If the timer is null we can't stop it.
             getTimer().stop();
@@ -976,24 +902,19 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getSearchCommand())
-        {
+        if (command == getSearchCommand()) {
             search();
         }
-        else if (command == getSearchNextPageCommand())
-        {
+        else if (command == getSearchNextPageCommand()) {
             searchNextPage();
         }
-        else if (command == getSearchPreviousPageCommand())
-        {
+        else if (command == getSearchPreviousPageCommand()) {
             searchPreviousPage();
         }
-        else if (command == getForceRefreshCommand())
-        {
+        else if (command == getForceRefreshCommand()) {
             forceRefresh();
         } else if (command instanceof ReportCommand) {
             openReport();
@@ -1004,41 +925,35 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         }
     }
 
-    public final static class PrivateAsyncCallback<E, T>
-    {
+    public final static class PrivateAsyncCallback<E, T> {
         private final SearchableListModel<E, T> model;
         private boolean searchRequested;
 
-        public PrivateAsyncCallback(SearchableListModel<E, T> model)
-        {
+        public PrivateAsyncCallback(SearchableListModel<E, T> model) {
             this.model = model;
             AsyncQuery _asyncQuery1 = new AsyncQuery();
             _asyncQuery1.setModel(this);
             _asyncQuery1.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void onSuccess(Object model1, Object result1)
-                {
+                public void onSuccess(Object model1, Object result1) {
                     ApplySearchPageSize((Integer) result1);
                 }
             };
             AsyncDataProvider.getInstance().getSearchResultsLimit(_asyncQuery1);
         }
 
-        public void requestSearch()
-        {
+        public void requestSearch() {
             searchRequested = true;
             model.setItems(new ArrayList<T>());
             model.getSelectedItemChangedEvent().raise(this, new EventArgs());
             model.getSelectedItemsChangedEvent().raise(this, new EventArgs());
         }
 
-        private void ApplySearchPageSize(int value)
-        {
+        private void ApplySearchPageSize(int value) {
             model.setSearchPageSize(value);
 
             // If there search was requested before max result limit was retrieved, do it now.
-            if (searchRequested && !model.getTimer().isActive())
-            {
+            if (searchRequested && !model.getTimer().isActive()) {
                 model.getSearchCommand().execute();
             }
 

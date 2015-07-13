@@ -72,37 +72,31 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     private LogicalNetworkModel managementNetworkModel;
 
-    public EntityModel<Boolean> getCheckConnectivity()
-    {
+    public EntityModel<Boolean> getCheckConnectivity() {
         return checkConnectivity;
     }
 
-    private void setCheckConnectivity(EntityModel<Boolean> value)
-    {
+    private void setCheckConnectivity(EntityModel<Boolean> value) {
         checkConnectivity = value;
     }
 
     private EntityModel<Integer> connectivityTimeout;
 
-    public EntityModel<Integer> getConnectivityTimeout()
-    {
+    public EntityModel<Integer> getConnectivityTimeout() {
         return connectivityTimeout;
     }
 
-    private void setConnectivityTimeout(EntityModel<Integer> value)
-    {
+    private void setConnectivityTimeout(EntityModel<Integer> value) {
         connectivityTimeout = value;
     }
 
     private EntityModel<Boolean> commitChanges;
 
-    public EntityModel<Boolean> getCommitChanges()
-    {
+    public EntityModel<Boolean> getCommitChanges() {
         return commitChanges;
     }
 
-    public void setCommitChanges(EntityModel<Boolean> value)
-    {
+    public void setCommitChanges(EntityModel<Boolean> value) {
         commitChanges = value;
     }
 
@@ -845,8 +839,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         asyncQuery.setModel(this);
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValue)
-            {
+            public void onSuccess(Object model, Object returnValue) {
                 List<VdsNetworkInterface> bonds =
                         ((VdcQueryReturnValue) returnValue).getReturnValue();
                 allBonds = bonds;
@@ -866,8 +859,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         asyncQuery.setModel(this);
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValueObj)
-            {
+            public void onSuccess(Object model, Object returnValueObj) {
                 VdcQueryReturnValue returnValue = (VdcQueryReturnValue) returnValueObj;
                 Object returnValue2 = returnValue.getReturnValue();
                 List<VdsNetworkInterface> allNics = (List<VdsNetworkInterface>) returnValue2;
@@ -889,8 +881,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         AsyncQuery asyncQuery = new AsyncQuery();
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValueObj)
-            {
+            public void onSuccess(Object model, Object returnValueObj) {
                 Object returnValue = ((VdcQueryReturnValue) returnValueObj).getReturnValue();
                 List<HostNicVfsConfig> allHostVfs = (List<HostNicVfsConfig>) returnValue;
 
@@ -915,8 +906,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         asyncQuery.setModel(this);
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValue)
-            {
+            public void onSuccess(Object model, Object returnValue) {
                 List<Network> networks = (List<Network>) returnValue;
                 allNetworks = networks;
                 initNetworkModels();
@@ -1040,15 +1030,12 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if ("OnSetupNetworks".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("OnSetupNetworks".equals(command.getName())) { //$NON-NLS-1$
             onSetupNetworks();
-        } else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
 

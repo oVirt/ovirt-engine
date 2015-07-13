@@ -171,8 +171,7 @@ public abstract class AffinityGroupModel extends Model {
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
         if ("OnSave".equals(command.getName())) { //$NON-NLS-1$

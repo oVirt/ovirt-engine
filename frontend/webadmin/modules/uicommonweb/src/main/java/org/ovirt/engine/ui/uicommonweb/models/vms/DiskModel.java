@@ -13,8 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
-public class DiskModel extends Model
-{
+public class DiskModel extends Model {
     private Disk disk;
     private VM vm;
 

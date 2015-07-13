@@ -35,14 +35,12 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     private final Event<EventArgs> poolModelBehaviorInitializedEvent = new Event<EventArgs>("PoolModelBehaviorInitializedEvent", //$NON-NLS-1$
             NewPoolModelBehavior.class);
 
-    public Event<EventArgs> getPoolModelBehaviorInitializedEvent()
-    {
+    public Event<EventArgs> getPoolModelBehaviorInitializedEvent() {
         return poolModelBehaviorInitializedEvent;
     }
 
     @Override
-    public void initialize(SystemTreeItemModel systemTreeSelectedItem)
-    {
+    public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
         super.initialize(systemTreeSelectedItem);
 
         getModel().getIsSoundcardEnabled().setIsChangeable(true);
@@ -128,14 +126,12 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
                     updateTimeZone(vmBase.getTimeZone());
 
-                    if (!vmBase.getId().equals(Guid.Empty))
-                    {
+                    if (!vmBase.getId().equals(Guid.Empty)) {
                         getModel().getStorageDomain().setIsChangeable(true);
 
                         initDisks();
                     }
-                    else
-                    {
+                    else {
                         getModel().getStorageDomain().setIsChangeable(false);
 
                         getModel().setIsDisksAvailable(false);
@@ -178,8 +174,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     }
 
     @Override
-    public void postDataCenterWithClusterSelectedItemChanged()
-    {
+    public void postDataCenterWithClusterSelectedItemChanged() {
         updateDefaultHost();
         updateCustomPropertySheet();
         updateMinAllocatedMemory();
@@ -196,14 +191,12 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     }
 
     @Override
-    public void defaultHost_SelectedItemChanged()
-    {
+    public void defaultHost_SelectedItemChanged() {
         updateCdImage();
     }
 
     @Override
-    public void provisioning_SelectedItemChanged()
-    {
+    public void provisioning_SelectedItemChanged() {
     }
 
     @Override
@@ -220,11 +213,9 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     }
 
     @Override
-    public void updateMinAllocatedMemory()
-    {
+    public void updateMinAllocatedMemory() {
         VDSGroup cluster = getModel().getSelectedCluster();
-        if (cluster == null)
-        {
+        if (cluster == null) {
             return;
         }
 
@@ -233,14 +224,12 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                 .setEntity((int) (getModel().getMemSize().getEntity() * overCommitFactor));
     }
 
-    public void initCdImage()
-    {
+    public void initCdImage() {
         updateCdImage();
     }
 
     @Override
-    public void updateIsDisksAvailable()
-    {
+    public void updateIsDisksAvailable() {
         getModel().setIsDisksAvailable(getModel().getDisks() != null
                 && getModel().getProvisioning().getIsChangable());
     }
@@ -253,24 +242,21 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
         getModel().getNumOfDesktops().validateEntity(
 
-                new IValidation[]
-                {
+                new IValidation[] {
                         new NotEmptyValidation(),
                         new LengthValidation(4),
                         new IntegerValidation(isNew ? 1 : 0, isNew ? maxAllowedVms : maxAllowedVms - assignedVms)
                 });
 
         getModel().getPrestartedVms().validateEntity(
-                new IValidation[]
-                {
+                new IValidation[] {
                         new NotEmptyValidation(),
                         new IntegerValidation(0, assignedVms)
                 });
 
         final int maxAssignedVmsPerUserUpperBound = isNew ? getModel().getNumOfDesktops().getEntity() : assignedVms + getModel().getNumOfDesktops().getEntity();
         getModel().getMaxAssignedVmsPerUser().validateEntity(
-                new IValidation[]
-                {
+                new IValidation[] {
                         new NotEmptyValidation(),
                         new IntegerValidation(1, maxAssignedVmsPerUserUpperBound)
                 });

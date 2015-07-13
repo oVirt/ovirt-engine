@@ -34,8 +34,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfileView, VnicProfileView> implements ISupportSystemTreeContext
-{
+public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfileView, VnicProfileView> implements ISupportSystemTreeContext {
     private UICommand newCommand;
     private UICommand editCommand;
     private UICommand removeCommand;
@@ -85,8 +84,7 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
     }
 
     public void newProfile() {
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -101,8 +99,7 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
     public void edit() {
         final VnicProfileView profile = getSelectedItem();
 
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -122,8 +119,7 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
     }
 
     public void remove() {
-        if (getConfirmWindow() != null)
-        {
+        if (getConfirmWindow() != null) {
             return;
         }
 
@@ -156,8 +152,7 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object ReturnValue)
-                {
+                public void onSuccess(Object model, Object ReturnValue) {
                     Collection<Network> networks = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
 
                     profileModel.getNetwork().setItems(networks);
@@ -216,8 +211,7 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
             AsyncQuery asyncQuery = new AsyncQuery();
             asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object returnValue)
-                {
+                public void onSuccess(Object model, Object returnValue) {
                     setItems((Collection<VnicProfileView>) returnValue);
                 }
             };
@@ -234,8 +228,7 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
             AsyncQuery asyncQuery = new AsyncQuery();
             asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object returnValue)
-                {
+                public void onSuccess(Object model, Object returnValue) {
                     setItems((Collection<VnicProfileView>) returnValue);
                 }
             };
@@ -267,17 +260,14 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getNewCommand())
-        {
+        if (command == getNewCommand()) {
             newProfile();
         }
-        else if (command == getEditCommand())
-        {
+        else if (command == getEditCommand()) {
             edit();
         }
 
-        else if (command == getRemoveCommand())
-        {
+        else if (command == getRemoveCommand()) {
             remove();
         }
     }
@@ -289,8 +279,7 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
 
     @Override
     public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        if (systemTreeSelectedItem != value)
-        {
+        if (systemTreeSelectedItem != value) {
             systemTreeSelectedItem = value;
             onSystemTreeSelectedItemChanged();
         }

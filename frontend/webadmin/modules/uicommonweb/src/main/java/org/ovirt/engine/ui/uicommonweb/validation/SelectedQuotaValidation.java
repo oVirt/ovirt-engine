@@ -4,11 +4,9 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class SelectedQuotaValidation implements IValidation
-{
+public class SelectedQuotaValidation implements IValidation {
     @Override
-    public ValidationResult validate(Object value)
-    {
+    public ValidationResult validate(Object value) {
         ValidationResult result = new ValidationResult();
 
         if (value == null || (value instanceof String && StringHelper.isNullOrEmpty((String) value))) {

@@ -17,21 +17,17 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
 
-public class NewEditStorageModelBehavior extends StorageModelBehavior
-{
+public class NewEditStorageModelBehavior extends StorageModelBehavior {
     @Override
-    public void updateItemsAvailability()
-    {
+    public void updateItemsAvailability() {
         StoragePool dataCenter = getModel().getDataCenter().getSelectedItem();
         if (dataCenter == null) {
             return;
         }
 
         // Allow Data storage type corresponding to the selected data-center type + ISO and Export that are NFS only:
-        for (final IStorageModel item : Linq.<IStorageModel> cast(getModel().getItems()))
-        {
-            if (item.getRole() == StorageDomainType.ISO)
-            {
+        for (final IStorageModel item : Linq.<IStorageModel> cast(getModel().getItems())) {
+            if (item.getRole() == StorageDomainType.ISO) {
                 AsyncDataProvider.getInstance().getIsoDomainByDataCenterId(new AsyncQuery(getModel(),
                         new INewAsyncCallback() {
                             @Override
@@ -44,8 +40,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
                             }
                         }), dataCenter.getId());
             }
-            else if (item.getRole() == StorageDomainType.ImportExport)
-            {
+            else if (item.getRole() == StorageDomainType.ImportExport) {
                 AsyncDataProvider.getInstance().getExportDomainByDataCenterId(new AsyncQuery(getModel(),
                         new INewAsyncCallback() {
                             @Override
@@ -58,8 +53,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
                             }
                         }), dataCenter.getId());
             }
-            else
-            {
+            else {
                 postUpdateItemsAvailability(item, false);
             }
         }

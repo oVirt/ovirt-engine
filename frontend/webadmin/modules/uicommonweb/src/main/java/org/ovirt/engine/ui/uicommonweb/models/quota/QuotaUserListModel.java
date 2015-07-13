@@ -46,25 +46,21 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
 
     private UICommand privateAddCommand;
 
-    public UICommand getAddCommand()
-    {
+    public UICommand getAddCommand() {
         return privateAddCommand;
     }
 
-    private void setAddCommand(UICommand value)
-    {
+    private void setAddCommand(UICommand value) {
         privateAddCommand = value;
     }
 
     private UICommand privateRemoveCommand;
 
-    public UICommand getRemoveCommand()
-    {
+    public UICommand getRemoveCommand() {
         return privateRemoveCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
+    private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
 
@@ -78,8 +74,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(Object model, Object ReturnValue) {
                 ArrayList<Permission> list = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 Map<Guid, Permission> map = new HashMap<Guid, Permission>();
                 for (Permission permission : list) {
@@ -114,8 +109,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
         if (getEntity() == null) {
             return;
@@ -153,10 +147,8 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
         getRemoveCommand().setIsExecutionAllowed(removeExe);
     }
 
-    public void add()
-    {
-        if (getWindow() != null)
-        {
+    public void add() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -174,10 +166,8 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
         model.getCommands().add(tempVar2);
     }
 
-    public void remove()
-    {
-        if (getWindow() != null)
-        {
+    public void remove() {
+        if (getWindow() != null) {
             return;
         }
 
@@ -188,8 +178,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
         model.setHashName("remove_quota_assignment_from_user"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<String>();
-        for (Permission item : Linq.<Permission> cast(getSelectedItems()))
-        {
+        for (Permission item : Linq.<Permission> cast(getSelectedItems())) {
             list.add(item.getOwnerName());
         }
         model.setItems(list);
@@ -204,33 +193,27 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
         setWindow(null);
     }
 
-    public void onAdd()
-    {
+    public void onAdd() {
         AdElementListModel model = (AdElementListModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
-        if (model.getSelectedItems() == null && !model.getIsEveryoneSelected())
-        {
+        if (model.getSelectedItems() == null && !model.getIsEveryoneSelected()) {
             cancel();
             return;
         }
         ArrayList<DbUser> items = new ArrayList<DbUser>();
-        if (model.getIsEveryoneSelected())
-        {
+        if (model.getIsEveryoneSelected()) {
             DbUser tempVar = new DbUser();
             tempVar.setId(ApplicationGuids.everyone.asGuid());
             items.add(tempVar);
         }
         else {
-            for (Object item : model.getItems())
-            {
+            for (Object item : model.getItems()) {
                 EntityModel entityModel = (EntityModel) item;
-                if (entityModel.getIsSelected())
-                {
+                if (entityModel.getIsSelected()) {
                     items.add((DbUser) entityModel.getEntity());
                 }
             }
@@ -240,8 +223,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         PermissionsOperationsParameters permissionParams;
-        for (DbUser user : items)
-        {
+        for (DbUser user : items) {
             Permission perm = new Permission(
                     user.getId(),
                     ApplicationGuids.quotaConsumer.asGuid(),
@@ -249,8 +231,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
                     VdcObjectType.Quota);
 
             permissionParams = new PermissionsOperationsParameters();
-            if (user.isGroup())
-            {
+            if (user.isGroup()) {
                 DbGroup group = new DbGroup();
                 group.setId(user.getId());
                 group.setExternalId(user.getExternalId());
@@ -258,8 +239,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
                 group.setDomain(user.getDomain());
                 permissionParams.setGroup(group);
             }
-            else
-            {
+            else {
                 permissionParams.setUser(user);
             }
             permissionParams.setPermission(perm);
@@ -280,20 +260,16 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
         cancel();
     }
 
-    private void onRemove()
-    {
-        if (getSelectedItems() != null && getSelectedItems().size() > 0)
-        {
+    private void onRemove() {
+        if (getSelectedItems() != null && getSelectedItems().size() > 0) {
             ConfirmationModel model = (ConfirmationModel) getWindow();
 
-            if (model.getProgress() != null)
-            {
+            if (model.getProgress() != null) {
                 return;
             }
 
             ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-            for (Object perm : getSelectedItems())
-            {
+            for (Object perm : getSelectedItems()) {
                 PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters();
                 tempVar.setPermission((Permission) perm);
                 list.add(tempVar);
@@ -318,29 +294,23 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getAddCommand())
-        {
+        if (command == getAddCommand()) {
             add();
         }
-        if (command == getRemoveCommand())
-        {
+        if (command == getRemoveCommand()) {
             remove();
         }
 
-        if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
-        if ("OnAdd".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("OnAdd".equals(command.getName())) { //$NON-NLS-1$
             onAdd();
         }
-        if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
     }

@@ -23,8 +23,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class PoolItemBehavior extends ItemBehavior
-{
+public class PoolItemBehavior extends ItemBehavior {
 
     // this has to be static because in every request a new instance of this class is created
     private static Map<Guid, Integer> poolToOsType = new HashMap<Guid, Integer>();
@@ -34,41 +33,34 @@ public class PoolItemBehavior extends ItemBehavior
     /**
      * @see UserPortalItemModel#UserPortalItemModel(Object, VmConsoles, VM)
      */
-    public PoolItemBehavior(UserPortalItemModel item, VM poolRepresentant)
-    {
+    public PoolItemBehavior(UserPortalItemModel item, VM poolRepresentant) {
         super(item);
         this.poolRepresentant = poolRepresentant;
     }
 
     @Override
-    public void onEntityChanged()
-    {
+    public void onEntityChanged() {
         updateProperties();
         updateActionAvailability();
     }
 
     @Override
-    public void entityPropertyChanged(PropertyChangedEventArgs e)
-    {
+    public void entityPropertyChanged(PropertyChangedEventArgs e) {
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
-        if (command == getItem().getTakeVmCommand())
-        {
+    public void executeCommand(UICommand command) {
+        if (command == getItem().getTakeVmCommand()) {
             takeVm();
         }
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
-    {
+    public void eventRaised(Event ev, Object sender, EventArgs args) {
         // Do nothing. There are no events to handle for pools.
     }
 
-    private void takeVm()
-    {
+    private void takeVm() {
         VmPool entity = (VmPool) getItem().getEntity();
 
         VmPoolUserParameters params = new VmPoolUserParameters(entity.getVmPoolId(),
@@ -86,8 +78,7 @@ public class PoolItemBehavior extends ItemBehavior
                 }, this);
     }
 
-    private void updateProperties()
-    {
+    private void updateProperties() {
         VmPool entity = (VmPool) getItem().getEntity();
 
         getItem().setName(entity.getName());
@@ -131,8 +122,7 @@ public class PoolItemBehavior extends ItemBehavior
         poolToOsType.put(((VmPool) model.getEntity()).getVmPoolId(), poolRepresentant.getVmOsId());
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         getItem().getTakeVmCommand().setIsAvailable(true);
 
         getItem().getRunCommand().setIsAvailable(false);

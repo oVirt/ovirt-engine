@@ -3,41 +3,34 @@ package org.ovirt.engine.ui.uicommonweb.validation;
 import org.ovirt.engine.core.compat.Regex;
 
 @SuppressWarnings("unused")
-public class RegexValidation implements IValidation
-{
+public class RegexValidation implements IValidation {
     private String privateExpression;
 
-    public String getExpression()
-    {
+    public String getExpression() {
         return privateExpression;
     }
 
-    public void setExpression(String value)
-    {
+    public void setExpression(String value) {
         privateExpression = value;
     }
 
     private String privateMessage;
 
-    public String getMessage()
-    {
+    public String getMessage() {
         return privateMessage;
     }
 
-    public void setMessage(String value)
-    {
+    public void setMessage(String value) {
         privateMessage = value;
     }
 
     private boolean privateIsNegate;
 
-    public boolean getIsNegate()
-    {
+    public boolean getIsNegate() {
         return privateIsNegate;
     }
 
-    public void setIsNegate(boolean value)
-    {
+    public void setIsNegate(boolean value) {
         privateIsNegate = value;
     }
 
@@ -50,8 +43,7 @@ public class RegexValidation implements IValidation
     }
 
     @Override
-    public ValidationResult validate(Object value)
-    {
+    public ValidationResult validate(Object value) {
         ValidationResult result = new ValidationResult();
 
         if (value == null) {
@@ -61,8 +53,7 @@ public class RegexValidation implements IValidation
         if (value != null
                 && value instanceof String
                 && (getIsNegate() ? Regex.IsMatch(value.toString(), getExpression())
-                        : !Regex.IsMatch(value.toString(), getExpression())))
-        {
+                        : !Regex.IsMatch(value.toString(), getExpression()))) {
             result.setSuccess(false);
             result.getReasons().add(getMessage());
         }

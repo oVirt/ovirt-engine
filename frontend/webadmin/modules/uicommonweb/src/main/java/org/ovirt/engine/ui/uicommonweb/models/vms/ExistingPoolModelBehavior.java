@@ -133,8 +133,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
     }
 
     @Override
-    public void updateIsDisksAvailable()
-    {
+    public void updateIsDisksAvailable() {
         getModel().setIsDisksAvailable(getModel().getDisks() != null);
     }
 

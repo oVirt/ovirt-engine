@@ -19,10 +19,8 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 
-public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
-{
-    public UserPortalExistingVmModelBehavior(VM vm)
-    {
+public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior {
+    public UserPortalExistingVmModelBehavior(VM vm) {
         super(vm);
     }
 
@@ -85,8 +83,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
         updateUserCdImage(getVm().getStoragePoolId());
     }
 
-    private void addVmCluster(final List<StoragePool> dataCenters, final List<VDSGroup> clusters)
-    {
+    private void addVmCluster(final List<StoragePool> dataCenters, final List<VDSGroup> clusters) {
         AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
@@ -94,8 +91,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
 
                         UnitVmModel model = (UnitVmModel) target;
                         VDSGroup cluster = (VDSGroup) returnValue;
-                        if (cluster != null)
-                        {
+                        if (cluster != null) {
                             clusters.add(cluster);
                         }
                         Collections.sort(clusters, new NameableComparator());

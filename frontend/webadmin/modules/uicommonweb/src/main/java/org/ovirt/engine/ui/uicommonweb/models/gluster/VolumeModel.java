@@ -54,13 +54,11 @@ public class VolumeModel extends Model {
 
     private UICommand addBricksCommand;
 
-    public UICommand getAddBricksCommand()
-    {
+    public UICommand getAddBricksCommand() {
         return addBricksCommand;
     }
 
-    private void setAddBricksCommand(UICommand value)
-    {
+    private void setAddBricksCommand(UICommand value) {
         addBricksCommand = value;
     }
     public ListModel<StoragePool> getDataCenter() {
@@ -146,8 +144,7 @@ public class VolumeModel extends Model {
 
                 if (getBricks().getItems() != null && ((List) getBricks().getItems()).size() > 0
                         && !validateBrickCount()
-                        && getAddBricksCommand().getIsExecutionAllowed())
-                {
+                        && getAddBricksCommand().getIsExecutionAllowed()) {
                     getAddBricksCommand().execute();
                 }
             }
@@ -285,8 +282,7 @@ public class VolumeModel extends Model {
     }
 
     public void addBricks(){
-        if (getWindow() != null || getCluster().getSelectedItem() == null)
-        {
+        if (getWindow() != null || getCluster().getSelectedItem() == null) {
             return;
         }
 
@@ -320,15 +316,12 @@ public class VolumeModel extends Model {
         _asyncQuery.setModel(volumeBrickModel);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 VolumeBrickModel volumeBrickModel = (VolumeBrickModel) model;
                 ArrayList<VDS> hostList = (ArrayList<VDS>) result;
                 Iterator<VDS> iterator = hostList.iterator();
-                while (iterator.hasNext())
-                {
-                    if (iterator.next().getStatus() != VDSStatus.Up)
-                    {
+                while (iterator.hasNext()) {
+                    if (iterator.next().getStatus() != VDSStatus.Up) {
                         iterator.remove();
                     }
                 }
@@ -353,18 +346,15 @@ public class VolumeModel extends Model {
     private void onAddBricks() {
         VolumeBrickModel volumeBrickModel = (VolumeBrickModel) getWindow();
 
-        if (!volumeBrickModel.validate())
-        {
+        if (!volumeBrickModel.validate()) {
             return;
         }
 
         GlusterVolumeType volumeType = getTypeList().getSelectedItem();
-        if (!volumeBrickModel.validateBrickCount(volumeType, true))
-        {
+        if (!volumeBrickModel.validateBrickCount(volumeType, true)) {
             String validationMsg =
                     volumeBrickModel.getValidationFailedMsg(getTypeList().getSelectedItem(), true);
-            if (validationMsg != null)
-            {
+            if (validationMsg != null) {
                 volumeBrickModel.setMessage(validationMsg);
             }
             return;
@@ -403,18 +393,15 @@ public class VolumeModel extends Model {
 
         cancelConfirmation();
 
-        if (!volumeBrickModel.validate())
-        {
+        if (!volumeBrickModel.validate()) {
             return;
         }
 
         GlusterVolumeType selectedVolumeType = getTypeList().getSelectedItem();
-        if (selectedVolumeType.isReplicatedType())
-        {
+        if (selectedVolumeType.isReplicatedType()) {
             getReplicaCount().setEntity(volumeBrickModel.getReplicaCount().getEntity());
         }
-        if (selectedVolumeType.isStripedType())
-        {
+        if (selectedVolumeType.isStripedType()) {
             getStripeCount().setEntity(volumeBrickModel.getStripeCount().getEntity());
         }
 
@@ -437,8 +424,7 @@ public class VolumeModel extends Model {
         setConfirmWindow(null);
     }
 
-    public boolean validateBrickCount()
-    {
+    public boolean validateBrickCount() {
         return VolumeBrickModel.validateBrickCount(getTypeList().getSelectedItem(),
                 getBricks(),
                 getReplicaCountValue(),
@@ -447,8 +433,7 @@ public class VolumeModel extends Model {
     }
 
     public boolean validate() {
-        if (!validateBrickCount())
-        {
+        if (!validateBrickCount()) {
             setMessage(VolumeBrickModel.getValidationFailedMsg(getTypeList().getSelectedItem(),
                     true));
             return false;
@@ -460,8 +445,7 @@ public class VolumeModel extends Model {
         setMessage(null);
         boolean validTransportTypes = true;
         if (getTcpTransportType().getEntity() == false
-                && getRdmaTransportType().getEntity() == false)
-        {
+                && getRdmaTransportType().getEntity() == false) {
             validTransportTypes = false;
             setMessage(ConstantsManager.getInstance().getConstants().volumeTransportTypesValidationMsg());
         }
@@ -469,12 +453,10 @@ public class VolumeModel extends Model {
         return getName().getIsValid() && validTransportTypes;
     }
 
-    private void clusterSelectedItemChanged()
-    {
+    private void clusterSelectedItemChanged() {
         setBricks(new ListModel<EntityModel<GlusterBrickEntity>>());
 
-        if (getCluster().getSelectedItem() != null)
-        {
+        if (getCluster().getSelectedItem() != null) {
             final VDSGroup cluster = getCluster().getSelectedItem();
 
             AsyncDataProvider.getInstance().isAnyHostUpInCluster(new AsyncQuery(this, new INewAsyncCallback() {
@@ -498,32 +480,27 @@ public class VolumeModel extends Model {
                 }
             }), cluster.getName());
         }
-        else
-        {
+        else {
             getAddBricksCommand().setIsExecutionAllowed(false);
             setMessage(null);
         }
     }
 
-    private void dataCenter_SelectedItemChanged()
-    {
+    private void dataCenter_SelectedItemChanged() {
         StoragePool dataCenter = getDataCenter().getSelectedItem();
-        if (dataCenter != null)
-        {
+        if (dataCenter != null) {
             AsyncQuery _asyncQuery = new AsyncQuery();
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object result)
-                {
+                public void onSuccess(Object model, Object result) {
                     VolumeModel volumeModel = (VolumeModel) model;
                     ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) result;
                     VDSGroup oldCluster = volumeModel.getCluster().getSelectedItem();
                     StoragePool selectedDataCenter = getDataCenter().getSelectedItem();
 
                     Iterator<VDSGroup> iterator = clusters.iterator();
-                    while(iterator.hasNext())
-                    {
+                    while(iterator.hasNext()) {
                         if (!iterator.next().supportsGlusterService()) {
                             iterator.remove();
                         }
@@ -535,22 +512,18 @@ public class VolumeModel extends Model {
                             || clusters.size() > 0
                             && clusters.get(0)
                                     .getStoragePoolId()
-                                    .equals(selectedDataCenter.getId()))
-                    {
+                                    .equals(selectedDataCenter.getId())) {
                         volumeModel.getCluster().setItems(clusters);
 
-                        if (oldCluster != null)
-                        {
+                        if (oldCluster != null) {
                             VDSGroup newSelectedItem =
                                     Linq.firstOrDefault(clusters, new Linq.ClusterPredicate(oldCluster.getId()));
-                            if (newSelectedItem != null)
-                            {
+                            if (newSelectedItem != null) {
                                 volumeModel.getCluster().setSelectedItem(newSelectedItem);
                             }
                         }
 
-                        if (volumeModel.getCluster().getSelectedItem() == null)
-                        {
+                        if (volumeModel.getCluster().getSelectedItem() == null) {
                             volumeModel.getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
                         }
                     }
@@ -566,8 +539,7 @@ public class VolumeModel extends Model {
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getAddBricksCommand())
-        {
+        if (command == getAddBricksCommand()) {
             addBricks();
         } else if (command.getName().equals("OnAddBricks")) { //$NON-NLS-1$
             onAddBricks();

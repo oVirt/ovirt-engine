@@ -7,53 +7,44 @@ import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 
 @SuppressWarnings("unused")
-public class BookmarkModel extends Model
-{
+public class BookmarkModel extends Model {
 
     private boolean privateIsNew;
 
-    public boolean getIsNew()
-    {
+    public boolean getIsNew() {
         return privateIsNew;
     }
 
-    public void setIsNew(boolean value)
-    {
+    public void setIsNew(boolean value) {
         privateIsNew = value;
     }
 
     private EntityModel<String> privateName;
 
-    public EntityModel<String> getName()
-    {
+    public EntityModel<String> getName() {
         return privateName;
     }
 
-    public void setName(EntityModel<String> value)
-    {
+    public void setName(EntityModel<String> value) {
         privateName = value;
     }
 
     private EntityModel<String> privateSearchString;
 
-    public EntityModel<String> getSearchString()
-    {
+    public EntityModel<String> getSearchString() {
         return privateSearchString;
     }
 
-    public void setSearchString(EntityModel<String> value)
-    {
+    public void setSearchString(EntityModel<String> value) {
         privateSearchString = value;
     }
 
-    public BookmarkModel()
-    {
+    public BookmarkModel() {
         setName(new EntityModel<String>());
         setSearchString(new EntityModel<String>());
     }
 
-    public boolean validate()
-    {
+    public boolean validate() {
         LengthValidation tempVar = new LengthValidation();
         tempVar.setMaxLength(40);
         getName().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
