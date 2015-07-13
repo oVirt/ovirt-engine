@@ -1,5 +1,7 @@
 package org.ovirt.engine.extensions.aaa.builtin.internal;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -7,11 +9,8 @@ import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.Extension;
 import org.ovirt.engine.api.extensions.aaa.Authn;
+import org.ovirt.engine.core.uutils.crypto.EnvelopePBE;
 
-/**
- * This authenticator authenticates the internal user as specified in the {@code AdminUser} and {@code AdminPassword}
- * configuration parameters stored in the database. Currently it is in an interim status of development as
- */
 public class InternalAuthn implements Extension {
 
     private ExtMap context;
@@ -37,12 +36,12 @@ public class InternalAuthn implements Extension {
 
     }
 
-    private void doAuthenticate(ExtMap input, ExtMap output) {
+    private void doAuthenticate(ExtMap input, ExtMap output) throws IOException, GeneralSecurityException {
         output.put(Authn.InvokeKeys.PRINCIPAL, input.get(Authn.InvokeKeys.USER));
-        if (!(input.get(Authn.InvokeKeys.USER).equals(adminUser) && input.get(Authn.InvokeKeys.CREDENTIALS)
-                .equals(adminPassword))) {
-            output.put(Authn.InvokeKeys.RESULT, Authn.AuthResult.CREDENTIALS_INVALID);
-        } else {
+        if (
+            input.get(Authn.InvokeKeys.USER).equals(adminUser) &&
+            EnvelopePBE.check(adminPassword, input.<String>get(Authn.InvokeKeys.CREDENTIALS))
+        ) {
             output.mput(
                     Authn.InvokeKeys.RESULT,
                     Authn.AuthResult.SUCCESS
@@ -53,6 +52,8 @@ public class InternalAuthn implements Extension {
                                     adminUser
                                     )
                     );
+        } else {
+            output.put(Authn.InvokeKeys.RESULT, Authn.AuthResult.CREDENTIALS_INVALID);
         }
     }
 
@@ -86,7 +87,7 @@ public class InternalAuthn implements Extension {
                         Base.ContextKeys.BUILD_INTERFACE_VERSION,
                         Base.INTERFACE_VERSION_CURRENT);
         Properties config = context.<Properties> get(Base.ContextKeys.CONFIGURATION);
-        adminUser = config.getProperty("config.authn.user.name");
+        adminUser = config.getProperty("config.authn.user.name", "admin");
         adminPassword = config.getProperty("config.authn.user.password");
     }
 

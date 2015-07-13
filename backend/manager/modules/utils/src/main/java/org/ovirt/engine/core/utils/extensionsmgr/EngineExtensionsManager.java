@@ -22,6 +22,7 @@ import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.extensions.mgr.ExtensionsManager;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
+import org.ovirt.engine.core.uutils.crypto.EnvelopePBE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,19 +143,29 @@ public class EngineExtensionsManager extends ExtensionsManager {
     }
 
     private void createInternalAAAConfigurations() {
-        Properties authConfig = new Properties();
-        authConfig.put(Base.ConfigKeys.NAME, "builtin-authn-internal");
-        authConfig.put(Base.ConfigKeys.PROVIDES, Authn.class.getName());
-        authConfig.put(Base.ConfigKeys.BINDINGS_METHOD, Base.ConfigBindingsMethods.JBOSSMODULE);
-        authConfig.put(Base.ConfigKeys.BINDINGS_JBOSSMODULE_MODULE, "org.ovirt.engine.extensions.builtin");
-        authConfig.put(Base.ConfigKeys.BINDINGS_JBOSSMODULE_CLASS,
-                "org.ovirt.engine.extensions.aaa.builtin.internal.InternalAuthn");
-        authConfig.put("ovirt.engine.aaa.authn.profile.name", "internal");
-        authConfig.put("ovirt.engine.aaa.authn.authz.plugin", "internal");
-        authConfig.put("config.authn.user.name", Config.<String> getValue(ConfigValues.AdminUser));
-        authConfig.put("config.authn.user.password", Config.<String> getValue(ConfigValues.AdminPassword));
-        authConfig.put(Base.ConfigKeys.SENSITIVE_KEYS, "config.authn.user.password)");
         try {
+            Properties authConfig = new Properties();
+            authConfig.put(Base.ConfigKeys.NAME, "builtin-authn-internal");
+            authConfig.put(Base.ConfigKeys.PROVIDES, Authn.class.getName());
+            authConfig.put(Base.ConfigKeys.BINDINGS_METHOD, Base.ConfigBindingsMethods.JBOSSMODULE);
+            authConfig.put(Base.ConfigKeys.BINDINGS_JBOSSMODULE_MODULE, "org.ovirt.engine.extensions.builtin");
+            authConfig.put(Base.ConfigKeys.BINDINGS_JBOSSMODULE_CLASS,
+                    "org.ovirt.engine.extensions.aaa.builtin.internal.InternalAuthn");
+            authConfig.put("ovirt.engine.aaa.authn.profile.name", "internal");
+            authConfig.put("ovirt.engine.aaa.authn.authz.plugin", "internal");
+            authConfig.put("config.authn.user.name", Config.<String> getValue(ConfigValues.AdminUser));
+            authConfig.put(
+                "config.authn.user.password",
+                EnvelopePBE.encode(
+                    "PBKDF2WithHmacSHA1",
+                    256,
+                    4000,
+                    null,
+                    Config.<String> getValue(ConfigValues.AdminPassword)
+                )
+            );
+            authConfig.put(Base.ConfigKeys.SENSITIVE_KEYS, "config.authn.user.password");
+
             load(authConfig);
         } catch (Exception ex) {
             log.error("Could not load auth config internal aaa extension based on configuration. Exception message is: {}",
@@ -170,7 +181,6 @@ public class EngineExtensionsManager extends ExtensionsManager {
         dirConfig.put(Base.ConfigKeys.BINDINGS_JBOSSMODULE_CLASS,
                 "org.ovirt.engine.extensions.aaa.builtin.internal.InternalAuthz");
         dirConfig.put("config.authz.user.name", Config.<String> getValue(ConfigValues.AdminUser));
-        dirConfig.put("config.authz.user.id", "fdfc627c-d875-11e0-90f0-83df133b58cc");
         dirConfig.put("config.query.filter.size",
                 Config.getValue(ConfigValues.MaxLDAPQueryPartsNumber).toString());
         try {

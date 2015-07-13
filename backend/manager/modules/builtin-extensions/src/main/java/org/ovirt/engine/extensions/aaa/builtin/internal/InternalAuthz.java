@@ -12,11 +12,10 @@ import org.ovirt.engine.api.extensions.Extension;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 
-/**
- * This directory contains only the internal user as specified in the {@code AdminUser} configuration parameter.
- */
 public class InternalAuthz implements Extension {
 
+    private static final String DEFAULT_PRINCIPAL_NAME = "admin";
+    private static final String DEFAULT_PRINCIPAL_ID = "fdfc627c-d875-11e0-90f0-83df133b58cc";
     private static final String NAMESPACE = "*";
 
     private ExtMap context;
@@ -84,9 +83,9 @@ public class InternalAuthz implements Extension {
             ExtKey extKey = filter.<ExtKey> get(Authz.QueryFilterRecord.KEY);
             if (extKey.equals(Authz.PrincipalRecord.NAME)) {
                 String name = filter.<String> get(Authz.PrincipalRecord.NAME);
-                found = configuration.getProperty("config.authz.user.name").matches(name.replace("*", ".*"));
+                found = adminUser.<String>get(Authz.PrincipalRecord.NAME).matches(name.replace("*", ".*"));
             } else if (extKey.equals(Authz.PrincipalRecord.ID)) {
-                found = filter.<String>get(Authz.PrincipalRecord.ID).equals(configuration.getProperty("config.authz.user.id"));
+                found = filter.<String>get(Authz.PrincipalRecord.ID).equals(adminUser.<String>get(Authz.PrincipalRecord.ID));
             } else {
                 found = false;
             }
@@ -135,7 +134,7 @@ public class InternalAuthz implements Extension {
                 ).mput(
                         Authz.ContextKeys.QUERY_MAX_FILTER_SIZE,
                         Integer.parseInt(
-                                configuration.getProperty("config.query.filter.size")
+                                configuration.getProperty("config.query.filter.size", "10")
                         )
                 ).mput(
                         Base.ContextKeys.BUILD_INTERFACE_VERSION,
@@ -149,15 +148,15 @@ public class InternalAuthz implements Extension {
                 NAMESPACE
                 ).mput(
                         Authz.PrincipalRecord.NAME,
-                        configuration.getProperty("config.authz.user.name")
+                        configuration.getProperty("config.authz.user.name", DEFAULT_PRINCIPAL_NAME)
                 ).mput(
                         Authz.PrincipalRecord.FIRST_NAME,
-                        configuration.getProperty("config.authz.user.name")
+                        configuration.getProperty("config.authz.user.name", DEFAULT_PRINCIPAL_NAME)
                 ).mput(
                         Authz.PrincipalRecord.ID,
-                        configuration.getProperty("config.authz.user.id")
+                        configuration.getProperty("config.authz.user.id", DEFAULT_PRINCIPAL_ID)
                 ).mput(Authz.PrincipalRecord.PRINCIPAL,
-                        configuration.getProperty("config.authz.user.name")
+                        configuration.getProperty("config.authz.user.name", DEFAULT_PRINCIPAL_NAME)
                 );
 
     }
