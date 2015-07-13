@@ -280,7 +280,7 @@ public class ArgumentsParser {
                         errors.add(
                             new IllegalArgumentException(
                                 String.format(
-                                    "Pattern for argument '%1$s' does not match, pattern is '%2$s', value is '%3$s", key, m.pattern(), value
+                                    "Pattern for argument '%1$s' does not match, pattern is '%2$s', value is '%3$s'", key, m.pattern(), value
                                 )
                             )
                         );
