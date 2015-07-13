@@ -78,14 +78,20 @@ public class ExtensionsToolExecutor {
                 throw new ExitException(1);
             }
             moduleService.parseArguments(cmdArgs);
+            logger.info("========================================================================");
+            logger.info("============================ Initialization ============================");
+            logger.info("========================================================================");
             loadExtensions(moduleService, argMap);
+            logger.info("========================================================================");
+            logger.info("============================== Execution ===============================");
+            logger.info("========================================================================");
             moduleService.run();
+            exitStatus = 0;
         } catch(ExitException e) {
             logger.debug(e.getMessage(), e);
             exitStatus = e.getExitCode();
         } catch (Throwable t) {
-            String message = t.getMessage() != null ? t.getMessage() : t.getClass().getName();
-            logger.error(message);
+            logger.error(t.getMessage() != null ? t.getMessage() : t.getClass().getName());
             logger.debug("Exception:", t);
         }
         logger.debug("Exiting with status '{}'", exitStatus);
@@ -121,6 +127,7 @@ public class ExtensionsToolExecutor {
             entry.setValue(extensionsManager.getExtensionByName(entry.getKey()));
             logger.debug("Extension '{}' initialized", entry.getKey());
         }
+        extensionsManager.dump();
     }
 
     private static Map<String, ModuleService> loadModules(Class cls) {
