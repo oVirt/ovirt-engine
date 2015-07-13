@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.AttachStorageDomainVDSCommandParameters;
@@ -85,7 +84,7 @@ public class AttachStorageDomainToPoolCommandTest {
         AttachStorageDomainToPoolParameters params =
                 new AttachStorageDomainToPoolParameters(storageDomainId, poolId);
         AttachStorageDomainToPoolCommand<AttachStorageDomainToPoolParameters> cmd =
-                spy(new AttachStorageDomainToPoolCommand<AttachStorageDomainToPoolParameters>(params));
+                spy(new AttachStorageDomainToPoolCommand<>(params));
 
         CommandMocks.mockDbFacade(cmd, dbFacade);
         doNothing().when(cmd).attemptToActivateDomain();
@@ -117,7 +116,7 @@ public class AttachStorageDomainToPoolCommandTest {
         mockAttachStorageDomainVdsCommand();
         when(vdsDao.get(any(Guid.class))).thenReturn(vds);
         doReturn(Collections.emptyList()).when(cmd).getEntitiesFromStorageOvfDisk(storageDomainId, pool.getId());
-        doReturn(Collections.<DiskImage>emptyList()).when(cmd).getAllOVFDisks(storageDomainId, pool.getId());
+        doReturn(Collections.emptyList()).when(cmd).getAllOVFDisks(storageDomainId, pool.getId());
         doAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
