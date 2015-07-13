@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils;
 import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils.VolumeStatus;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeStatusCell;
@@ -16,6 +17,10 @@ public class VolumeStatusColumn extends AbstractColumn<GlusterVolumeEntity, Glus
 
     public VolumeStatusColumn() {
         super(new VolumeStatusCell());
+    }
+
+    public VolumeStatusColumn(UICommand onClickCommand) {
+        super(new VolumeStatusCell(onClickCommand));
     }
 
     @Override

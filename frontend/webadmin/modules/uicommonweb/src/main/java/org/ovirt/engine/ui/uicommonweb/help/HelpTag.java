@@ -533,6 +533,8 @@ public enum HelpTag {
 
     volume_stop("volume_stop", HelpTagType.WEBADMIN, "Volumes Tab > Stop Volume"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    volume_start("volume_start", HelpTagType.WEBADMIN, "Volumes Tab > Start Volume"), //$NON-NLS-1$ //$NON-NLS-2$
+
     volume_snapshots("volume_snapshots", HelpTagType.WEBADMIN), //$NON-NLS-1$
 
     volume_restore_snapshot_confirmation(

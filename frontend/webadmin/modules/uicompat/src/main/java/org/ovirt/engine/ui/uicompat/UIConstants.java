@@ -1805,6 +1805,15 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Are you sure you want to stop the following Volume(s)?")
     String stopVolumeMessage();
 
+    @DefaultStringValue("Following volumes are already started but some/all bricks are down. Do you want to force start them ?")
+    String startForceVolumeMessage();
+
+    @DefaultStringValue("Start Volume")
+    String confirmStartVolume();
+
+    @DefaultStringValue("Force start")
+    String startForceLabel();
+
     @DefaultStringValue("NOTE:\n -Stopping volume will make its data inaccessible.")
     String stopVolumeWarning();
 

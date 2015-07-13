@@ -99,7 +99,8 @@ public class VolumeModule extends AbstractGinModule {
             public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(VolumeListModel source,
                     UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getStopCommand()
-                        || lastExecutedCommand == getModel().getRemoveVolumeCommand()) {
+                                || lastExecutedCommand == getModel().getRemoveVolumeCommand()
+                                || lastExecutedCommand == getModel().getStartCommand()) {
                     return removeConfirmPopupProvider.get();
                 } else {
                     return super.getConfirmModelPopup(source, lastExecutedCommand);

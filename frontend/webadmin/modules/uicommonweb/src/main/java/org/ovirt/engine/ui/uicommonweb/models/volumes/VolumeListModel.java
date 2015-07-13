@@ -42,6 +42,8 @@ import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils;
+import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils.VolumeStatus;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -68,8 +70,11 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeRebalanceStatusModel
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeSnapshotOptionModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
@@ -533,7 +538,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             allowStopProfiling = isStopProfileAvailable(list);
             for (GlusterVolumeEntity volume : list) {
                 if (volume.getStatus() == GlusterStatus.UP) {
-                    allowStart = false;
+                    VolumeStatus status = GlusterVolumeUtils.getVolumeStatus(volume);
+                    allowStart = status == VolumeStatus.ALL_BRICKS_DOWN || status == VolumeStatus.SOME_BRICKS_DOWN;
                     allowRemove = false;
                 }
                 else if (volume.getStatus() == GlusterStatus.DOWN) {
@@ -677,7 +683,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         }
         else if (command.equals(getRemoveVolumeCommand())) {
             removeVolume();
-        } else if(command.getName().equals("rebalanceNotStarted")) {//$NON-NLS-1$
+        } else if(command.getName().equals("closeConfirmationWindow")) {//$NON-NLS-1$
             closeConfirmationWindow();
         }
         else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
@@ -742,6 +748,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             getSnapshotListModel().getCreateSnapshotCommand().execute();
         } else if (command.equals(getEditSnapshotScheduleCommand())) {
             getSnapshotListModel().getEditSnapshotScheduleCommand().execute();
+        } else if (command.getName().equals("startVolumeWithForceOption")) {//$NON-NLS-1$
+            prepareForStartVolume(false);
         }
     }
 
@@ -854,7 +862,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         cModel.setHelpTag(HelpTag.volume_rebalance_status);
         cModel.setHashName("volume_rebalance_status"); //$NON-NLS-1$
 
-        final UICommand rebalanceStatusOk = new UICommand("rebalanceNotStarted", VolumeListModel.this);//$NON-NLS-1$
+        final UICommand rebalanceStatusOk = new UICommand("closeConfirmationWindow", VolumeListModel.this);//$NON-NLS-1$
         rebalanceStatusOk.setTitle(ConstantsManager.getInstance().getConstants().ok());
         rebalanceStatusOk.setIsCancel(true);
         cModel.getCommands().add(rebalanceStatusOk);
@@ -1128,14 +1136,70 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             return;
         }
 
+        ArrayList<String> volumesForForceStartWarning = new ArrayList<>();
+
+        for (Object item : getSelectedItems()) {
+            GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
+            VolumeStatus status = GlusterVolumeUtils.getVolumeStatus(volume);
+            if (status == VolumeStatus.ALL_BRICKS_DOWN || status == VolumeStatus.SOME_BRICKS_DOWN) {
+                volumesForForceStartWarning.add(volume.getName());
+            }
+        }
+
+        prepareForStartVolume(true);
+
+        if (!volumesForForceStartWarning.isEmpty()) {
+            final ConfirmationModel cModel = new ConfirmationModel();
+            cModel.setHelpTag(HelpTag.volume_start);
+            cModel.setHashName("volume_start");//$NON-NLS-1$
+
+            setConfirmWindow(cModel);
+
+            cModel.setMessage(ConstantsManager.getInstance().getConstants().startForceVolumeMessage());
+            cModel.setTitle(ConstantsManager.getInstance().getConstants().confirmStartVolume());
+            cModel.setForceLabel(ConstantsManager.getInstance().getConstants().startForceLabel());
+            cModel.setItems(volumesForForceStartWarning);
+            cModel.getForce().setIsAvailable(true);
+            cModel.getForce().setEntity(true);
+
+            cModel.getForce().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+                @Override
+                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                    if(cModel.getCommands() != null && cModel.getCommands().get(0) !=null) {
+                        cModel.getCommands().get(0).setIsExecutionAllowed(cModel.getForce().getEntity());
+                    }
+                }
+            });
+
+            cModel.getCommands().add(UICommand.createDefaultOkUiCommand("startVolumeWithForceOption", this));//$NON-NLS-1$
+            cModel.getCommands().add(UICommand.createCancelUiCommand("closeConfirmationWindow", this));//$NON-NLS-1$
+        }
+    }
+
+    private void onStartVolume(ArrayList<VdcActionParametersBase> parameters) {
+        Frontend.getInstance().runMultipleAction(VdcActionType.StartGlusterVolume, parameters, null, true, true);
+    }
+
+    private void prepareForStartVolume(boolean noForceStart) {
+        boolean force = false;
+        ConfirmationModel cModel;
+        if (getConfirmWindow() != null) {
+            cModel = (ConfirmationModel) getConfirmWindow();
+            closeConfirmationWindow();
+            force = cModel.getForce().getEntity();
+        }
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems()) {
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
-            list.add(new GlusterVolumeActionParameters(volume.getId(), false));
+            VolumeStatus status = GlusterVolumeUtils.getVolumeStatus(volume);
+            if (!noForceStart && (status == VolumeStatus.ALL_BRICKS_DOWN || status == VolumeStatus.SOME_BRICKS_DOWN)) {
+                list.add(new GlusterVolumeActionParameters(volume.getId(), force));
+            } else if (noForceStart && status == VolumeStatus.DOWN) {
+                list.add(new GlusterVolumeActionParameters(volume.getId(), false));
+            }
         }
-        Frontend.getInstance().runMultipleAction(VdcActionType.StartGlusterVolume, list);
+        onStartVolume(list);
     }
-
 
     private void onCreateVolume() {
         VolumeModel volumeModel = (VolumeModel) getWindow();

@@ -51,14 +51,15 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
     public MainTabVolumeView(MainModelProvider<GlusterVolumeEntity, VolumeListModel> modelProvider) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(modelProvider.getModel());
         initWidget(getTable());
     }
 
-    void initTable() {
+    void initTable(VolumeListModel model) {
         getTable().enableColumnResizing();
 
-        VolumeStatusColumn statusColumn = new VolumeStatusColumn();
+        VolumeStatusColumn statusColumn = new VolumeStatusColumn(model.getStartCommand());
+
         statusColumn.makeSortable(new Comparator<GlusterVolumeEntity>() {
             @Override
             public int compare(GlusterVolumeEntity o1, GlusterVolumeEntity o2) {
