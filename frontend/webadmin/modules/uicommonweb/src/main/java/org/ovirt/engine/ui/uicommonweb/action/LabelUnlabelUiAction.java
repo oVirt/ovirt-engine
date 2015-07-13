@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.action.LabelNicParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -17,17 +18,16 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.network.DataFromHostSetupNetworksModel.LabelOnNic;
 
 public class LabelUnlabelUiAction extends UiAction {
 
-    private final List<LabelOnNic> addedLabels;
-    private final List<LabelOnNic> removedLabels;
+    private final List<NicLabel> addedLabels;
+    private final List<NicLabel> removedLabels;
     private final List<Guid> removedBondIds;
     private final Guid vdsId;
 
-    public LabelUnlabelUiAction(List<LabelOnNic> addedLabels,
-        List<LabelOnNic> removedLabels,
+    public LabelUnlabelUiAction(List<NicLabel> addedLabels,
+        List<NicLabel> removedLabels,
         List<Bond> removedBonds,
         Guid vdsId,
         Model model) {
@@ -42,8 +42,8 @@ public class LabelUnlabelUiAction extends UiAction {
     }
 
     private void dropAllLabelsToRemoveRelatedToRemovedBond() {
-        for (Iterator<LabelOnNic> iterator = removedLabels.iterator(); iterator.hasNext(); ) {
-            LabelOnNic labelOnNic = iterator.next();
+        for (Iterator<NicLabel> iterator = removedLabels.iterator(); iterator.hasNext(); ) {
+            NicLabel labelOnNic = iterator.next();
             Guid nicId = labelOnNic.getNicId();
             boolean unlabelingBondBeingRemoved = removedBondIds.contains(nicId);    //TODO MM: not sure it this is sufficient.
 
@@ -88,7 +88,7 @@ public class LabelUnlabelUiAction extends UiAction {
     }
 
     private boolean needToUpdateMissingNicIds() {
-        for (LabelOnNic addedLabel : addedLabels) {
+        for (NicLabel addedLabel : addedLabels) {
             if (addedLabel.getNicId() == null) {
                 return true;
             }
@@ -114,7 +114,7 @@ public class LabelUnlabelUiAction extends UiAction {
     }
 
     private void updateLabelOnNicInstances(List<VdsNetworkInterface> allNics) {
-        for (LabelOnNic addedLabel : addedLabels) {
+        for (NicLabel addedLabel : addedLabels) {
             if (addedLabel.getNicId() == null) {
                 for (VdsNetworkInterface nic : allNics) {
                     if (nic.getName().equals(addedLabel.getNicName())) {
@@ -131,9 +131,9 @@ public class LabelUnlabelUiAction extends UiAction {
         }
     }
 
-    private List<LabelNicParameters> transformToLabelNicParameters(List<LabelOnNic> labelOnNicInstances) {
+    private List<LabelNicParameters> transformToLabelNicParameters(List<NicLabel> labelOnNicInstances) {
         List<LabelNicParameters> result = new ArrayList<>(labelOnNicInstances.size());
-        for (LabelOnNic labelOnNic : labelOnNicInstances) {
+        for (NicLabel labelOnNic : labelOnNicInstances) {
             result.add(new LabelNicParameters(labelOnNic.getNicId(), labelOnNic.getLabel()));
         }
         return result;

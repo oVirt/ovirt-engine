@@ -15,10 +15,10 @@ import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
+import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.network.DataFromHostSetupNetworksModel.LabelOnNic;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkLabelModel.NewNetworkLabelModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -552,7 +552,7 @@ public enum NetworkOperation {
                         String label,
                         VdsNetworkInterface iface) {
 
-                    LabelOnNic labelOnNic = new LabelOnNic(iface.getId(), iface.getName(), label);
+                    NicLabel labelOnNic = new NicLabel(iface.getId(), iface.getName(), label);
                     if (dataFromHostSetupNetworksModel.removedLabels.contains(labelOnNic)) {
                         dataFromHostSetupNetworksModel.removedLabels.remove(labelOnNic);
                     } else {
@@ -612,7 +612,7 @@ public enum NetworkOperation {
                         String label,
                         VdsNetworkInterface iface) {
 
-                    LabelOnNic labelOnNic = new LabelOnNic(iface.getId(), iface.getName(), label);
+                    NicLabel labelOnNic = new NicLabel(iface.getId(), iface.getName(), label);
                     if (dataFromHostSetupNetworksModel.addedLabels.contains(labelOnNic)) {
                         dataFromHostSetupNetworksModel.addedLabels.remove(labelOnNic);
                     } else {
@@ -824,7 +824,7 @@ public enum NetworkOperation {
         String networkLabel = networkToDetach.getLabel();
         VdsNetworkInterface nic = modelOfNetworkToDetach.getAttachedToNic().getIface();
 
-        LabelOnNic potentialLabelRemovalData = new LabelOnNic(nic.getId(), nic.getName(), networkLabel);
+        NicLabel potentialLabelRemovalData = new NicLabel(nic.getId(), nic.getName(), networkLabel);
         boolean networkRemovedViaRemovedNicLabel =
             dataFromHostSetupNetworksModel.removedLabels.contains(potentialLabelRemovalData);
 

@@ -90,6 +90,7 @@
         <include name="common/businessentities/network/ReportedConfigurations.java"/>
         <include name="common/businessentities/network/ReportedConfiguration.java"/>
         <include name="common/businessentities/network/ReportedConfigurationType.java"/>
+        <include name="common/businessentities/network/NicLabel.java"/>
 
         <include name="common/businessentities/Commented.java" />
         <include name="common/businessentities/Reasoned.java" />

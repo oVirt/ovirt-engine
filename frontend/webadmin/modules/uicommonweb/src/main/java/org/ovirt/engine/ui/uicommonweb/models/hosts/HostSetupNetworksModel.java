@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
+import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -1154,17 +1155,17 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
      * regardless of which interface they're labelling.
      */
     private void fixLabelsInBondDefinitions(List<Bond> newOrModifiedBonds,
-        List<DataFromHostSetupNetworksModel.LabelOnNic> addedLabels,
-        List<DataFromHostSetupNetworksModel.LabelOnNic> removedLabels) {
+        List<NicLabel> addedLabels,
+        List<NicLabel> removedLabels) {
 
         for (Bond bond : newOrModifiedBonds) {
-            for (DataFromHostSetupNetworksModel.LabelOnNic addedLabel : addedLabels) {
+            for (NicLabel addedLabel : addedLabels) {
                 if (addedLabel.getNicName().equals(bond.getName())) {
                     bond.getLabels().remove(addedLabel.getLabel());
                 }
             }
 
-            for (DataFromHostSetupNetworksModel.LabelOnNic removedLabel : removedLabels) {
+            for (NicLabel removedLabel : removedLabels) {
                 if (removedLabel.getNicName().equals(bond.getName())) {
                     bond.getLabels().add(removedLabel.getLabel());
                 }
