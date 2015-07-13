@@ -46,16 +46,12 @@ public class AddExistingFileStorageDomainCommandTest {
     private AddExistingFileStorageDomainCommand<StorageDomainManagementParameter> command;
     private StorageDomainManagementParameter parameters;
 
-    private static final int SD_MAX_NAME_LENGTH = 50;
-    private static Integer WARNING_LOW_SPACE_INDICATOR = 10;
-    private static Integer CRITICAL_SPACE_ACTION_BLOCKER = 5;
-
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.StorageDomainNameSizeLimit, SD_MAX_NAME_LENGTH),
+            mockConfig(ConfigValues.StorageDomainNameSizeLimit, 50),
             mockConfig(ConfigValues.HostedEngineStorageDomainName, StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME),
-            mockConfig(ConfigValues.WarningLowSpaceIndicator, WARNING_LOW_SPACE_INDICATOR),
-            mockConfig(ConfigValues.CriticalSpaceActionBlocker, CRITICAL_SPACE_ACTION_BLOCKER)
+            mockConfig(ConfigValues.WarningLowSpaceIndicator, 10),
+            mockConfig(ConfigValues.CriticalSpaceActionBlocker, 5)
     );
 
     @Mock
