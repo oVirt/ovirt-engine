@@ -20,7 +20,6 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
-import org.ovirt.engine.core.CommandMocks;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -44,7 +43,6 @@ import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSComman
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -54,8 +52,6 @@ import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AttachStorageDomainToPoolCommandTest {
-    @Mock
-    private DbFacade dbFacade;
     @Mock
     private StoragePoolIsoMapDao isoMapDao;
     @Mock
@@ -86,14 +82,14 @@ public class AttachStorageDomainToPoolCommandTest {
         AttachStorageDomainToPoolCommand<AttachStorageDomainToPoolParameters> cmd =
                 spy(new AttachStorageDomainToPoolCommand<>(params));
 
-        CommandMocks.mockDbFacade(cmd, dbFacade);
         doNothing().when(cmd).attemptToActivateDomain();
         doReturn(Collections.emptyList()).when(cmd).connectHostsInUpToDomainStorageServer();
-        when(dbFacade.getStoragePoolIsoMapDao()).thenReturn(isoMapDao);
-        when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDao);
-        when(dbFacade.getVdsDao()).thenReturn(vdsDao);
-        when(dbFacade.getStorageDomainDao()).thenReturn(storageDomainDao);
-        when(dbFacade.getStorageDomainStaticDao()).thenReturn(storageDomainStaticDao);
+        doReturn(isoMapDao).when(cmd).getStoragePoolIsoMapDao();
+        doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
+        doReturn(vdsDao).when(cmd).getVdsDao();
+        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
+        doReturn(storageDomainStaticDao).when(cmd).getStorageDomainStaticDao();
+
         StoragePool pool = new StoragePool();
         pool.setId(poolId);
         pool.setStatus(StoragePoolStatus.Up);
