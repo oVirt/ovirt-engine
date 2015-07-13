@@ -8,8 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -110,7 +109,7 @@ public class DeactivateStorageDomainCommandTest {
         when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new StorageDomain());
 
         doReturn(backendInternal).when(cmd).getBackend();
-        when(vdsDao.getAllForStoragePoolAndStatus(any(Guid.class), any(VDSStatus.class))).thenReturn(new ArrayList<VDS>());
+        when(vdsDao.getAllForStoragePoolAndStatus(any(Guid.class), any(VDSStatus.class))).thenReturn(Collections.<VDS>emptyList());
         when(backendInternal.getResourceManager()).thenReturn(vdsBrokerFrontend);
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
@@ -129,8 +128,7 @@ public class DeactivateStorageDomainCommandTest {
         mockDomain();
         doReturn(domain).when(cmd).getStorageDomain();
         when(dbFacade.getVmStaticDao()).thenReturn(vmStaticDao);
-        List<VmStatic> listVMs = new ArrayList<>();
-        when(vmStaticDao.getAllByStoragePoolId(any(Guid.class))).thenReturn(listVMs);
+        when(vmStaticDao.getAllByStoragePoolId(any(Guid.class))).thenReturn(Collections.<VmStatic>emptyList());
         assertTrue(cmd.isRunningVmsWithIsoAttached());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().isEmpty());
     }
@@ -143,12 +141,10 @@ public class DeactivateStorageDomainCommandTest {
         when(dbFacade.getVmStaticDao()).thenReturn(vmStaticDao);
         when(dbFacade.getVmDynamicDao()).thenReturn(vmDynamicDao);
 
-        List<VmStatic> listVMs = new ArrayList<>();
         VmStatic vmStatic = new VmStatic();
         vmStatic.setName("TestVM");
         vmStatic.setId(Guid.newGuid());
-        listVMs.add(vmStatic);
-        doReturn(listVMs).when(cmd).getVmsWithAttachedISO();
+        doReturn(Collections.singletonList(vmStatic)).when(cmd).getVmsWithAttachedISO();
         assertFalse(cmd.isRunningVmsWithIsoAttached());
         assertTrue(cmd.getReturnValue()
                 .getCanDoActionMessages()
