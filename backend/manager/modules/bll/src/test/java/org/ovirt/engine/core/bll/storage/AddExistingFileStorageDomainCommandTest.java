@@ -9,7 +9,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -162,11 +162,9 @@ public class AddExistingFileStorageDomainCommandTest {
     }
 
     private static List<VDS> getHosts() {
-        List<VDS> hosts = new ArrayList<>();
         VDS host = new VDS();
         host.setId(Guid.newGuid());
         host.setStatus(VDSStatus.Up);
-        hosts.add(host);
-        return hosts;
+        return Collections.singletonList(host);
     }
 }
