@@ -80,9 +80,8 @@ public class DeactivateStorageDomainCommandTest {
     @Mock
     private EventQueue eventQueue;
 
-    StoragePoolIsoMap map = new StoragePoolIsoMap();
-
-    private StorageDomain domain = null;
+    private StoragePoolIsoMap map;
+    private StorageDomain domain;
 
     @ClassRule
     public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
@@ -93,6 +92,7 @@ public class DeactivateStorageDomainCommandTest {
 
     @Before
     public void setup() {
+        map = new StoragePoolIsoMap();
         CommandMocks.mockDbFacade(cmd, dbFacade);
         when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDao);
         when(dbFacade.getStorageDomainDao()).thenReturn(storageDomainDao);
