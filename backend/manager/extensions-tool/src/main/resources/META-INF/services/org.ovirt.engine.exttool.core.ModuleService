@@ -1,3 +1,4 @@
+org.ovirt.engine.exttool.aaa.AAAServiceImpl
 org.ovirt.engine.exttool.core.HelpServiceImpl
 org.ovirt.engine.exttool.core.InfoServiceImpl
 org.ovirt.engine.exttool.logger.LoggerServiceImpl
