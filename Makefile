@@ -404,7 +404,7 @@ install_artifacts:
 
 install_poms:
 	install -dm 755 "$(DESTDIR)$(MAVENPOM_DIR)"
-	install -m 644 backend/manager/extension-tool/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-extension-tool.pom"
+	install -m 644 backend/manager/extensions-tool/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-extensions-tool.pom"
 	install -m 644 backend/manager/modules/aaa/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-aaa.pom"
 	install -m 644 backend/manager/modules/bll/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-bll.pom"
 	install -m 644 backend/manager/modules/branding/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-branding.pom"

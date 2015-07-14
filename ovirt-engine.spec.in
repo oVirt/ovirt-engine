@@ -714,7 +714,7 @@ done << __EOF__
 %{engine_jboss_modules}/common/org/ovirt/engine/core/common/main/common.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/core/compat/main/compat.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/core/dal/main/dal.jar
-%{engine_jboss_modules}/common/org/ovirt/engine/core/extension-tool/main/extension-tool.jar
+%{engine_jboss_modules}/common/org/ovirt/engine/core/extensions-tool/main/extensions-tool.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/core/extensions-manager/main/extensions-manager.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/core/searchbackend/main/searchbackend.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/core/tools/main/tools.jar
@@ -773,7 +773,7 @@ restapi %{name}-restapi-definition.pom
 restapi %{name}-restapi-jaxrs.pom
 restapi %{name}-restapi-parent.pom
 restapi %{name}-restapi-types.pom
-tools %{name}-extension-tool.pom
+tools %{name}-extensions-tool.pom
 tools %{name}-tools.pom
 __EOF__
 
@@ -1234,7 +1234,7 @@ fi
 %{engine_data}/bin/ovirt-engine-extensions-tool.sh
 %{engine_data}/bin/ovirt-engine-crypto-tool.sh
 %{engine_data}/bin/ovirt-engine-role.sh
-%{engine_data}/conf/extension-tool-logging.properties
+%{engine_data}/conf/extensions-tool-logging.properties
 %{engine_data}/conf/jaas.conf
 %{engine_data}/conf/notifier-logging.properties
 %{engine_data}/conf/tools-logging.properties

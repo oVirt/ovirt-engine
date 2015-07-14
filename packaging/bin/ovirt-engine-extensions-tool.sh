@@ -2,7 +2,7 @@
 
 . "$(dirname "$(readlink -f "$0")")"/engine-prolog.sh
 
-OVIRT_LOGGING_PROPERTIES="${OVIRT_LOGGING_PROPERTIES:-${ENGINE_USR}/conf/extension-tool-logging.properties}"
+OVIRT_LOGGING_PROPERTIES="${OVIRT_LOGGING_PROPERTIES:-${ENGINE_USR}/conf/extensions-tool-logging.properties}"
 
 exec "${JAVA_HOME}/bin/java" \
 	-Djava.security.auth.login.config="${ENGINE_USR}/conf/jaas.conf" \
@@ -14,6 +14,6 @@ exec "${JAVA_HOME}/bin/java" \
 	-Dorg.ovirt.engine.exttool.core.packageDisplayName="${PACKAGE_DISPLAY_NAME}" \
 	-Dorg.ovirt.engine.exttool.core.engineEtc="${ENGINE_ETC}" \
 	-jar "${JBOSS_HOME}/jboss-modules.jar" \
-	-dependencies org.ovirt.engine.core.extension-tool \
+	-dependencies org.ovirt.engine.core.extensions-tool \
 	-class org.ovirt.engine.exttool.core.ExtensionsToolExecutor \
 	"$@"

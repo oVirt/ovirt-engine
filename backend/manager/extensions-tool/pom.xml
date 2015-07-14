@@ -13,7 +13,7 @@
     <version>3.6.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>extension-tool</artifactId>
+  <artifactId>extensions-tool</artifactId>
   <packaging>jar</packaging>
   <name>oVirt Engine extensions tool</name>
   <description>oVirt Engine extensions tools</description>
