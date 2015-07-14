@@ -14,17 +14,11 @@ public class VdsOperationActionParameters extends VdsActionParameters {
 
     @Valid
     private VdsStatic vdsStatic;
-
     private String password;
-
     private boolean overrideFirewall;
-
     private boolean activateHost;
-
     private boolean enableSerialConsole;
-
     private AuthenticationMethod authMethod;
-
     private Guid networkProviderId;
     private String networkMappings;
 
