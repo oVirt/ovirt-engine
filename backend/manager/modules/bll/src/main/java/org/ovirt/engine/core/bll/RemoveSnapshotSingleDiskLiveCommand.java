@@ -469,7 +469,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                 Backend.getInstance().endAction(VdcActionType.DestroyImage,
                         command.getParameters(),
                         cloneContextAndDetachFromParent());
-                if (succeeded && cmdEntity != null) {
+                if (succeeded) {
                     cmdEntity.setCallbackNotified(true);
                 }
             }
