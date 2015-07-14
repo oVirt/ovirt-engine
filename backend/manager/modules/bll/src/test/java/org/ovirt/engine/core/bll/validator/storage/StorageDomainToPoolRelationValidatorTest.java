@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -64,7 +63,7 @@ public class StorageDomainToPoolRelationValidatorTest {
         storagePool.setId(Guid.newGuid());
         storagePool.setCompatibilityVersion(Version.v3_5);
 
-        when(storagePoolIsoMapDao.getAllForStorage(any(Guid.class))).thenReturn(Collections.<StoragePoolIsoMap>emptyList());
+        when(storagePoolIsoMapDao.getAllForStorage(storageDomain.getId())).thenReturn(Collections.<StoragePoolIsoMap>emptyList());
         spyValidator();
     }
 
@@ -221,7 +220,7 @@ public class StorageDomainToPoolRelationValidatorTest {
 
     @Test
     public void testAttachFailDomainAlreadyInPool() {
-        when(storagePoolIsoMapDao.getAllForStorage(any(Guid.class))).thenReturn(Collections.singletonList(new StoragePoolIsoMap()));
+        when(storagePoolIsoMapDao.getAllForStorage(storageDomain.getId())).thenReturn(Collections.singletonList(new StoragePoolIsoMap()));
 
         ValidationResult attachedDomainInsertionResult = validator.validateDomainCanBeAttachedToPool();
         assertThat(attachedDomainInsertionResult,
@@ -259,7 +258,7 @@ public class StorageDomainToPoolRelationValidatorTest {
             // Make the pool to have already a domain with the same type of the domain we want to attach.
             StorageDomain domainWithSameType = new StorageDomain();
             domainWithSameType.setStorageDomainType(type);
-            when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.singletonList(domainWithSameType));
+            when(storageDomainDao.getAllForStoragePool(storagePool.getId())).thenReturn(Collections.singletonList(domainWithSameType));
 
             ValidationResult attachMultipleISOOrExportResult = validator.validateDomainCanBeAttachedToPool();
             assertThat("Attaching domain of type " + type + " succeeded though another domain of the same type already exists in the pool",
