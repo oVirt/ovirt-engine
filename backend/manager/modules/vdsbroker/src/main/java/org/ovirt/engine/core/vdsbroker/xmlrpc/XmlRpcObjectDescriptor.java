@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.xmlrpc;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class XmlRpcObjectDescriptor {
@@ -17,6 +18,11 @@ public class XmlRpcObjectDescriptor {
                 builder.append(String.format("%1$s:", entry.getKey()));
                 builder.append("\n");
                 toStringBuilder((Iterable) (entry.getValue()), builder);
+                builder.append("\n");
+            } else if (entry.getValue() instanceof Object[]) {
+                builder.append(String.format("%1$s:", entry.getKey()));
+                builder.append("\n");
+                builder.append(Arrays.deepToString((Object[]) entry.getValue()));
                 builder.append("\n");
             } else {
                 builder.append(String.format("%1$s = %2$s", entry.getKey(), entry.getValue().toString()));
