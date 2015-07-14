@@ -247,7 +247,6 @@ public class StorageDomainToPoolRelationValidatorTest {
     public void testCanAttachSingleISOOrExport() {
         for (StorageDomainType type : Arrays.asList(StorageDomainType.ISO, StorageDomainType.ImportExport)) {
             storageDomain.setStorageDomainType(type);
-            spyValidator();
             assertThat(validator.validateDomainCanBeAttachedToPool(), isValid());
         }
     }
@@ -256,7 +255,6 @@ public class StorageDomainToPoolRelationValidatorTest {
     public void testCanAttachMultipleISOOrExport() {
         for (StorageDomainType type : Arrays.asList(StorageDomainType.ISO, StorageDomainType.ImportExport)) {
             storageDomain.setStorageDomainType(type);
-            spyValidator();
 
             // Make the pool to have already a domain with the same type of the domain we want to attach.
             StorageDomain domainWithSameType = new StorageDomain();
