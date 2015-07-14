@@ -32,18 +32,18 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 @RunWith(MockitoJUnitRunner.class)
 public class StorageHandlingCommandBaseTest {
 
-    StorageHandlingCommandBase<StoragePoolManagementParameter> cmd;
+    private StorageHandlingCommandBase<StoragePoolManagementParameter> cmd;
 
     @Mock
-    StoragePoolDao storagePoolDao;
+    private StoragePoolDao storagePoolDao;
 
     @Mock
-    StorageDomainDao storageDomainDao;
+    private StorageDomainDao storageDomainDao;
 
     @Mock
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
-    StoragePool storagePool;
+    private StoragePool storagePool;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
