@@ -29,7 +29,7 @@ public class ExtensionsToolExecutor {
     private static String PACKAGE_DISPLAY_NAME = System.getProperty("org.ovirt.engine.exttool.core.packageDisplayName");
     private static String ENGINE_ETC = System.getProperty("org.ovirt.engine.exttool.core.engineEtc");
 
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ExtensionsToolExecutor.class);
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(ExtensionsToolExecutor.class);
     private static final Logger OVIRT_LOGGER = Logger.getLogger("org.ovirt");
 
     public static void main(String... args) {
@@ -62,40 +62,40 @@ public class ExtensionsToolExecutor {
             }
             if(!parser.getErrors().isEmpty()) {
                 for(Throwable t : parser.getErrors()) {
-                    logger.error(t.getMessage());
-                    logger.debug(t.getMessage(), t);
+                    log.error(t.getMessage());
+                    log.debug(t.getMessage(), t);
                 }
                 throw new ExitException("Parsing error", 1);
             }
 
             if (cmdArgs.size() < 1) {
-                logger.error("Please provide module.");
+                log.error("Please provide module.");
                 throw new ExitException("Module not provided", 1);
             }
             String module = cmdArgs.get(0);
             ModuleService moduleService = moduleServices.get(module);
             if (moduleService == null) {
-                logger.error("No such '{}' module exists.", module);
+                log.error("No such '{}' module exists.", module);
                 throw new ExitException(1);
             }
             moduleService.parseArguments(cmdArgs);
-            logger.info("========================================================================");
-            logger.info("============================ Initialization ============================");
-            logger.info("========================================================================");
+            log.info("========================================================================");
+            log.info("============================ Initialization ============================");
+            log.info("========================================================================");
             loadExtensions(moduleService, argMap);
-            logger.info("========================================================================");
-            logger.info("============================== Execution ===============================");
-            logger.info("========================================================================");
+            log.info("========================================================================");
+            log.info("============================== Execution ===============================");
+            log.info("========================================================================");
             moduleService.run();
             exitStatus = 0;
         } catch(ExitException e) {
-            logger.debug(e.getMessage(), e);
+            log.debug(e.getMessage(), e);
             exitStatus = e.getExitCode();
         } catch (Throwable t) {
-            logger.error(t.getMessage() != null ? t.getMessage() : t.getClass().getName());
-            logger.debug("Exception:", t);
+            log.error(t.getMessage() != null ? t.getMessage() : t.getClass().getName());
+            log.debug("Exception:", t);
         }
-        logger.debug("Exiting with status '{}'", exitStatus);
+        log.debug("Exiting with status '{}'", exitStatus);
         System.exit(exitStatus);
     }
 
@@ -118,19 +118,19 @@ public class ExtensionsToolExecutor {
         }
 
         for(File f : files) {
-            logger.debug("Loading extension file '{}'", f.getName());
+            log.debug("Loading extension file '{}'", f.getName());
             try {
                 proxies.put(extensionsManager.load(f), null);
             } catch (Exception ex) {
-                logger.error("Can't load extension '{}', ignoring.", f.getName());
-                logger.debug("Exception:", ex);
+                log.error("Can't load extension '{}', ignoring.", f.getName());
+                log.debug("Exception:", ex);
             }
         }
 
         for(Map.Entry<String, ExtensionProxy> entry : proxies.entrySet()) {
             extensionsManager.initialize(entry.getKey());
             entry.setValue(extensionsManager.getExtensionByName(entry.getKey()));
-            logger.debug("Extension '{}' initialized", entry.getKey());
+            log.debug("Extension '{}' initialized", entry.getKey());
         }
         extensionsManager.dump();
     }
@@ -149,7 +149,7 @@ public class ExtensionsToolExecutor {
                 module.setContext(context);
             }
         }
-        logger.debug("Loaded modules: {}", modules.keySet());
+        log.debug("Loaded modules: {}", modules.keySet());
 
         return modules;
     }
@@ -162,12 +162,12 @@ public class ExtensionsToolExecutor {
     }
 
     private static void setupLogger(Map<String, Object> args) throws IOException {
-        Logger logger = Logger.getLogger("");
+        Logger log = Logger.getLogger("");
         String logfile = (String)args.get("log-file");
         if(logfile != null) {
             FileHandler fh = new FileHandler(logfile);
             fh.setFormatter(new SimpleFormatter());
-            logger.addHandler(fh);
+            log.addHandler(fh);
         }
 
         OVIRT_LOGGER.setLevel((Level)args.get("log-level"));
