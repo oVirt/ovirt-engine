@@ -87,6 +87,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         if (host.isSetOverrideIptables()) {
             addParams.setOverrideFirewall(host.isOverrideIptables());
         }
+        addParams.setHostedEngineDeployConfiguration(HostResourceParametersUtil.getHostedEngineDeployConfiguration(this));
         addParams = (AddVdsActionParameters) getMapper
             (Host.class, VdsOperationActionParameters.class).map(host, addParams);
         return performCreate(VdcActionType.AddVds,

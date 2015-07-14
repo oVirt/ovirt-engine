@@ -2057,6 +2057,17 @@ actions:
 - name: /hosts|rel=add
   description: add a new host to the system
   request:
+    urlparams:
+      deploy_hosted_engine:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
+      undeploy_hosted_engine:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
     body:
       parameterType: Host
       signatures:
@@ -2169,6 +2180,17 @@ actions:
 - name: /hosts/{host:id}/install|rel=install
   description: install vdsm and other packages required to get the host ready to be used in the engine
   request:
+    urlparams:
+      deploy_hosted_engine:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
+      undeploy_hosted_engine:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
     body:
       parameterType: Action
       signatures:
