@@ -278,6 +278,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         guestOsKernelVersion = "";
         guestOsArch = ArchitectureType.undefined;
         guestOsType = OsType.Other;
+        disks = new ArrayList<>();
     }
 
     public VmDynamic(VmDynamic template) {

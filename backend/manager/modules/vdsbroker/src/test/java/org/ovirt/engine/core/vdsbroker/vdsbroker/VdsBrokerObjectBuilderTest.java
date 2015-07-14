@@ -68,7 +68,7 @@ public class VdsBrokerObjectBuilderTest {
         Map<String, Object> diskData = setDiskData();
         diskData.put(VdsProperties.vm_disk_flush_latency, doubleValue);
         Map<String, Object> xml = setMockForTesting(diskData);
-        VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xml);
+        VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xml, getVds());
         assertEquals(vmDynamic.getDisks().get(0).getFlushLatency(), new Double("0.000000001"));
     }
 
@@ -79,7 +79,7 @@ public class VdsBrokerObjectBuilderTest {
         Map<String, Object> diskData = setDiskData();
         diskData.put(VdsProperties.vm_disk_read_latency, doubleValue);
         Map<String, Object> xml = setMockForTesting(diskData);
-        VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xml);
+        VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xml, getVds());
         assertEquals(vmDynamic.getDisks().get(0).getReadLatency(), new Double("0.000000002"));
     }
 
@@ -90,7 +90,7 @@ public class VdsBrokerObjectBuilderTest {
         Map<String, Object> diskData = setDiskData();
         diskData.put(VdsProperties.vm_disk_write_latency, doubleValue);
         Map<String, Object> xml = setMockForTesting(diskData);
-        VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xml);
+        VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xml, getVds());
         assertEquals(vmDynamic.getDisks().get(0).getWriteLatency(), new Double("0.000000003"));
     }
 
@@ -101,7 +101,7 @@ public class VdsBrokerObjectBuilderTest {
         Map<String, Object> diskData = setDiskData();
         diskData.put(VdsProperties.vm_disk_write_latency, doubleValue);
         Map<String, Object> xml = setMockForTesting(diskData);
-        VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xml);
+        VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xml, getVds());
         assertEquals(vmDynamic.getDisks().get(0).getWriteLatency(), new Double("1"));
     }
 
@@ -112,7 +112,7 @@ public class VdsBrokerObjectBuilderTest {
         Map<String, Object> diskData = setDiskData();
         diskData.put(VdsProperties.vm_disk_write_latency, doubleValue);
         Map<String, Object> xml = setMockForTesting(diskData);
-        VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xml);
+        VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xml, getVds());
         assertEquals(vmDynamic.getDisks().get(0).getWriteLatency(), new Double("0"));
     }
 
@@ -123,7 +123,7 @@ public class VdsBrokerObjectBuilderTest {
         Map<String, Object> diskData = setDiskData();
         diskData.put(VdsProperties.vm_disk_write_latency, doubleValue);
         Map<String, Object> xml = setMockForTesting(diskData);
-        VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xml);
+        VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xml, getVds());
         assertEquals(vmDynamic.getDisks().get(0).getWriteLatency(), new Double("999999999"));
     }
 
@@ -135,7 +135,7 @@ public class VdsBrokerObjectBuilderTest {
         diskData.put(VdsProperties.vm_disk_read_latency, null);
         diskData.put(VdsProperties.vm_disk_flush_latency, null);
         Map<String, Object> xml = setMockForTesting(diskData);
-        VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xml);
+        VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xml, getVds());
         assertEquals(vmDynamic.getDisks().get(0).getWriteLatency(), new Double(DEFAULT_VALUE));
         assertEquals(vmDynamic.getDisks().get(0).getReadLatency(), new Double(DEFAULT_VALUE));
         assertEquals(vmDynamic.getDisks().get(0).getFlushLatency(), new Double(DEFAULT_VALUE));
@@ -153,7 +153,7 @@ public class VdsBrokerObjectBuilderTest {
         diskData.put(VdsProperties.vm_disk_flush_latency, DEFAULT_VALUE);
 
         Map<String, Object> xml = setMockForTesting(diskData);
-        VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xml);
+        VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xml, getVds());
         assertNull(vmDynamic.getDisks().get(0).getWriteLatency());
         assertNull(vmDynamic.getDisks().get(0).getReadLatency());
         assertEquals(vmDynamic.getDisks().get(0).getFlushLatency(), new Double(DEFAULT_VALUE));

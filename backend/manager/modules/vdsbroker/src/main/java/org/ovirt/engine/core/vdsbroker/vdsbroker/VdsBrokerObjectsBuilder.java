@@ -293,9 +293,9 @@ public class VdsBrokerObjectsBuilder {
         return -1d;
     }
 
-    public static VmDynamic buildVMDynamicData(Map<String, Object> xmlRpcStruct) {
+    public static VmDynamic buildVMDynamicData(Map<String, Object> xmlRpcStruct, VDS host) {
         VmDynamic vmdynamic = new VmDynamic();
-        updateVMDynamicData(vmdynamic, xmlRpcStruct);
+        updateVMDynamicData(vmdynamic, xmlRpcStruct, host);
         return vmdynamic;
     }
 
@@ -346,7 +346,7 @@ public class VdsBrokerObjectsBuilder {
         return lunsMap;
     }
 
-    public static void updateVMDynamicData(VmDynamic vm, Map<String, Object> xmlRpcStruct) {
+    public static void updateVMDynamicData(VmDynamic vm, Map<String, Object> xmlRpcStruct, VDS host) {
         if (xmlRpcStruct.containsKey(VdsProperties.vm_guid)) {
             vm.setId(new Guid((String) xmlRpcStruct.get(VdsProperties.vm_guid)));
         }
@@ -375,6 +375,8 @@ public class VdsBrokerObjectsBuilder {
         if (!hasGraphicsInfo) {
             updateGraphicsInfoFromConf(vm, xmlRpcStruct);
         }
+
+        adjustDisplayIp(vm.getGraphicsInfos(), host);
 
         if (xmlRpcStruct.containsKey((VdsProperties.utc_diff))) {
             String utc_diff = xmlRpcStruct.get(VdsProperties.utc_diff).toString();
@@ -405,13 +407,18 @@ public class VdsBrokerObjectsBuilder {
         }
 
         // ------------- vm internal agent data
-        vm.setVmHost(assignStringValue(xmlRpcStruct, VdsProperties.vm_host));
+        if (xmlRpcStruct.containsKey(VdsProperties.vm_host)) {
+            vm.setVmHost(assignStringValue(xmlRpcStruct, VdsProperties.vm_host));
+        }
 
-        String guestUserName = assignStringValue(xmlRpcStruct, VdsProperties.guest_cur_user_name);
-        vm.setGuestCurrentUserName(guestUserName);
+        if (xmlRpcStruct.containsKey(VdsProperties.guest_cur_user_name)) {
+            vm.setGuestCurrentUserName(assignStringValue(xmlRpcStruct, VdsProperties.guest_cur_user_name));
+        }
 
         initAppsList(xmlRpcStruct, vm);
-        vm.setGuestOs(assignStringValue(xmlRpcStruct, VdsProperties.guest_os));
+        if (xmlRpcStruct.containsKey(VdsProperties.guest_os)) {
+            vm.setGuestOs(assignStringValue(xmlRpcStruct, VdsProperties.guest_os));
+        }
         if (xmlRpcStruct.containsKey(VdsProperties.VM_FQDN)) {
             vm.setVmFQDN(assignStringValue(xmlRpcStruct, VdsProperties.VM_FQDN));
             String fqdn = vm.getVmFQDN().trim();
@@ -423,7 +430,9 @@ public class VdsBrokerObjectsBuilder {
             }
         }
 
-        vm.setVmIp(assignStringValue(xmlRpcStruct, VdsProperties.VM_IP));
+        if (xmlRpcStruct.containsKey(VdsProperties.VM_IP)) {
+            vm.setVmIp(assignStringValue(xmlRpcStruct, VdsProperties.VM_IP));
+        }
         if (vm.getVmIp() != null) {
             if (vm.getVmIp().startsWith("127.0.")) {
                 vm.setVmIp(null);
@@ -432,27 +441,17 @@ public class VdsBrokerObjectsBuilder {
             }
         }
 
-        if(xmlRpcStruct.containsKey(VdsProperties.vm_guest_mem_stats)) {
+        if (xmlRpcStruct.containsKey(VdsProperties.vm_guest_mem_stats)) {
             Map<String, Object> sub = (Map<String, Object>)xmlRpcStruct.get(VdsProperties.vm_guest_mem_stats);
-            if(sub.containsKey(VdsProperties.vm_guest_mem_buffered)) {
+            if (sub.containsKey(VdsProperties.vm_guest_mem_buffered)) {
                 vm.setGuestMemoryBuffered(Long.parseLong(sub.get(VdsProperties.vm_guest_mem_buffered).toString()));
-            } else {
-                vm.setGuestMemoryBuffered(null);
             }
-            if(sub.containsKey(VdsProperties.vm_guest_mem_cached)) {
+            if (sub.containsKey(VdsProperties.vm_guest_mem_cached)) {
                 vm.setGuestMemoryCached(Long.parseLong(sub.get(VdsProperties.vm_guest_mem_cached).toString()));
-            } else {
-                vm.setGuestMemoryCached(null);
             }
-            if(sub.containsKey(VdsProperties.vm_guest_mem_free)) {
+            if (sub.containsKey(VdsProperties.vm_guest_mem_free)) {
                 vm.setGuestMemoryFree(Long.parseLong(sub.get(VdsProperties.vm_guest_mem_free).toString()));
-            } else {
-                vm.setGuestMemoryFree(null);
             }
-        } else {
-            vm.setGuestMemoryBuffered(null);
-            vm.setGuestMemoryCached(null);
-            vm.setGuestMemoryFree(null);
         }
 
         if (xmlRpcStruct.containsKey(VdsProperties.exit_code)) {
@@ -466,8 +465,6 @@ public class VdsBrokerObjectsBuilder {
         if (xmlRpcStruct.containsKey(VdsProperties.exit_reason)) {
             String exitReasonStr = xmlRpcStruct.get(VdsProperties.exit_reason).toString();
             vm.setExitReason(VmExitReason.forValue(Integer.parseInt(exitReasonStr)));
-        } else {
-            vm.setExitReason(VmExitReason.Unknown);
         }
 
         // if monitorResponse returns negative it means its erroneous
@@ -481,18 +478,15 @@ public class VdsBrokerObjectsBuilder {
             vm.setClientIp(xmlRpcStruct.get(VdsProperties.clientIp).toString());
         }
 
-        VmPauseStatus pauseStatus = VmPauseStatus.NONE;
         if (xmlRpcStruct.containsKey(VdsProperties.pauseCode)) {
             String pauseCodeStr = (String) xmlRpcStruct.get(VdsProperties.pauseCode);
             try {
-                pauseStatus = VmPauseStatus.valueOf(pauseCodeStr);
+                vm.setPauseStatus(VmPauseStatus.valueOf(pauseCodeStr));
 
             } catch (IllegalArgumentException ex) {
                 log.error("Error in parsing vm pause status. Setting value to NONE");
-                pauseStatus = VmPauseStatus.NONE;
             }
         }
-        vm.setPauseStatus(pauseStatus);
 
         if (xmlRpcStruct.containsKey(VdsProperties.watchdogEvent)) {
             Map<String, Object> watchdogStruct = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.watchdogEvent);
@@ -525,6 +519,31 @@ public class VdsBrokerObjectsBuilder {
                     (Map<String, Object>) xmlRpcStruct.get(VdsProperties.GUEST_TIMEZONE);
             vm.setGuestOsTimezoneName(assignStringValue(guestTimeZoneStruct, VdsProperties.GUEST_TIMEZONE_ZONE));
             vm.setGuestOsTimezoneOffset(assignIntValue(guestTimeZoneStruct, VdsProperties.GUEST_TIMEZONE_OFFSET));
+        }
+    }
+
+    /**
+     * Adjusts displayIp for graphicsInfos:
+     *  - if displayIp is overriden on cluster level then overriden address is used,
+     *   or
+     *  - if current displayIp starts with "0" then host's hostname is used.
+     *
+     * @param graphicsInfos - graphicsInfo to adjust
+     */
+    private static void adjustDisplayIp(Map<GraphicsType, GraphicsInfo> graphicsInfos, VDS host) {
+        if (graphicsInfos == null) {
+            return;
+        }
+        for (GraphicsInfo graphicsInfo : graphicsInfos.values()) {
+            if (graphicsInfo == null) {
+                continue;
+            }
+
+            if (host.getConsoleAddress() != null) {
+                graphicsInfo.setIp(host.getConsoleAddress());
+            } else if (graphicsInfo.getIp() != null && graphicsInfo.getIp().startsWith("0")) {
+                graphicsInfo.setIp(host.getHostName());
+            }
         }
     }
 
@@ -594,7 +613,7 @@ public class VdsBrokerObjectsBuilder {
     private static void updateGraphicsInfoFromConf(VmDynamic vm, Map<String, Object> xmlRpcStruct) {
         GraphicsType vmGraphicsType = parseGraphicsType(xmlRpcStruct);
         if (vmGraphicsType == null) {
-            log.warn("Can't set graphics data from XML.");
+            log.debug("graphics data missing in XML.");
             return;
         }
 
@@ -2296,41 +2315,6 @@ public class VdsBrokerObjectsBuilder {
             log.warn("Got invalid status for virt-v2v job: {}", status);
             return V2VJobInfo.JobStatus.UNKNOWN;
         }
-    }
-
-    /**
-     * Build VmDynamic from event we get from VDSM upon status change
-     * @param baseVmDynamic - base dynamic data, values which are not included in the
-     * events will be taken from it. This field is not changed by this method.
-     * @param xmlRpcStruct - map from VDSM
-     * @return cloned VmDynamic with values received from event
-     */
-    public static VmDynamic buildVmDynamicFromEvent(VmDynamic baseVmDynamic, Map<String, Object> xmlRpcStruct) {
-        VmDynamic clonedVmDynamic = new VmDynamic(baseVmDynamic);
-        if (xmlRpcStruct.containsKey(VdsProperties.status)) {
-            clonedVmDynamic.setStatus(convertToVmStatus((String) xmlRpcStruct.get(VdsProperties.status)));
-        }
-
-        if (xmlRpcStruct.containsKey(VdsProperties.hash)) {
-            clonedVmDynamic.setHash((String) xmlRpcStruct.get(VdsProperties.hash));
-        }
-
-        if (xmlRpcStruct.containsKey(VdsProperties.exit_code)) {
-            String exitCodeStr = xmlRpcStruct.get(VdsProperties.exit_code).toString();
-            clonedVmDynamic.setExitStatus(VmExitStatus.forValue(Integer.parseInt(exitCodeStr)));
-        }
-
-        if (xmlRpcStruct.containsKey(VdsProperties.exit_message)) {
-            String exitMsg = (String) xmlRpcStruct.get(VdsProperties.exit_message);
-            clonedVmDynamic.setExitMessage(exitMsg);
-        }
-
-        if (xmlRpcStruct.containsKey(VdsProperties.exit_reason)) {
-            String exitReasonStr = xmlRpcStruct.get(VdsProperties.exit_reason).toString();
-            clonedVmDynamic.setExitReason(VmExitReason.forValue(Integer.parseInt(exitReasonStr)));
-        }
-
-        return clonedVmDynamic;
     }
 
     public static Double removeNotifyTimeFromVmStatusEvent(Map<String, Object> xmlRpcStruct) {

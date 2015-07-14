@@ -31,7 +31,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
         vmReturn = getBroker().create(createInfo);
         proceedProxyReturnValue();
         VdsBrokerObjectsBuilder.updateVMDynamicData(vm.getDynamicData(),
-                vmReturn.vm);
+                vmReturn.vm, getVds());
     }
 
     /**

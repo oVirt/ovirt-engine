@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -117,10 +118,10 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
             }
 
             private VmInternalData createVmInternalData(VM dbVm, Map<String, Object> xmlRpcStruct, Double notifyTime) {
-                return new VmInternalData(
-                        VdsBrokerObjectsBuilder.buildVmDynamicFromEvent(dbVm.getDynamicData(), xmlRpcStruct),
-                        dbVm.getStatisticsData(),
-                        notifyTime);
+                // send a clone of vm dynamic to be overridden with new data
+                VmDynamic clonedVmDynamic = new VmDynamic(dbVm.getDynamicData());
+                VdsBrokerObjectsBuilder.updateVMDynamicData(clonedVmDynamic, xmlRpcStruct, vdsManager.getCopyVds());
+                return new VmInternalData(clonedVmDynamic, dbVm.getStatisticsData(), notifyTime);
             }
 
             @Override

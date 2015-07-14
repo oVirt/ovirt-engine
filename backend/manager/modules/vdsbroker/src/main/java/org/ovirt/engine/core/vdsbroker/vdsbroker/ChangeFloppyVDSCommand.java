@@ -14,6 +14,6 @@ public class ChangeFloppyVDSCommand<P extends ChangeDiskVDSCommandParameters> ex
     protected void executeVdsBrokerCommand() {
         vmReturn = getBroker().changeFloppy(vmId.toString(), isoLocation);
         proceedProxyReturnValue();
-        setReturnValue(VdsBrokerObjectsBuilder.buildVMDynamicData(vmReturn.vm).getStatus());
+        setReturnValue(VdsBrokerObjectsBuilder.buildVMDynamicData(vmReturn.vm, getVds()).getStatus());
     }
 }
