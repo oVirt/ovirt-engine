@@ -105,6 +105,12 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/many_desktops_changes.png")
     ImageResource manyDesktopsChangesImage();
 
+    @Source("images/many_servers.png")
+    ImageResource manyServersImage();
+
+    @Source("images/many_servers_changes.png")
+    ImageResource manyServersChangesImage();
+
     @Source("images/minus.png")
     ImageResource minusImage();
 

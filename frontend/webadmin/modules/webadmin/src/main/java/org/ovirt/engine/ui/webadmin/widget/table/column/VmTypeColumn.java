@@ -23,13 +23,18 @@ public class VmTypeColumn extends AbstractImageResourceColumn<VM> {
                 VmTypeConfig config = VmTypeConfig.from(vm.getVmType(), vm.isStateless(), vm.isNextRunConfigurationExists());
                 return config.getImageResource();
             } else {
-                if (!vm.isNextRunConfigurationExists()) {
-                    return resources.manyDesktopsImage();
-                } else {
-                    return resources.manyDesktopsChangesImage();
-                }
-
+                return getPoolVmImageResource(vm.getVmType(), vm.isNextRunConfigurationExists());
             }
+    }
+
+    private static ImageResource getPoolVmImageResource(VmType vmType, boolean nextRunConfigurationExists) {
+        switch (vmType) {
+            case Server:
+               return nextRunConfigurationExists ? resources.manyServersChangesImage() : resources.manyServersImage();
+            case Desktop:
+            default:
+                return nextRunConfigurationExists ? resources.manyDesktopsChangesImage() : resources.manyDesktopsImage();
+        }
     }
 
     @Override
