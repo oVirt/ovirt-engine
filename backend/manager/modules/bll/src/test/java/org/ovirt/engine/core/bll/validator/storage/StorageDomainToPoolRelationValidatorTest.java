@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -105,8 +103,8 @@ public class StorageDomainToPoolRelationValidatorTest {
 
     @Test
     public void testAttachOnValidDomain() {
-        assertTrue("Attaching a valid domain to attach was failed",
-                validator.validateDomainCanBeAttachedToPool().isValid());
+        assertThat("Attaching a valid domain to attach was failed",
+                validator.validateDomainCanBeAttachedToPool(), isValid());
     }
 
     /**
@@ -134,14 +132,10 @@ public class StorageDomainToPoolRelationValidatorTest {
 
         ValidationResult attachDomainResult = validator.validateDomainCanBeAttachedToPool();
         if (addingMixedTypesShouldSucceed) {
-            assertTrue("Attaching an ISCSI domain to a pool with NFS domain with with mixed type allowed failed, version: " + version, attachDomainResult.isValid());
+            assertThat("Attaching an ISCSI domain to a pool with NFS domain with with mixed type allowed failed, version: " + version, attachDomainResult, isValid());
         }
         else {
-            assertFalse("Attaching an ISCSI domain to a pool with NFS domain with no mixed type allowed succeeded, version: " + version, attachDomainResult.isValid());
-            assertFailingMessage(
-                    "Attaching an ISCSI domain to a pool with NFS domain with no mixed type failed with the wrong message",
-                    attachDomainResult,
-                    EngineMessage.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
+            assertThat(attachDomainResult, failsWith(EngineMessage.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED));
         }
     }
 
@@ -185,8 +179,8 @@ public class StorageDomainToPoolRelationValidatorTest {
     @Test
     public void testPosixCompatibility() {
         storageDomain.setStorageType(StorageType.POSIXFS);
-        assertTrue("Attaching a POSIX domain failed while it should have succeeded",
-                validator.validateDomainCanBeAttachedToPool().isValid());
+        assertThat("Attaching a POSIX domain failed while it should have succeeded",
+                validator.validateDomainCanBeAttachedToPool(), isValid());
     }
 
     @Test
@@ -197,17 +191,14 @@ public class StorageDomainToPoolRelationValidatorTest {
         storageDomain.setStorageFormat(StorageFormatType.V1);
 
         ValidationResult attachPosixToLowVersionResult = validator.validateDomainCanBeAttachedToPool();
-        assertFalse("Attaching a POSIX domain succeeded while it should have failed",
-                attachPosixToLowVersionResult.isValid());
-        assertFailingMessage("Attaching a POSIX domain failed with the wrong message",
-                attachPosixToLowVersionResult,
-                EngineMessage.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
+        assertThat(attachPosixToLowVersionResult,
+                failsWith(EngineMessage.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION));
     }
 
     @Test
     public void testGlusterCompatibility() {
         storageDomain.setStorageType(StorageType.GLUSTERFS);
-        assertTrue("Attaching a GLUSTER domain failed while it should have succeeded", validator.validateDomainCanBeAttachedToPool().isValid());
+        assertThat("Attaching a GLUSTER domain failed while it should have succeeded", validator.validateDomainCanBeAttachedToPool(), isValid());
     }
 
     @Test
@@ -218,20 +209,16 @@ public class StorageDomainToPoolRelationValidatorTest {
         storageDomain.setStorageType(StorageType.GLUSTERFS);
 
         ValidationResult attachGlusterToLowVersionResult = validator.validateDomainCanBeAttachedToPool();
-        assertFalse("Attaching a GLUSTER domain succeeded while it should have failed", attachGlusterToLowVersionResult.isValid());
-        assertFailingMessage("Attaching a GLUSTER domain failed failed with the wrong message",
-                attachGlusterToLowVersionResult,
-                EngineMessage.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
+        assertThat(attachGlusterToLowVersionResult,
+                failsWith(EngineMessage.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION));
     }
 
     @Test
     public void testAttachFailDomainTypeIncorrect() {
         storageDomain.setStorageType(StorageType.LOCALFS);
         ValidationResult attachIncorrectTypeResult = validator.validateDomainCanBeAttachedToPool();
-        assertFalse("Attaching domain with an incorrect type succeeded while it should have failed", attachIncorrectTypeResult.isValid());
-        assertFailingMessage("Attaching domain with an incorrect type failed with the wrong message",
-                attachIncorrectTypeResult,
-                EngineMessage.ERROR_CANNOT_ATTACH_STORAGE_DOMAIN_STORAGE_TYPE_NOT_MATCH);
+        assertThat(attachIncorrectTypeResult,
+                failsWith(EngineMessage.ERROR_CANNOT_ATTACH_STORAGE_DOMAIN_STORAGE_TYPE_NOT_MATCH));
     }
 
     @Test
@@ -241,11 +228,8 @@ public class StorageDomainToPoolRelationValidatorTest {
         when(storagePoolIsoMapDao.getAllForStorage(any(Guid.class))).thenReturn(isoMap);
 
         ValidationResult attachedDomainInsertionResult = validator.validateDomainCanBeAttachedToPool();
-        assertFalse("Attaching domain that is already in a pool succeeded while it should have failed",
-                attachedDomainInsertionResult.isValid());
-        assertFailingMessage("Attaching domain that is already in a pool failed with the wrong message",
-                attachedDomainInsertionResult,
-                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
+        assertThat(attachedDomainInsertionResult,
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL));
     }
 
     @Test
@@ -254,10 +238,8 @@ public class StorageDomainToPoolRelationValidatorTest {
         storagePool.setCompatibilityVersion(Version.v3_0);
 
         ValidationResult invalidFormatAttachingResult = validator.validateDomainCanBeAttachedToPool();
-        assertFalse("Attaching domain with unsupported version succeeded while it should have failed", invalidFormatAttachingResult.isValid());
-        assertFailingMessage("Attaching domain with unsupported version failed with the wrong message",
-                invalidFormatAttachingResult,
-                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL);
+        assertThat(invalidFormatAttachingResult,
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL));
     }
 
     /**
@@ -270,7 +252,7 @@ public class StorageDomainToPoolRelationValidatorTest {
         for (StorageDomainType type : Arrays.<StorageDomainType> asList(StorageDomainType.ISO, StorageDomainType.ImportExport)) {
             storageDomain.setStorageDomainType(type);
             spyValidator();
-            assertTrue("Attaching domain of type " + type + " failed while it should have succeed", validator.validateDomainCanBeAttachedToPool().isValid());
+            assertThat(validator.validateDomainCanBeAttachedToPool(), isValid());
         }
     }
 
@@ -288,17 +270,10 @@ public class StorageDomainToPoolRelationValidatorTest {
             when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(domainList);
 
             ValidationResult attachMultipleISOOrExportResult = validator.validateDomainCanBeAttachedToPool();
-            assertFalse("Attaching domain of type " + type + " succeeded while it should have failed",
-                    attachMultipleISOOrExportResult.isValid());
-
-            assertFailingMessage("Attaching domain of type " + type + " succeeded though another domain of the same type already exists in the pool",
+            assertThat("Attaching domain of type " + type + " succeeded though another domain of the same type already exists in the pool",
                     attachMultipleISOOrExportResult,
-                    (type  == StorageDomainType.ISO ? EngineMessage.ERROR_CANNOT_ATTACH_MORE_THAN_ONE_ISO_DOMAIN :
+                    failsWith(type  == StorageDomainType.ISO ? EngineMessage.ERROR_CANNOT_ATTACH_MORE_THAN_ONE_ISO_DOMAIN :
                             EngineMessage.ERROR_CANNOT_ATTACH_MORE_THAN_ONE_EXPORT_DOMAIN));
         }
-    }
-
-    private void assertFailingMessage(String failMessage, ValidationResult validationResult, EngineMessage engineMessage) {
-        assertTrue(failMessage, validationResult.getMessage().equals(engineMessage));
     }
 }
