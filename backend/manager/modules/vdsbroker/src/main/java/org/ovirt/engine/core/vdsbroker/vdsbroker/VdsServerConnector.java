@@ -440,4 +440,6 @@ public interface VdsServerConnector {
     public Map<String, Object> isolateVolume(String sdUUID, String srcImgUUID, String dstImgUUID, String volumeID);
 
     public Map<String, Object> wipeVolume(String sdUUID, String imgUUID, String volUUID);
+
+    public Map<String, Object> getOvaInfo(String ovaPath);
 }

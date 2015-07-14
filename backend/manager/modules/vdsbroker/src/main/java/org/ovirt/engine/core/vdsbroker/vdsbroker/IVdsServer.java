@@ -408,6 +408,8 @@ public interface IVdsServer {
 
     VMListReturnForXmlRpc getExternalVmList(String uri, String username, String password);
 
+    VMListReturnForXmlRpc getOvaInfo(String ovaPath);
+
     StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionResume(String volumeName,
             String slaveHostName,
             String slaveVolumeName,

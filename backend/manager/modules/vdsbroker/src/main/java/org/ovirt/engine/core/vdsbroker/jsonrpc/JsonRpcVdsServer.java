@@ -2069,4 +2069,15 @@ public class JsonRpcVdsServer implements IVdsServer {
                 new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
+
+    public VMListReturnForXmlRpc getOvaInfo(String ovaPath) {
+        JsonRpcRequest request =
+                new RequestBuilder("Host.getOvaInfo")
+                        .withParameter("ova_path", ovaPath)
+                        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request).withResponseKey("vmList")
+                .withResponseType(Object[].class);
+        return new VMListReturnForXmlRpc(response);
+    }
 }

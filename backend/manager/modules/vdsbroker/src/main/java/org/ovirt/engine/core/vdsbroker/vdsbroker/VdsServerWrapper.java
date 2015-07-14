@@ -2004,4 +2004,13 @@ public class VdsServerWrapper implements IVdsServer {
         StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
         return wrapper;
     }
+
+    public VMListReturnForXmlRpc getOvaInfo(String ovaPath) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.getOvaInfo(ovaPath);
+            return new VMListReturnForXmlRpc(xmlRpcReturnValue);
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
 }
