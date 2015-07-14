@@ -4,18 +4,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -33,6 +37,9 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 @RunWith(MockitoJUnitRunner.class)
 public class OvfManagerTest {
 
+    private static final int DEFAULT_OS_ID = OsRepository.DEFAULT_X86_OS;
+    private static final int EXISTING_OS_ID = 1;
+
     @Mock
     private OsRepository osRepository;
 
@@ -46,10 +53,25 @@ public class OvfManagerTest {
     public void setUp() throws Exception {
         manager = new OvfManager();
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
-        HashMap<Integer, String> osIdsToNames = new HashMap<>();
+        final HashMap<Integer, String> osIdsToNames = new HashMap<Integer, String>(){{
+            put(DEFAULT_OS_ID, "os_name_a");
+            put(EXISTING_OS_ID, "os_name_b");
+        }};
 
         when(osRepository.getArchitectureFromOS(any(Integer.class))).thenReturn(ArchitectureType.x86_64);
         when(osRepository.getUniqueOsNames()).thenReturn(osIdsToNames);
+        when(osRepository.getOsIdByUniqueName(anyString())).thenAnswer(new Answer<Integer>() {
+            @Override
+            public Integer answer(InvocationOnMock invocation) throws Throwable {
+                for (Map.Entry<Integer, String> entry : osIdsToNames.entrySet()) {
+                    if (invocation.getArguments()[0].equals(entry.getValue())) {
+                        return entry.getKey();
+                    }
+                }
+                return 0;
+            }
+        });
+
     }
 
     private static void assertVm(VM vm, VM newVm, long expectedDbGeneration) {
@@ -164,6 +186,7 @@ public class OvfManagerTest {
         vm.setDbGeneration(2L);
         vm.setSingleQxlPci(false);
         vm.setClusterArch(ArchitectureType.x86_64);
+        vm.setVmOs(EXISTING_OS_ID);
         initInterfaces(vm);
         return vm;
     }
@@ -200,6 +223,7 @@ public class OvfManagerTest {
         template.setDescription("test-description");
         template.setDbGeneration(2L);
         template.setClusterArch(ArchitectureType.x86_64);
+        template.setOsId(EXISTING_OS_ID);
         return template;
     }
 }
