@@ -53,7 +53,7 @@ public class MarshallingTestCase {
                         + "\"1.fc19\", \"buildtime\": 1383765188, \"version\": \"1.0.5.7\"}, \"qemu-img\": {\"release\": \"13.fc19\", \"buildtime\": "
                         + "1383700301, \"version\": \"1.4.2\"}, \"mom\": {\"release\": \"3.13.giteb3985f.fc19\", \"buildtime\": 1384283536, \"version\""
                         + ": \"0.3.2\"}}, \"cpuModel\": \"Intel(R) Core(TM) i7-3770 CPU @ 3.40GHz\", \"hooks\": {}, \"cpuSockets\": \"1\", \"vmTypes\": "
-                        + "[\"kvm\"], \"supportedProtocols\": [\"2.2\", \"2.3\"], \"networks\": {\"ovirtmgmt\": {\"iface\": \"ovirtmgmt\", \"addr\":"
+                        + "[\"kvm\"], \"networks\": {\"ovirtmgmt\": {\"iface\": \"ovirtmgmt\", \"addr\":"
                         + " \"192.168.1.10\", \"cfg\": {\"DEFROUTE\": \"yes\", \"IPADDR\": \"192.168.1.10\", \"GATEWAY\": \"192.168.1.1\", \"DELAY\":"
                         + " \"0\", \"NM_CONTROLLED\": \"no\", \"NETMASK\": \"255.255.255.0\", \"BOOTPROTO\": \"none\", \"STP\": \"no\", \"DEVICE\": "
                         + "\"ovirtmgmt\", \"TYPE\": \"Bridge\", \"ONBOOT\": \"yes\"}, \"ipv6addrs\": [\"fe80::baca:3aff:fea9:77e2/64\"], \"gateway\":"
