@@ -695,6 +695,12 @@ class ConfigEnv(object):
     def OVIRT_ENGINE_DB_BACKUP_DIR(self):
         return 'OVESETUP_CONFIG/engineDbBackupDir'
 
+    @osetupattrs(
+        answerfile=True,
+    )
+    def ADMIN_PASSWORD(self):
+        return 'OVESETUP_CONFIG/adminPassword'
+
 
 @util.export
 @util.codegen

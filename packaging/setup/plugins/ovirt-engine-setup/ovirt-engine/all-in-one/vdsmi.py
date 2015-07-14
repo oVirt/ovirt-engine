@@ -123,7 +123,7 @@ class Plugin(plugin.PluginBase):
                         domain=oenginecons.Const.DOMAIN_INTERNAL,
                     ),
                     password=self.environment[
-                        osetupcons.ConfigEnv.ADMIN_PASSWORD
+                        oenginecons.ConfigEnv.ADMIN_PASSWORD
                     ],
                     insecure=True,
                 )

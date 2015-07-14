@@ -50,7 +50,7 @@ class Plugin(plugin.PluginBase):
         self.environment[
             otopicons.CoreEnv.LOG_FILTER_KEYS
         ].append(
-            osetupcons.ConfigEnv.ADMIN_PASSWORD
+            oenginecons.ConfigEnv.ADMIN_PASSWORD
         )
 
     @plugin.event(
@@ -58,7 +58,7 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.ConfigEnv.ADMIN_PASSWORD,
+            oenginecons.ConfigEnv.ADMIN_PASSWORD,
             None
         )
 
@@ -84,7 +84,7 @@ class Plugin(plugin.PluginBase):
                 ),
             )
         else:
-            if self.environment[osetupcons.ConfigEnv.ADMIN_PASSWORD] is None:
+            if self.environment[oenginecons.ConfigEnv.ADMIN_PASSWORD] is None:
                 valid = False
                 password = None
                 while not valid:
@@ -133,7 +133,7 @@ class Plugin(plugin.PluginBase):
                             )
 
                 self.environment[
-                    osetupcons.ConfigEnv.ADMIN_PASSWORD
+                    oenginecons.ConfigEnv.ADMIN_PASSWORD
                 ] = password
 
     @plugin.event(
@@ -228,14 +228,14 @@ class Plugin(plugin.PluginBase):
                 {
                     'name': 'LocalAdminPassword',
                     'value': self.environment[
-                        osetupcons.ConfigEnv.ADMIN_PASSWORD
+                        oenginecons.ConfigEnv.ADMIN_PASSWORD
                     ],
                     'encrypt': True,
                 },
                 {
                     'name': 'AdminPassword',
                     'value': self.environment[
-                        osetupcons.ConfigEnv.ADMIN_PASSWORD
+                        oenginecons.ConfigEnv.ADMIN_PASSWORD
                     ],
                     'encrypt': True,
                 },

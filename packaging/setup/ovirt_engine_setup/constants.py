@@ -402,12 +402,6 @@ class ConfigEnv(object):
 
     @osetupattrs(
         answerfile=True,
-    )
-    def ADMIN_PASSWORD(self):
-        return 'OVESETUP_CONFIG/adminPassword'
-
-    @osetupattrs(
-        answerfile=True,
         summary=True,
         description=_('Firewall manager'),
         postinstallfile=True,
