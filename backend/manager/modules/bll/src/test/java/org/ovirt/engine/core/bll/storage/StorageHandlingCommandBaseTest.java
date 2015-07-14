@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.storage;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
@@ -23,7 +25,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
@@ -36,9 +37,6 @@ public class StorageHandlingCommandBaseTest {
 
     @Mock
     StoragePoolDao storagePoolDao;
-
-    @Mock
-    DbFacade facade;
 
     @Mock
     StorageDomainDao storageDomainDao;
@@ -76,22 +74,23 @@ public class StorageHandlingCommandBaseTest {
 
         initCommand();
 
-        when(facade.getStoragePoolDao()).thenReturn(storagePoolDao);
-        when(facade.getStoragePoolDao().get(storagePool.getId())).thenReturn(storagePool);
+        doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
+        when(storagePoolDao.get(storagePool.getId())).thenReturn(storagePool);
 
-        when(facade.getStorageDomainDao()).thenReturn(storageDomainDao);
+        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         when(storageDomainDao.getAllForStoragePool(storagePool.getId())).thenReturn(attachedDomains);
 
-        when(facade.getStoragePoolIsoMapDao()).thenReturn(storagePoolIsoMapDao);
+        doReturn(storagePoolIsoMapDao).when(cmd).getStoragePoolIsoMapDao();
         when(storagePoolIsoMapDao.getAllForStorage(any(Guid.class))).thenReturn(isoMap);
     }
 
     public void initCommand() {
-        cmd = new TestStorageHandlingCommandBase(new StoragePoolManagementParameter(storagePool));
+        cmd = spy(new TestStorageHandlingCommandBase(new StoragePoolManagementParameter(storagePool)));
     }
 
     @Test
     public void storagePoolNotFound() {
+        when(storagePoolDao.get(storagePool.getId())).thenReturn(null);
         checkStoragePoolFails();
     }
 
@@ -132,7 +131,6 @@ public class StorageHandlingCommandBaseTest {
     }
 
     private void checkStoragePoolFails() {
-        when(facade.getStoragePoolDao().get(storagePool.getId())).thenReturn(null);
         assertFalse(cmd.checkStoragePool());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage
                 .ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST.toString()));
@@ -157,11 +155,6 @@ public class StorageHandlingCommandBaseTest {
     private class TestStorageHandlingCommandBase extends StorageHandlingCommandBase<StoragePoolManagementParameter> {
         public TestStorageHandlingCommandBase(StoragePoolManagementParameter parameters) {
             super(parameters);
-        }
-
-        @Override
-        public DbFacade getDbFacade() {
-            return facade;
         }
 
         @Override
