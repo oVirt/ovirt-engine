@@ -143,7 +143,6 @@ public class NetworkConfigurator {
         managementAttachment.setNicId(nic.getId());
         IpConfiguration ipConfiguration = new IpConfiguration();
         ipConfiguration.getIPv4Addresses().add(createIPv4Address(nic));
-        ipConfiguration.setBootProtocol(nic.getBootProtocol());
         managementAttachment.setIpConfiguration(ipConfiguration);
         parameters.getNetworkAttachments().add(managementAttachment);
         return parameters;
@@ -154,6 +153,7 @@ public class NetworkConfigurator {
         result.setAddress(nic.getAddress());
         result.setNetmask(nic.getSubnet());
         result.setGateway(nic.getGateway());
+        result.setBootProtocol(nic.getBootProtocol());
         return result;
     }
 

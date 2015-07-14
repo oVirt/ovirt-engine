@@ -60,7 +60,8 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDaoDbFacade<NetworkA
         boolean hasPrimaryAddressSet = ipConfiguration.hasPrimaryAddressSet();
         IPv4Address primaryAddress = hasPrimaryAddressSet ? ipConfiguration.getPrimaryAddress() : null;
 
-        mapper.addValue("boot_protocol", EnumUtils.nameOrNull(ipConfiguration.getBootProtocol()))
+        mapper.addValue("boot_protocol",
+                hasPrimaryAddressSet ? EnumUtils.nameOrNull(primaryAddress.getBootProtocol()) : null)
                 .addValue("address", hasPrimaryAddressSet ? primaryAddress.getAddress() : null)
                 .addValue("netmask", hasPrimaryAddressSet ? primaryAddress.getNetmask() : null)
                 .addValue("gateway", hasPrimaryAddressSet ? primaryAddress.getGateway() : null);
@@ -93,9 +94,9 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDaoDbFacade<NetworkA
             IpConfiguration ipConfiguration = new IpConfiguration();
             String bootProtocol = rs.getString("boot_protocol");
             if (bootProtocol != null) {
-                ipConfiguration.setBootProtocol(NetworkBootProtocol.valueOf(bootProtocol));
                 ipConfiguration.setIPv4Addresses(new ArrayList<IPv4Address>());
                 IPv4Address iPv4Address = new IPv4Address();
+                iPv4Address.setBootProtocol(NetworkBootProtocol.valueOf(bootProtocol));
                 iPv4Address.setAddress(rs.getString("address"));
                 iPv4Address.setNetmask(rs.getString("netmask"));
                 iPv4Address.setGateway(rs.getString("gateway"));

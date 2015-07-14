@@ -25,6 +25,16 @@ public class IPv4Address implements Serializable {
     @Size(max = BusinessEntitiesDefinitions.GENERAL_GATEWAY_SIZE)
     private String gateway;
 
+    private NetworkBootProtocol bootProtocol;
+
+    public NetworkBootProtocol getBootProtocol() {
+        return bootProtocol;
+    }
+
+    public void setBootProtocol(NetworkBootProtocol bootProtocol) {
+        this.bootProtocol = bootProtocol;
+    }
+
     public String getAddress() {
         return address;
     }
@@ -56,14 +66,15 @@ public class IPv4Address implements Serializable {
         if (!(o instanceof IPv4Address))
             return false;
         IPv4Address that = (IPv4Address) o;
-        return Objects.equals(getAddress(), that.getAddress()) &&
-                Objects.equals(getNetmask(), that.getNetmask()) &&
-                Objects.equals(getGateway(), that.getGateway());
+        return Objects.equals(getAddress(), that.getAddress())
+                && Objects.equals(getNetmask(), that.getNetmask())
+                && Objects.equals(getGateway(), that.getGateway())
+                && Objects.equals(getBootProtocol(), that.getBootProtocol());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getAddress(), getNetmask(), getGateway());
+        return Objects.hash(getAddress(), getNetmask(), getGateway(), getBootProtocol());
     }
 
     @Override
@@ -72,6 +83,7 @@ public class IPv4Address implements Serializable {
                 .append("address", getAddress())
                 .append("netmask", getNetmask())
                 .append("gateway", getGateway())
+                .append("bootProtocol", getBootProtocol())
                 .build();
     }
 }

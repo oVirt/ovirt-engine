@@ -108,7 +108,8 @@ public class NetworkAttachmentValidator {
         IpConfiguration ipConfiguration = attachment.getIpConfiguration();
 
         boolean failWhen = ipConfiguration != null
-            && ipConfiguration.getBootProtocol() == NetworkBootProtocol.STATIC_IP
+            && ipConfiguration.hasPrimaryAddressSet()
+            && ipConfiguration.getPrimaryAddress().getBootProtocol() == NetworkBootProtocol.STATIC_IP
             && unsetAddress(ipConfiguration);
 
         return ValidationResult.failWith(EngineMessage.NETWORK_ADDR_MANDATORY_IN_STATIC_IP).when(failWhen);
@@ -123,7 +124,9 @@ public class NetworkAttachmentValidator {
     public ValidationResult bootProtocolSetForDisplayNetwork() {
         IpConfiguration ipConfiguration = attachment.getIpConfiguration();
         boolean failWhen = (getNetworkCluster().isDisplay() &&
-            (ipConfiguration == null || ipConfiguration.getBootProtocol() == NetworkBootProtocol.NONE));
+                (ipConfiguration == null
+                        || !ipConfiguration.hasPrimaryAddressSet()
+                        || ipConfiguration.getPrimaryAddress().getBootProtocol() == NetworkBootProtocol.NONE));
 
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL)
             .when(failWhen);
@@ -143,7 +146,9 @@ public class NetworkAttachmentValidator {
      */
     public ValidationResult networkIpAddressWasSameAsHostnameAndChanged(BusinessEntityMap<VdsNetworkInterface> existingInterfaces) {
         IpConfiguration ipConfiguration = attachment.getIpConfiguration();
-        if (ipConfiguration != null && ipConfiguration.getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
+        if (ipConfiguration != null
+                && ipConfiguration.hasPrimaryAddressSet()
+                && ipConfiguration.getPrimaryAddress().getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
             VdsNetworkInterface existingIface = existingInterfaces.get(attachment.getNicName());
             if (existingIface != null) {
                 String oldAddress = existingIface.getAddress();

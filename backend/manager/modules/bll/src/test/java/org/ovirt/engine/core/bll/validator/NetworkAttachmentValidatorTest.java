@@ -304,8 +304,8 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         IPv4Address primaryAddress = new IPv4Address();
         primaryAddress.setAddress(address);
         primaryAddress.setNetmask(netmask);
+        primaryAddress.setBootProtocol(bootProtocol);
         ipConfiguration.getIPv4Addresses().add(primaryAddress);
-        ipConfiguration.setBootProtocol(bootProtocol);
 
         NetworkAttachment attachment = new NetworkAttachment();
         attachment.setIpConfiguration(ipConfiguration);

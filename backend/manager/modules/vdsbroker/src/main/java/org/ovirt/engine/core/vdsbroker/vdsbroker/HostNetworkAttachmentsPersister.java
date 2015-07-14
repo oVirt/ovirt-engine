@@ -132,9 +132,9 @@ public class HostNetworkAttachmentsPersister {
         iPv4Address.setAddress(nic.getAddress());
         iPv4Address.setNetmask(nic.getSubnet());
         iPv4Address.setGateway(nic.getGateway());
+        iPv4Address.setBootProtocol(nic.getBootProtocol());
 
         IpConfiguration ipConfiguration = new IpConfiguration();
-        ipConfiguration.setBootProtocol(nic.getBootProtocol());
         ipConfiguration.setIPv4Addresses(Collections.singletonList(iPv4Address));
 
         return ipConfiguration;

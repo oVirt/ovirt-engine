@@ -299,9 +299,9 @@ public class HostNetworkAttachmentsPersisterTest {
         address.setAddress(IP_ADDRESS);
         address.setNetmask(NETMASK);
         address.setGateway(GATEWAY);
+        address.setBootProtocol(NetworkBootProtocol.STATIC_IP);
 
         IpConfiguration result = new IpConfiguration();
-        result.setBootProtocol(NetworkBootProtocol.STATIC_IP);
         result.setIPv4Addresses(Collections.singletonList(address));
 
         return result;
@@ -395,7 +395,7 @@ public class HostNetworkAttachmentsPersisterTest {
     private void assertIpConfiguration(IpConfiguration ipConfiguration) {
         IPv4Address primaryAddress = ipConfiguration.getPrimaryAddress();
 
-        assertThat(ipConfiguration.getBootProtocol(), is(interfaceWithAttachedClusterNetworkA.getBootProtocol()));
+        assertThat(primaryAddress.getBootProtocol(), is(interfaceWithAttachedClusterNetworkA.getBootProtocol()));
         assertThat(primaryAddress.getAddress(), is(interfaceWithAttachedClusterNetworkA.getAddress()));
         assertThat(primaryAddress.getNetmask(), is(interfaceWithAttachedClusterNetworkA.getSubnet()));
         assertThat(primaryAddress.getGateway(), is(interfaceWithAttachedClusterNetworkA.getGateway()));
@@ -404,7 +404,7 @@ public class HostNetworkAttachmentsPersisterTest {
     private void assertIpConfiguration(IpConfiguration persistedIpConfiguration, IpConfiguration ipConfiguration) {
         IPv4Address primaryAddress = persistedIpConfiguration.getPrimaryAddress();
 
-        assertThat(persistedIpConfiguration.getBootProtocol(), is(ipConfiguration.getBootProtocol()));
+        assertThat(primaryAddress.getBootProtocol(), is(ipConfiguration.getPrimaryAddress().getBootProtocol()));
         assertThat(primaryAddress.getAddress(), is(ipConfiguration.getPrimaryAddress().getAddress()));
         assertThat(primaryAddress.getNetmask(), is(ipConfiguration.getPrimaryAddress().getNetmask()));
         assertThat(primaryAddress.getGateway(), is(ipConfiguration.getPrimaryAddress().getGateway()));

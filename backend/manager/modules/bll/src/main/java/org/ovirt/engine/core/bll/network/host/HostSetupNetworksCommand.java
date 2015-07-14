@@ -273,10 +273,11 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     private boolean defaultRouteRequired(Network network, IpConfiguration ipConfiguration) {
         return managementNetworkUtil.isManagementNetwork(network.getId(), getVds().getVdsGroupId())
-            && ipConfiguration != null
-            && (ipConfiguration.getBootProtocol() == NetworkBootProtocol.DHCP
-            || ipConfiguration.getBootProtocol() == NetworkBootProtocol.STATIC_IP
-            && ipConfiguration.hasPrimaryAddressSet() && StringUtils.isNotEmpty(ipConfiguration.getPrimaryAddress().getGateway()));
+                && ipConfiguration != null
+                && ipConfiguration.hasPrimaryAddressSet()
+                && (ipConfiguration.getPrimaryAddress().getBootProtocol() == NetworkBootProtocol.DHCP
+                      || ipConfiguration.getPrimaryAddress().getBootProtocol() == NetworkBootProtocol.STATIC_IP
+                            && StringUtils.isNotEmpty(ipConfiguration.getPrimaryAddress().getGateway()));
     }
 
     private boolean noChangesDetected() {

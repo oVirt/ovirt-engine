@@ -15,8 +15,6 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 public class IpConfiguration implements Serializable {
     private static final long serialVersionUID = -3207405803308009853L;
 
-    private NetworkBootProtocol bootProtocol;
-
     @NotNull(groups = { CreateEntity.class, UpdateEntity.class })
     @Size(min = 1,
             max = 1,
@@ -27,14 +25,6 @@ public class IpConfiguration implements Serializable {
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
-    }
-
-    public NetworkBootProtocol getBootProtocol() {
-        return bootProtocol;
-    }
-
-    public void setBootProtocol(NetworkBootProtocol bootProtocol) {
-        this.bootProtocol = bootProtocol;
     }
 
     public List<IPv4Address> getIPv4Addresses() {
@@ -63,19 +53,17 @@ public class IpConfiguration implements Serializable {
         if (!(o instanceof IpConfiguration))
             return false;
         IpConfiguration that = (IpConfiguration) o;
-        return Objects.equals(getBootProtocol(), that.getBootProtocol()) &&
-                Objects.equals(getIPv4Addresses(), that.getIPv4Addresses());
+        return Objects.equals(getIPv4Addresses(), that.getIPv4Addresses());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getBootProtocol(), getIPv4Addresses());
+        return Objects.hash(getIPv4Addresses());
     }
 
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
-                .append("bootProtocol", getBootProtocol())
                 .append("ipv4Addresses", getIPv4Addresses())
                 .build();
     }

@@ -36,8 +36,9 @@ public class NetworkAttachmentDaoTest extends BaseDaoTestCase {
         networkAttachment.setId(Guid.newGuid());
         networkAttachment.setNetworkId(FixturesTool.NETWORK_ENGINE);
         IpConfiguration ipConfiguration = new IpConfiguration();
-        ipConfiguration.setBootProtocol(NetworkBootProtocol.DHCP);
-        ipConfiguration.getIPv4Addresses().add(new IPv4Address());
+        IPv4Address iPv4Address = new IPv4Address();
+        iPv4Address.setBootProtocol(NetworkBootProtocol.DHCP);
+        ipConfiguration.getIPv4Addresses().add(iPv4Address);
         networkAttachment.setIpConfiguration(ipConfiguration);
     }
 
@@ -70,7 +71,6 @@ public class NetworkAttachmentDaoTest extends BaseDaoTestCase {
         expected.setNetworkId(FixturesTool.NETWORK_ENGINE_2);
         expected.setNicId(FixturesTool.VDS_NETWORK_INTERFACE2);
         IpConfiguration ipConfiguration = new IpConfiguration();
-        ipConfiguration.setBootProtocol(NetworkBootProtocol.DHCP);
         ipConfiguration.getIPv4Addresses().add(createPrimaryAddress());
         expected.setIpConfiguration(ipConfiguration);
 
@@ -84,7 +84,9 @@ public class NetworkAttachmentDaoTest extends BaseDaoTestCase {
     }
 
     public IPv4Address createPrimaryAddress() {
-        return new IPv4Address();
+        IPv4Address iPv4Address = new IPv4Address();
+        iPv4Address.setBootProtocol(NetworkBootProtocol.DHCP);
+        return iPv4Address;
     }
 
     /**
@@ -149,8 +151,8 @@ public class NetworkAttachmentDaoTest extends BaseDaoTestCase {
         networkAttachment.setNicId(FixturesTool.NETWORK_ATTACHMENT_NIC);
         dao.save(networkAttachment);
         IpConfiguration ipConfiguration = networkAttachment.getIpConfiguration();
-        ipConfiguration.setBootProtocol(NetworkBootProtocol.STATIC_IP);
         IPv4Address primaryAddress = new IPv4Address();
+        primaryAddress.setBootProtocol(NetworkBootProtocol.STATIC_IP);
         primaryAddress.setAddress("192.168.1.2");
         primaryAddress.setGateway("192.168.1.1");
         primaryAddress.setNetmask("255.255.255.0");

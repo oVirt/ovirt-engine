@@ -79,7 +79,9 @@ public class HostNetwork {
     }
 
     public NetworkBootProtocol getBootProtocol() {
-        return hasIpConfiguration() ? getIpConfiguration().getBootProtocol() : null;
+        return hasIpConfiguration() && getIpConfiguration().hasPrimaryAddressSet()
+                ? getIpConfiguration().getPrimaryAddress().getBootProtocol()
+                : null;
     }
 
     public String getAddress() {
