@@ -2291,6 +2291,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cinder based storage is not supported with current data center compatibility version.")
     String DATA_CENTER_CINDER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION();
 
+    @DefaultStringValue("Cannot ${action} ${type}. There is already an existing Cinder provider with the same IP address.")
+    String ACTION_TYPE_FAILED_CINDER_ALREADY_EXISTS();
+
     @DefaultStringValue("Extend LUN size is not supported with current data center compatibility version.")
     String ACTION_TYPE_FAILED_REFRESH_LUNS_UNSUPPORTED_ACTION();
 
