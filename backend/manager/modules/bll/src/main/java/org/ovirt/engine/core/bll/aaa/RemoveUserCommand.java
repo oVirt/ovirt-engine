@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
-import org.ovirt.engine.core.bll.PredefinedUsers;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -63,12 +62,6 @@ public class RemoveUserCommand<T extends IdParameters> extends UserCommandBase<T
     protected boolean canDoAction() {
         // Get the identifier of the user to be removed:
         Guid id = getParameters().getId();
-
-        // Check that we are not trying to remove the built-in admin user:
-        if (PredefinedUsers.ADMIN_USER.getId().equals(id)) {
-            addCanDoActionMessage(EngineMessage.USER_CANNOT_REMOVE_ADMIN_USER);
-            return false;
-        }
 
         // Check that the current user isn't trying to remove himself:
         if (getCurrentUser().getId().equals(id)) {

@@ -124,6 +124,11 @@ class FileLocations(object):
         'changedbowner.sh'
     )
 
+    OVIRT_ENGINE_CRYPTO_TOOL = os.path.join(
+        OVIRT_ENGINE_BINDIR,
+        'ovirt-engine-crypto-tool.sh',
+    )
+
     OVIRT_ENGINE_PKIKEYSDIR = os.path.join(
         OVIRT_ENGINE_PKIDIR,
         'keys',
@@ -301,6 +306,10 @@ class FileLocations(object):
         OVIRT_ENGINE_SYSCONFDIR,
         'uninstall.d'
     )
+    OVIRT_ENGINE_EXTENSIONS_DIR = os.path.join(
+        OVIRT_ENGINE_SYSCONFDIR,
+        'extensions.d'
+    )
 
     AIO_VDSM_PATH = os.path.join(
         DATADIR,
@@ -348,6 +357,7 @@ class Stages(object):
     SYSTEM_NFS_CONFIG_AVAILABLE = 'osetup.system.nfs.available'
 
     CONFIG_ISO_DOMAIN_AVAILABLE = 'osetup.config.iso_domain.available'
+    CONFIG_AAA_ADMIN_USER_SETUP = 'osetup.config.aaa.adminuser.setup'
 
     CORE_ENABLE = 'osetup.engine.core.enable'
 
@@ -373,8 +383,6 @@ class Stages(object):
 @util.export
 @util.codegen
 class Const(object):
-    DOMAIN_INTERNAL = 'internal'
-
     ENGINE_PACKAGE_NAME = 'ovirt-engine'
     ENGINE_PACKAGE_SETUP_NAME = '%s-setup' % ENGINE_PACKAGE_NAME
 
@@ -694,6 +702,30 @@ class ConfigEnv(object):
     )
     def OVIRT_ENGINE_DB_BACKUP_DIR(self):
         return 'OVESETUP_CONFIG/engineDbBackupDir'
+
+    @osetupattrs(
+        postinstallfile=True,
+    )
+    def ADMIN_USER(self):
+        return 'OVESETUP_CONFIG/adminUser'
+
+    @osetupattrs(
+        postinstallfile=True,
+    )
+    def ADMIN_USER_AUTHZ_TYPE(self):
+        return 'OVESETUP_CONFIG/adminUserAuthzType'
+
+    @osetupattrs(
+        postinstallfile=True,
+    )
+    def ADMIN_USER_AUTHZ_NAME(self):
+        return 'OVESETUP_CONFIG/adminUserAuthzName'
+
+    @osetupattrs(
+        postinstallfile=True,
+    )
+    def ADMIN_USER_ID(self):
+        return 'OVESETUP_CONFIG/adminUserId'
 
     @osetupattrs(
         answerfile=True,

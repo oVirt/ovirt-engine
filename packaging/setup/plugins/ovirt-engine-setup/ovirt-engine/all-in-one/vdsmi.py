@@ -118,10 +118,9 @@ class Plugin(plugin.PluginBase):
                             oengcommcons.ConfigEnv.PUBLIC_HTTPS_PORT
                         ],
                     ),
-                    username='{user}@{domain}'.format(
-                        user=osetupcons.Const.USER_ADMIN,
-                        domain=oenginecons.Const.DOMAIN_INTERNAL,
-                    ),
+                    username=self.environment[
+                        oenginecons.ConfigEnv.ADMIN_USER
+                    ],
                     password=self.environment[
                         oenginecons.ConfigEnv.ADMIN_PASSWORD
                     ],

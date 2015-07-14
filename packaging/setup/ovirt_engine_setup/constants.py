@@ -231,8 +231,6 @@ class Const(object):
     RPM_VERSION = config.RPM_VERSION
     RPM_RELEASE = config.RPM_RELEASE
 
-    USER_ADMIN = 'admin'
-
     @classproperty
     def RPM_LOCK_LIST_SUFFIXES(self):
         return (

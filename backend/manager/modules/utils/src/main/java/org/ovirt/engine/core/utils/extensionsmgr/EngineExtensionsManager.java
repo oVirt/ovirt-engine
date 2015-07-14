@@ -6,14 +6,9 @@ import java.io.File;
 import java.util.Properties;
 
 import org.ovirt.engine.api.extensions.Base;
-import org.ovirt.engine.api.extensions.aaa.Authn;
-import org.ovirt.engine.api.extensions.aaa.Authz;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.extensions.mgr.ExtensionsManager;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
-import org.ovirt.engine.core.uutils.crypto.EnvelopePBE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,14 +38,6 @@ public class EngineExtensionsManager extends ExtensionsManager {
     }
 
     public void engineInitialize() {
-        try {
-            createInternalAAAConfigurations();
-        } catch (Exception ex) {
-            log.error("Could not load built in configuration. Exception message is: {}",
-                    ex.getMessage());
-            log.debug("", ex);
-        }
-
         for (File directory : EngineLocalConfig.getInstance().getExtensionsDirectories()) {
             if (!directory.exists()) {
                 log.warn("The directory '{}' cotaning configuration files does not exist.",
@@ -122,55 +109,6 @@ public class EngineExtensionsManager extends ExtensionsManager {
             }
         }
         return ret.toString();
-    }
-
-    private void createInternalAAAConfigurations() {
-        try {
-            Properties authConfig = new Properties();
-            authConfig.put(Base.ConfigKeys.NAME, "builtin-authn-internal");
-            authConfig.put(Base.ConfigKeys.PROVIDES, Authn.class.getName());
-            authConfig.put(Base.ConfigKeys.BINDINGS_METHOD, Base.ConfigBindingsMethods.JBOSSMODULE);
-            authConfig.put(Base.ConfigKeys.BINDINGS_JBOSSMODULE_MODULE, "org.ovirt.engine.extensions.builtin");
-            authConfig.put(Base.ConfigKeys.BINDINGS_JBOSSMODULE_CLASS,
-                    "org.ovirt.engine.extensions.aaa.builtin.internal.InternalAuthn");
-            authConfig.put("ovirt.engine.aaa.authn.profile.name", "internal");
-            authConfig.put("ovirt.engine.aaa.authn.authz.plugin", "internal");
-            authConfig.put("config.authn.user.name", Config.<String> getValue(ConfigValues.AdminUser));
-            authConfig.put(
-                "config.authn.user.password",
-                EnvelopePBE.encode(
-                    "PBKDF2WithHmacSHA1",
-                    256,
-                    4000,
-                    null,
-                    Config.<String> getValue(ConfigValues.AdminPassword)
-                )
-            );
-            authConfig.put(Base.ConfigKeys.SENSITIVE_KEYS, "config.authn.user.password");
-
-            load(authConfig);
-        } catch (Exception ex) {
-            log.error("Could not load auth config internal aaa extension based on configuration. Exception message is: {}",
-                    ex.getMessage());
-            log.debug("", ex);
-        }
-
-        Properties dirConfig = new Properties();
-        dirConfig.put(Base.ConfigKeys.NAME, "internal");
-        dirConfig.put(Base.ConfigKeys.PROVIDES, Authz.class.getName());
-        dirConfig.put(Base.ConfigKeys.BINDINGS_METHOD, Base.ConfigBindingsMethods.JBOSSMODULE);
-        dirConfig.put(Base.ConfigKeys.BINDINGS_JBOSSMODULE_MODULE, "org.ovirt.engine.extensions.builtin");
-        dirConfig.put(Base.ConfigKeys.BINDINGS_JBOSSMODULE_CLASS,
-                "org.ovirt.engine.extensions.aaa.builtin.internal.InternalAuthz");
-        dirConfig.put("config.authz.user.name", Config.<String> getValue(ConfigValues.AdminUser));
-        dirConfig.put("config.query.filter.size", "10");
-        try {
-            load(dirConfig);
-        } catch (Exception ex) {
-            log.error("Could not load directory config internal aaa extension based on configuration. Exception message is: {}",
-                    ex.getMessage());
-            log.debug("", ex);
-        }
     }
 
 }
