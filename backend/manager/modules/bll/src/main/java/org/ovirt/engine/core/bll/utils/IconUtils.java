@@ -1,14 +1,5 @@
 package org.ovirt.engine.core.bll.utils;
 
-import org.ovirt.engine.core.bll.validator.IconValidator;
-import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.core.common.businessentities.VmIconDefault;
-import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-
-import javax.imageio.ImageIO;
-import javax.xml.bind.DatatypeConverter;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -16,6 +7,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
+import javax.xml.bind.DatatypeConverter;
+
+import org.ovirt.engine.core.bll.validator.IconValidator;
+import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmIconDefault;
+import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
  * Shared code related to Vm Icons

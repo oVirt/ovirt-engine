@@ -23,7 +23,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.woorea.openstack.base.client.OpenStackResponseException;
 import com.woorea.openstack.cinder.model.ConnectionForInitialize;
 import com.woorea.openstack.cinder.model.Snapshot;

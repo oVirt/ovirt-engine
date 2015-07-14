@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.bll.scheduling.pending;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Represents a VM that is about to start on a host

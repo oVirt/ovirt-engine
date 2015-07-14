@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll.scheduling.external;
 
-import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.compat.Guid;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
 
 public class ScoringResult extends SchedulerResult {
     private List<Pair<Guid, Integer>> hostsWithScores;

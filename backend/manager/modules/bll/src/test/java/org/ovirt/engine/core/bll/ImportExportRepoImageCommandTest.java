@@ -1,5 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.mockito.Mock;
@@ -21,11 +26,6 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.lock.LockManager;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import static org.mockito.Mockito.when;
 
 
 public class ImportExportRepoImageCommandTest {

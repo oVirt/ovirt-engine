@@ -1,5 +1,12 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assume.assumeTrue;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.Set;
+
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -8,13 +15,6 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetStorageDomainDefaultWipeAfterDeleteParameters;
 import org.ovirt.engine.core.utils.MockConfigRule;
-
-import java.util.Collections;
-import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assume.assumeTrue;
-import static org.mockito.Mockito.when;
 
 @RunWith(Theories.class)
 public class GetStorageDomainDefaultWipeAfterDeleteQueryTest

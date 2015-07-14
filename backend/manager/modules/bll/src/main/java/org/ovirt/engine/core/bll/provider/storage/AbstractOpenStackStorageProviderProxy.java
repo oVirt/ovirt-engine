@@ -1,15 +1,8 @@
 package org.ovirt.engine.core.bll.provider.storage;
 
-import com.woorea.openstack.base.client.HttpMethod;
-import com.woorea.openstack.base.client.OpenStackClient;
-import com.woorea.openstack.base.client.OpenStackRequest;
-import com.woorea.openstack.base.client.OpenStackResponseException;
-import com.woorea.openstack.base.client.OpenStackTokenProvider;
-import com.woorea.openstack.keystone.model.Access;
-import com.woorea.openstack.keystone.utils.KeystoneTokenProvider;
-import org.ovirt.engine.core.common.errors.EngineError;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.security.cert.Certificate;
+import java.util.List;
+
 import org.ovirt.engine.core.bll.provider.ProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -18,14 +11,21 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.TenantProviderProperties;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-
-import java.security.cert.Certificate;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.woorea.openstack.base.client.HttpMethod;
+import com.woorea.openstack.base.client.OpenStackClient;
+import com.woorea.openstack.base.client.OpenStackRequest;
+import com.woorea.openstack.base.client.OpenStackResponseException;
+import com.woorea.openstack.base.client.OpenStackTokenProvider;
+import com.woorea.openstack.keystone.model.Access;
+import com.woorea.openstack.keystone.utils.KeystoneTokenProvider;
 
 public abstract class AbstractOpenStackStorageProviderProxy<C extends OpenStackClient, T extends TenantProviderProperties, V extends ProviderValidator> implements ProviderProxy<V> {
 

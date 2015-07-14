@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.HostDeviceDao;
-
-import javax.inject.Inject;
-import java.util.List;
 
 public class GetExtendedHostDevicesByHostIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 

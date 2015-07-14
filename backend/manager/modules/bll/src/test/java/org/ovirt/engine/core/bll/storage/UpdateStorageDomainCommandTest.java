@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.ClassRule;

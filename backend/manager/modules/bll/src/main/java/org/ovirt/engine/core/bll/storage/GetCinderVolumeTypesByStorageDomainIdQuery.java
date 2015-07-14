@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll.storage;
 
-import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
 public class GetCinderVolumeTypesByStorageDomainIdQuery<P extends IdQueryParameters> extends CinderQueryBase<P> {
 

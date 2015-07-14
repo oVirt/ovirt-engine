@@ -8,10 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.errors.EngineError;
-import org.ovirt.engine.core.common.errors.EngineException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
@@ -27,10 +23,14 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.utils.NetworkUtils;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.woorea.openstack.base.client.HttpMethod;
 import com.woorea.openstack.base.client.OpenStackRequest;
+import com.woorea.openstack.base.client.OpenStackResponseException;
 import com.woorea.openstack.keystone.utils.KeystoneTokenProvider;
 import com.woorea.openstack.quantum.Quantum;
 import com.woorea.openstack.quantum.model.Networks;
@@ -38,7 +38,6 @@ import com.woorea.openstack.quantum.model.Port;
 import com.woorea.openstack.quantum.model.Port.Binding;
 import com.woorea.openstack.quantum.model.Subnet;
 import com.woorea.openstack.quantum.model.Subnets;
-import com.woorea.openstack.base.client.OpenStackResponseException;
 
 public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
 

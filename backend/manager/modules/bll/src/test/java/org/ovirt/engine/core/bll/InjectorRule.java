@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll;
 
-import org.junit.rules.TestWatcher;
-import org.ovirt.engine.core.di.Injector;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.rules.TestWatcher;
+import org.ovirt.engine.core.di.Injector;
 
 public class InjectorRule extends TestWatcher {
 

@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
@@ -25,8 +27,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dao.LibvirtSecretDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
-
-import javax.inject.Inject;
 
 /**
  * Connect host to all Storage server connections in Storage pool. We

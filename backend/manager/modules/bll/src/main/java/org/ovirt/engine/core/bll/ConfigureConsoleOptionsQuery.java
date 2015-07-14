@@ -1,5 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
@@ -18,11 +23,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
-
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 
 /**
  * Query for filling required backend data to given ConsoleOptions.

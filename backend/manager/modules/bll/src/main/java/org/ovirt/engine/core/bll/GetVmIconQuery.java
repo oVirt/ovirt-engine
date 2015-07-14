@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.VmIconDao;
-
-import javax.inject.Inject;
 
 /**
  * Given an icon id it returns icons data in dataurl form

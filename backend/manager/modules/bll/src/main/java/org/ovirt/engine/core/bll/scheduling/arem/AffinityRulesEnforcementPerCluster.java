@@ -1,23 +1,5 @@
 package org.ovirt.engine.core.bll.scheduling.arem;
 
-import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.scheduling.AffinityGroup;
-import org.ovirt.engine.core.compat.Guid;
-
-import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
-import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +11,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is intended to represent one cluster in the Affinity Rules Enforcement manager.

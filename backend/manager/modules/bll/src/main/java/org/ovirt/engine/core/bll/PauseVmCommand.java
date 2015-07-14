@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import java.util.ArrayList;
+
+import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VM;

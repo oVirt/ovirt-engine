@@ -1,10 +1,19 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
+import static org.ovirt.engine.core.common.action.VdcActionType.AttachNetworkToVdsGroup;
+import static org.ovirt.engine.core.common.action.VdcActionType.DetachNetworkToVdsGroup;
+import static org.ovirt.engine.core.common.action.VdcActionType.UpdateNetworkOnCluster;
+import static org.ovirt.engine.core.utils.linq.LinqUtils.concat;
+import static org.ovirt.engine.core.utils.linq.LinqUtils.filter;
+import static org.ovirt.engine.core.utils.linq.LinqUtils.not;
+import static org.ovirt.engine.core.utils.linq.LinqUtils.transformToList;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -26,14 +35,6 @@ import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-
-import static org.ovirt.engine.core.common.action.VdcActionType.AttachNetworkToVdsGroup;
-import static org.ovirt.engine.core.common.action.VdcActionType.DetachNetworkToVdsGroup;
-import static org.ovirt.engine.core.common.action.VdcActionType.UpdateNetworkOnCluster;
-import static org.ovirt.engine.core.utils.linq.LinqUtils.concat;
-import static org.ovirt.engine.core.utils.linq.LinqUtils.filter;
-import static org.ovirt.engine.core.utils.linq.LinqUtils.not;
-import static org.ovirt.engine.core.utils.linq.LinqUtils.transformToList;
 
 @NonTransactiveCommandAttribute
 public final class ManageNetworkClustersCommand extends CommandBase<ManageNetworkClustersParameters> {

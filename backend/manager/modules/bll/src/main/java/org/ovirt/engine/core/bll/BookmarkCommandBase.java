@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.BookmarksParametersBase;
@@ -8,9 +11,6 @@ import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-
-import java.util.Collections;
-import java.util.List;
 
 public abstract class BookmarkCommandBase<T extends BookmarksParametersBase> extends CommandBase<T> {
     private Bookmark mBookmark;

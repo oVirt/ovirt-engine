@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll.storage;
 
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -7,10 +11,6 @@ import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
 public class ConnectStorageToVdsCommandTest {
 

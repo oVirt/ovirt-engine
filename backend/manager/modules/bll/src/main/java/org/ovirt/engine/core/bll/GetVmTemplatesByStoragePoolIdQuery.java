@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-
-import java.util.List;
 
 public class GetVmTemplatesByStoragePoolIdQuery<P extends IdQueryParameters>
         extends QueriesCommandBase<P> {

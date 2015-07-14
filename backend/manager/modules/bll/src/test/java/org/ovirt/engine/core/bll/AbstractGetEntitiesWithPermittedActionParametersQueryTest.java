@@ -4,6 +4,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+
 import org.junit.After;
 import org.junit.Before;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
@@ -16,8 +18,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.EngineSessionDao;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.utils.RandomUtils;
-
-import java.util.ArrayList;
 
 public abstract class AbstractGetEntitiesWithPermittedActionParametersQueryTest<P, Q> extends AbstractUserQueryTest<GetEntitiesWithPermittedActionParameters, QueriesCommandBase<? extends GetEntitiesWithPermittedActionParameters>> {
 

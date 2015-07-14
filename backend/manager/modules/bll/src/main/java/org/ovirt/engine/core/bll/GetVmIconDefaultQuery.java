@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.queries.GetVmIconDefaultParameters;
 import org.ovirt.engine.core.dao.VmIconDefaultDao;
-
-import javax.inject.Inject;
 
 public class GetVmIconDefaultQuery extends QueriesCommandBase<GetVmIconDefaultParameters> {
 

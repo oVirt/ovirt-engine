@@ -1,12 +1,11 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.mockito.Matchers.any;
 
 import org.junit.Before;
 import org.junit.Test;

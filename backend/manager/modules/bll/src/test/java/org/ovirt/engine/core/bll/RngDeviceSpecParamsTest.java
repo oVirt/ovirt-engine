@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;

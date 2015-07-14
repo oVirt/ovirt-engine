@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.List;
+
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -9,8 +11,6 @@ import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
-
-import java.util.List;
 
 public class AddCinderDiskCommandCallback extends AbstractCinderDiskCommandCallback<AddCinderDiskCommand<AddDiskParameters>> {
 

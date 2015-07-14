@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.network;
 
+import static org.ovirt.engine.core.utils.linq.LinqUtils.concat;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -14,8 +16,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.NetworkUtils;
-
-import static org.ovirt.engine.core.utils.linq.LinqUtils.concat;
 
 final class ManageLabeledNetworksParametersBuilderImpl extends NetworkParametersBuilder
         implements ManageLabeledNetworksParametersBuilder {

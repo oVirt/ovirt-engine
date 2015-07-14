@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -7,10 +11,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class HostedEngineHAClusterWeightPolicyUnit extends PolicyUnitImpl {
     private static int DEFAULT_WEIGHT = 1;

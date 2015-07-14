@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.bll.quota;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class QuotaConsumptionParametersWrapper implements Cloneable {
 

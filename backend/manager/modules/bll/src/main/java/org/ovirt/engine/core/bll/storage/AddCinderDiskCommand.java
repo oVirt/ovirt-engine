@@ -1,5 +1,11 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.AddDiskCommand;
 import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
@@ -19,12 +25,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Map;
 
 @InternalCommandAttribute
 public class AddCinderDiskCommand<T extends AddDiskParameters> extends AddDiskCommand<T> {

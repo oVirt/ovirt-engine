@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.GetClusterUnsupportedVmsCpusParameters;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.queries.GetClusterUnsupportedVmsCpusParameters;
 
 /**
  * The query checks if all of the VMs in a given cluster are compatible with a given cpu level.

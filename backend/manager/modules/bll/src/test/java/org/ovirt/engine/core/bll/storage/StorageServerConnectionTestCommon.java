@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.storage;
 
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
+
 import org.junit.Test;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -9,9 +12,6 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
 
 public abstract class StorageServerConnectionTestCommon {
 

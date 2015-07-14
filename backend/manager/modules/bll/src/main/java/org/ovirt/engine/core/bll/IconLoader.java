@@ -1,5 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -16,12 +22,6 @@ import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * It loads icons from packaging/icons/{small|large} dirs referenced from

@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.tasks.interfaces;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.List;
 
 public abstract class CommandCallback {
 

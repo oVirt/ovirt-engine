@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-
-import javax.inject.Inject;
-import java.util.List;
 
 public class GetQuotasConsumptionForCurrentUserQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
 

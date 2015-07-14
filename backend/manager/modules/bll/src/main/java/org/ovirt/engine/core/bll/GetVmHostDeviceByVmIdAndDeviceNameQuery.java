@@ -1,13 +1,14 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.common.queries.VmHostDeviceQueryParameters;
 import org.ovirt.engine.core.dao.VmDeviceDao;
-
-import javax.inject.Inject;
-import java.util.List;
 
 public class GetVmHostDeviceByVmIdAndDeviceNameQuery<P extends VmHostDeviceQueryParameters> extends QueriesCommandBase<P> {
 

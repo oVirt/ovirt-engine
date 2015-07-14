@@ -7,6 +7,8 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.ArrayList;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,8 +24,6 @@ import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParam
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
-
-import java.util.ArrayList;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EditAffinityGroupCommandTest {

@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.network.dc;
 
+import static org.ovirt.engine.core.utils.linq.LinqUtils.filter;
+import static org.ovirt.engine.core.utils.linq.LinqUtils.not;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -10,9 +13,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.linq.Predicate;
-
-import static org.ovirt.engine.core.utils.linq.LinqUtils.filter;
-import static org.ovirt.engine.core.utils.linq.LinqUtils.not;
 
 public class GetManagementNetworkCandidatesQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 

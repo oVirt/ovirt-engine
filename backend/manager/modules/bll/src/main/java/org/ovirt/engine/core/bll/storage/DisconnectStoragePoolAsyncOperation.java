@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.ArrayList;
+
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.slf4j.Logger;

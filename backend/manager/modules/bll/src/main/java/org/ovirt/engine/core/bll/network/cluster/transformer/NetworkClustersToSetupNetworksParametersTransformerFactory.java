@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.cluster.transformer;
 
 import java.util.Objects;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 

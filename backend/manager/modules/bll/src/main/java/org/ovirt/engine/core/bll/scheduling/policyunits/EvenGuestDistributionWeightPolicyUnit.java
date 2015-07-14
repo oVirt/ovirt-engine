@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
@@ -10,10 +14,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class EvenGuestDistributionWeightPolicyUnit extends PolicyUnitImpl {
     final int spmVmGrace;

@@ -1,32 +1,32 @@
 package org.ovirt.engine.core.bll.provider.storage;
 
+import java.security.cert.Certificate;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
+import org.ovirt.engine.core.bll.storage.CINDERStorageHelper;
+import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.storage.CinderConnectionInfo;
+import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
+import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.compat.Guid;
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.cinder.Cinder;
 import com.woorea.openstack.cinder.model.ConnectionForInitialize;
 import com.woorea.openstack.cinder.model.ConnectionInfo;
 import com.woorea.openstack.cinder.model.Limits;
-import com.woorea.openstack.cinder.model.SnapshotForCreate;
 import com.woorea.openstack.cinder.model.Snapshot;
+import com.woorea.openstack.cinder.model.SnapshotForCreate;
 import com.woorea.openstack.cinder.model.Volume;
 import com.woorea.openstack.cinder.model.VolumeForCreate;
 import com.woorea.openstack.cinder.model.VolumeForUpdate;
 import com.woorea.openstack.cinder.model.VolumeType;
 import com.woorea.openstack.cinder.model.VolumeTypes;
-import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
-import org.ovirt.engine.core.bll.storage.CINDERStorageHelper;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage.CinderConnectionInfo;
-import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
-import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
-import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.compat.Guid;
-
-import java.security.cert.Certificate;
-import java.util.ArrayList;
-import java.util.List;
 
 public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProviderProxy<Cinder, OpenStackVolumeProviderProperties, CinderProviderValidator> {
 

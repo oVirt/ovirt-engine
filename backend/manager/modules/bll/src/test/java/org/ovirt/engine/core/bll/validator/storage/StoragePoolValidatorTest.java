@@ -8,8 +8,8 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class StoragePoolValidatorTest {

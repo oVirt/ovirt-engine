@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll.quota;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -8,10 +12,6 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandsFactory;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.common.action.VdcActionType;
-
-import java.util.Arrays;
-
-import static org.junit.Assert.assertTrue;
 
 @RunWith(Theories.class)
 public class QuotaDependencyTest {

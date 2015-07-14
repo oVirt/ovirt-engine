@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImageByIdParameters;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class GetImageByIdQuery<P extends GetImageByIdParameters> extends QueriesCommandBase<P> {

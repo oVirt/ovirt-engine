@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll;
 
-import org.junit.Test;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class QueryExistenceTest {
 

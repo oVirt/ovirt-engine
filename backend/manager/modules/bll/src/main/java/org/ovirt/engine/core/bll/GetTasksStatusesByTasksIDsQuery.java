@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collection;
+
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.Collection;
 
 public class GetTasksStatusesByTasksIDsQuery<P extends GetTasksStatusesByTasksIDsParameters>
         extends QueriesCommandBase<P> {

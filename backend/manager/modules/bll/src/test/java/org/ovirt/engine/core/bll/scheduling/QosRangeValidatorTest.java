@@ -1,5 +1,13 @@
 package org.ovirt.engine.core.bll.scheduling;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import javax.validation.groups.Default;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -12,13 +20,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.utils.MockConfigRule;
-
-import javax.validation.groups.Default;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class QosRangeValidatorTest {

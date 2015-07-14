@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.bll;
 
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import static org.ovirt.engine.core.utils.MockConfigRule.MockConfigDescriptor;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collections;
 import java.util.Set;
+
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 

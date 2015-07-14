@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.compat.Guid;
-
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.glance.Glance;
 import com.woorea.openstack.glance.model.Image;

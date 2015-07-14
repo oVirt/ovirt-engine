@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.queries.GetFilteredAttachableDisksParameters;
-
-import java.util.List;
 
 public class GetFilteredAttachableDisksQuery<P extends GetFilteredAttachableDisksParameters> extends BaseGetAttachableDisksQuery<P> {
 

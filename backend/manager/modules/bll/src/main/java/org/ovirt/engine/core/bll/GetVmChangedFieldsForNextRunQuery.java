@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -7,9 +10,6 @@ import org.ovirt.engine.core.common.queries.GetVmChangedFieldsForNextRunParamete
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GetVmChangedFieldsForNextRunQuery<P extends GetVmChangedFieldsForNextRunParameters>
         extends QueriesCommandBase<P>{

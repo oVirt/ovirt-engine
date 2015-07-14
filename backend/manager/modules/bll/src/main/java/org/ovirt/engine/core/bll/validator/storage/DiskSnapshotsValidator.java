@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -10,10 +14,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class DiskSnapshotsValidator {
 

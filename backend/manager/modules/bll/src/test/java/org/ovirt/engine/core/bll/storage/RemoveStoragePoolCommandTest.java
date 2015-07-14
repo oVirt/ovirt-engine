@@ -7,8 +7,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 
 public class RemoveStoragePoolCommandTest {
 

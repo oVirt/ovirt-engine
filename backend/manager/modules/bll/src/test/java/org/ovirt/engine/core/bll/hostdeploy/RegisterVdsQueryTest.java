@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
-import static org.mockito.Mockito.when;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;

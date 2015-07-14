@@ -14,9 +14,9 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.compat.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ovirt.engine.core.compat.Version;
 
 public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(CpuLevelFilterPolicyUnit.class);

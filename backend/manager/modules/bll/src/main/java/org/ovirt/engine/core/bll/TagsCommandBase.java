@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
@@ -7,9 +10,6 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-
-import java.util.Collections;
-import java.util.List;
 
 public abstract class TagsCommandBase<T extends TagsActionParametersBase> extends CommandBase<T> {
     private Tags mTag = null;

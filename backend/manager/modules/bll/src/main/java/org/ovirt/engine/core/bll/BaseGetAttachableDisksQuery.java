@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.queries.GetAllAttachableDisksForVmQueryParameters;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.apache.commons.collections.CollectionUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class BaseGetAttachableDisksQuery<P extends GetAllAttachableDisksForVmQueryParameters> extends QueriesCommandBase<P> {
 

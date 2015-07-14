@@ -6,6 +6,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,8 +21,6 @@ import org.ovirt.engine.core.common.queries.GetVmChangedFieldsForNextRunParamete
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Version;
-
-import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetVmChangedFieldsForNextRunQueryTest

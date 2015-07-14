@@ -2,11 +2,11 @@ package org.ovirt.engine.core.bll.storage;
 
 import static org.junit.Assert.assertEquals;
 
+import java.text.MessageFormat;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.vdscommands.PostZero;
 import org.ovirt.engine.core.common.vdscommands.StorageDomainIdParametersBase;
-
-import java.text.MessageFormat;
 
 public class PostZeroHandlerTest {
 

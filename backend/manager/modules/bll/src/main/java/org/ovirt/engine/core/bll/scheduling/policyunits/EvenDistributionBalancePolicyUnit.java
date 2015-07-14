@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.utils.FindVmAndDestinations;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -7,9 +10,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
-
-import java.util.List;
-import java.util.Map;
 
 public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUnit {
 

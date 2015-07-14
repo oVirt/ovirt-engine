@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.validator;
 
 import java.util.Collection;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -9,8 +11,6 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Version;
-
-import java.util.List;
 
 public class VmValidationUtils {
 

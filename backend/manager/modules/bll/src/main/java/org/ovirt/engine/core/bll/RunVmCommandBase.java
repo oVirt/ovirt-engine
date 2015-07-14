@@ -44,7 +44,6 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsMonitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.woorea.openstack.base.client.OpenStackResponseException;
 
 /**

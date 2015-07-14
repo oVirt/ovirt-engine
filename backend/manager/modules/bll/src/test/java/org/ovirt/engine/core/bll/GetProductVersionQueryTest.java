@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,7 +10,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
-import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetProductVersionQueryTest extends AbstractQueryTest<VdcQueryParametersBase, GetProductVersionQuery<VdcQueryParametersBase>> {

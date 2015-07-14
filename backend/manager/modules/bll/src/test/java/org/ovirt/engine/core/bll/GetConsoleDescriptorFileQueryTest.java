@@ -1,14 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.queries.ConsoleOptionsParams;
 import org.ovirt.engine.core.compat.Guid;
-
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class GetConsoleDescriptorFileQueryTest {
 

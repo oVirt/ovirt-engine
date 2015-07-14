@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-
-import java.util.List;
 
 /* Returns a list of all templates under required base template - including the base template */
 public class GetVmTemplatesByBaseTemplateIdQuery<P extends GetVmTemplateParameters>

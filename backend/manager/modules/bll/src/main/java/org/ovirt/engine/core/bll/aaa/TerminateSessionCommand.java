@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.aaa;
 
 import java.util.Collections;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 

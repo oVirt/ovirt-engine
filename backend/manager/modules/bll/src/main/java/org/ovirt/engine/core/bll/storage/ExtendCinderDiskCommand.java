@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.UpdateVmDiskCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -10,9 +13,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collections;
-import java.util.Map;
 
 @InternalCommandAttribute
 public class ExtendCinderDiskCommand<T extends UpdateVmDiskParameters> extends UpdateVmDiskCommand<T> {

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.List;
+
 import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -10,8 +12,6 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-
-import java.util.List;
 
 public class ExtendCinderDiskCommandCallback extends AbstractCinderDiskCommandCallback<ExtendCinderDiskCommand<UpdateVmDiskParameters>> {
 

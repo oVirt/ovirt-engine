@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.scheduling.external;
 
-import org.ovirt.engine.core.compat.Guid;
-
 import java.util.LinkedList;
 import java.util.List;
+
+import org.ovirt.engine.core.compat.Guid;
 
 public class FilteringResult extends SchedulerResult {
     private List<Guid> possibleHosts;

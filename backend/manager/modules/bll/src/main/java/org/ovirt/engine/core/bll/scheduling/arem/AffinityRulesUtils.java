@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.bll.scheduling.arem;
 
-import org.ovirt.engine.core.common.scheduling.AffinityGroup;
-import org.ovirt.engine.core.compat.Guid;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -10,6 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
+import org.ovirt.engine.core.compat.Guid;
 
 public class AffinityRulesUtils {
     /**

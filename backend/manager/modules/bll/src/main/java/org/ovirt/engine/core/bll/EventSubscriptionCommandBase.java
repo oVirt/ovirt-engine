@@ -4,6 +4,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.EventNotificationMethod;
@@ -16,9 +19,6 @@ import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 
 public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionParametesBase> extends
         CommandBase<T> {

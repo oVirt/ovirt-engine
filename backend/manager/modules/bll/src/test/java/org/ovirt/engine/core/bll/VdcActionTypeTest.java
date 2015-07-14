@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import org.junit.Test;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -9,7 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.ovirt.engine.core.common.action.VdcActionType;
 
 public class VdcActionTypeTest {
     private static final int bitSetSize = 5000;

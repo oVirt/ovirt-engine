@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
 import static org.junit.Assert.assertEquals;
-
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 

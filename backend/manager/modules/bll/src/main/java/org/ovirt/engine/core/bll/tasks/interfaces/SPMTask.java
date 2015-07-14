@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll.tasks.interfaces;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.tasks.AsyncTaskState;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.Map;
 
 public interface SPMTask {
     void concreteStartPollingTask();

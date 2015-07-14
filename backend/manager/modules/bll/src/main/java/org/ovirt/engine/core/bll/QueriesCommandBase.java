@@ -22,8 +22,8 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ActionGroupDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
-import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.utils.log.Logged;
+import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 
 @Logged(executionLevel = LogLevel.TRACE, errorLevel = LogLevel.WARN)
 public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> extends VdcCommandBase {

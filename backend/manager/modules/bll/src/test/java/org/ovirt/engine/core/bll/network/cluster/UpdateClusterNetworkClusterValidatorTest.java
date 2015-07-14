@@ -1,5 +1,10 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
+
 import java.util.Collections;
 
 import org.hamcrest.Matcher;
@@ -9,11 +14,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
-import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateClusterNetworkClusterValidatorTest extends

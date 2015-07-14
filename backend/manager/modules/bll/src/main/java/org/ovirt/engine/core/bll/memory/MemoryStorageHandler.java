@@ -7,14 +7,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainFilter;
-import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainSpaceRequirementsFilter;
-import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainStatusFilter;
-import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainTypeFilter;
 import org.apache.commons.collections.comparators.ComparatorChain;
 import org.ovirt.engine.core.bll.memory.sdcomparators.StorageDomainAvailableDiskSizeComparator;
 import org.ovirt.engine.core.bll.memory.sdcomparators.StorageDomainNumberOfVmDisksComparator;
 import org.ovirt.engine.core.bll.memory.sdcomparators.StorageTypeComparator;
+import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainFilter;
+import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainSpaceRequirementsFilter;
+import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainStatusFilter;
+import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainTypeFilter;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;

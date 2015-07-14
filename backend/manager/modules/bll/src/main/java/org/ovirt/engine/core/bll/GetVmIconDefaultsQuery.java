@@ -1,14 +1,15 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.VmIconDefault;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.dao.VmIconDefaultDao;
-
-import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * It provides mapping of operating systems to their default icons.

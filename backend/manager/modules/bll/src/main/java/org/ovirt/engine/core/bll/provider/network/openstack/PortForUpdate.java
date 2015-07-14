@@ -5,7 +5,6 @@ import java.util.List;
 import org.codehaus.jackson.map.annotate.JsonRootName;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-
 import com.woorea.openstack.quantum.model.Port;
 
 @JsonRootName(value = "port")

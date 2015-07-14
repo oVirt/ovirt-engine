@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
-import com.woorea.openstack.base.client.OpenStackResponseException;
-import com.woorea.openstack.cinder.model.Limits;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,6 +21,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
+import com.woorea.openstack.base.client.OpenStackResponseException;
+import com.woorea.openstack.cinder.model.Limits;
 
 public class CinderDisksValidator {
 

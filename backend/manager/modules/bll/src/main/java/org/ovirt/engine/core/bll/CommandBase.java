@@ -104,7 +104,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
-
 import com.woorea.openstack.base.client.OpenStackResponseException;
 
 public abstract class CommandBase<T extends VdcActionParametersBase> extends AuditLogableBase implements

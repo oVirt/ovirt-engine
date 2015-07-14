@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
 import java.io.File;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.ovirt.engine.core.common.config.Config;

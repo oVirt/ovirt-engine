@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll.scheduling.pending;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.Set;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
 
 public class PendingResourceManagerTest {
 

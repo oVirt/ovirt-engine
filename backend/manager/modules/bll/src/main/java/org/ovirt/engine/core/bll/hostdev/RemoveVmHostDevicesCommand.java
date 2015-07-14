@@ -1,10 +1,6 @@
 package org.ovirt.engine.core.bll.hostdev;
 
-import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
-import org.ovirt.engine.core.common.businessentities.HostDevice;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmHostDevice;
+import static org.ovirt.engine.core.utils.collections.MultiValueMapUtils.addToMap;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,7 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.ovirt.engine.core.utils.collections.MultiValueMapUtils.addToMap;
+import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
+import org.ovirt.engine.core.common.businessentities.HostDevice;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 
 public class RemoveVmHostDevicesCommand extends AbstractVmHostDevicesCommand<VmHostDevicesParameters> {
 

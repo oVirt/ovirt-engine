@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.scheduling.utils;
 
-import org.ovirt.engine.core.common.businessentities.VM;
-
 import java.util.Comparator;
+
+import org.ovirt.engine.core.common.businessentities.VM;
 
 /**
  * Comparator that compares the CPU usage of two VMs, with regard to the number of CPUs each VM has.

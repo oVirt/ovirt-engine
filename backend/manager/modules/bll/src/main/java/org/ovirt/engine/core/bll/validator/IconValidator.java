@@ -1,15 +1,5 @@
 package org.ovirt.engine.core.bll.validator;
 
-import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import javax.xml.bind.DatatypeConverter;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
@@ -21,6 +11,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import javax.xml.bind.DatatypeConverter;
+
+import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class IconValidator {
 
