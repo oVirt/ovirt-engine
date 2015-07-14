@@ -2,11 +2,11 @@ package org.ovirt.engine.api.restapi.types;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.SupportedVersions;
 import org.ovirt.engine.api.model.Version;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VersionMapper {
     private static final Logger log = LoggerFactory.getLogger(VersionMapper.class);

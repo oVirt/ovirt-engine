@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Image;
@@ -13,9 +16,6 @@ import org.ovirt.engine.core.common.queries.GetImageByIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class BackendStorageDomainImageResourceTest extends AbstractBackendSubResourceTest<Image, RepoImage, BackendStorageDomainImageResource> {

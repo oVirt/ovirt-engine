@@ -15,8 +15,8 @@ import org.ovirt.engine.api.resource.SnapshotResource;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
-import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendSnapshotResource extends AbstractBackendActionableResource<Snapshot, org.ovirt.engine.core.common.businessentities.Snapshot> implements SnapshotResource {

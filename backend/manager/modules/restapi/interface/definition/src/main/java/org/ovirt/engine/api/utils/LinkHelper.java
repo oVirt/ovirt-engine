@@ -16,6 +16,19 @@
 
 package org.ovirt.engine.api.utils;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import javax.ws.rs.Path;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.ActionsBuilder;
@@ -27,8 +40,6 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Bookmark;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.Cluster;
-import org.ovirt.engine.api.model.HostDevices;
-import org.ovirt.engine.api.model.QuotaClusterLimit;
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DetailedLink;
@@ -53,6 +64,7 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostDevice;
+import org.ovirt.engine.api.model.HostDevices;
 import org.ovirt.engine.api.model.HostNIC;
 import org.ovirt.engine.api.model.Icon;
 import org.ovirt.engine.api.model.Image;
@@ -82,6 +94,7 @@ import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.QoS;
 import org.ovirt.engine.api.model.Quota;
+import org.ovirt.engine.api.model.QuotaClusterLimit;
 import org.ovirt.engine.api.model.QuotaStorageLimit;
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.Request;
@@ -215,10 +228,10 @@ import org.ovirt.engine.api.resource.VmApplicationResource;
 import org.ovirt.engine.api.resource.VmApplicationsResource;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
-import org.ovirt.engine.api.resource.VmHostDeviceResource;
-import org.ovirt.engine.api.resource.VmHostDevicesResource;
 import org.ovirt.engine.api.resource.VmGraphicsConsoleResource;
 import org.ovirt.engine.api.resource.VmGraphicsConsolesResource;
+import org.ovirt.engine.api.resource.VmHostDeviceResource;
+import org.ovirt.engine.api.resource.VmHostDevicesResource;
 import org.ovirt.engine.api.resource.VmNicResource;
 import org.ovirt.engine.api.resource.VmNumaNodeResource;
 import org.ovirt.engine.api.resource.VmNumaNodesResource;
@@ -280,18 +293,6 @@ import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProviderResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProvidersResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypeResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypesResource;
-
-import javax.ws.rs.Path;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * Contains a static addLinks() method which constructs any href attributes

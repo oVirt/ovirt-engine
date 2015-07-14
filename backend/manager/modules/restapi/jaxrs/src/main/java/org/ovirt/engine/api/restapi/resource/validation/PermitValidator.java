@@ -4,6 +4,7 @@ import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.PermitType;
 import org.ovirt.engine.api.restapi.types.PermitMapper;

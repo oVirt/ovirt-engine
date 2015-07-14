@@ -24,8 +24,8 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.ApiMediaType;
-import org.ovirt.engine.api.resource.AssignedRolesResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
+import org.ovirt.engine.api.resource.AssignedRolesResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})

@@ -18,6 +18,8 @@ package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
 import static org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendExternalHostProvidersResource.SUB_COLLECTIONS;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.ExternalHostProvider;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalComputeResourcesResource;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalDiscoveredHostsResource;
@@ -29,8 +31,6 @@ import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
-
-import javax.ws.rs.core.Response;
 
 public class BackendExternalHostProviderResource
         extends AbstractBackendExternalProviderResource<ExternalHostProvider>

@@ -19,16 +19,17 @@ package org.ovirt.engine.api.restapi.resource.openstack;
 import static org.easymock.EasyMock.expect;
 import static org.ovirt.engine.api.restapi.utils.HexUtils.string2hex;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ws.rs.WebApplicationException;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.OpenStackSubnet;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.queries.GetExternalSubnetsOnProviderByExternalNetworkQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
-import javax.ws.rs.WebApplicationException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BackendOpenStackSubnetResourceTest
         extends AbstractBackendSubResourceTest<OpenStackSubnet, ExternalSubnet, BackendOpenStackSubnetResource> {

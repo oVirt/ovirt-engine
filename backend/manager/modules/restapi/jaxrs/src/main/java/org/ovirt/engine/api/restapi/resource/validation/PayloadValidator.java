@@ -1,9 +1,9 @@
 package org.ovirt.engine.api.restapi.resource.validation;
 
+import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
+
 import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.VmDeviceType;
-
-import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
 
 @ValidatedClass(clazz = Payload.class)
 public class PayloadValidator implements Validator<Payload> {

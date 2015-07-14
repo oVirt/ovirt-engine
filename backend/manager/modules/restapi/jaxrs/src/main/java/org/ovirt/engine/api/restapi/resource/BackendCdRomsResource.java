@@ -1,24 +1,24 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.types.CdRomMapper.CDROM_ID;
+
+import java.util.List;
+
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
 import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.api.resource.DevicesResource;
-import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
-
-import java.util.List;
-
-import static org.ovirt.engine.api.restapi.types.CdRomMapper.CDROM_ID;
 
 public class BackendCdRomsResource
         extends AbstractBackendDevicesResource<CdRom, CdRoms, VM>

@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
+import org.ovirt.engine.api.model.PowerManagement;
 
 public class FenceOptionsParser {
 

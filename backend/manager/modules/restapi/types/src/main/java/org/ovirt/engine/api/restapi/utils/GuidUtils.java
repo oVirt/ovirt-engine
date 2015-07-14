@@ -1,8 +1,9 @@
 package org.ovirt.engine.api.restapi.utils;
 
-import org.ovirt.engine.core.compat.Guid;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import org.ovirt.engine.core.compat.Guid;
 
 public class GuidUtils {
 

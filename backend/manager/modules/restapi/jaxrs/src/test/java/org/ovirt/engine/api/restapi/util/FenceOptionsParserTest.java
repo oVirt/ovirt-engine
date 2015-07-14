@@ -1,14 +1,13 @@
 package org.ovirt.engine.api.restapi.util;
 
+import static org.ovirt.engine.api.restapi.util.FenceOptionsParser.parse;
+
 import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
-
-import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.Option;
-
-import static org.ovirt.engine.api.restapi.util.FenceOptionsParser.parse;
+import org.ovirt.engine.api.model.PowerManagement;
 
 public class FenceOptionsParserTest extends Assert {
     private static final String FENCE_OPTION = "apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port,"

@@ -1,19 +1,18 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.same;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import javax.ws.rs.core.Response.Status;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.same;
-import static org.easymock.EasyMock.expect;
-
 import org.easymock.IExpectationSetters;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.StatisticType;

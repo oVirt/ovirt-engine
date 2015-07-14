@@ -19,6 +19,13 @@ package org.ovirt.engine.api.restapi.resource.openstack;
 import static org.easymock.EasyMock.expect;
 import static org.ovirt.engine.api.restapi.utils.HexUtils.string2hex;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import javax.ws.rs.WebApplicationException;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.OpenStackNetwork;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
@@ -27,12 +34,6 @@ import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import javax.ws.rs.WebApplicationException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 public class BackendOpenStackNetworkResourceTest
         extends AbstractBackendSubResourceTest<OpenStackNetwork, Network, BackendOpenStackNetworkResource> {

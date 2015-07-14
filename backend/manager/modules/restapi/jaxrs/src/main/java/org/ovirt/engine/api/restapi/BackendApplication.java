@@ -36,6 +36,7 @@ import org.ovirt.engine.api.restapi.resource.BackendDiskProfilesResource;
 import org.ovirt.engine.api.restapi.resource.BackendDisksResource;
 import org.ovirt.engine.api.restapi.resource.BackendEventsResource;
 import org.ovirt.engine.api.restapi.resource.BackendHostsResource;
+import org.ovirt.engine.api.restapi.resource.BackendIconsResource;
 import org.ovirt.engine.api.restapi.resource.BackendInstanceTypesResource;
 import org.ovirt.engine.api.restapi.resource.BackendJobsResource;
 import org.ovirt.engine.api.restapi.resource.BackendMacPoolsResource;
@@ -50,7 +51,6 @@ import org.ovirt.engine.api.restapi.resource.BackendStorageServerConnectionsReso
 import org.ovirt.engine.api.restapi.resource.BackendSystemPermissionsResource;
 import org.ovirt.engine.api.restapi.resource.BackendTagsResource;
 import org.ovirt.engine.api.restapi.resource.BackendTemplatesResource;
-import org.ovirt.engine.api.restapi.resource.BackendIconsResource;
 import org.ovirt.engine.api.restapi.resource.BackendVmPoolsResource;
 import org.ovirt.engine.api.restapi.resource.BackendVmsResource;
 import org.ovirt.engine.api.restapi.resource.BackendVnicProfilesResource;

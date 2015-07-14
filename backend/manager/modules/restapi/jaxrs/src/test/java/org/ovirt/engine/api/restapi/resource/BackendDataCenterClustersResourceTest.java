@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +20,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.easymock.EasyMock.expect;
 
 public class BackendDataCenterClustersResourceTest extends
         AbstractBackendCollectionResourceTest<Cluster, VDSGroup, BackendDataCenterClustersResource> {

@@ -1,5 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
+import java.util.List;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
@@ -10,12 +17,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-import java.util.List;
-
-import static org.easymock.EasyMock.expect;
 
 public class BackendInstanceTypesResourceTest
     extends BackendTemplatesBasedResourceTest<InstanceType, org.ovirt.engine.core.common.businessentities.InstanceType, BackendInstanceTypesResource> {

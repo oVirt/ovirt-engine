@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.easymock.EasyMock.expect;
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.ISO_PATH;
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.CURRENT_ISO_PATH;
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.ISO_PATH;
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.PARENT_ID;
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.setUpEntityExpectations;
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.verifyModelWithIso;

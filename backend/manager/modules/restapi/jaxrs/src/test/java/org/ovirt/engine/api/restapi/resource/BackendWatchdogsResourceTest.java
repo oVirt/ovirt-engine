@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.WatchDog;
 import org.ovirt.engine.api.model.WatchdogAction;
 import org.ovirt.engine.api.model.WatchdogModel;
-
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;

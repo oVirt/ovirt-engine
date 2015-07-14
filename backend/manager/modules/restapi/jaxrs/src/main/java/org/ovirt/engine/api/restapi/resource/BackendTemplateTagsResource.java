@@ -1,13 +1,13 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.List;
+
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.resource.AssignedTagResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.GetTagsByTemplateIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
-import java.util.List;
 
 public class BackendTemplateTagsResource extends AbstractBackendAssignedTagsResource {
 

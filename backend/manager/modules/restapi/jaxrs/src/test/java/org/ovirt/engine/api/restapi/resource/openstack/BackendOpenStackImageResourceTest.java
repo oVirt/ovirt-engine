@@ -18,9 +18,10 @@ package org.ovirt.engine.api.restapi.resource.openstack;
 
 import static org.easymock.EasyMock.expect;
 
-import javax.ws.rs.WebApplicationException;
 import java.util.Collections;
 import java.util.List;
+
+import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.OpenStackImage;

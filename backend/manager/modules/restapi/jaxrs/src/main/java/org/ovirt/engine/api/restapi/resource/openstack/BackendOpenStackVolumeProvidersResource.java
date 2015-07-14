@@ -16,6 +16,10 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
+import java.util.List;
+
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.DataCenter;
@@ -37,9 +41,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import javax.ws.rs.core.Response;
-import java.util.List;
 
 public class BackendOpenStackVolumeProvidersResource
         extends AbstractBackendCollectionResource<OpenStackVolumeProvider, Provider>

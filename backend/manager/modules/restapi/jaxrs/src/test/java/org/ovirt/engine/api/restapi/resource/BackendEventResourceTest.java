@@ -1,5 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
+import java.util.Date;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.core.common.AuditLogSeverity;
@@ -9,10 +13,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.queries.GetAuditLogByIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
-import java.util.Date;
-
-import static org.easymock.EasyMock.expect;
 
 public class BackendEventResourceTest extends AbstractBackendSubResourceTest<Event, AuditLog, BackendEventResource> {
     private static final long[] LOG_IDS = { 1 };

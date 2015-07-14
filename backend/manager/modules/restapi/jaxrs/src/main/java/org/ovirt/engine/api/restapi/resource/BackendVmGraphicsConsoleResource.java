@@ -1,5 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.GraphicsConsole;
 import org.ovirt.engine.api.model.GraphicsType;
 import org.ovirt.engine.api.resource.ApiMediaType;
@@ -16,12 +23,6 @@ import org.ovirt.engine.core.common.queries.ConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BackendVmGraphicsConsoleResource
     extends BackendResource

@@ -1,12 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendHostNumaNodesResource.SUB_COLLECTIONS;
+
 import org.ovirt.engine.api.model.NumaNode;
 import org.ovirt.engine.api.resource.HostNumaNodeResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.ovirt.engine.api.restapi.resource.BackendHostNumaNodesResource.SUB_COLLECTIONS;
 
 public class BackendHostNumaNodeResource
     extends AbstractBackendSubResource<NumaNode, VdsNumaNode>

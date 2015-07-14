@@ -16,6 +16,10 @@
 
 package org.ovirt.engine.api.common.util;
 
+import static org.ovirt.engine.api.utils.ReflectionHelper.capitalize;
+import static org.ovirt.engine.api.utils.ReflectionHelper.different;
+import static org.ovirt.engine.api.utils.ReflectionHelper.isSet;
+
 import java.text.MessageFormat;
 
 import javax.ws.rs.WebApplicationException;
@@ -23,10 +27,6 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Fault;
-
-import static org.ovirt.engine.api.utils.ReflectionHelper.capitalize;
-import static org.ovirt.engine.api.utils.ReflectionHelper.different;
-import static org.ovirt.engine.api.utils.ReflectionHelper.isSet;
 
 /**
  * Used to assert that fields set on a model type do not conflict with

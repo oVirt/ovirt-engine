@@ -1,12 +1,11 @@
 package org.ovirt.engine.api.restapi.types;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.Rate;
 import org.ovirt.engine.api.model.RngDevice;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
-
-
-import static org.junit.Assert.assertEquals;
 
 
 public class RngDeviceMapperTest {

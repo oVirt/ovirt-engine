@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
-import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.IP;
+import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.ReportedDeviceType;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 

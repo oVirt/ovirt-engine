@@ -1,5 +1,10 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.core.Response;
+
+import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.model.CdRom;
+import org.ovirt.engine.api.model.CdRoms;
 import org.ovirt.engine.api.resource.CdRomResource;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -9,12 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import org.ovirt.engine.api.common.util.QueryHelper;
-import org.ovirt.engine.api.model.CdRom;
-import org.ovirt.engine.api.model.CdRoms;
-
-import javax.ws.rs.core.Response;
 
 public class BackendCdRomResource extends BackendDeviceResource<CdRom, CdRoms, VM> implements CdRomResource {
 

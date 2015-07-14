@@ -16,16 +16,16 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
+import static org.easymock.EasyMock.expect;
+
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTest;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-
-import java.util.List;
-
-import static org.easymock.EasyMock.expect;
 
 public class BackendOpenStackVolumeProvidersResourceTest extends
         AbstractBackendCollectionResourceTest<OpenStackVolumeProvider, Provider, BackendOpenStackVolumeProvidersResource> {

@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -7,9 +10,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class BackendAffinityGroupVmResourceTest
         extends AbstractBackendSubResourceTest<VM, org.ovirt.engine.core.common.businessentities.VM, BackendAffinityGroupVmResource> {

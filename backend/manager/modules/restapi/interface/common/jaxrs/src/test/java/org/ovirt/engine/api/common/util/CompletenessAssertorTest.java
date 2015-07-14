@@ -20,6 +20,8 @@ import java.util.Arrays;
 
 import javax.ws.rs.WebApplicationException;
 
+import org.junit.Assert;
+import org.junit.Test;
 import org.ovirt.engine.api.model.Bonding;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Host;
@@ -32,9 +34,6 @@ import org.ovirt.engine.api.model.Slaves;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmStatus;
-
-import org.junit.Assert;
-import org.junit.Test;
 
 public class CompletenessAssertorTest extends Assert {
 

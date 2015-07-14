@@ -1,10 +1,10 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.api.model.Application;
 import org.ovirt.engine.api.model.Applications;
 import org.ovirt.engine.api.resource.VmApplicationResource;
 import org.ovirt.engine.api.resource.VmApplicationsResource;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;

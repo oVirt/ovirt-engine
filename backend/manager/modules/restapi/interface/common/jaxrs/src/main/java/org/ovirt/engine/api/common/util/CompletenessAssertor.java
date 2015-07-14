@@ -16,6 +16,10 @@
 
 package org.ovirt.engine.api.common.util;
 
+import static org.ovirt.engine.api.utils.ReflectionHelper.capitalize;
+import static org.ovirt.engine.api.utils.ReflectionHelper.get;
+import static org.ovirt.engine.api.utils.ReflectionHelper.isSet;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,10 +29,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Fault;
-
-import static org.ovirt.engine.api.utils.ReflectionHelper.capitalize;
-import static org.ovirt.engine.api.utils.ReflectionHelper.get;
-import static org.ovirt.engine.api.utils.ReflectionHelper.isSet;
 
 /**
  * Used to validate that the required fields are set on a user-provided

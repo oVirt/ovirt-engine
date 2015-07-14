@@ -1,5 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+import static org.ovirt.engine.api.restapi.resource.BackendClustersResourceTest.getModel;
+import static org.ovirt.engine.api.restapi.resource.BackendClustersResourceTest.setUpEntityExpectations;
+
 import java.util.Collections;
 
 import javax.ws.rs.WebApplicationException;
@@ -15,10 +19,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.easymock.EasyMock.expect;
-import static org.ovirt.engine.api.restapi.resource.BackendClustersResourceTest.getModel;
-import static org.ovirt.engine.api.restapi.resource.BackendClustersResourceTest.setUpEntityExpectations;
 
 public class BackendClusterResourceTest
         extends AbstractBackendSubResourceTest<Cluster, VDSGroup, BackendClusterResource<BackendClustersResource>> {

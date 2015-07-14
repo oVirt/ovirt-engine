@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.resource.SnapshotDiskResource;
@@ -8,8 +9,6 @@ import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-
-import javax.ws.rs.core.Response;
 
 public class BackendSnapshotDiskResource extends BackendDiskResource implements SnapshotDiskResource {
 

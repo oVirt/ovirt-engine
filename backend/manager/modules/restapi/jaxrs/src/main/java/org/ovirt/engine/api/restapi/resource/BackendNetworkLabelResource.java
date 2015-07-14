@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Label;
 import org.ovirt.engine.api.model.Labels;
 import org.ovirt.engine.api.model.Network;
@@ -7,8 +9,6 @@ import org.ovirt.engine.api.resource.LabelResource;
 import org.ovirt.engine.core.common.action.UnlabelNetworkParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel;
-
-import javax.ws.rs.core.Response;
 
 public class BackendNetworkLabelResource extends AbstractBackendSubResource<Label, NetworkLabel> implements LabelResource {
 

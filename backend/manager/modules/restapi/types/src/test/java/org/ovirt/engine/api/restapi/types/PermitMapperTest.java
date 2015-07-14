@@ -3,7 +3,6 @@ package org.ovirt.engine.api.restapi.types;
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.PermitType;
 import org.ovirt.engine.api.model.RoleType;
-
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 
 public class PermitMapperTest extends AbstractInvertibleMappingTest<Permit, ActionGroup, ActionGroup> {

@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.types.CdRomMapper.CDROM_ID;
+
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
 import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
@@ -7,8 +9,6 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.ovirt.engine.api.restapi.types.CdRomMapper.CDROM_ID;
 
 public class BackendReadOnlyCdRomsResource<Q extends IVdcQueryable>
         extends AbstractBackendReadOnlyDevicesResource<CdRom, CdRoms, Q>

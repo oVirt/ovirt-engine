@@ -1,11 +1,10 @@
 package org.ovirt.engine.api.restapi.resource.validation;
 
+import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
+
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.MigrateOnError;
 import org.ovirt.engine.api.model.RngSource;
-
-
-import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
 
 @ValidatedClass(clazz = Cluster.class)
 public class ClusterValidator implements Validator<Cluster> {

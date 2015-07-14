@@ -16,6 +16,10 @@
 
 package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
+import static org.ovirt.engine.api.restapi.utils.HexUtils.hex2string;
+
+import java.util.List;
+
 import org.ovirt.engine.api.model.ExternalDiscoveredHost;
 import org.ovirt.engine.api.model.ExternalHostProvider;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalDiscoveredHostResource;
@@ -26,10 +30,6 @@ import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.List;
-
-import static org.ovirt.engine.api.restapi.utils.HexUtils.hex2string;
 
 public class BackendExternalDiscoveredHostResource
         extends AbstractBackendActionableResource<ExternalDiscoveredHost, org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost>

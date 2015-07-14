@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.DisplayType;
@@ -13,9 +16,6 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DisplayHelper {
 

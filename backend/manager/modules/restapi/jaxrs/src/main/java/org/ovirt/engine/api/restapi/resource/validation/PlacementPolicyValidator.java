@@ -1,8 +1,9 @@
 package org.ovirt.engine.api.restapi.resource.validation;
 
+import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
+
 import org.ovirt.engine.api.model.VmAffinity;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
-import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
 
 @ValidatedClass(clazz = VmPlacementPolicy.class)
 public class PlacementPolicyValidator implements Validator<VmPlacementPolicy> {

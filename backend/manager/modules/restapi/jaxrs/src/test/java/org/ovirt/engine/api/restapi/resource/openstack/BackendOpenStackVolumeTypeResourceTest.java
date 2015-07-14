@@ -16,21 +16,22 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
-import org.junit.Test;
-import org.ovirt.engine.api.model.OpenStackVolumeType;
-import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
-import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import static org.easymock.EasyMock.expect;
 
-import javax.ws.rs.WebApplicationException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.easymock.EasyMock.expect;
+import javax.ws.rs.WebApplicationException;
+
+import org.junit.Test;
+import org.ovirt.engine.api.model.OpenStackVolumeType;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendOpenStackVolumeTypeResourceTest
         extends AbstractBackendSubResourceTest<OpenStackVolumeType, CinderVolumeType, BackendOpenStackVolumeTypeResource> {

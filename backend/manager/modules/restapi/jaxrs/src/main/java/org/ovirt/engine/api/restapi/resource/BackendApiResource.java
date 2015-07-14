@@ -54,6 +54,7 @@ import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
 import org.ovirt.engine.api.rsdl.RsdlManager;
 import org.ovirt.engine.api.utils.ApiRootLinksCreator;
 import org.ovirt.engine.api.utils.LinkHelper;
+import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.constants.QueryConstants;
@@ -64,7 +65,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.branding.BrandingManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

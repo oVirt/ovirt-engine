@@ -1,12 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.WebApplicationException;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.Icon;
 import org.ovirt.engine.core.common.businessentities.VmIcon;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
-import javax.ws.rs.WebApplicationException;
 
 public class BackendIconResourceTest extends AbstractBackendSubResourceTest<Icon, VmIcon, BackendIconResource> {
 

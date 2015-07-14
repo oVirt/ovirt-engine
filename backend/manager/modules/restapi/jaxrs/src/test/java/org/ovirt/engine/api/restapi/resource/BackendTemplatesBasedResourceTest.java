@@ -1,7 +1,15 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
@@ -13,16 +21,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import java.util.ArrayList;
-import java.util.List;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-
-
-import static org.easymock.EasyMock.expect;
 
 public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C extends AbstractBackendCollectionResource<R, Q>>
         extends AbstractBackendCollectionResourceTest<R, Q, C> {

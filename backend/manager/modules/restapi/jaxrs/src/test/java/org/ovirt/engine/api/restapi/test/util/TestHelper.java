@@ -1,15 +1,13 @@
 package org.ovirt.engine.api.restapi.test.util;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
-import java.lang.reflect.Method;
 import java.util.Objects;
 
 import org.easymock.EasyMock;
 import org.easymock.IArgumentMatcher;
-
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;

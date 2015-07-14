@@ -1,19 +1,19 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendNetworksResourceTest.getModel;
+
 import java.util.ArrayList;
+
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendNetworksResourceTest.getModel;
 
 public class BackendNetworkResourceTest
     extends AbstractBackendNetworkResourceTest<BackendNetworkResource> {

@@ -1,11 +1,11 @@
 package org.ovirt.engine.api.restapi.resource.validation;
 
+import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
+
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.QuotaModeType;
 import org.ovirt.engine.api.model.StorageFormat;
 import org.ovirt.engine.api.model.StorageType;
-
-import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
 
 @ValidatedClass(clazz = DataCenter.class)
 public class DataCenterValidator implements Validator<DataCenter> {

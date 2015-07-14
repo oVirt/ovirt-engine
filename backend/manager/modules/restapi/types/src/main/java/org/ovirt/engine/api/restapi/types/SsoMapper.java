@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.Method;
-import org.ovirt.engine.api.model.Sso;
 import org.ovirt.engine.api.model.Methods;
+import org.ovirt.engine.api.model.Sso;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
 
 public class SsoMapper {

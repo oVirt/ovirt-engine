@@ -1,5 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.List;
+
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.InstanceTypes;
@@ -21,9 +25,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.List;
-import javax.ws.rs.core.Response;
 
 public class BackendInstanceTypesResource
     extends AbstractBackendCollectionResource<InstanceType, org.ovirt.engine.core.common.businessentities.InstanceType>

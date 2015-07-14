@@ -1,11 +1,11 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.DataType;
 import org.ovirt.engine.core.utils.ConfigUtilsBase;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class VmMapperMockConfigUtils extends ConfigUtilsBase {
     List<ConfigValues> booleanValues = Arrays.asList(

@@ -1,5 +1,13 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.ws.rs.WebApplicationException;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
@@ -8,14 +16,6 @@ import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import javax.ws.rs.WebApplicationException;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.easymock.EasyMock.expect;
 
 public class BackendHostTagResourceTest extends AbstractBackendSubResourceTest<Tag, Tags, BackendHostTagResource> {
     private static final Guid HOST_ID = GUIDS[0];

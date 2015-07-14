@@ -4,9 +4,9 @@ import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
 
 import org.ovirt.engine.api.model.EntityExternalStatus;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.HostProtocol;
 import org.ovirt.engine.api.model.PmProxy;
 import org.ovirt.engine.api.model.PmProxyType;
-import org.ovirt.engine.api.model.HostProtocol;
 
 @ValidatedClass(clazz = Host.class)
 public class HostValidator implements Validator<Host> {

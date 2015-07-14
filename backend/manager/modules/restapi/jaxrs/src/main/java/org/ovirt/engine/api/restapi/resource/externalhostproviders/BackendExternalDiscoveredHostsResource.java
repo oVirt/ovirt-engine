@@ -16,6 +16,8 @@
 
 package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
+import java.util.List;
+
 import org.ovirt.engine.api.model.ExternalDiscoveredHost;
 import org.ovirt.engine.api.model.ExternalDiscoveredHosts;
 import org.ovirt.engine.api.model.ExternalHostProvider;
@@ -26,8 +28,6 @@ import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
-import java.util.List;
 
 public class BackendExternalDiscoveredHostsResource
         extends AbstractBackendCollectionResource<ExternalDiscoveredHost, org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost>

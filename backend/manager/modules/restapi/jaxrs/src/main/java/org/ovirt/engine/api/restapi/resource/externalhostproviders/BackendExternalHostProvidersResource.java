@@ -16,9 +16,9 @@
 
 package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
-import javax.ws.rs.core.Response;
-
 import java.util.List;
+
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.QueryHelper;

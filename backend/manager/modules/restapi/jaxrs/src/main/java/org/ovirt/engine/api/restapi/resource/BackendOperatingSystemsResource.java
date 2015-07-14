@@ -16,6 +16,10 @@
 
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.api.model.OperatingSystemInfo;
 import org.ovirt.engine.api.model.OperatingSystemInfos;
 import org.ovirt.engine.api.resource.OperatingSystemResource;
@@ -26,10 +30,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class BackendOperatingSystemsResource
         extends AbstractBackendCollectionResource<OperatingSystemInfo, Integer>

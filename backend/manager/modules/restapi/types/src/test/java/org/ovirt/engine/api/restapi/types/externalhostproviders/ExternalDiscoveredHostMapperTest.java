@@ -16,10 +16,10 @@
 
 package org.ovirt.engine.api.restapi.types.externalhostproviders;
 
+import static org.ovirt.engine.api.restapi.utils.HexUtils.string2hex;
+
 import org.ovirt.engine.api.model.ExternalDiscoveredHost;
 import org.ovirt.engine.api.restapi.types.AbstractInvertibleMappingTest;
-
-import static org.ovirt.engine.api.restapi.utils.HexUtils.string2hex;
 
 public class ExternalDiscoveredHostMapperTest
         extends AbstractInvertibleMappingTest<

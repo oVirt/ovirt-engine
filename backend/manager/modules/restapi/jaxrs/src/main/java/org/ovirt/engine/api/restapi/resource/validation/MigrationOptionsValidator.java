@@ -1,9 +1,9 @@
 package org.ovirt.engine.api.restapi.resource.validation;
 
+import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
+
 import org.ovirt.engine.api.model.InheritableBoolean;
 import org.ovirt.engine.api.model.MigrationOptions;
-
-import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
 
 @ValidatedClass(clazz = MigrationOptions.class)
 public class MigrationOptionsValidator implements Validator<MigrationOptions> {

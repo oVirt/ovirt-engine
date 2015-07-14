@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -26,8 +25,8 @@ import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
-import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.api.restapi.util.IconHelper;
+import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;

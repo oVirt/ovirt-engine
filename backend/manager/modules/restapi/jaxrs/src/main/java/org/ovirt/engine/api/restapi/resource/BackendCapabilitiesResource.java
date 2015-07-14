@@ -15,7 +15,6 @@ import org.ovirt.engine.api.model.CPUs;
 import org.ovirt.engine.api.model.Capabilities;
 import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.ConfigurationTypes;
-import org.ovirt.engine.api.model.DisplayDisconnectActions;
 import org.ovirt.engine.api.model.ContentTypes;
 import org.ovirt.engine.api.model.CpuMode;
 import org.ovirt.engine.api.model.CpuModes;
@@ -33,6 +32,7 @@ import org.ovirt.engine.api.model.DiskStates;
 import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.DiskStorageType;
 import org.ovirt.engine.api.model.DiskStorageTypes;
+import org.ovirt.engine.api.model.DisplayDisconnectActions;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.DisplayTypes;
 import org.ovirt.engine.api.model.EntityExternalStatus;
@@ -137,8 +137,6 @@ import org.ovirt.engine.api.model.WatchdogAction;
 import org.ovirt.engine.api.model.WatchdogActions;
 import org.ovirt.engine.api.model.WatchdogModel;
 import org.ovirt.engine.api.model.WatchdogModels;
-
-
 import org.ovirt.engine.api.resource.CapabilitiesResource;
 import org.ovirt.engine.api.resource.CapabiliyResource;
 import org.ovirt.engine.api.restapi.model.AuthenticationMethod;

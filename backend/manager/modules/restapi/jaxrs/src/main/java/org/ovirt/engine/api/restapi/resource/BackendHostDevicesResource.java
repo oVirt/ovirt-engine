@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.List;
+
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostDevice;
 import org.ovirt.engine.api.model.HostDevices;
@@ -8,8 +10,6 @@ import org.ovirt.engine.api.resource.HostDevicesResource;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.List;
 
 public class BackendHostDevicesResource
         extends AbstractBackendCollectionResource<HostDevice, org.ovirt.engine.core.common.businessentities.HostDevice>

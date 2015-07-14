@@ -19,9 +19,10 @@ package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 import static org.easymock.EasyMock.expect;
 import static org.ovirt.engine.api.restapi.utils.HexUtils.string2hex;
 
-import javax.ws.rs.WebApplicationException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.ExternalComputeResource;

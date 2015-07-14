@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.List;
+
 import org.ovirt.engine.api.model.Icon;
 import org.ovirt.engine.api.model.Icons;
 import org.ovirt.engine.api.resource.IconResource;
@@ -7,8 +9,6 @@ import org.ovirt.engine.api.resource.IconsResource;
 import org.ovirt.engine.core.common.businessentities.VmIcon;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
-import java.util.List;
 
 public class BackendIconsResource
         extends AbstractBackendCollectionResource<Icon, VmIcon>

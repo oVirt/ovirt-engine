@@ -1,5 +1,13 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.GraphicsConsole;
 import org.ovirt.engine.api.model.GraphicsConsoles;
@@ -17,13 +25,6 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class BackendVmGraphicsConsolesResource
         extends AbstractBackendCollectionResource<GraphicsConsole, org.ovirt.engine.core.common.businessentities.VM>

@@ -6,13 +6,13 @@ import org.ovirt.engine.api.model.BaseDevice;
 import org.ovirt.engine.api.model.BaseDevices;
 import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.api.resource.DevicesResource;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
 
 public abstract class AbstractBackendDevicesResource<D extends BaseDevice, C extends BaseDevices, Q extends IVdcQueryable>
         extends AbstractBackendReadOnlyDevicesResource<D, C, Q>

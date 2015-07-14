@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.resource.AffinityGroupVmResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -8,9 +11,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 
 public class BackendAffinityGroupVmResource
         extends AbstractBackendActionableResource<VM, org.ovirt.engine.core.common.businessentities.VM>

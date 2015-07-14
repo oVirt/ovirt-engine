@@ -1,13 +1,13 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.HostDevice;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
-
-import java.util.Arrays;
 
 public class BackendVmHostDeviceResourceTest
         extends AbstractBackendHostDevicesResourceTest<BackendVmHostDeviceResource, HostDeviceView> {

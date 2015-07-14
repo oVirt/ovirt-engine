@@ -1,9 +1,10 @@
 package org.ovirt.engine.api.restapi.resource;
 
-
 import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResource.SUB_COLLECTIONS;
 
 import java.util.List;
+
+import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.DataCenter;
@@ -27,8 +28,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import javax.ws.rs.core.Response;
 
 public class BackendDataCenterResource extends AbstractBackendSubResource<DataCenter, StoragePool>
         implements DataCenterResource {

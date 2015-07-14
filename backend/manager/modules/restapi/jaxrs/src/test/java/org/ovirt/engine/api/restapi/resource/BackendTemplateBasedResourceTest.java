@@ -1,6 +1,13 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
+import javax.ws.rs.WebApplicationException;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.resource.UpdatableResource;
@@ -10,14 +17,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
-import javax.ws.rs.WebApplicationException;
-import java.util.ArrayList;
-import java.util.List;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-
-
-import static org.easymock.EasyMock.expect;
 
 public abstract class BackendTemplateBasedResourceTest<
         R extends Template,

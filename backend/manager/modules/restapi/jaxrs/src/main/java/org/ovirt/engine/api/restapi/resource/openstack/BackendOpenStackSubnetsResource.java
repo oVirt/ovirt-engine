@@ -16,8 +16,9 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
-import javax.ws.rs.core.Response;
 import java.util.List;
+
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.api.model.OpenStackNetwork;

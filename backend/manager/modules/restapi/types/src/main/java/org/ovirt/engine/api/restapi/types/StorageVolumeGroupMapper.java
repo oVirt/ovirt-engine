@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.types;
 
-import org.ovirt.engine.api.model.VolumeGroup;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageType;
+import org.ovirt.engine.api.model.VolumeGroup;
 
 
 public class StorageVolumeGroupMapper {

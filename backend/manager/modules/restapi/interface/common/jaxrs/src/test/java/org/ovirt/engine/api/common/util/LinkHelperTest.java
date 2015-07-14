@@ -16,36 +16,35 @@
 
 package org.ovirt.engine.api.common.util;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+
 import java.net.URI;
 
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Assert;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Event;
-import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Group;
-import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.utils.LinkHelper;
-
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 
 public class LinkHelperTest extends Assert {
 

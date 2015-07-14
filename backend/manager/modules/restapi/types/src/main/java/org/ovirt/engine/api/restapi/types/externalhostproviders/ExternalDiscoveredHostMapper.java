@@ -16,11 +16,11 @@
 
 package org.ovirt.engine.api.restapi.types.externalhostproviders;
 
-import org.ovirt.engine.api.model.ExternalDiscoveredHost;
-import org.ovirt.engine.api.restapi.types.Mapping;
-
 import static org.ovirt.engine.api.restapi.utils.HexUtils.hex2string;
 import static org.ovirt.engine.api.restapi.utils.HexUtils.string2hex;
+
+import org.ovirt.engine.api.model.ExternalDiscoveredHost;
+import org.ovirt.engine.api.restapi.types.Mapping;
 
 public class ExternalDiscoveredHostMapper {
     @Mapping(from = org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost.class,

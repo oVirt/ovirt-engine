@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.util;
 
+import java.util.List;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DataCenters;
@@ -11,8 +13,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.List;
 
 public class StorageDomainHelper {
 

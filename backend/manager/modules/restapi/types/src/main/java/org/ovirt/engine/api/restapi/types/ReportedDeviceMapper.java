@@ -3,10 +3,10 @@ package org.ovirt.engine.api.restapi.types;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.IP;
 import org.ovirt.engine.api.model.IPs;
 import org.ovirt.engine.api.model.MAC;
+import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.ReportedDeviceType;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;

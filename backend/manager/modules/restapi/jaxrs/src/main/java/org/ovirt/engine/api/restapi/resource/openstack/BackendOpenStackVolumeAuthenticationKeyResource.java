@@ -16,6 +16,8 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKey;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeAuthenticationKeyResource;
@@ -27,8 +29,6 @@ import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import javax.ws.rs.core.Response;
 
 public class BackendOpenStackVolumeAuthenticationKeyResource
         extends AbstractBackendActionableResource<OpenstackVolumeAuthenticationKey, LibvirtSecret>

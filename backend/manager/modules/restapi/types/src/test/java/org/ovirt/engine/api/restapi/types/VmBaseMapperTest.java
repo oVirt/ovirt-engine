@@ -1,9 +1,9 @@
 package org.ovirt.engine.api.restapi.types;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.OriginType;
-
-import static org.junit.Assert.assertEquals;
 
 public class VmBaseMapperTest {
 

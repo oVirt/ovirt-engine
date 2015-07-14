@@ -2,8 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import org.ovirt.engine.api.model.BaseDevice;
 import org.ovirt.engine.api.model.BaseDevices;
-import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
 import org.ovirt.engine.api.resource.CreationResource;
+import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.compat.Guid;
 

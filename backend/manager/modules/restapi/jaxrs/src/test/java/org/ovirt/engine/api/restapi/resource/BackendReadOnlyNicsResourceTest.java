@@ -5,7 +5,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;

@@ -1,5 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ws.rs.WebApplicationException;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
@@ -8,12 +15,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import javax.ws.rs.WebApplicationException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.easymock.EasyMock.expect;
 
 public class BackendTemplateNicResourceTest
         extends AbstractBackendSubResourceTest<NIC, VmNetworkInterface, BackendTemplateNicResource> {

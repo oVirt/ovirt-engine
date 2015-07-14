@@ -4,9 +4,9 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.api.model.DiskProfiles;
+import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.AssignedDiskProfileResource;
 import org.ovirt.engine.api.resource.AssignedDiskProfilesResource;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;

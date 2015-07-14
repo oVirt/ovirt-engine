@@ -2,7 +2,9 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.PermitType;
 import org.ovirt.engine.api.model.Permits;

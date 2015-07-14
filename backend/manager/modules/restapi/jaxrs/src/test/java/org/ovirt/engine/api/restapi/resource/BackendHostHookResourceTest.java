@@ -1,11 +1,11 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Hooks;
-
-import static org.easymock.EasyMock.expect;
 
 public class BackendHostHookResourceTest extends AbstractBackendSubResourceTest<Hook, Object, BackendHostHookResource> {
 

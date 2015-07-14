@@ -16,8 +16,8 @@
 
 package org.ovirt.engine.api.model;
 
-import java.net.URI;
 import java.lang.reflect.Method;
+import java.net.URI;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.core.UriBuilder;

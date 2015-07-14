@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.types;
 
+import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.QoS;
-import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 
 public class CpuProfileMapper {

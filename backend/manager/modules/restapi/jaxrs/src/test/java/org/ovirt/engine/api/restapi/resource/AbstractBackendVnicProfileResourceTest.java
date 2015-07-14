@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import javax.ws.rs.WebApplicationException;
-
 import static org.easymock.EasyMock.expect;
+
+import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.VnicProfile;

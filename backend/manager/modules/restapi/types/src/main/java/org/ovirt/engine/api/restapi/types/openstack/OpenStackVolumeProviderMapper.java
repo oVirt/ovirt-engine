@@ -16,6 +16,9 @@
 
 package org.ovirt.engine.api.restapi.types.openstack;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.model.Properties;
@@ -26,9 +29,6 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class OpenStackVolumeProviderMapper {
     @Mapping(from = OpenStackVolumeProvider.class, to = Provider.class)

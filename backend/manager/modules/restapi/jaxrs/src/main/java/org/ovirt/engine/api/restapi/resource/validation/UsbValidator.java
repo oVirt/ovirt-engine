@@ -1,9 +1,9 @@
 package org.ovirt.engine.api.restapi.resource.validation;
 
+import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
+
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
-
-import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
 
 @ValidatedClass(clazz = Usb.class)
 public class UsbValidator implements Validator<Usb> {

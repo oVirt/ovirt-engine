@@ -16,6 +16,13 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
+import static org.easymock.EasyMock.expect;
+
+import java.util.Collections;
+import java.util.List;
+
+import javax.ws.rs.WebApplicationException;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
@@ -27,13 +34,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
-import javax.ws.rs.WebApplicationException;
-
-import java.util.Collections;
-import java.util.List;
-
-import static org.easymock.EasyMock.expect;
 
 public class BackendOpenStackVolumeProviderResourceTest
         extends AbstractBackendSubResourceTest<OpenStackVolumeProvider, Provider, BackendOpenStackVolumeProviderResource> {

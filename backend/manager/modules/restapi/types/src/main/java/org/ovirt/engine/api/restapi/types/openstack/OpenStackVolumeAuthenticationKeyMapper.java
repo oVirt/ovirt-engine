@@ -16,9 +16,9 @@
 
 package org.ovirt.engine.api.restapi.types.openstack;
 
-import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKeyUsageType;
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKey;
+import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKeyUsageType;
 import org.ovirt.engine.api.restapi.types.DateMapper;
 import org.ovirt.engine.api.restapi.types.Mapping;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;

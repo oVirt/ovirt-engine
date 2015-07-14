@@ -16,6 +16,8 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
+import java.util.List;
+
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.model.OpenStackVolumeType;
 import org.ovirt.engine.api.model.OpenStackVolumeTypes;
@@ -26,8 +28,6 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.List;
 
 public class BackendOpenStackVolumeTypesResource
         extends AbstractBackendCollectionResource<OpenStackVolumeType, CinderVolumeType>

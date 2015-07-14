@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.List;
+
 import org.ovirt.engine.api.model.Image;
 import org.ovirt.engine.api.model.Images;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -10,8 +12,6 @@ import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.List;
 
 
 public class BackendStorageDomainImagesResource

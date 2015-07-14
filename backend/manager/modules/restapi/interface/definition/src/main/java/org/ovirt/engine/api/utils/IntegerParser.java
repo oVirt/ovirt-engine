@@ -1,7 +1,8 @@
 package org.ovirt.engine.api.utils;
 
-import javax.xml.bind.DatatypeConverter;
 import java.math.BigInteger;
+
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * This class contains methods that parse integers from strings checking and avoiding overflows of the corresponding

@@ -17,10 +17,11 @@
 package org.ovirt.engine.api.resource.aaa;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.resource.ApiMediaType;
-import javax.ws.rs.Path;
 
 @Produces( { ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
 public interface DomainResource {

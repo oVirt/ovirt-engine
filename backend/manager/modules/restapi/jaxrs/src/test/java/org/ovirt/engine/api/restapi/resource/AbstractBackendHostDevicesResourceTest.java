@@ -1,14 +1,15 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.Collections;
+import java.util.List;
+
+import javax.ws.rs.core.UriInfo;
+
 import org.ovirt.engine.api.model.HostDevice;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import javax.ws.rs.core.UriInfo;
-import java.util.Collections;
-import java.util.List;
 
 public abstract class AbstractBackendHostDevicesResourceTest<R extends AbstractBackendResource<HostDevice, D>, D extends org.ovirt.engine.core.common.businessentities.HostDevice>
         extends AbstractBackendResourceTest<HostDevice, D> {

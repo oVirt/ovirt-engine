@@ -1,19 +1,19 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import org.junit.Test;
+import static org.easymock.EasyMock.expect;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
+
+import org.junit.Test;
+import org.ovirt.engine.api.model.Application;
+import org.ovirt.engine.api.model.Applications;
 import org.ovirt.engine.api.resource.VmApplicationResource;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.api.model.Application;
-import org.ovirt.engine.api.model.Applications;
-
-import static org.easymock.EasyMock.expect;
 
 public class BackendVmApplicationsResourceTest extends AbstractBackendResourceTest {
 

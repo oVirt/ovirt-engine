@@ -1,5 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStoragePool;
+import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.setUpEntityExpectations;
+import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.verifyModelSpecific;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,18 +11,12 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStoragePool;
-import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.setUpEntityExpectations;
-import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.verifyModelSpecific;
 
 public class BackendStorageDomainVmsResourceTest
     extends AbstractBackendCollectionResourceTest<VM,

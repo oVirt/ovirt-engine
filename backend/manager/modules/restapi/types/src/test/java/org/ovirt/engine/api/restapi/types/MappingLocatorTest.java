@@ -3,7 +3,6 @@ package org.ovirt.engine.api.restapi.types;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.ovirt.engine.api.restapi.test.mappers.api.IBar;
 import org.ovirt.engine.api.restapi.test.mappers.api.IFoo;
 import org.ovirt.engine.api.restapi.test.mappers.impl.BarImpl;

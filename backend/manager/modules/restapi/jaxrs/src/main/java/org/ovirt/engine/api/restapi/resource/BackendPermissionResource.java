@@ -2,6 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.Map;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Permission;
@@ -12,8 +14,6 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import javax.ws.rs.core.Response;
 
 public class BackendPermissionResource
         extends AbstractBackendSubResource<Permission, org.ovirt.engine.core.common.businessentities.Permission>

@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import org.ovirt.engine.api.model.Rate;
 import org.ovirt.engine.api.model.RngDevice;
 import org.ovirt.engine.api.model.RngSource;

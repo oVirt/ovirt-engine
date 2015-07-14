@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.resource.EventResource;
 import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
@@ -8,8 +10,6 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.queries.GetAuditLogByIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import javax.ws.rs.core.Response;
 
 public class BackendEventResource extends AbstractBackendActionableResource<Event, AuditLog> implements EventResource {
     public BackendEventResource(String id) {

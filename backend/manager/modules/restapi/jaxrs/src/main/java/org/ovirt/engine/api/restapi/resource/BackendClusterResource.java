@@ -1,5 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendClustersResource.SUB_COLLECTIONS;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
@@ -23,11 +27,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-
-import static org.ovirt.engine.api.restapi.resource.BackendClustersResource.SUB_COLLECTIONS;
 
 public class BackendClusterResource<P extends BackendClustersResource>
         extends AbstractBackendActionableResource<Cluster, VDSGroup> implements ClusterResource {

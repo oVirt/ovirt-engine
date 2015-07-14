@@ -16,12 +16,12 @@ limitations under the License.
 
 package org.ovirt.engine.api.utils;
 
-import org.junit.Test;
+import static junit.framework.TestCase.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.TestCase.assertEquals;
+import org.junit.Test;
 
 public class BooleanParserTest {
     /**

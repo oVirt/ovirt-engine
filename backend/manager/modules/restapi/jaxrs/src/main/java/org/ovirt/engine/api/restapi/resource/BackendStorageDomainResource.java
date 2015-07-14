@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.ovirt.engine.api.common.util.StatusUtils;
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.LogicalUnit;
@@ -33,7 +34,6 @@ import org.ovirt.engine.api.resource.StorageDomainContentsResource;
 import org.ovirt.engine.api.resource.StorageDomainResource;
 import org.ovirt.engine.api.resource.StorageDomainServerConnectionsResource;
 import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
-import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;

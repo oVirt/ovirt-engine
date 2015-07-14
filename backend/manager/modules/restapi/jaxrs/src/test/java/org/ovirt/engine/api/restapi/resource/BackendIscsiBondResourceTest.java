@@ -1,13 +1,13 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.WebApplicationException;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.IscsiBond;
 import org.ovirt.engine.core.common.action.RemoveIscsiBondParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
-import javax.ws.rs.WebApplicationException;
 
 public class BackendIscsiBondResourceTest
     extends AbstractBackendSubResourceTest<IscsiBond, org.ovirt.engine.core.common.businessentities.IscsiBond, BackendIscsiBondResource> {

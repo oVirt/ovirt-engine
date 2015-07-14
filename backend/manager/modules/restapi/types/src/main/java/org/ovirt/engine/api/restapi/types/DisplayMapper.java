@@ -1,14 +1,14 @@
 package org.ovirt.engine.api.restapi.types;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class DisplayMapper {
 

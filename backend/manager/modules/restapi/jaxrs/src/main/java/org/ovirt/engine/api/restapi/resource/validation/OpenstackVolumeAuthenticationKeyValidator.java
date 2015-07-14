@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource.validation;
 
 import org.ovirt.engine.api.common.util.EnumValidator;
-import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKeyUsageType;
 import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKey;
+import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKeyUsageType;
 
 @ValidatedClass(clazz = OpenstackVolumeAuthenticationKey.class)
 public class OpenstackVolumeAuthenticationKeyValidator implements Validator<OpenstackVolumeAuthenticationKey> {

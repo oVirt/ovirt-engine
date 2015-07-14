@@ -1,10 +1,10 @@
 package org.ovirt.engine.api.restapi.resource.validation;
 
+import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
+
 import org.ovirt.engine.api.model.NfsVersion;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageType;
-
-import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
 
 
 @ValidatedClass(clazz = StorageConnection.class)

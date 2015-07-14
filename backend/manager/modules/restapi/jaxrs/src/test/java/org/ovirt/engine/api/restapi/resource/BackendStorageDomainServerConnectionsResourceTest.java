@@ -5,6 +5,9 @@ import static org.easymock.EasyMock.expect;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Host;
@@ -16,9 +19,6 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 
 public class BackendStorageDomainServerConnectionsResourceTest extends AbstractBackendCollectionResourceTest<StorageConnection, StorageServerConnections, BackendStorageDomainServerConnectionsResource> {
     protected static final StorageType STORAGE_TYPES_MAPPED[] = {

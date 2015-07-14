@@ -16,17 +16,17 @@
 
 package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
+import static org.easymock.EasyMock.expect;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.api.model.ExternalDiscoveredHost;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTest;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.easymock.EasyMock.expect;
 
 public class BackendExternalDiscoveredHostsResourceTest
         extends AbstractBackendCollectionResourceTest<

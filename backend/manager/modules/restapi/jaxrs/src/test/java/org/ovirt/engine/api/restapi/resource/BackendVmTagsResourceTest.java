@@ -1,9 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import org.ovirt.engine.core.common.queries.GetTagsByVmIdParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.queries.GetTagsByVmIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendVmTagsResourceTest extends AbstractBackendAssignedTagsResourceTest<BackendVmTagsResource> {
     public BackendVmTagsResourceTest() {

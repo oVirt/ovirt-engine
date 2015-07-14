@@ -11,7 +11,6 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;

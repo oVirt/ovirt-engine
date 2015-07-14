@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendDataCenterResource.getStoragePool;
+
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -19,8 +21,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.ovirt.engine.api.restapi.resource.BackendDataCenterResource.getStoragePool;
 
 public class BackendClustersResource extends AbstractBackendCollectionResource<Cluster, VDSGroup>
         implements ClustersResource {

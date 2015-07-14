@@ -1,11 +1,11 @@
 package org.ovirt.engine.api.resource;
 
-import org.ovirt.engine.api.model.GraphicsConsole;
-
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+
+import org.ovirt.engine.api.model.GraphicsConsole;
 
 public interface VmGraphicsConsoleResource {
 

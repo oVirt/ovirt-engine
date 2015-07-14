@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.WatchDog;
 import org.ovirt.engine.api.model.WatchDogs;
 import org.ovirt.engine.api.resource.WatchdogResource;
@@ -7,8 +9,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.compat.Guid;
-
-import javax.ws.rs.core.Response;
 
 public class BackendWatchdogResource extends BackendDeviceResource<WatchDog, WatchDogs, VmWatchdog> implements WatchdogResource {
 

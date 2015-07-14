@@ -1,5 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.List;
+
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageConnections;
 import org.ovirt.engine.api.resource.StorageDomainServerConnectionResource;
@@ -10,9 +14,6 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import javax.ws.rs.core.Response;
-import java.util.List;
 
 public class BackendStorageDomainServerConnectionsResource extends AbstractBackendCollectionResource<StorageConnection, StorageServerConnections> implements StorageDomainServerConnectionsResource {
 

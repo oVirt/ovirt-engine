@@ -1,10 +1,10 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-
-import javax.ws.rs.core.Response;
 
 public abstract class AbstractBackendNetworkResource
     extends AbstractBackendSubResource<Network, org.ovirt.engine.core.common.businessentities.network.Network> {

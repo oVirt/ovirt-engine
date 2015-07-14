@@ -1,24 +1,22 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.same;
+import static org.ovirt.engine.api.restapi.resource.BackendStatisticsResourceTest.STATISTICS;
+import static org.ovirt.engine.api.restapi.resource.BackendStatisticsResourceTest.getPrototype;
+import static org.ovirt.engine.api.restapi.resource.BackendStatisticsResourceTest.verify;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import javax.ws.rs.WebApplicationException;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.same;
-import static org.easymock.EasyMock.expect;
-
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.core.common.businessentities.VDS;
-
-import static org.ovirt.engine.api.restapi.resource.BackendStatisticsResourceTest.getPrototype;
-import static org.ovirt.engine.api.restapi.resource.BackendStatisticsResourceTest.verify;
-import static org.ovirt.engine.api.restapi.resource.BackendStatisticsResourceTest.STATISTICS;
 
 public class BackendStatisticResourceTest extends AbstractBackendSubResourceTest<Statistic, VDS, BackendStatisticResource<Host, VDS>> {
 

@@ -1,12 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendNetworksResourceTest.setUpEntityExpectations;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Ignore;
 import org.ovirt.engine.api.model.Network;
-
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendNetworksResourceTest.setUpEntityExpectations;
 
 @Ignore
 public class AbstractBackendNetworkResourceTest<N extends AbstractBackendNetworkResource> extends

@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.List;
 
 import org.ovirt.engine.api.model.DiskSnapshot;
 import org.ovirt.engine.api.model.DiskSnapshots;
@@ -10,8 +11,6 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.List;
 
 public class BackendStorageDomainDiskSnapshotsResource
         extends AbstractBackendCollectionResource<DiskSnapshot, Disk>

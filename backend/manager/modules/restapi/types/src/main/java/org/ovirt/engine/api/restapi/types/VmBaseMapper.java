@@ -1,19 +1,22 @@
 package org.ovirt.engine.api.restapi.types;
 
+import static org.ovirt.engine.api.restapi.types.IntegerMapper.mapMinusOneToNull;
+import static org.ovirt.engine.api.restapi.types.IntegerMapper.mapNullToMinusOne;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Bios;
 import org.ovirt.engine.api.model.BootMenu;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
-import org.ovirt.engine.api.model.DisplayDisconnectAction;
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.CustomProperties;
+import org.ovirt.engine.api.model.DisplayDisconnectAction;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.HighAvailability;
 import org.ovirt.engine.api.model.IO;
-import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Icon;
+import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.VmBase;
@@ -23,9 +26,6 @@ import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.UsbMapperUtils;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.OriginType;
-
-import static org.ovirt.engine.api.restapi.types.IntegerMapper.mapMinusOneToNull;
-import static org.ovirt.engine.api.restapi.types.IntegerMapper.mapNullToMinusOne;
 
 public class VmBaseMapper {
     protected static final int BYTES_PER_MB = 1024 * 1024;

@@ -1,20 +1,19 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-
-import static org.easymock.EasyMock.expect;
-
 import org.ovirt.engine.api.model.Creation;
 import org.ovirt.engine.api.model.CreationStatus;
-import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
+import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;

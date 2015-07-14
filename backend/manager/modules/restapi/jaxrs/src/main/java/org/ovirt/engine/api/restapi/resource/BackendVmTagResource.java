@@ -1,5 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.List;
+
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.resource.AssignedTagResource;
@@ -9,9 +13,6 @@ import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.GetTagsByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import javax.ws.rs.core.Response;
-import java.util.List;
 
 public class BackendVmTagResource extends AbstractBackendSubResource<Tag, Tags> implements AssignedTagResource {
     private Guid vmId;

@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Session;
@@ -10,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import static org.easymock.EasyMock.expect;
 
 public class BackendVmSessionsResourceTest extends AbstractBackendResourceTest<Session, VM> {
 
