@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -44,9 +43,6 @@ public class AddExistingBlockStorageDomainCommandTest {
     );
 
     @Mock
-    private DbFacade dbFacade;
-
-    @Mock
     private StorageDomainStaticDao storageDomainStaticDao;
 
     @Before
@@ -54,7 +50,6 @@ public class AddExistingBlockStorageDomainCommandTest {
         parameters = new StorageDomainManagementParameter(getStorageDomain());
         parameters.setVdsId(Guid.newGuid());
         command = spy(new AddExistingBlockStorageDomainCommand<>(parameters));
-        doReturn(dbFacade).when(command).getDbFacade();
         doReturn(storageDomainStaticDao).when(command).getStorageDomainStaticDao();
 
         doNothing().when(command).addStorageDomainInDb();
