@@ -124,12 +124,12 @@ public class StorageDomainToPoolRelationValidatorTest {
         storageDomain.setStorageType(StorageType.ISCSI);
         for (Version version : Version.ALL) {
             if (version.compareTo(Version.v3_0) >= 0) { // No reason to test unsupported versions
-                testAddingMixedTypes(version, FeatureSupported.mixedDomainTypesOnDataCenter(version));
+                assertAddingMixedTypes(version, FeatureSupported.mixedDomainTypesOnDataCenter(version));
             }
         }
     }
 
-    private void testAddingMixedTypes(Version version, boolean addingMixedTypesShouldSucceed) {
+    private void assertAddingMixedTypes(Version version, boolean addingMixedTypesShouldSucceed) {
         storagePool.setCompatibilityVersion(version);
 
         ValidationResult attachDomainResult = validator.validateDomainCanBeAttachedToPool();
