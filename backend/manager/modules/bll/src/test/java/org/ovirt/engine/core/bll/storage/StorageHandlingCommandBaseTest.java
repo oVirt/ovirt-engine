@@ -8,8 +8,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -44,10 +43,7 @@ public class StorageHandlingCommandBaseTest {
     @Mock
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
-    List<StorageDomain> attachedDomains = new ArrayList<StorageDomain>();
-
     StoragePool storagePool;
-    List<StoragePoolIsoMap> isoMap = new ArrayList<>();
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -78,10 +74,10 @@ public class StorageHandlingCommandBaseTest {
         when(storagePoolDao.get(storagePool.getId())).thenReturn(storagePool);
 
         doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
-        when(storageDomainDao.getAllForStoragePool(storagePool.getId())).thenReturn(attachedDomains);
+        when(storageDomainDao.getAllForStoragePool(storagePool.getId())).thenReturn(Collections.<StorageDomain>emptyList());
 
         doReturn(storagePoolIsoMapDao).when(cmd).getStoragePoolIsoMapDao();
-        when(storagePoolIsoMapDao.getAllForStorage(any(Guid.class))).thenReturn(isoMap);
+        when(storagePoolIsoMapDao.getAllForStorage(any(Guid.class))).thenReturn(Collections.<StoragePoolIsoMap>emptyList());
     }
 
     public void initCommand() {
