@@ -294,8 +294,8 @@ public class VmsMonitoring {
 
     private void importHostedEngineVM(Map vmStruct) {
         VM vm = VdsBrokerObjectsBuilder.buildVmsDataFromExternalProvider(vmStruct);
-        vm.setImages(VdsBrokerObjectsBuilder.BuildDiskImagesFromDevices(vmStruct));
-        vm.setInterfaces(VdsBrokerObjectsBuilder.BuildVmNetworkInterfacesFromDevices(vmStruct));
+        vm.setImages(VdsBrokerObjectsBuilder.buildDiskImagesFromDevices(vmStruct));
+        vm.setInterfaces(VdsBrokerObjectsBuilder.buildVmNetworkInterfacesFromDevices(vmStruct));
         for (DiskImage diskImage : vm.getImages()) {
             vm.getDiskMap().put(Guid.newGuid(), diskImage);
         }
