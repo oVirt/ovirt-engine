@@ -82,7 +82,8 @@ public class HostedEngineImporter {
             }
         } else {
             if (sd == null) {
-                log.debug("Skip trying to import the Hosted Engine VM. Storage Domain '{}' doesn't exist", sd);
+                log.debug("Skip trying to import the Hosted Engine VM. Storage Domain '{}' doesn't exist",
+                        Config.<String>getValue(ConfigValues.HostedEngineStorageDomainName));
                 auditLogDirector.log(new AuditLogableBase(), AuditLogType.HOSTED_ENGINE_SD_NOT_EXIT);
             } else {
                 log.debug("Skip trying to import the Hosted Engine VM. Storage Domain '{}' isn't ACTIVE", sd);
