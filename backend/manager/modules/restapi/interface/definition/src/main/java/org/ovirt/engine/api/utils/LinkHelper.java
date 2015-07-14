@@ -157,6 +157,8 @@ import org.ovirt.engine.api.resource.FileResource;
 import org.ovirt.engine.api.resource.FilesResource;
 import org.ovirt.engine.api.resource.FilterResource;
 import org.ovirt.engine.api.resource.FiltersResource;
+import org.ovirt.engine.api.resource.GraphicsConsoleResource;
+import org.ovirt.engine.api.resource.GraphicsConsolesResource;
 import org.ovirt.engine.api.resource.HostDeviceResource;
 import org.ovirt.engine.api.resource.HostDevicesResource;
 import org.ovirt.engine.api.resource.HostHookResource;
@@ -229,7 +231,6 @@ import org.ovirt.engine.api.resource.VmApplicationsResource;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.resource.VmGraphicsConsoleResource;
-import org.ovirt.engine.api.resource.VmGraphicsConsolesResource;
 import org.ovirt.engine.api.resource.VmHostDeviceResource;
 import org.ovirt.engine.api.resource.VmHostDevicesResource;
 import org.ovirt.engine.api.resource.VmNicResource;
@@ -346,7 +347,13 @@ public class LinkHelper {
         map.add(DeviceResource.class, DevicesResource.class, VM.class);
         TYPES.put(CdRom.class, map);
 
-        map = new ParentToCollectionMap(VmGraphicsConsoleResource.class, VmGraphicsConsolesResource.class, VM.class);
+        map = new ParentToCollectionMap(VmGraphicsConsoleResource.class, GraphicsConsolesResource.class, VM.class);
+        TYPES.put(GraphicsConsole.class, map);
+
+        map = new ParentToCollectionMap(GraphicsConsoleResource.class, GraphicsConsolesResource.class, Template.class);
+        TYPES.put(GraphicsConsole.class, map);
+
+        map = new ParentToCollectionMap(GraphicsConsoleResource.class, GraphicsConsolesResource.class, InstanceType.class);
         TYPES.put(GraphicsConsole.class, map);
 
         map = new ParentToCollectionMap(VmApplicationResource.class, VmApplicationsResource.class, VM.class);

@@ -37,4 +37,7 @@ public interface InstanceTypeResource extends UpdatableResource<InstanceType>, A
     @Path("watchdogs")
     public WatchdogsResource getWatchdogsResource();
 
+    @Path("graphicsconsoles")
+    public GraphicsConsolesResource getGraphicsConsolesResource();
+
 }

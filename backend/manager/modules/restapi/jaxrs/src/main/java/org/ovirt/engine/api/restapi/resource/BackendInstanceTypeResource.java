@@ -12,6 +12,7 @@ import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.VirtIOSCSI;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DevicesResource;
+import org.ovirt.engine.api.resource.GraphicsConsolesResource;
 import org.ovirt.engine.api.resource.InstanceTypeResource;
 import org.ovirt.engine.api.resource.WatchdogsResource;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
@@ -34,7 +35,7 @@ public class BackendInstanceTypeResource
     extends AbstractBackendActionableResource<InstanceType, org.ovirt.engine.core.common.businessentities.InstanceType>
     implements InstanceTypeResource {
 
-    static final String[] SUB_COLLECTIONS = { "nics", "watchdogs" };
+    static final String[] SUB_COLLECTIONS = { "nics", "watchdogs", "graphicsconsoles" };
 
     public BackendInstanceTypeResource(String id) {
         super(id, InstanceType.class, org.ovirt.engine.core.common.businessentities.InstanceType.class, SUB_COLLECTIONS);
@@ -115,6 +116,11 @@ public class BackendInstanceTypeResource
                 VdcQueryType.GetConsoleDevices,
                 new IdQueryParameters(id),
                 "GetConsoleDevices", true);
+    }
+
+    @Override
+    public GraphicsConsolesResource getGraphicsConsolesResource() {
+        return inject(new BackendInstanceTypeGraphicsConsolesResource(guid));
     }
 
     protected class UpdateParametersProvider implements ParametersProvider<InstanceType, org.ovirt.engine.core.common.businessentities.InstanceType> {

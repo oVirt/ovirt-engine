@@ -2699,6 +2699,18 @@ actions:
           permission.group.id: xs:string
           permission.role.id|name: xs:string
         description: add a new role permission on the template
+- name: /templates/{template:id}/graphicsconsoles|rel=get
+  description: Get graphics consoles of a template.
+- name: /templates/{template:id}/graphicsconsoles|rel=add
+  description: add a graphics console to a template
+  request:
+    body:
+      parameterType: GraphicsConsole
+      signatures:
+      - mandatoryArguments:
+          graphics_console.protocol: xs:string
+- name: /templates/{template:id}/graphicsconsoles/{graphicsconsole:id}|rel=delete
+  description: delete the graphics console for a template identified by the given id
 - name: /templates/{template:id}/tags|rel=get
   description: get the list of tags added to the template
 - name: /templates/{template:id}/tags/{tag:id}|rel=get
@@ -3410,6 +3422,18 @@ actions:
           instance_type.custom_emulated_machine: xs:string
           instance_type.custom_cpu_model: xs:string
         description: add a new instance type to the system
+- name: /instancetypes/{instancetype:id}/graphicsconsoles|rel=get
+  description: Get graphics consoles of an instance type.
+- name: /instancetypes/{instancetype:id}/graphicsconsoles|rel=add
+  description: add a graphics console to an instance type
+  request:
+    body:
+      parameterType: GraphicsConsole
+      signatures:
+      - mandatoryArguments:
+          graphics_console.protocol: xs:string
+- name: /instancetypes/{instancetype:id}/graphicsconsoles/{graphicsconsole:id}|rel=delete
+  description: delete the graphics console for an instance type identified by the given id
 
 - name: /clusters/{cluster:id}/affinitygroups|rel=get
   description: get the list of affinity groups in the cluster

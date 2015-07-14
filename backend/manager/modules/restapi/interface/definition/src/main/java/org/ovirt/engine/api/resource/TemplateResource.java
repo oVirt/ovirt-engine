@@ -65,4 +65,7 @@ public interface TemplateResource extends UpdatableResource<Template>, Asynchron
     @Path("watchdogs")
     public WatchdogsResource getWatchdogsResource();
 
+    @Path("graphicsconsoles")
+    public GraphicsConsolesResource getGraphicsConsolesResource();
+
 }

@@ -3163,6 +3163,8 @@
         <xs:extension base="BaseResource">
           <xs:sequence>
             <xs:element ref="vm" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="template" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="instance_type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="protocol" type="xs:string" minOccurs="0" maxOccurs="1"/>
             <xs:element name="port" type="xs:int" minOccurs="0" maxOccurs="1"/>
             <xs:element name="tls_port" type="xs:int" minOccurs="0" maxOccurs="1"/>

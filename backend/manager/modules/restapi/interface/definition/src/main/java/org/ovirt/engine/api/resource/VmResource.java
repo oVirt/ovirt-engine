@@ -191,7 +191,7 @@ public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreated
     public KatelloErrataResource getKatelloErrataResource();
 
     @Path("graphicsconsoles")
-    public VmGraphicsConsolesResource getVmGraphicsConsolesResource();
+    public GraphicsConsolesResource getVmGraphicsConsolesResource();
 
     @Path("hostdevices")
     public VmHostDevicesResource getVmHostDevicesResource();

@@ -31,11 +31,11 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DevicesResource;
+import org.ovirt.engine.api.resource.GraphicsConsolesResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmApplicationsResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
-import org.ovirt.engine.api.resource.VmGraphicsConsolesResource;
 import org.ovirt.engine.api.resource.VmHostDevicesResource;
 import org.ovirt.engine.api.resource.VmNicsResource;
 import org.ovirt.engine.api.resource.VmNumaNodesResource;
@@ -701,7 +701,7 @@ public class BackendVmResource extends
     }
 
     @Override
-    public VmGraphicsConsolesResource getVmGraphicsConsolesResource() {
+    public GraphicsConsolesResource getVmGraphicsConsolesResource() {
         return inject(new BackendVmGraphicsConsolesResource(guid));
     }
 

@@ -12,13 +12,13 @@ import org.ovirt.engine.api.model.GraphicsConsole;
 import org.ovirt.engine.api.model.GraphicsConsoles;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-public interface VmGraphicsConsolesResource {
+public interface GraphicsConsolesResource {
 
     @GET
     public GraphicsConsoles list();
 
     @Path("{iden}")
-    public VmGraphicsConsoleResource getVmGraphicsConsoleResource(@PathParam("iden") String id);
+    public GraphicsConsoleResource getGraphicsConsoleResource(@PathParam("iden") String id);
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})

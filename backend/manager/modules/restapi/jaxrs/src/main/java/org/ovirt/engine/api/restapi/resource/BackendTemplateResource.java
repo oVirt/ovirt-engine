@@ -17,6 +17,7 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DevicesResource;
+import org.ovirt.engine.api.resource.GraphicsConsolesResource;
 import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
 import org.ovirt.engine.api.resource.TemplateDisksResource;
 import org.ovirt.engine.api.resource.TemplateResource;
@@ -46,7 +47,7 @@ public class BackendTemplateResource
     extends AbstractBackendActionableResource<Template, VmTemplate>
     implements TemplateResource {
 
-    static final String[] SUB_COLLECTIONS = {"disks", "nics", "cdroms", "tags", "permissions", "watchdogs"};
+    static final String[] SUB_COLLECTIONS = {"disks", "nics", "cdroms", "tags", "permissions", "watchdogs", "graphicsconsoles"};
 
     public BackendTemplateResource(String id) {
         super(id, Template.class, VmTemplate.class, SUB_COLLECTIONS);
@@ -206,6 +207,11 @@ public class BackendTemplateResource
         return inject(new BackendTemplateWatchdogsResource(guid,
                 VdcQueryType.GetWatchdog,
                 new IdQueryParameters(guid)));
+    }
+
+    @Override
+    public GraphicsConsolesResource getGraphicsConsolesResource() {
+        return inject(new BackendTemplateGraphicsConsolesResource(guid));
     }
 
     private List<String> getConsoleDevicesForEntity(Guid id) {
