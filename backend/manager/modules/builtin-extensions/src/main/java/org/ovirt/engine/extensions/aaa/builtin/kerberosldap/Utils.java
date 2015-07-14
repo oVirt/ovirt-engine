@@ -85,7 +85,7 @@ public class Utils {
 
     public static synchronized void handleApplicationInit(String applicationName) throws Exception {
         if (firstCallToInit) {
-            if (applicationName.equals(Base.ApplicationNames.OVIRT_ENGINE_AAA_EXTENSION_TOOL)) {
+            if (applicationName.equals(Base.ApplicationNames.OVIRT_ENGINE_EXTENSIONS_TOOL)) {
                 Configuration.getConfiguration().refresh();
                 DirectoryManager.setObjectFactoryBuilder(new DirectoryContextFactoryBuilder());
             }

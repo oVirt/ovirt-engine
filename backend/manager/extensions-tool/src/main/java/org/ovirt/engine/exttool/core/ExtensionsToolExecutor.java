@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.extensions.mgr.ExtensionsManager;
@@ -100,6 +101,10 @@ public class ExtensionsToolExecutor {
 
     private static void loadExtensions(ModuleService moduleService, Map<String, Object> argMap) {
         ExtensionsManager extensionsManager = new ExtensionsManager();
+        extensionsManager.getGlobalContext().put(
+            Base.GlobalContextKeys.APPLICATION_NAME,
+            Base.ApplicationNames.OVIRT_ENGINE_EXTENSIONS_TOOL
+        );
         moduleService.getContext().put(ModuleService.EXTENSION_MANAGER, extensionsManager);
 
         Map<String, ExtensionProxy> proxies = moduleService.getContext().get(ModuleService.EXTENSIONS_MAP);

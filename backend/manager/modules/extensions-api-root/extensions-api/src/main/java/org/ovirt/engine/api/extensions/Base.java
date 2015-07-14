@@ -171,7 +171,7 @@ public class Base {
      */
     public static class ApplicationNames {
         public static final String OVIRT_ENGINE = "ovirt-engine";
-        public static final String OVIRT_ENGINE_AAA_EXTENSION_TOOL = "ovirt-engine-aaa-extension-tool";
+        public static final String OVIRT_ENGINE_EXTENSIONS_TOOL = "ovirt-engine-extensions-tool";
     }
 
     /**
