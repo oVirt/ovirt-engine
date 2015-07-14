@@ -267,4 +267,17 @@ public class StorageDomainToPoolRelationValidatorTest {
                             EngineMessage.ERROR_CANNOT_ATTACH_MORE_THAN_ONE_EXPORT_DOMAIN));
         }
     }
+
+    @Test
+    public void testIsStorageDomainNotInAnyPoolSucceed() {
+        assertThat(validator.isStorageDomainNotInAnyPool(), isValid());
+    }
+
+    @Test
+    public void testIsStorageDomainNotInAnyPoolFailure() {
+        when(storagePoolIsoMapDao.getAllForStorage(storageDomain.getId())).
+                thenReturn(Collections.singletonList(new StoragePoolIsoMap()));
+        assertThat(validator.isStorageDomainNotInAnyPool(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL));
+    }
 }
