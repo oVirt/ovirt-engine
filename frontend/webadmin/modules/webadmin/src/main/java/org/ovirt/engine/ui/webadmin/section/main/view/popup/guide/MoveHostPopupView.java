@@ -77,7 +77,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
     }
 
     private void initTable() {
-        table = new EntityModelCellTable<>(true);
+        table = new EntityModelCellTable<>(true, false, true);
         table.setWidth("100%", true); //$NON-NLS-1$
 
         AbstractTextColumn<MoveHostData> nameColumn = new AbstractTextColumn<MoveHostData>() {
