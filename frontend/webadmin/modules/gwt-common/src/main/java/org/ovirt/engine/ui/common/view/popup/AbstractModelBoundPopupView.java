@@ -69,26 +69,47 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
         return new ProgressPopupContent();
     }
 
+    /**
+     * Hook bound to "Title" property change on given model.
+     */
     @Override
     public void setTitle(String title) {
         asWidget().setHeader(new Label(title));
     }
 
+    /**
+     * Hook bound to "Message" property change on given model.
+     */
     @Override
     public void setMessage(String message) {
         // No-op, override as necessary
     }
 
+    /**
+     * Hook bound to "Items" property change on given model.
+     * <p>
+     * Called only if the model is a {@code ListModel}.
+     */
     @Override
     public void setItems(Iterable<?> items) {
         // No-op, override as necessary
     }
 
+    /**
+     * Hook bound to "HashName" property change on given model.
+     */
     @Override
     public void setHashName(String name) {
         this.hashName = name;
     }
 
+    /**
+     * Hook bound to "HelpTag" property change on given model.
+     * <p>
+     * Called only if the model's {@linkplain Model#getOpenDocumentationCommand Open
+     * Documentation command} (open context-sensitive help) is available, passing it
+     * as a parameter.
+     */
     @Override
     public void setHelpCommand(UICommand command) {
         asWidget().setHelpCommand(command);
@@ -142,6 +163,15 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
         focusInput();
     }
 
+    /**
+     * Hook for setting initial focus when the View becomes visible.
+     * <p>
+     * For example:
+     *
+     * <pre>
+     *  userNameWidget.setFocus(true);
+     * </pre>
+     */
     @Override
     public void focusInput() {
         // No-op, override as necessary
@@ -171,6 +201,21 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
         return hashName;
     }
 
+    /**
+     * Hook for assigning tab index to widgets contained in the View.
+     * <p>
+     * For example:
+     *
+     * <pre>
+     *  userNameWidget.setTabIndex(nextTabIndex++);
+     *  passwordWidget.setTabIndex(nextTabIndex++);
+     *  return nextTabIndex;
+     * </pre>
+     *
+     * @param nextTabIndex
+     *            Currently available tab index value.
+     * @return Next available tab index value.
+     */
     @Override
     public int setTabIndexes(int nextTabIndex) {
         // No-op, override as necessary
@@ -188,6 +233,23 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
         }
     }
 
+    /**
+     * Hook for initializing the View from given model.
+     * <p>
+     * Called once per model instance, before the initial {@link #edit}
+     * call that fills the View with model's current data.
+     * <p>
+     * This is the right place for any model-specific (one-time) event
+     * handler registration or initialization logic, for example:
+     *
+     * <pre>
+     *  model.getFoo().getPropertyChangedEvent().addListener( ... );
+     *  model.getBar().getEntityChangedEvent().addListener( ... );
+     * </pre>
+     *
+     * @param model
+     *            Model instance assigned to the View.
+     */
     @Override
     public void init(T model) {
         // No-op, override as necessary

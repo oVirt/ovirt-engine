@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
 import org.ovirt.engine.ui.uicommonweb.models.GridController;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
+
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.TableCellElement;
@@ -39,6 +40,12 @@ import com.google.gwt.view.client.ProvidesKey;
  * A {@link CellTable} that supports resizing its columns using mouse.
  * <p>
  * Column resize feature is disabled by default, use {@link #enableColumnResizing} to enable it.
+ * <p>
+ * Use {@link #initModelSortHandler} method to configure column sorting that works with:
+ * <ul>
+ *  <li>{@link SortedListModel} - client-side sorting
+ *  <li>{@link SearchableListModel} - client-side or server-side sorting
+ * </ul>
  *
  * @param <T>
  *            Table row data type.
@@ -368,6 +375,17 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
         applyHeaderStyle = false;
     }
 
+    /**
+     * Adds column sort handler that works with {@link SortedListModel} (client-side sorting)
+     * or {@link SearchableListModel} (client-side or server-side sorting).
+     * <p>
+     * The sort handler ensures that column sort definition ({@linkplain SortableColumn#getComparator
+     * comparator} for client-side sorting, {@linkplain SortableColumn#getSortBy sortBy} for server-side
+     * sorting) is propagated to the given model, causing model's item collection to be updated.
+     *
+     * @param sortedModel
+     *            Model for which to configure column sorting.
+     */
     @SuppressWarnings("unchecked")
     public void initModelSortHandler(final SortedListModel<T> sortedModel) {
         final SearchableListModel<?, T> searchableModel = (sortedModel instanceof SearchableListModel)
@@ -418,10 +436,20 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
         });
     }
 
+    /**
+     * Mark a {@linkplain ColumnSortInfo#getColumn column} as sorted.
+     *
+     * @see #getColumnSortList
+     */
     protected void pushColumnSort(ColumnSortInfo columnSortInfo) {
         getColumnSortList().push(columnSortInfo);
     }
 
+    /**
+     * Mark all columns as un-sorted.
+     *
+     * @see #getColumnSortList
+     */
     protected void clearColumnSort() {
         getColumnSortList().clear();
     }
