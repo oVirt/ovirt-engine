@@ -9,10 +9,8 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.fails
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -66,7 +64,7 @@ public class StorageDomainToPoolRelationValidatorTest {
         storagePool.setId(Guid.newGuid());
         storagePool.setCompatibilityVersion(Version.v3_5);
 
-        when(storagePoolIsoMapDao.getAllForStorage(any(Guid.class))).thenReturn(new ArrayList<StoragePoolIsoMap>());
+        when(storagePoolIsoMapDao.getAllForStorage(any(Guid.class))).thenReturn(Collections.<StoragePoolIsoMap>emptyList());
         spyValidator();
     }
 
@@ -223,9 +221,7 @@ public class StorageDomainToPoolRelationValidatorTest {
 
     @Test
     public void testAttachFailDomainAlreadyInPool() {
-        List<StoragePoolIsoMap> isoMap = new ArrayList<>();
-        isoMap.add(new StoragePoolIsoMap());
-        when(storagePoolIsoMapDao.getAllForStorage(any(Guid.class))).thenReturn(isoMap);
+        when(storagePoolIsoMapDao.getAllForStorage(any(Guid.class))).thenReturn(Collections.singletonList(new StoragePoolIsoMap()));
 
         ValidationResult attachedDomainInsertionResult = validator.validateDomainCanBeAttachedToPool();
         assertThat(attachedDomainInsertionResult,
@@ -263,11 +259,9 @@ public class StorageDomainToPoolRelationValidatorTest {
             spyValidator();
 
             // Make the pool to have already a domain with the same type of the domain we want to attach.
-            ArrayList<StorageDomain> domainList = new ArrayList<>();
             StorageDomain domainWithSameType = new StorageDomain();
             domainWithSameType.setStorageDomainType(type);
-            domainList.add(domainWithSameType);
-            when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(domainList);
+            when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.singletonList(domainWithSameType));
 
             ValidationResult attachMultipleISOOrExportResult = validator.validateDomainCanBeAttachedToPool();
             assertThat("Attaching domain of type " + type + " succeeded though another domain of the same type already exists in the pool",
