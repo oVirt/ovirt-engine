@@ -60,8 +60,6 @@ select fn_db_add_config_value('BootstrapMinimalVdsmVersion','4.9','general');
 select fn_db_add_config_value('CpuPinMigrationEnabled','true','general');
 select fn_db_add_config_value('CpuPinningEnabled','false','3.0');
 select fn_db_add_config_value('AdminDomain','internal','general');
-select fn_db_add_config_value('AdminPassword','','general');
-select fn_db_add_config_value('AdminUser','admin','general');
 select fn_db_add_config_value('AdUserId','','general');
 select fn_db_add_config_value('AdUserName','','general');
 select fn_db_add_config_value('AdUserPassword','','general');
@@ -946,6 +944,8 @@ select fn_db_update_default_config_value('GlusterStorageDeviceListMountPointsToI
 ------------------------------------------------------------------------------------
 
 select fn_db_delete_config_value_all_versions('SupportedStorageFormats');
+select fn_db_delete_config_value('AdminPassword','general');
+select fn_db_delete_config_value('AdminUser','general');
 select fn_db_delete_config_value('AsyncPollingCyclesBeforeCallbackCleanup','general');
 select fn_db_delete_config_value('AsyncPollingCyclesBeforeRefreshSuspend','general');
 select fn_db_delete_config_value('AutoMode','general');

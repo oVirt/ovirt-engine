@@ -916,15 +916,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     CustomFenceAgentDefaultParamsForPPC,
 
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("admin")
-    AdminUser,
-
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
-    AdminPassword,
-
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")

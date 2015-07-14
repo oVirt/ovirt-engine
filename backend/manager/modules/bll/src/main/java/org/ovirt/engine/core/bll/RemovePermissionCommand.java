@@ -41,11 +41,7 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
     protected boolean canDoAction() {
         boolean returnValue = true;
         Permission p = getPermissionDao().get(getParameters().getPermission().getId());
-        if (p.getAdElementId().equals(PredefinedUsers.ADMIN_USER.getId()) &&
-                (p.getRoleId().equals(PredefinedRoles.SUPER_USER.getId()))) {
-            addCanDoActionMessage(EngineMessage.USER_CANNOT_REMOVE_ADMIN_USER);
-            returnValue = false;
-        } else if (MultiLevelAdministrationHandler.isLastSuperUserPermission(p.getRoleId())) {
+        if (MultiLevelAdministrationHandler.isLastSuperUserPermission(p.getRoleId())) {
             getReturnValue().getCanDoActionMessages()
                     .add(EngineMessage.ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE.toString());
             returnValue = false;

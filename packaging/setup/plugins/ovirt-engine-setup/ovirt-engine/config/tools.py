@@ -79,7 +79,7 @@ class Plugin(plugin.PluginBase):
                         (
                             "[{section}]\n"
                             "engine={fqdn}:{port}\n"
-                            "user={user}@{domain}\n"
+                            "user={user}\n"
                         ).format(
                             section=entry['section'],
                             fqdn=self.environment[
@@ -88,8 +88,9 @@ class Plugin(plugin.PluginBase):
                             port=self.environment[
                                 oengcommcons.ConfigEnv.PUBLIC_HTTPS_PORT
                             ],
-                            user=osetupcons.Const.USER_ADMIN,
-                            domain=oenginecons.Const.DOMAIN_INTERNAL,
+                            user=self.environment[
+                                oenginecons.ConfigEnv.ADMIN_USER
+                            ],
                         )
                     ),
                     modifiedList=self.environment[
