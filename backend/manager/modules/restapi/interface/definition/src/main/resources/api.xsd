@@ -138,6 +138,12 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:complexType name="ProxyTicket">
+    <xs:sequence>
+      <xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+
   <xs:group name="ActionParameterGroup">
     <xs:sequence>
       <xs:element name="grace_period" type="GracePeriod" minOccurs="0"/>
@@ -156,6 +162,8 @@
       <xs:element name="fence_type" type="xs:string" minOccurs="0"/>
       <!-- for VM ticket actions -->
       <xs:element name="ticket" type="Ticket" minOccurs="0"/>
+      <!-- websocket proxy ticket of graphics consoles -->
+      <xs:element name="proxy_ticket" type="ProxyTicket" minOccurs="0" maxOccurs="1"/>
       <!-- for Host ISCSI actions -->
       <xs:element name="iscsi" type="IscsiDetails" minOccurs="0"/>
       <!-- for VM import and export actions -->

@@ -7,11 +7,14 @@ import java.util.List;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.GraphicsConsole;
 import org.ovirt.engine.api.model.GraphicsType;
+import org.ovirt.engine.api.model.ProxyTicket;
 import org.ovirt.engine.api.resource.ApiMediaType;
 import org.ovirt.engine.api.resource.VmGraphicsConsoleResource;
 import org.ovirt.engine.api.resource.VmGraphicsConsolesResource;
+import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
@@ -20,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.ConsoleOptionsParams;
+import org.ovirt.engine.core.common.queries.GetSignedWebsocketProxyTicketParams;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -105,4 +109,35 @@ public class BackendVmGraphicsConsoleResource
 
         throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
     }
+
+    @Override
+    public Response proxyTicket(Action action) {
+        final String plainConsoleId = HexUtils.hex2string(consoleId);
+        final GraphicsType graphicsTypeModel = GraphicsType.fromValue(plainConsoleId);
+        final org.ovirt.engine.core.common.businessentities.GraphicsType graphicsTypeEntity =
+                VmMapper.map(graphicsTypeModel, null);
+
+        final String ticketValue = getTicket(graphicsTypeEntity);
+        if (!action.isSetProxyTicket()) {
+            action.setProxyTicket(new ProxyTicket());
+        }
+        action.getProxyTicket().setValue(ticketValue);
+        return Response.ok().entity(action).build();
+    }
+
+    private String getTicket(org.ovirt.engine.core.common.businessentities.GraphicsType graphicsTypeEntity) {
+        final GetSignedWebsocketProxyTicketParams params =
+                new GetSignedWebsocketProxyTicketParams(vmGuid, graphicsTypeEntity);
+        final VdcQueryReturnValue ticketQueryReturnValue =
+                runQuery(VdcQueryType.GetSignedWebsocketProxyTicket, params);
+        if (!ticketQueryReturnValue.getSucceeded()) {
+            try {
+                backendFailure(ticketQueryReturnValue.getExceptionString());
+            } catch (BackendFailureException ex) {
+                handleError(ex, false);
+            }
+        }
+        return ticketQueryReturnValue.getReturnValue();
+    }
+
 }

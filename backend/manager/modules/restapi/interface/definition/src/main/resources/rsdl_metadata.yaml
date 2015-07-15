@@ -528,6 +528,8 @@ actions:
         required: false
 - name: /vms/{vm:id}/graphicsconsoles/{graphicsconsole:id}|rel=delete
   description: delete the graphics console for a virtual machine identified by the given id
+- name: /vms/{vm:id}/graphicsconsoles/{graphicsconsole:id}/proxyticket|rel=proxyticket
+  description: Get websocket proxy ticket for current console.
 - name: /vms/{vm:id}/logon|rel=logon
   description: Perform automatic logon on the VM using the guest agent.
   request:
