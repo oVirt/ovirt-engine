@@ -17,7 +17,6 @@ import java.util.logging.SimpleFormatter;
 
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
-import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.extensions.mgr.ExtensionsManager;
 import org.ovirt.engine.core.uutils.cli.parser.ArgumentsParser;
 import org.slf4j.LoggerFactory;
@@ -106,7 +105,7 @@ public class ExtensionsToolExecutor {
             Base.GlobalContextKeys.APPLICATION_NAME,
             Base.ApplicationNames.OVIRT_ENGINE_EXTENSIONS_TOOL
         );
-        moduleService.getContext().put(ModuleService.EXTENSION_MANAGER, extensionsManager);
+        moduleService.getContext().put(ModuleService.ContextKeys.EXTENSION_MANAGER, extensionsManager);
 
         List<File> files = (List<File>)argMap.get("extension-file");
         if(files == null) {
@@ -143,7 +142,7 @@ public class ExtensionsToolExecutor {
         Map<String, ModuleService> modules = new HashMap<>();
         if(cls != null) {
             ExtMap context = new ExtMap()
-                    .mput(ModuleService.PROGRAM_NAME, PROGRAM_NAME);
+                    .mput(ModuleService.ContextKeys.PROGRAM_NAME, PROGRAM_NAME);
 
             ServiceLoader<ModuleService> loader = ServiceLoader.load(cls);
             for (ModuleService module : loader) {

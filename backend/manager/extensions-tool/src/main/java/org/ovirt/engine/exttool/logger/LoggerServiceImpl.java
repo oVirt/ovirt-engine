@@ -1,9 +1,9 @@
 package org.ovirt.engine.exttool.logger;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +11,6 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.logger.Logger;
@@ -35,7 +34,7 @@ public class LoggerServiceImpl implements ModuleService {
             new Logic() {
                 @Override
                 public void execute(ExtMap context, Map<String, Object> argMap) {
-                    ExtensionProxy proxy = getExtensionManager(context).getExtensionByName((String) argMap.get("extension-name"));
+                    ExtensionProxy proxy = getExtensionsManager(context).getExtensionByName((String) argMap.get("extension-name"));
 
                     LogRecord logRecord = new LogRecord(
                         (Level) argMap.get("level"),
@@ -111,8 +110,8 @@ public class LoggerServiceImpl implements ModuleService {
     private Action action;
     private Map<String, Object> argMap;
 
-    private static ExtensionsManager getExtensionManager(ExtMap context) {
-        return (ExtensionsManager)context.get(EXTENSION_MANAGER);
+    private static ExtensionsManager getExtensionsManager(ExtMap context) {
+        return (ExtensionsManager)context.get(ContextKeys.EXTENSION_MANAGER);
     }
 
     @Override
@@ -138,14 +137,14 @@ public class LoggerServiceImpl implements ModuleService {
     @Override
     public void parseArguments(List<String> args) throws Exception {
         final Map<String, String> substitutions = new HashMap<>();
-        substitutions.put("@PROGRAM_NAME@", (String) context.get(PROGRAM_NAME));
+        substitutions.put("@PROGRAM_NAME@", (String) context.get(ContextKeys.PROGRAM_NAME));
 
         args.remove(0);
 
         Properties props = new Properties();
         try (
             InputStream in = LoggerServiceImpl.class.getResourceAsStream("arguments.properties");
-            Reader reader = new InputStreamReader(in);
+            Reader reader = new InputStreamReader(in, Charset.forName("UTF-8"));
         ) {
             props.load(reader);
         }

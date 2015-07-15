@@ -63,11 +63,9 @@
         <groupId>org.ovirt.engine</groupId>
         <artifactId>jboss-modules-maven-plugin</artifactId>
       </plugin>
-      <!--
       <plugin>
         <artifactId>maven-checkstyle-plugin</artifactId>
       </plugin>
-      -->
     </plugins>
   </build>
 
