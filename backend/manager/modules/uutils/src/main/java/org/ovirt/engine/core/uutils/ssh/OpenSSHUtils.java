@@ -3,6 +3,7 @@ package org.ovirt.engine.core.uutils.ssh;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.PublicKey;
@@ -199,7 +200,7 @@ public class OpenSSHUtils {
             return false;
         }
 
-        if (!isBase64(words[1].getBytes())) {
+        if (!isBase64(words[1].getBytes(Charset.forName("UTF-8")))) {
             return false;
         }
 
