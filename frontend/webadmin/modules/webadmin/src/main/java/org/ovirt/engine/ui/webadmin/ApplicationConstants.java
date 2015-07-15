@@ -683,7 +683,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Options")
     String hostPopupPmOptionsLabel();
 
-    @DefaultStringValue("Please use a comma-separated list of 'key=value' or 'key'")
+    @DefaultStringValue("Please use a comma-separated list of 'key=value'")
     String hostPopupPmOptionsExplanationLabel();
 
     @DefaultStringValue("Secure")
