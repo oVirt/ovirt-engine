@@ -51,16 +51,7 @@ public class HostStatusColumn<S> extends AbstractColumn<S, VDS> {
 
     @Override
     public SafeHtml getTooltip(S object) {
-        VDS vds = null;
-        if (object instanceof VDS){
-            vds = (VDS) object;
-        }
-        if (object instanceof PairQueryable){
-            if (((PairQueryable) object).getSecond() instanceof VDS){
-                vds = (VDS) ((PairQueryable) object).getSecond();
-            }
-        }
-
+        VDS vds = getValue(object);
         if (vds != null) {
             VDSStatus status = vds.getStatus();
             String tooltip = getTooltipText(status);
