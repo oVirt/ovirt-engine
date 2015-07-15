@@ -32,17 +32,23 @@ public class ExtensionsToolExecutor {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(ExtensionsToolExecutor.class);
     private static final Logger OVIRT_LOGGER = Logger.getLogger("org.ovirt");
 
+    private static final ExtMap context = new ExtMap();
+
     public static void main(String... args) {
         int exitStatus = 1;
         List<String> cmdArgs = new ArrayList<>(Arrays.asList(args));
 
         try {
+            final Map<String, String> contextSubstitutions = new HashMap<>();
+            contextSubstitutions.put("@ENGINE_ETC@", ENGINE_ETC);
+            contextSubstitutions.put("@PROGRAM_NAME@", PROGRAM_NAME);
+            context.put(ModuleService.ContextKeys.CLI_PARSER_SUBSTITUTIONS, contextSubstitutions);
+
             setupLogger();
             ArgumentsParser parser;
+
             Map<String, ModuleService> moduleServices = loadModules(ModuleService.class);
-            final Map<String, String> substitutions = new HashMap<>();
-            substitutions.put("@ENGINE_ETC@", ENGINE_ETC);
-            substitutions.put("@PROGRAM_NAME@", PROGRAM_NAME);
+            final Map<String, String> substitutions = new HashMap<>(contextSubstitutions);
             substitutions.put("@MODULE_LIST@", getModules(moduleServices));
 
             try (InputStream stream = ExtensionsToolExecutor.class.getResourceAsStream("arguments.properties")) {
@@ -82,7 +88,13 @@ public class ExtensionsToolExecutor {
             log.info("========================================================================");
             log.info("============================ Initialization ============================");
             log.info("========================================================================");
-            loadExtensions(moduleService, argMap);
+            ExtensionsManager extensionsManager = new ExtensionsManager();
+            extensionsManager.getGlobalContext().put(
+                Base.GlobalContextKeys.APPLICATION_NAME,
+                Base.ApplicationNames.OVIRT_ENGINE_EXTENSIONS_TOOL
+            );
+            context.put(ModuleService.ContextKeys.EXTENSION_MANAGER, extensionsManager);
+            loadExtensions(extensionsManager, moduleService, argMap);
             log.info("========================================================================");
             log.info("============================== Execution ===============================");
             log.info("========================================================================");
@@ -99,14 +111,11 @@ public class ExtensionsToolExecutor {
         System.exit(exitStatus);
     }
 
-    private static void loadExtensions(ModuleService moduleService, Map<String, Object> argMap) {
-        ExtensionsManager extensionsManager = new ExtensionsManager();
-        extensionsManager.getGlobalContext().put(
-            Base.GlobalContextKeys.APPLICATION_NAME,
-            Base.ApplicationNames.OVIRT_ENGINE_EXTENSIONS_TOOL
-        );
-        moduleService.getContext().put(ModuleService.ContextKeys.EXTENSION_MANAGER, extensionsManager);
-
+    private static void loadExtensions(
+        ExtensionsManager extensionsManager,
+        ModuleService moduleService,
+        Map<String, Object> argMap
+    ) {
         List<File> files = (List<File>)argMap.get("extension-file");
         if(files == null) {
             files = listFiles(
@@ -141,9 +150,6 @@ public class ExtensionsToolExecutor {
     private static Map<String, ModuleService> loadModules(Class cls) {
         Map<String, ModuleService> modules = new HashMap<>();
         if(cls != null) {
-            ExtMap context = new ExtMap()
-                    .mput(ModuleService.ContextKeys.PROGRAM_NAME, PROGRAM_NAME);
-
             ServiceLoader<ModuleService> loader = ServiceLoader.load(cls);
             for (ModuleService module : loader) {
                 modules.put(module.getName(), module);

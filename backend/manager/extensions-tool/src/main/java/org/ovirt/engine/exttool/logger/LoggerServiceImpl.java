@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -136,9 +135,6 @@ public class LoggerServiceImpl implements ModuleService {
 
     @Override
     public void parseArguments(List<String> args) throws Exception {
-        final Map<String, String> substitutions = new HashMap<>();
-        substitutions.put("@PROGRAM_NAME@", (String) context.get(ContextKeys.PROGRAM_NAME));
-
         args.remove(0);
 
         Properties props = new Properties();
@@ -148,6 +144,8 @@ public class LoggerServiceImpl implements ModuleService {
         ) {
             props.load(reader);
         }
+
+        Map<String, String> substitutions = (Map)context.get(ContextKeys.CLI_PARSER_SUBSTITUTIONS);
         ArgumentsParser parser = new ArgumentsParser(props, "module");
         parser.getSubstitutions().putAll(substitutions);
         parser.parse(args);
