@@ -290,7 +290,7 @@ public class UpdateVmCommandTest {
         prepareVmToPassCanDoAction();
         vmStatic.setVdsGroupId(Guid.newGuid());
 
-        assertFalse("canDoAction should have failed with cant change cluster.", command.canDoAction());
+        assertFalse("canDoAction should have failed with can't change cluster.", command.canDoAction());
         assertCanDoActionMessage(EngineMessage.VM_CANNOT_UPDATE_CLUSTER);
     }
 

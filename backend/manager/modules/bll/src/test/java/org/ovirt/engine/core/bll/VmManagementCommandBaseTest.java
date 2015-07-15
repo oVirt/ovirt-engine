@@ -118,7 +118,7 @@ public class VmManagementCommandBaseTest {
         if (canDoActionMessages.size() > 0) {
             Assert.assertEquals(EngineMessage.VM_PINNING_VCPU_DOES_NOT_EXIST.toString(), canDoActionMessages.get(0));
         }
-        // making sure cluster < 3.2 does not get validated on pCPU as we cant tell the number for sure
+        // making sure cluster < 3.2 does not get validated on pCPU as we can't tell the number for sure
         dedicatedVds.setVdsGroupCompatibilityVersion(Version.v3_1);
         Assert.assertTrue(test.isCpuPinningValid("10#1,2,3_11#1-20,^3", vmStatic));
 

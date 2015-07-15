@@ -610,7 +610,7 @@ public class IrsProxyData {
             mTriedVdssList.add(vdsId);
             return true;
         } else {
-            log.error("IRS failover failed - cant allocate vds server");
+            log.error("IRS failover failed - can't allocate vds server");
             return false;
         }
     }
