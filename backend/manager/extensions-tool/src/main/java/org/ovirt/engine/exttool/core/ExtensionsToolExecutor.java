@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.TreeMap;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,6 +49,7 @@ public class ExtensionsToolExecutor {
             ArgumentsParser parser;
 
             Map<String, ModuleService> moduleServices = loadModules(ModuleService.class);
+            context.put(ModuleService.ContextKeys.MODULES, moduleServices);
             final Map<String, String> substitutions = new HashMap<>(contextSubstitutions);
             substitutions.put("@MODULE_LIST@", getModules(moduleServices));
 
@@ -59,7 +61,7 @@ public class ExtensionsToolExecutor {
             Map<String, Object> argMap = parser.getParsedArgs();
             setupLogger(argMap);
 
-            if((Boolean)argMap.get("help") || (cmdArgs.size() > 0 && cmdArgs.get(0).equals("help"))) {
+            if((Boolean)argMap.get("help")) {
                 System.out.format("Usage: %s", parser.getUsage());
                 throw new ExitException("Help", 0);
             } else if((Boolean)argMap.get("version")) {
@@ -197,9 +199,9 @@ public class ExtensionsToolExecutor {
 
     private static String getModules(Map<String, ModuleService> modules) {
         StringBuilder sb = new StringBuilder();
-        for(ModuleService entry : modules.values()) {
+        for(Map.Entry<String, ModuleService> entry : new TreeMap<>(modules).entrySet()) {
             sb.append(
-                String.format("  %-10s - %s%n", entry.getName(), entry.getDescription())
+                String.format("  %-10s - %s%n", entry.getKey(), entry.getValue().getDescription())
             );
         }
         return sb.toString();
