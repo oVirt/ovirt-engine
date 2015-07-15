@@ -1898,7 +1898,9 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                 }
             }
         };
-        AsyncDataProvider.getInstance().getDataCenterVersions(_asyncQuery, selectedDataCenter.getId());
+        AsyncDataProvider.getInstance().getDataCenterVersions(_asyncQuery,
+                ApplicationModeHelper.getUiMode().equals(ApplicationMode.GlusterOnly) ? null
+                        : selectedDataCenter.getId());
 
         if (getManagementNetwork().getIsChangable()) {
             loadDcNetworks(selectedDataCenter.getId());

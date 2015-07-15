@@ -54,9 +54,11 @@ public class ClusterValidator {
 
     public ValidationResult dataCenterVersionMismatch() {
         StoragePool dataCenter = getDataCenter();
-        return ValidationResult.failWith(EngineMessage.VDS_GROUP_CANNOT_ADD_COMPATIBILITY_VERSION_WITH_LOWER_STORAGE_POOL)
-                .when(dataCenter != null
-                        && dataCenter.getCompatibilityVersion().compareTo(cluster.getCompatibilityVersion()) > 0);
+        return ValidationResult
+                .failWith(EngineMessage.VDS_GROUP_CANNOT_ADD_COMPATIBILITY_VERSION_WITH_LOWER_STORAGE_POOL)
+                .when(dataCenter != null && (cluster.supportsVirtService()
+                        ? dataCenter.getCompatibilityVersion().compareTo(cluster.getCompatibilityVersion()) > 0
+                        : false));
     }
 
     public ValidationResult dataCenterExists() {

@@ -18,6 +18,7 @@ import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
 import org.ovirt.engine.core.bll.network.cluster.UpdateClusterNetworkClusterValidator;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
+import org.ovirt.engine.core.bll.validator.ClusterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -256,9 +257,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
             }
 
             if (oldGroup.getStoragePoolId() != null) {
-                StoragePool storagePool = getStoragePoolDao().get(oldGroup.getStoragePoolId());
-                if (storagePool != null && getVdsGroup().getCompatibilityVersion()
-                    .compareTo(storagePool.getCompatibilityVersion()) < 0) {
+                if (!validate(new ClusterValidator(getDbFacade(), oldGroup).dataCenterVersionMismatch())) {
                     result = false;
                     addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC);
                 }

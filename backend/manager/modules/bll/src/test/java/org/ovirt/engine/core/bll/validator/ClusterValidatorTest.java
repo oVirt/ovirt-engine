@@ -142,6 +142,7 @@ public class ClusterValidatorTest {
         when(dataCenter.getCompatibilityVersion()).thenReturn(SUPPORTED_VERSION);
         when(dataCenterDao.get(any(Guid.class))).thenReturn(dataCenter);
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
+        when(cluster.supportsVirtService()).thenReturn(true);
         validator = new ClusterValidator(dbFacade, cluster);
 
         assertThat(validator.dataCenterVersionMismatch(),

@@ -44,6 +44,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
@@ -86,6 +87,9 @@ public class UpdateVdsGroupCommandTest {
             mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_1.getValue(), migrationMap),
             mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_2.getValue(), migrationMap)
             );
+
+    @Mock
+    DbFacade dbFacadeMock;
 
     @Mock
     private VdsGroupDao vdsGroupDao;
@@ -199,7 +203,7 @@ public class UpdateVdsGroupCommandTest {
 
     @Test
     public void versionDecreaseWithHost() {
-        createCommandWithOlderVersion();
+        createCommandWithOlderVersion(true, false);
         setupCpu();
         VdsExist();
         canDoActionFailedWithReason(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
@@ -207,7 +211,7 @@ public class UpdateVdsGroupCommandTest {
 
     @Test
     public void versionDecreaseNoHostsOrNetwork() {
-        createCommandWithOlderVersion();
+        createCommandWithOlderVersion(true, false);
         setupCpu();
         StoragePoolDao storagePoolDao2 = Mockito.mock(StoragePoolDao.class);
         when(storagePoolDao2.get(any(Guid.class))).thenReturn(createStoragePoolLocalFS());
@@ -217,10 +221,11 @@ public class UpdateVdsGroupCommandTest {
 
     @Test
     public void versionDecreaseLowerVersionThanDC() {
-        createCommandWithOlderVersion();
+        createCommandWithOlderVersion(true, false);
         StoragePoolDao storagePoolDao2 = Mockito.mock(StoragePoolDao.class);
         when(storagePoolDao2.get(any(Guid.class))).thenReturn(createStoragePoolLocalFSOldVersion());
         doReturn(storagePoolDao2).when(cmd).getStoragePoolDao();
+        doReturn(storagePoolDao2).when(dbFacadeMock).getStoragePoolDao();
         setupCpu();
         canDoActionFailedWithReason(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC);
     }
@@ -458,8 +463,8 @@ public class UpdateVdsGroupCommandTest {
         createCommand(createNewVdsGroup());
     }
 
-    private void createCommandWithOlderVersion() {
-        createCommand(createVdsGroupWithOlderVersion());
+    private void createCommandWithOlderVersion(boolean supportsVirtService, boolean supportsGlusterService) {
+        createCommand(createVdsGroupWithOlderVersion(true, false));
 
     }
 
@@ -515,9 +520,12 @@ public class UpdateVdsGroupCommandTest {
 
         doReturn(0).when(cmd).compareCpuLevels(any(VDSGroup.class));
 
+        doReturn(dbFacadeMock).when(cmd).getDbFacade();
         doReturn(vdsGroupDao).when(cmd).getVdsGroupDao();
+        doReturn(vdsGroupDao).when(dbFacadeMock).getVdsGroupDao();
         doReturn(vdsDao).when(cmd).getVdsDao();
         doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
+        doReturn(storagePoolDao).when(dbFacadeMock).getStoragePoolDao();
         doReturn(glusterVolumeDao).when(cmd).getGlusterVolumeDao();
         doReturn(vmDao).when(cmd).getVmDao();
         doReturn(networkDao).when(cmd).getNetworkDao();
@@ -593,10 +601,12 @@ public class UpdateVdsGroupCommandTest {
         return group;
     }
 
-    private static VDSGroup createVdsGroupWithOlderVersion() {
+    private static VDSGroup createVdsGroupWithOlderVersion(boolean supportsVirtService, boolean supportsGlusterService) {
         VDSGroup group = createNewVdsGroup();
         group.setCompatibilityVersion(VERSION_1_0);
         group.setStoragePoolId(DC_ID1);
+        group.setVirtService(supportsVirtService);
+        group.setGlusterService(supportsGlusterService);
         return group;
     }
 
