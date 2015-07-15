@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -107,9 +108,7 @@ public class ExtensionsToolExecutor {
         );
         moduleService.getContext().put(ModuleService.EXTENSION_MANAGER, extensionsManager);
 
-        Map<String, ExtensionProxy> proxies = moduleService.getContext().get(ModuleService.EXTENSIONS_MAP);
         List<File> files = (List<File>)argMap.get("extension-file");
-
         if(files == null) {
             files = listFiles(
                 ((String) argMap.get("extensions-dir")),
@@ -117,20 +116,25 @@ public class ExtensionsToolExecutor {
             );
         }
 
+        List<String> loadedExtensions = new LinkedList<>();
         for(File f : files) {
             log.debug("Loading extension file '{}'", f.getName());
             try {
-                proxies.put(extensionsManager.load(f), null);
+                loadedExtensions.add(extensionsManager.load(f));
             } catch (Exception ex) {
-                log.error("Can't load extension '{}', ignoring.", f.getName());
+                log.error("Extension '{}' load failed (ignored): {}", f.getName(), ex.getMessage());
                 log.debug("Exception:", ex);
             }
         }
 
-        for(Map.Entry<String, ExtensionProxy> entry : proxies.entrySet()) {
-            extensionsManager.initialize(entry.getKey());
-            entry.setValue(extensionsManager.getExtensionByName(entry.getKey()));
-            log.debug("Extension '{}' initialized", entry.getKey());
+        for(String extension : loadedExtensions) {
+            try {
+                extensionsManager.initialize(extension);
+                log.debug("Extension '{}' initialized", extension);
+            } catch (Exception ex) {
+                log.error("Extension '{}' initialization failed (ignored): {}", extension, ex.getMessage());
+                log.debug("Exception:", ex);
+            }
         }
         extensionsManager.dump();
     }
@@ -138,10 +142,8 @@ public class ExtensionsToolExecutor {
     private static Map<String, ModuleService> loadModules(Class cls) {
         Map<String, ModuleService> modules = new HashMap<>();
         if(cls != null) {
-            Map<String, ExtensionProxy> proxies = new HashMap<>();
             ExtMap context = new ExtMap()
-                .mput(ModuleService.EXTENSIONS_MAP, proxies)
-                .mput(ModuleService.PROGRAM_NAME, PROGRAM_NAME);
+                    .mput(ModuleService.PROGRAM_NAME, PROGRAM_NAME);
 
             ServiceLoader<ModuleService> loader = ServiceLoader.load(cls);
             for (ModuleService module : loader) {
