@@ -182,7 +182,7 @@ public class Authn {
          * <p>
          * Input:
          * <ul>
-         * <li>{@link InvokeKeys#PRINCIPAL}[M]</li>
+         * <li>{@link InvokeKeys#AUTH_RECORD}[M]</li>
          * </ul>
          * </p>
          */

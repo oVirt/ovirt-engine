@@ -46,8 +46,8 @@ public class LogoutSessionCommand<T extends VdcActionParametersBase> extends Com
                         Base.InvokeKeys.COMMAND,
                         Authn.InvokeCommands.LOGOUT
                         ).mput(
-                                Authn.InvokeKeys.PRINCIPAL,
-                                SessionDataContainer.getInstance().getPrincipalName(getParameters().getSessionId())
+                                Authn.InvokeKeys.AUTH_RECORD,
+                                SessionDataContainer.getInstance().getAuthRecord(getParameters().getSessionId())
                         ));
             }
             SessionDataContainer.getInstance().removeSessionOnLogout(getParameters().getSessionId());
