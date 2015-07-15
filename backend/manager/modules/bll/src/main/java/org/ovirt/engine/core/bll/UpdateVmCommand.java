@@ -33,7 +33,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
 import org.ovirt.engine.core.common.action.HotSetAmountOfMemoryParameters;
-import org.ovirt.engine.core.common.action.HotSetNumerOfCpusParameters;
+import org.ovirt.engine.core.common.action.HotSetNumberOfCpusParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.PlugAction;
@@ -301,8 +301,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         // try hotplug only if topology (cpuPerSocket) hasn't changed
         if (getVm().getStatus() == VMStatus.Up && currentSockets != newNumOfSockets
                 && currentCpuPerSocket == cpuPerSocket) {
-            HotSetNumerOfCpusParameters params =
-                    new HotSetNumerOfCpusParameters(
+            HotSetNumberOfCpusParameters params =
+                    new HotSetNumberOfCpusParameters(
                             newVmStatic,
                             currentSockets < newNumOfSockets ? PlugAction.PLUG : PlugAction.UNPLUG);
             setNumberOfCpusResult =
@@ -339,7 +339,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
      * otherwise internal command will audit log the result
      * @param params
      */
-    private void auditLogHotSetCpusCandos(HotSetNumerOfCpusParameters params) {
+    private void auditLogHotSetCpusCandos(HotSetNumberOfCpusParameters params) {
         if (!setNumberOfCpusResult.getCanDoAction()) {
             AuditLogableBase logable = new HotSetNumberOfCpusCommand<>(params);
             List<String> canDos = getBackend().getErrorsTranslator().

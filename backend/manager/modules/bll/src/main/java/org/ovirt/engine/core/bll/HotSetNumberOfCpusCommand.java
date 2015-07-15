@@ -10,7 +10,7 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.action.HotSetNumerOfCpusParameters;
+import org.ovirt.engine.core.common.action.HotSetNumberOfCpusParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.config.Config;
@@ -29,7 +29,7 @@ import org.ovirt.engine.core.vdsbroker.SetNumberOfCpusVDSCommand;
  * The execute will never throw an exception. it will rather wrap a return value in case of failure.
  */
 @NonTransactiveCommandAttribute
-public class HotSetNumberOfCpusCommand<T extends HotSetNumerOfCpusParameters> extends VmManagementCommandBase<T> implements QuotaVdsDependent {
+public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> extends VmManagementCommandBase<T> implements QuotaVdsDependent {
 
     public static final String LOGABLE_FIELD_NUMBER_OF_CPUS = "numberOfCpus";
     public static final String LOGABLE_FIELD_PREVIOUS_NUMBER_OF_CPUS = "previousNumberOfCpus";
