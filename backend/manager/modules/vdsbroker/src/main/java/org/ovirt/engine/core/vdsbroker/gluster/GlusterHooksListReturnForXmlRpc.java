@@ -24,7 +24,7 @@ public class GlusterHooksListReturnForXmlRpc extends StatusReturnForXmlRpc {
     public GlusterHooksListReturnForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap);
 
-        if (getXmlRpcStatus().mCode != 0) {
+        if (getXmlRpcStatus().code != 0) {
             return;
         }
 

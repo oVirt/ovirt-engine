@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AdGroupsHandlingCommandBase<T extends IdParameters> extends CommandBase<T> {
-    private DbGroup mGroup;
-    private String mGroupName;
+    private DbGroup group;
+    private String groupName;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -32,17 +32,17 @@ public abstract class AdGroupsHandlingCommandBase<T extends IdParameters> extend
     }
 
     public String getGroupName() {
-        if (mGroupName == null && getGroup() != null) {
-            mGroupName = getGroup().getName();
+        if (groupName == null && getGroup() != null) {
+            groupName = getGroup().getName();
         }
-        return mGroupName;
+        return groupName;
     }
 
     protected DbGroup getGroup() {
-        if (mGroup == null && !getGroupId().equals(Guid.Empty)) {
-            mGroup = getAdGroupDao().get(getParameters().getId());
+        if (group == null && !getGroupId().equals(Guid.Empty)) {
+            group = getAdGroupDao().get(getParameters().getId());
         }
-        return mGroup;
+        return group;
     }
 
     @Override

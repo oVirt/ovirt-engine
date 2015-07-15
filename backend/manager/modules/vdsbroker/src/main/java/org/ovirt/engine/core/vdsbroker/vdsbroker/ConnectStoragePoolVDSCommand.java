@@ -80,7 +80,7 @@ public class ConnectStoragePoolVDSCommand<P extends ConnectStoragePoolVDSCommand
         case AcquireHostIdFailure:
         case ReleaseHostIdFailure:
             VDSExceptionBase outEx = new VDSErrorException(String.format("Failed in vdscommand %1$s, error = %2$s",
-                    getCommandName(), getReturnStatus().mMessage));
+                    getCommandName(), getReturnStatus().message));
             initializeVdsError(returnStatus);
             getVDSReturnValue().setSucceeded(false);
             throw outEx;

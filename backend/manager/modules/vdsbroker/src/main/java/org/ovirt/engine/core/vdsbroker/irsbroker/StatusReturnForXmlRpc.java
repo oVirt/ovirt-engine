@@ -9,7 +9,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 public class StatusReturnForXmlRpc {
     private static final String STATUS = "status";
 
-    private StatusForXmlRpc mStatus;
+    private StatusForXmlRpc status;
     protected Map<String, Object> innerMap;
 
     public StatusReturnForXmlRpc(Map<String, Object> innerMap) {
@@ -24,21 +24,21 @@ public class StatusReturnForXmlRpc {
     }
 
     public StatusForXmlRpc getXmlRpcStatus() {
-        if (mStatus == null) {
+        if (status == null) {
             Map<String, Object> statusMap = (Map<String, Object>) innerMap.get(STATUS);
-            mStatus = new StatusForXmlRpc(statusMap);
+            status = new StatusForXmlRpc(statusMap);
         }
-        return mStatus;
+        return status;
     }
 
     public void setXmlRpcStatus(StatusForXmlRpc status) {
-        mStatus = status;
+        this.status = status;
     }
 
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
-                .append("mStatus", (isRequestCompleted() ? getXmlRpcStatus() : "Pending Response"))
+                .append("status", (isRequestCompleted() ? getXmlRpcStatus() : "Pending Response"))
                 .build();
     }
 }

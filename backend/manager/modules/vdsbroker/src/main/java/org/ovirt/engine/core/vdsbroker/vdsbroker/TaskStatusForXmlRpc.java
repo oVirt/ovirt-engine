@@ -7,14 +7,14 @@ public final class TaskStatusForXmlRpc extends StatusForXmlRpc {
     private static final String TASK_RESULT = "taskResult";
 
     // [XmlRpcMember("taskState")]
-    public String mTaskState;
+    public String taskState;
     // [XmlRpcMember("taskResult")]
-    public String mTaskResult;
+    public String taskResult;
 
     public TaskStatusForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap);
-        mTaskState = (String) innerMap.get(TASK_STATE);
-        mTaskResult = (String) innerMap.get(TASK_RESULT);
+        taskState = (String) innerMap.get(TASK_STATE);
+        taskResult = (String) innerMap.get(TASK_RESULT);
     }
 
     public TaskStatusForXmlRpc() {

@@ -11,7 +11,7 @@ public class UpdateGlusterGeoRepKeysVDSCommand<P extends UpdateGlusterGeoRepKeys
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return status.mStatus;
+        return status.status;
     }
 
     @Override

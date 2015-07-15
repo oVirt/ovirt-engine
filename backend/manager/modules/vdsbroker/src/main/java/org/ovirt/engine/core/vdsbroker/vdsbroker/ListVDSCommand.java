@@ -12,7 +12,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 
 @Logged(executionLevel = LogLevel.TRACE)
 public class ListVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> extends VdsBrokerCommand<P> {
-    private VMListReturnForXmlRpc mVmListReturn;
+    private VMListReturnForXmlRpc vmListReturn;
 
     public ListVDSCommand(P parameters) {
         super(parameters, parameters.getVds());
@@ -20,11 +20,11 @@ public class ListVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> exten
 
     @Override
     protected void executeVdsBrokerCommand() {
-        mVmListReturn = getBroker().list();
+        vmListReturn = getBroker().list();
         proceedProxyReturnValue();
         Map<Guid, VmInternalData> returnVMs = new HashMap<Guid, VmInternalData>();
-        for (int idx = 0; idx < mVmListReturn.mVmList.length; ++idx) {
-            Map<String, Object> vm = mVmListReturn.mVmList[idx];
+        for (int idx = 0; idx < vmListReturn.vmList.length; ++idx) {
+            Map<String, Object> vm = vmListReturn.vmList[idx];
             VmDynamic dynamicData = VdsBrokerObjectsBuilder.buildVMDynamicDataFromList(vm);
             VmInternalData vmData = new VmInternalData(dynamicData, VdsBrokerObjectsBuilder.getVdsmCallTimestamp(vm));
             returnVMs.put(dynamicData.getId(), vmData);
@@ -34,12 +34,12 @@ public class ListVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> exten
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return mVmListReturn.mStatus;
+        return vmListReturn.status;
     }
 
     @Override
     protected Object getReturnValueFromBroker() {
-        return mVmListReturn;
+        return vmListReturn;
     }
 
     @Override

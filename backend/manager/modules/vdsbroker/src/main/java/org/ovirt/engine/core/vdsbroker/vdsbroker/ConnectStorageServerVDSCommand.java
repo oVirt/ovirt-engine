@@ -49,7 +49,7 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
         case StorageServerConnectionRefIdAlreadyInUse:
         case StorageServerConnectionRefIdDoesNotExist:
             VDSExceptionBase outEx = new VDSErrorException(String.format("Failed in vdscommand %1$s, error = %2$s",
-                    getCommandName(), getReturnStatus().mMessage));
+                    getCommandName(), getReturnStatus().message));
             initializeVdsError(returnStatus);
             getVDSReturnValue().setSucceeded(false);
             throw outEx;

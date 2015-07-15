@@ -98,17 +98,17 @@ public class IrsProxyData {
 
     private final String storagePoolRefreshJobId;
     private final String domainRecoverOnHostJobId;
-    private final HashSet<Guid> mTriedVdssList = new HashSet<Guid>();
-    private Guid mCurrentVdsId;
+    private final HashSet<Guid> triedVdssList = new HashSet<Guid>();
+    private Guid currentVdsId;
 
     private Guid preferredHostId;
 
     public Guid getCurrentVdsId() {
-        return getIrsProxy() != null ? mCurrentVdsId : Guid.Empty;
+        return getIrsProxy() != null ? currentVdsId : Guid.Empty;
     }
 
     public void setCurrentVdsId(Guid value) {
-        mCurrentVdsId = (Guid.Empty.equals(value)) ? null : value;
+        currentVdsId = (Guid.Empty.equals(value)) ? null : value;
     }
 
     private String privatemCurrentIrsHost;
@@ -263,7 +263,7 @@ public class IrsProxyData {
         // ugly patch because vdsm doesnt check if host is spm on spm
         // operations
         VDSReturnValue result = null;
-        Guid curVdsId = mCurrentVdsId;
+        Guid curVdsId = currentVdsId;
         if (curVdsId != null) {
             result = ResourceManager.getInstance().runVdsCommand(VDSCommandType.SpmStatus,
                     new SpmStatusVDSCommandParameters(curVdsId, _storagePoolId));
@@ -551,7 +551,7 @@ public class IrsProxyData {
                     public EventResult call() {
                         log.warn(logMessage);
 
-                        AuditLogableBase logable = new AuditLogableBase(mCurrentVdsId);
+                        AuditLogableBase logable = new AuditLogableBase(currentVdsId);
                         logable.setStorageDomainId(masterDomainId);
                         new AuditLogDirector().log(logable, AuditLogType.SYSTEM_MASTER_DOMAIN_NOT_IN_SYNC);
 
@@ -565,11 +565,11 @@ public class IrsProxyData {
     }
 
     public HashSet<Guid> getTriedVdssList() {
-        return mTriedVdssList;
+        return triedVdssList;
     }
 
     public void init(VDS vds) {
-        mCurrentVdsId = vds.getId();
+        currentVdsId = vds.getId();
         setmIrsPort(vds.getPort());
         privatemCurrentIrsHost = vds.getHostName();
         setProtocol(vds.getProtocol());
@@ -577,7 +577,7 @@ public class IrsProxyData {
     }
 
     public boolean failover() {
-        Guid vdsId = mCurrentVdsId;
+        Guid vdsId = currentVdsId;
         nullifyInternalProxies();
         boolean performFailover = false;
         if (vdsId != null) {
@@ -598,7 +598,7 @@ public class IrsProxyData {
             } catch (Exception ex) {
                 // try to failover to another host if failed to get spm
                 // status or stop spm
-                // (in case mCurrentVdsId has wrong id for some reason)
+                // (in case currentVdsId has wrong id for some reason)
                 log.error("Could not get spm status on host '{}' for spmStop: {}", vdsId, ex.getMessage());
                 log.debug("Exception", ex);
                 performFailover = true;
@@ -607,7 +607,7 @@ public class IrsProxyData {
 
         if (performFailover) {
             log.info("Irs placed on server '{}' failed. Proceed Failover", vdsId);
-            mTriedVdssList.add(vdsId);
+            triedVdssList.add(vdsId);
             return true;
         } else {
             log.error("IRS failover failed - can't allocate vds server");
@@ -678,7 +678,7 @@ public class IrsProxyData {
 
     private String gethostFromVds() {
         String returnValue = null;
-        Guid curVdsId = (mCurrentVdsId != null) ? mCurrentVdsId : Guid.Empty;
+        Guid curVdsId = (currentVdsId != null) ? currentVdsId : Guid.Empty;
         StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
 
         if (storagePool == null) {
@@ -687,7 +687,7 @@ public class IrsProxyData {
         }
 
         List<VDS> prioritizedVdsInPool = getPrioritizedVdsInPool();
-        mCurrentVdsId = null;
+        currentVdsId = null;
 
         // If VDS is in initialize status, wait for it to be up (or until
         // configurable timeout is reached)
@@ -723,14 +723,14 @@ public class IrsProxyData {
             // Stores origin host id in case and will be needed to disconnect from storage pool
             Guid selectedVdsId = selectedVds.getId();
             Integer selectedVdsSpmId = selectedVds.getVdsSpmId();
-            mTriedVdssList.add(selectedVdsId);
+            triedVdssList.add(selectedVdsId);
 
             VDSReturnValue returnValueFromVds = ResourceManager.getInstance().runVdsCommand(
                     VDSCommandType.SpmStatus,
                     new SpmStatusVDSCommandParameters(selectedVds.getId(), _storagePoolId));
             spmStatus = (SpmStatusResult) returnValueFromVds.getReturnValue();
             if (spmStatus != null) {
-                mCurrentVdsId = selectedVds.getId();
+                currentVdsId = selectedVds.getId();
                 boolean performedPoolConnect = false;
                 log.info("hostFromVds::selectedVds - '{}', spmStatus '{}', storage pool '{}', storage pool version '{}'",
                         selectedVds.getName(), spmStatus.getSpmStatus(), storagePool.getName(), storagePool.getCompatibilityVersion());
@@ -776,7 +776,7 @@ public class IrsProxyData {
                     selectedVds = tempRefObject2.argvalue;
                     spmStatus = tempRefObject3.argvalue;
                 } else {
-                    mCurrentVdsId = null;
+                    currentVdsId = null;
                 }
                 if (performedPoolConnect && selectedVds == null) {
                     // if could not start spm on this host and connected to
@@ -800,7 +800,7 @@ public class IrsProxyData {
     }
 
     private List<VDS> getPrioritizedVdsInPool() {
-        Guid curVdsId = (mCurrentVdsId != null) ? mCurrentVdsId : Guid.Empty;
+        Guid curVdsId = (currentVdsId != null) ? currentVdsId : Guid.Empty;
         // Gets a list of the hosts in the storagePool, that are "UP", ordered
         // by vds_spm_priority (not including -1) and secondly ordered by RANDOM(), to
         // deal with the case that there are several hosts with the same priority.
@@ -810,7 +810,7 @@ public class IrsProxyData {
         IrsBrokerCommand.getIrsProxyData(_storagePoolId).setPreferredHostId(null);
 
         for (VDS vds : allVds) {
-            if (!mTriedVdssList.contains(vds.getId()) && !vds.getId().equals(curVdsId)) {
+            if (!triedVdssList.contains(vds.getId()) && !vds.getId().equals(curVdsId)) {
                 if (vds.getId().equals(preferredHost)) {
                     vdsRelevantForSpmSelection.add(0, vds);
                 }
@@ -1103,7 +1103,7 @@ public class IrsProxyData {
         }
         privatemCurrentIrsHost = null;
         irsProxy = null;
-        mCurrentVdsId = null;
+        currentVdsId = null;
     }
 
     private final Map<Guid, HashSet<Guid>> _domainsInProblem = new ConcurrentHashMap<Guid, HashSet<Guid>>();

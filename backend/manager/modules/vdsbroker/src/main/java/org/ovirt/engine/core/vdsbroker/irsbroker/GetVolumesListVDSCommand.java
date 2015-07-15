@@ -44,7 +44,7 @@ public class GetVolumesListVDSCommand<P extends StoragePoolDomainAndGroupIdBaseV
         EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case GetStorageDomainListError:
-            getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().mMessage));
+            getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().message));
             getVDSReturnValue().setSucceeded(false);
             break;
         default:

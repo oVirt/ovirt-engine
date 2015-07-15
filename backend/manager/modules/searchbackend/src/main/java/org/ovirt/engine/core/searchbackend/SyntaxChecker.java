@@ -31,69 +31,69 @@ public class SyntaxChecker implements ISyntaxChecker {
     public static final String SORTDIR_ASC = "ASC";
     public static final String SORTDIR_DESC = "DESC";
 
-    private final SearchObjectAutoCompleter mSearchObjectAC;
-    private final BaseAutoCompleter mColonAC;
-    private final BaseAutoCompleter mPluralAC;
-    private final BaseAutoCompleter mSortbyAC;
-    private final BaseAutoCompleter mPageAC;
-    private final BaseAutoCompleter mAndAC;
-    private final BaseAutoCompleter mOrAC;
-    private final BaseAutoCompleter mDotAC;
-    private final BaseAutoCompleter mSortDirectionAC;
-    private final Map<SyntaxObjectType, SyntaxObjectType[]> mStateMap;
+    private final SearchObjectAutoCompleter searchObjectAC;
+    private final BaseAutoCompleter colonAC;
+    private final BaseAutoCompleter pluralAC;
+    private final BaseAutoCompleter sortbyAC;
+    private final BaseAutoCompleter pageAC;
+    private final BaseAutoCompleter andAC;
+    private final BaseAutoCompleter orAC;
+    private final BaseAutoCompleter dotAC;
+    private final BaseAutoCompleter sortDirectionAC;
+    private final Map<SyntaxObjectType, SyntaxObjectType[]> stateMap;
 
-    private final Regex mFirstDQRegexp;
-    private final Regex mNonSpaceRegexp;
-    private final List<Character> mDisAllowedChars;
+    private final Regex firstDQRegexp;
+    private final Regex nonSpaceRegexp;
+    private final List<Character> disAllowedChars;
     private SqlInjectionChecker sqlInjectionChecker;
 
     public SyntaxChecker(int searchReasultsLimit) {
 
-        mSearchObjectAC = new SearchObjectAutoCompleter();
-        mColonAC = new BaseAutoCompleter(":");
-        mPluralAC = new BaseAutoCompleter("S");
-        mSortbyAC = new BaseAutoCompleter(SORTBY);
-        mPageAC = new BaseAutoCompleter(PAGE);
-        mSortDirectionAC = new BaseAutoCompleter(SORTDIR_ASC, SORTDIR_DESC);
-        mAndAC = new BaseAutoCompleter("AND");
-        mOrAC = new BaseAutoCompleter("OR");
-        mDotAC = new BaseAutoCompleter(".");
-        mDisAllowedChars = new ArrayList<Character>(Arrays.asList(new Character[] { '\'', ';' }));
+        searchObjectAC = new SearchObjectAutoCompleter();
+        colonAC = new BaseAutoCompleter(":");
+        pluralAC = new BaseAutoCompleter("S");
+        sortbyAC = new BaseAutoCompleter(SORTBY);
+        pageAC = new BaseAutoCompleter(PAGE);
+        sortDirectionAC = new BaseAutoCompleter(SORTDIR_ASC, SORTDIR_DESC);
+        andAC = new BaseAutoCompleter("AND");
+        orAC = new BaseAutoCompleter("OR");
+        dotAC = new BaseAutoCompleter(".");
+        disAllowedChars = new ArrayList<Character>(Arrays.asList(new Character[] { '\'', ';' }));
 
-        mFirstDQRegexp = new Regex("^\\s*\"$");
-        mNonSpaceRegexp = new Regex("^\\S+$");
+        firstDQRegexp = new Regex("^\\s*\"$");
+        nonSpaceRegexp = new Regex("^\\S+$");
 
-        mStateMap = new HashMap<SyntaxObjectType, SyntaxObjectType[]>();
-        mStateMap.put(SyntaxObjectType.BEGIN, new SyntaxObjectType[] { SyntaxObjectType.SEARCH_OBJECT });
-        mStateMap.put(SyntaxObjectType.SEARCH_OBJECT, new SyntaxObjectType[] { SyntaxObjectType.COLON });
+        stateMap = new HashMap<SyntaxObjectType, SyntaxObjectType[]>();
+        stateMap.put(SyntaxObjectType.BEGIN, new SyntaxObjectType[] { SyntaxObjectType.SEARCH_OBJECT });
+        stateMap.put(SyntaxObjectType.SEARCH_OBJECT, new SyntaxObjectType[] { SyntaxObjectType.COLON });
         SyntaxObjectType[] afterColon =
         { SyntaxObjectType.CROSS_REF_OBJ, SyntaxObjectType.CONDITION_FIELD,
                 SyntaxObjectType.SORTBY, SyntaxObjectType.PAGE, SyntaxObjectType.CONDITION_VALUE,
                 SyntaxObjectType.END };
-        mStateMap.put(SyntaxObjectType.COLON, afterColon);
+        stateMap.put(SyntaxObjectType.COLON, afterColon);
 
         SyntaxObjectType[] afterCrossRefObj = { SyntaxObjectType.DOT, SyntaxObjectType.CONDITION_RELATION };
-        mStateMap.put(SyntaxObjectType.CROSS_REF_OBJ, afterCrossRefObj);
-        mStateMap.put(SyntaxObjectType.DOT, new SyntaxObjectType[] { SyntaxObjectType.CONDITION_FIELD });
+        stateMap.put(SyntaxObjectType.CROSS_REF_OBJ, afterCrossRefObj);
+        stateMap.put(SyntaxObjectType.DOT, new SyntaxObjectType[] { SyntaxObjectType.CONDITION_FIELD });
 
-        mStateMap.put(SyntaxObjectType.CONDITION_FIELD, new SyntaxObjectType[] { SyntaxObjectType.CONDITION_RELATION });
-        mStateMap.put(SyntaxObjectType.CONDITION_RELATION, new SyntaxObjectType[] { SyntaxObjectType.CONDITION_VALUE });
+        stateMap.put(SyntaxObjectType.CONDITION_FIELD, new SyntaxObjectType[] { SyntaxObjectType.CONDITION_RELATION });
+        stateMap.put(SyntaxObjectType.CONDITION_RELATION, new SyntaxObjectType[] { SyntaxObjectType.CONDITION_VALUE });
         SyntaxObjectType[] afterConditionValue = { SyntaxObjectType.OR, SyntaxObjectType.AND,
                 SyntaxObjectType.CROSS_REF_OBJ, SyntaxObjectType.CONDITION_FIELD, SyntaxObjectType.SORTBY,
                 SyntaxObjectType.PAGE, SyntaxObjectType.CONDITION_VALUE };
-        mStateMap.put(SyntaxObjectType.CONDITION_VALUE, afterConditionValue);
+        stateMap.put(SyntaxObjectType.CONDITION_VALUE, afterConditionValue);
 
         SyntaxObjectType[] AndOrArray = { SyntaxObjectType.CROSS_REF_OBJ, SyntaxObjectType.CONDITION_FIELD,
                 SyntaxObjectType.CONDITION_VALUE };
-        mStateMap.put(SyntaxObjectType.AND, AndOrArray);
-        mStateMap.put(SyntaxObjectType.OR, AndOrArray);
+        stateMap.put(SyntaxObjectType.AND, AndOrArray);
+        stateMap.put(SyntaxObjectType.OR, AndOrArray);
 
-        mStateMap.put(SyntaxObjectType.SORTBY, new SyntaxObjectType[] { SyntaxObjectType.SORT_FIELD });
-        mStateMap.put(SyntaxObjectType.SORT_FIELD, new SyntaxObjectType[] { SyntaxObjectType.SORT_DIRECTION });
-        mStateMap.put(SyntaxObjectType.SORT_DIRECTION, new SyntaxObjectType[] { SyntaxObjectType.PAGE });
+        stateMap.put(SyntaxObjectType.SORTBY, new SyntaxObjectType[] { SyntaxObjectType.SORT_FIELD });
+        stateMap.put(SyntaxObjectType.SORT_FIELD, new SyntaxObjectType[] { SyntaxObjectType.SORT_DIRECTION });
+        stateMap.put(SyntaxObjectType.SORT_DIRECTION, new SyntaxObjectType[] { SyntaxObjectType.PAGE });
 
-        mStateMap.put(SyntaxObjectType.PAGE, new SyntaxObjectType[] { SyntaxObjectType.PAGE_VALUE });
-        mStateMap.put(SyntaxObjectType.PAGE_VALUE, new SyntaxObjectType[] { SyntaxObjectType.END });
+        stateMap.put(SyntaxObjectType.PAGE, new SyntaxObjectType[] { SyntaxObjectType.PAGE_VALUE });
+        stateMap.put(SyntaxObjectType.PAGE_VALUE, new SyntaxObjectType[] { SyntaxObjectType.END });
         // get sql injection checker for active database engine.
         try {
             sqlInjectionChecker = getSqlInjectionChecker();
@@ -120,7 +120,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         if (curChar == '"') {
             betweenDoubleQuotes = (!betweenDoubleQuotes);
             if (betweenDoubleQuotes) {
-                if (!mFirstDQRegexp.IsMatch(strRealObj)) {
+                if (!firstDQRegexp.IsMatch(strRealObj)) {
                     container.setErr(SyntaxError.INVALID_CONDITION_VALUE, startPos.argvalue, idx + 1);
                     return ValueParseResult.Err;
                 }
@@ -135,7 +135,7 @@ public class SyntaxChecker implements ISyntaxChecker {
             if (((curChar == ' ') || (idx + 1 == searchText.length())) && (betweenDoubleQuotes == false)
                     && (addObjFlag == false)) {
                 strRealObj = strRealObj.trim();
-                if (mNonSpaceRegexp.IsMatch(strRealObj)) {
+                if (nonSpaceRegexp.IsMatch(strRealObj)) {
                     addObjFlag = true;
                 } else {
                     startPos.argvalue = idx + 1;
@@ -144,7 +144,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         } else {
             if ((curChar == ' ') && (betweenDoubleQuotes == false) && (addObjFlag == false)) {
                 strRealObj = strRealObj.trim();
-                if (mNonSpaceRegexp.IsMatch(strRealObj)) {
+                if (nonSpaceRegexp.IsMatch(strRealObj)) {
                     addObjFlag = true;
                 } else {
                     startPos.argvalue = idx + 1;
@@ -154,7 +154,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         if (addObjFlag) {
             String curRefObj = container.getPreviousSyntaxObject(3, SyntaxObjectType.CROSS_REF_OBJ);
             String curConditionField = container.getPreviousSyntaxObject(1, SyntaxObjectType.CONDITION_FIELD);
-            curConditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(curRefObj);
+            curConditionFieldAC = searchObjectAC.getFieldAutoCompleter(curRefObj);
             if (curConditionFieldAC == null) {
                 container.setErr(SyntaxError.CANT_GET_CONDITION_FIELD_AC, startPos.argvalue, idx);
                 return ValueParseResult.Err;
@@ -206,7 +206,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         for (int idx = 0; idx < searchCharArr.length; idx++) {
             final SyntaxObjectType curState = syntaxContainer.getState();
             final char curChar = searchCharArr[idx];
-            if (mDisAllowedChars.contains(curChar)) {
+            if (disAllowedChars.contains(curChar)) {
                 syntaxContainer.setErr(SyntaxError.INVALID_CHARECTER, curStartPos, idx + 1);
                 return syntaxContainer;
             }
@@ -221,8 +221,8 @@ public class SyntaxChecker implements ISyntaxChecker {
             switch (curState) {
             case BEGIN:
                 // we have found a search-object
-                if (!mSearchObjectAC.validate(nextObject)) {
-                    if (!mSearchObjectAC.validateCompletion(nextObject)) {
+                if (!searchObjectAC.validate(nextObject)) {
+                    if (!searchObjectAC.validateCompletion(nextObject)) {
                         syntaxContainer.setErr(SyntaxError.INVALID_SEARCH_OBJECT, curStartPos, idx - curStartPos + 1);
                         return syntaxContainer;
                     }
@@ -230,7 +230,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     if (searchCharArr.length >= idx + 2) { // Check that this
                                                          // maybe a plural
                         // Validate that the next character is an 's'
-                        if (mPluralAC.validate(searchText.substring(idx + 1, idx + 1 + 1))) {
+                        if (pluralAC.validate(searchText.substring(idx + 1, idx + 1 + 1))) {
                             // Then just move things along.
                             idx++;
                             StringBuilder sb = new StringBuilder(nextObject);
@@ -245,8 +245,8 @@ public class SyntaxChecker implements ISyntaxChecker {
                 break;
             case SEARCH_OBJECT:
 
-                if (!mColonAC.validate(nextObject)) {
-                    if (!mColonAC.validateCompletion(nextObject)) {
+                if (!colonAC.validate(nextObject)) {
+                    if (!colonAC.validateCompletion(nextObject)) {
                         syntaxContainer.setErr(SyntaxError.COLON_NOT_NEXT_TO_SEARCH_OBJECT, curStartPos, idx + 1);
                         return syntaxContainer;
                     }
@@ -258,7 +258,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                 break;
             case CROSS_REF_OBJ:
                 String curRefObj = syntaxContainer.getPreviousSyntaxObject(0, SyntaxObjectType.CROSS_REF_OBJ);
-                curConditionRelationAC = mSearchObjectAC.getObjectRelationshipAutoCompleter();
+                curConditionRelationAC = searchObjectAC.getObjectRelationshipAutoCompleter();
                 if (idx + 1 < searchCharArr.length) {
                     tryNextObj = searchText.substring(curStartPos, idx + 2).toUpperCase();
                 }
@@ -266,7 +266,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     syntaxContainer.setErr(SyntaxError.CONDITION_CANT_CREATE_RRELATIONS_AC, curStartPos, idx + 1);
                     return syntaxContainer;
                 }
-                if (mDotAC.validate(nextObject)) {
+                if (dotAC.validate(nextObject)) {
                     syntaxContainer.addSyntaxObject(SyntaxObjectType.DOT, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
                 } else if ((!"".equals(tryNextObj)) && (curConditionRelationAC.validate(tryNextObj))) {
@@ -279,7 +279,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     curStartPos = idx + 1;
 
                 } else if ((!curConditionRelationAC.validateCompletion(nextObject))
-                        && (!mDotAC.validateCompletion(nextObject))) {
+                        && (!dotAC.validateCompletion(nextObject))) {
                     syntaxContainer.setErr(SyntaxError.INVALID_POST_CROSS_REF_OBJ, curStartPos, idx + 1);
                     return syntaxContainer;
                 }
@@ -287,7 +287,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                 break;
             case DOT:
                 curRefObj = syntaxContainer.getPreviousSyntaxObject(1, SyntaxObjectType.CROSS_REF_OBJ);
-                curConditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(curRefObj);
+                curConditionFieldAC = searchObjectAC.getFieldAutoCompleter(curRefObj);
                 if (curConditionFieldAC == null) {
 
                     syntaxContainer.setErr(SyntaxError.CANT_GET_CONDITION_FIELD_AC, curStartPos, idx);
@@ -306,16 +306,16 @@ public class SyntaxChecker implements ISyntaxChecker {
             case AND:
             case OR:
                 keepValid = false;
-                curConditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(syntaxContainer.getSearchObjectStr());
+                curConditionFieldAC = searchObjectAC.getFieldAutoCompleter(syntaxContainer.getSearchObjectStr());
                 if (curConditionFieldAC.validate(nextObject)) {
                     syntaxContainer.addSyntaxObject(SyntaxObjectType.CONDITION_FIELD, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
 
-                } else if (mSearchObjectAC.isCrossReference(nextObject, syntaxContainer.getFirst().getBody())) {
+                } else if (searchObjectAC.isCrossReference(nextObject, syntaxContainer.getFirst().getBody())) {
                     if (searchCharArr.length >= idx + 2) { // Check that this
                                                          // maybe a plural
                         // Validate that the next character is an 's'
-                        if (mPluralAC.validate(searchText.substring(idx + 1, idx + 1 + 1))) {
+                        if (pluralAC.validate(searchText.substring(idx + 1, idx + 1 + 1))) {
                             // Then just move things along.
                             idx++;
                             StringBuilder sb = new StringBuilder(nextObject);
@@ -341,7 +341,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                             keepValid = true;
                         }
                     } else if ((!curConditionFieldAC.validateCompletion(nextObject))
-                            && (!mSearchObjectAC.validateCompletion(nextObject))) {
+                            && (!searchObjectAC.validateCompletion(nextObject))) {
                         syntaxContainer.setErr(SyntaxError.INVALID_POST_OR_AND_PHRASE, curStartPos, idx + 1);
                         return syntaxContainer;
                     }
@@ -352,22 +352,22 @@ public class SyntaxChecker implements ISyntaxChecker {
                 break;
             case COLON:
                 keepValid = false;
-                curConditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(syntaxContainer.getSearchObjectStr());
+                curConditionFieldAC = searchObjectAC.getFieldAutoCompleter(syntaxContainer.getSearchObjectStr());
                 if (curConditionFieldAC.validate(nextObject)) {
                     syntaxContainer.addSyntaxObject(SyntaxObjectType.CONDITION_FIELD, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
 
-                } else if (mSortbyAC.validate(nextObject)) {
+                } else if (sortbyAC.validate(nextObject)) {
                     syntaxContainer.addSyntaxObject(SyntaxObjectType.SORTBY, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
-                } else if (mPageAC.validate(nextObject)) {
+                } else if (pageAC.validate(nextObject)) {
                     syntaxContainer.addSyntaxObject(SyntaxObjectType.PAGE, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
-                } else if (mSearchObjectAC.isCrossReference(nextObject, syntaxContainer.getFirst().getBody())) {
+                } else if (searchObjectAC.isCrossReference(nextObject, syntaxContainer.getFirst().getBody())) {
                     if (searchCharArr.length >= idx + 2) { // Check that this
                                                          // maybe a plural
                         // Validate that the next character is an 's'
-                        if (mPluralAC.validate(searchText.substring(idx + 1, idx + 1 + 1))) {
+                        if (pluralAC.validate(searchText.substring(idx + 1, idx + 1 + 1))) {
                             // Then just move things along.
                             idx++;
                             StringBuilder sb = new StringBuilder(nextObject);
@@ -387,8 +387,8 @@ public class SyntaxChecker implements ISyntaxChecker {
                         }
                         keepValid = true;
                     } else if ((!curConditionFieldAC.validateCompletion(nextObject))
-                            && (!mSortbyAC.validateCompletion(nextObject))
-                            && (!mSearchObjectAC.validateCompletion(nextObject))) {
+                            && (!sortbyAC.validateCompletion(nextObject))
+                            && (!searchObjectAC.validateCompletion(nextObject))) {
                         syntaxContainer.setErr(SyntaxError.INVALID_POST_COLON_PHRASE, curStartPos, idx + 1);
                         return syntaxContainer;
                     }
@@ -402,7 +402,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                 if (nextObject.length() > 0) {
                     keepValid = false;
                     curRefObj = syntaxContainer.getSearchObjectStr();
-                    curConditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(curRefObj);
+                    curConditionFieldAC = searchObjectAC.getFieldAutoCompleter(curRefObj);
                     if (curConditionFieldAC.validate(nextObject)) {
                         syntaxContainer.addSyntaxObject(SyntaxObjectType.CONDITION_FIELD,
                                 nextObject,
@@ -410,18 +410,18 @@ public class SyntaxChecker implements ISyntaxChecker {
                                 idx + 1);
                         curStartPos = idx + 1;
 
-                    } else if (mSortbyAC.validate(nextObject)) {
+                    } else if (sortbyAC.validate(nextObject)) {
                         syntaxContainer.addSyntaxObject(SyntaxObjectType.SORTBY, nextObject, curStartPos, idx + 1);
                         curStartPos = idx + 1;
-                    } else if (mPageAC.validate(nextObject)) {
+                    } else if (pageAC.validate(nextObject)) {
                         syntaxContainer.addSyntaxObject(SyntaxObjectType.PAGE, nextObject, curStartPos, idx + 1);
                         curStartPos = idx + 1;
-                    } else if (mSearchObjectAC.isCrossReference(nextObject, syntaxContainer.getFirst().getBody())) {
+                    } else if (searchObjectAC.isCrossReference(nextObject, syntaxContainer.getFirst().getBody())) {
                         if (searchCharArr.length >= idx + 2) { // Check that this
                                                              // maybe a
                                                              // plural
                             // Validate that the next character is an 's'
-                            if (mPluralAC.validate(searchText.substring(idx + 1, idx + 1 + 1))) {
+                            if (pluralAC.validate(searchText.substring(idx + 1, idx + 1 + 1))) {
                                 // Then just move things along.
                                 idx++;
                                 StringBuilder sb = new StringBuilder(nextObject);
@@ -434,18 +434,18 @@ public class SyntaxChecker implements ISyntaxChecker {
                                 curStartPos,
                                 idx + 1);
                         curStartPos = idx + 1;
-                    } else if (mAndAC.validate(nextObject)) {
+                    } else if (andAC.validate(nextObject)) {
                         syntaxContainer.addSyntaxObject(SyntaxObjectType.AND, nextObject, curStartPos, idx + 1);
                         curStartPos = idx + 1;
-                    } else if (mOrAC.validate(nextObject)) {
+                    } else if (orAC.validate(nextObject)) {
                         syntaxContainer.addSyntaxObject(SyntaxObjectType.OR, nextObject, curStartPos, idx + 1);
                         curStartPos = idx + 1;
                     }
 
                     else if ((!curConditionFieldAC.validateCompletion(nextObject))
-                            && (!mSortbyAC.validateCompletion(nextObject))
-                            && (!mSearchObjectAC.validateCompletion(nextObject))
-                            && (!mAndAC.validateCompletion(nextObject)) && (!mOrAC.validateCompletion(nextObject))) {
+                            && (!sortbyAC.validateCompletion(nextObject))
+                            && (!searchObjectAC.validateCompletion(nextObject))
+                            && (!andAC.validateCompletion(nextObject)) && (!orAC.validateCompletion(nextObject))) {
                         RefObject<Integer> tempRefObject3 = new RefObject<Integer>(curStartPos);
                         ValueParseResult ans =
                                 handleValuePhrase(final2, searchText, idx, tempRefObject3, syntaxContainer);
@@ -477,7 +477,7 @@ public class SyntaxChecker implements ISyntaxChecker {
             case CONDITION_FIELD:
                 curRefObj = syntaxContainer.getPreviousSyntaxObject(2, SyntaxObjectType.CROSS_REF_OBJ);
                 String curConditionField = syntaxContainer.getPreviousSyntaxObject(0, SyntaxObjectType.CONDITION_FIELD);
-                curConditionRelationAC = mSearchObjectAC
+                curConditionRelationAC = searchObjectAC
                         .getFieldRelationshipAutoCompleter(curRefObj, curConditionField);
                 if (curConditionRelationAC == null) {
                     syntaxContainer.setErr(SyntaxError.CONDITION_CANT_CREATE_RRELATIONS_AC, curStartPos, idx + 1);
@@ -526,7 +526,7 @@ public class SyntaxChecker implements ISyntaxChecker {
             }
                 break;
             case SORTBY:
-                curConditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(syntaxContainer.getSearchObjectStr());
+                curConditionFieldAC = searchObjectAC.getFieldAutoCompleter(syntaxContainer.getSearchObjectStr());
                 if (!curConditionFieldAC.validate(nextObject)) {
                     if (!curConditionFieldAC.validateCompletion(nextObject)) {
                         syntaxContainer.setErr(SyntaxError.INVALID_SORT_FIELD, curStartPos, idx + 1);
@@ -562,8 +562,8 @@ public class SyntaxChecker implements ISyntaxChecker {
                 }
                 break;
             case SORT_FIELD:
-                if (!mSortDirectionAC.validate(nextObject)) {
-                    if (!mSortDirectionAC.validateCompletion(nextObject)) {
+                if (!sortDirectionAC.validate(nextObject)) {
+                    if (!sortDirectionAC.validateCompletion(nextObject)) {
                         syntaxContainer.setErr(SyntaxError.INVALID_SORT_DIRECTION, curStartPos, idx + 1);
                         return syntaxContainer;
                     }
@@ -580,8 +580,8 @@ public class SyntaxChecker implements ISyntaxChecker {
                 }
                 break;
             case SORT_DIRECTION:
-                if (!mPageAC.validate(nextObject)) {
-                    if (!mPageAC.validateCompletion(nextObject)) {
+                if (!pageAC.validate(nextObject)) {
+                    if (!pageAC.validateCompletion(nextObject)) {
                         syntaxContainer.setErr(SyntaxError.INVALID_PAGE_FEILD, curStartPos, idx);
                         return syntaxContainer;
                     }
@@ -614,32 +614,32 @@ public class SyntaxChecker implements ISyntaxChecker {
                 curPartialWord = curPartialWord.trim();
             }
             SyntaxObjectType curState = retval.getState();
-            for (int idx = 0; idx < mStateMap.get(curState).length; idx++) {
-                switch (mStateMap.get(curState)[idx]) {
+            for (int idx = 0; idx < stateMap.get(curState).length; idx++) {
+                switch (stateMap.get(curState)[idx]) {
                 case SEARCH_OBJECT:
-                    retval.addToACList(mSearchObjectAC.getCompletion(curPartialWord));
+                    retval.addToACList(searchObjectAC.getCompletion(curPartialWord));
                     break;
                 case CROSS_REF_OBJ:
-                    IAutoCompleter crossRefAC = mSearchObjectAC.getCrossRefAutoCompleter(retval.getFirst().getBody());
+                    IAutoCompleter crossRefAC = searchObjectAC.getCrossRefAutoCompleter(retval.getFirst().getBody());
                     if (crossRefAC != null) {
                         retval.addToACList(crossRefAC.getCompletion(curPartialWord));
                     }
                     break;
                 case DOT:
-                    retval.addToACList(mDotAC.getCompletion(curPartialWord));
+                    retval.addToACList(dotAC.getCompletion(curPartialWord));
                     break;
                 case COLON:
-                    retval.addToACList(mColonAC.getCompletion(curPartialWord));
+                    retval.addToACList(colonAC.getCompletion(curPartialWord));
                     break;
                 case AND:
-                    retval.addToACList(mAndAC.getCompletion(curPartialWord));
+                    retval.addToACList(andAC.getCompletion(curPartialWord));
                     break;
                 case OR:
-                    retval.addToACList(mOrAC.getCompletion(curPartialWord));
+                    retval.addToACList(orAC.getCompletion(curPartialWord));
                     break;
                 case CONDITION_FIELD:
                     String relObj = retval.getPreviousSyntaxObject(1, SyntaxObjectType.CROSS_REF_OBJ);
-                    conditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(relObj);
+                    conditionFieldAC = searchObjectAC.getFieldAutoCompleter(relObj);
                     if (conditionFieldAC != null) {
                         retval.addToACList(conditionFieldAC.getCompletion(curPartialWord));
                     }
@@ -648,10 +648,10 @@ public class SyntaxChecker implements ISyntaxChecker {
                     if (curState == SyntaxObjectType.CONDITION_FIELD) {
                         relObj = retval.getPreviousSyntaxObject(2, SyntaxObjectType.CROSS_REF_OBJ);
                         String fldName = retval.getPreviousSyntaxObject(0, SyntaxObjectType.CONDITION_FIELD);
-                        conditionRelationAC = mSearchObjectAC.getFieldRelationshipAutoCompleter(relObj, fldName);
+                        conditionRelationAC = searchObjectAC.getFieldRelationshipAutoCompleter(relObj, fldName);
                     } else { // curState == SyntaxObjectType.CROSS_REF_OBJ
                         relObj = retval.getPreviousSyntaxObject(0, SyntaxObjectType.CROSS_REF_OBJ);
-                        conditionRelationAC = mSearchObjectAC.getObjectRelationshipAutoCompleter();
+                        conditionRelationAC = searchObjectAC.getObjectRelationshipAutoCompleter();
 
                     }
                     if (conditionRelationAC != null) {
@@ -662,26 +662,26 @@ public class SyntaxChecker implements ISyntaxChecker {
                 case CONDITION_VALUE: {
                     relObj = retval.getPreviousSyntaxObject(3, SyntaxObjectType.CROSS_REF_OBJ);
                     String fldName = retval.getPreviousSyntaxObject(1, SyntaxObjectType.CONDITION_FIELD);
-                    conditionValueAC = mSearchObjectAC.getFieldValueAutoCompleter(relObj, fldName);
+                    conditionValueAC = searchObjectAC.getFieldValueAutoCompleter(relObj, fldName);
                     if (conditionValueAC != null) {
                         retval.addToACList(conditionValueAC.getCompletion(curPartialWord));
                     }
                 }
                     break;
                 case SORTBY:
-                    retval.addToACList(mSortbyAC.getCompletion(curPartialWord));
+                    retval.addToACList(sortbyAC.getCompletion(curPartialWord));
                     break;
                 case PAGE:
-                    retval.addToACList(mPageAC.getCompletion(curPartialWord));
+                    retval.addToACList(pageAC.getCompletion(curPartialWord));
                     break;
                 case SORT_FIELD:
-                    conditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(retval.getSearchObjectStr());
+                    conditionFieldAC = searchObjectAC.getFieldAutoCompleter(retval.getSearchObjectStr());
                     if (conditionFieldAC != null) {
                         retval.addToACList(conditionFieldAC.getCompletion(curPartialWord));
                     }
                     break;
                 case SORT_DIRECTION:
-                    retval.addToACList(mSortDirectionAC.getCompletion(curPartialWord));
+                    retval.addToACList(sortDirectionAC.getCompletion(curPartialWord));
                     break;
                 }
             }
@@ -704,70 +704,70 @@ public class SyntaxChecker implements ISyntaxChecker {
         String searchObjStr = syntax.getSearchObjectStr();
         if (refObjList.size() > 0) {
             if (SearchObjects.TEMPLATE_OBJ_NAME.equals(searchObjStr)) {
-                innerJoins.addFirst(mSearchObjectAC.getInnerJoin(SearchObjects.TEMPLATE_OBJ_NAME,
+                innerJoins.addFirst(searchObjectAC.getInnerJoin(SearchObjects.TEMPLATE_OBJ_NAME,
                         SearchObjects.VM_OBJ_NAME, useTags));
                 if (refObjList.contains(SearchObjects.VM_OBJ_NAME)) {
                     refObjList.remove(SearchObjects.VM_OBJ_NAME);
                 }
                 if (refObjList.contains(SearchObjects.VDC_USER_OBJ_NAME)) {
-                    innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VM_OBJ_NAME,
+                    innerJoins.addLast(searchObjectAC.getInnerJoin(SearchObjects.VM_OBJ_NAME,
                             SearchObjects.VDC_USER_OBJ_NAME, true));
                     refObjList.remove(SearchObjects.VDC_USER_OBJ_NAME);
                 }
                 if (refObjList.contains(SearchObjects.VDS_OBJ_NAME)) {
-                    innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VM_OBJ_NAME,
+                    innerJoins.addLast(searchObjectAC.getInnerJoin(SearchObjects.VM_OBJ_NAME,
                             SearchObjects.VDS_OBJ_NAME, true));
                     refObjList.remove(SearchObjects.VDS_OBJ_NAME);
                 }
                 if (refObjList.contains(SearchObjects.AUDIT_OBJ_NAME)) {
-                    innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VM_OBJ_NAME,
+                    innerJoins.addLast(searchObjectAC.getInnerJoin(SearchObjects.VM_OBJ_NAME,
                             SearchObjects.AUDIT_OBJ_NAME, useTags));
                     refObjList.remove(SearchObjects.AUDIT_OBJ_NAME);
                 }
             }
             else if (SearchObjects.VDS_OBJ_NAME.equals(searchObjStr)) {
                 if (refObjList.contains(SearchObjects.TEMPLATE_OBJ_NAME)) {
-                    innerJoins.addFirst(mSearchObjectAC.getInnerJoin(SearchObjects.VDS_OBJ_NAME,
+                    innerJoins.addFirst(searchObjectAC.getInnerJoin(SearchObjects.VDS_OBJ_NAME,
                             SearchObjects.VM_OBJ_NAME, useTags));
                     if (refObjList.contains(SearchObjects.VM_OBJ_NAME)) {
                         refObjList.remove(SearchObjects.VM_OBJ_NAME);
                     }
                 }
                 if (refObjList.contains(SearchObjects.VDC_USER_OBJ_NAME)) {
-                    innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VDS_OBJ_NAME,
+                    innerJoins.addLast(searchObjectAC.getInnerJoin(SearchObjects.VDS_OBJ_NAME,
                             SearchObjects.VDC_USER_OBJ_NAME, useTags));
                     refObjList.remove(SearchObjects.VDC_USER_OBJ_NAME);
                 }
                 if (refObjList.contains(SearchObjects.TEMPLATE_OBJ_NAME)) {
-                    innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VM_OBJ_NAME,
+                    innerJoins.addLast(searchObjectAC.getInnerJoin(SearchObjects.VM_OBJ_NAME,
                             SearchObjects.TEMPLATE_OBJ_NAME, useTags));
                     refObjList.remove(SearchObjects.TEMPLATE_OBJ_NAME);
                 }
             }
             else if (SearchObjects.VDC_USER_OBJ_NAME.equals(searchObjStr)) {
                 if ((refObjList.contains(SearchObjects.VDS_OBJ_NAME))) {
-                    innerJoins.addFirst(mSearchObjectAC.getInnerJoin(SearchObjects.VDC_USER_OBJ_NAME,
+                    innerJoins.addFirst(searchObjectAC.getInnerJoin(SearchObjects.VDC_USER_OBJ_NAME,
                             SearchObjects.VM_OBJ_NAME, useTags));
                     if (refObjList.contains(SearchObjects.VM_OBJ_NAME)) {
                         refObjList.remove(SearchObjects.VM_OBJ_NAME);
                     }
                 }
                 if (refObjList.contains(SearchObjects.VDS_OBJ_NAME)) {
-                    innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VM_OBJ_NAME,
+                    innerJoins.addLast(searchObjectAC.getInnerJoin(SearchObjects.VM_OBJ_NAME,
                             SearchObjects.VDS_OBJ_NAME, useTags));
                     refObjList.remove(SearchObjects.VDS_OBJ_NAME);
                 }
                 if (refObjList.contains(SearchObjects.TEMPLATE_OBJ_NAME)) {
-                    innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VDC_USER_OBJ_NAME,
+                    innerJoins.addLast(searchObjectAC.getInnerJoin(SearchObjects.VDC_USER_OBJ_NAME,
                             SearchObjects.TEMPLATE_OBJ_NAME, useTags));
                     refObjList.remove(SearchObjects.TEMPLATE_OBJ_NAME);
                 }
             }
             else if (SearchObjects.AUDIT_OBJ_NAME.equals(searchObjStr)) {
                 if (refObjList.contains(SearchObjects.TEMPLATE_OBJ_NAME)) {
-                    innerJoins.addFirst(mSearchObjectAC.getInnerJoin(SearchObjects.AUDIT_OBJ_NAME,
+                    innerJoins.addFirst(searchObjectAC.getInnerJoin(SearchObjects.AUDIT_OBJ_NAME,
                             SearchObjects.VM_OBJ_NAME, useTags));
-                    innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VM_OBJ_NAME,
+                    innerJoins.addLast(searchObjectAC.getInnerJoin(SearchObjects.VM_OBJ_NAME,
                             SearchObjects.TEMPLATE_OBJ_NAME, useTags));
                     refObjList.remove(SearchObjects.TEMPLATE_OBJ_NAME);
                     if (refObjList.contains(SearchObjects.VM_OBJ_NAME)) {
@@ -777,18 +777,18 @@ public class SyntaxChecker implements ISyntaxChecker {
             }
             else if (SearchObjects.DISK_OBJ_NAME.equals(searchObjStr)) {
                 if (refObjList.contains(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
-                    innerJoins.addFirst(mSearchObjectAC.getInnerJoin(SearchObjects.DISK_OBJ_NAME,
+                    innerJoins.addFirst(searchObjectAC.getInnerJoin(SearchObjects.DISK_OBJ_NAME,
                             SearchObjects.VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME, useTags));
-                    innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME,
+                    innerJoins.addLast(searchObjectAC.getInnerJoin(SearchObjects.VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME,
                             SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, useTags));
                     refObjList.remove(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME);
                 }
             }
         }
         for (String cro : refObjList) {
-            innerJoins.addLast(mSearchObjectAC.getInnerJoin(searchObjStr, cro, useTags));
+            innerJoins.addLast(searchObjectAC.getInnerJoin(searchObjStr, cro, useTags));
         }
-        innerJoins.addFirst(mSearchObjectAC.getRelatedTableName(searchObjStr, useTags));
+        innerJoins.addFirst(searchObjectAC.getRelatedTableName(searchObjStr, useTags));
         StringBuilder sb = new StringBuilder();
         for (String part : innerJoins) {
             sb.append(" ");
@@ -841,7 +841,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     pageNumber = obj.getBody();
                     break;
                 case SORT_FIELD:
-                    conditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(searchObjStr);
+                    conditionFieldAC = searchObjectAC.getFieldAutoCompleter(searchObjStr);
                     sortByPhrase =
                             StringFormat.format(" ORDER BY %1$s", conditionFieldAC.getSortableDbField(obj.getBody()));
                     break;
@@ -899,19 +899,19 @@ public class SyntaxChecker implements ISyntaxChecker {
 
             // adding the sorting part if required
             if ("".equals(sortByPhrase)) {
-                sortByPhrase = " ORDER BY " + mSearchObjectAC.getDefaultSort(searchObjStr);
+                sortByPhrase = " ORDER BY " + searchObjectAC.getDefaultSort(searchObjStr);
             }
             // adding the paging phrase
             String pagePhrase = getPagePhrase(syntax, pageNumber);
-            String primeryKey = mSearchObjectAC.getPrimeryKeyName(searchObjStr);
-            String tableName = mSearchObjectAC.getRelatedTableName(searchObjStr, useTags);
+            String primeryKey = searchObjectAC.getPrimeryKeyName(searchObjStr);
+            String tableName = searchObjectAC.getRelatedTableName(searchObjStr, useTags);
 
             // adding a secondary default sort by entity name
             StringBuilder sortExpr = new StringBuilder();
             sortExpr.append(sortByPhrase);
-            if ( sortByPhrase.indexOf(mSearchObjectAC.getDefaultSort(searchObjStr)) < 0) {
+            if ( sortByPhrase.indexOf(searchObjectAC.getDefaultSort(searchObjStr)) < 0) {
                 sortExpr.append(",");
-                sortExpr.append(mSearchObjectAC.getDefaultSort(searchObjStr));
+                sortExpr.append(searchObjectAC.getDefaultSort(searchObjStr));
             }
 
             // TODO: The database configuration PostgresSearchTemplate has an extra closing braces. Hence our
@@ -921,7 +921,7 @@ public class SyntaxChecker implements ISyntaxChecker {
             if (useTags) {
                 inQuery = StringFormat.format(
                         "SELECT * FROM %1$s WHERE ( %2$s IN (%3$s)",
-                                mSearchObjectAC.getRelatedTableName(searchObjStr, false),
+                                searchObjectAC.getRelatedTableName(searchObjStr, false),
                                 primeryKey,
                                 getInnerQuery(tableName, primeryKey, fromStatement, wherePhrase, sortExpr));
             } else {
@@ -1030,7 +1030,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         if (prevType != SyntaxObjectType.CONDITION_RELATION) {
             // free text of default search object
             objName = searchObjStr;
-            conditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(searchObjStr);
+            conditionFieldAC = searchObjectAC.getFieldAutoCompleter(searchObjStr);
             conditionType = ConditionType.FreeText;
         } else {
             prev = objIter.previous();
@@ -1039,7 +1039,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                                                                     // for some
                                                                     // object
                 objName = prev.getBody();
-                conditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(objName);
+                conditionFieldAC = searchObjectAC.getFieldAutoCompleter(objName);
                 conditionType = ConditionType.FreeTextSpecificObj;
             } else { // if (prev.getType() == SyntaxObjectType.CONDITION_FIELD)
                 fieldName = prev.getBody();
@@ -1047,13 +1047,13 @@ public class SyntaxChecker implements ISyntaxChecker {
                 if (prev.getType() != SyntaxObjectType.DOT) {
                     // standard condition with default AC (search obj)
                     objName = searchObjStr;
-                    conditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(searchObjStr);
+                    conditionFieldAC = searchObjectAC.getFieldAutoCompleter(searchObjStr);
                     conditionType = ConditionType.ConditionWithDefaultObj;
                 } else {
                     // standard condition with specific AC
                     prev = objIter.previous();
                     objName = prev.getBody();
-                    conditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(objName);
+                    conditionFieldAC = searchObjectAC.getFieldAutoCompleter(objName);
                     conditionType = ConditionType.ConditionwithSpesificObj;
                 }
             }
@@ -1144,9 +1144,9 @@ public class SyntaxChecker implements ISyntaxChecker {
         // We will take the table with tags for all subtables
         // TODO: Optimize this
         if (conditionType == ConditionType.ConditionwithSpesificObj) {
-            tableName = mSearchObjectAC.getRelatedTableName(objName, true);
+            tableName = searchObjectAC.getRelatedTableName(objName, true);
         } else {
-            tableName = mSearchObjectAC.getRelatedTableName(objName, fieldName, useTags);
+            tableName = searchObjectAC.getRelatedTableName(objName, fieldName, useTags);
         }
         if (customizedRelation.equalsIgnoreCase("LIKE") || customizedRelation.equalsIgnoreCase("ILIKE")) {
             // Since '_' is treated in Postgres as '?' when using like, (i.e. match any single character)

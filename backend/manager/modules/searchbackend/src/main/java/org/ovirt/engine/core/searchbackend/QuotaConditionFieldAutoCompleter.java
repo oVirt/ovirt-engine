@@ -15,14 +15,14 @@ public class QuotaConditionFieldAutoCompleter extends BaseConditionFieldAutoComp
 
     public QuotaConditionFieldAutoCompleter() {
         // Building the basic verbs dict.
-        mVerbs.add(NAME);
-        mVerbs.add(STORAGEPOOLNAME);
-        mVerbs.add(DESCRIPTION);
-        mVerbs.add(thresholdStoragePercentage);
-        mVerbs.add(thresholdVdsGroupPercentage);
-        mVerbs.add(graceStoragePercentage);
-        mVerbs.add(graceVdsGrouPercentage);
-        mVerbs.add(enforcementType);
+        verbs.add(NAME);
+        verbs.add(STORAGEPOOLNAME);
+        verbs.add(DESCRIPTION);
+        verbs.add(thresholdStoragePercentage);
+        verbs.add(thresholdVdsGroupPercentage);
+        verbs.add(graceStoragePercentage);
+        verbs.add(graceVdsGrouPercentage);
+        verbs.add(enforcementType);
 
         // Building the autoCompletion dict.
         buildCompletions();

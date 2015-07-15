@@ -35,21 +35,21 @@ public abstract class VmPoolSimpleUserCommandBase<T extends VmPoolSimpleUserPara
         return getAdUserName();
     }
 
-    private DbUser mDbUser;
+    private DbUser dbUser;
 
     protected DbUser getDbUser() {
-        if (mDbUser == null) {
-            mDbUser = DbFacade.getInstance().getDbUserDao().get(getAdUserId());
+        if (dbUser == null) {
+            dbUser = DbFacade.getInstance().getDbUserDao().get(getAdUserId());
         }
 
-        return mDbUser;
+        return dbUser;
     }
 
     protected void setDbUser(DbUser value) {
-        mDbUser = value;
+        dbUser = value;
     }
 
-    private String mAdUserName;
+    private String adUserName;
 
     private VmPoolSimpleUserParameters getPoolUserSimpleParameters() {
         VdcActionParametersBase tempVar = getParameters();
@@ -57,16 +57,16 @@ public abstract class VmPoolSimpleUserCommandBase<T extends VmPoolSimpleUserPara
     }
 
     public String getAdUserName() {
-        if (mAdUserName == null) {
+        if (adUserName == null) {
             DbUser user = DbFacade.getInstance().getDbUserDao().get(getAdUserId());
             if (user != null) {
-                mAdUserName = user.getLoginName();
+                adUserName = user.getLoginName();
             }
         }
-        return mAdUserName;
+        return adUserName;
     }
 
     public void setAdUserName(String value) {
-        mAdUserName = value;
+        adUserName = value;
     }
 }

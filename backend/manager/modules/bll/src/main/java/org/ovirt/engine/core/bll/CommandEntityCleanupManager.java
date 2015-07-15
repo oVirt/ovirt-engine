@@ -26,8 +26,8 @@ public class CommandEntityCleanupManager {
     private CommandEntityCleanupManager() {
         log.info("Start initializing {}", getClass().getSimpleName());
         Calendar calendar = new GregorianCalendar();
-        Date mCommandEntityCleanupTime = Config.<DateTime> getValue(ConfigValues.CommandEntityCleanupTime);
-        calendar.setTimeInMillis(mCommandEntityCleanupTime.getTime());
+        Date commandEntityCleanupTime = Config.<DateTime> getValue(ConfigValues.CommandEntityCleanupTime);
+        calendar.setTimeInMillis(commandEntityCleanupTime.getTime());
 
         String cronExpression = String.format("%d %d %d * * ?", calendar.get(Calendar.SECOND),
                 calendar.get(Calendar.MINUTE), calendar.get(Calendar.HOUR_OF_DAY));

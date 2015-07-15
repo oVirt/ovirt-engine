@@ -223,8 +223,8 @@ public class PmHealthCheckManager implements BackendService {
 
     private void waitUntilFencingAllowed() {
         // wait the quiet time from engine start in which we skip fencing operations
-        int mSecToWait = Config.<Integer>getValue(ConfigValues.DisableFenceAtStartupInSec) * 1000;
-        ThreadUtils.sleep(mSecToWait);
+        int secToWait = Config.<Integer>getValue(ConfigValues.DisableFenceAtStartupInSec) * 1000;
+        ThreadUtils.sleep(secToWait);
     }
 
     /**

@@ -35,9 +35,9 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
  * Base class for all image handling commands
  */
 public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> extends StorageDomainCommandBase<T> {
-    private DiskImage _destinationImage;
-    private DiskImage mImage;
-    private Guid mImageId = Guid.Empty;
+    private DiskImage destinationImage;
+    private DiskImage image;
+    private Guid imageId = Guid.Empty;
     private EngineLock snapshotsEngineLock;
 
     protected BaseImagesCommand(T parameters) {
@@ -46,7 +46,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected BaseImagesCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        mImageId = parameters.getImageId();
+        imageId = parameters.getImageId();
         if (parameters instanceof ImagesContainterParametersBase) {
             initContainerDetails((ImagesContainterParametersBase) parameters);
         }
@@ -64,13 +64,13 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     protected DiskImage getImage() {
-        if (mImage == null) {
-            mImage = getDiskImageDao().get(getImageId());
-            if (mImage == null) {
-                mImage = getDiskImageDao().getSnapshotById(getImageId());
+        if (image == null) {
+            image = getDiskImageDao().get(getImageId());
+            if (image == null) {
+                image = getDiskImageDao().getSnapshotById(getImageId());
             }
         }
-        return mImage;
+        return image;
     }
 
     @Override
@@ -84,28 +84,28 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     protected void setImage(DiskImage image) {
-        mImage = image;
+        this.image = image;
     }
 
     protected Guid getImageId() {
-        return mImageId;
+        return imageId;
     }
 
     protected void setImageId(Guid imageId) {
-        this.mImageId = imageId;
+        this.imageId = imageId;
     }
 
-    private DiskImage _diskImage;
+    private DiskImage diskImage;
 
     protected DiskImage getDiskImage() {
-        if (_diskImage == null) {
-            _diskImage = getImage();
+        if (diskImage == null) {
+            diskImage = getImage();
         }
-        return _diskImage;
+        return diskImage;
     }
 
     protected void setDiskImage(DiskImage value) {
-        _diskImage = value;
+        diskImage = value;
     }
 
     private Guid _destinationImageId = Guid.Empty;
@@ -127,28 +127,28 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     protected DiskImage getDestinationDiskImage() {
-        if (_destinationImage == null) {
-            _destinationImage = getDiskImageDao().get(getDestinationImageId());
-            if (_destinationImage == null) {
-                _destinationImage = getDiskImageDao().getSnapshotById(getDestinationImageId());
+        if (destinationImage == null) {
+            destinationImage = getDiskImageDao().get(getDestinationImageId());
+            if (destinationImage == null) {
+                destinationImage = getDiskImageDao().getSnapshotById(getDestinationImageId());
             }
         }
-        return _destinationImage;
+        return destinationImage;
     }
 
-    private Guid _imageGroupId = Guid.Empty;
+    private Guid imageGroupId = Guid.Empty;
 
     protected Guid getImageGroupId() {
-        if (_imageGroupId.equals(Guid.Empty)) {
-            _imageGroupId = getDiskImage().getId() != null ? getDiskImage().getId()
+        if (imageGroupId.equals(Guid.Empty)) {
+            imageGroupId = getDiskImage().getId() != null ? getDiskImage().getId()
                     : Guid.Empty;
         }
-        return _imageGroupId;
+        return imageGroupId;
 
     }
 
     protected void setImageGroupId(Guid value) {
-        _imageGroupId = value;
+        imageGroupId = value;
     }
 
     protected EngineLock getSnapshotsEngineLock() {

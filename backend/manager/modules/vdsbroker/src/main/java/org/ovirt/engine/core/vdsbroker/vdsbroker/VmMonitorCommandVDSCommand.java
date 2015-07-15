@@ -4,18 +4,18 @@ import org.ovirt.engine.core.common.vdscommands.VmMonitorCommandVDSCommandParame
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmMonitorCommandVDSCommand<P extends VmMonitorCommandVDSCommandParameters> extends VdsBrokerCommand<P> {
-    private Guid mVmId = Guid.Empty;
-    private String mMonitorCommand;
+    private Guid vmId = Guid.Empty;
+    private String monitorCommand;
 
     public VmMonitorCommandVDSCommand(P parameters) {
         super(parameters);
-        mVmId = parameters.getVmId();
-        mMonitorCommand = parameters.getCommand();
+        vmId = parameters.getVmId();
+        monitorCommand = parameters.getCommand();
     }
 
     @Override
     protected void executeVdsBrokerCommand() {
-        status = getBroker().monitorCommand(mVmId.toString(), mMonitorCommand);
+        status = getBroker().monitorCommand(vmId.toString(), monitorCommand);
         proceedProxyReturnValue();
     }
 }

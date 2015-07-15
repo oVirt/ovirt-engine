@@ -8,16 +8,16 @@ public class StatusForXmlRpc {
     private static final String CODE = "code";
     private static final String MESSAGE = "message";
 
-    public int mCode;
-    public String mMessage;
+    public int code;
+    public String message;
 
     public StatusForXmlRpc(Map<String, Object> innerMap) {
-        mCode = (Integer) innerMap.get(CODE);
+        code = (Integer) innerMap.get(CODE);
         if (innerMap.get(MESSAGE) instanceof Object[]) {
-            mMessage = Arrays.toString((Object[])innerMap.get(MESSAGE));
+            message = Arrays.toString((Object[])innerMap.get(MESSAGE));
         }
         else {
-            mMessage = innerMap.get(MESSAGE).toString();
+            message = innerMap.get(MESSAGE).toString();
         }
     }
 
@@ -26,6 +26,6 @@ public class StatusForXmlRpc {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " [mCode=" + mCode + ", mMessage=" + mMessage + "]";
+        return getClass().getSimpleName() + " [code=" + code + ", message=" + message + "]";
     }
 }

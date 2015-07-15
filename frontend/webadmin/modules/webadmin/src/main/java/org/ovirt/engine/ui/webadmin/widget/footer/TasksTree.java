@@ -54,12 +54,12 @@ public class TasksTree extends AbstractSubTabTree<TaskListModel, Job, Step> {
 
         addTextBoxToPanel(panel,
                 corrIdTextBoxLabelTooltip,
-                task.getCorrelationId() != null && task.getCorrelationId().startsWith(TaskListModel._WEBADMIN_) ? task.getCorrelationId()
+                task.getCorrelationId() != null && task.getCorrelationId().startsWith(TaskListModel.WEBADMIN) ? task.getCorrelationId()
                         .split("_")[2] : task.getCorrelationId(), "100px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         TreeItem treeItem = new TreeItem(panel);
         String id =
-                task.getCorrelationId().startsWith(TaskListModel._WEBADMIN_) ? task.getCorrelationId() : task.getId()
+                task.getCorrelationId().startsWith(TaskListModel.WEBADMIN) ? task.getCorrelationId() : task.getId()
                         .toString();
         treeItem.setUserObject(id);
         return treeItem;

@@ -20,15 +20,15 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
     public VdcUserConditionFieldAutoCompleter() {
         super();
         // Building the basic verbs dictionary.
-        mVerbs.add(FIRST_NAME);
-        mVerbs.add(LAST_NAME);
-        mVerbs.add(USER_NAME);
-        mVerbs.add(LOGIN);
-        mVerbs.add(DIRECTORY);
-        mVerbs.add(DEPARTMENT);
-        mVerbs.add(TAG);
-        mVerbs.add(POOL);
-        mVerbs.add(TYPE);
+        verbs.add(FIRST_NAME);
+        verbs.add(LAST_NAME);
+        verbs.add(USER_NAME);
+        verbs.add(LOGIN);
+        verbs.add(DIRECTORY);
+        verbs.add(DEPARTMENT);
+        verbs.add(TAG);
+        verbs.add(POOL);
+        verbs.add(TYPE);
 
         // Building the auto completion dictionary.
         buildCompletions();

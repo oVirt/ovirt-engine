@@ -8,11 +8,11 @@ public final class StorageStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
     // not sent.
     // [XmlRpcMissingMapping(MappingAction.Ignore),
     // XmlRpcMember("storageStatus")]
-    public String mStorageStatus;
+    public String storageStatus;
 
     public StorageStatusReturnForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap);
-        mStorageStatus = (String) innerMap.get(STORAGE_STATUS);
+        storageStatus = (String) innerMap.get(STORAGE_STATUS);
     }
 
 }

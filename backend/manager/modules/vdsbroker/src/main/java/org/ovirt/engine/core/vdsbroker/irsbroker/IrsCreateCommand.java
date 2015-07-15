@@ -5,7 +5,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 
 public abstract class IrsCreateCommand<P extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters>
         extends IrsBrokerCommand<P> {
-    protected String mCreatedImageId = "";
+    protected String createdImageId = "";
     protected OneUuidReturnForXmlRpc uuidReturn;
 
     @Override

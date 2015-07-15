@@ -11,8 +11,8 @@ import java.util.Set;
 import org.ovirt.engine.core.compat.DayOfWeek;
 
 public class BaseAutoCompleter implements IAutoCompleter {
-    protected final Set<String> mVerbs = new HashSet<String>();
-    protected final Map<String, List<String>> mVerbCompletion =
+    protected final Set<String> verbs = new HashSet<String>();
+    protected final Map<String, List<String>> verbCompletion =
             new HashMap<String, List<String>>();
 
     private static final List<String> daysOfWeek = new ArrayList<String>();
@@ -43,31 +43,31 @@ public class BaseAutoCompleter implements IAutoCompleter {
     }
 
     protected final void acceptAll(final String... tokens) {
-        Collections.addAll(mVerbs, tokens);
+        Collections.addAll(verbs, tokens);
     }
 
     protected final void buildCompletions() {
         final List<String> emptyKeyList = new ArrayList<String>();
-        for (String title : mVerbs) {
+        for (String title : verbs) {
             emptyKeyList.add(changeCaseDisplay(title));
             for (int idx = 1; idx <= title.length(); idx++) {
                 String curKey = title.substring(0, idx);
-                if (!mVerbCompletion.containsKey(curKey)) {
-                    mVerbCompletion.put(curKey, new ArrayList<String>());
+                if (!verbCompletion.containsKey(curKey)) {
+                    verbCompletion.put(curKey, new ArrayList<String>());
                 }
-                final List<String> curList = mVerbCompletion.get(curKey);
+                final List<String> curList = verbCompletion.get(curKey);
                 curList.add(changeCaseDisplay(title));
             }
         }
-        mVerbCompletion.put("", emptyKeyList);
-        mVerbCompletion.put(" ", emptyKeyList);
+        verbCompletion.put("", emptyKeyList);
+        verbCompletion.put(" ", emptyKeyList);
     }
 
     @Override
     public final String[] getCompletion(String wordPart) {
         String[] retval = new String[0];
-        if (mVerbCompletion.containsKey(wordPart.toUpperCase())) {
-            List<String> curList = mVerbCompletion.get(wordPart.toUpperCase());
+        if (verbCompletion.containsKey(wordPart.toUpperCase())) {
+            List<String> curList = verbCompletion.get(wordPart.toUpperCase());
             retval = curList.toArray(new String[curList.size()]);
         }
         return retval;
@@ -75,12 +75,12 @@ public class BaseAutoCompleter implements IAutoCompleter {
 
     @Override
     public final boolean validate(String text) {
-        return (text != null) ? mVerbs.contains(text.toUpperCase()) : false;
+        return (text != null) ? verbs.contains(text.toUpperCase()) : false;
     }
 
     @Override
     public final boolean validateCompletion(String text) {
-        return mVerbCompletion.containsKey(text);
+        return verbCompletion.containsKey(text);
     }
 
     @Override

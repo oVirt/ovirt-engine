@@ -20,7 +20,7 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
 
     private static final Logger log = LoggerFactory.getLogger(GetStorageDomainStatsVDSCommand.class);
 
-    private OneStorageDomainStatsReturnForXmlRpc _result;
+    private OneStorageDomainStatsReturnForXmlRpc result;
 
     public GetStorageDomainStatsVDSCommand(P parameters) {
         super(parameters);
@@ -28,16 +28,16 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
 
     @Override
     protected void executeVdsBrokerCommand() {
-        _result = getBroker().getStorageDomainStats(getParameters().getStorageDomainId().toString());
+        result = getBroker().getStorageDomainStats(getParameters().getStorageDomainId().toString());
         proceedProxyReturnValue();
-        StorageDomain domain = buildStorageDynamicFromXmlRpcStruct(_result.mStorageStats);
+        StorageDomain domain = buildStorageDynamicFromXmlRpcStruct(result.storageStats);
         domain.setId(getParameters().getStorageDomainId());
         setReturnValue(domain);
     }
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.getXmlRpcStatus();
+        return result.getXmlRpcStatus();
     }
 
     @SuppressWarnings("unchecked")
@@ -89,6 +89,6 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
 
     @Override
     protected Object getReturnValueFromBroker() {
-        return _result;
+        return result;
     }
 }

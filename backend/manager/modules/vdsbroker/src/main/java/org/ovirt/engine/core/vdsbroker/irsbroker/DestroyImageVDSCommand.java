@@ -31,7 +31,7 @@ public class DestroyImageVDSCommand<P extends DestroyImageVDSCommandParameters> 
 
         proceedProxyReturnValue();
 
-        Guid taskID = new Guid(uuidReturn.mUuid);
+        Guid taskID = new Guid(uuidReturn.uuid);
 
         getVDSReturnValue()
                 .setCreationInfo(

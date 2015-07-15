@@ -5,24 +5,24 @@ import java.util.concurrent.TimeUnit;
 import org.ovirt.engine.core.dal.utils.CacheManager;
 
 public abstract class TimeoutBase {
-    private boolean mUseTimeout;
-    private long mEndTime = 0L;
+    private boolean useTimeout;
+    private long endTime = 0L;
 
     public boolean getUseTimout() {
-        return mUseTimeout;
+        return useTimeout;
     }
 
     public void setUseTimout(boolean value) {
-        mUseTimeout = value;
+        useTimeout = value;
     }
 
     public long getEndTime() {
-        return mEndTime;
+        return endTime;
     }
 
     public void setEndTime(long value) {
-        mUseTimeout = true;
-        mEndTime = value;
+        useTimeout = true;
+        endTime = value;
     }
 
     private String timeoutObjectId = "";

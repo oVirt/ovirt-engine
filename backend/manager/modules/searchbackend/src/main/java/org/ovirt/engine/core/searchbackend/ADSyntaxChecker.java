@@ -7,37 +7,37 @@ import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.StringHelper;
 
 public class ADSyntaxChecker implements ISyntaxChecker {
-    private AdSearchObjecAutoCompleter mSearchObjectAC;
-    private BaseAutoCompleter mColonAC;
-    private BaseAutoCompleter mPluralAC;
-    private HashMap<SyntaxObjectType, SyntaxObjectType[]> mStateMap;
+    private AdSearchObjecAutoCompleter searchObjectAC;
+    private BaseAutoCompleter colonAC;
+    private BaseAutoCompleter pluralAC;
+    private HashMap<SyntaxObjectType, SyntaxObjectType[]> stateMap;
     protected final static String USER_ACCOUNT_TYPE = "$USER_ACCOUNT_TYPE";
     private final static String LDAP_GROUP_CATEGORY = "$LDAP_GROUP_CATEGORY";
 
-    private Regex mFirstDQRegexp;
-    private Regex mNonSpaceRegexp;
+    private Regex firstDQRegexp;
+    private Regex nonSpaceRegexp;
 
     public ADSyntaxChecker() {
-        mSearchObjectAC = new AdSearchObjecAutoCompleter();
-        mColonAC = new BaseAutoCompleter(":");
-        mPluralAC = new BaseAutoCompleter("S");
+        searchObjectAC = new AdSearchObjecAutoCompleter();
+        colonAC = new BaseAutoCompleter(":");
+        pluralAC = new BaseAutoCompleter("S");
 
-        mFirstDQRegexp = new Regex("^\\s*\"$");
-        mNonSpaceRegexp = new Regex("^\\S+$");
+        firstDQRegexp = new Regex("^\\s*\"$");
+        nonSpaceRegexp = new Regex("^\\S+$");
 
-        mStateMap = new HashMap<SyntaxObjectType, SyntaxObjectType[]>();
+        stateMap = new HashMap<SyntaxObjectType, SyntaxObjectType[]>();
         SyntaxObjectType[] beginArray = { SyntaxObjectType.SEARCH_OBJECT };
-        mStateMap.put(SyntaxObjectType.BEGIN, beginArray);
+        stateMap.put(SyntaxObjectType.BEGIN, beginArray);
         SyntaxObjectType[] searchObjectArray = { SyntaxObjectType.COLON };
-        mStateMap.put(SyntaxObjectType.SEARCH_OBJECT, searchObjectArray);
+        stateMap.put(SyntaxObjectType.SEARCH_OBJECT, searchObjectArray);
         SyntaxObjectType[] colonArray = { SyntaxObjectType.CONDITION_FIELD, SyntaxObjectType.END };
-        mStateMap.put(SyntaxObjectType.COLON, colonArray);
+        stateMap.put(SyntaxObjectType.COLON, colonArray);
         SyntaxObjectType[] conditionFieldArray = { SyntaxObjectType.CONDITION_RELATION };
-        mStateMap.put(SyntaxObjectType.CONDITION_FIELD, conditionFieldArray);
+        stateMap.put(SyntaxObjectType.CONDITION_FIELD, conditionFieldArray);
         SyntaxObjectType[] conditionRelationArray = { SyntaxObjectType.CONDITION_VALUE };
-        mStateMap.put(SyntaxObjectType.CONDITION_RELATION, conditionRelationArray);
+        stateMap.put(SyntaxObjectType.CONDITION_RELATION, conditionRelationArray);
         SyntaxObjectType[] conditionValueArray = { SyntaxObjectType.CONDITION_FIELD };
-        mStateMap.put(SyntaxObjectType.CONDITION_VALUE, conditionValueArray);
+        stateMap.put(SyntaxObjectType.CONDITION_VALUE, conditionValueArray);
     }
 
     @Override
@@ -66,8 +66,8 @@ public class ADSyntaxChecker implements ISyntaxChecker {
             switch (curState) {
             case BEGIN:
                 // we have found a search-object
-                if (!mSearchObjectAC.validate(nextObject)) {
-                    if (!mSearchObjectAC.validateCompletion(nextObject)) {
+                if (!searchObjectAC.validate(nextObject)) {
+                    if (!searchObjectAC.validateCompletion(nextObject)) {
                         // ERROR INVALID-SEARCH OBJECT
                         retval.setErr(SyntaxError.INVALID_SEARCH_OBJECT, curStartPos, idx - curStartPos + 1);
                         return retval;
@@ -76,7 +76,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
                     if (searchCharArr.length >= idx + 2) { // Check that this
                                                          // maybe a plural
                         // Validate that the next character is an 's'
-                        if (mPluralAC.validate(searchText.substring(idx + 1, idx + 1 + 1))) {
+                        if (pluralAC.validate(searchText.substring(idx + 1, idx + 1 + 1))) {
                             // Then just move things along.
                             idx++;
                             StringBuilder sb = new StringBuilder(nextObject);
@@ -92,8 +92,8 @@ public class ADSyntaxChecker implements ISyntaxChecker {
 
             case SEARCH_OBJECT:
 
-                if (!mColonAC.validate(nextObject)) {
-                    if (!mColonAC.validateCompletion(nextObject)) {
+                if (!colonAC.validate(nextObject)) {
+                    if (!colonAC.validateCompletion(nextObject)) {
                         retval.setErr(SyntaxError.COLON_NOT_NEXT_TO_SEARCH_OBJECT, curStartPos, idx + 1);
                         return retval;
                     }
@@ -149,7 +149,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
                 if (curChar == '"') {
                     betweenDoubleQuotes = (!betweenDoubleQuotes);
                     if (betweenDoubleQuotes) {
-                        if (!mFirstDQRegexp.IsMatch(strRealObj)) {
+                        if (!firstDQRegexp.IsMatch(strRealObj)) {
                             retval.setErr(SyntaxError.INVALID_CONDITION_VALUE, curStartPos, idx + 1);
                             return retval;
                         }
@@ -164,7 +164,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
                     if (((curChar == ' ') || (idx + 1 == searchCharArr.length)) && (betweenDoubleQuotes == false)
                             && (addObjFlag == false)) {
                         strRealObj = strRealObj.trim();
-                        if (mNonSpaceRegexp.IsMatch(strRealObj)) {
+                        if (nonSpaceRegexp.IsMatch(strRealObj)) {
                             addObjFlag = true;
                         } else {
                             curStartPos = idx + 1;
@@ -173,7 +173,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
                 } else {
                     if ((curChar == ' ') && (betweenDoubleQuotes == false) && (addObjFlag == false)) {
                         strRealObj = strRealObj.trim();
-                        if (mNonSpaceRegexp.IsMatch(strRealObj)) {
+                        if (nonSpaceRegexp.IsMatch(strRealObj)) {
                             addObjFlag = true;
                         } else {
                             curStartPos = idx + 1;
@@ -220,13 +220,13 @@ public class ADSyntaxChecker implements ISyntaxChecker {
                 curPartialWord = curPartialWord.trim();
             }
             SyntaxObjectType curState = retval.getState();
-            for (int idx = 0; idx < mStateMap.get(curState).length; idx++) {
-                switch (mStateMap.get(curState)[idx]) {
+            for (int idx = 0; idx < stateMap.get(curState).length; idx++) {
+                switch (stateMap.get(curState)[idx]) {
                 case SEARCH_OBJECT:
-                    retval.addToACList(mSearchObjectAC.getCompletion(curPartialWord));
+                    retval.addToACList(searchObjectAC.getCompletion(curPartialWord));
                     break;
                 case COLON:
-                    retval.addToACList(mColonAC.getCompletion(curPartialWord));
+                    retval.addToACList(colonAC.getCompletion(curPartialWord));
                     break;
                 case CONDITION_FIELD:
                     String[] tmpCompletions = AdConditionFieldAC.getCompletion(curPartialWord);

@@ -40,6 +40,6 @@ public class UploadImageVDSCommand<P extends UploadImageVDSCommandParameters> ex
 
         proceedProxyReturnValue();
         getVDSReturnValue().setCreationInfo(
-                new AsyncTaskCreationInfo(new Guid(uuidReturn.mUuid), AsyncTaskType.copyImage, getParameters().getStoragePoolId()));
+                new AsyncTaskCreationInfo(new Guid(uuidReturn.uuid), AsyncTaskType.copyImage, getParameters().getStoragePoolId()));
     }
 }

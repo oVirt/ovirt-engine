@@ -29,7 +29,7 @@ public final class GlusterServersListReturnForXmlRpc extends StatusReturnForXmlR
     public GlusterServersListReturnForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap);
 
-        if (getXmlRpcStatus().mCode != 0) {
+        if (getXmlRpcStatus().code != 0) {
             return;
         }
 

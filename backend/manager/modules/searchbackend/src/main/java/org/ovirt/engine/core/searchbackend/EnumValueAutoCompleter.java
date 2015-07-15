@@ -10,15 +10,15 @@ public class EnumValueAutoCompleter extends BaseAutoCompleter implements ICondit
 
     private static final Logger log = LoggerFactory.getLogger(EnumValueAutoCompleter.class);
 
-    private final HashMap<String, Integer> mEnumValues = new HashMap<String, Integer>();
+    private final HashMap<String, Integer> enumValues = new HashMap<String, Integer>();
 
     public <E extends Enum<E> & Identifiable> EnumValueAutoCompleter(Class<E> enumerationType) {
 
         for (E val : enumerationType.getEnumConstants()) {
             String ValName = val.name().toUpperCase();
             try {
-                mEnumValues.put(ValName, val.getValue());
-                mVerbs.add(ValName);
+                enumValues.put(ValName, val.getValue());
+                verbs.add(ValName);
             } catch (RuntimeException e) {
                 log.error("EnumValueAutoCompleter. Failed to add '{}': {}", ValName, e.getMessage());
                 log.debug("Exception", e);
@@ -30,8 +30,8 @@ public class EnumValueAutoCompleter extends BaseAutoCompleter implements ICondit
 
     public String convertFieldEnumValueToActualValue(String fieldValue) {
         String retval = "";
-        if (mEnumValues.containsKey(fieldValue.toUpperCase())) {
-            retval = mEnumValues.get(fieldValue.toUpperCase()).toString();
+        if (enumValues.containsKey(fieldValue.toUpperCase())) {
+            retval = enumValues.get(fieldValue.toUpperCase()).toString();
         }
         return retval;
     }

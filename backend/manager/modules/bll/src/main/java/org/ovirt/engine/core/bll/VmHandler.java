@@ -96,7 +96,7 @@ import org.slf4j.LoggerFactory;
 
 public class VmHandler {
 
-    private static ObjectIdentityChecker mUpdateVmsStatic;
+    private static ObjectIdentityChecker updateVmsStatic;
     private static OsRepository osRepository;
 
     private static final Logger log = LoggerFactory.getLogger(VmHandler.class);
@@ -119,29 +119,29 @@ public class VmHandler {
 
         osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
-        mUpdateVmsStatic =
+        updateVmsStatic =
                 new ObjectIdentityChecker(VmHandler.class, Arrays.asList(inspectedClassNames));
 
         for (Pair<EditableField, Field> pair : BaseHandler.extractAnnotatedFields(EditableField.class,
                 (inspectedClassNames))) {
-            mUpdateVmsStatic.AddPermittedFields(pair.getSecond().getName());
+            updateVmsStatic.AddPermittedFields(pair.getSecond().getName());
         }
 
         for (Pair<EditableOnVm, Field> pair : BaseHandler.extractAnnotatedFields(EditableOnVm.class, inspectedClassNames)) {
-            mUpdateVmsStatic.AddPermittedFields(pair.getSecond().getName());
+            updateVmsStatic.AddPermittedFields(pair.getSecond().getName());
         }
 
         for (Pair<EditableOnVmStatusField, Field> pair : BaseHandler.extractAnnotatedFields(EditableOnVmStatusField.class,
                 inspectedClassNames)) {
-            mUpdateVmsStatic.AddField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond().getName());
+            updateVmsStatic.AddField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond().getName());
             if (pair.getFirst().isHotsetAllowed()) {
-                mUpdateVmsStatic.AddHotsetFields(pair.getSecond().getName());
+                updateVmsStatic.AddHotsetFields(pair.getSecond().getName());
             }
         }
 
         for (Pair<EditableDeviceOnVmStatusField, Field> pair : BaseHandler.extractAnnotatedFields(EditableDeviceOnVmStatusField.class,
                 inspectedClassNames)) {
-            mUpdateVmsStatic.AddField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond().getName());
+            updateVmsStatic.AddField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond().getName());
         }
 
         COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.MigrateVm);
@@ -165,27 +165,27 @@ public class VmHandler {
     }
 
     public static boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status) {
-        return mUpdateVmsStatic.IsUpdateValid(source, destination, status);
+        return updateVmsStatic.IsUpdateValid(source, destination, status);
     }
 
     public static List<String> getChangedFieldsForStatus(VmStatic source, VmStatic destination, VMStatus status) {
-        return mUpdateVmsStatic.getChangedFieldsForStatus(source, destination, status);
+        return updateVmsStatic.getChangedFieldsForStatus(source, destination, status);
     }
 
     public static boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status, boolean hotsetEnabled) {
-        return mUpdateVmsStatic.IsUpdateValid(source, destination, status, hotsetEnabled);
+        return updateVmsStatic.IsUpdateValid(source, destination, status, hotsetEnabled);
     }
 
     public static boolean isUpdateValid(VmStatic source, VmStatic destination) {
-        return mUpdateVmsStatic.IsUpdateValid(source, destination);
+        return updateVmsStatic.IsUpdateValid(source, destination);
     }
 
     public static boolean isUpdateValidForVmDevice(String fieldName, VMStatus status) {
-        return mUpdateVmsStatic.IsFieldUpdatable(status, fieldName, null);
+        return updateVmsStatic.IsFieldUpdatable(status, fieldName, null);
     }
 
     public static boolean copyNonEditableFieldsToDestination(VmStatic source, VmStatic destination, boolean hotSetEnabled) {
-        return mUpdateVmsStatic.copyNonEditableFieldsToDestination(source, destination, hotSetEnabled);
+        return updateVmsStatic.copyNonEditableFieldsToDestination(source, destination, hotSetEnabled);
     }
 
     /**

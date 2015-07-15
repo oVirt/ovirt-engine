@@ -107,7 +107,7 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case GlusterSnapshotScheduleFlagUpdateFailedException:
         case GlusterDisableSnapshotScheduleFailedException:
             // Capture error from gluster command and record failure
-            getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().mMessage));
+            getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().message));
             getVDSReturnValue().setSucceeded(false);
             break;
         default:

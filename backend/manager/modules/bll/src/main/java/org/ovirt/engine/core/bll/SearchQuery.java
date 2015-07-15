@@ -59,7 +59,7 @@ import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<P> {
-    private static final HashMap<String, QueryData> mQueriesCache = new HashMap<>();
+    private static final HashMap<String, QueryData> queriesCache = new HashMap<>();
     @Inject
     private QuotaManager quotaManager;
 
@@ -360,7 +360,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             if (useCache) {
                 // first lets check the cache of queries.
                 searchKey = String.format("%1$s,%2$s,%3$s", searchText, getParameters().getMaxCount(), getParameters().getCaseSensitive());
-                data = mQueriesCache.get(searchKey);
+                data = queriesCache.get(searchKey);
                 isExistsValue = (data != null);
 
                 if (isExistsValue) {
@@ -466,7 +466,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 // we should not rely on the cached query in such case and have to build the
                 // query from scratch.
                 if (!containsStaticInValues(data.getQuery()))
-                    mQueriesCache.put(searchKey, data);
+                    queriesCache.put(searchKey, data);
             }
         } catch (SearchEngineIllegalCharacterException e) {
             log.error("Search expression can not end with ESCAPE character: {}", getParameters().getSearchPattern());

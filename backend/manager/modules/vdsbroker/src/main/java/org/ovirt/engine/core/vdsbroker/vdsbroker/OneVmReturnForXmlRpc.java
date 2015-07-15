@@ -8,11 +8,11 @@ public final class OneVmReturnForXmlRpc {
     private static final String STATUS = "status";
     private static final String VM_LIST = "vmList";
 
-    public StatusForXmlRpc mStatus;
-    public Map<String, Object> mVm;
+    public StatusForXmlRpc status;
+    public Map<String, Object> vm;
 
     public OneVmReturnForXmlRpc(Map<String, Object> innerMap) {
-        mStatus = new StatusForXmlRpc((Map<String, Object>) innerMap.get(STATUS));
-        mVm = (Map<String, Object>) innerMap.get(VM_LIST);
+        status = new StatusForXmlRpc((Map<String, Object>) innerMap.get(STATUS));
+        vm = (Map<String, Object>) innerMap.get(VM_LIST);
     }
 }

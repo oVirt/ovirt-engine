@@ -14,7 +14,7 @@ import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 @SuppressWarnings("unchecked")
 @Logged(executionLevel = LogLevel.DEBUG)
 public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParametersBase> extends VdsBrokerCommand<P> {
-    private TaskStatusListReturnForXmlRpc _result;
+    private TaskStatusListReturnForXmlRpc result;
 
     public HSMGetAllTasksStatusesVDSCommand(P parameters) {
         super(parameters);
@@ -22,15 +22,15 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
 
     @Override
     protected void executeVdsBrokerCommand() {
-        _result = getBroker().getAllTasksStatuses();
+        result = getBroker().getAllTasksStatuses();
         proceedProxyReturnValue();
-        setReturnValue(parseTaskStatusList(_result.taskStatusList));
+        setReturnValue(parseTaskStatusList(result.taskStatusList));
     }
 
     protected AsyncTaskStatus parseTaskStatus(TaskStatusForXmlRpc taskStatus) {
         AsyncTaskStatus task = new AsyncTaskStatus();
-        task.setStatus((taskStatus != null && taskStatus.mTaskState != null) ? (AsyncTaskStatusEnum
-                .valueOf(taskStatus.mTaskState)) : AsyncTaskStatusEnum.unknown);
+        task.setStatus((taskStatus != null && taskStatus.taskState != null) ? (AsyncTaskStatusEnum
+                .valueOf(taskStatus.taskState)) : AsyncTaskStatusEnum.unknown);
 
         if (task.getStatus() == AsyncTaskStatusEnum.finished) {
             updateReturnStatus(taskStatus);
@@ -43,7 +43,7 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
                 task.setException(ex);
             }
 
-            task.setResult(taskStatus != null ? (AsyncTaskResultEnum.valueOf(taskStatus.mTaskResult))
+            task.setResult(taskStatus != null ? (AsyncTaskResultEnum.valueOf(taskStatus.taskResult))
                     : AsyncTaskResultEnum.unknown);
 
             // Normally, when the result is not 'success', there is an
@@ -54,7 +54,7 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
             if (task.getResult() != AsyncTaskResultEnum.success && task.getException() == null) {
                 task.setException(new VDSTaskResultNotSuccessException(String.format(
                         "TaskState contained successful return code, but a non-success result ('%1$s').",
-                        taskStatus.mTaskResult)));
+                        taskStatus.taskResult)));
             }
         }
         return task;
@@ -72,10 +72,10 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
                 } else {
                     Map<String, Object> xrsTaskStatus = xrsTaskStatusAsMAp;
                     TaskStatusForXmlRpc tempVar = new TaskStatusForXmlRpc();
-                    tempVar.mCode = Integer.parseInt(xrsTaskStatus.get("code").toString());
-                    tempVar.mMessage = xrsTaskStatus.get("message").toString();
-                    tempVar.mTaskResult = xrsTaskStatus.get("taskResult").toString();
-                    tempVar.mTaskState = xrsTaskStatus.get("taskState").toString();
+                    tempVar.code = Integer.parseInt(xrsTaskStatus.get("code").toString());
+                    tempVar.message = xrsTaskStatus.get("message").toString();
+                    tempVar.taskResult = xrsTaskStatus.get("taskResult").toString();
+                    tempVar.taskState = xrsTaskStatus.get("taskState").toString();
                     TaskStatusForXmlRpc taskStatus = tempVar;
                     AsyncTaskStatus task = parseTaskStatus(taskStatus);
                     result.put(taskGuid, task);
@@ -94,7 +94,7 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.getXmlRpcStatus();
+        return result.getXmlRpcStatus();
     }
 
     // overrides the value of the status that is being checked in the
@@ -104,11 +104,11 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
     // verb
     // execution status and an asynchronous task status.
     protected void updateReturnStatus(StatusForXmlRpc newReturnStatus) {
-        _result.setXmlRpcStatus(newReturnStatus);
+        result.setXmlRpcStatus(newReturnStatus);
     }
 
     @Override
     protected Object getReturnValueFromBroker() {
-        return _result;
+        return result;
     }
 }

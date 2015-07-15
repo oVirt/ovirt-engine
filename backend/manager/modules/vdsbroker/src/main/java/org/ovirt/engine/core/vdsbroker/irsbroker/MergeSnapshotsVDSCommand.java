@@ -23,7 +23,7 @@ public class MergeSnapshotsVDSCommand<P extends MergeSnapshotsVDSCommandParamete
 
         proceedProxyReturnValue();
 
-        Guid taskID = new Guid(uuidReturn.mUuid);
+        Guid taskID = new Guid(uuidReturn.uuid);
 
         getVDSReturnValue()
                 .setCreationInfo(

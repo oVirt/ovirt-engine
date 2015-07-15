@@ -9,7 +9,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 
 public class CreateVGVDSCommand<P extends CreateVGVDSCommandParameters> extends VdsBrokerCommand<P> {
-    private OneUuidReturnForXmlRpc _result;
+    private OneUuidReturnForXmlRpc result;
 
     public CreateVGVDSCommand(P parameters) {
         super(parameters, DbFacade.getInstance().getVdsDao().get(parameters.getVdsId()));
@@ -25,21 +25,21 @@ public class CreateVGVDSCommand<P extends CreateVGVDSCommandParameters> extends 
         boolean supportForceCreateVG = Config.<Boolean> getValue(
                 ConfigValues.SupportForceCreateVG, getVds().getVdsGroupCompatibilityVersion().toString());
 
-        _result = supportForceCreateVG ?
+        result = supportForceCreateVG ?
                 getBroker().createVG(storageDomainId, deviceArray, isForce) :
                 getBroker().createVG(storageDomainId, deviceArray);
 
         proceedProxyReturnValue();
-        setReturnValue(_result.mUuid);
+        setReturnValue(result.uuid);
     }
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.getXmlRpcStatus();
+        return result.getXmlRpcStatus();
     }
 
     @Override
     protected Object getReturnValueFromBroker() {
-        return _result;
+        return result;
     }
 }

@@ -20,7 +20,7 @@ public class GetVmsFromExternalProviderVDSCommand<T extends GetVmsFromExternalPr
                 getParameters().getUsername(), getParameters().getPassword());
         proceedProxyReturnValue();
         List<VM> vms = new ArrayList<>();
-        for (Map<String, Object> map : vmListReturn.mVmList) {
+        for (Map<String, Object> map : vmListReturn.vmList) {
             VM vm = VdsBrokerObjectsBuilder.buildVmsDataFromExternalProvider(map);
             if (vm != null) {
                 vms.add(vm);
@@ -31,7 +31,7 @@ public class GetVmsFromExternalProviderVDSCommand<T extends GetVmsFromExternalPr
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return vmListReturn.mStatus;
+        return vmListReturn.status;
     }
 
     @Override

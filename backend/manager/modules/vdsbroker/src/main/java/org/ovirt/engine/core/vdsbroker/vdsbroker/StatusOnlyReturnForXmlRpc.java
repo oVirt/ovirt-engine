@@ -6,15 +6,15 @@ public final class StatusOnlyReturnForXmlRpc {
 
     private static final String STATUS = "status";
 
-    public StatusForXmlRpc mStatus;
+    public StatusForXmlRpc status;
 
     public StatusOnlyReturnForXmlRpc(Map<String, Object> innerMap) {
         Map<String, Object> statusMap = (Map<String, Object>) innerMap.get(STATUS);
-        mStatus = new StatusForXmlRpc(statusMap);
+        status = new StatusForXmlRpc(statusMap);
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " [mStatus=" + mStatus + "]";
+        return getClass().getSimpleName() + " [status=" + status + "]";
     }
 }

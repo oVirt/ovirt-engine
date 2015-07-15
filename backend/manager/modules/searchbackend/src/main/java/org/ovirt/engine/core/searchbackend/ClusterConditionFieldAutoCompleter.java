@@ -10,10 +10,10 @@ public class ClusterConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
 
     public ClusterConditionFieldAutoCompleter() {
         // Building the basic vervs Dict
-        mVerbs.add(NAME);
-        mVerbs.add(DESCRIPTION);
-        mVerbs.add(COMMENT);
-        mVerbs.add(ARCHITECTURE);
+        verbs.add(NAME);
+        verbs.add(DESCRIPTION);
+        verbs.add(COMMENT);
+        verbs.add(ARCHITECTURE);
 
         // Building the autoCompletion Dict
         buildCompletions();

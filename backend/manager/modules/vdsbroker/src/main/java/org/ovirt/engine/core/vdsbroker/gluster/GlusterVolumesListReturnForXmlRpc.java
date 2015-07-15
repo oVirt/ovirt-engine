@@ -54,7 +54,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
         super(innerMap);
         this.clusterId = clusterId;
 
-        if(getXmlRpcStatus().mCode != 0) {
+        if(getXmlRpcStatus().code != 0) {
             return;
         }
 

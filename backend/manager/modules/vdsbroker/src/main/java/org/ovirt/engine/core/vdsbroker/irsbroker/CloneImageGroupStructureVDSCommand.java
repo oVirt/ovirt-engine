@@ -22,7 +22,7 @@ public class CloneImageGroupStructureVDSCommand<P extends TargetDomainImageGroup
 
         proceedProxyReturnValue();
 
-        Guid taskID = new Guid(uuidReturn.mUuid);
+        Guid taskID = new Guid(uuidReturn.uuid);
 
         getVDSReturnValue().setCreationInfo
                 (new AsyncTaskCreationInfo(taskID, AsyncTaskType.cloneImageStructure, params.getStoragePoolId()));

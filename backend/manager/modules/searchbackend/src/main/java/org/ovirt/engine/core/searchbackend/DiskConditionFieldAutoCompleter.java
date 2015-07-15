@@ -29,22 +29,22 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
 
     public DiskConditionFieldAutoCompleter() {
         // Building the basic verbs set.
-        mVerbs.add(ALIAS);
-        mVerbs.add(NAME);
-        mVerbs.add(DESCRIPTION);
-        mVerbs.add(PROVISIONED_SIZE);
-        mVerbs.add(SIZE);
-        mVerbs.add(ACTUAL_SIZE);
-        mVerbs.add(CREATION_DATE);
-        mVerbs.add(BOOTABLE);
-        mVerbs.add(SHAREABLE);
-        mVerbs.add(STATUS);
-        mVerbs.add(DISK_TYPE);
-        mVerbs.add(NUMBER_OF_VMS);
-        mVerbs.add(VM_NAMES);
-        mVerbs.add(QUOTA);
-        mVerbs.add(ID);
-        mVerbs.add(WIPE_AFTER_DELETE);
+        verbs.add(ALIAS);
+        verbs.add(NAME);
+        verbs.add(DESCRIPTION);
+        verbs.add(PROVISIONED_SIZE);
+        verbs.add(SIZE);
+        verbs.add(ACTUAL_SIZE);
+        verbs.add(CREATION_DATE);
+        verbs.add(BOOTABLE);
+        verbs.add(SHAREABLE);
+        verbs.add(STATUS);
+        verbs.add(DISK_TYPE);
+        verbs.add(NUMBER_OF_VMS);
+        verbs.add(VM_NAMES);
+        verbs.add(QUOTA);
+        verbs.add(ID);
+        verbs.add(WIPE_AFTER_DELETE);
 
         // Building the autoCompletion dict.
         buildCompletions();

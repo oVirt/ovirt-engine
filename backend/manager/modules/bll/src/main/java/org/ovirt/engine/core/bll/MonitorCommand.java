@@ -7,17 +7,17 @@ import org.ovirt.engine.core.common.vdscommands.VmMonitorCommandVDSCommandParame
 
 @InternalCommandAttribute
 public class MonitorCommand<T extends MonitorCommandParameters> extends VmOperationCommandBase<T> {
-    private String mMonitorCommand;
+    private String monitorCommand;
 
     public MonitorCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-        mMonitorCommand = parameters.getCommand();
+        monitorCommand = parameters.getCommand();
     }
 
     @Override
     protected void perform() {
         setSucceeded(runVdsCommand(VDSCommandType.VmMonitorCommand,
-                        new VmMonitorCommandVDSCommandParameters(getVdsId(), getVmId(), mMonitorCommand))
+                        new VmMonitorCommandVDSCommandParameters(getVdsId(), getVmId(), monitorCommand))
                 .getSucceeded());
     }
 }

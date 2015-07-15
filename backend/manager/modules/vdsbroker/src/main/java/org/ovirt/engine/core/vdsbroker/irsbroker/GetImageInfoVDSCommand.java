@@ -69,7 +69,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
                             .getStorageName(),
                     getParameters().getStorageDomainId(),
                     returnStatus,
-                    imageInfoReturn.getXmlRpcStatus().mMessage);
+                    imageInfoReturn.getXmlRpcStatus().message);
             throw new IRSErrorException(returnStatus.toString());
         }
     }

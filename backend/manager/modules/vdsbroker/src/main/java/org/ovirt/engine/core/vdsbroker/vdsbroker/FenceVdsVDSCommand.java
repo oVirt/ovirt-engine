@@ -55,8 +55,8 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
 
             FenceOperationResult actionResult = new FenceOperationResult(
                     getParameters().getAction(),
-                    result.getXmlRpcStatus().mCode,
-                    result.getXmlRpcStatus().mMessage,
+                    result.getXmlRpcStatus().code,
+                    result.getXmlRpcStatus().message,
                     result.power,
                     result.operationStatus);
             setReturnValue(actionResult);
@@ -109,8 +109,8 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         FenceStatusReturnForXmlRpc result = fenceNode(FenceActionType.STATUS);
         FenceOperationResult actionResult = new FenceOperationResult(
                 FenceActionType.STATUS,
-                result.getXmlRpcStatus().mCode,
-                result.getXmlRpcStatus().mMessage,
+                result.getXmlRpcStatus().code,
+                result.getXmlRpcStatus().message,
                 result.power,
                 result.operationStatus);
 
@@ -147,12 +147,12 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         FenceOperationResult result = (FenceOperationResult) getReturnValue();
         if (result == null) {
             // unexpected error happened
-            status.mCode = 1;
-            status.mMessage = "";
+            status.code = 1;
+            status.message = "";
         } else {
             // status result from action result
-            status.mCode = result.getStatus() == Status.ERROR ? 1 : 0;
-            status.mMessage = result.getMessage();
+            status.code = result.getStatus() == Status.ERROR ? 1 : 0;
+            status.message = result.getMessage();
         }
         return status;
     }

@@ -14,7 +14,7 @@ public final class OneImageInfoReturnForXmlRpc extends StatusReturnForXmlRpc {
     // We are ignoring missing fields after the status, because on failure it is
     // not sent.
     // [XmlRpcMissingMapping(MappingAction.Ignore), XmlRpcMember("info")]
-    private Map<String, Object> mInfo;
+    private Map<String, Object> info;
 
     @Override
     public String toString() {
@@ -22,17 +22,17 @@ public final class OneImageInfoReturnForXmlRpc extends StatusReturnForXmlRpc {
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.toStringBuilder(mInfo, builder);
+        XmlRpcObjectDescriptor.toStringBuilder(info, builder);
         return builder.toString();
     }
 
     @SuppressWarnings("unchecked")
     public OneImageInfoReturnForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap);
-        mInfo = (Map<String, Object>) innerMap.get(INFO);
+        info = (Map<String, Object>) innerMap.get(INFO);
     }
 
     public Map<String, Object> getInfo() {
-        return mInfo;
+        return info;
     }
 }

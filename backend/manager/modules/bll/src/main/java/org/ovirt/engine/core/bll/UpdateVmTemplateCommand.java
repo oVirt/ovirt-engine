@@ -47,7 +47,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> extends VmTemplateCommand<T>
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
 
-    private VmTemplate mOldTemplate;
+    private VmTemplate oldTemplate;
     private List<GraphicsDevice> cachedGraphics;
 
     public UpdateVmTemplateCommand(T parameters) {
@@ -55,7 +55,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         setVmTemplate(parameters.getVmTemplateData());
         setVmTemplateId(getVmTemplate().getId());
         setVdsGroupId(getVmTemplate().getVdsGroupId());
-        mOldTemplate = DbFacade.getInstance().getVmTemplateDao().get(getVmTemplate().getId());
+        oldTemplate = DbFacade.getInstance().getVmTemplateDao().get(getVmTemplate().getId());
 
         if (getVdsGroup() != null) {
             setStoragePoolId(getVdsGroup().getStoragePoolId() != null ? getVdsGroup().getStoragePoolId()
@@ -66,9 +66,9 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (getVdsGroup() != null || isBlankTemplate()) {
             getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(compatibilityVersion,
                     parameters.getVmTemplateData());
-            if (mOldTemplate != null) {
+            if (oldTemplate != null) {
                 getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(compatibilityVersion,
-                        mOldTemplate);
+                        oldTemplate);
             }
         }
 
@@ -92,15 +92,15 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         boolean returnValue = false;
 
-        if (mOldTemplate == null) {
+        if (oldTemplate == null) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
 
         if (!isInstanceType && !isBlankTemplate) {
-            VmTemplateHandler.updateDisksFromDb(mOldTemplate);
+            VmTemplateHandler.updateDisksFromDb(oldTemplate);
         }
 
-        if (!StringUtils.equals(mOldTemplate.getName(), getVmTemplate().getName())) {
+        if (!StringUtils.equals(oldTemplate.getName(), getVmTemplate().getName())) {
             if (!getVmTemplate().isBaseTemplate()) {
                 // template version should always have the name of the base template
                 return failCanDoAction(EngineMessage.VMT_CANNOT_UPDATE_VERSION_NAME);
@@ -123,7 +123,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         if (isVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(), getReturnValue()
                 .getCanDoActionMessages()) && checkDomain()) {
-            returnValue = VmTemplateHandler.isUpdateValid(mOldTemplate, getVmTemplate());
+            returnValue = VmTemplateHandler.isUpdateValid(oldTemplate, getVmTemplate());
             if (!returnValue) {
                 addCanDoActionMessage(EngineMessage.VMT_CANNOT_UPDATE_ILLEGAL_FIELD);
             }
@@ -160,7 +160,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     private boolean doClusterRelatedChecks() {
 
-        if (mOldTemplate.getStatus() == VmTemplateStatus.Locked) {
+        if (oldTemplate.getStatus() == VmTemplateStatus.Locked) {
             return failCanDoAction(EngineMessage.VM_TEMPLATE_IS_LOCKED);
         }
 
@@ -268,7 +268,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         updateOriginalTemplateNameOnDerivedVms();
         List<Guid> oldIconIds = Collections.emptyList();
         if (isTemplate()) {
-            oldIconIds = IconUtils.updateVmIcon(mOldTemplate, getVmTemplate(), getParameters().getVmLargeIcon());
+            oldIconIds = IconUtils.updateVmIcon(oldTemplate, getVmTemplate(), getParameters().getVmLargeIcon());
         }
         updateVmTemplate();
         IconUtils.removeUnusedIcons(oldIconIds);
@@ -317,7 +317,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     }
 
     private void updateOriginalTemplateNameOnDerivedVms() {
-        boolean templateNameChanged = !ObjectUtils.equals(mOldTemplate.getName(), getVmTemplate().getName());
+        boolean templateNameChanged = !ObjectUtils.equals(oldTemplate.getName(), getVmTemplate().getName());
         if (templateNameChanged) {
             getVmDao().updateOriginalTemplateName(getVmTemplate().getId(), getVmTemplate().getName());
         }
@@ -329,7 +329,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         // also update the smartcard device
         VmDeviceUtils.updateSmartcardDevice(getVmTemplateId(), getParameters().getVmTemplateData().isSmartcardEnabled());
         // update audio device
-        VmDeviceUtils.updateSoundDevice(mOldTemplate,
+        VmDeviceUtils.updateSoundDevice(oldTemplate,
                 getVmTemplate(),
                 getVdsGroup() != null ? getVdsGroup().getCompatibilityVersion() : null,
                 getParameters().isSoundDeviceEnabled());
@@ -372,7 +372,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
      @Override
      public String getEntityOldName() {
-        return mOldTemplate.getName();
+        return oldTemplate.getName();
      }
 
      @Override
@@ -382,7 +382,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     @Override
     public void setEntityId(AuditLogableBase logable) {
-        logable.setVmTemplateId(mOldTemplate.getId());
+        logable.setVmTemplateId(oldTemplate.getId());
     }
 
     @Override

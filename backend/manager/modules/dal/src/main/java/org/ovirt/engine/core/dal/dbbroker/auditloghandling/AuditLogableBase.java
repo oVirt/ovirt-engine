@@ -70,25 +70,25 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected AuditLogDirector auditLogDirector;
 
-    private Guid mVmId = Guid.Empty;
+    private Guid vmId = Guid.Empty;
     private DbUser dbUser;
-    private Guid mUserId = Guid.Empty;
-    private String mUserName;
-    private String mVmName;
-    private String mReason;
+    private Guid userId = Guid.Empty;
+    private String userName;
+    private String vmName;
+    private String reason;
     private Map<String, String> customValues = Collections.emptyMap();
-    private Guid mVdsId;
-    private String mVdsName;
-    private Guid mVmTemplateId;
-    private String mVmTemplateName;
-    private VDS mVds;
+    private Guid vdsId;
+    private String vdsName;
+    private Guid vmTemplateId;
+    private String vmTemplateName;
+    private VDS vds;
     private VdsStatic cachedVdsStatic;
-    private VM mVm;
-    private VmTemplate mVmTemplate;
-    private Guid _storageDomainId;
-    private Guid _storagePoolId;
-    private Guid mVdsGroupId;
-    private VDSGroup mVdsGroup;
+    private VM vm;
+    private VmTemplate vmTemplate;
+    private Guid storageDomainId;
+    private Guid storagePoolId;
+    private Guid vdsGroupId;
+    private VDSGroup vdsGroup;
     private String correlationId;
     private Guid jobId;
     private boolean isInternalExecution = false;
@@ -120,18 +120,18 @@ public class AuditLogableBase extends TimeoutBase {
 
     public AuditLogableBase(final Guid vdsId) {
         this();
-        mVdsId = vdsId;
+        this.vdsId = vdsId;
     }
 
     public AuditLogableBase(final Guid vdsId, final Guid vmId) {
         this(vdsId);
-        mVmId = vmId;
+        this.vmId = vmId;
     }
 
     public AuditLogableBase(final AuditLog auditLog) {
         this(auditLog.getVdsId(), auditLog.getVmId());
-        this._storageDomainId = auditLog.getStorageDomainId();
-        this._storagePoolId = auditLog.getStoragePoolId();
+        this.storageDomainId = auditLog.getStorageDomainId();
+        this.storagePoolId = auditLog.getStoragePoolId();
         this.correlationId = auditLog.getCorrelationId();
         this.customData = auditLog.getCustomData();
         this.customEventId = auditLog.getCustomEventId();
@@ -139,13 +139,13 @@ public class AuditLogableBase extends TimeoutBase {
         this.glusterVolumeId = auditLog.getGlusterVolumeId();
         this.glusterVolumeName = auditLog.getGlusterVolumeName();
         this.jobId = auditLog.getJobId();
-        this.mUserId = auditLog.getUserId();
-        this.mUserName = auditLog.getUserName();
-        this.mVdsGroupId = auditLog.getVdsGroupId();
-        this.mVdsName = auditLog.getVdsName();
-        this.mVmName = auditLog.getVmName();
-        this.mVmTemplateId = auditLog.getVmTemplateId();
-        this.mVmTemplateName = auditLog.getVmTemplateName();
+        this.userId = auditLog.getUserId();
+        this.userName = auditLog.getUserName();
+        this.vdsGroupId = auditLog.getVdsGroupId();
+        this.vdsName = auditLog.getVdsName();
+        this.vmName = auditLog.getVmName();
+        this.vmTemplateId = auditLog.getVmTemplateId();
+        this.vmTemplateName = auditLog.getVmTemplateName();
         this.origin = auditLog.getOrigin();
         this.external = auditLog.isExternal();
         this.callStack = auditLog.getCallStack();
@@ -154,25 +154,25 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public Guid getUserId() {
-        if (mUserId != null && mUserId.equals(Guid.Empty) && getCurrentUser() != null) {
-            mUserId = getCurrentUser().getId();
+        if (userId != null && userId.equals(Guid.Empty) && getCurrentUser() != null) {
+            userId = getCurrentUser().getId();
         }
-        return mUserId;
+        return userId;
     }
 
     public void setUserId(final Guid value) {
-        mUserId = value;
+        userId = value;
     }
 
     public String getUserName() {
-        if (StringUtils.isEmpty(mUserName) && getCurrentUser() != null) {
-            mUserName = String.format("%s@%s", getCurrentUser().getLoginName(), getCurrentUser().getDomain());
+        if (StringUtils.isEmpty(userName) && getCurrentUser() != null) {
+            userName = String.format("%s@%s", getCurrentUser().getLoginName(), getCurrentUser().getDomain());
         }
-        return mUserName;
+        return userName;
     }
 
     public void setUserName(final String value) {
-        mUserName = value;
+        userName = value;
     }
 
     public DbUser getCurrentUser() {
@@ -188,25 +188,25 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public void setVmTemplateId(final Guid value) {
-        mVmTemplateId = value;
+        vmTemplateId = value;
     }
 
     public Guid getVmTemplateIdRef() {
-        if (mVmTemplateId == null && getVmTemplate() != null) {
-            mVmTemplateId = getVmTemplate().getId();
+        if (vmTemplateId == null && getVmTemplate() != null) {
+            vmTemplateId = getVmTemplate().getId();
         }
-        return mVmTemplateId;
+        return vmTemplateId;
     }
 
     public String getVmTemplateName() {
-        if (mVmTemplateName == null && getVmTemplate() != null) {
-            mVmTemplateName = getVmTemplate().getName();
+        if (vmTemplateName == null && getVmTemplate() != null) {
+            vmTemplateName = getVmTemplate().getName();
         }
-        return mVmTemplateName;
+        return vmTemplateName;
     }
 
     protected void setVmTemplateName(final String value) {
-        mVmTemplateName = value;
+        vmTemplateName = value;
     }
 
     public Guid getVmId() {
@@ -214,7 +214,7 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public void setVmId(final Guid value) {
-        mVmId = value;
+        vmId = value;
     }
 
     private String privateSnapshotName;
@@ -228,110 +228,110 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public Guid getVmIdRef() {
-        if (Guid.isNullOrEmpty(mVmId) && getVm() != null) {
-            mVmId = getVm().getId();
+        if (Guid.isNullOrEmpty(vmId) && getVm() != null) {
+            vmId = getVm().getId();
         }
-        return mVmId;
+        return vmId;
     }
 
     public String getVmName() {
-        if (mVmName == null && getVm() != null) {
-            mVmName = getVm().getName();
+        if (vmName == null && getVm() != null) {
+            vmName = getVm().getName();
         }
-        return mVmName;
+        return vmName;
     }
 
     protected void setVmName(final String value) {
-        mVmName = value;
+        vmName = value;
     }
 
     public String getReason() {
-        if (mReason == null && getVm() != null) {
-            mReason = getVm().getStopReason();
+        if (reason == null && getVm() != null) {
+            reason = getVm().getStopReason();
         }
-        return mReason;
+        return reason;
     }
 
     public void setReason(String value) {
-        mReason = value;
+        reason = value;
     }
 
     public Guid getVdsIdRef() {
-        if (mVdsId == null && getVds() != null) {
-            mVdsId = getVds().getId();
+        if (vdsId == null && getVds() != null) {
+            vdsId = getVds().getId();
         }
-        return mVdsId;
+        return vdsId;
     }
 
     protected void setVdsIdRef(final Guid value) {
-        mVdsId = value;
+        vdsId = value;
     }
 
     public Guid getVdsId() {
-        return mVdsId != null ? mVdsId : Guid.Empty;
+        return vdsId != null ? vdsId : Guid.Empty;
     }
 
     public void setVdsId(final Guid value) {
-        mVdsId = value;
+        vdsId = value;
     }
 
     public String getVdsName() {
-        if (mVdsName == null) {
+        if (vdsName == null) {
             if (getVdsNoLoad() == null) {
                 if (getVdsStatic() != null) {
-                    mVdsName = getVdsStatic().getName();
+                    vdsName = getVdsStatic().getName();
                 }
             } else {
                 if (getVds() != null) {
-                    mVdsName = getVds().getName();
+                    vdsName = getVds().getName();
                 }
             }
         }
-        return mVdsName;
+        return vdsName;
     }
 
     protected void setVdsName(final String value) {
-        mVdsName = value;
+        vdsName = value;
     }
 
-    private StorageDomain _storageDomain;
+    private StorageDomain storageDomain;
 
     public StorageDomain getStorageDomain() {
-        if (_storageDomain == null && getStorageDomainId() != null) {
-            if (_storagePoolId != null && getStoragePool() != null) {
-                _storageDomain = getStorageDomainDao().getForStoragePool(
+        if (storageDomain == null && getStorageDomainId() != null) {
+            if (storagePoolId != null && getStoragePool() != null) {
+                storageDomain = getStorageDomainDao().getForStoragePool(
                         getStorageDomainId(), getStoragePool().getId());
             }
-            if (_storageDomain == null) {
+            if (storageDomain == null) {
                 final List<StorageDomain> storageDomainList =
                         getStorageDomainDao().getAllForStorageDomain(getStorageDomainId());
                 if (storageDomainList.size() != 0) {
-                    _storageDomain = storageDomainList.get(0);
+                    storageDomain = storageDomainList.get(0);
                     for (final StorageDomain storageDomainFromList : storageDomainList) {
                         if (storageDomainFromList.getStatus() == StorageDomainStatus.Active) {
-                            _storageDomain = storageDomainFromList;
+                            storageDomain = storageDomainFromList;
                             break;
                         }
                     }
                 }
             }
         }
-        return _storageDomain;
+        return storageDomain;
     }
 
     public void setStorageDomain(final StorageDomain value) {
-        _storageDomain = value;
+        storageDomain = value;
     }
 
     public Guid getStorageDomainId() {
-        if (_storageDomain != null) {
-            return _storageDomain.getId();
+        if (storageDomain != null) {
+            return storageDomain.getId();
         }
-        return _storageDomainId;
+        return storageDomainId;
     }
 
     public void setStorageDomainId(final Guid value) {
-        _storageDomainId = value;
+        storageDomainId = value;
     }
 
     public String getStorageDomainName() {
@@ -341,32 +341,32 @@ public class AuditLogableBase extends TimeoutBase {
         return "";
     }
 
-    private StoragePool _storagePool;
+    private StoragePool storagePool;
 
     public StoragePool getStoragePool() {
-        if (_storagePool == null && getStoragePoolId() != null && !Guid.Empty.equals(getStoragePoolId())) {
-            _storagePool = getStoragePoolDao().get(getStoragePoolId());
+        if (storagePool == null && getStoragePoolId() != null && !Guid.Empty.equals(getStoragePoolId())) {
+            storagePool = getStoragePoolDao().get(getStoragePoolId());
         }
-        return _storagePool;
+        return storagePool;
     }
 
     public void setStoragePool(final StoragePool value) {
-        _storagePool = value;
+        storagePool = value;
     }
 
     public Guid getStoragePoolId() {
-        if (_storagePoolId == null) {
-            if (_storagePool != null) {
-                _storagePoolId = _storagePool.getId();
+        if (storagePoolId == null) {
+            if (storagePool != null) {
+                storagePoolId = storagePool.getId();
             } else if (getStorageDomain() != null) {
-                _storagePoolId = getStorageDomain().getStoragePoolId();
+                storagePoolId = getStorageDomain().getStoragePoolId();
             }
         }
-        return _storagePoolId;
+        return storagePoolId;
     }
 
     public void setStoragePoolId(final Guid value) {
-        _storagePoolId = value;
+        storagePoolId = value;
     }
 
     public String getStoragePoolName() {
@@ -381,35 +381,35 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     private VDS getVdsNoLoad() {
-        return mVds;
+        return vds;
     }
 
     protected VDS getVds() {
-        if (mVds == null
-                && ((mVdsId != null && !Guid.Empty.equals(mVdsId)) || (getVm() != null && getVm().getRunOnVds() != null))) {
-            if (mVdsId == null || Guid.Empty.equals(mVdsId)) {
-                mVdsId = getVm().getRunOnVds();
+        if (vds == null
+                && ((vdsId != null && !Guid.Empty.equals(vdsId)) || (getVm() != null && getVm().getRunOnVds() != null))) {
+            if (vdsId == null || Guid.Empty.equals(vdsId)) {
+                vdsId = getVm().getRunOnVds();
             }
             try {
-                mVds = getVdsDao().get(getVdsId());
+                vds = getVdsDao().get(getVdsId());
             } catch (final RuntimeException e) {
-                log.info("Failed to get vds '{}', error {}", mVdsId, e.getMessage());
+                log.info("Failed to get vds '{}', error {}", vdsId, e.getMessage());
                 log.debug("Exception", e);
             }
         }
-        return mVds;
+        return vds;
     }
 
     protected VdsStatic getVdsStatic() {
         if (cachedVdsStatic == null
-                && ((mVdsId != null && !Guid.Empty.equals(mVdsId)) || (getVm() != null && getVm().getRunOnVds() != null))) {
-            if (mVdsId == null || Guid.Empty.equals(mVdsId)) {
-                mVdsId = getVm().getRunOnVds();
+                && ((vdsId != null && !Guid.Empty.equals(vdsId)) || (getVm() != null && getVm().getRunOnVds() != null))) {
+            if (vdsId == null || Guid.Empty.equals(vdsId)) {
+                vdsId = getVm().getRunOnVds();
             }
             try {
                 cachedVdsStatic = getVdsStaticDao().get(getVdsId());
             } catch (final RuntimeException e) {
-                log.info("Failed to get vds '{}', error: {}", mVdsId, e.getMessage());
+                log.info("Failed to get vds '{}', error: {}", vdsId, e.getMessage());
                 log.debug("Exception", e);
             }
         }
@@ -417,84 +417,84 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public void setVds(final VDS value) {
-        mVds = value;
-        mVdsName = null;
+        vds = value;
+        vdsName = null;
         if (value != null) {
-            mVdsId = value.getId();
+            vdsId = value.getId();
         }
     }
 
     public VM getVm() {
-        if (mVm == null && mVmId != null && !mVmId.equals(Guid.Empty)) {
+        if (vm == null && vmId != null && !vmId.equals(Guid.Empty)) {
             try {
-                mVm = getVmDao().get(mVmId);
+                vm = getVmDao().get(vmId);
 
                 // TODO: This is done for backwards compatibility with VMDao.getById(Guid)
                 // It should probably be removed, but some research is required
-                if (mVm != null) {
-                    mVm.setInterfaces(getVmNetworkInterfaceDao().getAllForVm(mVmId));
+                if (vm != null) {
+                    vm.setInterfaces(getVmNetworkInterfaceDao().getAllForVm(vmId));
                 }
             } catch (final Exception e) {
-                log.info("Failed to get vm '{}', error {}", mVmId, e.getMessage());
+                log.info("Failed to get vm '{}', error {}", vmId, e.getMessage());
                 log.debug("Exception", e);
             }
         }
-        return mVm;
+        return vm;
     }
 
     protected void setVm(final VM value) {
-        mVm = value;
+        vm = value;
     }
 
     public VmTemplate getVmTemplate() {
-        if (mVmTemplate == null && (mVmTemplateId != null || getVm() != null)) {
+        if (vmTemplate == null && (vmTemplateId != null || getVm() != null)) {
 
-            mVmTemplate = getVmTemplateDao()
-                    .get(mVmTemplateId != null ? getVmTemplateId() : getVm()
+            vmTemplate = getVmTemplateDao()
+                    .get(vmTemplateId != null ? getVmTemplateId() : getVm()
                             .getVmtGuid());
         }
-        return mVmTemplate;
+        return vmTemplate;
     }
 
     protected void setVmTemplate(final VmTemplate value) {
-        mVmTemplate = value;
+        vmTemplate = value;
     }
 
     public Guid getVdsGroupId() {
-        if (mVdsGroupId != null) {
-            return mVdsGroupId;
+        if (vdsGroupId != null) {
+            return vdsGroupId;
         } else if (getVdsGroup() != null) {
-            mVdsGroupId = getVdsGroup().getId();
-            return mVdsGroupId;
+            vdsGroupId = getVdsGroup().getId();
+            return vdsGroupId;
         } else {
             return Guid.Empty;
         }
     }
 
     public void setVdsGroupId(final Guid value) {
-        mVdsGroupId = value;
+        vdsGroupId = value;
     }
 
     public VDSGroup getVdsGroup() {
-        if (mVdsGroup == null) {
-            if (mVdsGroupId != null) {
-                mVdsGroup = getVdsGroupDao().get(mVdsGroupId);
+        if (vdsGroup == null) {
+            if (vdsGroupId != null) {
+                vdsGroup = getVdsGroupDao().get(vdsGroupId);
             } else if (getVds() != null) {
-                mVdsGroupId = getVds().getVdsGroupId();
-                mVdsGroup = getVdsGroupDao().get(mVdsGroupId);
+                vdsGroupId = getVds().getVdsGroupId();
+                vdsGroup = getVdsGroupDao().get(vdsGroupId);
             } else if (getVm() != null) {
-                mVdsGroupId = getVm().getVdsGroupId();
-                mVdsGroup = getVdsGroupDao().get(mVdsGroupId);
+                vdsGroupId = getVm().getVdsGroupId();
+                vdsGroup = getVdsGroupDao().get(vdsGroupId);
             } else if (getVmTemplate() != null) {
-                mVdsGroupId = getVmTemplate().getVdsGroupId();
-                mVdsGroup = getVdsGroupDao().get(mVdsGroupId);
+                vdsGroupId = getVmTemplate().getVdsGroupId();
+                vdsGroup = getVdsGroupDao().get(vdsGroupId);
             }
         }
-        return mVdsGroup;
+        return vdsGroup;
     }
 
     protected void setVdsGroup(final VDSGroup value) {
-        mVdsGroup = value;
+        vdsGroup = value;
     }
 
     public String getVdsGroupName() {

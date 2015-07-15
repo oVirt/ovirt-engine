@@ -15,7 +15,7 @@ public class SetGlusterVolumeSnapshotConfigVDSCommand<P extends GlusterVolumeSna
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return status.mStatus;
+        return status.status;
     }
 
     @Override

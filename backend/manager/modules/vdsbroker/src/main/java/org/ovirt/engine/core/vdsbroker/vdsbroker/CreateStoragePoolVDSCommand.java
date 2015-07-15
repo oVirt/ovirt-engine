@@ -41,7 +41,7 @@ public class CreateStoragePoolVDSCommand<P extends CreateStoragePoolVDSCommandPa
             getVDSReturnValue().setSucceeded(false);
             VDSError tempVar = new VDSError();
             tempVar.setCode(EngineError.StorageDomainAccessError);
-            tempVar.setMessage(getReturnStatus().mMessage);
+            tempVar.setMessage(getReturnStatus().message);
             getVDSReturnValue().setVdsError(tempVar);
             break;
 

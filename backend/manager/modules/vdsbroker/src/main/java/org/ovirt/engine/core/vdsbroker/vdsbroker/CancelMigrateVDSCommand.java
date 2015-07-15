@@ -32,7 +32,7 @@ public class CancelMigrateVDSCommand<P extends CancelMigrationVDSParameters> ext
             VDSExceptionBase outEx =
                     createDefaultConcreteException("Cancel migration has failed. Please try again in a few moments and track the VM's event list for details");
             initializeVdsError(returnStatus);
-            outEx.setVdsError(new VDSError(EngineError.MIGRATION_CANCEL_ERROR_NO_VM, getReturnStatus().mMessage));
+            outEx.setVdsError(new VDSError(EngineError.MIGRATION_CANCEL_ERROR_NO_VM, getReturnStatus().message));
             throw outEx;
         default:
             super.proceedProxyReturnValue();

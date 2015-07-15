@@ -8,20 +8,20 @@ import java.util.ListIterator;
 
 public class SyntaxContainer implements Iterable<SyntaxObject> {
 
-    private final String mOrigText;
-    private final LinkedList<SyntaxObject> mObjList = new LinkedList<SyntaxObject>();
-    private final List<String> mCurrentCompletions = new ArrayList<String>();
+    private final String origText;
+    private final LinkedList<SyntaxObject> objList = new LinkedList<SyntaxObject>();
+    private final List<String> currentCompletions = new ArrayList<String>();
 
     private static final String LINE_SEPARATOR = "\n";
-    private boolean mValid = false;
-    private SyntaxError mError = SyntaxError.NO_ERROR;
-    private final int[] mErrorPos = new int[2];
+    private boolean valid = false;
+    private SyntaxError error = SyntaxError.NO_ERROR;
+    private final int[] errorPos = new int[2];
     private int privateMaxCount;
     private long searchFrom = 0;
     private boolean caseSensitive=true;
 
     public boolean isSearchUsingTags() {
-        return mOrigText.contains("tag")
+        return origText.contains("tag")
                 || (getSearchObjectStr() != null && (getSearchObjectStr().equals(SearchObjects.VDC_USER_OBJ_NAME)))
                 || (getCrossRefObjList().contains(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME))
                 || (getCrossRefObjList().contains(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME));
@@ -44,15 +44,15 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
     }
 
     public boolean getvalid() {
-        return mValid;
+        return valid;
     }
 
     public void setvalid(boolean value) {
-        mValid = value;
+        valid = value;
     }
 
     public SyntaxError getError() {
-        return mError;
+        return error;
     }
 
     public boolean getCaseSensitive() {
@@ -63,76 +63,76 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
         caseSensitive = value;
     }
     public int getErrorStartPos() {
-        return mErrorPos[0];
+        return errorPos[0];
     }
 
     public int getErrorEndPos() {
-        return mErrorPos[1];
+        return errorPos[1];
     }
 
     public SyntaxObject getFirst() {
-        return mObjList.getFirst();
+        return objList.getFirst();
     }
 
     public String getSearchObjectStr() {
-        if (mObjList.getFirst() != null) {
-            return getObjSingularName(mObjList.getFirst().getBody());
+        if (objList.getFirst() != null) {
+            return getObjSingularName(objList.getFirst().getBody());
         }
         return null;
     }
 
     public SyntaxContainer(final String origText) {
-        mOrigText = origText;
-        mValid = false;
+        this.origText = origText;
+        valid = false;
     }
 
     public void setErr(SyntaxError errCode, int startPos, int endPos) {
-        mErrorPos[0] = startPos;
-        mErrorPos[1] = endPos;
-        mError = errCode;
-        mValid = false;
+        errorPos[0] = startPos;
+        errorPos[1] = endPos;
+        error = errCode;
+        valid = false;
     }
 
     public void addSyntaxObject(SyntaxObjectType type, String body, int startPos, int endPos) {
         SyntaxObject newObj = new SyntaxObject(type, body, startPos, endPos);
-        mObjList.addLast(newObj);
+        objList.addLast(newObj);
     }
 
     public SyntaxObjectType getState() {
         SyntaxObjectType retval = SyntaxObjectType.BEGIN;
-        if (mObjList.size() > 0) {
-            retval = mObjList.getLast().getType();
+        if (objList.size() > 0) {
+            retval = objList.getLast().getType();
         }
         return retval;
     }
 
     public int getLastHandledIndex() {
         int retval = 0;
-        if (mObjList.size() > 0) {
-            retval = mObjList.getLast().getPos()[1];
+        if (objList.size() > 0) {
+            retval = objList.getLast().getPos()[1];
         }
         return retval;
     }
 
     public String getPreviousSyntaxObject(int steps, SyntaxObjectType type) {
         String retval = "";
-        if (mObjList.size() > steps) {
-            SyntaxObject obj = mObjList.get(mObjList.size() - 1 - steps);
+        if (objList.size() > steps) {
+            SyntaxObject obj = objList.get(objList.size() - 1 - steps);
             if (obj.getType() == type) {
                 retval = obj.getBody();
             }
         }
         if ("".equals(retval)
                 && ((type == SyntaxObjectType.CROSS_REF_OBJ) || (type == SyntaxObjectType.SEARCH_OBJECT))) {
-            retval = mObjList.getFirst().getBody();
+            retval = objList.getFirst().getBody();
         }
         return retval;
     }
 
     public SyntaxObjectType getPreviousSyntaxObjectType(int steps) {
         SyntaxObjectType retval = SyntaxObjectType.END;
-        if (mObjList.size() > steps) {
-            SyntaxObject obj = mObjList.get(mObjList.size() - 1 - steps);
+        if (objList.size() > steps) {
+            SyntaxObject obj = objList.get(objList.size() - 1 - steps);
             retval = obj.getType();
         }
         return retval;
@@ -140,14 +140,14 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
 
     public void addToACList(String[] acArr) {
         for (int idx = 0; idx < acArr.length; idx++) {
-            mCurrentCompletions.add(acArr[idx]);
+            currentCompletions.add(acArr[idx]);
         }
     }
 
     public String[] getCompletionArray() {
-        String[] retval = new String[mCurrentCompletions.size()];
-        for (int idx = 0; idx < mCurrentCompletions.size(); idx++) {
-            retval[idx] = mCurrentCompletions.get(idx);
+        String[] retval = new String[currentCompletions.size()];
+        for (int idx = 0; idx < currentCompletions.size(); idx++) {
+            retval[idx] = currentCompletions.get(idx);
         }
         return retval;
     }
@@ -155,7 +155,7 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
     public ArrayList<String> getCrossRefObjList() {
         ArrayList<String> retval = new ArrayList<String>();
         String searchObj = getObjSingularName(getSearchObjectStr());
-        for (SyntaxObject obj : mObjList) {
+        for (SyntaxObject obj : objList) {
             if (obj.getType() == SyntaxObjectType.CROSS_REF_OBJ) {
                 String objSingularName = getObjSingularName(obj.getBody());
                 if ((!retval.contains(objSingularName)) &&
@@ -231,14 +231,14 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
     public String toString() {
         StringBuilder sb = new StringBuilder("---------------- SyntaxContainer ---------------------");
         sb.append(LINE_SEPARATOR);
-        sb.append("mOrigText       = ");
-        sb.append(mOrigText);
+        sb.append("origText       = ");
+        sb.append(origText);
         sb.append(LINE_SEPARATOR);
         sb.append("Valid           = ");
-        sb.append(Boolean.toString(mValid));
+        sb.append(Boolean.toString(valid));
         sb.append(LINE_SEPARATOR);
         sb.append("Error           = ");
-        sb.append(mError.toString());
+        sb.append(error.toString());
         sb.append(LINE_SEPARATOR);
         sb.append("CrossRefObjlist = ");
         for (String cro : getCrossRefObjList()) {
@@ -246,7 +246,7 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
         }
         sb.append("Syntax object list:");
 
-        for (SyntaxObject obj : mObjList) {
+        for (SyntaxObject obj : objList) {
             sb.append("    ");
             sb.append(LINE_SEPARATOR);
             sb.append(obj.toString());
@@ -256,7 +256,7 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
 
     public boolean contains(SyntaxObjectType type, String val) {
         boolean retval = false;
-        for (SyntaxObject obj : mObjList) {
+        for (SyntaxObject obj : objList) {
             if ((obj.getType() == type) && val.equalsIgnoreCase(obj.getBody())) {
                 retval = true;
                 break;
@@ -266,11 +266,11 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
     }
 
     public ListIterator<SyntaxObject> listIterator(int index) {
-        return mObjList.listIterator(index);
+        return objList.listIterator(index);
     }
 
     @Override
     public Iterator<SyntaxObject> iterator() {
-        return mObjList.iterator();
+        return objList.iterator();
     }
 }

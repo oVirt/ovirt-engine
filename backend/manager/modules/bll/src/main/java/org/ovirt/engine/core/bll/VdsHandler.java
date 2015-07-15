@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 public class VdsHandler extends BaseHandler {
     private static final Logger log = LoggerFactory.getLogger(VdsHandler.class);
-    private static ObjectIdentityChecker mUpdateVdsStatic;
+    private static ObjectIdentityChecker updateVdsStatic;
 
     /**
      * Initialize static list containers, for identity and permission check. The initialization should be executed
@@ -32,30 +32,30 @@ public class VdsHandler extends BaseHandler {
      */
     public static void init() {
         Class<?>[] inspectedClasses = new Class<?>[] { VDS.class, VdsStatic.class, VdsDynamic.class };
-        mUpdateVdsStatic =
+        updateVdsStatic =
                 new ObjectIdentityChecker(VdsHandler.class, Arrays.asList(inspectedClasses));
 
 
         for (Pair<EditableField, Field> pair : extractAnnotatedFields(EditableField.class, inspectedClasses)) {
-            mUpdateVdsStatic.AddPermittedFields(pair.getSecond().getName());
+            updateVdsStatic.AddPermittedFields(pair.getSecond().getName());
         }
 
         for (Pair<EditableOnVdsStatus, Field> pair : extractAnnotatedFields(EditableOnVdsStatus.class, inspectedClasses)) {
-            mUpdateVdsStatic.AddField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond().getName());
+            updateVdsStatic.AddField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond().getName());
         }
     }
 
     public VdsHandler() {
-        mUpdateVdsStatic.setContainer(this);
+        updateVdsStatic.setContainer(this);
     }
 
     public static boolean isUpdateValid(VdsStatic source, VdsStatic distination, VDSStatus status) {
 
-        return mUpdateVdsStatic.IsUpdateValid(source, distination, status);
+        return updateVdsStatic.IsUpdateValid(source, distination, status);
     }
 
     public static boolean isFieldsUpdated(VdsStatic source, VdsStatic destination, Iterable<String> list) {
-        return mUpdateVdsStatic.IsFieldsUpdated(source, destination, list);
+        return updateVdsStatic.IsFieldsUpdated(source, destination, list);
     }
 
     public static boolean isPendingOvirt(VDS vds) {

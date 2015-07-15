@@ -11,10 +11,10 @@ public class ProviderConditionFieldAutoCompleter extends BaseConditionFieldAutoC
 
     public ProviderConditionFieldAutoCompleter() {
         // Building the basic verbs dict.
-        mVerbs.add(NAME);
-        mVerbs.add(TYPE);
-        mVerbs.add(DESCRIPTION);
-        mVerbs.add(URL);
+        verbs.add(NAME);
+        verbs.add(TYPE);
+        verbs.add(DESCRIPTION);
+        verbs.add(URL);
 
         // Building the autoCompletion dict.
         buildCompletions();

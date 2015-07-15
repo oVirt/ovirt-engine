@@ -10,9 +10,9 @@ public class AdGroupConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
 
     public AdGroupConditionFieldAutoCompleter() {
         // Building the basic vervs Dict
-        mVerbs.add(NAME);
-        mVerbs.add(GROUPNAME);
-        mVerbs.add(ALLNAMES);
+        verbs.add(NAME);
+        verbs.add(GROUPNAME);
+        verbs.add(ALLNAMES);
 
         // Building the types dict
         getTypeDictionary().put(NAME, String.class);
@@ -26,7 +26,7 @@ public class AdGroupConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         buildCompletions();
 
         // Building the validation dict
-        for (String key : mVerbs) {
+        for (String key : verbs) {
             validationDict.put(key, Collections.singletonList(validCharacters));
         }
     }

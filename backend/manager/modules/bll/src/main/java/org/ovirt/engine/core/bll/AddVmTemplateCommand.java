@@ -99,7 +99,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Inject
     private SchedulerUtilQuartzImpl schedulerUtil;
-    private final List<DiskImage> mImages = new ArrayList<>();
+    private final List<DiskImage> images = new ArrayList<>();
     private List<PermissionSubject> permissionCheckSubject;
     protected Map<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, List<DiskImage>> sourceImageDomainsImageMap;
@@ -152,7 +152,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
         if (getVm() != null) {
             updateVmDevices();
-            mImages.addAll(getVmDisksFromDB());
+            images.addAll(getVmDisksFromDB());
             setStoragePoolId(getVm().getStoragePoolId());
             isVmInDb = true;
         } else if (getVdsGroup() != null && parameterMasterVm != null) {
@@ -188,7 +188,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             diskInfoDestinationMap = new HashMap<>();
         }
         sourceImageDomainsImageMap = new HashMap<>();
-        for (DiskImage image : mImages) {
+        for (DiskImage image : images) {
             MultiValueMapUtils.addToMap(image.getStorageIds().get(0), image, sourceImageDomainsImageMap);
             if (!diskInfoDestinationMap.containsKey(image.getId())) {
                 diskInfoDestinationMap.put(image.getId(), image);
@@ -559,7 +559,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     protected boolean imagesRelatedChecks() {
         // images related checks
-        if (!mImages.isEmpty()) {
+        if (!images.isEmpty()) {
             if (!validateVmNotDuringSnapshot()) {
                 return false;
             }
@@ -568,13 +568,13 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 return false;
             }
 
-            List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(mImages);
+            List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(images);
             CinderDisksValidator cinderDisksValidator = new CinderDisksValidator(cinderDisks);
             if (!validate(cinderDisksValidator.validateCinderDiskLimits())) {
                 return false;
             }
 
-            List<DiskImage> diskImagesToCheck = ImagesHandler.filterImageDisks(mImages, true, false, true);
+            List<DiskImage> diskImagesToCheck = ImagesHandler.filterImageDisks(images, true, false, true);
             diskImagesToCheck.addAll(cinderDisks);
             DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImagesToCheck);
             if (!validate(diskImagesValidator.diskImagesNotIllegal()) ||
@@ -797,7 +797,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     protected void addVmTemplateImages(Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
-        List<DiskImage> diskImages = ImagesHandler.filterImageDisks(mImages, true, false, true);
+        List<DiskImage> diskImages = ImagesHandler.filterImageDisks(images, true, false, true);
         for (DiskImage diskImage : diskImages) {
             addVmTemplateImage(srcDeviceIdToTargetDeviceIdMapping, diskImage);
         }

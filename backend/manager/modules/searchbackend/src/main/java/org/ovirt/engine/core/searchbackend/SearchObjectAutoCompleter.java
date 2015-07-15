@@ -9,46 +9,46 @@ import org.ovirt.engine.core.searchbackend.gluster.GlusterVolumeConditionFieldAu
 import org.ovirt.engine.core.searchbackend.gluster.GlusterVolumeCrossRefAutoCompleter;
 
 public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
-    private final Map<String, String[]> mJoinDictionary = new HashMap<String, String[]>();
+    private final Map<String, String[]> joinDictionary = new HashMap<String, String[]>();
     private final Map<String, Boolean> requiresFullTable = new HashMap<String, Boolean>();
 
     public SearchObjectAutoCompleter() {
 
-        mVerbs.add(SearchObjects.VM_PLU_OBJ_NAME);
-        mVerbs.add(SearchObjects.VDC_POOL_PLU_OBJ_NAME);
-        mVerbs.add(SearchObjects.VDS_PLU_OBJ_NAME);
-        mVerbs.add(SearchObjects.TEMPLATE_PLU_OBJ_NAME);
-        mVerbs.add(SearchObjects.AUDIT_PLU_OBJ_NAME);
-        mVerbs.add(SearchObjects.VDC_USER_PLU_OBJ_NAME);
-        mVerbs.add(SearchObjects.VDC_GROUP_PLU_OBJ_NAME);
-        mVerbs.add(SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME);
-        mVerbs.add(SearchObjects.DISK_PLU_OBJ_NAME);
-        mVerbs.add(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME);
-        mVerbs.add(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME);
-        mVerbs.add(SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME);
-        mVerbs.add(SearchObjects.QUOTA_OBJ_NAME);
-        mVerbs.add(SearchObjects.NETWORK_PLU_OBJ_NAME);
-        mVerbs.add(SearchObjects.PROVIDER_PLU_OBJ_NAME);
-        mVerbs.add(SearchObjects.INSTANCE_TYPE_PLU_OBJ_NAME);
-        mVerbs.add(SearchObjects.IMAGE_TYPE_PLU_OBJ_NAME);
-        mVerbs.add(SearchObjects.SESSION_PLU_OBJ_NAME);
+        verbs.add(SearchObjects.VM_PLU_OBJ_NAME);
+        verbs.add(SearchObjects.VDC_POOL_PLU_OBJ_NAME);
+        verbs.add(SearchObjects.VDS_PLU_OBJ_NAME);
+        verbs.add(SearchObjects.TEMPLATE_PLU_OBJ_NAME);
+        verbs.add(SearchObjects.AUDIT_PLU_OBJ_NAME);
+        verbs.add(SearchObjects.VDC_USER_PLU_OBJ_NAME);
+        verbs.add(SearchObjects.VDC_GROUP_PLU_OBJ_NAME);
+        verbs.add(SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME);
+        verbs.add(SearchObjects.DISK_PLU_OBJ_NAME);
+        verbs.add(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME);
+        verbs.add(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME);
+        verbs.add(SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME);
+        verbs.add(SearchObjects.QUOTA_OBJ_NAME);
+        verbs.add(SearchObjects.NETWORK_PLU_OBJ_NAME);
+        verbs.add(SearchObjects.PROVIDER_PLU_OBJ_NAME);
+        verbs.add(SearchObjects.INSTANCE_TYPE_PLU_OBJ_NAME);
+        verbs.add(SearchObjects.IMAGE_TYPE_PLU_OBJ_NAME);
+        verbs.add(SearchObjects.SESSION_PLU_OBJ_NAME);
 
         buildCompletions();
-        mVerbs.add(SearchObjects.VM_OBJ_NAME);
-        mVerbs.add(SearchObjects.VDC_POOL_OBJ_NAME);
-        mVerbs.add(SearchObjects.DISK_OBJ_NAME);
-        mVerbs.add(SearchObjects.VDS_OBJ_NAME);
-        mVerbs.add(SearchObjects.TEMPLATE_OBJ_NAME);
-        mVerbs.add(SearchObjects.AUDIT_OBJ_NAME);
-        mVerbs.add(SearchObjects.VDC_USER_OBJ_NAME);
-        mVerbs.add(SearchObjects.VDC_GROUP_OBJ_NAME);
-        mVerbs.add(SearchObjects.VDC_CLUSTER_OBJ_NAME);
-        mVerbs.add(SearchObjects.GLUSTER_VOLUME_OBJ_NAME);
-        mVerbs.add(SearchObjects.NETWORK_OBJ_NAME);
-        mVerbs.add(SearchObjects.PROVIDER_OBJ_NAME);
-        mVerbs.add(SearchObjects.INSTANCE_TYPE_OBJ_NAME);
-        mVerbs.add(SearchObjects.IMAGE_TYPE_OBJ_NAME);
-        mVerbs.add(SearchObjects.SESSION_OBJ_NAME);
+        verbs.add(SearchObjects.VM_OBJ_NAME);
+        verbs.add(SearchObjects.VDC_POOL_OBJ_NAME);
+        verbs.add(SearchObjects.DISK_OBJ_NAME);
+        verbs.add(SearchObjects.VDS_OBJ_NAME);
+        verbs.add(SearchObjects.TEMPLATE_OBJ_NAME);
+        verbs.add(SearchObjects.AUDIT_OBJ_NAME);
+        verbs.add(SearchObjects.VDC_USER_OBJ_NAME);
+        verbs.add(SearchObjects.VDC_GROUP_OBJ_NAME);
+        verbs.add(SearchObjects.VDC_CLUSTER_OBJ_NAME);
+        verbs.add(SearchObjects.GLUSTER_VOLUME_OBJ_NAME);
+        verbs.add(SearchObjects.NETWORK_OBJ_NAME);
+        verbs.add(SearchObjects.PROVIDER_OBJ_NAME);
+        verbs.add(SearchObjects.INSTANCE_TYPE_OBJ_NAME);
+        verbs.add(SearchObjects.IMAGE_TYPE_OBJ_NAME);
+        verbs.add(SearchObjects.SESSION_OBJ_NAME);
 
         requiresFullTable.put(SearchObjects.VDC_USER_ROLE_SEARCH, true);
 
@@ -246,8 +246,8 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
     }
 
     private void addJoin(String firstObj, String firstColumnName, String secondObj, String secondColumnName) {
-        mJoinDictionary.put(firstObj + "." + secondObj, new String[] { firstColumnName, secondColumnName });
-        mJoinDictionary.put(secondObj + "." + firstObj, new String[] { secondColumnName, firstColumnName });
+        joinDictionary.put(firstObj + "." + secondObj, new String[] { firstColumnName, secondColumnName });
+        joinDictionary.put(secondObj + "." + firstObj, new String[] { secondColumnName, firstColumnName });
     }
 
     private static final class EntitySearchInfo {
@@ -477,7 +477,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
     }
 
     public String getInnerJoin(String searchObj, String crossRefObj, boolean useTags) {
-        final String[] joinKey = mJoinDictionary.get(StringFormat.format("%1$s.%2$s", searchObj, crossRefObj));
+        final String[] joinKey = joinDictionary.get(StringFormat.format("%1$s.%2$s", searchObj, crossRefObj));
         // For joins, the table we join with is always the full view (including the tags)
         final String crossRefTable = getRelatedTableName(crossRefObj, true);
         final String searchObjTable = getRelatedTableName(searchObj, useTags);

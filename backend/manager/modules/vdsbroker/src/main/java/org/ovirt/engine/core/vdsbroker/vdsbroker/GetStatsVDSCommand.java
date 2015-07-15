@@ -20,7 +20,7 @@ public class GetStatsVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> e
         infoReturn = getBroker().getVdsStats();
         proceedProxyReturnValue();
 
-        VdsBrokerObjectsBuilder.updateVDSStatisticsData(getVds(), infoReturn.mInfo);
-        VdsBrokerObjectsBuilder.checkTimeDrift(getVds(), infoReturn.mInfo);
+        VdsBrokerObjectsBuilder.updateVDSStatisticsData(getVds(), infoReturn.info);
+        VdsBrokerObjectsBuilder.checkTimeDrift(getVds(), infoReturn.info);
     }
 }

@@ -35,7 +35,7 @@ public abstract class UserCommandBase<T extends IdParameters> extends CommandBas
 
     }
 
-    private String mAdUserName;
+    private String adUserName;
 
     @Override
     protected String getDescription() {
@@ -43,13 +43,13 @@ public abstract class UserCommandBase<T extends IdParameters> extends CommandBas
     }
 
     public String getAdUserName() {
-        if (mAdUserName == null) {
+        if (adUserName == null) {
             DbUser user = DbFacade.getInstance().getDbUserDao().get(getAdUserId());
             if (user != null) {
-                mAdUserName = user.getLoginName();
+                adUserName = user.getLoginName();
             }
         }
-        return mAdUserName;
+        return adUserName;
     }
 
     protected Guid getAdUserId() {

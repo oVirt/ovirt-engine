@@ -22,19 +22,19 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
 
     public StorageDomainFieldAutoCompleter() {
         // Building the basic vervs Dict
-        mVerbs.add(NAME);
-        mVerbs.add(STATUS);
-        mVerbs.add(EXTERNAL_STATUS);
-        mVerbs.add(DATACENTER);
-        mVerbs.add(TYPE);
-        mVerbs.add(SIZE);
-        mVerbs.add(USED);
-        mVerbs.add(COMMITTED);
-        mVerbs.add(COMMENT);
-        mVerbs.add(DESCRIPTION);
-        mVerbs.add(WIPE_AFTER_DELETE);
-        mVerbs.add(LOW_SPACE_THRESHOLD);
-        mVerbs.add(CRITICAL_SPACE_THRESHOLD);
+        verbs.add(NAME);
+        verbs.add(STATUS);
+        verbs.add(EXTERNAL_STATUS);
+        verbs.add(DATACENTER);
+        verbs.add(TYPE);
+        verbs.add(SIZE);
+        verbs.add(USED);
+        verbs.add(COMMITTED);
+        verbs.add(COMMENT);
+        verbs.add(DESCRIPTION);
+        verbs.add(WIPE_AFTER_DELETE);
+        verbs.add(LOW_SPACE_THRESHOLD);
+        verbs.add(CRITICAL_SPACE_THRESHOLD);
 
         // Building the autoCompletion Dict
         buildCompletions();

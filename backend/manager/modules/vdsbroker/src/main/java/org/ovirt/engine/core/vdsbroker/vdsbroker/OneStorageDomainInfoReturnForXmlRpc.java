@@ -12,11 +12,11 @@ public final class OneStorageDomainInfoReturnForXmlRpc extends StatusReturnForXm
     // We are ignoring missing fields after the status, because on failure it is
     // not sent.
     // [XmlRpcMissingMapping(MappingAction.Ignore), XmlRpcMember("info")]
-    public Map<String, Object> mStorageInfo;
+    public Map<String, Object> storageInfo;
 
     public OneStorageDomainInfoReturnForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap);
-        mStorageInfo = (Map<String, Object>) innerMap.get(INFO);
+        storageInfo = (Map<String, Object>) innerMap.get(INFO);
     }
 
     @Override
@@ -25,7 +25,7 @@ public final class OneStorageDomainInfoReturnForXmlRpc extends StatusReturnForXm
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.toStringBuilder(mStorageInfo, builder);
+        XmlRpcObjectDescriptor.toStringBuilder(storageInfo, builder);
         return builder.toString();
     }
 }

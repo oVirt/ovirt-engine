@@ -143,7 +143,7 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
             // ignore this, the parser can handle the empty result.
             break;
         case TaskInProgress:
-            getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().mMessage));
+            getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().message));
             getVDSReturnValue().setSucceeded(false);
             break;
         default:

@@ -25,7 +25,7 @@ public class ExtendImageSizeVDSCommand<P extends ExtendImageSizeVDSCommandParame
         proceedProxyReturnValue();
 
         getVDSReturnValue().setCreationInfo(
-                new AsyncTaskCreationInfo(Guid.createGuidFromString(result.mUuid),
+                new AsyncTaskCreationInfo(Guid.createGuidFromString(result.uuid),
                         AsyncTaskType.extendImageSize, getParameters().getStoragePoolId()));
     }
 

@@ -26,22 +26,22 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
     public static final String VERSION_NAME = "VERSION_NAME";
 
     public VmTemplateConditionFieldAutoCompleter() {
-        mVerbs.add(NAME);
-        mVerbs.add(COMMENT);
-        mVerbs.add(OS);
-        mVerbs.add(CREATIONDATE);
-        mVerbs.add(CHILDCOUNT);
-        mVerbs.add(MEM);
-        mVerbs.add(DESCRIPTION);
-        mVerbs.add(STATUS);
-        mVerbs.add(CLUSTER);
-        mVerbs.add(DATACENTER);
-        mVerbs.add(QUOTA);
-        mVerbs.add(ARCHITECTURE);
-        mVerbs.add(VERSION_NAME);
+        verbs.add(NAME);
+        verbs.add(COMMENT);
+        verbs.add(OS);
+        verbs.add(CREATIONDATE);
+        verbs.add(CHILDCOUNT);
+        verbs.add(MEM);
+        verbs.add(DESCRIPTION);
+        verbs.add(STATUS);
+        verbs.add(CLUSTER);
+        verbs.add(DATACENTER);
+        verbs.add(QUOTA);
+        verbs.add(ARCHITECTURE);
+        verbs.add(VERSION_NAME);
 
         buildCompletions();
-        mVerbs.add(VMT_ID);
+        verbs.add(VMT_ID);
         // Building the types dict
         getTypeDictionary().put(NAME, String.class);
         getTypeDictionary().put(COMMENT, String.class);

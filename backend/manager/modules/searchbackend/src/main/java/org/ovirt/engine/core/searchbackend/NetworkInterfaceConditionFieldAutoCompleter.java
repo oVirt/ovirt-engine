@@ -7,8 +7,8 @@ public class NetworkInterfaceConditionFieldAutoCompleter extends BaseConditionFi
 
     public NetworkInterfaceConditionFieldAutoCompleter() {
         // Building the basic verbs dict.
-        mVerbs.add(NETWORK_NAME);
-        mVerbs.add(MAC_ADDR);
+        verbs.add(NETWORK_NAME);
+        verbs.add(MAC_ADDR);
 
         // Building the autoCompletion dict.
         buildCompletions();

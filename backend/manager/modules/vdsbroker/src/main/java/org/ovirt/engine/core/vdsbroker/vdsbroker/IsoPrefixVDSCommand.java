@@ -56,8 +56,8 @@ public class IsoPrefixVDSCommand<T extends VdsAndPoolIDVDSParametersBase> extend
     }
 
     private String getIsoPrefixFromStoragePoolInfoReturnValue(StoragePoolInfoReturnForXmlRpc retVal) {
-        return retVal.mStoragePoolInfo.containsKey(IrsProperties.isoPrefix) ?
-                retVal.mStoragePoolInfo.get(IrsProperties.isoPrefix).toString()
+        return retVal.storagePoolInfo.containsKey(IrsProperties.isoPrefix) ?
+                retVal.storagePoolInfo.get(IrsProperties.isoPrefix).toString()
                 : StringUtils.EMPTY;
     }
 

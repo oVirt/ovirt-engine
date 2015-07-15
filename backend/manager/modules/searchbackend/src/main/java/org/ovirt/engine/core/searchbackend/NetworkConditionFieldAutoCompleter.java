@@ -15,16 +15,16 @@ public class NetworkConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
 
     public NetworkConditionFieldAutoCompleter() {
         // Building the basic verbs dict.
-        mVerbs.add(NAME);
-        mVerbs.add(DESCRIPTION);
-        mVerbs.add(COMMENT);
-        mVerbs.add(VLAN_ID);
-        mVerbs.add(STP);
-        mVerbs.add(MTU);
-        mVerbs.add(VM_NETWORK);
-        mVerbs.add(DATA_CENTER);
-        mVerbs.add(LABEL);
-        mVerbs.add(PROVIDER_NAME);
+        verbs.add(NAME);
+        verbs.add(DESCRIPTION);
+        verbs.add(COMMENT);
+        verbs.add(VLAN_ID);
+        verbs.add(STP);
+        verbs.add(MTU);
+        verbs.add(VM_NETWORK);
+        verbs.add(DATA_CENTER);
+        verbs.add(LABEL);
+        verbs.add(PROVIDER_NAME);
 
         // Building the autoCompletion dict.
         buildCompletions();

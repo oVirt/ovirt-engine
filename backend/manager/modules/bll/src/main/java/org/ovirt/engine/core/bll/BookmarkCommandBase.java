@@ -13,8 +13,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public abstract class BookmarkCommandBase<T extends BookmarksParametersBase> extends CommandBase<T> {
-    private Bookmark mBookmark;
-    private String mBookmarkName;
+    private Bookmark bookmark;
+    private String bookmarkName;
 
     public BookmarkCommandBase(T parameters) {
         super(parameters);
@@ -24,11 +24,11 @@ public abstract class BookmarkCommandBase<T extends BookmarksParametersBase> ext
     }
 
     protected Bookmark getBookmark() {
-        if (mBookmark == null) {
-            mBookmark = DbFacade.getInstance().getBookmarkDao()
+        if (bookmark == null) {
+            bookmark = DbFacade.getInstance().getBookmarkDao()
                     .get(getBookmarkId());
         }
-        return mBookmark;
+        return bookmark;
     }
 
     public String getBookmarkValue() {
@@ -36,14 +36,14 @@ public abstract class BookmarkCommandBase<T extends BookmarksParametersBase> ext
     }
 
     public String getBookmarkName() {
-        if (mBookmarkName == null && getBookmark() != null) {
-            mBookmarkName = getBookmark().getbookmark_name();
+        if (bookmarkName == null && getBookmark() != null) {
+            bookmarkName = getBookmark().getbookmark_name();
         }
-        return mBookmarkName;
+        return bookmarkName;
     }
 
     public void setBookmarkName(String value) {
-        mBookmarkName = value;
+        bookmarkName = value;
     }
 
     public Guid getBookmarkId() {

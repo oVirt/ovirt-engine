@@ -34,31 +34,31 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
     public AuditLogConditionFieldAutoCompleter() {
         super();
         // Building the basic vervs Dict
-        mVerbs.add(TYPE);
-        mVerbs.add(SEVERITY);
-        mVerbs.add(MESSAGE);
-        mVerbs.add(TIME);
-        mVerbs.add(USER_NAME);
-        mVerbs.add(EVENT_HOST);
-        mVerbs.add(EVENT_VM);
-        mVerbs.add(EVENT_TEMPLATE);
-        mVerbs.add(EVENT_STORAGE);
-        mVerbs.add(EVENT_DATACENTER);
-        mVerbs.add(EVENT_VOLUME);
-        mVerbs.add(CORRELATION_ID);
-        mVerbs.add(ORIGIN);
-        mVerbs.add(CUSTOM_EVENT_ID);
-        mVerbs.add(DELETED);
+        verbs.add(TYPE);
+        verbs.add(SEVERITY);
+        verbs.add(MESSAGE);
+        verbs.add(TIME);
+        verbs.add(USER_NAME);
+        verbs.add(EVENT_HOST);
+        verbs.add(EVENT_VM);
+        verbs.add(EVENT_TEMPLATE);
+        verbs.add(EVENT_STORAGE);
+        verbs.add(EVENT_DATACENTER);
+        verbs.add(EVENT_VOLUME);
+        verbs.add(CORRELATION_ID);
+        verbs.add(ORIGIN);
+        verbs.add(CUSTOM_EVENT_ID);
+        verbs.add(DELETED);
         buildCompletions();
         // These search options remain hidden from the autocompletion
         // but still available for the user interface
-        mVerbs.add(EVENT_VM_ID);
-        mVerbs.add(EVENT_TEMPLATE_ID);
-        mVerbs.add(EVENT_STORAGE_ID);
-        mVerbs.add(EVENT_HOST_ID);
-        mVerbs.add(EVENT_DATACENTER_ID);
-        mVerbs.add(EVENT_QUOTA_ID);
-        mVerbs.add(USRID);
+        verbs.add(EVENT_VM_ID);
+        verbs.add(EVENT_TEMPLATE_ID);
+        verbs.add(EVENT_STORAGE_ID);
+        verbs.add(EVENT_HOST_ID);
+        verbs.add(EVENT_DATACENTER_ID);
+        verbs.add(EVENT_QUOTA_ID);
+        verbs.add(USRID);
         // Building the autoCompletion Dict
         // Building the types dict
         getTypeDictionary().put(TYPE, Integer.class);

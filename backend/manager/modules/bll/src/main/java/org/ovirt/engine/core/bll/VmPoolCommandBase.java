@@ -33,17 +33,17 @@ import org.ovirt.engine.core.dao.VmPoolDao;
 
 public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends CommandBase<T> {
     private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
-    private VmPool mVmPool;
+    private VmPool vmPool;
 
     protected VmPool getVmPool() {
-        if (mVmPool == null && getVmPoolId() != null) {
-            mVmPool = getVmPoolDao().get(getVmPoolId());
+        if (vmPool == null && getVmPoolId() != null) {
+            vmPool = getVmPoolDao().get(getVmPoolId());
         }
-        return mVmPool;
+        return vmPool;
     }
 
     protected void setVmPool(VmPool value) {
-        mVmPool = value;
+        vmPool = value;
     }
 
     protected Guid getVmPoolId() {

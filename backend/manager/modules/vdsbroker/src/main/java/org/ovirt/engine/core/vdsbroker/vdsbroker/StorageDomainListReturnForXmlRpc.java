@@ -10,16 +10,16 @@ public final class StorageDomainListReturnForXmlRpc extends StatusReturnForXmlRp
     // We are ignoring missing fields after the status, because on failure it is
     // not sent.
     // [XmlRpcMissingMapping(MappingAction.Ignore), XmlRpcMember("domlist")]
-    public String[] mStorageDomainList;
+    public String[] storageDomainList;
 
     public StorageDomainListReturnForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap);
 
         Object[] temp = (Object[]) innerMap.get(DOMLIST);
         if (temp != null) {
-            mStorageDomainList = new String[temp.length];
+            storageDomainList = new String[temp.length];
             for (int i = 0; i < temp.length; i++) {
-                mStorageDomainList[i] = (String) temp[i];
+                storageDomainList[i] = (String) temp[i];
             }
         }
     }

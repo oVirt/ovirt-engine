@@ -7,7 +7,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class HSMGetStorageDomainsListVDSCommand<P extends HSMGetStorageDomainsListVDSCommandParameters>
         extends VdsBrokerCommand<P> {
-    private StorageDomainListReturnForXmlRpc _result;
+    private StorageDomainListReturnForXmlRpc result;
 
     public HSMGetStorageDomainsListVDSCommand(P parameters) {
         super(parameters);
@@ -15,7 +15,7 @@ public class HSMGetStorageDomainsListVDSCommand<P extends HSMGetStorageDomainsLi
 
     @Override
     protected void executeVdsBrokerCommand() {
-        _result =
+        result =
                 getBroker().getStorageDomainsList(getParameters().getStoragePoolId().toString(),
                         getParameters().getStorageDomainType().getValue(),
                         getParameters().getStorageType() != null ? Integer.valueOf(getParameters().getStorageType()
@@ -24,7 +24,7 @@ public class HSMGetStorageDomainsListVDSCommand<P extends HSMGetStorageDomainsLi
         proceedProxyReturnValue();
 
         ArrayList<Guid> domains = new ArrayList<Guid>();
-        for (String domain : _result.mStorageDomainList) {
+        for (String domain : result.storageDomainList) {
             domains.add(new Guid(domain));
         }
         setReturnValue(domains);
@@ -32,11 +32,11 @@ public class HSMGetStorageDomainsListVDSCommand<P extends HSMGetStorageDomainsLi
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.getXmlRpcStatus();
+        return result.getXmlRpcStatus();
     }
 
     @Override
     protected Object getReturnValueFromBroker() {
-        return _result;
+        return result;
     }
 }

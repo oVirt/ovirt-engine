@@ -17,14 +17,14 @@ public final class VMListReturnForXmlRpc {
     private static final String VM_LIST = "vmList";
     private static final Map<String, Object>[] EMPTY_ARRAY_OF_MAPS = new HashMap[0];
 
-    public StatusForXmlRpc mStatus;
-    public Map<String, Object>[] mVmList = EMPTY_ARRAY_OF_MAPS;
+    public StatusForXmlRpc status;
+    public Map<String, Object>[] vmList = EMPTY_ARRAY_OF_MAPS;
 
     public VMListReturnForXmlRpc(Map<String, Object> innerMap) {
-        mStatus = new StatusForXmlRpc((Map<String, Object>) innerMap.get(STATUS));
+        status = new StatusForXmlRpc((Map<String, Object>) innerMap.get(STATUS));
         Object[] temp = (Object[]) innerMap.get(VM_LIST);
         if (temp != null) {
-            mVmList = new HashMap[temp.length];
+            vmList = new HashMap[temp.length];
             for (int i = 0; i < temp.length; i++) {
                 // 1196327: we need to process both types of list message
                 // when temp[i] is a String we process array of vmids
@@ -32,9 +32,9 @@ public final class VMListReturnForXmlRpc {
                 if (String.class.isInstance(temp[i])) {
                     Map<String, Object> map = new HashMap<>();
                     map.put("vmId", temp[i]);
-                    mVmList[i] = map;
+                    vmList[i] = map;
                 } else {
-                    mVmList[i] = (Map<String, Object>) temp[i];
+                    vmList[i] = (Map<String, Object>) temp[i];
                 }
             }
         }

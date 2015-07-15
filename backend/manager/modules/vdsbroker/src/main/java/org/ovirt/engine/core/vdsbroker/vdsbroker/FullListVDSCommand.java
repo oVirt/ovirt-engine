@@ -18,13 +18,13 @@ public class FullListVDSCommand<P extends FullListVDSCommandParameters> extends 
         String[] vmIdsArray = vmIds.toArray(new String[vmIds.size()]);
         fullVmListReturn = getBroker().list(Boolean.TRUE.toString(), vmIdsArray);
         proceedProxyReturnValue();
-        Map<String, Object>[] struct = fullVmListReturn.mVmList;
+        Map<String, Object>[] struct = fullVmListReturn.vmList;
         setReturnValue(struct);
     }
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return fullVmListReturn.mStatus;
+        return fullVmListReturn.status;
     }
 
     @Override

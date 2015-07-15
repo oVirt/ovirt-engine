@@ -69,8 +69,8 @@ public class VdsManager {
     private static Logger log = LoggerFactory.getLogger(VdsManager.class);
     private static Map<Guid, String> recoveringJobIdMap = new ConcurrentHashMap<>();
     private final Object lockObj = new Object();
-    private final AtomicInteger mFailedToRunVmAttempts;
-    private final AtomicInteger mUnrespondedAttempts;
+    private final AtomicInteger failedToRunVmAttempts;
+    private final AtomicInteger unrespondedAttempts;
     private final Guid vdsId;
     private final VdsMonitor vdsMonitor = new VdsMonitor();
     private VDS cachedVds;
@@ -84,7 +84,7 @@ public class VdsManager {
     private EngineLock monitoringLock;
     private boolean initialized;
     private IVdsServer vdsProxy;
-    private boolean mBeforeFirstRefresh = true;
+    private boolean beforeFirstRefresh = true;
     private HostMonitoring hostMonitoring;
     private boolean monitoringNeeded;
     private List<VM> lastVmsList = Collections.emptyList();
@@ -108,8 +108,8 @@ public class VdsManager {
         cachedVds = vds;
         vdsId = vds.getId();
         monitoringStrategy = MonitoringStrategyFactory.getMonitoringStrategyForVds(vds);
-        mUnrespondedAttempts = new AtomicInteger();
-        mFailedToRunVmAttempts = new AtomicInteger();
+        unrespondedAttempts = new AtomicInteger();
+        failedToRunVmAttempts = new AtomicInteger();
         monitoringLock = new EngineLock(Collections.singletonMap(vdsId.toString(),
                 new Pair<>(LockingGroup.VDS_INIT.name(), "")), null);
         registeredJobs = new ArrayList<>();
@@ -220,7 +220,7 @@ public class VdsManager {
                                             dbFacade,
                                             auditLogDirector);
                             hostMonitoring.refresh();
-                            mUnrespondedAttempts.set(0);
+                            unrespondedAttempts.set(0);
                             setLastUpdate();
                         }
                     } catch (VDSNetworkException e) {
@@ -579,8 +579,8 @@ public class VdsManager {
             dbFacade.getVdsDynamicDao().updateStatus(getVdsId(), VDSStatus.Up);
             log.info("Settings host '{}' to up after {} failed attempts to run a VM",
                     vds.getName(),
-                    mFailedToRunVmAttempts);
-            mFailedToRunVmAttempts.set(0);
+                    failedToRunVmAttempts);
+            failedToRunVmAttempts.set(0);
         }
     }
 
@@ -592,8 +592,8 @@ public class VdsManager {
      * @param vds
      */
     public void failedToRunVm(VDS vds) {
-        if (mFailedToRunVmAttempts.get() < Config.<Integer> getValue(ConfigValues.NumberOfFailedRunsOnVds)
-                && mFailedToRunVmAttempts.incrementAndGet() >= Config
+        if (failedToRunVmAttempts.get() < Config.<Integer> getValue(ConfigValues.NumberOfFailedRunsOnVds)
+                && failedToRunVmAttempts.incrementAndGet() >= Config
                         .<Integer> getValue(ConfigValues.NumberOfFailedRunsOnVds)) {
             //Only one thread at a time can enter here
             resourceManager.runVdsCommand(VDSCommandType.SetVdsStatus,
@@ -613,14 +613,14 @@ public class VdsManager {
                             Config.<Integer> getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes).toString()),
                     AuditLogType.VDS_FAILED_TO_RUN_VMS);
             log.info("Vds '{}' moved to Error mode after {} attempts. Time: {}", vds.getName(),
-                    mFailedToRunVmAttempts, new Date());
+                    failedToRunVmAttempts, new Date());
         }
     }
 
     /**
      */
     public void succeededToRunVm(Guid vmId) {
-        mUnrespondedAttempts.set(0);
+        unrespondedAttempts.set(0);
         resourceManager.succededToRunVm(vmId, getVdsId());
     }
 
@@ -755,7 +755,7 @@ public class VdsManager {
                 } else {
                     saveToDb = false;
                 }
-                mUnrespondedAttempts.incrementAndGet();
+                unrespondedAttempts.incrementAndGet();
             } else {
                 if (cachedVds.getStatus() == VDSStatus.Maintenance) {
                     saveToDb = false;
@@ -795,7 +795,7 @@ public class VdsManager {
             unrespondedAttemptsBarrier = unrespondedAttemptsBarrier * 2;
         }
 
-        return mUnrespondedAttempts.get() < unrespondedAttemptsBarrier
+        return unrespondedAttempts.get() < unrespondedAttemptsBarrier
                 || (lastUpdate + timeoutToFence) > System.currentTimeMillis();
     }
 
@@ -1022,11 +1022,11 @@ public class VdsManager {
     }
 
     public boolean getbeforeFirstRefresh() {
-        return mBeforeFirstRefresh;
+        return beforeFirstRefresh;
     }
 
     public void setbeforeFirstRefresh(boolean value) {
-        mBeforeFirstRefresh = value;
+        beforeFirstRefresh = value;
     }
 
     public List<VM> getLastVmsList() {

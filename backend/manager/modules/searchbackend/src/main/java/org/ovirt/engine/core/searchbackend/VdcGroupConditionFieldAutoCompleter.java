@@ -9,8 +9,8 @@ public class VdcGroupConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         super();
 
         // Building the basic verbs dictionary:
-        mVerbs.add(GRPNAME);
-        mVerbs.add(NAME);
+        verbs.add(GRPNAME);
+        verbs.add(NAME);
 
         // Building the auto completion dictionary:
         buildCompletions();

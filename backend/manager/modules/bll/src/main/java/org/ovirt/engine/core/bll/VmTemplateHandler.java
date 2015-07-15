@@ -26,7 +26,7 @@ public class VmTemplateHandler {
 
     protected final static Guid BLANK_VM_TEMPLATE_ID = Guid.Empty;
     protected final static String BLANK_VM_TEMPLATE_NAME = "Blank";
-    private static ObjectIdentityChecker mUpdateVmTemplate;
+    private static ObjectIdentityChecker updateVmTemplate;
 
     /**
      * Initialize static list containers, for identity and permission check. The initialization should be executed
@@ -36,20 +36,20 @@ public class VmTemplateHandler {
      */
     public static void init() {
         final Class<?>[] inspectedClassNames = new Class<?>[] { VmBase.class, VmTemplate.class };
-        mUpdateVmTemplate = new ObjectIdentityChecker(VmTemplateHandler.class);
+        updateVmTemplate = new ObjectIdentityChecker(VmTemplateHandler.class);
 
         for (Pair<EditableField, Field> pair : BaseHandler.extractAnnotatedFields(EditableField.class,
                                                                                    (inspectedClassNames))) {
-            mUpdateVmTemplate.AddPermittedFields(pair.getSecond().getName());
+            updateVmTemplate.AddPermittedFields(pair.getSecond().getName());
         }
 
         for (Pair<EditableOnTemplate, Field> pair : BaseHandler.extractAnnotatedFields(EditableOnTemplate.class, inspectedClassNames)) {
-            mUpdateVmTemplate.AddPermittedFields(pair.getSecond().getName());
+            updateVmTemplate.AddPermittedFields(pair.getSecond().getName());
         }
     }
 
     public static boolean isUpdateValid(VmTemplate source, VmTemplate destination) {
-        return mUpdateVmTemplate.IsUpdateValid(source, destination);
+        return updateVmTemplate.IsUpdateValid(source, destination);
     }
 
     public static void updateDisksFromDb(VmTemplate vmt) {

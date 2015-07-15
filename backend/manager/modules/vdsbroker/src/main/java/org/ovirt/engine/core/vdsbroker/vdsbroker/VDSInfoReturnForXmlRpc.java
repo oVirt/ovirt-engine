@@ -10,11 +10,11 @@ public final class VDSInfoReturnForXmlRpc {
     private static final String STATUS = "status";
     private static final String INFO = "info";
 
-    public StatusForXmlRpc mStatus;
-    public Map<String, Object> mInfo;
+    public StatusForXmlRpc status;
+    public Map<String, Object> info;
 
     public VDSInfoReturnForXmlRpc(Map<String, Object> innerMap) {
-        mStatus = new StatusForXmlRpc((Map<String, Object>) innerMap.get(STATUS));
-        mInfo = (Map<String, Object>) innerMap.get(INFO);
+        status = new StatusForXmlRpc((Map<String, Object>) innerMap.get(STATUS));
+        info = (Map<String, Object>) innerMap.get(INFO);
     }
 }

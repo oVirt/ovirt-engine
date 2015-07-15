@@ -22,13 +22,13 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
     protected StatusOnlyReturnForXmlRpc status;
 
     protected StatusForXmlRpc getReturnStatus() {
-        return status.mStatus;
+        return status.status;
     }
 
     protected void initializeVdsError(EngineError returnStatus) {
         VDSError tempVar = new VDSError();
         tempVar.setCode(returnStatus);
-        tempVar.setMessage(getReturnStatus().mMessage);
+        tempVar.setMessage(getReturnStatus().message);
         getVDSReturnValue().setVdsError(tempVar);
     }
 
@@ -39,20 +39,20 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         case Done:
             return;
         case recovery:
-            outEx = new VDSRecoveringException(returnStatus, getReturnStatus().mMessage);
+            outEx = new VDSRecoveringException(returnStatus, getReturnStatus().message);
             break;
         case SpmStatusError:
-            outEx = new IRSNonOperationalException(getReturnStatus().mMessage);
+            outEx = new IRSNonOperationalException(getReturnStatus().message);
             break;
         case StoragePoolMasterNotFound:
         case StoragePoolTooManyMasters:
         case StoragePoolWrongMaster:
         case StoragePoolHasPotentialMaster:
         case StorageDomainMasterError:
-            outEx = new IRSNoMasterDomainException(getReturnStatus().mMessage);
+            outEx = new IRSNoMasterDomainException(getReturnStatus().message);
             break;
         case UnicodeArgumentException:
-            outEx = new IRSUnicodeArgumentException(getReturnStatus().mMessage);
+            outEx = new IRSUnicodeArgumentException(getReturnStatus().message);
             break;
         case TooManyDomainsInStoragePoolError:
         case StorageDomainAlreadyAttached:
@@ -177,15 +177,15 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         case V2V_JOB_ALREADY_EXIST:
         case UnsupportedGlusterVolumeReplicaCountError:
             if (this instanceof IrsBrokerCommand || this instanceof StorageDomainMetadataCommand) {
-                outEx = new IrsOperationFailedNoFailoverException(getReturnStatus().mMessage);
+                outEx = new IrsOperationFailedNoFailoverException(getReturnStatus().message);
             } else {
                 outEx = new VDSErrorException(String.format("Failed in vdscommand to %1$s, error = %2$s",
-                        getCommandName(), getReturnStatus().mMessage));
+                        getCommandName(), getReturnStatus().message));
             }
             break;
         case VDS_NETWORK_ERROR:
         case ERR_BAD_ADDR:
-            outEx = new VDSNetworkException(getReturnStatus().mMessage);
+            outEx = new VDSNetworkException(getReturnStatus().message);
             break;
         default:
             log.error("Failed in '{}' method", getCommandName());
@@ -194,7 +194,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         }
         VDSError tempVar = new VDSError();
         tempVar.setCode(returnStatus);
-        tempVar.setMessage(getReturnStatus().mMessage);
+        tempVar.setMessage(getReturnStatus().message);
         outEx.setVdsError(tempVar);
 
         logToAudit();
@@ -207,7 +207,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
 
     private VDSExceptionBase createException() {
         final String errorMessage = String.format("Failed to %1$s, error = %2$s, code = %3$s", getCommandName(),
-                getReturnStatus().mMessage, getReturnStatus().mCode);
+                getReturnStatus().message, getReturnStatus().code);
         return createDefaultConcreteException(errorMessage);
     }
 
@@ -215,7 +215,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
 
     protected EngineError getReturnValueFromStatus(StatusForXmlRpc xmlRpcStatus) {
         try {
-            EngineError bllErrors = EngineError.forValue(xmlRpcStatus.mCode);
+            EngineError bllErrors = EngineError.forValue(xmlRpcStatus.code);
             if (bllErrors == null) {
                 log.warn("Unexpected return value: {}", xmlRpcStatus);
                 bllErrors = EngineError.unexpected;

@@ -15,22 +15,22 @@ public class LdapUser implements IVdcQueryable {
     // TODO - DesktopDevice ?? (Miki)
 
     private static final long serialVersionUID = 6800096193162766377L;
-    private String mNamespace;
-    private String mUserId;
-    private String mUserName;
-    private String mDomainControler;
-    private String mName;
-    private String mSurName;
-    private String mDepartment;
-    private String mTitle;
-    private String mEmail;
-    private boolean _passwordExpired;
+    private String namespace;
+    private String userId;
+    private String userName;
+    private String domainControler;
+    private String name;
+    private String surName;
+    private String department;
+    private String title;
+    private String email;
+    private boolean passwordExpired;
     private List<String> memberof;
 
-    private Map<String, LdapGroup> mGroups;
+    private Map<String, LdapGroup> groups;
 
     public LdapUser() {
-        mGroups = new HashMap<String, LdapGroup>();
+        groups = new HashMap<String, LdapGroup>();
     }
 
     public LdapUser(DbUser dbUser) {
@@ -42,99 +42,99 @@ public class LdapUser implements IVdcQueryable {
         setDepartment(dbUser.getDepartment());
         setDomainControler(dbUser.getDomain());
         setEmail(dbUser.getEmail());
-        mGroups = new HashMap<String, LdapGroup>();
+        groups = new HashMap<String, LdapGroup>();
     }
 
     public String getNamespace() {
-        return mNamespace;
+        return namespace;
     }
 
     public void setNamespace(String value) {
-        mNamespace = value;
+        namespace = value;
     }
 
     public String getUserName() {
-        return mUserName;
+        return userName;
     }
 
     public void setUserName(String value) {
-        mUserName = value;
+        userName = value;
     }
 
     public String getUserId() {
-        return mUserId;
+        return userId;
     }
 
     public void setUserId(String value) {
-        mUserId = value;
+        userId = value;
     }
 
     public String getDomainControler() {
-        return mDomainControler;
+        return domainControler;
     }
 
     public void setDomainControler(String value) {
-        mDomainControler = value;
+        domainControler = value;
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
 
     public void setName(String value) {
-        mName = value;
+        name = value;
     }
 
     public String getSurName() {
-        return mSurName;
+        return surName;
     }
 
     public void setSurName(String value) {
-        mSurName = value;
+        surName = value;
     }
 
     public String getDepartment() {
-        return mDepartment;
+        return department;
     }
 
     public void setDepartment(String value) {
-        mDepartment = value;
+        department = value;
     }
 
     public String getTitle() {
-        return mTitle;
+        return title;
     }
 
     public void setTitle(String value) {
-        mTitle = value;
+        title = value;
     }
 
     public String getEmail() {
-        return mEmail;
+        return email;
     }
 
     public void setEmail(String value) {
-        mEmail = value;
+        email = value;
     }
 
     public boolean getPasswordExpired() {
-        return _passwordExpired;
+        return passwordExpired;
     }
 
     public void setPasswordExpired(boolean value) {
-        _passwordExpired = value;
+        passwordExpired = value;
     }
 
     public Map<String, LdapGroup> getGroups() {
-        return mGroups;
+        return groups;
     }
 
     public void setGroups(HashMap<String, LdapGroup> value) {
-        mGroups = value;
+        groups = value;
     }
 
     public String getGroup() {
-        String[] gArr = mGroups.keySet().toArray(new String[mGroups.size()]);
+        String[] gArr = groups.keySet().toArray(new String[groups.size()]);
         return StringHelper.join(",", gArr);
     }
 
@@ -149,7 +149,7 @@ public class LdapUser implements IVdcQueryable {
     public String getGroupIds() {
         StringBuilder sb = new StringBuilder();
         boolean first = true;
-        for (LdapGroup group : mGroups.values()) {
+        for (LdapGroup group : groups.values()) {
             if (first) {
                 first = false;
             } else {

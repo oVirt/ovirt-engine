@@ -35,32 +35,31 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
 
     public VdsConditionFieldAutoCompleter() {
         super();
-        mVerbs.add(NAME);
-        mVerbs.add(COMMENT);
-        mVerbs.add(STATUS);
-        mVerbs.add(EXTERNAL_STATUS);
-        mVerbs.add(CLUSTER);
-        mVerbs.add(ADDRESS);
-        mVerbs.add(CPU_USAGE);
-        mVerbs.add(MEM_USAGE);
-        mVerbs.add(NETWORK_USAGE);
-        mVerbs.add(LOAD);
-        mVerbs.add(VERSION);
-        mVerbs.add(CPUS);
-        mVerbs.add(MEMORY);
-        mVerbs.add(CPU_SPEED);
-        mVerbs.add(CPU_MODEL);
-        mVerbs.add(ACTIVE_VMS);
-        mVerbs.add(MIGRATING_VMS);
-        mVerbs.add(COMMITTED_MEM);
-        mVerbs.add(TAG);
-        mVerbs.add(TYPE);
-        mVerbs.add(DATACENTER);
-        mVerbs.add(ARCHITECTURE);
-        mVerbs.add(UPDATE_AVAILABLE);
-        // mVerbs.Add("NOTE", "NOTE");
+        verbs.add(NAME);
+        verbs.add(COMMENT);
+        verbs.add(STATUS);
+        verbs.add(EXTERNAL_STATUS);
+        verbs.add(CLUSTER);
+        verbs.add(ADDRESS);
+        verbs.add(CPU_USAGE);
+        verbs.add(MEM_USAGE);
+        verbs.add(NETWORK_USAGE);
+        verbs.add(LOAD);
+        verbs.add(VERSION);
+        verbs.add(CPUS);
+        verbs.add(MEMORY);
+        verbs.add(CPU_SPEED);
+        verbs.add(CPU_MODEL);
+        verbs.add(ACTIVE_VMS);
+        verbs.add(MIGRATING_VMS);
+        verbs.add(COMMITTED_MEM);
+        verbs.add(TAG);
+        verbs.add(TYPE);
+        verbs.add(DATACENTER);
+        verbs.add(ARCHITECTURE);
+        verbs.add(UPDATE_AVAILABLE);
         buildCompletions();
-        mVerbs.add("ID");
+        verbs.add("ID");
         // Building the types dict
         getTypeDictionary().put(NAME, String.class);
         getTypeDictionary().put(COMMENT, String.class);
@@ -86,7 +85,6 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         getTypeDictionary().put("ID", UUID.class);
         getTypeDictionary().put(ARCHITECTURE, ArchitectureType.class);
         getTypeDictionary().put(UPDATE_AVAILABLE, Boolean.class);
-        // mTypeDict.Add("NOTE", typeof(string));
         // building the ColumnName Dict
         columnNameDict.put(NAME, "vds_name");
         columnNameDict.put(COMMENT, "free_text_comment");
@@ -112,7 +110,6 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         columnNameDict.put("ID", "vds_id");
         columnNameDict.put(ARCHITECTURE, "architecture");
         columnNameDict.put(UPDATE_AVAILABLE, "is_update_available");
-        // mColumnNameDict.Add("NOTE", "note");
         // Building the validation dict
         buildBasicValidationTable();
     }

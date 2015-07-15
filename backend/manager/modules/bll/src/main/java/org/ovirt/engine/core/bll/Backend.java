@@ -100,9 +100,9 @@ import org.slf4j.LoggerFactory;
 public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private static final Logger log = LoggerFactory.getLogger(Backend.class);
 
-    private ITagsHandler mTagsHandler;
+    private ITagsHandler tagsHandler;
     private ErrorTranslator errorsTranslator;
-    private ErrorTranslator _vdsErrorsTranslator;
+    private ErrorTranslator vdsErrorsTranslator;
     private DateTime _startedAt;
     private static boolean firstInitialization = true;
     @Inject
@@ -119,8 +119,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     private void initHandlers() {
-        mTagsHandler = HandlersFactory.createTagsHandler();
-        BaseConditionFieldAutoCompleter.tagsHandler = mTagsHandler;
+        tagsHandler = HandlersFactory.createTagsHandler();
+        BaseConditionFieldAutoCompleter.tagsHandler = tagsHandler;
         VmHandler.init();
         VdsHandler.init();
         VmTemplateHandler.init();
@@ -242,7 +242,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         final String VdsErrorsFileName = "bundles/VdsmErrors.properties";
         errorsTranslator = new ErrorTranslatorImpl(AppErrorsFileName, VdsErrorsFileName);
 
-        _vdsErrorsTranslator = new ErrorTranslatorImpl(VdsErrorsFileName);
+        vdsErrorsTranslator = new ErrorTranslatorImpl(VdsErrorsFileName);
 
         // initialize the JobRepository object and finalize non-terminated jobs
         log.info("Mark incomplete jobs as {}", JobExecutionStatus.UNKNOWN.name());
@@ -587,7 +587,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     @Override
     @ExcludeClassInterceptors
     public ErrorTranslator getVdsErrorsTranslator() {
-        return _vdsErrorsTranslator;
+        return vdsErrorsTranslator;
     }
 
     /**

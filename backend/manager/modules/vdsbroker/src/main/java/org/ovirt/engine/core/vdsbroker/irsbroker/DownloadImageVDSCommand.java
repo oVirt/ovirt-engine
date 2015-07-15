@@ -38,6 +38,6 @@ public class DownloadImageVDSCommand<P extends DownloadImageVDSCommandParameters
         proceedProxyReturnValue();
 
         getVDSReturnValue().setCreationInfo(
-                new AsyncTaskCreationInfo(new Guid(uuidReturn.mUuid), AsyncTaskType.downloadImage, getParameters().getStoragePoolId()));
+                new AsyncTaskCreationInfo(new Guid(uuidReturn.uuid), AsyncTaskType.downloadImage, getParameters().getStoragePoolId()));
     }
 }

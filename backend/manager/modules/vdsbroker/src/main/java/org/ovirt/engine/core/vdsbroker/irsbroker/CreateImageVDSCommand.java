@@ -38,10 +38,10 @@ public class CreateImageVDSCommand<P extends CreateImageVDSCommandParameters> ex
 
         proceedProxyReturnValue();
 
-        Guid taskID = new Guid(uuidReturn.mUuid);
+        Guid taskID = new Guid(uuidReturn.uuid);
 
-        mCreatedImageId = getParameters().getNewImageID().toString();
-        setReturnValue(new Guid(mCreatedImageId));
+        createdImageId = getParameters().getNewImageID().toString();
+        setReturnValue(new Guid(createdImageId));
 
         getVDSReturnValue().setCreationInfo(
                 new AsyncTaskCreationInfo(taskID, AsyncTaskType.createVolume, getParameters()

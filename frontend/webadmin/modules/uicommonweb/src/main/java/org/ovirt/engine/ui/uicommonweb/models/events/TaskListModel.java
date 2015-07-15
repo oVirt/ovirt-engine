@@ -22,7 +22,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 public class TaskListModel extends SearchableListModel {
 
-    public static final String _WEBADMIN_ = "_WEBADMIN_"; //$NON-NLS-1$
+    public static final String WEBADMIN = "_WEBADMIN_"; //$NON-NLS-1$
     private final Map<String, Job> detailedTaskMap = new HashMap<String, Job>();
 
     public TaskListModel() {
@@ -30,9 +30,9 @@ public class TaskListModel extends SearchableListModel {
 
     @Override
     protected void syncSearch() {
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery asyncQuery = new AsyncQuery();
+        asyncQuery.setModel(this);
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object ReturnValue) {
                 TaskListModel taskListModel = (TaskListModel) model;
@@ -46,7 +46,7 @@ public class TaskListModel extends SearchableListModel {
                 Map<String, Map.Entry<Job, ArrayList<Job>>> correlationTaskMap =
                         new HashMap<String, Map.Entry<Job, ArrayList<Job>>>();
                 for (Job task : taskList) {
-                    if (task.getCorrelationId().startsWith(_WEBADMIN_)) {
+                    if (task.getCorrelationId().startsWith(WEBADMIN)) {
                         if (!correlationTaskMap.containsKey(task.getCorrelationId())) {
                             Job rootTask = new Job();
                             rootTask.setCorrelationId(task.getCorrelationId());
@@ -54,7 +54,7 @@ public class TaskListModel extends SearchableListModel {
                             entry.setValue(new ArrayList<Job>());
                             correlationTaskMap.put(rootTask.getCorrelationId(), entry);
                             String[] taskDescreptionArray =
-                                    rootTask.getCorrelationId().replace(_WEBADMIN_, "").split("_"); //$NON-NLS-1$ //$NON-NLS-2$
+                                    rootTask.getCorrelationId().replace(WEBADMIN, "").split("_"); //$NON-NLS-1$ //$NON-NLS-2$
                             StringBuilder taskDesc = new StringBuilder();
                             for (int i = 1; i < taskDescreptionArray.length; i++) {
                                 taskDesc.append(taskDescreptionArray[i]).append(" "); //$NON-NLS-1$
@@ -131,7 +131,7 @@ public class TaskListModel extends SearchableListModel {
 
                 for (Job task : taskListWithCorrelationFilter) {
                     String id = ""; //$NON-NLS-1$
-                    if (task.getCorrelationId().startsWith(_WEBADMIN_)) {
+                    if (task.getCorrelationId().startsWith(WEBADMIN)) {
                         id = task.getCorrelationId();
                     } else {
                         id = task.getId().toString();
@@ -155,7 +155,7 @@ public class TaskListModel extends SearchableListModel {
         GetJobsByOffsetQueryParameters tempVar = new GetJobsByOffsetQueryParameters();
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(VdcQueryType.GetJobsByOffset,
-                tempVar, _asyncQuery);
+                tempVar, asyncQuery);
 
         setIsQueryFirstTime(false);
     }
@@ -168,11 +168,11 @@ public class TaskListModel extends SearchableListModel {
     public boolean updateSingleTask(final String guidOrCorrelationId) {
         if (!detailedTaskMap.containsKey(guidOrCorrelationId)) {
             detailedTaskMap.put(guidOrCorrelationId.toString(), null);
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setModel(this);
+            AsyncQuery asyncQuery = new AsyncQuery();
+            asyncQuery.setModel(this);
 
-            if (guidOrCorrelationId.startsWith(_WEBADMIN_)) {
-                _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            if (guidOrCorrelationId.startsWith(WEBADMIN)) {
+                asyncQuery.asyncCallback = new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object ReturnValue) {
                         TaskListModel taskListModel = (TaskListModel) model;
@@ -227,9 +227,9 @@ public class TaskListModel extends SearchableListModel {
                 GetJobsByCorrelationIdQueryParameters parameters = new GetJobsByCorrelationIdQueryParameters();
                 parameters.setCorrelationId(guidOrCorrelationId);
                 Frontend.getInstance().runQuery(VdcQueryType.GetJobsByCorrelationId,
-                        parameters, _asyncQuery);
+                        parameters, asyncQuery);
             } else {
-                _asyncQuery.asyncCallback = new INewAsyncCallback() {
+                asyncQuery.asyncCallback = new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object ReturnValue) {
                         TaskListModel taskListModel = (TaskListModel) model;
@@ -253,7 +253,7 @@ public class TaskListModel extends SearchableListModel {
                 };
                 IdQueryParameters parameters = new IdQueryParameters(new Guid(guidOrCorrelationId));
                 Frontend.getInstance().runQuery(VdcQueryType.GetJobByJobId,
-                        parameters, _asyncQuery);
+                        parameters, asyncQuery);
             }
             return false;
         }
@@ -300,7 +300,7 @@ public class TaskListModel extends SearchableListModel {
         Random rand = new Random();
         String hashStr = rand.nextInt(9000000) + 9999999 + ""; //$NON-NLS-1$
 
-        String correlationId = TaskListModel._WEBADMIN_ + hashStr + "_" + actionDescription; //$NON-NLS-1$
+        String correlationId = TaskListModel.WEBADMIN + hashStr + "_" + actionDescription; //$NON-NLS-1$
         return correlationId;
     }
 }

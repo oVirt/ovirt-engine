@@ -13,12 +13,12 @@ public class StoragePoolFieldAutoCompleter extends BaseConditionFieldAutoComplet
 
     public StoragePoolFieldAutoCompleter() {
         // Building the basic vervs Dict
-        mVerbs.add(NAME);
-        mVerbs.add(DESCRIPTION);
-        mVerbs.add(LOCAL);
-        mVerbs.add(STATUS);
-        mVerbs.add(COMMENT);
-        mVerbs.add(COMPATIBILITY_VERSION);
+        verbs.add(NAME);
+        verbs.add(DESCRIPTION);
+        verbs.add(LOCAL);
+        verbs.add(STATUS);
+        verbs.add(COMMENT);
+        verbs.add(COMPATIBILITY_VERSION);
 
         // Building the autoCompletion Dict
         buildCompletions();

@@ -11,6 +11,6 @@ public class GetHardwareInfoVDSCommand<P extends VdsIdAndVdsVDSCommandParameters
     protected void executeVdsBrokerCommand() {
         infoReturn = getBroker().getHardwareInfo();
         proceedProxyReturnValue();
-        VdsBrokerObjectsBuilder.updateHardwareSystemInformation(infoReturn.mInfo, getVds());
+        VdsBrokerObjectsBuilder.updateHardwareSystemInformation(infoReturn.info, getVds());
     }
 }

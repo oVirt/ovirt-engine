@@ -47,35 +47,35 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
 
     public VmConditionFieldAutoCompleter() {
         // Building the basic verbs Dict
-        mVerbs.add(NAME);
-        mVerbs.add(COMMENT);
-        mVerbs.add(STATUS);
-        mVerbs.add(IP);
-        mVerbs.add(HOST);
-        mVerbs.add(FQDN);
-        mVerbs.add(UPTIME);
-        mVerbs.add(OS);
-        mVerbs.add(CREATIONDATE);
-        mVerbs.add(ADDRESS);
-        mVerbs.add(CPU_USAGE);
-        mVerbs.add(MEM_USAGE);
-        mVerbs.add(NETWORK_USAGE);
-        mVerbs.add(MEMORY);
-        mVerbs.add(MIGRATION_PROGRESS_PERCENT);
-        mVerbs.add(APPS);
-        mVerbs.add(CLUSTER);
-        mVerbs.add(POOL);
-        mVerbs.add(LOGGEDINUSER);
-        mVerbs.add(TAG);
-        mVerbs.add(DATACENTER);
-        mVerbs.add(TYPE);
-        mVerbs.add(QUOTA);
-        mVerbs.add(ID);
-        mVerbs.add(DESCRIPTION);
-        mVerbs.add(ARCHITECTURE);
-        mVerbs.add(CUSTOM_EMULATED_MACHINE);
-        mVerbs.add(CUSTOM_CPU_TYPE);
-        mVerbs.add(COMPATIBILITY_LEVEL);
+        verbs.add(NAME);
+        verbs.add(COMMENT);
+        verbs.add(STATUS);
+        verbs.add(IP);
+        verbs.add(HOST);
+        verbs.add(FQDN);
+        verbs.add(UPTIME);
+        verbs.add(OS);
+        verbs.add(CREATIONDATE);
+        verbs.add(ADDRESS);
+        verbs.add(CPU_USAGE);
+        verbs.add(MEM_USAGE);
+        verbs.add(NETWORK_USAGE);
+        verbs.add(MEMORY);
+        verbs.add(MIGRATION_PROGRESS_PERCENT);
+        verbs.add(APPS);
+        verbs.add(CLUSTER);
+        verbs.add(POOL);
+        verbs.add(LOGGEDINUSER);
+        verbs.add(TAG);
+        verbs.add(DATACENTER);
+        verbs.add(TYPE);
+        verbs.add(QUOTA);
+        verbs.add(ID);
+        verbs.add(DESCRIPTION);
+        verbs.add(ARCHITECTURE);
+        verbs.add(CUSTOM_EMULATED_MACHINE);
+        verbs.add(CUSTOM_CPU_TYPE);
+        verbs.add(COMPATIBILITY_LEVEL);
         // Building the autoCompletion Dict
         buildCompletions();
 
@@ -128,7 +128,6 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put(APPS, "app_list");
         columnNameDict.put(CLUSTER, "vds_group_name");
         columnNameDict.put(POOL, "vm_pool_name");
-        // mColumnNameDict.Add("NOTE", "note");
         columnNameDict.put(LOGGEDINUSER, "guest_cur_user_name");
         columnNameDict.put(TAG, "tag_name");
         columnNameDict.put(DATACENTER, "storage_pool_name");

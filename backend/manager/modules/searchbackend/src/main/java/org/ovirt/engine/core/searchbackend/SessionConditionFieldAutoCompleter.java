@@ -9,8 +9,8 @@ public class SessionConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
 
     public SessionConditionFieldAutoCompleter() {
         // Building the basic verbs dict.
-        mVerbs.add(USER_ID);
-        mVerbs.add(USER_NAME);
+        verbs.add(USER_ID);
+        verbs.add(USER_NAME);
 
         // Building the autoCompletion dict.
         buildCompletions();

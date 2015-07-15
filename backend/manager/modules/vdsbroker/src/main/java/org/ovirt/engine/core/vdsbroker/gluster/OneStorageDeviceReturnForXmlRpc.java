@@ -13,7 +13,7 @@ public class OneStorageDeviceReturnForXmlRpc extends StorageDeviceReturnForXmlRp
     public OneStorageDeviceReturnForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap);
 
-        if (getXmlRpcStatus().mCode != 0) {
+        if (getXmlRpcStatus().code != 0) {
             return;
         }
         if (innerMap.containsKey(DEVICE)) {

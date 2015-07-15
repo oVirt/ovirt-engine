@@ -33,7 +33,7 @@ public class GlusterServicesReturnForXmlRpc extends StatusReturnForXmlRpc {
         super(innerMap);
         this.serverId = serverId;
 
-        if (getXmlRpcStatus().mCode != GlusterConstants.CODE_SUCCESS) {
+        if (getXmlRpcStatus().code != GlusterConstants.CODE_SUCCESS) {
             return;
         }
 

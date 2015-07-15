@@ -13,16 +13,16 @@ public final class ServerConnectionListReturnForXmlRpc extends StatusReturnForXm
     // We are ignoring missing fields after the status, because on failure it is
     // not sent.
     // [XmlRpcMissingMapping(MappingAction.Ignore), XmlRpcMember("serverList")]
-    public Map<String, Object>[] mConnectionList;
+    public Map<String, Object>[] connectionList;
 
     @SuppressWarnings("unchecked")
     public ServerConnectionListReturnForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap);
         Object[] temp = (Object[]) innerMap.get(STATUS_LIST);
         if (temp != null) {
-            mConnectionList = new Map[temp.length];
+            connectionList = new Map[temp.length];
             for (int i = 0; i < temp.length; i++) {
-                mConnectionList[i] = (Map<String, Object>) temp[i];
+                connectionList[i] = (Map<String, Object>) temp[i];
             }
         }
     }

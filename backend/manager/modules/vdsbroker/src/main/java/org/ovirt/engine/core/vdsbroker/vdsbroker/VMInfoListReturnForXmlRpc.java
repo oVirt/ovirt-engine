@@ -8,16 +8,16 @@ public final class VMInfoListReturnForXmlRpc {
     private static final String STATUS = "status";
     private static final String STATS_LIST = "statsList";
 
-    public StatusForXmlRpc mStatus;
-    public Map<String, Object>[] mInfoList;
+    public StatusForXmlRpc status;
+    public Map<String, Object>[] infoList;
 
     public VMInfoListReturnForXmlRpc(Map<String, Object> innerMap) {
-        mStatus = new StatusForXmlRpc((Map<String, Object>) innerMap.get(STATUS));
+        status = new StatusForXmlRpc((Map<String, Object>) innerMap.get(STATUS));
         Object[] temp = (Object[]) innerMap.get(STATS_LIST);
         if (temp != null) {
-            mInfoList = new HashMap[temp.length];
+            infoList = new HashMap[temp.length];
             for (int i = 0; i < temp.length; i++) {
-                mInfoList[i] = (Map<String, Object>) temp[i];
+                infoList[i] = (Map<String, Object>) temp[i];
             }
         }
     }

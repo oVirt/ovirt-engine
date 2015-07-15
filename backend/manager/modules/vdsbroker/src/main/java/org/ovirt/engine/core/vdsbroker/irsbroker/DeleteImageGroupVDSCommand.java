@@ -21,7 +21,7 @@ public class DeleteImageGroupVDSCommand<P extends DeleteImageGroupVDSCommandPara
 
         proceedProxyReturnValue();
 
-        Guid taskID = new Guid(uuidReturn.mUuid);
+        Guid taskID = new Guid(uuidReturn.uuid);
 
         getVDSReturnValue().setCreationInfo(
                 new AsyncTaskCreationInfo(taskID, AsyncTaskType.deleteImage, getParameters().getStoragePoolId()));

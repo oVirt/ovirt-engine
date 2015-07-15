@@ -35,7 +35,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
 
     @Override
     protected void executeVmCommand() {
-        Set<Guid> mImagesToBeRemoved = new HashSet<>();
+        Set<Guid> imagesToBeRemoved = new HashSet<>();
         List<DiskImage> images = getParameters().images;
         if (images == null) {
             images =
@@ -46,13 +46,13 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
         }
         for (DiskImage image : images) {
             if (Boolean.TRUE.equals(image.getActive())) {
-                mImagesToBeRemoved.add(image.getImageId());
+                imagesToBeRemoved.add(image.getImageId());
             }
         }
 
         Collection<DiskImage> failedRemoving = new LinkedList<>();
         for (final DiskImage image : images) {
-            if (mImagesToBeRemoved.contains(image.getImageId())) {
+            if (imagesToBeRemoved.contains(image.getImageId())) {
                 VdcReturnValueBase vdcReturnValue =
                         runInternalActionWithTasksContext(
                                 VdcActionType.RemoveImage,

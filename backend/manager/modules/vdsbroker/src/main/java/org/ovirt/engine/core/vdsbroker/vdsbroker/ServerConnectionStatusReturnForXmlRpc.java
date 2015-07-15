@@ -11,7 +11,7 @@ public final class ServerConnectionStatusReturnForXmlRpc extends StatusReturnFor
     // We are ignoring missing fields after the status, because on failure it is
     // not sent.
     // [XmlRpcMissingMapping(MappingAction.Ignore), XmlRpcMember("statuslist")]
-    public Map<String, Object>[] mStatusList;
+    public Map<String, Object>[] statusList;
 
     @Override
     public String toString() {
@@ -19,7 +19,7 @@ public final class ServerConnectionStatusReturnForXmlRpc extends StatusReturnFor
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.toStringBuilder(mStatusList, builder);
+        XmlRpcObjectDescriptor.toStringBuilder(statusList, builder);
         return builder.toString();
     }
 
@@ -28,19 +28,19 @@ public final class ServerConnectionStatusReturnForXmlRpc extends StatusReturnFor
         super(innerMap);
         Object temp = innerMap.get(STATUS_LIST);
         if (temp == null) {
-            mStatusList = null;
+            statusList = null;
         } else {
             Object[] tempArray = (Object[]) temp;
-            mStatusList = new Map[tempArray.length];
+            statusList = new Map[tempArray.length];
             for (int i = 0; i < tempArray.length; i++) {
-                mStatusList[i] = (Map<String, Object>) tempArray[i];
+                statusList[i] = (Map<String, Object>) tempArray[i];
             }
         }
     }
 
     public Map<String, String> convertToStatusList() {
         HashMap<String, String> result = new HashMap<String, String>();
-        for (Map<String, Object> st : this.mStatusList) {
+        for (Map<String, Object> st : this.statusList) {
             String status = st.get("status").toString();
             String id = st.get("id").toString();
             result.put(id, status);

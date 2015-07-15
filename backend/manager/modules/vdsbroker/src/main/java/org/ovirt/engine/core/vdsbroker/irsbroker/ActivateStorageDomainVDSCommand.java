@@ -5,7 +5,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 
 public class ActivateStorageDomainVDSCommand<P extends ActivateStorageDomainVDSCommandParameters>
         extends IrsBrokerCommand<P> {
-    private StorageStatusReturnForXmlRpc _result;
+    private StorageStatusReturnForXmlRpc result;
 
     public ActivateStorageDomainVDSCommand(P parameters) {
         super(parameters);
@@ -13,19 +13,19 @@ public class ActivateStorageDomainVDSCommand<P extends ActivateStorageDomainVDSC
 
     @Override
     protected void executeIrsBrokerCommand() {
-        _result = getIrsProxy().activateStorageDomain(getParameters().getStorageDomainId().toString(),
+        result = getIrsProxy().activateStorageDomain(getParameters().getStorageDomainId().toString(),
                 getParameters().getStoragePoolId().toString());
         proceedProxyReturnValue();
-        setReturnValue(_result.mStorageStatus);
+        setReturnValue(result.storageStatus);
     }
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.getXmlRpcStatus();
+        return result.getXmlRpcStatus();
     }
 
     @Override
     protected Object getReturnValueFromBroker() {
-        return _result;
+        return result;
     }
 }

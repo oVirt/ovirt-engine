@@ -21,13 +21,13 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
         super(parameters);
     }
 
-    private OneStorageDomainInfoReturnForXmlRpc _result;
+    private OneStorageDomainInfoReturnForXmlRpc result;
 
     @Override
     protected void executeVdsBrokerCommand() {
-        _result = getBroker().getStorageDomainInfo(getParameters().getStorageDomainId().toString());
+        result = getBroker().getStorageDomainInfo(getParameters().getStorageDomainId().toString());
         proceedProxyReturnValue();
-        Pair<StorageDomainStatic, Guid> pairSdStatic = BuildStorageStaticFromXmlRpcStruct(_result.mStorageInfo);
+        Pair<StorageDomainStatic, Guid> pairSdStatic = BuildStorageStaticFromXmlRpcStruct(result.storageInfo);
         pairSdStatic.getFirst().setId(getParameters().getStorageDomainId());
         setReturnValue(pairSdStatic);
     }
@@ -88,11 +88,11 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.getXmlRpcStatus();
+        return result.getXmlRpcStatus();
     }
 
     @Override
     protected Object getReturnValueFromBroker() {
-        return _result;
+        return result;
     }
 }

@@ -26,22 +26,22 @@ public class EngineFault implements IVdcQueryable {
         privateDetails = value;
     }
 
-    private EngineError _Error;
+    private EngineError error;
 
     public EngineError getError() {
-        return _Error;
+        return error;
     }
 
     public void setError(EngineError value) {
-        _Error = value;
+        error = value;
     }
 
     public int getErrorCode() {
-        return _Error.getValue();
+        return error.getValue();
     }
 
     public void setError(int value) {
-        _Error = EngineError.forValue(value);
+        error = EngineError.forValue(value);
     }
 
     public EngineFault(RuntimeException ex, EngineError error) {
@@ -51,7 +51,7 @@ public class EngineFault implements IVdcQueryable {
     }
 
     public EngineFault(RuntimeException ex) {
-        _Error = EngineError.unexpected;
+        error = EngineError.unexpected;
         setMessage(ex.getMessage());
 
         // Pass over the inner exceptions and accumulate them within an array.
@@ -59,7 +59,7 @@ public class EngineFault implements IVdcQueryable {
     }
 
     public EngineFault() {
-        _Error = EngineError.unexpected;
+        error = EngineError.unexpected;
     }
 
     private String privateMessage;

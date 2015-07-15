@@ -20,18 +20,18 @@ public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends 
         vdsId = parameters.getVdsId();
     }
 
-    private OneUuidReturnForXmlRpc _result;
+    private OneUuidReturnForXmlRpc result;
     private Guid vdsId;
 
     @Override
     protected void executeVdsBrokerCommand() {
-        _result = getBroker().spmStart(getParameters().getStoragePoolId().toString(),
+        result = getBroker().spmStart(getParameters().getStoragePoolId().toString(),
                     getParameters().getPrevId(), getParameters().getPrevLVER(),
                     getParameters().getRecoveryMode().getValue(),
                     String.valueOf(getParameters().getSCSIFencing()).toLowerCase(),
                     Config.<Integer> getValue(ConfigValues.MaxNumberOfHostsInStoragePool), getParameters().getStoragePoolFormatType().getValue());
         proceedProxyReturnValue();
-        Guid taskId = new Guid(_result.mUuid);
+        Guid taskId = new Guid(result.uuid);
 
         AsyncTaskStatus taskStatus;
         log.info("spmStart polling started: taskId '{}'", taskId);
@@ -74,11 +74,11 @@ public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends 
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.getXmlRpcStatus();
+        return result.getXmlRpcStatus();
     }
 
     @Override
     protected Object getReturnValueFromBroker() {
-        return _result;
+        return result;
     }
 }

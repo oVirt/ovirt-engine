@@ -99,7 +99,7 @@ public class GlusterVolumeConditionFieldAutoCompleter extends BaseConditionField
     private void buildDictionaries() {
         // Build the field name auto completion dictionary
         for (AutoCompletionField field : fields) {
-            mVerbs.add(field.fieldName);
+            verbs.add(field.fieldName);
         }
         buildCompletions();
 

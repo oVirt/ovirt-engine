@@ -31,7 +31,7 @@ public class RemoveVMVDSCommand<P extends RemoveVMVDSCommandParameters> extends 
         case Done:
             return;
         default:
-            VDSExceptionBase outEx = createDefaultConcreteException(getReturnStatus().mMessage);
+            VDSExceptionBase outEx = createDefaultConcreteException(getReturnStatus().message);
             initializeVdsError(returnStatus);
             outEx.setVdsError(getVDSReturnValue().getVdsError());
             throw outEx;

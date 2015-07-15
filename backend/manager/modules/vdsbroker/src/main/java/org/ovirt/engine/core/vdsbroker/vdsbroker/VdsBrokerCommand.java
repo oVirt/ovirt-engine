@@ -20,7 +20,7 @@ import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
 
 public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> extends BrokerCommandBase<P> {
-    private final IVdsServer mVdsBroker;
+    private final IVdsServer vdsBroker;
     private VdsStatic vdsStatic;
     private VDS vds;
 
@@ -37,7 +37,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
      */
     public VdsBrokerCommand(P parameters) {
         super(parameters);
-        mVdsBroker = initializeVdsBroker(parameters.getVdsId());
+        vdsBroker = initializeVdsBroker(parameters.getVdsId());
     }
 
     /**
@@ -50,7 +50,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
      */
     protected VdsBrokerCommand(P parameters, VDS vds) {
         super(parameters);
-        this.mVdsBroker = initializeVdsBroker(parameters.getVdsId());
+        this.vdsBroker = initializeVdsBroker(parameters.getVdsId());
         this.vds = vds;
         this.vdsStatic = vds.getStaticData();
     }
@@ -67,7 +67,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
     }
 
     protected IVdsServer getBroker() {
-        return mVdsBroker;
+        return vdsBroker;
     }
 
     @Override
@@ -169,7 +169,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
     protected void logToAudit(){
         AuditLogableBase auditLogableBase = new AuditLogableBase(vds.getId());
         auditLogableBase.setVds(vds);
-        auditLogableBase.addCustomValue("message", getReturnStatus().mMessage);
+        auditLogableBase.addCustomValue("message", getReturnStatus().message);
 
         auditLogDirector.log(auditLogableBase, AuditLogType.VDS_BROKER_COMMAND_FAILURE);
     }

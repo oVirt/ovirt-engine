@@ -74,21 +74,21 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
     }
 
     public DiskImage createDisk(Guid domainId) {
-        DiskImage mNewCreatedDiskImage = new DiskImage();
-        mNewCreatedDiskImage.setDiskInterface(DiskInterface.IDE);
-        mNewCreatedDiskImage.setWipeAfterDelete(false);
-        mNewCreatedDiskImage.setDiskAlias(OvfInfoFileConstants.OvfStoreDescriptionLabel);
-        mNewCreatedDiskImage.setDiskDescription(OvfInfoFileConstants.OvfStoreDescriptionLabel);
-        mNewCreatedDiskImage.setShareable(shouldOvfStoreBeShareable());
-        mNewCreatedDiskImage.setStorageIds(new ArrayList<>(Arrays.asList(domainId)));
-        mNewCreatedDiskImage.setSize(SizeConverter.BYTES_IN_MB * 128);
-        mNewCreatedDiskImage.setvolumeFormat(VolumeFormat.RAW);
-        mNewCreatedDiskImage.setVolumeType(VolumeType.Preallocated);
-        mNewCreatedDiskImage.setDescription("OVF store for domain " + domainId);
+        DiskImage createdDiskImage = new DiskImage();
+        createdDiskImage.setDiskInterface(DiskInterface.IDE);
+        createdDiskImage.setWipeAfterDelete(false);
+        createdDiskImage.setDiskAlias(OvfInfoFileConstants.OvfStoreDescriptionLabel);
+        createdDiskImage.setDiskDescription(OvfInfoFileConstants.OvfStoreDescriptionLabel);
+        createdDiskImage.setShareable(shouldOvfStoreBeShareable());
+        createdDiskImage.setStorageIds(new ArrayList<>(Arrays.asList(domainId)));
+        createdDiskImage.setSize(SizeConverter.BYTES_IN_MB * 128);
+        createdDiskImage.setvolumeFormat(VolumeFormat.RAW);
+        createdDiskImage.setVolumeType(VolumeType.Preallocated);
+        createdDiskImage.setDescription("OVF store for domain " + domainId);
         Date creationDate = new Date();
-        mNewCreatedDiskImage.setCreationDate(creationDate);
-        mNewCreatedDiskImage.setLastModified(creationDate);
-        return mNewCreatedDiskImage;
+        createdDiskImage.setCreationDate(creationDate);
+        createdDiskImage.setLastModified(creationDate);
+        return createdDiskImage;
     }
 
     private void addStorageDomainOvfInfoToDb(Guid diskId) {

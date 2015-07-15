@@ -14,7 +14,7 @@ public class GetCapabilitiesVDSCommand<P extends VdsIdAndVdsVDSCommandParameters
     protected void executeVdsBrokerCommand() {
         infoReturn = getBroker().getCapabilities();
         proceedProxyReturnValue();
-        VdsBrokerObjectsBuilder.updateVDSDynamicData(getVds(), infoReturn.mInfo);
+        VdsBrokerObjectsBuilder.updateVDSDynamicData(getVds(), infoReturn.info);
         setReturnValue(getVds());
     }
 }

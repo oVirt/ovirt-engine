@@ -12,14 +12,14 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public abstract class TagsCommandBase<T extends TagsActionParametersBase> extends CommandBase<T> {
-    private Tags mTag = null;
+    private Tags tag = null;
     protected boolean noActionDone = true;
 
     protected Tags getTag() {
-        if (mTag == null && getTagId() != null) {
-            mTag = DbFacade.getInstance().getTagDao().get(getTagId());
+        if (tag == null && getTagId() != null) {
+            tag = DbFacade.getInstance().getTagDao().get(getTagId());
         }
-        return mTag;
+        return tag;
     }
 
     protected Guid getTagId() {

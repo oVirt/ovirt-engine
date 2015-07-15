@@ -28,10 +28,10 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
     protected void executeVdsBrokerCommand() {
         buildVmData();
         logCommandInfo();
-        mVmReturn = getBroker().create(createInfo);
+        vmReturn = getBroker().create(createInfo);
         proceedProxyReturnValue();
         VdsBrokerObjectsBuilder.updateVMDynamicData(vm.getDynamicData(),
-                mVmReturn.mVm);
+                vmReturn.vm);
     }
 
     /**

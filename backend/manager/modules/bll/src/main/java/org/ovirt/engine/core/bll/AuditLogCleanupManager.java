@@ -17,17 +17,17 @@ import org.slf4j.LoggerFactory;
 public class AuditLogCleanupManager {
     private static final Logger log = LoggerFactory.getLogger(AuditLogCleanupManager.class);
 
-    private static final AuditLogCleanupManager _instance = new AuditLogCleanupManager();
+    private static final AuditLogCleanupManager instance = new AuditLogCleanupManager();
 
     public static AuditLogCleanupManager getInstance() {
-        return _instance;
+        return instance;
     }
 
     private AuditLogCleanupManager() {
         log.info("Start initializing {}", getClass().getSimpleName());
         Calendar calendar = new GregorianCalendar();
-        Date mAuditLogCleanupTime = Config.<DateTime> getValue(ConfigValues.AuditLogCleanupTime);
-        calendar.setTimeInMillis(mAuditLogCleanupTime.getTime());
+        Date auditLogCleanupTime = Config.<DateTime> getValue(ConfigValues.AuditLogCleanupTime);
+        calendar.setTimeInMillis(auditLogCleanupTime.getTime());
 
         String cronExpression = String.format("%d %d %d * * ?", calendar.get(Calendar.SECOND),
                 calendar.get(Calendar.MINUTE), calendar.get(Calendar.HOUR_OF_DAY));

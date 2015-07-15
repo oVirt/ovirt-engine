@@ -27,7 +27,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
     // The log:
     private static final Logger log = LoggerFactory.getLogger(SetVmTicketCommand.class);
 
-    private String mTicket;
+    private String ticket;
 
     // This flag is calculated during the authorization phase and indicates if
     // the user needed additional permission in order to connect to the console
@@ -36,7 +36,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
 
     public SetVmTicketCommand(T parameters) {
         super(parameters);
-        mTicket = parameters.getTicket();
+        ticket = parameters.getTicket();
     }
 
     @Override
@@ -129,8 +129,8 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
     protected void perform() {
         // Generate the ticket if needed (in some situations the client will not send
         // a ticket):
-        if (StringUtils.isEmpty(mTicket)) {
-            mTicket = Ticketing.generateOTP();
+        if (StringUtils.isEmpty(ticket)) {
+            ticket = Ticketing.generateOTP();
         }
 
         // Update the dynamic information of the virtual machine in memory (we need it
@@ -197,12 +197,13 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         final DbUser user = getCurrentUser();
         final boolean sent =
                 runVdsCommand(VDSCommandType.SetVmTicket,
-                        new SetVmTicketVDSCommandParameters(getVdsId(), getVmId(), mTicket, getParameters().getValidTime(),
+                        new SetVmTicketVDSCommandParameters(getVdsId(), getVmId(),
+                                ticket, getParameters().getValidTime(),
                             user.getLoginName(), user.getId(), getParameters().getGraphicsType(), getVm().getConsoleDisconnectAction())).getSucceeded();
 
         // Return the ticket only if sending it to the virtual machine succeeded:
         if (sent) {
-            setActionReturnValue(mTicket);
+            setActionReturnValue(ticket);
         }
         setSucceeded(sent);
     }

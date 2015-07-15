@@ -20,7 +20,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 @Logged(executionLevel = LogLevel.DEBUG)
 public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommandParameters>
         extends IrsBrokerCommand<P> {
-    private StoragePoolInfoReturnForXmlRpc _result;
+    private StoragePoolInfoReturnForXmlRpc result;
 
     public GetStoragePoolInfoVDSCommand(P parameters) {
         super(parameters);
@@ -28,15 +28,15 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
 
     @Override
     protected void executeIrsBrokerCommand() {
-        _result = getIrsProxy().getStoragePoolInfo(getParameters().getStoragePoolId().toString());
+        result = getIrsProxy().getStoragePoolInfo(getParameters().getStoragePoolId().toString());
         proceedProxyReturnValue();
-        StoragePool sp = VdsBrokerObjectsBuilder.buildStoragePool(_result.mStoragePoolInfo);
+        StoragePool sp = VdsBrokerObjectsBuilder.buildStoragePool(result.storagePoolInfo);
         Guid masterId = Guid.Empty;
-        if (_result.mStoragePoolInfo.containsKey("master_uuid")) {
-            masterId = new Guid(_result.mStoragePoolInfo.get("master_uuid").toString());
+        if (result.storagePoolInfo.containsKey("master_uuid")) {
+            masterId = new Guid(result.storagePoolInfo.get("master_uuid").toString());
         }
         sp.setId(getParameters().getStoragePoolId());
-        ArrayList<StorageDomain> domList = ParseStorageDomainList(_result.mDomainsList, masterId);
+        ArrayList<StorageDomain> domList = ParseStorageDomainList(result.domainsList, masterId);
 
         KeyValuePairCompat<StoragePool, List<StorageDomain>> list =
                 new KeyValuePairCompat<StoragePool, List<StorageDomain>>(
@@ -66,6 +66,6 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.getXmlRpcStatus();
+        return result.getXmlRpcStatus();
     }
 }

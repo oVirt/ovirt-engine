@@ -22,7 +22,7 @@ public class SyncImageGroupDataVDSCommand<P extends SyncImageGroupDataVDSCommand
 
         proceedProxyReturnValue();
 
-        Guid taskID = new Guid(uuidReturn.mUuid);
+        Guid taskID = new Guid(uuidReturn.uuid);
 
         getVDSReturnValue().setCreationInfo(
                 new AsyncTaskCreationInfo(taskID, AsyncTaskType.syncImageData, params.getStoragePoolId()));

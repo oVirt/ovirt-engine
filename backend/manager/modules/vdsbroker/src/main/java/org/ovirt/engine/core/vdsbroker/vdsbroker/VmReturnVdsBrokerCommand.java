@@ -4,26 +4,26 @@ import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class VmReturnVdsBrokerCommand<P extends VdsAndVmIDVDSParametersBase> extends VdsBrokerCommand<P> {
-    protected OneVmReturnForXmlRpc mVmReturn;
-    protected Guid mVmId = Guid.Empty;
+    protected OneVmReturnForXmlRpc vmReturn;
+    protected Guid vmId = Guid.Empty;
 
     public VmReturnVdsBrokerCommand(P parameters) {
         super(parameters);
-        mVmId = parameters.getVmId();
+        vmId = parameters.getVmId();
     }
 
     public VmReturnVdsBrokerCommand(P parameters, Guid vmId) {
         super(parameters);
-        mVmId = vmId;
+        this.vmId = vmId;
     }
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return mVmReturn.mStatus;
+        return vmReturn.status;
     }
 
     @Override
     protected Object getReturnValueFromBroker() {
-        return mVmReturn;
+        return vmReturn;
     }
 }

@@ -3,17 +3,17 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import org.ovirt.engine.core.common.vdscommands.ChangeDiskVDSCommandParameters;
 
 public class ChangeFloppyVDSCommand<P extends ChangeDiskVDSCommandParameters> extends VmReturnVdsBrokerCommand<P> {
-    private String mIsoLocation = "";
+    private String isoLocation = "";
 
     public ChangeFloppyVDSCommand(P parameters) {
         super(parameters);
-        mIsoLocation = parameters.getDiskPath();
+        isoLocation = parameters.getDiskPath();
     }
 
     @Override
     protected void executeVdsBrokerCommand() {
-        mVmReturn = getBroker().changeFloppy(mVmId.toString(), mIsoLocation);
+        vmReturn = getBroker().changeFloppy(vmId.toString(), isoLocation);
         proceedProxyReturnValue();
-        setReturnValue(VdsBrokerObjectsBuilder.buildVMDynamicData(mVmReturn.mVm).getStatus());
+        setReturnValue(VdsBrokerObjectsBuilder.buildVMDynamicData(vmReturn.vm).getStatus());
     }
 }

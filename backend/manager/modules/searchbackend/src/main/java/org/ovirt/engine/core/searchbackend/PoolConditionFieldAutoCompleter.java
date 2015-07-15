@@ -16,14 +16,14 @@ public class PoolConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
 
     public PoolConditionFieldAutoCompleter() {
         // Building the basic vervs Dict
-        mVerbs.add(NAME);
-        mVerbs.add(DESCRIPTION);
-        mVerbs.add(TYPE);
-        mVerbs.add(CLUSTER);
-        mVerbs.add(DATACENTER);
-        mVerbs.add(ARCHITECTURE);
-        mVerbs.add(ASSIGNED_VM_COUNT);
-        mVerbs.add(RUNNING_VM_COUNT);
+        verbs.add(NAME);
+        verbs.add(DESCRIPTION);
+        verbs.add(TYPE);
+        verbs.add(CLUSTER);
+        verbs.add(DATACENTER);
+        verbs.add(ARCHITECTURE);
+        verbs.add(ASSIGNED_VM_COUNT);
+        verbs.add(RUNNING_VM_COUNT);
 
         // Building the autoCompletion Dict
         buildCompletions();

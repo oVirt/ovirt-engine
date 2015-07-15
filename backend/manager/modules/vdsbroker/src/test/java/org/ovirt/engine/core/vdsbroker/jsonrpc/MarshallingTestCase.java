@@ -88,11 +88,11 @@ public class MarshallingTestCase {
 
         // Then
         VDSInfoReturnForXmlRpc vdsInfo = new VDSInfoReturnForXmlRpc(map);
-        StatusForXmlRpc status = vdsInfo.mStatus;
-        assertEquals("Done", status.mMessage);
-        assertEquals(0, status.mCode);
+        StatusForXmlRpc status = vdsInfo.status;
+        assertEquals("Done", status.message);
+        assertEquals(0, status.code);
 
-        Map<String, Object> info = vdsInfo.mInfo;
+        Map<String, Object> info = vdsInfo.info;
         assertTrue(!info.isEmpty());
         Map<String, Object> bonds = (Map<String, Object>) info.get("bondings");
         for (Entry<String, Object> entry : bonds.entrySet()) {
@@ -121,10 +121,10 @@ public class MarshallingTestCase {
 
         // Then
         VMListReturnForXmlRpc vmList = new VMListReturnForXmlRpc(map);
-        StatusForXmlRpc status = vmList.mStatus;
-        assertEquals("Done", status.mMessage);
-        assertEquals(0, status.mCode);
-        assertEquals(0, vmList.mVmList.length);
+        StatusForXmlRpc status = vmList.status;
+        assertEquals("Done", status.message);
+        assertEquals(0, status.code);
+        assertEquals(0, vmList.vmList.length);
     }
 
     @SuppressWarnings("unchecked")
@@ -151,10 +151,10 @@ public class MarshallingTestCase {
 
         // Then
         VMListReturnForXmlRpc vmList = new VMListReturnForXmlRpc(map);
-        StatusForXmlRpc status = vmList.mStatus;
-        assertEquals("Done", status.mMessage);
-        assertEquals(0, status.mCode);
-        assertEquals(1, vmList.mVmList.length);
+        StatusForXmlRpc status = vmList.status;
+        assertEquals("Done", status.message);
+        assertEquals(0, status.code);
+        assertEquals(1, vmList.vmList.length);
     }
 
     @SuppressWarnings("unchecked")
@@ -204,10 +204,10 @@ public class MarshallingTestCase {
 
         // Then
         ServerConnectionStatusReturnForXmlRpc status = new ServerConnectionStatusReturnForXmlRpc(map);
-        assertEquals("Done", status.getXmlRpcStatus().mMessage);
-        assertEquals(0, status.getXmlRpcStatus().mCode);
-        assertEquals(1, status.mStatusList.length);
-        Map<String, Object> result = status.mStatusList[0];
+        assertEquals("Done", status.getXmlRpcStatus().message);
+        assertEquals(0, status.getXmlRpcStatus().code);
+        assertEquals(1, status.statusList.length);
+        Map<String, Object> result = status.statusList[0];
         assertEquals(0, result.get("status"));
         assertEquals("00000000-0000-0000-0000-000000000000", result.get("id"));
     }
@@ -232,8 +232,8 @@ public class MarshallingTestCase {
 
         // Then
         FileStatsReturnForXmlRpc isoList = new FileStatsReturnForXmlRpc(map);
-        assertEquals("Done", isoList.getXmlRpcStatus().mMessage);
-        assertEquals(0, isoList.getXmlRpcStatus().mCode);
+        assertEquals("Done", isoList.getXmlRpcStatus().message);
+        assertEquals(0, isoList.getXmlRpcStatus().code);
         assertEquals(0, isoList.getFileStats().size());
     }
 
@@ -258,8 +258,8 @@ public class MarshallingTestCase {
 
         // Then
         FileStatsReturnForXmlRpc isoList = new FileStatsReturnForXmlRpc(map);
-        assertEquals("Done", isoList.getXmlRpcStatus().mMessage);
-        assertEquals(0, isoList.getXmlRpcStatus().mCode);
+        assertEquals("Done", isoList.getXmlRpcStatus().message);
+        assertEquals(0, isoList.getXmlRpcStatus().code);
         assertEquals(1, isoList.getFileStats().size());
         assertEquals("Fedora-Live-Desktop-x86_64-19-1.iso", isoList.getFileStats().keySet().iterator().next());
     }
@@ -285,11 +285,11 @@ public class MarshallingTestCase {
 
         // Then
         VMListReturnForXmlRpc vmList = new VMListReturnForXmlRpc(map);
-        assertEquals("Done", vmList.mStatus.mMessage);
-        assertEquals(0, vmList.mStatus.mCode);
-        assertEquals(1, vmList.mVmList.length);
-        assertEquals("dd4d61c3-5128-4c26-ae71-0dbe5081ea93", (String) vmList.mVmList[0].get("vmId"));
-        assertEquals("Up", (String) vmList.mVmList[0].get("status"));
+        assertEquals("Done", vmList.status.message);
+        assertEquals(0, vmList.status.code);
+        assertEquals(1, vmList.vmList.length);
+        assertEquals("dd4d61c3-5128-4c26-ae71-0dbe5081ea93", (String) vmList.vmList[0].get("vmId"));
+        assertEquals("Up", (String) vmList.vmList[0].get("status"));
     }
 
     @SuppressWarnings("unchecked")
@@ -314,10 +314,10 @@ public class MarshallingTestCase {
 
         // Then
         VMListReturnForXmlRpc vmList = new VMListReturnForXmlRpc(map);
-        assertEquals("Done", vmList.mStatus.mMessage);
-        assertEquals(0, vmList.mStatus.mCode);
-        assertEquals(1, vmList.mVmList.length);
-        assertEquals("1397d80b-1c48-4d4a-acf9-ebd669bf3b25", (String) vmList.mVmList[0].get("vmId"));
+        assertEquals("Done", vmList.status.message);
+        assertEquals(0, vmList.status.code);
+        assertEquals(1, vmList.vmList.length);
+        assertEquals("1397d80b-1c48-4d4a-acf9-ebd669bf3b25", (String) vmList.vmList[0].get("vmId"));
     }
 
     @SuppressWarnings("unchecked")
@@ -346,14 +346,14 @@ public class MarshallingTestCase {
 
         // Then
         StoragePoolInfoReturnForXmlRpc storagePoolInfo = new StoragePoolInfoReturnForXmlRpc(map);
-        assertEquals("Done", storagePoolInfo.getXmlRpcStatus().mMessage);
-        assertEquals(0, storagePoolInfo.getXmlRpcStatus().mCode);
-        Set<String> keys = storagePoolInfo.mDomainsList.keySet();
+        assertEquals("Done", storagePoolInfo.getXmlRpcStatus().message);
+        assertEquals(0, storagePoolInfo.getXmlRpcStatus().code);
+        Set<String> keys = storagePoolInfo.domainsList.keySet();
         assertEquals(3, keys.size());
         assertTrue(keys.contains("05a0ad59-1259-4353-b40b-34eb80d8590a"));
         assertTrue(keys.contains("6ca00a0d-3f1d-4762-b5ff-c58a6a0a0324"));
         assertTrue(keys.contains("4192b643-fae9-4c1c-8b8b-9c9c6cc10523"));
-        Map<String, Object> info = storagePoolInfo.mStoragePoolInfo;
+        Map<String, Object> info = storagePoolInfo.storagePoolInfo;
         assertEquals("/rhev/data-center/mnt/192.168.1.10:_export_iso/6ca00a0d-3f1d-4762-b5ff-c58a6a0a0324/images/11111111-1111-1111-1111-111111111111",
                 info.get("isoprefix"));
     }
@@ -378,9 +378,9 @@ public class MarshallingTestCase {
 
         // Then
         StorageStatusReturnForXmlRpc storageStatus = new StorageStatusReturnForXmlRpc(map);
-        assertEquals("Done", storageStatus.getXmlRpcStatus().mMessage);
-        assertEquals(0, storageStatus.getXmlRpcStatus().mCode);
-        assertEquals("true", storageStatus.mStorageStatus);
+        assertEquals("Done", storageStatus.getXmlRpcStatus().message);
+        assertEquals(0, storageStatus.getXmlRpcStatus().code);
+        assertEquals("true", storageStatus.storageStatus);
     }
 
     @SuppressWarnings("unchecked")
@@ -403,9 +403,9 @@ public class MarshallingTestCase {
 
         // Then
         OneUuidReturnForXmlRpc oneuuid = new OneUuidReturnForXmlRpc(map);
-        assertEquals("Done", oneuuid.getXmlRpcStatus().mMessage);
-        assertEquals(0, oneuuid.getXmlRpcStatus().mCode);
-        assertEquals("4f84eef5-8f8b-4732-babd-0a860cf0d1b9", UUID.fromString(oneuuid.mUuid).toString());
+        assertEquals("Done", oneuuid.getXmlRpcStatus().message);
+        assertEquals(0, oneuuid.getXmlRpcStatus().code);
+        assertEquals("4f84eef5-8f8b-4732-babd-0a860cf0d1b9", UUID.fromString(oneuuid.uuid).toString());
     }
 
     @SuppressWarnings("unchecked")
@@ -442,8 +442,8 @@ public class MarshallingTestCase {
         // When
         Map<String, Object> map = new FutureMap(client, request).withResponseKey("fullTargets");
         IQNListReturnForXmlRpc list = new IQNListReturnForXmlRpc(map);
-        assertEquals("Done", list.getXmlRpcStatus().mMessage);
-        assertEquals(0, list.getXmlRpcStatus().mCode);
+        assertEquals("Done", list.getXmlRpcStatus().message);
+        assertEquals(0, list.getXmlRpcStatus().code);
         assertEquals(37, parseFullTargets(list.getIqnList()).size());
     }
 

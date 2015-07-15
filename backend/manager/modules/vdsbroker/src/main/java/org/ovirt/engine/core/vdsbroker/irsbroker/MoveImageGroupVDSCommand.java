@@ -24,7 +24,7 @@ public class MoveImageGroupVDSCommand<P extends MoveImageGroupVDSCommandParamete
                                              String.valueOf(getParameters().getForce()).toLowerCase());
         proceedProxyReturnValue();
 
-        Guid taskID = new Guid(uuidReturn.mUuid);
+        Guid taskID = new Guid(uuidReturn.uuid);
 
         getVDSReturnValue().setCreationInfo(
                 new AsyncTaskCreationInfo(taskID, AsyncTaskType.moveImage, getParameters().getStoragePoolId()));
