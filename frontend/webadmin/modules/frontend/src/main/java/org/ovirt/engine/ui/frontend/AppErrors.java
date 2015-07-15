@@ -2363,7 +2363,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("User/group ID cannot be empty.")
     String MISSING_DIRECTORY_ELEMENT_ID();
 
-    @DefaultStringValue("Network name must be 1-15 long and can contain only 'A-Z', 'a-z', '0-9', '_', '-' characters")
+    @DefaultStringValue("Network name must be 1-15 long and can contain only 'a-z', 'A-Z', '0-9', '_' or '-' characters")
     String NETWORK_ILEGAL_NETWORK_NAME();
 
     @DefaultStringValue("Network interface name is already in use")
@@ -2372,7 +2372,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Storage related operations can't be performed while the Storage Pool Manager is down.\nPlease make sure the Storage Pool Manager is up and running, and check network connectivity.")
     String STORAGE_OPERATION_FAILED_SPM_NETWORK_PROBLEMS();
 
-    @DefaultStringValue("Invalid tag name. Only 'A-Z', 'a-z', '0-9', '_' and '-' characters are valid")
+    @DefaultStringValue("Tag name must be formed of 'a-z', 'A-Z', '0-9', '_' or '-' characters")
     String VALIDATION_TAGS_INVALID_TAG_NAME();
 
     @DefaultStringValue("Pool name is required")
@@ -2450,19 +2450,19 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("email format is not valid")
     String VALIDATION_EVENTS_EMAIL_FORMAT();
 
-    @DefaultStringValue("The correlation ID must be formed of \"a-z0-9A-Z\" or \"-_\"")
+    @DefaultStringValue("The correlation ID must be formed of 'a-z', 'A-Z', '0-9', '_' or '-' characters")
     String VALIDATION_INVALID_CORRELATION_ID();
 
-    @DefaultStringValue("Role name must be formed of \"a-z0-9A-Z\" or \"-_\"")
+    @DefaultStringValue("Role name must be formed of 'a-z', 'A-Z', '0-9', '_' or '-' characters")
     String VALIDATION_ROLES_NAME_INVALID();
 
-    @DefaultStringValue("Cluster name must be formed of \"a-z0-9A-Z\" or \"-_\"")
+    @DefaultStringValue("Cluster name must be formed of 'a-z', 'A-Z', '0-9', '_' or '-' characters")
     String VALIDATION_VDS_GROUP_NAME_INVALID();
 
-    @DefaultStringValue("Storage Domain name must be formed of \"a-z0-9A-Z\" or \"-_\"")
+    @DefaultStringValue("Storage Domain name must be formed of 'a-z', 'A-Z', '0-9', '_' or '-' characters")
     String VALIDATION_STORAGE_DOMAIN_NAME_INVALID();
 
-    @DefaultStringValue("Storage Domain description must be formed of \"a-z0-9A-Z\" or \"-_\"")
+    @DefaultStringValue("Storage Domain description must be formed of 'a-z', 'A-Z', '0-9', '_' or '-' characters")
     String VALIDATION_STORAGE_DOMAIN_DESCRIPTION_INVALID();
 
     @DefaultStringValue("Storage Domain description must not exceed 4000 characters")
@@ -2474,7 +2474,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Storage Domain's \"Critical Space Action Blocker\" must be a non-negative integer.0")
     String VALIDATION_STORAGE_DOMAIN_CRITICAL_SPACE_ACTION_BLOCKER_RANGE();
 
-    @DefaultStringValue("Data Center name must be formed of \"a-z0-9A-Z\" or \"-_\"")
+    @DefaultStringValue("Data Center name must be formed of 'a-z', 'A-Z', '0-9', '_' or '-' characters")
     String VALIDATION_DATA_CENTER_NAME_INVALID();
 
     @DefaultStringValue("ID is required.")
@@ -2501,7 +2501,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Provider type is required.")
     String VALIDATION_PROVIDER_TYPE_NULL();
 
-    @DefaultStringValue("Quota name must be formed of \"a-z0-9A-Z\" and \"-_\"")
+    @DefaultStringValue("Quota name must be formed of 'a-z', 'A-Z', '0-9', '_' or '-' characters")
     String VALIDATION_QUOTA_NAME_INVALID();
 
     @DefaultStringValue("MAC address must be in format \"HH:HH:HH:HH:HH:HH\" where H is a hexadecimal character (either a digit or A-F, case is insignificant).")
@@ -3515,7 +3515,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("QoS name cannot be empty.")
     String QOS_NAME_NOT_NULL();
 
-    @DefaultStringValue("Invalid QoS name (name must be formed of \"a-z0-9A-Z\" or \"-_ \")")
+    @DefaultStringValue("QoS name must be formed of 'a-z', 'A-Z', '0-9', '_' or '-' characters")
     String QOS_NAME_INVALID();
 
     @DefaultStringValue("QoS name length must be under 50 characters.")
