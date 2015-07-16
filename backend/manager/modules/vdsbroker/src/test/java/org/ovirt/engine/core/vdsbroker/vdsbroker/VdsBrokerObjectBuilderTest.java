@@ -219,7 +219,7 @@ public class VdsBrokerObjectBuilderTest {
         }
     }
 
-    private Map<String, Object> setMockForTesting(Map<String, Object> diskData) {
+    private static Map<String, Object> setMockForTesting(Map<String, Object> diskData) {
         Map<String, Map<String, Object>> disksData = new HashMap<>();
         disksData.put("vda", diskData);
         return setDisksInXmlRpc(disksData);
@@ -229,13 +229,13 @@ public class VdsBrokerObjectBuilderTest {
         return new VDS();
     }
 
-    private VmStatistics getVmStatistics() {
+    private static VmStatistics getVmStatistics() {
         VmStatistics vmStatistics = new VmStatistics();
         vmStatistics.setId(VM_ID);
         return vmStatistics;
     }
 
-    private VmDynamic getVmDynamic() {
+    private static VmDynamic getVmDynamic() {
         VmDynamic vmDynamic = new VmDynamic();
         vmDynamic.setId(VM_ID);
         return vmDynamic;
@@ -259,7 +259,7 @@ public class VdsBrokerObjectBuilderTest {
         return map;
     }
 
-    private Map<String, Object> setDiskData() {
+    private static Map<String, Object> setDiskData() {
         Map<String, Object> diskData = new HashMap<>();
         diskData.put(VdsProperties.vm_disk_read_rate, DEFAULT_VALUE);
         diskData.put(VdsProperties.ImageId, IMAGE_ID.toString());
