@@ -410,4 +410,6 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterSnapshotScheduleOverride(boolean force);
 
     public Map<String, Object> glusterSnapshotScheduleReset();
+
+    public Map<String, Object> glusterProcessesStop();
 }

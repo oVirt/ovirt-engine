@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetHaMaintenanceModeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServiceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -86,6 +88,12 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
                     if (!runVdsCommand(VDSCommandType.SetHaMaintenanceMode, param).getSucceeded()) {
                         haMaintenanceFailed = true;
                     }
+                }
+
+                // Start glusterd service on the node, which would haven been stopped due to maintenance
+                if (vds.getVdsGroupSupportsGlusterService()) {
+                    runVdsCommand(VDSCommandType.ManageGlusterService,
+                            new GlusterServiceVDSParameters(vds.getId(), Arrays.asList("glusterd"), "restart"));
                 }
             }
         }
