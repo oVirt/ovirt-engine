@@ -40,7 +40,7 @@ public class HelpServiceImpl implements ModuleService {
                 entry.getValue().getDescription())
             );
         }
-        throw new ExitException(0);
+        throw new ExitException("Usage", 0);
     }
 
     @Override
