@@ -7,12 +7,12 @@ export BUILD_JAVA_OPTS_MAVEN="\
     -XX:MaxPermSize=1G \
     -Dgwt.compiler.localWorkers=2 \
 "
-export EXTRA_BUILD_FLAGS="-gs '$MAVEN_SETTINGS'"
+export EXTRA_BUILD_FLAGS="-gs $MAVEN_SETTINGS"
 export BUILD_JAVA_OPTS_GWT="\
     -XX:PermSize=512M \
     -XX:MaxPermSize=1G \
     -Xms1G \
-    -Xmx8G \
+    -Xmx6G \
 "
 
 # Use ovirt mirror if able, fall back to central maven
@@ -63,7 +63,7 @@ if [[ "$(rpm --eval "%{dist}")" ==  ".fc22" ]]; then
     # Needed to download the deps before compilation, for some reason it fails
     # inside fc22 chroot if not done first
     mvn dependency:resolve-plugins \
-        "EXTRA_BUILD_FLAGS=$EXTRA_BUILD_FLAGS"
+        $EXTRA_BUILD_FLAGS
 fi
 
 # create the rpms
