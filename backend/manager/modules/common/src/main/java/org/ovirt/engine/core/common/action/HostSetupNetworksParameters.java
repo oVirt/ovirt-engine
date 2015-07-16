@@ -5,21 +5,24 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.validation.Valid;
+
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
+import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.annotation.ConfiguredRange;
 import org.ovirt.engine.core.compat.Guid;
-
 
 public class HostSetupNetworksParameters extends VdsActionParameters {
 
     private static final long serialVersionUID = 6819278948636850828L;
 
-    /*This field cannot be validated via bean validation due to validation conflict:
-    {@link NetworkAttachment} in this class is present as new entity and entity to be updated, both requiring different
-    conflicting validations. So {@link NetworkAttachment} will be validated manually in
-     {@link org.ovirt.engine.core.bll.CommandBase#canDoAction}*/
+    /*
+     * This field cannot be validated via bean validation due to validation conflict: {@link NetworkAttachment} in this
+     * class is present as new entity and entity to be updated, both requiring different conflicting validations. So
+     * {@link NetworkAttachment} will be validated manually in {@link org.ovirt.engine.core.bll.CommandBase#canDoAction}
+     */
     private List<NetworkAttachment> networkAttachments;
 
     private Set<Guid> removedNetworkAttachments;
@@ -29,6 +32,11 @@ public class HostSetupNetworksParameters extends VdsActionParameters {
     private Set<Guid> removedBonds;
 
     private Set<String> removedUnmanagedNetworks;
+
+    @Valid
+    private Set<NicLabel> labels;
+
+    private Set<String> removedLabels;
 
     private boolean rollbackOnFailure = true;
 
@@ -46,6 +54,8 @@ public class HostSetupNetworksParameters extends VdsActionParameters {
         setBonds(new ArrayList<Bond>());
         setRemovedBonds(new HashSet<Guid>());
         setRemovedUnmanagedNetworks(new HashSet<String>());
+        setLabels(new HashSet<NicLabel>());
+        setRemovedLabels(new HashSet<String>());
     }
 
     public boolean rollbackOnFailure() {
@@ -103,5 +113,20 @@ public class HostSetupNetworksParameters extends VdsActionParameters {
     public void setRemovedUnmanagedNetworks(Set<String> removedUnmanagedNetworks) {
         this.removedUnmanagedNetworks = removedUnmanagedNetworks;
     }
-}
 
+    public void setLabels(Set<NicLabel> labels) {
+        this.labels = labels;
+    }
+
+    public Set<NicLabel> getLabels() {
+        return labels;
+    }
+
+    public void setRemovedLabels(Set<String> removedLabels) {
+        this.removedLabels = removedLabels;
+    }
+
+    public Set<String> getRemovedLabels() {
+        return removedLabels;
+    }
+}
