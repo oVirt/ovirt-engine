@@ -983,4 +983,7 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Failed to create signed websocket proxy ticket")
     String FailedToCreateWebsocketProxyTicket();
 
+    @DefaultStringValue("Default icon pair not found")
+    String DefaultIconPairNotFound();
+
 }

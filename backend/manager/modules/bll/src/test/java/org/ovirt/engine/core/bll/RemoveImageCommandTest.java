@@ -8,6 +8,7 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -38,6 +40,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
+import org.ovirt.engine.core.utils.ovf.OvfVmIconDefaultsProvider;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RemoveImageCommandTest {
@@ -52,6 +55,9 @@ public class RemoveImageCommandTest {
 
     @Mock
     OsRepository osRepository;
+
+    @Mock
+    private OvfVmIconDefaultsProvider iconDefaultsProvider;
 
     /** The command to test */
     private RemoveImageCommand<RemoveImageParameters> cmd;
@@ -83,8 +89,14 @@ public class RemoveImageCommandTest {
 
         });
         doReturn(snapshotDao).when(cmd).getSnapshotDao();
+        when(iconDefaultsProvider.getVmIconDefaults()).thenReturn(new HashMap<Integer, VmIconIdSizePair>(){{
+            put(0, new VmIconIdSizePair(
+                    Guid.createGuidFromString("00000000-0000-0000-0000-00000000000a"),
+                    Guid.createGuidFromString("00000000-0000-0000-0000-00000000000b")));
+        }});
 
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        SimpleDependecyInjector.getInstance().bind(OvfVmIconDefaultsProvider.class, iconDefaultsProvider);
     }
 
     @Test

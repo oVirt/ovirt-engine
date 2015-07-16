@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
@@ -62,6 +63,7 @@ import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.DateTime;
@@ -78,6 +80,7 @@ import org.ovirt.engine.core.utils.ErrorTranslatorImpl;
 import org.ovirt.engine.core.utils.OsRepositoryImpl;
 import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 import org.ovirt.engine.core.utils.osinfo.OsInfoPreferencesLoader;
+import org.ovirt.engine.core.utils.ovf.OvfVmIconDefaultsProvider;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
@@ -273,6 +276,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         initAttestation();
         updatePredefinedIcons();
         iconCleanup();
+        registerIconDefaultsProvider();
         EngineExtensionsManager.getInstance().engineInitialize();
         AuthenticationProfileRepository.getInstance();
         AcctUtils.reportReason(Acct.ReportReason.STARTUP, "Starting up engine");
@@ -289,9 +293,20 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         dbFacade.getVmIconDao().removeAllUnusedIcons();
     }
 
-
     private void updatePredefinedIcons() {
         IconLoader.load();
+    }
+
+    private void registerIconDefaultsProvider() {
+        final OvfVmIconDefaultsProvider ovfVmIconDefaultsProvider = new OvfVmIconDefaultsProvider() {
+
+            @Override public Map<Integer, VmIconIdSizePair> getVmIconDefaults() {
+                final VdcQueryReturnValue queryReturnValue =
+                        runInternalQuery(VdcQueryType.GetVmIconDefaults, new VdcQueryParametersBase());
+                return queryReturnValue.getReturnValue();
+            }
+        };
+        SimpleDependecyInjector.getInstance().bind(OvfVmIconDefaultsProvider.class, ovfVmIconDefaultsProvider);
     }
 
     private void initAttestation() {

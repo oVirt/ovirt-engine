@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -37,11 +38,20 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 @RunWith(MockitoJUnitRunner.class)
 public class OvfManagerTest {
 
+    private static final Guid SMALL_DEFAULT_ICON_ID = Guid.createGuidFromString("00000000-0000-0000-0000-00000000000a");
+    private static final Guid LARGE_DEFAULT_ICON_ID = Guid.createGuidFromString("00000000-0000-0000-0000-00000000000b");
+    private static final Guid SMALL_ICON_ID = Guid.createGuidFromString("00000000-0000-0000-0000-00000000000c");
+    private static final Guid LARGE_ICON_ID = Guid.createGuidFromString("00000000-0000-0000-0000-00000000000d");
+
     private static final int DEFAULT_OS_ID = OsRepository.DEFAULT_X86_OS;
     private static final int EXISTING_OS_ID = 1;
+    private static final int NONEXISTING_OS_ID = 2;
 
     @Mock
     private OsRepository osRepository;
+
+    @Mock
+    private OvfVmIconDefaultsProvider iconDefaultsProvider;
 
     @ClassRule
     public static MockConfigRule mockConfigRule =
@@ -51,8 +61,9 @@ public class OvfManagerTest {
 
     @Before
     public void setUp() throws Exception {
-        manager = new OvfManager();
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        SimpleDependecyInjector.getInstance().bind(OvfVmIconDefaultsProvider.class, iconDefaultsProvider);
+        manager = new OvfManager();
         final HashMap<Integer, String> osIdsToNames = new HashMap<Integer, String>(){{
             put(DEFAULT_OS_ID, "os_name_a");
             put(EXISTING_OS_ID, "os_name_b");
@@ -72,11 +83,21 @@ public class OvfManagerTest {
             }
         });
 
+        when(iconDefaultsProvider.getVmIconDefaults()).thenReturn(new HashMap<Integer, VmIconIdSizePair>(){{
+            put(DEFAULT_OS_ID, new VmIconIdSizePair(SMALL_DEFAULT_ICON_ID, LARGE_DEFAULT_ICON_ID));
+            put(EXISTING_OS_ID, new VmIconIdSizePair(SMALL_ICON_ID, LARGE_ICON_ID));
+        }});
+
     }
 
     private static void assertVm(VM vm, VM newVm, long expectedDbGeneration) {
         assertEquals("imported vm is different than expected", vm, newVm);
         assertEquals("imported db generation is different than expected", expectedDbGeneration, newVm.getDbGeneration());
+
+        // Icons are actually not stored in snapshots, so they are excluded from comparison
+        newVm.getStaticData().setSmallIconId(vm.getStaticData().getSmallIconId());
+        newVm.getStaticData().setLargeIconId(vm.getStaticData().getLargeIconId());
+
         assertEquals(vm.getStaticData(), newVm.getStaticData());
     }
 
@@ -174,6 +195,34 @@ public class OvfManagerTest {
                 new ArrayList<VmNetworkInterface>());
         assertEquals("imported template is different than expected", template, newtemplate);
         assertTrue("imported db generation is different than expected", newtemplate.getDbGeneration() == 1);
+    }
+
+    @Test
+    public void testIconsSetForKnownOs() throws Exception {
+        VM vm = createVM();
+        vm.setVmOs(EXISTING_OS_ID);
+        final VM newVm = serializeAndDeserialize(vm);
+        assertEquals(SMALL_ICON_ID, newVm.getStaticData().getSmallIconId());
+        assertEquals(LARGE_ICON_ID, newVm.getStaticData().getLargeIconId());
+    }
+
+    @Test
+    public void testIconsSetForUnknownOs() throws Exception {
+        VM vm = createVM();
+        vm.setVmOs(NONEXISTING_OS_ID);
+        final VM newVm = serializeAndDeserialize(vm);
+        assertEquals(SMALL_DEFAULT_ICON_ID, newVm.getStaticData().getSmallIconId());
+        assertEquals(LARGE_DEFAULT_ICON_ID, newVm.getStaticData().getLargeIconId());
+    }
+
+    private VM serializeAndDeserialize(VM inputVm) throws OvfReaderException {
+        String xml = manager.ExportVm(inputVm, new ArrayList<DiskImage>(), Version.v3_1);
+        assertNotNull(xml);
+        final VM resultVm = new VM();
+        assertTrue(xml.contains("Generation"));
+        String replacedXml = xml.replaceAll("Generation", "test_replaced");
+        manager.ImportVm(replacedXml, resultVm, new ArrayList<DiskImage>(), new ArrayList<VmNetworkInterface>());
+        return resultVm;
     }
 
     private static VM createVM() {

@@ -7,6 +7,9 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VmIconDefault;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.dao.VmIconDefaultDao;
@@ -33,6 +36,9 @@ public class GetVmIconDefaultsQuery extends QueriesCommandBase<VdcQueryParameter
         for (VmIconDefault iconDefault : iconDefaults) {
             result.put(iconDefault.getOsId(),
                     new VmIconIdSizePair(iconDefault.getSmallIconId(), iconDefault.getLargeIconId()));
+        }
+        if (!result.containsKey(OsRepository.DEFAULT_X86_OS)) {
+            throw new EngineException(EngineError.DefaultIconPairNotFound);
         }
         setReturnValue(result);
     }

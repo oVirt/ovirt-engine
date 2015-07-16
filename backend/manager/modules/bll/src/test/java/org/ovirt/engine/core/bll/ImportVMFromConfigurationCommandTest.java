@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
@@ -50,6 +51,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.ovf.OvfVmIconDefaultsProvider;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ImportVMFromConfigurationCommandTest {
@@ -77,6 +79,9 @@ public class ImportVMFromConfigurationCommandTest {
     @Mock
     private UnregisteredOVFDataDao unregisteredOVFDataDao;
 
+    @Mock
+    private OvfVmIconDefaultsProvider iconDefaultsProvider;
+
     @Before
     public void setUp() throws IOException {
         vmId = Guid.newGuid();
@@ -86,6 +91,7 @@ public class ImportVMFromConfigurationCommandTest {
 
         // init the injector with the osRepository instance
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        SimpleDependecyInjector.getInstance().bind(OvfVmIconDefaultsProvider.class, iconDefaultsProvider);
         final int osId = 0;
         Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> graphicsAndDisplays = new HashMap<>();
         graphicsAndDisplays.put(osId, new HashMap());
@@ -95,6 +101,11 @@ public class ImportVMFromConfigurationCommandTest {
                         Collections.singletonMap(Version.getLast(),
                                 Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)))));
         when(osRepository.isBalloonEnabled(anyInt(), any(Version.class))).thenReturn(true);
+        when(iconDefaultsProvider.getVmIconDefaults()).thenReturn(new HashMap<Integer, VmIconIdSizePair>(){{
+            put(osId, new VmIconIdSizePair(
+                    Guid.createGuidFromString("00000000-0000-0000-0000-00000000000a"),
+                    Guid.createGuidFromString("00000000-0000-0000-0000-00000000000b")));
+        }});
         mockVdsGroup();
         mockDisplayTypes();
         setXmlOvfData();
