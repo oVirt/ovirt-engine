@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -292,11 +291,13 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                 storageType_SelectedItemChanged();
             }
             else if (sender == getAvailableStorageDomainTypeItems()) {
-                updateCurrentStorageItem();
+                behavior.setStorageTypeItems();
             }
         }
         else if (ev.matchesDefinition(ListModel.itemsChangedEventDefinition)) {
-            storageItemsChanged();
+            if (sender == getAvailableStorageTypeItems()) {
+                storageItemsChanged();
+            }
         }
         else if (ev.matchesDefinition(NfsStorageModel.pathChangedEventDefinition)) {
             nfsStorageModel_PathChanged(sender, args);
@@ -736,15 +737,14 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         }
     }
 
-    public void updateStorageTypesByDomainType() {
-        StorageDomainType storageDomainType = getAvailableStorageDomainTypeItems().getSelectedItem();
-        Set<StorageType> filteredStorageTypes = new LinkedHashSet<>();
-        for (IStorageModel currModel : getStorageModels()) {
-            if (currModel.getRole() == storageDomainType) {
-                filteredStorageTypes.add(currModel.getType());
+    public List<IStorageModel> getStorageModelsByRole(StorageDomainType role) {
+        List<IStorageModel> filteredModels = new LinkedList<>();
+        for (IStorageModel model : getStorageModels()) {
+            if (model.getRole() == role) {
+                filteredModels.add(model);
             }
         }
-        getAvailableStorageTypeItems().setItems(filteredStorageTypes);
+        return filteredModels;
     }
 
 }

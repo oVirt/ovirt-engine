@@ -89,8 +89,8 @@ public class ImportStorageModelBehavior extends StorageModelBehavior {
     }
 
     @Override
-    public void setStorageItems() {
-        super.setStorageItems();
+    public void setStorageTypeItems() {
+        super.setStorageTypeItems();
         if (getSelectableModels().isEmpty()) {
             getModel().getDataCenterAlert().setIsAvailable(true);
             getModel().getDataCenterAlert().setEntity(ConstantsManager.getInstance().getConstants().noStoragesToImport());

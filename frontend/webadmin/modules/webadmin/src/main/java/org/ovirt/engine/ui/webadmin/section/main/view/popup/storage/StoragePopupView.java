@@ -349,7 +349,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     }
 
     private void updateStorageTypesByDomainType(StorageModel storageModel) {
-        storageModel.updateStorageTypesByDomainType();
+        storageModel.getBehavior().setStorageTypeItems();
     }
 
     @Override

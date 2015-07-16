@@ -31,30 +31,48 @@ public abstract class StorageModelBehavior extends Model {
 
     public abstract void updateItemsAvailability();
 
-    public void setStorageItems() {
-        ArrayList<IStorageModel> filterredItems = getSelectableModels();
-        Set<StorageDomainType> storageDomainTypeItems = new LinkedHashSet<StorageDomainType>();
+    public void setStorageTypeItems() {
+        ArrayList<IStorageModel> filteredItems = getSelectableModelsByRole();
         Set<StorageType> storageTypeItems = new LinkedHashSet<StorageType>();
 
-        for (IStorageModel model : filterredItems) {
-            storageDomainTypeItems.add(model.getRole());
+        for (IStorageModel model : filteredItems) {
             storageTypeItems.add(model.getType());
         }
-        getModel().getAvailableStorageDomainTypeItems().setItems(storageDomainTypeItems);
         getModel().getAvailableStorageTypeItems().setItems(storageTypeItems);
         getModel().storageItemsChanged();
+    }
+
+    public void setStorageDomainTypeItems() {
+        ArrayList<IStorageModel> filteredItems = getSelectableModels();
+        Set<StorageDomainType> storageDomainTypeItems = new LinkedHashSet<StorageDomainType>();
+
+        for (IStorageModel model : filteredItems) {
+            storageDomainTypeItems.add(model.getRole());
+        }
+        getModel().getAvailableStorageDomainTypeItems().setItems(storageDomainTypeItems);
     }
 
     public ArrayList<IStorageModel> getSelectableModels() {
         // Filter un-selectable models
         ArrayList<IStorageModel> items = Linq.<IStorageModel> cast(getModel().getStorageModels());
-        ArrayList<IStorageModel> filterredItems = new ArrayList<IStorageModel>();
-        for (IStorageModel model : items) {
+        return getSelectableModels(items);
+    }
+
+    public ArrayList<IStorageModel> getSelectableModelsByRole() {
+        StorageDomainType role = getModel().getAvailableStorageDomainTypeItems().getSelectedItem();
+        ArrayList<IStorageModel> items = Linq.<IStorageModel> cast(getModel().getStorageModelsByRole(role));
+        return getSelectableModels(items);
+    }
+
+    public ArrayList<IStorageModel> getSelectableModels(ArrayList<IStorageModel> storageItems) {
+        // Filter un-selectable models
+        ArrayList<IStorageModel> filteredItems = new ArrayList<IStorageModel>();
+        for (IStorageModel model : storageItems) {
             if (((Model) model).getIsSelectable()) {
-                filterredItems.add(model);
+                filteredItems.add(model);
             }
         }
-        return filterredItems;
+        return filteredItems;
     }
 
     public void onStorageModelUpdated(IStorageModel model) {
@@ -68,7 +86,8 @@ public abstract class StorageModelBehavior extends Model {
             getModel().getHost().setItems(new ArrayList<VDS>());
             getModel().getHost().setSelectedItem(null);
 
-            setStorageItems();
+            setStorageTypeItems();
+            setStorageDomainTypeItems();
 
             if (getModel().getCurrentStorageItem() != null) {
                 getModel().updateFormat();
