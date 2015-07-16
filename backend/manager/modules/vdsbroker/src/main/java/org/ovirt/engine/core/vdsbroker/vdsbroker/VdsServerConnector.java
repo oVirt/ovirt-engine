@@ -446,4 +446,6 @@ public interface VdsServerConnector {
     public Map<String, Object> wipeVolume(String sdUUID, String imgUUID, String volUUID);
 
     public Map<String, Object> getExternalVmFromOva(String ovaPath);
+
+    public Map<String, Object> glusterProcessesStop();
 }

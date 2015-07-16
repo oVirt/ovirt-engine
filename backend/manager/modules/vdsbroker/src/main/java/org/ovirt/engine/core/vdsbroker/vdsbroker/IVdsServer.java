@@ -475,4 +475,6 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc isolateVolume(String sdUUID, String srcImageID, String dstImageID, String volumeID);
 
     StatusOnlyReturnForXmlRpc wipeVolume(String sdUUID, String imgUUID, String volUUID);
+
+    StatusOnlyReturnForXmlRpc glusterStopProcesses();
 }

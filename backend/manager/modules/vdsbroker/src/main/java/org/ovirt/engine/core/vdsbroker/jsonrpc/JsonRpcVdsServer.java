@@ -2118,4 +2118,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                 .withResponseType(Object[].class);
         return new OneVmReturnForXmlRpc(response);
     }
+
+    public StatusOnlyReturnForXmlRpc glusterStopProcesses() {
+        JsonRpcRequest request =
+                new RequestBuilder("GlusterHost.processesStop").build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
 }
