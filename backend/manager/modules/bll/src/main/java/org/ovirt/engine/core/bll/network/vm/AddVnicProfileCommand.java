@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.network.vm;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VnicProfileValidator;
@@ -12,8 +14,12 @@ import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDao;
 
 public class AddVnicProfileCommand<T extends VnicProfileParameters> extends VnicProfileCommandBase<T> {
+
+    @Inject
+    private VmDao vmDao;
 
     public AddVnicProfileCommand(T parameters) {
         super(parameters);
@@ -21,7 +27,7 @@ public class AddVnicProfileCommand<T extends VnicProfileParameters> extends Vnic
 
     @Override
     protected boolean canDoAction() {
-        VnicProfileValidator validator = new VnicProfileValidator(getVnicProfile());
+        VnicProfileValidator validator = new VnicProfileValidator(vmDao, getVnicProfile());
         return validate(validator.vnicProfileIsSet())
                 && validate(validator.networkExists())
                 && validate(validator.networkQosExistsOrNull())

@@ -27,12 +27,14 @@ import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -43,8 +45,14 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -53,6 +61,15 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Inject
     private ManagementNetworkUtil managementNetworkUtil;
+
+    @Inject
+    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
+
+    @Inject
+    private VdsGroupDao vdsGroupDao;
+
+    @Inject
+    private VmDao vmDao;
 
     private Network oldNetwork;
 
@@ -125,8 +142,9 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             return true;
         }
 
-        NetworkValidator validatorNew = new NetworkValidator(getNetwork());
-        UpdateNetworkValidator validatorOld = new UpdateNetworkValidator(getOldNetwork());
+        final NetworkValidator validatorNew = new NetworkValidator(vmDao, getNetwork());
+        final UpdateNetworkValidator validatorOld =
+                new UpdateNetworkValidator(getOldNetwork(), vmNetworkInterfaceDao, vdsGroupDao, vmDao);
         return validate(validatorNew.dataCenterExists())
                 && validate(validatorNew.vmNetworkSetCorrectly())
                 && validate(validatorNew.stpForVmNetworkOnly())
@@ -198,8 +216,18 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     protected static class UpdateNetworkValidator extends NetworkValidator {
 
-        public UpdateNetworkValidator(Network network) {
-            super(network);
+        private final VmNetworkInterfaceDao vmNetworkInterfaceDao;
+        private final VdsGroupDao vdsGroupDao;
+
+        public UpdateNetworkValidator(
+                Network network,
+                VmNetworkInterfaceDao vmNetworkInterfaceDao,
+                VdsGroupDao vdsGroupDao,
+                VmDao vmDao) {
+            super(vmDao, network);
+
+            this.vmNetworkInterfaceDao = vmNetworkInterfaceDao;
+            this.vdsGroupDao = vdsGroupDao;
         }
 
         public ValidationResult notRenamingLabel(String newLabel) {
@@ -269,7 +297,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
         public ValidationResult networkNotUsedByRunningVms() {
             List<VM> runningVms = new ArrayList<>();
-            List<VmNetworkInterface> vnics = getDbFacade().getVmNetworkInterfaceDao().getAllForNetwork(network.getId());
+            List<VmNetworkInterface> vnics = vmNetworkInterfaceDao.getAllForNetwork(network.getId());
             Map<Guid, List<VmNetworkInterface>> vnicsByVmId = Entities.vmInterfacesByVmId(vnics);
 
             for (VM vm : getVms()) {
@@ -283,7 +311,26 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 }
             }
 
-            return networkNotUsed(runningVms, EngineMessage.VAR__ENTITIES__VMS, EngineMessage.VAR__ENTITIES__VM);
+            final List<VM> runningVmNotSupportNetworkChange = LinqUtils.filter(runningVms, new Predicate<VM>() {
+                final Map<Guid, Version> clusterVersions = new HashMap<>();
+
+                @Override
+                public boolean eval(VM vm) {
+                    final Guid clusterId = vm.getVdsGroupId();
+                    Version clusterVersion = clusterVersions.get(clusterId);
+                    if (clusterVersion == null) {
+                        final VDSGroup cluster = vdsGroupDao.get(clusterId);
+                        clusterVersion = cluster.getCompatibilityVersion();
+                        clusterVersions.put(clusterId, clusterVersion);
+                    }
+
+                    return !FeatureSupported.changeNetworkUsedByVmSupported(clusterVersion);
+                }
+            });
+
+            return networkNotUsed(runningVmNotSupportNetworkChange,
+                    EngineMessage.VAR__ENTITIES__VMS,
+                    EngineMessage.VAR__ENTITIES__VM);
         }
 
         public ValidationResult nonVmNetworkNotUsedByTemplates(Network updatedNetwork) {

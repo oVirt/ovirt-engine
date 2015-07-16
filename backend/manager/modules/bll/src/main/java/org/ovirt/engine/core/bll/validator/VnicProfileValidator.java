@@ -14,10 +14,13 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 
 public class VnicProfileValidator {
+
+    private final VmDao vmDao;
 
     private VnicProfile vnicProfile;
     private VnicProfile oldVnicProfile;
@@ -25,7 +28,8 @@ public class VnicProfileValidator {
     private List<VnicProfile> vnicProfiles;
     private List<VM> vms;
 
-    public VnicProfileValidator(VnicProfile vnicProfile) {
+    public VnicProfileValidator(VmDao vmDao, VnicProfile vnicProfile) {
+        this.vmDao = vmDao;
         this.vnicProfile = vnicProfile;
     }
 
@@ -46,7 +50,7 @@ public class VnicProfileValidator {
     }
 
     public ValidationResult networkExists() {
-        return new NetworkValidator(getNetwork()).networkIsSet();
+        return new NetworkValidator(vmDao, getNetwork()).networkIsSet();
     }
 
     public ValidationResult networkQosExistsOrNull() {

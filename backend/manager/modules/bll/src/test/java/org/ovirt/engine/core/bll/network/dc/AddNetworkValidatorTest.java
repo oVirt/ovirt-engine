@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -38,13 +39,15 @@ public class AddNetworkValidatorTest {
     @Mock
     private NetworkDao networkDao;
 
-    private List<Network> networks = new ArrayList<Network>();
+    @Mock
+    private VmDao vmDao;
 
+    private List<Network> networks = new ArrayList<>();
     private AddNetworkValidator validator;
 
     @Before
     public void setup() {
-        validator = spy(new AddNetworkValidator(network));
+        validator = spy(new AddNetworkValidator(vmDao, network));
 
         // spy on attempts to access the database
         doReturn(dbFacade).when(validator).getDbFacade();

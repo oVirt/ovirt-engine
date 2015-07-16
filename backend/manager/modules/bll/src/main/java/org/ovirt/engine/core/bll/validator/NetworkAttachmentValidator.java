@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.PluralMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -39,23 +40,24 @@ public class NetworkAttachmentValidator {
     private final NetworkAttachmentDao networkAttachmentDao;
     private final NetworkClusterDao networkClusterDao;
     private final VmInterfaceManager vmInterfaceManager;
+    private final VmDao vmDao;
 
     private NetworkAttachment attachment;
     private Network network;
     private VDS host;
-    private final ManagementNetworkUtil managementNetworkUtil;
 
+    private final ManagementNetworkUtil managementNetworkUtil;
     private NetworkCluster networkCluster;
     private NetworkValidator networkValidator;
     private NetworkAttachment existingNetworkAttachment;
 
     public NetworkAttachmentValidator(NetworkAttachment attachment,
-        VDS host,
-        ManagementNetworkUtil managementNetworkUtil,
-        NetworkAttachmentDao networkAttachmentDao,
-        VmInterfaceManager vmInterfaceManager, NetworkClusterDao networkClusterDao,
-        NetworkDao networkDao,
-        VdsDao vdsDao) {
+            VDS host,
+            ManagementNetworkUtil managementNetworkUtil,
+            NetworkAttachmentDao networkAttachmentDao,
+            VmInterfaceManager vmInterfaceManager, NetworkClusterDao networkClusterDao,
+            NetworkDao networkDao,
+            VdsDao vdsDao, VmDao vmDao) {
 
         this.attachment = attachment;
         this.host = host;
@@ -65,6 +67,7 @@ public class NetworkAttachmentValidator {
         this.networkClusterDao = networkClusterDao;
         this.networkDao = networkDao;
         this.vdsDao = vdsDao;
+        this.vmDao = vmDao;
     }
 
     public ValidationResult networkAttachmentIsSet() {
@@ -92,8 +95,13 @@ public class NetworkAttachmentValidator {
     }
 
     private ValidationResult networkNotUsedByVms(String networkName) {
+
+        if (FeatureSupported.changeNetworkUsedByVmSupported(host.getVdsGroupCompatibilityVersion())) {
+            return ValidationResult.VALID;
+        }
+
         List<String> vmNames =
-            vmInterfaceManager.findActiveVmsUsingNetworks(host.getId(), Collections.singleton(networkName));
+                vmInterfaceManager.findActiveVmsUsingNetworks(host.getId(), Collections.singleton(networkName));
 
         //TODO MM: this error message seems very crippled & missing some translations.
         return new PluralMessages().getNetworkInUse(vmNames,
@@ -180,7 +188,7 @@ public class NetworkAttachmentValidator {
                         VAR_ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED_LIST,
                         getNetwork().getName()))
                     .when(StringUtils.equals(oldAddress, host.getHostName())
-                        && !StringUtils.equals(oldAddress, ipConfiguration.getPrimaryAddress().getAddress()));
+                            && !StringUtils.equals(oldAddress, ipConfiguration.getPrimaryAddress().getAddress()));
 
             }
         }
@@ -237,7 +245,7 @@ public class NetworkAttachmentValidator {
 
     NetworkValidator getNetworkValidator() {
         if (networkValidator == null) {
-            networkValidator = new NetworkValidator(getNetwork());
+            networkValidator = new NetworkValidator(vmDao, getNetwork());
         }
 
         return networkValidator;

@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.network.dc;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
@@ -15,8 +17,13 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDao;
 
 public class UnlabelNetworkCommand<T extends UnlabelNetworkParameters> extends CommandBase<T> {
+
+    @Inject
+    private VmDao vmDao;
+
     private Network network;
 
     public UnlabelNetworkCommand(T parameters) {
@@ -45,7 +52,7 @@ public class UnlabelNetworkCommand<T extends UnlabelNetworkParameters> extends C
 
     @Override
     protected boolean canDoAction() {
-        NetworkValidator validatorNew = new NetworkValidator(getNetwork());
+        NetworkValidator validatorNew = new NetworkValidator(vmDao, getNetwork());
         return validate(validatorNew.networkIsSet());
     }
 

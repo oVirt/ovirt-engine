@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -85,6 +86,7 @@ public class HostSetupNetworksValidator {
     private final NetworkDao networkDao;
     private final VdsDao vdsDao;
     private final BusinessEntityMap<Bond> bondsMap;
+    private final VmDao vmDao;
     private Map<Guid, NetworkAttachment> networkAttachmentsByNetworkId;
     private Map<String, NicLabel> nicLabelByLabel;
     private HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper;
@@ -99,7 +101,8 @@ public class HostSetupNetworksValidator {
         NetworkAttachmentDao networkAttachmentDao,
         NetworkDao networkDao,
         VdsDao vdsDao,
-        HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper) {
+        HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper,
+        VmDao vmDao) {
 
         this.host = host;
         this.params = params;
@@ -110,6 +113,7 @@ public class HostSetupNetworksValidator {
         this.networkDao = networkDao;
         this.vdsDao = vdsDao;
         this.existingInterfaces = existingInterfaces;
+        this.vmDao = vmDao;
         this.existingInterfacesMap = new BusinessEntityMap<>(existingInterfaces);
         this.networkBusinessEntityMap = networkBusinessEntityMap;
 
@@ -625,7 +629,8 @@ public class HostSetupNetworksValidator {
             new VmInterfaceManager(),
             networkClusterDao,
             networkDao,
-            vdsDao);
+            vdsDao,
+            vmDao);
     }
 
     /**

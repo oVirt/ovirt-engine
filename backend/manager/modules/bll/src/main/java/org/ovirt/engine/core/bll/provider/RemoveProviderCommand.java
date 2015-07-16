@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -18,10 +20,14 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class RemoveProviderCommand<P extends ProviderParameters> extends CommandBase<P> {
+
+    @Inject
+    private VmDao vmDao;
 
     private Provider<?> deletedProvider;
 
@@ -48,7 +54,7 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
 
     @Override
     protected boolean canDoAction() {
-        RemoveProviderValidator validator = new RemoveProviderValidator(getDeletedProvider());
+        RemoveProviderValidator validator = new RemoveProviderValidator(vmDao, getDeletedProvider());
         return validate(validator.providerIsSet()) && validate(validator.providerNetworksNotUsed());
     }
 
@@ -91,8 +97,11 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
 
     protected static class RemoveProviderValidator extends ProviderValidator {
 
-        public RemoveProviderValidator(Provider<?> provider) {
+        private final VmDao vmDao;
+
+        public RemoveProviderValidator(VmDao vmDao, Provider<?> provider) {
             super(provider);
+            this.vmDao = vmDao;
         }
 
         public ValidationResult providerNetworksNotUsed() {
@@ -126,7 +135,7 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
         }
 
         protected NetworkValidator getValidator(Network network) {
-            return new NetworkValidator(network);
+            return new NetworkValidator(vmDao, network);
         }
     }
 }

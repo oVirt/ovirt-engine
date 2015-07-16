@@ -2,13 +2,19 @@ package org.ovirt.engine.core.bll.network.vm;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.validator.VnicProfileValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
+import org.ovirt.engine.core.dao.VmDao;
 
 public class RemoveVnicProfileCommand<T extends VnicProfileParameters> extends VnicProfileCommandBase<T> {
+
+    @Inject
+    private VmDao vmDao;
 
     public RemoveVnicProfileCommand(T parameters) {
         super(parameters);
@@ -16,7 +22,7 @@ public class RemoveVnicProfileCommand<T extends VnicProfileParameters> extends V
 
     @Override
     protected boolean canDoAction() {
-        VnicProfileValidator validator = new VnicProfileValidator(getVnicProfile());
+        VnicProfileValidator validator = new VnicProfileValidator(vmDao, getVnicProfile());
         return validate(validator.vnicProfileIsSet())
                 && validate(validator.vnicProfileExists())
                 && validate(validator.vnicProfileNotUsedByVms())

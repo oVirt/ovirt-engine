@@ -589,4 +589,12 @@ public class FeatureSupported {
     public static boolean refreshLunSupported(Version version) {
         return supportedInConfig(ConfigValues.RefreshLunSupported, version);
     }
+
+    /**
+     * @param version Compatibility version to check for.
+     * @return <code>true</code> if a host of the given version supports changing network under a bridge in use.
+     */
+    public static boolean changeNetworkUsedByVmSupported(Version version) {
+        return supportedInConfig(ConfigValues.ChangeNetworkUnderBridgeInUseSupported, version);
+    }
 }

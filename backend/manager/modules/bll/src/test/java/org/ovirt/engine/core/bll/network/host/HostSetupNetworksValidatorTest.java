@@ -52,6 +52,7 @@ import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -76,8 +77,10 @@ public class HostSetupNetworksValidatorTest {
     @Mock
     private VdsDao vdsDaoMock;
 
-    private Bond bond;
+    @Mock
+    private VmDao vmDao;
 
+    private Bond bond;
     @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule(
         mockConfig(ConfigValues.NetworkCustomPropertiesSupported, Version.v3_4.toString(), false),
@@ -1405,7 +1408,8 @@ public class HostSetupNetworksValidatorTest {
                 networkAttachmentDaoMock,
                 networkDaoMock,
                 vdsDaoMock,
-                new HostSetupNetworksValidatorHelper());
+                new HostSetupNetworksValidatorHelper(),
+                vmDao);
         }
     }
 }

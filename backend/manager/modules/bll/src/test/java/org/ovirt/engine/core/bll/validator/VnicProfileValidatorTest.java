@@ -75,7 +75,7 @@ public class VnicProfileValidatorTest {
     public void setup() {
 
         // spy on attempts to access the database
-        validator = spy(new VnicProfileValidator(vnicProfile));
+        validator = spy(new VnicProfileValidator(vmDao, vnicProfile));
         doReturn(dbFacade).when(validator).getDbFacade();
 
         // mock some commonly used Daos
@@ -96,7 +96,7 @@ public class VnicProfileValidatorTest {
 
     @Test
     public void vnicProfileNull() throws Exception {
-        validator = new VnicProfileValidator(null);
+        validator = new VnicProfileValidator(vmDao, null);
         assertThat(validator.vnicProfileIsSet(), failsWith(EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS));
     }
 

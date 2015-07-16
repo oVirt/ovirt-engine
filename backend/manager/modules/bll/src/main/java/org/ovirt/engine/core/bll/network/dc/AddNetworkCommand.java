@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -23,11 +25,15 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkModification<T> {
+    @Inject
+    private VmDao vmDao;
+
     public AddNetworkCommand(T parameters) {
         super(parameters);
     }
@@ -81,7 +87,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     }
 
     protected AddNetworkValidator getNetworkValidator() {
-        return new AddNetworkValidator(getNetwork());
+        return new AddNetworkValidator(vmDao, getNetwork());
     }
 
     private boolean externalNetworkValid(AddNetworkValidator validator) {
@@ -126,8 +132,8 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
 
     protected static class AddNetworkValidator extends NetworkValidator {
 
-        public AddNetworkValidator(Network network) {
-            super(network);
+        public AddNetworkValidator(VmDao vmDao, Network network) {
+            super(vmDao, network);
         }
 
         public ValidationResult externalNetworkVlanValid() {

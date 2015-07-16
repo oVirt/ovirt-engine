@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.PluralMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
  */
 public class NetworkValidator {
 
+    private final VmDao vmDao;
     protected final Network network;
 
     private StoragePool dataCenter;
@@ -34,8 +36,9 @@ public class NetworkValidator {
     private List<VM> vms;
     private List<VmTemplate> templates;
 
-    public NetworkValidator(Network network) {
+    public NetworkValidator(VmDao vmDao, Network network) {
         this.network = network;
+        this.vmDao = vmDao;
     }
 
     protected DbFacade getDbFacade() {
@@ -183,8 +186,17 @@ public class NetworkValidator {
         return String.format("$NetworkName %s", network.getName());
     }
 
-    protected ValidationResult networkNotUsed(List<? extends Nameable> entities, EngineMessage entitiesReplacementPlural, EngineMessage entitiesReplacementSingular) {
-        return new PluralMessages().getNetworkInUse(getEntitiesNames(entities),
+    protected ValidationResult networkNotUsed(List<? extends Nameable> entities,
+            EngineMessage entitiesReplacementPlural,
+            EngineMessage entitiesReplacementSingular) {
+        final Collection<String> entitiesNames = getEntitiesNames(entities);
+        return networkNotUsed(entitiesNames, entitiesReplacementPlural, entitiesReplacementSingular);
+    }
+
+    protected ValidationResult networkNotUsed(Collection<String> entitiesNames,
+            EngineMessage entitiesReplacementPlural,
+            EngineMessage entitiesReplacementSingular) {
+        return new PluralMessages().getNetworkInUse(entitiesNames,
             entitiesReplacementSingular,
             entitiesReplacementPlural);
     }
@@ -246,10 +258,14 @@ public class NetworkValidator {
 
     protected List<VM> getVms() {
         if (vms == null) {
-            vms = getDbFacade().getVmDao().getAllForNetwork(network.getId());
+            vms = getVmDao().getAllForNetwork(network.getId());
         }
 
         return vms;
+    }
+
+    protected VmDao getVmDao() {
+        return vmDao;
     }
 
     protected List<VmTemplate> getTemplates() {

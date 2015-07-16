@@ -74,15 +74,17 @@ public class NetworkValidatorTest {
     @Mock
     private ManagementNetworkUtil managementNetworkUtil;
 
-    private List<Network> networks = new ArrayList<Network>();
+    @Mock
+    private VmDao vmDao;
 
+    private List<Network> networks = new ArrayList<Network>();
     private NetworkValidator validator;
 
     @Before
     public void setup() {
 
         // spy on attempts to access the database
-        validator = spy(new NetworkValidator(network));
+        validator = spy(new NetworkValidator(vmDao, network));
         doReturn(dbFacade).when(validator).getDbFacade();
         doReturn(managementNetworkUtil).when(validator).getManagementNetworkUtil();
 
@@ -106,7 +108,7 @@ public class NetworkValidatorTest {
 
     @Test
     public void networkNull() throws Exception {
-        validator = new NetworkValidator(null);
+        validator = new NetworkValidator(vmDao, null);
         assertThat(validator.networkIsSet(), failsWith(EngineMessage.NETWORK_NOT_EXISTS));
     }
 
@@ -334,9 +336,7 @@ public class NetworkValidatorTest {
     }
 
     private void networkNotUsedByVmsTest(Matcher<ValidationResult> matcher, List<VM> vms) {
-        VmDao vmDao = mock(VmDao.class);
         when(vmDao.getAllForNetwork(any(Guid.class))).thenReturn(vms);
-        when(dbFacade.getVmDao()).thenReturn(vmDao);
         assertThat(validator.networkNotUsedByVms(), matcher);
     }
 

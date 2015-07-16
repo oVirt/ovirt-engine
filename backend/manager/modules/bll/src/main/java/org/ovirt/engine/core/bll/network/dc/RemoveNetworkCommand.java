@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.network.dc;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
@@ -13,13 +15,17 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends NetworkCommon<T> {
-    private Network network;
 
+    @Inject
+    private VmDao vmDao;
+
+    private Network network;
     private Provider<?> provider;
 
     public RemoveNetworkCommand(Guid id) {
@@ -103,7 +109,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
 
     @Override
     protected boolean canDoAction() {
-        NetworkValidator validator = new NetworkValidator(getNetworkDao().get(getNetwork().getId()));
+        NetworkValidator validator = new NetworkValidator(vmDao, getNetworkDao().get(getNetwork().getId()));
         return validate(validator.networkIsSet())
                 && validate(validator.notRemovingManagementNetwork())
                 && validate(validator.notIscsiBondNetwork())

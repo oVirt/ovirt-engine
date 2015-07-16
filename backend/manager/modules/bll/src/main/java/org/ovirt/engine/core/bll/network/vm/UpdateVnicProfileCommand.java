@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.network.vm;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.validator.VnicProfileValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -11,9 +13,13 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.VmDao;
 
 public class UpdateVnicProfileCommand<T extends VnicProfileParameters>
         extends VnicProfileCommandBase<T> implements RenamedEntityInfoProvider {
+
+    @Inject
+    private VmDao vmDao;
 
     private VnicProfile oldVnicProfile;
 
@@ -23,7 +29,7 @@ public class UpdateVnicProfileCommand<T extends VnicProfileParameters>
 
     @Override
     protected boolean canDoAction() {
-        VnicProfileValidator validator = new VnicProfileValidator(getVnicProfile());
+        VnicProfileValidator validator = new VnicProfileValidator(vmDao, getVnicProfile());
         return validate(validator.vnicProfileIsSet())
                 && validate(validator.vnicProfileExists())
                 && validate(validator.vnicProfileNameNotUsed())

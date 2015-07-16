@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.provider.network;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.dc.AddNetworkCommand;
@@ -10,11 +12,15 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParameters> extends AddNetworkCommand<T> {
+
+    @Inject
+    private VmDao vmDao;
 
     private Provider<?> provider;
 
@@ -65,12 +71,12 @@ public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParamete
 
     @Override
     protected AddNetworkValidator getNetworkValidator() {
-        return new AddNetworkOnProviderValidator(getNetwork());
+        return new AddNetworkOnProviderValidator(vmDao, getNetwork());
     }
 
     protected class AddNetworkOnProviderValidator extends AddNetworkValidator {
-        public AddNetworkOnProviderValidator(Network network) {
-            super(network);
+        public AddNetworkOnProviderValidator(VmDao vmDao, Network network) {
+            super(vmDao, network);
         }
 
         /**

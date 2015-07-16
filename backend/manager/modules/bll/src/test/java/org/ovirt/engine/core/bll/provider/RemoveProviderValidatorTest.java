@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -37,18 +38,21 @@ public class RemoveProviderValidatorTest {
     @Mock
     private Provider<?> provider;
 
-    private List<Network> networks = new ArrayList<Network>();
+    private List<Network> networks = new ArrayList<>();
 
     private RemoveProviderValidator validator;
 
     @Mock
     private NetworkDao networkDao;
 
+    @Mock
+    private VmDao vmDao;
+
     /* --- Set up for tests --- */
 
     @Before
     public void setUp() throws Exception {
-        validator = spy(new RemoveProviderValidator(provider));
+        validator = spy(new RemoveProviderValidator(vmDao, provider));
 
         doReturn(networkDao).when(validator).getNetworkDao();
         when(networkDao.getAllForProvider(any(Guid.class))).thenReturn(networks);

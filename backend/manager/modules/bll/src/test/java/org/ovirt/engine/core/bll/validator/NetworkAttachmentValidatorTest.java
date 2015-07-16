@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -71,11 +72,15 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     @Mock
     private ManagementNetworkUtil managementNetworkUtilMock;
 
+    @Mock
+    private VmDao vmDao;
 
     @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule(
         mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_5.toString(), false),
-        mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_6.toString(), true));
+        mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_6.toString(), true),
+        mockConfig(ConfigValues.ChangeNetworkUnderBridgeInUseSupported, Version.v3_5.toString(), false),
+        mockConfig(ConfigValues.ChangeNetworkUnderBridgeInUseSupported, Version.v3_6.toString(), true));
 
 
     private final VDS host;
@@ -95,7 +100,8 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
             vmInterfaceManager,
             networkClusterDaoMock,
             networkDaoMock,
-            vdsDaoMock);
+            vdsDaoMock,
+            vmDao);
     }
 
     @Test
@@ -321,7 +327,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     @Test
     public void testBootProtocolSetForDisplayNetworkWhenNullValuedIpConfigurationAndWhenNetworkClusterDisplayIsFalse() {
         doTestBootProtocolSetForDisplayNetworkWhenNullValuedIpConfigurationAndWhenNetworkClusterDisplay(false,
-            createNetwork(), isValid());
+                createNetwork(), isValid());
     }
 
     @Test
@@ -329,8 +335,8 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         Network network = createNetwork();
         doTestBootProtocolSetForDisplayNetworkWhenNullValuedIpConfigurationAndWhenNetworkClusterDisplay(true,
             network, failsWith(EngineMessage.ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL,
-                ReplacementUtils.createSetVariableString(NetworkAttachmentValidator.VAR_ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY,
-                    network.getName())));
+                        ReplacementUtils.createSetVariableString(NetworkAttachmentValidator.VAR_ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY,
+                                network.getName())));
     }
 
     private void doTestBootProtocolSetForDisplayNetworkWhenNullValuedIpConfigurationAndWhenNetworkClusterDisplay(
@@ -373,11 +379,11 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         attachment.setNetworkId(network.getId());
 
         doTestBootProtocolSetForDisplayNetworkWhenNullValuedIpConfigurationAndWhenNetworkClusterDisplay(true,
-            failsWith(EngineMessage.ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL,
-                ReplacementUtils.createSetVariableString(NetworkAttachmentValidator.VAR_ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY,
-                    network.getName())),
-            network,
-            attachment);
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL,
+                        ReplacementUtils.createSetVariableString(NetworkAttachmentValidator.VAR_ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY,
+                                network.getName())),
+                network,
+                attachment);
     }
 
     private Network createNetwork() {
@@ -398,9 +404,9 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
 
         doTestBootProtocolSetForDisplayNetworkWhenNullValuedIpConfigurationAndWhenNetworkClusterDisplay(false,
-            isValid(),
-            network,
-            attachment);
+                isValid(),
+                network,
+                attachment);
     }
 
     @Test
@@ -424,7 +430,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         NetworkAttachment attachment = new NetworkAttachment();
         attachment.setNicName(null);
         assertThat(createNetworkAttachmentValidator(attachment).nicExists(),
-            failsWith(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST));
+                failsWith(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST));
     }
 
     @Test
@@ -503,8 +509,8 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
             new BusinessEntityMap<>(Collections.singletonList(existingInterface));
         assertThat(validator.networkIpAddressWasSameAsHostnameAndChanged(nics),
             failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED,
-                ReplacementUtils.createSetVariableString(NetworkAttachmentValidator.VAR_ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED_LIST,
-                    existingInterface.getNetworkName())));
+                    ReplacementUtils.createSetVariableString(NetworkAttachmentValidator.VAR_ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED_LIST,
+                            existingInterface.getNetworkName())));
     }
 
     @Test
@@ -523,8 +529,8 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
         assertThat(createNetworkAttachmentValidator(attachment).networkNotChanged(oldAttachment),
             failsWith(EngineMessage.CANNOT_CHANGE_ATTACHED_NETWORK,
-                ReplacementUtils.createSetVariableString(NetworkAttachmentValidator.VAR_NETWORK_ATTACHMENT_ID,
-                    oldAttachment.getId())));
+                    ReplacementUtils.createSetVariableString(NetworkAttachmentValidator.VAR_NETWORK_ATTACHMENT_ID,
+                            oldAttachment.getId())));
     }
 
     @Test
@@ -618,8 +624,8 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         attachment.setNetworkName(networkName);
         assertThat(createNetworkAttachmentValidator(attachment).networkNotAttachedToHost(),
             failsWith(EngineMessage.NETWORK_ALREADY_ATTACHED_TO_HOST,
-                ReplacementUtils.createSetVariableString("networkName", networkName),
-                ReplacementUtils.createSetVariableString("hostName", host.getName())));
+                    ReplacementUtils.createSetVariableString("networkName", networkName),
+                    ReplacementUtils.createSetVariableString("hostName", host.getName())));
     }
 
     @Test
@@ -627,6 +633,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         Network network = new Network();
         network.setId(Guid.newGuid());
         network.setName("name");
+        host.setVdsGroupCompatibilityVersion(Version.v3_5);
 
         NetworkAttachment networkAttachment = new NetworkAttachment();
         networkAttachment.setNetworkId(network.getId());
@@ -635,7 +642,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
         when(vmInterfaceManager
             .findActiveVmsUsingNetworks(eq(host.getId()), collectionContainingOneGivenNetworkName(network.getName())))
-            .thenReturn(Collections.<String> emptyList());
+            .thenReturn(Collections.<String>emptyList());
 
         when(networkDaoMock.get(eq(network.getId()))).thenReturn(network);
 
@@ -643,7 +650,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNetworkNotUsedByVmsWhenUsed() throws Exception {
+    public void testNetworkNotUsedByVmsWhenUsedChangeNotSupported() throws Exception {
         Network network = new Network();
         network.setId(Guid.newGuid());
         network.setName("name");
@@ -658,7 +665,27 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
             .thenReturn(Collections.singletonList("networkName"));
 
         when(networkDaoMock.get(eq(network.getId()))).thenReturn(network);
+
+        host.setVdsGroupCompatibilityVersion(Version.v3_5);
+
         assertThat(validator.networkNotUsedByVms(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_IN_ONE_USE));
+    }
+
+    @Test
+    public void testNetworkNotUsedByVmsWhenUsedChangeSupported() throws Exception {
+        Network network = new Network();
+        network.setId(Guid.newGuid());
+        network.setName("name");
+
+        NetworkAttachment networkAttachment = new NetworkAttachment();
+        networkAttachment.setNetworkId(network.getId());
+
+        when(networkDaoMock.get(eq(network.getId()))).thenReturn(network);
+        host.setVdsGroupCompatibilityVersion(Version.v3_6);
+
+        NetworkAttachmentValidator validator = createNetworkAttachmentValidator(networkAttachment);
+
+        assertThat(validator.networkNotUsedByVms(), isValid());
     }
 
     private Collection<String> collectionContainingOneGivenNetworkName(final String name) {

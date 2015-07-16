@@ -39,6 +39,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -50,6 +51,9 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     @Inject
     private ManagementNetworkUtil managementNetworkUtil;
+
+    @Inject
+    private VmDao vmDao;
 
     public UpdateStoragePoolCommand(T parameters) {
         this(parameters, null);
@@ -295,7 +299,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     }
 
     protected NetworkValidator getNetworkValidator(Network network) {
-        return new NetworkValidator(network);
+        return new NetworkValidator(vmDao, network);
     }
 
     protected StoragePoolValidator createStoragePoolValidator() {

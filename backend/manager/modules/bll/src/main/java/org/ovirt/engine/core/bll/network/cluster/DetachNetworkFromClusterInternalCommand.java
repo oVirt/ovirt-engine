@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.network.cluster;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CanDoActionSupportsTransaction;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -15,11 +17,15 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dao.VmDao;
 
 @InternalCommandAttribute
 @CanDoActionSupportsTransaction
 public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToVdsGroupParameter>
         extends VdsGroupCommandBase<T> {
+
+    @Inject
+    private VmDao vmDao;
 
     public DetachNetworkFromClusterInternalCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -36,7 +42,7 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToVd
     @Override
     protected boolean canDoAction() {
         DetachNetworkValidator validator =
-                new DetachNetworkValidator(getNetwork(), getParameters().getNetworkCluster());
+                new DetachNetworkValidator(vmDao, getNetwork(), getParameters().getNetworkCluster());
         return validate(validator.notManagementNetwork())
                 && validate(validator.clusterNetworkNotUsedByVms())
                 && validate(validator.clusterNetworkNotUsedByTemplates())
@@ -57,8 +63,8 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToVd
 
         private final NetworkCluster networkCluster;
 
-        public DetachNetworkValidator(Network network, NetworkCluster networkCluster) {
-            super(network);
+        public DetachNetworkValidator(VmDao vmDao, Network network, NetworkCluster networkCluster) {
+            super(vmDao, network);
             this.networkCluster = networkCluster;
         }
 

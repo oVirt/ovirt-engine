@@ -2255,6 +2255,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("HostedEngine")
     HostedEngineVmName,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    ChangeNetworkUnderBridgeInUseSupported,
+
     Invalid
 
 }
