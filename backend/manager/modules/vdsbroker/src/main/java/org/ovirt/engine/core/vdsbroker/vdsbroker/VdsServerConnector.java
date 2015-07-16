@@ -448,4 +448,6 @@ public interface VdsServerConnector {
     public Map<String, Object> getExternalVmFromOva(String ovaPath);
 
     public Map<String, Object> refreshVolume(String sdUUID, String spUUID, String imgUUID, String volUUID);
+
+    public Map<String, Object> glusterProcessesStop();
 }
