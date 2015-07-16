@@ -26,6 +26,7 @@ import org.ovirt.engine.core.utils.SerializationFactory;
  */
 public class JsonObjectDeserializer implements Deserializer {
 
+    private static final ObjectMapper unformattedMapper = new ObjectMapper();
     private static final ObjectMapper formattedMapper;
     static {
         formattedMapper = new ObjectMapper();
@@ -79,6 +80,19 @@ public class JsonObjectDeserializer implements Deserializer {
             return SerializationFactory.getDeserializer().deserialize(value, clazz);
         }
     }
+
+
+    /**
+     * Deserialize unformatted Json content.
+     *
+     * @param source - The object which supposed to be deserialize.
+     * @return The serialized object.
+     * @throws SerializationExeption
+     */
+    public <T extends Serializable> T deserializeUnformattedJson(Object source, Class<T> type) throws SerializationExeption {
+        return readJsonString(source, type, unformattedMapper);
+    }
+
 
     private <T> T readJsonString(Object source, Class<T> type, ObjectMapper mapper) {
         try {
