@@ -2054,4 +2054,14 @@ public class VdsServerWrapper implements IVdsServer {
             throw new XmlRpcRunTimeException(ute);
         }
     };
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterStopProcesses() {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterProcessesStop();
+            return new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
 }
