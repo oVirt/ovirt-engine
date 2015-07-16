@@ -18,7 +18,6 @@ public enum ConfigurationValues {
     // TODO remove remarks and AdUserPassword completely in version 3.1.
     // AdUserPassword field format has been changed.
     // AdUserPassword,
-    LocalAdminPassword,
     ValidNumOfMonitors(ConfigAuthType.User),
     EnableUSBAsDefault(ConfigAuthType.User),
     SpiceSecureChannels(ConfigAuthType.User),

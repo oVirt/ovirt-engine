@@ -15,11 +15,6 @@ import org.ovirt.engine.core.compat.Version;
 
 public class GetConfigurationValuesQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
     private static final List<String> versions = getVersionsList();
-    private static final List<ConfigurationValues> generalOnlyPasswdConfigurationValues = new ArrayList<>();
-
-    static {
-        generalOnlyPasswdConfigurationValues.add(ConfigurationValues.LocalAdminPassword);
-    }
 
     public GetConfigurationValuesQuery(P parameters) {
         super(parameters);
@@ -42,11 +37,6 @@ public class GetConfigurationValuesQuery<P extends VdcQueryParametersBase> exten
             // Ignore an admin configuration value on filtered mode
             // Ignore a configuration value that doesn't exist in ConfigValues enum
             if (!shouldReturnValue(configValue)) {
-                continue;
-            }
-
-            if (generalOnlyPasswdConfigurationValues.contains(configValue)) {
-                populateValueForConfigValue(configValue, ConfigCommon.defaultConfigurationVersion, configValuesMap);
                 continue;
             }
 

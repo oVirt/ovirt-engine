@@ -86,7 +86,7 @@ public final class SysprepHandler {
             String systemLocale = Config.<String> getValue(ConfigValues.DefaultSysprepLocale);
             String userLocale = Config.<String> getValue(ConfigValues.DefaultSysprepLocale);
             String activeDirectoryOU = "";
-            String adminPassword = Config.<String> getValue(ConfigValues.LocalAdminPassword);
+            String adminPassword = "";
             String orgName = Config.<String> getValue(ConfigValues.OrganizationName);
 
             if (vm.getVmInit() != null) {

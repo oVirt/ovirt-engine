@@ -24,11 +24,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("EXAMPLE.COM:123456")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.DomainsPasswordMap)
     AdUserPassword,
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("123456")
-    @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
-    LocalAdminPassword,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("EXAMPLE.COM")
     DomainName,

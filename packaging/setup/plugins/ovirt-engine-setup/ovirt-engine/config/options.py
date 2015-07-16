@@ -226,13 +226,6 @@ class Plugin(plugin.PluginBase):
         ).updateVdcOptions(
             options=(
                 {
-                    'name': 'LocalAdminPassword',
-                    'value': self.environment[
-                        oenginecons.ConfigEnv.ADMIN_PASSWORD
-                    ],
-                    'encrypt': True,
-                },
-                {
                     'name': 'AdminPassword',
                     'value': self.environment[
                         oenginecons.ConfigEnv.ADMIN_PASSWORD
