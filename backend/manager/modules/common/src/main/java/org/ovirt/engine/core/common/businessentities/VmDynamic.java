@@ -311,7 +311,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         hash = template.getHash();
         guestAgentNicsHash = template.getGuestAgentNicsHash();
         exitMessage = template.getExitMessage();
-        disks = template.getDisks();
+        disks = new ArrayList<>(template.getDisks());
         win2kHackEnabled = template.getWin2kHackEnable();
         lastWatchdogEvent = template.getLastWatchdogEvent();
         lastWatchdogAction = template.getLastWatchdogAction();
@@ -323,7 +323,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         stopReason = template.getStopReason();
         exitReason = template.getExitReason();
         guestCpuCount = template.getGuestCpuCount();
-        graphicsInfos = template.getGraphicsInfos();
+        graphicsInfos = new HashMap<>(template.getGraphicsInfos());
         guestMemoryCached = template.getGuestMemoryCached();
         guestMemoryBuffered = template.getGuestMemoryBuffered();
         guestMemoryFree = template.getGuestMemoryFree();
