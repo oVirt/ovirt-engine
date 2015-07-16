@@ -49,7 +49,7 @@ public enum VdcQueryType implements Serializable {
     GetAllSiblingVlanInterfaces,
     GetVlanParent,
     GetVdsHooksById,
-    GetAllHosts,
+    GetAllHosts(VdcQueryAuthType.User),
     GetHostsByClusterId(VdcQueryAuthType.User),
     IsDisplayAddressConsistentInCluster,
     GetAllVdsByStoragePool(VdcQueryAuthType.User),
