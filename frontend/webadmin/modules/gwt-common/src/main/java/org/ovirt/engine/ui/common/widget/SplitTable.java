@@ -1,21 +1,25 @@
 package org.ovirt.engine.ui.common.widget;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Set;
 
 import org.ovirt.engine.ui.common.widget.dialog.ShapedButton;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
@@ -114,8 +118,6 @@ public abstract class SplitTable<M extends ListModel<T>, T> extends Composite {
             @Override
             public void onClick(ClickEvent event) {
                 MultiSelectionModel<T> sourceSelectionModel = getSelectionModel(excludedTableIsSource);
-                EntityModelCellTable<M> sourceTable = getTable(excludedTableIsSource);
-                EntityModelCellTable<M> targetTable = getTable(!excludedTableIsSource);
                 UICommand command = excludedTableIsSource ? onIncludeButtonPressed : onExcludeButtonPressed;
 
                 if (command != null) {
@@ -123,17 +125,77 @@ public abstract class SplitTable<M extends ListModel<T>, T> extends Composite {
                 }
 
                 Set<T> selectedItems = sourceSelectionModel.getSelectedSet();
-                sourceTable.asEditor().flush().getItems().removeAll(selectedItems);
-                ListModel<T> targetListModel = targetTable.asEditor().flush();
-                Collection<T> targetItems = targetListModel.getItems();
-                if (targetItems == null) {
-                    targetItems = new LinkedList<T>();
-                    targetListModel.setItems(targetItems);
+
+                if (excludedTableIsSource) {
+                    includeItems(selectedItems, true);
+                } else {
+                    excludeItems(selectedItems, true);
                 }
-                targetItems.addAll(selectedItems);
-                refresh();
             }
         });
+    }
+
+    /**
+     * Allows items to be moved between {@code excludedTable} and {@code includedTable}
+     * by double-clicking them. Moving items this way retains selection in both tables
+     * (excluding the item that was moved).
+     */
+    public void enableDoubleClickItemMoving() {
+        excludedTable.addSimulatedDoubleClickHandler(new CellPreviewEvent.Handler<EntityModel>() {
+            @Override
+            public void onCellPreview(CellPreviewEvent<EntityModel> event) {
+                T clickedItem = (T) event.getDisplay().getVisibleItem(event.getIndex());
+                includeItems(Collections.singletonList(clickedItem), false);
+            }
+        });
+        includedTable.addSimulatedDoubleClickHandler(new CellPreviewEvent.Handler<EntityModel>() {
+            @Override
+            public void onCellPreview(CellPreviewEvent<EntityModel> event) {
+                T clickedItem = (T) event.getDisplay().getVisibleItem(event.getIndex());
+                excludeItems(Collections.singletonList(clickedItem), false);
+            }
+        });
+    }
+
+    private void includeItems(Collection<T> itemsToInclude, boolean clearSelectionModels) {
+        M excludedTableModel = excludedTable.asEditor().flush();
+        M includedTableModel = includedTable.asEditor().flush();
+
+        if (excludedTableModel.getItems() != null && excludedTableModel.getItems().containsAll(itemsToInclude)) {
+            excludedTableModel.getItems().removeAll(itemsToInclude);
+            getListModelItems(includedTableModel).addAll(itemsToInclude);
+
+            for (T item : itemsToInclude) {
+                excludedSelectionModel.setSelected(item, false);
+            }
+
+            refresh(clearSelectionModels);
+        }
+    }
+
+    private void excludeItems(Collection<T> itemsToExclude, boolean clearSelectionModels) {
+        M excludedTableModel = excludedTable.asEditor().flush();
+        M includedTableModel = includedTable.asEditor().flush();
+
+        if (includedTableModel.getItems() != null && includedTableModel.getItems().containsAll(itemsToExclude)) {
+            includedTableModel.getItems().removeAll(itemsToExclude);
+            getListModelItems(excludedTableModel).addAll(itemsToExclude);
+
+            for (T item : itemsToExclude) {
+                includedSelectionModel.setSelected(item, false);
+            }
+
+            refresh(clearSelectionModels);
+        }
+    }
+
+    private Collection<T> getListModelItems(M model) {
+        Collection<T> items = model.getItems();
+        if (items == null) {
+            items = new LinkedList<>();
+            model.setItems(items);
+        }
+        return items;
     }
 
     private MultiSelectionModel<T> getSelectionModel(boolean excluded) {
@@ -148,9 +210,12 @@ public abstract class SplitTable<M extends ListModel<T>, T> extends Composite {
         return excluded ? excludedTable : includedTable;
     }
 
-    private void refresh() {
-        excludedSelectionModel.clear();
-        includedSelectionModel.clear();
+    private void refresh(boolean clearSelectionModels) {
+        if (clearSelectionModels) {
+            excludedSelectionModel.clear();
+            includedSelectionModel.clear();
+        }
+
         excludedTable.asEditor().edit(excludedTable.asEditor().flush());
         includedTable.asEditor().edit(includedTable.asEditor().flush());
     }

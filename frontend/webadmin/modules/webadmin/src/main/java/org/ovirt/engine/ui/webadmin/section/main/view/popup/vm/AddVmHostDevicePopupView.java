@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.AddVmHostDevicesModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.AddVmHostDevicePopupPresenterWidget;
+
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -80,6 +81,8 @@ public class AddVmHostDevicePopupView extends AbstractModelBoundPopupView<AddVmH
 
         initHostDeviceCellTable(availableHostDevices);
         initHostDeviceCellTable(selectedHostDevices);
+
+        splitTable.enableDoubleClickItemMoving();
     }
 
     private void initHostDeviceCellTable(EntityModelCellTable<SortedListModel<EntityModel<HostDeviceView>>> hostDeviceTable) {

@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.uicommonweb.models.GridController;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.TableCellElement;
@@ -34,6 +35,7 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.ColumnSortList.ColumnSortInfo;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.ProvidesKey;
 
 /**
@@ -452,6 +454,33 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
      */
     protected void clearColumnSort() {
         getColumnSortList().clear();
+    }
+
+    /**
+     * Adds a {@link CellPreviewEvent} handler for double-click event
+     * simulated as two {@code click} events fired in succession.
+     */
+    public void addSimulatedDoubleClickHandler(final CellPreviewEvent.Handler<T> handler) {
+        addCellPreviewHandler(new CellPreviewEvent.Handler<T>() {
+
+            private static final long DOUBLE_CLICK_THRESHOLD = 300; // Milliseconds
+            private long lastClick = -1;
+
+            @Override
+            public void onCellPreview(CellPreviewEvent<T> event) {
+                if (BrowserEvents.CLICK.equals(event.getNativeEvent().getType())) {
+                    long click = System.currentTimeMillis();
+
+                    if (lastClick > 0 && (click - lastClick < DOUBLE_CLICK_THRESHOLD)) {
+                        handler.onCellPreview(event);
+                        lastClick = -1;
+                    } else {
+                        lastClick = click;
+                    }
+                }
+            }
+
+        });
     }
 
 }
