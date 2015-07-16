@@ -96,6 +96,10 @@ public class LoggerServiceImpl implements ModuleService {
                 }
                 throw new ExitException("Parsing error", 1);
             }
+            if (moduleArgs.size() != 0) {
+                log.error("Extra parameters in command-line");
+                throw new ExitException("Parsing error", 1);
+            }
 
             return argMap;
         }
