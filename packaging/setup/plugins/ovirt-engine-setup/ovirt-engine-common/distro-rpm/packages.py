@@ -204,7 +204,7 @@ class Plugin(plugin.PluginBase):
         return update
 
     def _checkForProductUpdate(self):
-        haveRollback = True
+        missingRollback = []
         upgradeAvailable = False
         myum = self._miniyum.MiniYum(
             sink=self._getSink(),
@@ -244,7 +244,7 @@ class Plugin(plugin.PluginBase):
                     installed = False
                     reinstall_available = False
                     for query in myum.queryPackages(
-                        patterns=(package['name'],),
+                        patterns=(package['display_name'],),
                         showdups=True,
                     ):
                         self.logger.debug(
@@ -258,9 +258,8 @@ class Plugin(plugin.PluginBase):
                         if query['operation'] == 'reinstall_available':
                             reinstall_available = True
                     if installed and not reinstall_available:
-                        haveRollback = False
-                        break
-        return (upgradeAvailable, haveRollback, plist)
+                        missingRollback.append(package['display_name'])
+        return (upgradeAvailable, set(missingRollback), plist)
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -338,13 +337,13 @@ class Plugin(plugin.PluginBase):
         self._enabled = False
 
         upgradeAvailable = None
-        haveRollback = None
+        missingRollback = None
 
         if self.environment[osetupcons.RPMDistroEnv.ENABLE_UPGRADE] is None:
             self.logger.info(_('Checking for product updates...'))
             (
                 upgradeAvailable,
-                haveRollback,
+                missingRollback,
                 plist,
             ) = self._checkForProductUpdate()
 
@@ -393,14 +392,14 @@ class Plugin(plugin.PluginBase):
             if upgradeAvailable is None:
                 (
                     upgradeAvailable,
-                    haveRollback,
+                    missingRollback,
                     plist,
                 ) = self._checkForProductUpdate()
 
             if not upgradeAvailable:
                 self.dialog.note(text=_('No update for Setup found'))
             else:
-                if not haveRollback:
+                if missingRollback:
                     if self.environment[
                         osetupcons.RPMDistroEnv.REQUIRE_ROLLBACK
                     ] is None:
@@ -412,10 +411,15 @@ class Plugin(plugin.PluginBase):
                             note=_(
                                 'Setup will not be able to rollback new '
                                 'packages in case of a failure, because '
-                                'installed ones were not found in enabled '
-                                'repositories.\n'
+                                'the following installed packages were not '
+                                'found in enabled repositories:\n\n'
+                                '{missingRollback}\n'
                                 'Do you want to abort Setup? '
                                 '(@VALUES@) [@DEFAULT@]: '
+                            ).format(
+                                missingRollback='\n'.join(
+                                    list(missingRollback)
+                                ),
                             ),
                             prompt=True,
                             true=_('Yes'),
