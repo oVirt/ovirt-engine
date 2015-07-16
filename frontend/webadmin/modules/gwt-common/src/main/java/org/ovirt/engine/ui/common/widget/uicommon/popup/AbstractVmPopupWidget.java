@@ -2262,7 +2262,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         baseTemplateEditor.setEnabled(false);
         templateWithVersionEditor.setEnabled(false);
         vmTypeEditor.setEnabled(false);
-        instanceTypesEditor.setEnabled(false);
+        detachableInstanceTypesEditor.setEnabled(false);
         emulatedMachine.setEnabled(false);
         customCpu.setEnabled(false);
     }

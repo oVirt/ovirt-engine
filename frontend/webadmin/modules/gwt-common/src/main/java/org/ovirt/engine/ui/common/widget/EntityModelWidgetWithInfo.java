@@ -10,10 +10,11 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
-public class EntityModelWidgetWithInfo<T> extends Composite implements HasValidation {
+public class EntityModelWidgetWithInfo<T> extends Composite implements HasValidation, HasEnabled {
 
     interface WidgetUiBinder extends UiBinder<Widget, EntityModelWidgetWithInfo> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -62,5 +63,19 @@ public class EntityModelWidgetWithInfo<T> extends Composite implements HasValida
         }
 
         return true;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        label.setEnabled(enabled);
+        if (contentWidget instanceof HasEnabled) {
+            HasEnabled enableableWidget = (HasEnabled) this.contentWidget;
+            enableableWidget.setEnabled(enabled);
+        }
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return label.isEnabled();
     }
 }

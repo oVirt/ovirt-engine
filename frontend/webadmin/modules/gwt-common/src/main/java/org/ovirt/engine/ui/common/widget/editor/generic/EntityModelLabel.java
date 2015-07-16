@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.editor.generic;
 
+import org.ovirt.engine.ui.common.css.OvirtCss;
 import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
 import org.ovirt.engine.ui.common.widget.renderer.EmptyValueRenderer;
 import com.google.gwt.dom.client.Document;
@@ -23,6 +24,15 @@ public class EntityModelLabel<T> extends ValueBox<T> implements EditorWidget<T, 
         super.setText(new EmptyValueRenderer<String>().render(text));
         setReadOnly(true);
         getElement().getStyle().setBorderWidth(0, Unit.PX);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        if (enabled) {
+            getElement().replaceClassName(OvirtCss.LABEL_DISABLED, OvirtCss.LABEL_ENABLED);
+        } else {
+            getElement().replaceClassName(OvirtCss.LABEL_ENABLED, OvirtCss.LABEL_DISABLED);
+        }
     }
 
 }

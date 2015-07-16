@@ -42,7 +42,7 @@ public class ListModelTypeAheadChangeableListBox extends ListModelTypeAheadListB
                 StringUtils.isEmpty(value) || value.equals(nullReplacementText);
         // handle null replacement
         asSuggestBox().setValue(isEmptyReplace ? nullReplacementText : value, fireEvents);
-        asSuggestBox().getElement().getStyle().setColor(isEmptyReplace ? "gray" : "black"); //$NON-NLS-1$ $NON-NLS-2$
+        grayOutPlaceholderText(isEmptyReplace);
     }
 
     @Override

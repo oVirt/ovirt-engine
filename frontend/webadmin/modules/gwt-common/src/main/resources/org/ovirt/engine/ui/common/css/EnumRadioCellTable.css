@@ -25,7 +25,6 @@
 	border-right: 0px;
 	border-left: 0px;
 	white-space: nowrap;
-	cursor: pointer;
 }
 
 .cellTableEvenRow {
@@ -40,9 +39,12 @@
 	background-color: transparent;
 }
 
+.cellTableEnabledRow {
+	cursor: pointer;
+}
+
 .cellTableDisabledRow {
-	background-color: inactivecaption;
-	cursor: default !important;
+	cursor: default;
 }
 
 .cellTableSelectedRow {

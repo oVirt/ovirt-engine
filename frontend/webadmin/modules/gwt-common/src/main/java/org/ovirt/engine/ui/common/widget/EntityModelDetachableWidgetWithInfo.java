@@ -22,6 +22,7 @@ public class EntityModelDetachableWidgetWithInfo<T> extends EntityModelWidgetWit
 
     @Override
     public void setEnabled(boolean enabled) {
+        label.setEnabled(enabled);
         ((HasEnabled) contentWidget).setEnabled(enabled);
     }
 

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.ui.common.css.OvirtCss;
 import org.ovirt.engine.ui.common.editor.UiCommonEditor;
 import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
@@ -46,6 +47,11 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
 
     public interface EnumRadioCellTableResources extends CellTable.Resources {
         interface TableStyle extends CellTable.Style {
+            /**
+             * Applied to enabled rows
+             */
+            String cellTableEnabledRow();
+
             /**
              * Applied to disabled rows
              */
@@ -120,8 +126,9 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
          */
         private final Set<E> disabledSet;
         private final EnumRadioCellTableResources resources;
+        private final AbstractEnumColumn<E, E> nameColumn;
 
-        public EnumRadioCellTable(Class<E> enumClass, EnumRadioCellTableResources resources) {
+        public EnumRadioCellTable(Class<E> enumClass, final EnumRadioCellTableResources resources) {
             super(15, resources, new ListDataProvider<E>(Arrays.asList(enumClass.getEnumConstants())));
             this.resources = resources;
             disabledSet = new HashSet<E>();
@@ -129,8 +136,9 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
 
                 @Override
                 public String getStyleNames(E row, int rowIndex) {
-                    return disabledSet.contains(row) ? EnumRadioCellTable.this.resources.cellTableStyle()
-                            .cellTableDisabledRow() : null;
+                    return disabledSet.contains(row)
+                            ? resources.cellTableStyle().cellTableDisabledRow()
+                            : resources.cellTableStyle().cellTableEnabledRow();
                 }
             };
 
@@ -146,7 +154,7 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
             };
 
             // Text Column
-            AbstractEnumColumn<E, E> nameColumn = new AbstractEnumColumn<E, E>() {
+            nameColumn = new AbstractEnumColumn<E, E>() {
                 @Override
                 protected E getRawValue(E object) {
                     return object;
@@ -179,6 +187,11 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
         public void setEnabled(boolean enabled) {
             for (E item : getVisibleItems()) {
                 setEnabled(item, enabled);
+            }
+            if (enabled) {
+                nameColumn.getCell().setStyleClass(OvirtCss.LABEL_ENABLED);
+            } else {
+                nameColumn.getCell().setStyleClass(OvirtCss.LABEL_DISABLED);
             }
         }
 

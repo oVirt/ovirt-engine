@@ -19,9 +19,11 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.inject.Inject;
 
-public class SerialNumberPolicyWidget extends AbstractModelBoundPopupWidget<SerialNumberPolicyModel> {
+public class SerialNumberPolicyWidget extends AbstractModelBoundPopupWidget<SerialNumberPolicyModel>
+        implements HasEnabled {
 
     interface Driver extends SimpleBeanEditorDriver<SerialNumberPolicyModel, SerialNumberPolicyWidget> {
     }
@@ -90,5 +92,15 @@ public class SerialNumberPolicyWidget extends AbstractModelBoundPopupWidget<Seri
 
     public void setRenderer(VisibilityRenderer renderer) {
         overrideSerialNumberPolicy.setRenderer(renderer);
+    }
+
+    @Override public boolean isEnabled() {
+        return serialNumberPolicy.isEnabled();
+    }
+
+    @Override public void setEnabled(boolean enabled) {
+        overrideSerialNumberPolicy.setEnabled(enabled);
+        serialNumberPolicy.setEnabled(enabled);
+        customSerialNumber.setEnabled(enabled);
     }
 }

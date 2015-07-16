@@ -333,7 +333,15 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
         String replacementString = renderer.getReplacementString(value);
         boolean empty = StringUtils.isEmpty(replacementString);
         asSuggestBox().setValue(empty ? constants.emptyListBoxText() : replacementString, fireEvents);
-        asSuggestBox().getElement().getStyle().setColor(empty ? "gray" : "black"); //$NON-NLS-1$ $NON-NLS-2$
+        grayOutPlaceholderText(empty);
+    }
+
+    protected void grayOutPlaceholderText(boolean isPlaceholder) {
+        if (isPlaceholder) {
+            asSuggestBox().getElement().getStyle().setColor("gray"); //$NON-NLS-1$
+        } else {
+            asSuggestBox().getElement().getStyle().clearColor();
+        }
     }
 
     @Override
