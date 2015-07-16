@@ -56,8 +56,7 @@ public class VdsBrokerObjectBuilderTest {
     @Test
     public void testNullDisksUsages() {
         VmStatistics vmStatistics = getVmStatistics();
-        Object[] disksUsages = null;
-        Map<String, Object> xml = setDisksUsageInXmlRpc(disksUsages);
+        Map<String, Object> xml = setDisksUsageInXmlRpc(null);
         VdsBrokerObjectsBuilder.updateVMStatisticsData(vmStatistics, xml);
         assertEquals(null, vmStatistics.getDisksUsage());
     }
