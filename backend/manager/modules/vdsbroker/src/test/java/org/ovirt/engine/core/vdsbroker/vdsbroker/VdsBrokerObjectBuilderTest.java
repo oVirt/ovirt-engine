@@ -19,9 +19,9 @@ import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 public class VdsBrokerObjectBuilderTest {
 
     private static final int SIZE_FOR_DISK_STATS = 100;
-    private final Guid imageId = Guid.createGuidFromString("ed185868-3f9e-4040-a340-e1a64726ebc0");
-    private final Guid vmId = Guid.createGuidFromString("71ca53fb-c223-4b31-926d-de1c2ab0b0a9");
-    private final String DEFAULT_VALUE = "0.00";
+    private static final Guid IMAGE_ID = Guid.createGuidFromString("ed185868-3f9e-4040-a340-e1a64726ebc0");
+    private static final Guid VM_ID = Guid.createGuidFromString("71ca53fb-c223-4b31-926d-de1c2ab0b0a9");
+    private static final String DEFAULT_VALUE = "0.00";
 
     @Test
     public void testDisksUsages() {
@@ -147,7 +147,7 @@ public class VdsBrokerObjectBuilderTest {
         VmDynamic vmDynamic = getVmDynamic();
         Map<String, Object> diskData = new HashMap<String, Object>();
         diskData.put(VdsProperties.vm_disk_read_rate, DEFAULT_VALUE);
-        diskData.put(VdsProperties.ImageId, imageId.toString());
+        diskData.put(VdsProperties.ImageId, IMAGE_ID.toString());
         diskData.put(VdsProperties.vm_disk_write_rate, DEFAULT_VALUE);
 
         // Set the default values to the fields.
@@ -232,13 +232,13 @@ public class VdsBrokerObjectBuilderTest {
 
     private VmStatistics getVmStatistics() {
         VmStatistics vmStatistics = new VmStatistics();
-        vmStatistics.setId(vmId);
+        vmStatistics.setId(VM_ID);
         return vmStatistics;
     }
 
     private VmDynamic getVmDynamic() {
         VmDynamic vmDynamic = new VmDynamic();
-        vmDynamic.setId(vmId);
+        vmDynamic.setId(VM_ID);
         return vmDynamic;
     }
 
@@ -263,7 +263,7 @@ public class VdsBrokerObjectBuilderTest {
     private Map<String, Object> setDiskData() {
         Map<String, Object> diskData = new HashMap<String, Object>();
         diskData.put(VdsProperties.vm_disk_read_rate, DEFAULT_VALUE);
-        diskData.put(VdsProperties.ImageId, imageId.toString());
+        diskData.put(VdsProperties.ImageId, IMAGE_ID.toString());
         diskData.put(VdsProperties.vm_disk_write_rate, DEFAULT_VALUE);
 
         // Set the default values to the fields.
