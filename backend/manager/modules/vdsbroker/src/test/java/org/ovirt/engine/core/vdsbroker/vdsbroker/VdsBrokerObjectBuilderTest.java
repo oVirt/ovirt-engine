@@ -58,7 +58,7 @@ public class VdsBrokerObjectBuilderTest {
         VmStatistics vmStatistics = getVmStatistics();
         Map<String, Object> xml = setDisksUsageInXmlRpc(null);
         VdsBrokerObjectsBuilder.updateVMStatisticsData(vmStatistics, xml);
-        assertEquals(null, vmStatistics.getDisksUsage());
+        assertNull(vmStatistics.getDisksUsage());
     }
 
     @Test
@@ -154,8 +154,8 @@ public class VdsBrokerObjectBuilderTest {
 
         Map<String, Object> xml = setMockForTesting(diskData);
         VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xml);
-        assertEquals(vmDynamic.getDisks().get(0).getWriteLatency(), null);
-        assertEquals(vmDynamic.getDisks().get(0).getReadLatency(), null);
+        assertNull(vmDynamic.getDisks().get(0).getWriteLatency());
+        assertNull(vmDynamic.getDisks().get(0).getReadLatency());
         assertEquals(vmDynamic.getDisks().get(0).getFlushLatency(), new Double(DEFAULT_VALUE));
     }
 
