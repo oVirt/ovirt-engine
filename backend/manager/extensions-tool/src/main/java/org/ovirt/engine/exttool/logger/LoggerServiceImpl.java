@@ -92,7 +92,7 @@ public class LoggerServiceImpl implements ModuleService {
             }
             if(!parser.getErrors().isEmpty()) {
                 for(Throwable t : parser.getErrors()) {
-                    System.err.format("FATAL: %s%n", t.getMessage());
+                    log.error(t.getMessage());
                 }
                 throw new ExitException("Parsing error", 1);
             }
@@ -157,20 +157,20 @@ public class LoggerServiceImpl implements ModuleService {
         }
         if(!parser.getErrors().isEmpty()) {
             for(Throwable t : parser.getErrors()) {
-                System.err.format("FATAL: %s%n", t.getMessage());
+                log.error(t.getMessage());
             }
             throw new ExitException("Parsing error", 1);
         }
 
         if (args.size() < 1) {
-            System.err.println("Action not provided");
+            log.error("Action not provided");
             throw new ExitException("Action not provided", 1);
         }
 
         try {
             action = Action.valueOf(args.get(0).toUpperCase().replace("-", "_"));
         } catch(IllegalArgumentException e) {
-            System.err.printf("Invalid action '%s'%n", args.get(0));
+            log.error("Invalid action '{}'", args.get(0));
             throw new ExitException("Invalid action", 1);
         }
 
