@@ -492,7 +492,15 @@ public class AAAServiceImpl implements ModuleService {
                     if (ignore.contains(entry.getKey())) {
                         continue;
                     }
-                    log.info("{}    {}: {}", indent, entry.getKey().getUuid().getName(), entry.getValue());
+                    if ((entry.getKey().getFlags() & ExtKey.Flags.SKIP_DUMP) != 0) {
+                        continue;
+                    }
+                    log.info(
+                        "{}    {}: {}",
+                        indent,
+                        entry.getKey().getUuid().getName(),
+                        (entry.getKey().getFlags() & ExtKey.Flags.SENSITIVE) != 0 ? "***" : entry.getValue()
+                    );
                 }
             }
         }

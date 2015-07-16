@@ -55,7 +55,14 @@ public class InfoServiceImpl implements ModuleService {
                         if (IGNORE_KEYS.contains(entry.getKey())) {
                             continue;
                         }
-                        log.info("    {}: {}", entry.getKey().getUuid().getName(), entry.getValue());
+                        if ((entry.getKey().getFlags() & ExtKey.Flags.SKIP_DUMP) != 0) {
+                            continue;
+                        }
+                        log.info(
+                            "    {}: {}",
+                            entry.getKey().getUuid().getName(),
+                            (entry.getKey().getFlags() & ExtKey.Flags.SENSITIVE) != 0 ? "***" : entry.getValue()
+                        );
                     }
                 }
             }
