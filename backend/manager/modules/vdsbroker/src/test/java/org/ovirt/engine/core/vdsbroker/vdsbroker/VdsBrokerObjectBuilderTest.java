@@ -18,7 +18,7 @@ import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 
 public class VdsBrokerObjectBuilderTest {
 
-    private static final int SIZE_FOR_DISK_STATS = 100;
+    private static final long SIZE_FOR_DISK_STATS = 100L;
     private static final Guid IMAGE_ID = Guid.createGuidFromString("ed185868-3f9e-4040-a340-e1a64726ebc0");
     private static final Guid VM_ID = Guid.createGuidFromString("71ca53fb-c223-4b31-926d-de1c2ab0b0a9");
     private static final String DEFAULT_VALUE = "0.00";
