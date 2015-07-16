@@ -3,29 +3,19 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 
-@RunWith(MockitoJUnitRunner.class)
 public class VdsBrokerObjectBuilderTest {
 
     private static final int SIZE_FOR_DISK_STATS = 100;
@@ -35,12 +25,6 @@ public class VdsBrokerObjectBuilderTest {
     private final String READ_LATENCY = "readLatency";
     private final String FLUSH_LATENCY = "flushLatency";
     private final String DEFAULT_VALUE = "0.00";
-
-    @Mock
-    private DiskDao diskDao;
-
-    @Mock
-    private DbFacade dbFacade;
 
     @Test
     public void testDisksUsages() {
@@ -242,9 +226,7 @@ public class VdsBrokerObjectBuilderTest {
     private Map<String, Object> setMockForTesting(Map<String, Object> diskData) {
         Map<String, Map<String, Object>> disksData = new HashMap<String, Map<String, Object>>();
         disksData.put("vda", diskData);
-        Map<String, Object> xml = setDisksInXmlRpc(disksData);
-        mockDiskImageDao();
-        return xml;
+        return setDisksInXmlRpc(disksData);
     }
 
     private static VDS getVds() {
@@ -261,21 +243,6 @@ public class VdsBrokerObjectBuilderTest {
         VmDynamic vmDynamic = new VmDynamic();
         vmDynamic.setId(vmId);
         return vmDynamic;
-    }
-
-    private void mockDiskImageDao() {
-        List<Disk> diskImageList = setVmDiskImagesList();
-        when(dbFacade.getDiskDao()).thenReturn(diskDao);
-        when(diskDao.getAllForVm(vmId)).thenReturn(diskImageList);
-    }
-
-    private List<Disk> setVmDiskImagesList() {
-        List<Disk> diskImageList = new ArrayList<Disk>();
-        DiskImage diskImage = new DiskImage();
-        diskImage.setImageId(imageId);
-        diskImage.setId(imageId);
-        diskImageList.add(diskImage);
-        return diskImageList;
     }
 
     private static Map<String, Object> setDisksInXmlRpc(Map<String, Map<String, Object>> disksData) {
