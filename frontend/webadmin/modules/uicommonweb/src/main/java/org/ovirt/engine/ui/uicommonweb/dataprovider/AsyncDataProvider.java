@@ -785,6 +785,10 @@ public class AsyncDataProvider {
     }
 
     public void getDataCenterList(AsyncQuery aQuery) {
+        getDataCenterList(aQuery, true);
+    }
+
+    public void getDataCenterList(AsyncQuery aQuery, boolean doRefresh) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery) {
@@ -794,9 +798,8 @@ public class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.Search,
-                new SearchParameters("DataCenter: sortby name", SearchType.StoragePool), //$NON-NLS-1$
-                aQuery);
+        SearchParameters params = new SearchParameters("DataCenter: sortby name", SearchType.StoragePool); //$NON-NLS-1$
+        Frontend.getInstance().runQuery(VdcQueryType.Search, doRefresh ? params : params.withoutRefresh(), aQuery);
     }
 
     public void getDataCenterByClusterServiceList(AsyncQuery aQuery,
@@ -1052,6 +1055,10 @@ public class AsyncDataProvider {
     }
 
     public void getClusterList(AsyncQuery aQuery) {
+        getClusterList(aQuery, true);
+    }
+
+    public void getClusterList(AsyncQuery aQuery, boolean doRefresh) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery) {
@@ -1063,7 +1070,8 @@ public class AsyncDataProvider {
                 return new ArrayList<VDSGroup>();
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllVdsGroups, new VdcQueryParametersBase(), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllVdsGroups, doRefresh ? new VdcQueryParametersBase() :
+                new VdcQueryParametersBase().withoutRefresh(), aQuery);
     }
 
     public void getTemplateDiskList(AsyncQuery aQuery, Guid templateId) {
@@ -1468,7 +1476,15 @@ public class AsyncDataProvider {
         getHostListByStatus(aQuery, null);
     }
 
+    public void getHostList(AsyncQuery aQuery, boolean doRefresh) {
+        getHostListByStatus(aQuery, null, doRefresh);
+    }
+
     public void getHostListByStatus(AsyncQuery aQuery, VDSStatus status) {
+        getHostListByStatus(aQuery, status, true);
+    }
+
+    public void getHostListByStatus(AsyncQuery aQuery, VDSStatus status, boolean doRefresh) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery) {
@@ -1483,7 +1499,8 @@ public class AsyncDataProvider {
         SearchParameters searchParameters =
                 new SearchParameters("Host: " + (status == null ? "" : ("status=" + status.name())), SearchType.VDS); //$NON-NLS-1$ //$NON-NLS-2$
         searchParameters.setMaxCount(9999);
-        Frontend.getInstance().runQuery(VdcQueryType.Search, searchParameters, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.Search,
+                doRefresh ? searchParameters : searchParameters.withoutRefresh(), aQuery);
     }
 
     public void getHostsForStorageOperation(AsyncQuery aQuery, Guid storagePoolId, boolean localFsOnly) {
@@ -1502,7 +1519,15 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
+    public void getVolumeList(AsyncQuery aQuery, boolean doRefresh) {
+        getVolumeList(aQuery, null, doRefresh);
+    }
+
     public void getVolumeList(AsyncQuery aQuery, String clusterName) {
+        getVolumeList(aQuery, clusterName, true);
+    }
+
+    public void getVolumeList(AsyncQuery aQuery, String clusterName, boolean doRefresh) {
 
         if ((ApplicationModeHelper.getUiMode().getValue() & ApplicationMode.GlusterOnly.getValue()) == 0) {
             aQuery.asyncCallback.onSuccess(aQuery.model, new ArrayList<GlusterVolumeEntity>());
@@ -1525,6 +1550,9 @@ public class AsyncDataProvider {
                 clusterName == null ? new SearchParameters("Volumes:", SearchType.GlusterVolume) //$NON-NLS-1$
                         : new SearchParameters("Volumes: cluster.name=" + clusterName, SearchType.GlusterVolume); //$NON-NLS-1$
         searchParameters.setMaxCount(9999);
+        if (!doRefresh) {
+            searchParameters.withoutRefresh();
+        }
         Frontend.getInstance().runQuery(VdcQueryType.Search, searchParameters, aQuery);
     }
 
@@ -3054,6 +3082,10 @@ public class AsyncDataProvider {
     }
 
     public void getAllProviders(AsyncQuery aQuery) {
+        getAllProviders(aQuery, true);
+    }
+
+    public void getAllProviders(AsyncQuery aQuery, boolean doRefresh) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery) {
@@ -3064,7 +3096,8 @@ public class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllProviders, doRefresh ? new GetAllProvidersParameters() :
+                new GetAllProvidersParameters().withoutRefresh(), aQuery);
     }
 
     public void getAllProvidersByProvidedEntity(AsyncQuery query, final VdcObjectType providedEntity) {

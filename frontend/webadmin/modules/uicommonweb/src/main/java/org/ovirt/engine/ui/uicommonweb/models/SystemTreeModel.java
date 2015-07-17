@@ -203,6 +203,9 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
         doHostSearch();
         doVolumeSearch();
         doProviderSearch();
+        //Stop the timer if it is running. syncSearch only gets called by either a manual refresh and the timer
+        //shouldn't run during that, or during a fast forward, and that restarts the timer each cycle.
+        getTimer().stop();
     }
 
     /**
@@ -221,7 +224,7 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
                 doNetworksSearch();
             }
         };
-        AsyncDataProvider.getInstance().getDataCenterList(dcQuery);
+        AsyncDataProvider.getInstance().getDataCenterList(dcQuery, false);
     }
 
     /**
@@ -250,7 +253,7 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
                 }
             }
         };
-        AsyncDataProvider.getInstance().getClusterList(clusterQuery);
+        AsyncDataProvider.getInstance().getClusterList(clusterQuery, false);
     }
 
     /**
@@ -276,7 +279,7 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
                 }
             }
         };
-        AsyncDataProvider.getInstance().getHostList(hostQuery);
+        AsyncDataProvider.getInstance().getHostList(hostQuery, false);
     }
 
     /**
@@ -303,7 +306,7 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
                 }
             }
         };
-        AsyncDataProvider.getInstance().getVolumeList(volumeQuery, null);
+        AsyncDataProvider.getInstance().getVolumeList(volumeQuery, null, false);
     }
 
     /**
@@ -382,7 +385,7 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
                 setProviders((List<Provider>) returnValue);
             }
         };
-        AsyncDataProvider.getInstance().getAllProviders(providersQuery);
+        AsyncDataProvider.getInstance().getAllProviders(providersQuery, false);
     }
 
     @Override
