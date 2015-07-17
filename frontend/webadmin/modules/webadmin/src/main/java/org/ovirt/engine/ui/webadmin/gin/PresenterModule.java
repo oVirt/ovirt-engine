@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.Bookma
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.AddDataCenterClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterWarningsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.GlusterHookContentPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.GlusterHookResolveConflictsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ManageGlusterSwiftPopupPresenterWidget;
@@ -300,6 +301,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.bookmark.BookmarkPop
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.AddDataCenterClusterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterManageNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterWarningsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.GlusterHookContentPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.GlusterHookResolveConflictsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ManageGlusterSwiftPopupView;
@@ -1286,6 +1288,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(ClusterPopupPresenterWidget.class,
                 ClusterPopupPresenterWidget.ViewDef.class,
                 ClusterPopupView.class);
+
+        bindPresenterWidget(ClusterWarningsPopupPresenterWidget.class,
+                ClusterWarningsPopupPresenterWidget.ViewDef.class,
+                ClusterWarningsPopupView.class);
 
         bindPresenterWidget(VolumePopupPresenterWidget.class,
                 VolumePopupPresenterWidget.ViewDef.class,

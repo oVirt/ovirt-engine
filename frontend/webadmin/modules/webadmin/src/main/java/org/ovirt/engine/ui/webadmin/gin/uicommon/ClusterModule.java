@@ -30,12 +30,14 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterServiceModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterVmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterWarningsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.ClusterAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.CpuProfileListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterWarningsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.GlusterHookContentPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.GlusterHookResolveConflictsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ManageGlusterSwiftPopupPresenterWidget;
@@ -67,7 +69,8 @@ public class ClusterModule extends AbstractGinModule {
             final Provider<ReportPresenterWidget> reportWindowProvider,
             final Provider<MultipleHostsPopupPresenterWidget> addMultipleHostsPopupProvider,
             final Provider<ClusterListModel<Void>> clusterProvider,
-            final Provider<CommonModel> commonModelProvider) {
+            final Provider<CommonModel> commonModelProvider,
+            final Provider<ClusterWarningsPopupPresenterWidget> clusterWarningsPopupProvider) {
         MainTabModelProvider<VDSGroup, ClusterListModel<Void>> result = new MainTabModelProvider<VDSGroup, ClusterListModel<Void>>
                 (eventBus, defaultConfirmPopupProvider, commonModelProvider) {
             @Override
@@ -92,6 +95,8 @@ public class ClusterModule extends AbstractGinModule {
                     return removeConfirmPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getResetEmulatedMachineCommand()) {
                     return defaultConfirmPopupProvider.get();
+                } else if (source.getConfirmWindow() instanceof ClusterWarningsModel) {
+                    return clusterWarningsPopupProvider.get();
                 } else {
                     return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }

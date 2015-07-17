@@ -100,6 +100,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters;
 import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters.ArchCapabilitiesVerb;
+import org.ovirt.engine.core.common.queries.ClusterEditParameters;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAgentFenceOptionsQueryParameters;
@@ -108,7 +109,6 @@ import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameter
 import org.ovirt.engine.core.common.queries.GetAllProvidersParameters;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
 import org.ovirt.engine.core.common.queries.GetClusterFeaturesByVersionAndCategoryParameters;
-import org.ovirt.engine.core.common.queries.GetClusterUnsupportedVmsCpusParameters;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetConnectionsByDataCenterAndStorageTypeParameters;
 import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnClustersParameters;
@@ -4086,19 +4086,8 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void getClusterUnsupportedVmsCpus(AsyncQuery aQuery, Guid vdsGroupId, String newCpuName) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
-                if (source != null) {
-                    return source;
-                }
-                return new HashMap();
-            }
-        };
-        Frontend.getInstance()
-                .runQuery(VdcQueryType.GetClusterUnsupportedVmsCpus,
-                        new GetClusterUnsupportedVmsCpusParameters(vdsGroupId, newCpuName), aQuery);
+    public void getClusterEditWarnings(AsyncQuery aQuery, Guid clusterId, VDSGroup cluster) {
+        Frontend.getInstance().runQuery(VdcQueryType.GetClusterEditWarnings, new ClusterEditParameters(cluster), aQuery);
     }
 
     private static class AsIsAsyncConverter implements IAsyncConverter {

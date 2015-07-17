@@ -3771,4 +3771,15 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Num of IO Threads is not in supported limit.")
     String ACTION_TYPE_FAILED_NUM_OF_IOTHREADS_INCORRECT();
 
+    @DefaultStringValue("Due to unsupported /dev/random source:")
+    String CLUSTER_WARN_HOST_DUE_TO_UNSUPPORTED_RANDOM_DEVICE_SOURCE();
+
+    @DefaultStringValue("Due to unsupported /dev/hwrng source:")
+    String CLUSTER_WARN_HOST_DUE_TO_UNSUPPORTED_HWRNG_SOURCE();
+
+    @DefaultStringValue("Due to unsupported machine type:")
+    String CLUSTER_WARN_HOST_DUE_TO_UNSUPPORTED_MACHINE_TYPE();
+
+    @DefaultStringValue("Due to custom CPU level which is not supported by the new cluster CPU level:")
+    String CLUSTER_WARN_VM_DUE_TO_DECREASED_CLUSTER_CPU_LEVEL();
 }

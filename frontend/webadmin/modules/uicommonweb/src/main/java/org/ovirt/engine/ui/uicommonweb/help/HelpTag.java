@@ -118,6 +118,8 @@ public enum HelpTag {
 
     disable_cpu_thread_support("disable_cpu_thread_support", HelpTagType.WEBADMIN, "'Edit Cluster' dialog context: confirmation dialog for disabling the CPU Thread feature (related to CPU pinning):"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    cluster_edit_warnings("cluster_edit_warnings", HelpTagType.WEBADMIN, "'Edit Cluster' dialog context: confirmation dialog for edits that may result in non-operational hosts."), //$NON-NLS-1$ //$NON-NLS-2$
+
     disable_hooks("disable_hooks", HelpTagType.WEBADMIN, "[gluster] Clusters main tab -> Gluster Hooks sub tab: confirmation dialog for disabling selected gluster hooks."), //$NON-NLS-1$ //$NON-NLS-2$
 
     discover_networks("discover_networks", HelpTagType.WEBADMIN, "[Neutron integration] 'Providers' main tab -> 'Networks' sub-tab -> 'Discover' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
