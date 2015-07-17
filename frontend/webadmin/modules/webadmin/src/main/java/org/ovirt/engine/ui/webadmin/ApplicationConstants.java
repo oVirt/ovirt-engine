@@ -4613,4 +4613,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Problem retrieving errata:")
     String katelloProblemRetrievingErrata();
 
+    @DefaultStringValue("The following hosts may become non-operational under specified configuration:")
+    String clusterEditHostTitle();
+
+    @DefaultStringValue("The following VMs may encounter some problems under specified configuration:")
+    String clusterEditVmtTitle();
+
+    @DefaultStringValue("Are you sure you want to continue?")
+    String areYouSureYouWantToContinue();
 }

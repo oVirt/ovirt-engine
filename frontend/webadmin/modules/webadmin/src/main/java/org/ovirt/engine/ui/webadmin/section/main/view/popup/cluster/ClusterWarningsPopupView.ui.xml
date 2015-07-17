@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+
+  <ui:with field="constants" type="org.ovirt.engine.ui.webadmin.ApplicationConstants" />
+
+  <ui:style>
+    .warningPanel {
+      margin-left: 15px;
+    }
+  </ui:style>
+
+  <d:SimpleDialogPanel width="670px" height="400px">
+    <d:content>
+      <g:FlowPanel>
+        <g:FlowPanel ui:field="hostPanel">
+          <g:Label text="{constants.clusterEditHostTitle}" />
+          <g:HTML ui:field="hostWarnings" addStyleNames="{style.warningPanel}" />
+        </g:FlowPanel>
+        <g:FlowPanel ui:field="vmPanel">
+          <g:Label text="{constants.clusterEditVmtTitle}" />
+          <g:HTML ui:field="vmWarnings" addStyleNames="{style.warningPanel}" />
+        </g:FlowPanel>
+        <g:Label text="{constants.areYouSureYouWantToContinue}" />
+      </g:FlowPanel>
+    </d:content>
+  </d:SimpleDialogPanel>
+
+</ui:UiBinder>

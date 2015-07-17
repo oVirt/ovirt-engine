@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
+import org.ovirt.engine.core.common.businessentities.ClusterEditWarnings;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
@@ -274,7 +275,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         getAffinityGroupListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsVirtService());
         getCpuProfileListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsVirtService()
                 && Boolean.TRUE.equals(AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.CpuQosSupported,
-                        vdsGroup.getCompatibilityVersion().getValue())));
+                vdsGroup.getCompatibilityVersion().getValue())));
     }
 
     @Override
@@ -598,12 +599,12 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                     .getConstants()
                     .youAreAboutChangeClusterCpuThreadSupportMsg());
 
-            UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSaveConfirmCpuLevel", this); //$NON-NLS-1$
+            UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSaveConfirmGenericWarnings", this); //$NON-NLS-1$
             getConfirmWindow().getCommands().add(tempVar);
             UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
             getConfirmWindow().getCommands().add(tempVar2);
         } else {
-            onSaveConfirmCpuLevel();
+            onSaveConfirmGenericWarnings();
         }
     }
 
@@ -619,68 +620,29 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         return retVal;
     }
 
-    private void onSaveConfirmCpuLevel() {
+    private void onSaveConfirmGenericWarnings() {
         ClusterModel model = (ClusterModel) getWindow();
-
-        // cancel confirm window if there is one
         cancelConfirmation();
-        ServerCpu vdsCpu = getVdsGroupServerCpu(model, getSelectedItem());
-        if (vdsCpu != null && model.getCPU().getSelectedItem().getLevel() < vdsCpu.getLevel()) {
-            getWindow().startProgress(null);
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setModel(model);
-            _asyncQuery.asyncCallback = new INewAsyncCallback() {
-                @Override
-                public void onSuccess(Object model, Object result) {
-                    ClusterModel clusterModel = (ClusterModel) model;
-                    final Map<String, String> highCpuVms = (Map<String, String>)result;
-                    AsyncQuery _asyncQuery = new AsyncQuery();
-                    _asyncQuery.setModel(clusterModel);
-                    _asyncQuery.asyncCallback = new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object model, Object result) {
-                            Integer activeVms = (Integer) result;
 
-                            StringBuilder message = new StringBuilder();
-                            if (!highCpuVms.isEmpty()) {
-                                message.append(ConstantsManager.getInstance()
-                                        .getConstants()
-                                        .changeCpuLevelCustomVmCpusMessage());
-                                for (Map.Entry<String, String> highCpu : highCpuVms.entrySet()) {
-                                    message.append("* \""); //$NON-NLS-1$ // no format strings in GWT
-                                    message.append(highCpu.getKey()); //$NON-NLS-1$
-                                    message.append("\" - "); //$NON-NLS-1$
-                                    message.append(highCpu.getValue());
-                                    message.append(" CPU\n"); //$NON-NLS-1$
-                                }
+        VDSGroup cluster = buildCluster(model);
+        AsyncDataProvider.getInstance().getClusterEditWarnings(new AsyncQuery(new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                ClusterEditWarnings warnings = ((VdcQueryReturnValue) returnValue).getReturnValue();
 
-                            }
-                            if (activeVms > 0) {
-                                message.append(ConstantsManager.getInstance()
-                                        .getConstants()
-                                        .changeCpuLevelWhileRunningMessage());
-                            }
-                            getWindow().stopProgress();
-                            if (message.length() == 0) {
-                                onSaveInternal();
-                            } else {
-                                message.append(ConstantsManager.getInstance()
-                                        .getConstants()
-                                        .changeCpuLevelWarningMessage());
-                                cpuLevelConfirmationWindow(message.toString());
-                            }
-                        }
-                    };
-                    AsyncDataProvider.getInstance()
-                            .getNumberOfActiveVmsInCluster(_asyncQuery, getSelectedItem().getId());
+                if (!warnings.isEmpty()) {
+                    ClusterWarningsModel confirmWindow = new ClusterWarningsModel();
+                    confirmWindow.init(warnings);
+                    confirmWindow.getCommands().add(UICommand.createDefaultOkUiCommand("OnSaveInternal", ClusterListModel.this)); //$NON-NLS-1$
+                    confirmWindow.getCommands().add(UICommand.createCancelUiCommand("CancelConfirmation", ClusterListModel.this)); //$NON-NLS-1$
+
+                    setConfirmWindow(confirmWindow);
+                } else {
+                    onSaveInternal();
                 }
-            };
-            AsyncDataProvider.getInstance().getClusterUnsupportedVmsCpus(_asyncQuery,
-                    getSelectedItem().getId(),
-                    model.getCPU().getSelectedItem().getCpuName());
-        } else {
-            onSaveInternal();
-        }
+
+            }
+        }), model.getClusterId(), cluster);
     }
 
     private void cpuLevelConfirmationWindow(String message) {
@@ -720,7 +682,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         onSaveInternalWithModel(model);
     }
 
-    private void onSaveInternalWithModel(final ClusterModel model) {
+    private VDSGroup buildCluster(ClusterModel model) {
         VDSGroup cluster = model.getIsNew() ? new VDSGroup() : (VDSGroup) Cloner.clone(getSelectedItem());
 
         Version version = model.getVersion().getSelectedItem();
@@ -793,6 +755,12 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
             cluster.getRequiredRngSources().add(VmRngDevice.Source.HWRNG);
         }
 
+        return cluster;
+    }
+
+    private void onSaveInternalWithModel(final ClusterModel model) {
+        VDSGroup cluster = buildCluster(model);
+
         model.startProgress();
 
         final Network managementNetwork = model.getManagementNetwork().getSelectedItem();
@@ -809,8 +777,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                         ClusterListModel<Void> localModel = (ClusterListModel<Void>) result.getState();
                         if (model.getIsImportGlusterConfiguration().getEntity()) {
                             localModel.postOnSaveInternalWithImport(result.getReturnValue());
-                        }
-                        else {
+                        } else {
                             localModel.postOnSaveInternal(result.getReturnValue());
                         }
                     }
@@ -970,8 +937,8 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                 true,
                 new IFrontendMultipleActionAsyncCallback() {
 
-            @Override
-            public void executed(FrontendMultipleActionAsyncResult result) {
+                    @Override
+                    public void executed(FrontendMultipleActionAsyncResult result) {
                         hostsModel.stopProgress();
                         boolean isAllCanDoPassed = true;
                         for (VdcReturnValueBase returnValueBase : result.getReturnValue()) {
@@ -983,8 +950,8 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                         if (isAllCanDoPassed) {
                             cancel();
                         }
-            }
-        }, null);
+                    }
+                }, null);
     }
 
     public void cancel() {
@@ -1087,8 +1054,8 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         else if ("OnSaveConfirmCpuThreads".equals(command.getName())) { //$NON-NLS-1$
             onSaveConfirmCpuThreads();
         }
-        else if ("OnSaveConfirmCpuLevel".equals(command.getName())) { //$NON-NLS-1$
-            onSaveConfirmCpuLevel();
+        else if ("OnSaveConfirmGenericWarnings".equals(command.getName())) { //$NON-NLS-1$
+            onSaveConfirmGenericWarnings();
         }
         else if ("OnSaveInternal".equals(command.getName())) { //$NON-NLS-1$
             onSaveInternal();

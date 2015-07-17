@@ -2903,4 +2903,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Problem retrieving errata:")
     String katelloProblemRetrievingErrata();
+
+    @DefaultStringValue("Confirm Cluster Edit")
+    String confirmClusterWarnings();
 }
