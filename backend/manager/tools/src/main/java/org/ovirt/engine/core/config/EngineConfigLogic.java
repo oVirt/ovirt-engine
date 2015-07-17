@@ -211,8 +211,7 @@ public class EngineConfigLogic {
         else {
             prompt = msg + ": ";
         }
-        char[] passwd = console.readPassword(prompt);
-        return passwd == null ? "" : new String(passwd);
+        return console.readPassword(prompt);
     }
 
     /**

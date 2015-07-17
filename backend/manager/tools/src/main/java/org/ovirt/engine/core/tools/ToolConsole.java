@@ -157,10 +157,13 @@ public class ToolConsole {
     /**
      * Write a prompt to the console and then read a line without echoing it.
      */
-    public char[] readPassword(String prompt) {
+    public String readPassword(String prompt) throws IOException {
         char[] password = System.console().readPassword(prompt);
+        if (password == null) {
+            throw new IOException("EOF");
+        }
         log.info("Written to console \"{}\".", prompt);
         log.info("Read password from console.");
-        return password;
+        return new String(password);
     }
 }

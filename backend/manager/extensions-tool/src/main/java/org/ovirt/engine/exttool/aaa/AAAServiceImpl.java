@@ -571,7 +571,11 @@ public class AAAServiceImpl implements ModuleService {
                 throw new RuntimeException("Console is not available, interactive password prompt is impossible");
             }
             System.out.print("Password: ");
-            password = new String(System.console().readPassword());
+            char passwordChars[] = System.console().readPassword();
+            if (passwordChars == null) {
+                throw new RuntimeException("Cannot read password");
+            }
+            password = new String(passwordChars);
         } else {
             throw new IllegalArgumentException(String.format("Invalid type: '%s'", type));
         }

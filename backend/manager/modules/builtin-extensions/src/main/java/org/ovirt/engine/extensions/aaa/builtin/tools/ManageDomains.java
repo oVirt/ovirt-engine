@@ -288,6 +288,9 @@ public class ManageDomains {
         if (args.containsKey(ARG_PASSWORD_FILE)) {
             try {
                 pass = readPasswordFile((String)args.get(ARG_PASSWORD_FILE));
+                if (pass == null) {
+                    throw new IOException("EOF");
+                }
             } catch (Exception e) {
                 throw new ManageDomainsResult(ManageDomainsResultEnum.FAILURE_READING_PASSWORD_FILE, e.getMessage());
             }
