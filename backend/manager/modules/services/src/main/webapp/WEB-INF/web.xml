@@ -6,6 +6,18 @@
   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
   version="3.0">
 
+  <filter>
+    <filter-name>LocaleFilter</filter-name>
+    <filter-class>org.ovirt.engine.core.utils.servlet.LocaleFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>LocaleFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>ERROR</dispatcher>
+  </filter-mapping>
+
   <servlet>
     <servlet-name>pki-resource</servlet-name>
     <servlet-class>org.ovirt.engine.core.services.PKIResourceServlet</servlet-class>
