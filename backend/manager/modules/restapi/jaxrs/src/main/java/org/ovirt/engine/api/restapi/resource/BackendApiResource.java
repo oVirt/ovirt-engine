@@ -261,7 +261,9 @@ public class BackendApiResource
             try {
                 if (baos != null) baos.close();
                 if (is != null) is.close();
-            } catch (IOException ignored) {}
+            } catch (IOException e) {
+                LOG.error("cannot close a resource", e);
+            }
         }
     }
 
