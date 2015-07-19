@@ -148,8 +148,8 @@ public class StorageHandlingCommandBaseTest {
         assertTrue(cmd.checkStoragePoolNameLengthValid());
     }
 
-    private class TestStorageHandlingCommandBase extends StorageHandlingCommandBase<StoragePoolManagementParameter> {
-        public TestStorageHandlingCommandBase(StoragePoolManagementParameter parameters) {
+    private static class TestStorageHandlingCommandBase extends StorageHandlingCommandBase<StoragePoolManagementParameter> {
+        TestStorageHandlingCommandBase(StoragePoolManagementParameter parameters) {
             super(parameters);
         }
 
