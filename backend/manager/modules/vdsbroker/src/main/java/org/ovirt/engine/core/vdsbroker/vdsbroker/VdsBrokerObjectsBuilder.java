@@ -161,10 +161,13 @@ public class VdsBrokerObjectsBuilder {
                     switch ((String) deviceMap.get("iface")) {
                     case "virtio":
                         image.setDiskInterface(DiskInterface.VirtIO);
+                        break;
                     case "iscsi":
                         image.setDiskInterface(DiskInterface.VirtIO_SCSI);
+                        break;
                     case "ide":
                         image.setDiskInterface(DiskInterface.IDE);
+                        break;
                     }
                     diskImages.add(image);
                 }
