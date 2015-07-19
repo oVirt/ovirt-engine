@@ -2569,6 +2569,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         if (getOSType().getIsValid()) {
             validateNaming();
 
+            getVmId().setIsValid(true);
             if (getVmId().getIsAvailable() && !StringHelper.isNullOrEmpty(getVmId().getEntity())) {
                 getVmId().validateEntity(new IValidation[] { new GuidValidation() });
             }
