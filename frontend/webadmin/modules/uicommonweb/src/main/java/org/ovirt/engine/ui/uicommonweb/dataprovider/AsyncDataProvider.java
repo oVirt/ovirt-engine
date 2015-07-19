@@ -128,6 +128,7 @@ import org.ovirt.engine.core.common.queries.GetTagsByUserIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmChangedFieldsForNextRunParameters;
+import org.ovirt.engine.core.common.queries.GetVmFromOvaQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmsFromExternalProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -2493,6 +2494,14 @@ public class AsyncDataProvider {
 
         Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExternalProvider,
                 new GetVmsFromExternalProviderQueryParameters(url, username, password, vdsId, dataCenterId),
+                aQuery);
+    }
+
+    public void getVmFromOva(AsyncQuery aQuery, Guid vdsId, String path) {
+        aQuery.setHandleFailure(true);
+        Frontend.getInstance().runQuery(
+                VdcQueryType.GetVmFromOva,
+                new GetVmFromOvaQueryParameters(vdsId, path),
                 aQuery);
     }
 

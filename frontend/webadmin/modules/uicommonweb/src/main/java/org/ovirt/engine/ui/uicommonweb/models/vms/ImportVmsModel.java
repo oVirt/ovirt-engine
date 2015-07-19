@@ -44,6 +44,8 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.inject.Inject;
@@ -69,24 +71,36 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     private String exportName;
     private String exportDescription;
 
+    private ListModel<VDS> hosts;
+    private EntityModel<String> ovaPath;
+
     private UICommand addImportCommand = new UICommand(null, this);
     private UICommand cancelImportCommand = new UICommand(null, this);
 
     private com.google.inject.Provider<ImportVmFromVmwareModel> importFromVmwareModelProvider;
     private com.google.inject.Provider<ImportVmFromExportDomainModel> importFromExportDomainModelProvider;
+    private com.google.inject.Provider<ImportVmFromOvaModel> importFromOvaModelProvider;
 
     private ImportVmFromVmwareModel importFromVmwareModel;
     private ImportVmFromExportDomainModel importFromExportDomainModel;
+    private ImportVmFromOvaModel importFromOvaModel;
     private ImportVmModel selectedImportVmModel;
 
     private EntityModel<Boolean> importSourceValid;
+    private UIConstants constants;
+    private UIMessages messages;
 
     @Inject
     public ImportVmsModel(
             com.google.inject.Provider<ImportVmFromExportDomainModel> importFromExportDomainModelProvider,
-            com.google.inject.Provider<ImportVmFromVmwareModel> importFromVmwareModelProvider) {
+            com.google.inject.Provider<ImportVmFromVmwareModel> importFromVmwareModelProvider,
+            com.google.inject.Provider<ImportVmFromOvaModel> importFromOvaModelProvider) {
         this.importFromExportDomainModelProvider = importFromExportDomainModelProvider;
         this.importFromVmwareModelProvider = importFromVmwareModelProvider;
+        this.importFromOvaModelProvider = importFromOvaModelProvider;
+
+        constants = ConstantsManager.getInstance().getConstants();
+        messages = ConstantsManager.getInstance().getMessages();
 
         // General
         setDataCenters(new ListModel<StoragePool>());
@@ -104,6 +118,10 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         setVmwareDatacenter(new EntityModel<String>());
         setVerify(new EntityModel<Boolean>(false));
 
+        // OVA
+        setHosts(new ListModel<VDS>());
+        setOvaPath(new EntityModel<String>());
+
         setImportSourceValid(new EntityModel<Boolean>(true));
 
         getVmwareProviders().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
@@ -117,19 +135,21 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     public void initImportModels(UICommand ... commands) {
         importFromExportDomainModel = importFromExportDomainModelProvider.get();
-        importFromExportDomainModel.setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
-        importFromExportDomainModel.setHelpTag(HelpTag.import_virtual_machine);
-        importFromExportDomainModel.setHashName("import_virtual_machine"); //$NON-NLS-1$
-        for (UICommand command : commands) {
-            importFromExportDomainModel.getCommands().add(command);
-        }
+        initImportModel(importFromExportDomainModel, commands);
 
         importFromVmwareModel = importFromVmwareModelProvider.get();
-        importFromVmwareModel.setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
-        importFromVmwareModel.setHelpTag(HelpTag.import_virtual_machine);
-        importFromVmwareModel.setHashName("import_virtual_machine"); //$NON-NLS-1$
+        initImportModel(importFromVmwareModel, commands);
+
+        importFromOvaModel = importFromOvaModelProvider.get();
+        initImportModel(importFromOvaModel, commands);
+    }
+
+    private void initImportModel(ImportVmModel importVmModel, UICommand ... commands) {
+        importVmModel.setTitle(constants.importVirtualMachinesTitle());
+        importVmModel.setHelpTag(HelpTag.import_virtual_machine);
+        importVmModel.setHashName("import_virtual_machine"); //$NON-NLS-1$
         for (UICommand command : commands) {
-            importFromVmwareModel.getCommands().add(command);
+            importVmModel.getCommands().add(command);
         }
     }
 
@@ -150,6 +170,12 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             importFromVmwareModel.setProxyHostId(getProxyHosts().getSelectedItem() != null ? getProxyHosts().getSelectedItem().getId() : null);
             selectedImportVmModel = importFromVmwareModel;
             break;
+        case OVA:
+            importFromOvaModel.init(getVmsToImport(), getDataCenters().getSelectedItem().getId());
+            importFromOvaModel.setIsoName(getOvaPath().getEntity());
+            importFromOvaModel.setHostId(getHosts().getSelectedItem().getId());
+            selectedImportVmModel = importFromOvaModel;
+            break;
         default:
         }
         return selectedImportVmModel;
@@ -157,7 +183,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     public void init() {
         startProgress(null);
-        setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
+        setTitle(constants.importVirtualMachinesTitle());
         setHelpTag(HelpTag.import_virtual_machine);
         setHashName("import_virtual_machine"); //$NON-NLS-1$
 
@@ -172,7 +198,6 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
                exportDomain = getExportDomain(storageDomains);
                if (exportDomain == null) {
-                   setErrorToFetchData(ConstantsManager.getInstance().getConstants().notAvailableWithNoActiveExportDomain());
                    stopProgress();
                } else {
                    setExportName(exportDomain.getName());
@@ -261,19 +286,31 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                 hostsQuery.asyncCallback = new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        ImportVmsModel.this.stopProgress();
-                        List<VDS> hosts = new ArrayList<VDS>();
-                        hosts.add(0, null); // Any host in the cluster
-                        for (VDS host : (List<VDS>) returnValue) {
-                            if (host.getStatus() == VDSStatus.Up) {
-                                hosts.add(host);
-                            }
-                        }
-                        proxyHosts.setItems(hosts);
+                        List<VDS> hosts = (List<VDS>) returnValue;
+                        List<VDS> upHosts = filterUpHosts(hosts);
+                        proxyHosts.setItems(addAnyHostInCluster(upHosts));
+                        ImportVmsModel.this.hosts.setItems(upHosts);
+                        stopProgress();
                     }
                 };
 
                 AsyncDataProvider.getInstance().getHostListByDataCenter(hostsQuery, dataCenters.getSelectedItem().getId());
+            }
+
+            private List<VDS> filterUpHosts(List<VDS> hosts) {
+                List<VDS> result = new ArrayList<>();
+                for (VDS host : hosts) {
+                    if (host.getStatus() == VDSStatus.Up) {
+                        result.add(host);
+                    }
+                }
+                return result;
+            }
+
+            private List<VDS> addAnyHostInCluster(List<VDS> hosts) {
+                List<VDS> result = new ArrayList<>(hosts);
+                result.add(0, null); // Any host in the cluster
+                return result;
             }
         });
 
@@ -289,7 +326,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                 if (dataCenters == null || dataCenters.isEmpty()) {
                     getDataCenters().setIsChangeable(false);
                     getImportSources().setIsChangeable(false);
-                    setErrorToFetchData(ConstantsManager.getInstance().getConstants().notAvailableWithNoUpDC());
+                    setError(constants.notAvailableWithNoUpDC());
                     stopProgress();
                     return;
                 }
@@ -305,12 +342,21 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         importSources.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                validateSource();
                 clearVms();
                 clearValidations();
                 loadProviders();
             }
         });
         importSources.setSelectedItem(ImportSource.EXPORT_DOMAIN);
+        validateSource();
+    }
+
+    private void validateSource() {
+        clearError();
+        if (importSources.getSelectedItem() == ImportSource.EXPORT_DOMAIN && exportDomain == null) {
+            setError(constants.notAvailableWithNoActiveExportDomain());
+        }
     }
 
     private void clearVms() {
@@ -364,6 +410,37 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                         updateVms(((VdcQueryReturnValue) returnValue).<List<VM>>getReturnValue());
                     }
                 }));
+    }
+
+    public void loadVmFromOva() {
+        if (!validateOvaConfiguration()) {
+            return;
+        }
+
+        startProgress(null);
+        AsyncDataProvider.getInstance().getVmFromOva(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object target, Object returnValue) {
+                VdcQueryReturnValue queryReturnValue = (VdcQueryReturnValue) returnValue;
+                if (queryReturnValue.getSucceeded()) {
+                    VM vm = queryReturnValue.getReturnValue();
+                    updateVms(Collections.singletonList(vm));
+                    clearError();
+                } else {
+                    setError(messages.failedToLoadOva(getOvaPath().getEntity()));
+                }
+                stopProgress();
+            }
+        }),
+        getHosts().getSelectedItem().getId(),
+        getOvaPath().getEntity());
+    }
+
+    private boolean validateOvaConfiguration() {
+        getOvaPath().validateEntity(new IValidation[] {
+                new NotEmptyValidation() });
+
+        return getOvaPath().getIsValid();
     }
 
     public void loadVmsFromVmware() {
@@ -544,9 +621,14 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         this.importSourceValid = editingEnabled;
     }
 
-    public void setErrorToFetchData(String msg) {
+    public void setError(String msg) {
         getImportSourceValid().setMessage(msg);
         getImportSourceValid().setEntity(false);
+    }
+
+    public void clearError() {
+        getImportSourceValid().setMessage(""); //$NON-NLS-1$
+        getImportSourceValid().setEntity(true);
     }
 
     public String getExportPath() {
@@ -632,5 +714,21 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     public void setVmwareProviders(ListModel<Provider<VmwareVmProviderProperties>> vmwareProviders) {
         this.vmwareProviders = vmwareProviders;
+    }
+
+    public ListModel<VDS> getHosts() {
+        return hosts;
+    }
+
+    public void setHosts(ListModel<VDS> hosts) {
+        this.hosts = hosts;
+    }
+
+    public EntityModel<String> getOvaPath() {
+        return ovaPath;
+    }
+
+    public void setOvaPath(EntityModel<String> ovaPath) {
+        this.ovaPath = ovaPath;
     }
 }

@@ -2,5 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 public enum ImportSource {
     VMWARE,
-    EXPORT_DOMAIN
+    EXPORT_DOMAIN,
+    OVA
 }
