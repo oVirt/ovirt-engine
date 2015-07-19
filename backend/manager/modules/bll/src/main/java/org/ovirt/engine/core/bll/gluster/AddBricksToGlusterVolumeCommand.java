@@ -98,19 +98,17 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
         GlusterVolumeEntity volumeBeforeBrickAdd = getGlusterVolume();
 
         // Add bricks in a single transaction
-        if (bricksList != null && bricksList.size() > 0) {
-            TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                    new TransactionMethod<Void>() {
-                        @Override
-                        public Void runInTransaction() {
-                            addGlusterVolumeBricks(bricksList,
-                                    getParameters().getReplicaCount(),
-                                    getParameters().getStripeCount(),
-                                    getParameters().isForce());
-                            return null;
-                        }
-                    });
-        }
+        TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                new TransactionMethod<Void>() {
+                    @Override
+                    public Void runInTransaction() {
+                        addGlusterVolumeBricks(bricksList,
+                                getParameters().getReplicaCount(),
+                                getParameters().getStripeCount(),
+                                getParameters().isForce());
+                        return null;
+                    }
+                });
         if (getGlusterVolume().getIsGeoRepMaster() || getGlusterVolume().getIsGeoRepSlave()) {
             Set<Guid> newServerIds = findNewServers(bricksList, volumeBeforeBrickAdd);
             if (!newServerIds.isEmpty()) {
