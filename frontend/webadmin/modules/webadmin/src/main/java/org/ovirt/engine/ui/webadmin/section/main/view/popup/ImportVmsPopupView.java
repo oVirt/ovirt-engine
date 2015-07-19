@@ -87,6 +87,9 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     @UiField
     UiCommandButton loadVmsFromVmwareButton;
 
+    @UiField
+    UiCommandButton loadOvaButton;
+
     @UiField(provided = true)
     @Path("vmwareProviders.selectedItem")
     @WithElementId
@@ -126,6 +129,20 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     @Ignore
     FlowPanel vmwarePanel;
 
+    @UiField(provided = true)
+    @Path("hosts.selectedItem")
+    @WithElementId("hosts")
+    ListModelListBoxEditor<VDS> hostsEditor;
+
+    @UiField
+    @Path("ovaPath.entity")
+    @WithElementId("ovaPath")
+    StringEntityModelTextBoxEditor ovaPathEditor;
+
+    @UiField
+    @Ignore
+    FlowPanel ovaPanel;
+
     @UiField
     @Ignore
     Label message;
@@ -163,6 +180,12 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
                     ConstantsManager.getInstance().getConstants().anyHostInDataCenter();
             }
         });
+        hostsEditor = new ListModelListBoxEditor<VDS>(new AbstractRenderer<VDS>() {
+            @Override
+            public String render(VDS object) {
+                return object.getName();
+            }
+        });
         vmwareProvidersEditor = new ListModelListBoxEditor<>(new AbstractRenderer<Provider<VmwareVmProviderProperties>>() {
             @Override
             public String render(Provider<VmwareVmProviderProperties> provider) {
@@ -196,8 +219,12 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         passwordEditor.setLabel(constants.passwordProvider());
         proxyHostsEditor.setLabel(constants.proxyHost());
 
+        hostsEditor.setLabel(constants.ovaHost());
+        ovaPathEditor.setLabel(constants.ovaPath());
+
         loadVmsFromExportDomainButton.setLabel(constants.loadLabel());
         loadVmsFromVmwareButton.setLabel(constants.loadLabel());
+        loadOvaButton.setLabel(constants.loadLabel());
         driver.initialize(this);
     }
 
@@ -228,9 +255,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
 
         model.getImportSourceValid().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             public void eventRaised(org.ovirt.engine.ui.uicompat.Event<? extends EventArgs> ev, Object object, EventArgs args) {
-                if (Boolean.FALSE.equals(model.getImportSourceValid().getEntity())) {
-                    message.setText(model.getImportSourceValid().getMessage());
-                }
+                message.setText(model.getImportSourceValid().getMessage());
             };
         });
 
@@ -254,12 +279,19 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
                 model.loadVmsFromVmware();
             }
         });
+        loadOvaButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                model.loadVmFromOva();
+            }
+        });
     }
 
     private void updatePanelsVisibility(ImportVmsModel model) {
         exportPanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.EXPORT_DOMAIN);
         vmwarePanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.VMWARE);
         vmwareProvidersEditor.setVisible(model.getImportSources().getSelectedItem() == ImportSource.VMWARE);
+        ovaPanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.OVA);
     }
 
     @Override

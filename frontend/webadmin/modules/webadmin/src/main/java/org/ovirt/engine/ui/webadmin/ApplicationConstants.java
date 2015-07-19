@@ -3522,6 +3522,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Verify Credentials")
     String vmwareVerifyCredentials();
 
+    @DefaultStringValue("Host")
+    String ovaHost();
+
+    @DefaultStringValue("Path")
+    String ovaPath();
+
     @DefaultStringValue("Test")
     String testProvider();
 

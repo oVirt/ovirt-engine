@@ -29,6 +29,12 @@
 			height: 165px;
 		}
 
+		.ovaSectionStyle {
+			margin-top: 5px;
+			width: 390px;
+			height: 165px;
+		}
+
         .messageStyle {
             color: red;
             vertical-align: bottom;
@@ -83,6 +89,14 @@
 						<w:UiCommandButton ui:field="loadVmsFromVmwareButton"/>
 			        </g:FlowPanel>
 				</g:FlowPanel>
+
+				<g:FlowPanel ui:field="ovaPanel" visible="false" addStyleNames="{style.ovaSectionStyle}">
+					<e:ListModelListBoxEditor ui:field="hostsEditor" addStyleNames="{style.sourcePropertyStyle}"/>
+					<ge:StringEntityModelTextBoxEditor ui:field="ovaPathEditor" addStyleNames="{style.sourcePropertyStyle}"/>
+					<g:FlowPanel addStyleNames="{style.loadButtonStyle}">
+						<w:UiCommandButton ui:field="loadOvaButton"/>
+			        </g:FlowPanel>
+			    </g:FlowPanel>
 
 				<g:Label ui:field="message" addStyleNames="{style.messageStyle}" />
 				<w:VerticalSplitTable ui:field="vmsTable" />

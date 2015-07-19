@@ -96,7 +96,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         .setIsDefault(true)
         .setIsCancel(true));
 
-        setTargetArchitecture(externalVms.iterator().next().getClusterArch());
+        setTargetArchitecture(externalVms);
         super.setItems(
                 new INewAsyncCallback() {
                     @Override
@@ -105,6 +105,10 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
                     }
                 },
                 externalVms);
+    }
+
+    protected void setTargetArchitecture(List<VM> externalVms) {
+        setTargetArchitecture(externalVms.iterator().next().getClusterArch());
     }
 
     protected void doInit(final Guid dataCenterId) {
