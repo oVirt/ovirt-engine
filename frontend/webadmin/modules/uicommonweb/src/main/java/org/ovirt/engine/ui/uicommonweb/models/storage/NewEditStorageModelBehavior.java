@@ -120,7 +120,9 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior {
         boolean canAttachIsoDomain = isNoExportOrIsoStorageAttached &&
                 dataCenter.getStatus() != StoragePoolStatus.Uninitialized;
 
-        if ((isExportDomain && canAttachExportDomain) || (isIsoDomain && canAttachIsoDomain)) {
+        // local storage should only be available in a local DC.
+        boolean canAttachLocalStorage = !isLocalStorage(item) || dataCenter.isLocal();
+        if (((isExportDomain && canAttachExportDomain) || (isIsoDomain && canAttachIsoDomain)) && canAttachLocalStorage) {
             updateItemSelectability(item, true);
             return;
         }
