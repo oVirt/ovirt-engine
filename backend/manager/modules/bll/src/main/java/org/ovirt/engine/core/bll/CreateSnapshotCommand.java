@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -134,6 +135,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
         getParameters().setOldLastModifiedValue(getDiskImage().getLastModified());
         getDiskImage().setLastModified(new Date());
         getDiskImage().setActive(false);
+        getDiskImage().setVolumeClassification(VolumeClassification.Snapshot);
         getImageDao().update(getDiskImage().getImage());
         getCompensationContext().stateChanged();
     }
