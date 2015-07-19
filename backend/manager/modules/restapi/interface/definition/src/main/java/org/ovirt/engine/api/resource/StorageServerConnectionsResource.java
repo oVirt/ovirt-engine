@@ -29,7 +29,7 @@ public interface StorageServerConnectionsResource {
     /**
      * Sub-resource locator method, returns individual DataCenterResource on which the remainder of the URI is
      * dispatched.
-     * @param id  the StorageDomain ID
+     * @param id  the StorageServerConnection ID
      * @return matching subresource if found
      */
     @Path("{id}")
