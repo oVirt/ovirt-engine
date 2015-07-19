@@ -139,8 +139,11 @@ public class RestoreFromCinderSnapshotCommand<T extends RestoreFromSnapshotParam
     }
 
     private void endRemoveCinderDisk() {
-        CinderDisk cinderDiskToRemove = getParameters().getCinderDiskToBeRemoved();
-        removeSnapshot(cinderDiskToRemove);
+        // In case we didn't set CinderDiskToBeRemoved (Since there were no relied snapshots on the volume), don't
+        // remove the snapshot.
+        if (getParameters().getCinderDiskToBeRemoved() != null) {
+            removeSnapshot(getParameters().getCinderDiskToBeRemoved());
+        }
         if (getParameters().isRemoveParent()) {
             RestoreFromSnapshotParameters removeParams =
                     new RestoreFromSnapshotParameters(getParameters().getImageId(),
