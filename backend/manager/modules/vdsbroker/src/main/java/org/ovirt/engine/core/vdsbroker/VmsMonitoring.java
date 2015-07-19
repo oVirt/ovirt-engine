@@ -297,13 +297,15 @@ public class VmsMonitoring {
 
     private void importHostedEngineVM(Map vmStruct) {
         VM vm = VdsBrokerObjectsBuilder.buildVmsDataFromExternalProvider(vmStruct);
-        vm.setImages(VdsBrokerObjectsBuilder.buildDiskImagesFromDevices(vmStruct));
-        vm.setInterfaces(VdsBrokerObjectsBuilder.buildVmNetworkInterfacesFromDevices(vmStruct));
-        for (DiskImage diskImage : vm.getImages()) {
-            vm.getDiskMap().put(Guid.newGuid(), diskImage);
+        if (vm != null) {
+            vm.setImages(VdsBrokerObjectsBuilder.buildDiskImagesFromDevices(vmStruct));
+            vm.setInterfaces(VdsBrokerObjectsBuilder.buildVmNetworkInterfacesFromDevices(vmStruct));
+            for (DiskImage diskImage : vm.getImages()) {
+                vm.getDiskMap().put(Guid.newGuid(), diskImage);
+            }
+            vm.setVdsGroupId(getVdsManager().getVdsGroupId());
+            getVdsEventListener().importHostedEngineVm(vm);
         }
-        vm.setVdsGroupId(getVdsManager().getVdsGroupId());
-        getVdsEventListener().importHostedEngineVm(vm);
     }
 
     private void processVmsWithDevicesChange() {
