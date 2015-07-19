@@ -17,7 +17,7 @@ public class ConvertVmCallback extends CommandCallback {
     private static final String JOB_DOES_NOT_EXIST_MSG = "Lost contact with the conversion process";
 
     private Guid cmdId;
-    private ConvertVmCommand<ConvertVmParameters> cachedCommand;
+    private ConvertVmCommand<? extends ConvertVmParameters> cachedCommand;
 
     protected ConvertVmCallback(Guid cmdId) {
         this.cmdId = cmdId;
@@ -82,7 +82,7 @@ public class ConvertVmCallback extends CommandCallback {
         getCommand().getVmManager().updateConvertOperation(description, progress);
     }
 
-    private ConvertVmCommand<ConvertVmParameters> getCommand() {
+    private ConvertVmCommand<? extends ConvertVmParameters> getCommand() {
         if (cachedCommand == null) {
             cachedCommand = CommandCoordinatorUtil.retrieveCommand(cmdId);
         }

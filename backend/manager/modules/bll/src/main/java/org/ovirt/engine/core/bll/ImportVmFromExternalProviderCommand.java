@@ -256,12 +256,16 @@ implements QuotaStorageDependent {
         // Note that the VM is not locked for a short period of time. This should be fixed
         // when locks that are passed by caller could be released by command's callback.
         freeLock();
+        convert();
+
+        setSucceeded(true);
+    }
+
+    protected void convert() {
         CommandCoordinatorUtil.executeAsyncCommand(
                 VdcActionType.ConvertVm,
                 buildConvertVmParameters(),
                 cloneContextAndDetachFromParent());
-
-        setSucceeded(true);
     }
 
     private ConvertVmParameters buildConvertVmParameters() {
@@ -303,7 +307,7 @@ implements QuotaStorageDependent {
         }
     }
 
-    private List<DiskImage> getDisks() {
+    protected List<DiskImage> getDisks() {
         List<DiskImage> disks = new ArrayList<>();
         for (Guid diskId : getParameters().getDisks()) {
             disks.add(getDisk(diskId));

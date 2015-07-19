@@ -624,8 +624,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
-        if (getParameters().getVmId() != null && !Guid.Empty.equals(getParameters().getVmId()) &&
-                getParameters().getParentCommand() != VdcActionType.ImportVmFromExternalProvider) {
+        if (!Guid.isNullOrEmpty(getParameters().getVmId()) && !isInternalExecution()) {
             return Collections.singletonMap(getParameters().getVmId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }

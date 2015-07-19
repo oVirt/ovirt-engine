@@ -149,10 +149,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     @Override
     protected void executeVmCommand() {
         try {
-            VDSReturnValue retValue = runVdsCommand(
-                    VDSCommandType.ConvertVm,
-                    buildConvertParameters());
-
+            VDSReturnValue retValue = runVdsCommand();
             if (retValue.getSucceeded()) {
                 getVdsManager().addV2VJobInfoForVm(getVmId(), JobStatus.WAIT_FOR_START);
                 setSucceeded(true);
@@ -164,6 +161,12 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
             log.error("Failed to convert VM", e);
             setCommandStatus(CommandStatus.FAILED);
         }
+    }
+
+    protected VDSReturnValue runVdsCommand() {
+        return runVdsCommand(
+                VDSCommandType.ConvertVm,
+                buildConvertParameters());
     }
 
     private ConvertVmVDSParameters buildConvertParameters() {
@@ -180,7 +183,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         return parameters;
     }
 
-    private String getVirtioIsoPath() {
+    protected String getVirtioIsoPath() {
         return getParameters().getVirtioIsoName() == null ? null :
             new File(getIsoPrefix(), getParameters().getVirtioIsoName()).getPath();
     }
