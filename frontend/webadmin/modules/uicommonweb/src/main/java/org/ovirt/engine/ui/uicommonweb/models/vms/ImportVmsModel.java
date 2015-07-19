@@ -45,6 +45,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
+
 import com.google.inject.Inject;
 
 public class ImportVmsModel extends ListWithSimpleDetailsModel {
@@ -71,10 +72,10 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     private UICommand addImportCommand = new UICommand(null, this);
     private UICommand cancelImportCommand = new UICommand(null, this);
 
-    private com.google.inject.Provider<ImportVmFromExternalProviderModel> importFromExternalProviderModelProvider;
+    private com.google.inject.Provider<ImportVmFromVmwareModel> importFromVmwareModelProvider;
     private com.google.inject.Provider<ImportVmFromExportDomainModel> importFromExportDomainModelProvider;
 
-    private ImportVmFromExternalProviderModel importFromExternalProviderModel;
+    private ImportVmFromVmwareModel importFromVmwareModel;
     private ImportVmFromExportDomainModel importFromExportDomainModel;
     private ImportVmModel selectedImportVmModel;
 
@@ -83,9 +84,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     @Inject
     public ImportVmsModel(
             com.google.inject.Provider<ImportVmFromExportDomainModel> importFromExportDomainModelProvider,
-            com.google.inject.Provider<ImportVmFromExternalProviderModel> importFromExternalProviderModelProvider) {
+            com.google.inject.Provider<ImportVmFromVmwareModel> importFromVmwareModelProvider) {
         this.importFromExportDomainModelProvider = importFromExportDomainModelProvider;
-        this.importFromExternalProviderModelProvider = importFromExternalProviderModelProvider;
+        this.importFromVmwareModelProvider = importFromVmwareModelProvider;
 
         // General
         setDataCenters(new ListModel<StoragePool>());
@@ -123,12 +124,12 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             importFromExportDomainModel.getCommands().add(command);
         }
 
-        importFromExternalProviderModel = importFromExternalProviderModelProvider.get();
-        importFromExternalProviderModel.setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
-        importFromExternalProviderModel.setHelpTag(HelpTag.import_virtual_machine);
-        importFromExternalProviderModel.setHashName("import_virtual_machine"); //$NON-NLS-1$
+        importFromVmwareModel = importFromVmwareModelProvider.get();
+        importFromVmwareModel.setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
+        importFromVmwareModel.setHelpTag(HelpTag.import_virtual_machine);
+        importFromVmwareModel.setHashName("import_virtual_machine"); //$NON-NLS-1$
         for (UICommand command : commands) {
-            importFromExternalProviderModel.getCommands().add(command);
+            importFromVmwareModel.getCommands().add(command);
         }
     }
 
@@ -142,12 +143,12 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             selectedImportVmModel = importFromExportDomainModel;
             break;
         case VMWARE:
-            importFromExternalProviderModel.init(getVmsToImport(), getDataCenters().getSelectedItem().getId());
-            importFromExternalProviderModel.setUrl(getUrl());
-            importFromExternalProviderModel.setUsername(getUsername().getEntity());
-            importFromExternalProviderModel.setPassword(getPassword().getEntity());
-            importFromExternalProviderModel.setProxyHostId(getProxyHosts().getSelectedItem() != null ? getProxyHosts().getSelectedItem().getId() : null);
-            selectedImportVmModel = importFromExternalProviderModel;
+            importFromVmwareModel.init(getVmsToImport(), getDataCenters().getSelectedItem().getId());
+            importFromVmwareModel.setUrl(getUrl());
+            importFromVmwareModel.setUsername(getUsername().getEntity());
+            importFromVmwareModel.setPassword(getPassword().getEntity());
+            importFromVmwareModel.setProxyHostId(getProxyHosts().getSelectedItem() != null ? getProxyHosts().getSelectedItem().getId() : null);
+            selectedImportVmModel = importFromVmwareModel;
             break;
         default:
         }
