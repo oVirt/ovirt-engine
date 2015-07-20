@@ -182,11 +182,12 @@ public class AddStorageDomainCommonTest {
     }
 
     @Test
-    public void canDoActionFailsExportOnLocal() {
+    public void canDoActionSucceedsExportOnLocal() {
         sd.setStorageDomainType(StorageDomainType.ImportExport);
         sd.setStorageType(StorageType.LOCALFS);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
+        sd.setStorageFormat(StorageFormatType.V1);
+        sp.setIsLocal(true);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
     }
 
     @Test

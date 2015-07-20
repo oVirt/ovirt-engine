@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
@@ -181,9 +180,9 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
         }
         if (getStorageDomain().getStorageDomainType() == StorageDomainType.ImportExport
-                && (getStorageDomain().getStorageType() == StorageType.LOCALFS || getStorageDomain().getStorageType().isBlockDomain())) {
+                && getStorageDomain().getStorageType().isBlockDomain()) {
             addCanDoActionMessageVariable("domainType", StorageConstants.EXPORT);
-            addCanDoActionMessageVariable("storageTypes", StorageConstants.SHARED + " " + StorageConstants.FILE);
+            addCanDoActionMessageVariable("storageTypes", StorageConstants.FILE);
 
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
         }

@@ -3925,6 +3925,9 @@ public class AsyncDataProvider {
         GlusterStorageModel glusterExportModel = new GlusterStorageModel();
         models.add(glusterExportModel);
 
+        LocalStorageModel localExportStorageModel = new LocalStorageModel();
+        models.add(localExportStorageModel);
+
         addTypeToStorageModels(StorageDomainType.ImportExport, models);
 
         return models;
