@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.network.host;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,6 +44,7 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,6 +87,7 @@ public class HostSetupNetworksValidator {
             EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT + LIST_SUFFIX;
     static final String VAR_BOND_NAME = "BondName";
     static final String VAR_NETWORK_NAME = "networkName";
+    static final String VAR_NETWORK_NAMES = "networkNames";
     static final String VAR_ATTACHMENT_IDS = "attachmentIds";
 
     private HostSetupNetworksParameters params;
@@ -214,13 +217,19 @@ public class HostSetupNetworksValidator {
             removedNetworks.add(existingNetworkRelatedToAttachment(removedAttachment).getName());
         }
 
-        List<String> vmNames = getVmInterfaceManager().findActiveVmsUsingNetworks(host.getId(), removedNetworks);
+        final List<String> vmNames = getVmInterfaceManager().findActiveVmsUsingNetworks(host.getId(), removedNetworks);
+
         if (vmNames.isEmpty()) {
             return ValidationResult.VALID;
         } else {
-            return new ValidationResult(EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS,
-                ReplacementUtils.replaceWith(VAR_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST, vmNames));
+            final List<String> sortedRemovedNetsworks = new ArrayList<>(removedNetworks);
+            Collections.sort(sortedRemovedNetsworks);
 
+            return new ValidationResult(
+                    EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS,
+                    LinqUtils.concat(
+                            ReplacementUtils.replaceWith(VAR_NETWORK_NAMES, sortedRemovedNetsworks),
+                            ReplacementUtils.replaceWith(VAR_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST, vmNames)));
         }
     }
 

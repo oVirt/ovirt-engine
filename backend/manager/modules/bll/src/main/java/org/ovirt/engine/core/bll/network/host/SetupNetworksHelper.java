@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.network.host;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,17 +37,20 @@ import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.violation.DetailedViolation;
+import org.ovirt.engine.core.utils.violation.Violation;
+import org.ovirt.engine.core.utils.violation.ViolationRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SetupNetworksHelper {
+
     private static final Pattern BOND_OPTS_MODE_CAPTURE = Pattern.compile("mode=(\\d)");
     private static final float QOS_OVERCOMMITMENT_THRESHOLD = 0.75f;
-    protected static final String VIOLATING_ENTITIES_LIST_FORMAT = "${0}_LIST {1}";
     private static final Logger log = LoggerFactory.getLogger(SetupNetworksHelper.class);
     private SetupNetworksParameters params;
     private VDS vds;
-    private Map<EngineMessage, List<String>> violations = new HashMap<>();
+    private Map<EngineMessage, ViolationRenderer> violations = new HashMap<>();
     private Map<String, VdsNetworkInterface> existingIfaces;
     private Map<String, Network> existingClusterNetworks;
 
@@ -451,8 +453,8 @@ public class SetupNetworksHelper {
         String version = vds.getVdsGroupCompatibilityVersion().getValue();
         SimpleCustomPropertiesUtil util = SimpleCustomPropertiesUtil.getInstance();
         Map<String, String> validProperties =
-                util.convertProperties(Config.<String> getValue(ConfigValues.PreDefinedNetworkCustomProperties, version));
-        validProperties.putAll(util.convertProperties(Config.<String> getValue(ConfigValues.UserDefinedNetworkCustomProperties,
+                util.convertProperties(Config.<String>getValue(ConfigValues.PreDefinedNetworkCustomProperties, version));
+        validProperties.putAll(util.convertProperties(Config.<String>getValue(ConfigValues.UserDefinedNetworkCustomProperties,
                 version)));
         Map<String, String> validPropertiesNonVm = new HashMap<>(validProperties);
         validPropertiesNonVm.remove("bridge_opts");
@@ -497,25 +499,39 @@ public class SetupNetworksHelper {
         return networks;
     }
 
-    private void addViolation(EngineMessage violation, String violatingEntity) {
-        List<String> violatingEntities = violations.get(violation);
-        if (violatingEntities == null) {
-            violatingEntities = new ArrayList<>();
-            violations.put(violation, violatingEntities);
+    private void addViolation(EngineMessage violationMsg, String violatingEntity) {
+
+        final Violation violation = (Violation) violations.get(violationMsg);
+        if (violation == null) {
+            violations.put(violationMsg, new Violation(violationMsg.name(), violatingEntity));
+        } else {
+            violation.add(violatingEntity);
+        }
+    }
+
+    private void addDetailedViolation(
+            EngineMessage violationMsg,
+            String violatingEntity,
+            Map<String, String> violationDetails) {
+
+        DetailedViolation detailedViolation = (DetailedViolation) violations.get(violationMsg);
+        if (detailedViolation == null) {
+            detailedViolation = new DetailedViolation(violationMsg.name());
+            violations.put(violationMsg, detailedViolation);
         }
 
-        violatingEntities.add(violatingEntity);
+        for (Entry<String, String> violationDetailsEntry : violationDetails.entrySet()) {
+            detailedViolation.add(violatingEntity, violationDetailsEntry.getKey(), violationDetailsEntry.getValue());
+        }
     }
 
     private List<String> translateViolations() {
         List<String> violationMessages = new ArrayList<>(violations.size() * 2);
-        for (Map.Entry<EngineMessage, List<String>> v : violations.entrySet()) {
-            String violationName = v.getKey().name();
-            violationMessages.add(violationName);
-            violationMessages.add(MessageFormat.format(VIOLATING_ENTITIES_LIST_FORMAT,
-                    violationName,
-                    StringUtils.join(v.getValue(), ", ")));
-            if (v.getKey() == EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT) {
+        for (Entry<EngineMessage, ViolationRenderer> violationEntry : violations.entrySet()) {
+            final List<String> renderedViolationMessages = violationEntry.getValue().render();
+            violationMessages.addAll(renderedViolationMessages);
+
+            if (violationEntry.getKey() == EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT) {
                 violationMessages.add("$commitmentThreshold " + (int) (100 * QOS_OVERCOMMITMENT_THRESHOLD));
             }
         }
@@ -936,17 +952,21 @@ public class SetupNetworksHelper {
      */
     private void extractRemovedNetworks() {
         for (VdsNetworkInterface iface : getExistingIfaces().values()) {
-            String net = iface.getNetworkName();
-            if (StringUtils.isNotBlank(net) && !attachedNetworksNames.contains(net)) {
-                removedNetworks.add(net);
+            String networkName = iface.getNetworkName();
+            if (StringUtils.isNotBlank(networkName) && !attachedNetworksNames.contains(networkName)) {
+                removedNetworks.add(networkName);
+
+                final List<String> vmNames = getVmInterfaceManager().findActiveVmsUsingNetworks(
+                        params.getVdsId(),
+                        Collections.singleton(networkName));
+
+                for (String vmName : vmNames) {
+                    addDetailedViolation(
+                            EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS,
+                            vmName,
+                            Collections.singletonMap("networkNames", networkName));
+                }
             }
-        }
-
-        List<String> vmNames =
-                getVmInterfaceManager().findActiveVmsUsingNetworks(params.getVdsId(), removedNetworks);
-
-        for (String vmName : vmNames) {
-            addViolation(EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS, vmName);
         }
     }
 
