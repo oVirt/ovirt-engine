@@ -132,7 +132,6 @@
         }
 
         .refreshButton {
-			float: right;
 			font-size: 12px;
 			height: 14px;
 			line-height: 14px;
@@ -161,6 +160,20 @@
             width: 400px;
             float: left;
         }
+
+		.kernelImageEditorRow {
+			width: 100%;
+		}
+
+		.kernelImageRefreshButton {
+			margin-right: 0px;
+			margin-left: 0px;
+			padding-left: 0px;
+		}
+
+		.refreshButtonOffset {
+			margin-right: 20px;
+		}
 	</ui:style>
 
 	<g:FlowPanel>
@@ -203,17 +216,15 @@
 
 		<g:DisclosurePanel ui:field="linuxBootOptionsPanel" label="{constants.runOncePopupLinuxBootOptionsLabel}" addStyleNames="{style.panelStyle}">
 			<g:VerticalPanel addStyleNames="{style.linuxBootOptionsPanel}">
-				<g:HorizontalPanel>
-					<e:ListModelTypeAheadChangeableListBoxEditor ui:field="kernelImageEditor"
-																											 addStyleNames="{style.linuxBootOption}"/>
-					<g:PushButton ui:field="linuxBootOptionsRefreshButton" addStyleNames="{style.refreshButton}">
+				<g:HorizontalPanel addStyleNames="{style.kernelImageEditorRow}">
+					<e:ListModelTypeAheadChangeableListBoxEditor ui:field="kernelImageEditor" addStyleNames="{style.linuxBootOption}"/>
+					<g:PushButton ui:field="linuxBootOptionsRefreshButton" addStyleNames="{style.refreshButton} {style.kernelImageRefreshButton}">
 						<g:upFace image='{resources.refreshButtonImage}'/>
 					</g:PushButton>
 				</g:HorizontalPanel>
 
-				<e:ListModelTypeAheadChangeableListBoxEditor ui:field="initrdImageEditor"
-																										 addStyleNames="{style.linuxBootOption}"/>
-				<ge:StringEntityModelTextBoxEditor ui:field="kernelParamsEditor" addStyleNames="{style.linuxBootOption}" />
+				<e:ListModelTypeAheadChangeableListBoxEditor ui:field="initrdImageEditor" addStyleNames="{style.linuxBootOption} {style.refreshButtonOffset}"/>
+				<ge:StringEntityModelTextBoxEditor ui:field="kernelParamsEditor" addStyleNames="{style.linuxBootOption} {style.refreshButtonOffset}" />
 			</g:VerticalPanel>
 		</g:DisclosurePanel>
 
