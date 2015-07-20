@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.storage;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -15,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -47,9 +46,7 @@ public class ActivateStorageDomainCommandTest {
     @Test
     public void nonInternalLockedDisallowed() {
         testExecution(StorageDomainStatus.Locked);
-        canDoActionFails();
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(
-                EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED.name()));
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED);
     }
 
     @Test
@@ -107,19 +104,16 @@ public class ActivateStorageDomainCommandTest {
     @Test
     public void nonActiveVdsDisallowed() {
         testNonActiveVdsExecution(StorageDomainStatus.Maintenance);
-        canDoActionFails();
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(
-                EngineMessage.ACTION_TYPE_FAILED_NO_VDS_IN_POOL.name()));
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
     }
 
     private void testActionAllowed() {
-        canDoActionSucceeds();
-        noIllegalStatusMessage();
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
     }
 
     private void testActionDisallowed() {
-        canDoActionFails();
-        hasIllegalStatusMessage();
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
     }
 
     public void internalActionAllowed(StorageDomainStatus status) {
@@ -184,24 +178,6 @@ public class ActivateStorageDomainCommandTest {
         doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
         doReturn(vdsDao).when(cmd).getVdsDao();
-    }
-
-    private void canDoActionSucceeds() {
-        assertTrue(cmd.canDoAction());
-    }
-
-    private void canDoActionFails() {
-        assertFalse(cmd.canDoAction());
-    }
-
-    private void noIllegalStatusMessage() {
-        assertFalse(cmd.getReturnValue().getCanDoActionMessages().contains(
-                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString()));
-    }
-
-    private void hasIllegalStatusMessage() {
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(
-                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString()));
     }
 
     private void setIsInternal() {
