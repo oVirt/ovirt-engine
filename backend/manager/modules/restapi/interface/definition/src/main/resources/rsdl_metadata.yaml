@@ -2160,6 +2160,11 @@ actions:
             host_nic.name|id: xs:string
           action.synchronized_network_attachments.network_attachment--COLLECTION:
             network_attachment.id: xs:string
+          action.modified_labels.label--COLLECTION:
+            label.host_nic.name|id: xs:string
+            label.id: xs:string
+          action.removed_labels.label--COLLECTION:
+            label.id: xs:string
           action.check_connectivity: xs:boolean
           action.connectivity_timeout: xs:int
 - name: /hosts/{host:id}/nics/{nic:id}/networkattachments|rel=get

@@ -18,6 +18,7 @@ import org.ovirt.engine.api.model.FenceType;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostNIC;
 import org.ovirt.engine.api.model.IscsiDetails;
+import org.ovirt.engine.api.model.Label;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.PowerManagementStatus;
@@ -64,6 +65,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
+import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
@@ -255,6 +257,24 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
                         return handleError(new EntityNotFoundException("NetworkAttachment.id: " + model.getId()), true);
                     }
                 }
+            }
+        }
+
+        if (action.isSetModifiedLabels()) {
+            for (Label label : action.getModifiedLabels().getLabels()) {
+                NicLabel nicLabel = new NicLabel();
+                nicLabel.setLabel(label.getId());
+                if (label.isSetHostNic()) {
+                    nicLabel.setNicId(label.getHostNic().isSetId() ? asGuid(label.getHostNic().getId()) : null);
+                    nicLabel.setNicName(label.getHostNic().getName());
+                }
+                parameters.getLabels().add(nicLabel);
+            }
+        }
+
+        if (action.isSetRemovedLabels()) {
+            for (Label label : action.getRemovedLabels().getLabels()) {
+                parameters.getRemovedLabels().add(label.getId());
             }
         }
 
