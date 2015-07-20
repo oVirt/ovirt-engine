@@ -2251,6 +2251,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     RefreshLunSupported,
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("HostedEngine")
+    HostedEngineVmName,
+
     Invalid
 
 }

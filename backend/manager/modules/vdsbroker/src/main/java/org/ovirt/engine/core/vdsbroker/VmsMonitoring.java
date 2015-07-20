@@ -31,6 +31,8 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -99,7 +101,6 @@ public class VmsMonitoring {
     private List<Pair<VM, VmInternalData>> externalVms = new ArrayList<>();
     //*** data collectors ***//
 
-    private static final String HOSTED_ENGINE_VM_NAME = "HostedEngine";
     private static final String EXTERNAL_VM_NAME_FORMAT = "external-%1$s";
     private static final Logger log = LoggerFactory.getLogger(VmsMonitoring.class);
 
@@ -370,7 +371,7 @@ public class VmsMonitoring {
                 vmStatic.setVdsGroupId(vdsManager.getVdsGroupId());
                 String vmNameOnHost = (String) vmInfo.get(VdsProperties.vm_name);
 
-                if (StringUtils.equals(HOSTED_ENGINE_VM_NAME, vmNameOnHost)) {
+                if (StringUtils.equals(Config.<String>getValue(ConfigValues.HostedEngineVmName), vmNameOnHost)) {
                     // its a hosted engine VM -> import it and skip the external VM phase
                     importHostedEngineVM(vmInfo);
                     continue;

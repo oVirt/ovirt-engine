@@ -744,6 +744,7 @@ select fn_db_add_config_value('DefaultMigrationCompression','false','general');
 select fn_db_add_config_value_for_versions_up_to('NetworkSriovSupported','false','3.5');
 
 select fn_db_add_config_value_for_versions_up_to('RefreshLunSupported','false','3.5');
+select fn_db_add_config_value('HostedEngineVmName','HostedEngine','general');
 
 ------------------------------------------------------------------------------------
 --                  Update with override section
