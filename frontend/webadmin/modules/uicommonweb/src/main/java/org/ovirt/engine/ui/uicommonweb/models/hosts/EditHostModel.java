@@ -7,11 +7,17 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class EditHostModel extends HostModel {
+
+    public EditHostModel() {
+        getExternalHostProviderEnabled().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
+    }
 
     @Override
     protected boolean showInstallationProperties() {
@@ -51,15 +57,16 @@ public class EditHostModel extends HostModel {
     }
 
     @Override
-    public void updateHosts() {
-    }
-
-    @Override
     protected void updateProvisionedHosts() {
     }
 
     @Override
     public boolean showExternalProviderPanel() {
+        return true;
+    }
+
+    @Override
+    public boolean externalProvisionEnabled() {
         return false;
     }
 

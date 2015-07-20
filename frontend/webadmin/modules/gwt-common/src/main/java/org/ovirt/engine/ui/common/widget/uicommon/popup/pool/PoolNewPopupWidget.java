@@ -60,6 +60,7 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
     protected PopupWidgetConfigMap createWidgetConfiguration() {
         PopupWidgetConfigMap widgetConfiguration = super.createWidgetConfiguration().
                 update(highAvailabilityTab, hiddenField()).
+                update(foremanTab, hiddenField()).
                 update(spiceProxyEditor, simpleField().visibleInAdvancedModeOnly()).
                 update(spiceProxyEnabledCheckboxWithInfoIcon, simpleField().visibleInAdvancedModeOnly()).
                 update(spiceProxyOverrideEnabledEditor, simpleField().visibleInAdvancedModeOnly()).

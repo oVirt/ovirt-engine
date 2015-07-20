@@ -18,6 +18,9 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
+import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
@@ -88,6 +91,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     public static final int VM_TEMPLATE_AND_INSTANCE_TYPE_NAME_MAX_LIMIT = 40;
     public static final int DESCRIPTION_MAX_LIMIT = 255;
+
+    final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private boolean privateIsNew;
 
@@ -1671,6 +1676,44 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setNumOfIoThreads(new NotChangableForVmInPoolEntityModel<>(0));
         getNumOfIoThreads().setIsAvailable(false);
         getIoThreadsEnabled().getEntityChangedEvent().addListener(this);
+
+        setProviders(new NotChangableForVmInPoolListModel<Provider<OpenstackNetworkProviderProperties>>());
+    }
+
+    public void initForemanProviders(final Guid selected) {
+        AsyncQuery getProvidersQuery = new AsyncQuery();
+        getProvidersQuery.asyncCallback = new INewAsyncCallback() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void onSuccess(Object model, Object result) {
+                List<Provider<OpenstackNetworkProviderProperties>> providers =
+                        (List<Provider<OpenstackNetworkProviderProperties>>) result;
+                Provider<OpenstackNetworkProviderProperties> noneProvider = createNoneProvider();
+                providers.add(0, noneProvider);
+                ListModel<Provider<OpenstackNetworkProviderProperties>> providersListModel = getProviders();
+                if (selected != null) {
+                    //Find the selected provider.
+                    for (Provider<OpenstackNetworkProviderProperties> provider: providers) {
+                        if (provider.getId().equals(selected)) {
+                            providersListModel.setItems(providers, provider);
+                            break;
+                        }
+                    }
+                }
+                if (providersListModel.getItems() == null || providersListModel.getItems().isEmpty()) {
+                    providersListModel.setItems(providers, providers.get(0));
+                }
+                providersListModel.setIsChangeable(true);
+            }
+
+            private Provider<OpenstackNetworkProviderProperties> createNoneProvider() {
+                Provider<OpenstackNetworkProviderProperties> noneProvider = new Provider<>();
+                noneProvider.setId(Guid.Empty);
+                noneProvider.setName(constants.providerNone());
+                return noneProvider;
+            }
+        };
+        AsyncDataProvider.getInstance().getAllProvidersByType(getProvidersQuery, ProviderType.FOREMAN);
     }
 
     public void initialize(SystemTreeItemModel SystemTreeSelectedItem) {
@@ -2599,7 +2642,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
             // initrd path and kernel params require kernel path to be filled
             if (StringHelper.isNullOrEmpty(getKernel_path().getEntity())) {
-                final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
                 if (!StringHelper.isNullOrEmpty(getInitrd_path().getEntity())) {
                     getInitrd_path().getInvalidityReasons().add(constants.initrdPathInvalid());
@@ -3042,5 +3084,15 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     public void updateNodeCount(int size) {
         initialsNumaNodeCount = size;
         getNumaNodeCount().setEntity(size);
+    }
+
+    private NotChangableForVmInPoolListModel<Provider<OpenstackNetworkProviderProperties>> providers;
+
+    public ListModel<Provider<OpenstackNetworkProviderProperties>> getProviders() {
+        return providers;
+    }
+
+    protected void setProviders(NotChangableForVmInPoolListModel<Provider<OpenstackNetworkProviderProperties>> value) {
+        providers = value;
     }
 }

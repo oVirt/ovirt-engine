@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicompat;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 
 import com.google.gwt.i18n.client.Constants;
+import com.google.gwt.i18n.client.Messages.DefaultMessage;
 
 public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
@@ -2881,4 +2882,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("VM Devices")
     String vmDevicesTitle();
+
+    @DefaultStringValue("No provider")
+    String providerNone();
 }

@@ -624,19 +624,23 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 boolean showForemanProviders = object.getExternalHostProviderEnabled().getEntity();
+                boolean doProvisioning = object.externalProvisionEnabled();
+
                 providersEditor.setVisible(showForemanProviders);
 
                 // showing or hiding radio buttons
-                provisionedHostSection.setVisible(showForemanProviders);
-                discoveredHostSection.setVisible(showForemanProviders);
+                provisionedHostSection.setVisible(showForemanProviders && doProvisioning);
+                discoveredHostSection.setVisible(showForemanProviders && doProvisioning);
 
                 // disabling ip and name textbox when using provisioned hosts
-                hostAddressEditor.setEnabled(!showForemanProviders);
+                hostAddressEditor.setEnabled(!showForemanProviders && doProvisioning);
 
-                if (showForemanProviders) {
+                if (showForemanProviders && doProvisioning) {
                     object.updateHosts();
                 } else {
-                    object.cleanHostParametersFields();
+                    if (doProvisioning) {
+                        object.cleanHostParametersFields();
+                    }
                     hideProviderWidgets(object);
                 }
             }
@@ -645,10 +649,10 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         object.getIsDiscoveredHosts().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (Boolean.TRUE.equals(object.getIsDiscoveredHosts().getEntity())) {
+                if (object.getIsDiscoveredHosts().getEntity()) {
                     rbDiscoveredHost.setValue(true);
                     showDiscoveredHostsWidgets(true);
-                } else if (Boolean.FALSE.equals(object.getIsDiscoveredHosts().getEntity())) {
+                } else if (!object.getIsDiscoveredHosts().getEntity()) {
                     rbProvisionedHost.setValue(true);
                     showProvisionedHostsWidgets(true);
                 }

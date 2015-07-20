@@ -5,16 +5,13 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
-import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -203,24 +200,6 @@ public class NewHostModel extends HostModel {
         }
     }
 
-    private void updateExternalHostModels() {
-        AsyncQuery getProvidersQuery = new AsyncQuery();
-        getProvidersQuery.asyncCallback = new INewAsyncCallback() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onSuccess(Object model, Object result) {
-                ArrayList<Provider<OpenstackNetworkProviderProperties>> providers =
-                        (ArrayList<Provider<OpenstackNetworkProviderProperties>>) result;
-                ListModel<Provider<OpenstackNetworkProviderProperties>> providersListModel = getProviders();
-                providersListModel.setItems(providers, Linq.firstOrDefault(providers));
-                providersListModel.setIsChangeable(true);
-                getIsDiscoveredHosts().setEntity(null);
-                getIsDiscoveredHosts().setEntity(true);
-            }
-        };
-        AsyncDataProvider.getInstance().getAllProvidersByType(getProvidersQuery, ProviderType.FOREMAN);
-    }
-
     @Override
     protected boolean showInstallationProperties() {
         return true;
@@ -243,11 +222,6 @@ public class NewHostModel extends HostModel {
     protected void setAllowChangeHostPlacementPropertiesWhenNotInMaintenance() {
         getDataCenter().setIsChangeable(true);
         getCluster().setIsChangeable(true);
-    }
-
-    @Override
-    public void updateHosts() {
-        updateExternalHostModels();
     }
 
     @Override

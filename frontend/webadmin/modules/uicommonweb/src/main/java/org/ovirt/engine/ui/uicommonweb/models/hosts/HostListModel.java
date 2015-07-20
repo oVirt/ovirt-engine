@@ -967,6 +967,9 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             parameters.setRebootAfterInstallation(isVirt);
             parameters.setAuthMethod(model.getAuthenticationMethod());
             parameters.setFenceAgents(model.getFenceAgentListModel().getFenceAgents());
+            if (model.getExternalHostProviderEnabled().getEntity() && model.getProviders().getSelectedItem() != null) {
+                host.setHostProviderId(model.getProviders().getSelectedItem().getId());
+            }
 
             if (!oldClusterId.equals(newClusterId)) {
                 Frontend.getInstance().runAction(VdcActionType.ChangeVDSCluster,

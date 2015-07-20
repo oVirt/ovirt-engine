@@ -733,6 +733,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
 
         model.initialize(this.getSystemTreeSelectedItem());
+        model.initForemanProviders(vm.getProviderId());
 
         VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
         switchModeCommand.init(model);
