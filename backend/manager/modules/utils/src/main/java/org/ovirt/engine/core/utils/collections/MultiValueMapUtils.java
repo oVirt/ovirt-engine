@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils.collections;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -92,6 +93,12 @@ public class MultiValueMapUtils {
         }
     }
 
+    public static class LinkedHashSetCreator<V> implements CollectionCreator<V, Set<V>> {
+        @Override
+        public Set<V> create() {
+            return new LinkedHashSet<>();
+        }
+    }
 
     public static <K, V, C extends Collection<V>> boolean removeFromMap(Map<K, C> map, K key, V value) {
         C collection = map.get(key);

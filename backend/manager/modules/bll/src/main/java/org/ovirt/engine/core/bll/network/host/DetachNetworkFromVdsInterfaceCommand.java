@@ -144,6 +144,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
 
         if (!vmNames.isEmpty()) {
             addCanDoActionMessage(EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS);
+            addCanDoActionMessageVariable("networkNames", getParameters().getNetwork().getName());
             addCanDoActionMessageVariable(String.format("$%s_LIST",
                     EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS.name()),
                     StringUtils.join(vmNames, ","));

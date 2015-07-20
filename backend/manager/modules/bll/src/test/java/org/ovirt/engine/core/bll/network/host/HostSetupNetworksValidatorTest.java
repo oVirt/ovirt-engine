@@ -9,9 +9,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.bll.network.host.HostSetupNetworksValidator.VAR_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST;
+import static org.ovirt.engine.core.bll.network.host.HostSetupNetworksValidator.VAR_NETWORK_NAMES;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
+import static org.ovirt.engine.core.utils.ReplacementUtils.replaceWith;
+import static org.ovirt.engine.core.utils.linq.LinqUtils.concat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -419,9 +423,9 @@ public class HostSetupNetworksValidatorTest {
 
         assertThat(validator.validRemovedBonds(Collections.<NetworkAttachment> emptyList()),
             failsWith(EngineMessage.NETWORK_BOND_RECORD_DOES_NOT_EXISTS,
-                ReplacementUtils.replaceWith(
-                    HostSetupNetworksValidator.VAR_NETWORK_BOND_RECORD_DOES_NOT_EXISTS_LIST,
-                    Collections.singletonList(idOfInexistingInterface))));
+                replaceWith(
+                        HostSetupNetworksValidator.VAR_NETWORK_BOND_RECORD_DOES_NOT_EXISTS_LIST,
+                        Collections.singletonList(idOfInexistingInterface))));
 
     }
 
@@ -442,8 +446,8 @@ public class HostSetupNetworksValidatorTest {
         List<String> replacements = new ArrayList<>();
         replacements.add(ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_BOND_NAME, nicName));
         //null -- new network attachment with null id.
-        replacements.addAll(ReplacementUtils.replaceWith(HostSetupNetworksValidator.VAR_ATTACHMENT_IDS,
-            Collections.<Guid> singletonList(null)));
+        replacements.addAll(replaceWith(HostSetupNetworksValidator.VAR_ATTACHMENT_IDS,
+                Collections.<Guid>singletonList(null)));
 
         assertThat(validator.validRemovedBonds(Collections.singletonList(requiredNetworkAttachment)),
             failsWith(EngineMessage.BOND_USED_BY_NETWORK_ATTACHMENTS,
@@ -589,7 +593,7 @@ public class HostSetupNetworksValidatorTest {
 
         HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
         params.setRemovedNetworkAttachments(new HashSet<>(Arrays.asList(networkAttachmentA.getId(),
-            networkAttachmentB.getId())));
+                networkAttachmentB.getId())));
 
         HostSetupNetworksValidator validator = spy(createHostSetupNetworksValidator(params,
             Arrays.asList(nicA, nicB),
@@ -599,15 +603,15 @@ public class HostSetupNetworksValidatorTest {
         VmInterfaceManager vmInterfaceManagerMock = mock(VmInterfaceManager.class);
         doReturn(vmInterfaceManagerMock).when(validator).getVmInterfaceManager();
 
-        //for simplicity we pretend, that vm names are equal to network they're using.
-        List<String> vmNames = Arrays.asList(nameOfNetworkA, nameOfNetworkB);
+        List<String> vmNames = Arrays.asList("vmName1", "vmName2");
         when(vmInterfaceManagerMock.findActiveVmsUsingNetworks(any(Guid.class), any(Collection.class)))
             .thenReturn(vmNames);
 
+        final List<String> errorNetworkNames = Arrays.asList(nameOfNetworkA, nameOfNetworkB);
         assertThat(validator.validateNotRemovingUsedNetworkByVms(),
-            failsWith(EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS,
-                ReplacementUtils.replaceWith(HostSetupNetworksValidator.VAR_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST,
-                    vmNames)));
+                failsWith(EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS,
+                        concat(replaceWith(VAR_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST, vmNames),
+                               replaceWith(VAR_NETWORK_NAMES, errorNetworkNames))));
 
 
         ArgumentCaptor<Collection> collectionArgumentCaptor = ArgumentCaptor.forClass(Collection.class);

@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -20,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,6 +50,7 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SetupNetworksHelperTest {
@@ -66,6 +68,7 @@ public class SetupNetworksHelperTest {
     private static final int LOW_BANDWIDTH = 500;
     private static final int HIGH_BANDWIDTH = 2000;
     private static final int DEFAULT_SPEED = 1000;
+    private static final String LIST_SUFFIX = "_LIST";
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -1774,12 +1777,10 @@ public class SetupNetworksHelperTest {
         List<String> violations = helper.validate();
         assertTrue(MessageFormat.format("Expected violation {0} but only got {1}.", violation, violations),
                 violations.contains(violation.name()));
-        String violatingEntityMessage = MessageFormat.format(SetupNetworksHelper.VIOLATING_ENTITIES_LIST_FORMAT,
-                violation.name(),
-                StringUtils.join(violatingEntities, ", "));
-        assertTrue(MessageFormat.format("Expected violating entity {0} but only got {1}.",
-                violatingEntityMessage, violations),
-                violations.contains(violatingEntityMessage));
+
+        for(String violationDetail : ReplacementUtils.replaceWith(violation + LIST_SUFFIX, Arrays.asList(violatingEntities))) {
+            assertThat("Missing violation entity", violations, hasItems(violationDetail));
+        }
     }
 
     private void validateAndExpectViolation(SetupNetworksHelper helper, EngineMessage violation) {
