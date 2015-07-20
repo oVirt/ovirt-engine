@@ -333,7 +333,7 @@ public class GlusterUtil {
      */
     public Time convertTime(Time inTime, String fromTimeZone) {
         Calendar calFrom = new GregorianCalendar(TimeZone.getTimeZone(fromTimeZone));
-        calFrom.set(Calendar.HOUR, inTime.getHours());
+        calFrom.set(Calendar.HOUR_OF_DAY, inTime.getHours());
         calFrom.set(Calendar.MINUTE, inTime.getMinutes());
         calFrom.set(Calendar.SECOND, inTime.getSeconds());
 
