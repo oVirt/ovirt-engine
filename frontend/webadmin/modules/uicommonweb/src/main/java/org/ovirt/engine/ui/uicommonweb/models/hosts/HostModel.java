@@ -1109,6 +1109,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                     for (Provider<OpenstackNetworkProviderProperties> provider: providers) {
                         if (provider.getId().equals(selected)) {
                             providersListModel.setItems(providers, provider);
+                            getExternalHostProviderEnabled().setEntity(true);
                             break;
                         }
                     }
@@ -1119,7 +1120,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 }
                 providersListModel.setIsChangeable(true);
                 getIsDiscoveredHosts().setEntity(null);
-                getIsDiscoveredHosts().setEntity(true);
             }
         };
         AsyncDataProvider.getInstance().getAllProvidersByType(getProvidersQuery, ProviderType.FOREMAN);

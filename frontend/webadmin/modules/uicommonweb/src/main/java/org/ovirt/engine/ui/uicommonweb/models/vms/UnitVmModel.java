@@ -92,6 +92,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     public static final int VM_TEMPLATE_AND_INSTANCE_TYPE_NAME_MAX_LIMIT = 40;
     public static final int DESCRIPTION_MAX_LIMIT = 255;
 
+    final UIConstants constants = ConstantsManager.getInstance().getConstants();
+
     private boolean privateIsNew;
 
     private EntityModel<Boolean> valid;
@@ -1686,6 +1688,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             public void onSuccess(Object model, Object result) {
                 List<Provider<OpenstackNetworkProviderProperties>> providers =
                         (List<Provider<OpenstackNetworkProviderProperties>>) result;
+                Provider<OpenstackNetworkProviderProperties> noneProvider = createNoneProvider();
+                providers.add(0, noneProvider);
                 ListModel<Provider<OpenstackNetworkProviderProperties>> providersListModel = getProviders();
                 if (selected != null) {
                     //Find the selected provider.
@@ -1696,11 +1700,17 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                         }
                     }
                 }
-                if (providersListModel.getItems() == null || providersListModel.getItems().isEmpty()
-                        || providersListModel.getSelectedItem() == null) {
-                    providersListModel.setItems(providers, Linq.firstOrDefault(providers));
+                if (providersListModel.getItems() == null || providersListModel.getItems().isEmpty()) {
+                    providersListModel.setItems(providers, providers.get(0));
                 }
                 providersListModel.setIsChangeable(true);
+            }
+
+            private Provider<OpenstackNetworkProviderProperties> createNoneProvider() {
+                Provider<OpenstackNetworkProviderProperties> noneProvider = new Provider<>();
+                noneProvider.setId(Guid.Empty);
+                noneProvider.setName(constants.providerNone());
+                return noneProvider;
             }
         };
         AsyncDataProvider.getInstance().getAllProvidersByType(getProvidersQuery, ProviderType.FOREMAN);
@@ -2632,7 +2642,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
             // initrd path and kernel params require kernel path to be filled
             if (StringHelper.isNullOrEmpty(getKernel_path().getEntity())) {
-                final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
                 if (!StringHelper.isNullOrEmpty(getInitrd_path().getEntity())) {
                     getInitrd_path().getInvalidityReasons().add(constants.initrdPathInvalid());

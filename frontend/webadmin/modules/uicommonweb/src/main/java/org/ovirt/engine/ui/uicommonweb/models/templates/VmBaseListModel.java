@@ -339,7 +339,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
 
         getcurrentVm().setVmInit(model.getVmInitModel().buildCloudInitParameters(model));
 
-        if (model.getProviders().getIsSelected()) {
+        if (!model.getProviders().getItems().iterator().next().equals(model.getProviders().getSelectedItem())) {
             getcurrentVm().setProviderId(model.getProviders().getSelectedItem().getId());
         }
         if (model.getIsNew()) {
