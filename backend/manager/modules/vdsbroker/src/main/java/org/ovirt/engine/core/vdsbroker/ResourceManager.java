@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -26,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
@@ -130,67 +128,32 @@ public class ResourceManager implements BackendService {
     private void init() {
         // init the singleton. TODO remove once all code is using CDI
         setInstance(this);
+
         log.info("Start initializing {}", getClass().getSimpleName());
-        List<VDS> allVdsList = hostDao.getAll();
-        HashSet<Guid> nonResponsiveVdss = new HashSet<Guid>();
-        for (VDS helper_vds : allVdsList) {
-            if (helper_vds.getStatus() == VDSStatus.NonResponsive) {
-                nonResponsiveVdss.add(helper_vds.getId());
-            }
-        }
-
-        // Is there any VM that is not fully Up or fully Down?
-        boolean runningVmsInTransition = false;
-
-        // Cleanup all vms dynamic data. This is defensive code on power crash
-        List<VM> vms = vmDao.getAll();
-        for (VM vm : vms) {
-            if (!vm.isNotRunning()) {
-                if (vm.getRunOnVds() != null) {
-                    MultiValueMapUtils.addToMap(vm.getRunOnVds(),
-                            vm.getId(),
-                            vdsAndVmsList,
-                            new MultiValueMapUtils.HashSetCreator<Guid>());
-                }
-                if (vm.getRunOnVds() != null && nonResponsiveVdss.contains(vm.getRunOnVds())) {
-                    SetVmUnknown(vm);
-                }
-            }
-
-            if (!runningVmsInTransition && vm.isRunning() && vm.getStatus() != VMStatus.Up) {
-                runningVmsInTransition = true;
-            }
-        }
-
-        // Clean pending memory and CPUs if there is no VM in transition on a given Host
-        // (meaning we tried to start a VM and the engine crashed before telling VDSM about it)
-        List<VdsDynamic> updatedEntities = new ArrayList<>();
-        for (VDS _vds : allVdsList) {
-            boolean _saveVdsDynamic = false;
-
-            if (_vds.getPendingVcpusCount() != 0 && !runningVmsInTransition) {
-                _vds.setPendingVcpusCount(0);
-                _saveVdsDynamic = true;
-            }
-
-            if (_vds.getPendingVmemSize() != 0 && !runningVmsInTransition) {
-                _vds.setPendingVmemSize(0);
-                _saveVdsDynamic = true;
-            }
-
-            if (_saveVdsDynamic) {
-                updatedEntities.add(_vds.getDynamicData());
-            }
-        }
-
-        hostDynamicDao.updateAllInBatch(updatedEntities);
+        populateVdsAndVmsList();
 
         // Populate the VDS dictionary
+        final List<VDS> allVdsList = hostDao.getAll();
         for (VDS curVds : allVdsList) {
             AddVds(curVds, true);
         }
         IrsBrokerCommand.init();
+
         log.info("Finished initializing {}", getClass().getSimpleName());
+    }
+
+    private void populateVdsAndVmsList() {
+
+        final List<VM> vms = vmDao.getAll();
+
+        for (VM vm : vms) {
+            if (!vm.isNotRunning() && vm.getRunOnVds() != null) {
+                MultiValueMapUtils.addToMap(vm.getRunOnVds(),
+                        vm.getId(),
+                        vdsAndVmsList,
+                        new MultiValueMapUtils.HashSetCreator<Guid>());
+            }
+        }
     }
 
     public boolean AddAsyncRunningVm(Guid vmId) {
