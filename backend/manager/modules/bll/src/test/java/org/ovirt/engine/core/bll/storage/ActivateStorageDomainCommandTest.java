@@ -6,8 +6,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -161,13 +160,13 @@ public class ActivateStorageDomainCommandTest {
     }
 
     private void createUpVds() {
-        List<VDS> vdss = new ArrayList<>();
-        vdss.add(new VDS());
-        when(vdsDao.getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up))).thenReturn(vdss);
+        when(vdsDao.getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up)))
+                .thenReturn(Collections.singletonList(new VDS()));
     }
 
     private void createNonUpVds() {
-        when(vdsDao.getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up))).thenReturn(new ArrayList<VDS>());
+        when(vdsDao.getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up)))
+                .thenReturn(Collections.<VDS>emptyList());
     }
 
     private void createCommand() {
