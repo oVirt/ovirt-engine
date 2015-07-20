@@ -161,7 +161,7 @@ public class ActivateStorageDomainCommandTest {
     }
 
     private void createUpVds() {
-        List<VDS> vdss = new ArrayList<VDS>();
+        List<VDS> vdss = new ArrayList<>();
         vdss.add(new VDS());
         when(vdsDao.getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up))).thenReturn(vdss);
     }
@@ -174,7 +174,7 @@ public class ActivateStorageDomainCommandTest {
         StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase();
         params.setStorageDomainId(Guid.newGuid());
         params.setStoragePoolId(Guid.newGuid());
-        cmd = spy(new ActivateStorageDomainCommand<StorageDomainPoolParametersBase>(params));
+        cmd = spy(new ActivateStorageDomainCommand<>(params));
         doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
         doReturn(vdsDao).when(cmd).getVdsDao();
