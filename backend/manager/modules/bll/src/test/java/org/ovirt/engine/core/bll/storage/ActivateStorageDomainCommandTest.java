@@ -31,11 +31,11 @@ import org.ovirt.engine.core.dao.VdsDao;
 @RunWith(MockitoJUnitRunner.class)
 public class ActivateStorageDomainCommandTest {
     @Mock
-    StorageDomainDao storageDomainDao;
+    private StorageDomainDao storageDomainDao;
     @Mock
-    StoragePoolDao storagePoolDao;
+    private StoragePoolDao storagePoolDao;
     @Mock
-    VdsDao vdsDao;
+    private VdsDao vdsDao;
 
     private ActivateStorageDomainCommand<StorageDomainPoolParametersBase> cmd;
 
