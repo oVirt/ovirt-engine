@@ -1,4 +1,3 @@
-
 package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
 import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
@@ -20,6 +19,8 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -915,6 +916,15 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path("icon.entity")
     protected IconEditorWidget iconEditorWidget;
 
+    @UiField
+    @Ignore
+    protected DialogTab foremanTab;
+
+    @UiField(provided = true)
+    @Path(value = "providers.selectedItem")
+    @WithElementId("providers")
+    public ListModelListBoxEditor<Provider<OpenstackNetworkProviderProperties>> providersEditor;
+
     private UnitVmModel unitVmModel;
 
     private final Driver driver = GWT.create(Driver.class);
@@ -1041,6 +1051,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         getTabNameMapping().put(TabName.RESOURCE_ALLOCATION_TAB, this.resourceAllocationTab);
         getTabNameMapping().put(TabName.SYSTEM_TAB, this.systemTab);
         getTabNameMapping().put(TabName.ICON_TAB, this.iconTab);
+        getTabNameMapping().put(TabName.FOREMAN_TAB, foremanTab);
     }
 
     private void initDetachableFields() {
@@ -1453,6 +1464,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 new ListModelListBoxOnlyEditor<UnitVmModel.CpuSharesAmount>(new EnumRenderer<UnitVmModel.CpuSharesAmount>(), new ModeSwitchingVisibilityRenderer());
 
         numaTuneMode = new ListModelListBoxEditor<NumaTuneMode>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
+
+        providersEditor = new ListModelListBoxEditor<>(new NameRenderer<Provider<OpenstackNetworkProviderProperties>>());
+        providersEditor.setLabel(constants.providerLabel());
     }
 
     private String typeAheadNameDescriptionTemplateNullSafe(String name, String description) {
@@ -1593,6 +1607,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         // Icon tab
         iconTab.setLabel(constants.iconTabVmPopup());
+
+        // Foreman tab
+        foremanTab.setLabel(constants.foremanLabel());
     }
 
     protected void applyStyles() {
@@ -2130,6 +2147,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         nextTabIndex = iconTab.setTabIndexes(nextTabIndex);
         iconEditorWidget.setTabIndex(nextTabIndex++);
 
+        // ==Foreman Tab==
+        nextTabIndex = foremanTab.setTabIndexes(nextTabIndex);
         return nextTabIndex;
     }
 
@@ -2137,7 +2156,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     protected PopupWidgetConfigMap createWidgetConfiguration() {
         return super.createWidgetConfiguration().
                 putAll(allTabs(), simpleField().visibleInAdvancedModeOnly()).
-                putAll(adancedFieldsFromGeneralTab(), simpleField().visibleInAdvancedModeOnly()).
+                putAll(advancedFieldsFromGeneralTab(), simpleField().visibleInAdvancedModeOnly()).
                 putAll(consoleTabWidgets(), simpleField().visibleInAdvancedModeOnly()).
                 update(consoleTab, simpleField()).
                 update(numOfMonitorsEditor, simpleField()).
@@ -2192,10 +2211,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 highAvailabilityTab,
                 poolTab,
                 systemTab,
-                iconTab);
+                iconTab,
+                foremanTab);
     }
 
-    protected List<Widget> adancedFieldsFromGeneralTab() {
+    protected List<Widget> advancedFieldsFromGeneralTab() {
         return Arrays.<Widget> asList(
                 memSizeEditor,
                 totalvCPUsEditor,
@@ -2284,7 +2304,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             customPropertiesTab,
             systemTab,
             rngDeviceTab,
-            iconTab
+            iconTab,
+            foremanTab
         );
     }
 

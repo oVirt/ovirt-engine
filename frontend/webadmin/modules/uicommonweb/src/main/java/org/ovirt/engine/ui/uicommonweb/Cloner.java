@@ -503,6 +503,7 @@ public final class Cloner {
         obj.setCustomProperties(instance.getCustomProperties());
         obj.setSmallIconId(instance.getSmallIconId());
         obj.setLargeIconId(instance.getLargeIconId());
+        obj.setProviderId(instance.getProviderId());
 
         return obj;
     }

@@ -33,6 +33,7 @@ public class InstanceTypesPopupWidget extends AbstractVmPopupWidget {
     @Override
     protected PopupWidgetConfigMap createWidgetConfiguration() {
         return super.createWidgetConfiguration().
+                update(foremanTab, hiddenField()).
                 putAll(poolSpecificFields(), hiddenField()).
                 putOne(isDeleteProtectedEditor, hiddenField()).
                 putOne(isStatelessEditor, hiddenField()).

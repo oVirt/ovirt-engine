@@ -23,7 +23,8 @@ public class VmPopupView extends AbstractVmPopupView implements VmPopupPresenter
         super(eventBus, new VmPopupWidget(eventBus) {
             @Override
             protected PopupWidgetConfigMap createWidgetConfiguration() {
-                return super.createWidgetConfiguration().update(hostTab, hiddenField());
+                return super.createWidgetConfiguration().update(hostTab, hiddenField())
+                        .update(foremanTab, hiddenField());
             }
         }, resources);
         ViewIdHandler.idHandler.generateAndSetIds(this);
