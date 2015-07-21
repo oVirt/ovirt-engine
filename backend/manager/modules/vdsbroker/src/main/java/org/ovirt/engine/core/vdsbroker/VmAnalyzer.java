@@ -155,13 +155,13 @@ public class VmAnalyzer {
      */
     void proceedDownVms() {
         if (vdsmVm != null && vdsmVm.getVmDynamic().getStatus() == VMStatus.Down) {
-            VMStatus status = VMStatus.Unassigned;
+            VMStatus prevStatus = VMStatus.Unassigned;
             if (dbVm != null) {
-                status = dbVm.getStatus();
+                prevStatus = dbVm.getStatus();
                 proceedVmBeforeDeletion();
 
                 // when going to suspend, delete vm from cache later
-                if (status == VMStatus.SavingState) {
+                if (prevStatus == VMStatus.SavingState) {
                     vmsMonitoring.getResourceManager().InternalSetVmStatus(dbVm, VMStatus.Suspended);
 
                 }
@@ -169,11 +169,13 @@ public class VmAnalyzer {
                 clearVm(vdsmVm.getVmDynamic().getExitStatus(),
                         vdsmVm.getVmDynamic().getExitMessage(),
                         vdsmVm.getVmDynamic().getExitReason());
+            } else {
+                VmDynamic dynamicFromDb = getDbFacade().getVmDynamicDao().get(vdsmVm.getVmDynamic().getId());
+                if (dynamicFromDb != null) {
+                    prevStatus = dynamicFromDb.getStatus();
+                }
             }
-
-            VmStatistics vmStatistics = vmsMonitoring.getDbFacade().getVmStatisticsDao().get(vdsmVm.getVmDynamic()
-                    .getId());
-            if (vmStatistics != null) {
+            if (prevStatus != VMStatus.Unassigned) {
                 vmsMonitoring.getResourceManager().runVdsCommand(
                         VDSCommandType.Destroy,
                         new DestroyVmVDSCommandParameters(
@@ -183,9 +185,9 @@ public class VmAnalyzer {
                                 false,
                                 0));
 
-                if (dbVm != null && status == VMStatus.SavingState) {
+                if (dbVm != null && prevStatus == VMStatus.SavingState) {
                     afterSuspendTreatment(vdsmVm.getVmDynamic());
-                } else if (status != VMStatus.MigratingFrom) {
+                } else if (prevStatus != VMStatus.MigratingFrom) {
                     handleVmOnDown(dbVm, vdsmVm.getVmDynamic());
                 }
             }
