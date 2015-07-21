@@ -289,7 +289,7 @@ SELECT
     CAST ( a.num_of_sockets AS SMALLINT ) AS number_of_sockets,
     a.mem_size_mb AS memory_size_mb,
     CAST ( a.os AS SMALLINT ) AS operating_system,
-    fn_get_dedicated_hosts_ids_by_vm_id(a.vm_guid) AS default_host,
+    f.vds_id AS default_host,
     a.auto_startup AS high_availability,
     a.is_initialized AS initialized,
     a.is_stateless AS stateless,
@@ -310,6 +310,9 @@ LEFT
 OUTER JOIN vm_pools AS d ON c.vm_pool_id = d.vm_pool_id
 LEFT
 OUTER JOIN users AS e ON a.created_by_user_id = e.user_id
+LEFT
+JOIN (SELECT DISTINCT ON (vm_id) vm_id,vds_id FROM vm_host_pinning_map ORDER BY vm_id) f
+    ON f.vm_id = a.vm_guid
 WHERE ( a.entity_type = 'VM'
     AND b.entity_type = 'TEMPLATE' )
     AND ( ( a._create_date > (
