@@ -111,6 +111,8 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             if(Config.<Boolean> getValue(ConfigValues.AffinityRulesEnforcementManagerEnabled)) {
                 loadService(AffinityRulesEnforcementManager.class);
             }
+
+            loadService(CertificationValidityChecker.class);
         } catch (Exception ex) {
             log.error("Failed to initialize backend", ex);
             throw ex;
