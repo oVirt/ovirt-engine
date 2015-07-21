@@ -27,6 +27,7 @@ from ovirt_engine import util as outil
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.engine_common import database
 
 
 def _(m):
@@ -35,7 +36,7 @@ def _(m):
 
 @util.export
 class Plugin(plugin.PluginBase):
-    """Databsae plugin."""
+    """Database plugin."""
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -64,15 +65,7 @@ class Plugin(plugin.PluginBase):
                     'ENGINE_DB_SECURED="{secured}"\n'
                     'ENGINE_DB_SECURED_VALIDATION="{securedValidation}"\n'
                     'ENGINE_DB_DRIVER="org.postgresql.Driver"\n'
-                    'ENGINE_DB_URL=' + (
-                        '"'
-                        'jdbc:postgresql://'
-                        '${{ENGINE_DB_HOST}}:${{ENGINE_DB_PORT}}'
-                        '/${{ENGINE_DB_DATABASE}}'
-                        '?{jdbcTlsOptions}'
-                        '"\n'
-                    ) +
-                    ''
+                    'ENGINE_DB_URL="{jdbcUrl}"\n'
                 ).format(
                     host=self.environment[oenginecons.EngineDBEnv.HOST],
                     port=self.environment[oenginecons.EngineDBEnv.PORT],
@@ -86,23 +79,10 @@ class Plugin(plugin.PluginBase):
                     securedValidation=self.environment[
                         oenginecons.EngineDBEnv.SECURED_HOST_VALIDATION
                     ],
-                    jdbcTlsOptions='&'.join(
-                        s for s in (
-                            'ssl=true'
-                            if self.environment[
-                                oenginecons.EngineDBEnv.SECURED
-                            ] else '',
-
-                            (
-                                'sslfactory='
-                                'org.postgresql.ssl.NonValidatingFactory'
-                            )
-                            if not self.environment[
-                                oenginecons.EngineDBEnv.
-                                SECURED_HOST_VALIDATION
-                            ] else ''
-                        ) if s
-                    ),
+                    jdbcUrl=database.OvirtUtils(
+                        plugin=self,
+                        dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
+                    ).getJdbcUrl(),
                 ),
                 modifiedList=self.environment[
                     otopicons.CoreEnv.MODIFIED_FILES

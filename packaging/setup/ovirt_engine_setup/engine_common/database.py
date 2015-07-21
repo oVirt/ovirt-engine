@@ -1201,5 +1201,28 @@ class OvirtUtils(base.Base):
         if not _ind_env(self, DEK.NEW_DATABASE):
             self._checkDbConf(environment=dbenv, name=name)
 
+    def getJdbcUrl(self):
+        return (
+            'jdbc:postgresql://{host}:{port}/{database}'
+            '?{jdbcTlsOptions}'
+        ).format(
+            host=_ind_env(self, DEK.HOST),
+            port=_ind_env(self, DEK.PORT),
+            database=_ind_env(self, DEK.DATABASE),
+            jdbcTlsOptions='&'.join(
+                s for s in (
+                    'ssl=true'
+                    if _ind_env(self, DEK.SECURED)
+                    else '',
+
+                    (
+                        'sslfactory='
+                        'org.postgresql.ssl.NonValidatingFactory'
+                    )
+                    if not _ind_env(self, DEK.HOST_VALIDATION)
+                    else ''
+                ) if s
+            ),
+        )
 
 # vim: expandtab tabstop=4 shiftwidth=4
