@@ -652,6 +652,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Some network custom properties contained errors (bad syntax, non-existing keys or invalid values), please take a closer look at the following network(s): ${ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT_LIST}. Refer to the engine log for further details.")
     String ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The attachment of network '${ATTACHMENT_REFERENCE_VLAN_DEVICE_ENTITY}' references vlan device '${nicName}'. Network attachment cannot reference vlan device.")
+    String ATTACHMENT_REFERENCE_VLAN_DEVICE();
+
     @DefaultStringValue("Cannot ${action} ${type}. Custom properties are not supported for device type: ${InvalidDeviceType}")
     String ACTION_TYPE_FAILED_INVALID_DEVICE_TYPE_FOR_CUSTOM_PROPERTIES();
 

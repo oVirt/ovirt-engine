@@ -487,6 +487,7 @@ public class HostSetupNetworksValidator {
             vr = skipValidation(vr) ? vr : validateCoherentNetworkIdentification(attachment);
             vr = skipValidation(vr) ? vr : modifiedAttachmentExists(attachment.getId());
             vr = skipValidation(vr) ? vr : modifiedAttachmentNotRemoved(attachment);
+            vr = skipValidation(vr) ? vr : validateAttachmentNotReferenceVlanDevice(attachment);
             vr = skipValidation(vr) ? vr : validateAttachmentAndNicReferenceSameLabelNotConflict(attachment);
             vr = skipValidation(vr) ? vr : validator.notExternalNetwork();
             vr = skipValidation(vr) ? vr : validator.networkAttachedToCluster();
@@ -783,6 +784,14 @@ public class HostSetupNetworksValidator {
         List<String> messages = new ArrayList<>();
         util.handleCustomPropertiesError(errors, messages);
         log.error(StringUtils.join(translateErrorMessages(messages), ','));
+    }
+
+    private ValidationResult validateAttachmentNotReferenceVlanDevice(NetworkAttachment attachment) {
+        VdsNetworkInterface nic = existingInterfacesMap.get(attachment.getNicName());
+        return ValidationResult.failWith(EngineMessage.ATTACHMENT_REFERENCE_VLAN_DEVICE,
+                ReplacementUtils.createSetVariableString("ATTACHMENT_REFERENCE_VLAN_DEVICE_ENTITY", attachment.getNetworkName()),
+                ReplacementUtils.createSetVariableString("nicName", attachment.getNicName())).when(nic != null
+                && NetworkUtils.isVlan(nic));
     }
 
     private Network existingNetworkRelatedToAttachment(NetworkAttachment attachment) {
