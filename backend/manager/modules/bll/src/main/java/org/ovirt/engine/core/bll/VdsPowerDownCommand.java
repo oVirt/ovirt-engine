@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsPowerDownParameters;
@@ -48,10 +49,10 @@ public class VdsPowerDownCommand<T extends VdsPowerDownParameters> extends VdsCo
             return;
         }
 
-        boolean result = executeSshPowerdown(getVds().getVdsGroupCompatibilityVersion().toString());
+        boolean result = executeSshPowerDown(getVds().getVdsGroupCompatibilityVersion().toString());
         if (result) {
             // SSH powerdown executed without errors set the status to down
-            getVds().setStatus(VDSStatus.Down);
+            setVdsStatus(VDSStatus.Down);
 
             // clear the automatic PM flag unless instructed otherwise
             if (!getParameters().getKeepPolicyPMEnabled()) {
@@ -68,8 +69,12 @@ public class VdsPowerDownCommand<T extends VdsPowerDownParameters> extends VdsCo
                     parameters,
                     ExecutionHandler.createInternalJobContext());
         }
+        setSucceeded(result);
+    }
 
-        getReturnValue().setSucceeded(result);
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        return getSucceeded() ? AuditLogType.USER_VDS_STOP : AuditLogType.USER_FAILED_VDS_STOP;
     }
 
     private void handleError(final String errorMessage) {
@@ -83,14 +88,14 @@ public class VdsPowerDownCommand<T extends VdsPowerDownParameters> extends VdsCo
     /**
      * Executes SSH shutdown command
      *
-     * @returns {@code true} if command has been executed successfully, {@code false} otherwise
+     * @return {@code true} if command has been executed successfully, {@code false} otherwise
      */
-    private boolean executeSshPowerdown(String version) {
+    private boolean executeSshPowerDown(String version) {
         boolean ret = false;
         try (
                 final EngineSSHClient sshClient = new EngineSSHClient();
                 final ByteArrayOutputStream cmdOut = new ByteArrayOutputStream();
-                final ByteArrayOutputStream cmdErr = new ByteArrayOutputStream();
+                final ByteArrayOutputStream cmdErr = new ByteArrayOutputStream()
         ) {
             try {
                 log.info("Opening SSH power down session on host {}", getVds().getHostName());
