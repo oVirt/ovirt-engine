@@ -162,12 +162,13 @@ public class CinderBroker extends AuditLogableBase {
         });
     }
 
-    public String createSnapshot(final CinderDisk cinderDisk) {
+    public String createSnapshot(final CinderDisk cinderDisk, final String snapshotDescription) {
         return execute(new Callable<String>() {
             @Override
             public String call() {
                 SnapshotForCreate snapshotForCreate = new SnapshotForCreate();
                 snapshotForCreate.setVolumeId(cinderDisk.getImageId().toString());
+                snapshotForCreate.setDescription(snapshotDescription);
                 return proxy.createSnapshot(snapshotForCreate);
             }
         });

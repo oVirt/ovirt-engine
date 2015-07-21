@@ -36,7 +36,7 @@ public class CreateCinderSnapshotCommand<T extends ImagesContainterParametersBas
     private CinderDisk cloneDiskForSnapshot() {
         CinderDisk cinderDependentVolume = getDisk();
         initCinderDependentVolume(cinderDependentVolume);
-        String snapshotId = getCinderBroker().createSnapshot(cinderDependentVolume);
+        String snapshotId = getCinderBroker().createSnapshot(cinderDependentVolume, getParameters().getDescription());
         Guid destinationImageId = Guid.createGuidFromString(snapshotId);
         getParameters().setDestinationImageId(destinationImageId);
         cinderDependentVolume.setImageId(destinationImageId);

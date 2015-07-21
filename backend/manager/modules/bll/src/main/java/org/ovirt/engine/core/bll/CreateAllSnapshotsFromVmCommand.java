@@ -334,6 +334,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         ImagesContainterParametersBase createParams = new ImagesContainterParametersBase(cinderDisk.getId());
         createParams.setVmSnapshotId(newActiveSnapshotId);
         createParams.setParentHasTasks(!cachedImagesDisks.isEmpty() || getMemoryImageBuilder().isCreateTasks());
+        createParams.setDescription(getParameters().getDescription());
         return withRootCommandInfo(createParams, getActionType());
     }
 
