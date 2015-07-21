@@ -5,9 +5,7 @@ import java.util.Objects;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
-import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
@@ -31,9 +29,6 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
 
     private Guid nicId;
 
-    @Size(min = 1,
-            max = BusinessEntitiesDefinitions.HOST_NIC_NAME_LENGTH,
-            groups = { CreateEntity.class, UpdateEntity.class })
     private String nicName;
 
     @Valid
