@@ -1442,8 +1442,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         Integer usageHistoryLimit = Config.getValue(ConfigValues.UsageHistoryLimit);
 
         setElapsedTime(vmStatistics.getelapsed_time());
-        setUsageNetworkPercent(vmStatistics.getusage_network_percent());
-        addNetworkUsageHistory(getUsageNetworkPercent(), usageHistoryLimit);
 
         vm.getStatisticsData().setDisksUsage(vmStatistics.getDisksUsage());
 
