@@ -199,11 +199,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     protected void executeVmCommand() {
-        Guid createdSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
         getParameters().setSnapshotType(determineSnapshotType());
 
-        getSnapshotDao().updateId(createdSnapshotId, newActiveSnapshotId);
-
+        Guid createdSnapshotId = updateActiveSnapshotId();
         setActionReturnValue(createdSnapshotId);
 
         MemoryImageBuilder memoryImageBuilder = getMemoryImageBuilder();
@@ -218,6 +216,25 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         }
 
         setSucceeded(true);
+    }
+
+    private Guid updateActiveSnapshotId() {
+        final Snapshot activeSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.ACTIVE);
+        final Guid activeSnapshotId = activeSnapshot.getId();
+
+        TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                getCompensationContext().snapshotEntity(activeSnapshot);
+                getSnapshotDao().updateId(activeSnapshotId, newActiveSnapshotId);
+                activeSnapshot.setId(newActiveSnapshotId);
+                getCompensationContext().snapshotNewEntity(activeSnapshot);
+                getCompensationContext().stateChanged();
+                return null;
+            }
+        });
+
+        return activeSnapshotId;
     }
 
     public Guid getStorageDomainIdForVmMemory(List<DiskImage> memoryDisksList) {
