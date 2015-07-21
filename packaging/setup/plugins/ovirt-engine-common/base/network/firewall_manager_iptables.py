@@ -29,7 +29,8 @@ from otopi import filetransaction, plugin, util
 from ovirt_engine import util as outil
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import dialog, firewall_manager_base
+from ovirt_setup_lib import dialog
+from ovirt_engine_setup import firewall_manager_base
 
 from . import process_firewalld_services
 

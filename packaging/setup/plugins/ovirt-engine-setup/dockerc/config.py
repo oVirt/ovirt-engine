@@ -29,8 +29,8 @@ from M2Crypto import RSA, X509
 from otopi import plugin, util
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import hostname as osetuphostname
-from ovirt_engine_setup import dialog
+from ovirt_setup_lib import hostname as osetuphostname
+from ovirt_setup_lib import dialog
 from ovirt_engine_setup.dockerc import constants as odockerccons
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
@@ -335,7 +335,20 @@ class Plugin(plugin.PluginBase):
             'RABBIT_USERID': odockerccons.Const.RABBIT_USER,
         }
 
-        hostname = osetuphostname.Hostname(plugin=self)
+        hostname = osetuphostname.Hostname(plugin=self).getHostname(
+            envkey=None,
+            whichhost=_('this'),
+            supply_default=True,
+            validate_syntax=True,
+            system=True,
+            dns=False,
+            local_non_loopback=self.environment[
+                osetupcons.ConfigEnv.FQDN_NON_LOOPBACK_VALIDATION
+            ],
+            reverse_dns=self.environment[
+                osetupcons.ConfigEnv.FQDN_REVERSE_VALIDATION
+            ],
+        )
         dnsresolved = hostname.isResolvedByDNS(fqdn)
         # TODO: check if we also need to force container DNS
         for cont in self._dimages:

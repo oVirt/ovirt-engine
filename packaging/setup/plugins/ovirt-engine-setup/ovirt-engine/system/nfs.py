@@ -30,7 +30,7 @@ from otopi import filetransaction, plugin, util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import util as osetuputil
-from ovirt_engine_setup import dialog
+from ovirt_setup_lib import dialog
 from ovirt_engine_setup.engine import constants as oenginecons
 
 

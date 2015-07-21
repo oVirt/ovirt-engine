@@ -24,8 +24,8 @@ from otopi import constants as otopicons
 from otopi import filetransaction, plugin, util
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import hostname as osetuphostname
-from ovirt_engine_setup import dialog
+from ovirt_setup_lib import hostname as osetuphostname
+from ovirt_setup_lib import dialog
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.vmconsole_proxy_helper import constants as ovmpcons
 
@@ -139,7 +139,16 @@ class Plugin(plugin.PluginBase):
         ).getHostname(
             envkey=ovmpcons.EngineConfigEnv.ENGINE_FQDN,
             whichhost=_('the engine'),
-            supply_default=True,
+            supply_default=False,
+            validate_syntax=True,
+            system=True,
+            dns=False,
+            local_non_loopback=self.environment[
+                osetupcons.ConfigEnv.FQDN_NON_LOOPBACK_VALIDATION
+            ],
+            reverse_dns=self.environment[
+                osetupcons.ConfigEnv.FQDN_REVERSE_VALIDATION
+            ],
         )
         self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend([
             {

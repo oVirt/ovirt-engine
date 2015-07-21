@@ -24,7 +24,7 @@ import gettext
 from otopi import constants as otopicons
 from otopi import plugin, util
 
-from ovirt_engine_setup import dialog
+from ovirt_setup_lib import dialog
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 

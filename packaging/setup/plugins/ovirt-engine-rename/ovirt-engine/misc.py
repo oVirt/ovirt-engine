@@ -25,7 +25,7 @@ from otopi import constants as otopicons
 from otopi import plugin, util
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import hostname as osetuphostname
+from ovirt_setup_lib import hostname as osetuphostname
 
 
 def _(m):
@@ -93,6 +93,15 @@ class Plugin(plugin.PluginBase):
                 whichhost=_('New'),
                 supply_default=False,
                 prompttext=_('New fully qualified server name: '),
+                validate_syntax=True,
+                system=True,
+                dns=True,
+                local_non_loopback=self.environment[
+                    osetupcons.ConfigEnv.FQDN_NON_LOOPBACK_VALIDATION
+                ],
+                reverse_dns=self.environment[
+                    osetupcons.ConfigEnv.FQDN_REVERSE_VALIDATION
+                ],
             )
         self.environment[osetupcons.ConfigEnv.FQDN] = self.environment[
             osetupcons.RenameEnv.FQDN

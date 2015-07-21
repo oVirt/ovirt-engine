@@ -24,7 +24,7 @@ import gettext
 from otopi import plugin, util
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import dialog
+from ovirt_setup_lib import dialog
 from ovirt_engine_setup.websocket_proxy import constants as owspcons
 
 

@@ -24,7 +24,7 @@ import gettext
 from otopi import plugin, util
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import hostname as osetuphostname
+from ovirt_setup_lib import hostname as osetuphostname
 
 
 def _(m):
@@ -79,6 +79,15 @@ class Plugin(plugin.PluginBase):
             envkey=osetupcons.ConfigEnv.FQDN,
             whichhost=_('this'),
             supply_default=True,
+            validate_syntax=True,
+            system=True,
+            dns=True,
+            local_non_loopback=self.environment[
+                osetupcons.ConfigEnv.FQDN_NON_LOOPBACK_VALIDATION
+            ],
+            reverse_dns=self.environment[
+                osetupcons.ConfigEnv.FQDN_REVERSE_VALIDATION
+            ],
         )
 
 

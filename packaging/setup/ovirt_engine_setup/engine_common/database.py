@@ -29,7 +29,7 @@ from otopi import base, util
 from ovirt_engine import util as outil
 
 from ovirt_engine_setup import util as osetuputil
-from ovirt_engine_setup import dialog
+from ovirt_setup_lib import dialog
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 DEK = oengcommcons.DBEnvKeysConst
 

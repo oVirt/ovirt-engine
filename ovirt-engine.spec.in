@@ -319,6 +319,7 @@ The RESTful API for %{ovirt_product_name_short}
 Summary:	%{ovirt_product_name_short} suite base setup components.
 Group:		%{ovirt_product_group}
 Requires:	%{name}-lib >= %{version}-%{release}
+Requires:	ovirt-setup-lib >= 1.0.0
 Requires:	bind-utils
 Requires:	iproute
 Requires:	libxml2-python

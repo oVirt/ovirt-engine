@@ -28,7 +28,7 @@ from otopi import plugin, util
 
 import configparser
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import dialog
+from ovirt_setup_lib import dialog
 from ovirt_engine_setup.engine import constants as oenginecons
 
 

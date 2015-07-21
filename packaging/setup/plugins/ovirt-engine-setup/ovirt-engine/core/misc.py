@@ -25,7 +25,7 @@ from otopi import plugin, util
 from ovirt_engine import configfile
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import dialog
+from ovirt_setup_lib import dialog
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 

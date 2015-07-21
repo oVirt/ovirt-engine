@@ -29,7 +29,7 @@ from otopi import constants as otopicons
 from otopi import plugin, transaction, util
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import dialog
+from ovirt_setup_lib import dialog
 
 
 def _(m):
