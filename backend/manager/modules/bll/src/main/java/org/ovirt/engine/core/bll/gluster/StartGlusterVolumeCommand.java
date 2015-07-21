@@ -64,7 +64,18 @@ public class StartGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterV
         setSucceeded(returnValue.getSucceeded());
         if(getSucceeded()) {
             GlusterDBUtils.getInstance().updateVolumeStatus(getParameters().getVolumeId(), GlusterStatus.UP);
-            GlusterSyncJob.getInstance().refreshVolumeDetails(upServer, getGlusterVolume());
+            /* Refresh volume details once the volume is started.
+             * A specific requirement for this was user might create a volume for the sake of using it for geo-replication.
+             * However, for suggesting volumes eligible for session creation, the size information of the volume is very important.
+             * Having the user to wait for the sync job to sync the volume detail might not be appropriate.
+             */
+            GlusterSyncJob.getInstance().refreshVolumeDetails(upServer, getGlusterVolumeDao().getById(getParameters().getVolumeId()));
+            /* GlusterSyncJob.getInstance().refreshVolumeDetails(upServer, getGlusterVolume());
+             * will not suffice bcoz, getGlusterVolume fetches new volume only if its not yet been fetched from db and hence, refreshVolumeDetails figures out
+             * that the info about volume-bricks are stale and hence attempts a update and correspondingly raises events for brick state change.
+             * But here in the previous step we changed the volumes state(To GlusterStatus.UP) due to a successful execution of start command.
+             * Hence fetch the volume afresh after the state change and use it to refresh volume details.
+             */
         } else {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_START_FAILED, returnValue.getVdsError().getMessage());
             return;
