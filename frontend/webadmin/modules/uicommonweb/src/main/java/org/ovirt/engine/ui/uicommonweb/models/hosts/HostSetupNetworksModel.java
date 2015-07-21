@@ -500,7 +500,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
         NetworkAttachment updatedNetworkAttachment =
                 NetworkOperation.newNetworkAttachment(updatedNetwork,
-                        entity,
+                        logicalNetwork.getAttachedToNic().getIface(),
+                        logicalNetwork.getVlanNicModel().getIface(),
                         networkAttachmentId,
                         hostSetupNetworksParametersData.networksToSync);
         hostSetupNetworksParametersData.newOrModifiedNetworkAttachments.add(updatedNetworkAttachment);

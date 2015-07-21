@@ -181,18 +181,6 @@ public enum NetworkOperation {
                                 networkToAttach.getId()));
                     }
 
-                    if (networkUsedInPreexistingAttachment) {
-                        Guid oldNetworkAttachmentId = allNetworkAttachmentMap.get(networkToAttach.getId()).getId();
-                        dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.add(
-                                newNetworkAttachment(networkToAttach,
-                                        targetNic,
-                                        oldNetworkAttachmentId, dataFromHostSetupNetworksModel.networksToSync));
-                    } else {
-                        dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.add(
-                                newNetworkAttachment(networkToAttach,
-                                        targetNic, dataFromHostSetupNetworksModel.networksToSync));
-                    }
-
                     VdsNetworkInterface vlanBridge = networkModelToAttach.attach(targetNicModel, true);
                     if (vlanBridge != null) {
                         Iterator<VdsNetworkInterface> i = dataFromHostSetupNetworksModel.allNics.iterator();
@@ -207,6 +195,22 @@ public enum NetworkOperation {
                                 break;
                             }
                         }
+                    }
+
+                    if (networkUsedInPreexistingAttachment) {
+                        Guid oldNetworkAttachmentId = allNetworkAttachmentMap.get(networkToAttach.getId()).getId();
+                        dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.add(
+                                newNetworkAttachment(networkToAttach,
+                                        targetNic,
+                                        vlanBridge,
+                                        oldNetworkAttachmentId, dataFromHostSetupNetworksModel.networksToSync));
+                    } else {
+                        dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.add(
+                                newNetworkAttachment(networkToAttach,
+                                        targetNic, vlanBridge, dataFromHostSetupNetworksModel.networksToSync));
+                    }
+
+                    if (vlanBridge != null) {
                         dataFromHostSetupNetworksModel.allNics.add(vlanBridge);
                     }
                 }
@@ -1027,24 +1031,26 @@ public enum NetworkOperation {
     }
 
     public static NetworkAttachment newNetworkAttachment(Network network,
-            VdsNetworkInterface targetNic,
+            VdsNetworkInterface baseNic,
+            VdsNetworkInterface vlanDevice,
             List<String> networksToSync) {
-        return newNetworkAttachment(network, targetNic, null, networksToSync);
+        return newNetworkAttachment(network, baseNic, vlanDevice, null, networksToSync);
     }
 
     public static NetworkAttachment newNetworkAttachment(Network network,
-            VdsNetworkInterface targetNic,
+            VdsNetworkInterface baseNic,
+            VdsNetworkInterface vlanDevice,
             Guid networkAttachmentId,
             List<String> networksToSync) {
         NetworkAttachment networkAttachment = new NetworkAttachment();
         networkAttachment.setId(networkAttachmentId);
         networkAttachment.setNetworkId(network.getId());
-        networkAttachment.setNicId(targetNic.getId());
-        networkAttachment.setNicName(targetNic.getName());
+        networkAttachment.setNicId(baseNic.getId());
+        networkAttachment.setNicName(baseNic.getName());
         networkAttachment.setOverrideConfiguration(networksToSync.contains(network.getName()));
         IpConfiguration ipConfiguration = new IpConfiguration();
         networkAttachment.setIpConfiguration(ipConfiguration);
-        ipConfiguration.getIPv4Addresses().add(newPrimaryAddress(targetNic));
+        ipConfiguration.getIPv4Addresses().add(newPrimaryAddress(vlanDevice == null ? baseNic : vlanDevice));
 
         return networkAttachment;
     }
