@@ -294,7 +294,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
             }
         });
 
-        SSOTokenChangeEvent.fire(eventBus, SSOTokenData.instance().getToken());
+        SSOTokenChangeEvent.fire(eventBus, SSOTokenData.getToken());
 
         // Indicate that the user should be logged in automatically
         user.setAutoLogin(true);

@@ -1815,19 +1815,6 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeRemoveBricksStatus, parameters, aQuery);
     }
 
-    public void getRpmVersion(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (String) source : ""; //$NON-NLS-1$
-            }
-        };
-        GetConfigurationValueParameters tempVar =
-                new GetConfigurationValueParameters(ConfigurationValues.ProductRPMVersion);
-        tempVar.setVersion(getDefaultConfigurationVersion());
-        getConfigFromCache(tempVar, aQuery);
-    }
-
     public void getUserMessageOfTheDayViaPublic(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

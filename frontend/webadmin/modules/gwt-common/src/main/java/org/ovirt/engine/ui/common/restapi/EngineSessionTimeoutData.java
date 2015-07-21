@@ -21,4 +21,5 @@ public final class EngineSessionTimeoutData extends JavaScriptObject {
     public native String getSessionHardLimit() /*-{
         return this.sessionHardLimit;
     }-*/;
+
 }

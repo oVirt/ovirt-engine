@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.INoVnc;
 
 public class NoVncImpl extends AbstractVnc implements INoVnc {
 
-    private static final String CLIENT_PAGE = BaseContextPathData.getInstance().getRelativePath()
+    private static final String CLIENT_PAGE = BaseContextPathData.getRelativePath()
             + "services/novnc-main.html"; //$NON-NLS-1$
 
     private WebsocketProxyConfig config;

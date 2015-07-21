@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.atLeast;
@@ -33,17 +34,20 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.branding.BrandingTheme;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.server.gwt.GwtDynamicHostPageServlet.MD5Attributes;
 
 public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamicHostPageServlet> {
 
@@ -95,7 +99,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
         when(mockRequest.getAttribute(GwtDynamicHostPageServlet.
                 MD5Attributes.ATTR_SELECTOR_SCRIPT.getKey())).
                 thenReturn(SELECTOR_SCRIPT);
-        when(mockRequest.getAttribute(GwtDynamicHostPageServlet.ATTR_ENGINE_SESSION_TIMEOUT)).thenReturn(mockEngineSessionTimeoutObject);
+        when(mockRequest.getAttribute(MD5Attributes.ATTR_ENGINE_SESSION_TIMEOUT.getKey())).thenReturn(mockEngineSessionTimeoutObject);
         when(mockRequest.getSession()).thenReturn(mockSession);
         when(mockRequest.getSession().getServletContext()).thenReturn(mockServletContext);
         when(mockSession.getId()).thenReturn("sessionId"); //$NON-NLS-1$
@@ -242,19 +246,49 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     }
 
     void stubGetUserBySessionIdQuery() {
-        VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
-        returnValue.setSucceeded(true);
-        returnValue.setReturnValue(mockUser);
-        when(mockBackend.runQuery(eq(VdcQueryType.GetUserBySessionId),
-                isA(VdcQueryParametersBase.class))).thenReturn(returnValue);
+        when(mockBackend.runQuery(
+                eq(VdcQueryType.GetUserBySessionId),
+                isA(VdcQueryParametersBase.class)
+        )).thenReturn(new VdcQueryReturnValue() {
+            {
+                setSucceeded(true);
+                setReturnValue(mockUser);
+            }
+        });
     }
 
     void stubGetConfigurationValuePublicQuery() {
-        VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
-        returnValue.setSucceeded(true);
-        returnValue.setReturnValue(Integer.valueOf(255));
-        when(mockBackend.runPublicQuery(eq(VdcQueryType.GetConfigurationValue),
-                isA(GetConfigurationValueParameters.class))).thenReturn(returnValue);
+        when(mockBackend.runPublicQuery(
+                eq(VdcQueryType.GetConfigurationValue),
+                argThat(configValueParams(ConfigurationValues.ApplicationMode))
+        )).thenReturn(new VdcQueryReturnValue() {
+            {
+                setSucceeded(true);
+                setReturnValue(Integer.valueOf(255));
+            }
+        });
+
+        when(mockBackend.runPublicQuery(
+                eq(VdcQueryType.GetConfigurationValue),
+                argThat(configValueParams(ConfigurationValues.ProductRPMVersion))
+        )).thenReturn(new VdcQueryReturnValue() {
+            {
+                setSucceeded(true);
+                setReturnValue("1.2.3"); //$NON-NLS-1$
+            }
+        });
+    }
+
+    ArgumentMatcher<GetConfigurationValueParameters> configValueParams(final ConfigurationValues configValue) {
+        return new ArgumentMatcher<GetConfigurationValueParameters>() {
+            @Override
+            public boolean matches(Object argument) {
+                if (argument instanceof GetConfigurationValueParameters) {
+                    return ((GetConfigurationValueParameters) argument).getConfigValue() == configValue;
+                }
+                return false;
+            }
+        };
     }
 
 }

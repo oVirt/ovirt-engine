@@ -72,7 +72,7 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
     }
 
     public void updateUsbFilter() {
-        fetchFile(BaseContextPathData.getInstance().getPath()
+        fetchFile(BaseContextPathData.getPath()
                 + "services/files/usbfilter.txt", usbFilterFileFetchedEvent); //$NON-NLS-1$
     }
 

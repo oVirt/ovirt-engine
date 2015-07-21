@@ -62,9 +62,9 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
         Window.setTitle(dynamicMessages.applicationTitle());
 
         // Check for ApplicationMode configuration
-        UiModeData uiModeData = UiModeData.instance();
-        if (uiModeData != null) {
-            handleUiMode(uiModeData);
+        ApplicationMode uiMode = UiModeData.getUiMode();
+        if (uiMode != null) {
+            ApplicationModeHelper.setUiMode(uiMode);
         }
 
         // Initiate transition to requested application place
@@ -103,11 +103,6 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
         super.initFrontend();
 
         ReportInit.getInstance().initHandlers(eventBus);
-    }
-
-    void handleUiMode(UiModeData uiModeData) {
-        ApplicationMode uiMode = uiModeData.getUiMode();
-        ApplicationModeHelper.setUiMode(uiMode);
     }
 
 }

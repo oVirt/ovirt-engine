@@ -135,7 +135,7 @@ public abstract class AbstractLoginFormView extends AbstractView {
         // Add the option to change the locale
         String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
         String[] localeNames = LocaleInfo.getAvailableLocaleNames();
-        localeNames = VisibleLocalesInfoData.instance().getFilteredLocaleNames(Arrays.asList(localeNames));
+        localeNames = VisibleLocalesInfoData.getFilteredLocaleNames(Arrays.asList(localeNames));
 
         // Populate the locale list box with available locales
         boolean foundDefaultLocale = false;

@@ -33,7 +33,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextArea;
 
 public abstract class ConsoleModel extends EntityModel<VM> {
-    public static final String GET_ATTACHMENT_SERVLET_URL = BaseContextPathData.getInstance().getPath()
+    public static final String GET_ATTACHMENT_SERVLET_URL = BaseContextPathData.getPath()
             + "services/attachment/"; //$NON-NLS-1$
 
     private static String EJECT_LABEL;

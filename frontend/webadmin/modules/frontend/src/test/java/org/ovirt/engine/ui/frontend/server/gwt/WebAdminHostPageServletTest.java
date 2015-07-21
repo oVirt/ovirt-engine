@@ -36,6 +36,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.ui.frontend.server.gwt.GwtDynamicHostPageServlet.MD5Attributes;
 import org.ovirt.engine.ui.frontend.server.gwt.plugin.PluginData;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -99,7 +100,7 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockRequest).setAttribute(WebAdminHostPageServlet.ATTR_APPLICATION_MODE, mockApplicationModeObject);
         verify(mockRequest).setAttribute(WebAdminHostPageServlet.ATTR_PLUGIN_DEFS, mockPluginDefinitionsArray);
-        verify(mockRequest).setAttribute(WebAdminHostPageServlet.ATTR_ENGINE_SESSION_TIMEOUT, mockEngineSessionTimeoutObject);
+        verify(mockRequest).setAttribute(MD5Attributes.ATTR_ENGINE_SESSION_TIMEOUT.getKey(), mockEngineSessionTimeoutObject);
     }
 
     @Test

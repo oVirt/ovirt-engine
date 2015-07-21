@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceHtml5;
 
 public class SpiceHtml5Impl extends AbstractSpice implements ISpiceHtml5 {
 
-    private static final String CLIENT_PAGE = BaseContextPathData.getInstance().getRelativePath()
+    private static final String CLIENT_PAGE = BaseContextPathData.getRelativePath()
             + "services/spicehtml5-main.html"; //$NON-NLS-1$
 
     private WebsocketProxyConfig config;

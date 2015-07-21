@@ -4,26 +4,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.gwt.core.client.JavaScriptObject;
+import org.ovirt.engine.ui.frontend.utils.JsSingleValueStringObject;
 
-public final class VisibleLocalesInfoData extends JavaScriptObject {
+public final class VisibleLocalesInfoData extends JsSingleValueStringObject {
 
     protected VisibleLocalesInfoData() {
     }
 
-    public static native VisibleLocalesInfoData instance() /*-{
-        return $wnd.visibleLocales;
-    }-*/;
-
-    private native String getValueString() /*-{
-        return this.value;
-    }-*/;
-
-    public List<String> getVisibleList() {
-        return getLocaleValues(getValueString());
+    public static List<String> getVisibleList() {
+        return getLocaleValues(getValueFrom("visibleLocales")); //$NON-NLS-1$
     }
 
-    private List<String> getLocaleValues(String localeString) {
+    private static List<String> getLocaleValues(String localeString) {
         List<String> result = new ArrayList<String>();
         if (localeString != null && !localeString.isEmpty()) {
             String[] locales = localeString.trim().split(" *, *"); //$NON-NLS-1$
@@ -40,10 +32,9 @@ public final class VisibleLocalesInfoData extends JavaScriptObject {
      *
      * Elements in the lists should be of format xx_YY, which is the standard Java Locale format.
      * @param allLocaleNames List of all available locales. Cannot be null.
-     * @param visibleLocales The list of visible locales. Cannot be null
      * @return An array of locales that has been filtered.
      */
-    public String[] getFilteredLocaleNames(List<String> allLocaleNames) {
+    public static String[] getFilteredLocaleNames(List<String> allLocaleNames) {
         List<String> result = new ArrayList<String>(allLocaleNames);
         List<String> hiddenList = new ArrayList<String>(allLocaleNames);
         hiddenList.removeAll(getVisibleList());
@@ -51,4 +42,5 @@ public final class VisibleLocalesInfoData extends JavaScriptObject {
         Collections.sort(result);
         return result.toArray(new String[result.size()]);
     }
+
 }

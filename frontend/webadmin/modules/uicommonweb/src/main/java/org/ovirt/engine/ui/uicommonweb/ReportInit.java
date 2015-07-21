@@ -103,7 +103,7 @@ public class ReportInit {
 
     private static String buildUrl(String service, String params) {
         return "/" //$NON-NLS-1$
-                + BaseContextPathData.getInstance().getRelativePath()
+                + BaseContextPathData.getRelativePath()
                 + service + (params != null ? params : ""); //$NON-NLS-1$
     }
 

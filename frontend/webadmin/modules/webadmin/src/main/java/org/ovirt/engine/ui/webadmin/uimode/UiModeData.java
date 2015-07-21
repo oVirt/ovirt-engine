@@ -1,27 +1,20 @@
 package org.ovirt.engine.ui.webadmin.uimode;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import com.google.gwt.core.client.JavaScriptObject;
+import org.ovirt.engine.ui.frontend.utils.JsSingleValueStringObject;
 
 /**
  * Overlay type for {@code applicationMode} global JS object.
  */
-public final class UiModeData extends JavaScriptObject {
+public final class UiModeData extends JsSingleValueStringObject {
 
     protected UiModeData() {
     }
 
-    public static native UiModeData instance() /*-{
-        return $wnd.applicationMode;
-    }-*/;
-
-    private native String getValue() /*-{
-        return this.value;
-    }-*/;
-
-    public ApplicationMode getUiMode() {
+    public static ApplicationMode getUiMode() {
+        String applicationModeValue = getValueFrom("applicationMode"); //$NON-NLS-1$
         try {
-            return ApplicationMode.from(Integer.parseInt(getValue()));
+            return ApplicationMode.from(Integer.parseInt(applicationModeValue));
         } catch (NumberFormatException ex) {
             return null;
         }

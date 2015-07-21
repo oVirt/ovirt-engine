@@ -253,7 +253,7 @@ public class BaseDynamicMessages implements DynamicMessages {
 
         return isAbsolute
                  ? url
-                 : "/" + BaseContextPathData.getInstance().getRelativePath() + url; //$NON-NLS-1$
+                 : "/" + BaseContextPathData.getRelativePath() + url; //$NON-NLS-1$
     }
 
     @Override

@@ -24,9 +24,12 @@ import org.ovirt.engine.core.branding.BrandingFilter;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -43,8 +46,7 @@ import org.ovirt.engine.core.utils.servlet.UnsupportedLocaleHelper;
 public abstract class GwtDynamicHostPageServlet extends HttpServlet {
 
     /**
-     * The values of this enum are used by the MD5 sum calculation to
-     * determine if the values have changed.
+     * Request attributes that participate in MD5 checksum calculation.
      */
     public enum MD5Attributes {
         ATTR_SELECTOR_SCRIPT("selectorScript"), //$NON-NLS-1$
@@ -55,25 +57,23 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         ATTR_LOCALE(LocaleFilter.LOCALE),
         ATTR_SSO_TOKEN("ssoToken"), //$NON-NLS-1$
         ATTR_APPLICATION_TYPE(BrandingFilter.APPLICATION_NAME),
-        ATTR_DISPLAY_LOCALES("visibleLocales"); //$NON-NLS-1$
+        ATTR_DISPLAY_LOCALES("visibleLocales"), //$NON-NLS-1$
+        ATTR_ENGINE_SESSION_TIMEOUT("engineSessionTimeout"), //$NON-NLS-1$
+        ATTR_ENGINE_RPM_VERSION("engineRpmVersion"); //$NON-NLS-1$
 
         private final String attributeKey;
 
-        /**
-         * Constructor for enum.
-         * @param key The key to store
-         */
-        private MD5Attributes(final String key) {
+        MD5Attributes(String key) {
             this.attributeKey = key;
         }
 
         /**
-         * Get the value of the attribute key.
-         * @return A {@code String} containing the key.
+         * Get the key associated with this attribute.
          */
         public String getKey() {
             return attributeKey;
         }
+
     }
 
     private static final long serialVersionUID = 3946034162721073929L;
@@ -83,8 +83,6 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
 
     private static final String HOST_JSP = "/GwtHostPage.jsp"; //$NON-NLS-1$
     private static final String UTF_CONTENT_TYPE = "text/html; charset=UTF-8"; //$NON-NLS-1$
-
-    protected static final String ATTR_ENGINE_SESSION_TIMEOUT = "engineSessionTimeout"; //$NON-NLS-1$
 
     private BackendLocal backend;
 
@@ -114,29 +112,33 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
 
         // Set attribute for selector script
         request.setAttribute(MD5Attributes.ATTR_SELECTOR_SCRIPT.getKey(), getSelectorScriptName());
+
         // Set the messages that need to be replaced.
         request.setAttribute(MD5Attributes.ATTR_MESSAGES.getKey(),
                 getBrandingMessages(getApplicationTypeFromRequest(request), getLocaleFromRequest(request)));
         request.setAttribute(MD5Attributes.ATTR_BASE_CONTEXT_PATH.getKey(),
                 getValueObject(ServletUtils.getBaseContextPath(request)));
         request.setAttribute(MD5Attributes.ATTR_DISPLAY_LOCALES.getKey(), getValueObject(
-                StringUtils.join(UnsupportedLocaleHelper.getDisplayedLocales(LocaleFilter.getLocaleKeys()),
-                        ","))); //$NON-NLS-1$
-        // Set attribute for userInfo object
-        DbUser loggedInUser =
-                getLoggedInUser(getEngineSessionId(request));
+                StringUtils.join(UnsupportedLocaleHelper.getDisplayedLocales(LocaleFilter.getLocaleKeys()), ","))); //$NON-NLS-1$
+
+        // Set attributes for userInfo object
+        DbUser loggedInUser = getLoggedInUser(getEngineSessionId(request));
         if (loggedInUser != null) {
             request.setAttribute(MD5Attributes.ATTR_USER_INFO.getKey(), getUserInfoObject(loggedInUser));
-            String ssoToken = (String)
-                    request.getSession().getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
+            String ssoToken = (String) request.getSession().getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
             if (ssoToken != null) {
                 request.setAttribute(MD5Attributes.ATTR_SSO_TOKEN.getKey(), getValueObject(ssoToken));
             }
         }
 
-        // Set attribute for engineSessionTimeout object
-        request.setAttribute(ATTR_ENGINE_SESSION_TIMEOUT, getEngineSessionTimeoutObject(getUserSessionTimeout(),
-                getUserSessionHardTimeout()));
+        // Set attributes for engineSessionTimeout object
+        request.setAttribute(MD5Attributes.ATTR_ENGINE_SESSION_TIMEOUT.getKey(),
+                getEngineSessionTimeoutObject(getUserSessionTimeout(), getUserSessionHardTimeout()));
+
+        // Set attribute for engineRpmVersion object
+        String engineRpmVersion = getEngineRpmVersion(getEngineSessionId(request));
+        request.setAttribute(MD5Attributes.ATTR_ENGINE_RPM_VERSION.getKey(),
+                getValueObject(engineRpmVersion));
 
         try {
             // Calculate MD5 for use with If-None-Match request header
@@ -159,8 +161,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     }
 
     protected String getEngineSessionId(final HttpServletRequest request) {
-        return (String) request.getSession()
-                .getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
+        return (String) request.getSession().getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
     }
 
     /**
@@ -231,18 +232,18 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     }
 
     /**
-     * Executes a backend {@linkplain BackendLocal#RunQuery query} and returns its result value if successful.
+     * Executes a backend {@linkplain BackendLocal#runQuery query} and returns its result value if successful.
      * <p>
      * Returns {@code null} otherwise.
      */
     protected Object runQuery(VdcQueryType queryType, VdcQueryParametersBase queryParams, String sessionId) {
         initQueryParams(queryParams, sessionId);
         VdcQueryReturnValue result = backend.runQuery(queryType, queryParams);
-        return result.getSucceeded() ? result.getReturnValue() : null;
+        return result != null && result.getSucceeded() ? result.getReturnValue() : null;
     }
 
     /**
-     * Executes a backend {@linkplain BackendLocal#RunPublicQuery public query} and returns its result value if
+     * Executes a backend {@linkplain BackendLocal#runPublicQuery public query} and returns its result value if
      * successful.
      * <p>
      * Returns {@code null} otherwise.
@@ -250,7 +251,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     protected Object runPublicQuery(VdcQueryType queryType, VdcQueryParametersBase queryParams, String sessionId) {
         initQueryParams(queryParams, sessionId);
         VdcQueryReturnValue result = backend.runPublicQuery(queryType, queryParams);
-        return result.getSucceeded() ? result.getReturnValue() : null;
+        return result != null && result.getSucceeded() ? result.getReturnValue() : null;
     }
 
     protected ObjectNode createObjectNode() {
@@ -291,19 +292,14 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
      * object.
      * @throws UnsupportedEncodingException
      */
-    protected MessageDigest getMd5Digest(final HttpServletRequest request)
+    protected MessageDigest getMd5Digest(HttpServletRequest request)
             throws NoSuchAlgorithmException, UnsupportedEncodingException {
         MessageDigest digest = createMd5Digest();
         for (MD5Attributes attribute: MD5Attributes.values()) {
             if (request.getAttribute(attribute.getKey()) != null) {
-                digest.update(request.getAttribute(attribute.getKey()).
-                        toString().getBytes(StandardCharsets.UTF_8));
+                digest.update(request.getAttribute(attribute.getKey()).toString().getBytes(StandardCharsets.UTF_8));
             }
         }
-
-        // Update based on engineSessionTimeout object
-        digest.update(request.getAttribute(ATTR_ENGINE_SESSION_TIMEOUT).toString().getBytes(StandardCharsets.UTF_8)); //$NON-NLS-1$
-
         return digest;
     }
 
@@ -324,6 +320,12 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         obj.put("sessionTimeout", String.valueOf(engineSessionTimeout)); //$NON-NLS-1$
         obj.put("sessionHardLimit", String.valueOf(userSessionHardLimit)); //$NON-NLS-1$
         return obj;
+    }
+
+    protected String getEngineRpmVersion(String sessionId) {
+        return (String) runPublicQuery(VdcQueryType.GetConfigurationValue,
+                new GetConfigurationValueParameters(ConfigurationValues.ProductRPMVersion,
+                        ConfigCommon.defaultConfigurationVersion), sessionId);
     }
 
 }

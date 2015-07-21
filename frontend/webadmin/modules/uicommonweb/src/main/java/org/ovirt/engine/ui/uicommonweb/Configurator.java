@@ -26,8 +26,8 @@ import com.google.gwt.i18n.client.LocaleInfo;
 public abstract class Configurator {
 
     private static final String DOCS_HTML_DIR = "html"; //$NON-NLS-1$
-    private static final String DOCS_ROOT = BaseContextPathData.getInstance().getRelativePath() + "docs/manual"; //$NON-NLS-1$
-    private static final String CSH_ROOT = BaseContextPathData.getInstance().getRelativePath() + "docs/csh"; //$NON-NLS-1$
+    private static final String DOCS_ROOT = BaseContextPathData.getRelativePath() + "docs/manual"; //$NON-NLS-1$
+    private static final String CSH_ROOT = BaseContextPathData.getRelativePath() + "docs/csh"; //$NON-NLS-1$
     private static final String JSON = ".json"; //$NON-NLS-1$
 
     private static String localeDir;
@@ -163,7 +163,7 @@ public abstract class Configurator {
      * Returns the base URL for retrieving Spice-related resources.
      */
     public static String getSpiceBaseURL() {
-        return FrontendUrlUtils.getRootURL() + BaseContextPathData.getInstance().getRelativePath()
+        return FrontendUrlUtils.getRootURL() + BaseContextPathData.getRelativePath()
                 + "services/files/spice/"; //$NON-NLS-1$
     }
 
