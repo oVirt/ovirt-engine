@@ -50,7 +50,7 @@ public class CommandExecutor {
     private static final ExecutorService executor = Executors.newFixedThreadPool(Config.<Integer>getValue(ConfigValues.CommandCoordinatorThreadPoolSize));
     private static final Logger log = LoggerFactory.getLogger(CommandExecutor.class);
 
-    private class CommandContainer {
+    private static class CommandContainer {
         private int initialDelay;     // Total delay between callback executions
         private int remainingDelay;   // Remaining delay to next callback execution
         private CommandCallback callback;
