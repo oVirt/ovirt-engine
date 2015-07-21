@@ -15,8 +15,8 @@ public class DataFromHostSetupNetworksModel {
     public List<VdsNetworkInterface> allNics;
     public List<NetworkAttachment> existingNetworkAttachments;
 
-    public List<NicLabel> addedLabels = new ArrayList<>();
-    public List<NicLabel> removedLabels = new ArrayList<>();
+    public Set<NicLabel> addedLabels = new HashSet<>();
+    public Set<NicLabel> removedLabels = new HashSet<>();
 
     public List<NetworkAttachment> newOrModifiedNetworkAttachments = new ArrayList<>();
     public List<NetworkAttachment> removedNetworkAttachments = new ArrayList<>();

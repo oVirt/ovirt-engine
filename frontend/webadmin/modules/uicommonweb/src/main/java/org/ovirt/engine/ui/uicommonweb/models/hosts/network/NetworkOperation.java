@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
@@ -363,7 +364,7 @@ public enum NetworkOperation {
 
                     // Attach previous nic networks to bond
                     attachNetworks(bondModel, networksToReatach, dataFromHostSetupNetworksModel);
-                    moveLabels(Collections.singletonList(nicModel.getIface()), bondModel.getIface());
+                    moveLabels(Collections.singletonList(nicModel.getIface()), bondModel.getIface(), dataFromHostSetupNetworksModel);
 
                     Bond bond = bondModel.getIface();
                     String bondName = bond.getName();
@@ -552,12 +553,23 @@ public enum NetworkOperation {
                         String label,
                         VdsNetworkInterface iface) {
 
-                    NicLabel labelOnNic = new NicLabel(iface.getId(), iface.getName(), label);
-                    if (dataFromHostSetupNetworksModel.removedLabels.contains(labelOnNic)) {
-                        dataFromHostSetupNetworksModel.removedLabels.remove(labelOnNic);
-                    } else {
-                        dataFromHostSetupNetworksModel.addedLabels.add(labelOnNic);
+                    Map<String, NicLabel> removedLabelToNicLabel =
+                            Entities.entitiesByName(dataFromHostSetupNetworksModel.removedLabels);
+                    if (removedLabelToNicLabel.containsKey(label)) {
+                        dataFromHostSetupNetworksModel.removedLabels.remove(removedLabelToNicLabel.get(label));
                     }
+
+                    Map<String, NicLabel> labelToNicLabel =
+                            Entities.entitiesByName(dataFromHostSetupNetworksModel.addedLabels);
+                    NicLabel nicLabel;
+                    if (labelToNicLabel.containsKey(label)) {
+                        nicLabel = labelToNicLabel.get(label);
+                        nicLabel.setNicId(iface.getId());
+                        nicLabel.setNicName(iface.getName());
+                    } else {
+                        nicLabel = new NicLabel(iface.getId(), iface.getName(), label);
+                    }
+                    dataFromHostSetupNetworksModel.addedLabels.add(nicLabel);
                 }
             };
         }
@@ -821,36 +833,25 @@ public enum NetworkOperation {
 
         Network networkToDetach = modelOfNetworkToDetach.getNetwork();
         Guid networkId = networkToDetach.getId();
-        String networkLabel = networkToDetach.getLabel();
-        VdsNetworkInterface nic = modelOfNetworkToDetach.getAttachedToNic().getIface();
-
-        NicLabel potentialLabelRemovalData = new NicLabel(nic.getId(), nic.getName(), networkLabel);
-        boolean networkRemovedViaRemovedNicLabel =
-            dataFromHostSetupNetworksModel.removedLabels.contains(potentialLabelRemovalData);
 
         detachNetworkWithoutUpdatingHostSetupNetworksParameters(dataFromHostSetupNetworksModel.allNics,
-            modelOfNetworkToDetach);
+                modelOfNetworkToDetach);
 
-
-
-        if (!networkRemovedViaRemovedNicLabel) {
-            Map<Guid, NetworkAttachment> allNetworkAttachmentMap = new MapNetworkAttachments(
+        Map<Guid, NetworkAttachment> allNetworkAttachmentMap = new MapNetworkAttachments(
                 dataFromHostSetupNetworksModel.existingNetworkAttachments).byNetworkId();
-            boolean detachingPreexistingNetworkAttachment = allNetworkAttachmentMap.containsKey(networkId);
+        boolean detachingPreexistingNetworkAttachment = allNetworkAttachmentMap.containsKey(networkId);
 
-            if (detachingPreexistingNetworkAttachment) {
-                dataFromHostSetupNetworksModel.removedNetworkAttachments.add(allNetworkAttachmentMap.get(networkId));
-            }
+        if (detachingPreexistingNetworkAttachment) {
+            dataFromHostSetupNetworksModel.removedNetworkAttachments.add(allNetworkAttachmentMap.get(networkId));
+        }
 
-            //if network attachment was issued to be updated, remove it from such request
-            for (Iterator<NetworkAttachment> iterator =
-                 dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.iterator(); iterator.hasNext(); ) {
+        // if network attachment was issued to be updated, remove it from such request
+        for (Iterator<NetworkAttachment> iterator =
+                dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.iterator(); iterator.hasNext();) {
 
-                NetworkAttachment networkAttachment = iterator.next();
-                if (networkAttachment.getNetworkId().equals(networkId)) {
-                    iterator.remove();
-                }
-
+            NetworkAttachment networkAttachment = iterator.next();
+            if (networkAttachment.getNetworkId().equals(networkId)) {
+                iterator.remove();
             }
         }
     }
@@ -864,7 +865,9 @@ public enum NetworkOperation {
         networkToDetach.detach();
     }
 
-    public static void moveLabels(List<VdsNetworkInterface> srcIfaces, VdsNetworkInterface dstIface) {
+    public static void moveLabels(List<VdsNetworkInterface> srcIfaces,
+            VdsNetworkInterface dstIface,
+            DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel) {
         Set<String> labels = new HashSet<>();
         for (VdsNetworkInterface srcIface : srcIfaces) {
             if (srcIface.getLabels() != null) {
@@ -881,6 +884,19 @@ public enum NetworkOperation {
             dstIface.setLabels(labels);
         } else {
             dstIface.getLabels().addAll(labels);
+        }
+
+        Map<String, NicLabel> labelToNicLabel = Entities.entitiesByName(dataFromHostSetupNetworksModel.addedLabels);
+        for (String label : labels) {
+            NicLabel nicLabel = labelToNicLabel.get(label);
+
+            if (nicLabel != null) {
+                nicLabel.setNicId(dstIface.getId());
+                nicLabel.setNicName(dstIface.getName());
+            } else {
+                nicLabel = new NicLabel(dstIface.getId(), dstIface.getName(), label);
+                dataFromHostSetupNetworksModel.addedLabels.add(nicLabel);
+            }
         }
     }
 

@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
-import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -37,7 +36,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.action.LabelUnlabelUiAction;
 import org.ovirt.engine.ui.uicommonweb.action.SimpleAction;
 import org.ovirt.engine.ui.uicommonweb.action.UiAction;
 import org.ovirt.engine.ui.uicommonweb.action.UiVdcAction;
@@ -597,7 +595,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     private void commitLabelChanges(List<VdsNetworkInterface> srcIfaces,
             VdsNetworkInterface dstIface) {
-        NetworkOperation.moveLabels(srcIfaces, dstIface);
+        NetworkOperation.moveLabels(srcIfaces, dstIface, hostSetupNetworksParametersData);
     }
 
     private void commitNetworkChanges(VdsNetworkInterface iface, List<LogicalNetworkModel> networks) {
@@ -1081,25 +1079,11 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 this,
                 true);
 
+        setupNetworksAction
+                .then(getVfsConfigAction())
+                .then(getCommitNetworkChangesAction()).onAllExecutionsFinish(closeAction);
 
-
-        UiAction uiAction = setupNetworksAction
-            .then(getVfsConfigAction())
-            .then(getCommitNetworkChangesAction())
-            .then(getLabelUnlabelUiAction());
-
-
-
-        setupNetworksAction.onAllExecutionsFinish(closeAction);
         setupNetworksAction.runAction();
-    }
-
-    private LabelUnlabelUiAction getLabelUnlabelUiAction() {
-        return new LabelUnlabelUiAction(hostSetupNetworksParametersData.addedLabels,
-            hostSetupNetworksParametersData.removedLabels,
-            hostSetupNetworksParametersData.removedBonds,
-            getEntity().getId(),
-            this);
     }
 
     public UiAction getCommitNetworkChangesAction() {
@@ -1137,40 +1121,13 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         result.setRemovedNetworkAttachments(
             new HashSet<>(Entities.getIds(hostSetupNetworksParametersData.removedNetworkAttachments)));
 
-        fixLabelsInBondDefinitions(hostSetupNetworksParametersData.newOrModifiedBonds,
-                hostSetupNetworksParametersData.addedLabels,
-                hostSetupNetworksParametersData.removedLabels);
         result.setBonds(hostSetupNetworksParametersData.newOrModifiedBonds);
         result.setRemovedBonds(new HashSet<>(Entities.getIds(hostSetupNetworksParametersData.removedBonds)));
         result.setRemovedUnmanagedNetworks(hostSetupNetworksParametersData.removedUnmanagedNetworks);
+        result.setLabels(hostSetupNetworksParametersData.addedLabels);
+        result.setRemovedLabels(Entities.objectNames(hostSetupNetworksParametersData.removedLabels));
 
         return result;
-    }
-
-    /**
-     * sadly new API passes whole bond instances, when bond is created/modified, to backend just like in old days with
-     * SetupNetworksCommand. And such instances contains up-to-date labels. So labels on bonds will be processed twice.
-     * This is enabled by (wrong) storing labels in db as JSON. The best way, to enforce uniformness of adding labels is
-     * heal Bond instances here, and pass them to bll without updated labels, and process all labels in same manner
-     * regardless of which interface they're labelling.
-     */
-    private void fixLabelsInBondDefinitions(List<Bond> newOrModifiedBonds,
-        List<NicLabel> addedLabels,
-        List<NicLabel> removedLabels) {
-
-        for (Bond bond : newOrModifiedBonds) {
-            for (NicLabel addedLabel : addedLabels) {
-                if (addedLabel.getNicName().equals(bond.getName())) {
-                    bond.getLabels().remove(addedLabel.getLabel());
-                }
-            }
-
-            for (NicLabel removedLabel : removedLabels) {
-                if (removedLabel.getNicName().equals(bond.getName())) {
-                    bond.getLabels().add(removedLabel.getLabel());
-                }
-            }
-        }
     }
 
     @Override
