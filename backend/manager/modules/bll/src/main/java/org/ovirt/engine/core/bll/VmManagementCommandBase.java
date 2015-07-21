@@ -217,6 +217,14 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
         return (vmData.getCpuShares() >= 0 && vmData.getCpuShares() <= MAXIMUM_CPU_SHARES);
     }
 
+    protected boolean isCpuSupported(VM vm) {
+        return VmHandler.isCpuSupported(
+                vm.getVmOsId(),
+                getVdsGroup().getCompatibilityVersion(),
+                getVdsGroup().getCpuName(),
+                getReturnValue().getCanDoActionMessages());
+    }
+
     protected boolean setAndValidateCpuProfile() {
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getVm().getStaticData(),
                 getVdsGroup().getCompatibilityVersion()));

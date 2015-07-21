@@ -348,6 +348,18 @@ public class AddVmCommandTest {
 
         when(osRepository.isCpuSupported(vm.getVmOsId(), vdsGroup.getCompatibilityVersion(), null)).thenReturn(false);
         when(osRepository.getUnsupportedCpus()).thenReturn(unsupported);
+        when(cmd.isCpuSupported(vm)).thenAnswer(new Answer<Boolean>() {
+
+            @Override
+            public Boolean answer(InvocationOnMock invocationOnMock) throws Throwable {
+                AddVmFromTemplateCommand<AddVmParameters> self =
+                        (AddVmFromTemplateCommand<AddVmParameters>) invocationOnMock.getMock();
+                self.getReturnValue().getCanDoActionMessages().add(
+                        EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS.name());
+                return false;
+            }
+
+        });
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(
                 cmd,
@@ -463,6 +475,7 @@ public class AddVmCommandTest {
         doReturn(Guid.newGuid()).when(cmd).getStoragePoolId();
         doReturn(true).when(cmd).canAddVm(anyListOf(String.class), anyString(), any(Guid.class), anyInt());
         doReturn(STORAGE_POOL_ID).when(cmd).getStoragePoolId();
+        doReturn(true).when(cmd).isCpuSupported(any(VM.class));
     }
 
     private VM initializeMock(final int domainSizeGB, final int sizeRequired) {

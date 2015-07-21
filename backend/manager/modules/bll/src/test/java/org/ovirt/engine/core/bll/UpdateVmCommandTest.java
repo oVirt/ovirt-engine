@@ -24,7 +24,9 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -172,6 +174,7 @@ public class UpdateVmCommandTest {
         doReturn(false).when(command).isVirtioScsiEnabledForVm(any(Guid.class));
         doReturn(true).when(command).isBalloonEnabled();
         doReturn(true).when(osRepository).isBalloonEnabled(vm.getVmOsId(), group.getCompatibilityVersion());
+        doReturn(true).when(command).isCpuSupported(vm);
     }
 
     @Test
@@ -336,6 +339,18 @@ public class UpdateVmCommandTest {
 
         when(osRepository.isCpuSupported(0, Version.v3_0, null)).thenReturn(false);
         when(osRepository.getUnsupportedCpus()).thenReturn(unsupported);
+        when(command.isCpuSupported(vm)).thenAnswer(new Answer<Boolean>() {
+
+            @Override
+            public Boolean answer(InvocationOnMock invocationOnMock) throws Throwable {
+                UpdateVmCommand<VmManagementParametersBase> self =
+                        (UpdateVmCommand<VmManagementParametersBase>) invocationOnMock.getMock();
+                self.getReturnValue().getCanDoActionMessages().add(
+                        EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS.name());
+                return false;
+            }
+
+        });
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(
                 command,

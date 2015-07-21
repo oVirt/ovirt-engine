@@ -653,11 +653,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (!VmHandler.isCpuSupported(
-                vmFromParams.getVmOsId(),
-                getVdsGroup().getCompatibilityVersion(),
-                getVdsGroup().getCpuName(),
-                getReturnValue().getCanDoActionMessages())) {
+        if (!isCpuSupported(vmFromParams)) {
             return false;
         }
 

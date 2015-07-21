@@ -889,16 +889,21 @@ public class VmHandler {
     }
 
     public static boolean isCpuSupported(int osId, Version version, String cpuName, ArrayList<String> canDoActionMessages) {
-        if (osRepository.isCpuSupported(
+        String cpuId = CpuFlagsManagerHandler.getCpuId(cpuName, version);
+        if (cpuId == null) {
+            canDoActionMessages.add(EngineMessage.CPU_TYPE_UNKNOWN.name());
+            return false;
+        }
+        if (!osRepository.isCpuSupported(
                 osId,
                 version,
-                CpuFlagsManagerHandler.getCpuId(cpuName, version))) {
-            return true;
+                cpuId)) {
+            String unsupportedCpus = osRepository.getUnsupportedCpus(osId, version).toString();
+            canDoActionMessages.add(EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS.name());
+            canDoActionMessages.add("$unsupportedCpus " + StringUtils.strip(unsupportedCpus.toString(), "[]"));
+            return false;
         }
-        String unsupportedCpus = osRepository.getUnsupportedCpus(osId, version).toString();
-        canDoActionMessages.add(EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS.name());
-        canDoActionMessages.add("$unsupportedCpus " + StringUtils.strip(unsupportedCpus.toString(), "[]"));
-        return false;
+        return true;
     }
 
     /**
