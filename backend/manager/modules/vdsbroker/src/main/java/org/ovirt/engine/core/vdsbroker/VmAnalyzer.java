@@ -186,19 +186,19 @@ public class VmAnalyzer {
                 if (dbVm != null && status == VMStatus.SavingState) {
                     afterSuspendTreatment(vdsmVm.getVmDynamic());
                 } else if (status != VMStatus.MigratingFrom) {
-                    handleVmOnDown(dbVm, vdsmVm.getVmDynamic(), vmStatistics);
+                    handleVmOnDown(dbVm, vdsmVm.getVmDynamic());
                 }
             }
         }
     }
 
-    private void handleVmOnDown(VM cacheVm, VmDynamic vmDynamic, VmStatistics vmStatistics) {
+    private void handleVmOnDown(VM cacheVm, VmDynamic vmDynamic) {
         VmExitStatus exitStatus = vmDynamic.getExitStatus();
 
         // we don't need to have an audit log for the case where the VM went down on a host
         // which is different than the one it should be running on (must be in migration process)
         if (cacheVm != null) {
-            auditVmOnDownEvent(exitStatus, vmDynamic.getExitMessage(), vmStatistics.getId());
+            auditVmOnDownEvent(exitStatus, vmDynamic.getExitMessage(), vmDynamic.getId());
         }
 
         if (exitStatus != VmExitStatus.Normal) {
