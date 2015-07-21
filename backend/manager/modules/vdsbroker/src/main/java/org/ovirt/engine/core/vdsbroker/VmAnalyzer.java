@@ -820,6 +820,8 @@ public class VmAnalyzer {
         dbVm.setUsageNetworkPercent((dbVm.getUsageNetworkPercent() > maxPercent) ?
                 maxPercent :
                 dbVm.getUsageNetworkPercent());
+        Integer usageHistoryLimit = Config.getValue(ConfigValues.UsageHistoryLimit);
+        dbVm.addNetworkUsageHistory(dbVm.getUsageNetworkPercent(), usageHistoryLimit);
     }
 
     private void saveVmInterfaces() {
