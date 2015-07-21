@@ -300,8 +300,6 @@
             dont, we need to include them explicitly: -->
         <include name="**/*_CustomFieldSerializer.java" />
 
-        <include name="common/businessentities/VdcRole.java" />
-
         <include name="common/businessentities/pm/FenceActionType.java" />
         <include name="common/businessentities/ConfigurationType.java" />
         <include name="common/businessentities/VdcOption.java" />
