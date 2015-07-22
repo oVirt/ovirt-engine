@@ -709,6 +709,16 @@ public class BackendHostResourceTest
         }
     }
 
+    @Test
+    public void testEnrollCertificate() throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.HostEnrollCertificate,
+                VdsActionParameters.class,
+                new String[] { "VdsId" },
+                new Object[] { GUIDS[0] }));
+
+        verifyActionResponse(resource.enrollCertificate(new Action()));
+    }
+
     protected VDS setUpStatisticalExpectations() throws Exception {
         VdsStatistics stats = control.createMock(VdsStatistics.class);
         VDS entity = control.createMock(VDS.class);

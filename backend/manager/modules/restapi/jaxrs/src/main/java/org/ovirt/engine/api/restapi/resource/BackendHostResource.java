@@ -391,6 +391,11 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     }
 
     @Override
+    public Response enrollCertificate(Action action) {
+        return doAction(VdcActionType.HostEnrollCertificate, new VdsActionParameters(guid), action);
+    }
+
+    @Override
     public Response iscsiLogin(Action action) {
         validateParameters(action, "iscsi.address", "iscsi.target");
         StorageServerConnections cnx = new StorageServerConnections();

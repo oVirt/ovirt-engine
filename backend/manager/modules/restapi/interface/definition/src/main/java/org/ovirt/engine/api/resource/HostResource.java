@@ -39,7 +39,7 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
     Response remove(Action action);
 
     @Path("{action: (approve|install|upgrade|fence|activate|deactivate|commitnetconfig|iscsidiscover|iscsilogin|" +
-            "forceselectspm|setupnetworks)}/{oid}")
+            "forceselectspm|setupnetworks|enrollcertificate)}/{oid}")
     ActionResource getActionSubresource(@PathParam("action")String action, @PathParam("oid")String oid);
 
     @POST
@@ -101,6 +101,11 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
     @Actionable
     @Path("forceselectspm")
     Response forceSelectSPM(Action action);
+
+    @POST
+    @Actionable
+    @Path("enrollcertificate")
+    Response enrollCertificate(Action action);
 
     @Path("numanodes")
     HostNumaNodesResource getHostNumaNodesResource();

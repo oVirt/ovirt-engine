@@ -1989,6 +1989,11 @@ actions:
       signatures:
       - optionalArguments:
           action.image: xs:string
+- name: /hosts/{host:id}/enrollcertificate|rel=enrollcertificate
+  description: enroll certificate for the specified host in the system
+  request:
+    body:
+      parameterType: Action
 - name: /hosts/{host:id}/iscsidiscover|rel=iscsidiscover
   description: initiate the command to discover the iscsi targets and map the targets to the storage server connections
   request:

@@ -101,6 +101,7 @@ public class FeaturesHelper {
             addOpenStackVolumeProvidersFeature(features);
             addRefreshLunSize(features);
             addNetworkAttachmentsFeature(features);
+            addHostEnrollCertificateFeature(features);
         }
         return features;
     }
@@ -581,6 +582,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Refresh LUNs Size");
         feature.setDescription("Refresh the LUN size in order to reflect an increase in the size of a storage domain");
+        features.getFeature().add(feature);
+    }
+
+    private void addHostEnrollCertificateFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Enroll Host Certificate");
+        feature.setDescription("Enroll host certificate in order to renew existing certificate");
         features.getFeature().add(feature);
     }
 }
