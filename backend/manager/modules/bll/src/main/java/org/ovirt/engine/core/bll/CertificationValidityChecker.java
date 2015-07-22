@@ -27,9 +27,13 @@ import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class CertificationValidityChecker implements BackendService {
+
+    private static Logger log = LoggerFactory.getLogger(CertificationValidityChecker.class);
 
     @Inject
     private SchedulerUtilQuartzImpl scheduler;
@@ -57,37 +61,42 @@ public class CertificationValidityChecker implements BackendService {
 
     @OnTimerMethodAnnotation("checkCertificationValidity")
     public void checkCertificationValidity() {
-        if (!checkCertificate(EngineEncryptionUtils.getCertificate(EngineLocalConfig.getInstance().getPKICACert()),
-                AuditLogType.ENGINE_CA_CERTIFICATION_HAS_EXPIRED,
-                AuditLogType.ENGINE_CA_CERTIFICATION_IS_ABOUT_TO_EXPIRE,
-                null)
-                || !checkCertificate((X509Certificate) EngineEncryptionUtils.getCertificate(),
-                        AuditLogType.ENGINE_CERTIFICATION_HAS_EXPIRED,
-                        AuditLogType.ENGINE_CERTIFICATION_IS_ABOUT_TO_EXPIRE,
-                        null)) {
-            return;
-        }
+        try {
+            if (!checkCertificate(EngineEncryptionUtils.getCertificate(EngineLocalConfig.getInstance().getPKICACert()),
+                    AuditLogType.ENGINE_CA_CERTIFICATION_HAS_EXPIRED,
+                    AuditLogType.ENGINE_CA_CERTIFICATION_IS_ABOUT_TO_EXPIRE,
+                    null)
+                    || !checkCertificate((X509Certificate) EngineEncryptionUtils.getCertificate(),
+                    AuditLogType.ENGINE_CERTIFICATION_HAS_EXPIRED,
+                    AuditLogType.ENGINE_CERTIFICATION_IS_ABOUT_TO_EXPIRE,
+                    null)) {
+                return;
+            }
 
-        if (!Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication)) {
-            return;
-        }
+            if (!Config.<Boolean>getValue(ConfigValues.EncryptHostCommunication)) {
+                return;
+            }
 
-        for (VDS host : hostDao.getAll()) {
-            if (host.getStatus() == VDSStatus.Up || host.getStatus() == VDSStatus.NonOperational) {
-                VdsManager hostManager = resourceManager.GetVdsManager(host.getId());
-                List<Certificate> peerCertificates = hostManager.getVdsProxy().getPeerCertificates();
+            for (VDS host : hostDao.getAll()) {
+                if (host.getStatus() == VDSStatus.Up || host.getStatus() == VDSStatus.NonOperational) {
+                    VdsManager hostManager = resourceManager.GetVdsManager(host.getId());
+                    List<Certificate> peerCertificates = hostManager.getVdsProxy().getPeerCertificates();
 
-                if (peerCertificates == null || peerCertificates.isEmpty()) {
-                    AuditLogableBase noCertEvent = new AuditLogableBase();
-                    noCertEvent.setVds(host);
-                    auditLogDirector.log(noCertEvent, AuditLogType.HOST_CERTIFICATION_IS_INVALID);
-                } else {
-                    checkCertificate((X509Certificate) peerCertificates.get(0),
-                            AuditLogType.HOST_CERTIFICATION_HAS_EXPIRED,
-                            AuditLogType.HOST_CERTIFICATION_IS_ABOUT_TO_EXPIRE,
-                            host);
+                    if (peerCertificates == null || peerCertificates.isEmpty()) {
+                        AuditLogableBase noCertEvent = new AuditLogableBase();
+                        noCertEvent.setVds(host);
+                        auditLogDirector.log(noCertEvent, AuditLogType.HOST_CERTIFICATION_IS_INVALID);
+                    } else {
+                        checkCertificate((X509Certificate) peerCertificates.get(0),
+                                AuditLogType.HOST_CERTIFICATION_HAS_EXPIRED,
+                                AuditLogType.HOST_CERTIFICATION_IS_ABOUT_TO_EXPIRE,
+                                host);
+                    }
                 }
             }
+        } catch (Exception e) {
+            log.error("Failed to check certification validity: {}", e.getMessage());
+            log.error("Exception", e);
         }
     }
 
