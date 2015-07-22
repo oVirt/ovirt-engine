@@ -97,7 +97,6 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
         final VdsMgmtPackages hostPackagesManager = new VdsMgmtPackages(host, checkOnly);
 
         String correlationId = CorrelationIdTracker.getCorrelationId();
-        hostPackagesManager.setCorrelationId(correlationId);
         if (StringUtils.isEmpty(correlationId)) {
             correlationId = LoggedUtils.getObjectId(host);
         }
