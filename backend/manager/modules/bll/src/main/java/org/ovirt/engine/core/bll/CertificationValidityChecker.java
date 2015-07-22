@@ -54,9 +54,9 @@ public class CertificationValidityChecker implements BackendService {
                 "checkCertificationValidity",
                 new Class[0],
                 new Object[0],
-                0,
-                Config.<Integer> getValue(ConfigValues.CertificationValidityCheckTimeInHours),
-                TimeUnit.HOURS);
+                10,
+                TimeUnit.HOURS.toMinutes(Config.<Integer> getValue(ConfigValues.CertificationValidityCheckTimeInHours)),
+                TimeUnit.MINUTES);
     }
 
     @OnTimerMethodAnnotation("checkCertificationValidity")
