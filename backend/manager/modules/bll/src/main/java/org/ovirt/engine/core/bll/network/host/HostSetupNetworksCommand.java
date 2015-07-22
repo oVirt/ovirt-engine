@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
+import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
 import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.HostNetwork;
 import org.ovirt.engine.core.common.vdscommands.HostSetupNetworksVdsCommandParameters;
@@ -387,12 +388,17 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private Set<String> getRemovedNetworks() {
         if (removedNetworks == null) {
             List<NetworkAttachment> removedNetworkAttachments =
-                Entities.filterEntitiesByRequiredIds(getParameters().getRemovedNetworkAttachments(),
-                    existingAttachments);
+                    Entities.filterEntitiesByRequiredIds(getParameters().getRemovedNetworkAttachments(),
+                            existingAttachments);
             removedNetworks = new HashSet<>(removedNetworkAttachments.size());
 
-            for (NetworkAttachment attachment : removedNetworkAttachments) {
-                removedNetworks.add(existingNetworkRelatedToAttachment(attachment).getName());
+            Map<Guid, NetworkAttachment> networkIdToAttachment =
+                    new MapNetworkAttachments(getParameters().getNetworkAttachments()).byNetworkId();
+
+            for (NetworkAttachment removedAttachment : removedNetworkAttachments) {
+                if (!networkIdToAttachment.containsKey(removedAttachment.getNetworkId())) {
+                    removedNetworks.add(existingNetworkRelatedToAttachment(removedAttachment).getName());
+                }
             }
         }
 
