@@ -110,7 +110,8 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
      * null for removing the device. If the map doesn't contain entry for graphics type, VM's graphics card
      * of this type is not modified.
      */
-    @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.GRAPHICS, type = VmDeviceType.UNKNOWN)
+    @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.GRAPHICS, type = VmDeviceType.UNKNOWN,
+                                   name = "graphicsProtocol")
     private Map<GraphicsType, GraphicsDevice> graphicsDevices;
 
     public VmManagementParametersBase() {

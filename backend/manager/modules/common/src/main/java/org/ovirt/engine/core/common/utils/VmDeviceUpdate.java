@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.utils;
 
-import org.ovirt.engine.core.common.businessentities.EditableDeviceOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 
@@ -9,28 +8,29 @@ public class VmDeviceUpdate {
     private VmDeviceGeneralType generalType;
     private VmDeviceType type;
     private boolean readOnly;
+    private String name;
     private boolean enable;
     private VmDevice device = null;
 
     public VmDeviceUpdate() {
-        this(VmDeviceGeneralType.UNKNOWN, VmDeviceType.UNKNOWN, false, false);
+        this(VmDeviceGeneralType.UNKNOWN, VmDeviceType.UNKNOWN, false, "", false);
     }
 
-    public VmDeviceUpdate(EditableDeviceOnVmStatusField field, boolean enable) {
-        this(field.generalType(), field.type(), field.isReadOnly(), enable);
-    }
-
-    public VmDeviceUpdate(VmDeviceGeneralType generalType, VmDeviceType type, boolean readOnly, boolean enable) {
+    public VmDeviceUpdate(VmDeviceGeneralType generalType, VmDeviceType type, boolean readOnly, String name,
+                          boolean enable) {
         this.generalType = generalType;
         this.type = type;
         this.readOnly = readOnly;
+        this.name = name;
         setEnable(enable);
     }
 
-    public VmDeviceUpdate(VmDeviceGeneralType generalType, VmDeviceType type, boolean readOnly, VmDevice device) {
+    public VmDeviceUpdate(VmDeviceGeneralType generalType, VmDeviceType type, boolean readOnly, String name,
+                          VmDevice device) {
         this.generalType = generalType;
         this.type = type;
         this.readOnly = readOnly;
+        this.name = name;
         setEnable(device != null);
         setDevice(device);
     }
@@ -57,6 +57,14 @@ public class VmDeviceUpdate {
 
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public boolean isEnable() {

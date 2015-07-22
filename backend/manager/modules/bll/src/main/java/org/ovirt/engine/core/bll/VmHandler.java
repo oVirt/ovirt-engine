@@ -833,11 +833,11 @@ public class VmHandler {
     private static boolean addDeviceUpdateOnNextRun(Guid vmId, EditableDeviceOnVmStatusField annotation,
                                                 Object key, Object value, List<VmDeviceUpdate> updates) {
         return addDeviceUpdateOnNextRun(vmId, annotation.generalType(), annotation.type(), annotation.isReadOnly(),
-                key, value, updates);
+                annotation.name(), key, value, updates);
     }
 
     private static boolean addDeviceUpdateOnNextRun(Guid vmId, VmDeviceGeneralType generalType, VmDeviceType type,
-                boolean readOnly, Object key, Object value, List<VmDeviceUpdate> updates) {
+                boolean readOnly, String name, Object key, Object value, List<VmDeviceUpdate> updates) {
 
         if (key != null) {
             VmDeviceGeneralType keyGeneralType = VmDeviceGeneralType.UNKNOWN;
@@ -869,15 +869,15 @@ public class VmHandler {
 
         if (value == null) {
             if (VmDeviceUtils.vmDeviceChanged(vmId, generalType, typeName, false)) {
-                updates.add(new VmDeviceUpdate(generalType, type, readOnly, false));
+                updates.add(new VmDeviceUpdate(generalType, type, readOnly, name, false));
             }
         } else if (value instanceof Boolean) {
             if (VmDeviceUtils.vmDeviceChanged(vmId, generalType, typeName, (Boolean) value)) {
-                updates.add(new VmDeviceUpdate(generalType, type, readOnly, (Boolean) value));
+                updates.add(new VmDeviceUpdate(generalType, type, readOnly, name, (Boolean) value));
             }
         } else if (value instanceof VmDevice) {
             if (VmDeviceUtils.vmDeviceChanged(vmId, generalType, typeName, (VmDevice) value)) {
-                updates.add(new VmDeviceUpdate(generalType, type, readOnly, (VmDevice) value));
+                updates.add(new VmDeviceUpdate(generalType, type, readOnly, name, (VmDevice) value));
             }
         } else {
             log.warn("addDeviceUpdateOnNextRun: Unsupported value type: " +

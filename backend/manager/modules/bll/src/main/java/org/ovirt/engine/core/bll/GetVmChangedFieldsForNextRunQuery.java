@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -38,22 +39,26 @@ public class GetVmChangedFieldsForNextRunQuery<P extends GetVmChangedFieldsForNe
         vmPropertiesUtils.separateCustomPropertiesToUserAndPredefined(
                 dstVm.getVdsGroupCompatibilityVersion(), dstStatic);
 
-        List<String> result = new ArrayList<>(VmHandler.getChangedFieldsForStatus(srcStatic, dstStatic, VMStatus.Up));
+        Set<String> result = new HashSet<>(VmHandler.getChangedFieldsForStatus(srcStatic, dstStatic, VMStatus.Up));
 
         for (VmDeviceUpdate device :
                 VmHandler.getVmDevicesFieldsToUpdateOnNextRun(srcVm.getId(), VMStatus.Up, getParameters().getUpdateVmParameters())) {
-            switch (device.getType()) {
-                case UNKNOWN:
-                case VIRTIO:
-                    result.add(device.getGeneralType().name());
-                    break;
+            if (!device.getName().isEmpty()) {
+                result.add(device.getName());
+            } else {
+                switch (device.getType()) {
+                    case UNKNOWN:
+                    case VIRTIO:
+                        result.add(device.getGeneralType().name());
+                        break;
 
-                default:
-                    result.add(device.getType().getName());
-                    break;
+                    default:
+                        result.add(device.getType().getName());
+                        break;
+                }
             }
         }
 
-        setReturnValue(result);
+        setReturnValue(new ArrayList<>(result));
     }
 }

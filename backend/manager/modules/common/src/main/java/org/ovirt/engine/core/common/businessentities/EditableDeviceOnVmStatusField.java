@@ -18,4 +18,7 @@ public @interface EditableDeviceOnVmStatusField {
     VmDeviceType type();
 
     boolean isReadOnly() default false;
+
+    String name() default "";
+
 }
