@@ -24,7 +24,6 @@
       <artifactId>compat</artifactId>
       <version>${engine.version}</version>
     </dependency>
-
     <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>common</artifactId>
@@ -55,39 +54,26 @@
       <artifactId>utils</artifactId>
       <version>${engine.version}</version>
     </dependency>
-
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>utils</artifactId>
-      <version>${engine.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>dal</artifactId>
       <version>${engine.version}</version>
     </dependency>
-
     <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>searchbackend</artifactId>
       <version>${engine.version}</version>
     </dependency>
-
     <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>vdsbroker</artifactId>
       <version>${engine.version}</version>
     </dependency>
-
     <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>branding</artifactId>
       <version>${engine.version}</version>
     </dependency>
-
     <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>scheduler</artifactId>
@@ -95,86 +81,83 @@
       <scope>provided</scope>
       <type>ejb</type>
     </dependency>
-
     <dependency>
       <groupId>com.woorea</groupId>
       <artifactId>keystone-client</artifactId>
       <version>${openstack-client.version}</version>
     </dependency>
-
     <dependency>
       <groupId>com.woorea</groupId>
       <artifactId>quantum-client</artifactId>
       <version>${openstack-client.version}</version>
     </dependency>
-
     <dependency>
       <groupId>com.woorea</groupId>
       <artifactId>resteasy-connector</artifactId>
       <version>${openstack-client.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.jboss.spec.javax.ejb</groupId>
       <artifactId>jboss-ejb-api_3.1_spec</artifactId>
     </dependency>
-
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
     </dependency>
-
     <dependency>
       <groupId>javax.transaction</groupId>
       <artifactId>jta</artifactId>
     </dependency>
-
     <dependency>
       <groupId>javax.mail</groupId>
       <artifactId>mail</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.jboss.spec.javax.interceptor</groupId>
       <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
     </dependency>
     <dependency>
-        <groupId>org.apache.xmlrpc</groupId>
-        <artifactId>xmlrpc-client</artifactId>
+      <groupId>org.apache.xmlrpc</groupId>
+      <artifactId>xmlrpc-client</artifactId>
     </dependency>
-
-    <!-- JUL is used as logging backend for tests -->
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-core-asl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-asl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>utils</artifactId>
+      <version>${engine.version}</version>
+      <type>test-jar</type>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>commons-configuration</groupId>
       <artifactId>commons-configuration</artifactId>
       <version>1.6</version>
       <scope>test</scope>
     </dependency>
+    <!-- JUL is used as logging backend for tests -->
     <dependency>
-       <groupId>org.codehaus.jackson</groupId>
-       <artifactId>jackson-core-asl</artifactId>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jdk14</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
-       <groupId>org.codehaus.jackson</groupId>
-       <artifactId>jackson-mapper-asl</artifactId>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-library</artifactId>
+      <version>${hamcrest.version}</version>
+      <scope>test</scope>
     </dependency>
-     <dependency>
-        <groupId>javax.enterprise</groupId>
-        <artifactId>cdi-api</artifactId>
-        <scope>provided</scope>
-     </dependency>
-      <dependency>
-          <groupId>org.hamcrest</groupId>
-          <artifactId>hamcrest-library</artifactId>
-          <version>${hamcrest.version}</version>
-          <scope>test</scope>
-      </dependency>
   </dependencies>
 
   <build>
