@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.di.Injector;
@@ -140,7 +141,10 @@ public class NetworkConfigurator {
         HostSetupNetworksParameters parameters = new HostSetupNetworksParameters(host.getId());
         NetworkAttachment managementAttachment = new NetworkAttachment();
         managementAttachment.setNetworkId(managementNetwork.getId());
-        managementAttachment.setNicId(nic.getId());
+
+        Map<String, VdsNetworkInterface> nicNameToNic = Entities.entitiesByName(host.getInterfaces());
+        Guid baseNicId = nicNameToNic.get(NetworkUtils.stripVlan(nic)).getId();
+        managementAttachment.setNicId(baseNicId);
         IpConfiguration ipConfiguration = new IpConfiguration();
         ipConfiguration.getIPv4Addresses().add(createIPv4Address(nic));
         managementAttachment.setIpConfiguration(ipConfiguration);
