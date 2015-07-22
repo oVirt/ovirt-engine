@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import java.util.Collections;
 import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -65,16 +63,6 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                     return null;
                 }
             });
-
-            // if using stop then call to ProcessOnVmStop because
-            // will not be called from UpdateRunTimeInfo
-            if (!parameters.getGracefully()) {
-                ResourceManager.getInstance().getEventListener().processOnVmStop(
-                        Collections.singleton(curVm.getId()),
-                        getParameters().getVdsId(),
-                        !isInPoolBeingDestroyed(curVm));
-            }
-
             getVDSReturnValue().setReturnValue(curVm.getStatus());
         } else if (vdsBrokerCommand.getVDSReturnValue().getExceptionObject() != null) {
             log.error("VDS::destroy Failed destroying VM '{}' in vds = '{}' , error = '{}'",
@@ -102,8 +90,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
     private void changeStatus(DestroyVmVDSCommandParameters parameters, VM curVm) {
         // do the state transition only if that VM is really running on SRC
         if (getParameters().getVdsId().equals(curVm.getRunOnVds())) {
-            ResourceManager.getInstance().InternalSetVmStatus(curVm,
-                    parameters.getGracefully() ? VMStatus.PoweringDown : VMStatus.Down);
+            ResourceManager.getInstance().InternalSetVmStatus(curVm, VMStatus.PoweringDown);
         }
     }
 }
