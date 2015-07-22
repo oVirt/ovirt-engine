@@ -1695,11 +1695,12 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION InsertDedicatedHostsToVm(v_vm_guid UUID, v_dedicated_vm_for_vds text)
 RETURNS VOID
 AS $procedure$
+BEGIN
     INSERT INTO vm_host_pinning_map(vm_id, vds_id)
     SELECT v_vm_guid, vds_id
     FROM fnSplitterUuid(v_dedicated_vm_for_vds) as vds_id;
-$procedure$
-LANGUAGE sql;
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION UpdateDedicatedHostsToVm(v_vm_guid UUID, v_dedicated_vm_for_vds text)
