@@ -302,7 +302,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     @Override
     @Size(min = 1, max = BusinessEntitiesDefinitions.VM_TEMPLATE_NAME_SIZE,
-            message = "VALIDATION.VM_TEMPLATE.NAME.MAX",
+            message = "VALIDATION_VM_TEMPLATE_NAME_MAX",
             groups = { Default.class, ImportClonedEntity.class })
     @ValidI18NName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS", groups = { CreateEntity.class,
             UpdateEntity.class, ImportClonedEntity.class })

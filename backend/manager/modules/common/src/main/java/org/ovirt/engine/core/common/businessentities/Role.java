@@ -18,10 +18,10 @@ public class Role implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
     private Guid id;
     private boolean readOnly;
 
-    @NotNull(message = "VALIDATION.ROLES.NAME.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
-    @Size(min = 1, max = BusinessEntitiesDefinitions.ROLE_NAME_SIZE, message = "VALIDATION.ROLES.NAME.MAX", groups = {
+    @NotNull(message = "VALIDATION_ROLES_NAME_NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
+    @Size(min = 1, max = BusinessEntitiesDefinitions.ROLE_NAME_SIZE, message = "VALIDATION_ROLES_NAME_MAX", groups = {
             CreateEntity.class, UpdateEntity.class })
-    @ValidName(message = "VALIDATION.ROLES.NAME.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
+    @ValidName(message = "VALIDATION_ROLES_NAME_INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     private String name;
 
     /**

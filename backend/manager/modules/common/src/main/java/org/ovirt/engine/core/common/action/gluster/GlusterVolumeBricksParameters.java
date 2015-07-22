@@ -13,7 +13,7 @@ public class GlusterVolumeBricksParameters extends GlusterVolumeParameters {
     private static final long serialVersionUID = -3931242146910640331L;
 
     @Valid
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICKS.NOT_NULL")
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_BRICKS_NOT_NULL")
     private List<GlusterBrickEntity> bricks;
 
     public GlusterVolumeBricksParameters() {

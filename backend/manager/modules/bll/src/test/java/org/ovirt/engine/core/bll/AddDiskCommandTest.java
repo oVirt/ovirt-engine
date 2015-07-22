@@ -189,7 +189,7 @@ public class AddDiskCommandTest {
         AddDiskParameters params = new AddDiskParameters(Guid.newGuid(), image);
         initializeCommand(storageId, params);
         assertFalse(command.validateInputs());
-        assertTrue(command.getReturnValue().getCanDoActionMessages().contains("VALIDATION.DISK_INTERFACE.NOT_NULL"));
+        assertTrue(command.getReturnValue().getCanDoActionMessages().contains("VALIDATION_DISK_INTERFACE_NOT_NULL"));
     }
 
     @Test

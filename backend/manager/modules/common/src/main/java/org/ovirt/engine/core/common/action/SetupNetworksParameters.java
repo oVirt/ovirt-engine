@@ -16,14 +16,14 @@ public class SetupNetworksParameters extends VdsActionParameters {
     private static final long serialVersionUID = 7275844490628744535L;
 
     @Valid
-    @NoRepetitiveStaticIpInList(message = "VALIDATION.REPETITIVE.IP.IN.VDS")
+    @NoRepetitiveStaticIpInList(message = "VALIDATION_REPETITIVE_IP_IN_VDS")
     private List<VdsNetworkInterface> interfaces;
 
     private boolean force;
     private boolean checkConnectivity;
 
     @ConfiguredRange(min = 1, maxConfigValue = ConfigValues.NetworkConnectivityCheckTimeoutInSeconds,
-            message = "VALIDATION.CONNECTIVITY.TIMEOUT.INVALID")
+            message = "VALIDATION_CONNECTIVITY_TIMEOUT_INVALID")
     private Integer conectivityTimeout;
 
     private List<String> networksToSync;

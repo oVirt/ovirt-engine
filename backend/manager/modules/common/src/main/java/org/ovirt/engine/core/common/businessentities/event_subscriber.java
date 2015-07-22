@@ -78,7 +78,7 @@ public class event_subscriber implements IVdcQueryable {
         this.id.eventNotificationMethod = eventNotificationMethod;
     }
 
-    @Email(message = "VALIDATION.EVENTS.EMAIL_FORMAT")
+    @Email(message = "VALIDATION_EVENTS_EMAIL_FORMAT")
     private String methodAddress;
 
     public String getmethod_address() {

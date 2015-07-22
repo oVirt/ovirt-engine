@@ -22,14 +22,14 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
     private String storage;
 
     // TODO storage name needs to be made unique
-    @ValidName(message = "VALIDATION.STORAGE_DOMAIN.NAME.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
+    @ValidName(message = "VALIDATION_STORAGE_DOMAIN_NAME_INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     @Size(min = 1, max = BusinessEntitiesDefinitions.STORAGE_NAME_SIZE)
     private String name;
 
-    @ValidDescription(message = "VALIDATION.STORAGE_DOMAIN.DESCRIPTION.INVALID", groups = { CreateEntity.class,
+    @ValidDescription(message = "VALIDATION_STORAGE_DOMAIN_DESCRIPTION_INVALID", groups = { CreateEntity.class,
             UpdateEntity.class })
     @Size(min = 1, max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE,
-            message = "VALIDATION.STORAGE_DOMAIN.DESCRIPTION.MAX",
+            message = "VALIDATION_STORAGE_DOMAIN_DESCRIPTION_MAX",
             groups = { CreateEntity.class, UpdateEntity.class })
     private String description;
 
@@ -51,12 +51,12 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
 
     private Boolean wipeAfterDelete;
 
-    @Min(value = 0, message = "VALIDATION.STORAGE_DOMAIN.WARNING_LOW_SPACE_INDICATOR.RANGE")
-    @Max(value = 100, message = "VALIDATION.STORAGE_DOMAIN.WARNING_LOW_SPACE_INDICATOR.RANGE")
+    @Min(value = 0, message = "VALIDATION_STORAGE_DOMAIN_WARNING_LOW_SPACE_INDICATOR_RANGE")
+    @Max(value = 100, message = "VALIDATION_STORAGE_DOMAIN_WARNING_LOW_SPACE_INDICATOR_RANGE")
     private Integer warningLowSpaceIndicator;
 
-    @Min(value = 0, message = "VALIDATION.STORAGE_DOMAIN.CRITICAL_SPACE_ACTION_BLOCKER.RANGE")
-    @Max(value = Integer.MAX_VALUE, message = "VALIDATION.STORAGE_DOMAIN.CRITICAL_SPACE_ACTION_BLOCKER.RANGE")
+    @Min(value = 0, message = "VALIDATION_STORAGE_DOMAIN_CRITICAL_SPACE_ACTION_BLOCKER_RANGE")
+    @Max(value = Integer.MAX_VALUE, message = "VALIDATION_STORAGE_DOMAIN_CRITICAL_SPACE_ACTION_BLOCKER_RANGE")
     private Integer criticalSpaceActionBlocker;
 
     public StorageDomainStatic() {

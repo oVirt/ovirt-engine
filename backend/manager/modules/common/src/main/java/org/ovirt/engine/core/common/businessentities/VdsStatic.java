@@ -35,7 +35,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     private String comment;
 
     @EditableField
-    @HostnameOrIp(message = "VALIDATION.VDS.CONSOLEADDRESSS.HOSTNAME_OR_IP",
+    @HostnameOrIp(message = "VALIDATION_VDS_CONSOLEADDRESSS_HOSTNAME_OR_IP",
             groups = { CreateEntity.class, UpdateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.CONSOLE_ADDRESS_SIZE)
     private String consoleAddress;
@@ -44,7 +44,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     private String uniqueId;
 
     @EditableOnVdsStatus
-    @HostnameOrIp(message = "VALIDATION.VDS.HOSTNAME.HOSTNAME_OR_IP",
+    @HostnameOrIp(message = "VALIDATION_VDS_HOSTNAME_HOSTNAME_OR_IP",
             groups = { CreateEntity.class, UpdateEntity.class })
     @NotNull(groups = { CreateEntity.class, UpdateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.HOST_HOSTNAME_SIZE)
@@ -53,7 +53,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     @EditableField
     @Range(min = BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT,
             max = BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT,
-            message = "VALIDATION.VDS.PORT.RANGE")
+            message = "VALIDATION_VDS_PORT_RANGE")
     private int port;
 
     @EditableField

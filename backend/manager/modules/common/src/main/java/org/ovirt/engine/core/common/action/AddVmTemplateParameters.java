@@ -31,7 +31,7 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase implements
     private VmEntityType templateType;
     private String vmLargeIcon;
 
-    @Size(min = 1, max = 40, message = "VALIDATION.VM_TEMPLATE.NAME.MAX", groups = { CreateEntity.class, UpdateEntity.class })
+    @Size(min = 1, max = 40, message = "VALIDATION_VM_TEMPLATE_NAME_MAX", groups = { CreateEntity.class, UpdateEntity.class })
     @ValidI18NName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS")
     private String _name;
 

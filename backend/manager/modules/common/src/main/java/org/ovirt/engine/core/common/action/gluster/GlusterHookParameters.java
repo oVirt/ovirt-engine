@@ -9,7 +9,7 @@ public class GlusterHookParameters extends VdcActionParametersBase {
 
     private static final long serialVersionUID = -8236696198344082891L;
 
-    @NotNull(message = "VALIDATION.GLUSTER.GLUSTER_HOOK_ID.NOT_NULL")
+    @NotNull(message = "VALIDATION_GLUSTER_GLUSTER_HOOK_ID_NOT_NULL")
     private Guid hookId;
 
     public GlusterHookParameters() {

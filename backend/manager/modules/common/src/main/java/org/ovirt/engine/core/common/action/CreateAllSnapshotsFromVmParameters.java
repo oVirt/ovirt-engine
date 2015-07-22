@@ -20,8 +20,8 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
     private static final long serialVersionUID = 847791941815264795L;
 
     @NotEmpty(groups = { CreateEntity.class },
-            message = "VALIDATION.DISK_IMAGE.DESCRIPTION.NOT_EMPTY")
-    @ValidDescription(message = "VALIDATION.DISK_IMAGE.DESCRIPTION.INVALID", groups = { CreateEntity.class })
+            message = "VALIDATION_DISK_IMAGE_DESCRIPTION_NOT_EMPTY")
+    @ValidDescription(message = "VALIDATION_DISK_IMAGE_DESCRIPTION_INVALID", groups = { CreateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE, groups = { CreateEntity.class },
             message = "VALIDATION_DISK_IMAGE_DESCRIPTION_MAX")
     private String description;

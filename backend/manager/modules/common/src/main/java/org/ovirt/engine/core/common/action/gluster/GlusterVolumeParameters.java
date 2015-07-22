@@ -13,7 +13,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class GlusterVolumeParameters extends VdcActionParametersBase {
     private static final long serialVersionUID = -5148741622108406754L;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.ID.NOT_NULL")
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_ID_NOT_NULL")
     private Guid volumeId;
 
     public GlusterVolumeParameters() {

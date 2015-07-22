@@ -20,7 +20,7 @@ public class MacRange implements Serializable {
                    @Pattern(regexp = MacAddressValidationPatterns.NON_MULTICAST_MAC_ADDRESS_FORMAT,
                             message = VmNic.VALIDATION_VM_NETWORK_MAC_ADDRESS_MULTICAST)
     })
-    @NotNull(message= "VALIDATION.VM.NETWORK.MAC.ADDRESS.NOT_NULL")
+    @NotNull(message= "VALIDATION_VM_NETWORK_MAC_ADDRESS_NOT_NULL")
     private String macFrom;
 
     @Pattern.List({

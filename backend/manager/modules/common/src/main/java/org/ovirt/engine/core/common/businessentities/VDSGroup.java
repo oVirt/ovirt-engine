@@ -27,11 +27,11 @@ public class VDSGroup implements IVdcQueryable, BusinessEntity<Guid>, HasStorage
 
     private Guid id;
 
-    @NotNull(message = "VALIDATION.VDS_GROUP.NAME.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
-    @Size(min = 1, max = BusinessEntitiesDefinitions.CLUSTER_NAME_SIZE, message = "VALIDATION.VDS_GROUP.NAME.MAX",
+    @NotNull(message = "VALIDATION_VDS_GROUP_NAME_NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
+    @Size(min = 1, max = BusinessEntitiesDefinitions.CLUSTER_NAME_SIZE, message = "VALIDATION_VDS_GROUP_NAME_MAX",
             groups = {
             CreateEntity.class, UpdateEntity.class })
-    @ValidI18NName(message = "VALIDATION.VDS_GROUP.NAME.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
+    @ValidI18NName(message = "VALIDATION_VDS_GROUP_NAME_INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     private String name;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
@@ -88,7 +88,7 @@ public class VDSGroup implements IVdcQueryable, BusinessEntity<Guid>, HasStorage
 
     private Set<SupportedAdditionalClusterFeature> addtionalFeaturesSupported;
 
-    @ValidUri(message = "VALIDATION.VDS_GROUP.SPICE_PROXY.HOSTNAME_OR_IP",
+    @ValidUri(message = "VALIDATION_VDS_GROUP_SPICE_PROXY_HOSTNAME_OR_IP",
             groups = { CreateEntity.class, UpdateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.SPICE_PROXY_ADDR_SIZE)
     private String spiceProxy;

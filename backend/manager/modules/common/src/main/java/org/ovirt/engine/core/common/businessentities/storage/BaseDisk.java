@@ -44,13 +44,13 @@ public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid> {
      * The alias name of the disk.
      */
     @Size(min = 0, max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE, groups = { CreateEntity.class })
-    @ValidI18NName(message = "VALIDATION.DISK.ALIAS.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
+    @ValidI18NName(message = "VALIDATION_DISK_ALIAS_INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     private String diskAlias = "";
 
     /**
      * The description of the disk.
      */
-    @ValidDescription(message = "VALIDATION.DISK.DESCRIPTION.INVALID", groups = { CreateEntity.class
+    @ValidDescription(message = "VALIDATION_DISK_DESCRIPTION_INVALID", groups = { CreateEntity.class
             , UpdateEntity.class })
     private String diskDescription;
 
@@ -104,7 +104,7 @@ public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid> {
         this.id = id;
     }
 
-    @NotNull(message = "VALIDATION.DISK_INTERFACE.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
+    @NotNull(message = "VALIDATION_DISK_INTERFACE_NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     public DiskInterface getDiskInterface() {
         return diskInterface;
     }

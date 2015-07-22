@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOption
 public class GlusterVolumeOptionParameters extends GlusterVolumeParameters {
     private static final long serialVersionUID = -7962802152394185854L;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.OPTION.NOT_NULL")
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_OPTION_NOT_NULL")
     @Valid
     private GlusterVolumeOptionEntity volumeOption;
 

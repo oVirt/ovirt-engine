@@ -34,12 +34,12 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
 
     private ImageStatus status;
 
-    @NotNull(message = "VALIDATION.VOLUME_TYPE.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
+    @NotNull(message = "VALIDATION_VOLUME_TYPE_NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     private VolumeType volumeType;
 
     private long size;
 
-    @NotNull(message = "VALIDATION.VOLUME_FORMAT.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
+    @NotNull(message = "VALIDATION_VOLUME_FORMAT_NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     private VolumeFormat volumeFormat;
 
     public Image() {

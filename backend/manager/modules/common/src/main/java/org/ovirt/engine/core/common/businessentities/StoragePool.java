@@ -17,13 +17,13 @@ public class StoragePool implements IVdcQueryable, BusinessEntityWithStatus<Guid
 
     private Guid id;
 
-    @ValidName(message = "VALIDATION.DATA_CENTER.NAME.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
+    @ValidName(message = "VALIDATION_DATA_CENTER_NAME_INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     @Size(min = 1, max = BusinessEntitiesDefinitions.DATACENTER_NAME_SIZE)
     private String name;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.ONLY_ASCII_OR_NONE,
-            message = "VALIDATION.DATA_CENTER.DESCRIPTION.INVALID",
+            message = "VALIDATION_DATA_CENTER_DESCRIPTION_INVALID",
             groups = { CreateEntity.class, UpdateEntity.class })
     private String description;
 

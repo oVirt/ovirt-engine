@@ -11,7 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class GlusterParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = -1224829720081853632L;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.CLUSTER_ID.NOT_NULL")
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_CLUSTER_ID_NOT_NULL")
     private Guid clusterId;
 
     public GlusterParameters() {

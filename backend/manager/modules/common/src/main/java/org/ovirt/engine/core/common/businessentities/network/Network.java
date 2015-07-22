@@ -55,7 +55,7 @@ public class Network implements IVdcQueryable, BusinessEntity<Guid>, Nameable, C
 
     private boolean stp;
 
-    @NotNull(message = "VALIDATION.STORAGE_POOL.ID.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
+    @NotNull(message = "VALIDATION_STORAGE_POOL_ID_NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     private Guid dataCenterId;
 
     private NetworkCluster cluster;

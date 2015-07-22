@@ -41,24 +41,24 @@ import org.ovirt.engine.core.compat.StringHelper;
 public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithStatus<Guid, GlusterStatus>, GlusterTaskSupport {
     private static final long serialVersionUID = 2355384696827317277L;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.ID.NOT_NULL", groups = { RemoveEntity.class })
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_ID_NOT_NULL", groups = { RemoveEntity.class })
     private Guid id;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.CLUSTER_ID.NOT_NULL", groups = {CreateEntity.class, CreateReplicatedVolume.class, CreateStripedVolume.class})
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_CLUSTER_ID_NOT_NULL", groups = {CreateEntity.class, CreateReplicatedVolume.class, CreateStripedVolume.class})
     private Guid clusterId;
 
     private String vdsGroupName;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.NAME.NOT_NULL", groups = {CreateEntity.class, CreateReplicatedVolume.class, CreateStripedVolume.class})
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_NAME_NOT_NULL", groups = {CreateEntity.class, CreateReplicatedVolume.class, CreateStripedVolume.class})
     private String name;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.TYPE.NOT_NULL", groups = {CreateEntity.class, CreateReplicatedVolume.class, CreateStripedVolume.class})
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_TYPE_NOT_NULL", groups = {CreateEntity.class, CreateReplicatedVolume.class, CreateStripedVolume.class})
     private GlusterVolumeType volumeType;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.REPLICA_COUNT.NOT_NULL", groups = { CreateReplicatedVolume.class })
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_REPLICA_COUNT_NOT_NULL", groups = { CreateReplicatedVolume.class })
     private Integer replicaCount;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.STRIPE_COUNT.NOT_NULL", groups = { CreateStripedVolume.class })
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_STRIPE_COUNT_NOT_NULL", groups = { CreateStripedVolume.class })
     private Integer stripeCount;
 
     private Integer disperseCount;
@@ -68,7 +68,7 @@ public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithSta
     @Valid
     private Map<String, GlusterVolumeOptionEntity> options;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICKS.NOT_NULL", groups = {CreateEntity.class, CreateReplicatedVolume.class, CreateStripedVolume.class})
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_BRICKS_NOT_NULL", groups = {CreateEntity.class, CreateReplicatedVolume.class, CreateStripedVolume.class})
     @Valid
     private List<GlusterBrickEntity> bricks;
 

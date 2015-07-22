@@ -119,7 +119,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @EditableOnVmStatusField
     @EditableOnTemplate
     @IntegerContainedInConfigValueList(configValue = ConfigValues.ValidNumOfMonitors,
-            message = "VALIDATION.VM.NUM_OF_MONITORS.EXCEEDED")
+            message = "VALIDATION_VM_NUM_OF_MONITORS_EXCEEDED")
     private int numOfMonitors;
 
     @CopyOnNewVersion
@@ -251,7 +251,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
      * VDSM behavior will be used.
      */
     @EditableField
-    @Min(value = 0, message = "VALIDATION.VM.MIGRATION_DOWNTIME_RANGE")
+    @Min(value = 0, message = "VALIDATION_VM_MIGRATION_DOWNTIME_RANGE")
     private Integer migrationDowntime;
 
     @EditableField
@@ -346,7 +346,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @EditableOnTemplate
     @NullOrStringContainedInConfigValueList(configValue = ConfigValues.VncKeyboardLayoutValidValues,
         groups = { CreateEntity.class, UpdateEntity.class },
-        message = "VALIDATION.VM.INVALID_KEYBOARD_LAYOUT")
+        message = "VALIDATION_VM_INVALID_KEYBOARD_LAYOUT")
     private String vncKeyboardLayout;
 
     @CopyOnNewVersion

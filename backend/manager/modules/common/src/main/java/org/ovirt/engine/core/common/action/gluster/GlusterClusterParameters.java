@@ -9,7 +9,7 @@ public class GlusterClusterParameters extends VdcActionParametersBase {
 
     private static final long serialVersionUID = 2260339638936514331L;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.CLUSTER_ID.NOT_NULL")
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_CLUSTER_ID_NOT_NULL")
     private Guid clusterId;
 
     public GlusterClusterParameters() {

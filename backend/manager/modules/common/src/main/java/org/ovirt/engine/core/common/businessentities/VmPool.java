@@ -20,7 +20,7 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     private Guid id;
 
-    @NotNull(message = "VALIDATION.VM_POOLS.NAME.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
+    @NotNull(message = "VALIDATION_VM_POOLS_NAME_NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     @Size(min = 1, max = BusinessEntitiesDefinitions.VM_POOL_NAME_SIZE)
     @Pattern(regexp = ValidationUtils.POOL_NAME_PATTERN, message = "ACTION_TYPE_FAILED_INVALID_POOL_NAME", groups = { CreateEntity.class,
             UpdateEntity.class })
@@ -52,13 +52,13 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     private int vmPoolRunningCount;
 
-    @Min(value = 1, message = "VALIDATION.VM_POOLS.NUMBER_OF_MAX_ASSIGNED_VMS_OUT_OF_RANGE")
-    @Max(value = Short.MAX_VALUE, message = "VALIDATION.VM_POOLS.NUMBER_OF_MAX_ASSIGNED_VMS_OUT_OF_RANGE")
+    @Min(value = 1, message = "VALIDATION_VM_POOLS_NUMBER_OF_MAX_ASSIGNED_VMS_OUT_OF_RANGE")
+    @Max(value = Short.MAX_VALUE, message = "VALIDATION_VM_POOLS_NUMBER_OF_MAX_ASSIGNED_VMS_OUT_OF_RANGE")
     private int maxAssignedVmsPerUser;
 
     public static final char MASK_CHARACTER = '?';
 
-    @ValidUri(message = "VALIDATION.VDS_GROUP.SPICE_PROXY.HOSTNAME_OR_IP", groups = { CreateEntity.class, UpdateEntity.class })
+    @ValidUri(message = "VALIDATION_VDS_GROUP_SPICE_PROXY_HOSTNAME_OR_IP", groups = { CreateEntity.class, UpdateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.SPICE_PROXY_ADDR_SIZE)
     private String spiceProxy;
 

@@ -4,36 +4,6 @@ import com.google.gwt.i18n.client.Constants;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 
 public interface AppErrors extends ConstantsWithLookup {
-    @DefaultStringValue("Cannot remove Directory Group. Detach Group from  VM-Pool first.")
-    String DIRECTORY_GROUP_CANNOT_REMOVE_DIRECTORY_GROUP_ATTACHED_TO_VM_POOL();
-
-    @DefaultStringValue("Image file already exists.")
-    String IO_CD_IMAGE_FILE_ALREADY_EXIST();
-
-    @DefaultStringValue("Image file does not exist.")
-    String IO_CD_IMAGE_FILE_NOT_EXIST();
-
-    @DefaultStringValue("Invalid CD image extension.")
-    String IO_INVALID_CD_IMAGE_EXTENSION();
-
-    @DefaultStringValue("ISO directory does not exist.")
-    String IO_ISO_DIRECTORY_NOT_EXIST();
-
-    @DefaultStringValue("Snapshot creation failed.")
-    String IRS_FAILED_CREATING_SNAPSHOT();
-
-    @DefaultStringValue("Internal error, Snapshot cannot be retrieved.")
-    String IRS_FAILED_RETRIEVING_SNAPSHOT_INFO();
-
-    @DefaultStringValue("Storage Manager Service not responding.")
-    String IRS_NETWORK_ERROR();
-
-    @DefaultStringValue("Storage Manager protocol error.")
-    String IRS_PROTOCOL_ERROR();
-
-    @DefaultStringValue("Storage Manager response error.")
-    String IRS_RESPONSE_ERROR();
-
     @DefaultStringValue("Not enough MAC addresses left in MAC Address Pool.")
     String MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES();
 
@@ -91,9 +61,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Physical Memory Guaranteed cannot exceed Memory Size.")
     String ACTION_TYPE_FAILED_MIN_MEMORY_CANNOT_EXCEED_MEMORY_SIZE();
 
-    @DefaultStringValue("Storage Domain cannot be accessed.\nPossible reasons:\nNo operational Host in Data Center or Data Center state is not Up.")
-    String IMAGE_REPOSITORY_NOT_FOUND();
-
     @DefaultStringValue("Template is currently locked (temporarily).")
     String VM_TEMPLATE_IS_LOCKED();
 
@@ -105,9 +72,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The image is the only remaining copy of a Template disk.")
     String VM_TEMPLATE_IMAGE_LAST_DOMAIN();
-
-    @DefaultStringValue("VM Name cannot be empty.")
-    String VM_NAME_CANNOT_BE_EMPTY();
 
     @DefaultStringValue("There was an attempt to change VM values while the VM is not down. Please shut down the VM in order to modify these properties.")
     String VM_CANNOT_UPDATE_ILLEGAL_FIELD();
@@ -130,47 +94,11 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Delete protection is enabled. In order to delete, disable Delete protection first.")
     String ACTION_TYPE_FAILED_DELETE_PROTECTION_ENABLED();
 
-    @DefaultStringValue("Failed to attach VM to User.")
-    String RESOURCE_MANAGER_FAILED_ATTACHING_VM_TO_USERS();
-
-    @DefaultStringValue("Migration failed, VM is not running.")
-    String RESOURCE_MANAGER_MIGRATING_VM_IS_NOT_UP();
-
-    @DefaultStringValue("VM not found.")
-    String RESOURCE_MANAGER_VM_NOT_FOUND();
-
-    @DefaultStringValue("Search error.")
-    String SEARCH();
-
-    @DefaultStringValue("Error in Search text.")
-    String SEARCH_ERRORNOUS_SEARCH_TEXT();
-
-    @DefaultStringValue("Invalid Search text.")
-    String SEARCH_INVALID_SEARCH_TEXT();
-
-    @DefaultStringValue("Search unsupported business object.")
-    String SEARCH_UNSUPPORTED_BUSINESS_OBJECT();
-
-    @DefaultStringValue("Cannot create new VM. The disk image is being copied. Please wait for the Copy operation to complete.")
-    String TEMPLATE_IMAGE_LOCKED();
-
-    @DefaultStringValue("Cannot remove User attached to VM-Pool.Remove User from VM-Pool first by:\n-Going to 'VM-Pool(s)' window.\n-Selecting the VM-Pool.\n-Clicking on 'Manage Pool Users' from the menu bar.")
-    String USER_CANNOT_REMOVE_USER_ATTACHED_POOL();
-
-    @DefaultStringValue("Cannot remove User, user is not attached to VM-Pool.")
-    String USER_CANNOT_REMOVE_USER_NOT_ATTACHED_POOL();
-
-    @DefaultStringValue("Cannot remove a User that is attached to a VM. Remove VM from VMs tab first.")
-    String USER_CANNOT_REMOVE_USER_DETECTED_RUNNING_VM();
-
     @DefaultStringValue("Cannot ${action} ${type}. User is currently logged in.")
     String USER_CANNOT_REMOVE_HIMSELF();
 
     @DefaultStringValue("Failed to get User data from Directory Server.")
     String USER_FAILED_POPULATE_DATA();
-
-    @DefaultStringValue("Failed set User Role, operation canceled")
-    String USER_FAILED_SET_USER_ROLE();
 
     @DefaultStringValue("Cannot switch Host to Maintenance mode.\nHost still has running VMs on it and is in Non Responsive state.")
     String VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_WITH_VMS();
@@ -252,12 +180,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The Host is not a part of a Storage Pool.")
     String CANNOT_FORCE_SELECT_SPM_VDS_NOT_IN_POOL();
-
-    @DefaultStringValue("Internal error: Host protocol error.")
-    String VDS_PROTOCOL_ERROR();
-
-    @DefaultStringValue("Internal error: Host response error")
-    String VDS_RESPONSE_ERROR();
 
     @DefaultStringValue("Cannot perform Stop operation, Host has to be in Maintenance mode in order to be stopped.")
     String VDS_STATUS_NOT_VALID_FOR_STOP();
@@ -346,9 +268,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}.One or more VM-Pools are still associated with it")
     String VDS_GROUP_CANNOT_REMOVE_HAS_VM_POOLS();
 
-    @DefaultStringValue("Cannot run VM. The disk image is being copied. Please wait for the copy operation to complete.")
-    String VM_IMAGE_LOCKED();
-
     @DefaultStringValue("Cannot attach VM to VM-Pool. VM-Pool is already attached to a User.")
     String VM_POOL_CANNOT_ADD_VM_WITH_USERS_ATTACHED_TO_POOL();
 
@@ -390,12 +309,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot update the name of Sub-Templates, Only the Version name can be updated.")
     String VMT_CANNOT_UPDATE_VERSION_NAME();
-
-    @DefaultStringValue("Cannot remove Directory Group. Detach Directory Group from VM first.")
-    String DIRECTORY_GROUP_CANNOT_REMOVE_DIRECTORY_GROUP_ATTACHED_TO_VM();
-
-    @DefaultStringValue("VM not found")
-    String VM_NOT_FOUND();
 
     @DefaultStringValue("Cannot ${action} ${type}. VM is previewing a Snapshot.")
     String ACTION_TYPE_FAILED_VM_IN_PREVIEW();
@@ -577,12 +490,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Number of Prestarted VMs cannot exceed the number of VMs in the Pool.")
     String ACTION_TYPE_FAILED_PRESTARTED_VMS_CANNOT_EXCEED_VMS_COUNT();
 
-    @DefaultStringValue("Cannot ${action} ${type}: VM was created from the Blank Template and does not contain an operating system. Please run the VM using 'Boot from CD' or 'Boot from Network' options from the 'Run Once' menu.")
-    String ACTION_TYPE_FAILED_VM_WITH_BLANK_TEMPLATE();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Low disk space on relevant Storage Domain.")
-    String ACTION_TYPE_FAILED_DISK_SPACE_LOW();
-
     @DefaultStringValue("Cannot ${action} ${type}. The operation is unsupported for ${volumeType} Disk(s), please try again with Disk(s) with one of the following type(s): ${supportedVolumeTypes}.")
     String ACTION_TYPE_FAILED_DISK_VOLUME_TYPE_UNSUPPORTED();
 
@@ -723,9 +630,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. A Template with the same identifier already exists.")
     String ACTION_TYPE_FAILED_TEMPLATE_GUID_ALREADY_EXISTS();
-
-    @DefaultStringValue("Cannot ${action} ${type}. The export candidate already exists in the specified path.\n- Use the 'Force Override' option to override the existing file.")
-    String ACTION_TYPE_FAILED_CANDIDATE_ALREADY_EXISTS();
 
     @DefaultStringValue("Cannot ${action} ${type}. The Role is Read-Only.")
     String ACTION_TYPE_FAILED_ROLE_IS_READ_ONLY();
@@ -1186,9 +1090,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Gluster Volume Option")
     String VAR__TYPE__GLUSTER_VOLUME_OPTION();
 
-    @DefaultStringValue("$type Gluster Volume Rebalance")
-    String VAR__TYPE__GLUSTER_VOLUME_REBALANCE();
-
     @DefaultStringValue("$type Brick(s)")
     String VAR__TYPE__GLUSTER_BRICK();
 
@@ -1225,9 +1126,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The disk is not shareable and is already attached to a VM.")
     String ACTION_TYPE_FAILED_NOT_SHAREABLE_DISK_ALREADY_ATTACHED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Maximum value for concurrently running VMs exceeded.")
-    String ACTION_TYPE_FAILED_VM_MAX_RESOURCE_EXEEDED();
-
     @DefaultStringValue("Cannot ${action} ${type}. One or more provided storage domains are either not in active status or of an illegal type for the requested operation")
     String ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS();
 
@@ -1248,12 +1146,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Maximum sPAPR VSCSI devices exceeded.")
     String ACTION_TYPE_FAILED_EXCEEDED_MAX_SPAPR_VSCSI_DISKS();
-
-    @DefaultStringValue("User is already attached to VM")
-    String USER_CANNOT_ATTACH_TO_VM_ALREADY_ATTACHED();
-
-    @DefaultStringValue("The user is not attached to this VM.")
-    String USER_CANNOT_ATTACH_TO_VM_NOT_ATTACHED();
 
     @DefaultStringValue("Login failed. Please verify your login information or contact the system administrator.")
     String USER_FAILED_TO_AUTHENTICATE();
@@ -1315,9 +1207,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot edit VM-Pool properties - VM-Pool not found.")
     String VM_POOL_CANNOT_UPDATE_POOL_NOT_FOUND();
 
-    @DefaultStringValue("Cannot ${action} ${type}. There are already asynchronous running tasks, please retry later.")
-    String ACTION_TYPE_FAILED_VM_TASKS_ARE_ALREADY_RUNNING();
-
     @DefaultStringValue("Cannot suspend VM. VM has asynchronous running tasks, please retry later.")
     String VM_CANNOT_SUSPENDE_HAS_RUNNING_TASKS();
 
@@ -1344,9 +1233,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot approve RHEV Hypervisor Host.\n-Host must be in \"Pending Approval\" or \"Install Failed\" status in order to be approved.")
     String VDS_APPROVE_VDS_IN_WRONG_STATUS();
-
-    @DefaultStringValue("Cannot update Host properties. Mismatch between Cluster CPU and Host CPU.")
-    String VDS_NEW_CLUSTER_ILLEGAL();
 
     @DefaultStringValue("Cannot ${action} ${type}. Cluster ID is not valid.")
     String VDS_CLUSTER_IS_NOT_VALID();
@@ -1384,14 +1270,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot update Cluster. Clusters hosts must be down in order to perform this action.")
     String VDS_GROUP_HOSTS_MUST_BE_DOWN();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Network name already exists.")
-    String NETWORK_NAME_ALREADY_EXISTS();
-
     @DefaultStringValue("Cannot ${action} ${type}. The ${type} name is already in use, please choose a unique name and try again.")
     String ACTION_TYPE_FAILED_NAME_ALREADY_USED();
-
-    @DefaultStringValue("Cannot ${action} ${type}. The URL is not valid, please enter a valid URL and try again.")
-    String ACTION_TYPE_FAILED_URL_INVALID();
 
     @DefaultStringValue("Cannot ${action} ${type}. Storage connection doesn't exist.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST();
@@ -1437,9 +1317,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Storage connection parameters are used by the following disks : ${diskNames}.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_DISKS();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Connection parameters are invalid for this storage type.")
-    String ACTION_TYPE_FAILED_STORAGE_CONNECTION_WRONG_PARAMETERS_FOR_STORAGE_TYPE();
 
     @DefaultStringValue("Cannot ${action} ${type}. Storage Domain doesn't exist.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST();
@@ -1579,9 +1456,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Network interface '${LABEL_ATTACH_TO_IMPROPER_INTERFACE_ENTITY}' cannot be labeled. Label can be provided only to interfaces or to bonds (not to slaves nor vlans).")
     String LABEL_ATTACH_TO_IMPROPER_INTERFACE();
 
-    @DefaultStringValue("Bond name must be formatted as <bondYYY>.")
-    String NETWORK_INVALID_BOND_NAME();
-
     @DefaultStringValue("Network name doesn't exist.")
     String NETWORK_INTERFACE_NOT_EXISTS();
 
@@ -1599,9 +1473,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("The Network Interface is already attached to a Logical Network.")
     String NETWORK_INTERFACE_ALREADY_HAVE_NETWORK();
-
-    @DefaultStringValue("Logical Network is already attached to a Network Interface.")
-    String NETWORK_ALREAY_ATTACH_TO_INTERFACE();
 
     @DefaultStringValue("The specified Logical Network doesn't exist.")
     String NETWORK_NOT_EXISTS();
@@ -1690,9 +1561,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Label ${label} doesn't exist in network interface ${nicName} VFs configuration.")
     String ACTION_TYPE_FAILED_LABEL_NOT_IN_VFS_CONFIG();
 
-    @DefaultStringValue("Cannot recover Data Center with active Data Storage Domain in Data Center.")
-    String ERROR_CANNOT_RECOVERY_STORAGE_POOL_THERE_IS_ACTIVE_DATA_DOMAINS();
-
     @DefaultStringValue("Cannot remove the master Storage Domain from the Data Center without another active Storage Domain to take its place.\n-Either activate another Storage Domain in the Data Center, or remove the Data Center.")
     String ERROR_CANNOT_DETACH_LAST_STORAGE_DOMAIN();
 
@@ -1738,20 +1606,11 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM ID must be empty.")
     String NETWORK_INTERFACE_VM_CANNOT_BE_SET();
 
-    @DefaultStringValue("Network interface is already in use.")
-    String NETWORK_INTERFACE_NAME_ALREAY_IN_USE();
-
     @DefaultStringValue("The Notification method is unsupported.")
     String EN_UNKNOWN_NOTIFICATION_METHOD();
 
     @DefaultStringValue("The notification event ${eventName} is unsupported.")
     String EN_UNSUPPORTED_NOTIFICATION_EVENT();
-
-    @DefaultStringValue("Alert Notification.")
-    String EN_EVENT_UP_SUBJECT_TEXT();
-
-    @DefaultStringValue("Issue Solved Notification.")
-    String EN_EVENT_DOWN_SUBJECT_TEXT();
 
     @DefaultStringValue("User is already subscribed to this event with the same Notification method. ")
     String EN_ALREADY_SUBSCRIBED();
@@ -1774,9 +1633,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}.\n The Storage Domain metadata indicates it is already attached to a Data Center hence cannot be formatted.\n To remove the Storage Domain one should either remove it without the format option or attach it to an existing Data Center, detach it, and try again.")
     String ACTION_TYPE_FAILED_FORMAT_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN();
 
-    @DefaultStringValue("Cannot extend Storage Domain. Extend operation is supported only on Data Storage Domain.")
-    String ERROR_CANNOT_EXTEND_NON_DATA_DOMAIN();
-
     @DefaultStringValue("Cannot extend Storage Domain. Storage device ${lun} is unreachable from ${hostName}.")
     String ERROR_CANNOT_EXTEND_CONNECTION_FAILED();
 
@@ -1788,9 +1644,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot import Storage Domain. Internal Error: The connection data is illegal.")
     String ERROR_CANNOT_ADD_EXISTING_STORAGE_DOMAIN_CONNECTION_DATA_ILLEGAL();
-
-    @DefaultStringValue("Cannot import SAN Export Storage Domain as it is no longer supported.")
-    String ERROR_CANNOT_ADD_DEPRECATED_EXISTING_SAN_EXPORT_STORAGE_DOMAIN();
 
     @DefaultStringValue("Cannot get Storage Domains list.")
     String ERROR_GET_STORAGE_DOMAIN_LIST();
@@ -1830,9 +1683,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("The specified Tag does not exist.")
     String TAGS_SPECIFY_TAG_IS_NOT_EXISTS();
-
-    @DefaultStringValue("Cannot ${action} ${type}. The Network is in use by a Template.\nNetwork definition cannot be detached unless all references to it are cleared.")
-    String NETWORK_CANNOT_REMOVE_NETWORK_IN_USE_BY_TEMPLATE();
 
     @DefaultStringValue("Cannot ${action} a Network Interface when VM is not Down, Up or Image-Locked.")
     String NETWORK_CANNOT_ADD_INTERFACE_WHEN_VM_STATUS_NOT_UP_DOWN_LOCKED();
@@ -1972,9 +1822,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot preview Active VM snapshot.")
     String CANNOT_PREVIEW_ACTIVE_SNAPSHOT();
 
-    @DefaultStringValue("Illegal configuration entry.\n-Please check configuration entry name.")
-    String CONFIG_UNKNOWN_KEY();
-
     @DefaultStringValue("Operation canceled, recursive Tag hierarchy cannot be defined.")
     String TAGS_SPECIFIED_TAG_CANNOT_BE_THE_PARENT_OF_ITSELF();
 
@@ -2007,9 +1854,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("The specified Tag name already exists.")
     String TAGS_SPECIFY_TAG_IS_IN_USE();
-
-    @DefaultStringValue("The specified Logical Network does not exist in Cluster.")
-    String NETWORK_NET_EXISTS_IN_CLUSTER();
 
     @DefaultStringValue("Actions list cannot be empty.")
     String ACTION_LIST_CANNOT_BE_EMPTY();
@@ -2201,23 +2045,11 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot attach non vlan network to vlan interface")
     String NETWORK_INTERFACE_CONNECT_TO_VLAN();
 
-    @DefaultStringValue("Cannot remove network '${NetworkName}', it's in use by a VM")
-    String NETWORK_CANNOT_REMOVE_NETWORK_IN_USE_BY_VM();
-
     @DefaultStringValue("Cannot create disk more than ${max}_disk_size GB")
     String ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED();
 
     @DefaultStringValue("Cannot edit Network while Host is Active, change the Host to Maintenance mode and try again.")
     String NETWORK_HOST_IS_BUSY();
-
-    @DefaultStringValue("Cannot change Template images format")
-    String VMT_CANNOT_CHANGE_IMAGES_TEMPLATE();
-
-    @DefaultStringValue("Cannot change image format to raw when image have Snapshots.")
-    String VMT_CANNOT_IMPORT_RAW_IMAGE_WITH_SNAPSHOTS();
-
-    @DefaultStringValue("Cannot change image format to raw when VM has Template.")
-    String VMT_CANNOT_IMPORT_RAW_IMAGE_WITH_TEMPLATE();
 
     @DefaultStringValue("Cannot change format to RAW on export VM.")
     String VM_CANNOT_EXPORT_RAW_FORMAT();
@@ -2273,9 +2105,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The VMs ${VmsName} already have a disk marked as boot.")
     String ACTION_TYPE_FAILED_VMS_BOOT_IN_USE();
 
-    @DefaultStringValue("Cannot change cpu level when VMs are running.")
-    String VDS_GROUP_CANNOT_UPDATE_CPU_WHEN_RUNNING_VMS();
-
     @DefaultStringValue("VM priority value passed the permitted max value, value should be between 0 and ${MaxValue}.")
     String VM_OR_TEMPLATE_ILLEGAL_PRIORITY_VALUE();
 
@@ -2314,9 +2143,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Data Center must be \"Local Storage\"")
     String ACTION_TYPE_FAILED_STORAGE_POOL_IS_NOT_LOCAL();
-
-    @DefaultStringValue("Host is not attached to Data Center")
-    String ACTION_TYPE_FAILED_VDS_IS_NOT_IN_STORAGE_POOL();
 
     @DefaultStringValue("Cannot add more than one Host to \"Local Storage\" Data Center")
     String VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE();
@@ -2384,9 +2210,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot add permission, VM is part of VM-Pool, permission should be given on VM-Pool instead")
     String PERMISSION_ADD_FAILED_VM_IN_POOL();
 
-    @DefaultStringValue("Role with this ID does not exit")
-    String ROLE_WITH_ROLE_ID_DO_NOT_EXIST();
-
     @DefaultStringValue("CPU utilization threshold must be between 0 and 100.")
     String VDS_GROUP_CPU_UTILIZATION_MUST_BE_IN_VALID_RANGE();
 
@@ -2430,9 +2253,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Network interface name is already in use")
     String NETWORK_INTERFACE_NAME_ALREADY_IN_USE();
 
-    @DefaultStringValue("Storage related operations can't be performed while the Storage Pool Manager is down.\nPlease make sure the Storage Pool Manager is up and running, and check network connectivity.")
-    String STORAGE_OPERATION_FAILED_SPM_NETWORK_PROBLEMS();
-
     @DefaultStringValue("Tag name must be formed of 'a-z', 'A-Z', '0-9', '_' or '-' characters")
     String VALIDATION_TAGS_INVALID_TAG_NAME();
 
@@ -2455,7 +2275,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String VALIDATION_VDS_GROUP_NAME_MAX();
 
     @DefaultStringValue("Cluster migrate on error option is required")
-    String VALIDATION_VDS_GROUP_MigrateOnError_NOT_NULL();
+    String VALIDATION_VDS_GROUP_MIGRATE_ON_ERROR_NOT_NULL();
 
     @DefaultStringValue("SPICE proxy address must be in form [protocol://]hostname or ip[:port]")
     String VALIDATION_VDS_GROUP_SPICE_PROXY_HOSTNAME_OR_IP();
@@ -2481,9 +2301,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Volume type is required")
     String VALIDATION_VOLUME_TYPE_NOT_NULL();
 
-    @DefaultStringValue("Disk type is required")
-    String VALIDATION_DISK_TYPE_NOT_NULL();
-
     @DefaultStringValue("Disk alias name must be formed of alpha-numeric characters or \"-_.\"")
     String VALIDATION_DISK_ALIAS_INVALID();
 
@@ -2496,17 +2313,11 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Snapshot description must not exceed 4000 characters")
     String VALIDATION_DISK_IMAGE_DESCRIPTION_MAX();
 
-    @DefaultStringValue("MAC Address must be in the following format: XX:XX:XX:XX:XX:XX, (XX=0-9 or A-F)")
-    String VALIDATION_VMINTERFACE_MACADDRESS();
-
     @DefaultStringValue("\"Data Center description must be formed of ASCII charis only\"")
     String VALIDATION_DATA_CENTER_DESCRIPTION_INVALID();
 
     @DefaultStringValue("Host name must be formed of alphanumeric characters, numbers or \"-_.\"")
     String VALIDATION_VDS_NAME_INVALID();
-
-    @DefaultStringValue("Console address must be a FQDN or a valid IP address")
-    String VALIDATION_VDS_CONSOLEADDRESSS_HOSTNAME_OR_IP();
 
     @DefaultStringValue("email format is not valid")
     String VALIDATION_EVENTS_EMAIL_FORMAT();
@@ -2610,26 +2421,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot update Cluster and change CPU Cluster name if there are hosts or virtual machines in the Cluster. This CPU name is incompatible with all other available CPUs")
     String VDS_GROUP_CPU_IS_NOT_UPDATABLE();
 
-    @DefaultStringValue("Cannot update Cluster, custom properties are not supported under current Cluster version")
-    String CUSTOM_PROPERTIES_INVALID_VALUES_NOT_ALLOWED_IN_CURRENT_CLUSTER();
-
     @DefaultStringValue("Authentication failed. The user is either locked or disabled")
     String USER_FAILED_TO_AUTHENTICATE_ACCOUNT_IS_LOCKED_OR_DISABLED();
-
-    @DefaultStringValue("Authentication Failed. Error in DNS configuration. Please verify the Engine Host has a valid reverse DNS (PTR) record.")
-    String USER_FAILED_TO_AUTHENTICATE_DNS_ERROR();
-
-    @DefaultStringValue("Authentication Failed. Please verify the fully qualified domain name that is used for authentication is correct.")
-    String USER_FAILED_TO_AUTHENTICATE_NO_KDCS_FOUND();
-
-    @DefaultStringValue("Authentication Failed. The Engine clock is not synchronized with directory services (must be within 5 minutes difference). Please verify the clocks are synchronized and restart the service.")
-    String USER_FAILED_TO_AUTHENTICATE_CLOCK_SKEW_TOO_GREAT();
-
-    @DefaultStringValue("Authentication Failed. Connection to Directory server has timed out. Please contact your system administrator")
-    String USER_FAILED_TO_AUTHENTICATE_CONNECTION_TIMED_OUT();
-
-    @DefaultStringValue("Authentication Failed. Wrong domain name was provided for authentication")
-    String USER_FAILED_TO_AUTHENTICATE_WRONG_REALM();
 
     @DefaultStringValue("Cannot ${action} ${type} if some of the specified custom properties appear more than once. The keys are: ${DuplicateKeys}")
     String ACTION_TYPE_FAILED_INVALID_CUSTOM_PROPERTIES_DUPLICATE_KEYS();
@@ -2657,9 +2450,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Can not ${action} ${type}. The given name contains special characters. Only lower-case and upper-case letters, numbers, '_', '-', '.' are allowed.")
     String ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS();
-
-    @DefaultStringValue("Can not ${action} ${type}. The given name contains special characters. Only lower-case and upper-case letters, numbers, '_', allowed.")
-    String ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS_OR_DASH();
 
     @DefaultStringValue("Can not ${action} ${type}. The given Host name is invalid. Only Host names corresponding to RFC-952 and RFC-1123 are allowed.")
     String ACTION_TYPE_FAILED_INVALID_VDS_HOSTNAME();
@@ -2737,23 +2527,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Limitation can not be configured as specific and general for the same Quota. Please choose whether the limitation should be enforced on the Data Center (global) or for specific storage domain or cluster.")
     String ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Quota limitation must be configured specific or general.")
-    String ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_NOT_SPECIFIC_OR_GENERAL();
-
-    @DefaultStringValue("Cannot ${action} ${type}. The prefix DefaultQuota is reserved for the default quota.")
-    String ACTION_TYPE_FAILED_QUOTA_NAME_RESERVED_FOR_DEFAULT();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Quota can not have default indication.")
-    String ACTION_TYPE_FAILED_QUOTA_CAN_NOT_HAVE_DEFAULT_INDICATION();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Quota with default indication can not be removed while Data Center is at disable mode.")
-    String ACTION_TYPE_FAILED_QUOTA_WITH_DEFAULT_INDICATION_CAN_NOT_BE_REMOVED();
-
     @Constants.DefaultStringValue("Cannot ${action} ${type}. Quota is still in use by a VM or a disk and Data Center's Quota enforcement is enabled.")
     String ACTION_TYPE_FAILED_QUOTA_IN_USE_BY_VM_OR_DISK();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Data Center must have at least one quota associated with it. Please try to add another Quota, or change the existing one.")
-    String ACTION_TYPE_FAILED_DATA_CENTER_MUST_HAVE_AT_LEAST_ONE_QUOTA();
 
     @DefaultStringValue("Cannot ${action} ${type}. Quota has insufficient storage resources.")
     String ACTION_TYPE_FAILED_QUOTA_STORAGE_LIMIT_EXCEEDED();
@@ -2771,36 +2546,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot attach action group to Role. This action group is already attached to Role.")
     String ERROR_CANNOT_ATTACH_ACTION_GROUP_TO_ROLE_ATTACHED();
 
-    @DefaultStringValue("Cannot attach action group to Role. The action group is invalid.")
-    String ERROR_CANNOT_ATTACH_ACTION_GROUP_TO_ROLE_INVALID_ACTION();
-
     @DefaultStringValue("Cannot detach action group from Role. This action group is not attached to this Role.")
     String ERROR_CANNOT_DETACH_ACTION_GROUP_TO_ROLE_NOT_ATTACHED();
-
-    // Not Used
-    @DefaultStringValue("There is no valid license for oVirt Engine")
-    String ERROR_LICENSE_NO_LICENSE();
-
-    @DefaultStringValue("Login failed, if the Engine Service was restarted please wait few seconds and try again, if the problem persists please check your oVirt Engine license.")
-    String ERROR_LICENSE_ILLEGAL();
-
-    @DefaultStringValue("The Engine has detected that the system clock has been modified")
-    String ERROR_LICENSE_SYSTEM_CLOCK_MODIFIED();
-
-    @DefaultStringValue("oVirt Engine's evaluation period has expired")
-    String ERROR_LICENSE_EXPIRED();
-
-    @DefaultStringValue("oVirt Engine is in evaluation mode. Evaluation period will end in ${DaysLeft} days")
-    String MESSAGE_LICENSE_EVALUATION__PARAM_DAYS_LEFT();
-
-    @DefaultStringValue("Cannot register Host. No Hostname specified.")
-    String VDS_REGISTER_NO_HOSTNAME_INPUT();
-
-    @DefaultStringValue("Cannot register Host, Host with the same unique ID was found, but requested Host type does not match.")
-    String VDS_REGISTER_UNIQUE_ID_DIFFERENT_TYPE();
-
-    @DefaultStringValue("Cannot add Host, Host unique ID is ambiguous with hosts: ${HostNameList}.")
-    String VDS_REGISTER_UNIQUE_ID_AMBIGUOUS();
 
     @DefaultStringValue("Cannot ${action} ${type}. Connecting to host via SSH has failed, verify that the host is reachable (IP address, routable address etc.) You may refer to the engine.log file for further details.")
     String VDS_CANNOT_CONNECT_TO_SERVER();
@@ -2811,104 +2558,23 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. SSH connection failed, ${ErrorMsg}.")
     String VDS_SECURITY_CONNECTION_ERROR();
 
-    @DefaultStringValue("Cannot migrate - check relevant configuration options.")
-    String AUTO_MIGRATE_DISABLED();
-
-    @DefaultStringValue("Cannot migrate - Host not found.")
-    String AUTO_MIGRATE_VDS_NOT_FOUND();
-
-    @DefaultStringValue("Cannot migrate - VM already running on Host.")
-    String AUTO_MIGRATE_ALREADY_RUNNING_ON_VDS();
-
-    @DefaultStringValue("Cannot migrate - Previous migration was unsuccessful.")
-    String AUTO_MIGRATE_UNSUCCESSFUL();
-
-    @DefaultStringValue("Cannot approve Host. Host is not found.")
-    String APPROVE_VDS_VDS_NOT_FOUND();
-
-    @DefaultStringValue("Cannot ${action} Cluster. Cluster ID is not valid.")
-    String VDS_GROUP_CLUSTER_IS_NOT_VALID();
-
-    @DefaultStringValue("Network file is already in use")
-    String NETWORK_INTERFACE_NAME_ALREAY_EXISTS();
-
-    @DefaultStringValue("Storage from this type not allowed to be added")
-    String STORAGE_DOMAIN_TYPE_ILLEGAL_FOR_ADDING_EXISTING();
-
-    @DefaultStringValue("The specified Interface is not a display Interface.")
-    String NETWORK_INTERFACE_NOT_HAVE_DISPLAY_FLAG();
-
     @DefaultStringValue("Cannot create Data Center - There must be at least one Data storage.")
     String ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_AND_ISO_DOMAINS();
 
     @DefaultStringValue("Cannot add data storages to pool. Storages should have same format.")
     String ERROR_CANNOT_ADD_STORAGE_POOL_WITH_DIFFERENT_STORAGE_FORMAT();
 
-    @DefaultStringValue("Cannot ${action} ${type}. There are VMs in Data Center.")
-    String ACTION_TYPE_FAILED_VMS_IN_STORAGE_POOL();
-
-    @DefaultStringValue("Please move all servers to maintenance before updating the Data Center.")
-    String ERROR_CANNOT_CHANGE_STORAGE_POOL_VDSS_UP();
-
-    @DefaultStringValue("Data Center must be specified")
-    String NETWORK_STORAGE_POOL_MUST_BE_SPECIFY();
-
     @DefaultStringValue("Unknown tag name.")
     String EN_UNKNOWN_TAG_NAME();
 
-    @DefaultStringValue("Cannot attach Storage Domain, Shared Domains are not supported in this Data Center compatibility version.")
-    String ERROR_CANNOT_ATTACH_STORAGE_DOMAIN_SHARED_NOT_SUPPORTED_IN_THIS_POOL();
-
-    @DefaultStringValue("Cannot attach Storage Domain, Shared Domains are not supported in other Data Center compatibility version.")
-    String ERROR_CANNOT_ATTACH_STORAGE_DOMAIN_SHARED_NOT_SUPPORTED_IN_OTHER_POOL();
-
     @DefaultStringValue("Cannot remove Data Center with networks, please remove all networks first.")
     String ERROR_CANNOT_REMOVE_POOL_WITH_NETWORKS();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Some Hosts in the Cluster are in Up state. Please move all Hosts to Maintenance mode first.")
-    String ACTION_TYPE_FAILED_UP_VDSS_IN_CLUSTER();
-
-    @DefaultStringValue("Directory Element tag is missing in requested user")
-    String TAGS_DIRECTORY_ELEMENT_TAG_IS_MISSING();
-
-    @DefaultStringValue("Directory Group is already attached to this VM.")
-    String DIRECTORY_GROUP_CANNOT_ATTACH_TO_VM_ALREADY_ATTACHED();
-
-    @DefaultStringValue("Directory Group is not attached to the specified VM.")
-    String DIRECTORY_GROUP_NOT_ATTACH_TO_VM();
-
-    @DefaultStringValue("Cannot remove the default Directory tag.")
-    String ERROR_CANNOT_DEFAULT_DIRECTORY_ELEMENT_TAG();
-
-    @DefaultStringValue("Cannot ${action} ${type}. No Host supplied.")
-    String ACTION_TYPE_FAILED_NO_VDS_SUPPLIED();
 
     @DefaultStringValue("Cannot remove the default Network.")
     String NETWORK_CAN_NOT_REMOVE_DEFAULT_NETWORK();
 
     @DefaultStringValue("Cannot ${action} ${type}. Renaming a network label while configured on hosts interfaces is not supported. Please unlabel the network first and later specify the new one.")
     String ACTION_TYPE_FAILED_NETWORK_LABEL_RENAMING_NOT_SUPPORTED();
-
-    @DefaultStringValue("Cannot update default network name.")
-    String NETWORK_CAN_NOT_UPDATE_DEFAULT_NETWORK();
-
-    @DefaultStringValue("The specified Tag cannot be assigned")
-    String TAGS_CANNOT_ASSING_TAG();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Illegal memory defined for Windows XP.")
-    String ACTION_TYPE_FAILED_XP_MEMORY_ERROR();
-
-    @DefaultStringValue("Cannot update Network with VLAN, you need to set the Interface to \"None\" Network")
-    String NETWORK_INTERFACE_CANNOT_UPDATE_INTERFACE_VLAN();
-
-    @DefaultStringValue("Illegal user supplied")
-    String ILLEAGAL_USER_PROVIDED();
-
-    @DefaultStringValue("User cannot be added to VM")
-    String USER_CANNOT_BE_ADDED_TO_VM();
-
-    @DefaultStringValue("User cannot be added to VM-Pool")
-    String USER_CANNOT_BE_ADDED_TO_VM_POOL();
 
     @DefaultStringValue("Cannot ${action} ${type}. The following VMs are set to run specifically only on this Host: ${VmNames}.\nIn order to ${action} ${type}, you need to remove the association between the VMs and the Host (Using Edit VM properties).")
     String ACTION_TYPE_FAILED_DETECTED_PINNED_VMS();
@@ -3085,9 +2751,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The source and target storage domains are the same.")
     String ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Template disks cannot be moved.")
-    String ACTION_TYPE_FAILED_CANNOT_MOVE_TEMPLATE_DISK();
 
     @DefaultStringValue("Cannot ${action} ${type}. Base Template does not exist for this Template Version.")
     String ACTION_TYPE_FAILED_BASE_TEMPLATE_DOES_NOT_EXIST();
@@ -3885,9 +3548,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("iSCSI bond name must be formed from alpha-numeric characters, periods (.), hyphens (-), and underscores (_).")
     String VALIDATION_ISCSI_BOND_NAME_INVALID_CHARACTER();
 
-    @DefaultStringValue("iSCSI bond description must be formed only from alpha-numeric characters and special characters that conform to the standard ASCII character set.")
-    String VALIDATION_SCSI_BOND_DESCRIPTION_INVALID();
-
     @DefaultStringValue("Cannot ${action} ${type}. iSCSI bond with the same name already exists in the Data Center.")
     String ISCSI_BOND_WITH_SAME_NAME_EXIST_IN_DATA_CENTER();
 
@@ -4010,9 +3670,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Provided VM icon is of unknown type.")
     String PROVIDED_VM_ICON_OF_UNKNOWN_TYPE();
-
-    @DefaultStringValue("Provided VM icon is of unsupported type ${fileType}. Supported file types: ${supportedFileTypes}.")
-    String PROVIDED_VM_ICON_OF_UNSUPPORTED_TYPE();
 
     @DefaultStringValue("Provided VM icon can't be read.")
     String PROVIDED_VM_ICON_CANT_BE_READ();

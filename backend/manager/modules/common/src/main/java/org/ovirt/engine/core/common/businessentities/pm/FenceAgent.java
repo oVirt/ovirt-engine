@@ -29,7 +29,7 @@ public class FenceAgent implements BusinessEntity<Guid> {
 
     @EditableField
     @Size(max = BusinessEntitiesDefinitions.HOST_IP_SIZE)
-    @HostnameOrIp(message = "VALIDATION.VDS.POWER_MGMT.ADDRESS.HOSTNAME_OR_IP", groups = PowerManagementCheck.class)
+    @HostnameOrIp(message = "VALIDATION_VDS_POWER_MGMT.ADDRESS_HOSTNAME_OR_IP", groups = PowerManagementCheck.class)
     private String ip;
 
     @EditableField
@@ -47,7 +47,7 @@ public class FenceAgent implements BusinessEntity<Guid> {
     @EditableField
     @Range(min = BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT,
             max = BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT,
-            message = "VALIDATION.VDS.PORT.RANGE")
+            message = "VALIDATION_VDS_PORT_RANGE")
     private Integer port;
 
     @EditableField

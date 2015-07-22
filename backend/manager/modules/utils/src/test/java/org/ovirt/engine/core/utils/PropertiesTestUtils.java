@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-public class DuplicateKeysCheck {
+public class PropertiesTestUtils {
     public static File loadFileFromPath(String relativePath) {
         String baseDir =  System.getProperty("basedir");
         assumeNotNull(baseDir);
@@ -24,6 +24,15 @@ public class DuplicateKeysCheck {
         }
         catch (DuplicatePropertyException exception) {
             fail("Check for duplicate keys in " + file.getAbsolutePath() + " failed: " + exception.getMessage());
+        }
+    }
+
+    public static void assertNoRedundantKeys(File file, Class<? extends Enum<?>>... template) throws IOException {
+        EnumTranslationProperties props = new EnumTranslationProperties(template);
+        try (InputStream is = new FileInputStream(file)) {
+            props.load(is);
+        } catch (MissingEnumTranslationException exception) {
+            fail("Check for redundant keys in " + file.getAbsolutePath() + " failed: " + exception.getMessage());
         }
     }
 }

@@ -52,7 +52,7 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
      * The quota name.
      */
     @Size(min = 1, max = BusinessEntitiesDefinitions.QUOTA_NAME_SIZE)
-    @ValidName(message = "VALIDATION.QUOTA.NAME.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
+    @ValidName(message = "VALIDATION_QUOTA_NAME_INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     private String quotaName;
 
     /**

@@ -41,7 +41,7 @@ public class HostSetupNetworksParameters extends VdsActionParameters {
     private boolean rollbackOnFailure = true;
 
     @ConfiguredRange(min = 1, maxConfigValue = ConfigValues.NetworkConnectivityCheckTimeoutInSeconds,
-            message = "VALIDATION.CONNECTIVITY.TIMEOUT.INVALID")
+            message = "VALIDATION_CONNECTIVITY_TIMEOUT_INVALID")
     private Integer conectivityTimeout;
 
     HostSetupNetworksParameters() {

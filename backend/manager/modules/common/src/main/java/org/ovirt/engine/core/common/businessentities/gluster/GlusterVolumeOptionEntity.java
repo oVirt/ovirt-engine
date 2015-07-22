@@ -19,16 +19,16 @@ import org.ovirt.engine.core.compat.Guid;
 public class GlusterVolumeOptionEntity implements IVdcQueryable, BusinessEntity<Guid>, Comparable<GlusterVolumeOptionEntity>{
     private static final long serialVersionUID = 5770623263518245638L;
 
-    @NotNull(message = "VALIDATION.GLUSTER.OPTION.ID.NOT_NULL", groups = { RemoveEntity.class })
+    @NotNull(message = "VALIDATION_GLUSTER_OPTION_ID_NOT_NULL", groups = { RemoveEntity.class })
     private Guid id;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.ID.NOT_NULL", groups = { SetVolumeOption.class })
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_ID_NOT_NULL", groups = { SetVolumeOption.class })
     private Guid volumeId;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.OPTION.KEY.NOT_NULL", groups = { SetVolumeOption.class })
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_OPTION_KEY_NOT_NULL", groups = { SetVolumeOption.class })
     private String key;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.OPTION.VALUE.NOT_NULL", groups = { SetVolumeOption.class })
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_OPTION_VALUE_NOT_NULL", groups = { SetVolumeOption.class })
     private String value;
 
     public GlusterVolumeOptionEntity() {

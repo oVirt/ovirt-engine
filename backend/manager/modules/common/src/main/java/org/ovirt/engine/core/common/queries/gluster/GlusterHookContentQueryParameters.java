@@ -12,7 +12,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class GlusterHookContentQueryParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = 4564573475511998657L;
 
-    @NotNull(message = "VALIDATION.GLUSTER.GLUSTER_HOOK_ID.NOT_NULL")
+    @NotNull(message = "VALIDATION_GLUSTER_GLUSTER_HOOK_ID_NOT_NULL")
     private Guid glusterHookId;
 
     private Guid glusterServerId;

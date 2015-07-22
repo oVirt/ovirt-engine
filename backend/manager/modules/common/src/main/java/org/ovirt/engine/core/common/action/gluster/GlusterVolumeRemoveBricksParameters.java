@@ -16,7 +16,7 @@ public class GlusterVolumeRemoveBricksParameters extends GlusterVolumeParameters
     private static final long serialVersionUID = -6327827215443668543L;
 
     @Valid
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICKS.NOT_NULL")
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_BRICKS_NOT_NULL")
     private List<GlusterBrickEntity> bricks;
 
     private int replicaCount;

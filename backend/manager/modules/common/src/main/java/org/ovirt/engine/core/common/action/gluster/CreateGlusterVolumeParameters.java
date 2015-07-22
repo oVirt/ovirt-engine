@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 public class CreateGlusterVolumeParameters extends VdcActionParametersBase {
     private static final long serialVersionUID = 2015321730118872954L;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.NOT_NULL")
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_NOT_NULL")
     @Valid
     private GlusterVolumeEntity volume;
 
