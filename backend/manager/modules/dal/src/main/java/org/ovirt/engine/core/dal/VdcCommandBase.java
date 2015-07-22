@@ -34,7 +34,6 @@ public abstract class VdcCommandBase {
             LoggedUtils.logReturn(log, logId, this, getReturnValue() != null && getReturnValue() instanceof Map[] ? Arrays.asList((Map[])getReturnValue()) : getReturnValue());
         } catch (Exception e) {
             LoggedUtils.logError(log, logId, this, e);
-            // throw e;
             IllegalStateException ise = new IllegalStateException();
             ise.setStackTrace(e.getStackTrace());
             throw ise;
