@@ -755,15 +755,17 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
         for (Object selectedItem : getSelectedItems()) {
             VM vm = (VM) selectedItem;
-            EntityModel removeDisksCheckbox = new EntityModel(true);
-            removeDisksCheckbox.setTitle(ConstantsManager.getInstance().getConstants().removeDisksTitle());
-            removeDisksCheckbox.setMessage(vm.getName());
-            if (!Guid.Empty.equals(vm.getVmtGuid())) {
-                updateRemoveDisksCheckBox(removeDisksCheckbox, true, false, ConstantsManager.getInstance()
-                        .getConstants()
-                        .removeVmDisksTemplateMsg());
+            if (VdcActionUtils.canExecute(Arrays.asList(vm), VM.class, VdcActionType.RemoveVm)) {
+                EntityModel removeDisksCheckbox = new EntityModel(true);
+                removeDisksCheckbox.setTitle(ConstantsManager.getInstance().getConstants().removeDisksTitle());
+                removeDisksCheckbox.setMessage(vm.getName());
+                if (!Guid.Empty.equals(vm.getVmtGuid())) {
+                    updateRemoveDisksCheckBox(removeDisksCheckbox, true, false, ConstantsManager.getInstance()
+                            .getConstants()
+                            .removeVmDisksTemplateMsg());
+                }
+                vmsRemoveMap.put(vm.getId(), removeDisksCheckbox);
             }
-            vmsRemoveMap.put(vm.getId(), removeDisksCheckbox);
         }
         window.setItems(vmsRemoveMap.entrySet());
         initRemoveDisksCheckboxes(vmsRemoveMap);
@@ -1962,7 +1964,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         getCloneVmCommand().setIsExecutionAllowed(singleVmSelected);
         getEditCommand().setIsExecutionAllowed(isEditCommandExecutionAllowed(items));
         getRemoveCommand().setIsExecutionAllowed(vmsSelected
-                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.RemoveVm));
+                && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.RemoveVm));
         getRunCommand().setIsExecutionAllowed(vmsSelected
                 && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.RunVm));
         getCloneVmCommand().setIsExecutionAllowed(singleVmSelected
@@ -2039,7 +2041,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         getEnableGlobalHaMaintenanceCommand().setIsExecutionAllowed(isAvailable);
         getDisableGlobalHaMaintenanceCommand().setIsExecutionAllowed(isAvailable);
     }
-
 
     /**
      * Return true if and only if one element is selected.
