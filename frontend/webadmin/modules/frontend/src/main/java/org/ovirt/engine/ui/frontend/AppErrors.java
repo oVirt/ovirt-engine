@@ -2515,6 +2515,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Either network id or network name must be provided.")
     String VALIDATION_NETWORK_ID_OR_NETWORK_NAME_MUST_BE_SET();
 
+    @DefaultStringValue("Nic Label must provide either nic id or nic name.")
+    String NIC_LABEL_VALIDATION_NIC_ID_OR_NIC_NAME_MUST_BE_SET();
+
+    @DefaultStringValue("Nic Label cannot have null label.")
+    String LABEL_ON_NETWORK_LABEL_CANNOT_BE_NULL();
+
     @DefaultStringValue("Name is required.")
     String VALIDATION_NAME_NULL();
 
