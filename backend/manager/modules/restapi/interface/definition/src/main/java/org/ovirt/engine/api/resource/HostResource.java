@@ -39,92 +39,92 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
     Response remove(Action action);
 
     @Path("{action: (approve|install|upgrade|fence|activate|deactivate|commitnetconfig|iscsidiscover|iscsilogin|forceselectspm)}/{oid}")
-    public ActionResource getActionSubresource(@PathParam("action")String action, @PathParam("oid")String oid);
+    ActionResource getActionSubresource(@PathParam("action")String action, @PathParam("oid")String oid);
 
     @POST
     @Actionable
     @Path("approve")
-    public Response approve(Action action);
+    Response approve(Action action);
 
     @POST
     @Actionable
     @Path("install")
-    public Response install(Action action);
+    Response install(Action action);
 
     @POST
     @Actionable
     @Path("upgrade")
-    public Response upgrade(Action action);
+    Response upgrade(Action action);
 
     @POST
     @Actionable
     @Path("fence")
-    public Response fence(Action action);
+    Response fence(Action action);
 
     @POST
     @Actionable
     @Path("activate")
-    public Response activate(Action action);
+    Response activate(Action action);
 
     @POST
     @Actionable
     @Path("deactivate")
-    public Response deactivate(Action action);
+    Response deactivate(Action action);
 
     @POST
     @Actionable
     @Path("commitnetconfig")
-    public Response commitNetConfig(Action action);
+    Response commitNetConfig(Action action);
 
     @POST
     @Actionable
     @Path("iscsidiscover")
-    public Response iscsiDiscover(Action action);
+    Response iscsiDiscover(Action action);
 
     @POST
     @Actionable
     @Path("iscsilogin")
-    public Response iscsiLogin(Action action);
+    Response iscsiLogin(Action action);
 
     @POST
     @Actionable
     @Path("unregisteredstoragedomainsdiscover")
-    public Response unregisteredStorageDomainsDiscover(Action action);
+    Response unregisteredStorageDomainsDiscover(Action action);
 
     @POST
     @Actionable
     @Path("refresh")
-    public Response refresh(Action action);
+    Response refresh(Action action);
 
     @POST
     @Actionable
     @Path("forceselectspm")
-    public Response forceSelectSPM(Action action);
+    Response forceSelectSPM(Action action);
 
     @Path("numanodes")
-    public HostNumaNodesResource getHostNumaNodesResource();
+    HostNumaNodesResource getHostNumaNodesResource();
 
     @Path("nics")
-    public HostNicsResource getHostNicsResource();
+    HostNicsResource getHostNicsResource();
 
     @Path("storage")
-    public HostStorageResource getHostStorageResource();
+    HostStorageResource getHostStorageResource();
 
     @Path("tags")
-    public AssignedTagsResource getTagsResource();
+    AssignedTagsResource getTagsResource();
 
     @Path("hooks")
-    public HostHooksResource getHooksResource();
+    HostHooksResource getHooksResource();
 
     @Path("permissions")
-    public AssignedPermissionsResource getPermissionsResource();
+    AssignedPermissionsResource getPermissionsResource();
 
     @Path("fenceagents")
-    public FenceAgentsResource getFenceAgentsResource();
+    FenceAgentsResource getFenceAgentsResource();
 
     @Path("katelloerrata")
-    public KatelloErrataResource getKatelloErrataResource();
+    KatelloErrataResource getKatelloErrataResource();
 
     @Path("devices")
-    public HostDevicesResource getHostDevicesResource();
+    HostDevicesResource getHostDevicesResource();
 }
