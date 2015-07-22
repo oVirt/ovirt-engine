@@ -1651,7 +1651,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following networks are already attached to a different interface: ${AssignedNetworks}. Please remove the networks in order to label the interface.")
     String LABELED_NETWORK_ATTACHED_TO_WRONG_INTERFACE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The label '${NicLabel}'is already defined on other interface ${LabeledNic} on the host.")
+    @DefaultStringValue("Cannot ${action} ${type}. The label '${NicLabel}' is already defined on other interface ${LabeledNic} on the host.")
     String OTHER_INTERFACE_ALREADY_LABELED();
 
     @DefaultStringValue("Cannot ${action} ${type}. SR-IOV is not supported on the selected cluster version.")

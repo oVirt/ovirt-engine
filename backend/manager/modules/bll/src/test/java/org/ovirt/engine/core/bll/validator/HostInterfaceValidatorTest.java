@@ -89,68 +89,6 @@ public class HostInterfaceValidatorTest {
 
     }
 
-    @Test
-    public void testLabeledValidBondWhenInterfaceIsNotBonded() throws Exception {
-        VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName();
-        vdsNetworkInterface.setBonded(false);
-
-        List<VdsNetworkInterface> existingInterfaces = Collections.emptyList();
-        assertThat("not bonded interface can be labeled",
-                new HostInterfaceValidator(vdsNetworkInterface).labeledValidBond(existingInterfaces),
-                isValid());
-    }
-
-    @Test
-    public void testLabeledValidBondWhenBondHasNoSlave() throws Exception {
-        assertCorrectSlaveCountInLabeledValidBondsWhenInsufficientBonds(0);
-    }
-
-    @Test
-    public void testLabeledValidBondWhenBondHasOneSlave() throws Exception {
-        assertCorrectSlaveCountInLabeledValidBondsWhenInsufficientBonds(1);
-    }
-
-    @Test
-    public void testLabeledValidBondWhenSufficientNumberOfSlaves() throws Exception {
-        assertCorrectSlaveCountInLabeledValidBonds(
-            2,
-            "bonded interface with two or more slaves should be valid bond",
-            isValid(),
-            "bondName");
-    }
-
-    private void assertCorrectSlaveCountInLabeledValidBondsWhenInsufficientBonds(int numberOfSlaves) {
-        String bondName = "bondName";
-        Matcher<ValidationResult> matcher = failsWith(EngineMessage.IMPROPER_BOND_IS_LABELED,
-            ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_BOND_NAME, bondName));
-        assertCorrectSlaveCountInLabeledValidBonds(
-            numberOfSlaves,
-            String.format("bonded interface with only %1$d slaves is not valid bond", numberOfSlaves),
-            matcher,
-            bondName);
-
-    }
-
-    private void assertCorrectSlaveCountInLabeledValidBonds(int numberOfSlaves,
-        String reason,
-        Matcher<ValidationResult> matcher,
-        String bondName) {
-        VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName(bondName, true);
-        List<VdsNetworkInterface> slaves = createGivenCountOfSlavesForBond(bondName, numberOfSlaves);
-
-        assertThat(reason, new HostInterfaceValidator(vdsNetworkInterface).labeledValidBond(slaves), matcher);
-    }
-
-
-    @Test
-    public void testAddLabelToNicAndValidateWhenUsingInvalidLabel() throws Exception {
-        VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName();
-        vdsNetworkInterface.setLabels(new HashSet<String>());
-        assertThat(new HostInterfaceValidator(vdsNetworkInterface).addLabelToNicAndValidate("**uups!**",
-                        new ArrayList<Class<?>>()),
-                failsWith(EngineMessage.IMPROPER_INTERFACE_IS_LABELED));
-    }
-
     private VdsNetworkInterface createVdsNetworkInterfaceWithName() {
         return createVdsNetworkInterfaceWithName("name");
     }
@@ -164,14 +102,6 @@ public class HostInterfaceValidatorTest {
         vdsNetworkInterface.setName(name);
         vdsNetworkInterface.setBonded(bonded);
         return vdsNetworkInterface;
-    }
-
-    @Test
-    public void testAddLabelToNicAndValidateWhenUsingValidLabel() throws Exception {
-        VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName();
-        vdsNetworkInterface.setLabels(new HashSet<String>());
-        HostInterfaceValidator validator = new HostInterfaceValidator(vdsNetworkInterface);
-        assertThat(validator.addLabelToNicAndValidate("ok", Collections.<Class<?>> emptyList()), isValid());
     }
 
     @Test

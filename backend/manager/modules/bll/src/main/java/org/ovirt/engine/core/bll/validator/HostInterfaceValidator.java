@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -66,44 +65,6 @@ public class HostInterfaceValidator {
             .when(iface != null && !iface.isBond());
     }
 
-    /**
-     * @param nics existing host interfaces
-     * @return Validation result evaluated as: isBond ==> isCorrectBond. If <code>iface</code> is not a bond, validation
-     * is successful.
-     */
-    public ValidationResult labeledValidBond(List<VdsNetworkInterface> nics) {
-        if (!Boolean.TRUE.equals(iface.getBonded())) {
-            return ValidationResult.VALID;
-        }
-
-        return ValidationResult.failWith(EngineMessage.IMPROPER_BOND_IS_LABELED,
-            ReplacementUtils.createSetVariableString(VAR_BOND_NAME, iface.getName()))
-            .when(getSlaveCount(nics, 2) < 2);
-
-    }
-
-    /**
-     * Label validation. Written in way, which tries to reuse javax.validation && existing validator
-     * {@link org.ovirt.engine.core.common.validation.annotation.ValidNetworkLabelFormat}.
-     * So this method expects, that NIC is valid prior to calling this method thus potential validation fail can be only
-     * caused by added label.
-     *
-     * requires to be called after it's verified that getNic() is at least 2 slaves bond.
-     *
-     * @param label label to add to NIC.
-     * @param commandValidationGroups validationGroups of calling command.
-     */
-    public ValidationResult addLabelToNicAndValidate(String label, List<Class<?>> commandValidationGroups) {
-        iface.getLabels().add(label);
-        List<String> validationResult = ValidationUtils.validateInputs(commandValidationGroups, iface);
-        //TODO MM: message is used on many places without host name mentioned. How to fix this?
-
-        return ValidationResult
-            .failWith(EngineMessage.IMPROPER_INTERFACE_IS_LABELED)
-
-                .when(!validationResult.isEmpty());
-    }
-
     public ValidationResult validBond(List<VdsNetworkInterface> nics) {
         if (!Boolean.TRUE.equals(iface.getBonded())) {
             return ValidationResult.VALID;
@@ -127,15 +88,13 @@ public class HostInterfaceValidator {
             List<VdsNetworkInterface> interfacesToCheck) {
 
         for (VdsNetworkInterface nic : interfacesToCheck) {
-            //do not compare with self.
+            // do not compare with self.
             boolean notTheSameNic = !StringUtils.equals(nic.getName(), iface.getName());
 
-            if (notTheSameNic) {
-                return ValidationResult.failWith(EngineMessage.OTHER_INTERFACE_ALREADY_LABELED,
-                    ReplacementUtils.createSetVariableString(VAR_LABELED_NIC, nic.getName()),
-                    ReplacementUtils.createSetVariableString(VAR_NIC_LABEL, label))
-
-                        .when(NetworkUtils.isLabeled(nic) && nic.getLabels().contains(label));
+            if (notTheSameNic && NetworkUtils.isLabeled(nic) && nic.getLabels().contains(label)) {
+                return new ValidationResult(EngineMessage.OTHER_INTERFACE_ALREADY_LABELED,
+                        ReplacementUtils.createSetVariableString(VAR_LABELED_NIC, nic.getName()),
+                        ReplacementUtils.createSetVariableString(VAR_NIC_LABEL, label));
             }
         }
 
