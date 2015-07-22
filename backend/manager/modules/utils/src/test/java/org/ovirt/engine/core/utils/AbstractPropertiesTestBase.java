@@ -8,16 +8,29 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
-public class PropertiesTestUtils {
-    public static File loadFileFromPath(String relativePath) {
+public class AbstractPropertiesTestBase {
+    private String relativePath;
+    private File file;
+
+    public AbstractPropertiesTestBase(String relativePath) {
+        this.relativePath = relativePath;
+    }
+
+    @Before
+    public void loadFileFromPath() {
         String baseDir =  System.getProperty("basedir");
         assumeNotNull(baseDir);
 
-        return new File(baseDir, relativePath);
+        file = new File(baseDir, relativePath);
     }
 
-    public static void assertNoDuplicateKeys(File file) throws IOException {
+    @Test
+    public void testDuplicateKeys() throws IOException {
         NoDuplicateProperties props = new NoDuplicateProperties();
         try (InputStream is = new FileInputStream(file)) {
             props.load(is);
@@ -27,8 +40,9 @@ public class PropertiesTestUtils {
         }
     }
 
-    public static void assertNoRedundantKeys(File file, Class<? extends Enum<?>>... template) throws IOException {
-        EnumTranslationProperties props = new EnumTranslationProperties(template);
+    @Test
+    public void testRedundantMessages() throws IOException {
+        EnumTranslationProperties props = new EnumTranslationProperties(EngineMessage.class, EngineError.class);
         try (InputStream is = new FileInputStream(file)) {
             props.load(is);
         } catch (MissingEnumTranslationException exception) {
