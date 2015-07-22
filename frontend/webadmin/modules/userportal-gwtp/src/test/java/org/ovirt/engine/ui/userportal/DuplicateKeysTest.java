@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.userportal;
 import static org.junit.Assume.assumeNotNull;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.junit.Test;
 import org.ovirt.engine.core.utils.DuplicateKeysCheck;
@@ -11,7 +11,7 @@ import org.ovirt.engine.core.utils.DuplicateKeysCheck;
 public class DuplicateKeysTest {
        @SuppressWarnings("NonJREEmulationClassesInClientCode")
        @Test
-       public void testDuplicateKeys() throws FileNotFoundException {
+       public void testDuplicateKeys() throws IOException {
           String baseDir =  System.getProperty("basedir"); //$NON-NLS-1$
           assumeNotNull(baseDir);
 

@@ -3,14 +3,14 @@ package org.ovirt.engine.core;
 import static org.junit.Assume.assumeNotNull;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.junit.Test;
 import org.ovirt.engine.core.utils.DuplicateKeysCheck;
 
 public class DuplicateKeysTest {
     @Test
-    public void testDuplicateKeys() throws FileNotFoundException {
+    public void testDuplicateKeys() throws IOException {
         String baseDir = System.getProperty("basedir");
         assumeNotNull(baseDir);
 

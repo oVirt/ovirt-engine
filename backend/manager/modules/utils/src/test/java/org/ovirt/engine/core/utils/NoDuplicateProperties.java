@@ -13,7 +13,7 @@ public class NoDuplicateProperties extends Properties {
     @Override
     public Object put(Object key, Object value) {
         if(containsKey(key))   {
-            throw new RuntimeException("The key " + key + " already exists");
+            throw new DuplicatePropertyException("The key " + key + " already exists");
         }
         return super.put(key, value);
     }
