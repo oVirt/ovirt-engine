@@ -409,7 +409,7 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
     public ImportDiskData getDiskImportData(Guid diskId) {
         ImportDiskData importData = diskImportDataMap.get(diskId);
         if (importData != null) {
-            if (storageDiskListModel.getSelectedItem() == null) {
+            if (storageDiskListModel.getSelectedItem() != null) {
                 importData.setSelectedStorageDomain((StorageDomain) storageDiskListModel.getSelectedItem());
             }
         }
