@@ -163,6 +163,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Host is operational. Please switch Host to Maintenance mode first.")
     String VDS_CANNOT_REMOVE_VDS_STATUS_ILLEGAL();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Please switch Host to Maintenance mode first.")
+    String CANNOT_ENROLL_CERTIFICATE_HOST_STATUS_ILLEGAL();
+
     @DefaultStringValue("Cannot ${action} ${type}. Internal Error: Host does not exists in DB.")
     String VDS_NOT_EXIST();
 
@@ -999,6 +1002,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("$action install")
     String VAR__ACTION__INSTALL();
+
+    @DefaultStringValue("$action enroll certificate")
+    String VAR__ACTION__ENROLL_CERTIFICATE();
 
     @DefaultStringValue("$action start profiling")
     String VAR__ACTION__START_PROFILE();

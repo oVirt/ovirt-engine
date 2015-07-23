@@ -95,6 +95,8 @@ public enum VdcActionType {
     RemoveFenceAgentsByVdsId(136, ActionGroup.EDIT_HOST_CONFIGURATION, QuotaDependency.NONE),
     UpgradeHost(137, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),
     UpgradeHostInternal(138, QuotaDependency.NONE),
+    HostEnrollCertificate(139, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),
+    HostEnrollCertificateInternal(140, QuotaDependency.NONE),
 
     // Network
     UpdateNetworkToVdsInterface(149, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),

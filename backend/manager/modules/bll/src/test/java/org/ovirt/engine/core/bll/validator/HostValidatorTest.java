@@ -315,4 +315,17 @@ public class HostValidatorTest {
         validator = mockHostForActivation(VDSStatus.Up);
         assertTrue(validator.isUp().isValid());
     }
+
+    @Test
+    public void testValidStatusForEnrollCertificate() {
+        validator = mockHostForActivation(VDSStatus.Maintenance);
+        assertThat(validator.validateStatusForEnrollCertificate(), isValid());
+    }
+
+    @Test
+    public void testInvalidStatusForEnrollCertificate() {
+        validator = mockHostForActivation(VDSStatus.Up);
+        assertThat(validator.validateStatusForEnrollCertificate(),
+                failsWith(EngineMessage.CANNOT_ENROLL_CERTIFICATE_HOST_STATUS_ILLEGAL));
+    }
 }
