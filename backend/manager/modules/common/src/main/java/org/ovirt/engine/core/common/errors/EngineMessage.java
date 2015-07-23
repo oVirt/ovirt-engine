@@ -134,6 +134,8 @@ public enum EngineMessage {
     VAR__ACTION__UPGRADE,
     VAR__ACTION__INSTALL,
     VAR__ACTION__HOT_SET_MEMORY,
+    VAR__ACTION__FREEZE,
+    VAR__ACTION__THAW,
 
     // Host statuses replacements
     VAR__HOST_STATUS__UP,

@@ -1264,6 +1264,9 @@ public enum AuditLogType {
     FAILED_TO_THAW_VM(10765, AuditLogSeverity.ERROR),
     FREEZE_VM_INITIATED(10766, AuditLogSeverity.NORMAL),
     FREEZE_VM_SUCCESS(10767, AuditLogSeverity.NORMAL),
+    THAW_VM_SUCCESS(10768, AuditLogSeverity.NORMAL),
+    USER_FAILED_TO_FREEZE_VM(10769, AuditLogSeverity.ERROR),
+    USER_FAILED_TO_THAW_VM(10770, AuditLogSeverity.ERROR),
 
     //Affinity Rules Enforcement Manager
     AFFINITY_RULES_ENFORCEMENT_MANAGER_START(10780, AuditLogSeverity.NORMAL),

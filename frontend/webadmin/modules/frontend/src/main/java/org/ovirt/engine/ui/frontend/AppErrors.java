@@ -973,6 +973,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action restart")
     String VAR__ACTION__RESTART();
 
+    @DefaultStringValue("$action freeze")
+    String VAR__ACTION__FREEZE();
+
+    @DefaultStringValue("$action thaw")
+    String VAR__ACTION__THAW();
+
     @DefaultStringValue("$action shutdown")
     String VAR__ACTION__SHUTDOWN();
 
