@@ -562,6 +562,22 @@ public class BackendVmResource extends
         return response;
     }
 
+    @Override
+    public Response freezeFilesystems(Action action) {
+        final Response response = doAction(VdcActionType.FreezeVm,
+                new VmOperationParameterBase(guid),
+                action);
+        return response;
+    }
+
+    @Override
+    public Response thawFilesystems(Action action) {
+        final Response response = doAction(VdcActionType.ThawVm,
+                new VmOperationParameterBase(guid),
+                action);
+        return response;
+    }
+
     protected RunVmOnceParams map(VM vm, RunVmOnceParams params) {
         return getMapper(VM.class, RunVmOnceParams.class).map(vm, params);
     }
