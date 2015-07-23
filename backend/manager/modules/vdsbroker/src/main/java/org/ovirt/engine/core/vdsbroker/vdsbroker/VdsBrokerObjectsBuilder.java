@@ -1865,7 +1865,27 @@ public class VdsBrokerObjectsBuilder {
 
                     Object bondOptions = null;
                     if (cfgEntriesDeprecated) {
-                        bondOptions = bondProperties.get("opts");
+                        Map<String, Object> bondOptionsMap = new HashMap<>();
+                        bondOptionsMap.putAll((Map<String, Object>) bondProperties.get("opts"));
+
+                        String bondOptionsString = "";
+                        String mode = (String) bondOptionsMap.get("mode");
+                        String miimon = (String) bondOptionsMap.get("miimon");
+
+                        if (mode != null && miimon != null) {
+                            bondOptionsString = String.format("mode=%s miimon=%s", mode, miimon);
+                            bondOptionsMap.remove("mode");
+                            bondOptionsMap.remove("miimon");
+                        }
+
+                        for (Map.Entry<String, Object> optionEntry : bondOptionsMap.entrySet()) {
+                            bondOptionsString =
+                                    String.format("%s %s=%s",
+                                            bondOptionsString,
+                                            optionEntry.getKey(),
+                                            optionEntry.getValue());
+                        }
+                        bondOptions = bondOptionsString.isEmpty() ? null : bondOptionsString;
                     } else {
                         Map<String, Object> config = (Map<String, Object>) bondProperties.get("cfg");
                         bondOptions = (config == null) ? null : config.get("BONDING_OPTS");
