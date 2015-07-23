@@ -1996,7 +1996,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
         getGuideCommand().setIsExecutionAllowed(getGuideContext() != null || singleVmSelected);
 
-        getConsoleConnectCommand().setIsExecutionAllowed(isConsoleCommandsExecutionAllowed());
+        getConsoleConnectCommand().setIsExecutionAllowed(singleVmSelected && isConsoleCommandsExecutionAllowed());
         getEditConsoleCommand().setIsExecutionAllowed(isConsoleEditEnabled());
     }
 
