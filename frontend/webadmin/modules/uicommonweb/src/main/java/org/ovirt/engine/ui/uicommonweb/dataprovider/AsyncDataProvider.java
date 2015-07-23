@@ -3834,7 +3834,7 @@ public class AsyncDataProvider {
     }
 
     public boolean isRebootCommandExecutionAllowed(List<VM> vms) {
-        if (vms.isEmpty() || !VdcActionUtils.canExecute(vms, VM.class, VdcActionType.RebootVm)) {
+        if (vms.isEmpty() || !VdcActionUtils.canExecutePartially(vms, VM.class, VdcActionType.RebootVm)) {
             return false;
         }
 
