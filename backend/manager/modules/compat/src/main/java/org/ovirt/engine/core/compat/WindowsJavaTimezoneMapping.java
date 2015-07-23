@@ -21,6 +21,7 @@ public class WindowsJavaTimezoneMapping {
             { "Central European Standard Time", "Europe/Warsaw" },
             { "Central Pacific Standard Time", "Pacific/Guadalcanal" }, { "Central Standard Time", "America/Chicago" },
             { "Central Standard Time", "America/Mexico_City" }, { "China Standard Time", "Asia/Shanghai" },
+            { "Central Standard Time (Mexico)", "America/Mexico_City" },
             { "Dateline Standard Time", "Etc/GMT+12" }, { "E. Africa Standard Time", "Africa/Nairobi" },
             { "E. Australia Standard Time", "Australia/Brisbane" }, { "E. Europe Standard Time", "Europe/Minsk" },
             { "E. South America Standard Time", "America/Sao_Paulo" }, { "Eastern Standard Time", "America/New_York" },
