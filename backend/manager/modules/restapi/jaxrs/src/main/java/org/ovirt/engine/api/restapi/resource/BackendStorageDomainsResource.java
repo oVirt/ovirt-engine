@@ -100,13 +100,12 @@ public class BackendStorageDomainsResource
             }
         }
 
-        if (action != VdcActionType.AddExistingFileStorageDomain) {
-            validateParameters(model, 2, "name");
-        }
-
         try {
+            if (action != VdcActionType.AddExistingFileStorageDomain) {
+                validateParameters(model, 2, "name");
+            }
             response = performCreate(action, getAddParams(entity, hostId), ID_RESOLVER);
-        } catch (WebFaultException e) {
+        } catch (WebApplicationException e) {
             // cleanup of created connection
             if (isConnNew) {
                 removeStorageServerConnection(connection, hostId);
