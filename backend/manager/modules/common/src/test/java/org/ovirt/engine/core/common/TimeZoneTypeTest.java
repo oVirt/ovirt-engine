@@ -1,15 +1,18 @@
 package org.ovirt.engine.core.common;
 
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+
+import java.util.Map;
+import java.util.Set;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 
 public class TimeZoneTypeTest {
 
@@ -47,5 +50,13 @@ public class TimeZoneTypeTest {
     public void testUltimateFallbackValues() {
         assertEquals(windows.getUltimateFallback(), "GMT Standard Time");
         assertEquals(general.getUltimateFallback(), "Etc/GMT");
+    }
+
+    @Test
+    public void testWindowsTimeZonesKeys() {
+        final Set<String> windowsTimeZoneKeys = WindowsJavaTimezoneMapping.windowsToJava.keySet();
+        for (String timeZoneKey : TimeZoneType.WINDOWS_TIMEZONE.getTimeZoneList().keySet()) {
+            assertThat(windowsTimeZoneKeys, hasItem(timeZoneKey));
+        }
     }
 }
