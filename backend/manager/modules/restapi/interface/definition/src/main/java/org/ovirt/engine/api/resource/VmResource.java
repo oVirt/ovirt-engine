@@ -151,6 +151,18 @@ public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreated
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     @Actionable
+    @Path("freezefilesystems")
+    public Response freezeFilesystems(Action action);
+
+    @POST
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Actionable
+    @Path("thawfilesystems")
+    public Response thawFilesystems(Action action);
+
+    @POST
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Actionable
     @Path("reordermacaddresses")
     public Response reorderMacAddresses(Action action);
 

@@ -539,6 +539,24 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {}
         description: Perform automatic logon on the VM using the guest agent.
+- name: /vms/{vm:id}/freezefilesystems|rel=freezefilesystems
+  description: Freeze the filesystems of the VM using qemu guest agent.
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {}
+        description: Freeze the filesystems of the VM using qemu guest agent.
+- name: /vms/{vm:id}/thawfilesystems|rel=thawfilesystems
+  description: Thaw the filesystems of the VM using qemu guest agent.
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {}
+        description: Thaw the filesystems of the VM using qemu guest agent.
 - name: /vms/{vm:id}/cdroms|rel=get
   description: get all the cdroms for a virtual machine
   request:

@@ -876,6 +876,28 @@ public class BackendVmResourceTest
     }
 
     @Test
+    public void testFreezeFilesystems() throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.FreezeVm,
+                VmOperationParameterBase.class,
+                new String[] { "VmId" },
+                new Object[] { GUIDS[0] }));
+
+        Action action = new Action();
+        verifyActionResponse(resource.freezeFilesystems(action));
+    }
+
+    @Test
+    public void testThawFilesystems() throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.ThawVm,
+                VmOperationParameterBase.class,
+                new String[] { "VmId" },
+                new Object[] { GUIDS[0] }));
+
+        Action action = new Action();
+        verifyActionResponse(resource.thawFilesystems(action));
+    }
+
+    @Test
     public void testMigrateWithHostId() throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.MigrateVmToServer,
                                            MigrateVmToServerParameters.class,
