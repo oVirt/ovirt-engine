@@ -86,7 +86,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
     public void testPositiveCanDoActionWithNoDisks() {
         setUpGeneralValidations();
         setUpDiskValidations();
-        doReturn(getEmptyDiskList()).when(cmd).getDisksList();
+        doReturn(getEmptyDiskList()).when(cmd).getSnappableVmDisks();
         doReturn(Guid.newGuid()).when(cmd).getStorageDomainId();
         assertTrue(cmd.canDoAction());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().isEmpty());
@@ -165,7 +165,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
         setUpGeneralValidations();
         setUpDiskValidations();
         doReturn(true).when(cmd).isLiveSnapshotApplicable();
-        doReturn(getEmptyDiskList()).when(cmd).getDisksList();
+        doReturn(getEmptyDiskList()).when(cmd).getSnappableVmDisks();
         assertTrue(cmd.canDoAction());
         assertTrue(cmd.getReturnValue()
                 .getCanDoActionMessages()
@@ -200,7 +200,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
     public void testPositiveCanDoActionWithDisks() {
         setUpGeneralValidations();
         setUpDiskValidations();
-        doReturn(getNonEmptyDiskList()).when(cmd).getDisksList();
+        doReturn(getNonEmptyDiskList()).when(cmd).getSnappableVmDisks();
         doReturn(Guid.newGuid()).when(cmd).getStorageDomainId();
         assertTrue(cmd.canDoAction());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().isEmpty());
@@ -210,7 +210,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
     public void testImagesLocked() {
         setUpGeneralValidations();
         setUpDiskValidations();
-        doReturn(getNonEmptyDiskList()).when(cmd).getDisksList();
+        doReturn(getNonEmptyDiskList()).when(cmd).getSnappableVmDisks();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED)).when(diskImagesValidator)
                 .diskImagesNotLocked();
         assertFalse(cmd.canDoAction());
@@ -223,7 +223,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
     public void testImagesIllegal() {
         setUpGeneralValidations();
         setUpDiskValidations();
-        doReturn(getNonEmptyDiskList()).when(cmd).getDisksList();
+        doReturn(getNonEmptyDiskList()).when(cmd).getSnappableVmDisks();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_ILLEGAL)).when(diskImagesValidator)
                 .diskImagesNotIllegal();
         assertFalse(cmd.canDoAction());
@@ -254,7 +254,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
     public void testAllDomainsExistAndActive() {
         setUpGeneralValidations();
         setUpDiskValidations();
-        doReturn(Collections.emptyList()).when(cmd).getDisksList();
+        doReturn(Collections.emptyList()).when(cmd).getSnappableVmDisks();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST)).when(multipleStorageDomainsValidator)
                 .allDomainsExistAndActive();
         assertFalse(cmd.canDoAction());
@@ -268,8 +268,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
         setUpGeneralValidations();
         setUpDiskValidations();
         List<DiskImage> disksList = Collections.emptyList();
-        doReturn(disksList).when(cmd).getDisksList();
-        doReturn(disksList).when(cmd).getDisksListForChecks();
+        doReturn(disksList).when(cmd).getSnappableVmDisks();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).when(multipleStorageDomainsValidator)
                 .allDomainsHaveSpaceForNewDisks(disksList);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
@@ -281,7 +280,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
         setUpGeneralValidations();
         setUpDiskValidations();
         List<DiskImage> disksList = Collections.emptyList();
-        doReturn(disksList).when(cmd).getDisksList();
+        doReturn(disksList).when(cmd).getSnappableVmDisks();
         doReturn(ValidationResult.VALID).when(multipleStorageDomainsValidator).allDomainsHaveSpaceForNewDisks(disksList);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
         verify(multipleStorageDomainsValidator).allDomainsHaveSpaceForNewDisks(disksList);
@@ -291,7 +290,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
     public void testAllDomainsWithinThreshold() {
         setUpGeneralValidations();
         setUpDiskValidations();
-        doReturn(Collections.emptyList()).when(cmd).getDisksList();
+        doReturn(Collections.emptyList()).when(cmd).getSnappableVmDisks();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).when(multipleStorageDomainsValidator)
                 .allDomainsExistAndActive();
         assertFalse(cmd.canDoAction());
@@ -304,7 +303,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
     public void testAllDomainsHaveSpaceForAllDisksFailure() {
         setUpGeneralValidations();
         setUpDiskValidations();
-        doReturn(Collections.emptyList()).when(cmd).getDisksList();
+        doReturn(Collections.emptyList()).when(cmd).getSnappableVmDisks();
         cmd.getParameters().setSaveMemory(true);
         doReturn(Guid.newGuid()).when(cmd).getStorageDomainIdForVmMemory(eq(Collections.<DiskImage>emptyList()));
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).when(multipleStorageDomainsValidator)
@@ -317,7 +316,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
     public void testAllDomainsHaveSpaceForAllDisksSuccess() {
         setUpGeneralValidations();
         setUpDiskValidations();
-        doReturn(Collections.emptyList()).when(cmd).getDisksList();
+        doReturn(Collections.emptyList()).when(cmd).getSnappableVmDisks();
         cmd.getParameters().setSaveMemory(true);
         doReturn(Guid.newGuid()).when(cmd).getStorageDomainIdForVmMemory(eq(Collections.<DiskImage>emptyList()));
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
