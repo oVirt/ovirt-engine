@@ -193,10 +193,15 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
      * @return
      */
     public String customProperties(String predefinedProperties, String userDefinedProperties) {
+        String predefined = predefinedProperties == null ? "" : predefinedProperties;
+        String userDefined = userDefinedProperties == null ? "" : userDefinedProperties;
+
         StringBuilder result = new StringBuilder();
-        result.append(predefinedProperties == null ? "" : predefinedProperties);
-        result.append((result.length() == 0) ? "" : ";");
-        result.append(userDefinedProperties == null ? "" : userDefinedProperties);
+        result.append(predefined);
+        if (!predefined.isEmpty() && !userDefined.isEmpty()) {
+            result.append(PROPERTIES_DELIMETER);
+        }
+        result.append(userDefined);
         return result.toString();
     }
 
