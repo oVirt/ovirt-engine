@@ -5,10 +5,10 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabel;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.providers.NeutronAgentModel;
@@ -44,11 +44,11 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField(provided = true)
-    EntityModelWidgetWithInfo<String> mappings;
+    EntityModelWidgetWithInfo mappings;
 
     @Path(value = "interfaceMappingsLabel.entity")
     @WithElementId("interfaceMappingsLabel")
-    StringEntityModelLabel mappingsLabel;
+    EnableableFormLabel mappingsLabel;
 
     @Path(value = "interfaceMappings.entity")
     @WithElementId("interfaceMappings")
@@ -82,9 +82,9 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
     @Inject
     public NeutronAgentWidget() {
         brokerTypeEditor = new ListModelListBoxEditor<BrokerType>(new EnumRenderer<BrokerType>());
-        mappingsLabel = new StringEntityModelLabel();
+        mappingsLabel = new EnableableFormLabel();
         interfaceMappings = new StringEntityModelTextBoxOnlyEditor();
-        mappings = new EntityModelWidgetWithInfo<String>(mappingsLabel, interfaceMappings);
+        mappings = new EntityModelWidgetWithInfo(mappingsLabel, interfaceMappings);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
 

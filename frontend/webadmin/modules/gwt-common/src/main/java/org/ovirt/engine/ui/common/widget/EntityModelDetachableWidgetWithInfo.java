@@ -1,12 +1,15 @@
 package org.ovirt.engine.ui.common.widget;
 
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelDetachableWidget;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelLabel;
+import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
+
 import com.google.gwt.user.client.ui.HasEnabled;
 
-public class EntityModelDetachableWidgetWithInfo<T> extends EntityModelWidgetWithInfo implements HasDetachable, HasEnabled {
+public class EntityModelDetachableWidgetWithInfo extends EntityModelWidgetWithInfo
+        implements HasDetachable, HasEnabled {
 
-    public EntityModelDetachableWidgetWithInfo(EntityModelLabel<T> label, AbstractValidatedWidgetWithLabel contentWidget) {
+    public EntityModelDetachableWidgetWithInfo(EnableableFormLabel label,
+                                               AbstractValidatedWidgetWithLabel contentWidget) {
         super(label, new EntityModelDetachableWidget(contentWidget));
     }
 

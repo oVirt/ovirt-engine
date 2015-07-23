@@ -3,7 +3,8 @@ package org.ovirt.engine.ui.common.widget;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelLabel;
+import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -14,24 +15,23 @@ import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
-public class EntityModelWidgetWithInfo<T> extends Composite implements HasValidation, HasEnabled {
+public class EntityModelWidgetWithInfo extends Composite implements HasValidation, HasEnabled {
 
     interface WidgetUiBinder extends UiBinder<Widget, EntityModelWidgetWithInfo> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
     @UiField(provided = true)
-    EntityModelLabel<T> label;
+    EnableableFormLabel label;
 
     @UiField(provided = true)
     InfoIcon infoIcon;
 
     @UiField(provided = true)
-    Composite contentWidget;
+    Widget contentWidget;
 
     @Inject
-    public EntityModelWidgetWithInfo(EntityModelLabel<T> label, Composite contentWidget) {
-
+    public EntityModelWidgetWithInfo(EnableableFormLabel label, Widget contentWidget) {
         this.label = label;
         this.contentWidget = contentWidget;
         infoIcon = new InfoIcon(SafeHtmlUtils.EMPTY_SAFE_HTML);

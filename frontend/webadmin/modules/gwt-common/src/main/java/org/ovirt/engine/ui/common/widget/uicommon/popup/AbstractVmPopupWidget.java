@@ -72,10 +72,10 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxEditor
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxOnlyEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabel;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
+import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.parser.MemorySizeParser;
 import org.ovirt.engine.ui.common.widget.profile.ProfilesInstanceTypeEditor;
 import org.ovirt.engine.ui.common.widget.renderer.BooleanRendererWithNullText;
@@ -105,6 +105,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -281,7 +282,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField(provided = true)
     @Ignore
-    public EntityModelDetachableWidgetWithInfo<String> totalvCPUsEditorWithInfoIcon;
+    public EntityModelDetachableWidgetWithInfo totalvCPUsEditorWithInfoIcon;
 
     @UiField
     @Ignore
@@ -447,12 +448,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField(provided = true)
     @Ignore
-    public EntityModelWidgetWithInfo<String> timeZoneEditorWithInfo;
+    public EntityModelWidgetWithInfo timeZoneEditorWithInfo;
 
     // ==Initial run Tab==
     @UiField
     protected DialogTab initialRunTab;
-
 
     @UiField
     @Path(value = "vmInitEnabled.entity")
@@ -538,7 +538,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField(provided = true)
     @Ignore
-    public EntityModelWidgetWithInfo<String> spiceProxyEnabledCheckboxWithInfoIcon;
+    public EntityModelWidgetWithInfo spiceProxyEnabledCheckboxWithInfoIcon;
 
     @Path(value = "spiceProxyEnabled.entity")
     @WithElementId
@@ -564,7 +564,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField(provided = true)
     @WithElementId
-    public EntityModelWidgetWithInfo<String> isRngEnabledCheckboxWithInfoIcon;
+    public EntityModelWidgetWithInfo isRngEnabledCheckboxWithInfoIcon;
 
     @UiField
     @Ignore
@@ -1053,9 +1053,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         migrationModeEditorWithDetachable = new EntityModelDetachableWidget(migrationModeEditor, Align.IGNORE);
         migrationModeEditorWithDetachable.setupContentWrapper(Align.RIGHT);
 
-        StringEntityModelLabel rnglabel = new StringEntityModelLabel();
+        EnableableFormLabel rnglabel = new EnableableFormLabel();
         rnglabel.setText(constants.rngDevEnabled());
-        isRngEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo<String>(rnglabel, isRngEnabledEditor);
+        isRngEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo(rnglabel, isRngEnabledEditor);
         isRngEnabledCheckboxWithInfoIcon.setExplanation(SafeHtmlUtils.fromTrustedString(constants.rngDevExplanation()));
     }
 
@@ -1064,18 +1064,18 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     protected void initSpiceProxy() {
-        StringEntityModelLabel label = new StringEntityModelLabel();
+        EnableableFormLabel label = new EnableableFormLabel();
         label.setText(constants.defineSpiceProxyEnable());
         spiceProxyOverrideEnabledEditor = new EntityModelCheckBoxOnlyEditor();
-        spiceProxyEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo<String>(label, spiceProxyOverrideEnabledEditor);
+        spiceProxyEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo(label, spiceProxyOverrideEnabledEditor);
     }
 
     private void initTotalVcpus() {
-        StringEntityModelLabel label = new StringEntityModelLabel();
+        EnableableFormLabel label = new EnableableFormLabel();
         label.setText(constants.numOfVCPUs());
         label.addStyleName("numCPUs_pfly_fix"); //$NON-NLS-1$
         totalvCPUsEditor = new StringEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
-        totalvCPUsEditorWithInfoIcon = new EntityModelDetachableWidgetWithInfo<String>(label, totalvCPUsEditor);
+        totalvCPUsEditorWithInfoIcon = new EntityModelDetachableWidgetWithInfo(label, totalvCPUsEditor);
         totalvCPUsEditorWithInfoIcon.setExplanation(templates.italicText(messages.hotPlugUnplugCpuWarning()));
     }
 
@@ -1367,9 +1367,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         }, new ModeSwitchingVisibilityRenderer());
 
-        StringEntityModelLabel label = new StringEntityModelLabel();
+        EnableableFormLabel label = new EnableableFormLabel();
         label.setText(constants.tzVmPopup());
-        timeZoneEditorWithInfo = new EntityModelWidgetWithInfo<String>(label, timeZoneEditor);
+        timeZoneEditorWithInfo = new EntityModelWidgetWithInfo(label, timeZoneEditor);
         timeZoneEditorWithInfo.setExplanation(templates.italicText(constants.timeZoneInfo()));
 
         // Console tab

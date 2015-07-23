@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabel;
+import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
@@ -48,11 +48,11 @@ public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<Hos
 
     @UiField(provided = true)
     @WithElementId("networkProvider")
-    public EntityModelWidgetWithInfo<String> networkProvider;
+    public EntityModelWidgetWithInfo networkProvider;
 
     @Ignore
     @WithElementId("networkProviderLabel")
-    public StringEntityModelLabel networkProviderLabel;
+    public EnableableFormLabel networkProviderLabel;
 
     @Path(value = "networkProviders.selectedItem")
     @WithElementId("networkProviderEditor")
@@ -78,9 +78,9 @@ public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<Hos
     @Inject
     public HostNetworkProviderWidget() {
 
-        networkProviderLabel = new StringEntityModelLabel();
+        networkProviderLabel = new EnableableFormLabel();
         networkProviderEditor = new ListModelListBoxOnlyEditor<>(new NameRenderer<Provider<OpenstackNetworkProviderProperties>>());
-        networkProvider = new EntityModelWidgetWithInfo<String>(networkProviderLabel, networkProviderEditor);
+        networkProvider = new EntityModelWidgetWithInfo(networkProviderLabel, networkProviderEditor);
         networkProviderTypeEditor = new ListModelListBoxEditor<ProviderType>(new EnumRenderer<ProviderType>());
         neutronAgentWidget = new NeutronAgentWidget();
 

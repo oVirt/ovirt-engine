@@ -15,9 +15,9 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxOnlyEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabel;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -107,11 +107,11 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
 
     @UiField(provided = true)
     @WithElementId("stripeSize")
-    public EntityModelWidgetWithInfo<String> stripeSizeWithInfo;
+    public EntityModelWidgetWithInfo stripeSizeWithInfo;
 
     @Ignore
     @WithElementId("stripeSizeLabel")
-    public StringEntityModelLabel stripeSizeLabel;
+    public EnableableFormLabel stripeSizeLabel;
 
     @Path(value = "stripeSize.entity")
     @WithElementId("stripeSizeEditor")
@@ -134,9 +134,9 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
         initListBoxEditors();
         initInfoIcon();
         deviceTable = new ListModelObjectCellTable<StorageDevice, ListModel<StorageDevice>>(true, false);
-        stripeSizeLabel = new StringEntityModelLabel();
+        stripeSizeLabel = new EnableableFormLabel();
         stripeSizeEditor = new IntegerEntityModelTextBoxOnlyEditor();
-        stripeSizeWithInfo = new EntityModelWidgetWithInfo<String>(stripeSizeLabel, stripeSizeEditor);
+        stripeSizeWithInfo = new EntityModelWidgetWithInfo(stripeSizeLabel, stripeSizeEditor);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize();
