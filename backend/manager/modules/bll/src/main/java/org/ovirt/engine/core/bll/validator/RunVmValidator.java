@@ -380,12 +380,15 @@ public class RunVmValidator {
      * return true if all storage domains have enough space to create snapshots for this VM plugged disks
      */
     protected ValidationResult hasSpaceForSnapshots() {
-        Set<Guid> sdIds = ImagesHandler.getAllStorageIdsForImageIds(getVmImageDisks());
+        List<Disk> disks = DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId());
+        List<DiskImage> allDisks = ImagesHandler.filterImageDisks(disks, false, true, false);
+
+        Set<Guid> sdIds = ImagesHandler.getAllStorageIdsForImageIds(allDisks);
 
         MultipleStorageDomainsValidator msdValidator = getStorageDomainsValidator(sdIds);
         ValidationResult retVal = msdValidator.allDomainsWithinThresholds();
         if (retVal == ValidationResult.VALID) {
-            return msdValidator.allDomainsHaveSpaceForNewDisks(getVmImageDisks());
+            return msdValidator.allDomainsHaveSpaceForNewDisks(allDisks);
         }
         return retVal;
     }
