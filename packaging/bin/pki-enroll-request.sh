@@ -29,6 +29,7 @@ sign() {
 		-out "${cert}" \
 		-startdate "$(date --utc --date "now -1 days" +"%y%m%d%H%M%SZ")" \
 		${subject:+-subj "${subject}"} \
+		-utf8 \
 		${EXTRA_COMMAND} \
 		|| die "Cannot sign certificate"
 	chmod a+r "${cert}" || die "Cannot set certificate permissions"
