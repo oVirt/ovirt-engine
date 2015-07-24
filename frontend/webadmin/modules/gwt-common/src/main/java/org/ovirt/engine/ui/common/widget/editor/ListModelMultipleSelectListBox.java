@@ -21,8 +21,8 @@ public class ListModelMultipleSelectListBox<T> extends ListModelListBox<List<T>>
     private TakesConstrainedValueListEditor<T> editor;
 
     /**
-     * Internal map that stores rendered strings of typed values so we can do reverse lookups to find the typed
-     * values based on the rendered strings.
+     * Internal list that contains the typed values so we can look them up based on the selected indexes of the
+     * {@code ListBox}.
      */
     private List<T> typedItemList = new ArrayList<>();
 
