@@ -12,10 +12,14 @@ public class BlankTemplateModel extends UnitVmModel {
     }
 
     @Override
-    protected void doDisplayTypeChanged() {
+    protected void initGraphicsConsoles() {
         // typically the Other OS
         Integer osType = getOSType().getSelectedItem();
 
-        displayTypeSelectedItemChanged(osType, Version.getLast());
+        if (osType == null) {
+            return;
+        }
+
+        initGraphicsConsoles(osType, Version.getLast());
     }
 }

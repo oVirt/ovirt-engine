@@ -471,28 +471,23 @@ public abstract class InstanceTypeManager {
 
     protected void updateDefaultDisplayRelatedFields(final VmBase vmBase) {
         // Update display protocol selected item
-        Collection<DisplayType> displayTypes = model.getDisplayType().getItems();
+        final Collection<DisplayType> displayTypes = model.getDisplayType().getItems();
         if (displayTypes == null || displayTypes.isEmpty()) {
             return;
         }
 
-        // select display protocol
-        DisplayType displayProtocol = displayTypes.iterator().next(); // first by default
-        if (displayTypes.contains(vmBase.getDefaultDisplayType())) {
-            displayProtocol = vmBase.getDefaultDisplayType(); // if display types contain DT of a vm, pick this one
-        }
-
-        maybeSetSelectedItem(model.getDisplayType(), displayProtocol);
-        maybeSetSelectedItem(model.getNumOfMonitors(), vmBase.getNumOfMonitors());
-        maybeSetSelectedItem(model.getUsbPolicy(), vmBase.getUsbPolicy());
-        maybeSetEntity(model.getIsSmartcardEnabled(), vmBase.isSmartcardEnabled());
-        maybeSetSingleQxlPci(vmBase);
-
         // graphics
         Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(vmBase.getId()), new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object modelFromCallback, Object returnValue) {
                 deactivate();
+                // select display protocol
+                DisplayType displayProtocol = displayTypes.iterator().next(); // first by default
+                if (displayTypes.contains(vmBase.getDefaultDisplayType())) {
+                    displayProtocol = vmBase.getDefaultDisplayType(); // if display types contain DT of a vm, pick this one
+                }
+                maybeSetSelectedItem(model.getDisplayType(), displayProtocol);
+
                 Set<GraphicsType> graphicsTypes = new HashSet<GraphicsType>();
                 List<GraphicsDevice> graphicsDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 for (GraphicsDevice graphicsDevice : graphicsDevices) {
@@ -502,6 +497,12 @@ public abstract class InstanceTypeManager {
                 if (selected != null && getModel().getGraphicsType().getItems().contains(selected)) {
                     maybeSetSelectedItem(getModel().getGraphicsType(), selected);
                 }
+
+                maybeSetSelectedItem(model.getNumOfMonitors(), vmBase.getNumOfMonitors());
+                maybeSetSelectedItem(model.getUsbPolicy(), vmBase.getUsbPolicy());
+                maybeSetEntity(model.getIsSmartcardEnabled(), vmBase.isSmartcardEnabled());
+                maybeSetSingleQxlPci(vmBase);
+
                 activate();
             }
         }));

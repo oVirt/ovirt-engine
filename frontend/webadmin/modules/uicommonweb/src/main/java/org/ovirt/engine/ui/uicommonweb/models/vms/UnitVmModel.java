@@ -1753,7 +1753,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 firstBootDevice_SelectedItemChanged(sender, args);
             }
             else if (sender == getDisplayType()) {
-                displayTypeSelectedItemChanged(sender, args);
+                initGraphicsConsoles();
                 initUsbPolicy();
             }
             else if (sender == getGraphicsType()) {
@@ -2050,6 +2050,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         updateWatchdogModels();
         updateBootMenu();
         getInstanceImages().updateActionsAvailability();
+
+        initGraphicsConsoles();
     }
 
     private void updateBootMenu() {
@@ -2144,6 +2146,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getInstanceImages().updateActionsAvailability();
 
         updateIconAccordingToOs();
+
+        initGraphicsConsoles();
     }
 
     private void updateIconAccordingToOs() {
@@ -2258,16 +2262,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getMigrationDowntime().setIsChangeable(Boolean.TRUE.equals(entity));
     }
 
-    private void displayTypeSelectedItemChanged(Object sender, EventArgs args) {
-        if (getDisplayType().getSelectedItem() == null) {
-            getBehavior().activateInstanceTypeManager();
-            return;
-        }
-
-        doDisplayTypeChanged();
-    }
-
-    protected void doDisplayTypeChanged() {
+    protected void initGraphicsConsoles() {
         VDSGroup cluster = getSelectedCluster();
         Integer osType = getOSType().getSelectedItem();
 
@@ -2275,10 +2270,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return;
         }
 
-        displayTypeSelectedItemChanged(osType, cluster.getCompatibilityVersion());
+        initGraphicsConsoles(osType, cluster.getCompatibilityVersion());
     }
 
-    protected void displayTypeSelectedItemChanged(int osType, Version compatibilityVersion) {
+    protected void initGraphicsConsoles(int osType, Version compatibilityVersion) {
         Set<GraphicsTypes> graphicsTypes = new LinkedHashSet<>();
         List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = AsyncDataProvider.getInstance().getGraphicsAndDisplays(osType, compatibilityVersion);
 
@@ -2292,7 +2287,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             graphicsTypes.add(GraphicsTypes.SPICE_AND_VNC);
         }
 
-        getGraphicsType().setItems(graphicsTypes);
+        GraphicsTypes prevSelected = getGraphicsType().getSelectedItem();
+
+        if (prevSelected != null && graphicsTypes.contains(prevSelected)) {
+            getGraphicsType().setItems(graphicsTypes, prevSelected);
+        } else {
+            getGraphicsType().setItems(graphicsTypes);
+        }
 
         upgradeGraphicsRelatedModels();
     }
@@ -2305,7 +2306,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         if (display != DisplayType.qxl || !graphics.getBackingGraphicsTypes().contains(GraphicsType.SPICE)) {
-            getUsbPolicy().setSelectedItem(org.ovirt.engine.core.common.businessentities.UsbPolicy.DISABLED);
+            getUsbPolicy().setSelectedItem(UsbPolicy.DISABLED);
             getIsSmartcardEnabled().setEntity(false);
         }
 

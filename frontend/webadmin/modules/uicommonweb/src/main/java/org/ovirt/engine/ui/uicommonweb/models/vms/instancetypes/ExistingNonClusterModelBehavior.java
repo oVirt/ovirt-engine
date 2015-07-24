@@ -57,6 +57,8 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
                         }
 
                         initDisplayTypes(entity.getDefaultDisplayType(), UnitVmModel.GraphicsTypes.fromGraphicsTypes(graphicsTypesCollection));
+
+                        doBuild();
                     }
                 }
         ));
@@ -65,6 +67,59 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
         updateConsoleDevice(entity.getId());
         initPriority(entity.getPriority());
 
+        Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(entity.getId()), new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                    }
+                }
+        ));
+
+        AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery(getModel(), new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                getModel().getIsVirtioScsiEnabled().setEntity((Boolean) returnValue);
+            }
+        }), entity.getId());
+
+
+        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery(this.getModel(), new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object target, Object returnValue) {
+                UnitVmModel model = (UnitVmModel) target;
+                @SuppressWarnings("unchecked")
+                Collection<VmWatchdog> watchdogs =
+                        ((VdcQueryReturnValue) returnValue).getReturnValue();
+                for (VmWatchdog watchdog : watchdogs) {
+                    model.getWatchdogAction().setSelectedItem(watchdog.getAction());
+                    model.getWatchdogModel().setSelectedItem(watchdog.getModel());
+                }
+            }
+        }), entity.getId());
+
+       Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(entity.getId()), new AsyncQuery(
+               this,
+               new INewAsyncCallback() {
+                   @Override
+                   public void onSuccess(Object model, Object returnValue) {
+                       List<VmDevice> rngDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                       getModel().getIsRngEnabled().setEntity(!rngDevices.isEmpty());
+                       if (!rngDevices.isEmpty()) {
+                           VmRngDevice rngDevice = new VmRngDevice(rngDevices.get(0));
+                           getModel().setRngDevice(rngDevice);
+                       }
+                   }
+               }
+       ));
+        getModel().getEmulatedMachine().setSelectedItem(entity.getCustomEmulatedMachine());
+        getModel().getCustomCpu().setSelectedItem(entity.getCustomCpuName());
+        getModel().getMigrationMode().setSelectedItem(entity.getMigrationSupport());
+        getModel().getCpuSharesAmount().setEntity(entity.getCpuShares());
+        updateCpuSharesSelection();
+    }
+
+    public void doBuild() {
         buildModel(entity, new BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel>() {
             @Override
             public void finished(VmBase source, UnitVmModel destination) {
@@ -120,58 +175,6 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
                 postBuild();
             }
         });
-
-
-        Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(entity.getId()), new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) ((VdcQueryReturnValue) returnValue).getReturnValue());
-                    }
-                }
-        ));
-
-        AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery(getModel(), new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                getModel().getIsVirtioScsiEnabled().setEntity((Boolean) returnValue);
-            }
-        }), entity.getId());
-
-
-        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery(this.getModel(), new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object target, Object returnValue) {
-                UnitVmModel model = (UnitVmModel) target;
-                @SuppressWarnings("unchecked")
-                Collection<VmWatchdog> watchdogs =
-                        ((VdcQueryReturnValue) returnValue).getReturnValue();
-                for (VmWatchdog watchdog : watchdogs) {
-                    model.getWatchdogAction().setSelectedItem(watchdog.getAction());
-                    model.getWatchdogModel().setSelectedItem(watchdog.getModel());
-                }
-            }
-        }), entity.getId());
-
-       Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(entity.getId()), new AsyncQuery(
-               this,
-               new INewAsyncCallback() {
-                   @Override
-                   public void onSuccess(Object model, Object returnValue) {
-                       List<VmDevice> rngDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                       getModel().getIsRngEnabled().setEntity(!rngDevices.isEmpty());
-                       if (!rngDevices.isEmpty()) {
-                           VmRngDevice rngDevice = new VmRngDevice(rngDevices.get(0));
-                           getModel().setRngDevice(rngDevice);
-                       }
-                   }
-               }
-       ));
-        getModel().getEmulatedMachine().setSelectedItem(entity.getCustomEmulatedMachine());
-        getModel().getCustomCpu().setSelectedItem(entity.getCustomCpuName());
-        getModel().getMigrationMode().setSelectedItem(entity.getMigrationSupport());
-        getModel().getCpuSharesAmount().setEntity(entity.getCpuShares());
-        updateCpuSharesSelection();
     }
 
     protected void postBuild() {
