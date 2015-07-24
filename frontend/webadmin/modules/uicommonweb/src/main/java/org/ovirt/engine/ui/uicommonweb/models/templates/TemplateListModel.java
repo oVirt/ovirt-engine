@@ -608,6 +608,8 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
                                         .add(UICommand.createCancelUiCommand("CancelConfirmation", TemplateListModel.this)); //$NON-NLS-1$
 
                                 setConfirmWindow(confirmModel);
+                            } else {
+                                postNameUniqueCheck();
                             }
 
                         }
