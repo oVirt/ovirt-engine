@@ -79,6 +79,7 @@ enroll() {
 			-keyfile private/ca.pem \
 			-selfsign \
 			-subj "${subject}" \
+			-utf8 \
 			-days "${CA_DAYS}" \
 			-startdate "$(date --utc --date "now -1 days" +"%y%m%d%H%M%SZ")"
 	) || die "Cannot enroll CA certificate"
