@@ -86,9 +86,9 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         commandsCache.put(cmdEntity);
         // check if callback is enabled or if parent command has callback enabled
         if (cmdEntity.isCallbackEnabled() ||
-                (!Guid.isNullOrEmpty(cmdEntity.getRootCommandId()) &&
-                        commandsCache.get(cmdEntity.getRootCommandId()) != null &&
-                        commandsCache.get(cmdEntity.getRootCommandId()).isCallbackEnabled()
+                (!Guid.isNullOrEmpty(cmdEntity.getParentCommandId()) &&
+                        commandsCache.get(cmdEntity.getParentCommandId()) != null &&
+                        commandsCache.get(cmdEntity.getParentCommandId()).isCallbackEnabled()
                 )) {
             buildCmdHierarchy(cmdEntity);
             if (!cmdEntity.isCallbackNotified()) {
@@ -176,10 +176,10 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
             }
 
             command.setCommandStatus(cmdEntity.getCommandStatus(), false);
-            if (!Guid.isNullOrEmpty(cmdEntity.getRootCommandId()) &&
-                    ! cmdEntity.getRootCommandId().equals(cmdEntity.getId()) &&
+            if (!Guid.isNullOrEmpty(cmdEntity.getParentCommandId()) &&
+                    ! cmdEntity.getParentCommandId().equals(cmdEntity.getId()) &&
                     command.getParameters().getParentParameters() == null) {
-                CommandBase<?> parentCommand = retrieveCommand(cmdEntity.getRootCommandId());
+                CommandBase<?> parentCommand = retrieveCommand(cmdEntity.getParentCommandId());
                 if (parentCommand != null) {
                     command.getParameters().setParentParameters(parentCommand.getParameters());
                 }
@@ -249,7 +249,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return Collections.emptyList();
     }
 
-    public List<CommandEntity> getChildCmdsByParentCmdId(Guid cmdId) {
+    public List<CommandEntity> getChildCmdsByRootCmdId(Guid cmdId) {
         return commandsCache.getChildCmdsByParentCmdId(cmdId);
     }
 
@@ -268,10 +268,10 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     }
 
     private void buildCmdHierarchy(CommandEntity cmdEntity) {
-        if (!Guid.isNullOrEmpty(cmdEntity.getRootCommandId()) && !cmdEntity.getId().equals(cmdEntity.getRootCommandId())) {
-            childHierarchy.putIfAbsent(cmdEntity.getRootCommandId(), new ArrayList<Guid>());
-            if (!childHierarchy.get(cmdEntity.getRootCommandId()).contains(cmdEntity.getId())) {
-                childHierarchy.get(cmdEntity.getRootCommandId()).add(cmdEntity.getId());
+        if (!Guid.isNullOrEmpty(cmdEntity.getParentCommandId()) && !cmdEntity.getId().equals(cmdEntity.getParentCommandId())) {
+            childHierarchy.putIfAbsent(cmdEntity.getParentCommandId(), new ArrayList<Guid>());
+            if (!childHierarchy.get(cmdEntity.getParentCommandId()).contains(cmdEntity.getId())) {
+                childHierarchy.get(cmdEntity.getParentCommandId()).add(cmdEntity.getId());
             }
         }
     }

@@ -248,7 +248,6 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
     public void onSucceeded() {
         syncDbRecords(true);
-        endSuccessfully();
         log.info("Successfully merged snapshot '{}' images '{}'..'{}'",
                 getDiskImage().getImage().getSnapshotId(),
                 getDiskImage().getImageId(),
@@ -401,12 +400,6 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         }
     }
 
-    @Override
-    protected void endSuccessfully() {
-        handleAnyChildSPMTaskCompletion(true);
-        setSucceeded(true);
-    }
-
     public void onFailed() {
         if (!completedMerge()) {
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
@@ -439,40 +432,6 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                     getDiskImage().getImageId(),
                     getDestinationDiskImage() != null ? getDestinationDiskImage().getImageId() : "(n/a)",
                     getParameters().getMergeStatusReturnValue().getImagesToRemove());
-        }
-        endWithFailure();
-    }
-
-    @Override
-    protected void endWithFailure() {
-        handleAnyChildSPMTaskCompletion(false);
-        setSucceeded(true);
-    }
-
-    // SPM tasks report their final status to the spawning command's parent (in this case, us)
-    // rather than the spawning command (ie DestroyImageCommand); therefore, we must redirect
-    // endAction so that upon SPM task completion the status is propagated to the child command.
-    private void handleAnyChildSPMTaskCompletion(boolean succeeded) {
-        if (getParameters().getCommandStep() != RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE) {
-            return;
-        }
-
-        syncChildCommandList();
-        Guid currentChildId = getCurrentChildId();
-        if (!Guid.isNullOrEmpty(currentChildId)) {
-            CommandBase<?> command = CommandCoordinatorUtil.retrieveCommand(currentChildId);
-            CommandEntity cmdEntity = CommandCoordinatorUtil.getCommandEntity(currentChildId);
-            if (command != null && cmdEntity != null && !cmdEntity.isCallbackNotified()) {
-                if (!succeeded) {
-                    command.getParameters().setTaskGroupSuccess(false);
-                }
-                Backend.getInstance().endAction(VdcActionType.DestroyImage,
-                        command.getParameters(),
-                        cloneContextAndDetachFromParent());
-                if (succeeded) {
-                    cmdEntity.setCallbackNotified(true);
-                }
-            }
         }
     }
 
