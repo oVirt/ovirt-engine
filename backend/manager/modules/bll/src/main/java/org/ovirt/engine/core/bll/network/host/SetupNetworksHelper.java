@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
@@ -44,8 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SetupNetworksHelper {
-
-    private static final Pattern BOND_OPTS_MODE_CAPTURE = Pattern.compile("mode=(\\d)");
     private static final float QOS_OVERCOMMITMENT_THRESHOLD = 0.75f;
     private static final Logger log = LoggerFactory.getLogger(SetupNetworksHelper.class);
     private SetupNetworksParameters params;
@@ -66,7 +62,7 @@ public class SetupNetworksHelper {
     /** Map of all bonds which were processed by the helper. Key = bond name, Value = list of slave NICs. */
     private Map<String, List<VdsNetworkInterface>> bonds = new HashMap<>();
 
-    private Map<String, Integer> ifaceSpeeds = new HashMap<>();
+    private InterfacesSpeed interfacesSpeed = new InterfacesSpeed(bonds);
 
     /** All network`s names that are attached to some sort of interface. */
     private Set<String> attachedNetworksNames = new HashSet<>();
@@ -118,7 +114,7 @@ public class SetupNetworksHelper {
         for (VdsNetworkInterface iface : params.getInterfaces()) {
             String name = iface.getName();
             if (addInterfaceToProcessedList(iface)) {
-                if (isBond(iface)) {
+                if (iface.isBond()) {
                     extractBondIfModified(iface, name);
                 } else if (StringUtils.isNotBlank(iface.getBondName())) {
                     extractBondSlave(iface);
@@ -209,7 +205,7 @@ public class SetupNetworksHelper {
     }
 
     private boolean qosOrCustomPropertiesChanged(VdsNetworkInterface nic, VdsNetworkInterface existingNic) {
-        return nic.isQosOverridden() != existingNic.isQosOverridden() || customPropertiesChanged(nic, existingNic);
+        return nic.isQosOverridden() != existingNic.isQosOverridden() || customPropertiesChanged(nic, existingNic);     //TODO MM: missing qos values comparison??
     }
 
     /**
@@ -356,7 +352,8 @@ public class SetupNetworksHelper {
             Network network = getExistingClusterNetworks().get(networkName);
             if (NetworkUtils.qosConfiguredOnInterface(iface, network)) {
                 String baseIfaceName = NetworkUtils.stripVlan(iface);
-                Integer speed = computeInterfaceSpeed(baseIfaceName);
+                VdsNetworkInterface baseInterface = ifaceByNames.get(baseIfaceName);
+                Integer speed = interfacesSpeed.getInterfaceSpeed(baseInterface);
 
                 // if effective interface speed can't be figured out, no need to consider it now (fail later)
                 if (speed == null) {
@@ -381,9 +378,9 @@ public class SetupNetworksHelper {
         }
 
         // if any base interface speed couldn't be figured out be protective - add a violation
-        for (Entry<String, Integer> entry : ifaceSpeeds.entrySet()) {
-            if (entry.getValue() == null) {
-                addViolation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED, entry.getKey());
+        if (interfacesSpeed.containsInterfaceWithoutKnownSpeed()) {
+            for (String interfaceName : interfacesSpeed.namesOfInterfacesWithoutKnownSpeed()) {
+                addViolation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED, interfaceName);
             }
         }
 
@@ -393,60 +390,6 @@ public class SetupNetworksHelper {
                 addViolation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, entry.getKey());
             }
         }
-    }
-
-    /**
-     * Computes the effective speed of an interface, using the following algorithm:
-     *
-     * <li>If vdsm reported a non-zero speed for the interface, use that.</li>
-     *
-     * <li>Else, if the interface is a newly-created bond and all its slaves have non-zero speed reported by vdsm,
-     * compute the effective bond speed according to bonding mode.</li>
-     *
-     * <li>Else, return null.
-     *
-     * @param ifaceName
-     *            the interface whose effective speed is to be computed.
-     * @return the effective interface speed based on vdsm report, or null in case reported speeds are missing or zero.
-     */
-    private Integer computeInterfaceSpeed(String ifaceName) {
-        VdsNetworkInterface iface = ifaceByNames.get(ifaceName);
-        if (ifaceSpeeds.containsKey(ifaceName)) {
-            return ifaceSpeeds.get(ifaceName);
-        } else {
-            Integer speed = null;
-            if (iface.hasSpeed()) {
-                // vdsm reported some speed for this interface, use it
-                speed = iface.getSpeed();
-            } else {
-                // vdsm didn't report any speed - if this is a new bond, calculate its speed
-                Iterable<VdsNetworkInterface> slaves = bonds.get(ifaceName);
-                if (slaves != null) {
-                    boolean chooseMinimum = isBondModeFailover(iface.getBondOptions());
-                    speed = chooseMinimum ? Integer.MAX_VALUE : 0;
-                    for (VdsNetworkInterface slave : slaves) {
-                        if (!slave.hasSpeed()) {
-                            speed = null;
-                            break;
-                        }
-
-                        speed = chooseMinimum ? Math.min(speed, slave.getSpeed()) : speed + slave.getSpeed();
-                    }
-                }
-            }
-
-            // cache the speed for future reference
-            ifaceSpeeds.put(ifaceName, speed);
-
-            return speed;
-        }
-    }
-
-    private boolean isBondModeFailover(String bondOptions) {
-        Matcher matcher = BOND_OPTS_MODE_CAPTURE.matcher(bondOptions);
-        matcher.find();
-        int bondMode = Integer.parseInt(matcher.group(1));
-        return bondMode == 1 || bondMode == 3;
     }
 
     private void validateCustomProperties() {
@@ -563,7 +506,7 @@ public class SetupNetworksHelper {
     private void detectSlaveChanges() {
         for (VdsNetworkInterface newIface : params.getInterfaces()) {
             VdsNetworkInterface existingIface = getExistingIfaces().get(newIface.getName());
-            if (existingIface != null && !isBond(existingIface) && existingIface.getVlanId() == null) {
+            if (existingIface != null && !existingIface.isBond() && existingIface.getVlanId() == null) {
                 String bondNameInNewIface = newIface.getBondName();
                 String bondNameInOldIface = existingIface.getBondName();
 
@@ -774,8 +717,6 @@ public class SetupNetworksHelper {
     /**
      * Make sure the network is not an external network, which we can't set up.
      *
-     * @param iface
-     *            The interface.
      * @param network
      *            The network to check.
      */
@@ -859,10 +800,6 @@ public class SetupNetworksHelper {
         return (iface.hasCustomProperties() != existingIface.hasCustomProperties())
                 || (iface.hasCustomProperties()
                         && !iface.getCustomProperties().equals(existingIface.getCustomProperties()));
-    }
-
-    private boolean isBond(VdsNetworkInterface iface) {
-        return Boolean.TRUE.equals(iface.getBonded());
     }
 
     /**
