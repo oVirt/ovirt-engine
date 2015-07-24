@@ -32,7 +32,7 @@ case "$1" in
 			echo $"Insufficient privilege" 1>&2
 			exit 4
 		fi
-		echo -n $"Starting $PROG: "
+		printf $"Starting $PROG: "
 		touch "${PIDFILE}"
 		chown "${USER}" "${PIDFILE}"
 		daemon --user "${USER}" --pidfile="${PIDFILE}" \
@@ -54,7 +54,7 @@ case "$1" in
 		[ $RETVAL -ne 0 -a ! -s "${PIDFILE}" ] && rm -f "${PIDFILE}"
 		;;
 	stop)
-		echo -n $"Stopping $PROG: "
+		printf $"Stopping $PROG: "
 		killproc -p "${PIDFILE}" -d 60
 		RETVAL=$?
 		echo

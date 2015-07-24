@@ -43,7 +43,7 @@ sign() {
 			${host:+-h} \
 			-V "-1h:+${days}d" \
 			${principals:+${principal_arg} "${principals}"} \
-			$(echo -n "${options}" | xargs -ix -d',' echo -O x) \
+			$(printf "${options}" | xargs -ix -d',' echo -O x) \
 			"${sshpub}" \
 			|| die "ssh-keygen failed"
 	) || die "Cannot sign ssh certificate"

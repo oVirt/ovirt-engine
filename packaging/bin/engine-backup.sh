@@ -1426,7 +1426,7 @@ readdbpassword() {
 		[ -t 0 ] || die "Standard input is not a terminal"
 		STTY_ORIG="$(stty -g)"
 		stty -echo || die "Failed to disable terminal input echo"
-		echo -n "Enter ${app} database password: " >&2
+		printf "Enter ${app} database password: " >&2
 		read -r dbpass
 		echo >&2
 		cat << __EOF__
