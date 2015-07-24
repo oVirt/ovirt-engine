@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.scheduling;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -19,6 +20,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscovery;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
@@ -37,7 +39,7 @@ public class SchedulingManagerTest {
             MockConfigRule.mockConfig(ConfigValues.EnableVdsLoadBalancing, false)
             );
 
-    @Inject
+    @Inject @Spy
     private Instance<SchedulingManager> schedulingManager;
     @Inject
     private DbFacade dbFacade;
@@ -70,5 +72,6 @@ public class SchedulingManagerTest {
     @Test
     public void testSchedule() throws Exception {
         assertNotNull(schedulingManager.get());
+        verify(schedulingManager.get()).init();
     }
 }
