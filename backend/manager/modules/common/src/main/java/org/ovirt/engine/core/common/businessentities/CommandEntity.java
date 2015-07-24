@@ -14,6 +14,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
     private static final long serialVersionUID = 5293055556971973650L;
     private Guid userId;
     private Guid commandId;
+    private Guid parentCommandId;
     private Guid rootCommandId;
     private Guid jobId;
     private Guid stepId;
@@ -37,6 +38,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
         int result = 1;
         result = prime * result + (Guid.isNullOrEmpty(commandId) ? 0 : commandId.hashCode());
         result = prime * result + ((commandType == null) ? 0 : commandType.hashCode());
+        result = prime * result + (Guid.isNullOrEmpty(parentCommandId) ? 0 : parentCommandId.hashCode());
         result = prime * result + (Guid.isNullOrEmpty(rootCommandId) ? 0 : rootCommandId.hashCode());
         return result;
     }
@@ -52,6 +54,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
         CommandEntity other = (CommandEntity) obj;
         return ObjectUtils.objectsEqual(commandId, other.commandId)
                 && commandType == other.commandType
+                && ObjectUtils.objectsEqual(getGuid(parentCommandId), getGuid(other.parentCommandId))
                 && ObjectUtils.objectsEqual(getGuid(rootCommandId), getGuid(other.rootCommandId));
     }
 
@@ -81,6 +84,14 @@ public class CommandEntity implements BusinessEntity<Guid> {
 
     public void setId(Guid commandId) {
         this.commandId = commandId;
+    }
+
+    public Guid getParentCommandId() {
+        return parentCommandId;
+    }
+
+    public void setParentCommandId(Guid parentCommandId) {
+        this.parentCommandId = parentCommandId;
     }
 
     public Guid getRootCommandId() {
@@ -125,6 +136,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
 
     public static CommandEntity buildCommandEntity(Guid userId,
                                                    Guid commandId,
+                                                   Guid parentCommandId,
                                                    Guid rootCommandId,
                                                    Guid jobId,
                                                    Guid stepId,
@@ -136,6 +148,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
         CommandEntity entity = new CommandEntity();
         entity.setUserId(userId);
         entity.setId(commandId);
+        entity.setParentCommandId(parentCommandId);
         entity.setRootCommandId(rootCommandId);
         entity.setJobId(jobId);
         entity.setStepId(stepId);

@@ -51,5 +51,5 @@ public interface CommandCRUDOperations {
 
     void updateCallbackNotified(Guid commandId);
 
-    List<CommandEntity> getChildCmdsByParentCmdId(Guid cmdId);
+    List<CommandEntity> getChildCmdsByRootCmdId(Guid cmdId);
 }

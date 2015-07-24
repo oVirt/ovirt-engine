@@ -215,7 +215,10 @@ public class CoCoAsyncTaskHelper {
         }
 
         CommandEntity cmdEntity = coco.getCommandEntity(asyncTask.getCommandId());
-        CommandEntity parentEntity = coco.getCommandEntity(asyncTask.getRootCommandId());
+        CommandEntity parentEntity = null;
+        if (cmdEntity != null) {
+            parentEntity = coco.getCommandEntity(cmdEntity.getParentCommandId());
+        }
         return (cmdEntity != null && !cmdEntity.isCallbackEnabled() &&
                 (parentEntity == null || !parentEntity.isCallbackEnabled()));
     }
@@ -253,7 +256,9 @@ public class CoCoAsyncTaskHelper {
 
             @Override
             public Void runInTransaction() {
-                coco.persistCommand(asyncTask.getRootCmdEntity());
+                if (!asyncTask.getChildCmdEntity().getRootCommandId().equals(asyncTask.getChildCmdEntity().getId())) {
+                    coco.persistCommand(asyncTask.getRootCmdEntity());
+                }
                 coco.persistCommand(asyncTask.getChildCmdEntity());
                 DbFacade.getInstance().getAsyncTaskDao().saveOrUpdate(asyncTask);
                 return null;
@@ -296,8 +301,7 @@ public class CoCoAsyncTaskHelper {
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
         Guid parentCommandId =
-                command.getParameters().getParentParameters() == null ? Guid.Empty : command.getParameters()
-                        .getParentParameters()
+                command.getParentParameters() == null ? Guid.Empty : command.getParentParameters()
                         .getCommandId();
         VdcActionParametersBase parentParameters = command.getParentParameters(parentCommand);
         if (VdcActionType.Unknown.equals(command.getParameters().getCommandType())) {

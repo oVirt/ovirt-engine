@@ -116,7 +116,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
 
     private boolean hasRunningChildCommands() {
         Guid rootCmdId = getParameters().getDbAsyncTask().getRootCommandId();
-        for (CommandEntity entity : coco.getChildCmdsByParentCmdId(rootCmdId)) {
+        for (CommandEntity entity : coco.getChildCmdsByRootCmdId(rootCmdId)) {
             if (!hasCompleted(entity) && !coco.doesCommandContainAsyncTask(entity.getId())) {
                 return true;
             }
