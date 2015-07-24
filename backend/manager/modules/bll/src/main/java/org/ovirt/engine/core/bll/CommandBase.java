@@ -141,6 +141,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private List<SPMAsyncTaskHandler> taskHandlers;
 
     private CommandStatus commandStatus = CommandStatus.NOT_STARTED;
+    private VdcActionType rootCommandType;
+    private VdcActionType parentCommandType;
 
     protected boolean isDataCenterWithSpm() {
         return isDataCenterWithSpm(getStoragePool());
@@ -773,7 +775,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected boolean hasParentCommand() {
-        return getParameters().getParentCommand() != VdcActionType.Unknown;
+        return getParentCommandType() != VdcActionType.Unknown;
     }
 
     private boolean isCanDoActionSupportsTransaction() {
@@ -1177,19 +1179,20 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected boolean isExecutedAsChildCommand() {
-        return getParameters().getParentCommand() != VdcActionType.Unknown;
+        return getParentCommandType() != VdcActionType.Unknown;
     }
 
     /**
      * Calculates the proper parameters for the task
-     * @param parentCommandType parent command type for which the task is created
+     * @param actionType parent command type for which the task is created
      * @param parameters parameter of the creating command
      */
-    protected VdcActionParametersBase getParametersForTask(VdcActionType parentCommandType,
+    protected VdcActionParametersBase getParametersForTask(VdcActionType actionType,
             VdcActionParametersBase parameters) {
+        VdcActionType parentCommandType = getParentCommandType(actionType);
         // If there is no parent command, the command that its type
         // will be stored in the DB for thr task is the one creating the command
-        VdcActionParametersBase parentParameters = parameters.getParentParameters();
+        VdcActionParametersBase parentParameters = getParentParameters();
         if (parentCommandType == VdcActionType.Unknown || parentParameters == null) {
             return parameters;
         }
@@ -1512,8 +1515,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return persistAsyncTaskPlaceHolder(parentCommand, DEFAULT_TASK_KEY);
     }
 
-    public Guid persistAsyncTaskPlaceHolder(VdcActionType parentCommand, final String taskKey) {
-
+    public Guid persistAsyncTaskPlaceHolder(VdcActionType actionType, final String taskKey) {
+        VdcActionType parentCommand = getRootCommandType(actionType);
         Guid taskId = Guid.Empty;
         try {
             AsyncTaskCreationInfo creationInfo = new AsyncTaskCreationInfo();
@@ -1716,7 +1719,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             VdcActionType parentCommand,
             String description,
             Map<Guid, VdcObjectType> entitiesMap) {
-        return CommandCoordinatorUtil.createTask(taskId, this, asyncTaskCreationInfo, parentCommand, description, entitiesMap);
+        return CommandCoordinatorUtil.createTask(taskId, this, asyncTaskCreationInfo, getRootCommandType(parentCommand), description, entitiesMap);
     }
 
     /**
@@ -1776,7 +1779,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected ArrayList<Guid> getTaskIdList() {
-        return getParameters().getParentCommand() != VdcActionType.Unknown ? getReturnValue().getInternalVdsmTaskIdList()
+        return getParentCommandType() != VdcActionType.Unknown ? getReturnValue().getInternalVdsmTaskIdList()
                 : getReturnValue().getVdsmTaskIdList();
     }
 
@@ -2269,10 +2272,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
-    private CommandEntity buildCommandEntity(Guid parentCommandId, boolean enableCallback) {
+    private CommandEntity buildCommandEntity(Guid rootCommandId, boolean enableCallback) {
         return CommandEntity.buildCommandEntity(getUserId(),
                 getCommandId(),
-                parentCommandId,
+                getParameters().getParentParameters() == null ? Guid.Empty : getParameters().getParentParameters().getCommandId(),
+                rootCommandId,
                 getExecutionContext() == null || getExecutionContext().getJob() == null ? Guid.Empty : getExecutionContext().getJob().getId(),
                 getExecutionContext() == null || getExecutionContext().getStep() == null ? Guid.Empty : getExecutionContext().getStep().getId(),
                 getActionType(),
@@ -2402,9 +2406,66 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return SessionDataContainer.getInstance().getEngineSessionSeqId(sessionId);
     }
 
+    private VdcActionType getParentCommandType() {
+        VdcActionType parentCommand = VdcActionType.Unknown;
+        if (parentHasCallback()) {
+            if (getTaskType() == AsyncTaskType.notSupported) {
+                parentCommand = getParameters().getParentCommand();
+            }
+        } else {
+            parentCommand = getParameters().getParentCommand();
+        }
+        return parentCommand;
+    }
+
+    public VdcActionParametersBase getParentParameters() {
+        VdcActionParametersBase parentParameters = getParameters();
+        if (parentHasCallback()) {
+            if (getTaskType() == AsyncTaskType.notSupported) {
+                parentParameters = getParameters().getParentParameters();
+            }
+        } else {
+            parentParameters = getParameters().getParentParameters();
+        }
+        return parentParameters;
+    }
+
+    private VdcActionType getRootCommandType(VdcActionType actionType) {
+        if (rootCommandType != null) {
+            return rootCommandType;
+        }
+        rootCommandType = getActionType();
+        if (parentHasCallback()) {
+            if (getTaskType() == AsyncTaskType.notSupported) {
+                rootCommandType = getParameters().getParentCommand() != VdcActionType.Unknown ?
+                        getParameters().getParentCommand() : actionType;
+            }
+        } else {
+            rootCommandType = getParameters().getParentCommand() != VdcActionType.Unknown ?
+                    getParameters().getParentCommand() : actionType;
+        }
+        return rootCommandType;
+    }
+
+    private VdcActionType getParentCommandType(VdcActionType actionType) {
+        if (parentCommandType != null) {
+            return parentCommandType;
+        }
+        parentCommandType = VdcActionType.Unknown;
+        if (parentHasCallback()) {
+            if (getTaskType() == AsyncTaskType.notSupported) {
+                parentCommandType = getParameters().getParentCommand() != VdcActionType.Unknown ?
+                        getParameters().getParentCommand() : actionType;
+            }
+        } else {
+            parentCommandType = getParameters().getParentCommand() != VdcActionType.Unknown ?
+                    getParameters().getParentCommand() : actionType;
+        }
+        return parentCommandType;
+    }
+
     protected <P extends VdcActionParametersBase> P withRootCommandInfo(P params, VdcActionType actionType) {
-        VdcActionType parentCommand = getParameters().getParentCommand() != VdcActionType.Unknown ?
-                getParameters().getParentCommand() : actionType;
+        VdcActionType parentCommand = getParentCommandType(actionType);
         params.setParentParameters(getParametersForTask(parentCommand, getParameters()));
         params.setParentCommand(parentCommand);
         return params;

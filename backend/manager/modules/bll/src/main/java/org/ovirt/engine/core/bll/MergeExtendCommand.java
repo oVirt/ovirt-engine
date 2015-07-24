@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.action.MergeParameters;
 import org.ovirt.engine.core.common.action.RefreshVolumeParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -108,42 +107,6 @@ public class MergeExtendCommand<T extends MergeParameters>
         return Collections.singletonList(new PermissionSubject(getParameters().getStorageDomainId(),
                 VdcObjectType.Storage,
                 getActionType().getActionGroup()));
-    }
-
-    @Override
-    protected void endWithFailure() {
-        handleAnyChildSPMTaskCompletion(false);
-    }
-
-    @Override
-    protected void endSuccessfully() {
-        handleAnyChildSPMTaskCompletion(true);
-        setSucceeded(true);
-    }
-
-    private void handleAnyChildSPMTaskCompletion(boolean succeeded) {
-        List<Guid> childCommandIds = CommandCoordinatorUtil.getChildCommandIds(getCommandId());
-        if (childCommandIds.isEmpty()) {
-            return;
-        }
-        Guid currentChildId = childCommandIds.get(0);
-        log.info("Handling child command {} completion", currentChildId);
-
-        if (!Guid.isNullOrEmpty(currentChildId)) {
-            CommandBase<?> command = CommandCoordinatorUtil.retrieveCommand(currentChildId);
-            CommandEntity cmdEntity = CommandCoordinatorUtil.getCommandEntity(currentChildId);
-            if (command != null && cmdEntity != null && !cmdEntity.isCallbackNotified()) {
-                if (!succeeded) {
-                    command.getParameters().setTaskGroupSuccess(false);
-                }
-                Backend.getInstance().endAction(VdcActionType.ExtendImageSize,
-                        command.getParameters(),
-                        cloneContextAndDetachFromParent());
-                if (succeeded) {
-                    cmdEntity.setCallbackNotified(true);
-                }
-            }
-        }
     }
 
     @Override

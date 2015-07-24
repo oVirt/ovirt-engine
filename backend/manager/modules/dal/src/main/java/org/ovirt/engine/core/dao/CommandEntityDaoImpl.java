@@ -66,6 +66,7 @@ public class CommandEntityDaoImpl extends DefaultGenericDao<CommandEntity, Guid>
             result.setStepId(Guid.createGuidFromString(resultSet.getString("step_id")));
             result.setCreatedAt(DbFacadeUtils.fromDate(resultSet.getTimestamp("created_at")));
             result.setCommandType(VdcActionType.forValue(resultSet.getInt("command_type")));
+            result.setParentCommandId(Guid.createGuidFromString(resultSet.getString("parent_command_id")));
             result.setRootCommandId(Guid.createGuidFromString(resultSet.getString("root_command_id")));
             result.setCommandParameters(deserializeParameters(resultSet.getString("command_parameters"), resultSet.getString("command_params_class")));
             result.setReturnValue(deserializeReturnValue(resultSet.getString("return_value"), resultSet.getString("return_value_class")));
@@ -108,6 +109,7 @@ public class CommandEntityDaoImpl extends DefaultGenericDao<CommandEntity, Guid>
         return getCustomMapSqlParameterSource().addValue("user_id", Guid.isNullOrEmpty(entity.getUserId()) ? Guid.Empty : entity.getUserId())
                 .addValue("command_id", Guid.isNullOrEmpty(entity.getId()) ? Guid.Empty : entity.getId())
                 .addValue("command_type", entity.getCommandType().getValue())
+                .addValue("parent_command_id", entity.getParentCommandId())
                 .addValue("root_command_id", Guid.isNullOrEmpty(entity.getRootCommandId()) ? Guid.Empty : entity.getRootCommandId())
                 .addValue("job_id", Guid.isNullOrEmpty(entity.getJobId()) ? Guid.Empty : entity.getJobId())
                 .addValue("step_id", Guid.isNullOrEmpty(entity.getStepId()) ? Guid.Empty : entity.getStepId())
