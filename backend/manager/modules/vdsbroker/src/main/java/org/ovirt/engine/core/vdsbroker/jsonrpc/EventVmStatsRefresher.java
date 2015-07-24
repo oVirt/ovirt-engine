@@ -126,6 +126,8 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
 
             @Override
             public void onError(Throwable t) {
+                // communication issue is delivered as a message so we need to request for more
+                subscription.request(1);
             }
 
             @Override
