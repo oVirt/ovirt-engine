@@ -84,7 +84,7 @@ dbfunc_psql_statement_parse_line() {
 		line="$(expr substr "${line}" 2 $((${#line}+1)))"
 		if [ -n "${escape}" ]; then
 			escape=
-			echo -n "$c"
+			ret="${ret}${c}"
 		else
 			case "${c}" in
 				\\) escape=1 ;;
