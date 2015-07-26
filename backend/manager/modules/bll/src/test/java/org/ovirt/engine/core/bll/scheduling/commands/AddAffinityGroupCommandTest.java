@@ -98,6 +98,12 @@ public class AddAffinityGroupCommandTest {
     }
 
     @Test
+    public void canDoAction_nonEnforcing_Test() {
+        affinityGroup.setEnforcing(false);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
+    @Test
     public void canDoAction_succeed_Test() {
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }

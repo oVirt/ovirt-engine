@@ -270,6 +270,7 @@ public class AffinityRulesEnforcementManagerTest {
         doReturn(isPositive).when(ag).isPositive();
         doReturn(vmList).when(ag).getEntityIds();
         doReturn(vdsGroupId).when(ag).getClusterId();
+        doReturn(true).when(ag).isEnforcing();
 
         when(_affinityGroupDao.get(id)).thenReturn(ag);
 

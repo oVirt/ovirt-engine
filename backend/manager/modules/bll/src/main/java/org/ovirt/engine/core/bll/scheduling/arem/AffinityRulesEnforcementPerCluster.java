@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -115,14 +116,23 @@ public class AffinityRulesEnforcementPerCluster {
     }
 
     public VM chooseNextVmToMigrate() {
-        List<AffinityGroup> allAffinityGroups = getAllAffinityGroups();
+        List<AffinityGroup> allHardAffinityGroups = getAllAffinityGroups();
+
+        //Filtering all non enforcing groups (Leaving only hard affinity groups).
+        for(Iterator<AffinityGroup> it = allHardAffinityGroups.iterator(); it.hasNext();) {
+            AffinityGroup ag = it.next();
+            if(!ag.isEnforcing()) {
+                it.remove();
+            }
+        }
+
         Set<Set<Guid>> unifiedPositiveAffinityGroups = AffinityRulesUtils.getUnifiedPositiveAffinityGroups(
-                allAffinityGroups);
+                allHardAffinityGroups);
         List<AffinityGroup> unifiedAffinityGroups = AffinityRulesUtils.setsToAffinityGroups(
                 unifiedPositiveAffinityGroups);
 
         // Add negative affinity groups
-        for (AffinityGroup ag: allAffinityGroups) {
+        for (AffinityGroup ag: allHardAffinityGroups) {
             if (ag.isPositive()) {
                 continue;
             }
