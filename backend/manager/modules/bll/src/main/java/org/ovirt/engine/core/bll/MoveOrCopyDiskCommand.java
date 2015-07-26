@@ -171,7 +171,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         StorageDomainValidator storageDomainValidator = createStorageDomainValidator();
         if (validate(storageDomainValidator.isDomainWithinThresholds())) {
             getImage().getSnapshots().addAll(getAllImageSnapshots());
-            return validate(storageDomainValidator.hasSpaceForClonedDisk(getImage()));
+            return validate(storageDomainValidator.hasSpaceForDiskWithSnapshots(getImage()));
         }
         return false;
     }

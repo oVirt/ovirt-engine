@@ -256,14 +256,14 @@ public class MoveOrCopyDiskCommandTest {
 
     private static StorageDomainValidator mockStorageDomainValidatorWithoutSpace() {
         StorageDomainValidator storageDomainValidator = mockStorageDomainValidator();
-        when(storageDomainValidator.hasSpaceForClonedDisk(any(DiskImage.class))).thenReturn(
+        when(storageDomainValidator.hasSpaceForDiskWithSnapshots(any(DiskImage.class))).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         return storageDomainValidator;
     }
 
     private static StorageDomainValidator mockStorageDomainValidatorWithSpace() {
         StorageDomainValidator storageDomainValidator = mockStorageDomainValidator();
-        when(storageDomainValidator.hasSpaceForClonedDisk(any(DiskImage.class))).thenReturn(ValidationResult.VALID);
+        when(storageDomainValidator.hasSpaceForDiskWithSnapshots(any(DiskImage.class))).thenReturn(ValidationResult.VALID);
         return storageDomainValidator;
     }
 
