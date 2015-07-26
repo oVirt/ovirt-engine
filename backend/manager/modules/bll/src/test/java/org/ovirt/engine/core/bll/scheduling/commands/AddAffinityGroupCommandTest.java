@@ -24,7 +24,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
-
 @RunWith(MockitoJUnitRunner.class)
 public class AddAffinityGroupCommandTest {
 
@@ -100,6 +99,12 @@ public class AddAffinityGroupCommandTest {
     @Test
     public void canDoAction_nonEnforcing_Test() {
         affinityGroup.setEnforcing(false);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
+    @Test
+    public void canDoAction_emptyAffinityGroup() {
+        affinityGroup.setEntityIds(null);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 

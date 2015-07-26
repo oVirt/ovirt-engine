@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,9 +56,21 @@ public class AffinityRulesUtils {
         Set<Set<Guid>> uag = new HashSet<>();
         Map<Guid, Set<Guid>> vmIndex = new HashMap<>();
 
-        // Initialize the single element groups by taking all VMs that are referenced
-        // from any affinity group
-        for(AffinityGroup ag: affinityGroups) {
+        /**
+         * Initialize the single element groups by taking all VMs that are referenced
+         * from any affinity group
+         */
+        for(Iterator<AffinityGroup> it = affinityGroups.iterator(); it.hasNext();) {
+            AffinityGroup ag = it.next();
+            /*
+             * This check is done in order to prevent getting NullPointerException when the entityIds list
+             * is null. This can can happen when using the REST api to add an affinity group.
+             */
+            if(ag.getEntityIds() == null) {
+                it.remove();
+                continue;
+            }
+
             for(Guid id : ag.getEntityIds()) {
                 Set<Guid> temp = new HashSet<>();
                 temp.add(id);
