@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.VmPool;
+import org.ovirt.engine.api.model.VmPoolType;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
 
@@ -45,6 +46,11 @@ public class VmPoolMapper {
         if (model.isSetDisplay() && model.getDisplay().isSetProxy()) {
             entity.setSpiceProxy("".equals(model.getDisplay().getProxy()) ? null : model.getDisplay().getProxy());
         }
+        if (model.isSetType()) {
+            VmPoolType type = VmPoolType.fromValue(model.getType());
+            entity.setVmPoolType(type != null
+                    ? map(type, null) : org.ovirt.engine.core.common.businessentities.VmPoolType.Automatic);
+        }
         return entity;
     }
 
@@ -84,7 +90,37 @@ public class VmPoolMapper {
             display.setProxy(entity.getSpiceProxy());
             model.setDisplay(display);
         }
+        model.setType(map(entity.getVmPoolType(), null));
 
         return model;
     }
+
+    @Mapping(from = VmPoolType.class, to = org.ovirt.engine.core.common.businessentities.VmPoolType.class)
+    public static org.ovirt.engine.core.common.businessentities.VmPoolType map(
+            VmPoolType vmPoolType, org.ovirt.engine.core.common.businessentities.VmPoolType incoming) {
+        switch (vmPoolType) {
+            case AUTOMATIC:
+                return org.ovirt.engine.core.common.businessentities.VmPoolType.Automatic;
+            case MANUAL:
+                return org.ovirt.engine.core.common.businessentities.VmPoolType.Manual;
+            default:
+                return null;
+        }
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.VmPoolType.class, to = String.class)
+    public static String map(org.ovirt.engine.core.common.businessentities.VmPoolType vmPoolType, String incoming) {
+        if (vmPoolType == null) {
+            return null;
+        }
+        switch (vmPoolType) {
+            case Automatic:
+                return VmPoolType.AUTOMATIC.value();
+            case Manual:
+                return VmPoolType.MANUAL.value();
+            default:
+                return null;
+        }
+    }
+
 }

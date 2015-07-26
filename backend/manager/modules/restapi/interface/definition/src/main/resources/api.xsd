@@ -646,6 +646,7 @@
           <xs:element ref="authentication_methods" minOccurs="0"/>
           <xs:element ref="kdump_states" minOccurs="0"/>
           <xs:element ref="spm_states" minOccurs="0"/>
+          <xs:element ref="vm_pool_types" minOccurs="0"/>
           <!--  External tasks -->
           <xs:element ref="step_types" minOccurs="0"/>
           <xs:element ref="payload_encodings" minOccurs="0"/>
@@ -1183,6 +1184,20 @@
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="SchedulingPolicyUnitTypes" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="vm_pool_types" type="VmPoolTypes"/>
+
+  <xs:complexType name="VmPoolTypes">
+    <xs:sequence>
+      <xs:element name="vm_pool_type" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="VmPoolTypes"/>
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
@@ -3332,6 +3347,7 @@
           <xs:element ref="display" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="rng_device" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="soundcard_enabled" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
