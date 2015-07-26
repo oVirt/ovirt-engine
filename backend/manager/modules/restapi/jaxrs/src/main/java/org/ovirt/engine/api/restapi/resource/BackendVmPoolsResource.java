@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
-import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -65,7 +64,6 @@ public class BackendVmPoolsResource
         }
 
         org.ovirt.engine.core.common.businessentities.VmPool entity = map(pool);
-        entity.setVmPoolType(VmPoolType.Automatic);
 
         VM vm = mapToVM(pool, template);
 

@@ -3065,7 +3065,7 @@ actions:
       - mandatoryArguments: {vmpool.cluster.id|name: 'xs:string', vmpool.template.id|name: 'xs:string',
           vmpool.name: 'xs:string'}
         optionalArguments: {vmpool.comment: 'xs:string', vmpool.size: 'xs:int', vmpool.max_user_vms: 'xs:int', vmpool.display.proxy: 'xs:string',
-          vmpool.description: 'xs:string', vmpool.soundcard_enabled: 'xs:boolean'}
+          vmpool.description: 'xs:string', vmpool.soundcard_enabled: 'xs:boolean', vmpool.type: 'xs:string'}
         description: add a new vm pool to the system
 - name: /vmpools/{vmpool:id}/permissions|rel=get
   description: get the list of permissions for the specified vm pool

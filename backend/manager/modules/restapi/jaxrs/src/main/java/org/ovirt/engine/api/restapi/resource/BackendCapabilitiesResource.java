@@ -130,6 +130,8 @@ import org.ovirt.engine.api.model.VmAffinity;
 import org.ovirt.engine.api.model.VmDeviceType;
 import org.ovirt.engine.api.model.VmDeviceTypes;
 import org.ovirt.engine.api.model.VmPauseDetails;
+import org.ovirt.engine.api.model.VmPoolType;
+import org.ovirt.engine.api.model.VmPoolTypes;
 import org.ovirt.engine.api.model.VmStates;
 import org.ovirt.engine.api.model.VmStatus;
 import org.ovirt.engine.api.model.VmType;
@@ -302,6 +304,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addRngSources(version, RngSource.values());
         addPolicyUnitTypes(version, PolicyUnitType.values());
         addSpmStates(version, SpmState.values());
+        addVmPoolTypes(version, VmPoolType.values());
         addNetworkPluginTypes(version, NetworkPluginType.values());
         addMessageBrokerTypes(version, MessageBrokerType.values());
         addConsoleDisconnectActions(version, ConsoleDisconnectAction.values());
@@ -983,6 +986,16 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
                 states.getSpmStates().add(state.value());
             }
             version.setSpmStates(states);
+        }
+    }
+
+    private void addVmPoolTypes(VersionCaps version, VmPoolType[] values) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_6)) {
+            VmPoolTypes types = new VmPoolTypes();
+            for (VmPoolType state : values) {
+                types.getVmPoolTypes().add(state.value());
+            }
+            version.setVmPoolTypes(types);
         }
     }
 
