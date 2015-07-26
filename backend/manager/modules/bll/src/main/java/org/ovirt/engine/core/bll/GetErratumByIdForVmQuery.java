@@ -31,7 +31,7 @@ public class GetErratumByIdForVmQuery<P extends HostErratumQueryParameters> exte
 
         Provider<?> provider = providerDao.get(vm.getProviderId());
         if (provider != null) {
-            HostProviderProxy proxy = (HostProviderProxy) ProviderProxyFactory.getInstance().create(provider);
+            HostProviderProxy proxy = ProviderProxyFactory.getInstance().create(provider);
             getQueryReturnValue().setReturnValue(proxy.getErratumForHost(vm.getVmHost(), getParameters().getErratumId()));
         }
     }

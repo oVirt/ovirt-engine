@@ -25,7 +25,7 @@ public class GetErrataForHostQuery<P extends IdQueryParameters> extends QueriesC
 
         Provider<?> provider = getDbFacade().getProviderDao().get(host.getHostProviderId());
         if (provider != null) {
-            HostProviderProxy proxy = (HostProviderProxy) ProviderProxyFactory.getInstance().create(provider);
+            HostProviderProxy proxy = ProviderProxyFactory.getInstance().create(provider);
             getQueryReturnValue().setReturnValue(proxy.getErrataForHost(host.getHostName()));
         } else {
             getQueryReturnValue().setReturnValue(Collections.<Erratum> emptyList());

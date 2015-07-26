@@ -21,7 +21,7 @@ public class GetErratumByIdForHostQuery<P extends HostErratumQueryParameters> ex
 
         Provider<?> provider = getDbFacade().getProviderDao().get(host.getHostProviderId());
         if (provider != null) {
-            HostProviderProxy proxy = (HostProviderProxy) ProviderProxyFactory.getInstance().create(provider);
+            HostProviderProxy proxy = ProviderProxyFactory.getInstance().create(provider);
             getQueryReturnValue().setReturnValue(proxy.getErratumForHost(host.getHostName(),
                     getParameters().getErratumId()));
         }
