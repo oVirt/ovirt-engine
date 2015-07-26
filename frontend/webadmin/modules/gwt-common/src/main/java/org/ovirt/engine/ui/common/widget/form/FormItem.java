@@ -1,6 +1,11 @@
 package org.ovirt.engine.ui.common.widget.form;
 
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
+
+import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -17,6 +22,8 @@ public class FormItem {
 
     }
 
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+
     private static final int UNASSIGNED_ROW = -1;
 
     private AbstractFormPanel formPanel;
@@ -30,8 +37,16 @@ public class FormItem {
     private String name;
     private Widget valueWidget;
 
+    /**
+     * Replaces provided value widget if {@code defaultValueCondition} holds {@code true}.
+     */
     private TextBoxLabel defaultValueLabel;
     private DefaultValueCondition defaultValueCondition;
+
+    /**
+     * Replaces resolved value widget if the widget's text is {@code null} or empty string.
+     */
+    private final TextBoxLabel emptyValueLabel = new TextBoxLabel(constants.unAvailablePropertyLabel());
 
     private boolean autoPlacement = false;
     private int autoPlacementRow = UNASSIGNED_ROW;
@@ -88,6 +103,14 @@ public class FormItem {
     public FormItem withDefaultValue(String defaultValue, DefaultValueCondition defaultValueCondition) {
         this.defaultValueLabel = new TextBoxLabel(defaultValue);
         this.defaultValueCondition = defaultValueCondition;
+        return this;
+    }
+
+    /**
+     * Set custom "empty" value shown when the resolved value widget's text is {@code null} or empty string.
+     */
+    public FormItem withEmptyValue(String emptyValue) {
+        emptyValueLabel.setText(emptyValue);
         return this;
     }
 
@@ -159,7 +182,11 @@ public class FormItem {
      */
     public Widget resolveValueWidget() {
         boolean showDefaultValue = defaultValueCondition != null && defaultValueCondition.showDefaultValue();
-        return showDefaultValue ? defaultValueLabel : valueWidget;
+        Widget resolvedValueWidget = showDefaultValue ? defaultValueLabel : valueWidget;
+
+        boolean showEmptyValue = (resolvedValueWidget instanceof HasText)
+                && StringUtils.isEmpty(((HasText) resolvedValueWidget).getText());
+        return showEmptyValue ? emptyValueLabel : resolvedValueWidget;
     }
 
 }
