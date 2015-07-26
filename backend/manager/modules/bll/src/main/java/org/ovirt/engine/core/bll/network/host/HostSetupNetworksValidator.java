@@ -331,8 +331,8 @@ public class HostSetupNetworksValidator {
 
     ValidationResult validateModifiedBondSlaves(Bond modifiedOrNewBond) {
 
-        Map<String, NetworkAttachment> removedNetworkAttachmentsByNicName =
-            new MapNetworkAttachments(removedNetworkAttachments).byNicName();
+        Set<String> removedNetworkAttachmentsNicNames =
+            new MapNetworkAttachments(removedNetworkAttachments).nicNames();
 
 
         for (String slaveName : modifiedOrNewBond.getSlaves()) {
@@ -368,7 +368,7 @@ public class HostSetupNetworksValidator {
             }
 
             boolean noNetworkOnInterfaceOrItsVlan =
-                interfaceOrItsVlanDoesNotHaveNetworkOrOneIsAboutToBeRemovedFromIt(removedNetworkAttachmentsByNicName,
+                interfaceOrItsVlanDoesNotHaveNetworkOrOneIsAboutToBeRemovedFromIt(removedNetworkAttachmentsNicNames,
                     potentialSlave);
 
             if (!noNetworkOnInterfaceOrItsVlan) {
@@ -416,14 +416,14 @@ public class HostSetupNetworksValidator {
         return ValidationResult.VALID;
     }
 
-    private boolean interfaceOrItsVlanDoesNotHaveNetworkOrOneIsAboutToBeRemovedFromIt(Map<String, NetworkAttachment> removedNetworkAttachmentsByNicName,
+    private boolean interfaceOrItsVlanDoesNotHaveNetworkOrOneIsAboutToBeRemovedFromIt(Set<String> removedNetworkAttachmentsNicNames,
         VdsNetworkInterface potentialSlave) {
-        boolean validSlave = interfaceDoesNotHaveNetworkOrOneIsAboutToBeRemovedFromIt(removedNetworkAttachmentsByNicName,
+        boolean validSlave = interfaceDoesNotHaveNetworkOrOneIsAboutToBeRemovedFromIt(removedNetworkAttachmentsNicNames,
             potentialSlave);
         List<VdsNetworkInterface> vlanInterfacesForInterface = vlanInterfacesForInterface(potentialSlave);
         for (VdsNetworkInterface vdsNetworkInterface : vlanInterfacesForInterface) {
             validSlave = validSlave
-                && interfaceDoesNotHaveNetworkOrOneIsAboutToBeRemovedFromIt(removedNetworkAttachmentsByNicName,
+                && interfaceDoesNotHaveNetworkOrOneIsAboutToBeRemovedFromIt(removedNetworkAttachmentsNicNames,
                 vdsNetworkInterface);
         }
         return validSlave;
@@ -440,13 +440,13 @@ public class HostSetupNetworksValidator {
         return result;
     }
 
-    private boolean interfaceDoesNotHaveNetworkOrOneIsAboutToBeRemovedFromIt(Map<String, NetworkAttachment> removedNetworkAttachmentsByNicName,
+    private boolean interfaceDoesNotHaveNetworkOrOneIsAboutToBeRemovedFromIt(Set<String> removedNetworkAttachmentsNicNames,
         VdsNetworkInterface potentialSlave) {
         String slaveNetworkName = potentialSlave.getNetworkName();
         boolean slaveHadNetworkAttached = slaveNetworkName != null;
         if (slaveHadNetworkAttached) {
             boolean attachmentBoundToNicBecomingSlaveRemoved =
-                removedNetworkAttachmentsByNicName.containsKey(potentialSlave.getName());
+                    removedNetworkAttachmentsNicNames.contains(potentialSlave.getName());
 
             if (!attachmentBoundToNicBecomingSlaveRemoved) {
                 return false;

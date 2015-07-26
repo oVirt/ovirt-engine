@@ -2,8 +2,10 @@ package org.ovirt.engine.core.common.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.compat.Guid;
@@ -31,12 +33,16 @@ public class MapNetworkAttachments {
         return result;
     }
 
-    public Map<Guid, NetworkAttachment> byNetworkId() {
-        return group(new ByNetworkId(), networkAttachments);
+    public Set<String> nicNames() {
+        Set<String> result = new HashSet<>();
+        for (NetworkAttachment attachment : networkAttachments) {
+            result.add(new ByNicName().keyFrom(attachment));
+        }
+        return result;
     }
 
-    public Map<String, NetworkAttachment> byNicName() {
-        return group(new ByNicName(), networkAttachments);
+    public Map<Guid, NetworkAttachment> byNetworkId() {
+        return group(new ByNetworkId(), networkAttachments);
     }
 
     private static interface CalculateKey<I, K> {

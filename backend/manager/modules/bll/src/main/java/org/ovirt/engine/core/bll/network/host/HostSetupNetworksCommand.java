@@ -57,6 +57,7 @@ import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -144,6 +145,10 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 getParameters().getNetworkAttachments(),
                 getNetworkBusinessEntityMap());
 
+        networkIdNetworkNameCompleter.completeNetworkAttachments(
+                getExistingAttachments(),
+                getNetworkBusinessEntityMap());
+
         NicLabelsCompleter labelsCompleter = new NicLabelsCompleter(getParameters(),
                 getExistingAttachments(),
                 getClusterNetworks(),
@@ -213,8 +218,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     }
 
     private ValidationResult checkForOutOfSyncNetworks() {
-        BusinessEntityMap<VdsNetworkInterface> existingNicsBusinessEntityMap = getExistingNicsBusinessEntityMap();
-
         for (NetworkAttachment networkAttachment : getParameters().getNetworkAttachments()) {
             boolean newNetworkAttachment = networkAttachment.getId() == null;
             if (newNetworkAttachment) {
@@ -231,13 +234,18 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 Entities.businessEntitiesById(getExistingAttachments());
             NetworkAttachment existingNetworkAttachment = existingNetworkAttachmentMap.get(networkAttachment.getId());
 
-            VdsNetworkInterface vdsNetworkInterface = existingNicsBusinessEntityMap.get(existingNetworkAttachment.getNicId());
+            VdsNetworkInterface vdsNetworkInterface =
+                    Entities.hostInterfacesByNetworkName(getExistingNics()).get(existingNetworkAttachment.getNetworkName());
             Network network = getNetworkBusinessEntityMap().get(existingNetworkAttachment.getNetworkId());
             HostNetworkQos qos = qosDaoCache.get(network.getQosId());
 
             boolean networkInSync = NetworkUtils.isNetworkInSync(vdsNetworkInterface, network, qos);
             if (!networkInSync) {
-                return new ValidationResult(EngineMessage.NETWORKS_NOT_IN_SYNC, "NETWORK_NOT_IN_SYNC", network.getName());
+
+                return new ValidationResult(EngineMessage.NETWORKS_NOT_IN_SYNC,
+                        ReplacementUtils.createSetVariableString(
+                                "NETWORK_NOT_IN_SYNC",
+                                network.getName()));
             }
         }
 
