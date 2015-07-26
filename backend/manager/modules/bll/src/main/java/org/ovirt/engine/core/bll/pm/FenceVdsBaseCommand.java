@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.validator.FenceValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
@@ -206,4 +207,11 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
      * Get the fence action
      */
     protected abstract FenceActionType getAction();
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        Map<String, String> map = super.getJobMessageProperties();
+        map.put(VdcObjectType.VdsGroups.name(), getVdsGroupName());
+        return map;
+    }
 }
