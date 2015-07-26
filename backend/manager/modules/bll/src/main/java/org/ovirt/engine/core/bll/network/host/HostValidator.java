@@ -11,7 +11,7 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class HostValidator {
 
-    public static final String VAR_HOST_STATUS = "$hostStatus";
+    public static final String VAR_HOST_STATUS = "hostStatus";
     private final VDS host;
     private final boolean internalExecution;
 
@@ -43,7 +43,7 @@ public class HostValidator {
             //            violations.addViolation(___EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL, host.getName());
 
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL,
-                ReplacementUtils.createSetVariableString(VAR_HOST_STATUS, host.getStatus().name()));
+                ReplacementUtils.replaceWith(VAR_HOST_STATUS, supportedStatuses, ",", supportedStatuses.size()));
         }
 
         return ValidationResult.VALID;

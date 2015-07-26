@@ -16,6 +16,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 
 public class HostValidator {
@@ -26,7 +27,8 @@ public class HostValidator {
     private VDS host;
 
     private ValidationResult validateStatus(VDSStatus hostStatus) {
-        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL)
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL,
+                ReplacementUtils.createSetVariableString("hostStatus", hostStatus.name()))
                 .unless(hostStatus == host.getStatus());
     }
 
