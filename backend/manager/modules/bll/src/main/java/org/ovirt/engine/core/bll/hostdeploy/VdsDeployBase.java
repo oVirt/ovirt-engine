@@ -7,10 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.security.KeyPair;
 import java.security.KeyStoreException;
@@ -39,13 +35,16 @@ import org.ovirt.engine.core.uutils.ssh.SSHDialog;
 import org.ovirt.otopi.constants.BaseEnv;
 import org.ovirt.otopi.constants.CoreEnv;
 import org.ovirt.otopi.constants.Queries;
+import org.ovirt.otopi.constants.SysEnv;
 import org.ovirt.otopi.dialog.Event;
 import org.ovirt.otopi.dialog.MachineDialogParser;
 import org.ovirt.otopi.dialog.SoftError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
+public class VdsDeployBase implements SSHDialog.Sink, Closeable {
+
+    public static enum DeployStatus {Complete, Incomplete, Failed, Reboot};
 
     private static final int THREAD_JOIN_TIMEOUT = 20 * 1000; // milliseconds
     private static final String BOOTSTRAP_CUSTOM_ENVIRONMENT_PLACE_HOLDER = "@ENVIRONMENT@";
@@ -54,7 +53,7 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
     private static final Logger log = LoggerFactory.getLogger(VdsDeployBase.class);
     private static volatile CachedTar s_deployPackage;
 
-    private static final Map<Event.Log.Severity, Level> _severityToLevel = new HashMap<Event.Log.Severity, Level>() {{
+    private static final Map<Event.Log.Severity, Level> SEVERITY_TO_LEVEL = new HashMap<Event.Log.Severity, Level>() {{
         put(Event.Log.Severity.INFO, Level.INFO);
         put(Event.Log.Severity.WARNING, Level.WARNING);
         put(Event.Log.Severity.ERROR, Level.SEVERE);
@@ -67,8 +66,28 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
      * This is tick based vector, every event execute the next
      * tick.
      */
-    // BUG: Arrays.asList() cannot handle single element correctly
-    protected final List<Callable<Boolean>> CUSTOMIZATION_DIALOG_EPILOG = new ArrayList() {{ add(
+    private final List<Callable<Boolean>> CUSTOMIZATION_DIALOG_PROLOG = Arrays.asList(
+        new Callable<Boolean>() { public Boolean call() throws Exception {
+            userVisibleLog(
+                Level.INFO,
+                String.format(
+                    "Logs at host located at: '%1$s'",
+                    _parser.cliEnvironmentGet(
+                        CoreEnv.LOG_FILE_NAME
+                    )
+                )
+            );
+            return true;
+        }},
+        new Callable<Boolean>() { public Boolean call() throws Exception {
+            _parser.cliEnvironmentSet(
+                "OVIRT_ENGINE/correlationId",
+                _correlationId
+            );
+            return true;
+        }}
+    );
+    private final List<Callable<Boolean>> CUSTOMIZATION_DIALOG_EPILOG = new ArrayList() {{ add(
         new Callable<Boolean>() { public Boolean call() throws Exception {
             _parser.cliInstall();
             return true;
@@ -80,7 +99,7 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
      * This is tick based vector, every event execute the next
      * tick.
      */
-    protected final List<Callable<Boolean>> TERMINATION_DIALOG_PROLOG = Arrays.asList(
+    private final List<Callable<Boolean>> TERMINATION_DIALOG_EPILOG = Arrays.asList(
         new Callable<Boolean>() { public Boolean call() throws Exception {
             _resultError = (Boolean)_parser.cliEnvironmentGet(
                 BaseEnv.ERROR
@@ -88,13 +107,44 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
             return true;
         }},
         new Callable<Boolean>() { public Boolean call() throws Exception {
-            _aborted = (Boolean)_parser.cliEnvironmentGet(
-                BaseEnv.ABORTED
+            _installIncomplete = (Boolean)_parser.cliEnvironmentGet(
+                org.ovirt.ovirt_host_deploy.constants.CoreEnv.INSTALL_INCOMPLETE
             );
             return true;
-        }}
-    );
-    protected final List<Callable<Boolean>> TERMINATION_DIALOG_EPILOG = Arrays.asList(
+        }},
+        new Callable<Boolean>() { public Boolean call() throws Exception {
+            _goingToReboot = (Boolean)_parser.cliEnvironmentGet(
+                SysEnv.REBOOT
+            );
+            if (_goingToReboot) {
+                userVisibleLog(
+                    Level.INFO,
+                    "Reboot scheduled"
+                );
+            }
+            return true;
+        }},
+        new Callable<Boolean>() { public Boolean call() throws Exception {
+            if (_resultError || !_installIncomplete) {
+                _parser.cliNoop();
+            }
+            else {
+                String[] msgs = (String[])_parser.cliEnvironmentGet(
+                    org.ovirt.ovirt_host_deploy.constants.CoreEnv.INSTALL_INCOMPLETE_REASONS
+                );
+                userVisibleLog(
+                    Level.WARNING,
+                    "Installation is incomplete, manual intervention is required"
+                );
+                for (String m : msgs) {
+                    userVisibleLog(
+                        Level.WARNING,
+                        m
+                    );
+                }
+            }
+            return true;
+        }},
         new Callable<Boolean>() { public Boolean call() throws Exception {
             File logFile = new File(
                 EngineLocalConfig.getInstance().getLogDir(),
@@ -142,6 +192,8 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
         }}
     );
 
+    private final List<VdsDeployUnit> _units = new ArrayList<>();
+
     private SSHDialog.Control _control;
     private Thread _thread;
     private EngineSSHDialog _dialog;
@@ -149,31 +201,18 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
     private final String _logPrefix;
     private final String _entryPoint;
 
-    protected MachineDialogParser _parser;
-    protected VDS _vds;
-    protected String _correlationId = null;
-    protected Exception _failException = null;
-    protected boolean _resultError = false;
-    protected boolean _aborted = false;
-
-    protected abstract boolean processEvent(Event.Base bevent) throws IOException;
-    protected void postExecute() {}
+    private MachineDialogParser _parser;
+    private VDS _vds;
+    private String _correlationId;
+    private Exception _failException = null;
+    private boolean _resultError = false;
+    private boolean _installIncomplete = false;
+    private boolean _goingToReboot = false;
 
     /*
      * Customization dialog.
      */
 
-    /**
-     * Special annotation to specify when the customization is necessary.
-     */
-    @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.RUNTIME)
-    protected @interface CallWhen {
-        /**
-         * @return A condition that determines if the customization should run.
-         */
-        String[] value();
-    }
     /**
      * A set of conditions under which the conditional customizations should run.
      */
@@ -200,7 +239,7 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
                 Callable<Boolean> customizationStep = _customizationDialog.get(_customizationIndex);
                 Method callMethod = customizationStep.getClass().getDeclaredMethod("call");
                 if (callMethod != null) {
-                    CallWhen ann = callMethod.getAnnotation(CallWhen.class);
+                    VdsDeployUnit.CallWhen ann = callMethod.getAnnotation(VdsDeployUnit.CallWhen.class);
                     skip = ann != null && !_customizationConditions.containsAll(Arrays.asList(ann.value()));
                 }
 
@@ -229,15 +268,6 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
             _customizationShouldAbort = true;
         }
     }
-    protected void addCustomizationDialog(List<Callable<Boolean>> dialog) {
-        _customizationDialog.addAll(dialog);
-    }
-    protected void addCustomizationCondition(String cond) {
-        _customizationConditions.add(cond);
-    }
-    protected void removeCustomizationCondition(String cond) {
-        _customizationConditions.remove(cond);
-    }
 
     /*
      * Termination dialog.
@@ -260,9 +290,6 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
         catch (ArrayIndexOutOfBoundsException e) {
             throw new RuntimeException("Protocol violation", e);
         }
-    }
-    protected void addTerminationDialog(List<Callable<Boolean>> dialog) {
-        _terminationDialog.addAll(dialog);
     }
 
     /**
@@ -287,41 +314,7 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
                     terminate = true;
                     unknown = false;
                 }
-                else if (bevent instanceof Event.Log) {
-                    Event.Log event = (Event.Log)bevent;
-                    Level level = _severityToLevel.get(event.severity);
-                    if (level == null) {
-                        level = Level.SEVERE;
-                    }
-                    userVisibleLog(level, event.record);
-                    unknown = false;
-                }
-                else if (bevent instanceof Event.QueryString) {
-                    Event.QueryString event = (Event.QueryString)bevent;
 
-                    if (Queries.CUSTOMIZATION_COMMAND.equals(event.name)) {
-                        _nextCustomizationEntry();
-                        unknown = false;
-                    }
-                    else if (Queries.TERMINATION_COMMAND.equals(event.name)) {
-                        _nextTerminationEntry();
-                        unknown = false;
-                    }
-                }
-                else if (bevent instanceof Event.QueryValue) {
-                    Event.QueryValue event = (Event.QueryValue)bevent;
-
-                    if (Queries.TIME.equals(event.name)) {
-                        userVisibleLog(
-                            Level.INFO,
-                            "Setting time"
-                        );
-                        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssZ");
-                        format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                        event.value = format.format(Calendar.getInstance().getTime());
-                        unknown = false;
-                    }
-                }
                 if (unknown) {
                     unknown = processEvent(bevent);
                 }
@@ -431,8 +424,16 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
         }
     }
 
-    public void setCorrelationId(String correlationId) {
-        _correlationId = correlationId;
+    public void userVisibleLog(Level level, String message) {
+        if (Level.SEVERE.equals(level)) {
+            log.error(message);
+        } else if (Level.WARNING.equals(level)) {
+            log.warn(message);
+        } else if (Level.INFO.equals(level)) {
+            log.info(message);
+        } else {
+            log.debug(message);
+        }
     }
 
     /**
@@ -466,11 +467,73 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
         _dialog.setPassword(password);
     }
 
+    public void addUnit(VdsDeployUnit... units) {
+        _units.addAll(Arrays.asList(units));
+        for (VdsDeployUnit unit : units) {
+            unit.setVdsDeploy(this);
+        }
+    }
+
+    public void addCustomizationCondition(String... cond) {
+        _customizationConditions.addAll(Arrays.asList(cond));
+    }
+
+    public void removeCustomizationCondition(String cond) {
+        _customizationConditions.remove(cond);
+    }
+
+    public void addCustomizationDialog(List<Callable<Boolean>> dialog) {
+        _customizationDialog.addAll(dialog);
+    }
+
+    public void addTerminationDialog(List<Callable<Boolean>> dialog) {
+        _terminationDialog.addAll(dialog);
+    }
+
+    public MachineDialogParser getParser() {
+        return _parser;
+    }
+
+    public void setCorrelationId(String correlationId) {
+        _correlationId = correlationId;
+    }
+
+    public String getCorrelationId() {
+        return _correlationId;
+    }
+
+    public VDS getVds() {
+        return _vds;
+    }
+
+    /**
+     * Returns the installation status
+     *
+     * @return the installation status
+     */
+    public DeployStatus getDeployStatus() {
+        if (_goingToReboot) {
+            return DeployStatus.Reboot;
+        }
+        else if (_installIncomplete) {
+            return DeployStatus.Incomplete;
+        } else {
+            return DeployStatus.Complete;
+        }
+    }
+
     /**
      * Main method.
      * Execute the command and initiate the dialog.
      */
     public void execute() throws Exception {
+        _customizationDialog.addAll(CUSTOMIZATION_DIALOG_PROLOG);
+        for (VdsDeployUnit unit : _units) {
+            unit.init();
+        }
+        _customizationDialog.addAll(CUSTOMIZATION_DIALOG_EPILOG);
+        _terminationDialog.addAll(TERMINATION_DIALOG_EPILOG);
+
         try {
             _dialog.setVds(_vds);
             _dialog.connect();
@@ -518,9 +581,6 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
                     "Installation failed, please refer to installation logs"
                 );
             }
-            else {
-                postExecute();
-            }
         }
         catch (TimeLimitExceededException e){
             log.error(
@@ -560,16 +620,55 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
         }
     }
 
-    protected void userVisibleLog(Level level, String message) {
-        if (Level.SEVERE.equals(level)) {
-            log.error(message);
-        } else if (Level.WARNING.equals(level)) {
-            log.warn(message);
-        } else if (Level.INFO.equals(level)) {
-            log.info(message);
-        } else {
-            log.debug(message);
+    protected boolean processEvent(Event.Base bevent) throws Exception {
+        boolean unknown = true;
+
+        if (bevent instanceof Event.Log) {
+            Event.Log event = (Event.Log)bevent;
+            Level level = SEVERITY_TO_LEVEL.get(event.severity);
+            if (level == null) {
+                level = Level.SEVERE;
+            }
+            userVisibleLog(level, event.record);
+            unknown = false;
         }
+        else if (bevent instanceof Event.QueryString) {
+            Event.QueryString event = (Event.QueryString)bevent;
+
+            if (Queries.CUSTOMIZATION_COMMAND.equals(event.name)) {
+                _nextCustomizationEntry();
+                unknown = false;
+            }
+            else if (Queries.TERMINATION_COMMAND.equals(event.name)) {
+                _nextTerminationEntry();
+                unknown = false;
+            }
+        }
+        else if (bevent instanceof Event.QueryValue) {
+            Event.QueryValue event = (Event.QueryValue)bevent;
+
+            if (Queries.TIME.equals(event.name)) {
+                userVisibleLog(
+                    Level.INFO,
+                    "Setting time"
+                );
+                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssZ");
+                format.setTimeZone(TimeZone.getTimeZone("UTC"));
+                event.value = format.format(Calendar.getInstance().getTime());
+                unknown = false;
+            }
+        }
+
+        if (unknown) {
+            for (VdsDeployUnit unit : _units) {
+                unknown = unit.processEvent(bevent);
+                if (!unknown) {
+                    break;
+                }
+            }
+        }
+
+        return unknown;
     }
 
     /*

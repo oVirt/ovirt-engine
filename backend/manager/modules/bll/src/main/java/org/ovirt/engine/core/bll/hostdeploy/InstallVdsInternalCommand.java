@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -95,7 +94,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     }
 
     private void installHost() {
-        try (final VdsDeploy installer = new VdsDeploy(getVds())) {
+        try (final VdsDeploy deploy = new VdsDeploy("ovirt-host-deploy", getVds(), true)) {
             log.info(
                 "Before Installation host {}, {}",
                 getVds().getId(),
@@ -103,19 +102,28 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             );
 
             T parameters = getParameters();
-            installer.setCorrelationId(getCorrelationId());
+            deploy.setCorrelationId(getCorrelationId());
             boolean configureNetworkUsingHostDeploy = !FeatureSupported.setupManagementNetwork(
                 getVds().getVdsGroupCompatibilityVersion()
             );
-            installer.setReboot(
-                parameters.isRebootAfterInstallation() &&
-                configureNetworkUsingHostDeploy
-            );
 
-            if (configureNetworkUsingHostDeploy) {
-                final Network managementNetwork = managementNetworkUtil.getManagementNetwork(getVdsGroupId());
-                installer.setManagementNetwork(managementNetwork.getName());
-            }
+            deploy.addUnit(
+                new VdsDeployMiscUnit(
+                    (
+                        parameters.isRebootAfterInstallation() &&
+                        configureNetworkUsingHostDeploy
+                    )
+                ),
+                new VdsDeployVdsmUnit(
+                    (
+                        configureNetworkUsingHostDeploy ?
+                        managementNetworkUtil.getManagementNetwork(getVdsGroupId()).getName() :
+                        null
+                    )
+                ),
+                new VdsDeployPKIUnit(),
+                new VdsDeployKdumpUnit()
+            );
 
             if (parameters.getNetworkProviderId() != null) {
                 Provider<?> provider = getDbFacade().getProviderDao().get(parameters.getNetworkProviderId());
@@ -127,49 +135,51 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                             parameters.getNetworkMappings()
                         );
                     }
-                    installer.setOpenStackAgentProperties(agentProperties);
+                    deploy.addUnit(new VdsDeployOpenStackUnit(agentProperties));
                 }
             }
 
-            switch (getVds().getVdsType()) {
-                case VDS:
-                    installer.setFirewall(parameters.getOverrideFirewall());
-                break;
-                case oVirtNode:
-                    if (parameters.getOverrideFirewall()) {
+            if (parameters.getOverrideFirewall()) {
+                switch (getVds().getVdsType()) {
+                    case VDS:
+                        deploy.addUnit(new VdsDeployIptablesUnit());
+                    break;
+                    case oVirtNode:
                         log.warn(
                             "Installation of Host {} will ignore Firewall Override option, since it is not supported for Host type {}",
                             getVds().getName(),
                             getVds().getVdsType().name()
                         );
-                    }
-                break;
-                default:
-                    throw new IllegalArgumentException(
-                        String.format(
-                            "Not handled VDS type: %1$s",
-                            getVds().getVdsType()
-                        )
-                    );
+                    break;
+                    default:
+                        throw new IllegalArgumentException(
+                            String.format(
+                                "Not handled VDS type: %1$s",
+                                getVds().getVdsType()
+                            )
+                        );
+                }
             }
 
-            installer.setVMConsole(parameters.getEnableSerialConsole());
+            if (parameters.getEnableSerialConsole()) {
+                deploy.addUnit(new VdsDeployVmconsoleUnit());
+            }
 
             switch (getParameters().getAuthMethod()) {
                 case Password:
-                    installer.setPassword(parameters.getPassword());
+                    deploy.setPassword(parameters.getPassword());
                 break;
                 case PublicKey:
-                    installer.useDefaultKeyPair();
+                    deploy.useDefaultKeyPair();
                 break;
                 default:
                     throw new Exception("Invalid authentication method value was sent to InstallVdsInternalCommand");
             }
 
             setVdsStatus(VDSStatus.Installing);
-            installer.execute();
+            deploy.execute();
 
-            switch (installer.getDeployStatus()) {
+            switch (deploy.getDeployStatus()) {
                 case Failed:
                     throw new VdsInstallException(VDSStatus.InstallFailed, StringUtils.EMPTY);
                 case Incomplete:
