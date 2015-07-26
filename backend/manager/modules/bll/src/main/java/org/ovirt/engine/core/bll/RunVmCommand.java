@@ -1237,7 +1237,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         final VmPool vmPool = getDbFacade().getVmPoolDao().get(getVm().getVmPoolId());
-        return vmPool.getVmPoolType().equals(VmPoolType.Manual);
+        return vmPool.getVmPoolType().equals(VmPoolType.MANUAL);
     }
 
     @Override

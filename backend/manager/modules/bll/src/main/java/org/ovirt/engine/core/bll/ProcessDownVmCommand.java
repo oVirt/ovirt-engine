@@ -169,7 +169,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
             }
             return true;
         }
-        if (getVmPoolType() == VmPoolType.Automatic) {
+        if (getVmPoolType() == VmPoolType.AUTOMATIC) {
             // should be only one user in the collection
             for (DbUser dbUser : users) {
                 runInternalActionWithTasksContext(VdcActionType.DetachUserFromVmFromPool,
@@ -317,7 +317,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
 
     private void removeVmStatelessImages() {
         if (getSnapshotDao().exists(getVmId(), SnapshotType.STATELESS)
-                && getVmPoolType() != VmPoolType.Manual) {
+                && getVmPoolType() != VmPoolType.MANUAL) {
             log.info("Deleting snapshot for stateless vm '{}'", getVmId());
             runInternalAction(VdcActionType.RestoreStatelessVm,
                     new VmOperationParameterBase(getVmId()),

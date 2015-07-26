@@ -18,12 +18,12 @@ public class PoolModel extends UnitVmModel {
 
         EntityModel automaticOption = new EntityModel();
         automaticOption.setTitle(ConstantsManager.getInstance().getConstants().automaticTitle());
-        automaticOption.setEntity(VmPoolType.Automatic);
+        automaticOption.setEntity(VmPoolType.AUTOMATIC);
         poolTypeItems.add(automaticOption);
 
         EntityModel manualOption = new EntityModel();
         manualOption.setTitle(ConstantsManager.getInstance().getConstants().manualTitle());
-        manualOption.setEntity(VmPoolType.Manual);
+        manualOption.setEntity(VmPoolType.MANUAL);
         poolTypeItems.add(manualOption);
 
         getPoolType().setItems(poolTypeItems);

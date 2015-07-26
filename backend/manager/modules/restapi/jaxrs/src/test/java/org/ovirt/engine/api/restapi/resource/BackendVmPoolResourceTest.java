@@ -189,7 +189,7 @@ public class BackendVmPoolResourceTest
         expect(entity.getVmPoolId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getVdsGroupId()).andReturn(GUIDS[2]).anyTimes();
         expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getVmPoolType()).andReturn(VmPoolType.Automatic).anyTimes();
+        expect(entity.getVmPoolType()).andReturn(VmPoolType.AUTOMATIC).anyTimes();
         expect(entity.getVmPoolDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
 
         return entity;

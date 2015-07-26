@@ -50,7 +50,7 @@ public class VmPoolMapper {
         if (model.isSetType()) {
             VmPoolType type = VmPoolType.fromValue(model.getType());
             entity.setVmPoolType(type != null
-                    ? map(type, null) : org.ovirt.engine.core.common.businessentities.VmPoolType.Automatic);
+                    ? map(type, null) : org.ovirt.engine.core.common.businessentities.VmPoolType.AUTOMATIC);
         }
         return entity;
     }
@@ -122,9 +122,9 @@ public class VmPoolMapper {
             VmPoolType vmPoolType, org.ovirt.engine.core.common.businessentities.VmPoolType incoming) {
         switch (vmPoolType) {
             case AUTOMATIC:
-                return org.ovirt.engine.core.common.businessentities.VmPoolType.Automatic;
+                return org.ovirt.engine.core.common.businessentities.VmPoolType.AUTOMATIC;
             case MANUAL:
-                return org.ovirt.engine.core.common.businessentities.VmPoolType.Manual;
+                return org.ovirt.engine.core.common.businessentities.VmPoolType.MANUAL;
             default:
                 return null;
         }
@@ -136,9 +136,9 @@ public class VmPoolMapper {
             return null;
         }
         switch (vmPoolType) {
-            case Automatic:
+            case AUTOMATIC:
                 return VmPoolType.AUTOMATIC.value();
-            case Manual:
+            case MANUAL:
                 return VmPoolType.MANUAL.value();
             default:
                 return null;

@@ -230,9 +230,9 @@ public interface Enums extends LocalizedEnums {
 
     String VolumeClassification___Invalid();
 
-    String VmPoolType___Automatic();
+    String VmPoolType___AUTOMATIC();
 
-    String VmPoolType___Manual();
+    String VmPoolType___MANUAL();
 
     String AdRefStatus___Inactive();
 

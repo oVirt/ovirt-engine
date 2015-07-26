@@ -72,7 +72,7 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         vmPoolRunningCount = 1;
         maxAssignedVmsPerUser = 1;
         beingDestroyed = false;
-        type = VmPoolType.Automatic;
+        type = VmPoolType.AUTOMATIC;
     }
 
     @Override

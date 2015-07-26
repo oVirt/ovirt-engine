@@ -171,7 +171,7 @@ public class VmItemBehavior extends ItemBehavior {
 
                             VmItemBehavior behavior = (VmItemBehavior) target;
                             VmPool pool = (VmPool) returnValue;
-                            boolean isManualPool = pool.getVmPoolType() == VmPoolType.Manual;
+                            boolean isManualPool = pool.getVmPoolType() == VmPoolType.MANUAL;
                             behavior.updateCommandsAccordingToPoolType(isManualPool);
 
                         }

@@ -1,16 +1,28 @@
 package org.ovirt.engine.core.common.businessentities;
 
 public enum VmPoolType implements Identifiable {
-    // FIXME add ids and remove the ordinal impl of getValue
-    Automatic,
-    Manual;
+
+    AUTOMATIC(0),
+    MANUAL(1);
+
+    private int value;
+
+    VmPoolType(int value) {
+        this.value = value;
+    }
 
     @Override
     public int getValue() {
-        return this.ordinal();
+        return value;
     }
 
     public static VmPoolType forValue(int value) {
-        return values()[value];
+        for (VmPoolType vmPoolType : values()) {
+            if (vmPoolType.getValue() == value) {
+                return vmPoolType;
+            }
+        }
+        return null;
     }
+
 }
