@@ -6,6 +6,7 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -33,8 +34,25 @@ public class InfoServiceImpl implements ModuleService {
                 public void execute(InfoServiceImpl module) {
                     ExtensionProxy extension = module.getExtensionsManager().getExtensionByName((String)module.argMap.get("extension-name"));
                     Collection<?> sensitive = extension.getContext().<Collection<?>>get(Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS);
-                    for (Map.Entry<Object, Object> entry : extension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).entrySet()) {
-                        log.info("    {}: {}", entry.getKey(), sensitive.contains(entry.getKey()) ? "***" : entry.getValue());
+
+
+                    Map<Object, Object> config = extension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION);
+                    Collection<Object> keys = config.keySet();
+                    if (module.argMap.get("key") != null) {
+                        keys.retainAll((List<String>)module.argMap.get("key"));
+                    }
+
+                    for (Object key : keys) {
+                        module.output(
+                            ((String)module.argMap.get("format")).replace(
+                                "{key}",
+                                String.format("%s", key)
+                            ).replace(
+                                "{value}",
+                                sensitive.contains(key) ? "***" : String.format("%s", config.get(key))
+                            ),
+                            "    "
+                        );
                     }
                 }
             }
@@ -51,17 +69,34 @@ public class InfoServiceImpl implements ModuleService {
                 @Override
                 public void execute(InfoServiceImpl module) {
                     ExtensionProxy extension = module.getExtensionsManager().getExtensionByName((String)module.argMap.get("extension-name"));
-                    for (Map.Entry<ExtKey, Object> entry : extension.getContext().entrySet()) {
-                        if (IGNORE_KEYS.contains(entry.getKey())) {
+                    Collection<ExtKey> keys = extension.getContext().keySet();
+                    if (module.argMap.get("key") != null) {
+                        Collection<ExtKey> k = new HashSet<>();
+                        for (String uuid : (List<String>)module.argMap.get("key")) {
+                            k.add(new ExtKey("Unknown", Object.class, uuid));
+                        }
+                        keys.retainAll(k);
+                    }
+                    for (ExtKey key : keys) {
+                        if (IGNORE_KEYS.contains(key)) {
                             continue;
                         }
-                        if ((entry.getKey().getFlags() & ExtKey.Flags.SKIP_DUMP) != 0) {
+                        if ((key.getFlags() & ExtKey.Flags.SKIP_DUMP) != 0) {
                             continue;
                         }
-                        log.info(
-                            "    {}: {}",
-                            entry.getKey().getUuid().getName(),
-                            (entry.getKey().getFlags() & ExtKey.Flags.SENSITIVE) != 0 ? "***" : entry.getValue()
+
+                        module.output(
+                            ((String)module.argMap.get("format")).replace(
+                                "{key}",
+                                key.getUuid().getUuid().toString()
+                            ).replace(
+                                "{name}",
+                                key.getUuid().getName()
+                            ).replace(
+                                "{value}",
+                                (key.getFlags() & ExtKey.Flags.SENSITIVE) != 0 ? "***" : extension.getContext().get(key).toString()
+                            ),
+                            "    "
                         );
                     }
                 }
@@ -127,6 +162,14 @@ public class InfoServiceImpl implements ModuleService {
 
     private ExtensionsManager getExtensionsManager() {
         return (ExtensionsManager)context.get(ContextKeys.EXTENSION_MANAGER);
+    }
+
+    private void output(String s, String logIndent) {
+        if ("log".equals(argModuleMap.get("output"))) {
+            log.info("{}{}", logIndent, s);
+        } else if ("stdout".equals(argModuleMap.get("output"))) {
+            System.out.println(s);
+        }
     }
 
     @Override
