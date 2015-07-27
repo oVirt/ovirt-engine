@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -308,70 +309,80 @@ public class AAAServiceImpl implements ModuleService {
                     ExtMap filter = createQueryFilter(entity, module.argMap);
                     Dump.QUERY_FILTER_RECORD.dump(filter, "");
 
-                    log.info("API: -->Authz.InvokeCommands.QUERY_OPEN");
-                    ExtMap outMap = authzExtension.invoke(
-                        new ExtMap().mput(
-                            Base.InvokeKeys.COMMAND,
-                            Authz.InvokeCommands.QUERY_OPEN
-                        ).mput(
-                            Authz.InvokeKeys.QUERY_ENTITY,
-                            entity
-                        ).mput(
-                            Authz.InvokeKeys.QUERY_FLAGS,
-                            getAuthzFlags((List<String>)module.argMap.get("authz-flag"))
-                        ).mput(
-                            Authz.InvokeKeys.QUERY_FILTER,
-                            filter
-                        ).mput(
-                            Authz.InvokeKeys.NAMESPACE,
-                            getNamespace(authzExtension, (String)module.argMap.get("namespace"))
-                        )
+                    Collection<String> namespaces = authzExtension.getContext().get(
+                        Authz.ContextKeys.AVAILABLE_NAMESPACES,
+                        Collections.<String>emptyList()
                     );
-                    log.info("API: <--Authz.InvokeCommands.QUERY_OPEN");
+                    if (module.argMap.get("namespace") != null) {
+                        namespaces = (Collection<String>)module.argMap.get("namespace");
+                    }
 
-                    Object opaque = outMap.get(Authz.InvokeKeys.QUERY_OPAQUE);
-                    boolean done = false;
-                    while (!done) {
-                        log.info("API: -->Authz.InvokeCommands.QUERY_EXECUTE");
-                        outMap = authzExtension.invoke(
+                    for (String namespace : namespaces) {
+                        log.info("API: -->Authz.InvokeCommands.QUERY_OPEN namespace='{}'", namespace);
+                        ExtMap outMap = authzExtension.invoke(
                             new ExtMap().mput(
                                 Base.InvokeKeys.COMMAND,
-                                Authz.InvokeCommands.QUERY_EXECUTE
+                                Authz.InvokeCommands.QUERY_OPEN
                             ).mput(
-                                Authz.InvokeKeys.QUERY_OPAQUE,
-                                opaque
+                                Authz.InvokeKeys.QUERY_ENTITY,
+                                entity
                             ).mput(
-                                Authz.InvokeKeys.PAGE_SIZE,
-                                module.argMap.get("page-size")
+                                Authz.InvokeKeys.QUERY_FLAGS,
+                                getAuthzFlags((List<String>)module.argMap.get("authz-flag"))
+                            ).mput(
+                                Authz.InvokeKeys.QUERY_FILTER,
+                                filter
+                            ).mput(
+                                Authz.InvokeKeys.NAMESPACE,
+                                namespace
                             )
                         );
-                        List<ExtMap> results = outMap.get(Authz.InvokeKeys.QUERY_RESULT);
-                        log.info("API: <--Authz.InvokeCommands.QUERY_EXECUTE count={}", results == null ? "END" : results.size());
+                        log.info("API: <--Authz.InvokeCommands.QUERY_OPEN");
 
-                        if (results == null) {
-                            done = true;
-                        } else {
-                            for (ExtMap result : results) {
-                                if (Authz.QueryEntity.PRINCIPAL.equals(entity)) {
-                                    Dump.PRINCIPAL_RECORD.dump(result);
-                                } else if (Authz.QueryEntity.GROUP.equals(entity)) {
-                                    Dump.GROUP_RECORD.dump(result);
+                        Object opaque = outMap.get(Authz.InvokeKeys.QUERY_OPAQUE);
+                        boolean done = false;
+                        while (!done) {
+                            log.info("API: -->Authz.InvokeCommands.QUERY_EXECUTE");
+                            outMap = authzExtension.invoke(
+                                new ExtMap().mput(
+                                    Base.InvokeKeys.COMMAND,
+                                    Authz.InvokeCommands.QUERY_EXECUTE
+                                ).mput(
+                                    Authz.InvokeKeys.QUERY_OPAQUE,
+                                    opaque
+                                ).mput(
+                                    Authz.InvokeKeys.PAGE_SIZE,
+                                    module.argMap.get("page-size")
+                                )
+                            );
+                            List<ExtMap> results = outMap.get(Authz.InvokeKeys.QUERY_RESULT);
+                            log.info("API: <--Authz.InvokeCommands.QUERY_EXECUTE count={}", results == null ? "END" : results.size());
+
+                            if (results == null) {
+                                done = true;
+                            } else {
+                                for (ExtMap result : results) {
+                                    if (Authz.QueryEntity.PRINCIPAL.equals(entity)) {
+                                        Dump.PRINCIPAL_RECORD.dump(result);
+                                    } else if (Authz.QueryEntity.GROUP.equals(entity)) {
+                                        Dump.GROUP_RECORD.dump(result);
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    log.info("API: -->Authz.InvokeCommands.QUERY_CLOSE");
-                    authzExtension.invoke(
-                        new ExtMap().mput(
-                            Base.InvokeKeys.COMMAND,
-                            Authz.InvokeCommands.QUERY_CLOSE
-                        ).mput(
-                            Authz.InvokeKeys.QUERY_OPAQUE,
-                            opaque
-                        )
-                    );
-                    log.info("API: <--Authz.InvokeCommands.QUERY_CLOSE");
+                        log.info("API: -->Authz.InvokeCommands.QUERY_CLOSE");
+                        authzExtension.invoke(
+                            new ExtMap().mput(
+                                Base.InvokeKeys.COMMAND,
+                                Authz.InvokeCommands.QUERY_CLOSE
+                            ).mput(
+                                Authz.InvokeKeys.QUERY_OPAQUE,
+                                opaque
+                            )
+                        );
+                        log.info("API: <--Authz.InvokeCommands.QUERY_CLOSE");
+                    }
                 }
             }
         );
@@ -649,16 +660,6 @@ public class AAAServiceImpl implements ModuleService {
     @Override
     public void run() throws Exception {
         action.execute(this);
-    }
-
-    private static String getNamespace(ExtensionProxy authzExtension, String namespace) {
-        if(namespace == null) {
-            for (String nm : authzExtension.getContext().get(Authz.ContextKeys.AVAILABLE_NAMESPACES, Collections.<String>emptyList())) {
-                namespace = nm;
-                break;
-            }
-        }
-        return namespace;
     }
 
     private static ExtMap createQueryFilter(ExtUUID entity, Map<String, Object> argMap) {
