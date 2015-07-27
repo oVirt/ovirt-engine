@@ -4,10 +4,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.CommandBase;
-import org.ovirt.engine.core.bll.network.RemoveNetworksByLabelParametersBuilder;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.LabelNicParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -30,16 +30,20 @@ public class UnlabelNicCommand<T extends LabelNicParameters> extends CommandBase
         addCustomValue("NicName", getNic().getName());
 
         VdcReturnValueBase result =
-                runInternalAction(VdcActionType.PersistentSetupNetworks,
-                        new RemoveNetworksByLabelParametersBuilder(getContext()).buildParameters(getNic(),
-                                getLabel(),
-                                getVds().getVdsGroupId()), cloneContextAndDetachFromParent());
+                runInternalAction(VdcActionType.HostSetupNetworks,
+                        createHostSetupNetworksParameters(), cloneContextAndDetachFromParent());
 
         if (!result.getSucceeded()) {
             propagateFailure(result);
         }
 
         setSucceeded(result.getSucceeded());
+    }
+
+    private HostSetupNetworksParameters createHostSetupNetworksParameters() {
+        HostSetupNetworksParameters params = new HostSetupNetworksParameters(getVdsId());
+        params.setRemovedLabels(Collections.singleton(getLabel()));
+        return params;
     }
 
     @Override
