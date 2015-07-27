@@ -329,15 +329,22 @@ public class ArgumentsParser {
             Argument argument = this.arguments.get(arg);
             help.append(
                     String.format(
-                            "  --%s%n" +
-                                    "    %s%n" +
-                                    "%n",
-                            arg + (argument.getType() != Argument.Type.NO_ARGUMENT ? "=[" + argument.getMetavar() + "]" : ""),
-                            argument.getHelp()
-                                    .replace("@CLI_PRM_DEFAULT@", StringUtils.defaultString(argument.getDefaultValue()))
-                                    .replace("@CLI_PRM_PATTERN@", argument.getMatcher().pattern())
+                            "  --%s%n",
+                            arg + (argument.getType() != Argument.Type.NO_ARGUMENT ? "=[" + argument.getMetavar() + "]" : "")
                     )
             );
+            for (
+                String s : argument.getHelp().replace(
+                    "@CLI_PRM_DEFAULT@",
+                    StringUtils.defaultString(argument.getDefaultValue())
+                ).replace(
+                    "@CLI_PRM_PATTERN@",
+                    argument.getMatcher().pattern()
+                ).split("\n")
+            ) {
+                help.append(String.format("    %s%n", s));
+            }
+            help.append(String.format("%n"));
         }
         return doSubstitutions(
                 String.format("%1$s%n%2$s%n%n%3$s%4$s%n",
