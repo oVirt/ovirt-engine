@@ -31,7 +31,6 @@ public class VmPopupWidget extends AbstractVmPopupWidget {
         if (unitVmModel.isVmAttachedToPool()) {
             // this just disables it, does not hides it
             specificHost.setEnabled(false);
-            specificHostLabel.setStyleName(style.labelDisabled(), true);
         }
 
     }

@@ -634,6 +634,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     public EntityModelDetachableWidget overrideMigrationDowntimeEditorWithDetachable;
 
+    @UiField
+    @Ignore
+    public EnableableFormLabel overrideMigrationDowntimeLabel;
+
     @UiField(provided = true)
     public InfoIcon migrationDowntimeInfoIcon;
 
@@ -662,7 +666,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField
     @Ignore
-    public Label specificHostLabel;
+    public EnableableFormLabel specificHostLabel;
 
     @UiField(provided = true)
     @Path(value = "defaultHost.selectedItems")
