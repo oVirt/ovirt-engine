@@ -119,13 +119,13 @@ public class AAAServiceImpl implements ModuleService {
                 @Override
                 public void execute(AAAServiceImpl module) {
                     ExtensionProxy mappingExtension = null;
-                    ExtensionProxy authnExtension = module.getExtensionByProfile((String) module.argMap.get("profile-name"));
+                    ExtensionProxy authnExtension = module.getExtensionByProfile((String) module.argMap.get("profile"));
                     String authzName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(Authn.ConfigKeys.AUTHZ_PLUGIN);
                     String mappingName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(Authn.ConfigKeys.MAPPING_PLUGIN);
 
                     log.info(
                         "Profile='{}' authn='{}' authz='{}' mapping='{}'",
-                        module.argMap.get("profile-name"),
+                        module.argMap.get("profile"),
                         authnExtension.getContext().get(Base.ContextKeys.INSTANCE_NAME),
                         authzName,
                         mappingName
