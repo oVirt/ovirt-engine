@@ -1127,6 +1127,10 @@ fi
 %endif
 
 %changelog
+* Mon Jul 27 2015 Sandro Bonazzola <sbonazzo@redhat.com> - 3.5.4.1-1
+- Bump version to 3.5.4.1
+- Translations update (Korean only)
+
 * Tue Jun 30 2015 Sandro Bonazzola <sbonazzo@redhat.com> - 3.5.4-1
 - Bump version to 3.5.4
 
