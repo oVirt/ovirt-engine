@@ -672,3 +672,99 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION InsertStorageServerConnectionExtension(
+	v_id UUID,
+	v_vds_id UUID,
+	v_iqn VARCHAR(128),
+	v_user_name TEXT,
+	v_password TEXT)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+INSERT INTO storage_server_connection_extension(id, vds_id, iqn, user_name, password)
+	VALUES (v_id, v_vds_id, v_iqn, v_user_name, v_password);
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+Create or replace FUNCTION UpdateStorageServerConnectionExtension(
+	v_id UUID,
+	v_vds_id UUID,
+	v_iqn VARCHAR(128),
+	v_user_name TEXT,
+	v_password TEXT)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+      UPDATE storage_server_connection_extension
+      SET vds_id = v_vds_id, iqn = v_iqn, user_name = v_user_name, password = v_password
+      WHERE id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+Create or replace FUNCTION DeleteStorageServerConnectionExtension(v_id UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+   DELETE FROM storage_server_connection_extension
+   WHERE id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+Create or replace FUNCTION GetStorageServerConnectionExtensionById(v_id UUID)
+RETURNS SETOF storage_server_connection_extension STABLE
+    AS $procedure$
+BEGIN
+   RETURN QUERY SELECT * FROM storage_server_connection_extension
+   WHERE id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+Create or replace FUNCTION GetStorageServerConnectionExtensionsByHostId(v_vds_id UUID)
+RETURNS SETOF storage_server_connection_extension STABLE
+    AS $procedure$
+BEGIN
+   RETURN QUERY SELECT * FROM storage_server_connection_extension
+   WHERE vds_id = v_vds_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+Create or replace FUNCTION GetStorageServerConnectionExtensionsByHostIdAndTarget(v_vds_id UUID, v_iqn VARCHAR(128))
+RETURNS SETOF storage_server_connection_extension STABLE
+    AS $procedure$
+BEGIN
+   RETURN QUERY SELECT * FROM storage_server_connection_extension
+   WHERE vds_id = v_vds_id and iqn = v_iqn;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+Create or replace FUNCTION GetAllFromStorageServerConnectionExtensions()
+RETURNS SETOF storage_server_connection_extension STABLE
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT * FROM storage_server_connection_extension;
+END; $procedure$
+LANGUAGE plpgsql;

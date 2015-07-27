@@ -390,6 +390,28 @@
         </row>
     </table>
 
+    <table name="storage_server_connection_extension">
+        <column>id</column>
+        <column>vds_id</column>
+        <column>iqn</column>
+        <column>user_name</column>
+        <column>password</column>
+        <row>
+            <value>9f0852ba-7c96-4974-9cb8-b214a6bf90d8</value>
+            <value>07945583-ebf7-48f8-aec7-4ffa8950f185</value>
+            <value>iqn.2015-07.com.judas:priest.targeta</value>
+            <value>rhalford</value>
+            <value>rh666</value>
+        </row>
+        <row>
+            <value>71912394-f6df-41f5-8efd-54f926801e06</value>
+            <value>d5c64c22-0cae-4cd5-a483-57a5d3d0e915</value>
+            <value>iqn.2015-07.com.iron:maiden.targetb</value>
+            <value>bdickinson</value>
+            <value>bd666</value>
+        </row>
+    </table>
+
     <table name="LUNS">
         <column>physical_volume_id</column>
         <column>lun_id</column>
