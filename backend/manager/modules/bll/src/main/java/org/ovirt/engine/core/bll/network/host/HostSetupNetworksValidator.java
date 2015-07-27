@@ -554,7 +554,7 @@ public class HostSetupNetworksValidator {
         String networkName = attachment.getNetworkName();
         Guid violatingEntityId = attachment.getId();
 
-        return validateCoherentIdentification(violatingEntityId,
+        return validateCoherentIdentification(String.valueOf(violatingEntityId),
             networkId,
             networkName,
             EngineMessage.NETWORK_ATTACHMENT_REFERENCES_NETWORK_INCOHERENTLY,
@@ -562,21 +562,21 @@ public class HostSetupNetworksValidator {
     }
 
     private ValidationResult validateCoherentNicIdentification(NetworkAttachment attachment) {
-        return validateCoherentIdentification(attachment.getId(),
-            attachment.getNicId(),
-            attachment.getNicName(),
-            EngineMessage.NETWORK_ATTACHMENT_REFERENCES_NICS_INCOHERENTLY, existingInterfacesMap);
+        return validateCoherentIdentification(String.valueOf(attachment.getId()),
+                attachment.getNicId(),
+                attachment.getNicName(),
+                EngineMessage.NETWORK_ATTACHMENT_REFERENCES_NICS_INCOHERENTLY, existingInterfacesMap);
     }
 
     private ValidationResult validateCoherentNicIdentification(Bond bond) {
         Guid nicId = bond.getId();
         String nicName = bond.getName();
         EngineMessage message = EngineMessage.BOND_REFERENCES_NICS_INCOHERENTLY;
-        return validateCoherentIdentification(bond.getId(), nicId, nicName, message, existingInterfacesMap);
+        return validateCoherentIdentification(bond.getName(), nicId, nicName, message, existingInterfacesMap);
 
     }
 
-    private <T extends BusinessEntity<Guid> & Nameable> ValidationResult validateCoherentIdentification(Guid violatingEntityId,
+    private <T extends BusinessEntity<Guid> & Nameable> ValidationResult validateCoherentIdentification(String violatingEntityId,
         Guid referringId,
         String referringName,
         EngineMessage message,
@@ -589,7 +589,7 @@ public class HostSetupNetworksValidator {
             .when(bothIdentificationSet && isNameAndIdIncoherent(referringId, referringName, map));
     }
 
-    private String[] createIncoherentIdentificationErrorReplacements(Guid violatingEntityId,
+    private String[] createIncoherentIdentificationErrorReplacements(String violatingEntityId,
         Guid referringId,
         String referringName) {
         return new String[] {
