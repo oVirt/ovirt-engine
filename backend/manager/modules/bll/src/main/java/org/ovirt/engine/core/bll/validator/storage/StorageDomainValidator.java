@@ -112,7 +112,7 @@ public class StorageDomainValidator {
     }
 
     /**
-     * Verify there's enough space in the storage domain for creating cloned DiskImages.
+     * Verify there's enough space in the storage domain for creating cloned DiskImages with collapse.
      * Space should be allocated according to the volumes type and format, and allocation policy,
      * according to the following table:
      *
@@ -175,6 +175,9 @@ public class StorageDomainValidator {
         });
     }
 
+    /**
+     * Validate space for new, empty disks. Used for a new Active Image.
+     */
     public ValidationResult hasSpaceForNewDisks(Collection<DiskImage> diskImages) {
         if (storageDomain.getStorageType().isCinderDomain()) {
             return ValidationResult.VALID;
@@ -185,6 +188,9 @@ public class StorageDomainValidator {
         return validateRequiredSpace(availableSize, totalSizeForDisks);
     }
 
+    /**
+     * Validate space for a cloned disk with the collapse option.
+     */
     public ValidationResult hasSpaceForClonedDisks(Collection<DiskImage> diskImages) {
         if (storageDomain.getStorageType().isCinderDomain()) {
             return ValidationResult.VALID;
@@ -195,6 +201,9 @@ public class StorageDomainValidator {
         return validateRequiredSpace(availableSize, totalSizeForDisks);
     }
 
+    /**
+     * Validate space for cloned disks without the collapse option. Every snapshot will be cloned.
+     */
     public ValidationResult hasSpaceForDisksWithSnapshots(Collection<DiskImage> diskImages) {
         if (storageDomain.getStorageType().isCinderDomain()) {
             return ValidationResult.VALID;
@@ -205,6 +214,12 @@ public class StorageDomainValidator {
         return validateRequiredSpace(availableSize, totalSizeForDisks);
     }
 
+    /**
+     * Validate space for new and cloned (with collapse) disks. When this option is needed a combined method should be
+     * used in order to check the space on the domain for the two types of validation, done here.
+     * Note that at this time there is no need for the same functionality for clone without collapse,
+     * so there's no method for this.
+     */
     public ValidationResult hasSpaceForAllDisks(Collection<DiskImage> newDiskImages, Collection<DiskImage> clonedDiskImages) {
         if (storageDomain.getStorageType().isCinderDomain()) {
             return ValidationResult.VALID;
@@ -217,14 +232,23 @@ public class StorageDomainValidator {
         return validateRequiredSpace(availableSize, totalSizeForDisks);
     }
 
+    /**
+     * Validate space for a cloned disk without the collapse option. Every snapshot will be cloned.
+     */
     public ValidationResult hasSpaceForDiskWithSnapshots(DiskImage diskImage) {
         return hasSpaceForDisksWithSnapshots(Collections.singleton(diskImage));
     }
 
+    /**
+     * Validate space for a cloned disk with the collapse option.
+     */
     public ValidationResult hasSpaceForClonedDisk(DiskImage diskImage) {
         return hasSpaceForClonedDisks(Collections.singleton(diskImage));
     }
 
+    /**
+     * Validate space for a new, empty disk. Used for a new Active Image.
+     */
     public ValidationResult hasSpaceForNewDisk(DiskImage diskImage) {
         return hasSpaceForNewDisks(Collections.singleton(diskImage));
     }
