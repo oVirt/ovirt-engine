@@ -17,18 +17,10 @@ public class ReportedConfigurations implements Serializable {
      */
     private List<ReportedConfiguration> reportedConfigurationList = new ArrayList<>();
 
-    public ReportedConfigurations add(ReportedConfigurationType type, String value, boolean inSync) {
-        reportedConfigurationList.add(new ReportedConfiguration(type, value, inSync));
-        return this;
-    }
-
-    public ReportedConfigurations add(ReportedConfigurationType type, Integer value, boolean inSync) {
-        reportedConfigurationList.add(new ReportedConfiguration(type, value == null ? "null" : value.toString(), inSync));
-        return this;
-    }
-
-    public ReportedConfigurations add(ReportedConfigurationType type, boolean value, boolean inSync) {
-        reportedConfigurationList.add(new ReportedConfiguration(type, Boolean.toString(value), inSync));
+    public <T> ReportedConfigurations add(ReportedConfigurationType type, T actual, T expected, boolean inSync) {
+        String actualValue = actual == null ? null : actual.toString();
+        String expectedValue = expected == null ? null : expected.toString();
+        reportedConfigurationList.add(new ReportedConfiguration(type, actualValue, expectedValue, inSync));
         return this;
     }
 

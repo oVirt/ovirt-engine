@@ -46,16 +46,17 @@ public class NetworkInSyncWithVdsNetworkInterface {
 
         result.setNetworkInSync(isNetworkInSync());
 
-        result.add(ReportedConfigurationType.MTU, iface.getMtu(), isNetworkMtuInSync());
-        result.add(ReportedConfigurationType.BRIDGED, iface.isBridged(), isNetworkBridgedFlagInSync());
-        result.add(ReportedConfigurationType.VLAN, iface.getVlanId(), isNetworkVlanIdInSync());
+        Integer networkMtu = network.getMtu() == 0 ? NetworkUtils.getDefaultMtu() : network.getMtu();
+        result.add(ReportedConfigurationType.MTU, iface.getMtu(), networkMtu, isNetworkMtuInSync());
+        result.add(ReportedConfigurationType.BRIDGED, iface.isBridged(), network.isVmNetwork(), isNetworkBridgedFlagInSync());
+        result.add(ReportedConfigurationType.VLAN, iface.getVlanId(), network.getVlanId(), isNetworkVlanIdInSync());
 
         boolean reportHostQos = ifaceQos != null;
         if (reportHostQos) {
             //TODO MM: lets say, that Qos is overridden, so whole network is 'inSync' while following parameters are 'out of sync'. Can be little bit confusing.
-            result.add(ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE, ifaceQos.getOutAverageLinkshare(), isOutAverageLinkShareInSync());
-            result.add(ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT, ifaceQos.getOutAverageUpperlimit(), isOutAverageUpperLimitInSync());
-            result.add(ReportedConfigurationType.OUT_AVERAGE_REAL_TIME, ifaceQos.getOutAverageRealtime(), isOutAverageRealTimeInSync());
+            result.add(ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE, ifaceQos.getOutAverageLinkshare(), networkQos.getOutAverageLinkshare(), isOutAverageLinkShareInSync());
+            result.add(ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT, ifaceQos.getOutAverageUpperlimit(), networkQos.getOutAverageUpperlimit(),  isOutAverageUpperLimitInSync());
+            result.add(ReportedConfigurationType.OUT_AVERAGE_REAL_TIME, ifaceQos.getOutAverageRealtime(), networkQos.getOutAverageRealtime(), isOutAverageRealTimeInSync());
         }
 
         return result;
