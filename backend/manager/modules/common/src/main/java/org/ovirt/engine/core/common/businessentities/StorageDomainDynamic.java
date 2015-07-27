@@ -17,6 +17,15 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
     }
 
     private Integer availableDiskSize;
+    private boolean containsUnregisteredEntities;
+
+    public boolean isContainsUnregisteredEntities() {
+        return containsUnregisteredEntities;
+    }
+
+    public void setContainsUnregisteredEntities(boolean containsUnregisteredEntities) {
+        this.containsUnregisteredEntities = containsUnregisteredEntities;
+    }
 
     public Integer getAvailableDiskSize() {
         return availableDiskSize;
@@ -62,6 +71,7 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((availableDiskSize == null) ? 0 : availableDiskSize.hashCode());
         result = prime * result + ((usedDiskSize == null) ? 0 : usedDiskSize.hashCode());
+        result = prime * result + (containsUnregisteredEntities ? 0 : 1);
         return result;
     }
 
@@ -79,6 +89,7 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
         StorageDomainDynamic other = (StorageDomainDynamic) obj;
         return (ObjectUtils.objectsEqual(id, other.id)
                 && ObjectUtils.objectsEqual(availableDiskSize, other.availableDiskSize)
-                && ObjectUtils.objectsEqual(usedDiskSize, other.usedDiskSize));
+                && ObjectUtils.objectsEqual(usedDiskSize, other.usedDiskSize))
+                && containsUnregisteredEntities == other.containsUnregisteredEntities;
     }
 }

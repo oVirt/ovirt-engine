@@ -297,11 +297,11 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntityWithSt
     }
 
     public boolean isContainsUnregisteredEntities() {
-        return staticData.isContainsUnregisteredEntities();
+        return dynamicData.isContainsUnregisteredEntities();
     }
 
     public void setContainsUnregisteredEntities(boolean containsUnregisteredEntities) {
-        staticData.setContainsUnregisteredEntities(containsUnregisteredEntities);
+        dynamicData.setContainsUnregisteredEntities(containsUnregisteredEntities);
     }
 
     public long getLastTimeUsedAsMaster() {
