@@ -183,6 +183,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
 
         newLabelModel = new NewNetworkLabelModel(this);
+
+        hostSetupNetworksParametersData.networksToSync = networksToSync;
     }
 
     public NetworkLabelModel getNewNetworkLabelModel() {
@@ -497,7 +499,10 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         hostSetupNetworksParametersData.newOrModifiedNetworkAttachments.remove(previousUpdate);
 
         NetworkAttachment updatedNetworkAttachment =
-                NetworkOperation.newNetworkAttachment(updatedNetwork, entity, networkAttachmentId);
+                NetworkOperation.newNetworkAttachment(updatedNetwork,
+                        entity,
+                        networkAttachmentId,
+                        hostSetupNetworksParametersData.networksToSync);
         hostSetupNetworksParametersData.newOrModifiedNetworkAttachments.add(updatedNetworkAttachment);
     }
 

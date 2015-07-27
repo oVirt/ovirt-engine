@@ -186,11 +186,11 @@ public enum NetworkOperation {
                         dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.add(
                                 newNetworkAttachment(networkToAttach,
                                         targetNic,
-                                        oldNetworkAttachmentId));
+                                        oldNetworkAttachmentId, dataFromHostSetupNetworksModel.networksToSync));
                     } else {
                         dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.add(
                                 newNetworkAttachment(networkToAttach,
-                                        targetNic));
+                                        targetNic, dataFromHostSetupNetworksModel.networksToSync));
                     }
 
                     VdsNetworkInterface vlanBridge = networkModelToAttach.attach(targetNicModel, true);
@@ -1026,19 +1026,22 @@ public enum NetworkOperation {
         return logicalNetworkModel.getNetwork().getCluster().isDisplay();
     }
 
-    public static NetworkAttachment newNetworkAttachment(Network network, VdsNetworkInterface targetNic) {
-        return newNetworkAttachment(network, targetNic, null);
+    public static NetworkAttachment newNetworkAttachment(Network network,
+            VdsNetworkInterface targetNic,
+            List<String> networksToSync) {
+        return newNetworkAttachment(network, targetNic, null, networksToSync);
     }
 
     public static NetworkAttachment newNetworkAttachment(Network network,
             VdsNetworkInterface targetNic,
-            Guid networkAttachmentId) {
+            Guid networkAttachmentId,
+            List<String> networksToSync) {
         NetworkAttachment networkAttachment = new NetworkAttachment();
         networkAttachment.setId(networkAttachmentId);
         networkAttachment.setNetworkId(network.getId());
         networkAttachment.setNicId(targetNic.getId());
         networkAttachment.setNicName(targetNic.getName());
-        networkAttachment.setOverrideConfiguration(true);
+        networkAttachment.setOverrideConfiguration(networksToSync.contains(network.getName()));
         IpConfiguration ipConfiguration = new IpConfiguration();
         networkAttachment.setIpConfiguration(ipConfiguration);
         ipConfiguration.getIPv4Addresses().add(newPrimaryAddress(targetNic));
