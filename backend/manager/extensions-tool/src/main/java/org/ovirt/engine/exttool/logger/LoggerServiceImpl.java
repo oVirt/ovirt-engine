@@ -25,21 +25,21 @@ public class LoggerServiceImpl implements ModuleService {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(LoggerServiceImpl.class);
 
     private interface Logic {
-        void execute(ExtMap context, Map<String, Object> argMap);
+        void execute(LoggerServiceImpl module);
     }
 
     private enum Action {
         LOG_RECORD(
             new Logic() {
                 @Override
-                public void execute(ExtMap context, Map<String, Object> argMap) {
-                    ExtensionProxy proxy = getExtensionsManager(context).getExtensionByName((String) argMap.get("extension-name"));
+                public void execute(LoggerServiceImpl module) {
+                    ExtensionProxy proxy = module.getExtensionsManager().getExtensionByName((String) module.argMap.get("extension-name"));
 
                     LogRecord logRecord = new LogRecord(
-                        (Level) argMap.get("level"),
-                        (String) argMap.get("message")
+                        (Level) module.argMap.get("level"),
+                        (String) module.argMap.get("message")
                     );
-                    logRecord.setLoggerName((String) argMap.get("logger-name"));
+                    logRecord.setLoggerName((String) module.argMap.get("logger-name"));
 
                     log.info("API: -->Logger.InvokeCommands.PUBLISH level={}, name={}", logRecord.getLevel(), logRecord.getLoggerName());
                     proxy.invoke(
@@ -80,10 +80,10 @@ public class LoggerServiceImpl implements ModuleService {
             this.logic = logic;
         }
 
-        Map<String, Object> parse(Map<String, String> substitutions, Properties props, List<String> moduleArgs) {
-            ArgumentsParser parser = new ArgumentsParser(props, moduleArgs.remove(0));
+        Map<String, Object> parse(Map<String, String> substitutions, Properties props, List<String> actionArgs) {
+            ArgumentsParser parser = new ArgumentsParser(props, actionArgs.remove(0));
             parser.getSubstitutions().putAll(substitutions);
-            parser.parse(moduleArgs);
+            parser.parse(actionArgs);
             Map<String, Object> argMap = parser.getParsedArgs();
 
             if((Boolean)argMap.get("help")) {
@@ -96,7 +96,7 @@ public class LoggerServiceImpl implements ModuleService {
                 }
                 throw new ExitException("Parsing error", 1);
             }
-            if (moduleArgs.size() != 0) {
+            if (actionArgs.size() != 0) {
                 log.error("Extra parameters in command-line");
                 throw new ExitException("Parsing error", 1);
             }
@@ -104,16 +104,17 @@ public class LoggerServiceImpl implements ModuleService {
             return argMap;
         }
 
-        void execute(ExtMap context, Map<String, Object> argMap) {
-            logic.execute(context, argMap);
+        void execute(LoggerServiceImpl module) {
+            logic.execute(module);
         }
     }
 
     private ExtMap context;
     private Action action;
+    private Map<String, Object> argModuleMap;
     private Map<String, Object> argMap;
 
-    private static ExtensionsManager getExtensionsManager(ExtMap context) {
+    private ExtensionsManager getExtensionsManager() {
         return (ExtensionsManager)context.get(ContextKeys.EXTENSION_MANAGER);
     }
 
@@ -153,9 +154,9 @@ public class LoggerServiceImpl implements ModuleService {
         ArgumentsParser parser = new ArgumentsParser(props, "module");
         parser.getSubstitutions().putAll(substitutions);
         parser.parse(args);
-        Map<String, Object> moduleArgs = parser.getParsedArgs();
+        argModuleMap = parser.getParsedArgs();
 
-        if((Boolean)moduleArgs.get("help")) {
+        if((Boolean)argModuleMap.get("help")) {
             System.out.format("Usage: %s", parser.getUsage());
             throw new ExitException("Help", 0);
         }
@@ -183,6 +184,6 @@ public class LoggerServiceImpl implements ModuleService {
 
     @Override
     public void run() throws Exception {
-        action.execute(context, argMap);
+        action.execute(this);
     }
 }

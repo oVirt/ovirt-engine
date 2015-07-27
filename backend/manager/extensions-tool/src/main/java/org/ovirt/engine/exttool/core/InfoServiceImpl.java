@@ -23,15 +23,15 @@ public class InfoServiceImpl implements ModuleService {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(InfoServiceImpl.class);
 
     private interface Logic {
-        void execute(ExtMap context, Map<String, Object> argMap);
+        void execute(InfoServiceImpl module);
     }
 
     private enum Action {
         CONFIGURATION(
             new Logic() {
                 @Override
-                public void execute(ExtMap context, Map<String, Object> argMap) {
-                    ExtensionProxy extension = getExtensionsManager(context).getExtensionByName((String)argMap.get("extension-name"));
+                public void execute(InfoServiceImpl module) {
+                    ExtensionProxy extension = module.getExtensionsManager().getExtensionByName((String)module.argMap.get("extension-name"));
                     Collection<?> sensitive = extension.getContext().<Collection<?>>get(Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS);
                     for (Map.Entry<Object, Object> entry : extension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).entrySet()) {
                         log.info("    {}: {}", entry.getKey(), sensitive.contains(entry.getKey()) ? "***" : entry.getValue());
@@ -49,8 +49,8 @@ public class InfoServiceImpl implements ModuleService {
                 );
 
                 @Override
-                public void execute(ExtMap context, Map<String, Object> argMap) {
-                    ExtensionProxy extension = getExtensionsManager(context).getExtensionByName((String)argMap.get("extension-name"));
+                public void execute(InfoServiceImpl module) {
+                    ExtensionProxy extension = module.getExtensionsManager().getExtensionByName((String)module.argMap.get("extension-name"));
                     for (Map.Entry<ExtKey, Object> entry : extension.getContext().entrySet()) {
                         if (IGNORE_KEYS.contains(entry.getKey())) {
                             continue;
@@ -70,8 +70,8 @@ public class InfoServiceImpl implements ModuleService {
         LIST_EXTENSIONS(
             new Logic() {
                 @Override
-                public void execute(ExtMap context, Map<String, Object> argMap) {
-                    for (ExtensionProxy extension : getExtensionsManager(context).getExtensions()) {
+                public void execute(InfoServiceImpl module) {
+                    for (ExtensionProxy extension : module.getExtensionsManager().getExtensions()) {
                         ExtMap extContext = extension.getContext();
                         log.info(
                             "Extension name={} type={} version={} notes={}",
@@ -91,10 +91,10 @@ public class InfoServiceImpl implements ModuleService {
             this.logic = logic;
         }
 
-        Map<String, Object> parse(Map<String, String> substitutions, Properties props, List<String> moduleArgs) {
-            ArgumentsParser parser = new ArgumentsParser(props, moduleArgs.remove(0));
+        Map<String, Object> parse(Map<String, String> substitutions, Properties props, List<String> actionArgs) {
+            ArgumentsParser parser = new ArgumentsParser(props, actionArgs.remove(0));
             parser.getSubstitutions().putAll(substitutions);
-            parser.parse(moduleArgs);
+            parser.parse(actionArgs);
             Map<String, Object> argMap = parser.getParsedArgs();
 
             if((Boolean)argMap.get("help")) {
@@ -107,7 +107,7 @@ public class InfoServiceImpl implements ModuleService {
                 }
                 throw new ExitException("Parsing error", 1);
             }
-            if (moduleArgs.size() != 0) {
+            if (actionArgs.size() != 0) {
                 log.error("Extra parameters in command-line");
                 throw new ExitException("Parsing error", 1);
             }
@@ -115,16 +115,17 @@ public class InfoServiceImpl implements ModuleService {
             return argMap;
         }
 
-        void execute(ExtMap context, Map<String, Object> argMap) {
-            logic.execute(context, argMap);
+        void execute(InfoServiceImpl module) {
+            logic.execute(module);
         }
     }
 
     private ExtMap context;
     private Action action;
+    private Map<String, Object> argModuleMap;
     private Map<String, Object> argMap;
 
-    private static ExtensionsManager getExtensionsManager(ExtMap context) {
+    private ExtensionsManager getExtensionsManager() {
         return (ExtensionsManager)context.get(ContextKeys.EXTENSION_MANAGER);
     }
 
@@ -163,9 +164,9 @@ public class InfoServiceImpl implements ModuleService {
         ArgumentsParser parser = new ArgumentsParser(props, "module");
         parser.getSubstitutions().putAll(substitutions);
         parser.parse(args);
-        Map<String, Object> moduleArgs = parser.getParsedArgs();
+        argModuleMap = parser.getParsedArgs();
 
-        if((Boolean)moduleArgs.get("help")) {
+        if((Boolean)argModuleMap.get("help")) {
             System.out.format("Usage: %s", parser.getUsage());
             throw new ExitException("Help", 0);
         }
@@ -193,6 +194,6 @@ public class InfoServiceImpl implements ModuleService {
 
     @Override
     public void run() throws Exception {
-        action.execute(context, argMap);
+        action.execute(this);
     }
 }
