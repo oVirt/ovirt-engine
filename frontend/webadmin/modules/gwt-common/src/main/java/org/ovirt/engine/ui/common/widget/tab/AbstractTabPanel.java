@@ -14,7 +14,7 @@ import com.gwtplatform.mvp.client.TabData;
 import com.gwtplatform.mvp.client.TabPanel;
 
 /**
- * Base class used to implement tab panel widgets.
+ * Base class used to implement GWTP TabPanel widgets.
  * <p>
  * Subclasses are free to style the UI, given that they declare:
  * <ul>

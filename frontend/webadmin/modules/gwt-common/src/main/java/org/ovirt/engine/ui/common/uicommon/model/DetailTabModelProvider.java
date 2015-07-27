@@ -10,10 +10,8 @@ import com.google.inject.Provider;
 /**
  * Default {@link DetailModelProvider} implementation for use with tab controls.
  *
- * @param <M>
- *            Main model type.
- * @param <D>
- *            Detail model type.
+ * @param <M> Main model type (extends ListWithDetailsModel)
+ * @param <D> Detail model type (extends EntityModel)
  */
 public class DetailTabModelProvider<M extends ListWithDetailsModel, D extends EntityModel> extends TabModelProvider<D> implements DetailModelProvider<M, D> {
 

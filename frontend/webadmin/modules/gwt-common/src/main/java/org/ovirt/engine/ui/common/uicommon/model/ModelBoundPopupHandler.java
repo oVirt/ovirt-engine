@@ -17,12 +17,16 @@ import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 
 /**
- * Encapsulates logic for handling dialog models of the given source model.
+ * Contains some logic for handling window model changes for a given source model.
+ * Contains the code that actually reveals the popups via GWTP.
+ *
+ * TODO rename to WindowModelPopupHandler
+ * TODO this class is just a ball of stuff with no one well-defined purpose. Needs a refactor.
+ *
  * <p>
  * Uses {@link ModelBoundPopupResolver} for resolving popup widgets from dialog models.
  *
- * @param <M>
- *            Model type.
+ * @param <M> Model type.
  */
 public class ModelBoundPopupHandler<M extends IModel> {
 
@@ -46,7 +50,9 @@ public class ModelBoundPopupHandler<M extends IModel> {
     }
 
     /**
-     * Adds a property change listener to the given source model that handles its dialog models.
+     * Adds a property change listener to the model that responds when a new window model is set.
+     *
+     * TODO rename addWindowModelChangeListener
      */
     public void addDialogModelListener(final M source) {
         hideAndClearAllPopups();
@@ -69,21 +75,23 @@ public class ModelBoundPopupHandler<M extends IModel> {
         this.defaultConfirmPopupProvider = defaultConfirmPopupProvider;
     }
 
+    // TODO this should be redesigned -- way too complex. GS
     @SuppressWarnings("unchecked")
-    void handleWindowModelChange(M source, AbstractModelBoundPopupPresenterWidget<?, ?> popup,
-            boolean isConfirm, String propertyName) {
-        Model windowModel = isConfirm ? popupResolver.getConfirmWindowModel(source, propertyName)
-                : popupResolver.getWindowModel(source, propertyName);
+    void handleWindowModelChange(M sourceModel, AbstractModelBoundPopupPresenterWidget<?, ?> currentPopup,
+            boolean isConfirmation, String propertyName) {
+        Model windowModel = isConfirmation ? popupResolver.getConfirmWindowModel(sourceModel, propertyName)
+                : popupResolver.getWindowModel(sourceModel, propertyName);
 
         // Reveal new popup
-        if (windowModel != null && popup == null) {
+        if (windowModel != null && currentPopup == null) {
+
             // 1. Resolve
             AbstractModelBoundPopupPresenterWidget<?, ?> newPopup = null;
-            UICommand lastExecutedCommand = source.getLastExecutedCommand();
+            UICommand lastExecutedCommand = sourceModel.getLastExecutedCommand();
 
             if (windowModel instanceof ConfirmationModel) {
                 // Resolve confirmation popup
-                newPopup = popupResolver.getConfirmModelPopup(source, lastExecutedCommand);
+                newPopup = popupResolver.getConfirmModelPopup(sourceModel, lastExecutedCommand);
 
                 if (newPopup == null && defaultConfirmPopupProvider != null) {
                     // Fall back to basic confirmation popup if possible
@@ -91,32 +99,30 @@ public class ModelBoundPopupHandler<M extends IModel> {
                 }
             } else {
                 // Resolve main popup
-                newPopup = popupResolver.getModelPopup(source, lastExecutedCommand, windowModel);
+                newPopup = popupResolver.getModelPopup(sourceModel, lastExecutedCommand, windowModel);
             }
 
             // 2. Reveal
             if (newPopup != null) {
                 revealAndAssignPopup(windowModel,
                         (AbstractModelBoundPopupPresenterWidget<Model, ?>) newPopup,
-                        isConfirm);
+                        isConfirmation);
             } else {
-                // No popup bound to model, need to clear model reference manually
-                if (isConfirm) {
-                    popupResolver.clearConfirmWindowModel(source, propertyName);
+                if (isConfirmation) {
+                    popupResolver.clearConfirmWindowModel(sourceModel, propertyName);
                 } else {
-                    popupResolver.clearWindowModel(source, propertyName);
+                    popupResolver.clearWindowModel(sourceModel, propertyName);
                 }
             }
         }
 
-        // Hide existing popup
-        else if (windowModel == null && popup != null) {
-            hideAndClearPopup(popup, isConfirm);
+        else if (windowModel == null && currentPopup != null) {
+            hideAndClearPopup(currentPopup, isConfirmation);
         }
     }
 
     /**
-     * Reveals a popup bound to the given model.
+     * Reveals the popup (tells GWTP to actually show it)
      */
     <T extends Model> void revealPopup(final T model,
             final AbstractModelBoundPopupPresenterWidget<T, ?> popup) {
@@ -149,7 +155,7 @@ public class ModelBoundPopupHandler<M extends IModel> {
     }
 
     /**
-     * Reveals a model-bound popup and remembers its reference, so that it can be closed (hidden) later on.
+     * Reveals the popup (tells GWTP to actually show it) and remembers its reference, so that it can be closed (hidden) later on.
      */
     protected <T extends Model> void revealAndAssignPopup(T model,
             AbstractModelBoundPopupPresenterWidget<T, ?> popup, boolean isConfirm) {
@@ -164,7 +170,7 @@ public class ModelBoundPopupHandler<M extends IModel> {
     }
 
     /**
-     * Hides a model-bound popup and clears its reference, so that another popup can be opened.
+     * Hides a popup and clears its reference, so that another popup can be opened.
      */
     protected void hideAndClearPopup(AbstractModelBoundPopupPresenterWidget<?, ?> popup, boolean isConfirm) {
         popup.hideAndUnbind();
@@ -178,7 +184,7 @@ public class ModelBoundPopupHandler<M extends IModel> {
     }
 
     /**
-     * Hides all model-bound popups and clears their references.
+     * Hides confirmation and window popups and clears their references.
      */
     void hideAndClearAllPopups() {
         if (confirmWindowPopup != null) {

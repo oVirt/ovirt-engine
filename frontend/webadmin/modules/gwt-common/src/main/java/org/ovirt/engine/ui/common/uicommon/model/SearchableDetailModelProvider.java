@@ -8,12 +8,9 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
  * <p>
  * Contains main model type information to distinguish detail models of the same type for different main models.
  *
- * @param <T>
- *            Detail model item type.
- * @param <M>
- *            Main model type.
- * @param <D>
- *            Detail model type.
+ * @param <T> Detail item type.
+ * @param <M> Main model type (extends ListWithDetailsModel).
+ * @param <D> Detail model type (extends SearchableListModel).
  */
 public interface SearchableDetailModelProvider<T, M extends ListWithDetailsModel, D extends SearchableListModel> extends DetailModelProvider<M, D>, SearchableTableModelProvider<T, D> {
 

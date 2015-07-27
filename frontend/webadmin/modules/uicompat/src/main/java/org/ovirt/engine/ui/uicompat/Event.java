@@ -4,9 +4,30 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
-
+/**
+ * <p>
+ * The main Event class in uicommon's eventing infrastructure. Note that this is
+ * completely separate from GWT's eventing infrastructure, GwtEvent, etc.
+ * </p>
+ * <p>
+ * Encapsulates an event that occurs to an object -- usually a Model object. The
+ * event can be anything, but is typically a property value change.
+ * </p>
+ * <p>
+ * Event uses a simple publish-subscribe model. Create an Event, and set it as a
+ * Model field. Subscribe to the Event by calling addListener() (usually do this
+ * from a Presenter or View). Event keeps the subscribers in a simple List.
+ * Fire the event (probably in a Model setter) when your event condition occurs
+ * (for example, a Model property is changed) by calling Event.raise(). raise()
+ * publishes the event to all those who subscribed via addListener();
+ * </p>
+ *
+ * @param <T>
+ */
 public class Event<T extends EventArgs> {
+
     private List<IEventListener<? super T>> listeners;
     private Map<IEventListener<? super T>, Object> contexts;
     private Class<?> privateOwnerType;
@@ -29,9 +50,8 @@ public class Event<T extends EventArgs> {
     }
 
     /**
-     Gets an object representing current event context.
-     Specified when add listener.
-    */
+     * Gets an object representing current event context. Specified when add listener.
+     */
     private Object privateContext;
     public Object getContext()
     {
@@ -62,13 +82,16 @@ public class Event<T extends EventArgs> {
     }
 
     /**
-     Add listener with no context specified.
-    */
+     * Add listener with no context specified.
+     */
     public void addListener(IEventListener<? super T> listener)
     {
         listeners.add(listener);
     }
 
+    /**
+     * Subscribe to this Event. Subscriber will have eventRaised() called back when the event is published.
+     */
     public void addListener(IEventListener<? super T> listener, Object context)
     {
         listeners.add(listener);
@@ -85,15 +108,21 @@ public class Event<T extends EventArgs> {
         }
     }
 
+    /**
+     * Raise (publish) the event. This simply calls eventRaised() on all those who subscribed via addListener();
+     */
     public void raise(Object sender, T e)
     {
-        //Iterate on a new instance of listeners list,
-        //to enable listener unsubscribe from event
-        //as a result on event fairing.
+        // Iterate on a new instance of listeners list,
+        // to enable listener unsubscribe from event
+        // as a result on event firing.
+
         ArrayList<IEventListener<? super T>> list = new ArrayList<IEventListener<? super T>>();
+
         for (IEventListener<? super T> listener : listeners)
         {
             list.add(listener);
+
         }
 
         for (IEventListener<? super T> listener : list)

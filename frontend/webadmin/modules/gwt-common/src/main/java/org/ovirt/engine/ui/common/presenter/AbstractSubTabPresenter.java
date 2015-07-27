@@ -29,16 +29,11 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 /**
  * Base class for presenters representing sub tabs that react to item selection changes within main tab presenters.
  *
- * @param <T>
- *            Main tab table row data type.
- * @param <M>
- *            Main model type.
- * @param <D>
- *            Detail model type.
- * @param <V>
- *            View type.
- * @param <P>
- *            Proxy type.
+ * @param <T> Main tab table row data type.
+ * @param <M> Main model type (extends ListWithDetailsModel)
+ * @param <D> Detail model type extends HasEntity
+ * @param <V> View type (extends AbstractSubTabPresenter.ViewDef<T>)
+ * @param <P> Proxy type (extends TabContentProxyPlace)
  */
 public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel, D extends HasEntity, V extends AbstractSubTabPresenter.ViewDef<T>, P extends TabContentProxyPlace<?>>
         extends AbstractTabPresenter<V, P> {
@@ -62,6 +57,15 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
 
     private List<T> mainTabSelectedItems;
 
+    /**
+     * @param eventBus
+     * @param view <V> View type (extends AbstractSubTabPresenter.ViewDef<T>)
+     * @param proxy <P> Proxy type (extends TabContentProxyPlace)
+     * @param placeManager
+     * @param modelProvider DetailModelProvider<M, D> <M> Main model type (extends ListWithDetailsModel)
+     *                                                <D> Detail model type extends HasEntity
+     * @param slot
+     */
     public AbstractSubTabPresenter(EventBus eventBus, V view, P proxy,
             PlaceManager placeManager, DetailModelProvider<M, D> modelProvider,
             Type<RevealContentHandler<?>> slot) {

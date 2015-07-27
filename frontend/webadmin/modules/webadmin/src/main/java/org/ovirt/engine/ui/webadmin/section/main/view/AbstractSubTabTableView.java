@@ -16,14 +16,10 @@ import com.google.gwt.user.cellview.client.CellTable.Resources;
 /**
  * Base class for sub tab views that use {@link SimpleActionTable} directly.
  *
- * @param <I>
- *            Main tab table row data type.
- * @param <T>
- *            Sub tab table row data type.
- * @param <M>
- *            Main model type.
- * @param <D>
- *            Detail model type.
+ * @param <I> Main tab table row data type.
+ * @param <T> Sub tab table row data type.
+ * @param <M> Main model type (extends ListWithDetailsModel)
+ * @param <D> Detail model type (extends SearchableListModel)
  */
 public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsModel, D extends SearchableListModel> extends AbstractView implements AbstractSubTabPresenter.ViewDef<I> {
 

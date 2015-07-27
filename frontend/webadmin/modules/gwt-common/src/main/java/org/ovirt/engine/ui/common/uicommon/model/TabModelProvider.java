@@ -17,8 +17,13 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 /**
- * Basic {@link ModelProvider} implementation
- * @param <M> Model type.
+ * Base {@link ModelProvider} implementation. Decorates a Provider<M> that gets injected by GIN.
+ *
+ * Provides a model to something, usually preparing it along the way.
+ *
+ * TODO rename BaseModelProvider
+ *
+ * @param <M> model type being provided
  */
 public abstract class TabModelProvider<M extends HasEntity> implements ModelProvider<M>, ModelBoundPopupResolver<M>, HasHandlers {
 
@@ -26,6 +31,7 @@ public abstract class TabModelProvider<M extends HasEntity> implements ModelProv
     private final ModelBoundPopupHandler<M> popupHandler;
     private boolean modelInitialized = false;
 
+    // Decorated model provider that gets setter-injected by GIN.
     protected Provider<M> modelProvider;
 
     public TabModelProvider(EventBus eventBus,
@@ -58,11 +64,18 @@ public abstract class TabModelProvider<M extends HasEntity> implements ModelProv
     }
 
     /**
-     * <p>
+     * Adds a property change listener to the model that calls popupHandler.handleWindowModelChange()
+     * when a new window model is set.
+     *
+     * Register WidgetModel property change listener that calls modelBoundWidgetChange().
+     *
      * Override this method to register custom listeners on the corresponding model.
+     *
+     * TODO: rename initializeModelListeners / 'Handlers' is the wrong word
      */
     protected void initializeModelHandlers(M model) {
-        // Register dialog model property change listener
+        // Add a property change listener to the model that responds when a new window model is set.
+        // TODO should be refactored to read "model.addDialogModelListener(popupHandler)", which is semantically correct
         popupHandler.addDialogModelListener(model);
 
         // Register WidgetModel property change listener
@@ -78,6 +91,10 @@ public abstract class TabModelProvider<M extends HasEntity> implements ModelProv
         });
     }
 
+    /**
+     * Called when the widget-model property of a model is changed
+     * TODO this seems important. What does it do? What is a widget model?
+     */
     @SuppressWarnings("unchecked")
     void modelBoundWidgetChange() {
         UICommand lastExecutedCommand = getModel().getLastExecutedCommand();
@@ -115,17 +132,29 @@ public abstract class TabModelProvider<M extends HasEntity> implements ModelProv
         source.setConfirmWindow(null);
     }
 
+    /* (non-Javadoc)
+     * @see org.ovirt.engine.ui.common.uicommon.model.ModelBoundPopupResolver#getModelPopup(org.ovirt.engine.ui.uicommonweb.models.IModel, org.ovirt.engine.ui.uicommonweb.UICommand, org.ovirt.engine.ui.uicommonweb.models.Model)
+     */
     @Override
-    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(M source,
+    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(M sourceModel,
             UICommand lastExecutedCommand, Model windowModel) {
-        // No-op, override as necessary
+
+        // No-op by default.
+        // Override if you need to figure out which popup presenter widget is responsible for rendering the popup for windowModel.
+
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.ovirt.engine.ui.common.uicommon.model.ModelBoundPopupResolver#getConfirmModelPopup(org.ovirt.engine.ui.uicommonweb.models.IModel, org.ovirt.engine.ui.uicommonweb.UICommand)
+     */
     @Override
-    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(M source,
+    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(M sourceModel,
             UICommand lastExecutedCommand) {
-        // No-op, override as necessary
+
+        // No-op by default.
+        // Override if you need to figure out which popup presenter widget is responsible for rendering the popup for windowModel.
+
         return null;
     }
 
