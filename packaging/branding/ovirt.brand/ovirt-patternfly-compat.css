@@ -479,3 +479,11 @@ a.dropdown-toggle {
     position: relative !important;
     top: 3px !important;
 }
+
+/*
+fix of https://github.com/necolas/normalize.css/blob/3.0.3/normalize.css#L246 bug, imported through PatternFly
+bug-report https://github.com/necolas/normalize.css/issues/349
+*/
+input:disabled {
+    color: GrayText;
+}
