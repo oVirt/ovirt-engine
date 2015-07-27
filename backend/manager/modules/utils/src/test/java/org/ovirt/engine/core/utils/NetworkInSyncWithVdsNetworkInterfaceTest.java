@@ -197,13 +197,31 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         List<ReportedConfiguration> reportedConfigurationList = reportedConfigurations.getReportedConfigurationList();
 
         List<ReportedConfiguration> expectedReportedConfigurations = Arrays.asList(
-                new ReportedConfiguration(ReportedConfigurationType.MTU, Integer.toString(iface.getMtu()), true),
-                new ReportedConfiguration(ReportedConfigurationType.BRIDGED, Boolean.toString(iface.isBridged()), true),
-                new ReportedConfiguration(ReportedConfigurationType.VLAN, Integer.toString(iface.getVlanId()), true),
+                        new ReportedConfiguration(ReportedConfigurationType.MTU,
+                                Integer.toString(iface.getMtu()),
+                                Integer.toString(network.getMtu()),
+                                true),
+                        new ReportedConfiguration(ReportedConfigurationType.BRIDGED,
+                                Boolean.toString(iface.isBridged()),
+                                Boolean.toString(network.isVmNetwork()),
+                                true),
+                        new ReportedConfiguration(ReportedConfigurationType.VLAN,
+                                Integer.toString(iface.getVlanId()),
+                                Integer.toString(network.getVlanId()),
+                                true),
 
-                new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE, ifaceQos.getOutAverageLinkshare().toString(), false),
-                new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT, ifaceQos.getOutAverageUpperlimit().toString(), false),
-                new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_REAL_TIME, ifaceQos.getOutAverageRealtime().toString(), false)
+                        new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE,
+                                ifaceQos.getOutAverageLinkshare().toString(),
+                                null,
+                                false),
+                        new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT,
+                                ifaceQos.getOutAverageUpperlimit().toString(),
+                                null,
+                                false),
+                        new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_REAL_TIME,
+                                ifaceQos.getOutAverageRealtime().toString(),
+                                null,
+                                false)
         );
 
         assertThat(reportedConfigurationList.containsAll(expectedReportedConfigurations), is(true));
@@ -226,9 +244,18 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         List<ReportedConfiguration> reportedConfigurationList = reportedConfigurations.getReportedConfigurationList();
 
         List<ReportedConfiguration> expectedReportedConfigurations = Arrays.asList(
-                new ReportedConfiguration(ReportedConfigurationType.MTU, Integer.toString(iface.getMtu()), true),
-                new ReportedConfiguration(ReportedConfigurationType.BRIDGED, Boolean.toString(iface.isBridged()), true),
-                new ReportedConfiguration(ReportedConfigurationType.VLAN, Integer.toString(iface.getVlanId()), true)
+                new ReportedConfiguration(ReportedConfigurationType.MTU,
+                        Integer.toString(iface.getMtu()),
+                        Integer.toString(network.getMtu()),
+                        true),
+                new ReportedConfiguration(ReportedConfigurationType.BRIDGED,
+                        Boolean.toString(iface.isBridged()),
+                        Boolean.toString(network.isVmNetwork()),
+                        true),
+                new ReportedConfiguration(ReportedConfigurationType.VLAN,
+                        Integer.toString(iface.getVlanId()),
+                        Integer.toString(network.getVlanId()),
+                        true)
         );
 
         assertThat(reportedConfigurationList.containsAll(expectedReportedConfigurations), is(true));

@@ -4318,9 +4318,10 @@
 
   <xs:complexType name="ReportedConfiguration">
     <xs:sequence>
-      <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
-      <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="1"/>
-      <xs:element name="in_sync" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="expected_value" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="actual_value" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="in_sync" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
 

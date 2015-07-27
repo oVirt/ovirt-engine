@@ -21,7 +21,8 @@ public class ReportedConfigurationsMapper {
             ReportedConfiguration conf = new ReportedConfiguration();
             conf.setInSync(reportedConfiguration.isInSync());
             conf.setName(reportedConfiguration.getType().getName());
-            conf.setValue(reportedConfiguration.getValue());
+            conf.setActualValue(reportedConfiguration.getActualValue());
+            conf.setExpectedValue(reportedConfiguration.getExpectedValue());
             reportedConfigurationList.add(conf);
         }
 
