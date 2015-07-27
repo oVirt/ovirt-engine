@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.bll.network.host;
 
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
+import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -56,6 +58,13 @@ public class NicNameNicIdCompleter {
      */
     public void completeBond(Bond bond) {
         complete(new NicNameAndNicIdAccessors.FromBond(bond));
+    }
+
+    public void completeLabels(Set<NicLabel> labels) {
+        NicNameAndNicIdAccessors.FromNicLabel accessors = new NicNameAndNicIdAccessors.FromNicLabel();
+        for (NicLabel label : labels) {
+            complete(accessors.setNicLabel(label));
+        }
     }
 
     void complete(NicNameAndNicIdAccessors accessors) {
@@ -161,6 +170,44 @@ public class NicNameNicIdCompleter {
 
             public FromNetworkAttachment setNetworkAttachment(NetworkAttachment networkAttachment) {
                 this.networkAttachment = networkAttachment;
+                return this;
+            }
+        }
+
+        class FromNicLabel implements NicNameAndNicIdAccessors {
+            private NicLabel nicLabel;
+
+            public FromNicLabel() {
+            }
+
+            public FromNicLabel(NicLabel nicLabel) {
+                this.nicLabel = nicLabel;
+            }
+
+            @Override
+            public String getName() {
+                return nicLabel.getNicName();
+            }
+
+            @Override
+            public NicNameAndNicIdAccessors setName(String name) {
+                nicLabel.setNicName(name);
+                return this;
+            }
+
+            @Override
+            public Guid getId() {
+                return nicLabel.getNicId();
+            }
+
+            @Override
+            public NicNameAndNicIdAccessors setId(Guid id) {
+                nicLabel.setNicId(id);
+                return this;
+            }
+
+            public FromNicLabel setNicLabel(NicLabel nicLabel) {
+                this.nicLabel = nicLabel;
                 return this;
             }
         }

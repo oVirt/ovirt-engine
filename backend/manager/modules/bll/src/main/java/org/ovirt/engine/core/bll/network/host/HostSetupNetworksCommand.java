@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll.network.host;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -49,6 +52,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -76,6 +80,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private List<HostNetwork> networksToConfigure;
     private BusinessEntityMap<VdsNetworkInterface> existingNicsBusinessEntityMap;
     private final QosDaoCache qosDaoCache = new QosDaoCache(getDbFacade().getHostNetworkQosDao());
+    private List<Network> clusterNetworks;
 
     @Inject
     private HostNetworkTopologyPersister hostNetworkTopologyPersister;
@@ -98,6 +103,9 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     @Inject
     private VdsDao vdsDao;
+
+    @Inject
+    private InterfaceDao interfaceDao;
 
     @Inject
     private NetworkIdNetworkNameCompleter networkIdNetworkNameCompleter;
@@ -130,10 +138,17 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         nicNameNicIdCompleter.completeNetworkAttachments(getParameters().getNetworkAttachments());
         nicNameNicIdCompleter.completeBonds(getParameters().getBonds());
         nicNameNicIdCompleter.completeNetworkAttachments(getExistingAttachments());
+        nicNameNicIdCompleter.completeLabels(getParameters().getLabels());
 
         networkIdNetworkNameCompleter.completeNetworkAttachments(
-            getParameters().getNetworkAttachments(),
-            getNetworkBusinessEntityMap());
+                getParameters().getNetworkAttachments(),
+                getNetworkBusinessEntityMap());
+
+        NicLabelsCompleter labelsCompleter = new NicLabelsCompleter(getParameters(),
+                getExistingAttachments(),
+                getClusterNetworks(),
+                getExistingNicsBusinessEntityMap());
+        labelsCompleter.completeNetworkAttachments();
 
         ValidationResult hostSetupNetworkValidatorResult = validateWithHostSetupNetworksValidator(host);
         if (!hostSetupNetworkValidatorResult.isValid()) {
@@ -282,10 +297,12 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     private boolean noChangesDetected() {
         return getNetworksToConfigure().isEmpty()
-            && getRemovedNetworks().isEmpty()
-            && getParameters().getBonds().isEmpty()
-            && getRemovedBondNames().isEmpty()
-            && getRemovedUnmanagedNetworks().isEmpty();
+                && getRemovedNetworks().isEmpty()
+                && getParameters().getBonds().isEmpty()
+                && getRemovedBondNames().isEmpty()
+                && getRemovedUnmanagedNetworks().isEmpty()
+                && getParameters().getLabels().isEmpty()
+                && getParameters().getRemovedLabels().isEmpty();
     }
 
     private List<VdsNetworkInterface> getRemovedBonds() {
@@ -426,14 +443,111 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     }
 
     private List<VdsNetworkInterface> applyUserConfiguredNics() {
-        List<VdsNetworkInterface> userConfiguredNics = new ArrayList<>();
-        userConfiguredNics.addAll(getParameters().getBonds());
-        for (VdsNetworkInterface existingBondToRemove : getRemovedBonds()) {
-            existingBondToRemove.setLabels(null);
-            userConfiguredNics.add(existingBondToRemove);
+        List<VdsNetworkInterface> nicsToConfigure = getNicsToConfigureWithoutLabelsUpdates();
+
+        updateLabelsOnNicsToConfigure(nicsToConfigure);
+
+        return nicsToConfigure;
+    }
+
+    private void updateLabelsOnNicsToConfigure(List<VdsNetworkInterface> nicsToConfigure) {
+        Map<String, VdsNetworkInterface> nicsToConfigureByName = Entities.entitiesByName(nicsToConfigure);
+
+        clearLabelsFromRemovedBonds(nicsToConfigureByName);
+
+        updateAddedModifiedLabelsOnNics(nicsToConfigureByName);
+
+        updateRemovedLabelOnNics(nicsToConfigureByName);
+    }
+
+    private void updateRemovedLabelOnNics(Map<String, VdsNetworkInterface> nicsToConfigureByName) {
+        Map<String, VdsNetworkInterface> labelToNic = getLabelToNic(nicsToConfigureByName.values());
+        for (String removedLabel : getParameters().getRemovedLabels()) {
+            VdsNetworkInterface nicWithLabel = labelToNic.get(removedLabel);
+            nicWithLabel.getLabels().remove(removedLabel);
+        }
+    }
+
+    private void updateAddedModifiedLabelsOnNics(Map<String, VdsNetworkInterface> nicsToConfigureByName) {
+        Map<String, VdsNetworkInterface> labelToExistingNic = getLabelToNic(nicsToConfigureByName);
+        for (NicLabel nicLabel : getParameters().getLabels()) {
+            VdsNetworkInterface currentLabelNic = labelToExistingNic.get(nicLabel.getLabel());
+            VdsNetworkInterface newLabelNic = nicsToConfigureByName.get(nicLabel.getNicName());
+
+            moveLabel(nicLabel.getLabel(), currentLabelNic, newLabelNic);
+        }
+    }
+
+    private void moveLabel(String label,
+            VdsNetworkInterface currentLabelNic,
+            VdsNetworkInterface newLabelNic) {
+        if (currentLabelNic != null && currentLabelNic.getName().equals(newLabelNic.getName())) {
+            return;
         }
 
-        return userConfiguredNics;
+        // Add label to new nic
+        Set<String> labelsOnNic = newLabelNic.getLabels();
+
+        if (labelsOnNic == null) {
+            labelsOnNic = new HashSet<>();
+            newLabelNic.setLabels(labelsOnNic);
+        }
+
+        labelsOnNic.add(label);
+
+        // Remove labels from current nic
+        if (currentLabelNic != null) {
+            currentLabelNic.getLabels().remove(label);
+        }
+    }
+
+    private void clearLabelsFromRemovedBonds(Map<String, VdsNetworkInterface> nicsToConfigureByName) {
+        for (VdsNetworkInterface existingBondToRemove : getRemovedBonds()) {
+            nicsToConfigureByName.get(existingBondToRemove.getName()).setLabels(null);
+        }
+    }
+
+    private Map<String, VdsNetworkInterface> getLabelToNic(Map<String, VdsNetworkInterface> nicsToConfigureByName) {
+        Map<String, VdsNetworkInterface> labelToExistingNic = new HashMap<>();
+        for (VdsNetworkInterface nic : nicsToConfigureByName.values()) {
+            if (NetworkUtils.isLabeled(nic)) {
+                for (String label : nic.getLabels()) {
+                    labelToExistingNic.put(label, nic);
+                }
+            }
+        }
+
+        return labelToExistingNic;
+    }
+
+    private List<VdsNetworkInterface> getNicsToConfigureWithoutLabelsUpdates() {
+        List<VdsNetworkInterface> nicsToConfigure = new ArrayList<>();
+
+        nicsToConfigure.addAll(interfaceDao.getAllInterfacesForVds(getVdsId()));
+
+        // TODO MM: The bonds in the parameters shouldn't contain the whole VdsNetworkInterface. 0nly the id, name and
+        // slaves.
+        for (Bond bond : getParameters().getBonds()) {
+            if (bond.getId() == null) {
+                Bond newBond = new Bond(bond.getName());
+                nicsToConfigure.add(newBond);
+            }
+        }
+
+        return nicsToConfigure;
+    }
+
+    private Map<String, VdsNetworkInterface> getLabelToNic(Collection<VdsNetworkInterface> nics) {
+        Map<String, VdsNetworkInterface> labelToNic = new HashMap<>();
+        for (VdsNetworkInterface nic : nics) {
+            if (nic.getLabels() != null) {
+                for (String label : nic.getLabels()) {
+                    labelToNic.put(label, nic);
+                }
+            }
+        }
+
+        return labelToNic;
     }
 
     private List<Network> getModifiedNetworks() {
@@ -480,11 +594,16 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     private BusinessEntityMap<Network> getNetworkBusinessEntityMap() {
         if (networkBusinessEntityMap == null) {
-            List<Network> networks = getNetworkDao().getAllForCluster(getVdsGroupId());
-            networkBusinessEntityMap = new BusinessEntityMap<>(networks);
+            networkBusinessEntityMap = new BusinessEntityMap<>(getClusterNetworks());
         }
 
         return networkBusinessEntityMap;
     }
 
+    private List<Network> getClusterNetworks() {
+        if (clusterNetworks == null) {
+            clusterNetworks = getNetworkDao().getAllForCluster(getVdsGroupId());
+        }
+        return clusterNetworks;
+    }
 }

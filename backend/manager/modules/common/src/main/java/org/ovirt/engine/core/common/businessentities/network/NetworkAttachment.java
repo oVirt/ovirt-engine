@@ -42,6 +42,21 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
         return serialVersionUID;
     }
 
+    public NetworkAttachment() {
+    }
+
+    public NetworkAttachment(NetworkAttachment networkAttachment) {
+        id = networkAttachment.getId();
+        nicId = networkAttachment.getNicId();
+        nicName = networkAttachment.getNicName();
+        networkId = networkAttachment.getNetworkId();
+        networkName = networkAttachment.getNetworkName();
+        ipConfiguration = networkAttachment.getIpConfiguration();
+        properties = networkAttachment.getProperties();
+        overrideConfiguration = networkAttachment.isOverrideConfiguration();
+        reportedConfigurations = networkAttachment.getReportedConfigurations();
+    }
+
     @Override
     public Guid getId() {
         return id;
