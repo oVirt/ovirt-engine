@@ -16,8 +16,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class StorageDomainValidator {
@@ -324,13 +322,6 @@ public class StorageDomainValidator {
             if (storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Locked) {
                 return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
             }
-        }
-        return ValidationResult.VALID;
-    }
-
-    public ValidationResult isHostedEngineStorage() {
-        if (Config.getValue(ConfigValues.HostedEngineStorageDomainName).equals(storageDomain.getName())) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_STORAGE);
         }
         return ValidationResult.VALID;
     }
