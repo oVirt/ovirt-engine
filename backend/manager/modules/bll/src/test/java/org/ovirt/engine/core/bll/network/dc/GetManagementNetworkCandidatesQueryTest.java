@@ -37,16 +37,16 @@ public class GetManagementNetworkCandidatesQueryTest {
     @Mock
     private Network mockExternalNetwork;
     @Mock
-    private Network mockNonExternalNetwork;
+    private Network mockManagementNetworkCandidate;
 
     private GetManagementNetworkCandidatesQuery underTest;
-    private ArrayList<Network> dcNetworks = new ArrayList<>();
+    private List<Network> dcNetworks = new ArrayList<>();
 
     @Before
     public void setUp() throws Exception {
         when(mockUser.getId()).thenReturn(USER_ID);
-        when(mockNetworkPredicate.eval(mockExternalNetwork)).thenReturn(true);
-        when(mockNetworkPredicate.eval(mockNonExternalNetwork)).thenReturn(false);
+        when(mockNetworkPredicate.eval(mockExternalNetwork)).thenReturn(false);
+        when(mockNetworkPredicate.eval(mockManagementNetworkCandidate)).thenReturn(true);
         when(mockNetworkDao.getAllForDataCenter(DC_ID, USER_ID, true)).thenReturn(dcNetworks);
 
         final IdQueryParameters params = new IdQueryParameters(DC_ID);
@@ -57,7 +57,7 @@ public class GetManagementNetworkCandidatesQueryTest {
 
     @Test
     public void testExecuteQueryCommand() {
-        dcNetworks.addAll(Arrays.asList(mockExternalNetwork, mockNonExternalNetwork));
+        dcNetworks.addAll(Arrays.asList(mockExternalNetwork, mockManagementNetworkCandidate));
 
         underTest.executeQueryCommand();
 
@@ -65,7 +65,7 @@ public class GetManagementNetworkCandidatesQueryTest {
 
         assertNotNull(actual);
         assertThat(actual, hasSize(1));
-        assertTrue(actual.contains(mockNonExternalNetwork));
+        assertTrue(actual.contains(mockManagementNetworkCandidate));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class GetManagementNetworkCandidatesQueryTest {
         }
 
         @Override
-        Predicate<Network> getExternalNetworkPredicate() {
+        public Predicate<Network> getManagementNetworkCandidatePredicate() {
             return mockNetworkPredicate;
         }
     }

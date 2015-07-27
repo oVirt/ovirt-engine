@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.network.dc;
 
 import static org.ovirt.engine.core.utils.linq.LinqUtils.filter;
-import static org.ovirt.engine.core.utils.linq.LinqUtils.not;
 
 import java.util.List;
 
@@ -21,7 +20,7 @@ public class GetManagementNetworkCandidatesQuery<P extends IdQueryParameters> ex
 
     @Inject
     @Named
-    private Predicate<Network> externalNetworkPredicate;
+    private Predicate<Network> managementNetworkCandidatePredicate;
 
     public GetManagementNetworkCandidatesQuery(P parameters) {
         super(parameters);
@@ -37,16 +36,11 @@ public class GetManagementNetworkCandidatesQuery<P extends IdQueryParameters> ex
         getQueryReturnValue().setReturnValue(managementNetworkCandidates);
     }
 
-    private Predicate<Network> getManagementNetworkCandidatePredicate() {
-        return not(getExternalNetworkPredicate());
-    }
-
     NetworkDao getNetworkDao() {
         return networkDao;
     }
 
-    Predicate<Network> getExternalNetworkPredicate() {
-        return externalNetworkPredicate;
+    public Predicate<Network> getManagementNetworkCandidatePredicate() {
+        return managementNetworkCandidatePredicate;
     }
-
 }

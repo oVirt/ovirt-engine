@@ -15,6 +15,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.linq.Predicate;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultManagementNetworkFinderImplTest {
@@ -31,12 +32,17 @@ public class DefaultManagementNetworkFinderImplTest {
     private Network mockDefaultEngineNetwork;
     @Mock
     private ManagementNetworkUtil mockManagementNetworkUtil;
+    @Mock
+    private Predicate<Network> mockManagementNetworkCandidatePredicate;
 
     private DefaultManagementNetworkFinderImpl underTest;
 
     @Before
     public void setUp() {
-        underTest = new DefaultManagementNetworkFinderImpl(mockNetworkDao, mockManagementNetworkUtil);
+        underTest = new DefaultManagementNetworkFinderImpl(
+                mockNetworkDao,
+                mockManagementNetworkUtil,
+                mockManagementNetworkCandidatePredicate);
     }
 
     @Test
@@ -51,6 +57,7 @@ public class DefaultManagementNetworkFinderImplTest {
 
     @Test
     public void testFindDefaultManagementNetworkNonDefault() throws Exception {
+        when(mockNetworkDao.getAllForDataCenter(TEST_DC_ID)).thenReturn(Arrays.asList(mockNetwork, mockNetwork));
         when(mockNetworkDao.getManagementNetworks(TEST_DC_ID))
                 .thenReturn(Collections.singletonList(mockNetwork));
 
@@ -61,6 +68,7 @@ public class DefaultManagementNetworkFinderImplTest {
 
     @Test
     public void testFindDefaultManagementNetworkMultipleNonDefault() throws Exception {
+        when(mockNetworkDao.getAllForDataCenter(TEST_DC_ID)).thenReturn(Arrays.asList(mockNetwork, mockNetwork));
         when(mockNetworkDao.getManagementNetworks(TEST_DC_ID))
                 .thenReturn(Arrays.asList(mockNetwork, mockDefaultEngineNetwork));
 
@@ -77,4 +85,32 @@ public class DefaultManagementNetworkFinderImplTest {
         assertNull(actual);
     }
 
+    @Test
+    public void testFindSingleDcNetwork() {
+        when(mockNetworkDao.getAllForDataCenter(TEST_DC_ID)).thenReturn(Collections.singletonList(mockNetwork));
+        when(mockManagementNetworkCandidatePredicate.eval(mockNetwork)).thenReturn(true);
+
+        final Network actual = underTest.findDefaultManagementNetwork(TEST_DC_ID);
+
+        assertSame(actual, mockNetwork);
+    }
+
+    @Test
+    public void testFindSingleNotAppropriateDcNetwork() {
+        when(mockNetworkDao.getAllForDataCenter(TEST_DC_ID)).thenReturn(Collections.singletonList(mockNetwork));
+        when(mockManagementNetworkCandidatePredicate.eval(mockNetwork)).thenReturn(false);
+
+        final Network actual = underTest.findDefaultManagementNetwork(TEST_DC_ID);
+
+        assertNull(actual);
+    }
+
+    @Test
+    public void testFindMultipleDcNetworks() {
+        when(mockNetworkDao.getAllForDataCenter(TEST_DC_ID)).thenReturn(Arrays.asList(mockNetwork, mockNetwork));
+
+        final Network actual = underTest.findDefaultManagementNetwork(TEST_DC_ID);
+
+        assertNull(actual);
+    }
 }
