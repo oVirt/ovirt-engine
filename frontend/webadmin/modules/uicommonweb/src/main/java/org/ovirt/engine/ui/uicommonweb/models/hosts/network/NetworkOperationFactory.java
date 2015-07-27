@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-
 /**
  * A Factory responsible for providing Setup Network Operations for Network Items.<BR>
  * The Factory also generates Menu Items for these Operations.
@@ -252,14 +250,18 @@ public class NetworkOperationFactory {
      * @param allNics
      * @return
      */
-    public Map<NetworkOperation, List<NetworkCommand>> commandsFor(NetworkItemModel<?> item, List<VdsNetworkInterface> allNics) {
+    public Map<NetworkOperation, List<NetworkCommand>> commandsFor(NetworkItemModel<?> item,
+            DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel) {
         Map<NetworkOperation, List<NetworkCommand>> operations = new HashMap<>();
         // with nics
         for (NetworkInterfaceModel nic : nics) {
             NetworkOperation operation = operationFor(item, nic);
             if (!operation.isNullOperation()) {
                 assertBinary(item, nic, operation);
-                addToOperationMultiMap(operations, operation, operation.getCommand(item, nic, allNics));
+                NetworkCommand command = operation.getCommand(item,
+                        nic,
+                        dataFromHostSetupNetworksModel);
+                addToOperationMultiMap(operations, operation, command);
             }
         }
         // with networks
@@ -267,7 +269,10 @@ public class NetworkOperationFactory {
             NetworkOperation operation = operationFor(item, network);
             if (!operation.isNullOperation()) {
                 assertBinary(item, network, operation);
-                addToOperationMultiMap(operations, operation, operation.getCommand(item, network, allNics));
+                NetworkCommand command = operation.getCommand(item,
+                        network,
+                        dataFromHostSetupNetworksModel);
+                addToOperationMultiMap(operations, operation, command);
             }
         }
 
@@ -276,7 +281,10 @@ public class NetworkOperationFactory {
         if (!operation.isNullOperation()) {
             assert operation.isUnary() : "Operation " + operation.name() //$NON-NLS-1$
                     + " is Binary, while a Uniary Operation is expected for " + item.getName(); //$NON-NLS-1$
-            addToOperationMultiMap(operations, operation, operation.getCommand(item, null, allNics));
+            NetworkCommand command = operation.getCommand(item,
+                    null,
+                    dataFromHostSetupNetworksModel);
+            addToOperationMultiMap(operations, operation, command);
         }
 
         return operations;

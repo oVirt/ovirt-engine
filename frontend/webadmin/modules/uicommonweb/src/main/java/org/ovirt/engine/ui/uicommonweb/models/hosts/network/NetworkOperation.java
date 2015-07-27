@@ -1,13 +1,24 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
+import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.network.DataFromHostSetupNetworksModel.LabelOnNic;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkLabelModel.NewNetworkLabelModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -19,6 +30,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
  * Some Operations have required parameters
  *
  */
+//TODO MM: NetworkOperation contains duplicates; getVerb, isNullOperation to constructor
+//TODO MM: fix naming: model/entity etc. (.*?)Model should be named as \1Model and \1Model.getEntity should be called \1 and not entity. Etc.
 public enum NetworkOperation {
 
     BREAK_BOND {
@@ -39,7 +52,8 @@ public enum NetworkOperation {
                 @Override
                 protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
-                        List<VdsNetworkInterface> allNics, Object... params) {
+                        DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel,
+                        Object... params) {
                     assert op1 instanceof BondNetworkInterfaceModel;
                     assert op2 == null;
                     List<VdsNetworkInterface> bridgesToRemove = new ArrayList<>();
@@ -52,17 +66,29 @@ public enum NetworkOperation {
                         networksToDetach.add(bondNetwork);
                     }
                     for (LogicalNetworkModel networkToDetach : networksToDetach) {
-                        DETACH_NETWORK.getCommand(networkToDetach, null, allNics).execute();
+                        NetworkCommand command = DETACH_NETWORK.getCommand(networkToDetach,
+                                null,
+                                dataFromHostSetupNetworksModel);
+                        command.execute();
                     }
 
+                    Map<String, Bond> bondsMap = byName(dataFromHostSetupNetworksModel.newOrModifiedBonds);
+                    Bond bond = bondModel.getIface();
+                    boolean bondActuallyExisted = bond.getId() != null;
                     String bondName = bondModel.getName();
+
+                    dataFromHostSetupNetworksModel.newOrModifiedBonds.remove(bondsMap.get(bondName));
+                    if (bondActuallyExisted) {
+                        dataFromHostSetupNetworksModel.removedBonds.add(bond);
+                    }
+
                     // delete bonds
-                    for (VdsNetworkInterface iface : allNics) {
+                    for (VdsNetworkInterface iface : dataFromHostSetupNetworksModel.allNics) {
                         if (iface.getName().startsWith(bondName)) {
                             bridgesToRemove.add(iface);
                         }
                     }
-                    allNics.removeAll(bridgesToRemove);
+                    dataFromHostSetupNetworksModel.allNics.removeAll(bridgesToRemove);
                 }
             };
         }
@@ -92,12 +118,13 @@ public enum NetworkOperation {
                 @Override
                 protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
-                        List<VdsNetworkInterface> allNics, Object... params) {
+                        DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel,
+                        Object... params) {
                     assert op1 instanceof LogicalNetworkModel;
                     LogicalNetworkModel networkToDetach = (LogicalNetworkModel) op1;
                     assert networkToDetach.isAttached();
-                    // remove vlan bridges
-                    detachNetwork(allNics, networkToDetach);
+
+                    detachNetworkAndUpdateHostSetupNetworksParameters(dataFromHostSetupNetworksModel, networkToDetach);
                 }
             };
         }
@@ -123,7 +150,8 @@ public enum NetworkOperation {
                 @Override
                 protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
-                        List<VdsNetworkInterface> allNics, Object... params) {
+                        DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel,
+                        Object... params) {
                     assert op1 instanceof LogicalNetworkModel;
                     assert op2 instanceof NetworkInterfaceModel;
                     LogicalNetworkModel networkModelToAttach = (LogicalNetworkModel) op1;
@@ -131,11 +159,42 @@ public enum NetworkOperation {
                     // is network already attached?
                     if (networkModelToAttach.isAttached()) {
                         // detach first
-                        DETACH_NETWORK.getCommand(op1, null, allNics).execute();
+                        NetworkCommand command = DETACH_NETWORK.getCommand(op1,
+                                null,
+                                dataFromHostSetupNetworksModel);
+                        command.execute();
                     }
+
+                    Network networkToAttach = networkModelToAttach.getNetwork();
+                    Map<Guid, NetworkAttachment> allNetworkAttachmentMap =
+                            new MapNetworkAttachments(dataFromHostSetupNetworksModel.existingNetworkAttachments).byNetworkId();
+                    boolean networkUsedInPreexistingAttachment = allNetworkAttachmentMap.containsKey(networkToAttach.getId());
+                    Map<Guid, NetworkAttachment> removedNetworkAttachmentByIdMap =
+                            new MapNetworkAttachments(dataFromHostSetupNetworksModel.removedNetworkAttachments).byNetworkId();
+
+                    VdsNetworkInterface targetNic = targetNicModel.getIface();
+
+                    boolean previouslyDetachedNetwork = removedNetworkAttachmentByIdMap.containsKey(networkToAttach.getId());
+                    if (previouslyDetachedNetwork) {
+                        dataFromHostSetupNetworksModel.removedNetworkAttachments.remove(removedNetworkAttachmentByIdMap.get(
+                                networkToAttach.getId()));
+                    }
+
+                    if (networkUsedInPreexistingAttachment) {
+                        Guid oldNetworkAttachmentId = allNetworkAttachmentMap.get(networkToAttach.getId()).getId();
+                        dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.add(
+                                newNetworkAttachment(networkToAttach,
+                                        targetNic,
+                                        oldNetworkAttachmentId));
+                    } else {
+                        dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.add(
+                                newNetworkAttachment(networkToAttach,
+                                        targetNic));
+                    }
+
                     VdsNetworkInterface vlanBridge = networkModelToAttach.attach(targetNicModel, true);
                     if (vlanBridge != null) {
-                        Iterator<VdsNetworkInterface> i = allNics.iterator();
+                        Iterator<VdsNetworkInterface> i = dataFromHostSetupNetworksModel.allNics.iterator();
                         // If a vlan device with the same vlan id as the new one already exists- remove it
                         while (i.hasNext()) {
                             VdsNetworkInterface nic = i.next();
@@ -147,7 +206,7 @@ public enum NetworkOperation {
                                 break;
                             }
                         }
-                        allNics.add(vlanBridge);
+                        dataFromHostSetupNetworksModel.allNics.add(vlanBridge);
                     }
                 }
             };
@@ -174,7 +233,8 @@ public enum NetworkOperation {
                 @Override
                 protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
-                        List<VdsNetworkInterface> allNics, Object... params) {
+                        DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel,
+                        Object... params) {
                     assert op1 instanceof NetworkInterfaceModel && !(op1 instanceof BondNetworkInterfaceModel);
                     assert op2 instanceof NetworkInterfaceModel && !(op2 instanceof BondNetworkInterfaceModel);
                     assert params.length == 1 : "incorrect params length"; //$NON-NLS-1$
@@ -182,18 +242,30 @@ public enum NetworkOperation {
                     NetworkInterfaceModel nic2Model = (NetworkInterfaceModel) op2;
 
                     // detach possible networks from both nics
-                    clearNetworks(nic1Model, allNics);
-                    clearNetworks(nic2Model, allNics);
+                    clearNetworks(nic1Model, dataFromHostSetupNetworksModel);
+                    clearNetworks(nic2Model, dataFromHostSetupNetworksModel);
 
                     // param
-                    VdsNetworkInterface bond = (VdsNetworkInterface) params[0];
+                    Bond bond = (Bond) params[0];
                     String bondName = bond.getName();
 
                     // add to nic list
-                    allNics.add(bond);
+                    dataFromHostSetupNetworksModel.allNics.add(bond);
 
-                    nic1Model.getIface().setBondName(bondName);
-                    nic2Model.getIface().setBondName(bondName);
+                    VdsNetworkInterface nic1 = nic1Model.getIface();
+                    VdsNetworkInterface nic2 = nic2Model.getIface();
+                    nic1.setBondName(bondName);
+                    nic2.setBondName(bondName);
+                    bond.getSlaves().add(nic1.getName());
+                    bond.getSlaves().add(nic2.getName());
+
+                    Map<String, Bond> removedBondsMap = byName(dataFromHostSetupNetworksModel.removedBonds);
+                    boolean previouslyRemovedBond = removedBondsMap.containsKey(bond.getName());
+                    if (previouslyRemovedBond) {
+                        dataFromHostSetupNetworksModel.removedBonds.remove(removedBondsMap.get(bond.getName()));
+                    }
+                    dataFromHostSetupNetworksModel.newOrModifiedBonds.add(bond);
+
                 }
             };
         }
@@ -216,27 +288,39 @@ public enum NetworkOperation {
                 @Override
                 protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
-                        List<VdsNetworkInterface> allNics, Object... params) {
+                        DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel,
+                        Object... params) {
                     assert op1 instanceof BondNetworkInterfaceModel;
                     assert op2 instanceof BondNetworkInterfaceModel;
                     assert params.length == 1 : "incorrect params length"; //$NON-NLS-1$
-                    Set<NetworkInterfaceModel> slaveModels = new HashSet<>();
+                    Set<NetworkInterfaceModel> slaveModels = new HashSet<>();      ////TODO MM: why set? There shouldn't be overlap in slaves and if there is, this cover-ups problem.
                     slaveModels.addAll(((BondNetworkInterfaceModel) op1).getBonded());
                     slaveModels.addAll(((BondNetworkInterfaceModel) op2).getBonded());
 
                     // break both bonds
-                    BREAK_BOND.getCommand(op1, null, allNics).execute();
-                    BREAK_BOND.getCommand(op2, null, allNics).execute();
+                    BREAK_BOND.getCommand(op1, null, dataFromHostSetupNetworksModel).execute();
+                    BREAK_BOND.getCommand(op2, null, dataFromHostSetupNetworksModel).execute();
 
                     // param
-                    VdsNetworkInterface bond = (VdsNetworkInterface) params[0];
+                    Bond bond = (Bond) params[0];
                     String bondName = bond.getName();
 
                     // add to nic list
-                    allNics.add(bond);
+                    dataFromHostSetupNetworksModel.allNics.add(bond);
 
                     for (NetworkInterfaceModel slaveModel : slaveModels) {
-                        slaveModel.getIface().setBondName(bondName);
+                        VdsNetworkInterface slave = slaveModel.getIface();
+                        slave.setBondName(bondName);
+                        bond.getSlaves().add(slave.getName());
+                    }
+
+                    Map<String, Bond> removedBondsMap = byName(dataFromHostSetupNetworksModel.removedBonds);
+                    boolean previouslyRemovedBond = removedBondsMap.containsKey(bond.getName());
+                    if (previouslyRemovedBond) {
+                        dataFromHostSetupNetworksModel.removedBonds.remove(removedBondsMap.get(bond.getName()));
+                        dataFromHostSetupNetworksModel.newOrModifiedBonds.add(bond);
+                    } else {
+                        dataFromHostSetupNetworksModel.newOrModifiedBonds.add(bond);
                     }
                 }
             };
@@ -261,7 +345,8 @@ public enum NetworkOperation {
                 @Override
                 protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
-                        List<VdsNetworkInterface> allNics, Object... params) {
+                        DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel,
+                        Object... params) {
                     assert op1 instanceof NetworkInterfaceModel;
                     assert op2 instanceof BondNetworkInterfaceModel;
 
@@ -274,13 +359,29 @@ public enum NetworkOperation {
                                     : new ArrayList<LogicalNetworkModel>();
 
                     // Detach possible networks from the nic
-                    clearNetworks(nicModel, allNics);
+                    clearNetworks(nicModel, dataFromHostSetupNetworksModel);
 
                     // Attach previous nic networks to bond
-                    attachNetworks(bondModel, networksToReatach, allNics);
+                    attachNetworks(bondModel, networksToReatach, dataFromHostSetupNetworksModel);
                     moveLabels(Collections.singletonList(nicModel.getIface()), bondModel.getIface());
 
-                    nicModel.getIface().setBondName(bondModel.getIface().getName());
+                    Bond bond = bondModel.getIface();
+                    String bondName = bond.getName();
+
+                    VdsNetworkInterface nic = nicModel.getIface();
+                    nic.setBondName(bondName);
+                    String slaveName = nic.getName();
+
+                    Map<String, Bond> bondsMap = byName(dataFromHostSetupNetworksModel.newOrModifiedBonds);
+
+                    //TODO MM: removing and adding back a slave will end up in bond update even if there's no need for that.
+                    boolean bondIsAlreadyBeingUpdated = bondsMap.containsKey(bondName);
+                    if (bondIsAlreadyBeingUpdated) {
+                        bondsMap.get(bondModel.getName()).getSlaves().add(slaveName);
+                    } else {
+                        bond.getSlaves().add(slaveName);
+                        dataFromHostSetupNetworksModel.newOrModifiedBonds.add(bond);
+                    }
                 }
             };
         }
@@ -304,8 +405,9 @@ public enum NetworkOperation {
                 @Override
                 protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
-                        List<VdsNetworkInterface> allNics, Object... params) {
-                    ADD_TO_BOND.getCommand(op2, op1, allNics).execute();
+                        DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel,
+                        Object... params) {
+                    ADD_TO_BOND.getCommand(op2, op1, dataFromHostSetupNetworksModel).execute();
                 }
             };
         }
@@ -334,15 +436,34 @@ public enum NetworkOperation {
                 @Override
                 protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
-                        List<VdsNetworkInterface> allNics, Object... params) {
+                        DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel,
+                        Object... params) {
                     assert op1 instanceof NetworkInterfaceModel;
+                    assert op2 == null;
                     NetworkInterfaceModel nicModel = (NetworkInterfaceModel) op1;
                     VdsNetworkInterface slaveNic = nicModel.getIface();
                     slaveNic.setBondName(null);
                     // is there are only two nics, break the bond
                     BondNetworkInterfaceModel bondModel = nicModel.getBond();
+                    Bond bond = bondModel.getIface();
+                    String bondName = bond.getName();
+
                     if (bondModel.getBonded().size() == 2) {
-                        BREAK_BOND.getCommand(bondModel, null, allNics).execute();
+                        BREAK_BOND.getCommand(bondModel, null, dataFromHostSetupNetworksModel).execute();
+                    } else {
+                        nicModel.setBonded(false);
+                        slaveNic.setBonded(false);
+                        slaveNic.setBondName(null);
+                        Map<String, Bond> bondsMap = byName(dataFromHostSetupNetworksModel.newOrModifiedBonds);
+                        boolean bondWasAlreadyUpdated = bondsMap.containsKey(bondName);
+                        if (bondWasAlreadyUpdated) {
+                            Bond formerlyUpdatedBond = bondsMap.get(bondName);
+                            formerlyUpdatedBond.getSlaves().remove(slaveNic.getName());
+                        } else {
+                            bond.getSlaves().remove(slaveNic.getName());
+                            dataFromHostSetupNetworksModel.newOrModifiedBonds.add(bond);
+                        }
+
                     }
                 }
             };
@@ -376,8 +497,18 @@ public enum NetworkOperation {
                 @Override
                 protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
-                        List<VdsNetworkInterface> allNics, Object... params) {
-                    DETACH_NETWORK.getCommand(op1, op2, allNics).execute();
+                        DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel,
+                        Object... params) {
+
+                    assert op1 instanceof LogicalNetworkModel;
+                    LogicalNetworkModel networkToDetach = (LogicalNetworkModel) op1;
+                    assert networkToDetach.isAttached();
+                    Guid networkId = networkToDetach.getNetwork().getId();
+                    assert networkId == null;
+
+                    detachNetworkWithoutUpdatingHostSetupNetworksParameters(dataFromHostSetupNetworksModel.allNics,
+                            networkToDetach);
+                    dataFromHostSetupNetworksModel.removedUnmanagedNetworks.add(networkToDetach.getNetwork().getName());
                 }
             };
         }
@@ -397,19 +528,35 @@ public enum NetworkOperation {
                 @Override
                 protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
-                        List<VdsNetworkInterface> allNics,
+                        DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel,
                         Object... params) {
-                    NetworkLabelModel label = (NetworkLabelModel) op1;
-                    NetworkInterfaceModel iface = (NetworkInterfaceModel) op2;
+                    NetworkLabelModel labelModel = (NetworkLabelModel) op1;
+                    NetworkInterfaceModel ifaceModel = (NetworkInterfaceModel) op2;
 
-                    if (label.isAttached()) {
-                        UNLABEL.getCommand(label, null, allNics).execute();
+                    if (labelModel.isAttached()) {
+                        UNLABEL.getCommand(labelModel, null, dataFromHostSetupNetworksModel).execute();
                     }
 
-                    iface.label(label);
-                    for (LogicalNetworkModel network : label.getNetworks()) {
-                        ATTACH_NETWORK.getCommand(network, iface, allNics).execute();
+                    ifaceModel.label(labelModel);
+
+                    addLabelToAddedRemovedSets(dataFromHostSetupNetworksModel,
+                            labelModel.getName(),
+                            ifaceModel.getIface());
+                    for (LogicalNetworkModel network : labelModel.getNetworks()) {
+                        ATTACH_NETWORK.getCommand(network, ifaceModel, dataFromHostSetupNetworksModel).execute();
                         network.attachViaLabel();
+                    }
+                }
+
+                private void addLabelToAddedRemovedSets(DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel,
+                        String label,
+                        VdsNetworkInterface iface) {
+
+                    LabelOnNic labelOnNic = new LabelOnNic(iface.getId(), iface.getName(), label);
+                    if (dataFromHostSetupNetworksModel.removedLabels.contains(labelOnNic)) {
+                        dataFromHostSetupNetworksModel.removedLabels.remove(labelOnNic);
+                    } else {
+                        dataFromHostSetupNetworksModel.addedLabels.add(labelOnNic);
                     }
                 }
             };
@@ -447,12 +594,29 @@ public enum NetworkOperation {
                 @Override
                 protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
-                        List<VdsNetworkInterface> allNics,
+                        DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel,
                         Object... params) {
-                    NetworkLabelModel label = (NetworkLabelModel) op1;
-                    label.getInterface().unlabel(label);
-                    for (LogicalNetworkModel network : label.getNetworks()) {
-                        DETACH_NETWORK.getCommand(network, null, allNics).execute();
+                    NetworkLabelModel labelModel = (NetworkLabelModel) op1;
+                    NetworkInterfaceModel interfaceModel = labelModel.getInterface();
+                    interfaceModel.unlabel(labelModel);
+
+                    removeLabelFromAddedRemovedSets(dataFromHostSetupNetworksModel,
+                            labelModel.getName(),
+                            interfaceModel.getIface());
+                    for (LogicalNetworkModel network : labelModel.getNetworks()) {
+                        DETACH_NETWORK.getCommand(network, null, dataFromHostSetupNetworksModel).execute();
+                    }
+                }
+
+                private void removeLabelFromAddedRemovedSets(DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel,
+                        String label,
+                        VdsNetworkInterface iface) {
+
+                    LabelOnNic labelOnNic = new LabelOnNic(iface.getId(), iface.getName(), label);
+                    if (dataFromHostSetupNetworksModel.addedLabels.contains(labelOnNic)) {
+                        dataFromHostSetupNetworksModel.addedLabels.remove(labelOnNic);
+                    } else {
+                        dataFromHostSetupNetworksModel.removedLabels.add(labelOnNic);
                     }
                 }
             };
@@ -633,22 +797,65 @@ public enum NetworkOperation {
 
     };
 
-    private static void clearNetworks(NetworkInterfaceModel nic, List<VdsNetworkInterface> allNics) {
+    public static void clearNetworks(NetworkInterfaceModel nic,
+            DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel) {
         List<LogicalNetworkModel> attachedNetworks = nic.getItems();
         if (attachedNetworks.size() > 0) {
             for (LogicalNetworkModel networkModel : new ArrayList<>(attachedNetworks)) {
-                DETACH_NETWORK.getCommand(networkModel, null, allNics).execute();
+                DETACH_NETWORK.getCommand(networkModel, null, dataFromHostSetupNetworksModel).execute();
             }
         }
     }
 
-    public static void attachNetworks(NetworkInterfaceModel nic, List<LogicalNetworkModel> networks, List<VdsNetworkInterface> allNics) {
+    public static void attachNetworks(NetworkInterfaceModel nic,
+            List<LogicalNetworkModel> networks,
+            DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel) {
         for (LogicalNetworkModel networkModel : networks) {
-            ATTACH_NETWORK.getCommand(networkModel, nic, allNics).execute();
+            ATTACH_NETWORK.getCommand(networkModel, nic, dataFromHostSetupNetworksModel).execute();
         }
     }
 
-    private static void detachNetwork(List<VdsNetworkInterface> allNics,
+    private static void detachNetworkAndUpdateHostSetupNetworksParameters(
+            DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel,
+            LogicalNetworkModel modelOfNetworkToDetach) {
+
+        Network networkToDetach = modelOfNetworkToDetach.getNetwork();
+        Guid networkId = networkToDetach.getId();
+        String networkLabel = networkToDetach.getLabel();
+        VdsNetworkInterface nic = modelOfNetworkToDetach.getAttachedToNic().getIface();
+
+        LabelOnNic potentialLabelRemovalData = new LabelOnNic(nic.getId(), nic.getName(), networkLabel);
+        boolean networkRemovedViaRemovedNicLabel =
+            dataFromHostSetupNetworksModel.removedLabels.contains(potentialLabelRemovalData);
+
+        detachNetworkWithoutUpdatingHostSetupNetworksParameters(dataFromHostSetupNetworksModel.allNics,
+            modelOfNetworkToDetach);
+
+
+
+        if (!networkRemovedViaRemovedNicLabel) {
+            Map<Guid, NetworkAttachment> allNetworkAttachmentMap = new MapNetworkAttachments(
+                dataFromHostSetupNetworksModel.existingNetworkAttachments).byNetworkId();
+            boolean detachingPreexistingNetworkAttachment = allNetworkAttachmentMap.containsKey(networkId);
+
+            if (detachingPreexistingNetworkAttachment) {
+                dataFromHostSetupNetworksModel.removedNetworkAttachments.add(allNetworkAttachmentMap.get(networkId));
+            }
+
+            //if network attachment was issued to be updated, remove it from such request
+            for (Iterator<NetworkAttachment> iterator =
+                 dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.iterator(); iterator.hasNext(); ) {
+
+                NetworkAttachment networkAttachment = iterator.next();
+                if (networkAttachment.getNetworkId().equals(networkId)) {
+                    iterator.remove();
+                }
+
+            }
+        }
+    }
+
+    private static void detachNetworkWithoutUpdatingHostSetupNetworksParameters(List<VdsNetworkInterface> allNics,
             LogicalNetworkModel networkToDetach) {
         // remove the vlan device
         if (networkToDetach.hasVlan()) {
@@ -685,14 +892,17 @@ public enum NetworkOperation {
      *            first operand
      * @param op2
      *            second operand
-     * @param allNics
-     *            the complete nic list
      * @return
      */
     public NetworkCommand getCommand(final NetworkItemModel<?> op1,
             final NetworkItemModel<?> op2,
-            List<VdsNetworkInterface> allNics) {
-        return new NetworkCommand(getMenuTitle(op1, op2), getTarget(), op1, op2, allNics);
+            DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel) {
+
+        return new NetworkCommand(getMenuTitle(op1, op2),
+                getTarget(),
+                op1,
+                op2,
+                dataFromHostSetupNetworksModel);
     }
 
     /**
@@ -754,7 +964,7 @@ public enum NetworkOperation {
             @Override
             protected void executeNetworkCommand(NetworkItemModel<?> op1,
                     NetworkItemModel<?> op2,
-                    List<VdsNetworkInterface> allNics,
+                    DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel,
                     Object... params) {
                 // NOOP
 
@@ -798,5 +1008,43 @@ public enum NetworkOperation {
 
     private static boolean isDisplayNetwork(LogicalNetworkModel logicalNetworkModel) {
         return logicalNetworkModel.getNetwork().getCluster().isDisplay();
+    }
+
+    public static NetworkAttachment newNetworkAttachment(Network network, VdsNetworkInterface targetNic) {
+        return newNetworkAttachment(network, targetNic, null);
+    }
+
+    public static NetworkAttachment newNetworkAttachment(Network network,
+            VdsNetworkInterface targetNic,
+            Guid networkAttachmentId) {
+        NetworkAttachment networkAttachment = new NetworkAttachment();
+        networkAttachment.setId(networkAttachmentId);
+        networkAttachment.setNetworkId(network.getId());
+        networkAttachment.setNicId(targetNic.getId());
+        networkAttachment.setNicName(targetNic.getName());
+        networkAttachment.setOverrideConfiguration(true);
+        IpConfiguration ipConfiguration = new IpConfiguration();
+        networkAttachment.setIpConfiguration(ipConfiguration);
+        ipConfiguration.getIPv4Addresses().add(newPrimaryAddress(targetNic));
+
+        return networkAttachment;
+    }
+
+    public static IPv4Address newPrimaryAddress(VdsNetworkInterface targetNic) {
+        IPv4Address primaryAddress = new IPv4Address();
+        primaryAddress.setGateway(targetNic.getGateway());
+        primaryAddress.setNetmask(targetNic.getSubnet());
+        primaryAddress.setAddress(targetNic.getAddress());
+        primaryAddress.setBootProtocol(targetNic.getBootProtocol());
+        return primaryAddress;
+    }
+
+    //TODO MM: rename & move to better place.
+    public static <E extends VdsNetworkInterface> Map<String, E> byName(Collection<E> collection) {
+        Map<String, E> map = new HashMap<>();
+        for (E e : collection) {
+            map.put(e.getName(), e);
+        }
+        return map;
     }
 }

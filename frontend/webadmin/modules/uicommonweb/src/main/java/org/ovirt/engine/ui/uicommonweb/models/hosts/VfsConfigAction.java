@@ -69,7 +69,7 @@ public class VfsConfigAction extends SyncUiAction {
                         getModel())).
                 then(getNextAction());
 
-        then(null);
+        then(null); //TODO MM: what's this? May it mean, that when this action is executed in chain, where something should follow, it will be forgotten to be executed?
 
         updateAction.runParallelAction(getActionFlowState());
     }

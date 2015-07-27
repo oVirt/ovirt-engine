@@ -12,27 +12,31 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 
-import org.ovirt.engine.core.common.action.SetupNetworksParameters;
+import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.action.LabelUnlabelUiAction;
 import org.ovirt.engine.ui.uicommonweb.action.SimpleAction;
 import org.ovirt.engine.ui.uicommonweb.action.UiAction;
 import org.ovirt.engine.ui.uicommonweb.action.UiVdcAction;
@@ -43,6 +47,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsConfigModel.AllNetworksSelector;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.BondNetworkInterfaceModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.network.DataFromHostSetupNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkCommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
@@ -119,6 +124,11 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     private Map<String, NetworkLabelModel> networkLabelMap = new HashMap<>();
 
     private final NewNetworkLabelModel newLabelModel;
+
+    private List<NetworkAttachment> existingNetworkAttachments;
+
+
+    private DataFromHostSetupNetworksModel hostSetupNetworksParametersData = new DataFromHostSetupNetworksModel();
 
     private Map<String, String> labelToIface = new HashMap<>();
 
@@ -207,7 +217,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         NetworkOperation candidate = NetworkOperationFactory.operationFor(op1, op2, true);
 
         if (drop) {
-            onOperation(candidate, candidate.getCommand(op1, op2, allNics));
+            onOperation(candidate, candidate.getCommand(op1, op2, hostSetupNetworksParametersData));
         }
 
         // raise the candidate event only if it was changed
@@ -221,7 +231,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     }
 
     public Map<NetworkOperation, List<NetworkCommand>> commandsFor(NetworkItemModel<?> item) {
-        return operationFactory.commandsFor(item, allNics);
+        return operationFactory.commandsFor(item, hostSetupNetworksParametersData);
     }
 
     public List<VdsNetworkInterface> getAllNics() {
@@ -439,6 +449,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                         networksToSync.remove(logicalNetwork.getName());
                     }
 
+                    removePreviousNetworkAttachmentInstanceFromRequestAndAddNewOne(logicalNetwork, entity);
+
                     sourceListModel.setConfirmWindow(null);
                 }
             };
@@ -462,6 +474,32 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             editPopup.getCommands().add(cancelCommand);
         }
         sourceListModel.setConfirmWindow(editPopup);
+    }
+
+    public void removePreviousNetworkAttachmentInstanceFromRequestAndAddNewOne(
+            LogicalNetworkModel logicalNetwork, VdsNetworkInterface entity) {
+
+        Network updatedNetwork = logicalNetwork.getNetwork();
+        Guid updatedNetworkId = updatedNetwork.getId();
+
+        Map<Guid, NetworkAttachment> networkIdToPreexistingNetworkAttachment =
+                new MapNetworkAttachments(existingNetworkAttachments).byNetworkId();
+
+        Map<Guid, NetworkAttachment> networkIdToNewOrUpdatedNetworkAttachments =
+                new MapNetworkAttachments(hostSetupNetworksParametersData.newOrModifiedNetworkAttachments).byNetworkId();
+
+        NetworkAttachment preexistingNetworkAttachment =
+                networkIdToPreexistingNetworkAttachment.get(updatedNetworkId);
+
+        Guid networkAttachmentId =
+                preexistingNetworkAttachment == null ? null : preexistingNetworkAttachment.getId();
+
+        NetworkAttachment previousUpdate = networkIdToNewOrUpdatedNetworkAttachments.get(updatedNetworkId);
+        hostSetupNetworksParametersData.newOrModifiedNetworkAttachments.remove(previousUpdate);
+
+        NetworkAttachment updatedNetworkAttachment =
+                NetworkOperation.newNetworkAttachment(updatedNetwork, entity, networkAttachmentId);
+        hostSetupNetworksParametersData.newOrModifiedNetworkAttachments.add(updatedNetworkAttachment);
     }
 
     public void onOperation(NetworkOperation operation, final NetworkCommand networkCommand) {
@@ -536,7 +574,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                             dcLabels.add(label);
                             NetworkOperation.LABEL.getCommand(new NetworkLabelModel(label, HostSetupNetworksModel.this),
                                     networkCommand.getOp2(),
-                                    allNics)
+                                    hostSetupNetworksParametersData)
                                     .execute();
                             redraw();
                         }
@@ -565,7 +603,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         NetworkInterfaceModel bondModel = nicMap.get(iface.getName());
         NetworkOperation.attachNetworks(bondModel,
             new ArrayList<LogicalNetworkModel>(networks),
-            allNics);
+            hostSetupNetworksParametersData);
     }
 
     public void redraw() {
@@ -779,21 +817,32 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             }
 
             List<VdsNetworkInterface> bondedNics = bondToNic.get(nicName);
-            NetworkInterfaceModel nicModel;
 
             if (bondedNics != null) {
                 List<NetworkInterfaceModel> bondedModels = new ArrayList<>();
                 for (VdsNetworkInterface bonded : bondedNics) {
-                    NetworkInterfaceModel bondedModel = new NetworkInterfaceModel(bonded, nicToVfsConfig.containsKey(bonded.getId()), this);
+                    NetworkInterfaceModel bondedModel = new NetworkInterfaceModel(bonded,
+                            nicToVfsConfig.containsKey(bonded.getId()),
+                            this);
                     bondedModel.setBonded(true);
                     bondedModels.add(bondedModel);
                 }
-                nicModel = new BondNetworkInterfaceModel(nic, nicNetworks, nicLabels, bondedModels, this);
-            } else {
-                nicModel = new NetworkInterfaceModel(nic, nicNetworks, nicLabels, nicToVfsConfig.containsKey(nic.getId()), this);
-            }
+                BondNetworkInterfaceModel bondNetworkInterfaceModel = new BondNetworkInterfaceModel((Bond)nic,
+                        nicNetworks,
+                        nicLabels,
+                        bondedModels,
+                        this);
 
-            nicModels.put(nicName, nicModel);
+                nicModels.put(nicName, bondNetworkInterfaceModel);
+            } else {
+                NetworkInterfaceModel nicModel = new NetworkInterfaceModel(nic,
+                                nicNetworks,
+                                nicLabels,
+                                nicToVfsConfig.containsKey(nic.getId()),
+                                this);
+
+                nicModels.put(nicName, nicModel);
+            }
         }
         initLabeledNetworksErrorMessages(errorLabelNetworks, nicModels);
         setNics(nicModels);
@@ -837,11 +886,13 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                List<VdsNetworkInterface> bonds =
-                        ((VdcQueryReturnValue) returnValue).getReturnValue();
-                allBonds = bonds;
+                allBonds = ((VdcQueryReturnValue) returnValue).getReturnValue();
 
                 initNicModels();
+
+                hostSetupNetworksParametersData.allNics = allNics;
+                hostSetupNetworksParametersData.existingNetworkAttachments = existingNetworkAttachments;
+
                 stopProgress();
             }
         };
@@ -861,8 +912,29 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             public void onSuccess(Object model, Object returnValueObj) {
                 VdcQueryReturnValue returnValue = (VdcQueryReturnValue) returnValueObj;
                 Object returnValue2 = returnValue.getReturnValue();
-                List<VdsNetworkInterface> allNics = (List<VdsNetworkInterface>) returnValue2;
-                HostSetupNetworksModel.this.allNics = allNics;
+                HostSetupNetworksModel.this.allNics = (List<VdsNetworkInterface>) returnValue2;
+
+                // chain the network attachments query
+                queryNetworkAttachments();
+            }
+        };
+
+        VDS vds = getEntity();
+        IdQueryParameters params = new IdQueryParameters(vds.getId());
+        params.setRefresh(false);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVdsInterfacesByVdsId, params, asyncQuery);
+    }
+
+    private void queryNetworkAttachments() {
+        // query for network attachments
+        AsyncQuery asyncQuery = new AsyncQuery();
+        asyncQuery.setModel(this);
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValueObj) {
+                VdcQueryReturnValue returnValue = (VdcQueryReturnValue) returnValueObj;
+                Object returnValue2 = returnValue.getReturnValue();
+                HostSetupNetworksModel.this.existingNetworkAttachments = (List<NetworkAttachment>) returnValue2;
 
                 // chain the vfsConfig query
                 queryVfsConfig();
@@ -872,7 +944,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         VDS vds = getEntity();
         IdQueryParameters params = new IdQueryParameters(vds.getId());
         params.setRefresh(false);
-        Frontend.getInstance().runQuery(VdcQueryType.GetVdsInterfacesByVdsId, params, asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetNetworkAttachmentsByHostId, params, asyncQuery);
     }
 
     private void queryVfsConfig() {
@@ -906,8 +978,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                List<Network> networks = (List<Network>) returnValue;
-                allNetworks = networks;
+                allNetworks = (List<Network>) returnValue;
                 initNetworkModels();
                 initDcNetworkParams();
 
@@ -987,19 +1058,47 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     }
 
     public void postOnSetupNetworks() {
-        SetupNetworksParameters params = new SetupNetworksParameters();
-        params.setInterfaces(getAllNics());
-        params.setCheckConnectivity(getCheckConnectivity().getEntity());
-        params.setConectivityTimeout(getConnectivityTimeout().getEntity());
-        params.setVdsId(getEntity().getId());
-        params.setNetworksToSync(getNetworksToSync());
+        //        SetupNetworksParameters params = new SetupNetworksParameters();
+        //        params.setInterfaces(getAllNics());
+        //        params.setCheckConnectivity(getCheckConnectivity().getEntity());
+        //        params.setConectivityTimeout(getConnectivityTimeout().getEntity());
+        //        params.setVdsId(getEntity().getId());
+        //        params.setNetworksToSync(getNetworksToSync());
 
         SimpleAction closeAction = getCloseAction();
-        UiAction setupNetworks = new UiVdcAction(VdcActionType.SetupNetworks, params, this, true);
+        //        UiAction setupNetworks = new UiVdcAction(VdcActionType.SetupNetworks, params, this, true);
 
-        setupNetworks.then(getVfsConfigAction()).then(getCommitNetworkChangesAction()).onAllExecutionsFinish(closeAction);
+        //        Logger.getLogger(getClass().getName()).severe("new labels: " + //$NON-NLS-1$
+        //                Arrays.toString(hostSetupNetworksParametersData.addedLabels.toArray()));
+        //        Logger.getLogger(getClass().getName()).severe("removed labels: " +  //$NON-NLS-1$
+        //                Arrays.toString(hostSetupNetworksParametersData.removedLabels.toArray()));
 
-        setupNetworks.runAction();
+
+        HostSetupNetworksParameters hostSetupNetworksParameters = createHostSetupNetworksParameters();
+        UiAction setupNetworksAction = new UiVdcAction(VdcActionType.HostSetupNetworks,
+                hostSetupNetworksParameters,
+                this,
+                true);
+
+
+
+        UiAction uiAction = setupNetworksAction
+            .then(getVfsConfigAction())
+            .then(getCommitNetworkChangesAction())
+            .then(getLabelUnlabelUiAction());
+
+
+
+        setupNetworksAction.onAllExecutionsFinish(closeAction);
+        setupNetworksAction.runAction();
+    }
+
+    private LabelUnlabelUiAction getLabelUnlabelUiAction() {
+        return new LabelUnlabelUiAction(hostSetupNetworksParametersData.addedLabels,
+            hostSetupNetworksParametersData.removedLabels,
+            hostSetupNetworksParametersData.removedBonds,
+            getEntity().getId(),
+            this);
     }
 
     public UiAction getCommitNetworkChangesAction() {
@@ -1026,6 +1125,51 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 sourceListModel.search();
             }
         };
+
+    }
+
+    public HostSetupNetworksParameters createHostSetupNetworksParameters() {
+        HostSetupNetworksParameters result = new HostSetupNetworksParameters(getEntity().getId());
+
+
+        result.setNetworkAttachments(hostSetupNetworksParametersData.newOrModifiedNetworkAttachments);
+        result.setRemovedNetworkAttachments(
+            new HashSet<>(Entities.getIds(hostSetupNetworksParametersData.removedNetworkAttachments)));
+
+        fixLabelsInBondDefinitions(hostSetupNetworksParametersData.newOrModifiedBonds,
+                hostSetupNetworksParametersData.addedLabels,
+                hostSetupNetworksParametersData.removedLabels);
+        result.setBonds(hostSetupNetworksParametersData.newOrModifiedBonds);
+        result.setRemovedBonds(new HashSet<>(Entities.getIds(hostSetupNetworksParametersData.removedBonds)));
+        result.setRemovedUnmanagedNetworks(hostSetupNetworksParametersData.removedUnmanagedNetworks);
+
+        return result;
+    }
+
+    /**
+     * sadly new API passes whole bond instances, when bond is created/modified, to backend just like in old days with
+     * SetupNetworksCommand. And such instances contains up-to-date labels. So labels on bonds will be processed twice.
+     * This is enabled by (wrong) storing labels in db as JSON. The best way, to enforce uniformness of adding labels is
+     * heal Bond instances here, and pass them to bll without updated labels, and process all labels in same manner
+     * regardless of which interface they're labelling.
+     */
+    private void fixLabelsInBondDefinitions(List<Bond> newOrModifiedBonds,
+        List<DataFromHostSetupNetworksModel.LabelOnNic> addedLabels,
+        List<DataFromHostSetupNetworksModel.LabelOnNic> removedLabels) {
+
+        for (Bond bond : newOrModifiedBonds) {
+            for (DataFromHostSetupNetworksModel.LabelOnNic addedLabel : addedLabels) {
+                if (addedLabel.getNicName().equals(bond.getName())) {
+                    bond.getLabels().remove(addedLabel.getLabel());
+                }
+            }
+
+            for (DataFromHostSetupNetworksModel.LabelOnNic removedLabel : removedLabels) {
+                if (removedLabel.getNicName().equals(bond.getName())) {
+                    bond.getLabels().add(removedLabel.getLabel());
+                }
+            }
+        }
     }
 
     @Override

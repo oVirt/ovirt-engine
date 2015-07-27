@@ -1,8 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
-import java.util.List;
-
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 
@@ -13,21 +10,17 @@ public class NetworkCommand extends UICommand {
 
     private final NetworkItemModel<?> op1;
     private final NetworkItemModel<?> op2;
-    private final List<VdsNetworkInterface> allNics;
+    private final DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel;
 
     public NetworkCommand(String name,
             ICommandTarget target,
             NetworkItemModel<?> op1,
             NetworkItemModel<?> op2,
-            List<VdsNetworkInterface> allNics) {
+            DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel) {
         super(name, target);
         this.op1 = op1;
         this.op2 = op2;
-        this.allNics = allNics;
-    }
-
-    public List<VdsNetworkInterface> getAllNics() {
-        return allNics;
+        this.dataFromHostSetupNetworksModel = dataFromHostSetupNetworksModel;
     }
 
     public NetworkItemModel<?> getOp1() {
@@ -38,4 +31,7 @@ public class NetworkCommand extends UICommand {
         return op2;
     }
 
+    public DataFromHostSetupNetworksModel getDataFromHostSetupNetworksModel() {
+        return dataFromHostSetupNetworksModel;
+    }
 }
