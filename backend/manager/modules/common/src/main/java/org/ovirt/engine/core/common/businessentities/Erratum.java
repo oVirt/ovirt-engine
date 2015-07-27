@@ -3,6 +3,8 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.Date;
 import java.util.List;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
+
 public class Erratum implements IVdcQueryable, BusinessEntity<String> {
 
     private static final long serialVersionUID = 1297381071010863377L;
@@ -16,6 +18,11 @@ public class Erratum implements IVdcQueryable, BusinessEntity<String> {
     private String solution;
     private Date issued;
     private List<String> packages;
+
+    public Erratum() {
+        // default to unknown severity
+        setSeverity(ErrataSeverity.UNKNOWN);
+    }
 
     @Override
     public String getId() {
@@ -164,9 +171,9 @@ public class Erratum implements IVdcQueryable, BusinessEntity<String> {
     }
 
     public enum ErrataType {
-        BUGFIX("bugfix"),
-        SECURITY("security"),
-        ENHANCEMENT("enhancement");
+        BUGFIX("bugfix"), //$NON-NLS-1$
+        SECURITY("security"), //$NON-NLS-1$
+        ENHANCEMENT("enhancement"); //$NON-NLS-1$
 
         private String description;
 
@@ -190,9 +197,10 @@ public class Erratum implements IVdcQueryable, BusinessEntity<String> {
     }
 
     public enum ErrataSeverity {
-        CRITICAL("Critical"),
-        IMPORTANT("Important"),
-        MODERATE("Moderate");
+        CRITICAL("Critical"), //$NON-NLS-1$
+        IMPORTANT("Important"), //$NON-NLS-1$
+        MODERATE("Moderate"), //$NON-NLS-1$
+        UNKNOWN("Unknown"); //$NON-NLS-1$
 
         private String description;
 
@@ -214,4 +222,16 @@ public class Erratum implements IVdcQueryable, BusinessEntity<String> {
             return description;
         }
     }
+
+    @Override
+    public String toString() {
+        ToStringBuilder builder = ToStringBuilder.forInstance(this);
+        builder.append("id", id); //$NON-NLS-1$
+        builder.append("title", title); //$NON-NLS-1$
+        builder.append("type", type); //$NON-NLS-1$
+        builder.append("severity", severity); //$NON-NLS-1$
+
+        return builder.toString();
+    }
+
 }

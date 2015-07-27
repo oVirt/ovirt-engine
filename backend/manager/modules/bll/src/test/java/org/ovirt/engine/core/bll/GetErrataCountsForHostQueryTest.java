@@ -20,7 +20,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.common.businessentities.ErrataCounts;
-import org.ovirt.engine.core.common.businessentities.ErrataCounts.TypedErrataCounts;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.Erratum.ErrataSeverity;
 import org.ovirt.engine.core.common.businessentities.Erratum.ErrataType;
@@ -83,7 +82,7 @@ public class GetErrataCountsForHostQueryTest extends AbstractQueryTest<IdQueryPa
         assertNotNull(getQuery().getQueryReturnValue().getReturnValue());
         ErrataCounts returnValue = (ErrataCounts) getQuery().getQueryReturnValue().getReturnValue();
         for (ErrataType type : ErrataType.values()) {
-            assertEquals(0, returnValue.getTypedCounts().getByType(type).getTotal());
+            assertEquals(0, returnValue.getCountByType(type));
         }
     }
 
@@ -92,13 +91,12 @@ public class GetErrataCountsForHostQueryTest extends AbstractQueryTest<IdQueryPa
         setupToReportErrata(expectedErrata());
         getQuery().executeQueryCommand();
 
-        ErrataCounts returnValue = (ErrataCounts) getQuery().getQueryReturnValue().getReturnValue();
-        TypedErrataCounts<ErrataType> typedStatistics = returnValue.getTypedCounts();
-        assertEquals(11, returnValue.getTotal());
-        assertEquals(5, typedStatistics.getByType(ErrataType.BUGFIX).getTotal());
-        assertEquals(4, typedStatistics.getByType(ErrataType.ENHANCEMENT).getTotal());
-        assertEquals(2, typedStatistics.getByType(ErrataType.SECURITY).getTotal());
-        assertEquals(0, typedStatistics.getByType(ErrataType.SECURITY).getCounter(ErrataSeverity.MODERATE));
+        ErrataCounts counts = (ErrataCounts) getQuery().getQueryReturnValue().getReturnValue();
+        assertEquals(11, counts.getTotal());
+        assertEquals(5, counts.getCountByType(ErrataType.BUGFIX));
+        assertEquals(4, counts.getCountByType(ErrataType.ENHANCEMENT));
+        assertEquals(2, counts.getCountByType(ErrataType.SECURITY));
+        assertEquals(0, counts.getCountByTypeAndSeverity(ErrataType.SECURITY, ErrataSeverity.MODERATE));
     }
 
     @SuppressWarnings("unchecked")
