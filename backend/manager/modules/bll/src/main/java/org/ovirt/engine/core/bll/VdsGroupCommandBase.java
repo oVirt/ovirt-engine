@@ -15,6 +15,9 @@ public abstract class VdsGroupCommandBase<T extends VdsGroupParametersBase> exte
     @Inject
     private ClusterPermissionsFinder clusterPermissionsFinder;
 
+    @Inject
+    protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
+
     private VDSGroup _vdsGroup;
 
     protected VdsGroupCommandBase(T parameters) {
@@ -28,6 +31,10 @@ public abstract class VdsGroupCommandBase<T extends VdsGroupParametersBase> exte
     public VdsGroupCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setVdsGroupId(parameters.getVdsGroupId());
+    }
+
+    protected CpuFlagsManagerHandler getCpuFlagsManagerHandler() {
+        return cpuFlagsManagerHandler;
     }
 
     @Override

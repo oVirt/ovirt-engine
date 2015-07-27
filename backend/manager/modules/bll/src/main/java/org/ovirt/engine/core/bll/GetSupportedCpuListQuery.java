@@ -9,6 +9,6 @@ public class GetSupportedCpuListQuery<P extends GetSupportedCpuListParameters> e
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(CpuFlagsManagerHandler.getSupportedServerCpuList(CpuFlagsManagerHandler.getLatestDictionaryVersion(), getParameters().getMaxCpuName()));
+        getQueryReturnValue().setReturnValue(getCpuFlagsManagerHandler().getSupportedServerCpuList(getCpuFlagsManagerHandler().getLatestDictionaryVersion(), getParameters().getMaxCpuName()));
     }
 }

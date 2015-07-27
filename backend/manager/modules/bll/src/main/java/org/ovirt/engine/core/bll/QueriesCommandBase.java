@@ -42,6 +42,9 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     @Inject
     protected AuditLogDirector auditLogDirector;
 
+    @Inject
+    protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
+
     public QueriesCommandBase(P parameters) {
         this(parameters, null);
     }
@@ -52,6 +55,10 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         queryType = initQueryType();
         this.engineContext = engineContext == null ? new EngineContext().withSessionId(parameters.getSessionId()) : engineContext;
         user = initUser();
+    }
+
+    protected CpuFlagsManagerHandler getCpuFlagsManagerHandler() {
+        return cpuFlagsManagerHandler;
     }
 
     private VdcQueryType initQueryType() {

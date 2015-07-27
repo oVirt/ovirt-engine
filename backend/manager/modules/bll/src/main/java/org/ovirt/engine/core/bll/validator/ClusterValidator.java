@@ -16,6 +16,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.di.Injector;
 
 public class ClusterValidator {
 
@@ -23,6 +24,8 @@ public class ClusterValidator {
     private final VdsGroupDao clusterDao;
     private final StoragePoolDao dataCenterDao;
     private StoragePool dataCenter;
+
+    private CpuFlagsManagerHandler cpuFlagsManagerHandler = Injector.get(CpuFlagsManagerHandler.class);
 
     public ClusterValidator(DbFacade dbFacade, VDSGroup cluster) {
         this.cluster = cluster;
@@ -44,7 +47,7 @@ public class ClusterValidator {
     }
 
     protected boolean cpuExists() {
-        return CpuFlagsManagerHandler.checkIfCpusExist(cluster.getCpuName(), cluster.getCompatibilityVersion());
+        return cpuFlagsManagerHandler.checkIfCpusExist(cluster.getCpuName(), cluster.getCompatibilityVersion());
     }
 
     public ValidationResult versionSupported() {

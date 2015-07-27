@@ -72,6 +72,11 @@ public class UpdateVmCommandTest {
 
     private static String vncKeyboardLayoutValues =
             "ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr";
+    private static String CPU_ID = "0";
+
+    @ClassRule
+    public static InjectorRule injectorRule = new InjectorRule();
+
     @Mock
     private VmDao vmDao;
     @Mock
@@ -81,6 +86,8 @@ public class UpdateVmCommandTest {
     @Mock
     private VmDeviceDao vmDeviceDao;
 
+    @Mock
+    CpuFlagsManagerHandler cpuFlagsManagerHandler;
     @Mock
     OsRepository osRepository;
 
@@ -126,8 +133,11 @@ public class UpdateVmCommandTest {
         final int osId = 0;
         final Version version = Version.v3_0;
 
+        injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
         SimpleDependecyInjector.getInstance().bind(DbFacade.class, dbFacade);
+
+        when(cpuFlagsManagerHandler.getCpuId(anyString(), any(Version.class))).thenReturn(CPU_ID);
 
         when(osRepository.getMinimumRam(osId, version)).thenReturn(0);
         when(osRepository.getMinimumRam(osId, null)).thenReturn(0);
@@ -330,10 +340,10 @@ public class UpdateVmCommandTest {
         // prepare the mock values
         HashMap<Pair<Integer, Version>, Set<String>> unsupported = new HashMap<>();
         HashSet<String> value = new HashSet<>();
-        value.add(null);
+        value.add(CPU_ID);
         unsupported.put(new Pair<>(0, Version.v3_0), value);
 
-        when(osRepository.isCpuSupported(0, Version.v3_0, null)).thenReturn(false);
+        when(osRepository.isCpuSupported(0, Version.v3_0, CPU_ID)).thenReturn(false);
         when(osRepository.getUnsupportedCpus()).thenReturn(unsupported);
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(

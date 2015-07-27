@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.PostZeroHandler;
@@ -58,6 +60,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     public static final String DELETE_SECONDARY_IMAGES_TASK_KEY = "DELETE_SECONDARY_IMAGES_TASK_KEY";
     private static final int Kb = 1024;
 
+    @Inject
+    protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
+
     protected final OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
     private Boolean skipCommandExecution;
 
@@ -69,6 +74,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     public VmCommand(T parameters) {
         this(parameters, null);
+    }
+
+    protected CpuFlagsManagerHandler getCpuFlagsManagerHandler() {
+        return cpuFlagsManagerHandler;
     }
 
     @Override

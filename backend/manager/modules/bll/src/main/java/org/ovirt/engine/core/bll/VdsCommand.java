@@ -44,6 +44,9 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     @Inject
     private PmHealthCheckManager pmHealthCheckManager;
 
+    @Inject
+    protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -60,6 +63,10 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     public VdsCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setVdsId(parameters.getVdsId());
+    }
+
+    protected CpuFlagsManagerHandler getCpuFlagsManagerHandler() {
+        return cpuFlagsManagerHandler;
     }
 
     protected void initializeVds() {

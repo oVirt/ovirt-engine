@@ -542,25 +542,25 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
     }
 
     protected boolean checkIfCpusSameManufacture(VDSGroup group) {
-        return CpuFlagsManagerHandler.checkIfCpusSameManufacture(group.getCpuName(),
+        return getCpuFlagsManagerHandler().checkIfCpusSameManufacture(group.getCpuName(),
                 getVdsGroup().getCpuName(),
                 getVdsGroup().getCompatibilityVersion());
     }
 
     protected boolean checkIfCpusExist() {
-        return CpuFlagsManagerHandler.checkIfCpusExist(getVdsGroup().getCpuName(),
+        return getCpuFlagsManagerHandler().checkIfCpusExist(getVdsGroup().getCpuName(),
                 getVdsGroup().getCompatibilityVersion());
     }
 
     protected List<String> missingServerCpuFlags(VDS vds) {
-        return CpuFlagsManagerHandler.missingServerCpuFlags(
+        return getCpuFlagsManagerHandler().missingServerCpuFlags(
                 getVdsGroup().getCpuName(),
                 vds.getCpuFlags(),
                 getVdsGroup().getCompatibilityVersion());
     }
 
     protected boolean isCpuUpdatable(VDSGroup cluster) {
-        return CpuFlagsManagerHandler.isCpuUpdatable(cluster.getCpuName(), cluster.getCompatibilityVersion());
+        return getCpuFlagsManagerHandler().isCpuUpdatable(cluster.getCpuName(), cluster.getCompatibilityVersion());
     }
 
     private boolean areAllVdssInMaintenance(List<VDS> vdss) {
@@ -575,7 +575,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
     }
 
     protected int compareCpuLevels(VDSGroup otherGroup) {
-        return CpuFlagsManagerHandler.compareCpuLevels(getVdsGroup().getCpuName(),
+        return getCpuFlagsManagerHandler().compareCpuLevels(getVdsGroup().getCpuName(),
                 otherGroup.getCpuName(),
                 otherGroup.getCompatibilityVersion());
     }

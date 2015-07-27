@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
 public class GetHostArchitectureQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
-
     public GetHostArchitectureQuery(P parameters) {
         super(parameters);
     }
@@ -16,7 +15,7 @@ public class GetHostArchitectureQuery<P extends IdQueryParameters> extends Queri
         VDS host = getDbFacade().getVdsDao().get(getParameters().getId());
 
         ServerCpu sc =
-                CpuFlagsManagerHandler.findMaxServerCpuByFlags(host.getCpuFlags(),
+                getCpuFlagsManagerHandler().findMaxServerCpuByFlags(host.getCpuFlags(),
                         host.getVdsGroupCompatibilityVersion());
 
         getQueryReturnValue().setReturnValue(sc == null ? ArchitectureType.undefined : sc.getArchitecture());

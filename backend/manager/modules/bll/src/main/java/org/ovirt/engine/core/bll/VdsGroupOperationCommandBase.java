@@ -69,7 +69,7 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
 
     protected ArchitectureType getArchitecture() {
         if (StringUtils.isNotEmpty(getVdsGroup().getCpuName())) {
-            return CpuFlagsManagerHandler.getArchitectureByCpuName(getVdsGroup().getCpuName(),
+            return getCpuFlagsManagerHandler().getArchitectureByCpuName(getVdsGroup().getCpuName(),
                     getVdsGroup().getCompatibilityVersion());
         } else if (getVdsGroup().getArchitecture() == null) {
             return ArchitectureType.undefined;

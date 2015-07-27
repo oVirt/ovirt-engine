@@ -23,8 +23,8 @@ public class GetClusterUnsupportedVmsCpusQuery<P extends GetClusterUnsupportedVm
         Map<String, String> highCpuVms = new HashMap<>();
         for (VM vm : vmsForCluster) {
             if (vm.getCustomCpuName() != null && !vm.getCustomCpuName().isEmpty()) {
-                String vmCpuName = CpuFlagsManagerHandler.getCpuNameByCpuId(vm.getCustomCpuName(), CpuFlagsManagerHandler.getLatestDictionaryVersion());
-                if (vmCpuName == null || CpuFlagsManagerHandler.compareCpuLevels(vmCpuName, getParameters().getNewCpuName(), CpuFlagsManagerHandler.getLatestDictionaryVersion()) > 0) {
+                String vmCpuName = getCpuFlagsManagerHandler().getCpuNameByCpuId(vm.getCustomCpuName(), getCpuFlagsManagerHandler().getLatestDictionaryVersion());
+                if (vmCpuName == null || getCpuFlagsManagerHandler().compareCpuLevels(vmCpuName, getParameters().getNewCpuName(), getCpuFlagsManagerHandler().getLatestDictionaryVersion()) > 0) {
                     highCpuVms.put(vm.getName(), vm.getCustomCpuName());
                 }
             }

@@ -93,6 +93,7 @@ public class AddVmCommandTest {
     private static final int USED_SPACE_GB = 4;
     private static int MAX_PCI_SLOTS = 26;
     private static final Guid STORAGE_POOL_ID = Guid.newGuid();
+    private static final String CPU_ID = "0";
     private VmTemplate vmTemplate = null;
     private VDSGroup vdsGroup = null;
     private StoragePool storagePool = null;
@@ -108,6 +109,9 @@ public class AddVmCommandTest {
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule();
+
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
 
     @Mock
     StorageDomainDao sdDao;
@@ -134,6 +138,9 @@ public class AddVmCommandTest {
     SnapshotDao snapshotDao;
 
     @Mock
+    CpuFlagsManagerHandler cpuFlagsManagerHandler;
+
+    @Mock
     OsRepository osRepository;
 
     @Mock
@@ -144,6 +151,7 @@ public class AddVmCommandTest {
 
     @Before
     public void InitTest() {
+        mockCpuFlagsManagerHandler();
         mockOsRepository();
         SimpleDependecyInjector.getInstance().bind(DbFacade.class, dbFacade);
     }
@@ -192,6 +200,11 @@ public class AddVmCommandTest {
         HashMap<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> g = new HashMap<>();
         g.put(osId, value);
         when(osRepository.getGraphicsAndDisplays()).thenReturn(g);
+    }
+
+    protected void mockCpuFlagsManagerHandler() {
+        injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
+        when(cpuFlagsManagerHandler.getCpuId(anyString(), any(Version.class))).thenReturn(CPU_ID);
     }
 
     protected void mockOsRepository() {
@@ -343,10 +356,10 @@ public class AddVmCommandTest {
         // prepare the mock values
         HashMap<Pair<Integer, Version>, Set<String>> unsupported = new HashMap<>();
         HashSet<String> value = new HashSet<>();
-        value.add(null);
+        value.add(CPU_ID);
         unsupported.put(new Pair<>(vm.getVmOsId(), vdsGroup.getCompatibilityVersion()), value);
 
-        when(osRepository.isCpuSupported(vm.getVmOsId(), vdsGroup.getCompatibilityVersion(), null)).thenReturn(false);
+        when(osRepository.isCpuSupported(vm.getVmOsId(), vdsGroup.getCompatibilityVersion(), CPU_ID)).thenReturn(false);
         when(osRepository.getUnsupportedCpus()).thenReturn(unsupported);
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(

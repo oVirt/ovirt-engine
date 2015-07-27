@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -88,6 +89,9 @@ public class UpdateVdsGroupCommandTest {
             mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_2.getValue(), migrationMap)
             );
 
+    @ClassRule
+    public static InjectorRule injectorRule = new InjectorRule();
+
     @Mock
     DbFacade dbFacadeMock;
 
@@ -111,6 +115,8 @@ public class UpdateVdsGroupCommandTest {
     private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
     @Mock
     private UpdateClusterNetworkClusterValidator networkClusterValidator;
+    @Mock
+    private CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
     @Mock
     private Network mockManagementNetwork = createManagementNetwork();
@@ -516,10 +522,12 @@ public class UpdateVdsGroupCommandTest {
         } else {
             param = new ManagementNetworkOnClusterOperationParameters(group, managementNetworkId);
         }
+        injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
         cmd = spy(new UpdateVdsGroupCommand<>(param));
 
         doReturn(0).when(cmd).compareCpuLevels(any(VDSGroup.class));
 
+        doReturn(cpuFlagsManagerHandler).when(cmd).getCpuFlagsManagerHandler();
         doReturn(dbFacadeMock).when(cmd).getDbFacade();
         doReturn(vdsGroupDao).when(cmd).getVdsGroupDao();
         doReturn(vdsGroupDao).when(dbFacadeMock).getVdsGroupDao();

@@ -47,7 +47,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
 
         VDSGroup grp = DbFacade.getInstance().getVdsGroupDao().get(getVds().getVdsGroupId());
 
-        ServerCpu sc = CpuFlagsManagerHandler.findMaxServerCpuByFlags(getVds().getCpuFlags(), getVds()
+        ServerCpu sc = getCpuFlagsManagerHandler().findMaxServerCpuByFlags(getVds().getCpuFlags(), getVds()
                 .getVdsGroupCompatibilityVersion());
 
         if (sc == null) {
@@ -104,7 +104,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
 
         // If the host CPU name is not found by the CpuFlagsManagerHandler class, report an error
         if (architectureMatch) {
-            List<String> missingFlags = CpuFlagsManagerHandler.missingServerCpuFlags(vdsGroupCpuName, getVds()
+            List<String> missingFlags = getCpuFlagsManagerHandler().missingServerCpuFlags(vdsGroupCpuName, getVds()
                     .getCpuFlags(), getVds().getVdsGroupCompatibilityVersion());
             if (!StringUtils.isEmpty(getVds().getCpuFlags())
                     && (!foundCPU || missingFlags != null)) {
@@ -141,7 +141,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
 
     protected ArchitectureType getArchitecture(VDSGroup group) {
         if (StringUtils.isNotEmpty(group.getCpuName())) {
-            return CpuFlagsManagerHandler.getArchitectureByCpuName(group.getCpuName(),
+            return getCpuFlagsManagerHandler().getArchitectureByCpuName(group.getCpuName(),
                     group.getCompatibilityVersion());
         }
 

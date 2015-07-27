@@ -9,6 +9,6 @@ public class GetAllServerCpuListQuery<P extends GetAllServerCpuListParameters> e
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(CpuFlagsManagerHandler.allServerCpuList(getParameters().getVersion()));
+        getQueryReturnValue().setReturnValue(getCpuFlagsManagerHandler().allServerCpuList(getParameters().getVersion()));
     }
 }

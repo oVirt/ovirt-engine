@@ -6,11 +6,14 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class VdsArchitectureHelper {
     private static final Logger log = LoggerFactory.getLogger(VdsArchitectureHelper.class);
+
+    private CpuFlagsManagerHandler cpuFlagsManagerHandler = Injector.get(CpuFlagsManagerHandler.class);
 
     /**
      * Gets the architecture type of the given host using its cpu flags, if not found, return the cluster architecture
@@ -23,7 +26,7 @@ public class VdsArchitectureHelper {
         VDSGroup cluster = DbFacade.getInstance().getVdsGroupDao().get(host.getVdsGroupId());
         VdsDynamic vdsDynamic = DbFacade.getInstance().getVdsDynamicDao().get(host.getId());
         if (vdsDynamic != null) {
-            ServerCpu cpu = CpuFlagsManagerHandler.findMaxServerCpuByFlags(vdsDynamic.getCpuFlags(),
+            ServerCpu cpu = cpuFlagsManagerHandler.findMaxServerCpuByFlags(vdsDynamic.getCpuFlags(),
                     cluster.getCompatibilityVersion());
             if (cpu != null && cpu.getArchitecture() != null) {
                 return cpu.getArchitecture();
@@ -37,4 +40,5 @@ public class VdsArchitectureHelper {
                 cluster.getName());
         return cluster.getArchitecture();
     }
+
 }

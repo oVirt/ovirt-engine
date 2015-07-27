@@ -768,7 +768,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 getVm().setCpuName(getVm().getCustomCpuName());
             } else {
                 // get what cpu flags should be passed to vdsm according to the cluster
-                getVm().setCpuName(CpuFlagsManagerHandler.getCpuId(getVm().getVdsGroupCpuName(), getVm()
+                getVm().setCpuName(getCpuFlagsManagerHandler().getCpuId(getVm().getVdsGroupCpuName(), getVm()
                         .getVdsGroupCompatibilityVersion()));
             }
         }

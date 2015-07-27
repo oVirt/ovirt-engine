@@ -83,6 +83,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmInitDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -98,6 +99,7 @@ public class VmHandler {
 
     private static ObjectIdentityChecker updateVmsStatic;
     private static OsRepository osRepository;
+    private static CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
     private static final Logger log = LoggerFactory.getLogger(VmHandler.class);
 
@@ -116,6 +118,8 @@ public class VmHandler {
                 VmStatic.class,
                 VmDynamic.class,
                 VmManagementParametersBase.class };
+
+        cpuFlagsManagerHandler = Injector.get(CpuFlagsManagerHandler.class);
 
         osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
@@ -892,7 +896,7 @@ public class VmHandler {
         if (osRepository.isCpuSupported(
                 osId,
                 version,
-                CpuFlagsManagerHandler.getCpuId(cpuName, version))) {
+                cpuFlagsManagerHandler.getCpuId(cpuName, version))) {
             return true;
         }
         String unsupportedCpus = osRepository.getUnsupportedCpus(osId, version).toString();

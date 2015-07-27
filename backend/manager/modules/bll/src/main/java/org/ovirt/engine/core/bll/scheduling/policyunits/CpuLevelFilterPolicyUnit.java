@@ -15,11 +15,14 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(CpuLevelFilterPolicyUnit.class);
+
+    private CpuFlagsManagerHandler cpuFlagsManagerHandler = Injector.get(CpuFlagsManagerHandler.class);
 
     public CpuLevelFilterPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
@@ -31,7 +34,7 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
                             PerHostMessages messages) {
         List<VDS> hostsToRunOn = new ArrayList<>();
         String customCpu; // full name of the vm cpu
-        Version latestVer = CpuFlagsManagerHandler.getLatestDictionaryVersion();
+        Version latestVer = cpuFlagsManagerHandler.getLatestDictionaryVersion();
 
         /* get required cpu name */
         if (StringUtils.isNotEmpty(vm.getCpuName())) { // dynamic check - used for 1.migrating vms 2.run-once 3.after dynamic field is updated with current static-field\cluster
@@ -42,16 +45,16 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
             return hosts;
         }
 
-        customCpu = CpuFlagsManagerHandler.getCpuNameByCpuId(customCpu, latestVer); // translate vdsVerb to full cpu name
+        customCpu = cpuFlagsManagerHandler.getCpuNameByCpuId(customCpu, latestVer); // translate vdsVerb to full cpu name
         if(StringUtils.isNotEmpty(customCpu)) { // checks if there's a cpu with the given vdsVerb
 
             /* find compatible hosts */
             for (VDS host : hosts) {
-                ServerCpu cpu = CpuFlagsManagerHandler.findMaxServerCpuByFlags(host.getCpuFlags(), latestVer);
+                ServerCpu cpu = cpuFlagsManagerHandler.findMaxServerCpuByFlags(host.getCpuFlags(), latestVer);
                 String hostCpuName = cpu == null ? null : cpu.getCpuName();
                 if (StringUtils.isNotEmpty(hostCpuName)) {
-                    if (CpuFlagsManagerHandler.checkIfCpusSameManufacture(customCpu, hostCpuName, latestVer)) { // verify comparison uses only one cpu-level scale
-                        int compareResult = CpuFlagsManagerHandler.compareCpuLevels(customCpu, hostCpuName, latestVer);
+                    if (cpuFlagsManagerHandler.checkIfCpusSameManufacture(customCpu, hostCpuName, latestVer)) { // verify comparison uses only one cpu-level scale
+                        int compareResult = cpuFlagsManagerHandler.compareCpuLevels(customCpu, hostCpuName, latestVer);
                         if (compareResult <= 0) {
                             hostsToRunOn.add(host);
                             log.debug("Host '{}' wasn't filtered out as it has a CPU level ({}) which is higher or equal than the CPU level the VM was run with ({})",

@@ -10,8 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Singleton;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.config.Config;
@@ -20,11 +24,13 @@ import org.ovirt.engine.core.compat.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class CpuFlagsManagerHandler {
+@Singleton
+public class CpuFlagsManagerHandler implements BackendService {
     private static final Logger log = LoggerFactory.getLogger(CpuFlagsManagerHandler.class);
     private static Map<Version, CpuFlagsManager> _managersDictionary = new HashMap<>();
 
-    public static void initDictionaries() {
+    @PostConstruct
+    public void initDictionaries() {
         log.info("Start initializing dictionaries");
         _managersDictionary.clear();
         for (Version ver : Config.<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels)) {
@@ -33,7 +39,7 @@ public final class CpuFlagsManagerHandler {
        log.info("Finished initializing dictionaries");
     }
 
-    public static String getCpuId(String name, Version ver) {
+    public String getCpuId(String name, Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         if (cpuFlagsManager != null) {
             return cpuFlagsManager.GetVDSVerbDataByCpuName(name);
@@ -41,7 +47,7 @@ public final class CpuFlagsManagerHandler {
         return null;
     }
 
-    public static String getCpuNameByCpuId(String name, Version ver) {
+    public String getCpuNameByCpuId(String name, Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         if (cpuFlagsManager != null) {
             return cpuFlagsManager.getCpuNameByCpuId(name);
@@ -49,7 +55,7 @@ public final class CpuFlagsManagerHandler {
         return null;
     }
 
-    public static ArchitectureType getArchitectureByCpuName(String name, Version ver) {
+    public ArchitectureType getArchitectureByCpuName(String name, Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         if (cpuFlagsManager != null) {
             return cpuFlagsManager.getArchitectureByCpuName(name);
@@ -57,7 +63,7 @@ public final class CpuFlagsManagerHandler {
         return null;
     }
 
-    public static List<ServerCpu> allServerCpuList(Version ver) {
+    public List<ServerCpu> allServerCpuList(Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         if (cpuFlagsManager != null) {
             return cpuFlagsManager.getAllServerCpuList();
@@ -74,7 +80,7 @@ public final class CpuFlagsManagerHandler {
      * @param ver
      * @return list of missing CPU flags
      */
-    public static List<String> missingServerCpuFlags(String clusterCpuName, String serverFlags, Version ver) {
+    public List<String> missingServerCpuFlags(String clusterCpuName, String serverFlags, Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         if (cpuFlagsManager != null) {
             return cpuFlagsManager.missingServerCpuFlags(clusterCpuName, serverFlags);
@@ -82,7 +88,7 @@ public final class CpuFlagsManagerHandler {
         return null;
     }
 
-    public static boolean checkIfCpusSameManufacture(String cpuName1, String cpuName2, Version ver) {
+    public boolean checkIfCpusSameManufacture(String cpuName1, String cpuName2, Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         if (cpuFlagsManager != null) {
             return cpuFlagsManager.CheckIfCpusSameManufacture(cpuName1, cpuName2);
@@ -90,7 +96,7 @@ public final class CpuFlagsManagerHandler {
         return false;
     }
 
-    public static boolean checkIfCpusExist(String cpuName, Version ver) {
+    public boolean checkIfCpusExist(String cpuName, Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         if (cpuFlagsManager != null) {
             return cpuFlagsManager.CheckIfCpusExist(cpuName);
@@ -104,7 +110,7 @@ public final class CpuFlagsManagerHandler {
      * @param flags
      * @return
      */
-    public static ServerCpu findMaxServerCpuByFlags(String flags, Version ver) {
+    public ServerCpu findMaxServerCpuByFlags(String flags, Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         if (cpuFlagsManager != null) {
             return cpuFlagsManager.FindMaxServerCpuByFlags(flags);
@@ -113,12 +119,12 @@ public final class CpuFlagsManagerHandler {
     }
 
 
-    public static Version getLatestDictionaryVersion() {
+    public Version getLatestDictionaryVersion() {
         return Collections.max(_managersDictionary.keySet());
 
     }
 
-    public static List<ServerCpu> getSupportedServerCpuList(Version ver, String maxCpuName) {
+    public List<ServerCpu> getSupportedServerCpuList(Version ver, String maxCpuName) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         if (cpuFlagsManager != null) {
             return cpuFlagsManager.getSupportedServerCpuList(maxCpuName);
@@ -127,7 +133,7 @@ public final class CpuFlagsManagerHandler {
 
     }
 
-        private static class CpuFlagsManager {
+    private static class CpuFlagsManager {
         private List<ServerCpu> _intelCpuList;
         private List<ServerCpu> _amdCpuList;
         private List<ServerCpu> _ibmCpuList;
@@ -420,7 +426,7 @@ public final class CpuFlagsManagerHandler {
         }
     }
 
-    public static int compareCpuLevels(String cpuName1, String cpuName2, Version ver) {
+    public int compareCpuLevels(String cpuName1, String cpuName2, Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         ServerCpu server1 = null;
         ServerCpu server2 = null;
@@ -433,7 +439,7 @@ public final class CpuFlagsManagerHandler {
         return server1Level - server2Level;
     }
 
-    public static boolean isCpuUpdatable(String cpuName, Version ver) {
+    public boolean isCpuUpdatable(String cpuName, Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         ServerCpu server = null;
 

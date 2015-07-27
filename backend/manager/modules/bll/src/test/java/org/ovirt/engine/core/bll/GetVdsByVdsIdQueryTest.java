@@ -31,9 +31,13 @@ public class GetVdsByVdsIdQueryTest extends AbstractQueryTest<IdQueryParameters,
         when(vdsDaoMock.get(vdsID)).thenReturn(expected);
         when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDaoMock);
 
-        getQuery().executeQueryCommand();
+        CpuFlagsManagerHandler cpuFlagsManagerHandlerMock = mock(CpuFlagsManagerHandler.class);
+        GetVdsByVdsIdQuery<IdQueryParameters> query = getQuery();
+        when(query.getCpuFlagsManagerHandler()).thenReturn(cpuFlagsManagerHandlerMock);
 
-        VDS actual = (VDS) getQuery().getQueryReturnValue().getReturnValue();
+        query.executeQueryCommand();
+
+        VDS actual = (VDS) query.getQueryReturnValue().getReturnValue();
         assertEquals("wrong VDS", expected, actual);
     }
 }

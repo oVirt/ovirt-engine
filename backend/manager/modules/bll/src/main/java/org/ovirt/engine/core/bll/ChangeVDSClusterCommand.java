@@ -131,8 +131,8 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             return false;
         }
 
-        vds.setCpuName(CpuFlagsManagerHandler.findMaxServerCpuByFlags(vds.getCpuFlags(),
-                getTargetCluster().getCompatibilityVersion()));
+        vds.setCpuName(getCpuFlagsManagerHandler().
+                findMaxServerCpuByFlags(vds.getCpuFlags(), getTargetCluster().getCompatibilityVersion()));
 
 
         // CPU flags are null if oVirt node cluster is changed during approve process.
