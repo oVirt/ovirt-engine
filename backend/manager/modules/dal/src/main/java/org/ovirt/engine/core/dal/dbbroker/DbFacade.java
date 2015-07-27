@@ -112,6 +112,7 @@ import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionExtensionDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.TagDao;
@@ -987,6 +988,15 @@ public class DbFacade {
      */
     public GlusterVolumeSnapshotConfigDao getGlusterVolumeSnapshotConfigDao() {
         return getDao(GlusterVolumeSnapshotConfigDao.class);
+    }
+
+    /**
+     * Retrieves the singleton instance of {@link org.ovirt.engine.core.dao.StorageServerConnectionExtensionDao}.
+     *
+     * @return the dao
+     */
+    public StorageServerConnectionExtensionDao getStorageServerConnectionExtensionDao() {
+        return getDao(StorageServerConnectionExtensionDao.class);
     }
 
     /**
