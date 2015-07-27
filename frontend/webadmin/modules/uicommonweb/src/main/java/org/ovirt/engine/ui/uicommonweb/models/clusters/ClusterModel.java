@@ -1396,6 +1396,9 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 final ClusterModel clusterModel = (ClusterModel) model;
+                if (clusterModel.getDataCenter().getSelectedItem() == null) {
+                    return;
+                }
                 final List<Network> dcNetworks = (List<Network>) returnValue;
                 clusterModel.getManagementNetwork().setItems(dcNetworks);
 
@@ -1857,6 +1860,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         // to be attached to.
         final StoragePool selectedDataCenter = getDataCenter().getSelectedItem();
         if (selectedDataCenter == null) {
+            getManagementNetwork().setItems(Collections.<Network>emptyList());
             return;
         }
         if (selectedDataCenter.isLocal()) {
