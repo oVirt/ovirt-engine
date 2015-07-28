@@ -3144,6 +3144,19 @@ public final class AsyncDataProvider {
                 asyncQuery);
     }
 
+    public static void getIsPasswordDelegationPossible(AsyncQuery asyncQuery) {
+        final INewAsyncCallback chainedCallback = asyncQuery.asyncCallback;
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                chainedCallback.onSuccess(model, ((VdcQueryReturnValue) returnValue).getReturnValue());
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.IsPasswordDelegationPossible,
+                new VdcQueryParametersBase(),
+                asyncQuery);
+    }
+
     public static VmInterfaceType getDefaultNicType(Collection<VmInterfaceType> items)
     {
         if (items == null || items.isEmpty()) {
