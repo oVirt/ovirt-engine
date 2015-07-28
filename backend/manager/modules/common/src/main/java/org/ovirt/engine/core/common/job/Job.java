@@ -155,8 +155,11 @@ public class Job implements IVdcQueryable, BusinessEntity<Guid> {
      * A collection which stores the steps of the Job
      */
 
+    // Note that we have to use a Hibernate annotation here, otherwise we'll
+    // get a Simulatenous Bag exception
     @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(cascade = { CascadeType.ALL }, mappedBy = "jobId", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "jobId",
+            orphanRemoval = false)
     private List<Step> steps;
 
     /**
