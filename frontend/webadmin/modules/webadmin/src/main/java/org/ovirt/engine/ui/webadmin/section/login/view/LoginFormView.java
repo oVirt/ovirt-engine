@@ -8,9 +8,11 @@ import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.login.presenter.LoginFormPresenterWidget;
 import org.ovirt.engine.ui.webadmin.system.InternalConfiguration;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.inject.Inject;
@@ -45,8 +47,7 @@ public class LoginFormView extends AbstractLoginFormView implements LoginFormPre
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
         if (!intConf.isCurrentBrowserSupported()) {
-            // Browser is not supported
-            informationMessage.setText(constants.browserNotSupported());
+            informationMessagePanel.addMessage(SafeHtmlUtils.fromSafeConstant(constants.browserNotSupported()));
             informationMessagePanel.setVisible(true);
         }
     }

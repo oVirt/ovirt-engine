@@ -3,11 +3,10 @@ package org.ovirt.engine.ui.common.view;
 import java.util.Arrays;
 import java.util.List;
 
-import org.gwtbootstrap3.client.ui.Alert;
-import org.gwtbootstrap3.client.ui.Label;
 import org.gwtbootstrap3.client.ui.ListBox;
 import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.gwtbootstrap3.client.ui.constants.Styles;
+import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.utils.VisibleLocalesInfoData;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
@@ -15,7 +14,10 @@ import org.ovirt.engine.ui.common.widget.PatternflyUiCommandButton;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
+import org.ovirt.engine.ui.common.widget.panel.AlertPanel.Type;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.editor.client.Editor.Path;
@@ -30,8 +32,6 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Panel;
 
 /**
  * Base implementation of the login form.
@@ -44,7 +44,9 @@ public abstract class AbstractLoginFormView extends AbstractView {
     }
 
     public interface Style extends CssResource {
+        String labelDefault();
         String loginMessageError();
+        String informationMessage();
     }
 
     private static final String DEFAULT_LOCALE = "default"; //$NON-NLS-1$
@@ -83,15 +85,11 @@ public abstract class AbstractLoginFormView extends AbstractView {
 
     @UiField
     @Ignore
-    public Label informationMessage;
+    public AlertPanel errorMessagePanel;
 
     @UiField
     @Ignore
-    public Alert errorMessagePanel;
-
-    @UiField
-    @Ignore
-    public Panel informationMessagePanel;
+    public AlertPanel informationMessagePanel;
 
     public AbstractLoginFormView(EventBus eventBus) {
         initLocalizationEditor();
@@ -111,6 +109,7 @@ public abstract class AbstractLoginFormView extends AbstractView {
 
     protected void setStyles() {
         errorMessagePanel.setVisible(false);
+        errorMessagePanel.setType(Type.DANGER);
         informationMessagePanel.setVisible(false);
         passwordEditor.setAutoComplete("off"); //$NON-NLS-1$
 
@@ -183,21 +182,14 @@ public abstract class AbstractLoginFormView extends AbstractView {
     }
 
     public void clearErrorMessages() {
-        IsWidget errorIconWidget = errorMessagePanel.getWidget(0);
-        errorMessagePanel.clear();
-        errorMessagePanel.add(errorIconWidget);
+        errorMessagePanel.clearMessages();
         errorMessagePanel.setVisible(false);
     }
 
     public void setErrorMessages(List<SafeHtml> messages) {
-        clearErrorMessages();
-        for (SafeHtml message: messages) {
-            Label messageLabel = new Label();
-            messageLabel.setHTML(message.asString());
-            messageLabel.addStyleName(style.loginMessageError());
-            errorMessagePanel.add(messageLabel);
-            errorMessagePanel.setVisible(true);
-        }
+        errorMessagePanel.setMessages(messages, style.loginMessageError(), style.labelDefault(),
+                style.informationMessage(), PatternflyConstants.TEMP_LINK_COLOR);
+        errorMessagePanel.setVisible(true);
     }
 
     public void resetAndFocus() {
