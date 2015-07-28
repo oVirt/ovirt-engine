@@ -301,6 +301,9 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                     }
                     sourceListModel.setConfirmWindow(null);
                     setBondOptions(entity, bondDialogModel);
+
+                    Bond bond = (Bond) entity;
+                    addBondToUpdateList(bond);
                 }
             };
         } else if (item instanceof NetworkInterfaceModel) {
@@ -475,6 +478,18 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             editPopup.getCommands().add(cancelCommand);
         }
         sourceListModel.setConfirmWindow(editPopup);
+    }
+
+    private void addBondToUpdateList(Bond bond) {
+        for (Iterator<Bond> iter = hostSetupNetworksParametersData.newOrModifiedBonds.iterator(); iter.hasNext();) {
+            Bond oldModifiedBond = iter.next();
+            if (oldModifiedBond.getName().equals(bond.getName())) {
+                iter.remove();
+                break;
+            }
+        }
+
+        hostSetupNetworksParametersData.newOrModifiedBonds.add(bond);
     }
 
     public void removePreviousNetworkAttachmentInstanceFromRequestAndAddNewOne(
