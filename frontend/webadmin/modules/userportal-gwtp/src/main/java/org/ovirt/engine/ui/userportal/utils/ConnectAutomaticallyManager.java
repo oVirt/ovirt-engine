@@ -3,7 +3,10 @@ package org.ovirt.engine.ui.userportal.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.AbstractUserPortalListModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -81,6 +84,19 @@ public class ConnectAutomaticallyManager {
         @Override
         public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
             if (connectAutomatically.readConnectAutomatically() && model.getCanConnectAutomatically() && !alreadyOpened) {
+                AsyncQuery asyncQuery = new AsyncQuery();
+                asyncQuery.asyncCallback = new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        connect((Boolean) returnValue);
+                    }
+                };
+                AsyncDataProvider.getInstance().getIsPasswordDelegationPossible(asyncQuery);
+            }
+        }
+
+        private void connect(boolean isPasswordDelegationPossible) {
+            if (isPasswordDelegationPossible) {
                 try {
                     model.getAutoConnectableConsoles().get(0).connect();
                     alreadyOpened = true;
@@ -88,7 +104,6 @@ public class ConnectAutomaticallyManager {
                     errorPopupManager.show(e.getLocalizedErrorMessage());
                 }
             }
-
             unregisterModels();
         }
     }
