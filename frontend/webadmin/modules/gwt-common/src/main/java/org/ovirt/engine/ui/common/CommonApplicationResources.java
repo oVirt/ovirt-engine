@@ -191,6 +191,9 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/user.png")
     ImageResource userImage();
 
+    @Source("images/user_tree.png")
+    ImageResource userImage_tree();
+
     @Source("images/volume_bricks_down_warning.png")
     ImageResource volumeBricksDownWarning();
 
