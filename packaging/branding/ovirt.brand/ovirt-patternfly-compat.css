@@ -465,12 +465,6 @@ a.dropdown-toggle {
     top: -3px !important;
     cursor: pointer;
 }
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-    .cppv_editors_pfly_fix input {
-        position: relative;
-        top: -31px;
-    }
-}
 .cppv_labelStyle_pfly_fix {
     position: relative !important;
     top: 4px !important;

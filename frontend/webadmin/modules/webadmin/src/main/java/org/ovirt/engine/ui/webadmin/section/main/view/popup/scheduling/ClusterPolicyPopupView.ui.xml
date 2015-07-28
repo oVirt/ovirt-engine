@@ -90,7 +90,7 @@
         <d:content>
             <g:VerticalPanel>
                 <g:FlowPanel>
-                    <g:HorizontalPanel addStyleNames="cppv_editors_pfly_fix">
+                    <g:HorizontalPanel>
                         <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
                         <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
                     </g:HorizontalPanel>
