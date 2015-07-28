@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.frontend.communication.EngineSessionRefreshedEvent;
 import org.ovirt.engine.ui.frontend.communication.EngineSessionRefreshedEvent.EngineSessionRefreshedHandler;
 import org.ovirt.engine.ui.frontend.communication.StorageCallback;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
+
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.event.shared.EventBus;
@@ -70,6 +71,7 @@ public class RestApiSessionManager implements EngineSessionRefreshedHandler {
     private static final Logger logger = Logger.getLogger(RestApiSessionManager.class.getName());
 
     private static final String PREFER_HEADER = "Prefer"; //$NON-NLS-1$
+    private static final String FILTER_HEADER = "Filter"; //$NON-NLS-1$
     private static final String SESSION_ID_HEADER = "JSESSIONID"; //$NON-NLS-1$
     private static final String CSRF_HEADER = "JSESSIONID"; //$NON-NLS-1$
     private static final String ENGINE_AUTH_TOKEN_HEADER = "OVIRT-INTERNAL-ENGINE-AUTH-TOKEN"; //$NON-NLS-1$
@@ -160,6 +162,9 @@ public class RestApiSessionManager implements EngineSessionRefreshedHandler {
 
         // Express additional preferences for serving this request
         builder.setHeader(PREFER_HEADER, "persistent-auth, csrf-protection"); //$NON-NLS-1$
+
+        boolean isAdmin = Frontend.getInstance().getLoggedInUser().isAdmin();
+        builder.setHeader(FILTER_HEADER, String.valueOf(!isAdmin));
 
         // Add CSRF token, this is needed due to Prefer:csrf-protection
         if (restApiSessionId != null) {
