@@ -1,9 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -73,11 +71,11 @@ public enum NetworkOperation {
                         command.execute();
                     }
 
-                    Map<String, Bond> bondsMap = byName(dataFromHostSetupNetworksModel.newOrModifiedBonds);
                     Bond bond = bondModel.getIface();
                     boolean bondActuallyExisted = bond.getId() != null;
                     String bondName = bondModel.getName();
 
+                    Map<String, Bond> bondsMap = Entities.entitiesByName(dataFromHostSetupNetworksModel.newOrModifiedBonds);
                     dataFromHostSetupNetworksModel.newOrModifiedBonds.remove(bondsMap.get(bondName));
                     if (bondActuallyExisted) {
                         dataFromHostSetupNetworksModel.removedBonds.add(bond);
@@ -264,13 +262,7 @@ public enum NetworkOperation {
                     bond.getSlaves().add(nic1.getName());
                     bond.getSlaves().add(nic2.getName());
 
-                    Map<String, Bond> removedBondsMap = byName(dataFromHostSetupNetworksModel.removedBonds);
-                    boolean previouslyRemovedBond = removedBondsMap.containsKey(bond.getName());
-                    if (previouslyRemovedBond) {
-                        dataFromHostSetupNetworksModel.removedBonds.remove(removedBondsMap.get(bond.getName()));
-                    }
-                    dataFromHostSetupNetworksModel.newOrModifiedBonds.add(bond);
-
+                    addBondToParams(dataFromHostSetupNetworksModel, bond);
                 }
             };
         }
@@ -298,7 +290,7 @@ public enum NetworkOperation {
                     assert op1 instanceof BondNetworkInterfaceModel;
                     assert op2 instanceof BondNetworkInterfaceModel;
                     assert params.length == 1 : "incorrect params length"; //$NON-NLS-1$
-                    Set<NetworkInterfaceModel> slaveModels = new HashSet<>();      ////TODO MM: why set? There shouldn't be overlap in slaves and if there is, this cover-ups problem.
+                    Set<NetworkInterfaceModel> slaveModels = new HashSet<>();
                     slaveModels.addAll(((BondNetworkInterfaceModel) op1).getBonded());
                     slaveModels.addAll(((BondNetworkInterfaceModel) op2).getBonded());
 
@@ -319,14 +311,7 @@ public enum NetworkOperation {
                         bond.getSlaves().add(slave.getName());
                     }
 
-                    Map<String, Bond> removedBondsMap = byName(dataFromHostSetupNetworksModel.removedBonds);
-                    boolean previouslyRemovedBond = removedBondsMap.containsKey(bond.getName());
-                    if (previouslyRemovedBond) {
-                        dataFromHostSetupNetworksModel.removedBonds.remove(removedBondsMap.get(bond.getName()));
-                        dataFromHostSetupNetworksModel.newOrModifiedBonds.add(bond);
-                    } else {
-                        dataFromHostSetupNetworksModel.newOrModifiedBonds.add(bond);
-                    }
+                    addBondToParams(dataFromHostSetupNetworksModel, bond);
                 }
             };
         }
@@ -377,7 +362,7 @@ public enum NetworkOperation {
                     nic.setBondName(bondName);
                     String slaveName = nic.getName();
 
-                    Map<String, Bond> bondsMap = byName(dataFromHostSetupNetworksModel.newOrModifiedBonds);
+                    Map<String, Bond> bondsMap = Entities.entitiesByName(dataFromHostSetupNetworksModel.newOrModifiedBonds);
 
                     //TODO MM: removing and adding back a slave will end up in bond update even if there's no need for that.
                     boolean bondIsAlreadyBeingUpdated = bondsMap.containsKey(bondName);
@@ -456,10 +441,7 @@ public enum NetworkOperation {
                     if (bondModel.getBonded().size() == 2) {
                         BREAK_BOND.getCommand(bondModel, null, dataFromHostSetupNetworksModel).execute();
                     } else {
-                        nicModel.setBonded(false);
-                        slaveNic.setBonded(false);
-                        slaveNic.setBondName(null);
-                        Map<String, Bond> bondsMap = byName(dataFromHostSetupNetworksModel.newOrModifiedBonds);
+                        Map<String, Bond> bondsMap = Entities.entitiesByName(dataFromHostSetupNetworksModel.newOrModifiedBonds);
                         boolean bondWasAlreadyUpdated = bondsMap.containsKey(bondName);
                         if (bondWasAlreadyUpdated) {
                             Bond formerlyUpdatedBond = bondsMap.get(bondName);
@@ -856,6 +838,7 @@ public enum NetworkOperation {
             NetworkAttachment networkAttachment = iterator.next();
             if (networkAttachment.getNetworkId().equals(networkId)) {
                 iterator.remove();
+                break;
             }
         }
     }
@@ -1042,15 +1025,18 @@ public enum NetworkOperation {
             VdsNetworkInterface vlanDevice,
             Guid networkAttachmentId,
             List<String> networksToSync) {
+        VdsNetworkInterface targetNic = vlanDevice == null ? baseNic : vlanDevice;
+
         NetworkAttachment networkAttachment = new NetworkAttachment();
         networkAttachment.setId(networkAttachmentId);
         networkAttachment.setNetworkId(network.getId());
         networkAttachment.setNicId(baseNic.getId());
         networkAttachment.setNicName(baseNic.getName());
         networkAttachment.setOverrideConfiguration(networksToSync.contains(network.getName()));
+        networkAttachment.setProperties(targetNic.getCustomProperties());
         IpConfiguration ipConfiguration = new IpConfiguration();
         networkAttachment.setIpConfiguration(ipConfiguration);
-        ipConfiguration.getIPv4Addresses().add(newPrimaryAddress(vlanDevice == null ? baseNic : vlanDevice));
+        ipConfiguration.getIPv4Addresses().add(newPrimaryAddress(targetNic));
 
         return networkAttachment;
     }
@@ -1064,12 +1050,15 @@ public enum NetworkOperation {
         return primaryAddress;
     }
 
-    //TODO MM: rename & move to better place.
-    public static <E extends VdsNetworkInterface> Map<String, E> byName(Collection<E> collection) {
-        Map<String, E> map = new HashMap<>();
-        for (E e : collection) {
-            map.put(e.getName(), e);
+    public static void addBondToParams(DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel, Bond bond) {
+        for (Iterator<Bond> iter = dataFromHostSetupNetworksModel.removedBonds.iterator(); iter.hasNext();) {
+            Bond removedBond = iter.next();
+            if (removedBond.getName().equals(bond.getName())) {
+                iter.remove();
+                break;
+            }
         }
-        return map;
+
+        dataFromHostSetupNetworksModel.newOrModifiedBonds.add(bond);
     }
 }

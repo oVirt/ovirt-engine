@@ -303,7 +303,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                     setBondOptions(entity, bondDialogModel);
 
                     Bond bond = (Bond) entity;
-                    addBondToUpdateList(bond);
+                    onBondEditUpdateParams(bond);
                 }
             };
         } else if (item instanceof NetworkInterfaceModel) {
@@ -480,7 +480,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         sourceListModel.setConfirmWindow(editPopup);
     }
 
-    private void addBondToUpdateList(Bond bond) {
+    private void onBondEditUpdateParams(Bond bond) {
         for (Iterator<Bond> iter = hostSetupNetworksParametersData.newOrModifiedBonds.iterator(); iter.hasNext();) {
             Bond oldModifiedBond = iter.next();
             if (oldModifiedBond.getName().equals(bond.getName())) {
@@ -516,7 +516,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         NetworkAttachment updatedNetworkAttachment =
                 NetworkOperation.newNetworkAttachment(updatedNetwork,
                         logicalNetwork.getAttachedToNic().getIface(),
-                        logicalNetwork.getVlanNicModel().getIface(),
+                        logicalNetwork.getVlanNicModel() == null ? null : logicalNetwork.getVlanNicModel().getIface(),
                         networkAttachmentId,
                         hostSetupNetworksParametersData.networksToSync);
         hostSetupNetworksParametersData.newOrModifiedNetworkAttachments.add(updatedNetworkAttachment);
@@ -1078,22 +1078,6 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     }
 
     public void postOnSetupNetworks() {
-        //        SetupNetworksParameters params = new SetupNetworksParameters();
-        //        params.setInterfaces(getAllNics());
-        //        params.setCheckConnectivity(getCheckConnectivity().getEntity());
-        //        params.setConectivityTimeout(getConnectivityTimeout().getEntity());
-        //        params.setVdsId(getEntity().getId());
-        //        params.setNetworksToSync(getNetworksToSync());
-
-        SimpleAction closeAction = getCloseAction();
-        //        UiAction setupNetworks = new UiVdcAction(VdcActionType.SetupNetworks, params, this, true);
-
-        //        Logger.getLogger(getClass().getName()).severe("new labels: " + //$NON-NLS-1$
-        //                Arrays.toString(hostSetupNetworksParametersData.addedLabels.toArray()));
-        //        Logger.getLogger(getClass().getName()).severe("removed labels: " +  //$NON-NLS-1$
-        //                Arrays.toString(hostSetupNetworksParametersData.removedLabels.toArray()));
-
-
         HostSetupNetworksParameters hostSetupNetworksParameters = createHostSetupNetworksParameters();
         UiAction setupNetworksAction = new UiVdcAction(VdcActionType.HostSetupNetworks,
                 hostSetupNetworksParameters,
@@ -1102,7 +1086,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
         setupNetworksAction
                 .then(getVfsConfigAction())
-                .then(getCommitNetworkChangesAction()).onAllExecutionsFinish(closeAction);
+                .then(getCommitNetworkChangesAction()).onAllExecutionsFinish(getCloseAction());
 
         setupNetworksAction.runAction();
     }
