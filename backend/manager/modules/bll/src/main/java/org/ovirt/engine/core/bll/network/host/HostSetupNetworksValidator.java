@@ -21,14 +21,13 @@ import org.ovirt.engine.core.bll.validator.NetworkAttachmentsValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
-import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.Entities;
-import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
+import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -87,6 +86,8 @@ public class HostSetupNetworksValidator {
     private final VdsDao vdsDao;
     private final BusinessEntityMap<Bond> bondsMap;
     private Map<Guid, NetworkAttachment> networkAttachmentsByNetworkId;
+    private Map<String, NicLabel> nicLabelByLabel;
+    private HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper;
 
     public HostSetupNetworksValidator(VDS host,
         HostSetupNetworksParameters params,
@@ -97,7 +98,8 @@ public class HostSetupNetworksValidator {
         NetworkClusterDao networkClusterDao,
         NetworkAttachmentDao networkAttachmentDao,
         NetworkDao networkDao,
-        VdsDao vdsDao) {
+        VdsDao vdsDao,
+        HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper) {
 
         this.host = host;
         this.params = params;
@@ -123,6 +125,9 @@ public class HostSetupNetworksValidator {
         bondsMap = new BusinessEntityMap<>(params.getBonds());
         networkAttachmentsByNetworkId = new MapNetworkAttachments(params.getNetworkAttachments()).byNetworkId();
 
+        nicLabelByLabel = Entities.entitiesByName(params.getLabels());
+
+        this.hostSetupNetworksValidatorHelper = hostSetupNetworksValidatorHelper;
     }
 
     private void setSupportedFeatures() {
@@ -138,6 +143,7 @@ public class HostSetupNetworksValidator {
         Collection<NetworkAttachment> attachmentsToConfigure = getAttachmentsToConfigure();
 
         ValidationResult vr = ValidationResult.VALID;
+        vr = skipValidation(vr) ? vr : new NicLabelValidator(params, existingInterfacesMap, bondsMap, hostSetupNetworksValidatorHelper).validate();
         vr = skipValidation(vr) ? vr : validNewOrModifiedNetworkAttachments();
         vr = skipValidation(vr) ? vr : validRemovedNetworkAttachments();
         vr = skipValidation(vr) ? vr : validNewOrModifiedBonds();
@@ -392,9 +398,23 @@ public class HostSetupNetworksValidator {
                         "NETWORK_INTERFACE_REFERENCED_AS_A_SLAVE_MULTIPLE_TIMES_ENTITY",
                         slaveName));
             }
+
+            ValidationResult slaveHasNoLabelsValidationResult = validateSlaveHasNoLabels(slaveName);
+
+            if (!slaveHasNoLabelsValidationResult.isValid()) {
+                return slaveHasNoLabelsValidationResult;
+            }
         }
 
         return ValidationResult.VALID;
+    }
+
+    ValidationResult validateSlaveHasNoLabels(String slaveName) {
+        Set<String> labelsToConfigureOnNic = getLabelsToConfigureOnNic(slaveName);
+        return ValidationResult.failWith(EngineMessage.LABEL_ATTACH_TO_IMPROPER_INTERFACE,
+                ReplacementUtils.createSetVariableString(
+                        "LABEL_ATTACH_TO_IMPROPER_INTERFACE_ENTITY",
+                        slaveName)).unless(labelsToConfigureOnNic == null || labelsToConfigureOnNic.isEmpty());
     }
 
     private ValidationResult networkBeingAttachedToInterfaceBecomingSlave(VdsNetworkInterface potentialSlave) {
@@ -526,6 +546,8 @@ public class HostSetupNetworksValidator {
             vr = skipValidation(vr) ? vr : validateCoherentNicIdentification(attachment);
             vr = skipValidation(vr) ? vr : validateCoherentNetworkIdentification(attachment);
             vr = skipValidation(vr) ? vr : modifiedAttachmentExists(attachment.getId());
+            vr = skipValidation(vr) ? vr : modifiedAttachmentNotRemoved(attachment);
+            vr = skipValidation(vr) ? vr : validateAttachmentAndNicReferenceSameLabelNotConflict(attachment);
             vr = skipValidation(vr) ? vr : validator.notExternalNetwork();
             vr = skipValidation(vr) ? vr : validator.networkAttachedToCluster();
             vr = skipValidation(vr) ? vr : validator.ipConfiguredForStaticBootProtocol();
@@ -539,7 +561,7 @@ public class HostSetupNetworksValidator {
             vr = skipValidation(vr) ? vr : validator.networkNotChanged(attachmentsById.get(attachment.getId()));
             vr = skipValidation(vr) ? vr : validator.validateGateway();
 
-            boolean attachmentUpdated = attachment.getId() != null;
+            boolean attachmentUpdated = !isNewAttachment(attachment.getId());
             if (attachmentUpdated) {
                 vr = skipValidation(vr) ? vr : validator.networkNotUsedByVms();
                 vr = skipValidation(vr) ? vr : notMovingLabeledNetworkToDifferentNic(attachment);
@@ -554,7 +576,7 @@ public class HostSetupNetworksValidator {
         String networkName = attachment.getNetworkName();
         Guid violatingEntityId = attachment.getId();
 
-        return validateCoherentIdentification(String.valueOf(violatingEntityId),
+        return hostSetupNetworksValidatorHelper.validateCoherentIdentification(String.valueOf(violatingEntityId),
             networkId,
             networkName,
             EngineMessage.NETWORK_ATTACHMENT_REFERENCES_NETWORK_INCOHERENTLY,
@@ -562,7 +584,7 @@ public class HostSetupNetworksValidator {
     }
 
     private ValidationResult validateCoherentNicIdentification(NetworkAttachment attachment) {
-        return validateCoherentIdentification(String.valueOf(attachment.getId()),
+        return hostSetupNetworksValidatorHelper.validateCoherentIdentification(String.valueOf(attachment.getId()),
                 attachment.getNicId(),
                 attachment.getNicName(),
                 EngineMessage.NETWORK_ATTACHMENT_REFERENCES_NICS_INCOHERENTLY, existingInterfacesMap);
@@ -572,49 +594,17 @@ public class HostSetupNetworksValidator {
         Guid nicId = bond.getId();
         String nicName = bond.getName();
         EngineMessage message = EngineMessage.BOND_REFERENCES_NICS_INCOHERENTLY;
-        return validateCoherentIdentification(bond.getName(), nicId, nicName, message, existingInterfacesMap);
+        return hostSetupNetworksValidatorHelper.validateCoherentIdentification(bond.getName(), nicId, nicName, message, existingInterfacesMap);
 
-    }
-
-    private <T extends BusinessEntity<Guid> & Nameable> ValidationResult validateCoherentIdentification(String violatingEntityId,
-        Guid referringId,
-        String referringName,
-        EngineMessage message,
-        BusinessEntityMap<T> map) {
-
-        boolean bothIdentificationSet = referringId != null && referringName != null;
-        String[] replacements = createIncoherentIdentificationErrorReplacements(violatingEntityId, referringId, referringName);
-        return ValidationResult
-            .failWith(message, replacements)
-            .when(bothIdentificationSet && isNameAndIdIncoherent(referringId, referringName, map));
-    }
-
-    private String[] createIncoherentIdentificationErrorReplacements(String violatingEntityId,
-        Guid referringId,
-        String referringName) {
-        return new String[] {
-            String.format("$referrerId %s", violatingEntityId),
-            String.format("$referringId %s", referringId),
-            String.format("$referringName %s", referringName)
-        };
-    }
-
-    private <T extends BusinessEntity<Guid> & Nameable> boolean isNameAndIdIncoherent(Guid id,
-        String name,
-        BusinessEntityMap<T> map) {
-        T entityById = map.get(id);
-        T entityByName = map.get(name);
-        return !Objects.equals(entityById, entityByName);
     }
 
     private ValidationResult modifiedAttachmentExists(Guid networkAttachmentId) {
-        boolean doesNotReferenceExistingNetworkAttachment = networkAttachmentId == null;
-        if (doesNotReferenceExistingNetworkAttachment) {
+        if (isNewAttachment(networkAttachmentId)) {
             return ValidationResult.VALID;
         }
 
         for (NetworkAttachment existingAttachment : existingAttachments) {
-            if (existingAttachment.getId().equals(networkAttachmentId)) {
+          if (existingAttachment.getId().equals(networkAttachmentId)) {
                 return ValidationResult.VALID;
             }
         }
@@ -625,22 +615,39 @@ public class HostSetupNetworksValidator {
 
     }
 
+    ValidationResult modifiedAttachmentNotRemoved(NetworkAttachment networkAttachment) {
+        Guid networkAttachmentId = networkAttachment.getId();
+        if (isNewAttachment(networkAttachmentId)) {
+            return ValidationResult.VALID;
+        }
+
+        boolean attachmentInRemoveList = params.getRemovedNetworkAttachments().contains(networkAttachmentId);
+
+        return ValidationResult.failWith(EngineMessage.NETWORK_ATTACHMENT_IN_BOTH_LISTS,
+                ReplacementUtils.createSetVariableString("NETWORK_ATTACHMENT_IN_BOTH_LISTS_ENTITY",
+                        networkAttachmentId.toString())).when(attachmentInRemoveList);
+
+    }
+
+    private boolean isNewAttachment(Guid networkAttachmentId) {
+        return networkAttachmentId == null;
+    }
+
     private ValidationResult nicActuallyExistsOrReferencesNewBond(NetworkAttachment attachment) {
-        String targetNicName = attachment.getNicName();
-        boolean attachmentReferencesExistingNic = existingInterfacesMap.get(attachment.getNicId(),
-            targetNicName) != null;
-        if (attachmentReferencesExistingNic) {
+        boolean nicActuallyExistsOrReferencesNewBond =
+                isNicActuallyExistsOrReferencesNewBond(attachment.getNicName(), attachment.getNicId());
+
+        if (nicActuallyExistsOrReferencesNewBond) {
             return ValidationResult.VALID;
         }
 
-        boolean attachmentReferencesNewlyCreatedBond = targetNicName != null && bondsMap.get(targetNicName) != null;
-        if (attachmentReferencesNewlyCreatedBond) {
-            return ValidationResult.VALID;
-        }
-
-        //TODO MM: this message also exist in different code without interface id being mentioned. How to fix? Duplicate message / fix other code as well?
+        // TODO MM: this message also exist in different code without interface id being mentioned. How to fix?
+        // Duplicate message / fix other code as well?
         return new ValidationResult(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST);
+    }
 
+    private boolean isNicActuallyExistsOrReferencesNewBond(String nicName, Guid nicId) {
+        return hostSetupNetworksValidatorHelper.isNicActuallyExistsOrReferencesNewBond(existingInterfacesMap, bondsMap, nicName, nicId);
     }
 
     private ValidationResult validRemovedNetworkAttachments() {
@@ -694,23 +701,15 @@ public class HostSetupNetworksValidator {
             return ValidationResult.VALID;
         }
 
-        /*
-        When attachment is related to labeled network and bond being removed, it's considered to be valid,
-        because with disappearance of bond its label also disappears, so technically we cannot detach such network,
-        since it shouldn't be present there anyways.
-        * */
-        VdsNetworkInterface nic = existingInterfacesMap.get(attachment.getNicName());
-        if (nic != null && !removedBondVdsNetworkInterfaceMap.containsKey(nic.getName())) {
-            if (NetworkUtils.isLabeled(nic) && nic.getLabels().contains(removedNetwork.getLabel())) {
-                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC,
-                    ReplacementUtils.createSetVariableString(
+        boolean networkAttachedToNicByAnotherAttachment =
+                networkAttachmentsByNetworkId.get(removedNetwork.getId()) != null;
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC,
+                ReplacementUtils.createSetVariableString(
                         VAR_ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_LIST,
-                        removedNetwork.getName()));
+                        removedNetwork.getName()))
+                .when(!networkAttachedToNicByAnotherAttachment
+                        && isNicToConfigureContainTheLabel(attachment.getNicName(), removedNetwork.getLabel()));
 
-            }
-        }
-
-        return ValidationResult.VALID;
     }
 
     ValidationResult notMovingLabeledNetworkToDifferentNic(NetworkAttachment attachment) {
@@ -724,10 +723,74 @@ public class HostSetupNetworksValidator {
         boolean movedToDifferentNic = !existingAttachment.getNicId().equals(attachment.getNicId());
 
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC,
-            ReplacementUtils.createSetVariableString(
-                ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY, movedNetwork.getLabel()))
-            .when(movedToDifferentNic);
+                ReplacementUtils.createSetVariableString(
+                        "networkName", movedNetwork.getName()),
+                ReplacementUtils.createSetVariableString(
+                        ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY, movedNetwork.getLabel()))
+                .when(movedToDifferentNic
+                        && isNicToConfigureContainTheLabel(existingAttachment.getNicName(), movedNetwork.getLabel()));
 
+    }
+
+    ValidationResult validateAttachmentAndNicReferenceSameLabelNotConflict(NetworkAttachment attachment) {
+        Network network = existingNetworkRelatedToAttachment(attachment);
+
+        if (!NetworkUtils.isLabeled(network)) {
+            return ValidationResult.VALID;
+        }
+
+        String label = network.getLabel();
+        String nicThatShouldHaveTheLabel =
+                nicLabelByLabel.containsKey(label) ? nicLabelByLabel.get(label).getNicName() : null;
+
+        return ValidationResult.failWith(EngineMessage.NETWORK_SHOULD_BE_ATTACHED_VIA_LABEL_TO_ANOTHER_NIC,
+                ReplacementUtils.createSetVariableString("NETWORK_SHOULD_BE_ATTACHED_VIA_LABEL_TO_ANOTHER_NIC_ENTITY",
+                        network.getName()),
+                ReplacementUtils.createSetVariableString("interfaceName", attachment.getNicName()),
+                ReplacementUtils.createSetVariableString("labeledInterfaceName", nicThatShouldHaveTheLabel))
+                .unless(nicThatShouldHaveTheLabel == null || nicThatShouldHaveTheLabel.equals(attachment.getNicName()));
+
+    }
+
+    private Set<String> getLabelsToConfigureOnNic(String nicName) {
+        VdsNetworkInterface existingNic = existingInterfacesMap.get(nicName);
+        Set<String> labelsToConfigure = new HashSet<>();
+
+        if (existingNic != null) {
+            boolean nicWasRemoved = removedBondVdsNetworkInterfaceMap.containsKey(existingNic.getName());
+
+            if (nicWasRemoved) {
+                return null;
+            }
+
+            Set<String> oldLabels = existingNic.getLabels();
+
+            if (oldLabels != null) {
+                for (String label : oldLabels) {
+                    NicLabel nicLabel = nicLabelByLabel.get(label);
+                    boolean labelRemovedFromNic =
+                            params.getRemovedLabels().contains(label)
+                                    || (nicLabel != null && !Objects.equals(nicLabel.getNicName(),
+                                            existingNic.getName()));
+                    if (!labelRemovedFromNic) {
+                        labelsToConfigure.add(label);
+                    }
+                }
+            }
+
+            for (NicLabel nicLabel : params.getLabels()) {
+                if (existingNic.getName().equals(nicLabel.getNicName())) {
+                    labelsToConfigure.add(nicLabel.getLabel());
+                }
+            }
+        }
+        return labelsToConfigure;
+    }
+
+    private boolean isNicToConfigureContainTheLabel(String nicName, String label) {
+        Set<String> labelsToConfigure = getLabelsToConfigureOnNic(nicName);
+
+        return labelsToConfigure == null ? false : labelsToConfigure.contains(label);
     }
 
     private ValidationResult validateCustomProperties() {
@@ -781,8 +844,6 @@ public class HostSetupNetworksValidator {
         util.handleCustomPropertiesError(errors, messages);
         log.error(StringUtils.join(translateErrorMessages(messages), ','));
     }
-
-
 
     private Network existingNetworkRelatedToAttachment(NetworkAttachment attachment) {
         return networkBusinessEntityMap.get(attachment.getNetworkId());

@@ -56,8 +56,10 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
+import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -160,7 +162,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             return validate(hostSetupNetworkValidatorResult);
         }
 
-
         return validate(checkForOutOfSyncNetworks());
     }
 
@@ -174,7 +175,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             networkClusterDao,
             networkAttachmentDao,
             networkDao,
-            vdsDao);
+            vdsDao,
+            Injector.get(HostSetupNetworksValidatorHelper.class));
 
         return validator.validate();
     }
@@ -341,6 +343,10 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         if (existingNics == null) {
             existingNics = getDbFacade().getInterfaceDao().getAllInterfacesForVds(getVdsId());
 
+            Map <String, List<String>> bondToSlaves = new HashMap<>();
+
+            fillBondSlaves(bondToSlaves);
+
             for (VdsNetworkInterface iface : existingNics) {
                 Network network = getNetworkBusinessEntityMap().get(iface.getNetworkName());
                 HostNetworkQos hostNetworkQos = network == null ? null : qosDaoCache.get(network.getQosId());
@@ -351,6 +357,24 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         }
 
         return existingNics;
+    }
+
+    private void fillBondSlaves(Map<String, List<String>> bondToSlaves) {
+        for (VdsNetworkInterface nic : existingNics) {
+            if (nic.isPartOfBond()) {
+                MultiValueMapUtils.addToMap(nic.getBondName(),
+                        nic.getName(),
+                        bondToSlaves,
+                        new MultiValueMapUtils.ListCreator<String>());
+            }
+        }
+
+        for (VdsNetworkInterface nic : existingNics) {
+            if (nic instanceof Bond) {
+                Bond bond = (Bond) nic;
+                bond.setSlaves(bondToSlaves.get(bond.getName()));
+            }
+        }
     }
 
     private List<NetworkAttachment> getExistingAttachments() {

@@ -49,7 +49,7 @@ public class NetworkAttachmentsValidator {
         }
     }
 
-    public List<String> findViolatedNics(Map<String, List<NetworkType>> nicNameToNetworkTypesMap) {
+    private List<String> findViolatedNics(Map<String, List<NetworkType>> nicNameToNetworkTypesMap) {
         List<String> violatedNics = new ArrayList<>();
         for (Entry<String, List<NetworkType>> nicNameToNetworkTypes : nicNameToNetworkTypesMap.entrySet()) {
             String nicName = nicNameToNetworkTypes.getKey();

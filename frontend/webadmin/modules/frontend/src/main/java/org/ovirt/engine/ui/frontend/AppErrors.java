@@ -1498,6 +1498,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Multiple network attachments (${ACTION_TYPE_FAILED_NETWORK_ATTACHMENTS_REFERENCES_SAME_NETWORK_DUPLICATELY_LIST}) references same network (${ACTION_TYPE_FAILED_NETWORK_ATTACHMENTS_REFERENCES_SAME_NETWORK_DUPLICATELY_ENTITY}).")
     String ACTION_TYPE_FAILED_NETWORK_ATTACHMENTS_REFERENCES_SAME_NETWORK_DUPLICATELY();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Cannot remove and update a Network Attachment simultaneously. The same network attachment ('${NETWORK_ATTACHMENT_IN_BOTH_LISTS_ENTITY}') appears in both 'network attachments' and 'removed network attachments' lists.")
+    String NETWORK_ATTACHMENT_IN_BOTH_LISTS();
+
     @DefaultStringValue("Cannot ${action} ${type}. The given network interface does not exist on specified host '${NIC_NOT_EXISTS_ON_HOST_ENTITY}'.")
     String NIC_NOT_EXISTS_ON_HOST();
 
@@ -1534,13 +1537,16 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Following Network Attachments does not exist: ${NETWORK_ATTACHMENT_NOT_EXISTS_LIST}.")
     String NETWORK_ATTACHMENTS_NOT_EXISTS();
 
-    @DefaultStringValue("Cannot ${action} ${type}. NetworkAttachment (id ${$referrerId}) does not reference nic coherently. Nic name and id references different nic: nicId ${referringId} nicName ${referringName}}.")
+    @DefaultStringValue("Cannot ${action} ${type}. NetworkAttachment (id ${$referrerId}) does not reference nic coherently. Nic name and id reference different nics: nicId ${referringId} nicName ${referringName}}.")
     String NETWORK_ATTACHMENT_REFERENCES_NICS_INCOHERENTLY();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Bond (${referrerId}) does not reference nic coherently. Nic name and id references different nic: nicId ${referringId} nicName ${referringName}.")
+    @DefaultStringValue("Cannot ${action} ${type}. NicLabel (${referrerId}) does not reference nic coherently. Nic name and id reference different nics: nicId ${referringId} nicName ${referringName}.")
+    String NIC_LABEL_REFERENCES_NICS_INCOHERENTLY();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Bond (${referrerId}) does not reference nic coherently. Nic name and id reference different nics: nicId ${referringId} nicName ${referringName}.")
     String BOND_REFERENCES_NICS_INCOHERENTLY();
 
-    @DefaultStringValue("Cannot ${action} ${type}. NetworkAttachment (id ${referrerId}) does not reference network coherently. Network name and id references different network: networkId ${referringId} networkName ${referringName}}.")
+    @DefaultStringValue("Cannot ${action} ${type}. NetworkAttachment (id ${referrerId}) does not reference network coherently. Network name and id reference different networks: networkId ${referringId} networkName ${referringName}}.")
     String NETWORK_ATTACHMENT_REFERENCES_NETWORK_INCOHERENTLY();
 
     @DefaultStringValue("Cannot ${action} ${type}. Given network '${networkName}' is already attached to given host '${hostName}'.")
@@ -1552,6 +1558,17 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Display network '${ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY}' hasn't boot protocol assigned.")
     String ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Label '${INTERFACE_ON_NIC_LABEL_NOT_EXIST_ENTITY}' cannot be attached to non-existing/removed '${interfaceName}' network interface.")
+    String INTERFACE_ON_NIC_LABEL_NOT_EXIST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Label '${LABEL_NOT_EXIST_IN_HOST_ENTITY}' cannot be removed, since it isn't attached to any network interface.")
+    String LABEL_NOT_EXIST_IN_HOST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Labels '${PARAMS_CONTAIN_DUPLICATE_LABELS_LIST}' appear in the 'labels/removed labels' lists more than once.")
+    String PARAMS_CONTAIN_DUPLICATE_LABELS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Network interface '${LABEL_ATTACH_TO_IMPROPER_INTERFACE_ENTITY}' cannot be labeled. Label can be provided only to interfaces or to bonds (not to slaves nor vlans).")
+    String LABEL_ATTACH_TO_IMPROPER_INTERFACE();
 
     @DefaultStringValue("Bond name must be formatted as <bondYYY>.")
     String NETWORK_INVALID_BOND_NAME();
@@ -1619,8 +1636,11 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following networks cannot be removed from the network interface since they are managed by the label: ${ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_LIST}. Please remove the label from the network interface in order to remove the network.")
     String ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The following network cannot be moved to another network interface since it's managed by the label: ${ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY}. Please remove the label from the network interface in order to remove the network.")
+    @DefaultStringValue("Cannot ${action} ${type}. Network '${networkName}' cannot be moved to another network interface since it's managed by label '${ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY}'. Please remove the label from the network interface in order to remove the network.")
     String ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Cannot attach network '${NETWORK_SHOULD_BE_ATTACHED_VIA_LABEL_TO_ANOTHER_NIC_ENTITY}' to network interface '${interfaceName}', it should be attached via label to network interface '${labeledInterfaceName}'.")
+    String NETWORK_SHOULD_BE_ATTACHED_VIA_LABEL_TO_ANOTHER_NIC();
 
     @DefaultStringValue("Cannot ${action} ${type}. The following networks cannot be removed from the network interface since they are used by gluster volume bricks: ${ACTION_TYPE_FAILED_CANNOT_REMOVE_NETWORK_FROM_BRICK_LIST}. Please remove or replace the bricks in order to remove the network.")
     String ACTION_TYPE_FAILED_CANNOT_REMOVE_NETWORK_FROM_BRICK();

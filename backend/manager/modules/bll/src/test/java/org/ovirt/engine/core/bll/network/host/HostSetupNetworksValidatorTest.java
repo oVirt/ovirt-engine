@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
+import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -94,7 +95,7 @@ public class HostSetupNetworksValidatorTest {
         bond.setId(Guid.newGuid());
     }
 
-public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk() throws Exception {
+    public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk() throws Exception {
         Network unlabeledNetwork = new Network();
         unlabeledNetwork.setId(Guid.newGuid());
 
@@ -153,6 +154,83 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
     }
 
     @Test
+    public void testNotRemovingLabeledNetworksLabelRemovedFromNicValid() {
+        VdsNetworkInterface nicWithLabel = createNic("nicWithLabel");
+        nicWithLabel.setLabels(new HashSet<>(Arrays.asList("lbl1")));
+
+        Network network = createNetworkWithNameAndLabel("net", "lbl1");
+        NetworkAttachment removedAttachment = createNetworkAttachment(network, nicWithLabel);
+
+        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
+        params.getRemovedLabels().add("lbl1");
+
+        assertTestNotRemovingLabeledNetworksValid(nicWithLabel, removedAttachment, params, network);
+    }
+
+    @Test
+    public void testNotRemovingLabeledNetworksLabelMovedToAnotherNicValid() {
+        VdsNetworkInterface nicWithLabel = createNic("nicWithLabel");
+        nicWithLabel.setLabels(new HashSet<>(Arrays.asList("lbl1")));
+
+        Network network = createNetworkWithNameAndLabel("net", "lbl1");
+        NetworkAttachment removedAttachment = createNetworkAttachment(network, nicWithLabel);
+
+        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
+        NicLabel nicLabel = new NicLabel(Guid.newGuid(), nicWithLabel.getName() + "not", "lbl1");
+        params.getLabels().add(nicLabel);
+
+        assertTestNotRemovingLabeledNetworksValid(nicWithLabel, removedAttachment, params, network);
+    }
+
+    @Test
+    public void testNotRemovingLabeledNetworksNicHasLabelOldAttachRemovedNewAttachWithSameNetworkAddedToNicValid() {
+        VdsNetworkInterface nicWithLabel = createNic("nicWithLabel");
+        nicWithLabel.setLabels(new HashSet<>(Arrays.asList("lbl1")));
+
+        Network network = createNetworkWithNameAndLabel("net", "lbl1");
+        NetworkAttachment removedAttachment = createNetworkAttachment(network, nicWithLabel);
+
+        NetworkAttachment addedAttachment = new NetworkAttachment(removedAttachment);
+        addedAttachment.setId(Guid.newGuid());
+
+        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
+        params.getNetworkAttachments().add(addedAttachment);
+
+        assertTestNotRemovingLabeledNetworksValid(nicWithLabel, removedAttachment, params, network);
+    }
+
+    @Test
+    public void testNotRemovingLabeledNetworksLabelAddedToNicOldAttachRemovedNewAttachWithSameNetworkAddedToNicValid() {
+        VdsNetworkInterface nic = createNic("nicWithNoLabel");
+
+        Network network = createNetworkWithNameAndLabel("net", "lbl1");
+        NetworkAttachment removedAttachment = createNetworkAttachment(network, nic);
+        NetworkAttachment addedAttachment = new NetworkAttachment(removedAttachment);
+        addedAttachment.setId(Guid.newGuid());
+
+        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
+        params.getNetworkAttachments().add(addedAttachment);
+
+        NicLabel nicLabel = new NicLabel(nic.getId(), nic.getName(), "lbl1");
+        params.getLabels().add(nicLabel);
+
+        assertTestNotRemovingLabeledNetworksValid(nic, removedAttachment, params, network);
+    }
+
+    private void assertTestNotRemovingLabeledNetworksValid(VdsNetworkInterface nic,
+            NetworkAttachment removedAttachment,
+            HostSetupNetworksParameters params, Network network) {
+        HostSetupNetworksValidator validator =
+                new HostSetupNetworksValidatorBuilder().setParams(params)
+                        .setHost(host)
+                        .setExistingInterfaces(Arrays.asList(nic))
+                        .setNetworkBusinessEntityMap(new BusinessEntityMap<>(Arrays.asList(network)))
+                        .build();
+
+        assertThat(validator.notRemovingLabeledNetworks(removedAttachment), isValid());
+    }
+
+    @Test
     public void testNotMovingLabeledNetworkToDifferentNicWhenRemovingLabeledNetworkUnrelatedToRemovedBond() throws Exception {
         String label = "label";
 
@@ -163,16 +241,20 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
         VdsNetworkInterface existingNic = new VdsNetworkInterface();
         existingNic.setLabels(Collections.singleton(label));
         existingNic.setId(Guid.newGuid());
+        existingNic.setName("nic1");
 
         VdsNetworkInterface existingNic2 = new VdsNetworkInterface();
         existingNic2.setId(Guid.newGuid());
+        existingNic2.setName("nic2");
 
         Guid attachmentId = Guid.newGuid();
         NetworkAttachment existingNetworkAttachment = createNetworkAttachment(labeledNetwork, attachmentId);
         existingNetworkAttachment.setNicId(existingNic.getId());
+        existingNetworkAttachment.setNicName(existingNic.getName());
 
         NetworkAttachment updatedNetworkAttachment = createNetworkAttachment(labeledNetwork, attachmentId);
         updatedNetworkAttachment.setNicId(existingNic2.getId());
+        updatedNetworkAttachment.setNicName(existingNic2.getName());
 
         HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
         params.setNetworkAttachments(Collections.singletonList(updatedNetworkAttachment));
@@ -186,8 +268,10 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
 
         assertThat(validator.notMovingLabeledNetworkToDifferentNic(updatedNetworkAttachment),
             failsWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC,
-                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY,
-                    label)));
+                    ReplacementUtils.createSetVariableString(
+                            "networkName", labeledNetwork.getName()),
+                    ReplacementUtils.createSetVariableString(
+                            HostSetupNetworksValidator.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY, labeledNetwork.getLabel())));
     }
 
     @Test
@@ -213,6 +297,83 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
             null,
             new BusinessEntityMap<>(Collections.singletonList(labeledNetwork)));
         assertThat(validator.notRemovingLabeledNetworks(networkAttachment), isValid());
+    }
+
+    @Test
+    public void notMovingLabeledNetworkToDifferentNicNewLabelIsAddedToNic() {
+        notMovingLabeledNetworkToDifferentNicCommonTest(/* nicContainslabel */false,
+                false,
+                /* labelShouldBeAddedToNic */true,
+                false);
+    }
+
+    @Test
+    public void notMovingLabeledNetworkToDifferentNicNoLabelOnNic() {
+        notMovingLabeledNetworkToDifferentNicCommonTest(/* nicContainslabel */false,
+                false,
+                /* labelShouldBeAddedToNic */false,
+                true);
+    }
+
+    @Test
+    public void notMovingLabeledNetworkToDifferentNicHasLabel() {
+        notMovingLabeledNetworkToDifferentNicCommonTest(/* nicContainslabel */true,
+                /* labelShouldBeRemovedFromNic */ false,
+                false,
+                false);
+    }
+
+    @Test
+    public void notMovingLabeledNetworkToDifferentNicLabelIsRemovedFromNic() {
+        notMovingLabeledNetworkToDifferentNicCommonTest(/* nicContainslabel */true,
+                /* labelShouldBeRemovedFromNic */true,
+                false,
+                true);
+    }
+
+    private void notMovingLabeledNetworkToDifferentNicCommonTest(boolean nicContainslabel, boolean labelShouldBeRemovedFromNic,
+            boolean labelShouldBeAddedToNic,
+            boolean valid) {
+        VdsNetworkInterface nic = createNic("nicWithLabel");
+
+        if (nicContainslabel) {
+            nic.setLabels(new HashSet<>(Arrays.asList("lbl1")));
+        }
+
+        Network movedNetwork = createNetworkWithNameAndLabel("net", "lbl1");
+        NetworkAttachment existingAttachment = createNetworkAttachment(movedNetwork, nic);
+        NetworkAttachment updatedAttachment = new NetworkAttachment(existingAttachment);
+        updatedAttachment.setNicId(Guid.newGuid());
+        updatedAttachment.setNicName(nic.getName() + "not");
+
+        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
+
+        if (labelShouldBeRemovedFromNic) {
+            params.getRemovedLabels().add("lbl1");
+        }
+
+        if (labelShouldBeAddedToNic) {
+            NicLabel nicLabel = new NicLabel(nic.getId(), nic.getName(), "lbl1");
+            params.getLabels().add(nicLabel);
+        }
+
+        HostSetupNetworksValidator validator =
+                new HostSetupNetworksValidatorBuilder().setParams(params)
+                        .setHost(host)
+                        .setExistingInterfaces(Arrays.asList(nic))
+                        .setExistingAttachments(Arrays.asList(existingAttachment))
+                        .setNetworkBusinessEntityMap(new BusinessEntityMap<>(Arrays.asList(movedNetwork)))
+                        .build();
+        if (valid) {
+            assertThat(validator.notMovingLabeledNetworkToDifferentNic(updatedAttachment), isValid());
+        } else {
+            assertThat(validator.notMovingLabeledNetworkToDifferentNic(updatedAttachment),
+                    failsWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC,
+                            ReplacementUtils.createSetVariableString(
+                                    "networkName", movedNetwork.getName()),
+                            ReplacementUtils.createSetVariableString(
+                                    HostSetupNetworksValidator.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY, movedNetwork.getLabel())));
+        }
     }
 
     @Test
@@ -372,8 +533,8 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
         Network networkA = createNetworkWithName("networkA");
         Network networkB = createNetworkWithName("networkB");
 
-        NetworkAttachment networkAttachmentA = createNetworkAttachment(networkA, null);
-        NetworkAttachment networkAttachmentB = createNetworkAttachment(networkB, null);
+        NetworkAttachment networkAttachmentA = createNetworkAttachment(networkA, (Guid)null);
+        NetworkAttachment networkAttachmentB = createNetworkAttachment(networkB, (Guid)null);
 
         HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
         params.setNetworkAttachments(Arrays.asList(networkAttachmentA, networkAttachmentB));
@@ -386,6 +547,13 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
         assertThat(attachmentsToConfigure.size(), is(2));
         assertThat(attachmentsToConfigure.contains(networkAttachmentA), is(true));
         assertThat(attachmentsToConfigure.contains(networkAttachmentB), is(true));
+    }
+
+    private NetworkAttachment createNetworkAttachment(Network networkA, VdsNetworkInterface nic) {
+        NetworkAttachment attachment = createNetworkAttachment(networkA, Guid.newGuid());
+        attachment.setNicId(nic.getId());
+        attachment.setNicName(nic.getName());
+        return attachment;
     }
 
     private NetworkAttachment createNetworkAttachment(Network networkA) {
@@ -457,6 +625,12 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
         networkA.setName(nameOfNetworkA);
         networkA.setId(Guid.newGuid());
         return networkA;
+    }
+
+    private Network createNetworkWithNameAndLabel(String name, String label) {
+        Network network = createNetworkWithName(name);
+        network.setLabel(label);
+        return network;
     }
 
     @SuppressWarnings("unchecked")
@@ -961,7 +1135,7 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
         VdsNetworkInterface nicA = createNic("nicA");
         VdsNetworkInterface nicB = createNic("nicB");
 
-        NetworkAttachment networkAttachment = createNetworkAttachment(networkA, null);
+        NetworkAttachment networkAttachment = createNetworkAttachment(networkA, (Guid)null);
         networkAttachment.setNicId(nicA.getId());
         networkAttachment.setNicName(nicA.getName());
         networkAttachment.setNetworkId(networkA.getId());
@@ -997,6 +1171,145 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
                     nicA.getName()),
                 ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME,
                     networkA.getName())));
+    }
+
+    @Test
+    public void validateSlaveHasNoLabelsHasNoOldNorNewLabelsValid() {
+        VdsNetworkInterface slave = createNic("slave");
+        HostSetupNetworksValidator validator =
+                new HostSetupNetworksValidatorBuilder().setParams(new HostSetupNetworksParameters(host.getId()))
+                        .setExistingInterfaces(Arrays.asList(slave)).setHost(host).build();
+        assertThat(validator.validateSlaveHasNoLabels(slave.getName()), isValid());
+    }
+
+    @Test
+    public void validateSlaveHasNoLabelsOldLabelWasRemovedValid() {
+        VdsNetworkInterface slave = createNic("slave");
+        slave.setLabels(new HashSet<>(Arrays.asList("lbl1")));
+
+        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
+        params.getRemovedLabels().add("lbl1");
+
+        HostSetupNetworksValidator validator =
+                new HostSetupNetworksValidatorBuilder().setParams(params)
+                        .setExistingInterfaces(Arrays.asList(slave)).setHost(host).build();
+        assertThat(validator.validateSlaveHasNoLabels(slave.getName()), isValid());
+    }
+
+    @Test
+    public void validateSlaveHasNoLabelsOldLabelWasMovedToAnotherNicValid() {
+        VdsNetworkInterface slave = createNic("slave");
+        slave.setLabels(new HashSet<>(Arrays.asList("lbl1")));
+
+        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
+        NicLabel nicLabel = new NicLabel(Guid.newGuid(), slave.getName() + "not", "lbl1");
+        params.getLabels().add(nicLabel);
+
+        HostSetupNetworksValidator validator =
+                new HostSetupNetworksValidatorBuilder().setParams(params)
+                        .setExistingInterfaces(Arrays.asList(slave)).setHost(host).build();
+        assertThat(validator.validateSlaveHasNoLabels(slave.getName()), isValid());
+    }
+
+    @Test
+    public void validateSlaveHasNoLabelsHasOldLabel() {
+        VdsNetworkInterface slave = createNic("slave");
+        slave.setLabels(new HashSet<>(Arrays.asList("lbl1")));
+
+        HostSetupNetworksValidator validator =
+                new HostSetupNetworksValidatorBuilder().setParams(new HostSetupNetworksParameters(host.getId()))
+                        .setExistingInterfaces(Arrays.asList(slave)).setHost(host).build();
+        assertValidateSlaveHasNoLabelsFailed(validator, slave.getName());
+    }
+
+    @Test
+    public void validateSlaveHasNoLabelsHasNewLabel() {
+        VdsNetworkInterface slave = createNic("slave");
+
+        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
+        NicLabel nicLabel = new NicLabel(slave.getId(), slave.getName(), "lbl1");
+        params.getLabels().add(nicLabel);
+
+        HostSetupNetworksValidator validator =
+                new HostSetupNetworksValidatorBuilder().setParams(params)
+                        .setExistingInterfaces(Arrays.asList(slave)).setHost(host).build();
+        assertValidateSlaveHasNoLabelsFailed(validator, slave.getName());
+    }
+
+    private void assertValidateSlaveHasNoLabelsFailed(HostSetupNetworksValidator validator, String slaveName) {
+        assertThat(validator.validateSlaveHasNoLabels(slaveName),
+                failsWith(EngineMessage.LABEL_ATTACH_TO_IMPROPER_INTERFACE,
+                        ReplacementUtils.createSetVariableString(
+                                "LABEL_ATTACH_TO_IMPROPER_INTERFACE_ENTITY",
+                                slaveName)));
+    }
+
+    @Test
+    public void modifiedAttachmentNotRemovedAttachmentModifiedAndRemoved() {
+        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
+        NetworkAttachment modifiedAttachment = createNetworkAttachment(new Network());
+        params.getRemovedNetworkAttachments().add(modifiedAttachment.getId());
+
+        HostSetupNetworksValidator validator =
+                new HostSetupNetworksValidatorBuilder().setParams(params).setHost(host).build();
+
+        assertThat(validator.modifiedAttachmentNotRemoved(modifiedAttachment),
+                failsWith(EngineMessage.NETWORK_ATTACHMENT_IN_BOTH_LISTS,
+                        ReplacementUtils.createSetVariableString("NETWORK_ATTACHMENT_IN_BOTH_LISTS_ENTITY",
+                                modifiedAttachment.getId().toString())));
+    }
+
+    @Test
+    public void modifiedAttachmentNotRemovedAttachmentModifiedButNotRemovedValid() {
+        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
+
+        HostSetupNetworksValidator validator =
+                new HostSetupNetworksValidatorBuilder().setParams(params).setHost(host).build();
+
+        NetworkAttachment modifiedAttachment = createNetworkAttachment(new Network());
+        assertThat(validator.modifiedAttachmentNotRemoved(modifiedAttachment), isValid());
+    }
+
+    @Test
+    public void attachmentAndNicLabelReferenceSameLabelNotConflict() {
+        attachmentAndNicLabelReferenceSameLabelCommonTest(/* referenceSameNic */true, true);
+    }
+
+    @Test
+    public void attachmentAndNicLabelReferenceSameLabelConflict() {
+        attachmentAndNicLabelReferenceSameLabelCommonTest(/* referenceSameNic */false, false);
+    }
+
+    private void attachmentAndNicLabelReferenceSameLabelCommonTest(boolean referenceSameNic, boolean valid) {
+        VdsNetworkInterface nic = createNic("nic");
+        Network network = createNetworkWithNameAndLabel("net", "lbl1");
+        NetworkAttachment attachment = createNetworkAttachment(network, nic);
+
+        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
+
+        NicLabel nicLabel =
+                referenceSameNic ? new NicLabel(nic.getId(), nic.getName(), "lbl1") : new NicLabel(Guid.newGuid(),
+                        nic.getName() + "not",
+                        "lbl1");
+        params.getLabels().add(nicLabel);
+
+        HostSetupNetworksValidator validator =
+                new HostSetupNetworksValidatorBuilder().setParams(params)
+                        .setNetworkBusinessEntityMap(new BusinessEntityMap<>(Arrays.asList(network)))
+                        .setExistingInterfaces(Arrays.asList(nic))
+                        .setHost(host)
+                        .build();
+
+        if (valid) {
+            assertThat(validator.validateAttachmentAndNicReferenceSameLabelNotConflict(attachment), isValid());
+        } else {
+            assertThat(validator.validateAttachmentAndNicReferenceSameLabelNotConflict(attachment),
+                    failsWith(EngineMessage.NETWORK_SHOULD_BE_ATTACHED_VIA_LABEL_TO_ANOTHER_NIC,
+                            ReplacementUtils.createSetVariableString("NETWORK_SHOULD_BE_ATTACHED_VIA_LABEL_TO_ANOTHER_NIC_ENTITY",
+                                    network.getName()),
+                            ReplacementUtils.createSetVariableString("interfaceName", attachment.getNicName()),
+                            ReplacementUtils.createSetVariableString("labeledInterfaceName", nicLabel.getNicName())));
+        }
     }
 
     private VdsNetworkInterface createBondSlave(Bond bond, String slaveName) {
@@ -1087,7 +1400,8 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
                 networkClusterDaoMock,
                 networkAttachmentDaoMock,
                 networkDaoMock,
-                vdsDaoMock);
+                vdsDaoMock,
+                new HostSetupNetworksValidatorHelper());
         }
     }
 }
