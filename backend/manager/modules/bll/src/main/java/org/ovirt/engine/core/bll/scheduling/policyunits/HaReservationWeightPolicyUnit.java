@@ -35,7 +35,7 @@ public class HaReservationWeightPolicyUnit extends PolicyUnitImpl {
     @Override
     public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
 
-        log.info("Started HA reservation scoring method");
+        log.debug("Started HA reservation scoring method");
         List<Pair<Guid, Integer>> scores = new ArrayList<>();
 
         Map<Guid, Integer> hostsHaVmCount = new HashMap<>();
@@ -90,6 +90,7 @@ public class HaReservationWeightPolicyUnit extends PolicyUnitImpl {
 
         }
 
+        log.debug("Ended HA reservation scoring method");
         return scores;
     }
 
