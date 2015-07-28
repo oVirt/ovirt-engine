@@ -1603,6 +1603,19 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION RemoveNetworkAttachmentByNetworkId(v_id UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+   DELETE FROM
+    network_attachments na
+   WHERE
+    na.network_id = v_id;
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 ----------------------------------------------------------------------
 --  vfsConfigNetworks
 ----------------------------------------------------------------------

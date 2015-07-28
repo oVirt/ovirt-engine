@@ -43,6 +43,11 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDaoDbFacade<NetworkA
     }
 
     @Override
+    public void removeByNetworkId(Guid networkId) {
+        getCallsHandler().executeModification("RemoveNetworkAttachmentByNetworkId", createIdParameterMapper(networkId));
+    }
+
+    @Override
     protected MapSqlParameterSource createFullParametersMapper(NetworkAttachment networkAttachment) {
         MapSqlParameterSource mapper = createIdParameterMapper(networkAttachment.getId())
                 .addValue("network_id", networkAttachment.getNetworkId())

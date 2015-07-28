@@ -25,4 +25,10 @@ public interface NetworkAttachmentDao extends GenericDao<NetworkAttachment, Guid
      * @return the list of network attachments
      */
     List<NetworkAttachment> getAllForHost(Guid hostId);
+
+    /**
+     * Removed network attachment related to given networkId.
+     * @param networkId
+     */
+    void removeByNetworkId(Guid networkId);
 }

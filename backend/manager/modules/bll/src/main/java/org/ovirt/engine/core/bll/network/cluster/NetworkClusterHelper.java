@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -36,6 +37,10 @@ public class NetworkClusterHelper {
         return DbFacade.getInstance().getNetworkClusterDao();
     }
 
+    private NetworkAttachmentDao getNetworkAttachmentDao() {
+        return Injector.get(NetworkAttachmentDao.class);
+    }
+
     private NetworkCluster getManagementNetworkCluster() {
         if (managementNetworkCluster == null) {
             Guid clusterId = networkCluster.getClusterId();
@@ -50,6 +55,8 @@ public class NetworkClusterHelper {
     public void removeNetworkAndReassignRoles() {
         NetworkCluster oldNetworkCluster = getNetworkClusterDao().get(networkCluster.getId());
         getNetworkClusterDao().remove(networkCluster.getClusterId(), networkCluster.getNetworkId());
+        getNetworkAttachmentDao().removeByNetworkId(networkCluster.getNetworkId());
+
         boolean updateManagementNetwork = false;
 
         if (oldNetworkCluster.isDisplay()) {

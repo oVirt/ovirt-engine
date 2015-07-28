@@ -111,6 +111,21 @@ public class NetworkAttachmentDaoTest extends BaseDaoTestCase {
         assertEquals(2, result.size());
     }
 
+    @Test
+    public void testRemoveByNetworkId() {
+        //store ids for for case it gets changed during processing somehow.
+        Guid networkAttachmentId = networkAttachment.getId();
+        Guid networkIdUsedForAttachmentRemoval = networkAttachment.getNetworkId();
+
+        //persist & verify presence
+        dao.save(networkAttachment);
+        assertNotNull(dao.get(networkAttachmentId));
+
+        //delete & verify absence
+        dao.removeByNetworkId(networkIdUsedForAttachmentRemoval);
+        assertNull(dao.get(networkAttachmentId));
+    }
+
     /**
      * Ensures that a populated collection is returned.
      */
