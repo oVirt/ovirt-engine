@@ -21,7 +21,8 @@ public enum SystemTreeItemType {
     Network,
     Providers,
     Provider,
-    Sessions;
+    Sessions,
+    Errata;
 
     public int getValue() {
         return this.ordinal();

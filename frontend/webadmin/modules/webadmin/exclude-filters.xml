@@ -210,18 +210,6 @@
         UuF: Unused field (UUF_UNUSED_FIELD)
        -->
      <Match>
-       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVolumePresenter$VolumeSelectionChange" />
-       <Bug code="UuF"/>
-     </Match>
-
-       <!--
-        findbugs complain of unused field in class.
-        This is a GWT class and use to generate code
-
-        findbugs reason:
-        UuF: Unused field (UUF_UNUSED_FIELD)
-       -->
-     <Match>
        <Class name="org.ovirt.engine.ui.webadmin.system.MessageReceived" />
        <Bug code="UuF"/>
      </Match>
@@ -235,6 +223,30 @@
        -->
      <Match>
        <Class name="org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider$SystemTreeSelectionChange" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabEngineErrataPresenter$ErrataSelectionChange" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVolumePresenter$VolumeSelectionChange" />
        <Bug code="UuF"/>
      </Match>
 
@@ -306,3 +318,4 @@
       <Bug pattern="SKIPPED_CLASS_TOO_BIG"/>
     </Match>
 </FindBugsFilter>
+

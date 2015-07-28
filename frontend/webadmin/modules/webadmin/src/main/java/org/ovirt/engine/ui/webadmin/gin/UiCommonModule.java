@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.ClusterModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.DataCenterModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.DiskModule;
+import org.ovirt.engine.ui.webadmin.gin.uicommon.ErrataModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.EventModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.HostModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.MacPoolModule;
@@ -84,6 +85,7 @@ public class UiCommonModule extends BaseUiCommonModule {
         install(new ProviderModule());
         install(new VnicProfileModule());
         install(new MacPoolModule());
+        install(new ErrataModule());
         install(new SessionModule());
 
         bindCommonModels();

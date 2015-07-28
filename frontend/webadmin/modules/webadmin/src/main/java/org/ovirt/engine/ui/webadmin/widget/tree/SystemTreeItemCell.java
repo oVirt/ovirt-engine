@@ -98,6 +98,9 @@ public class SystemTreeItemCell extends AbstractCell<SystemTreeItemModel> {
         case Sessions:
             imageResource = resources.userImage_tree();
             break;
+        case Errata:
+            imageResource = resources.errataImage();
+            break;
 
         default:
             imageResource = resources.questionMarkImage();

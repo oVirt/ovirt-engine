@@ -9,14 +9,17 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.IsEditorDriver;
 import org.ovirt.engine.ui.common.widget.table.ElementIdCellTable;
+import org.ovirt.engine.ui.common.widget.table.HasColumns;
 import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 import org.ovirt.engine.ui.common.widget.table.cell.EventHandlingCell;
 import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
 import org.ovirt.engine.ui.common.widget.table.header.AbstractSelectAllCheckBoxHeader;
+import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
+
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -44,7 +47,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
  * @param <M>
  *            List model type.
  */
-public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTable<EntityModel> implements IsEditorDriver<M> {
+public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTable<EntityModel> implements IsEditorDriver<M>, HasColumns {
 
     public interface CellTableValidation extends CssResource {
         String invalidRow();
@@ -393,6 +396,28 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         super.setColumnWidth(column, width);
     }
 
+    @Override
+    public void addColumnWithHtmlHeader(Column column, SafeHtml header) {
+        super.addColumn(column, header);
+    }
+
+    @Override
+    public void addColumnWithHtmlHeader(Column column, SafeHtml header, String width) {
+        super.addColumn(column, header);
+        super.setColumnWidth(column, width);
+    }
+
+    @Override
+    public void addColumn(Column column, SafeHtmlHeader header) {
+        super.addColumn(column, header);
+    }
+
+    @Override
+    public void addColumn(Column column, SafeHtmlHeader header, String width) {
+        super.addColumn(column, header);
+        super.setColumnWidth(column, width);
+    }
+
     /**
      * {@inheritDoc}
      * <p>
@@ -407,5 +432,4 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
     public void setLoadingState(LoadingState state) {
         super.onLoadingStateChanged(state);
     }
-
 }

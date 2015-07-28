@@ -2885,4 +2885,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("No provider")
     String providerNone();
+
+    @DefaultStringValue("Errata")
+    String errata();
+
+    @DefaultStringValue("Problem retrieving errata:")
+    String katelloProblemRetrievingErrata();
+
 }

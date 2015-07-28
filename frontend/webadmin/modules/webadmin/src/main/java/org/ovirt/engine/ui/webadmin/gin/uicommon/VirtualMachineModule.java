@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -25,6 +26,8 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.VmErrataCountModel;
+import org.ovirt.engine.ui.uicommonweb.models.VmErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AttachDiskModel;
@@ -49,6 +52,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.VmHostDeviceListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ImportVmsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.VmErrataListWithDetailsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.AddVmHostDevicePopupPresenterWidget;
@@ -79,6 +83,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotPr
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VncInfoPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
@@ -424,6 +429,48 @@ public class VirtualMachineModule extends AbstractGinModule {
         return result;
     }
 
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<Erratum, VmListModel<Void>, VmErrataListModel> getVmErrataListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<VmListModel<Void>> mainModelProvider,
+            final Provider<VmErrataListModel> modelProvider) {
+
+        SearchableDetailTabModelProvider<Erratum, VmListModel<Void>, VmErrataListModel> result =
+                new SearchableDetailTabModelProvider<Erratum, VmListModel<Void>, VmErrataListModel>(
+                        eventBus, defaultConfirmPopupProvider);
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+
+        return result;
+    }
+
+    @Provides
+    @Singleton
+    public DetailTabModelProvider<VmListModel<Void>, VmErrataCountModel> getVmErrataCountProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<VmListModel<Void>> mainModelProvider,
+            final Provider<VmErrataListWithDetailsPopupPresenterWidget> errataPopupProvider,
+            final Provider<VmErrataCountModel> modelProvider) {
+
+        DetailTabModelProvider<VmListModel<Void>, VmErrataCountModel> result =
+                new DetailTabModelProvider<VmListModel<Void>,
+                VmErrataCountModel>(eventBus, defaultConfirmPopupProvider) {
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmErrataCountModel source,
+                    UICommand lastExecutedCommand,
+                    Model windowModel) {
+
+                return errataPopupProvider.get();
+            }
+        };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+
+        return result;
+    }
+
+
     @Override
     protected void configure() {
         bind(new TypeLiteral<VmListModel<Void>>() {}).in(Singleton.class);
@@ -439,6 +486,10 @@ public class VirtualMachineModule extends AbstractGinModule {
         bind(VmHostDeviceListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<VM>>(){}).in(Singleton.class);
         bind(new TypeLiteral<VmDevicesListModel<VM>>() {}).in(Singleton.class);
+        bind(VmErrataCountModel.class).in(Singleton.class);
+        bind(VmErrataListModel.class).in(Singleton.class);
+
+
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<VmListModel<Void>, VmGeneralModel>>(){})

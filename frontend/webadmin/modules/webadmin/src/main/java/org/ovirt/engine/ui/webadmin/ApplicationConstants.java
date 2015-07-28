@@ -94,6 +94,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Providers")
     String providerMainTabLabel();
 
+    @DefaultStringValue("Errata")
+    String errataMainTabLabel();
+
+    @DefaultStringValue("Details")
+    String errataDetailsSubTabLabel();
+
     @DefaultStringValue("Sessions")
     String sessionMainTabLabel();
 
@@ -542,6 +548,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Events")
     String virtualMachineEventSubTabLabel();
 
+    @DefaultStringValue("Errata")
+    String virtualMachineErrataSubTabLabel();
+
     @DefaultStringValue("General")
     String hostGeneralSubTabLabel();
 
@@ -553,6 +562,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Hardware")
     String hostGeneralHardwareSubTabLabel();
+
+    @DefaultStringValue("Errata")
+    String hostGeneralErrataSubTabLabel();
 
     @DefaultStringValue("Virtual Machines")
     String hostVmSubTabLabel();
@@ -4531,4 +4543,65 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Device Passthrough")
     String hostDevicePassthroughHostGeneral();
+
+    @DefaultStringValue("Critical")
+    String critical();
+
+    @DefaultStringValue("Important")
+    String important();
+
+    @DefaultStringValue("Moderate")
+    String moderate();
+
+    @DefaultStringValue("Bug")
+    String bug();
+
+    @DefaultStringValue("Bugs")
+    String bugs();
+
+    @DefaultStringValue("Enhancement")
+    String enhancement();
+
+    @DefaultStringValue("Enhancements")
+    String enhancements();
+
+    @DefaultStringValue("Security")
+    String security();
+
+    @DefaultStringValue("Type")
+    String errataType();
+
+    @DefaultStringValue("Severity")
+    String errataSeverity();
+
+    @DefaultStringValue("Date Issued")
+    String errataDateIssued();
+
+    @DefaultStringValue("ID")
+    String errataId();
+
+    @DefaultStringValue("Title")
+    String errataTitle();
+
+    @DefaultStringValue("Solution")
+    String solution();
+
+    @DefaultStringValue("Summary")
+    String summary();
+
+    @DefaultStringValue("Packages")
+    String errataPackages();
+
+    @DefaultStringValue("Total security:")
+    String totalSecurity();
+
+    @DefaultStringValue("Total bugs:")
+    String totalBugFix();
+
+    @DefaultStringValue("Total enhancements:")
+    String totalEnhancement();
+
+    @DefaultStringValue("Problem retrieving errata:")
+    String katelloProblemRetrievingErrata();
+
 }

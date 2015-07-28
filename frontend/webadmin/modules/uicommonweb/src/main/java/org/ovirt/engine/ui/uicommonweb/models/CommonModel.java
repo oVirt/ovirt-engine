@@ -114,6 +114,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
     private final AlertListModel alertListModel;
     private final TaskListModel taskListModel;
     private final SessionListModel sessionListModel;
+    private final EngineErrataListModel engineErrataListModel;
     private final SharedMacPoolListModel sharedMacPoolListModel;
 
     @Inject
@@ -146,6 +147,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
             final TaskListModel taskListModel,
             final SharedMacPoolListModel sharedMacPoolListModel,
             final SessionListModel sessionListModel,
+            final EngineErrataListModel engineErrataListModel,
             final EventBus eventBus) {
 
         this.dataCenterListModel = dataCenterListModel;
@@ -177,6 +179,8 @@ public class CommonModel extends ListModel<SearchableListModel> {
         this.taskListModel = taskListModel;
         this.sharedMacPoolListModel = sharedMacPoolListModel;
         this.sessionListModel = sessionListModel;
+        this.engineErrataListModel = engineErrataListModel;
+
         setModelList();
 
         setSignedOutEvent(new Event<EventArgs>(signedOutEventDefinition));
@@ -496,11 +500,13 @@ public class CommonModel extends ListModel<SearchableListModel> {
                 || type == SystemTreeItemType.DataCenter);
 
         getSessionList().setIsAvailable(type == SystemTreeItemType.Sessions);
+
+        getErrataList().setIsAvailable(type == SystemTreeItemType.Errata);
     }
 
     private void changeSelectedTabIfNeeded(SystemTreeItemModel model) {
         if (getSelectedItem() != null && getSelectedItem().getIsAvailable()) {
-            // Do not change tab if we can show it
+            // Do not change tab if we can't show it
             return;
         } else {
             switch (model.getType()) {
@@ -541,6 +547,9 @@ public class CommonModel extends ListModel<SearchableListModel> {
             case Providers:
             case Provider:
                 setSelectedItem(getProviderList());
+                break;
+            case Errata:
+                setSelectedItem(getErrataList());
                 break;
             case Sessions:
                 setSelectedItem(getSessionList());
@@ -960,6 +969,11 @@ public class CommonModel extends ListModel<SearchableListModel> {
                     prefix.argvalue = "Session:"; //$NON-NLS-1$
                 }
                 break;
+            case Errata:
+                if (getErrataList().isSearchStringMatch(source)) {
+                    prefix.argvalue = "Errata:"; //$NON-NLS-1$
+                }
+                break;
             }
 
             prefix.argvalue = prefix.argvalue + " "; //$NON-NLS-1$
@@ -1102,6 +1116,10 @@ public class CommonModel extends ListModel<SearchableListModel> {
 
     public SessionListModel getSessionList() {
         return sessionListModel;
+    }
+
+    public EngineErrataListModel getErrataList() {
+        return engineErrataListModel;
     }
 
     public NetworkListModel getNetworkList() {

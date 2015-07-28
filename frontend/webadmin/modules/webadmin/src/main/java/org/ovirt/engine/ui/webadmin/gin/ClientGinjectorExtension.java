@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.gin;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.Permission;
@@ -49,9 +50,16 @@ import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.auth.LoggedInGatekeeper;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
+import org.ovirt.engine.ui.uicommonweb.models.ErratumModel;
+import org.ovirt.engine.ui.uicommonweb.models.HostErrataCountModel;
+import org.ovirt.engine.ui.uicommonweb.models.HostErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SessionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.VmErrataCountModel;
+import org.ovirt.engine.ui.uicommonweb.models.VmErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGlusterHookListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterHostListModel;
@@ -221,6 +229,8 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     MainModelProvider<UserSession, SessionListModel> getMainTabSessionModelProvider();
 
+    MainModelProvider<Erratum, EngineErrataListModel> getMainTabErrataModelProvider();
+
     // UiCommon model providers: Sub tabs
 
     // DataCenter
@@ -323,6 +333,10 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<HostDeviceView, VmListModel<Void>, VmHostDeviceListModel> getSubTabVirtualMachineHostDeviceModelProvider();
 
+    SearchableDetailModelProvider<Erratum, VmListModel<Void>, VmErrataListModel> getVmErrataListProvider();
+
+    DetailTabModelProvider<VmListModel<Void>, VmErrataCountModel> getVmErrataCountProvider();
+
     // Host
 
     DetailModelProvider<HostListModel<Void>, HostGeneralModel> getSubTabHostGeneralModelProvider();
@@ -346,6 +360,10 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
     SearchableDetailModelProvider<GlusterBrickEntity, HostListModel<Void>, HostBricksListModel> getSubTabHostBricksModelProvider();
 
     SearchableDetailModelProvider<StorageDevice, HostListModel<Void>, HostGlusterStorageDevicesListModel> getHostGlusterStorageDevicesListModelProvider();
+
+    SearchableDetailModelProvider<Erratum, HostListModel<Void>, HostErrataListModel> getHostErrataListProvider();
+
+    DetailTabModelProvider<HostListModel<Void>, HostErrataCountModel> getHostErrataCountProvider();
 
     // Pool
 
@@ -462,6 +480,10 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<Permission, VnicProfileListModel, PermissionListModel<VnicProfileView>> getSubTabVnicProfilePermissionModelProvider();
 
+    // Errata
+    DetailTabModelProvider<EngineErrataListModel, ErratumModel> getErrataDetailProvider();
+
     // Widgets
     VfsConfigPopupView getVfsConfigPopupView();
+
 }

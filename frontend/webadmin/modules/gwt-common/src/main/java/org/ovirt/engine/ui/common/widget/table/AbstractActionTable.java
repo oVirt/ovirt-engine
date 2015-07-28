@@ -72,7 +72,7 @@ import com.google.gwt.view.client.SelectionModel;
  * @param <T>
  *            Table row data type.
  */
-public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> implements ActionTable<T> {
+public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> implements ActionTable<T>, HasColumns<T> {
 
     /**
      * Allows customizing table row elements after the table finished loading its items.
@@ -622,31 +622,55 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         tableHeader.setColumnWidth(column, width);
     }
 
+    /* (non-Javadoc)
+     * @see org.ovirt.engine.ui.common.widget.table.HasAddableColumns#addColumn(com.google.gwt.user.cellview.client.Column, java.lang.String)
+     */
+    @Override
     public void addColumn(Column<T, ?> column, String headerText) {
         table.addColumn(column, headerText);
         tableHeader.addColumn(column, headerText);
     }
 
+    /* (non-Javadoc)
+     * @see org.ovirt.engine.ui.common.widget.table.HasAddableColumns#addColumn(com.google.gwt.user.cellview.client.Column, java.lang.String, java.lang.String)
+     */
+    @Override
     public void addColumn(Column<T, ?> column, String headerText, String width) {
         addColumn(column, headerText);
         setColumnWidth(column, width);
     }
 
+    /* (non-Javadoc)
+     * @see org.ovirt.engine.ui.common.widget.table.HasAddableColumns#addColumnWithHtmlHeader(com.google.gwt.user.cellview.client.Column, com.google.gwt.safehtml.shared.SafeHtml)
+     */
+    @Override
     public void addColumnWithHtmlHeader(Column<T, ?> column, SafeHtml headerHtml) {
         table.addColumnWithHtmlHeader(column, headerHtml);
         tableHeader.addColumnWithHtmlHeader(column, headerHtml);
     }
 
+    /* (non-Javadoc)
+     * @see org.ovirt.engine.ui.common.widget.table.HasAddableColumns#addColumnWithHtmlHeader(com.google.gwt.user.cellview.client.Column, com.google.gwt.safehtml.shared.SafeHtml, java.lang.String)
+     */
+    @Override
     public void addColumnWithHtmlHeader(Column<T, ?> column, SafeHtml headerHtml, String width) {
         table.addColumnWithHtmlHeader(column, headerHtml, width);
         tableHeader.addColumnWithHtmlHeader(column, headerHtml, width);
     }
 
+    /* (non-Javadoc)
+     * @see org.ovirt.engine.ui.common.widget.table.HasAddableColumns#addColumn(com.google.gwt.user.cellview.client.Column, org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader)
+     */
+    @Override
     public void addColumn(Column<T, ?> column, SafeHtmlHeader header) {
         table.addColumn(column, header);
         tableHeader.addColumn(column, header);
     }
 
+    /* (non-Javadoc)
+     * @see org.ovirt.engine.ui.common.widget.table.HasAddableColumns#addColumn(com.google.gwt.user.cellview.client.Column, org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader, java.lang.String)
+     */
+    @Override
     public void addColumn(Column<T, ?> column, SafeHtmlHeader header, String width) {
         addColumn(column, header);
         setColumnWidth(column, width);

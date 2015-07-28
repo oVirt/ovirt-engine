@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:f="urn:import:org.ovirt.engine.ui.common.widget.form"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+
+    <ui:style>
+    .security, .bug, .enhancement{
+        position: relative;
+        left: 37px;
+        top: -1px;
+    }
+    .securityCheckbox label, .bugCheckbox label, .enhancementCheckbox label {
+        padding-left: 25px;
+    }
+
+    .securityCheckbox input, .bugCheckbox input, .enhancementCheckbox input {
+        position: relative;
+        top: 3px;
+    }
+    </ui:style>
+
+    <g:FlowPanel>
+        <g:Image resource="{resources.security}" addStyleNames="{style.security}"/>
+        <g:CheckBox ui:field="securityCheckbox" addStyleNames="{style.securityCheckbox}"/>
+        <g:Image resource="{resources.bug}" addStyleNames="{style.bug}"/>
+        <g:CheckBox ui:field="bugCheckbox" addStyleNames="{style.bugCheckbox}"/>
+        <g:Image resource="{resources.enhancement}" addStyleNames="{style.enhancement}"/>
+        <g:CheckBox ui:field="enhancementCheckbox" addStyleNames="{style.enhancementCheckbox}"/>
+    </g:FlowPanel>
+
+</ui:UiBinder>

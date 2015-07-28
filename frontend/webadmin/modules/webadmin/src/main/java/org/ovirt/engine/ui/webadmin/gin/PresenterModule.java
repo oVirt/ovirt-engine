@@ -15,12 +15,14 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterW
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.CpuQosPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.HostErrataListWithDetailsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.HostNetworkQosPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ImportVmsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.NetworkQoSPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.StorageQosPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.SystemPermissionsRemoveConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.VmErrataListWithDetailsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.BookmarkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.AddDataCenterClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
@@ -137,6 +139,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VncInfoPopup
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDiskPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabEngineErrataPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabNetworkPresenter;
@@ -180,6 +183,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskPe
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskVmPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.errata.ErrataSubTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.errata.SubTabEngineErrataDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabGlusterVolumeSnapshotPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeBrickPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeEventPresenter;
@@ -194,6 +199,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostBr
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostDevicePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralHardwarePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralHostErrataPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralInfoPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralSoftwarePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGlusterStorageDevicesPresenter;
@@ -264,6 +270,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserQu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.UserSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineAffinityGroupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineApplicationPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineErrataPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineGuestInfoPresenter;
@@ -283,10 +290,12 @@ import org.ovirt.engine.ui.webadmin.section.main.view.ReportView;
 import org.ovirt.engine.ui.webadmin.section.main.view.SearchPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AssignTagsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.DetachConfirmationPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.HostErrataListWithDetailsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.ImportVmsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.NewNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.PermissionsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.SystemPermissionsRemoveConfirmationPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.VmErrataListWithDetailsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.bookmark.BookmarkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.AddDataCenterClusterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterManageNetworkPopupView;
@@ -410,6 +419,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VncInfoPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabClusterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabDataCenterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabDiskView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabEngineErrataView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabHostView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabNetworkView;
@@ -453,6 +463,8 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskPermiss
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskStorageView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskTemplateView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskVmView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.errata.ErrataSubTabPanelView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.errata.SubTabEngineErrataDetailsView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabGlusterVolumeSnapshotView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeBrickView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeEventView;
@@ -467,6 +479,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostBrickVi
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostDeviceView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGeneralHardwareView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGeneralHostErrataView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGeneralInfoView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGeneralSoftwareView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGlusterStorageDevicesView;
@@ -537,6 +550,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.SubTabUserQuotaVi
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.UserSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineAffinityGroupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineApplicationView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineErrataView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineGuestInfoView;
@@ -633,6 +647,10 @@ public class PresenterModule extends BasePresenterModule {
                 MainTabProviderPresenter.ViewDef.class,
                 MainTabProviderView.class,
                 MainTabProviderPresenter.ProxyDef.class);
+        bindPresenter(MainTabEngineErrataPresenter.class,
+                MainTabEngineErrataPresenter.ViewDef.class,
+                MainTabEngineErrataView.class,
+                MainTabEngineErrataPresenter.ProxyDef.class);
         bindPresenter(MainTabSessionPresenter.class,
                 MainTabSessionPresenter.ViewDef.class,
                 MainTabSessionView.class,
@@ -875,6 +893,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabHostGeneralHardwarePresenter.ViewDef.class,
                 SubTabHostGeneralHardwareView.class,
                 SubTabHostGeneralHardwarePresenter.ProxyDef.class);
+        bindPresenter(SubTabHostGeneralHostErrataPresenter.class,
+                SubTabHostGeneralHostErrataPresenter.ViewDef.class,
+                SubTabHostGeneralHostErrataView.class,
+                SubTabHostGeneralHostErrataPresenter.ProxyDef.class);
         bindPresenter(SubTabHostVmPresenter.class,
                 SubTabHostVmPresenter.ViewDef.class,
                 SubTabHostVmView.class,
@@ -961,6 +983,11 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabVirtualMachineHostDevicePresenter.ViewDef.class,
                 SubTabVirtualMachineHostDeviceView.class,
                 SubTabVirtualMachineHostDevicePresenter.ProxyDef.class);
+        bindPresenter(SubTabVirtualMachineErrataPresenter.class,
+                SubTabVirtualMachineErrataPresenter.ViewDef.class,
+                SubTabVirtualMachineErrataView.class,
+                SubTabVirtualMachineErrataPresenter.ProxyDef.class);
+
 
         // Pool
         bindPresenter(PoolSubTabPanelPresenter.class,
@@ -1165,6 +1192,16 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabProviderSecretPresenter.ViewDef.class,
                 SubTabProviderSecretView.class,
                 SubTabProviderSecretPresenter.ProxyDef.class);
+
+        // Errata
+        bindPresenter(ErrataSubTabPanelPresenter.class,
+                ErrataSubTabPanelPresenter.ViewDef.class,
+                ErrataSubTabPanelView.class,
+                ErrataSubTabPanelPresenter.ProxyDef.class);
+        bindPresenter(SubTabEngineErrataDetailsPresenter.class,
+                SubTabEngineErrataDetailsPresenter.ViewDef.class,
+                SubTabEngineErrataDetailsView.class,
+                SubTabEngineErrataDetailsPresenter.ProxyDef.class);
 
         // Profile
         bindPresenter(VnicProfileSubTabPanelPresenter.class,
@@ -1682,5 +1719,14 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(IscsiBondPopupPresenterWidget.class,
                 IscsiBondPopupPresenterWidget.ViewDef.class,
                 IscsiBondPopupView.class);
+
+        // Errata details
+        bindPresenterWidget(HostErrataListWithDetailsPopupPresenterWidget.class,
+                HostErrataListWithDetailsPopupPresenterWidget.ViewDef.class,
+                HostErrataListWithDetailsPopupView.class);
+        bindPresenterWidget(VmErrataListWithDetailsPopupPresenterWidget.class,
+                VmErrataListWithDetailsPopupPresenterWidget.ViewDef.class,
+                VmErrataListWithDetailsPopupView.class);
+
     }
 }

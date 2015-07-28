@@ -5,6 +5,19 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
+/**
+ * An Erratum (also referred to as Katello Erratum) is the wrapper of a software update to an operating system.
+ * <p>
+ * "Errata are updates between major releases. An Erratum is metadata about a group of [software] packages
+ * that explains the importance of the package updates. Errata may be released individually on an as-needed
+ * basis or aggregated as a minor release. There are three main types of errata:
+ * <br><br>
+ * Enhancement: the new packages contain one or more added features
+ * Bugfix: the new packages contain one or more bug fixes
+ * Security: the new packages fix one or more security vulnerabilities"
+ * <p>
+ * @see http://www.katello.org/docs//user_guide/errata/index.html
+ */
 public class Erratum implements IVdcQueryable, BusinessEntity<String> {
 
     private static final long serialVersionUID = 1297381071010863377L;
@@ -20,8 +33,9 @@ public class Erratum implements IVdcQueryable, BusinessEntity<String> {
     private List<String> packages;
 
     public Erratum() {
-        // default to unknown severity
+        // default to unknown severity, bug
         setSeverity(ErrataSeverity.UNKNOWN);
+        setType(ErrataType.BUGFIX);
     }
 
     @Override
