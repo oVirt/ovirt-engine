@@ -406,6 +406,24 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+
+
+
+Create or replace FUNCTION Clear_network_from_nics(v_id UUID)
+RETURNS VOID
+
+   AS $procedure$
+BEGIN
+      UPDATE vds_interface
+      SET network_name = null
+      WHERE id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
 Create or replace FUNCTION Getinterface_viewByvds_id(v_vds_id UUID, v_user_id UUID, v_is_filtered boolean)
 RETURNS SETOF vds_interface_view STABLE
    AS $procedure$

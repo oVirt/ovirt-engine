@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistic
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.dao.BaseDaoDbFacade;
 import org.ovirt.engine.core.dao.network.NetworkStatisticsDaoImpl.NetworkStatisticsParametersMapper;
@@ -56,6 +57,22 @@ public class InterfaceDaoImpl extends BaseDaoDbFacade implements InterfaceDao {
                 return createInterfaceParametersMapper(nic);
             }
         });
+    }
+
+    @Override
+    public void massClearNetworkFromNics(List<Guid> nicIds) {
+        getCallsHandler().executeStoredProcAsBatch("Clear_network_from_nics",
+                nicIds,
+                new MapSqlParameterMapper<Guid>() {
+
+                    @Override
+                    public MapSqlParameterSource map(Guid id) {
+                        CustomMapSqlParameterSource paramSource = getCustomMapSqlParameterSource();
+                        paramSource.addValue("id", id);
+                        return paramSource;
+
+                    }
+                });
     }
 
     public void updateAllInBatch(String procedureName,

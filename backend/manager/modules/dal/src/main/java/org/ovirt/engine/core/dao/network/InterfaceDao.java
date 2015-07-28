@@ -62,6 +62,13 @@ public interface InterfaceDao extends Dao {
     void massUpdateInterfacesForVds(List<VdsNetworkInterface> dbIfacesToBatch);
 
     /**
+     * Clears the networkName from the specified nics.
+     *
+     * @param nicIds
+     */
+    void massClearNetworkFromNics(List<Guid> nicIds);
+
+    /**
      * Retrieves all interfaces for the given VDS id.
      *
      * @param id

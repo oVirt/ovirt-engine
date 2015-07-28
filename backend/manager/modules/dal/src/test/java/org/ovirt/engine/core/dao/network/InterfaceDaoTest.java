@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -373,5 +374,26 @@ public class InterfaceDaoTest extends BaseDaoTestCase {
         for (VdsNetworkInterface nic : interfaces) {
             assertEquals(VDS_ID, nic.getVdsId());
         }
+    }
+
+    @Test
+    public void massClearNetworkFromNicsTest() {
+        VdsNetworkInterface nic1 = dao.get(FixturesTool.VDS_NETWORK_INTERFACE);
+        VdsNetworkInterface nic2 = dao.get(FixturesTool.VDS_NETWORK_INTERFACE_WITHOUT_QOS);
+        VdsNetworkInterface nic3 = dao.get(FixturesTool.VDS_NETWORK_INTERFACE2);
+
+        assertNotNull(nic1.getNetworkName());
+        assertNotNull(nic2.getNetworkName());
+        assertNotNull(nic3.getNetworkName());
+
+        dao.massClearNetworkFromNics(Arrays.asList(nic1.getId(), nic2.getId()));
+
+        nic1 = dao.get(nic1.getId());
+        nic2 = dao.get(nic2.getId());
+        nic3 = dao.get(nic3.getId());
+
+        assertNull(nic1.getNetworkName());
+        assertNull(nic2.getNetworkName());
+        assertNotNull(nic3.getNetworkName());
     }
 }

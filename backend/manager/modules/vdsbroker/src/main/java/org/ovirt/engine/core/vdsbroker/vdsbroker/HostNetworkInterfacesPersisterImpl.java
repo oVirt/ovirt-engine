@@ -8,6 +8,7 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.UserConfiguredNetworkData;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 
 public class HostNetworkInterfacesPersisterImpl implements HostNetworkInterfacesPersister {
@@ -51,9 +52,12 @@ public class HostNetworkInterfacesPersisterImpl implements HostNetworkInterfaces
     }
 
     private void updateModifiedInterfaces() {
-        List<VdsNetworkInterface> nicsForUpdate = prepareNicsForUpdate();
+        List<VdsNetworkInterface> nicsForUpdate = getNicsForUpdate();
+        List<Guid> updateNicsIds = Entities.getIds(nicsForUpdate);
+
         if (!nicsForUpdate.isEmpty()) {
-            interfaceDao.massUpdateInterfacesForVds(getNicsForUpdate());
+            interfaceDao.massClearNetworkFromNics(updateNicsIds);
+            interfaceDao.massUpdateInterfacesForVds(nicsForUpdate);
         }
     }
 
