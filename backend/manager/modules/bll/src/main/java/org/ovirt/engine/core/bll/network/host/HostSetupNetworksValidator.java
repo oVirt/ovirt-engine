@@ -373,23 +373,10 @@ public class HostSetupNetworksValidator {
 
             }
 
-            boolean noNetworkOnInterfaceOrItsVlan =
-                interfaceOrItsVlanDoesNotHaveNetworkOrOneIsAboutToBeRemovedFromIt(removedNetworkAttachmentsNicNames,
-                    potentialSlave);
-
-            if (!noNetworkOnInterfaceOrItsVlan) {
-                return new ValidationResult(EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE,
-                    ReplacementUtils.createSetVariableString(
-                        NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE_ENTITY,
-                        potentialSlave.getName()),
-                    ReplacementUtils.createSetVariableString(VAR_NETWORK_NAME, potentialSlave.getNetworkName()));
-
-            }
-
-            ValidationResult networkCannotBeAttachedToSlaveValidationResult =
-                networkBeingAttachedToInterfaceBecomingSlave(potentialSlave);
-            if (!networkCannotBeAttachedToSlaveValidationResult.isValid()) {
-                return networkCannotBeAttachedToSlaveValidationResult;
+            ValidationResult slaveHasAttachedNetworksValidationResult =
+                    validateSlaveHasNoNetworks(removedNetworkAttachmentsNicNames, potentialSlave.getName());
+            if (!slaveHasAttachedNetworksValidationResult.isValid()) {
+                return slaveHasAttachedNetworksValidationResult;
             }
 
             if (slaveUsedMultipleTimesInDifferentBonds(slaveName)) {
@@ -417,73 +404,26 @@ public class HostSetupNetworksValidator {
                         slaveName)).unless(labelsToConfigureOnNic == null || labelsToConfigureOnNic.isEmpty());
     }
 
-    private ValidationResult networkBeingAttachedToInterfaceBecomingSlave(VdsNetworkInterface potentialSlave) {
-        for (NetworkAttachment networkAttachment : this.params.getNetworkAttachments()) {
-            Guid networkAttachmentsNicId = networkAttachment.getNicId();
-            String networkAttachmentsNicName = networkAttachment.getNicName();
-
-            if (networkAttachmentsNicId != null && networkAttachmentsNicId.equals(potentialSlave.getId())
-                || networkAttachmentsNicName != null && networkAttachmentsNicName.equals(potentialSlave.getName())) {
-                return new ValidationResult(EngineMessage.NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME,
-                    ReplacementUtils.createSetVariableString(
-                        NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME_ENTITY,
-                        potentialSlave.getName()),
-                    ReplacementUtils.createSetVariableString(VAR_NETWORK_NAME, networkAttachment.getNetworkName()));
-
+    private ValidationResult validateSlaveHasNoNetworks(Set<String> removedNetworkAttachmentsNicNames,
+            String slaveName) {
+        for (NetworkAttachment attachment : getAttachmentsToConfigure()) {
+            if (Objects.equals(attachment.getNicName(), slaveName)) {
+                if (attachment.getId() == null) {
+                    return new ValidationResult(EngineMessage.NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME,
+                            ReplacementUtils.createSetVariableString(
+                                    NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME_ENTITY,
+                                    slaveName),
+                            ReplacementUtils.createSetVariableString(VAR_NETWORK_NAME, attachment.getNetworkName()));
+                } else {
+                    return new ValidationResult(EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE,
+                            ReplacementUtils.createSetVariableString(
+                                    NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE_ENTITY,
+                                    slaveName),
+                            ReplacementUtils.createSetVariableString(VAR_NETWORK_NAME, attachment.getNetworkName()));
+                }
             }
         }
-
         return ValidationResult.VALID;
-    }
-
-    private boolean interfaceOrItsVlanDoesNotHaveNetworkOrOneIsAboutToBeRemovedFromIt(Set<String> removedNetworkAttachmentsNicNames,
-        VdsNetworkInterface potentialSlave) {
-        boolean validSlave = interfaceDoesNotHaveNetworkOrOneIsAboutToBeRemovedFromIt(removedNetworkAttachmentsNicNames,
-            potentialSlave);
-        List<VdsNetworkInterface> vlanInterfacesForInterface = vlanInterfacesForInterface(potentialSlave);
-        for (VdsNetworkInterface vdsNetworkInterface : vlanInterfacesForInterface) {
-            validSlave = validSlave
-                && interfaceDoesNotHaveNetworkOrOneIsAboutToBeRemovedFromIt(removedNetworkAttachmentsNicNames,
-                vdsNetworkInterface);
-        }
-        return validSlave;
-    }
-
-    private List<VdsNetworkInterface> vlanInterfacesForInterface(VdsNetworkInterface nic) {
-        List<VdsNetworkInterface> result = new ArrayList<>();
-        for (VdsNetworkInterface existingInterface : existingInterfaces) {
-            if (nic.getName().equals(existingInterface.getBaseInterface())) {
-                result.add(existingInterface);
-            }
-        }
-
-        return result;
-    }
-
-    private boolean interfaceDoesNotHaveNetworkOrOneIsAboutToBeRemovedFromIt(Set<String> removedNetworkAttachmentsNicNames,
-        VdsNetworkInterface potentialSlave) {
-        String slaveNetworkName = potentialSlave.getNetworkName();
-        boolean slaveHadNetworkAttached = slaveNetworkName != null;
-        if (slaveHadNetworkAttached) {
-            boolean attachmentBoundToNicBecomingSlaveRemoved =
-                    removedNetworkAttachmentsNicNames.contains(potentialSlave.getName());
-
-            if (!attachmentBoundToNicBecomingSlaveRemoved) {
-                return false;
-            }
-
-            Guid slaveNetworkId = networkBusinessEntityMap.get(slaveNetworkName).getId();
-            NetworkAttachment attachmentRelevantToSlaveNetwork = networkAttachmentsByNetworkId.get(slaveNetworkId);
-            boolean networkBoundToNicBecomingSlaveMovedToAnotherNic =
-                attachmentRelevantToSlaveNetwork != null &&
-                    (!Objects.equals(attachmentRelevantToSlaveNetwork.getNicId(), potentialSlave.getId()) &&
-                        !Objects.equals(attachmentRelevantToSlaveNetwork.getNicName(), potentialSlave.getName()));
-
-            if (!networkBoundToNicBecomingSlaveMovedToAnotherNic) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private boolean slaveUsedMultipleTimesInDifferentBonds(String potentiallyDuplicateSlaveName) {
@@ -790,7 +730,7 @@ public class HostSetupNetworksValidator {
     private boolean isNicToConfigureContainTheLabel(String nicName, String label) {
         Set<String> labelsToConfigure = getLabelsToConfigureOnNic(nicName);
 
-        return labelsToConfigure == null ? false : labelsToConfigure.contains(label);
+        return labelsToConfigure != null && labelsToConfigure.contains(label);
     }
 
     private ValidationResult validateCustomProperties() {

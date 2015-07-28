@@ -556,15 +556,16 @@ public class HostSetupNetworksValidatorTest {
         return attachment;
     }
 
-    private NetworkAttachment createNetworkAttachment(Network networkA) {
-        return createNetworkAttachment(networkA, Guid.newGuid());
+    private NetworkAttachment createNetworkAttachment(Network network) {
+        return createNetworkAttachment(network, Guid.newGuid());
     }
 
-    private NetworkAttachment createNetworkAttachment(Network networkA, Guid id) {
-        NetworkAttachment networkAttachmentA = new NetworkAttachment();
-        networkAttachmentA.setId(id);
-        networkAttachmentA.setNetworkId(networkA.getId());
-        return networkAttachmentA;
+    private NetworkAttachment createNetworkAttachment(Network network, Guid id) {
+        NetworkAttachment networkAttachment = new NetworkAttachment();
+        networkAttachment.setId(id);
+        networkAttachment.setNetworkId(network.getId());
+        networkAttachment.setNetworkName(network.getName());
+        return networkAttachment;
     }
 
     @SuppressWarnings("unchecked")
@@ -926,6 +927,9 @@ public class HostSetupNetworksValidatorTest {
 
         VdsNetworkInterface slaveA = createBondSlave(bond, "slaveA");
         slaveA.setNetworkName("assignedNetwork");
+
+        NetworkAttachment attachmentOfNetworkToSlaveA = createNetworkAttachment(networkBeingRemoved, slaveA);
+
         VdsNetworkInterface slaveB = createBondSlave(bond, "slaveB");
 
         bond.setSlaves(Arrays.asList(slaveA.getName(), slaveB.getName()));
@@ -936,7 +940,7 @@ public class HostSetupNetworksValidatorTest {
         doTestValidateModifiedBondSlaves(
             params,
             Arrays.asList(bond, slaveA, slaveB),
-            Collections.<NetworkAttachment> emptyList(),
+            Collections.singletonList(attachmentOfNetworkToSlaveA),
             Collections.singletonList(networkBeingRemoved),
             ValidationResult.VALID,
             ValidationResult.VALID,

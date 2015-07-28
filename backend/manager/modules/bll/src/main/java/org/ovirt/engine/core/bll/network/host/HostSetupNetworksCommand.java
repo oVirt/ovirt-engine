@@ -51,12 +51,10 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersB
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
@@ -91,8 +89,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     @Inject
     private ManagementNetworkUtil managementNetworkUtil;
 
-    @Inject
-    private HostNetworkQosDao qosDao;
     private List<Network> modifiedNetworks;
 
     @Inject
@@ -112,6 +108,9 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     @Inject
     private NetworkIdNetworkNameCompleter networkIdNetworkNameCompleter;
+
+    @Inject
+    HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper;
 
     public HostSetupNetworksCommand(T parameters) {
         this(parameters, null);
@@ -167,16 +166,16 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     private ValidationResult validateWithHostSetupNetworksValidator(VDS host) {
         HostSetupNetworksValidator validator = new HostSetupNetworksValidator(host,
-            getParameters(),
-            getExistingNics(),
-            getExistingAttachments(),
-            getNetworkBusinessEntityMap(),
-            managementNetworkUtil,
-            networkClusterDao,
-            networkAttachmentDao,
-            networkDao,
-            vdsDao,
-            Injector.get(HostSetupNetworksValidatorHelper.class));
+                getParameters(),
+                getExistingNics(),
+                getExistingAttachments(),
+                getNetworkBusinessEntityMap(),
+                managementNetworkUtil,
+                networkClusterDao,
+                networkAttachmentDao,
+                networkDao,
+                vdsDao,
+                hostSetupNetworksValidatorHelper);
 
         return validator.validate();
     }
