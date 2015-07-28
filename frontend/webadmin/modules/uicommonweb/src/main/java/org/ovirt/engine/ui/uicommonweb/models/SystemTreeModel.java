@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -130,6 +131,16 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
         privateProviders = value;
     }
 
+    private List<Erratum> privateErrata;
+
+    public List<Erratum> getErrata() {
+        return privateErrata;
+    }
+
+    public void setErrata(List<Erratum> value) {
+        privateErrata = value;
+    }
+
     private HashMap<Guid, ArrayList<VDSGroup>> privateClusterMap;
 
     public HashMap<Guid, ArrayList<VDSGroup>> getClusterMap() {
@@ -203,6 +214,7 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
         doHostSearch();
         doVolumeSearch();
         doProviderSearch();
+        doErrataSearch();
         //Stop the timer if it is running. syncSearch only gets called by either a manual refresh and the timer
         //shouldn't run during that, or during a fast forward, and that restarts the timer each cycle.
         getTimer().stop();
@@ -386,6 +398,23 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
             }
         };
         AsyncDataProvider.getInstance().getAllProviders(providersQuery, false);
+    }
+
+    /**
+     * Create and run the query for engine's errata.
+     */
+    private void doErrataSearch() {
+        final AsyncQuery errataQuery = new AsyncQuery();
+        errataQuery.setModel(this);
+        errataQuery.asyncCallback = new INewAsyncCallback() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void onSuccess(Object model, Object result) {
+                final SystemTreeModel systemTreeModel = (SystemTreeModel) model;
+                systemTreeModel.setErrata((List<Erratum>) result);
+            }
+        };
+        AsyncDataProvider.getInstance().getAllErrata(errataQuery);
     }
 
     @Override
@@ -593,6 +622,13 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
             providersItem.addChild(providerItem);
             treeItemById.put(provider.getId(), providerItem);
         }
+
+        // add Errata node under System
+        SystemTreeItemModel errataItem = new SystemTreeItemModel();
+        errataItem.setType(SystemTreeItemType.Errata);
+        errataItem.setApplicationMode(ApplicationMode.AllModes);
+        errataItem.setTitle(ConstantsManager.getInstance().getConstants().errata());
+        systemItem.addChild(errataItem);
 
         //Add sessions node under System
         SystemTreeItemModel sessionsItem = new SystemTreeItemModel();

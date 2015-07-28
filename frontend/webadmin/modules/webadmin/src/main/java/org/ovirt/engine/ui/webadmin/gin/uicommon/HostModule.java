@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -26,6 +27,8 @@ import org.ovirt.engine.ui.uicommonweb.ReportCommand;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.HostErrataCountModel;
+import org.ovirt.engine.ui.uicommonweb.models.HostErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterStorageDevicesListModel;
@@ -49,6 +52,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.HostDeviceListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.HostErrataListWithDetailsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.CreateBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureLocalStoragePopupPresenterWidget;
@@ -75,6 +79,9 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 
+/**
+ * Gin configuration module for Hosts tabs and popups.
+ */
 public class HostModule extends AbstractGinModule {
 
     // Main List Model
@@ -334,6 +341,49 @@ public class HostModule extends AbstractGinModule {
         return result;
     }
 
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<Erratum, HostListModel<Void>, HostErrataListModel> getHostErrataListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<HostListModel<Void>> mainModelProvider,
+            final Provider<HostErrataListModel> modelProvider,
+            final Provider<HostErrataCountModel> countModelProvider) {
+
+        SearchableDetailTabModelProvider<Erratum, HostListModel<Void>, HostErrataListModel> result =
+                new SearchableDetailTabModelProvider<Erratum, HostListModel<Void>, HostErrataListModel>(
+                        eventBus, defaultConfirmPopupProvider);
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+
+        return result;
+    }
+
+    @Provides
+    @Singleton
+    public DetailTabModelProvider<HostListModel<Void>, HostErrataCountModel> getHostErrataCountProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<HostErrataListWithDetailsPopupPresenterWidget> errataPopupProvider,
+            final Provider<HostErrataListModel> listModelProvider,
+            final Provider<HostListModel<Void>> mainModelProvider,
+            final Provider<HostErrataCountModel> modelProvider) {
+
+        DetailTabModelProvider<HostListModel<Void>, HostErrataCountModel> result = new DetailTabModelProvider<HostListModel<Void>, HostErrataCountModel>(
+                eventBus, defaultConfirmPopupProvider) {
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostErrataCountModel source,
+                    UICommand lastExecutedCommand,
+                    Model windowModel) {
+
+                return errataPopupProvider.get();
+            }
+        };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+
+        return result;
+    }
+
+
     @Override
     protected void configure() {
         bind(new TypeLiteral<HostListModel<Void>>() {}).in(Singleton.class);
@@ -349,6 +399,9 @@ public class HostModule extends AbstractGinModule {
         bind(HostDeviceListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<VDS>>(){}).in(Singleton.class);
         bind(FenceAgentModelProvider.class).in(Singleton.class);
+        bind(HostErrataCountModel.class).in(Singleton.class);
+        bind(HostErrataListModel.class).in(Singleton.class);
+
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<HostListModel<Void>, HostHardwareGeneralModel>>(){})

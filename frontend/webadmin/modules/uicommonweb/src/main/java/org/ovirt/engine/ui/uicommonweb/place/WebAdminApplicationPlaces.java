@@ -43,6 +43,8 @@ public class WebAdminApplicationPlaces {
 
     public static final String providerMainTabPlace = "providers"; //$NON-NLS-1$
 
+    public static final String errataMainTabPlace = "errata"; //$NON-NLS-1$
+
     public static final String sessionMainTabPlace = "sessions"; //$NON-NLS-1$
 
     // Main section: sub tabs
@@ -200,7 +202,11 @@ public class WebAdminApplicationPlaces {
     public static final String virtualMachineGuestInfoSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
             + "sessions"; //$NON-NLS-1$
 
-    public static final String virtualMachineEventSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX + "events"; //$NON-NLS-1$
+    public static final String virtualMachineEventSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
+            + "events"; //$NON-NLS-1$
+
+    public static final String virtualMachineErrataSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
+            + "errata"; //$NON-NLS-1$
 
     // Host
 
@@ -215,6 +221,9 @@ public class WebAdminApplicationPlaces {
 
     public static final String hostGeneralInfoSubTabPlace = hostGeneralSubTabPlace
             + "_info"; //$NON-NLS-1$
+
+    public static final String hostGeneralErrataSubTabPlace = hostGeneralSubTabPlace
+            + "_errata"; //$NON-NLS-1$
 
     public static final String hostVmSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
             + "virtual_machines"; //$NON-NLS-1$
@@ -390,6 +399,11 @@ public class WebAdminApplicationPlaces {
 
     public static final String vnicProfileTemplateSubTabPlace = vnicProfileMainTabPlace + SUB_TAB_PREFIX
             + "templates"; //$NON-NLS-1$
+
+    // Errata
+    public static final String errataDetailsSubTabPlace = errataMainTabPlace + SUB_TAB_PREFIX + "details"; //$NON-NLS-1$
+
+
 
     // Default places
 

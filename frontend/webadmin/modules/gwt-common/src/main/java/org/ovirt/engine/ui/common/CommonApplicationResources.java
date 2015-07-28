@@ -404,4 +404,8 @@ public interface CommonApplicationResources extends ClientBundle {
 
     @Source("images/memory_icon.png")
     ImageResource memoryDeviceGeneralTypeIcon();
+
+    @Source("images/errata.png")
+    ImageResource errataImage();
+
 }

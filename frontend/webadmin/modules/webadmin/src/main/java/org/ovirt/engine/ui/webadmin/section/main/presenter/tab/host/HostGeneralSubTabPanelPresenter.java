@@ -84,7 +84,8 @@ public class HostGeneralSubTabPanelPresenter extends AbstractSubTabPanelPresente
         super.setInSlot(slot, content);
         if (content instanceof SubTabHostGeneralInfoPresenter
                 || content instanceof SubTabHostGeneralSoftwarePresenter
-                || content instanceof SubTabHostGeneralHardwarePresenter) {
+                || content instanceof SubTabHostGeneralHardwarePresenter
+                || content instanceof SubTabHostGeneralHostErrataPresenter) {
             lastPresenter = (AbstractSubTabPresenter<VDS, HostListModel<Void>, HostGeneralModel,
                     ? extends AbstractSubTabPresenter.ViewDef<VDS>, ? extends TabContentProxyPlace<?>>) content;
         }

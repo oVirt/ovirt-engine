@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.CertificateInfo;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
@@ -3107,6 +3108,19 @@ public class AsyncDataProvider {
         };
         Frontend.getInstance().runQuery(VdcQueryType.GetAllProviders, doRefresh ? new GetAllProvidersParameters() :
                 new GetAllProvidersParameters().withoutRefresh(), aQuery);
+    }
+
+    public void getAllErrata(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                if (source == null) {
+                    return new ArrayList<Erratum>();
+                }
+                return source;
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetErrataForSystem, new VdcQueryParametersBase(), aQuery);
     }
 
     public void getAllProvidersByProvidedEntity(AsyncQuery query, final VdcObjectType providedEntity) {

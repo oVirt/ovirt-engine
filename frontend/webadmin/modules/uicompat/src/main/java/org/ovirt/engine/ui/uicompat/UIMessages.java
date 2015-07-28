@@ -562,4 +562,10 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Failed to load VM configuration from OVA file: {0}")
     String failedToLoadOva(String ovaPath);
 
+    @DefaultMessage("Errata for Host {0}")
+    String errataForHost(String hostName);
+
+    @DefaultMessage("Errata for VM {0}")
+    String errataForVm(String vmName);
+
 }

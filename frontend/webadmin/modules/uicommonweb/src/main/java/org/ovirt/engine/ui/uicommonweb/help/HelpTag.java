@@ -630,7 +630,9 @@ public enum HelpTag {
 
     remove_host_device("remove_host_device", HelpTagType.WEBADMIN, "VMs Tab > Host Devices Sub-Tab > Remove Host Device(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    repin_host("repin_host", HelpTagType.WEBADMIN, "VMs Tab > Host Devices Sub-Tab > Pin to another Host"); //$NON-NLS-1$ //$NON-NLS-2$
+    repin_host("repin_host", HelpTagType.WEBADMIN, "VMs Tab > Host Devices Sub-Tab > Pin to another Host"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    errata("errata", HelpTagType.WEBADMIN, "System tree > Errata"); //$NON-NLS-1$ //$NON-NLS-2$
 
     public final String name;
 
