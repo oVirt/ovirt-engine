@@ -131,6 +131,7 @@ public enum VDSCommandType {
     SetMOMPolicyParameters("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     SetHaMaintenanceMode("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     ConvertVm("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    ConvertOva("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetConvertedOvf("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     DeleteV2VJob("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     // Gluster VDS commands

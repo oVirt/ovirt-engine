@@ -1899,7 +1899,9 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
-    public StatusOnlyReturnForXmlRpc convertVmFromExternalSystem(String url,
+    @Override
+    public StatusOnlyReturnForXmlRpc convertVmFromExternalSystem(
+            String url,
             String user,
             String password,
             Map<String, Object> vm,
@@ -1914,6 +1916,18 @@ public class VdsServerWrapper implements IVdsServer {
         }
     }
 
+    @Override
+    public StatusOnlyReturnForXmlRpc convertOva(String ovaPath, Map<String, Object> vm, String jobUUID) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.convertOva(ovaPath, vm, jobUUID);
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public OvfReturnForXmlRpc getConvertedVm(String jobUUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getConvertedVm(jobUUID);

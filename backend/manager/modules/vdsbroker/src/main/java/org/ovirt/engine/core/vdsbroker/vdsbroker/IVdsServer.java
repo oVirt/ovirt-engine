@@ -451,6 +451,8 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc convertVmFromExternalSystem(String url, String user, String password, Map<String, Object> vm, String jobUUID);
 
+    StatusOnlyReturnForXmlRpc convertOva(String ovaPath, Map<String, Object> vm, String jobUUID);
+
     OvfReturnForXmlRpc getConvertedVm(String jobUUID);
 
     StatusOnlyReturnForXmlRpc deleteV2VJob(String jobUUID);

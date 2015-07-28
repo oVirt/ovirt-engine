@@ -421,6 +421,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> convertExternalVm(String url, String user, String password, Map vm, String jobId);
 
+    public Map<String, Object> convertOva(String ovaPath, Map vm, String jobId);
+
     public Map<String, Object> getConvertedVm(String jobUUID);
 
     public Map<String, Object> deleteV2VJob(String jobUUID);
