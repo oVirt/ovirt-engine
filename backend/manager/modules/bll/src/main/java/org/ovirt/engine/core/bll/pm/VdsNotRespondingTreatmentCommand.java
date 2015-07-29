@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.validator.FenceValidator;
+import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -79,17 +80,8 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
 
     @Override
     protected boolean canDoAction() {
-        FenceValidator fenceValidator = new FenceValidator();
-        List<String> messages = getReturnValue().getCanDoActionMessages();
-        boolean canDo =
-                fenceValidator.isHostExists(getVds(), messages)
-                        && fenceValidator.isStartupTimeoutPassed(messages)
-                        && isQuietTimeFromLastActionPassed();
-        if (!canDo) {
-            handleError();
-        }
-        getReturnValue().setSucceeded(canDo);
-        return canDo;
+        HostValidator validator = new HostValidator(getVds());
+        return validate(validator.hostExists());
     }
 
     /**
@@ -98,6 +90,15 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
      */
     @Override
     protected void executeCommand() {
+        if (!new FenceValidator().isStartupTimeoutPassed() || !isQuietTimeFromLastActionPassed()) {
+            log.error("Failed to run Fence script on vds '{}'.", getVdsName());
+            alertIfPowerManagementOperationSkipped(RESTART, null);
+            // If fencing can't be done and the host is the SPM, set storage-pool to non-operational
+            if (getVds().getSpmStatus() != VdsSpmStatus.None) {
+                setStoragePoolNonOperational();
+            }
+            return;
+        }
         setVds(null);
         if (getVds() == null) {
             setCommandShouldBeLogged(false);
@@ -182,19 +183,19 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         }
     }
 
-    @Override
-    protected void handleError() {
-        // if fence failed on spm, move storage pool to non operational
-        if (getVds().getSpmStatus() != VdsSpmStatus.None) {
-            log.info("Fence failed on vds '{}' which is spm of pool '{}' - moving pool to non operational",
-                    getVds().getName(), getVds().getStoragePoolId());
-            runInternalAction(
-                    VdcActionType.SetStoragePoolStatus,
-                    new SetStoragePoolStatusParameters(getVds().getStoragePoolId(), StoragePoolStatus.NotOperational,
-                            AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_NO_HOST_FOR_SPM));
-        }
-        log.error("Failed to run Fence script on vds '{}'.", getVdsName());
-        alertIfPowerManagementOperationSkipped(RESTART, null);
+    private void setStoragePoolNonOperational() {
+        log.info("Fence failed on vds '{}' which is spm of pool '{}' - moving pool to non operational",
+                getVds().getName(),
+                getVds().getStoragePoolId());
+        CommandContext commandContext = getContext().clone();
+        // CommandContext clone is 'shallow' and does not clone the internal ExecutionContext.
+        // So ExecutionContext is cloned here manually to prevent a bug (BZ1145099).
+        commandContext.withExecutionContext(new ExecutionContext(commandContext.getExecutionContext()));
+        runInternalAction(
+                VdcActionType.SetStoragePoolStatus,
+                new SetStoragePoolStatusParameters(getVds().getStoragePoolId(),
+                        StoragePoolStatus.NotOperational,
+                        AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_NO_HOST_FOR_SPM), commandContext);
     }
 
     @Override

@@ -27,7 +27,7 @@ public class FenceValidator {
         }
     }
 
-    public boolean isStartupTimeoutPassed(List<String> messages) {
+    public boolean isStartupTimeoutPassed() {
         // check if we are in the interval of X seconds from startup
         // if yes , system is still initializing , ignore fence operations
         Date waitTo =
@@ -35,11 +35,18 @@ public class FenceValidator {
                         .addSeconds((Integer) Config.getValue(ConfigValues.DisableFenceAtStartupInSec));
         Date now = new Date();
         if (!(waitTo.before(now) || waitTo.equals(now))) {
-            messages.add(EngineMessage.VDS_FENCE_DISABLED_AT_SYSTEM_STARTUP_INTERVAL.name());
             return false;
         } else {
             return true;
         }
+    }
+
+    public boolean isStartupTimeoutPassed(List<String> messages) {
+        boolean startupTimeoutPassed = isStartupTimeoutPassed();
+        if (!startupTimeoutPassed) {
+            messages.add(EngineMessage.VDS_FENCE_DISABLED_AT_SYSTEM_STARTUP_INTERVAL.name());
+        }
+        return startupTimeoutPassed;
     }
 
     public boolean isPowerManagementEnabledAndLegal(VDS vds, VDSGroup vdsGroup, List<String> messages) {
