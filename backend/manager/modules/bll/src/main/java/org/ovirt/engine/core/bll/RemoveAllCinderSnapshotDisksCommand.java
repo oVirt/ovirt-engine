@@ -63,7 +63,7 @@ public class RemoveAllCinderSnapshotDisksCommand<T extends RemoveAllVmCinderDisk
 
     @Override
     protected void endSuccessfully() {
-        if (!getParameters().isParentHasTasks()) {
+        if (!getParameters().isParentHasTasks() && getParameters().isInvokeEndActionOnParent()) {
             getBackend().endAction(getParameters().getParentCommand(), getParameters().getParentParameters(), null);
         }
     }
