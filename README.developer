@@ -21,7 +21,6 @@ Install the following system components:
  - python-daemon
  - otopi >= 1.1.0
  - ovirt-host-deploy >= 1.1.0
- - jboss-as (optional)
  - maven-3 (optional)
  - pyflakes (optional)
  - python-pep8 / pep8 (optional)
@@ -31,13 +30,11 @@ Install the following system components:
 Maven-3 is required, download and extract if not installed using
 distribution package management, and add to PATH.
 
-Following application servers are required for engine development:
+JBoss EAP is required, download[1] and extract into /opt, wildfly can also
+be used but it requires ovirt-overlay to be usable. Easier to use jboss-eap
+for now.
 
- 1. WildFly 8.2 for oVirt 3.6+ development
-      yum install ovirt-engine-wildfly ovirt-engine-wildfly-overlay
-
- 2. JBoss 7.1.1 for backporting changes to oVirt 3.5
-      yum install ovirt-engine-jboss-as
+[1] http://www.jboss.org/products/eap/download/
 
 Both application servers can be installed from ovirt-master-snapshot-static
 repository:
@@ -50,7 +47,6 @@ repository:
   gpgcheck=0
 
 Please replace "@DIST@" with "fc" for Fedora or "el" for Centos/RHEL.
-
 
 SYSTEM SETTINGS
 
@@ -106,16 +102,24 @@ not run this sequence as root.
 
 Each instance of application must be installed at different PREFIX
 and use its own database. Throughout this document application is
-installed using PREFIX=$HOME/ovirt-engine and engine database and
+installed using PREFIX="${PREFIX}" and engine database and
 user, these should be changed if a new instance is required. Do not
 mix different versions of product with same PREFIX/database.
+
+From this point on, the "${PREFIX}" will be used to mark the prefix
+in which you selected to install the development environment.
 
 BUILD
 
 To build and install ovirt-engine at your home folder under ovirt-engine
-directory, use:
+directory.
 
-$ make clean install-dev PREFIX=$HOME/ovirt-engine
+Execute:
+
+$ make clean install-dev PREFIX="${PREFIX}"
+
+NOTE: ${PREFIX} should be replaced with the location in
+which you intend to install the environment:
 
 BUILD TARGETS
 
@@ -203,20 +207,26 @@ SETUP
 
 To setup the product use the following command:
 
-$ $HOME/ovirt-engine/bin/engine-setup
+$ "${PREFIX}/bin/engine-setup" --jboss-home=/opt/jboss-eap-6.4
 
-If WildFly is not installed via distribution package management,
-add the following parameter, provided JBOSS_HOME environment contains
-the location of the Jboss installation:
-   --jboss-home="${JBOSS_HOME}"
+JBOSS
 
-If WildFly 8.2 should be used, then it's required to manually setup
-ovirt-engine-wildfly-overlay using following command:
+If Wildfly is to be used, install the ovirt overlay package
+ovirt-engine-wildfly-overlay and execute the following to apply.
 
-  echo "ENGINE_JAVA_MODULEPATH=\"/usr/share/ovirt-engine-wildfly-overlay/modules:\${ENGINE_JAVA_MODULEPATH}\"" \
-          > $PREFIX/etc/ovirt-engine/engine.conf.d/20-setup-jboss-overlay.conf
+$ echo 'ENGINE_JAVA_MODULEPATH="/usr/share/ovirt-engine-wildfly-overlay/modules:${ENGINE_JAVA_MODULEPATH}" \
+     > "${PREFIX}/etc/ovirt-engine/engine.conf.d/20-setup-jboss-overlay.conf"
 
-Please adapt $PREFIX according you environment.
+Specify Wildfly at --jboss-home= parameter of setup. Note that jboss-eap will
+not be able to operate if the overlay is applied.
+
+ENVIRONMENT
+
+OVIRT_ENGINE_JAVA_HOME
+    Select a specific Java home.
+
+OVIRT_ENGINE_JAVA_HOME_FORCE
+    Set to non zero to bypass Java compatibility check.
 
 REFRESH
 
@@ -228,19 +238,19 @@ schema.
 Do remember to restart the engine service.
 
 If there is a significant change, safest path is to stop service, remove
-$HOME/ovirt-engine directory, build and setup.
+${PREFIX} directory, build and setup.
 
-The $HOME/ovirt-engine/bin/engine-cleanup is also available to cleanup
+The ${PREFIX}/bin/engine-cleanup is also available to cleanup
 the environment, it is useful for application changes, less for packaging
 changes.
 
-ADMINISTRATION
+SERVICE ADMINISTRATION
 
 Most utilities and services are operational, including PKI, host deploy.
 
 To start/stop the engine service use:
 
-$ $HOME/ovirt-engine/share/ovirt-engine/services/ovirt-engine/ovirt-engine.py start
+$ "${PREFIX}/share/ovirt-engine/services/ovirt-engine/ovirt-engine.py" start
 
 While the service is running, this command will not exit.
 Press <Ctrl>-C to stop service.
@@ -251,9 +261,38 @@ Access using HTTP or HTTPS:
 
 Debug port is available at 127.0.0.1:8787
 
+RUNNING INSTANCE MANAGEMENT (JMX)
+
+ovirt-engine service supports jmx as management interface. Actually, this is
+the standard jboss jmx interface, while authentication can be done using any
+engine user with SuperUser role. Access is permitted only from the local
+host.
+
+Access JMX shell using provide OPTIONAL_COMMAND for non interactive usage:
+
+$ "${JBOSS_HOME}/bin/jboss-cli.sh" \
+    --connect \
+    --controller=localhost:8706 \
+    --user=admin@internal \
+    OPTIONAL_COMMAND
+
+Useful commands:
+
+  Modify log level
+  /subsystem=logging/logger=org.ovirt.engine.core.bll:write-attribute(name=level,value=DEBUG)"
+
+  Create a new log category
+  /subsystem=logging/logger=org.ovirt.engine:add
+
+  Get the engine data-source statistics:
+  ls /subsystem=datasources/data-source=ENGINEDataSource/statistics=jdbc/
+
+  Get Threading info
+  ls /core-service=platform-mbean/type=threading/
+
 GWT DEBUG
 
-$ make install-dev PREFIX="${HOME}/ovirt-engine"
+$ make install-dev PREFIX="${PREFIX}"
 $ make gwt-debug DEBUG_MODULE=<module>
 
 While <module> is webadmin or userportal-gwtp.
