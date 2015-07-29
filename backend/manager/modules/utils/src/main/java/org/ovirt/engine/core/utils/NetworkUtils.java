@@ -13,7 +13,6 @@ import java.util.Set;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -275,38 +274,5 @@ public final class NetworkUtils {
             log.debug(msg, host.getHostName(), ex);
             return null;
         }
-    }
-
-    public static List<VdsNetworkInterface> getBondsWithSlavesInformation(List<VdsNetworkInterface> nics) {
-        Map<String, List<String>> bondNameToSlavesMap = getBondNameToBondSlavesMap(nics);
-        List<VdsNetworkInterface> bonds = new ArrayList<>();
-
-        for (VdsNetworkInterface nic : nics) {
-            if (nic.isBond()) {
-                bonds.add(nic);
-                String bondName = nic.getName();
-                if (bondNameToSlavesMap.containsKey(bondName)) {
-                    ((Bond) nic).getSlaves().addAll(bondNameToSlavesMap.get(bondName));
-                }
-            }
-        }
-
-        return bonds;
-    }
-
-    public static Map<String, List<String>> getBondNameToBondSlavesMap(List<VdsNetworkInterface> nics) {
-        Map<String, List<String>> bondToSlaves = new HashMap<>();
-        for (VdsNetworkInterface nic : nics) {
-            if (nic.isPartOfBond()) {
-                String bondName = nic.getBondName();
-                if (!bondToSlaves.containsKey(bondName)) {
-                    bondToSlaves.put(bondName, new ArrayList<String>());
-                }
-
-                bondToSlaves.get(bondName).add(nic.getName());
-            }
-        }
-
-        return bondToSlaves;
     }
 }

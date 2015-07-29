@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.HostNetwork;
 import org.ovirt.engine.core.common.vdscommands.HostSetupNetworksVdsCommandParameters;
@@ -58,7 +59,6 @@ import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -343,9 +343,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         if (existingNics == null) {
             existingNics = getDbFacade().getInterfaceDao().getAllInterfacesForVds(getVdsId());
 
-            Map <String, List<String>> bondToSlaves = new HashMap<>();
-
-            fillBondSlaves(bondToSlaves);
+            NetworkCommonUtils.fillBondSlaves(existingNics);
 
             for (VdsNetworkInterface iface : existingNics) {
                 Network network = getNetworkBusinessEntityMap().get(iface.getNetworkName());
@@ -357,24 +355,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         }
 
         return existingNics;
-    }
-
-    private void fillBondSlaves(Map<String, List<String>> bondToSlaves) {
-        for (VdsNetworkInterface nic : existingNics) {
-            if (nic.isPartOfBond()) {
-                MultiValueMapUtils.addToMap(nic.getBondName(),
-                        nic.getName(),
-                        bondToSlaves,
-                        new MultiValueMapUtils.ListCreator<String>());
-            }
-        }
-
-        for (VdsNetworkInterface nic : existingNics) {
-            if (nic instanceof Bond) {
-                Bond bond = (Bond) nic;
-                bond.setSlaves(bondToSlaves.get(bond.getName()));
-            }
-        }
     }
 
     private List<NetworkAttachment> getExistingAttachments() {
