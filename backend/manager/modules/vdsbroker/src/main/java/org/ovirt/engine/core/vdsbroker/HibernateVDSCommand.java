@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import org.ovirt.engine.core.common.vdscommands.HibernateVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.HibernateBrokerVDSCommand;
 
 public class HibernateVDSCommand<P extends HibernateVDSCommandParameters> extends ManagingVmCommand<P> {
 
@@ -12,7 +12,7 @@ public class HibernateVDSCommand<P extends HibernateVDSCommandParameters> extend
 
     @Override
     protected void executeVmCommand() {
-        VDSReturnValue retVal = runHibernateBrokerVDSCommand();
+        VDSReturnValue retVal = resourceManager.runVdsCommand(VDSCommandType.HibernateBroker, getParameters());
         if (retVal.getSucceeded()) {
             vmManager.succededToHibernate();
             getVDSReturnValue().setSucceeded(true);
@@ -25,12 +25,5 @@ public class HibernateVDSCommand<P extends HibernateVDSCommandParameters> extend
             getVDSReturnValue().setExceptionObject(retVal.getExceptionObject());
             getVDSReturnValue().setVdsError(retVal.getVdsError());
         }
-    }
-
-    private VDSReturnValue runHibernateBrokerVDSCommand() {
-        HibernateBrokerVDSCommand<HibernateVDSCommandParameters> command =
-                new HibernateBrokerVDSCommand<HibernateVDSCommandParameters>(getParameters());
-        command.execute();
-        return command.getVDSReturnValue();
     }
 }

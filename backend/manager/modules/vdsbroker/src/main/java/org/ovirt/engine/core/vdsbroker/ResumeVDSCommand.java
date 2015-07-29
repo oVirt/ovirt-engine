@@ -2,8 +2,8 @@ package org.ovirt.engine.core.vdsbroker;
 
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.vdscommands.ResumeVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.ResumeBrokerVDSCommand;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,20 +19,17 @@ public class ResumeVDSCommand<P extends ResumeVDSCommandParameters> extends Mana
     protected void executeVmCommand() {
         ResumeVDSCommandParameters parameters = getParameters();
         VMStatus retval = VMStatus.Unknown;
-        ResumeBrokerVDSCommand<VdsAndVmIDVDSParametersBase> command =
-                new ResumeBrokerVDSCommand<VdsAndVmIDVDSParametersBase>(parameters);
-        command.execute();
-        if (command.getVDSReturnValue().getSucceeded()) {
+        VDSReturnValue vdsReturnValue = resourceManager.runVdsCommand(VDSCommandType.ResumeBroker, parameters);
+        if (vdsReturnValue.getSucceeded()) {
             retval = VMStatus.PoweringUp;
-            ResourceManager.getInstance().AddAsyncRunningVm(parameters.getVmId());
-        } else if (command.getVDSReturnValue().getExceptionObject() != null) {
+            resourceManager.AddAsyncRunningVm(parameters.getVmId());
+        } else if (vdsReturnValue.getExceptionObject() != null) {
             log.error("VDS::pause Failed resume VM '{}' in VDS = '{}' error = '{}'", parameters
-                    .getVmId(), getParameters().getVdsId(), command.getVDSReturnValue()
-                    .getExceptionString());
+                    .getVmId(), getParameters().getVdsId(), vdsReturnValue.getExceptionString());
             getVDSReturnValue().setSucceeded(false);
-            getVDSReturnValue().setExceptionString(command.getVDSReturnValue().getExceptionString());
-            getVDSReturnValue().setExceptionObject(command.getVDSReturnValue().getExceptionObject());
-            getVDSReturnValue().setVdsError(command.getVDSReturnValue().getVdsError());
+            getVDSReturnValue().setExceptionString(vdsReturnValue.getExceptionString());
+            getVDSReturnValue().setExceptionObject(vdsReturnValue.getExceptionObject());
+            getVDSReturnValue().setVdsError(vdsReturnValue.getVdsError());
         }
         getVDSReturnValue().setReturnValue(retval);
     }

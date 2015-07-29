@@ -7,10 +7,11 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.DestroyVDSCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,16 +27,14 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
     protected void executeVmCommand() {
 
         final DestroyVmVDSCommandParameters parameters = getParameters();
-        ResourceManager.getInstance().RemoveAsyncRunningVm(parameters.getVmId());
+        resourceManager.RemoveAsyncRunningVm(parameters.getVmId());
 
         final VM curVm = DbFacade.getInstance().getVmDao().get(parameters.getVmId());
         curVm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForVm(curVm.getId()));
         curVm.setvNumaNodeList(DbFacade.getInstance().getVmNumaNodeDao().getAllVmNumaNodeByVmId(curVm.getId()));
 
-        DestroyVDSCommand<DestroyVmVDSCommandParameters> vdsBrokerCommand =
-                new DestroyVDSCommand<DestroyVmVDSCommandParameters>(parameters);
-        vdsBrokerCommand.execute();
-        if (vdsBrokerCommand.getVDSReturnValue().getSucceeded()) {
+        VDSReturnValue vdsReturnValue = resourceManager.runVdsCommand(VDSCommandType.Destroy, parameters);
+        if (vdsReturnValue.getSucceeded()) {
             if (curVm.getStatus() == VMStatus.Down) {
                 getVDSReturnValue().setReturnValue(VMStatus.Down);
             }
@@ -64,18 +63,15 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                 }
             });
             getVDSReturnValue().setReturnValue(curVm.getStatus());
-        } else if (vdsBrokerCommand.getVDSReturnValue().getExceptionObject() != null) {
+        } else if (vdsReturnValue.getExceptionObject() != null) {
             log.error("VDS::destroy Failed destroying VM '{}' in vds = '{}' , error = '{}'",
                     parameters.getVmId(),
                     getParameters().getVdsId(),
-                    vdsBrokerCommand
-                            .getVDSReturnValue().getExceptionString());
+                    vdsReturnValue.getExceptionString());
             getVDSReturnValue().setSucceeded(false);
-            getVDSReturnValue().setExceptionString(vdsBrokerCommand.getVDSReturnValue()
-                    .getExceptionString());
-            getVDSReturnValue().setExceptionObject(vdsBrokerCommand.getVDSReturnValue()
-                    .getExceptionObject());
-            getVDSReturnValue().setVdsError(vdsBrokerCommand.getVDSReturnValue().getVdsError());
+            getVDSReturnValue().setExceptionString(vdsReturnValue.getExceptionString());
+            getVDSReturnValue().setExceptionObject(vdsReturnValue.getExceptionObject());
+            getVDSReturnValue().setVdsError(vdsReturnValue.getVdsError());
         }
     }
 
@@ -90,7 +86,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
     private void changeStatus(DestroyVmVDSCommandParameters parameters, VM curVm) {
         // do the state transition only if that VM is really running on SRC
         if (getParameters().getVdsId().equals(curVm.getRunOnVds())) {
-            ResourceManager.getInstance().InternalSetVmStatus(curVm, VMStatus.PoweringDown);
+            resourceManager.InternalSetVmStatus(curVm, VMStatus.PoweringDown);
         }
     }
 }

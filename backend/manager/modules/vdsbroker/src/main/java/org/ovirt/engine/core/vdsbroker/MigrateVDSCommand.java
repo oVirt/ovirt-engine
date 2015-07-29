@@ -3,11 +3,11 @@ package org.ovirt.engine.core.vdsbroker;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.MigrateBrokerVDSCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,15 +21,12 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Ma
 
     @Override
     protected void executeVmCommand() {
-        MigrateBrokerVDSCommand<?> command = new MigrateBrokerVDSCommand<>(getParameters());
-        command.execute();
-        VDSReturnValue vdsReturnValue = command.getVDSReturnValue();
-
+        VDSReturnValue vdsReturnValue = resourceManager.runVdsCommand(VDSCommandType.MigrateBroker, getParameters());
         VM vm = getVmDao().get(getParameters().getVmId());
 
         if (vdsReturnValue.getSucceeded()) {
-            ResourceManager.getInstance().AddAsyncRunningVm(getParameters().getVmId());
-            ResourceManager.getInstance().InternalSetVmStatus(vm, VMStatus.MigratingFrom);
+            resourceManager.AddAsyncRunningVm(getParameters().getVmId());
+            resourceManager.InternalSetVmStatus(vm, VMStatus.MigratingFrom);
             vm.setMigratingToVds(getParameters().getDstVdsId());
             vmManager.update(vm.getDynamicData());
             getVDSReturnValue().setReturnValue(VMStatus.MigratingFrom);

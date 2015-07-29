@@ -2,18 +2,16 @@ package org.ovirt.engine.core.vdsbroker;
 
 import java.util.Date;
 import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVDSCommand;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVmFromCloudInitVDSCommand;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVmFromSysPrepVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSGenericException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,12 +28,11 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
     protected void executeVmCommand() {
         final VM vm = getParameters().getVm();
         vm.setLastStartTime(new Date());
-        if (canExecute() && ResourceManager.getInstance().AddAsyncRunningVm(vm.getId())) {
-            CreateVDSCommand<?> command = null;
+        if (canExecute() && resourceManager.AddAsyncRunningVm(vm.getId())) {
+            VDSReturnValue vdsReturnValue = null;
             try {
-                command = initCreateVDSCommand(vm);
-                command.execute();
-                if (command.getVDSReturnValue().getSucceeded()) {
+                vdsReturnValue = runCreateVDSCommand();
+                if (vdsReturnValue.getSucceeded()) {
                     saveSetInitializedToDb(vm.getId());
 
                     vm.setStopReason(null);
@@ -43,14 +40,14 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                     vm.setRunOnVds(getParameters().getVdsId());
                     vmManager.update(vm.getDynamicData());
                 } else {
-                    handleCommandResult(command);
-                    ResourceManager.getInstance().RemoveAsyncRunningVm(getParameters().getVmId());
+                    handleCommandResult(vdsReturnValue);
+                    resourceManager.RemoveAsyncRunningVm(getParameters().getVmId());
                 }
             } catch (Exception e) {
                 log.error("Error in excuting CreateVmVDSCommand: {}", e.getMessage());
                 log.error("Exception", e);
-                if (command != null && !command.getVDSReturnValue().getSucceeded()) {
-                    ResourceManager.getInstance().RemoveAsyncRunningVm(getParameters().getVmId());
+                if (vdsReturnValue != null && !vdsReturnValue.getSucceeded()) {
+                    resourceManager.RemoveAsyncRunningVm(getParameters().getVmId());
                 }
                 throw new RuntimeException(e);
             }
@@ -58,21 +55,21 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
         getVDSReturnValue().setReturnValue(vm.getStatus());
     }
 
-    private CreateVDSCommand<?> initCreateVDSCommand(VM vm) throws Exception {
+    private VDSReturnValue runCreateVDSCommand() {
+        final VM vm = getParameters().getVm();
         if (vm.isSysprepUsed()) {
-
             // use answer file to run after sysprep.
             CreateVmVDSCommandParameters createVmFromSysPrepParam =
                     new CreateVmVDSCommandParameters(
                             getParameters().getVdsId(),
                             vm);
             createVmFromSysPrepParam.setSysPrepParams(getParameters().getSysPrepParams());
-            return new CreateVmFromSysPrepVDSCommand<CreateVmVDSCommandParameters>(createVmFromSysPrepParam);
+            return resourceManager.runVdsCommand(VDSCommandType.CreateVmFromSysPrep, createVmFromSysPrepParam);
         } else if (vm.isCloudInitUsed()) {
-            return new CreateVmFromCloudInitVDSCommand<CreateVmVDSCommandParameters>(getParameters());
+            return resourceManager.runVdsCommand(VDSCommandType.CreateVmFromCloudInit, getParameters());
         } else {
             // normal run.
-            return new CreateVDSCommand<CreateVmVDSCommandParameters>(getParameters());
+            return resourceManager.runVdsCommand(VDSCommandType.Create, getParameters());
         }
     }
 
@@ -81,7 +78,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
         Guid guid = getParameters().getVm().getId();
         String vmName = getParameters().getVm().getName();
         VmDynamic vmDynamicFromDb = DbFacade.getInstance().getVmDynamicDao().get(guid);
-        if (ResourceManager.getInstance().IsVmDuringInitiating(getParameters().getVm().getId())) {
+        if (resourceManager.IsVmDuringInitiating(getParameters().getVm().getId())) {
             log.info("Vm Running failed - vm '{}'({}) already running", vmName, guid);
             getVDSReturnValue().setReturnValue(vmDynamicFromDb.getStatus());
             return false;
@@ -108,18 +105,18 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
         return true;
     }
 
-    private void handleCommandResult(CreateVDSCommand<?> command) {
-        if (!command.getVDSReturnValue().getSucceeded() && command.getVDSReturnValue().getExceptionObject() != null) {
-            if (command.getVDSReturnValue().getExceptionObject() instanceof VDSGenericException) {
+    private void handleCommandResult(VDSReturnValue vdsReturnValue) {
+        if (!vdsReturnValue.getSucceeded() && vdsReturnValue.getExceptionObject() != null) {
+            if (vdsReturnValue.getExceptionObject() instanceof VDSGenericException) {
                 log.error("VDS::create Failed creating vm '{}' in vds = '{}' error = '{}'",
                         getParameters().getVm().getName(), getParameters().getVdsId(),
-                command.getVDSReturnValue().getExceptionString());
+                        vdsReturnValue.getExceptionString());
                 getVDSReturnValue().setReturnValue(VMStatus.Down);
                 getVDSReturnValue().setSucceeded(false);
-                getVDSReturnValue().setExceptionString(command.getVDSReturnValue().getExceptionString());
-                getVDSReturnValue().setVdsError(command.getVDSReturnValue().getVdsError());
+                getVDSReturnValue().setExceptionString(vdsReturnValue.getExceptionString());
+                getVDSReturnValue().setVdsError(vdsReturnValue.getVdsError());
             } else {
-                throw command.getVDSReturnValue().getExceptionObject();
+                throw vdsReturnValue.getExceptionObject();
             }
         }
     }

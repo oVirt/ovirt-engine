@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import javax.inject.Inject;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -10,6 +11,9 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCommandBase {
     private P _parameters;
     private boolean async;
+
+    @Inject
+    protected ResourceManager resourceManager;
 
     public P getParameters() {
         return _parameters;
