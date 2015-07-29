@@ -224,4 +224,21 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         agentConfigurationTab.setVisible(visible);
     }
 
+    @Override
+    public int setTabIndexes(int nextTabIndex) {
+        nameEditor.setTabIndex(nextTabIndex++);
+        descriptionEditor.setTabIndex(nextTabIndex++);
+        typeEditor.setTabIndex(nextTabIndex++);
+        datacenterEditor.setTabIndex(nextTabIndex++);
+        pluginTypeEditor.setTabIndex(nextTabIndex++);
+        urlEditor.setTabIndex(nextTabIndex++);
+        nextTabIndex = vmwarePropertiesWidget.setTabIndexes(nextTabIndex);
+        requiresAuthenticationEditor.setTabIndex(nextTabIndex++);
+        usernameEditor.setTabIndex(nextTabIndex++);
+        passwordEditor.setTabIndex(nextTabIndex++);
+        tenantNameEditor.setTabIndex(nextTabIndex++);
+        authUrlEditor.setTabIndex(nextTabIndex++);
+        testButton.setTabIndex(nextTabIndex++);
+        return nextTabIndex;
+    }
 }

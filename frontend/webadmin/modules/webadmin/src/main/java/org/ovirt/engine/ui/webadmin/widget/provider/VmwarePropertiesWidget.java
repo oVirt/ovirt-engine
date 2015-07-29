@@ -100,4 +100,13 @@ public class VmwarePropertiesWidget extends AbstractModelBoundPopupWidget<Vmware
         return driver.flush();
     }
 
+    @Override
+    public int setTabIndexes(int nextTabIndex) {
+        vCenterEditor.setTabIndex(nextTabIndex++);
+        esxEditor.setTabIndex(nextTabIndex++);
+        vmwareDatacenterEditor.setTabIndex(nextTabIndex++);
+        verifySSLEditor.setTabIndex(nextTabIndex++);
+        proxyHostEditor.setTabIndex(nextTabIndex++);
+        return nextTabIndex;
+    }
 }
