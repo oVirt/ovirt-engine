@@ -41,12 +41,14 @@ public class RemoveCinderSnapshotCommandCallback extends AbstractCinderDiskComma
     public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
         super.onFailed(cmdId, childCmdIds);
         getCommand().getParameters().setTaskGroupSuccess(false);
+        getCommand().endAction();
         CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
     @Override
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
         super.onSucceeded(cmdId, childCmdIds);
+        getCommand().endAction();
         CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
