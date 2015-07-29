@@ -98,6 +98,19 @@ public class ExecutionContext implements Serializable{
         stepsList = DEFAULT_STEPS_LIST;
     }
 
+    public ExecutionContext(ExecutionContext otherContext) {
+        job = otherContext.job; // shallow clone, might need to change.
+        step = otherContext.step; // shallow clone, might need to change.
+        parentTasksStep = otherContext.parentTasksStep; // shallow clone, might need to change.
+        isCompleted = otherContext.isCompleted;
+        executionMethod = otherContext.executionMethod;
+        isMonitored = otherContext.isMonitored;
+        shouldEndJob = otherContext.shouldEndJob;
+        stepsList = otherContext.stepsList;
+        isTasksMonitored = otherContext.isTasksMonitored;
+        isJobRequired = otherContext.isJobRequired;
+    }
+
     public void setJob(Job job) {
         this.job = job;
     }
