@@ -259,8 +259,6 @@ public enum NetworkOperation {
                     VdsNetworkInterface nic2 = nic2Model.getIface();
                     nic1.setBondName(bondName);
                     nic2.setBondName(bondName);
-                    bond.getSlaves().add(nic1.getName());
-                    bond.getSlaves().add(nic2.getName());
 
                     addBondToParams(dataFromHostSetupNetworksModel, bond);
                 }
@@ -308,7 +306,6 @@ public enum NetworkOperation {
                     for (NetworkInterfaceModel slaveModel : slaveModels) {
                         VdsNetworkInterface slave = slaveModel.getIface();
                         slave.setBondName(bondName);
-                        bond.getSlaves().add(slave.getName());
                     }
 
                     addBondToParams(dataFromHostSetupNetworksModel, bond);
@@ -360,16 +357,12 @@ public enum NetworkOperation {
 
                     VdsNetworkInterface nic = nicModel.getIface();
                     nic.setBondName(bondName);
-                    String slaveName = nic.getName();
 
                     Map<String, Bond> bondsMap = Entities.entitiesByName(dataFromHostSetupNetworksModel.newOrModifiedBonds);
 
                     //TODO MM: removing and adding back a slave will end up in bond update even if there's no need for that.
                     boolean bondIsAlreadyBeingUpdated = bondsMap.containsKey(bondName);
-                    if (bondIsAlreadyBeingUpdated) {
-                        bondsMap.get(bondModel.getName()).getSlaves().add(slaveName);
-                    } else {
-                        bond.getSlaves().add(slaveName);
+                    if (!bondIsAlreadyBeingUpdated) {
                         dataFromHostSetupNetworksModel.newOrModifiedBonds.add(bond);
                     }
                 }
@@ -443,11 +436,7 @@ public enum NetworkOperation {
                     } else {
                         Map<String, Bond> bondsMap = Entities.entitiesByName(dataFromHostSetupNetworksModel.newOrModifiedBonds);
                         boolean bondWasAlreadyUpdated = bondsMap.containsKey(bondName);
-                        if (bondWasAlreadyUpdated) {
-                            Bond formerlyUpdatedBond = bondsMap.get(bondName);
-                            formerlyUpdatedBond.getSlaves().remove(slaveNic.getName());
-                        } else {
-                            bond.getSlaves().remove(slaveNic.getName());
+                        if (!bondWasAlreadyUpdated) {
                             dataFromHostSetupNetworksModel.newOrModifiedBonds.add(bond);
                         }
 

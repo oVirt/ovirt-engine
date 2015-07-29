@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -1126,6 +1127,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         result.setRemovedNetworkAttachments(
             new HashSet<>(Entities.getIds(hostSetupNetworksParametersData.removedNetworkAttachments)));
 
+        NetworkCommonUtils.fillBondSlaves(allNics);
         result.setBonds(hostSetupNetworksParametersData.newOrModifiedBonds);
         result.setRemovedBonds(new HashSet<>(Entities.getIds(hostSetupNetworksParametersData.removedBonds)));
         result.setRemovedUnmanagedNetworks(hostSetupNetworksParametersData.removedUnmanagedNetworks);

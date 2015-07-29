@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -549,6 +550,11 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
     }
 
     private void assertBond(Bond bond, Guid bondId, List<VdsNetworkInterface> slaves) {
+        List<VdsNetworkInterface> existingNics = new ArrayList<>();
+        existingNics.add(bond);
+        existingNics.addAll(slaves);
+
+        NetworkCommonUtils.fillBondSlaves(existingNics);
         Matcher attachmentIdMatcher = bondId == null ? nullValue() : is(bondId);
         assertThat("id mismatch", bond.getId(), attachmentIdMatcher); //$NON-NLS-1$
 
@@ -595,7 +601,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
         result.setName(bondName);
 
         for (VdsNetworkInterface slave : slaves) {
-            result.getSlaves().add(slave.getName());
+            slave.setBondName(bondName);
         }
 
         return result;

@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,22 +21,12 @@ public class BondNetworkInterfaceModel extends NetworkInterfaceModel {
         this.bonded = bonded;
 
         setThisBondModelToRelatedSlavesModels(bonded);
-        getIface().setSlaves(slaveModelsToSlaveNames(bonded));
     }
 
     public void setThisBondModelToRelatedSlavesModels(List<NetworkInterfaceModel> slaveModels) {
         for (NetworkInterfaceModel slaveModel : slaveModels) {
             slaveModel.setBond(this);
         }
-    }
-
-    private List<String> slaveModelsToSlaveNames(List<NetworkInterfaceModel> slaveModels) {
-        List<String> slaveNames = new ArrayList<>();
-        for (NetworkInterfaceModel slaveModel : slaveModels) {
-            slaveNames.add(slaveModel.getName());
-        }
-
-        return slaveNames;
     }
 
     public List<NetworkInterfaceModel> getBonded() {
