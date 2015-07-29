@@ -1,6 +1,12 @@
 -- ----------------------------------------------------------------------
 -- Views
 -- ----------------------------------------------------------------------
+CREATE OR REPLACE VIEW domains_with_unregistered_entities_view AS
+SELECT
+    DISTINCT storage_domain_id
+FROM
+    unregistered_ovf_of_entities;
+
 CREATE
 OR REPLACE VIEW storage_domain_static_view AS
 SELECT
@@ -17,7 +23,7 @@ SELECT
     storage_domain_static.last_time_used_as_master AS last_time_used_as_master,
     storage_domain_static.wipe_after_delete AS wipe_after_delete,
     storage_pool.name AS storage_pool_name,
-    unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
+    domains_with_unregistered_entities_view.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
     storage_domain_static.warning_low_space_indicator,
     storage_domain_static.critical_space_action_blocker
 FROM
@@ -27,11 +33,9 @@ OUTER JOIN storage_pool_iso_map ON storage_pool_iso_map.storage_id = storage_dom
 LEFT
 OUTER JOIN storage_pool ON storage_pool.id = storage_pool_iso_map.storage_pool_id
 LEFT
-OUTER JOIN (
-        SELECT
-            DISTINCT storage_domain_id
-        FROM
-            unregistered_ovf_of_entities ) AS unregistered_entities ON unregistered_entities.storage_domain_id = storage_domain_static.id;
+OUTER JOIN domains_with_unregistered_entities_view ON
+    domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id;
+
 CREATE
 OR REPLACE VIEW vms_for_disk_view AS
 SELECT
@@ -474,7 +478,7 @@ SELECT
         storage_pool_iso_map.status,
         storage_domain_static.storage_domain_type ) AS storage_domain_shared_status,
     storage_domain_static.recoverable AS recoverable,
-    unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
+    domains_with_unregistered_entities_view.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
     storage_domain_static.warning_low_space_indicator as warning_low_space_indicator,
     storage_domain_static.critical_space_action_blocker as critical_space_action_blocker,
     storage_domain_dynamic.external_status as external_status
@@ -486,11 +490,9 @@ OUTER JOIN storage_pool_iso_map ON storage_domain_static.id = storage_pool_iso_m
 LEFT
 OUTER JOIN storage_pool ON storage_pool_iso_map.storage_pool_id = storage_pool.id
 LEFT
-OUTER JOIN (
-        SELECT
-            DISTINCT storage_domain_id
-        FROM
-            unregistered_ovf_of_entities ) AS unregistered_entities ON unregistered_entities.storage_domain_id = storage_domain_static.id;
+OUTER JOIN domains_with_unregistered_entities_view ON
+    domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id;
+
 CREATE
 OR REPLACE VIEW storage_domains_without_storage_pools AS
 SELECT
@@ -515,7 +517,7 @@ SELECT
         storage_pool_iso_map.status,
         storage_domain_static.storage_domain_type ) AS storage_domain_shared_status,
     storage_domain_static.recoverable AS recoverable,
-    unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
+    domains_with_unregistered_entities_view.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
     storage_domain_static.warning_low_space_indicator as warning_low_space_indicator,
     storage_domain_static.critical_space_action_blocker as critical_space_action_blocker,
     storage_domain_dynamic.external_status as external_status
@@ -525,11 +527,9 @@ INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_d
 LEFT
 OUTER JOIN storage_pool_iso_map ON storage_domain_static.id = storage_pool_iso_map.storage_id
 LEFT
-OUTER JOIN (
-        SELECT
-            DISTINCT storage_domain_id
-        FROM
-            unregistered_ovf_of_entities ) AS unregistered_entities ON unregistered_entities.storage_domain_id = storage_domain_static.id;
+OUTER JOIN domains_with_unregistered_entities_view ON
+    domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id;
+
 CREATE
 OR REPLACE VIEW storage_domains_for_search AS
 SELECT
@@ -558,7 +558,7 @@ SELECT
         status_table.status,
         storage_domain_static.storage_domain_type ) AS storage_domain_shared_status,
     storage_domain_static.recoverable AS recoverable,
-    unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
+    domains_with_unregistered_entities_view.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
     storage_domain_static.warning_low_space_indicator as warning_low_space_indicator,
     storage_domain_static.critical_space_action_blocker as critical_space_action_blocker,
     storage_domain_dynamic.external_status as external_status
@@ -586,11 +586,9 @@ OUTER JOIN (
         GROUP BY
             storage_id ) AS status_table ON storage_domain_static.id = status_table.storage_id
 LEFT
-OUTER JOIN (
-        SELECT
-            DISTINCT storage_domain_id
-        FROM
-            unregistered_ovf_of_entities ) AS unregistered_entities ON unregistered_entities.storage_domain_id = storage_domain_static.id;
+OUTER JOIN domains_with_unregistered_entities_view ON
+    domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id;
+
 CREATE
 OR REPLACE VIEW luns_view AS
 SELECT
