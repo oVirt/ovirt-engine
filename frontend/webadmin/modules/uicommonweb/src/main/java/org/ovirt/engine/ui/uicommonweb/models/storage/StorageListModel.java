@@ -836,7 +836,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             templateRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
             diskListModel.setIsAvailable(isDataStorage || isCinderStorage);
             registerDiskListModel.setIsAvailable(isCinderStorage);
-            snapshotListModel.setIsAvailable(isDataStorage);
+            snapshotListModel.setIsAvailable(isDataStorage || isCinderStorage);
             diskProfileListModel.setIsAvailable(isDataStorage);
 
             isoListModel.setIsAvailable(isImageStorage);
