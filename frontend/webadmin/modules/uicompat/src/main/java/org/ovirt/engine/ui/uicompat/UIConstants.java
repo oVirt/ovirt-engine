@@ -178,7 +178,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Power Management Configuration")
     String powerManagementConfigurationTitle();
 
-    @DefaultStringValue("Next Restart Configuration")
+    @DefaultStringValue("Next Start Configuration")
     String editNextRunConfigurationTitle();
 
     @DefaultStringValue("Unsupported CPU type for current cluster")
