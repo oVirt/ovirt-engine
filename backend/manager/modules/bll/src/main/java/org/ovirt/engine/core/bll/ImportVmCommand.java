@@ -1062,17 +1062,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return permissionList;
     }
 
-    @Override
-    public Map<String, String> getJobMessageProperties() {
-        if (jobProperties == null) {
-            jobProperties = super.getJobMessageProperties();
-            jobProperties.put(VdcObjectType.VM.name().toLowerCase(),
-                    (getVmName() == null) ? "" : getVmName());
-            jobProperties.put(VdcObjectType.VdsGroups.name().toLowerCase(), getVdsGroupName());
-        }
-        return jobProperties;
-    }
-
     protected boolean setAndValidateDiskProfiles() {
         if (getParameters().getVm().getDiskMap() != null) {
             Map<DiskImage, Guid> map = new HashMap<>();

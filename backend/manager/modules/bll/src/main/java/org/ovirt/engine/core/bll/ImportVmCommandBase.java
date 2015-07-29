@@ -554,4 +554,15 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
         return new ArrayList<>(permissionSet);
     }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            jobProperties.put(VdcObjectType.VM.name().toLowerCase(),
+                    (getVmName() == null) ? "" : getVmName());
+            jobProperties.put(VdcObjectType.VdsGroups.name().toLowerCase(), getVdsGroupName());
+        }
+        return jobProperties;
+    }
 }
