@@ -69,55 +69,55 @@ import com.google.inject.Inject;
 
 public class StorageListModel extends ListWithDetailsAndReportsModel<Void, StorageDomain> implements ITaskTarget, ISupportSystemTreeContext {
 
-    private UICommand privateNewDomainCommand;
+    private UICommand newDomainCommand;
 
     public UICommand getNewDomainCommand() {
-        return privateNewDomainCommand;
+        return newDomainCommand;
     }
 
     private void setNewDomainCommand(UICommand value) {
-        privateNewDomainCommand = value;
+        newDomainCommand = value;
     }
 
-    private UICommand privateImportDomainCommand;
+    private UICommand importDomainCommand;
 
     public UICommand getImportDomainCommand() {
-        return privateImportDomainCommand;
+        return importDomainCommand;
     }
 
     private void setImportDomainCommand(UICommand value) {
-        privateImportDomainCommand = value;
+        importDomainCommand = value;
     }
 
-    private UICommand privateEditCommand;
+    private UICommand editCommand;
 
     @Override
     public UICommand getEditCommand() {
-        return privateEditCommand;
+        return editCommand;
     }
 
     private void setEditCommand(UICommand value) {
-        privateEditCommand = value;
+        editCommand = value;
     }
 
-    private UICommand privateRemoveCommand;
+    private UICommand removeCommand;
 
     public UICommand getRemoveCommand() {
-        return privateRemoveCommand;
+        return removeCommand;
     }
 
     private void setRemoveCommand(UICommand value) {
-        privateRemoveCommand = value;
+        removeCommand = value;
     }
 
-    private UICommand privateDestroyCommand;
+    private UICommand destroyCommand;
 
     public UICommand getDestroyCommand() {
-        return privateDestroyCommand;
+        return destroyCommand;
     }
 
     private void setDestroyCommand(UICommand value) {
-        privateDestroyCommand = value;
+        destroyCommand = value;
     }
 
     protected Object[] getSelectedKeys() {

@@ -54,14 +54,14 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
     /**
      * Gets or sets the storage being edited. Null if it's a new one.
      */
-    private StorageDomain privateStorage;
+    private StorageDomain storageDomain;
 
     public StorageDomain getStorage() {
-        return privateStorage;
+        return storageDomain;
     }
 
     public void setStorage(StorageDomain value) {
-        privateStorage = value;
+        storageDomain = value;
     }
 
     private IStorageModel currentStorageItem;
@@ -86,24 +86,24 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         this.storageModels = storageModels;
     }
 
-    private String privateOriginalName;
+    private String originalName;
 
     public String getOriginalName() {
-        return privateOriginalName;
+        return originalName;
     }
 
     public void setOriginalName(String value) {
-        privateOriginalName = value;
+        originalName = value;
     }
 
-    private EntityModel<String> privateName;
+    private EntityModel<String> name;
 
     public EntityModel<String> getName() {
-        return privateName;
+        return name;
     }
 
     private void setName(EntityModel<String> value) {
-        privateName = value;
+        name = value;
     }
 
     private EntityModel<String> description;
@@ -126,14 +126,14 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         comment = value;
     }
 
-    private ListModel<StoragePool> privateDataCenter;
+    private ListModel<StoragePool> dataCenter;
 
     public ListModel<StoragePool> getDataCenter() {
-        return privateDataCenter;
+        return dataCenter;
     }
 
     private void setDataCenter(ListModel<StoragePool> value) {
-        privateDataCenter = value;
+        dataCenter = value;
     }
 
     private EntityModel<String> dataCenterAlert;
@@ -146,24 +146,24 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         this.dataCenterAlert = dataCenterAlert;
     }
 
-    private ListModel<VDS> privateHost;
+    private ListModel<VDS> host;
 
     public ListModel<VDS> getHost() {
-        return privateHost;
+        return host;
     }
 
     public void setHost(ListModel<VDS> value) {
-        privateHost = value;
+        host = value;
     }
 
-    private ListModel<StorageFormatType> privateFormat;
+    private ListModel<StorageFormatType> format;
 
     public ListModel<StorageFormatType> getFormat() {
-        return privateFormat;
+        return format;
     }
 
     private void setFormat(ListModel<StorageFormatType> value) {
-        privateFormat = value;
+        format = value;
     }
 
     private ListModel<StorageType> availableStorageTypeItems;
