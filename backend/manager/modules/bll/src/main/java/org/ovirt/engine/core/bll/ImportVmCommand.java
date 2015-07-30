@@ -230,7 +230,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         if (!isImagesAlreadyOnTarget()) {
             setSourceDomainId(getParameters().getSourceDomainId());
             StorageDomainValidator validator = new StorageDomainValidator(getSourceDomain());
-            if (validator.isDomainExistAndActive().isValid() && getSourceDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
+            if (validator.isDomainExistAndActive().isValid()
+                    && getSourceDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
                 return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             }
             if (!validateAndSetVmFromExportDomain()) {
@@ -329,6 +330,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     /**
      * Load images from Import/Export domain.
+     *
      * @return A {@link List} of {@link VM}s from the export domain.
      */
     @SuppressWarnings("unchecked")
@@ -402,7 +404,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                             getStorageDomainStaticDao().get(getParameters().getSourceDomainId()).getStorageName()));
         }
 
-        if (!validateVmArchitecture()){
+        if (!validateVmArchitecture()) {
             return false;
         }
 
@@ -444,13 +446,13 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         if (getParameters().getCopyCollapse()) {
             Snapshot activeSnapshot = getActiveSnapshot();
             if (activeSnapshot != null && activeSnapshot.containsMemory()) {
-                //Checking space for memory volume of the active image (if there is one)
+                // Checking space for memory volume of the active image (if there is one)
                 StorageDomain storageDomain = updateStorageDomainInMemoryVolumes(dummiesDisksList);
                 if (storageDomain == null) {
                     return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
                 }
             }
-        } else { //Check space for all the snapshot's memory volumes
+        } else { // Check space for all the snapshot's memory volumes
             if (!updateDomainsForMemoryImages(dummiesDisksList)) {
                 return false;
             }
@@ -459,8 +461,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     /**
-     * For each snapshot that has memory volume, this method updates the memory volume with
-     * the storage pool and storage domain it's going to be imported to.
+     * For each snapshot that has memory volume, this method updates the memory volume with the storage pool and storage
+     * domain it's going to be imported to.
      *
      * @return true if we managed to assign storage domain for every memory volume, false otherwise
      */
@@ -493,7 +495,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     private StorageDomain updateStorageDomainInMemoryVolumes(List<DiskImage> disksList) {
-        List<DiskImage> memoryDisksList = MemoryUtils.createDiskDummies(getVm().getTotalMemorySizeInBytes(), MemoryUtils.META_DATA_SIZE_IN_BYTES);
+        List<DiskImage> memoryDisksList =
+                MemoryUtils.createDiskDummies(getVm().getTotalMemorySizeInBytes(), MemoryUtils.META_DATA_SIZE_IN_BYTES);
         StorageDomain storageDomain = MemoryStorageHandler.getInstance().findStorageDomainForMemory(
                 getParameters().getStoragePoolId(), memoryDisksList, getVmDisksDummies(), getVm());
         disksList.addAll(memoryDisksList);
@@ -592,9 +595,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             Guid imageGroupId = image.getId() != null ? image.getId() : Guid.Empty;
 
             VDSReturnValue retValue = runVdsCommand(
-                            VDSCommandType.DoesImageExist,
-                            new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
-                                    imageGUID));
+                    VDSCommandType.DoesImageExist,
+                    new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
+                            imageGUID));
 
             if (Boolean.FALSE.equals(retValue.getReturnValue())) {
                 return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
@@ -840,7 +843,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     /**
      * Generates and saves a {@link DiskImageDynamic} for the given {@link #disk}.
-     * @param disk The imported disk
+     *
+     * @param disk
+     *            The imported disk
      **/
     protected void saveDiskImageDynamic(DiskImage disk) {
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
@@ -851,7 +856,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     /**
      * Saves a new active snapshot for the VM
-     * @param snapshotId The ID to assign to the snapshot
+     *
+     * @param snapshotId
+     *            The ID to assign to the snapshot
      * @return The generated snapshot
      */
     protected Snapshot addActiveSnapshot(Guid snapshotId) {
@@ -904,8 +911,11 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     /**
      * Save a snapshot if it does not exist in the database.
-     * @param snapshotId The snapshot to save.
-     * @param disk The disk containing the snapshot's information.
+     *
+     * @param snapshotId
+     *            The snapshot to save.
+     * @param disk
+     *            The disk containing the snapshot's information.
      */
     protected void saveSnapshotIfNotExists(Guid snapshotId, DiskImage disk) {
         if (!getSnapshotDao().exists(getVm().getId(), snapshotId)) {
@@ -923,7 +933,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     /**
      * Update a snapshot and make it the active snapshot.
-     * @param snapshotId The snapshot to update.
+     *
+     * @param snapshotId
+     *            The snapshot to update.
      */
     protected void updateActiveSnapshot(Guid snapshotId) {
         getSnapshotDao().update(
@@ -1083,15 +1095,15 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         List<QuotaConsumptionParameter> list = new ArrayList<>();
 
         for (Disk disk : getParameters().getVm().getDiskMap().values()) {
-            //TODO: handle import more than once;
-            if(disk instanceof DiskImage){
-                DiskImage diskImage = (DiskImage)disk;
+            // TODO: handle import more than once;
+            if (disk instanceof DiskImage) {
+                DiskImage diskImage = (DiskImage) disk;
                 list.add(new QuotaStorageConsumptionParameter(
                         diskImage.getQuotaId(),
                         null,
                         QuotaConsumptionParameter.QuotaAction.CONSUME,
                         imageToDestinationDomainMap.get(diskImage.getId()),
-                        (double)diskImage.getSizeInGigabytes()));
+                        (double) diskImage.getSizeInGigabytes()));
             }
         }
         return list;
@@ -1101,9 +1113,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return getVm().getImages();
     }
 
-    ///////////////////////////////////////
+    // /////////////////////////////////////
     // TaskHandlerCommand Implementation //
-    ///////////////////////////////////////
+    // /////////////////////////////////////
 
     @Override
     public T getParameters() {

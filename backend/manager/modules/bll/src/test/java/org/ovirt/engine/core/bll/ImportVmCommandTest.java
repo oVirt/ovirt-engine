@@ -210,7 +210,7 @@ public class ImportVmCommandTest {
             image.setStorageIds(sdIds);
         }
 
-        doReturn(Collections.<DiskImage>emptyList()).when(cmd).createDiskDummiesForSpaceValidations(anyList());
+        doReturn(Collections.<DiskImage> emptyList()).when(cmd).createDiskDummiesForSpaceValidations(anyList());
 
         return cmd;
     }
@@ -301,9 +301,8 @@ public class ImportVmCommandTest {
     }
 
     /**
-     * Checking that other fields in
-     * {@link org.ovirt.engine.core.common.businessentities.VmStatic.VmStatic}
-     * don't get validated when importing a VM.
+     * Checking that other fields in {@link org.ovirt.engine.core.common.businessentities.VmStatic.VmStatic} don't get
+     * validated when importing a VM.
      */
     @Test
     public void testOtherFieldsNotValidatedInImport() {
@@ -325,7 +324,7 @@ public class ImportVmCommandTest {
         assertTrue(validate.isEmpty());
         parameters.getVm().setUserDefinedProperties(tooLongString);
         parameters.setImportAsNewEntity(false);
-        command = new ImportVmCommand<ImportVmParameters>(parameters){
+        command = new ImportVmCommand<ImportVmParameters>(parameters) {
             @Override
             public VDSGroup getVdsGroup() {
                 return null;
@@ -344,7 +343,7 @@ public class ImportVmCommandTest {
     @Test
     public void testManagedDeviceSyncWithNewDiskId() {
         ImportVmParameters parameters = createParameters();
-        ImportVmCommand<ImportVmParameters> command = new ImportVmCommand<ImportVmParameters>(parameters){
+        ImportVmCommand<ImportVmParameters> command = new ImportVmCommand<ImportVmParameters>(parameters) {
             @Override
             public VDSGroup getVdsGroup() {
                 return null;
@@ -365,9 +364,13 @@ public class ImportVmCommandTest {
         command.generateNewDiskId(diskList, disk);
         command.updateManagedDeviceMap(disk, managedDevices);
         Guid oldDiskId = command.newDiskIdForDisk.get(disk.getId()).getId();
-        assertEquals("The old disk id should be similar to the value at the newDiskIdForDisk.", beforeOldDiskId, oldDiskId);
-        assertNotNull("The manged device should return the disk device by the new key", managedDevices.get(disk.getId()));
-        assertNull("The manged device should not return the disk device by the old key", managedDevices.get(beforeOldDiskId));
+        assertEquals("The old disk id should be similar to the value at the newDiskIdForDisk.",
+                beforeOldDiskId,
+                oldDiskId);
+        assertNotNull("The manged device should return the disk device by the new key",
+                managedDevices.get(disk.getId()));
+        assertNull("The manged device should not return the disk device by the old key",
+                managedDevices.get(beforeOldDiskId));
     }
 
     /* Tests for alias generation in addVmImagesAndSnapshots() */
@@ -376,7 +379,7 @@ public class ImportVmCommandTest {
     public void testAliasGenerationByAddVmImagesAndSnapshotsWithCollapse() {
         ImportVmParameters params = createParameters();
         params.setCopyCollapse(true);
-        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params){
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params) {
             @Override
             public VDSGroup getVdsGroup() {
                 return null;
@@ -434,7 +437,7 @@ public class ImportVmCommandTest {
     public void testAliasGenerationByAddVmImagesAndSnapshotsWithoutCollapse() {
         ImportVmParameters params = createParameters();
         params.setCopyCollapse(false);
-        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params){
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params) {
             @Override
             public VDSGroup getVdsGroup() {
                 return null;
