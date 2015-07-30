@@ -119,7 +119,7 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
             }
 
             // Clone volumes for Cinder disk templates
-            addVmCinderDisks(ImagesHandler.filterDisksBasedOnCinder(templateDisks));
+            addVmCinderDisks(templateDisks);
         }
         return true;
     }

@@ -361,7 +361,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
     @Override
     protected boolean addVmImages() {
         int numberOfStartedCopyTasks = 0;
-        List<CinderDisk> cinderDisks = new ArrayList<>();
+        List<DiskImage> cinderDisks = new ArrayList<>();
         try {
             if (!getAdjustedDiskImagesFromConfiguration().isEmpty()) {
                 lockEntities();
@@ -393,9 +393,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                         numberOfStartedCopyTasks++;
                     }
                 }
-                if (!cinderDisks.isEmpty()) {
-                    addVmCinderDisks(cinderDisks);
-                }
+                addVmCinderDisks(cinderDisks);
             }
         } finally {
             // If no tasks were created, endAction will not be called, but

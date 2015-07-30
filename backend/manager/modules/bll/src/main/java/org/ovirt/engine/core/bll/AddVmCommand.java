@@ -1149,7 +1149,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             }
 
             // Clone volumes for Cinder disk templates
-            addVmCinderDisks(ImagesHandler.filterDisksBasedOnCinder(templateDisks));
+            addVmCinderDisks(templateDisks);
         }
         return true;
     }
@@ -1170,14 +1170,16 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return tempVar;
     }
 
-    protected void addVmCinderDisks(List<CinderDisk> templateDisks) {
+    protected void addVmCinderDisks(Collection<DiskImage> templateDisks) {
         List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(templateDisks);
-
+        if (cinderDisks.isEmpty()) {
+            return;
+        }
         Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
-                VdcActionType.CloneCinderDisks,
-                buildCinderChildCommandParameters(cinderDisks, getVmSnapshotId()),
-                cloneContextAndDetachFromParent(),
-                CINDERStorageHelper.getStorageEntities(cinderDisks));
+            VdcActionType.CloneCinderDisks,
+            buildCinderChildCommandParameters(cinderDisks, getVmSnapshotId()),
+            cloneContextAndDetachFromParent(),
+            CINDERStorageHelper.getStorageEntities(cinderDisks));
         try {
             Map<Guid, Guid> diskImageMap = future.get().getActionReturnValue();
             srcDiskIdToTargetDiskIdMapping.putAll(diskImageMap);
