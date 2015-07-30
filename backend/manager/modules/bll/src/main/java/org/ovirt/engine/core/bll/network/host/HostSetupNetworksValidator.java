@@ -38,7 +38,6 @@ import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -50,28 +49,46 @@ import org.slf4j.LoggerFactory;
 public class HostSetupNetworksValidator {
     private static final Logger log = LoggerFactory.getLogger(HostSetupNetworksValidator.class);
 
+    private static final String LIST_SUFFIX = "_LIST";
+    private static final String ENTITY_SUFFIX  = "_ENTITY";
+
     //TODO MM: here? EngineMessage? Elsewhere? (note: some of these are related to this file and it's test only, some even elsewhere
-    static final String ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY = "ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY";
-    public static final String NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME_ENTITY = "NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME_ENTITY";
-    public static final String VAR_NETWORKS_ALREADY_ATTACHED_TO_IFACES_LIST = "NETWORKS_ALREADY_ATTACHED_TO_IFACES_LIST";
-    public static final String VAR_NETWORK_BOND_RECORD_DOES_NOT_EXISTS_LIST = "NETWORK_BOND_RECORD_DOES_NOT_EXISTS_LIST";
-    public static final String VAR_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST = "NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST";
-    public static final String VAR_BOND_NAME = "BondName";
-    public static final String VAR_NETWORK_BOND_NAME_BAD_FORMAT_ENTITY = "NETWORK_BOND_NAME_BAD_FORMAT_ENTITY";
-    public static final String VAR_NETWORK_BONDS_INVALID_SLAVE_COUNT_LIST = "NETWORK_BONDS_INVALID_SLAVE_COUNT_LIST";
-    public static final String VAR_NETWORK_INTERFACE_ALREADY_IN_BOND_ENTITY = "NETWORK_INTERFACE_ALREADY_IN_BOND_ENTITY";
-    public static final String NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE_ENTITY = "NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE_ENTITY";
-    public static final String VAR_NETWORK_ATTACHMENT_NOT_EXISTS_ENTITY = "NETWORK_ATTACHMENT_NOT_EXISTS_ENTITY";
-    public static final String VAR_NETWORK_ATTACHMENTS_NOT_EXISTS_LIST = "NETWORK_ATTACHMENT_NOT_EXISTS_LIST";
-    public static final String VAR_ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_LIST = "ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_LIST";
-    public static final String VAR_ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED_LIST = "ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED_LIST";
-    public static final String VAR_ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT_LIST = "ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT_LIST";
-    public static final String VAR_NETWORK_NAME = "networkName";
-    public static final String VAR_ATTACHMENT_IDS = "attachmentIds";
+    public static final String VAR_NETWORK_ATTACHMENT_NOT_EXISTS_ENTITY =
+            EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS + ENTITY_SUFFIX;
+    public static final String VAR_NETWORK_BONDS_INVALID_SLAVE_COUNT_LIST =
+            EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT + LIST_SUFFIX;
+
+    static final String NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME_ENTITY =
+            EngineMessage.NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME
+                    + ENTITY_SUFFIX;
+    static final String ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY =
+            EngineMessage.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC + ENTITY_SUFFIX;
+    static final String VAR_NETWORKS_ALREADY_ATTACHED_TO_IFACES_LIST =
+            EngineMessage.NETWORKS_ALREADY_ATTACHED_TO_IFACES + LIST_SUFFIX;
+    static final String VAR_NETWORK_BOND_RECORD_DOES_NOT_EXISTS_LIST =
+            EngineMessage.NETWORK_BOND_RECORD_DOES_NOT_EXISTS + LIST_SUFFIX;
+    static final String VAR_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST =
+            EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS + LIST_SUFFIX;
+    static final String VAR_NETWORK_BOND_NAME_BAD_FORMAT_ENTITY =
+            EngineMessage.NETWORK_BOND_NAME_BAD_FORMAT + ENTITY_SUFFIX;
+    static final String VAR_NETWORK_INTERFACE_ALREADY_IN_BOND_ENTITY =
+            EngineMessage.NETWORK_INTERFACE_ALREADY_IN_BOND + ENTITY_SUFFIX;
+    static final String NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE_ENTITY =
+            EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE + ENTITY_SUFFIX;
+    static final String VAR_NETWORK_ATTACHMENTS_NOT_EXISTS_LIST =
+            EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS + LIST_SUFFIX;
+    static final String VAR_ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_LIST =
+            EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC + LIST_SUFFIX;
+    static final String VAR_ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED_LIST =
+            EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED + LIST_SUFFIX;
+    static final String VAR_ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT_LIST =
+            EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT + LIST_SUFFIX;
+    static final String VAR_BOND_NAME = "BondName";
+    static final String VAR_NETWORK_NAME = "networkName";
+    static final String VAR_ATTACHMENT_IDS = "attachmentIds";
 
     private HostSetupNetworksParameters params;
     private VDS host;
-    private final List<VdsNetworkInterface> existingInterfaces;
     private BusinessEntityMap<VdsNetworkInterface> existingInterfacesMap;
     private List<NetworkAttachment> existingAttachments;
     private final ManagementNetworkUtil managementNetworkUtil;
@@ -82,7 +99,6 @@ public class HostSetupNetworksValidator {
     private BusinessEntityMap<Network> networkBusinessEntityMap;
     private final Map<Guid, NetworkAttachment> attachmentsById;
     private final NetworkClusterDao networkClusterDao;
-    private final NetworkAttachmentDao networkAttachmentDao;
     private final NetworkDao networkDao;
     private final VdsDao vdsDao;
     private final BusinessEntityMap<Bond> bondsMap;
@@ -92,27 +108,24 @@ public class HostSetupNetworksValidator {
     private HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper;
 
     public HostSetupNetworksValidator(VDS host,
-        HostSetupNetworksParameters params,
-        List<VdsNetworkInterface> existingInterfaces,
-        List<NetworkAttachment> existingAttachments,
-        BusinessEntityMap<Network> networkBusinessEntityMap,
-        ManagementNetworkUtil managementNetworkUtil,
-        NetworkClusterDao networkClusterDao,
-        NetworkAttachmentDao networkAttachmentDao,
-        NetworkDao networkDao,
-        VdsDao vdsDao,
-        HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper,
-        VmDao vmDao) {
+            HostSetupNetworksParameters params,
+            List<VdsNetworkInterface> existingInterfaces,
+            List<NetworkAttachment> existingAttachments,
+            BusinessEntityMap<Network> networkBusinessEntityMap,
+            ManagementNetworkUtil managementNetworkUtil,
+            NetworkClusterDao networkClusterDao,
+            NetworkDao networkDao,
+            VdsDao vdsDao,
+            HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper,
+            VmDao vmDao) {
 
         this.host = host;
         this.params = params;
         this.existingAttachments = existingAttachments;
         this.managementNetworkUtil = managementNetworkUtil;
         this.networkClusterDao = networkClusterDao;
-        this.networkAttachmentDao = networkAttachmentDao;
         this.networkDao = networkDao;
         this.vdsDao = vdsDao;
-        this.existingInterfaces = existingInterfaces;
         this.vmDao = vmDao;
         this.existingInterfacesMap = new BusinessEntityMap<>(existingInterfaces);
         this.networkBusinessEntityMap = networkBusinessEntityMap;
@@ -274,7 +287,6 @@ public class HostSetupNetworksValidator {
         for (NetworkAttachment attachment : params.getNetworkAttachments()) {
             if (attachment.getId() == null) {
                 newAttachments.add(attachment);
-                continue;
             } else {
                 networkAttachmentsMap.put(attachment.getId(), attachment);
             }
@@ -341,10 +353,6 @@ public class HostSetupNetworksValidator {
 
     ValidationResult validateModifiedBondSlaves(Bond modifiedOrNewBond) {
 
-        Set<String> removedNetworkAttachmentsNicNames =
-            new MapNetworkAttachments(removedNetworkAttachments).nicNames();
-
-
         for (String slaveName : modifiedOrNewBond.getSlaves()) {
             VdsNetworkInterface potentialSlave = existingInterfacesMap.get(slaveName);
             HostInterfaceValidator slaveHostInterfaceValidator = createHostInterfaceValidator(potentialSlave);
@@ -378,7 +386,7 @@ public class HostSetupNetworksValidator {
             }
 
             ValidationResult slaveHasAttachedNetworksValidationResult =
-                    validateSlaveHasNoNetworks(removedNetworkAttachmentsNicNames, potentialSlave.getName());
+                    validateSlaveHasNoNetworks(potentialSlave.getName());
             if (!slaveHasAttachedNetworksValidationResult.isValid()) {
                 return slaveHasAttachedNetworksValidationResult;
             }
@@ -408,8 +416,7 @@ public class HostSetupNetworksValidator {
                         slaveName)).unless(labelsToConfigureOnNic == null || labelsToConfigureOnNic.isEmpty());
     }
 
-    private ValidationResult validateSlaveHasNoNetworks(Set<String> removedNetworkAttachmentsNicNames,
-            String slaveName) {
+    private ValidationResult validateSlaveHasNoNetworks(String slaveName) {
         for (NetworkAttachment attachment : getAttachmentsToConfigure()) {
             if (Objects.equals(attachment.getNicName(), slaveName)) {
                 if (attachment.getId() == null) {
@@ -625,7 +632,6 @@ public class HostSetupNetworksValidator {
         return new NetworkAttachmentValidator(attachmentToValidate,
             host,
             managementNetworkUtil,
-            networkAttachmentDao,
             new VmInterfaceManager(),
             networkClusterDao,
             networkDao,

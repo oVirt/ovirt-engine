@@ -177,7 +177,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 getNetworkBusinessEntityMap(),
                 managementNetworkUtil,
                 networkClusterDao,
-                networkAttachmentDao,
                 networkDao,
                 vdsDao,
                 hostSetupNetworksValidatorHelper,

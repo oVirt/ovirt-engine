@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.utils.PluralMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -37,7 +36,6 @@ public class NetworkAttachmentValidator {
     public static final String VAR_NETWORK_ATTACHMENT_ID = "networkAttachmentID";
     private final VdsDao vdsDao;
     private final NetworkDao networkDao;
-    private final NetworkAttachmentDao networkAttachmentDao;
     private final NetworkClusterDao networkClusterDao;
     private final VmInterfaceManager vmInterfaceManager;
     private final VmDao vmDao;
@@ -49,20 +47,18 @@ public class NetworkAttachmentValidator {
     private final ManagementNetworkUtil managementNetworkUtil;
     private NetworkCluster networkCluster;
     private NetworkValidator networkValidator;
-    private NetworkAttachment existingNetworkAttachment;
 
     public NetworkAttachmentValidator(NetworkAttachment attachment,
             VDS host,
             ManagementNetworkUtil managementNetworkUtil,
-            NetworkAttachmentDao networkAttachmentDao,
-            VmInterfaceManager vmInterfaceManager, NetworkClusterDao networkClusterDao,
+            VmInterfaceManager vmInterfaceManager,
+            NetworkClusterDao networkClusterDao,
             NetworkDao networkDao,
             VdsDao vdsDao, VmDao vmDao) {
 
         this.attachment = attachment;
         this.host = host;
         this.managementNetworkUtil = managementNetworkUtil;
-        this.networkAttachmentDao = networkAttachmentDao;
         this.vmInterfaceManager = vmInterfaceManager;
         this.networkClusterDao = networkClusterDao;
         this.networkDao = networkDao;
@@ -74,16 +70,6 @@ public class NetworkAttachmentValidator {
         //TODO MM: what to do with this? this actually does not mean, that the attachment does not exist, we just did not get one, and we don't even know how one searched for it, so we also don't know what to complain about.
         return ValidationResult.failWith(EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS,
             HostSetupNetworksValidator.VAR_NETWORK_ATTACHMENT_NOT_EXISTS_ENTITY, "null").when(attachment == null);
-
-    }
-
-    //TODO MM: seems unused.
-    private NetworkAttachment getExistingNetworkAttachment() {
-        if (existingNetworkAttachment == null) {
-            existingNetworkAttachment = networkAttachmentDao.get(attachment.getId());
-        }
-
-        return existingNetworkAttachment;
     }
 
     public ValidationResult networkExists() {

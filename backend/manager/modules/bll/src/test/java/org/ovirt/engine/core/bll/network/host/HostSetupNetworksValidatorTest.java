@@ -159,7 +159,7 @@ public class HostSetupNetworksValidatorTest {
     @Test
     public void testNotRemovingLabeledNetworksLabelRemovedFromNicValid() {
         VdsNetworkInterface nicWithLabel = createNic("nicWithLabel");
-        nicWithLabel.setLabels(new HashSet<>(Arrays.asList("lbl1")));
+        nicWithLabel.setLabels(Collections.singleton("lbl1"));
 
         Network network = createNetworkWithNameAndLabel("net", "lbl1");
         NetworkAttachment removedAttachment = createNetworkAttachment(network, nicWithLabel);
@@ -173,7 +173,7 @@ public class HostSetupNetworksValidatorTest {
     @Test
     public void testNotRemovingLabeledNetworksLabelMovedToAnotherNicValid() {
         VdsNetworkInterface nicWithLabel = createNic("nicWithLabel");
-        nicWithLabel.setLabels(new HashSet<>(Arrays.asList("lbl1")));
+        nicWithLabel.setLabels(Collections.singleton("lbl1"));
 
         Network network = createNetworkWithNameAndLabel("net", "lbl1");
         NetworkAttachment removedAttachment = createNetworkAttachment(network, nicWithLabel);
@@ -188,7 +188,7 @@ public class HostSetupNetworksValidatorTest {
     @Test
     public void testNotRemovingLabeledNetworksNicHasLabelOldAttachRemovedNewAttachWithSameNetworkAddedToNicValid() {
         VdsNetworkInterface nicWithLabel = createNic("nicWithLabel");
-        nicWithLabel.setLabels(new HashSet<>(Arrays.asList("lbl1")));
+        nicWithLabel.setLabels(Collections.singleton("lbl1"));
 
         Network network = createNetworkWithNameAndLabel("net", "lbl1");
         NetworkAttachment removedAttachment = createNetworkAttachment(network, nicWithLabel);
@@ -340,7 +340,7 @@ public class HostSetupNetworksValidatorTest {
         VdsNetworkInterface nic = createNic("nicWithLabel");
 
         if (nicContainslabel) {
-            nic.setLabels(new HashSet<>(Arrays.asList("lbl1")));
+            nic.setLabels(Collections.singleton("lbl1"));
         }
 
         Network movedNetwork = createNetworkWithNameAndLabel("net", "lbl1");
@@ -1124,8 +1124,7 @@ public class HostSetupNetworksValidatorTest {
 
         //we do not test SimpleCustomPropertiesUtil here, we just state what happens if it does not find ValidationError
         SimpleCustomPropertiesUtil simpleCustomPropertiesUtilMock = mock(SimpleCustomPropertiesUtil.class);
-        when(simpleCustomPropertiesUtilMock
-            .validateProperties(any(Map.class), any(Map.class)))
+        when(simpleCustomPropertiesUtilMock.validateProperties(any(Map.class), any(Map.class)))
             .thenReturn(Collections.<ValidationError>emptyList());
 
         assertThat(validator.validateCustomProperties(simpleCustomPropertiesUtilMock,
@@ -1192,7 +1191,7 @@ public class HostSetupNetworksValidatorTest {
     @Test
     public void validateSlaveHasNoLabelsOldLabelWasRemovedValid() {
         VdsNetworkInterface slave = createNic("slave");
-        slave.setLabels(new HashSet<>(Arrays.asList("lbl1")));
+        slave.setLabels(Collections.singleton("lbl1"));
 
         HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
         params.getRemovedLabels().add("lbl1");
@@ -1206,7 +1205,7 @@ public class HostSetupNetworksValidatorTest {
     @Test
     public void validateSlaveHasNoLabelsOldLabelWasMovedToAnotherNicValid() {
         VdsNetworkInterface slave = createNic("slave");
-        slave.setLabels(new HashSet<>(Arrays.asList("lbl1")));
+        slave.setLabels(Collections.singleton("lbl1"));
 
         HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
         NicLabel nicLabel = new NicLabel(Guid.newGuid(), slave.getName() + "not", "lbl1");
@@ -1221,7 +1220,7 @@ public class HostSetupNetworksValidatorTest {
     @Test
     public void validateSlaveHasNoLabelsHasOldLabel() {
         VdsNetworkInterface slave = createNic("slave");
-        slave.setLabels(new HashSet<>(Arrays.asList("lbl1")));
+        slave.setLabels(Collections.singleton("lbl1"));
 
         HostSetupNetworksValidator validator =
                 new HostSetupNetworksValidatorBuilder().setParams(new HostSetupNetworksParameters(host.getId()))
@@ -1405,8 +1404,7 @@ public class HostSetupNetworksValidatorTest {
                 networkBusinessEntityMap,
                 managementNetworkUtil,
                 networkClusterDaoMock,
-                networkAttachmentDaoMock,
-                networkDaoMock,
+                    networkDaoMock,
                 vdsDaoMock,
                 new HostSetupNetworksValidatorHelper(),
                 vmDao);
