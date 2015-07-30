@@ -1341,6 +1341,18 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public GlusterVolumesListReturnForXmlRpc glusterVolumeInfo(Guid clusterId, String volumeName) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterVolumesList(volumeName);
+            GlusterVolumesListReturnForXmlRpc wrapper =
+                    new GlusterVolumesListReturnForXmlRpc(clusterId, xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public GlusterVolumeProfileInfoReturnForXmlRpc glusterVolumeProfileInfo(Guid clusterId, String volumeName, boolean nfs) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.glusterVolumeProfileInfo(volumeName, nfs);

@@ -247,6 +247,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> glusterVolumesList();
 
+    public Map<String, Object> glusterVolumesList(String volumeName);
+
     public Map<String, Object> ping();
 
     @FutureCall(delegeteTo = "ping")
