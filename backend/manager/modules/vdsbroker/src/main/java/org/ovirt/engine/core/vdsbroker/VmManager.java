@@ -23,6 +23,7 @@ public class VmManager {
 
     private int convertOperationProgress;
     private String convertOperationDescription;
+    private Guid convertProxyHostId;
 
     private Double lastStatusEventTimestamp;
     private Guid lastStatusEventReporterId;
@@ -97,6 +98,14 @@ public class VmManager {
     public void updateConvertOperation(String description, int progress) {
         this.convertOperationDescription = description;
         this.convertOperationProgress = progress;
+    }
+
+    public void setConvertProxyHostId(Guid convertProxyHostId) {
+        this.convertProxyHostId = convertProxyHostId;
+    }
+
+    public Guid getConvertProxyHostId() {
+        return convertProxyHostId;
     }
 
     public Long getVmDataChangedTime () {

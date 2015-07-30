@@ -73,10 +73,15 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
             // if the callback is created after the command was executed, it means that the engine restarted
             // so there is no v2v-job in vdsManager and thus we add a new job with unknown status there
             if (getCommandExecutionStatus() == CommandExecutionStatus.EXECUTED) {
-                getVdsManager().addV2VJobInfoForVm(getVmId(), JobStatus.UNKNOWN);
+                monitorV2VJob(JobStatus.UNKNOWN);
             }
         }
         return cachedCallback;
+    }
+
+    private void monitorV2VJob(JobStatus initialJobStatus) {
+        getVdsManager().addV2VJobInfoForVm(getVmId(), initialJobStatus);
+        getVmManager().setConvertProxyHostId(getVdsId());
     }
 
     @Override
@@ -151,7 +156,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         try {
             VDSReturnValue retValue = runVdsCommand();
             if (retValue.getSucceeded()) {
-                getVdsManager().addV2VJobInfoForVm(getVmId(), JobStatus.WAIT_FOR_START);
+                monitorV2VJob(JobStatus.WAIT_FOR_START);
                 setSucceeded(true);
             } else {
                 log.error("Failed to convert VM");
@@ -242,6 +247,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
 
     private void deleteV2VJob() {
         getVdsManager().removeV2VJobInfoForVm(getVmId());
+        getVmManager().setConvertProxyHostId(null);
         runVdsCommand(
                 VDSCommandType.DeleteV2VJob,
                 new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
