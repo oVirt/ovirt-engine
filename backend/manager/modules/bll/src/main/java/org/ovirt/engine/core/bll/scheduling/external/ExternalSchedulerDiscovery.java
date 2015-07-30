@@ -8,44 +8,50 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ExternalSchedulerDiscoveryThread extends Thread {
+public class ExternalSchedulerDiscovery {
+
+    private final static Logger log = LoggerFactory.getLogger(ExternalSchedulerDiscovery.class);
 
     @Inject
-    private SchedulingManager schedulingManager;
+    private PolicyUnitDao policyUnitDao;
 
-    private final static Logger log = LoggerFactory.getLogger(ExternalSchedulerDiscoveryThread.class);
+    private ExternalSchedulerDiscovery() {}
 
-    private ExternalSchedulerDiscoveryThread() {}
-
-    @Override
-    public void run() {
+    /**
+     * Discover external schedulers and process its policy units. This operation may take time and is recommended to run
+     * in a different thread. If we found new policy units we save them to db and expose them for usage.
+     *
+     * @return {@code true} if new policies where found and saved to db, {@code false} otherwise.
+     */
+    public boolean discover() {
         ExternalSchedulerDiscoveryResult discoveryResult = ExternalSchedulerFactory.getInstance().runDiscover();
+        boolean dbUpdated = false;
         if (discoveryResult != null) {
             updateDB(discoveryResult);
             log.info("PolicyUnits updated");
+            dbUpdated = true;
         } else {
             AuditLogableBase loggable = new AuditLogableBase();
             new AuditLogDirector().log(loggable, AuditLogType.FAILED_TO_CONNECT_TO_SCHEDULER_PROXY);
             markAllExternalPoliciesAsDisabled();
             log.warn("Discovery returned empty result, disabled external policy units");
         }
+        return dbUpdated;
     }
 
     private void updateDB(ExternalSchedulerDiscoveryResult discoveryResult) {
-        List<PolicyUnit> allPolicyUnits = getPolicyUnitDao().getAll();
+        List<PolicyUnit> allPolicyUnits = policyUnitDao.getAll();
         List<PolicyUnit> foundInBoth = new LinkedList<>();
         for (ExternalSchedulerDiscoveryUnit unit : discoveryResult.getFilters()) {
             PolicyUnit found = compareToDB(allPolicyUnits, unit, PolicyUnitType.FILTER);
@@ -69,21 +75,19 @@ public class ExternalSchedulerDiscoveryThread extends Thread {
         allPolicyUnits.removeAll(foundInBoth);
         // found in the db but not found in discovery, mark as such
         markExternalPoliciesAsDisabled(allPolicyUnits);
-
-        schedulingManager.reloadPolicyUnits();
     }
 
     private void markExternalPoliciesAsDisabled(List<PolicyUnit> units) {
         for (PolicyUnit policyUnit : units) {
             if (!policyUnit.isInternal()) {
                 policyUnit.setEnabled(false);
-                getPolicyUnitDao().update(policyUnit);
+                policyUnitDao.update(policyUnit);
             }
         }
     }
 
     public void markAllExternalPoliciesAsDisabled(){
-        markExternalPoliciesAsDisabled(getPolicyUnitDao().getAll());
+        markExternalPoliciesAsDisabled(policyUnitDao.getAll());
     }
 
     private PolicyUnit compareToDB(List<PolicyUnit> dbEnteries,
@@ -122,10 +126,10 @@ public class ExternalSchedulerDiscoveryThread extends Thread {
         PolicyUnit policy = createFromDiscoveryUnit(discovery, type);
         if (policyUnitId != null) {
             policy.setId(policyUnitId);
-            getPolicyUnitDao().update(policy);
+            policyUnitDao.update(policy);
         } else {
             policy.setId(Guid.newGuid());
-            getPolicyUnitDao().save(policy);
+            policyUnitDao.save(policy);
         }
     }
 
@@ -144,7 +148,4 @@ public class ExternalSchedulerDiscoveryThread extends Thread {
         return policy;
     }
 
-    public PolicyUnitDao getPolicyUnitDao() {
-        return DbFacade.getInstance().getPolicyUnitDao();
-    }
 }

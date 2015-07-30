@@ -19,7 +19,6 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -27,7 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.network.host.HostNicVfsConfigHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
-import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscoveryThread;
+import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscovery;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerFactory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingCpuCores;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingMemory;
@@ -61,6 +60,7 @@ import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -81,7 +81,7 @@ public class SchedulingManager implements BackendService {
     @Inject
     private MigrationHandler migrationHandler;
     @Inject
-    private Instance<ExternalSchedulerDiscoveryThread> exSchedulerDiscoveryProvider;
+    private ExternalSchedulerDiscovery exSchedulerDiscovery;
     @Inject
     private DbFacade dbFacade;
     private PendingResourceManager pendingResourceManager;
@@ -119,17 +119,27 @@ public class SchedulingManager implements BackendService {
         log.info("Initializing Scheduling manager");
         loadPolicyUnits();
         loadClusterPolicies();
-        ExternalSchedulerDiscoveryThread discoveryThread = exSchedulerDiscoveryProvider.get();
-        if (Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled)) {
-            log.info("Starting external scheduler discovery thread");
-            discoveryThread.start();
-        } else {
-            discoveryThread.markAllExternalPoliciesAsDisabled();
-            log.info("External scheduler disabled, discovery skipped");
-        }
+        loadExternalScheduler();
         enableLoadBalancer();
         enableHaReservationCheck();
         log.info("Initialized Scheduling manager");
+    }
+
+    protected void loadExternalScheduler() {
+        if (Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled)) {
+            log.info("Starting external scheduler discovery thread");
+            ThreadPoolUtil.execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (exSchedulerDiscovery.discover()) {
+                        reloadPolicyUnits();
+                    }
+                }
+            });
+        } else {
+            exSchedulerDiscovery.markAllExternalPoliciesAsDisabled();
+            log.info("External scheduler disabled, discovery skipped");
+        }
     }
 
     public void reloadPolicyUnits() {
