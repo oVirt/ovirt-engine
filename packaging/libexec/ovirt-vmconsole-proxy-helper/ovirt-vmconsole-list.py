@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import argparse
+import contextlib
 import json
 import logging
 import os
@@ -28,7 +29,8 @@ import ovirt_vmconsole_conf as config
 from ovirt_engine import configfile, service, ticket
 
 
-HTTP_STATUS_CODE_SUCCESS = 200
+_HTTP_STATUS_CODE_SUCCESS = 200
+_LOGGER_NAME = 'ovirt.engine.vmconsole.helper'
 
 
 def make_ticket_encoder(cfg_file):
@@ -40,33 +42,45 @@ def make_ticket_encoder(cfg_file):
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description='oVirt-vmconsole-proxy helper tool')
+        description='ovirt-vmconsole-proxy helper tool')
+    parser.add_argument(
+        '--debug', default=False, action='store_true',
+        help='enable debug log',
+    )
     parser.add_argument(
         '--version', metavar='V', type=int, nargs='?', default=1,
-        help='version of the protocol to use')
+        help='version of the protocol to use',
+    )
     subparsers = parser.add_subparsers(
         dest='entity',
-        help='subcommand help')
+        help='subcommand help',
+    )
 
     parser_consoles = subparsers.add_parser(
         'consoles',
-        help='list available consoles')
+        help='list available consoles',
+    )
     parser_consoles.add_argument(
         '--entityid', nargs='?', type=str, default='',
-        help='entity ID where needed')
+        help='entity ID where needed',
+    )
 
     parser_keys = subparsers.add_parser(
         'keys',
-        help='list available keys')
+        help='list available keys',
+    )
     parser_keys.add_argument(
         '--keyfp', nargs='?', type=str, default='',
-        help='list only the keys matching the given fingerprint')
+        help='list only the keys matching the given fingerprint',
+    )
     parser_keys.add_argument(
         '--keytype', nargs='?', type=str, default='',
-        help='list only the keys matching the given key type (e.g. ssh-rsa)')
+        help='list only the keys matching the given key type (e.g. ssh-rsa)',
+    )
     parser_keys.add_argument(
         '--keycontent', nargs='?', type=str, default='',
-        help='list only the keys matching the given content')
+        help='list only the keys matching the given content',
+    )
 
     return parser.parse_args()
 
@@ -113,12 +127,15 @@ def handle_response(res_string):
 def main():
     service.setupLogger()
 
-    logger = logging.getLogger('ovirt')
+    logger = logging.getLogger(_LOGGER_NAME)
 
     try:
         args = parse_args()
 
         cfg_file = configfile.ConfigFile([config.ENGINE_VMPROXY_VARS])
+
+        if cfg_file.getboolean('DEBUG') or args.debug:
+            logger.setLevel(logging.DEBUG)
 
         base_url = (
             # debug, emergency override
@@ -126,7 +143,7 @@ def main():
             cfg_file.get('ENGINE_BASE_URL')
         )
 
-        logging.debug('using engine base url: %s', base_url)
+        logger.debug('using engine base url: %s', base_url)
 
         enc = make_ticket_encoder(cfg_file)
         data = enc.encode(json.dumps(make_request(args)))
@@ -138,15 +155,17 @@ def main():
                 'Content-Length': len(data),
             },
         )
-        res = urllib2.urlopen(req)
 
-        if res.getcode() != HTTP_STATUS_CODE_SUCCESS:
-            raise RuntimeError('Engine call failed: code=%d', res.getcode())
-
-        print(handle_response(res.read()))
+        with contextlib.closing(urllib2.urlopen(req)) as res:
+            if res.getcode() != _HTTP_STATUS_CODE_SUCCESS:
+                logger.error('Engine call failed: code=%d',
+                             res.getcode())
+            else:
+                print(handle_response(res.read()))
 
     except Exception as ex:
-        logger.error('%s', str(ex))
+        logger.error('Error: %s', ex)
+        logger.debug('Exception', exc_info=True)
         return 1
     else:
         return 0
