@@ -18,8 +18,6 @@
 
 """vmconsole proxy configuration plugin."""
 
-import os.path
-
 import gettext
 
 from otopi import constants as otopicons
@@ -246,38 +244,6 @@ class Plugin(plugin.PluginBase):
         })
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=ovmpcons.Stages.CONFIG_VMCONSOLE_PROXY_CUSTOMIZATION,
-        condition=lambda self: self.environment[
-            ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
-        ],
-        before=(
-            osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
-        ),
-        after=(
-            osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
-            ovmpcons.Stages.CONFIG_VMCONSOLE_ENGINE_CUSTOMIZATION,
-        ),
-    )
-    def customizationVMConsoleProxy(self):
-        if self.environment[
-            ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
-        ]:
-            configd_path = self.dialog.queryString(
-                name='VMCONSOLE_PROXY_CONFIGD_PATH',
-                note=_(
-                    'ovirt-vmconsole-proxy config '
-                    'directory path [@DEFAULT@]: '
-                ),
-                prompt=True,
-                default=ovmpcons.FileLocations.OVIRT_VMCONSOLE_PROXY_CONFIGD
-            )
-
-            self.environment[
-                ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIGD_PATH
-            ] = configd_path
-
-    @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: self.environment[
             ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
@@ -315,69 +281,26 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        condition=lambda self: self.environment[
-            ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
-        ],
+        condition=lambda self: (
+            self.environment[
+                ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
+            ] and
+            not self.environment[
+                osetupcons.CoreEnv.DEVELOPER_MODE
+            ]
+        ),
     )
     def _miscConfigVMConsoleProxy(self):
-
-        content = (
-            "[proxy]\n"
-            "key_list = exec {helper} --version {version} keys\n"
-            "console_list = exec {helper} --version {version} "
-            "consoles --entityid {entityid}\n"
-        ).format(
-            helper=(
-                ovmpcons.FileLocations.OVIRT_VMCONSOLE_PROXY_ENGINE_HELPER
-            ),
-            version='{version}',  # pass through to vmconsole
-            entityid='{entityid}'  # ditto
-        )
-
-        # shortcut
-        conf_file = os.path.join(
-            ovmpcons.FileLocations.ENGINE_VMCONSOLE_PROXY_DIR,
-            ovmpcons.FileLocations.
-            OVIRT_VMCONSOLE_PROXY_CONFIG_ENGINE_SETUP_FILE
-        )
-
-        # make a copy in engine's dir as reference
-        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-            filetransaction.FileTransaction(
-                name=conf_file,
-                content=content,
-                modifiedList=self.environment[
-                    otopicons.CoreEnv.MODIFIED_FILES
-                ],
-            )
-        )
-
-        if not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
+        with open(ovmpcons.FileLocations.OVIRT_VMCONSOLE_PROXY_CONFIG) as f:
             self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
                 filetransaction.FileTransaction(
-                    name=os.path.join(
-                        self.environment[
-                            ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIGD_PATH
-                        ],
+                    name=(
                         ovmpcons.FileLocations.
                         OVIRT_VMCONSOLE_PROXY_CONFIG_ENGINE_SETUP_FILE
                     ),
-                    content=content,
+                    content=f.read(),
                     modifiedList=self.environment[
                         otopicons.CoreEnv.MODIFIED_FILES
-                    ],
-                )
-            )
-        else:
-            self.dialog.note(
-                '{text}'
-                '\n'
-                'cp -p {conf_file} {vmconsole_confdir}\n'
-                '\n'.format(
-                    text=ovmpcons.Const.MANUAL_INTERVENTION_TEXT,
-                    conf_file=conf_file,
-                    vmconsole_confdir=self.environment[
-                        ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIGD_PATH
                     ],
                 )
             )

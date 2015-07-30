@@ -50,6 +50,7 @@ ovirt-engine.spec
 packaging/bin/engine-prolog.sh
 packaging/bin/pki-common.sh
 packaging/conf/notifier-logging.properties
+packaging/conf/ovirt-vmconsole-proxy.conf
 packaging/etc/engine-manage-domains/engine-manage-domains.conf
 packaging/etc/engine.conf.d/README
 packaging/etc/notifier/notifier.conf.d/README

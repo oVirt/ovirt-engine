@@ -66,12 +66,20 @@ class FileLocations(object):
     OVIRT_ENGINE_VMCONSOLE_PROXY_CONFIG = \
         vmpconfig.ENGINE_VMCONSOLE_PROXY_CONFIG
 
+    OVIRT_SETUP_DATADIR = vmpconfig.SETUP_DATADIR
+
     OVIRT_ENGINE_VMCONSOLE_PROXY_CONFIGD = (
         '%s.d' % OVIRT_ENGINE_VMCONSOLE_PROXY_CONFIG
     )
     OVIRT_ENGINE_VMCONSOLE_PROXY_CONFIG_SETUP = os.path.join(
         OVIRT_ENGINE_VMCONSOLE_PROXY_CONFIGD,
         '10-setup.conf',
+    )
+
+    OVIRT_VMCONSOLE_PROXY_CONFIG = os.path.join(
+        OVIRT_SETUP_DATADIR,
+        'conf',
+        'ovirt-vmconsole-proxy.conf'
     )
 
     OVIRT_ENGINE_PKIDIR = vmpconfig.ENGINE_PKIDIR
@@ -110,16 +118,14 @@ class FileLocations(object):
     # we default to absolute path because this is an
     # external package.
     # sync with ovirt-vmconsole-proxy
-    OVIRT_VMCONSOLE_PROXY_CONFIGD = os.path.join(
+    OVIRT_VMCONSOLE_PROXY_CONFIG_ENGINE_SETUP_FILE = os.path.join(
         '/',
         'etc',
         'ovirt-vmconsole',
         'ovirt-vmconsole-proxy',
-        'conf.d'
+        'conf.d',
+        '50-ovirt-vmconsole-proxy.conf',
     )
-
-    OVIRT_VMCONSOLE_PROXY_CONFIG_ENGINE_SETUP_FILE = \
-        '10-engine-setup.conf'
 
     OVIRT_VMCONSOLE_PROXY_ENGINE_HELPER = \
         vmpconfig.VMCONSOLE_PROXY_HELPER_PATH
@@ -180,9 +186,6 @@ class ConfigEnv(object):
 
     VMCONSOLE_PROXY_PORT = \
         'OVESETUP_VMCONSOLE_PROXY_CONFIG/vmconsoleProxyPort'
-
-    VMCONSOLE_PROXY_CONFIGD_PATH = \
-        'OVESETUP_VMCONSOLE_PROXY_CONFIG/vmconsoleProxyConfigdPath'
 
     @osetupattrs(
         answerfile=True,

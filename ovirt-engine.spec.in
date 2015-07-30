@@ -1148,6 +1148,7 @@ fi
 
 %files setup-plugin-vmconsole-proxy-helper
 
+%{engine_data}/conf/ovirt-vmconsole-proxy.conf
 %{engine_data}/firewalld/vmconsole-proxy/
 %{engine_data}/setup/ovirt_engine_setup/vmconsole_proxy_helper/
 %{engine_data}/setup/plugins/*/vmconsole_proxy_helper/

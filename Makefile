@@ -170,7 +170,6 @@ BUILD_TARGET=install
 	-e "s|@PEP8@|$(PEP8)|g" \
 	-e "s|@PYFLAKES@|$(PYFLAKES)|g" \
 	-e "s|@DEVMODE@|$(BUILD_DEV)|g" \
-	-e "s|@VMCONSOLE_PROXY_HELPER_CONF_DIR@|$(SYSCONF_DIR)/ovirt-vmconsole/ovirt-vmconsole-proxy-helper/conf|g" \
 	-e "s|@VMCONSOLE_PROXY_HELPER_PATH@|$(LIBEXEC_DIR)/ovirt-vmconsole-proxy-helper/ovirt-vmconsole-list.py|g" \
 	$< > $@
 
@@ -181,6 +180,7 @@ GENERATED = \
 	packaging/bin/engine-prolog.sh \
 	packaging/bin/pki-common.sh \
 	packaging/conf/notifier-logging.properties \
+	packaging/conf/ovirt-vmconsole-proxy.conf \
 	packaging/etc/engine-manage-domains/engine-manage-domains.conf \
 	packaging/etc/engine.conf.d/README \
 	packaging/etc/notifier/notifier.conf.d/README \

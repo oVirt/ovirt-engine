@@ -323,6 +323,19 @@ $ make maven BUILD_GWT=0 BUILD_UT=1 EXTRA_BUILD_FLAGS="-P enable-dao-tests \
     -D engine.db.password=engine \
     -D engine.db.url=jdbc:postgresql://localhost/engine_dao_tests"
 
+VMCONSOLE
+
+After the environment is setup and installed, some adjustments are required.
+
+Copy vmconsole-host configuration.
+
+$ sudo cp -p  "${PREFIX}/share/ovirt-engine/conf/ovirt-vmconsole-proxy.conf \
+	/etc/ovirt-vmconsole/ovirt-vmconsole-proxy/conf.d/50-ovirt-vmconsole-proxy.conf
+
+If selinux is enabled on your machine, set type on vmconsole helper using:
+
+$ sudo chcon --type=bin_t "${PREFIX}/libexec/ovirt-vmconsole-proxy-helper/ovirt-vmconsole-list.py"
+
 RPM PACKAGING
 
 $ make dist
