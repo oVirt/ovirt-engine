@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CreateVolumeVDSCommandParameters extends StorageDomainVdsCommandParameters {
@@ -83,17 +84,14 @@ public class CreateVolumeVDSCommandParameters extends StorageDomainVdsCommandPar
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, imageSizeInBytes = %s, volumeFormat = %s, srcImageGroupId = %s, srcImageId = %s," +
-                " newImageGroupId = %s, newImageId = %s, description = %s",
-                super.toString(),
-                getImageSizeInBytes(),
-                getVolumeFormat(),
-                getSrcImageGroupId(),
-                getSrcImageId(),
-                getNewImageGroupId(),
-                getNewImageID(),
-                getDescription());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb).append("imageSizeInBytes", getImageSizeInBytes())
+                .append("volumeFormat", getVolumeFormat())
+                .append("srcImageGroupId", getSrcImageGroupId())
+                .append("srcImageId", getSrcImageId())
+                .append("newImageGroupId", getNewImageGroupId())
+                .append("newImageId", getNewImageID())
+                .append("description", getDescription());
     }
 
     public CreateVolumeVDSCommandParameters() {

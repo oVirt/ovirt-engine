@@ -8,6 +8,7 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 public class HostSetupNetworksVdsCommandParameters extends VdsIdAndVdsVDSCommandParametersBase {
     private List<HostNetwork> networks;
@@ -90,19 +91,14 @@ public class HostSetupNetworksVdsCommandParameters extends VdsIdAndVdsVDSCommand
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, rollbackOnFailure = %s, conectivityTimeout = %s, hostNetworkQosSupported = %s, %n"
-                + "\tnetworks = %s,%n"
-                + "\tremovedNetworks=%s,%n"
-                + "\tbonds=%s,%n"
-                + "\tremovedBonds=%s",
-                super.toString(),
-                isRollbackOnFailure(),
-                getConectivityTimeout(),
-                getHostNetworkQosSupported(),
-                Entities.collectionToString(getNetworks(), "\t\t"),
-                getRemovedNetworks(),
-                Entities.collectionToString(getBonds(), "\t\t"),
-                getRemovedBonds());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("rollbackOnFailure", isRollbackOnFailure())
+                .append("conectivityTimeout", getConectivityTimeout())
+                .append("hostNetworkQosSupported", getHostNetworkQosSupported())
+                .append("networks", Entities.collectionToString(getNetworks(), "\t\t"))
+                .append("removedNetworks", getRemovedNetworks())
+                .append("bonds", Entities.collectionToString(getBonds(), "\t\t"))
+                .append("removedBonds", getBonds());
     }
 }

@@ -23,7 +23,7 @@ public class VDSParametersBase {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return appendAttributes(ToStringBuilder.forInstance(this)).build();
     }
 }

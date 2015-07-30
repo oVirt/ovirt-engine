@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 
 import org.ovirt.engine.core.common.businessentities.LocationInfo;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 public class CopyVolumeDataVDSCommandParameters extends VdsIdVDSCommandParametersBase {
 
@@ -45,11 +46,8 @@ public class CopyVolumeDataVDSCommandParameters extends VdsIdVDSCommandParameter
     }
 
     @Override
-    public String toString() {
-        return "CopyVolumeDataVDSCommandParameters{" +
-                "srcInfo=" + srcInfo +
-                ", dstInfo=" + dstInfo +
-                ", collapse=" + collapse +
-                '}';
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("srcInfo", srcInfo).append("dstInfo", dstInfo).append("collapse", collapse);
     }
 }

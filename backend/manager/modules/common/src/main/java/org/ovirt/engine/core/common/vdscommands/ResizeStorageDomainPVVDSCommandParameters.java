@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ResizeStorageDomainPVVDSCommandParameters extends StorageDomainIdParametersBase {
@@ -21,7 +22,7 @@ public class ResizeStorageDomainPVVDSCommandParameters extends StorageDomainIdPa
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, device = %s", super.toString(), getDevice());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb).append("device", getDevice());
     }
 }

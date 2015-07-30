@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerCommand;
@@ -38,8 +39,8 @@ public class SetNumberOfCpusVDSCommand<P extends SetNumberOfCpusVDSCommand.Param
         }
 
         @Override
-        public String toString() {
-            return String.format("%s, numberOfCpus=%s", super.toString(), getNumberOfCpus());
+        protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+            return super.appendAttributes(tsb).append("numberOfCpus", getNumberOfCpus());
         }
     }
 }
