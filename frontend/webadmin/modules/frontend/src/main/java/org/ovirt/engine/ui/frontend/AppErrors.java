@@ -868,6 +868,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action cancel migration")
     String VAR__ACTION__CANCEL_MIGRATE();
 
+    @DefaultStringValue("$action cancel conversion")
+    String VAR__ACTION__CANCEL_CONVERSION();
+
     @DefaultStringValue("$action attach VM to")
     String VAR__ACTION__ATTACH_DESKTOP_TO();
 
@@ -2745,6 +2748,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot cancel migration for non migrating VM.")
     String VM_CANNOT_CANCEL_MIGRATION_WHEN_VM_IS_NOT_MIGRATING();
+
+    @DefaultStringValue("Cannot cancel conversion for non converted VM.")
+    String VM_CANNOT_CANCEL_CONVERSION_WHEN_VM_IS_NOT_BEING_CONVERTED();
 
     @DefaultStringValue("Cannot ${action} ${type} to a Snapshot that is not being previewed. Please select the correct Snapshot to restore to: Either the one being previewed, or the one before the preview.")
     String ACTION_TYPE_FAILED_VM_SNAPSHOT_NOT_IN_PREVIEW();
