@@ -300,11 +300,11 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
             }
         }
         else if (ev.matchesDefinition(NfsStorageModel.pathChangedEventDefinition)) {
-            nfsStorageModel_PathChanged(sender, args);
+            nfsStorageModel_PathChanged(sender);
         }
     }
 
-    private void nfsStorageModel_PathChanged(Object sender, EventArgs args) {
+    private void nfsStorageModel_PathChanged(Object sender) {
         NfsStorageModel senderModel = (NfsStorageModel) sender;
 
         for (Object item : getStorageModels()) {

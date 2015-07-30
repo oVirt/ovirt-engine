@@ -120,20 +120,6 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         destroyCommand = value;
     }
 
-    protected Object[] getSelectedKeys() {
-        if (getSelectedItems() == null) {
-            return new Object[0];
-        }
-        else {
-            ArrayList<Object> items = new ArrayList<Object>();
-            for (Object item : getSelectedItems()) {
-                StorageDomain i = (StorageDomain) item;
-                items.add(i.getId());
-            }
-            return items.toArray(new Object[] {});
-        }
-    }
-
     @Inject
     public StorageListModel(final StorageGeneralModel storageGeneralModel,
             final StorageDataCenterListModel storageDataCenterListModel,
@@ -1963,10 +1949,6 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
     private UICommand createCancelCommand(String commandName) {
         return UICommand.createCancelUiCommand(commandName, this);
-    }
-
-    public DiskProfileListModel getDiskProfileListModel() {
-        return diskProfileListModel;
     }
 
     private boolean isConnectionOverriden() {
