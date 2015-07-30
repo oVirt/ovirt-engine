@@ -383,6 +383,12 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return getMainModel().getCancelMigrateCommand();
             }
         });
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.cancelConvertVm()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getCancelConvertCommand();
+            }
+        });
         // TODO: separator
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.makeTemplateVm()) {
             @Override
