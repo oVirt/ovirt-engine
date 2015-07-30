@@ -222,6 +222,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_IMPORT_CLONE_NOT_COLLAPSED);
         }
 
+        // Register can never happen with copyCollapse = true since there's no copy operation involved.
         if (isImagesAlreadyOnTarget() && getParameters().getCopyCollapse()) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_IMPORT_UNREGISTERED_NOT_COLLAPSED);
         }
