@@ -53,7 +53,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -262,20 +261,6 @@ public class ImportVmCommandTest {
         sd.setStatus(StorageDomainStatus.Active);
         sd.setAvailableDiskSize(2);
         return sd;
-    }
-
-    protected List<DiskImage> mockCreateDiskDummiesForSpaceValidations() {
-        List<DiskImage> disksList = new ArrayList<>();
-        for (int i = 0; i < 3; ++i) {
-            DiskImage diskImage = new DiskImage();
-            diskImage.setActive(false);
-            diskImage.setId(Guid.newGuid());
-            diskImage.setImageId(Guid.newGuid());
-            diskImage.setParentId(Guid.newGuid());
-            diskImage.setImageStatus(ImageStatus.OK);
-            disksList.add(diskImage);
-        }
-        return disksList;
     }
 
     @Test
