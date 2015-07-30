@@ -10,8 +10,6 @@ import java.util.SortedMap;
 
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.OptGroupElement;
 import com.google.gwt.dom.client.OptionElement;
@@ -69,15 +67,9 @@ public abstract class GroupedListModelListBox<T> extends ListModelListBox<T> {
     /**
      * Set the value, do nothing if the value is null.
      */
-    public void setValue(final T value) {
+    public void setValue(T value) {
         if (value != null) {
-            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-                @Override
-                public void execute() {
-                    GroupedListModelListBox.super.setValue(value, true);
-                }
-            });
+            super.setValue(value, true);
         }
     }
 
