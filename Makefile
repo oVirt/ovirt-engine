@@ -176,8 +176,8 @@ BUILD_TARGET=install
 
 # List of files that will be generated from templates:
 GENERATED = \
-	ovirt-engine.spec \
 	build/python-check.sh \
+	ovirt-engine.spec \
 	packaging/bin/engine-prolog.sh \
 	packaging/bin/pki-common.sh \
 	packaging/conf/notifier-logging.properties \
@@ -187,6 +187,8 @@ GENERATED = \
 	packaging/etc/ovirt-fence-kdump-listener.conf.d/README \
 	packaging/etc/ovirt-vmconsole-proxy-helper.conf.d/README \
 	packaging/etc/ovirt-websocket-proxy.conf.d/README \
+	packaging/libexec/ovirt-vmconsole-proxy-helper/ovirt-vmconsole-proxy-helper.conf \
+	packaging/libexec/ovirt-vmconsole-proxy-helper/ovirt_vmconsole_conf.py \
 	packaging/pythonlib/ovirt_engine/config.py \
 	packaging/services/ovirt-engine-notifier/config.py \
 	packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.conf \
@@ -200,8 +202,6 @@ GENERATED = \
 	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.conf \
 	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.systemd \
 	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.sysv \
-	packaging/libexec/ovirt-vmconsole-proxy-helper/ovirt_vmconsole_conf.py \
-	packaging/libexec/ovirt-vmconsole-proxy-helper/ovirt-vmconsole-proxy-helper.conf \
 	packaging/services/ovirt-websocket-proxy/config.py \
 	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.conf \
 	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.systemd \
@@ -210,8 +210,8 @@ GENERATED = \
 	packaging/setup/ovirt_engine_setup/config.py \
 	packaging/setup/ovirt_engine_setup/engine/config.py \
 	packaging/setup/ovirt_engine_setup/engine_common/config.py \
-	packaging/setup/ovirt_engine_setup/websocket_proxy/config.py \
 	packaging/setup/ovirt_engine_setup/vmconsole_proxy_helper/config.py \
+	packaging/setup/ovirt_engine_setup/websocket_proxy/config.py \
 	packaging/sys-etc/logrotate.d/ovirt-engine \
 	packaging/sys-etc/logrotate.d/ovirt-engine-notifier \
 	packaging/sys-etc/logrotate.d/ovirt-engine-setup \
