@@ -269,6 +269,7 @@ fi
 
 # Install taskcleaner procedures
 dbfunc_psql_die --file="$(dirname "$0")/taskcleaner_sp.sql" > /dev/null
+dbfunc_psql_die --file="$(dirname "$0")/taskcleaner_sp_3_5.sql" > /dev/null
 
 # Execute
 dbfunc_psql_die --command="${CMD1}${CMD2}"
