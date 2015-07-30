@@ -162,9 +162,9 @@ class Plugin(plugin.PluginBase):
                 default=True,
             )
 
-        self.environment[
-            ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
-        ] = enabled
+            self.environment[
+                ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
+            ] = enabled
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
