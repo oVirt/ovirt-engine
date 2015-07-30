@@ -457,6 +457,8 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc deleteV2VJob(String jobUUID);
 
+    StatusOnlyReturnForXmlRpc abortV2VJob(String jobUUID);
+
     StatusOnlyReturnForXmlRpc glusterSnapshotScheduleOverride(boolean force);
 
     StatusOnlyReturnForXmlRpc glusterSnapshotScheduleReset();

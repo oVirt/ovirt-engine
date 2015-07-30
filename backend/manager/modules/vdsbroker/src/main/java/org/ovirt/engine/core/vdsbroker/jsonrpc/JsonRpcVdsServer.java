@@ -2003,6 +2003,16 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturnForXmlRpc abortV2VJob(String jobUUID) {
+        JsonRpcRequest request =
+                new RequestBuilder("Host.abortV2VJob")
+        .withParameter("jobid", jobUUID)
+        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
     public StatusOnlyReturnForXmlRpc glusterSnapshotScheduleOverride(boolean force) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.snapshotScheduleOverride").withParameter("force", force).build();

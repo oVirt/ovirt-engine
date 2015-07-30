@@ -1947,6 +1947,15 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturnForXmlRpc abortV2VJob(String jobUUID) {
+        try {
+            return new StatusOnlyReturnForXmlRpc(vdsServer.abortV2VJob(jobUUID));
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public StatusOnlyReturnForXmlRpc glusterSnapshotScheduleOverride(boolean force) {
         try {
             return new StatusOnlyReturnForXmlRpc(vdsServer.glusterSnapshotScheduleOverride(force));
