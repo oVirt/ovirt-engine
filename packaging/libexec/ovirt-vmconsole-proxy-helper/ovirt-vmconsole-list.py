@@ -129,12 +129,16 @@ def main():
         logging.debug('using engine base url: %s', base_url)
 
         enc = make_ticket_encoder(cfg_file)
-        req = enc.encode(json.dumps(make_request(args)))
-
-        res = urllib2.urlopen(
+        data = enc.encode(json.dumps(make_request(args)))
+        req = urllib2.Request(
             urlparse.urljoin(base_url, 'services/vmconsole-proxy'),
-            req
+            data=data,
+            headers={
+                'Content-Type': 'text/plain',
+                'Content-Length': len(data),
+            },
         )
+        res = urllib2.urlopen(req)
 
         if res.getcode() != HTTP_STATUS_CODE_SUCCESS:
             raise RuntimeError('Engine call failed: code=%d', res.getcode())
