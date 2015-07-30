@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeSnapshotActionPa
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -23,6 +25,7 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeInfoVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeSnapshotActionVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -114,6 +117,29 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
                 return false;
             } else {
                 getGlusterVolumeSnapshotDao().removeByName(volume.getId(), snapshotName);
+
+                // Sync the new bricks of the volume immediately
+                VDS upServer = getClusterUtils().getRandomUpServer(volume.getClusterId());
+                VDSReturnValue volDetailsRetVal =
+                        runVdsCommand(VDSCommandType.GetGlusterVolumeInfo,
+                                new GlusterVolumeInfoVDSParameters(upServer.getId(),
+                                        volume.getClusterId(),
+                                        volume.getName()));
+                GlusterVolumeEntity fetchedVolume =
+                        ((Map<Guid, GlusterVolumeEntity>) volDetailsRetVal.getReturnValue()).get(volume.getId());
+                List<GlusterBrickEntity> fetchedBricks = fetchedVolume.getBricks();
+                if (fetchedBricks != null) {
+                    getGlusterBrickDao().removeAllInBatch(volume.getBricks());
+                    for (GlusterBrickEntity fetchdBrick : fetchedVolume.getBricks()) {
+                        if (fetchdBrick.getServerId() != null) {
+                            fetchdBrick.setStatus(GlusterStatus.UP);
+                            getGlusterBrickDao().save(fetchdBrick);
+                        } else {
+                            log.warn("Invalid server details for brick " + fetchdBrick.getName()
+                                    + ". Not adding now.");
+                        }
+                    }
+                }
             }
         }
 
@@ -136,7 +162,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
                 return false;
             }
 
-            try (EngineLock lock = acquireEngineLock(session.getSlaveVolumeId(), LockingGroup.GLUSTER_SNAPSHOT)) {
+            try (EngineLock lock = acquireEngineLock(slaveVolume.getClusterId(), LockingGroup.GLUSTER_SNAPSHOT)) {
                 if (!restoreVolumeToSnapshot(slaveUpServer.getId(), slaveVolume, getSnapshot().getSnapshotName())) {
                     return false;
                 }
@@ -261,12 +287,14 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
         }
 
         // Restore the master volume to the said snapshot
-        if (!restoreVolumeToSnapshot(upServer.getId(), getGlusterVolume(), getParameters().getSnapshotName())) {
-            if (!georepSessions.isEmpty()) {
-                handleVdsError(AuditLogType.GLUSTER_MASTER_VOLUME_SNAPSHOT_RESTORE_FAILED,
-                        EngineError.FailedToRestoreMasterVolumeDuringVolumeSnapshotRestore.name());
+        try (EngineLock lock = acquireEngineLock(getGlusterVolume().getClusterId(), LockingGroup.GLUSTER_SNAPSHOT)) {
+            if (!restoreVolumeToSnapshot(upServer.getId(), getGlusterVolume(), getParameters().getSnapshotName())) {
+                if (!georepSessions.isEmpty()) {
+                    handleVdsError(AuditLogType.GLUSTER_MASTER_VOLUME_SNAPSHOT_RESTORE_FAILED,
+                            EngineError.FailedToRestoreMasterVolumeDuringVolumeSnapshotRestore.name());
+                }
+                return;
             }
-            return;
         }
 
         // Start the slave volumes

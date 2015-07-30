@@ -1543,6 +1543,15 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
+    public GlusterVolumesListReturnForXmlRpc glusterVolumeInfo(Guid clusterId, String volumeName) {
+        JsonRpcRequest request =
+                new RequestBuilder("GlusterVolume.list").withParameter("volumeName", volumeName).build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request).withIgnoreResponseKey();
+        return new GlusterVolumesListReturnForXmlRpc(clusterId, response);
+    }
+
+    @Override
     public GlusterVolumeProfileInfoReturnForXmlRpc glusterVolumeProfileInfo(Guid clusterId, String volumeName, boolean nfs) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.profileInfo").withParameter("volumeName", volumeName)
