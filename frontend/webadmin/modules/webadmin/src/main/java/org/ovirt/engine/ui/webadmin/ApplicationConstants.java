@@ -1900,6 +1900,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Cancel Migration")
     String cancelMigrationVm();
 
+    @DefaultStringValue("Cancel Conversion")
+    String cancelConvertVm();
+
     @DefaultStringValue("Make Template")
     String makeTemplateVm();
 

@@ -229,6 +229,16 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         privateCancelMigrateCommand = value;
     }
 
+    private UICommand cancelConvertCommand;
+
+    public UICommand getCancelConvertCommand() {
+        return cancelConvertCommand;
+    }
+
+    private void setCancelConvertCommand(UICommand value) {
+        cancelConvertCommand = value;
+    }
+
     private UICommand privateMigrateCommand;
 
     public UICommand getMigrateCommand() {
@@ -438,6 +448,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         setConsoleConnectCommand(new UICommand("ConsoleConnectCommand", this)); //$NON-NLS-1$
         setMigrateCommand(new UICommand("Migrate", this)); //$NON-NLS-1$
         setCancelMigrateCommand(new UICommand("CancelMigration", this)); //$NON-NLS-1$
+        setCancelConvertCommand(new UICommand("CancelConversion", this)); //$NON-NLS-1$
         setNewTemplateCommand(new UICommand("NewTemplate", this)); //$NON-NLS-1$
         setRunOnceCommand(new UICommand("RunOnce", this)); //$NON-NLS-1$
         setExportCommand(new UICommand("Export", this)); //$NON-NLS-1$
@@ -1325,6 +1336,15 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                                                  }, null);
     }
 
+    private void cancelConversion() {
+        List<VdcActionParametersBase> parameters = new ArrayList<>();
+        for (VM vm : getSelectedItems()) {
+            parameters.add(new VmOperationParameterBase(vm.getId()));
+        }
+
+        Frontend.getInstance().runMultipleAction(VdcActionType.CancelConvertVm, parameters);
+    }
+
     private void onMigrate() {
         MigrateModel model = (MigrateModel) getWindow();
 
@@ -1994,6 +2014,20 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
         getConsoleConnectCommand().setIsExecutionAllowed(singleVmSelected && isConsoleCommandsExecutionAllowed());
         getEditConsoleCommand().setIsExecutionAllowed(isConsoleEditEnabled());
+        getCancelConvertCommand().setIsExecutionAllowed(isSelectedVmBeingConverted());
+    }
+
+    private boolean isSelectedVmBeingConverted() {
+        List<VM> vms = getSelectedItems();
+        if (vms != null) {
+            for (VM vm : vms) {
+                int conversionProgress = vm.getBackgroundOperationProgress();
+                if (conversionProgress >= 0 && conversionProgress < 100) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private boolean isConsoleEditEnabled() {
@@ -2167,6 +2201,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         }
         else if (command == getCancelMigrateCommand()) {
             cancelMigration();
+        }
+        else if (command == getCancelConvertCommand()) {
+            cancelConversion();
         }
         else if ("OnShutdown".equals(command.getName())) { //$NON-NLS-1$
             onShutdown();
