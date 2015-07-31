@@ -99,11 +99,14 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case GlusterHostStorageDeviceNotFoundException:
         case GlusterHostStorageDeviceInUseException:
         case GlusterHostStorageDeviceMountFailedException:
-        case GlusterHostStorageDeviceMkfsFailedException:
         case GlusterHostStorageDeviceFsTabFoundException:
         case GlusterHostStorageDevicePVCreateFailedException:
         case GlusterHostStorageDeviceLVConvertFailedException:
         case GlusterHostStorageDeviceLVChangeFailedException:
+        case GlusterHostStorageDeviceMakeDirsFailedException:
+        case GlusterHostStorageMountPointInUseException:
+        case GlusterHostStorageDeviceVGCreateFailedException:
+        case GlusterHostStorageDeviceVGScanFailedException:
         case GlusterSnapshotScheduleFlagUpdateFailedException:
         case GlusterDisableSnapshotScheduleFailedException:
             // Capture error from gluster command and record failure
