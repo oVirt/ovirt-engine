@@ -124,7 +124,7 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
             }
         };
         logTimeColumn.makeSortable(AuditLogConditionFieldAutoCompleter.TIME);
-        getTable().addColumn(logTimeColumn, constants.timeEvent(), "150px"); //$NON-NLS-1$
+        getTable().addColumn(logTimeColumn, constants.timeEvent(), "175px"); //$NON-NLS-1$
 
         messageColumn = new AbstractTextColumn<AuditLog>() {
             @Override

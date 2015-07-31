@@ -5,7 +5,6 @@ import java.util.Date;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.text.shared.AbstractRenderer;
 
 /**
@@ -14,18 +13,16 @@ import com.google.gwt.text.shared.AbstractRenderer;
  */
 public class FullDateTimeRenderer extends AbstractRenderer<Date> {
 
-    private static final String japaneseLocale = "ja"; //$NON-NLS-1$
-
     private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
-    private DateTimeFormat formatter;
+    private DateTimeFormat formatPattern = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM);
 
     /**
      * Create a new FullDateTimeRenderer with a default pattern of 'yyyy-MMM-dddd HH:mm'.
      * (Uses only 'MM' for month is locale is set to Japanese.)
      */
     public FullDateTimeRenderer() {
-        this(true, false);
+        this(true);
     }
 
     /**
@@ -35,20 +32,12 @@ public class FullDateTimeRenderer extends AbstractRenderer<Date> {
      * Pass 'true' for includeSeconds ('yyyy-MMM-dddd HH:mm:ss') if you want the seconds in the
      * date as well.
      */
-    public FullDateTimeRenderer(boolean includeTime, boolean includeSeconds) {
-        StringBuilder pattern = new StringBuilder();
-        pattern.append("yyyy-MM"); //$NON-NLS-1$
-        if (!LocaleInfo.getCurrentLocale().getLocaleName().startsWith(japaneseLocale)) {
-            pattern.append("M"); // add another M for non-Japanese //$NON-NLS-1$
-        }
-        pattern.append("-dd"); //$NON-NLS-1$
+    public FullDateTimeRenderer(boolean includeTime) {
+        DateTimeFormat newFormat = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM);
         if (includeTime) {
-            pattern.append(", HH:mm"); //$NON-NLS-1$
-            if (includeSeconds) {
-                pattern.append(":ss"); //$NON-NLS-1$
-            }
+            newFormat = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM);
         }
-        formatter = DateTimeFormat.getFormat(pattern.toString());
+        formatPattern = newFormat;
     }
 
     @Override
@@ -56,7 +45,7 @@ public class FullDateTimeRenderer extends AbstractRenderer<Date> {
         if(object == null){
             return constants.notAvailableLabel();
         }
-        return formatter.format(object);
+        return formatPattern.format(object);
     }
 
 }
