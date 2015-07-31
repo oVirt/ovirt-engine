@@ -40,6 +40,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
@@ -244,14 +245,17 @@ public class Frontend implements HasHandlers {
                     final VdcQueryReturnValue result) {
                 try {
                     if (!result.getSucceeded()) {
-                        logger.log(Level.WARNING, "Failure while invoking runQuery [" //$NON-NLS-1$
-                                + result.getExceptionString() + "]"); //$NON-NLS-1$
+
+                        // translate error enums to text
+                        result.setExceptionMessage(getAppErrorsTranslator().translateErrorTextSingle(result.getExceptionString()));
+
+                        logger.log(Level.WARNING, "Failure while invoking runQuery [" + result.getExceptionString() + ", " + result.getExceptionMessage() + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
                         if (getEventsHandler() != null) {
                             ArrayList<VdcQueryReturnValue> failedResult = new ArrayList<VdcQueryReturnValue>();
+
                             failedResult.add(result);
-                            // getEventsHandler().runQueryFailed(failedResult);
-                            String errorMessage = result.getExceptionString();
-                            handleNotLoggedInEvent(errorMessage);
+                            handleNotLoggedInEvent(result.getExceptionString());
                         }
                         if (callback.isHandleFailure()) {
                             callback.getDel().onSuccess(callback.getModel(), result);
