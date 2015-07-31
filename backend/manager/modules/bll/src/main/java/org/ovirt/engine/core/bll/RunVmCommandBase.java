@@ -299,7 +299,9 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     protected final void decreasePendingVm(VmStatic vm) {
         Guid vdsId = getCurrentVdsId();
         schedulingManager.clearPendingVm(vm);
-        getBlockingQueue(vdsId).offer(Boolean.TRUE);
+        if (vdsId != null) {
+            getBlockingQueue(vdsId).offer(Boolean.TRUE);
+        }
     }
 
     /**
