@@ -3,10 +3,11 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.VdsCommand;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.action.gluster.SyncGlusterStorageDevicesParameter;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -15,10 +16,14 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.di.Injector;
 
-public class SyncStorageDevicesCommand<T extends VdsActionParameters> extends VdsCommand<T> {
+public class SyncStorageDevicesCommand<T extends SyncGlusterStorageDevicesParameter> extends VdsCommand<T> {
 
     public SyncStorageDevicesCommand(T parameters) {
         super(parameters);
+    }
+
+    public SyncStorageDevicesCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override
@@ -30,8 +35,14 @@ public class SyncStorageDevicesCommand<T extends VdsActionParameters> extends Vd
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_PROVISIONING_NOT_SUPPORTED_BY_CLUSTER);
         }
 
-        HostValidator validator = new HostValidator(getVds());
-        return validate(validator.isUp());
+        //Host status will not checked in case of force. Storage devices will be synced as part of host install/activation
+        //and host status will not be up during host activation. So BLL will be called with force in this case.
+        if(!getParameters().isForceAction()){
+            HostValidator validator = new HostValidator(getVds());
+            return validate(validator.isUp());
+        }
+
+        return true;
     }
 
     @Override

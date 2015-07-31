@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.gluster.CreateBrickParameters;
+import org.ovirt.engine.core.common.action.gluster.SyncGlusterStorageDevicesParameter;
 import org.ovirt.engine.core.common.businessentities.RaidType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -160,7 +160,7 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
     private void syncStorageDevices() {
         Frontend.getInstance()
                 .runAction(VdcActionType.SyncStorageDevices,
-                        new VdsActionParameters(getEntity().getId()),
+                        new SyncGlusterStorageDevicesParameter(getEntity().getId()),
                         null,
                         true,
                         true);
