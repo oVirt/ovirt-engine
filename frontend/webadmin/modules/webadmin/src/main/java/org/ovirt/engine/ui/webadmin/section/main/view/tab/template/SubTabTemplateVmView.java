@@ -51,7 +51,7 @@ public class SubTabTemplateVmView extends AbstractSubTabTableView<VmTemplate, VM
                 return object.getName();
             }
         };
-        getTable().addColumn(nameColumn, constants.nameVm());
+        getTable().addColumn(nameColumn, constants.nameVm(), "200px"); //$NON-NLS-1$
 
         getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
