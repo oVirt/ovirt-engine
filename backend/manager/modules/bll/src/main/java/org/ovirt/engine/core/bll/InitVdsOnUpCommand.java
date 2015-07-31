@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.action.gluster.SyncGlusterStorageDevicesParameter;
 import org.ovirt.engine.core.common.businessentities.AttestationResultEnum;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
@@ -416,7 +417,18 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                 setNonOperational(NonOperationalReason.GLUSTER_HOST_UUID_NOT_FOUND, null);
             }
         }
+        refreshGlusterStorageDevices();
         return glusterHostUuidFound && initGlusterPeerProcess();
+    }
+
+    private void refreshGlusterStorageDevices() {
+        if(getGlusterUtil().isGlusterBrickProvisioningSupported(getVdsGroup().getCompatibilityVersion(), getVdsGroup().getId())){
+            try{
+                runInternalAction(VdcActionType.SyncStorageDevices, new SyncGlusterStorageDevicesParameter(getVds().getId(), true));
+            } catch (EngineException e) {
+                log.error("Could not refresh storage devices from gluster host '{}'", getVds().getName());
+            }
+        }
     }
 
     /**
