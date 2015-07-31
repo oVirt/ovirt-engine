@@ -199,9 +199,7 @@ AS $procedure$
 BEGIN
   UPDATE host_device
   SET vm_id = NULL
-  WHERE device_name IN (SELECT device
-                        FROM vm_device
-                        WHERE vm_id = v_vm_id AND type = 'hostdev');
+  WHERE vm_id = v_vm_id;
 END; $procedure$
 LANGUAGE plpgsql;
 

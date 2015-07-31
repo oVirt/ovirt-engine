@@ -148,7 +148,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (getVm() != null) {
             needsHostDevices = hostDeviceManager.checkVmNeedsDirectPassthrough(getVm());
         }
-        acquireHostDevicesLock();
     }
 
     @Override
@@ -244,10 +243,17 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (getVdsToRunOn()) {
             VMStatus status = null;
             try {
+                acquireHostDevicesLock();
                 if (connectLunDisks(getVdsId()) && updateCinderDisksConnections()) {
-                    status = createVm();
-                    ExecutionHandler.setAsyncJob(getExecutionContext(), true);
-                    markHostDevicesAsUsed();
+                    if (!checkRequiredHostDevicesAvailability()) {
+                        // if between canDoAction and execute the host-devices were stolen by another VM
+                        // (while the host-device lock wasn't being held) we need to bail here
+                        throw new EngineException(EngineError.HOST_DEVICES_TAKEN_BY_OTHER_VM);
+                    } else {
+                        status = createVm();
+                        ExecutionHandler.setAsyncJob(getExecutionContext(), true);
+                        markHostDevicesAsUsed();
+                    }
                 }
             } catch(EngineException e) {
                 // if the returned exception is such that shoudn't trigger the re-run process,
@@ -260,6 +266,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     throw e;
                 case VDS_NETWORK_ERROR: // probably wrong xml format sent.
                 case PROVIDER_FAILURE:
+                case HOST_DEVICES_TAKEN_BY_OTHER_VM:
                     runningFailed();
                     throw e;
                 default:
@@ -267,6 +274,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 }
 
             } finally {
+                releaseHostDevicesLock();
                 freeLock();
             }
             setActionReturnValue(status);
@@ -288,6 +296,20 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
     }
 
+    /**
+     * Checks if all required Host Devices are available.
+     * Should be called with held host-device lock.
+     * <br>
+     * See {@link #acquireHostDevicesLock()} and {@link #releaseHostDevicesLock()}.
+     **/
+    private boolean checkRequiredHostDevicesAvailability() {
+        if (!needsHostDevices) {
+            return true;
+        }
+        // Only single dedicated host allowed for host devices, verified on canDoActions
+        return hostDeviceManager.checkVmHostDeviceAvailability(getVm(), getVm().getDedicatedVmForVdsList().get(0));
+    }
+
     private void markHostDevicesAsUsed() {
         if (needsHostDevices) {
             hostDeviceManager.allocateVmHostDevices(getVm());
@@ -306,11 +328,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             // Only single dedicated host allowed for host devices, verified on canDoActions
             hostDeviceManager.releaseHostDevicesLock(getVm().getDedicatedVmForVdsList().get(0));
         }
-    }
-
-    @Override
-    protected void freeCustomLocks() {
-        releaseHostDevicesLock();
     }
 
     private void cleanupPassthroughVnics() {
@@ -338,9 +355,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     public void rerun() {
         cleanupPassthroughVnics();
         setFlow(null);
-        // re-acquire the host device lock (if needed) as the canDoAction already expects this
-        // lock to be held (originally acquired in 'postConstruct'
-        acquireHostDevicesLock();
         super.rerun();
     }
 
@@ -994,10 +1008,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                return failCanDoAction(EngineMessage.VMPAYLOAD_CDROM_WITH_CLOUD_INIT);
            }
         }
-        if (needsHostDevices &&
-                // Only single dedicated host allowed for host devices, verified on canDoActions
-                !hostDeviceManager.checkVmHostDeviceAvailability(getVm(), getVm().getDedicatedVmForVdsList().get(0))) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_DEVICE_NOT_AVAILABLE);
+
+        try {
+            acquireHostDevicesLock();
+            if (!checkRequiredHostDevicesAvailability()) {
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_DEVICE_NOT_AVAILABLE);
+            }
+        } finally {
+            releaseHostDevicesLock();
         }
 
         return true;

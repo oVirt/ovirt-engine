@@ -986,4 +986,6 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Default icon pair not found")
     String DefaultIconPairNotFound();
 
+    @DefaultStringValue("Some of the configured host devices were acquired by other VM.")
+    String HOST_DEVICES_TAKEN_BY_OTHER_VM();
 }
