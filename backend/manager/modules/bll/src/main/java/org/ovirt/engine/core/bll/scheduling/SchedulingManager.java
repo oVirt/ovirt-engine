@@ -531,16 +531,16 @@ public class SchedulingManager implements BackendService {
         SchedulingResult result = new SchedulingResult();
         ArrayList<PolicyUnitImpl> internalFilters = new ArrayList<>();
         ArrayList<PolicyUnitImpl> externalFilters = new ArrayList<>();
+        filters = new ArrayList<>(filters);
+
         sortFilters(filters, filterPositionMap);
-        if (filters != null) {
-            for (Guid filter : filters) {
-                PolicyUnitImpl filterPolicyUnit = policyUnits.get(filter);
-                if (filterPolicyUnit.getPolicyUnit().isInternal()) {
-                    internalFilters.add(filterPolicyUnit);
-                } else {
-                    if (filterPolicyUnit.getPolicyUnit().isEnabled()) {
-                        externalFilters.add(filterPolicyUnit);
-                    }
+        for (Guid filter : filters) {
+            PolicyUnitImpl filterPolicyUnit = policyUnits.get(filter);
+            if (filterPolicyUnit.getPolicyUnit().isInternal()) {
+                internalFilters.add(filterPolicyUnit);
+            } else {
+                if (filterPolicyUnit.getPolicyUnit().isEnabled()) {
+                    externalFilters.add(filterPolicyUnit);
                 }
             }
         }
