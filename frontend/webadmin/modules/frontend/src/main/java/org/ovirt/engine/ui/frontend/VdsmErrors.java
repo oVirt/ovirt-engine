@@ -923,9 +923,6 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Failed to mount the device")
     String GlusterHostStorageDeviceMountFailedException();
 
-    @DefaultStringValue(" Failed to format the device")
-    String GlusterHostStorageDeviceMkfsFailedException();
-
     @DefaultStringValue("FSTAB entry already exists for the device")
     String GlusterHostStorageDeviceFsTabFoundException();
 
@@ -937,6 +934,19 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Failed to run lvchange for the thin pool:")
     String GlusterHostStorageDeviceLVChangeFailedException();
+
+    @DefaultStringValue("Failed to create the mount directory")
+    String GlusterHostStorageDeviceMakeDirsFailedException();
+
+    @DefaultStringValue("Mount point is in use")
+    String GlusterHostStorageMountPointInUseException();
+
+    @DefaultStringValue("Failed to create LVM VG")
+    String GlusterHostStorageDeviceVGCreateFailedException();
+
+    @DefaultStringValue("vgscan failed")
+    String GlusterHostStorageDeviceVGScanFailedException();
+
 
     @DefaultStringValue("Unsupported Gluster Volume Replica Count")
     String UnsupportedGlusterVolumeReplicaCountError();
