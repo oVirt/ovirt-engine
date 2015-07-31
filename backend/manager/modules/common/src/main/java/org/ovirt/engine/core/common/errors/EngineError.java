@@ -518,7 +518,9 @@ public enum EngineError {
     // migration cancel failed, VM doesn't exist
     MIGRATION_CANCEL_ERROR_NO_VM(5100),
 
-    SESSION_ERROR(9999);
+    SESSION_ERROR(9999),
+
+    HOST_DEVICES_TAKEN_BY_OTHER_VM(6000);
 
     private int intValue;
     private static final HashMap<Integer, EngineError> mappings = new HashMap<Integer, EngineError>();
