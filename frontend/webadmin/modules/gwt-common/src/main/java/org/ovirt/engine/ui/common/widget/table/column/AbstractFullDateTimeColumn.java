@@ -12,24 +12,23 @@ import org.ovirt.engine.ui.common.widget.renderer.FullDateTimeRenderer;
 public abstract class AbstractFullDateTimeColumn<T> extends AbstractRenderedTextColumn<T, Date> {
 
     /**
-     * Use standard date format pattern of 'yyyy-MMM-dddd'.
-     *
-     * (Uses only 'MM' for month is locale is set to Japanese.)
+     * Create a new date column displaying the Date in the predefined DATE_TIME_MEDIUM format for
+     * the current selected locale. This includes the time part including seconds.
+     * @see DateTimeFormat.PredefinedFormat
      */
     public AbstractFullDateTimeColumn() {
         super(new FullDateTimeRenderer());
     }
 
     /**
-     * Use date format pattern of 'yyyy-MMM-dddd'. Pass 'true' for includeTime if
-     * you want to include the hours and minutes in the date ('yyyy-MMM-dddd HH:mm').
-     * Pass 'true' for includeSeconds ('yyyy-MMM-dddd HH:mm:ss') if you want the seconds in the
-     * date as well.
-     *
-     * (Uses only 'MM' for month is locale is set to Japanese.)
+     * Create a new date column displaying the Date in a predefined format for
+     * the current selected locale. If you pass in true the format will be DATE_TIME_MEDIUM, if you pass in
+     * false the format will be DATE_MEDIUM. Note DATE_TIME_MEDIUM includes seconds in the result. Also note there
+     * is NO valid predefined format that includes the full year and does NOT include the seconds.
+     * @see DateTimeFormat.PredefinedFormat
      */
-    public AbstractFullDateTimeColumn(boolean includeTime, boolean includeSeconds) {
-        super(new FullDateTimeRenderer(includeTime, includeSeconds));
+    public AbstractFullDateTimeColumn(boolean includeTime) {
+        super(new FullDateTimeRenderer(includeTime));
     }
 
 }

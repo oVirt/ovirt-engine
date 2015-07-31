@@ -95,7 +95,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
     private final static ApplicationConstants constants = AssetProvider.getConstants();
     private final static ApplicationMessages messages = AssetProvider.getMessages();
 
-    protected FullDateTimeRenderer renderer = new FullDateTimeRenderer(true, true); // show seconds in dates
+    protected FullDateTimeRenderer renderer = new FullDateTimeRenderer(true);
 
     private final Driver driver = GWT.create(Driver.class);
 
