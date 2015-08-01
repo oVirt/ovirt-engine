@@ -24,6 +24,7 @@ public class OpenSSHUtilsTest {
         final PublicKey key = decodeKey(keyEncoding);
         final String fingerprintString = OpenSSHUtils.getKeyFingerprint(key, algo);
         assertEquals(goodFingerprintString, fingerprintString);
+        assertEquals(algo, OpenSSHUtils.getKeyFingerprintHash(fingerprintString));
     }
 
     @Test
@@ -38,6 +39,14 @@ public class OpenSSHUtilsTest {
         final PublicKey key = decodeKey(keyEncoding);
         final String keyString = OpenSSHUtils.getKeyString(key, null);
         assertEquals(goodKeyString, keyString);
+    }
+
+    @Test
+    public void testMd5Hash() throws Exception {
+        String fingerprint1 = "1b:d3:aa:c3:67:4b:b5:55:a9:ff:19:0c:16:7e:d1:de";
+        String goodfingerprint1 = "MD5:" + fingerprint1;
+        assertEquals(goodfingerprint1, OpenSSHUtils.fixupKeyFingerprintHash(fingerprint1));
+        assertEquals(goodfingerprint1, OpenSSHUtils.fixupKeyFingerprintHash(goodfingerprint1));
     }
 
     @Test
@@ -113,7 +122,7 @@ public class OpenSSHUtilsTest {
             "ODNh3JfzLcVNzqDsqwIDAQAB",
 
             // Fingerprint MD5
-            "16:e1:9e:89:1e:ed:cc:3d:d8:af:d1:83:6e:b0:da:ae",
+            "MD5:16:e1:9e:89:1e:ed:cc:3d:d8:af:d1:83:6e:b0:da:ae",
 
             // Fingerprint SHA256
             "SHA256:I4ud9yJLWcxsanCu0bXL6SxjTxj9/wbPi4JqtR1ophw",
@@ -129,7 +138,7 @@ public class OpenSSHUtilsTest {
             "gYKAEfF6MbwzZwcwhwIDAQAB",
 
             // Fingerprint MD5
-            "a2:55:07:d3:b6:69:7c:ca:8f:33:e7:22:f2:12:48:d9",
+            "MD5:a2:55:07:d3:b6:69:7c:ca:8f:33:e7:22:f2:12:48:d9",
 
             // Fingerprint SHA256
             "SHA256:5xWt5k1RhhX+EHqhzLxlqEW50QxiBIN2ng78SFbf2Rk",
@@ -145,7 +154,7 @@ public class OpenSSHUtilsTest {
             "5+YCSkrnZOSr+if8GwIDAQAB",
 
             // Fingerprint MD5
-            "0e:82:e9:96:e7:b1:35:2b:c0:14:49:09:1c:8d:80:ee",
+            "MD5:0e:82:e9:96:e7:b1:35:2b:c0:14:49:09:1c:8d:80:ee",
 
             // Fingerprint SHA256
             "SHA256:KLeBSl0NAL6T1Z8EEqsvpW1c3y9mtVGmogUNxIuL9is",
@@ -161,7 +170,7 @@ public class OpenSSHUtilsTest {
             "9KWvwt2LV2c8cbMprwIDAQAB",
 
             // Fingerprint MD5
-            "b0:d1:fc:40:95:39:25:20:c4:3f:7b:b8:6f:18:4d:ae",
+            "MD5:b0:d1:fc:40:95:39:25:20:c4:3f:7b:b8:6f:18:4d:ae",
 
             // Fingerprint SHA256
             "SHA256:hDXnC4yi0dCY8uqtecpi7x3qPk4hwetfZigGpwoMrCo",
@@ -177,7 +186,7 @@ public class OpenSSHUtilsTest {
             "uCMvqv3dLKR1SGRzEQIDAQAB",
 
             // Fingerprint MD5
-            "56:c1:e3:c5:bc:75:21:00:67:65:c2:06:39:82:bf:9f",
+            "MD5:56:c1:e3:c5:bc:75:21:00:67:65:c2:06:39:82:bf:9f",
 
             // Fingerprint SHA256
             "SHA256:tO9ZbfmciAOQYdr/yk5+EGeEW51jBmMM/bDhc2Y47x8",
@@ -193,7 +202,7 @@ public class OpenSSHUtilsTest {
             "LKktR9T/nxc8D9H+/wIDAQAB",
 
             // Fingerprint MD5
-            "55:d5:de:fc:17:d4:b1:06:22:73:67:f5:e0:08:bf:25",
+            "MD5:55:d5:de:fc:17:d4:b1:06:22:73:67:f5:e0:08:bf:25",
 
             // Fingerprint SHA256
             "SHA256:GtqEmRC7wauTPZcuI14NeyIq/OBRIZfO8A5IoFyCWl8",
@@ -209,7 +218,7 @@ public class OpenSSHUtilsTest {
             "NNuIVKPltQVnJUA0AwIDAQAB",
 
             // Fingerprint MD5
-            "23:90:4e:18:11:fc:44:f8:4a:3e:5b:f3:a7:3c:cb:14",
+            "MD5:23:90:4e:18:11:fc:44:f8:4a:3e:5b:f3:a7:3c:cb:14",
 
             // Fingerprint SHA256
             "SHA256:FmRM9fOZfn3yAkik/vE799kR0msftllHsxWh4WK+WDU",
@@ -225,7 +234,7 @@ public class OpenSSHUtilsTest {
             "wQNFlOweUqh4h0sRtwIDAQAB",
 
             // Fingerprint MD5
-            "61:a8:d6:8d:ca:27:86:50:ad:5f:de:1e:a6:17:c0:42",
+            "MD5:61:a8:d6:8d:ca:27:86:50:ad:5f:de:1e:a6:17:c0:42",
 
             // Fingerprint SHA256
             "SHA256:N0jkalb2Z9nK/tjmYlfECOiTSOVP/OSRHmHmj1BOePk",
@@ -241,7 +250,7 @@ public class OpenSSHUtilsTest {
             "1rA4kS4jQURTLODjrwIDAQAB",
 
             // Fingerprint MD5
-            "37:49:1d:28:20:98:1a:da:e7:29:b3:96:61:2b:f1:40",
+            "MD5:37:49:1d:28:20:98:1a:da:e7:29:b3:96:61:2b:f1:40",
 
             // Fingerprint SHA256
             "SHA256:OQfj4/W7qD5rfqy81+2gUiX+cPdlVGWupfxZ5Z6GGIM",
@@ -257,7 +266,7 @@ public class OpenSSHUtilsTest {
             "yVm2/0qLjdCN8lYahwIDAQAB",
 
             // Fingerprint MD5
-            "6d:cd:bc:99:c0:83:ca:b1:8e:58:10:c3:b8:4d:56:ee",
+            "MD5:6d:cd:bc:99:c0:83:ca:b1:8e:58:10:c3:b8:4d:56:ee",
 
             // Fingerprint SHA256
             "SHA256:pbpMFSx/C7wm34+zg3ky8ALQytzn1QzDOYE1ohHWGWw",

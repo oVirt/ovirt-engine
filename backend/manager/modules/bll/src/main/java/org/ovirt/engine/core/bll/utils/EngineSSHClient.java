@@ -5,6 +5,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyStore;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -53,11 +54,20 @@ public class EngineSSHClient extends SSHClient {
     public void connect() throws Exception {
         super.connect();
         if (_vds != null) {
-            String actual = getHostFingerprint();
             String expected = _vds.getSshKeyFingerprint();
 
-            if (expected == null || expected.isEmpty()) {
-                _vds.setSshKeyFingerprint(getHostFingerprint());
+            String hash;
+            if (StringUtils.isEmpty(expected)) {
+                hash = "SHA-256";
+            } else {
+                expected = OpenSSHUtils.fixupKeyFingerprintHash(expected);
+                hash = OpenSSHUtils.getKeyFingerprintHash(expected);
+            }
+
+            String actual = getHostFingerprint(hash);
+
+            if (StringUtils.isEmpty(expected)) {
+                _vds.setSshKeyFingerprint(actual);
                 try {
                     DbFacade.getInstance().getVdsStaticDao().update(_vds.getStaticData());
                 } catch (Exception e) {
@@ -81,18 +91,18 @@ public class EngineSSHClient extends SSHClient {
         }
     }
 
-    /**
-     * Get host fingerprint.
-     * @return fingerprint.
-     */
-    public String getHostFingerprint() throws IOException {
-        String fingerprint = OpenSSHUtils.getKeyFingerprint(getHostKey(), "MD5");
+    public String getHostFingerprint(String hash) throws IOException {
+        String fingerprint = OpenSSHUtils.getKeyFingerprint(getHostKey(), hash);
 
         if (fingerprint == null) {
             throw new IOException("Unable to parse host key");
         }
 
         return fingerprint;
+    }
+
+    public String getHostFingerprint() throws IOException {
+        return getHostFingerprint("SHA-256");
     }
 
     /**

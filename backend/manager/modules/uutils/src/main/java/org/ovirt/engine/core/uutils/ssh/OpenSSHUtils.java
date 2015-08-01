@@ -132,18 +132,39 @@ public class OpenSSHUtils {
         return keyString;
     }
 
+
+    public static final String fixupKeyFingerprintHash(String fingerprint) {
+        String h = fingerprint.split(":", 2)[0];
+        try {
+            if (h.length() == 2) {
+                Integer.parseInt(h, 16);
+                fingerprint = "MD5:" + fingerprint;
+            }
+        } catch(NumberFormatException e) {
+            // ignore
+        }
+        return fingerprint;
+    }
+
+    public static final String getKeyFingerprintHash(final String fingerprint) {
+        String algo = fingerprint.split(":", 2)[0];
+        if (!algo.startsWith("MD")) {
+            algo = algo.replaceFirst("([0-9])", "-$1");
+        }
+        return algo;
+    }
+
     public static final String getKeyFingerprint(final PublicKey key, String digest) {
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA1");
+            MessageDigest md = MessageDigest.getInstance(digest);
             md.update(getKeyBytes(key));
 
             String fingerprint;
             if ("MD5".equals(digest)) {
                 StringBuilder s = new StringBuilder();
+                s.append("MD5");
                 for (byte b : md.digest()) {
-                    if (s.length() > 0) {
-                        s.append(':');
-                    }
+                    s.append(':');
                     s.append(String.format("%02x", b));
                 }
                 fingerprint = s.toString();
@@ -151,7 +172,7 @@ public class OpenSSHUtils {
                 fingerprint = String.format(
                     "%s:%s",
                     digest.toUpperCase().replace("-", ""),
-                    new Base64(0).encodeToString(md.digest())
+                    new Base64(0).encodeToString(md.digest()).replaceAll("=", "")
                 );
             }
 
