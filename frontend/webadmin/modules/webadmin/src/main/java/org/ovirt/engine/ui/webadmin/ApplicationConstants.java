@@ -1569,6 +1569,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Refresh Capabilities")
     String refreshHostCapabilities();
 
+    @DefaultStringValue("Enroll Certificate")
+    String enrollCertificate();
+
     @DefaultStringValue("Host HA Maintenance")
     String hostHaMaintenance();
 

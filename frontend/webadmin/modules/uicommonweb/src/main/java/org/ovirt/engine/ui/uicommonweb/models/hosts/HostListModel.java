@@ -274,6 +274,16 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         refreshCapabilitiesCommand = value;
     }
 
+    private UICommand enrollCertificateCommand;
+
+    public UICommand getEnrollCertificateCommand() {
+        return enrollCertificateCommand;
+    }
+
+    private void setEnrollCertificateCommand(UICommand value) {
+        enrollCertificateCommand = value;
+    }
+
     private UICommand numaSupportCommand;
 
     public UICommand getNumaSupportCommand() {
@@ -387,6 +397,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         setAssignTagsCommand(new UICommand("AssignTags", this)); //$NON-NLS-1$
         setConfigureLocalStorageCommand(new UICommand("ConfigureLocalStorage", this)); //$NON-NLS-1$
         setRefreshCapabilitiesCommand(new UICommand("GetCapabilities", this)); //$NON-NLS-1$
+        setEnrollCertificateCommand(new UICommand("EnrollCertificate", this)); //$NON-NLS-1$
         setNumaSupportCommand(new UICommand("NumaSupport", this)); //$NON-NLS-1$
         getConfigureLocalStorageCommand().setAvailableInModes(ApplicationMode.VirtOnly);
         getSelectAsSpmCommand().setAvailableInModes(ApplicationMode.VirtOnly);
@@ -1602,6 +1613,11 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 }, null);
     }
 
+    private void enrollCertificate() {
+        final VDS host = getSelectedItem();
+        Frontend.getInstance().runAction(VdcActionType.HostEnrollCertificate, new VdsActionParameters(host.getId()));
+    }
+
     @Override
     protected void updateDetailsAvailability() {
         super.updateDetailsAvailability();
@@ -1766,6 +1782,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             upgradeAvailability = canUpgradeHost(host);
         }
         getUpgradeCommand().setIsExecutionAllowed(upgradeAvailability);
+        getEnrollCertificateCommand().setIsExecutionAllowed(installAvailability);
 
         getMaintenanceCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.MaintenanceVds));
@@ -1927,6 +1944,9 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         }
         else if (command == getRefreshCapabilitiesCommand()) {
             refreshCapabilities();
+        }
+        else if (command == getEnrollCertificateCommand()) {
+            enrollCertificate();
         }
         else if (command == getNumaSupportCommand()) {
             numaSupport();
