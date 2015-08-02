@@ -820,13 +820,20 @@ class OvirtUtils(base.Base):
         )
 
     @staticmethod
-    def _error_message(key, current, expected, format_str, name):
+    def _error_message(key, current, expected, format_str, name, pg_host):
         return format_str.format(
             key=key,
             current=current,
             expected=expected,
             name=name,
+            pg_host=pg_host,
         )
+
+    _PG_CONF_MSG = _(
+        'Please fix {key} in postgresql.conf on {pg_host} before you '
+        'continue. Its location is usually /var/lib/pgsql/data , or '
+        'somewhere under /etc/postgresql* .'
+    )
 
     def _pg_conf_info(self):
         return (
@@ -853,9 +860,11 @@ class OvirtUtils(base.Base):
                 ),
                 'check_on_use': True,
                 'needed_on_create': True,
-                'error_msg': _(
-                    '{name} requires {key} to be at least {expected}. '
-                    'Please fix {key} before you continue.'
+                'error_msg': '{specific}{pg_conf_msg}'.format(
+                    specific=_(
+                        '{name} requires {key} to be at least {expected}. '
+                    ),
+                    pg_conf_msg=self._PG_CONF_MSG,
                 )
             },
             {
@@ -876,10 +885,12 @@ class OvirtUtils(base.Base):
                 'ok': self._lower_equal_no_dash,
                 'check_on_use': True,
                 'needed_on_create': True,
-                'error_msg': _(
-                    '{name} requires {key} to be {expected}. '
-                    'Please fix {key} before you continue.'
-                )
+                'error_msg': '{specific}{pg_conf_msg}'.format(
+                    specific=_(
+                        '{name} requires {key} to be {expected}. '
+                    ),
+                    pg_conf_msg=self._PG_CONF_MSG,
+                ),
             },
         )
 
@@ -924,7 +935,8 @@ class OvirtUtils(base.Base):
                         current=current,
                         expected=expected,
                         format_str=item['error_msg'],
-                        name=name
+                        name=name,
+                        pg_host=_ind_env(self, DEK.HOST),
                     )
                 )
 
