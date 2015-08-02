@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +46,7 @@ public class NetworkCommonUtils {
             if (nic instanceof Bond) {
                 Bond bond = (Bond) nic;
                 bond.setSlaves(bondToSlaves.containsKey(bond.getName()) ? bondToSlaves.get(bond.getName())
-                        : Collections.<String> emptyList());
+                        : new ArrayList<String>());
             }
         }
     }
