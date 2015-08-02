@@ -139,7 +139,10 @@ public class BackendVmDisksResource
     @Override
     protected VdcActionParametersBase getAddParameters(org.ovirt.engine.core.common.businessentities.storage.Disk entity, Disk disk) {
         AddDiskParameters parameters = new AddDiskParameters(parentId, entity);
-        parameters.setStorageDomainId(getStorageDomainId(disk));
+        Guid storageDomainId = getStorageDomainId(disk);
+        if (storageDomainId != null) {
+            parameters.setStorageDomainId(storageDomainId);
+        }
         if (disk.isSetActive()) {
             parameters.setPlugDiskToVm(disk.isActive());
         }
