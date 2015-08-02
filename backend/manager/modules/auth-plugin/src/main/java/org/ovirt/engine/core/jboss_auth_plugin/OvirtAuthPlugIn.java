@@ -53,7 +53,7 @@ public class OvirtAuthPlugIn extends AbstractPlugIn {
                         VdcLoginReturnValueBase login = (VdcLoginReturnValueBase) backend.login(loginParams);
                         return login.getSucceeded()
                                 && backend.runQuery(
-                                        VdcQueryType.isUserApplicationContainerManager,
+                                        VdcQueryType.IsUserApplicationContainerManager,
                                         new VdcQueryParametersBase(login.getSessionId())
                                         ).getSucceeded();
                     }
