@@ -163,6 +163,7 @@ public class EditDiskModel extends AbstractDiskModel {
         getVolumeType().setIsChangeable(false);
         getSize().setIsChangeable(false);
         getCinderVolumeType().setIsChangeable(false);
+        getDiskStorageType().setIsChangeable(false);
 
         if (!isEditEnabled()) {
             getIsShareable().setIsChangeable(false);
