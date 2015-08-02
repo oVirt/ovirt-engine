@@ -1,29 +1,55 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.Arrays;
+
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class FCPStorageHelper extends StorageHelperBase {
 
+    private static final StorageServerConnections fcCon = new StorageServerConnections();
+
+    static {
+        fcCon.setid(Guid.Empty.toString());
+        fcCon.setstorage_type(StorageType.FCP);
+    }
+
     @Override
     protected Pair<Boolean, EngineFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
-        return new Pair<>(true, null);
+        return runConnectionStorageToDomain(storageDomain, vdsId, type, null, storageDomain.getStoragePoolId());
     }
 
     @Override
     public boolean connectStorageToDomainByVdsId(StorageDomain storageDomain, Guid vdsId) {
-        return true;
+        return runConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.ConnectStorageServer.getValue()).getFirst();
     }
 
     @Override
     public boolean disconnectStorageFromDomainByVdsId(StorageDomain storageDomain, Guid vdsId) {
-        return true;
+        return runConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.DisconnectStorageServer.getValue()).getFirst();
+    }
+
+    @Override
+    public boolean connectStorageToLunByVdsId(StorageDomain storageDomain, Guid vdsId, LUNs lun, Guid storagePoolId) {
+        return runConnectionStorageToDomain(storageDomain,
+                vdsId,
+                VDSCommandType.ConnectStorageServer.getValue(),
+                lun,
+                storagePoolId).getFirst();
     }
 
     @Override
@@ -39,4 +65,43 @@ public class FCPStorageHelper extends StorageHelperBase {
         parameters.setVdsId(vdsId);
         return Backend.getInstance().runInternalAction(VdcActionType.SyncLunsInfoForBlockStorageDomain, parameters).getSucceeded();
     }
+
+    public static StorageServerConnections getFCPConnection() {
+        return fcCon;
+    }
+
+    @Override
+    protected Pair<Boolean, EngineFault> runConnectionStorageToDomain(StorageDomain storageDomain,
+            Guid vdsId,
+            int type,
+            LUNs lun,
+            Guid storagePoolId) {
+        if (Guid.isNullOrEmpty(storagePoolId) || !FeatureSupported.refreshLunSupported(DbFacade.getInstance()
+                .getStoragePoolDao()
+                .get(storagePoolId)
+                .getCompatibilityVersion())) {
+            return new Pair<>(true, null);
+        }
+
+        VDSReturnValue returnValue = Backend
+                .getInstance()
+                .getResourceManager()
+                .RunVdsCommand(
+                        VDSCommandType.forValue(type),
+                        new StorageServerConnectionManagementVDSParameters(vdsId,
+                                storagePoolId, StorageType.FCP, Arrays.asList(getFCPConnection())));
+        boolean isSuccess = returnValue.getSucceeded();
+        EngineFault engineFault = null;
+        if (!isSuccess && returnValue.getVdsError() != null) {
+            engineFault = new EngineFault();
+            engineFault.setError(returnValue.getVdsError().getCode());
+        }
+        return new Pair<>(isSuccess, engineFault);
+    }
+
+    @Override
+    public Pair<Boolean, EngineFault> connectStorageToDomainByVdsIdDetails(StorageDomain storageDomain, Guid vdsId) {
+        return runConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.ConnectStorageServer.getValue());
+    }
+
 }

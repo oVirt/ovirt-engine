@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
@@ -55,6 +56,7 @@ public abstract class ConnectHostToStoragePoolServerCommandBase<T extends Storag
                                 null,
                                 statuses);
         updateConnectionsTypeMap();
+        updateConnectionMapForFiberChannel(statuses);
     }
 
     private void updateConnectionsTypeMap() {
@@ -62,6 +64,21 @@ public abstract class ConnectHostToStoragePoolServerCommandBase<T extends Storag
         for (StorageServerConnections conn : _connections) {
             StorageType connType = conn.getstorage_type();
             MultiValueMapUtils.addToMap(connType, conn, connectionsTypeMap);
+        }
+    }
+
+    private void updateConnectionMapForFiberChannel(Set<StorageDomainStatus> statuses) {
+        if (FeatureSupported.refreshLunSupported(getStoragePool().getCompatibilityVersion())) {
+            List<StorageDomain> storageDomainList =
+                    getStorageDomainDao().getAllForStoragePool(getStoragePool().getId());
+            for (StorageDomain sd : storageDomainList) {
+                if (sd.getStorageType() == StorageType.FCP && statuses.contains(sd.getStatus())) {
+                    MultiValueMapUtils.addToMap(StorageType.FCP,
+                            FCPStorageHelper.getFCPConnection(),
+                            getConnectionsTypeMap());
+                    break;
+                }
+            }
         }
     }
 
