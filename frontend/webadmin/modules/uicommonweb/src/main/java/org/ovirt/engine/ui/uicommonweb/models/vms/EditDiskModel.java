@@ -57,6 +57,7 @@ public class EditDiskModel extends AbstractDiskModel {
             case LUN:
                 LunDisk lunDisk = (LunDisk) getDisk();
                 getDiskStorageType().setEntity(DiskStorageType.LUN);
+                getStorageType().setIsAvailable(false);
                 getSize().setEntity(lunDisk.getLun().getDeviceSize());
                 getSizeExtend().setIsAvailable(false);
                 break;
