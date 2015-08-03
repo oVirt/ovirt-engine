@@ -747,26 +747,6 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcActionType___AddStorageServerConnection();
 
-    String VdcActionType___DataCenters();
-
-    String VdcActionType___Clusters();
-
-    String VdcActionType___Hosts();
-
-    String VdcActionType___Storage();
-
-    String VdcActionType___VirtualMachines();
-
-    String VdcActionType___Pools();
-
-    String VdcActionType___Templates();
-
-    String VdcActionType___Users();
-
-    String VdcActionType___Events();
-
-    String VdcActionType___Monitor();
-
     String VdcActionType___ForceRemoveStorageDomain();
 
     String VdcActionType___ActivateStorageDomain();
