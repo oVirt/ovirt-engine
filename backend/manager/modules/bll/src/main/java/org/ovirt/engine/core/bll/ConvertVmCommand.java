@@ -79,14 +79,6 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         return cachedCallback;
     }
 
-    /**
-     * We treat virt-v2v conversion as task
-     */
-    @Override
-    public boolean hasTasks() {
-        return true;
-    }
-
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         return lockProperties.withScope(Scope.Command);
