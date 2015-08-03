@@ -39,15 +39,12 @@ import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
-import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
@@ -223,45 +220,16 @@ public class BackendStorageDomainResource extends
                 incoming.getStorage().isOverrideLuns() : false;
         if (!newLuns.isEmpty()) {
             // If there are new LUNs, this means the user wants to extend the storage domain.
-            // Supplying a host is necessary for this operation, but not for regular update
-            // of storage-domain. So only now is the time for this validation.
-            validateParameters(incoming, "host.id|name");
-            addLunsToStorageDomain(incoming, storageType, newLuns, overrideLuns);
+            addLunsToStorageDomain(newLuns, overrideLuns);
             // Remove the new LUNs from the incoming LUns before update, since they have already been dealt with.
             incomingLuns.removeAll(newLuns);
         }
     }
 
-    private void addLunsToStorageDomain(StorageDomain incoming,
-            StorageType storageType,
-            List<LogicalUnit> newLuns,
-            boolean overrideLuns) {
-        for (LogicalUnit lun : newLuns) {
-            if (lun.isSetAddress() && lun.isSetTarget()) {
-                StorageServerConnections connection =
-                        StorageDomainHelper.getConnection(storageType,
-                                lun.getAddress(),
-                                lun.getTarget(),
-                                lun.getUsername(),
-                                lun.getPassword(),
-                                lun.getPort());
-                performAction(VdcActionType.ConnectStorageToVds,
-                        new StorageServerConnectionParametersBase(connection, getHostId(incoming)));
-            }
-        }
-
-        refreshVDSM(incoming);
+    private void addLunsToStorageDomain(List<LogicalUnit> newLuns, boolean overrideLuns) {
 
         ExtendSANStorageDomainParameters params = createParameters(guid, newLuns, overrideLuns);
-
         performAction(VdcActionType.ExtendSANStorageDomain, params);
-    }
-
-    // This is a work-around for a VDSM bug. The call to GetDeviceList causes a refresh in the VDSM, without which the
-    // creation will fail.
-    private void refreshVDSM(StorageDomain incoming) {
-        getEntity(Object.class, VdcQueryType.GetDeviceList, new GetDeviceListQueryParameters(getHostId(incoming),
-                StorageType.ISCSI), "");
     }
 
     @Override
