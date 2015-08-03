@@ -1272,6 +1272,7 @@ public enum AuditLogType {
     THAW_VM_SUCCESS(10768, AuditLogSeverity.NORMAL),
     USER_FAILED_TO_FREEZE_VM(10769, AuditLogSeverity.ERROR),
     USER_FAILED_TO_THAW_VM(10770, AuditLogSeverity.ERROR),
+    VDS_CANNOT_CONNECT_TO_GLUSTERFS(10771, AuditLogSeverity.ERROR),
 
     //Affinity Rules Enforcement Manager
     AFFINITY_RULES_ENFORCEMENT_MANAGER_START(10780, AuditLogSeverity.NORMAL),

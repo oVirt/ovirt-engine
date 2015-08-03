@@ -555,6 +555,14 @@ public class FeatureSupported {
     }
 
     /**
+     * @param version - compatibility version to check for
+     * @return <code>true</code> if the Cinder provider is supported for the specified datacenter
+     */
+    public static boolean glusterVolumeInfoSupported(Version version) {
+        return supportedInConfig(ConfigValues.GlusterVolumeInfoSupported, version);
+    }
+
+    /**
      * @param version
      *            Compatibility version to check for.
      * @return <code>true</code> if SR-IOV network interfaces are supported for the given version

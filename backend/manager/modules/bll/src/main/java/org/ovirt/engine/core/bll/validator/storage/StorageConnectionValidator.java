@@ -3,10 +3,12 @@ package org.ovirt.engine.core.bll.validator.storage;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.storage.GLUSTERFSStorageHelper;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -15,6 +17,7 @@ import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 
 public class StorageConnectionValidator {
     private static final String STORAGE_DOMAIN_NAME_REPLACEMENT = "$domainNames %1$s";
+    private static final String VDS_NAME_REPLACEMENT = "$VdsName %1$s";
 
     private StorageServerConnections connection;
 
@@ -65,6 +68,15 @@ public class StorageConnectionValidator {
                 && storageDomain.getStorageDomainSharedStatus() != StorageDomainSharedStatus.Unattached) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED,
                     String.format(STORAGE_DOMAIN_NAME_REPLACEMENT, storageDomain.getStorageName()));
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    public ValidationResult canVDSConnectToGlusterfs(VDS vds) {
+        if (!GLUSTERFSStorageHelper.canVDSConnectToGlusterfs(vds)) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAIL_VDS_CANNOT_CONNECT_TO_GLUSTERFS,
+                    String.format(VDS_NAME_REPLACEMENT, vds.getName()));
         }
 
         return ValidationResult.VALID;

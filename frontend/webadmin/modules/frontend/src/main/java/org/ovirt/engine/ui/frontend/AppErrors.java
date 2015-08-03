@@ -3736,4 +3736,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Due to custom CPU level which is not supported by the new cluster CPU level:")
     String CLUSTER_WARN_VM_DUE_TO_DECREASED_CLUSTER_CPU_LEVEL();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Host ${VdsName} cannot connect to Glusterfs. Verify that glusterfs-cli package is installed on the host.")
+    String ACTION_TYPE_FAIL_VDS_CANNOT_CONNECT_TO_GLUSTERFS();
 }
