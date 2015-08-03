@@ -137,13 +137,6 @@ public class CINDERStorageHelper extends StorageHelperBase {
         return true;
     }
 
-    public static void addMessageToAuditLog(AuditLogType auditLogType, String storageDomainName, String vdsName){
-        AuditLogableBase logable = new AuditLogableBase();
-        logable.addCustomValue("StorageDomainName", storageDomainName);
-        logable.addCustomValue("VdsName", vdsName);
-        new AuditLogDirector().log(logable, auditLogType);
-    }
-
     private <T> void execute(final Callable<T> callable) {
         if (runInNewTransaction) {
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {

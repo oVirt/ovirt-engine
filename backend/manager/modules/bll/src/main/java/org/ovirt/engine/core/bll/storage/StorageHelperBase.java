@@ -195,4 +195,12 @@ public abstract class StorageHelperBase implements IStorageHelper {
     public boolean syncDomainInfo(StorageDomain storageDomain, Guid vdsId) {
         return true;
     }
+
+    public static void addMessageToAuditLog(AuditLogType auditLogType, String storageDomainName, String vdsName){
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.addCustomValue("StorageDomainName", storageDomainName);
+        logable.addCustomValue("VdsName", vdsName);
+        new AuditLogDirector().log(logable, auditLogType);
+    }
+
 }
