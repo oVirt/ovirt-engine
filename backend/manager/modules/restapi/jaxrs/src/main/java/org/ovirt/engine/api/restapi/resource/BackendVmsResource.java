@@ -27,6 +27,7 @@ import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.Payloads;
+import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Tags;
@@ -111,6 +112,7 @@ public class BackendVmsResource extends
         } else {
             validateParameters(vm, "name");
             if (isCreateFromSnapshot(vm)) {
+                validateSnapshotExistence(vm);
                 response = createVmFromSnapshot(vm);
             } else {
                 validateParameters(vm, "template.id|name");
@@ -199,6 +201,12 @@ public class BackendVmsResource extends
     private boolean isCreateFromSnapshot(VM vm) {
         return vm.isSetSnapshots() && vm.getSnapshots().getSnapshots() != null
                 && !vm.getSnapshots().getSnapshots().isEmpty();
+    }
+
+    private void validateSnapshotExistence(VM vm) {
+        // null and emptiness were previously tested
+        Snapshot snapshot = vm.getSnapshots().getSnapshots().get(0);
+        validateParameters(snapshot, "id");
     }
 
     private Response createVmFromSnapshot(VM vm) {
