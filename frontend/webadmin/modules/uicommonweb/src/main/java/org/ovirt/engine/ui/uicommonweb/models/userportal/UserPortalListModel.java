@@ -54,13 +54,12 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
+import org.ovirt.engine.ui.uicommonweb.models.ConsolesFactory;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.PublicKeyModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
-import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
@@ -321,7 +320,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
         updateActionAvailability();
 
-        consoleModelsCache = new ConsoleModelsCache(ConsoleContext.UP_EXTENDED, this);
+        consolesFactory = new ConsolesFactory(ConsoleContext.UP_EXTENDED, this);
     }
 
     private void setDetailList() {
@@ -717,16 +716,18 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                 VdcActionType.CloneVm));
 
         getChangeCdCommand().setIsExecutionAllowed(selectedItem != null
-                                                           && !selectedItem.isPool()
-                                                           && VdcActionUtils.canExecute(new ArrayList<VM>(Arrays.asList(new VM[] {(VM) selectedItem.getEntity()})),
-                                                                                        VM.class,
-                                                                                        VdcActionType.ChangeDisk));
+                && !selectedItem.isPool()
+                && VdcActionUtils.canExecute(new ArrayList<VM>(Arrays.asList(new VM[] {
+                (VM) selectedItem.getEntity() })),
+                VM.class,
+                VdcActionType.ChangeDisk));
 
         getNewTemplateCommand().setIsExecutionAllowed(selectedItem != null
-                                                              && !selectedItem.isPool()
-                                                              && VdcActionUtils.canExecute(new ArrayList<VM>(Arrays.asList(new VM[] {(VM) selectedItem.getEntity()})),
-                                                                                           VM.class,
-                                                                                           VdcActionType.AddVmTemplate));
+                && !selectedItem.isPool()
+                && VdcActionUtils.canExecute(new ArrayList<VM>(Arrays.asList(new VM[] {
+                (VM) selectedItem.getEntity() })),
+                VM.class,
+                VdcActionType.AddVmTemplate));
     }
 
     private void newInternal() {
@@ -787,7 +788,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         UnitVmModel model = new UnitVmModel(new UserPortalExistingVmModelBehavior(vm), this);
 
         model.setTitle(ConstantsManager.getInstance()
-                               .getConstants().editVmTitle());
+                .getConstants().editVmTitle());
         model.setHelpTag(HelpTag.edit_vm);
         model.setHashName("edit_vm"); //$NON-NLS-1$
         model.getVmType().setSelectedItem(vm.getVmType());
@@ -1109,18 +1110,27 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         Guid newClusterID = model.getSelectedCluster().getId();
         if (oldClusterID.equals(newClusterID) == false) {
             Frontend.getInstance().runAction(VdcActionType.ChangeVMCluster, new ChangeVMClusterParameters(newClusterID,
-                    gettempVm().getId()),
+                            gettempVm().getId()),
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void executed(FrontendActionAsyncResult result) {
                             VmManagementParametersBase param = getUpdateVmParameters(applyCpuChangesLater);
-                            Frontend.getInstance().runAction(VdcActionType.UpdateVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()), this);
+                            Frontend.getInstance()
+                                    .runAction(VdcActionType.UpdateVm,
+                                            param,
+                                            new UnitVmModelNetworkAsyncCallback(model,
+                                                    defaultNetworkCreatingManager,
+                                                    gettempVm().getId()),
+                                            this);
                         }
                     }, this);
         }
         else {
             VmManagementParametersBase param = getUpdateVmParameters(applyCpuChangesLater);
-            Frontend.getInstance().runAction(VdcActionType.UpdateVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()), this);
+            Frontend.getInstance().runAction(VdcActionType.UpdateVm,
+                    param,
+                    new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()),
+                    this);
         }
     }
 
@@ -1242,13 +1252,13 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         if (!model.getIsNew()) {
             if (cachedMaxPriority == null) {
                 AsyncDataProvider.getInstance().getMaxVmPriority(new AsyncQuery(model,
-                                                                                new INewAsyncCallback() {
-                                                                                    @Override
-                                                                                    public void onSuccess(Object target, Object returnValue) {
-                                                                                        cachedMaxPriority = (Integer) returnValue;
-                                                                                        updatePriority((UnitVmModel) target);
-                                                                                    }
-                                                                                }));
+                        new INewAsyncCallback() {
+                            @Override
+                            public void onSuccess(Object target, Object returnValue) {
+                                cachedMaxPriority = (Integer) returnValue;
+                                updatePriority((UnitVmModel) target);
+                            }
+                        }));
             } else {
                 updatePriority(model);
             }
@@ -1356,17 +1366,18 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                                 for (VdcQueryReturnValue poolRepresentant : poolRepresentantsRetval) { // extract from return value
                                     poolRepresentants.add((VM) poolRepresentant.getReturnValue());
                                 }
-                                consoleModelsCache.updatePoolCache(poolRepresentants);
                                 final List<Pair<Object, VM>> poolsPairs =
-                                        Linq.zip(Collections.<Object>unmodifiableList(filteredPools), poolRepresentants);
+                                        Linq.zip(Collections.<Object>unmodifiableList(filteredPools),
+                                                poolRepresentants);
                                 final List<Pair<Object, VM>> all = Linq.concat(vmPairs, poolsPairs);
                                 final List<VM> vmsAndPoolRepresentants = Linq.concat(getvms(), poolRepresentants);
                                 IconUtils.prefetchIcons(vmsAndPoolRepresentants, true, false,
                                         new IconCache.IconsCallback() {
-                                    @Override public void onSuccess(Map<Guid, String> idToIconMap) {
-                                        finishSearch(all);
-                                    }
-                                });
+                                            @Override
+                                            public void onSuccess(Map<Guid, String> idToIconMap) {
+                                                finishSearch(all);
+                                            }
+                                        });
                             }
                         });
             }
@@ -1374,14 +1385,11 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     }
 
     private void finishSearch(List<Pair<Object, VM>> vmOrPoolAndPoolRepresentants) {
-        consoleModelsCache.updateVmCache(getvms());
-
         Collections.sort((List) vmOrPoolAndPoolRepresentants, IconUtils.getFirstComponentNameableComparator());
 
         ArrayList<Model> items = new ArrayList<Model>();
         for (Pair<Object, VM> item : vmOrPoolAndPoolRepresentants) {
-            VmConsoles consoles = consoleModelsCache.getVmConsolesForEntity(item.getFirst());
-            UserPortalItemModel model = new UserPortalItemModel(item.getFirst(), consoles, item.getSecond());
+            UserPortalItemModel model = new UserPortalItemModel(item.getFirst(), item.getSecond(), consolesFactory);
             model.setEntity(item.getFirst());
             items.add(model);
         }

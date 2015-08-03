@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
+import org.ovirt.engine.ui.uicommonweb.models.ConsolesFactory;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.uicompat.ICancelable;
 public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<Void, /* VmOrPool */ Object, UserPortalItemModel> implements ICancelable {
     private UICommand editConsoleCommand;
 
-    protected ConsoleModelsCache consoleModelsCache;
+    protected ConsolesFactory consolesFactory;
 
     public AbstractUserPortalListModel() {
         setEditConsoleCommand(new UICommand("NewServer", this)); //$NON-NLS-1$

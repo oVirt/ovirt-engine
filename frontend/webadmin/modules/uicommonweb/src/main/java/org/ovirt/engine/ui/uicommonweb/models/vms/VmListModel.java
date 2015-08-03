@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,8 +69,8 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.VmIconUnitAndVmToParameterBui
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
+import org.ovirt.engine.ui.uicommonweb.models.ConsolesFactory;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
@@ -100,8 +99,10 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+
 public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSystemTreeContext, ICancelable {
 
     public static final String CMD_CONFIGURE_VMS_TO_IMPORT = "ConfigureVmsToImport"; //$NON-NLS-1$
@@ -391,7 +392,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         privateGuideContext = value;
     }
 
-    private final ConsoleModelsCache consoleModelsCache;
+    private final ConsolesFactory consolesFactory;
 
     private ErrorPopupManager errorPopupManager;
 
@@ -420,7 +421,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         setSearchObjects(new String[] { SearchObjects.VM_OBJ_NAME, SearchObjects.VM_PLU_OBJ_NAME });
         setAvailableInModes(ApplicationMode.VirtOnly);
 
-        consoleModelsCache = new ConsoleModelsCache(ConsoleContext.WA, this);
+        consolesFactory = new ConsolesFactory(ConsoleContext.WA, this);
         setConsoleHelpers();
 
         setNewVmCommand(new UICommand("NewVm", this)); //$NON-NLS-1$
@@ -650,13 +651,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         super.syncSearch(VdcQueryType.Search, tempVar);
     }
 
-    @Override
-    public void setItems(Collection value) {
-        consoleModelsCache.updateVmCache(value);
-
-        super.setItems(value);
-    }
-
     private void newVm() {
         if (getWindow() != null) {
             return;
@@ -675,7 +669,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             return;
         }
 
-        final VmConsoles activeVmConsoles = consoleModelsCache.getVmConsolesForEntity(getSelectedItem());
+        final VmConsoles activeVmConsoles = consolesFactory.getVmConsolesForVm(getSelectedItem());
 
         final ConsolePopupModel model = new ConsolePopupModel();
         model.setVmConsoles(activeVmConsoles);
@@ -2014,7 +2008,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
         // return true, if at least one console is available
         for (VM vm : list) {
-            if (consoleModelsCache.getVmConsolesForEntity(vm).canConnectToConsole()) {
+            if (consolesFactory.getVmConsolesForVm(vm).canConnectToConsole()) {
                 return true;
             }
         }
@@ -2299,7 +2293,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
         for (VM vm : list) {
             try {
-                consoleModelsCache.getVmConsolesForEntity(vm).connect();
+                consolesFactory.getVmConsolesForVm(vm).connect();
             } catch (VmConsoles.ConsoleConnectException e) {
                 final String errorMessage = e.getLocalizedErrorMessage();
                 if (errorMessage != null) {

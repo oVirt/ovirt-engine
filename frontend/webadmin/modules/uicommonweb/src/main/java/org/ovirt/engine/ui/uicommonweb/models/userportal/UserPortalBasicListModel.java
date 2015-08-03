@@ -22,11 +22,10 @@ import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleCo
 import org.ovirt.engine.ui.uicommonweb.IconUtils;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
+import org.ovirt.engine.ui.uicommonweb.models.ConsolesFactory;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IconCache;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -112,7 +111,7 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
         setSelectedItemDefinedMemory(new EntityModel<String>());
         setSelectedItemNumOfCpuCores(new EntityModel<String>());
 
-        consoleModelsCache = new ConsoleModelsCache(ConsoleContext.UP_BASIC, this);
+        consolesFactory = new ConsolesFactory(ConsoleContext.UP_BASIC, this);
     }
 
     private void setDetailList() {
@@ -285,7 +284,6 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
                                 for (VdcQueryReturnValue poolRepresentant : poolRepresentantsRetval) { // extract from return value
                                     poolRepresentants.add((VM) poolRepresentant.getReturnValue());
                                 }
-                                consoleModelsCache.updatePoolCache(poolRepresentants);
                                 final List<Pair<Object, VM>> poolsPairs =
                                         Linq.zip(Collections.<Object>unmodifiableList(filteredPools), poolRepresentants);
                                 final List<Pair<Object, VM>> all = Linq.concat(vmPairs, poolsPairs);
@@ -309,14 +307,11 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
      *                                     </ul>
      */
     private void finishSearch(List<Pair<Object, VM>> vmOrPoolAndPoolRepresentants) {
-        consoleModelsCache.updateVmCache(getvms());
-
         Collections.sort((List) vmOrPoolAndPoolRepresentants, IconUtils.getFirstComponentNameableComparator());
 
         ArrayList<Model> items = new ArrayList<Model>();
         for (Pair<Object, VM> item : vmOrPoolAndPoolRepresentants) {
-            VmConsoles consoles = consoleModelsCache.getVmConsolesForEntity(item.getFirst());
-            UserPortalItemModel model = new UserPortalItemModel(item.getFirst(), consoles, item.getSecond());
+            UserPortalItemModel model = new UserPortalItemModel(item.getFirst(), item.getSecond(), consolesFactory);
             model.setEntity(item.getFirst());
             items.add(model);
         }

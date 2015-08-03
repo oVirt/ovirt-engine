@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.ConsolesFactory;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
@@ -25,8 +26,8 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class UserPortalItemModel extends EntityModel {
     private UICommand runCommand;
-    private final VmConsoles vmConsoles;
-    private VM poolRepresentant;
+    private final VM poolRepresentative;
+    private final ConsolesFactory consolesFactory;
 
     public UICommand getRunCommand() {
         return runCommand;
@@ -259,11 +260,11 @@ public class UserPortalItemModel extends EntityModel {
     /**
      *
      * @param vmOrPool instance of either {@link VM} or {@link VmPool} - the wrapped entity
-     * @param poolRepresentant used if {@code vmOrPool} argument is instance of {@link VmPool};
-     *                         a pre-resolved pool representant for one-time use. Introduced to reduce
-     *                         number of queries for pool representants.
+     * @param poolRepresentative if argument {@code vmOrPool} is instance if {@link VM} then {@code null},
+     *                           if {@code vmOrPool} is instance if {@link VmPool} then arbitrary VM from
+     *                           that pool
      */
-    public UserPortalItemModel(Object vmOrPool, VmConsoles consoles, VM poolRepresentant) {
+    public UserPortalItemModel(Object vmOrPool, VM poolRepresentative, ConsolesFactory consolesFactory) {
         setRunCommand(new UICommand("Run", this)); //$NON-NLS-1$
         setPauseCommand(new UICommand("Pause", this)); //$NON-NLS-1$
         setStopCommand(new UICommand("Stop", this)); //$NON-NLS-1$
@@ -276,8 +277,8 @@ public class UserPortalItemModel extends EntityModel {
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().retrievingCDsTitle());
         setCdImages(new ArrayList<ChangeCDModel>(Arrays.asList(new ChangeCDModel[] { tempVar })));
 
-        this.vmConsoles = consoles;
-        this.poolRepresentant = poolRepresentant;
+        this.poolRepresentative = poolRepresentative;
+        this.consolesFactory = consolesFactory;
 
         setEntity(vmOrPool);
     }
@@ -289,8 +290,7 @@ public class UserPortalItemModel extends EntityModel {
             behavior = new VmItemBehavior(this);
         }
         else if (getEntity() instanceof VmPool) {
-            behavior = new PoolItemBehavior(this, poolRepresentant);
-            poolRepresentant = null;
+            behavior = new PoolItemBehavior(this, poolRepresentative);
         }
         else {
             throw new UnsupportedOperationException();
@@ -406,6 +406,8 @@ public class UserPortalItemModel extends EntityModel {
     }
 
     public VmConsoles getVmConsoles() {
-        return vmConsoles;
+        return poolRepresentative == null
+               ? consolesFactory.getVmConsolesForVm((VM) getEntity())
+               : consolesFactory.getVmConsolesForPool(poolRepresentative);
     }
 }
