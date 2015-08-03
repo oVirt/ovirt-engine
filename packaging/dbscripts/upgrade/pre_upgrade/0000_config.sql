@@ -705,6 +705,8 @@ select fn_db_add_config_value_for_versions_up_to('CinderProviderSupported', 'fal
 
 select fn_db_add_config_value_for_versions_up_to('MigrateDowntime', 'false', '3.5');
 
+select fn_db_add_config_value_for_versions_up_to('GlusterVolumeInfoSupported', 'false', '3.5');
+
 -- Cluster HA Reservation
 select fn_db_add_config_value('OverUtilizationForHaReservation','200','general');
 select fn_db_add_config_value('ScaleDownForHaReservation','1','general');

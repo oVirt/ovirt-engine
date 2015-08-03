@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.validator.storage.StorageConnectionValidator;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -99,6 +100,13 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
             }
             if (!isValidStorageConnectionPort(conn.getport())) {
                 return failCanDoAction(EngineMessage.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
+            }
+        }
+
+        if (storageType == StorageType.GLUSTERFS) {
+            StorageConnectionValidator validator = new StorageConnectionValidator(conn);
+            if (!validate(validator.canVDSConnectToGlusterfs(getVds()))) {
+                return false;
             }
         }
 

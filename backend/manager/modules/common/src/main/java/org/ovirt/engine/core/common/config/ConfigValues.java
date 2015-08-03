@@ -2160,6 +2160,10 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
+    GlusterVolumeInfoSupported,
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
     NetworkSriovSupported,
 
     @TypeConverterAttribute(Integer.class)
