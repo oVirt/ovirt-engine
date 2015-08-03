@@ -112,11 +112,29 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         boolean graphicsOverriden = vm.isRunOnce() && vm.getGraphicsInfos() != null && !vm.getGraphicsInfos().isEmpty();
         boolean usesGraphicsAsDevice = FeatureSupported.graphicsDeviceEnabled(vm.getVdsGroupCompatibilityVersion());
 
+        Map<GraphicsType, GraphicsInfo> infos = vm.getGraphicsInfos();
+        Map<String, Object> specParamsFromVm = buildVmGraphicsSpecParamsFromVm(infos);
+
         if (graphicsOverriden) {
-            buildVmGraphicsDevicesOverriden(vm.getGraphicsInfos(), usesGraphicsAsDevice);
+            buildVmGraphicsDevicesOverriden(infos, usesGraphicsAsDevice, specParamsFromVm);
         } else {
-            buildVmGraphicsDevicesFromDb(usesGraphicsAsDevice);
+            buildVmGraphicsDevicesFromDb(usesGraphicsAsDevice, specParamsFromVm);
         }
+    }
+
+    /**
+     * Some vm-level settings need to be translated as graphic device specParams.
+     * This information must take precedence over that stored on the DB - because these parameters aren't expected
+     * to be stored in the DB at all!
+     */
+    private Map<String, Object> buildVmGraphicsSpecParamsFromVm(Map<GraphicsType, GraphicsInfo> infos) {
+        Map<String, Object> specParamsFromVm = null;
+        if (infos != null && infos.containsKey(GraphicsType.SPICE)) {
+            // harmless if added to VNC devices. Just noise.
+            specParamsFromVm = new HashMap();
+            addVmSpiceOptions(infos, specParamsFromVm);
+        }
+        return specParamsFromVm;
     }
 
     /**
@@ -127,13 +145,16 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
      * @param usesGraphicsAsDevice - true if vdsm understands graphics as a separate device, false when vdsm creates
      *                             video and graphics from conf.
      */
-    private void buildVmGraphicsDevicesOverriden(Map<GraphicsType, GraphicsInfo> graphicsInfos, boolean usesGraphicsAsDevice) {
+    private void buildVmGraphicsDevicesOverriden(Map<GraphicsType, GraphicsInfo> graphicsInfos, boolean usesGraphicsAsDevice, Map<String, Object> extraSpecParams) {
         if (usesGraphicsAsDevice) {
             for (Entry<GraphicsType, GraphicsInfo> graphicsInfo : graphicsInfos.entrySet()) {
                 Map struct = new HashMap();
                 struct.put(VdsProperties.Type, VmDeviceGeneralType.GRAPHICS.getValue());
                 struct.put(VdsProperties.Device, graphicsInfo.getKey().name().toLowerCase());
                 struct.put(VdsProperties.DeviceId, String.valueOf(Guid.newGuid()));
+                if (extraSpecParams != null) {
+                    struct.put(VdsProperties.SpecParams, extraSpecParams);
+                }
                 devices.add(struct);
             }
         }
@@ -153,9 +174,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
      * @param usesGraphicsAsDevice - true if vdsm understands graphics as a separate device, false when vdsm creates
      *                             video and graphics from conf.
      */
-    private void buildVmGraphicsDevicesFromDb(boolean usesGraphicsAsDevice) {
+    private void buildVmGraphicsDevicesFromDb(boolean usesGraphicsAsDevice, Map<String, Object> extraSpecParams) {
         if (usesGraphicsAsDevice) {
-            buildVmDevicesFromDb(VmDeviceGeneralType.GRAPHICS, false);
+            buildVmDevicesFromDb(VmDeviceGeneralType.GRAPHICS, false, extraSpecParams);
         }
 
         String legacyDisplay = deriveDisplayTypeLegacy();
@@ -587,15 +608,15 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmSoundDevices() {
-        buildVmDevicesFromDb(VmDeviceGeneralType.SOUND, true);
+        buildVmDevicesFromDb(VmDeviceGeneralType.SOUND, true, null);
     }
 
     @Override
     protected void buildVmConsoleDevice() {
-        buildVmDevicesFromDb(VmDeviceGeneralType.CONSOLE, false);
+        buildVmDevicesFromDb(VmDeviceGeneralType.CONSOLE, false, null);
     }
 
-    private void buildVmDevicesFromDb(VmDeviceGeneralType generalType, boolean addAddress) {
+    private void buildVmDevicesFromDb(VmDeviceGeneralType generalType, boolean addAddress, Map<String, Object> extraSpecParams) {
         List<VmDevice> vmDevices =
                 DbFacade.getInstance()
                         .getVmDeviceDao()
@@ -606,7 +627,13 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             Map struct = new HashMap();
             struct.put(VdsProperties.Type, vmDevice.getType().getValue());
             struct.put(VdsProperties.Device, vmDevice.getDevice());
-            struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
+
+            Map<String, Object> specParams = vmDevice.getSpecParams();
+            if (extraSpecParams != null) {
+                specParams.putAll(extraSpecParams);
+            }
+            struct.put(VdsProperties.SpecParams, specParams);
+
             struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
             if (addAddress) {
                 addAddress(vmDevice, struct);

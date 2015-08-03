@@ -13,6 +13,7 @@ import java.util.TimeZone;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -159,15 +160,20 @@ public abstract class VmInfoBuilderBase {
         createInfo.put(VdsProperties.transparent_huge_pages,
                 vm.isTransparentHugePages() ? "true" : "false");
 
-        if (vm.getGraphicsInfos().containsKey(GraphicsType.SPICE)) {
-            createInfo.put(VdsProperties.spiceFileTransferEnable,
-                Boolean.toString(vm.isSpiceFileTransferEnabled()));
-            createInfo.put(VdsProperties.spiceCopyPasteEnable,
-                Boolean.toString(vm.isSpiceCopyPasteEnabled()));
-        }
+        // ensure compatibility with VDSM <= 4.16
+        addVmSpiceOptions(vm.getGraphicsInfos(), createInfo);
 
         if (osRepository.isHypervEnabled(vm.getVmOsId(), vm.getVdsGroupCompatibilityVersion())) {
             createInfo.put(VdsProperties.hypervEnable, "true");
+        }
+    }
+
+    protected void addVmSpiceOptions(Map<GraphicsType, GraphicsInfo> infos, Map<String, Object> params) {
+        if (infos != null && infos.containsKey(GraphicsType.SPICE)) {
+            params.put(VdsProperties.spiceFileTransferEnable,
+                    Boolean.toString(vm.isSpiceFileTransferEnabled()));
+            params.put(VdsProperties.spiceCopyPasteEnable,
+                    Boolean.toString(vm.isSpiceCopyPasteEnabled()));
         }
     }
 
