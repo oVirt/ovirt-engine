@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -47,6 +48,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
@@ -54,12 +57,19 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkAttachmentsPersister;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> extends VdsCommand<T> {
 
     @Inject
     private NetworkDao networkDao;
+
+    @Inject
+    private NetworkAttachmentDao networkAttachmentDao;
+
+    @Inject
+    private InterfaceDao interfaceDao;
 
     private StoragePool targetStoragePool;
 
@@ -282,6 +292,14 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                 && (targetStoragePool== null || !getSourceCluster().getStoragePoolId().equals(targetStoragePool.getId()))) {
             getVdsSpmIdMapDao().removeByVdsAndStoragePool(getVds().getId(), getSourceCluster().getStoragePoolId());
         }
+
+        List<Network> clusterNetworks = networkDao.getAllForCluster(getTargetCluster().getId());
+        HostNetworkAttachmentsPersister persister = new HostNetworkAttachmentsPersister(this.networkAttachmentDao,
+                getVdsId(),
+                interfaceDao.getAllInterfacesForVds(getVdsId()),
+                Collections.<NetworkAttachment> emptyList(),
+                clusterNetworks);
+        persister.persistNetworkAttachments();
 
         if (targetClusterSupportsSetupNetworks()) {
             configureNetworks();
