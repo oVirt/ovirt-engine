@@ -91,8 +91,8 @@ public class HostDeviceManager implements BackendService {
         return !supportsHostDevicePassthrough(vm) || hostDeviceDao.checkVmHostDeviceAvailability(vm.getId(), vdsId);
     }
 
-    public void allocateVmHostDevices(Guid vmId) {
-        hostDeviceDao.markHostDevicesUsedByVmId(vmId);
+    public void allocateVmHostDevices(VM vm) {
+        hostDeviceDao.markHostDevicesUsedByVmId(vm.getId(), vm.getDedicatedVmForVdsList().get(0));
     }
 
     public void freeVmHostDevices(Guid vmId) {

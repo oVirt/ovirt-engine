@@ -87,9 +87,11 @@ public class HostDeviceDaoImpl extends MassOperationsGenericDaoDbFacade<HostDevi
     }
 
     @Override
-    public void markHostDevicesUsedByVmId(Guid vmId) {
+    public void markHostDevicesUsedByVmId(Guid vmId, Guid hostId) {
         getCallsHandler().executeModification("MarkHostDevicesUsedByVmId",
-                getCustomMapSqlParameterSource().addValue("vm_id", vmId));
+                getCustomMapSqlParameterSource()
+                        .addValue("vm_id", vmId)
+                        .addValue("host_id", hostId));
     }
 
     @Override
