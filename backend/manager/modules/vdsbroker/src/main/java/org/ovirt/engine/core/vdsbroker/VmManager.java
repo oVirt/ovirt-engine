@@ -29,6 +29,7 @@ public class VmManager {
 
     public VmManager(Guid id) {
         this.id = id;
+        convertOperationProgress = -1;
     }
 
     public void lock() {
