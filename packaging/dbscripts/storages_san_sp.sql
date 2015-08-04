@@ -571,10 +571,9 @@ RETURNS SETOF storage_server_connections STABLE
 BEGIN
 RETURN QUERY SELECT distinct storage_server_connections.*
    FROM    storage_server_connections storage_server_connections
-   INNER JOIN
-   storage_domain_static_view ON
-   storage_server_connections.id = storage_domain_static_view.storage
-   WHERE     (storage_domain_static_view.storage_pool_id = v_storage_pool_id);
+   INNER JOIN storage_domain_static ON storage_server_connections.id = storage_domain_static.storage
+   INNER JOIN storage_pool_iso_map ON storage_pool_iso_map.storage_id = storage_domain_static.id
+   WHERE     (storage_pool_iso_map.storage_pool_id = v_storage_pool_id);
 END; $procedure$
 LANGUAGE plpgsql;
 

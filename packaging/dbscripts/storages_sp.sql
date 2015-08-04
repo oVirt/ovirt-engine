@@ -556,12 +556,13 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION Getstorage_domain_staticBystorage_pool_id(v_storage_pool_id UUID)
-RETURNS SETOF storage_domain_static_view STABLE
+RETURNS SETOF storage_domain_static STABLE
    AS $procedure$
 BEGIN
-   RETURN QUERY SELECT *
-   FROM storage_domain_static_view
-   WHERE storage_pool_id = v_storage_pool_id;
+   RETURN QUERY SELECT storage_domain_static.*
+   FROM storage_domain_static
+   INNER JOIN storage_pool_iso_map ON storage_pool_iso_map.storage_id = storage_domain_static.id
+   WHERE storage_pool_iso_map.storage_pool_id = v_storage_pool_id;
 
 END; $procedure$
 LANGUAGE plpgsql;

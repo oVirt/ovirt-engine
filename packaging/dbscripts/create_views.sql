@@ -8,35 +8,6 @@ FROM
     unregistered_ovf_of_entities;
 
 CREATE
-OR REPLACE VIEW storage_domain_static_view AS
-SELECT
-    storage_domain_static.id AS id,
-    storage_domain_static.storage AS storage,
-    storage_domain_static.storage_name AS storage_name,
-    storage_domain_static.storage_description AS storage_description,
-    storage_domain_static.storage_comment AS storage_comment,
-    storage_pool_iso_map.storage_pool_id AS storage_pool_id,
-    storage_pool_iso_map.status AS status,
-    storage_domain_static.storage_domain_type AS storage_domain_type,
-    storage_domain_static.storage_type AS storage_type,
-    storage_domain_static.storage_domain_format_type AS storage_domain_format_type,
-    storage_domain_static.last_time_used_as_master AS last_time_used_as_master,
-    storage_domain_static.wipe_after_delete AS wipe_after_delete,
-    storage_pool.name AS storage_pool_name,
-    domains_with_unregistered_entities_view.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
-    storage_domain_static.warning_low_space_indicator,
-    storage_domain_static.critical_space_action_blocker
-FROM
-    storage_domain_static
-LEFT
-OUTER JOIN storage_pool_iso_map ON storage_pool_iso_map.storage_id = storage_domain_static.id
-LEFT
-OUTER JOIN storage_pool ON storage_pool.id = storage_pool_iso_map.storage_pool_id
-LEFT
-OUTER JOIN domains_with_unregistered_entities_view ON
-    domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id;
-
-CREATE
 OR REPLACE VIEW vms_for_disk_view AS
 SELECT
     array_agg ( vm_name ) AS array_vm_names,
@@ -54,10 +25,10 @@ CREATE
 OR REPLACE VIEW images_storage_domain_view AS -- TODO: Change code to treat disks values directly instead of through this view.
 SELECT
     images.image_guid AS image_guid,
-    storage_domain_static_view.storage_name AS storage_name,
-    storage_domain_static_view.storage AS storage_path,
-    storage_domain_static_view.storage_pool_id AS storage_pool_id,
-    storage_domain_static_view.storage_type AS storage_type,
+    storage_domain_static.storage_name AS storage_name,
+    storage_domain_static.storage AS storage_path,
+    storage_pool_iso_map.storage_pool_id AS storage_pool_id,
+    storage_domain_static.storage_type AS storage_type,
     images.creation_date AS creation_date,
     images.size AS SIZE,
     images.it_guid AS it_guid,
@@ -111,7 +82,7 @@ SELECT
             storage_domains_ovf_info
         WHERE
             images.image_group_id = storage_domains_ovf_info.ovf_disk_id ) AS ovf_store,
-    storage_domain_static_view.contains_unregistered_entities AS contains_unregistered_entities
+    domains_with_unregistered_entities_view.storage_domain_id IS NOT NULL AS contains_unregistered_entities
 FROM
     images
 LEFT
@@ -123,7 +94,10 @@ LEFT
 OUTER JOIN vms_for_disk_view ON vms_for_disk_view.device_id = images.image_group_id
 LEFT JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
 LEFT
-OUTER JOIN storage_domain_static_view ON image_storage_domain_map.storage_domain_id = storage_domain_static_view.id
+OUTER JOIN storage_domain_static ON image_storage_domain_map.storage_domain_id = storage_domain_static.id
+LEFT
+OUTER JOIN domains_with_unregistered_entities_view ON
+    image_storage_domain_map.storage_domain_id = domains_with_unregistered_entities_view.storage_domain_id
 LEFT
 OUTER JOIN snapshots ON images.vm_snapshot_id = snapshots.snapshot_id
 LEFT
@@ -131,7 +105,9 @@ OUTER JOIN quota ON image_storage_domain_map.quota_id = quota.id
 LEFT
 OUTER JOIN disk_profiles ON image_storage_domain_map.disk_profile_id = disk_profiles.id
 LEFT
-OUTER JOIN storage_pool ON storage_pool.id = storage_domain_static_view.storage_pool_id
+OUTER JOIN storage_pool_iso_map ON storage_pool_iso_map.storage_id = storage_domain_static.id
+LEFT
+OUTER JOIN storage_pool ON storage_pool.id = storage_pool_iso_map.storage_pool_id
 WHERE
     images.image_guid != '00000000-0000-0000-0000-000000000000';
 CREATE
