@@ -2,37 +2,49 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.businessentities.ErrataCounts;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 
-public class GetErrataCountsForHostQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+public class GetErrataCountsForVmQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
-    public GetErrataCountsForHostQuery(P parameters) {
+    @Inject
+    private VmDao vmDao;
+
+    @Inject
+    private ProviderDao providerDao;
+
+    public GetErrataCountsForVmQuery(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeQueryCommand() {
-        VdsStatic host = getDbFacade().getVdsStaticDao().get(getParameters().getId());
-        if (host == null) {
-            failWith(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+        VM vm = vmDao.get(getParameters().getId());
+
+        Provider<?> provider = getHostProvider(vm);
+
+        if (vm == null) {
+            failWith(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_EXIST);
             return;
         }
 
-        Provider<?> provider = getHostProvider(host);
         if (provider == null) {
-            failWith(EngineMessage.NO_FOREMAN_PROVIDER_FOR_ENGINE);
+            failWith(EngineMessage.NO_FOREMAN_PROVIDER_FOR_VM);
             return;
         }
 
         HostProviderProxy proxy = getHostProviderProxy(provider);
-        List<Erratum> errata = proxy.getErrataForHost(host.getHostName());
+        List<Erratum> errata = proxy.getErrataForHost(vm.getVmHost()); // vm.getVmHost() == vm's hostname
         ErrataCounts stats = new ErrataCounts();
         for (Erratum erratum : errata) {
             stats.addToCounts(erratum);
@@ -50,7 +62,7 @@ public class GetErrataCountsForHostQuery<P extends IdQueryParameters> extends Qu
         return (HostProviderProxy) ProviderProxyFactory.getInstance().create(provider);
     }
 
-    private Provider<?> getHostProvider(VdsStatic host) {
-        return host.getHostProviderId() == null ? null : getDbFacade().getProviderDao().get(host.getHostProviderId());
+    private Provider<?> getHostProvider(VM vm) {
+        return vm.getProviderId() == null ? null : providerDao.get(vm.getProviderId());
     }
 }

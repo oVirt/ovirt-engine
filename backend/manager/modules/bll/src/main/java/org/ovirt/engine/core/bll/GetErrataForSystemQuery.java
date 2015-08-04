@@ -7,6 +7,7 @@ import org.ovirt.engine.core.bll.host.provider.foreman.SystemProviderFinder;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
+// TODO rename -> GetErrataForEngineQuery
 public class GetErrataForSystemQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
 
     @Inject
@@ -21,7 +22,7 @@ public class GetErrataForSystemQuery<P extends VdcQueryParametersBase> extends Q
         HostProviderProxy proxy = systemProviderFinder.findSystemProvider();
         if (proxy == null) {
             getQueryReturnValue().setSucceeded(false);
-            getQueryReturnValue().setExceptionString(EngineMessage.NO_HOST_PROVIDER_FOR_SYSTEM.name());
+            getQueryReturnValue().setExceptionString(EngineMessage.NO_FOREMAN_PROVIDER_FOR_ENGINE.name());
         } else {
             setReturnValue(proxy.getErrataForHost(systemProviderFinder.getSystemHostName()));
         }
