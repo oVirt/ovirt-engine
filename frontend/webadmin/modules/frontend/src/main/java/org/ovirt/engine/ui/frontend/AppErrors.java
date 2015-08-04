@@ -292,9 +292,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot attach VM to VM-Pool. VM is running.")
     String VM_POOL_CANNOT_ADD_RUNNING_VM_TO_POOL();
 
-    @DefaultStringValue("Invalid Host Cluster id.")
-    String VM_INVALID_SERVER_CLUSTER_ID();
-
     @DefaultStringValue("Cannot ${action} ${type}. VM is locked or still running, try again once VM is in the Down state.")
     String VMT_CANNOT_CREATE_TEMPLATE_FROM_DOWN_VM();
 
@@ -1662,9 +1659,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot get Storage Domains list.")
     String ERROR_GET_STORAGE_DOMAIN_LIST();
-
-    @DefaultStringValue("MAC Address is already in use.")
-    String NETWORK_MAC_ADDRESS_IN_USE();
 
     @DefaultStringValue("Cannot ${action} ${type}. There is at least one running VM that uses this Network.")
     String NETWORK_INTERFACE_IN_USE_BY_VM();
@@ -3505,12 +3499,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot perform ${action}. Another power management action is already in progress.")
     String POWER_MANAGEMENT_ACTION_ON_ENTITY_ALREADY_IN_PROGRESS();
-
-    @DefaultStringValue("A labeled network interface could not be found.")
-    String LABELED_NETWORK_INTERFACE_NOT_FOUND();
-
-    @DefaultStringValue("The networks represented by label cannot be configured on the same network interface.")
-    String NETWORK_LABEL_CONFLICT();
 
     @DefaultStringValue("Cannot ${action} ${type}. Name field input is too long.")
     String AFFINITY_GROUP_NAME_TOO_LONG();

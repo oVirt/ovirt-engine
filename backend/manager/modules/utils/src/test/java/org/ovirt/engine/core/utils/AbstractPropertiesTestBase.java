@@ -10,7 +10,6 @@ import java.io.InputStream;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class AbstractPropertiesTestBase {
@@ -42,7 +41,7 @@ public class AbstractPropertiesTestBase {
 
     @Test
     public void testRedundantMessages() throws IOException {
-        EnumTranslationProperties props = new EnumTranslationProperties(EngineMessage.class, EngineError.class);
+        EnumTranslationProperties props = new EnumTranslationProperties(EngineMessage.class);
         try (InputStream is = new FileInputStream(file)) {
             props.load(is);
         } catch (MissingEnumTranslationException exception) {

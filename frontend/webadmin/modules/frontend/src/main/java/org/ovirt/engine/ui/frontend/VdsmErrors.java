@@ -661,6 +661,9 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String VM_NOT_QUALIFIED_FOR_SNAPSHOT_MERGE();
 
+    @DefaultStringValue("Invalid Host Cluster id.")
+    String VM_INVALID_SERVER_CLUSTER_ID();
+
     String MIGRATION_DEST_INVALID_HOSTNAME();
 
     String MIGRATION_CANCEL_ERROR();
@@ -870,6 +873,12 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Reverting back to last known saved configuration.")
     String SETUP_NETWORKS_ROLLBACK();
+
+    @DefaultStringValue("A labeled network interface could not be found.")
+    String LABELED_NETWORK_INTERFACE_NOT_FOUND();
+
+    @DefaultStringValue("The networks represented by label cannot be configured on the same network interface.")
+    String NETWORK_LABEL_CONFLICT();
 
     @DefaultStringValue("Failed to change the number of virtual functions.")
     String UPDATE_NUM_VFS_FAILURE();
