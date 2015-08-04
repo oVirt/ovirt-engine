@@ -145,4 +145,7 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
     @Actionable
     @Path("setupnetworks")
     Response setupNetworks(Action action);
+
+    @Path("storageconnectionextensions")
+    public StorageServerConnectionExtensionsResource getStorageConnectionExtensionsResource();
 }
