@@ -9,7 +9,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -28,8 +30,15 @@ import org.ovirt.engine.core.utils.RandomUtils;
 /** A test case for the {@link VmHandler} class. */
 public class VmHandlerTest {
 
+    @ClassRule
+    public static InjectorRule injectorRule = new InjectorRule();
+
+    @Mock
+    CpuFlagsManagerHandler cpuFlagsManagerHandler;
+
     @Before
     public void setUp() {
+        injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
         VmHandler.init();
     }
 

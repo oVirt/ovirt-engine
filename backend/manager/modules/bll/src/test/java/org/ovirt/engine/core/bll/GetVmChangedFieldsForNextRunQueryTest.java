@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -26,14 +27,25 @@ import org.ovirt.engine.core.compat.Version;
 public class GetVmChangedFieldsForNextRunQueryTest
         extends AbstractQueryTest<GetVmChangedFieldsForNextRunParameters, GetVmChangedFieldsForNextRunQuery<? extends GetVmChangedFieldsForNextRunParameters>> {
 
+    @ClassRule
+    public static InjectorRule injectorRule = new InjectorRule();
+
+    @Mock
+    CpuFlagsManagerHandler cpuFlagsManagerHandler;
+
     @Mock
     VmPropertiesUtils vmPropertiesUtils;
 
     @Before
     public void init() {
+        mockCpuFlagsManagerHandler();
         VmHandler.init();
         mockVmPropertiesUtils();
         doNothing().when(vmPropertiesUtils).separateCustomPropertiesToUserAndPredefined(any(Version.class), any(VmStatic.class));
+    }
+
+    private void mockCpuFlagsManagerHandler() {
+        injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
     }
 
     private void mockVmPropertiesUtils() {
