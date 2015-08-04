@@ -1858,8 +1858,11 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Active VMs were detected.\n-Please ensure all VMs associated with this Storage Domain are stopped and in the Down state first.")
     String ACTION_TYPE_FAILED_DETECTED_ACTIVE_VMS();
 
-    @DefaultStringValue("The provided Host does not exist.")
+    @DefaultStringValue("The selected Host does not exist.")
     String ACTION_TYPE_FAILED_HOST_NOT_EXIST();
+
+    @DefaultStringValue("The selected VM does not exist.")
+    String ACTION_TYPE_FAILED_VM_NOT_EXIST();
 
     @DefaultStringValue("The specified Tag name already exists.")
     String TAGS_SPECIFY_TAG_IS_IN_USE();
@@ -3662,8 +3665,24 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Cinder disk is already registered (${diskAlias}).")
     String CINDER_DISK_ALREADY_REGISTERED();
 
-    @DefaultStringValue("The engine server is not associated with any host provider.")
-    String NO_HOST_PROVIDER_FOR_SYSTEM();
+    @DefaultStringValue("The engine is not associated with a Foreman/Satellite provider. No errata for the engine are available.")
+    String NO_FOREMAN_PROVIDER_FOR_ENGINE();
+
+    @DefaultStringValue("The selected VM is not associated with a Foreman/Satellite provider. No errata for the VM are available.")
+    String NO_FOREMAN_PROVIDER_FOR_VM();
+
+    @DefaultStringValue("The selected Host is not associated with a Foreman/Satellite provider. No errata for the Host are available.")
+    String NO_FOREMAN_PROVIDER_FOR_HOST();
+
+    // TODO-GS: use the next three messages for these conditions (follow-up patch)
+    @DefaultStringValue("Foreman/Katello/Satellite: the engine is not registered with this provider. The engine's DNS name must be a registered host in Katello. No errata for the engine are available.")
+    String FOREMAN_ENGINE_NOT_REGISTERED();
+
+    @DefaultStringValue("Foreman/Katello/Satellite: the selected VM is not registered with this provider. No errata for the VM are available.")
+    String FOREMAN_VM_NOT_REGISTERED();
+
+    @DefaultStringValue("Foreman/Katello/Satellite: the selected Host is not registered with this provider. No errata for the Host are available.")
+    String FOREMAN_HOST_NOT_REGISTERED();
 
     @DefaultStringValue("Cannot ${action} ${type}. VM must be pinned to a host.")
     String ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST();
