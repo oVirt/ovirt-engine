@@ -408,7 +408,7 @@ public interface IVdsServer {
 
     VMListReturnForXmlRpc getExternalVmList(String uri, String username, String password);
 
-    VMListReturnForXmlRpc getOvaInfo(String ovaPath);
+    VMListReturnForXmlRpc getExternalVmFromOva(String ovaPath);
 
     StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionResume(String volumeName,
             String slaveHostName,
@@ -451,7 +451,7 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc convertVmFromExternalSystem(String url, String user, String password, Map<String, Object> vm, String jobUUID);
 
-    StatusOnlyReturnForXmlRpc convertOva(String ovaPath, Map<String, Object> vm, String jobUUID);
+    StatusOnlyReturnForXmlRpc convertVmFromOva(String ovaPath, Map<String, Object> vm, String jobUUID);
 
     OvfReturnForXmlRpc getConvertedVm(String jobUUID);
 

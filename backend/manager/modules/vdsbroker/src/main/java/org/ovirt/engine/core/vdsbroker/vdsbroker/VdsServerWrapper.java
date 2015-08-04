@@ -1917,9 +1917,9 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc convertOva(String ovaPath, Map<String, Object> vm, String jobUUID) {
+    public StatusOnlyReturnForXmlRpc convertVmFromOva(String ovaPath, Map<String, Object> vm, String jobUUID) {
         try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.convertOva(ovaPath, vm, jobUUID);
+            Map<String, Object> xmlRpcReturnValue = vdsServer.convertExternalVmFromOva(ovaPath, vm, jobUUID);
             StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
@@ -2028,9 +2028,10 @@ public class VdsServerWrapper implements IVdsServer {
         return wrapper;
     }
 
-    public VMListReturnForXmlRpc getOvaInfo(String ovaPath) {
+    @Override
+    public VMListReturnForXmlRpc getExternalVmFromOva(String ovaPath) {
         try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.getOvaInfo(ovaPath);
+            Map<String, Object> xmlRpcReturnValue = vdsServer.getExternalVmFromOva(ovaPath);
             return new VMListReturnForXmlRpc(xmlRpcReturnValue);
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);

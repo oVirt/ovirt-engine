@@ -16,7 +16,7 @@ public class GetOvaInfoVDSCommand<T extends GetOvaInfoParameters> extends VdsBro
 
     @Override
     protected void executeVdsBrokerCommand() {
-        vmListReturn = getBroker().getOvaInfo(getParameters().getPath());
+        vmListReturn = getBroker().getExternalVmFromOva(getParameters().getPath());
         proceedProxyReturnValue();
         Map<String, Object> map = vmListReturn.vmList[0];
         map.put(VdsProperties.vm_guid, Guid.newGuid().toString());

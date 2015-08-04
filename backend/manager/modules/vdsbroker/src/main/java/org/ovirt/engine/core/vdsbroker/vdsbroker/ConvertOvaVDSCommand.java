@@ -16,7 +16,7 @@ public class ConvertOvaVDSCommand<T extends ConvertOvaVDSParameters> extends Vds
 
     @Override
     protected void executeVdsBrokerCommand() {
-        status = getBroker().convertOva(
+        status = getBroker().convertVmFromOva(
                 getParameters().getOvaPath(),
                 createVmProperties(),
                 getParameters().getVmId().toString());
