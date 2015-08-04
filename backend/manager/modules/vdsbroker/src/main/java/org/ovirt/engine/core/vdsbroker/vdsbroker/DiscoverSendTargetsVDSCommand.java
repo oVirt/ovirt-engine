@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.vdscommands.DiscoverSendTargetsVDSCommandParameters;
+import org.ovirt.engine.core.vdsbroker.storage.StorageConnectionHelper;
 
 public class DiscoverSendTargetsVDSCommand<P extends DiscoverSendTargetsVDSCommandParameters>
         extends VdsBrokerCommand<P> {
@@ -17,7 +18,7 @@ public class DiscoverSendTargetsVDSCommand<P extends DiscoverSendTargetsVDSComma
     @Override
     protected void executeVdsBrokerCommand() {
         _result = getBroker().discoverSendTargets(
-                ConnectStorageServerVDSCommand.createStructFromConnection(getParameters().getConnection(), null));
+                StorageConnectionHelper.getInstance().createStructFromConnection(getParameters().getConnection(), null, getParameters().getVdsId()));
         proceedProxyReturnValue();
         setReturnValue(_result.isFullTargets() ? parseFullTargets(_result.getIqnList())
                 : parseTargets(_result.getIqnList()));
