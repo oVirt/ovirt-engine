@@ -438,8 +438,16 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+DROP TYPE IF EXISTS host_networks_by_cluster_rs CASCADE;
+CREATE TYPE host_networks_by_cluster_rs AS (
+        vds_id UUID,
+        network_name VARCHAR
+);
+
+
 Create or replace FUNCTION GetHostNetworksByCluster(v_cluster_id UUID)
-RETURNS TABLE(vds_id UUID, network_name VARCHAR) STABLE
+RETURNS SETOF host_networks_by_cluster_rs STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT vds_static.vds_id, vds_interface.network_name
@@ -448,6 +456,7 @@ BEGIN
    AND vds_static.vds_group_id = v_cluster_id;
 END; $procedure$
 LANGUAGE plpgsql;
+
 
 Create or replace FUNCTION Getinterface_viewByAddr(v_cluster_id UUID, v_addr VARCHAR(50))
 RETURNS SETOF vds_interface_view STABLE
