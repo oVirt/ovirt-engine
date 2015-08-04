@@ -108,6 +108,7 @@ import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Step;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageConnection;
+import org.ovirt.engine.api.model.StorageConnectionExtension;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.Template;
@@ -220,6 +221,8 @@ import org.ovirt.engine.api.resource.StorageDomainContentsResource;
 import org.ovirt.engine.api.resource.StorageDomainResource;
 import org.ovirt.engine.api.resource.StorageDomainsResource;
 import org.ovirt.engine.api.resource.StorageResource;
+import org.ovirt.engine.api.resource.StorageServerConnectionExtensionResource;
+import org.ovirt.engine.api.resource.StorageServerConnectionExtensionsResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionsResource;
 import org.ovirt.engine.api.resource.SystemPermissionsResource;
@@ -300,6 +303,7 @@ import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProviderResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProvidersResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypeResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypesResource;
+
 
 /**
  * Contains a static addLinks() method which constructs any href attributes
@@ -385,6 +389,9 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(DiskSnapshotResource.class, DiskSnapshotsResource.class, StorageDomain.class);
         TYPES.put(DiskSnapshot.class, map);
+
+        map = new ParentToCollectionMap(StorageServerConnectionExtensionResource.class, StorageServerConnectionExtensionsResource.class, Host.class);
+        TYPES.put(StorageConnectionExtension.class, map);
 
         map = new ParentToCollectionMap(org.ovirt.engine.api.resource.HostResource.class, org.ovirt.engine.api.resource.HostsResource.class);
         TYPES.put(Host.class, map);

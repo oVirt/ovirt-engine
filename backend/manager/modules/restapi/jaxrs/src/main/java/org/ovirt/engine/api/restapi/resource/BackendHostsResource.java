@@ -43,7 +43,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
     private static final Logger log = LoggerFactory.getLogger(BackendHostsResource.class);
     private static final String DEFAULT_NAME = "Default";
     static final String[] SUB_COLLECTIONS = { "storage", "nics", "numanodes", "tags", "permissions", "statistics",
-        "hooks", "fenceagents", "katelloerrata", "devices", "networkattachments", "unmanagednetworks" };
+        "hooks", "fenceagents", "katelloerrata", "devices", "networkattachments", "unmanagednetworks", "storageconnectionextensions" };
     static final String GLUSTERONLY_MODE_COLLECTIONS_TO_HIDE = "storage";
 
     public BackendHostsResource() {

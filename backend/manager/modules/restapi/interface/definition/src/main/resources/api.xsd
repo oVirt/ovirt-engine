@@ -2066,6 +2066,7 @@
           <xs:element ref="external_host_provider" minOccurs="0" maxOccurs="1"/>
           <xs:element name="update_available" type="xs:boolean" minOccurs="0" maxOccurs="1" />
           <xs:element ref="device_passthrough" minOccurs="0" maxOccurs="1" />
+          <xs:element ref="storage_connection_extensions" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -2729,6 +2730,33 @@
   <xs:element name="storage_domains" type="StorageDomains"/>
 
   <xs:element name="storage_connections" type="StorageConnections"/>
+
+  <xs:element name="storage_connection_extensions" type="StorageConnectionExtensions"/>
+
+  <xs:element name="storage_connection_extension" type="StorageConnectionExtension"/>
+
+  <xs:complexType name="StorageConnectionExtensions">
+      <xs:complexContent>
+          <xs:extension base="BaseResources">
+              <xs:sequence>
+                  <xs:element ref="storage_connection_extension" minOccurs="0" maxOccurs="unbounded"/>
+              </xs:sequence>
+          </xs:extension>
+      </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="StorageConnectionExtension">
+      <xs:complexContent>
+          <xs:extension base="BaseResource">
+              <xs:sequence>
+                  <xs:element name="target" type="xs:string" minOccurs="0"/>
+                  <xs:element name="username" type="xs:string" minOccurs="0"/>
+                  <xs:element name="password" type="xs:string" minOccurs="0"/>
+                  <xs:element ref="host" minOccurs="0"/>
+              </xs:sequence>
+          </xs:extension>
+      </xs:complexContent>
+  </xs:complexType>
 
   <xs:group name="NfsStorage">
        <xs:sequence>
