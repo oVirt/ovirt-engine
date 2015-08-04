@@ -32,7 +32,7 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationParameters>
         extends VdsGroupOperationCommandBase<T> {
 
-    public static final String DefaultNetworkDescription = "Management Network";
+    public static final String DefaultNetworkDescription = "Default Management Network";
 
     @Inject
     private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
