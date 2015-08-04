@@ -27,6 +27,7 @@ public class UserProfileDaoImpl extends BaseDaoDbFacade implements UserProfileDa
             entity.setUserId(getGuidDefaultEmpty(rs, "user_id"));
             entity.setSshPublicKey(rs.getString("ssh_public_key"));
             entity.setLoginName(rs.getString("login_name"));
+            entity.setUserPortalVmLoginAutomatically(rs.getBoolean("user_portal_vm_auto_login"));
             return entity;
         }
     }
@@ -60,9 +61,10 @@ public class UserProfileDaoImpl extends BaseDaoDbFacade implements UserProfileDa
     @Override
     public void save(UserProfile profile) {
         getCallsHandler().executeModification("InsertUserProfile",
-                                  createIdParameterMapper(profile.getId())
-                                                  .addValue("user_id", profile.getUserId())
-                                                  .addValue("ssh_public_key", profile.getSshPublicKey()));
+                createIdParameterMapper(profile.getId())
+                        .addValue("user_id", profile.getUserId())
+                        .addValue("ssh_public_key", profile.getSshPublicKey())
+                        .addValue("user_portal_vm_auto_login", profile.isUserPortalVmLoginAutomatically()));
     }
 
     @Override
@@ -70,7 +72,8 @@ public class UserProfileDaoImpl extends BaseDaoDbFacade implements UserProfileDa
         getCallsHandler().executeModification("UpdateUserProfile",
                                   createIdParameterMapper(profile.getId())
                                                   .addValue("user_id", profile.getUserId())
-                                                  .addValue("ssh_public_key", profile.getSshPublicKey()));
+                                                  .addValue("ssh_public_key", profile.getSshPublicKey())
+                                                  .addValue("user_portal_vm_auto_login", profile.isUserPortalVmLoginAutomatically()));
     }
 
     @Override

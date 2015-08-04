@@ -94,11 +94,9 @@
                             <e:ListModelListBoxEditor ui:field="profileEditor" usePatternFly="true" tabIndex="4" />
 
                             <g:FlowPanel>
-                                <b:Column size="XS_8 SM_6" offset="SM_2">
-                                    <ge:EntityModelCheckBoxEditor ui:field="connectAutomaticallyEditor" usePatternFly="true" tabIndex="5" />
-                                </b:Column>
+                                <b:Column size="XS_8 SM_6" offset="SM_2"></b:Column>
                                 <b:Column size="XS_4" addStyleNames="submit {style.loginButtonContainer}">
-                                    <w:PatternflyUiCommandButton ui:field="loginButton" addStyleNames="btn-primary btn-lg" tabIndex="6" />
+                                    <w:PatternflyUiCommandButton ui:field="loginButton" addStyleNames="btn-primary btn-lg" tabIndex="5" />
                                </b:Column>
                            </g:FlowPanel>
                        </g:FlowPanel>

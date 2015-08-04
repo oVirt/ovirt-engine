@@ -12,38 +12,10 @@ public class LoginFormPresenterWidget extends AbstractLoginPresenterWidget<UserP
     public interface ViewDef extends AbstractLoginPresenterWidget.ViewDef<UserPortalLoginModel> {
     }
 
-    private final ConnectAutomaticallyProvider connectAutomaticallyProvider;
-
     @Inject
     public LoginFormPresenterWidget(EventBus eventBus, ViewDef view, UserPortalLoginModel loginModel,
-            ClientStorage clientStorage, LockInteractionManager lockInteractionManager,
-            ConnectAutomaticallyProvider connectAutomaticallyProvider) {
+            ClientStorage clientStorage, LockInteractionManager lockInteractionManager) {
         super(eventBus, view, loginModel, clientStorage, lockInteractionManager);
-        this.connectAutomaticallyProvider = connectAutomaticallyProvider;
-    }
-
-    @Override
-    protected void onBind() {
-        super.onBind();
-
-        UserPortalLoginModel loginModel = getView().flush();
-        initConnectAutomatically(loginModel);
-    }
-
-    @Override
-    protected void onLoggedInEvent(UserPortalLoginModel loginModel) {
-        super.onLoggedInEvent(loginModel);
-        saveConnectAutomatically(loginModel);
-    }
-
-    void saveConnectAutomatically(UserPortalLoginModel loginModel) {
-        Boolean isAutoconnect = loginModel.getIsAutoConnect().getEntity();
-        connectAutomaticallyProvider.storeConnectAutomatically(isAutoconnect);
-    }
-
-    void initConnectAutomatically(UserPortalLoginModel loginModel) {
-        boolean isAutoconnect = connectAutomaticallyProvider.readConnectAutomatically();
-        loginModel.getIsAutoConnect().setEntity(isAutoconnect);
     }
 
     @Override

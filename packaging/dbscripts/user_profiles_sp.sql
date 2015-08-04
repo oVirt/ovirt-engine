@@ -15,18 +15,21 @@
 Create or replace FUNCTION InsertUserProfile(
     v_profile_id UUID,
     v_user_id UUID,
-    v_ssh_public_key TEXT)
+    v_ssh_public_key TEXT,
+    v_user_portal_vm_auto_login boolean)
 RETURNS VOID
 AS $procedure$
 BEGIN
     INSERT INTO user_profiles (
         profile_id,
         user_id,
-        ssh_public_key)
+        ssh_public_key,
+        user_portal_vm_auto_login)
     VALUES(
         v_profile_id,
         v_user_id,
-        v_ssh_public_key);
+        v_ssh_public_key,
+        v_user_portal_vm_auto_login);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -37,14 +40,16 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION UpdateUserProfile(
     v_profile_id UUID,
     v_user_id UUID,
-    v_ssh_public_key TEXT)
+    v_ssh_public_key TEXT,
+    v_user_portal_vm_auto_login boolean)
 RETURNS VOID
 AS $procedure$
 BEGIN
     UPDATE user_profiles
     SET    profile_id = v_profile_id,
            user_id = v_user_id,
-           ssh_public_key = v_ssh_public_key
+           ssh_public_key = v_ssh_public_key,
+           user_portal_vm_auto_login = v_user_portal_vm_auto_login
     WHERE  profile_id = v_profile_id;
 END; $procedure$
 LANGUAGE plpgsql;

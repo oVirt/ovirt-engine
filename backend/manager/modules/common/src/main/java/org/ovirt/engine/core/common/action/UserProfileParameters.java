@@ -17,17 +17,22 @@ public class UserProfileParameters extends VdcActionParametersBase {
     }
 
     public UserProfileParameters(Guid userId) {
-        this(userId, "");
+        this(userId, "", true);
     }
 
     public UserProfileParameters(String sshPublicKey) {
-        this(Guid.Empty, sshPublicKey);
+        this(Guid.Empty, sshPublicKey, true);
     }
 
     public UserProfileParameters(Guid userId, String sshPublicKey) {
+        this(Guid.Empty, sshPublicKey, true);
+    }
+
+    public UserProfileParameters(Guid userId, String sshPublicKey, boolean userPortalVmLoginAutomatically) {
         profile = new UserProfile();
         profile.setUserId(userId);
         profile.setSshPublicKey(sshPublicKey);
+        profile.setUserPortalVmLoginAutomatically(userPortalVmLoginAutomatically);
     }
 
     public UserProfile getUserProfile() {

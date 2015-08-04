@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.userportal.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.UserProfile;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
@@ -12,7 +14,6 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.AbstractUserPortalListM
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.userportal.section.login.presenter.ConnectAutomaticallyProvider;
 import com.google.inject.Inject;
 
 /**
@@ -27,16 +28,12 @@ public class ConnectAutomaticallyManager {
 
     private final ErrorPopupManager errorPopupManager;
 
-    private final ConnectAutomaticallyProvider connectAutomatically;
-
     private boolean alreadyOpened = false;
 
     private List<EventChangeListener> listeners;
 
     @Inject
-    public ConnectAutomaticallyManager(ConnectAutomaticallyProvider connectAutomatically,
-                                       ErrorPopupManager errorPopupManager) {
-        this.connectAutomatically = connectAutomatically;
+    public ConnectAutomaticallyManager(ErrorPopupManager errorPopupManager) {
         this.errorPopupManager = errorPopupManager;
     }
 
@@ -53,7 +50,7 @@ public class ConnectAutomaticallyManager {
     }
 
     public void registerModel(final AbstractUserPortalListModel model) {
-        if (alreadyOpened || !connectAutomatically.readConnectAutomatically()) {
+        if (alreadyOpened) {
             return;
         }
 
@@ -83,7 +80,21 @@ public class ConnectAutomaticallyManager {
 
         @Override
         public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-            if (connectAutomatically.readConnectAutomatically() && model.getCanConnectAutomatically() && !alreadyOpened) {
+            AsyncDataProvider.getInstance().getUserProfile(new AsyncQuery(model, new INewAsyncCallback() {
+                @Override
+                public void onSuccess(Object model, Object returnValue) {
+                    UserProfile profile = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                    Boolean connectAutomatically = profile == null ? Boolean.TRUE :
+                            profile.isUserPortalVmLoginAutomatically();
+                    if (connectAutomatically) {
+                        handleConnectAutomatically();
+                    }
+                }
+            }));
+        }
+
+        private void handleConnectAutomatically() {
+            if (model.getCanConnectAutomatically() && !alreadyOpened) {
                 AsyncQuery asyncQuery = new AsyncQuery();
                 asyncQuery.asyncCallback = new INewAsyncCallback() {
                     @Override

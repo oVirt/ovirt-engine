@@ -2,10 +2,7 @@ package org.ovirt.engine.ui.userportal.section.login.view;
 
 import org.gwtbootstrap3.client.ui.Label;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractLoginFormView;
-import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -38,11 +35,6 @@ public class LoginFormView extends AbstractLoginFormView implements LoginFormPre
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    @UiField(provided = true)
-    @Path("isAutoConnect.entity")
-    @WithElementId
-    EntityModelCheckBoxEditor connectAutomaticallyEditor;
-
     @UiField
     @Ignore
     Panel motdPanel;
@@ -64,8 +56,6 @@ public class LoginFormView extends AbstractLoginFormView implements LoginFormPre
     public LoginFormView(EventBus eventBus, ApplicationDynamicMessages dynamicMessages) {
         super(eventBus);
 
-        connectAutomaticallyEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize();
 
@@ -80,9 +70,6 @@ public class LoginFormView extends AbstractLoginFormView implements LoginFormPre
     @Override
     protected void setStyles() {
         super.setStyles();
-        connectAutomaticallyEditor.setContentWidgetContainerStyleName("connect-automatically-checkbox"); //$NON-NLS-1$
-        connectAutomaticallyEditor.addContentWidgetContainerStyleName("connect-automatically-checkbox_pfly_fix"); //$NON-NLS-1$
-        connectAutomaticallyEditor.setContentWidgetStyleName(""); //$NON-NLS-1$
         motdPanel.setVisible(false);
     }
 
@@ -113,7 +100,6 @@ public class LoginFormView extends AbstractLoginFormView implements LoginFormPre
         userNameEditor.setLabel(constants.loginFormUserNameLabel());
         passwordEditor.setLabel(constants.loginFormPasswordLabel());
         profileEditor.setLabel(constants.loginFormProfileLabel());
-        connectAutomaticallyEditor.setLabel(constants.loginFormConnectAutomaticallyLabel());
         loginButton.setLabel(constants.loginButtonLabel());
         motdHeaderLabel.setText(constants.motdHeaderLabel());
     }

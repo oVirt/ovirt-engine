@@ -1776,6 +1776,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Edit")
     String editVolume();
 
+    @DefaultStringValue("Edit")
+    String edit();
+
     @DefaultStringValue("Reset")
     String resetVolume();
 
@@ -1787,6 +1790,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Edit Option")
     String editOptionVolume();
+
+    @DefaultStringValue("Edit Options")
+    String editOptionsTitle();
 
     @DefaultStringValue("Error in fetching volume option list, please try again.")
     String errorInFetchingVolumeOptionList();

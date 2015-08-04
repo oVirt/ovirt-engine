@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.AboutPopupPresenter
 import org.ovirt.engine.ui.userportal.section.main.presenter.HeaderPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.OptionsPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.permissions.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.template.TemplateEditPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
@@ -60,6 +61,7 @@ import org.ovirt.engine.ui.userportal.section.main.view.AboutPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.HeaderView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainSectionView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainTabPanelView;
+import org.ovirt.engine.ui.userportal.section.main.view.OptionsPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.permissions.PermissionsPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.template.TemplateEditPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.template.TemplateInterfacePopupView;
@@ -330,6 +332,10 @@ public class PresenterModule extends BasePresenterModule {
                 TemplateInterfacePopupPresenterWidget.ViewDef.class,
                 TemplateInterfacePopupView.class);
 
+        // Options popups
+        bindPresenterWidget(OptionsPopupPresenterWidget.class,
+                OptionsPopupPresenterWidget.ViewDef.class,
+                OptionsPopupView.class);
     }
 
 }

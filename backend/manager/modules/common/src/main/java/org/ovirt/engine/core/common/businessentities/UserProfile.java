@@ -14,7 +14,10 @@ public class UserProfile  implements IVdcQueryable {
 
     private String loginName;
 
+    private boolean userPortalVmLoginAutomatically;
+
     public UserProfile() {
+        userPortalVmLoginAutomatically = true;
         sshPublicKey = "";
     }
 
@@ -60,6 +63,7 @@ public class UserProfile  implements IVdcQueryable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((sshPublicKey == null) ? 0 : sshPublicKey.hashCode());
+        result = prime * result + ((Boolean) userPortalVmLoginAutomatically).hashCode();
         result = prime * result + ((loginName == null) ? 0 : loginName.hashCode());
         return result;
     }
@@ -77,6 +81,15 @@ public class UserProfile  implements IVdcQueryable {
         }
         UserProfile other = (UserProfile) obj;
         return  ObjectUtils.objectsEqual(sshPublicKey, other.sshPublicKey)
+             && ObjectUtils.objectsEqual(isUserPortalVmLoginAutomatically(), other.isUserPortalVmLoginAutomatically())
              && ObjectUtils.objectsEqual(loginName, other.loginName);
+    }
+
+    public Boolean isUserPortalVmLoginAutomatically() {
+        return userPortalVmLoginAutomatically;
+    }
+
+    public void setUserPortalVmLoginAutomatically(boolean userPortalVmLoginAutomatically) {
+        this.userPortalVmLoginAutomatically = userPortalVmLoginAutomatically;
     }
 }

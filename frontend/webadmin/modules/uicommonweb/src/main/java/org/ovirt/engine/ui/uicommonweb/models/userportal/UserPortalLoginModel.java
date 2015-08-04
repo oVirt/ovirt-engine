@@ -34,16 +34,6 @@ public class UserPortalLoginModel extends LoginModel {
 
     private static final ActionGroup ConsumeQuotaActionGroup = ActionGroup.CONSUME_QUOTA; // 901
 
-    private EntityModel<Boolean> privateIsAutoConnect;
-
-    public EntityModel<Boolean> getIsAutoConnect() {
-        return privateIsAutoConnect;
-    }
-
-    private void setIsAutoConnect(EntityModel<Boolean> value) {
-        privateIsAutoConnect = value;
-    }
-
     private DbUser privateLoggedUser;
 
     @Override
@@ -100,9 +90,6 @@ public class UserPortalLoginModel extends LoginModel {
         EntityModel<Boolean> tempVar = new EntityModel<Boolean>();
         tempVar.setEntity(true);
         setIsENGINEUser(tempVar);
-        EntityModel<Boolean> tempVar2 = new EntityModel<Boolean>();
-        tempVar2.setEntity(true);
-        setIsAutoConnect(tempVar2);
     }
 
     @Override
@@ -119,7 +106,6 @@ public class UserPortalLoginModel extends LoginModel {
         getPassword().setIsChangeable(false);
         getProfile().setIsChangeable(false);
         getLoginCommand().setIsExecutionAllowed(false);
-        getIsAutoConnect().setIsChangeable(false);
 
         AsyncQuery asyncQuery = new AsyncQuery();
         asyncQuery.setModel(this);
@@ -141,7 +127,6 @@ public class UserPortalLoginModel extends LoginModel {
                     loginModel.getPassword().setIsChangeable(true);
                     loginModel.getProfile().setIsChangeable(true);
                     loginModel.getLoginCommand().setIsExecutionAllowed(true);
-                    getIsAutoConnect().setIsChangeable(true);
                     loginModel.getLoginFailedEvent().raise(this, EventArgs.EMPTY);
                 }
                 stopProgress();
