@@ -3,10 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.userportal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmParameters;
@@ -27,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -39,7 +35,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
-import org.ovirt.engine.ui.uicommonweb.IconUtils;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
@@ -67,7 +62,6 @@ import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.CloneVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
-import org.ovirt.engine.ui.uicommonweb.models.vms.IconCache;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RunOnceModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallback;
@@ -92,11 +86,10 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+
 import com.google.inject.Inject;
 
 public class UserPortalListModel extends AbstractUserPortalListModel {
@@ -127,6 +120,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         }
     });
 
+    @Override
     public Event<EventArgs> getSearchCompletedEvent() {
         return privateSearchCompletedEvent;
     }
@@ -238,25 +232,6 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     private final PoolGeneralModel poolGeneralModel;
     private final PoolDiskListModel poolDiskListModel;
     private final PoolInterfaceListModel poolInterfaceListModel;
-    private List<VM> privatevms;
-
-    public List<VM> getvms() {
-        return privatevms;
-    }
-
-    public void setvms(List<VM> value) {
-        privatevms = value;
-    }
-
-    private List<VmPool> privatepools;
-
-    public List<VmPool> getpools() {
-        return privatepools;
-    }
-
-    public void setpools(List<VmPool> value) {
-        privatepools = value;
-    }
 
     private VM privatetempVm;
 
@@ -404,9 +379,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                             }
                         }
 
-                        userPortalListModel.setvms(vms);
-                        userPortalListModel.setpools(pools);
-                        userPortalListModel.onVmAndPoolLoad();
+                        onVmAndPoolLoad(vms, pools);
                     }
                 }));
     }
@@ -657,9 +630,9 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
         BuilderExecutor.build(model, tempVar.getStaticData(), new CommonUnitToVmBaseBuilder<VmStatic>());
         BuilderExecutor.build(vm.getStaticData(), tempVar.getStaticData(),
-                              new KernelParamsVmBaseToVmBaseBuilder(),
-                              new UsbPolicyVmBaseToVmBaseBuilder(),
-                              new CpuSharesVmBaseToVmBaseBuilder());
+                new KernelParamsVmBaseToVmBaseBuilder(),
+                new UsbPolicyVmBaseToVmBaseBuilder(),
+                new CpuSharesVmBaseToVmBaseBuilder());
         return tempVar;
     }
 
@@ -1317,89 +1290,8 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     }
 
     @Override
-    public void onVmAndPoolLoad() {
-        if (getvms() != null && getpools() != null) {
-            // Complete search.
-
-            // Remove pools that has provided VMs.
-            final ArrayList<VmPool> filteredPools = new ArrayList<VmPool>();
-            for (VmPool pool : getpools()) {
-                // Add pool to map.
-
-                int attachedVmsCount = 0;
-                for (VM vm : getvms()) {
-                    if (vm.getVmPoolId() != null && vm.getVmPoolId().equals(pool.getVmPoolId())) {
-                        attachedVmsCount++;
-                    }
-                }
-
-                if (attachedVmsCount < pool.getMaxAssignedVmsPerUser()) {
-                    filteredPools.add(pool);
-                }
-            }
-
-            final List<Object> vms = Collections.<Object>unmodifiableList(getvms());
-            final List<Pair<Object, VM>> vmPairs = Linq.wrapAsFirst(vms, VM.class);
-
-            if (filteredPools.isEmpty()) {
-                IconUtils.prefetchIcons(getvms(), true, false, new IconCache.IconsCallback() {
-                    @Override public void onSuccess(Map<Guid, String> idToIconMap) {
-                        finishSearch(vmPairs);
-                    }
-                });
-            } else { // if we have pools we have to update their console cache and THEN finish search
-                List<VdcQueryType> poolQueryList = new ArrayList<VdcQueryType>();
-                List<VdcQueryParametersBase> poolParamList = new ArrayList<VdcQueryParametersBase>();
-
-                for (VmPool p : filteredPools) {
-                    poolQueryList.add(VdcQueryType.GetVmDataByPoolId);
-                    poolParamList.add(new IdQueryParameters(p.getVmPoolId()));
-                }
-
-                Frontend.getInstance().runMultipleQueries(
-                        poolQueryList, poolParamList,
-                        new IFrontendMultipleQueryAsyncCallback() {
-                            @Override
-                            public void executed(FrontendMultipleQueryAsyncResult result) {
-                                List<VM> poolRepresentants = new LinkedList<VM>();
-                                List<VdcQueryReturnValue> poolRepresentantsRetval = result.getReturnValues();
-                                for (VdcQueryReturnValue poolRepresentant : poolRepresentantsRetval) { // extract from return value
-                                    poolRepresentants.add((VM) poolRepresentant.getReturnValue());
-                                }
-                                final List<Pair<Object, VM>> poolsPairs =
-                                        Linq.zip(Collections.<Object>unmodifiableList(filteredPools),
-                                                poolRepresentants);
-                                final List<Pair<Object, VM>> all = Linq.concat(vmPairs, poolsPairs);
-                                final List<VM> vmsAndPoolRepresentants = Linq.concat(getvms(), poolRepresentants);
-                                IconUtils.prefetchIcons(vmsAndPoolRepresentants, true, false,
-                                        new IconCache.IconsCallback() {
-                                            @Override
-                                            public void onSuccess(Map<Guid, String> idToIconMap) {
-                                                finishSearch(all);
-                                            }
-                                        });
-                            }
-                        });
-            }
-        }
-    }
-
-    private void finishSearch(List<Pair<Object, VM>> vmOrPoolAndPoolRepresentants) {
-        Collections.sort((List) vmOrPoolAndPoolRepresentants, IconUtils.getFirstComponentNameableComparator());
-
-        ArrayList<Model> items = new ArrayList<Model>();
-        for (Pair<Object, VM> item : vmOrPoolAndPoolRepresentants) {
-            UserPortalItemModel model = new UserPortalItemModel(item.getFirst(), item.getSecond(), consolesFactory);
-            model.setEntity(item.getFirst());
-            items.add(model);
-        }
-
-        setItems(items);
-
-        setvms(null);
-        setpools(null);
-
-        getSearchCompletedEvent().raise(this, EventArgs.EMPTY);
+    protected boolean fetchLargeIcons() {
+        return false;
     }
 
     @Override
