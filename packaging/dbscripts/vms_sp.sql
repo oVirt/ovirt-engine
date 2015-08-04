@@ -742,7 +742,7 @@ INSERT INTO vm_static(description,
     INSERT INTO vm_ovf_generations(vm_guid, storage_pool_id) VALUES (v_vm_guid, (SELECT storage_pool_id FROM vds_groups vg WHERE vg.vds_group_id = v_vds_group_id));
 
     -- add connections to dedicated hosts
-    PERFORM InsertDedicatedHostsToVm(v_val, v_dedicated_vm_for_vds);
+    PERFORM InsertDedicatedHostsToVm(v_vm_guid, v_dedicated_vm_for_vds);
 
     -- set child_count for the template
     UPDATE vm_static SET child_count = child_count+1 where vm_guid = v_vmt_guid;
