@@ -40,15 +40,21 @@ public class ReplacementUtils {
      *         <li>The property counter name and the items size.</li>
      *         </ul>
      */
-    public static Collection<String> replaceWith(String propertyName, List<?> items, String separator, int maxNumberOfPrintedItems) {
+    public static Collection<String> replaceWith(String propertyName,
+            Collection<?> items,
+            String separator,
+            int maxNumberOfPrintedItems) {
         Validate.isTrue(maxNumberOfPrintedItems >= 1);
         Validate.isTrue(StringUtils.isNotEmpty(separator));
 
-        int size = Math.min(maxNumberOfPrintedItems, items.size());
-        List<String> printedItems = new ArrayList<>(size);
+        int maxNumOfItems = Math.min(maxNumberOfPrintedItems, items.size());
+        List<String> printedItems = new ArrayList<>(maxNumOfItems);
 
-        for (int i = 0; i < size; i++) {
-            printedItems.add(String.format("\t%s", String.valueOf(items.get(i))));
+        for (Object item : items) {
+            if (--maxNumOfItems < 0) {
+                break;
+            }
+            printedItems.add(String.format("\t%s", String.valueOf(item)));
         }
 
         if (items.size() > maxNumberOfPrintedItems) {
@@ -83,7 +89,7 @@ public class ReplacementUtils {
      *         <li>The property counter name and the items size.</li>
      *         </ul>
      */
-    public static Collection<String> replaceWith(String propertyName, List<?> items) {
+    public static Collection<String> replaceWith(String propertyName, Collection<?> items) {
         return replaceWith(propertyName, items, DEFAULT_SEPARATOR, DEFAULT_MAX_NUMBER_OF_PRINTED_ITEMS);
     }
 
@@ -106,7 +112,7 @@ public class ReplacementUtils {
      *         <li>The property counter name and the items size.</li>
      *         </ul>
      */
-    public static <T extends Nameable> Collection<String> replaceWithNameable(String propertyName, List<T> items) {
+    public static <T extends Nameable> Collection<String> replaceWithNameable(String propertyName, Collection<T> items) {
         List<Object> printedItems = new ArrayList<>(items.size());
 
         for (Nameable itemName : items) {
