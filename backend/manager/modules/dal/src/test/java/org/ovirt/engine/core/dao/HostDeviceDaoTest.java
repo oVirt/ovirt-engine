@@ -156,7 +156,7 @@ public class HostDeviceDaoTest extends BaseGenericDaoTestCase<HostDeviceId, Host
 
     @Test
     public void testMarkHostDevicesUsedByVmId() {
-        dao.markHostDevicesUsedByVmId(EXISTING_VM_ID);
+        dao.markHostDevicesUsedByVmId(EXISTING_VM_ID, EXISTING_HOST_ID);
         HostDevice hostDevice = dao.getHostDeviceByHostIdAndDeviceName(EXISTING_HOST_ID, EXISTING_DEVICE_NAME);
         assertEquals(EXISTING_VM_ID, hostDevice.getVmId());
     }

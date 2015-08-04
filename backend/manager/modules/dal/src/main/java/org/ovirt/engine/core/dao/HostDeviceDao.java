@@ -21,7 +21,7 @@ public interface HostDeviceDao extends GenericDao<HostDevice, HostDeviceId>, Mas
 
     boolean checkVmHostDeviceAvailability(Guid vmId, Guid hostId);
 
-    void markHostDevicesUsedByVmId(Guid vmId);
+    void markHostDevicesUsedByVmId(Guid vmId, Guid hostId);
 
     void freeHostDevicesUsedByVmId(Guid vmId);
 

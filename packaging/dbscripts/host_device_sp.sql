@@ -170,13 +170,14 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION MarkHostDevicesUsedByVmId(v_vm_id UUID)
+CREATE OR REPLACE FUNCTION MarkHostDevicesUsedByVmId(v_vm_id UUID, v_host_id UUID)
 RETURNS VOID
 AS $procedure$
 BEGIN
   UPDATE host_device
   SET vm_id = v_vm_id
-  WHERE device_name IN (SELECT device
+  WHERE host_id = v_host_id AND
+        device_name IN (SELECT device
                         FROM vm_device
                         WHERE vm_id = v_vm_id AND type = 'hostdev');
 END; $procedure$

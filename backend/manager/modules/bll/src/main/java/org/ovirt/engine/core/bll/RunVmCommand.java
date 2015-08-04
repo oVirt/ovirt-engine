@@ -290,7 +290,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     private void markHostDevicesAsUsed() {
         if (needsHostDevices) {
-            hostDeviceManager.allocateVmHostDevices(getVmId());
+            hostDeviceManager.allocateVmHostDevices(getVm());
         }
     }
 
