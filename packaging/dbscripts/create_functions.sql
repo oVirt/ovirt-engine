@@ -715,7 +715,7 @@ CREATE OR REPLACE FUNCTION getNonCountableQutoaVmStatuses()
 RETURNS SETOF INTEGER IMMUTABLE
     AS $BODY$
 BEGIN
-    RETURN query select 0 union select 13 union select 14 union select 15;
+    RETURN query select 0 union all select 13 union all select 14 union all select 15;
 --(Down(0), Suspended(13), ImageIllegal(14), ImageLocked(15))
 END; $BODY$
 LANGUAGE plpgsql;
