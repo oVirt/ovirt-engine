@@ -268,4 +268,9 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         this.beingDestroyed = beingDestroyed;
     }
 
+    @Override
+    public String toString() {
+        return "VmPool [" + getName() + "]";
+    }
+
 }
