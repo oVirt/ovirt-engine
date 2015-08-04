@@ -115,6 +115,9 @@ public class ListModelMultipleSelectListBox<T> extends ListModelListBox<List<T>>
 
     @Override
     public void setAcceptableValues(Collection<List<T>> newValues) {
+        if (newValues == null || newValues.isEmpty()) {
+            return;
+        }
         // Set a value in the super class, so calling setAcceptableValues doesn't add a null value and
         // potentially NPE if the renderer doesn't take kindly to getting a null value passed to it.
         super.setValue(newValues.iterator().next(), false);
@@ -123,7 +126,7 @@ public class ListModelMultipleSelectListBox<T> extends ListModelListBox<List<T>>
         // Store the rendered values so we can reverse them to find the right typed value. This will
         // break if more than one type value renders to the same string.
         itemIndex.clear();
-        for (List<T> value: newValues) {
+        for (List<T> value : newValues) {
             addToItems(value);
             itemIndex.add(value.get(0));
         }
