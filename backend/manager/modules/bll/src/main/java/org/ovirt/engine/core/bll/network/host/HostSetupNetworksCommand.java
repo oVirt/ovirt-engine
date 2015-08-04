@@ -75,6 +75,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
 
     private static final Logger log = LoggerFactory.getLogger(HostSetupNetworksCommand.class);
+    private static final String DEFAULT_BOND_OPTIONS = "mode=4 miimon=100";
     private BusinessEntityMap<Network> networkBusinessEntityMap;
 
     private Set<String> removedNetworks;
@@ -143,6 +144,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     @Override
     protected boolean canDoAction() {
         VDS host = getVds();
+
+        fillInUnsetBondingOptions();
 
         final ValidationResult hostValidatorResult = new HostValidator(host, isInternalExecution()).validate();
         if (!hostValidatorResult.isValid()) {
@@ -229,6 +232,14 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             }
         } catch (TimeoutException e) {
             log.debug("Host Setup networks command timed out for {} seconds", timeout);
+        }
+    }
+
+    private void fillInUnsetBondingOptions() {
+        for (Bond bond : getParameters().getBonds()) {
+            if (StringUtils.isEmpty(bond.getBondOptions())) {
+                bond.setBondOptions(DEFAULT_BOND_OPTIONS);
+            }
         }
     }
 
