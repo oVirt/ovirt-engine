@@ -27,8 +27,8 @@ public class GetDeviceListVDSCommandTest {
     }
 
     @Test
-    public void parseLunFromXmlRpcReturnsUnknownForFcp() throws Exception {
-        testParseLunFromXmlRpcForDevtypeField(StorageType.UNKNOWN, GetDeviceListVDSCommand.DEVTYPE_VALUE_FCP);
+    public void parseLunFromXmlRpcReturnsFcpForFcp() throws Exception {
+        testParseLunFromXmlRpcForDevtypeField(StorageType.FCP, GetDeviceListVDSCommand.DEVTYPE_VALUE_FCP);
     }
 
     /**
