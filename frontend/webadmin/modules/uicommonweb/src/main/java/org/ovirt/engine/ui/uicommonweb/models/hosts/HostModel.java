@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ExternalEntityBase;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -977,7 +976,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
             boolean isEditWithPMemphasis,
             SystemTreeItemModel selectedSystemTreeItem) {
         setHostId(vds.getId());
-        updateExternalHostModels(vds.getHostProviderId());
         getOverrideIpTables().setIsAvailable(showInstallationProperties());
         vdsProtocol = vds.getProtocol();
         getProtocol().setEntity(VdsProtocol.STOMP == vds.getProtocol());
@@ -1096,35 +1094,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         }
     }
 
-    private void updateExternalHostModels(final Guid selected) {
-        AsyncQuery getProvidersQuery = new AsyncQuery();
-        getProvidersQuery.asyncCallback = new INewAsyncCallback() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onSuccess(Object model, Object result) {
-                List<Provider<OpenstackNetworkProviderProperties>> providers =
-                        (List<Provider<OpenstackNetworkProviderProperties>>) result;
-                ListModel<Provider<OpenstackNetworkProviderProperties>> providersListModel = getProviders();
-                if (selected != null) {
-                    for (Provider<OpenstackNetworkProviderProperties> provider: providers) {
-                        if (provider.getId().equals(selected)) {
-                            providersListModel.setItems(providers, provider);
-                            break;
-                        }
-                    }
-                }
-                if (providersListModel.getItems() == null || providersListModel.getItems().isEmpty()
-                        || providersListModel.getSelectedItem() == null) {
-                    providersListModel.setItems(providers, Linq.firstOrDefault(providers));
-                }
-                providersListModel.setIsChangeable(true);
-                getIsDiscoveredHosts().setEntity(null);
-                getIsDiscoveredHosts().setEntity(true);
-            }
-        };
-        AsyncDataProvider.getInstance().getAllProvidersByType(getProvidersQuery, ProviderType.FOREMAN);
-    }
-
     protected abstract boolean showInstallationProperties();
 
     protected abstract boolean editTransportProperties(VDS vds);
@@ -1139,15 +1108,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
     protected abstract void setAllowChangeHostPlacementPropertiesWhenNotInMaintenance();
 
-    public void updateHosts() {
-        updateExternalHostModels(null);
-    }
+    public abstract void updateHosts();
 
     protected abstract void updateProvisionedHosts();
-
-    public boolean externalProvisionEnabled() {
-        return true;
-    }
 
     protected abstract void setPort(VDS vds);
 

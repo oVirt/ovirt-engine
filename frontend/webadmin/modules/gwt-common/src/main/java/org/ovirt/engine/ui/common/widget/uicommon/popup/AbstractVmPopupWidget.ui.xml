@@ -11,8 +11,7 @@
              xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label"
              xmlns:p="urn:import:org.ovirt.engine.ui.common.widget.profile"
              xmlns:vm="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.vm"
-             xmlns:ii="urn:import:org.ovirt.engine.ui.common.widget.uicommon.instanceimages"
-             xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+             xmlns:ii="urn:import:org.ovirt.engine.ui.common.widget.uicommon.instanceimages">
 
     <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
@@ -160,6 +159,10 @@
             text-align: right;
         }
 
+        .radioButton {
+
+        }
+
         .radioButtonSpecificHost {
             margin-left: 10px;
         }
@@ -170,6 +173,10 @@
 
         .labelDisabled {
             color: gray;
+        }
+
+        .runHostPanel {
+
         }
 
         .attachCdPanel {
@@ -249,6 +256,9 @@
             width: 238px;
             padding-left: 5px;
             padding-right: 5px;
+        }
+
+        .nameEditor {
         }
 
         .editPrestartedVmsEditor, .editMaxAssignedVmsPerUserEditor {
@@ -447,7 +457,7 @@
                                     <g:Label ui:field="nameLabel" addStyleNames="{style.nameLabel}" />
                                     <d:InfoIcon ui:field="poolNameIcon" addStyleNames="{style.poolNameIcon} avmpw_infoIcon_pfly_fix" />
                                 </g:FlowPanel>
-                                <ge:EntityModelTextBoxOnlyEditor ui:field="nameEditor" addStyleNames="avmpw_nameEditor_pfly_fix" contentWidgetContainerStyleName="{style.nameEditorContent}"/>
+                                <ge:EntityModelTextBoxOnlyEditor ui:field="nameEditor" addStyleNames="{style.nameEditor} avmpw_nameEditor_pfly_fix" contentWidgetContainerStyleName="{style.nameEditorContent}"/>
                             </g:FlowPanel>
                             <ge:StringEntityModelTextBoxEditor ui:field="templateVersionNameEditor" />
                             <ge:StringEntityModelTextBoxEditor ui:field="vmIdEditor" />
@@ -611,8 +621,9 @@
                     <g:FlowPanel>
                     <g:FlowPanel ui:field="startRunningOnPanel">
                         <g:Label addStyleNames="{style.slimSectionLabel}" text="{constants.runOnVmPopup}" />
-                        <g:VerticalPanel verticalAlignment='ALIGN_MIDDLE'>
-                            <ge:EntityModelRadioButtonEditor ui:field="isAutoAssignEditor" />
+                        <g:VerticalPanel addStyleNames="{style.runHostPanel}" verticalAlignment='ALIGN_MIDDLE'>
+                            <ge:EntityModelRadioButtonEditor ui:field="isAutoAssignEditor"
+                                addStyleNames="{style.radioButton}" />
                             <g:HorizontalPanel verticalAlignment='ALIGN_TOP'>
                                 <g:RadioButton ui:field="specificHost" addStyleNames="{style.radioButtonSpecificHost}" />
                                 <l:EnableableFormLabel ui:field="specificHostLabel" text="{constants.specificVmPopup}" addStyleNames="avmpw_specificHostLabel_pfly_fix" />
@@ -806,19 +817,6 @@
             <t:DialogTab ui:field="iconTab">
                 <t:content>
                     <e:IconEditorWidget ui:field="iconEditorWidget" />
-                </t:content>
-            </t:DialogTab>
-        </t:tab>
-        <t:tab>
-            <t:DialogTab ui:field="foremanTab">
-                <t:content>
-                    <b:Container addStyleNames="{style.fullWidth}">
-                        <b:Row>
-                            <b:Column size="LG_12">
-                                <e:ListModelListBoxEditor ui:field="providersEditor" labelColSize="LG_5" widgetColSize="LG_7" usePatternFly="true"/>
-                            </b:Column>
-                        </b:Row>
-                    </b:Container>
                 </t:content>
             </t:DialogTab>
         </t:tab>

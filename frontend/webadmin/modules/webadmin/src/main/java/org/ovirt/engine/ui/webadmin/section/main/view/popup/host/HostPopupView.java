@@ -624,18 +624,16 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 boolean showForemanProviders = object.getExternalHostProviderEnabled().getEntity();
-                boolean doProvisioning = object.externalProvisionEnabled();
-
                 providersEditor.setVisible(showForemanProviders);
 
                 // showing or hiding radio buttons
-                provisionedHostSection.setVisible(showForemanProviders && doProvisioning);
-                discoveredHostSection.setVisible(showForemanProviders && doProvisioning);
+                provisionedHostSection.setVisible(showForemanProviders);
+                discoveredHostSection.setVisible(showForemanProviders);
 
                 // disabling ip and name textbox when using provisioned hosts
-                hostAddressEditor.setEnabled(!showForemanProviders && doProvisioning);
+                hostAddressEditor.setEnabled(!showForemanProviders);
 
-                if (showForemanProviders && doProvisioning) {
+                if (showForemanProviders) {
                     object.updateHosts();
                 } else {
                     object.cleanHostParametersFields();

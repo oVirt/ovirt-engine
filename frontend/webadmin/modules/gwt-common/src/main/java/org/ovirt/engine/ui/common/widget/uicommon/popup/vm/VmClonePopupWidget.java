@@ -26,7 +26,6 @@ public class VmClonePopupWidget extends AbstractVmPopupWidget {
     @Override
     protected PopupWidgetConfigMap createWidgetConfiguration() {
         return super.createWidgetConfiguration().
-                update(foremanTab, hiddenField()).
                 putAll(poolSpecificFields(), hiddenField()).
                 putOne(logicalNetworksEditorPanel, hiddenField()).
                 update(consoleTab, simpleField().visibleInAdvancedModeOnly()).
