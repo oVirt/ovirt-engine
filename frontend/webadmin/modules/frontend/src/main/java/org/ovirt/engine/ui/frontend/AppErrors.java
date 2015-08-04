@@ -1855,7 +1855,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Previous network name is required.")
     String NETWORK_OLD_NETWORK_NOT_SPECIFIED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Active VMs were detected.\n-Please ensure all VMs associated with this Storage Domain are stopped and in the Down state first.")
+    @DefaultStringValue("Cannot ${action} ${type}. VMs in a state other than \"Down\" were detected.\n-Please ensure all VMs associated with this Storage Domain are stopped and in the Down state first.")
     String ACTION_TYPE_FAILED_DETECTED_ACTIVE_VMS();
 
     @DefaultStringValue("The selected Host does not exist.")
