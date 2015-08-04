@@ -28,7 +28,7 @@ public class ReplacementUtilsTest {
 
     @Test
     public void replaceWithNullItem() {
-        List<Object> items = Collections.<Object> singletonList(null);
+        List<Object> items = Collections.singletonList(null);
         Collection<String> replacements = ReplacementUtils.replaceWith(PROPERTY_NAME, items);
         validateReplacementsContainsExpectedProperties(replacements, items);
         assertTrue(validateReplacementContains(replacements, "null"));
@@ -44,7 +44,7 @@ public class ReplacementUtilsTest {
             }
         };
 
-        List<Nameable> items = Collections.<Nameable> singletonList(item);
+        List<Nameable> items = Collections.singletonList(item);
         validateReplacements(ReplacementUtils.replaceWithNameable(PROPERTY_NAME, items), items);
     }
 
@@ -160,7 +160,7 @@ public class ReplacementUtilsTest {
     }
 
     private List<Object> createItems() {
-        List<Object> items = new ArrayList<Object>(ReplacementUtils.DEFAULT_MAX_NUMBER_OF_PRINTED_ITEMS* 2);
+        List<Object> items = new ArrayList<>(ReplacementUtils.DEFAULT_MAX_NUMBER_OF_PRINTED_ITEMS * 2);
 
         for (int i = 0; i < ReplacementUtils.DEFAULT_MAX_NUMBER_OF_PRINTED_ITEMS * 2; i++) {
             items.add(buildPropertyValue(i));
