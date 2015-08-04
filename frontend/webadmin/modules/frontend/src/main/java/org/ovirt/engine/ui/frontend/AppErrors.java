@@ -97,9 +97,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. User is currently logged in.")
     String USER_CANNOT_REMOVE_HIMSELF();
 
-    @DefaultStringValue("Failed to get User data from Directory Server.")
-    String USER_FAILED_POPULATE_DATA();
-
     @DefaultStringValue("Cannot switch Host to Maintenance mode.\nHost still has running VMs on it and is in Non Responsive state.")
     String VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_WITH_VMS();
 
