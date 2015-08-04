@@ -81,8 +81,7 @@ SELECT
         FROM
             storage_domains_ovf_info
         WHERE
-            images.image_group_id = storage_domains_ovf_info.ovf_disk_id ) AS ovf_store,
-    domains_with_unregistered_entities_view.storage_domain_id IS NOT NULL AS contains_unregistered_entities
+            images.image_group_id = storage_domains_ovf_info.ovf_disk_id ) AS ovf_store
 FROM
     images
 LEFT
@@ -95,9 +94,6 @@ OUTER JOIN vms_for_disk_view ON vms_for_disk_view.device_id = images.image_group
 LEFT JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
 LEFT
 OUTER JOIN storage_domain_static ON image_storage_domain_map.storage_domain_id = storage_domain_static.id
-LEFT
-OUTER JOIN domains_with_unregistered_entities_view ON
-    image_storage_domain_map.storage_domain_id = domains_with_unregistered_entities_view.storage_domain_id
 LEFT
 OUTER JOIN snapshots ON images.vm_snapshot_id = snapshots.snapshot_id
 LEFT
