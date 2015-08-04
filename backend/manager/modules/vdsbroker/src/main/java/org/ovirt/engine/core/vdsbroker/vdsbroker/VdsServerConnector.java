@@ -421,7 +421,7 @@ public interface VdsServerConnector {
 
     public Map<String, Object> convertExternalVm(String url, String user, String password, Map vm, String jobId);
 
-    public Map<String, Object> convertOva(String ovaPath, Map vm, String jobId);
+    public Map<String, Object> convertExternalVmFromOva(String ovaPath, Map vm, String jobId);
 
     public Map<String, Object> getConvertedVm(String jobUUID);
 
@@ -445,5 +445,5 @@ public interface VdsServerConnector {
 
     public Map<String, Object> wipeVolume(String sdUUID, String imgUUID, String volUUID);
 
-    public Map<String, Object> getOvaInfo(String ovaPath);
+    public Map<String, Object> getExternalVmFromOva(String ovaPath);
 }

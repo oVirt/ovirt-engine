@@ -1968,9 +1968,9 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc convertOva(String ovaPath, Map<String, Object> vm, String jobUUID) {
+    public StatusOnlyReturnForXmlRpc convertVmFromOva(String ovaPath, Map<String, Object> vm, String jobUUID) {
         JsonRpcRequest request =
-                new RequestBuilder("Host.convertOva")
+                new RequestBuilder("Host.convertExternalVmFromOva")
         .withParameter("ova_path", ovaPath)
         .withParameter("vminfo", vm)
         .withParameter("jobid", jobUUID)
@@ -2092,9 +2092,10 @@ public class JsonRpcVdsServer implements IVdsServer {
         return new StatusOnlyReturnForXmlRpc(response);
     }
 
-    public VMListReturnForXmlRpc getOvaInfo(String ovaPath) {
+    @Override
+    public VMListReturnForXmlRpc getExternalVmFromOva(String ovaPath) {
         JsonRpcRequest request =
-                new RequestBuilder("Host.getOvaInfo")
+                new RequestBuilder("Host.getExternalVmFromOva")
                         .withParameter("ova_path", ovaPath)
                         .build();
         Map<String, Object> response =
