@@ -772,6 +772,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Storage Connection")
     String VAR__TYPE__STORAGE__CONNECTION();
 
+    @DefaultStringValue("$type Storage Connection Extension")
+    String VAR__TYPE__STORAGE__CONNECTION__EXTENSION();
+
     @DefaultStringValue("$type Storage")
     String VAR__TYPE__STORAGE__DOMAIN();
 
@@ -1323,6 +1326,12 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Storage connection parameters are used by the following disks : ${diskNames}.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_DISKS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Connection extension already exists for the host ${vdsName} and the target ${target}.")
+    String ACTION_TYPE_FAILED_STORAGE_CONNECTION_EXTENSION_ALREADY_EXISTS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Connection extension with the id ${connExtId} does not exist.")
+    String ACTION_TYPE_FAILED_STORAGE_CONNECTION_EXTENSION_DOES_NOT_EXIST();
 
     @DefaultStringValue("Cannot ${action} ${type}. Storage Domain doesn't exist.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST();

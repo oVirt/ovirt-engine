@@ -115,6 +115,7 @@
         <include name="common/businessentities/MacRange.java"/>
         <include name="common/businessentities/MacPool.java"/>
         <include name="common/businessentities/StorageServerConnections.java" />
+        <include name="common/businessentities/storage/StorageServerConnectionExtension.java"/>
         <include name="common/businessentities/StorageDomainSharedStatus.java" />
         <include name="common/businessentities/StorageDomainStatus.java" />
         <include name="common/businessentities/StorageDomainType.java" />
