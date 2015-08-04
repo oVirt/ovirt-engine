@@ -10,13 +10,14 @@ import java.io.InputStream;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class AbstractPropertiesTestBase {
+    private Class<? extends Enum> enumClass;
     private String relativePath;
     private File file;
 
-    public AbstractPropertiesTestBase(String relativePath) {
+    public AbstractPropertiesTestBase(Class<? extends Enum> enumClass, String relativePath) {
+        this.enumClass = enumClass;
         this.relativePath = relativePath;
     }
 
@@ -41,7 +42,7 @@ public class AbstractPropertiesTestBase {
 
     @Test
     public void testRedundantMessages() throws IOException {
-        EnumTranslationProperties props = new EnumTranslationProperties(EngineMessage.class);
+        EnumTranslationProperties props = new EnumTranslationProperties(enumClass);
         try (InputStream is = new FileInputStream(file)) {
             props.load(is);
         } catch (MissingEnumTranslationException exception) {

@@ -395,8 +395,6 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String MAC_POOL_INITIALIZATION_FAILED();
 
-    String VDS_FENCING_OPERATION_FAILED();
-
     String VDS_NETWORK_ERROR();
 
     String DeviceNotFound();
@@ -685,8 +683,6 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String VM_TEMPLATE_CANT_LOCATE_DISKS_IN_DB();
 
-    String VM_WITH_SAME_NAME_EXIST();
-
     @DefaultStringValue("Gluster General Exception occurred.")
     String GlusterGeneralException();
 
@@ -813,9 +809,6 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Gluster host UUID not found")
     String GlusterHostUUIDNotFound();
-
-    @DefaultStringValue("Failed to fetch statuses of services.")
-    String GlusterServicesListFailed();
 
     @DefaultStringValue("Failed to update gluster hook.")
     String GlusterHookUpdateFailed();
@@ -964,15 +957,6 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Job id already exists")
     String V2V_JOB_ALREADY_EXIST();
-
-    @DefaultStringValue("Bad secret request")
-    String SecretBadRequestError();
-
-    @DefaultStringValue("Error registering Libvirt secret")
-    String SecretRegisterError();
-
-    @DefaultStringValue("Error un-registering Libvirt secret")
-    String SecretUnregisterError();
 
     @DefaultStringValue("Operation not supported")
     String UnsupportedOperationErr();
