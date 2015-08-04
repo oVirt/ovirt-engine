@@ -11,15 +11,13 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.collections.DefaultValueMap;
+import org.ovirt.engine.core.vdsbroker.storage.StorageConnectionHelper;
 
 public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionManagementVDSParameters>
         extends VdsBrokerCommand<P> {
@@ -66,41 +64,12 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
         final Map<String, String>[] result = new HashMap[getParameters().getConnectionList().size()];
         int i = 0;
         for (StorageServerConnections connection : getParameters().getConnectionList()) {
-            result[i] = createStructFromConnection(connection, storagePool);
+            result[i] = StorageConnectionHelper.getInstance().createStructFromConnection(connection,
+                    storagePool,
+                    getParameters().getVdsId());
             i++;
         }
         return result;
-    }
-
-    public static Map<String, String> createStructFromConnection(final StorageServerConnections connection,
-                                                                 final StoragePool storagePool) {
-        // for information, see _connectionDict2ConnectionInfo in vdsm/storage/hsm.py
-        DefaultValueMap con = new DefaultValueMap();
-        con.put("id", connection.getid(), Guid.Empty.toString());
-        con.put("connection", connection.getconnection(), "");
-        con.putIfNotEmpty("tpgt", connection.getportal());
-        con.put("port", connection.getport(), "");
-        con.put("iqn", connection.getiqn(), "");
-        con.put("user", connection.getuser_name(), "");
-        con.put("password", connection.getpassword(), "");
-        con.putIfNotEmpty("ifaceName", connection.getIface());
-        con.putIfNotEmpty("netIfaceName", connection.getNetIfaceName());
-
-        // storage_pool can be null when discovering iscsi send targets or when connecting
-        // through vds which has no storage pool
-        if (storagePool == null || Config.<Boolean> getValue(ConfigValues.AdvancedNFSOptionsEnabled,
-                storagePool.getCompatibilityVersion().getValue())) {
-            // For mnt_options, vfs_type, and protocol_version - if they are null
-            // or empty we should not send a key with an empty value
-            con.putIfNotEmpty("mnt_options", connection.getMountOptions());
-            con.putIfNotEmpty("vfs_type", connection.getVfsType());
-            if (connection.getNfsVersion() != null) {
-                con.put("protocol_version", connection.getNfsVersion().getValue());
-            }
-            con.putIfNotEmpty("timeout", connection.getNfsTimeo());
-            con.putIfNotEmpty("retrans", connection.getNfsRetrans());
-        }
-        return con;
     }
 
     private void logFailedStorageConnections(Map<String, String> returnValue) {
