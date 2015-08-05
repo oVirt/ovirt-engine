@@ -1157,4 +1157,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String ConsoleDisconnectAction___SHUTDOWN();
 
     String ConsoleDisconnectAction___REBOOT();
+
+    String SerialNumberPolicy___HOST_ID();
+
+    String SerialNumberPolicy___VM_ID();
+
+    String SerialNumberPolicy___CUSTOM();
 }

@@ -363,12 +363,6 @@ public interface Enums extends LocalizedEnums {
 
     String ExternalSubnet$IpVersion___IPV6();
 
-    String SerialNumberPolicy___HOST_ID();
-
-    String SerialNumberPolicy___VM_ID();
-
-    String SerialNumberPolicy___CUSTOM();
-
     String OpenstackNetworkProviderProperties$BrokerType___QPID();
 
     String OpenstackNetworkProviderProperties$BrokerType___RABBIT_MQ();
