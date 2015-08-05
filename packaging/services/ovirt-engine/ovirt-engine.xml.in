@@ -568,7 +568,6 @@
       #end if
       <virtual-server name="default-host" enable-welcome-root="false">
         <alias name="localhost"/>
-        <rewrite pattern="^/RHEVManager(.*)$" substitution="/OvirtEngine$1" flags="last"/>
       </virtual-server>
     </subsystem>
     #else

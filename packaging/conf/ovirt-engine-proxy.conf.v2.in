@@ -30,7 +30,7 @@
         RequestHeader unset Expect early
     </IfModule>
 
-    <LocationMatch ^/(ovirt-engine($|/)|api($|/)|RHEVManagerWeb/|OvirtEngineWeb/|ca.crt$|engine.ssh.key.txt$|rhevm.ssh.key.txt$)>
+    <LocationMatch ^/(ovirt-engine($|/)|api($|/))>
         ProxyPassMatch ajp://127.0.0.1:@JBOSS_AJP_PORT@ timeout=3600 retry=5
 
         <IfModule deflate_module>
