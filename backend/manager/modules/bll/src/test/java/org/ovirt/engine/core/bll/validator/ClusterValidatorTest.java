@@ -13,11 +13,13 @@ import java.util.Collections;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.InjectorRule;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -54,6 +56,9 @@ public class ClusterValidatorTest {
 
     @Rule
     public MockConfigRule mockConfigRule = new MockConfigRule();
+
+    @ClassRule
+    public static InjectorRule injectorRule = new InjectorRule();
 
     @Before
     public void setup() {
