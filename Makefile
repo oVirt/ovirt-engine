@@ -38,7 +38,6 @@ PATTERNFLY_DIR=/usr/share/patternfly1/resources
 PACKAGE_NAME=ovirt-engine
 ENGINE_NAME=$(PACKAGE_NAME)
 MVN=mvn
-RPMBUILD=rpmbuild
 PYTHON=python
 PYFLAKES=pyflakes
 PEP8=pep8
@@ -117,8 +116,6 @@ endif
 BUILD_FLAGS:=$(BUILD_FLAGS) $(EXTRA_BUILD_FLAGS)
 
 PYTHON_SYS_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
-OUTPUT_RPMBUILD=$(shell pwd -P)/tmp.rpmbuild
-OUTPUT_DIR=output
 TARBALL=$(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz
 ARCH=noarch
 BUILD_FILE=tmp.built
@@ -251,7 +248,7 @@ clean:
 	# Clean maven generated stuff:
 	$(MVN) clean $(EXTRA_BUILD_FLAGS)
 	( cd build/validations && $(MVN) clean )
-	rm -rf $(OUTPUT_RPMBUILD) $(OUTPUT_DIR) $(BUILD_FILE) tmp.dev.flist
+	rm -rf $(BUILD_FILE) tmp.dev.flist
 
 	# Clean files generated from templates:
 	rm -rf $(GENERATED)
@@ -272,46 +269,7 @@ ovirt-engine.spec: version.mak
 dist:	ovirt-engine.spec
 	git ls-files | tar --files-from /proc/self/fd/0 -czf "$(TARBALL)" ovirt-engine.spec
 	@echo
-	@echo You can use $(RPMBUILD) -tb $(TARBALL) to produce rpms
-	@echo
-
-# legacy
-tarball:	dist
-
-srpm:	dist
-	rm -rf "$(OUTPUT_RPMBUILD)"
-	mkdir -p "$(OUTPUT_RPMBUILD)"/{SPECS,RPMS,SRPMS,SOURCES,BUILD,BUILDROOT}
-	mkdir -p "$(OUTPUT_DIR)"
-	$(RPMBUILD) -ts --define="_topdir $(OUTPUT_RPMBUILD)" "$(TARBALL)"
-	mv "$(OUTPUT_RPMBUILD)/SRPMS"/*.rpm "$(OUTPUT_DIR)"
-	rm -rf "$(OUTPUT_RPMBUILD)"
-	@echo
-	@echo srpm is ready at $(OUTPUT_DIR)
-	@echo
-
-rpm:	srpm
-	rm -rf "$(OUTPUT_RPMBUILD)"
-	mkdir -p "$(OUTPUT_RPMBUILD)"/{SPECS,RPMS,SRPMS,SOURCES,BUILD,BUILDROOT}
-	mkdir -p "$(OUTPUT_DIR)"
-	$(RPMBUILD) --define="_topdir $(OUTPUT_RPMBUILD)" $(RPMBUILD_EXTRA_ARGS) --rebuild "$(OUTPUT_DIR)/$(PACKAGE_NAME)-$(RPM_VERSION)"*.src.rpm
-	mv $(OUTPUT_RPMBUILD)/RPMS/$(ARCH)/*.rpm "$(OUTPUT_DIR)"
-	rm -rf "$(OUTPUT_RPMBUILD)"
-	@echo
-	@echo rpms are ready at $(OUTPUT_DIR)
-	@echo
-
-# This is intended to quickly build a set of RPMs that don't
-# contain working copies of the GWT applications, mostly useful
-# for testing the RPM build process itself or for testing only the
-# backend and the RESTAPI
-rpm-quick:
-	$(MAKE) \
-		rpm \
-		RPMBUILD_EXTRA_ARGS='--define="ovirt_build_quick 1"'
-	@echo
-	@echo WARNING:
-	@echo rpms produces from quick are partial!
-	@echo *DO NOT* use them for any other use but debug.
+	@echo You can use rpmbuild -tb $(TARBALL) to produce rpms
 	@echo
 
 # copy SOURCEDIR to TARGETDIR
