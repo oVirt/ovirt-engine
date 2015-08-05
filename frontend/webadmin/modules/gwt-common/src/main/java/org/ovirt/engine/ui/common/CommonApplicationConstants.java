@@ -1435,7 +1435,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Dev. Size")
     String devSizeSanStorage();
 
-    @DefaultStringValue("Size to Add")
+    @DefaultStringValue("Additional Size")
     String devAdditionalSizeSanStorage();
 
     @DefaultStringValue("#path")
