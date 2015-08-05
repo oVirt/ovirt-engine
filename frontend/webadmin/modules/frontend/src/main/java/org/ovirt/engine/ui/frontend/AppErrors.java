@@ -1762,7 +1762,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Network belongs to a different data-center.")
     String ACTION_TYPE_FAILED_NETWORK_FROM_DIFFERENT_DC();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Default management network is not found or is ambiguous.")
+    @DefaultStringValue("Cannot ${action} ${type}. No single suitable network was found to serve as the management network.")
     String ACTION_TYPE_FAILED_DEFAULT_MANAGEMENT_NETWORK_NOT_FOUND();
 
     @DefaultStringValue("Cannot ${action} ${type}. Changing management network in a non-empty cluster is not allowed.")
