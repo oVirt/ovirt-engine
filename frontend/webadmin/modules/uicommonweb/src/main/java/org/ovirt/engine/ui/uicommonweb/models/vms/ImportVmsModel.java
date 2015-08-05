@@ -86,7 +86,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     private ImportVmFromOvaModel importFromOvaModel;
     private ImportVmModel selectedImportVmModel;
 
-    private EntityModel<Boolean> importSourceValid;
+    private EntityModel<String> problemDescription;
     private UIConstants constants;
     private UIMessages messages;
 
@@ -122,7 +122,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         setHosts(new ListModel<VDS>());
         setOvaPath(new EntityModel<String>());
 
-        setImportSourceValid(new EntityModel<Boolean>(true));
+        setInfoMessage(new EntityModel<String>());
 
         getVmwareProviders().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
@@ -353,7 +353,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     private void validateSource() {
-        clearError();
+        clearProblem();
         if (importSources.getSelectedItem() == ImportSource.EXPORT_DOMAIN && exportDomain == null) {
             setError(constants.notAvailableWithNoActiveExportDomain());
         }
@@ -401,6 +401,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     public void loadVmsFromExportDomain() {
+        clearProblem();
         startProgress(null);
         Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExportDomain,
                 new GetAllFromExportDomainQueryParameters(getDataCenters().getSelectedItem().getId(), exportDomain.getId()),
@@ -413,6 +414,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     public void loadVmFromOva() {
+        clearProblem();
         if (!validateOvaConfiguration()) {
             return;
         }
@@ -425,7 +427,6 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                 if (queryReturnValue.getSucceeded()) {
                     VM vm = queryReturnValue.getReturnValue();
                     updateVms(Collections.singletonList(vm));
-                    clearError();
                 } else {
                     setError(messages.failedToLoadOva(getOvaPath().getEntity()));
                 }
@@ -444,6 +445,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     public void loadVmsFromVmware() {
+        clearProblem();
         if (!validateVmwareConfiguration()) {
             return;
         }
@@ -613,22 +615,30 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         this.proxyHosts = proxyHosts;
     }
 
-    public EntityModel<Boolean> getImportSourceValid() {
-        return importSourceValid;
+    public EntityModel<String> getProblemDescription() {
+        return problemDescription;
     }
 
-    public void setImportSourceValid(EntityModel<Boolean> editingEnabled) {
-        this.importSourceValid = editingEnabled;
+    public void setInfoMessage(EntityModel<String> problemDescription) {
+        this.problemDescription = problemDescription;
     }
 
-    public void setError(String msg) {
-        getImportSourceValid().setMessage(msg);
-        getImportSourceValid().setEntity(false);
+    public void setError(String problem) {
+        getProblemDescription().setIsValid(false);
+        getProblemDescription().setEntity(problem);
     }
 
-    public void clearError() {
-        getImportSourceValid().setMessage(""); //$NON-NLS-1$
-        getImportSourceValid().setEntity(true);
+    public void setWarning(String problem) {
+        if (!getProblemDescription().getIsValid()) {
+            return;
+        }
+        getProblemDescription().setIsValid(true);
+        getProblemDescription().setEntity(problem);
+    }
+
+    public void clearProblem() {
+        getProblemDescription().setIsValid(true);
+        getProblemDescription().setEntity(null);
     }
 
     public String getExportPath() {

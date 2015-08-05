@@ -145,7 +145,19 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
 
     @UiField
     @Ignore
-    Label message;
+    FlowPanel errorPanel;
+
+    @UiField
+    @Ignore
+    FlowPanel warningPanel;
+
+    @UiField
+    @Ignore
+    Label errorMessage;
+
+    @UiField
+    @Ignore
+    Label warningMessage;
 
     @UiField
     @Path("exportPath")
@@ -253,10 +265,22 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
                 model.getCancelImportCommand());
         driver.edit(model);
 
-        model.getImportSourceValid().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+        model.getProblemDescription().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             public void eventRaised(org.ovirt.engine.ui.uicompat.Event<? extends EventArgs> ev, Object object, EventArgs args) {
-                message.setText(model.getImportSourceValid().getMessage());
-            };
+                errorPanel.setVisible(false);
+                warningPanel.setVisible(false);
+                String message = model.getProblemDescription().getEntity();
+                if (message == null) {
+                    return;
+                }
+                if (model.getProblemDescription().getIsValid()) {
+                    warningMessage.setText(message);
+                    warningPanel.setVisible(true);
+                } else {
+                    errorMessage.setText(message);
+                    errorPanel.setVisible(true);
+                }
+            }
         });
 
         updatePanelsVisibility(model);
