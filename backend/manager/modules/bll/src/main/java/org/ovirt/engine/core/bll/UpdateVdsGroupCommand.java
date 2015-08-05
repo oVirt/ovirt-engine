@@ -257,7 +257,9 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
             }
 
             if (oldGroup.getStoragePoolId() != null) {
-                if (!validate(new ClusterValidator(getDbFacade(), oldGroup).dataCenterVersionMismatch())) {
+                ClusterValidator validator = new ClusterValidator(
+                        getDbFacade(), oldGroup, getCpuFlagsManagerHandler());
+                if (!validate(validator.dataCenterVersionMismatch())) {
                     result = false;
                     addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC);
                 }

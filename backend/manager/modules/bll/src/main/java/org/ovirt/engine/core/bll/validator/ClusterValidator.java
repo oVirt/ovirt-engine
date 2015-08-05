@@ -16,7 +16,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsGroupDao;
-import org.ovirt.engine.core.di.Injector;
 
 public class ClusterValidator {
 
@@ -25,12 +24,13 @@ public class ClusterValidator {
     private final StoragePoolDao dataCenterDao;
     private StoragePool dataCenter;
 
-    private CpuFlagsManagerHandler cpuFlagsManagerHandler = Injector.get(CpuFlagsManagerHandler.class);
+    private final CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
-    public ClusterValidator(DbFacade dbFacade, VDSGroup cluster) {
+    public ClusterValidator(DbFacade dbFacade, VDSGroup cluster, CpuFlagsManagerHandler cpuFlagsManagerHandler) {
         this.cluster = cluster;
         this.clusterDao = dbFacade.getVdsGroupDao();
         this.dataCenterDao = dbFacade.getStoragePoolDao();
+        this.cpuFlagsManagerHandler = cpuFlagsManagerHandler;
     }
 
     public ValidationResult nameNotUsed() {

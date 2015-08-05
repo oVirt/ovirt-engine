@@ -119,7 +119,8 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
 
     @Override
     protected boolean canDoAction() {
-        final ClusterValidator validator = new ClusterValidator(getDbFacade(), getVdsGroup());
+        final ClusterValidator validator = new ClusterValidator(
+                getDbFacade(), getVdsGroup(), getCpuFlagsManagerHandler());
 
         return validate(validator.nameNotUsed())
                 && validate(validator.cpuTypeSupportsVirtService())

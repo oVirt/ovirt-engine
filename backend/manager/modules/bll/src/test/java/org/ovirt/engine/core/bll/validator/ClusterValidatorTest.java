@@ -13,13 +13,12 @@ import java.util.Collections;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.InjectorRule;
+import org.ovirt.engine.core.bll.CpuFlagsManagerHandler;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -54,23 +53,23 @@ public class ClusterValidatorTest {
     @Mock
     private VDSGroup cluster;
 
+    @Mock
+    private CpuFlagsManagerHandler cpuFlagsManagerHandler;
+
     @Rule
     public MockConfigRule mockConfigRule = new MockConfigRule();
-
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
 
     @Before
     public void setup() {
         mockConfigRule.mockConfigValue(ConfigValues.SupportedClusterLevels, Collections.singleton(SUPPORTED_VERSION));
-        validator = new ClusterValidator(dbFacade, cluster);
+        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
     }
 
     @Test
     public void nameNotUsed() {
         when(clusterDao.getByName(any(String.class), any(Boolean.class))).thenReturn(Collections.<VDSGroup> emptyList());
         when(dbFacade.getVdsGroupDao()).thenReturn(clusterDao);
-        validator = new ClusterValidator(dbFacade, cluster);
+        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.nameNotUsed(), isValid());
     }
@@ -79,7 +78,7 @@ public class ClusterValidatorTest {
     public void nameIsAlreadyUsed() {
         when(clusterDao.getByName(any(String.class), any(Boolean.class))).thenReturn(Collections.<VDSGroup> singletonList(mock(VDSGroup.class)));
         when(dbFacade.getVdsGroupDao()).thenReturn(clusterDao);
-        validator = new ClusterValidator(dbFacade, cluster);
+        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.nameNotUsed(), failsWith(EngineMessage.VDS_GROUP_CANNOT_DO_ACTION_NAME_IN_USE));
     }
@@ -92,7 +91,7 @@ public class ClusterValidatorTest {
     @Test
     public void cpuTypeSupportsVirtServiceForVirtCluster() {
         when(cluster.supportsVirtService()).thenReturn(true);
-        validator = spy(new ClusterValidator(dbFacade, cluster));
+        validator = spy(new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler));
         doReturn(true).when(validator).cpuExists();
 
         assertThat(validator.cpuTypeSupportsVirtService(), isValid());
@@ -101,7 +100,7 @@ public class ClusterValidatorTest {
     @Test
     public void cpuTypeDoesNotSupportVirtServiceForVirtCluster() {
         when(cluster.supportsVirtService()).thenReturn(true);
-        validator = spy(new ClusterValidator(dbFacade, cluster));
+        validator = spy(new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler));
         doReturn(false).when(validator).cpuExists();
 
         assertThat(validator.cpuTypeSupportsVirtService(), failsWith(EngineMessage.ACTION_TYPE_FAILED_CPU_NOT_FOUND));
@@ -134,7 +133,7 @@ public class ClusterValidatorTest {
         when(dataCenter.getCompatibilityVersion()).thenReturn(SUPPORTED_VERSION);
         when(dataCenterDao.get(any(Guid.class))).thenReturn(dataCenter);
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
-        validator = new ClusterValidator(dbFacade, cluster);
+        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.dataCenterVersionMismatch(), isValid());
     }
@@ -148,7 +147,7 @@ public class ClusterValidatorTest {
         when(dataCenterDao.get(any(Guid.class))).thenReturn(dataCenter);
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
         when(cluster.supportsVirtService()).thenReturn(true);
-        validator = new ClusterValidator(dbFacade, cluster);
+        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.dataCenterVersionMismatch(),
                 failsWith(EngineMessage.VDS_GROUP_CANNOT_ADD_COMPATIBILITY_VERSION_WITH_LOWER_STORAGE_POOL));
@@ -159,7 +158,7 @@ public class ClusterValidatorTest {
         when(cluster.getStoragePoolId()).thenReturn(mock(Guid.class));
         when(dataCenterDao.get(any(Guid.class))).thenReturn(mock(StoragePool.class));
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
-        validator = new ClusterValidator(dbFacade, cluster);
+        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.dataCenterExists(), isValid());
     }
@@ -173,7 +172,7 @@ public class ClusterValidatorTest {
     public void dataCenterDoesNotExist() {
         when(cluster.getStoragePoolId()).thenReturn(mock(Guid.class));
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
-        validator = new ClusterValidator(dbFacade, cluster);
+        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.dataCenterExists(), failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST));
     }
@@ -188,7 +187,7 @@ public class ClusterValidatorTest {
         when(cluster.getStoragePoolId()).thenReturn(mock(Guid.class));
         when(dataCenterDao.get(any(Guid.class))).thenReturn(mock(StoragePool.class));
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
-        validator = new ClusterValidator(dbFacade, cluster);
+        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.localStoragePoolAttachedToSingleCluster(), isValid());
     }
@@ -202,7 +201,7 @@ public class ClusterValidatorTest {
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
         when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.<VDSGroup> emptyList());
         when(dbFacade.getVdsGroupDao()).thenReturn(clusterDao);
-        validator = new ClusterValidator(dbFacade, cluster);
+        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.localStoragePoolAttachedToSingleCluster(), isValid());
     }
@@ -216,7 +215,7 @@ public class ClusterValidatorTest {
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
         when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.<VDSGroup> singletonList(mock(VDSGroup.class)));
         when(dbFacade.getVdsGroupDao()).thenReturn(clusterDao);
-        validator = new ClusterValidator(dbFacade, cluster);
+        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.localStoragePoolAttachedToSingleCluster(),
                 failsWith(EngineMessage.VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE));
@@ -231,7 +230,7 @@ public class ClusterValidatorTest {
     public void qosBaloonSupported() {
         when(cluster.getCompatibilityVersion()).thenReturn(Version.v3_3);
         when(cluster.isEnableBallooning()).thenReturn(true);
-        validator = new ClusterValidator(dbFacade, cluster);
+        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.qosBaloonSupported(), isValid());
     }
@@ -240,7 +239,7 @@ public class ClusterValidatorTest {
     public void qosBaloonNotSupported() {
         when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
         when(cluster.isEnableBallooning()).thenReturn(true);
-        validator = new ClusterValidator(dbFacade, cluster);
+        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.qosBaloonSupported(), failsWith(EngineMessage.QOS_BALLOON_NOT_SUPPORTED));
     }
@@ -249,7 +248,7 @@ public class ClusterValidatorTest {
     public void glusterServiceSupported() {
         when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
         when(cluster.supportsGlusterService()).thenReturn(true);
-        validator = spy(new ClusterValidator(dbFacade, cluster));
+        validator = spy(new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler));
         doReturn(true).when(validator).glusterFeatureEnabled();
 
         assertThat(validator.glusterServiceSupported(), isValid());
@@ -259,7 +258,7 @@ public class ClusterValidatorTest {
     public void glusterServiceNotRequired() {
         when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
         when(cluster.supportsGlusterService()).thenReturn(false);
-        validator = new ClusterValidator(dbFacade, cluster);
+        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.glusterServiceSupported(), isValid());
     }
@@ -268,7 +267,7 @@ public class ClusterValidatorTest {
     public void glusterServiceNotSupported() {
         when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
         when(cluster.supportsGlusterService()).thenReturn(true);
-        validator = spy(new ClusterValidator(dbFacade, cluster));
+        validator = spy(new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler));
         doReturn(false).when(validator).glusterFeatureEnabled();
 
         assertThat(validator.glusterServiceSupported(),
@@ -278,7 +277,7 @@ public class ClusterValidatorTest {
     @Test
     public void clusterServiceDefined() {
         when(cluster.supportsGlusterService()).thenReturn(true);
-        validator = new ClusterValidator(dbFacade, cluster);
+        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.clusterServiceDefined(), isValid());
     }
@@ -294,7 +293,7 @@ public class ClusterValidatorTest {
         mockConfigRule.mockConfigValue(ConfigValues.AllowClusterWithVirtGlusterEnabled, true);
         when(cluster.supportsGlusterService()).thenReturn(true);
         when(cluster.supportsVirtService()).thenReturn(true);
-        validator = new ClusterValidator(dbFacade, cluster);
+        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.mixedClusterServicesSupported(), isValid());
     }
@@ -304,7 +303,7 @@ public class ClusterValidatorTest {
         mockConfigRule.mockConfigValue(ConfigValues.AllowClusterWithVirtGlusterEnabled, false);
         when(cluster.supportsGlusterService()).thenReturn(true);
         when(cluster.supportsVirtService()).thenReturn(false);
-        validator = new ClusterValidator(dbFacade, cluster);
+        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.mixedClusterServicesSupported(), isValid());
     }
@@ -314,7 +313,7 @@ public class ClusterValidatorTest {
         mockConfigRule.mockConfigValue(ConfigValues.AllowClusterWithVirtGlusterEnabled, false);
         when(cluster.supportsGlusterService()).thenReturn(true);
         when(cluster.supportsVirtService()).thenReturn(true);
-        validator = new ClusterValidator(dbFacade, cluster);
+        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.mixedClusterServicesSupported(),
                 failsWith(EngineMessage.VDS_GROUP_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED));
@@ -329,7 +328,7 @@ public class ClusterValidatorTest {
     public void attestationServerConfigured() {
         mockConfigRule.mockConfigValue(ConfigValues.AttestationServer, RandomUtils.instance().nextString(10));
         when(cluster.supportsTrustedService()).thenReturn(true);
-        validator = new ClusterValidator(dbFacade, cluster);
+        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.attestationServerConfigured(), isValid());
     }
@@ -338,7 +337,7 @@ public class ClusterValidatorTest {
     public void attestationServerNotConfiguredProperly() {
         mockConfigRule.mockConfigValue(ConfigValues.AttestationServer, StringUtils.EMPTY);
         when(cluster.supportsTrustedService()).thenReturn(true);
-        validator = new ClusterValidator(dbFacade, cluster);
+        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.attestationServerConfigured(),
                 failsWith(EngineMessage.VDS_GROUP_CANNOT_SET_TRUSTED_ATTESTATION_SERVER_NOT_CONFIGURED));
@@ -347,7 +346,7 @@ public class ClusterValidatorTest {
     @Test
     public void migrationSupported() {
         when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
-        validator = spy(new ClusterValidator(dbFacade, cluster));
+        validator = spy(new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler));
         doReturn(true).when(validator).migrationSupportedForArch(any(ArchitectureType.class));
 
         assertThat(validator.migrationSupported(RandomUtils.instance().nextEnum(ArchitectureType.class)), isValid());
@@ -356,7 +355,7 @@ public class ClusterValidatorTest {
     @Test
     public void migrationNotSupported() {
         when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
-        validator = spy(new ClusterValidator(dbFacade, cluster));
+        validator = spy(new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler));
         doReturn(false).when(validator).migrationSupportedForArch(any(ArchitectureType.class));
 
         assertThat(validator.migrationSupported(RandomUtils.instance().nextEnum(ArchitectureType.class)),
@@ -372,7 +371,7 @@ public class ClusterValidatorTest {
     public void virtIoRngSupported() {
         when(cluster.getRequiredRngSources()).thenReturn(Collections.singleton(RandomUtils.instance()
                 .nextEnum(Source.class)));
-        validator = spy(new ClusterValidator(dbFacade, cluster));
+        validator = spy(new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler));
         doReturn(true).when(validator).virtIoRngSupportedInCluster();
 
         assertThat(validator.virtIoRngSupported(), isValid());
@@ -382,7 +381,7 @@ public class ClusterValidatorTest {
     public void virtIoRngNotSupported() {
         when(cluster.getRequiredRngSources()).thenReturn(Collections.singleton(RandomUtils.instance()
                 .nextEnum(Source.class)));
-        validator = spy(new ClusterValidator(dbFacade, cluster));
+        validator = spy(new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler));
         doReturn(false).when(validator).virtIoRngSupportedInCluster();
 
         assertThat(validator.virtIoRngSupported(),
