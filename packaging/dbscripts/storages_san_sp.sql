@@ -565,18 +565,6 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetNFSstorage_server_connectionsByStoragePoolId(v_storage_pool_id UUID)
-RETURNS SETOF storage_server_connections STABLE
-   AS $procedure$
-BEGIN
-RETURN QUERY SELECT distinct storage_server_connections.*
-   FROM    storage_server_connections storage_server_connections
-   INNER JOIN storage_domain_static ON storage_server_connections.id = storage_domain_static.storage
-   INNER JOIN storage_pool_iso_map ON storage_pool_iso_map.storage_id = storage_domain_static.id
-   WHERE     (storage_pool_iso_map.storage_pool_id = v_storage_pool_id);
-END; $procedure$
-LANGUAGE plpgsql;
-
 Create or replace FUNCTION Getstorage_server_connectionsByLunId(v_lunId VARCHAR(50))
 RETURNS SETOF storage_server_connections STABLE
    AS $procedure$
