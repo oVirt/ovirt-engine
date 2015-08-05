@@ -1255,6 +1255,9 @@ fi
 %endif
 
 %changelog
+* Wed Aug  5 2015 Sandro Bonazzola <sbonazzo@redhat.com> - 4.0.0
+- Bump version to 4.0.0
+
 * Thu Jul 10 2014 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.0
 - Update dependencies and removed legacy provides / requires
 
