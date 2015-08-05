@@ -23,7 +23,11 @@ public class SizeConverter {
         KiB(2, "KiB"),
         MiB(3, "MiB"),
         GiB(4, "GiB"),
-        TiB(5, "TiB");
+        TiB(5, "TiB"),
+        PiB(6, "PiB"),
+        EiB(7, "EiB"),
+        ZiB(8, "ZiB"),
+        YiB(9, "YiB");
 
         private long unitWeight;
         private String unitInString;

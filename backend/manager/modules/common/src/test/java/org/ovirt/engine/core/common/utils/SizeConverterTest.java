@@ -65,6 +65,27 @@ public class SizeConverterTest {
     }
 
     @Test
+    public void testConvertTiBToYiB() {
+        double tib = 100 * Math.pow(1024, 4);
+        int yib = SizeConverter.convert((long)tib, SizeUnit.TiB, SizeUnit.YiB).intValue();
+        assertEquals(yib, 100);
+    }
+
+    @Test
+    public void testConvertMiBToEiB() {
+        double mib = 15 * Math.pow(1024, 4);
+        int eib = SizeConverter.convert((long)mib, SizeUnit.MiB, SizeUnit.EiB).intValue();
+        assertEquals(eib, 15);
+    }
+
+    @Test
+    public void testConvertPiBToZiB() {
+        double pib = 15 * Math.pow(1024, 2);
+        int zib = SizeConverter.convert((long)pib, SizeUnit.PiB, SizeUnit.ZiB).intValue();
+        assertEquals(zib, 15);
+    }
+
+    @Test
     public void testGetMathOperationSafeOperands() {
         List<Pair<SizeUnit, Double>> expected = new ArrayList<Pair<SizeUnit, Double>>() {
             private static final long serialVersionUID = 1L;
