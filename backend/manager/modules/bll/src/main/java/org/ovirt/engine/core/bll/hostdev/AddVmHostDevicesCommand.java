@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class AddVmHostDevicesCommand extends AbstractVmHostDevicesCommand<VmHostDevicesParameters> {
 
@@ -61,6 +62,12 @@ public class AddVmHostDevicesCommand extends AbstractVmHostDevicesCommand<VmHost
 
     public List<String> getNamesAdded() {
         return new ArrayList<>(getPrimaryDeviceNames());
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST_DEVICES);
     }
 }
 

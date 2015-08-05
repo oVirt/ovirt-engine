@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.VmCommand;
+import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
@@ -56,7 +57,7 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
 
         // hot(un)plug not supported (yet)
         if (getVm().getStatus() != VMStatus.Down) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(getVm().getStatus()));
         }
 
         if (getVm().getDedicatedVmForVdsList().isEmpty()) {
