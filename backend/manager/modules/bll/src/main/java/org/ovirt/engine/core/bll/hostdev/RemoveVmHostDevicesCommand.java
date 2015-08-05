@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class RemoveVmHostDevicesCommand extends AbstractVmHostDevicesCommand<VmHostDevicesParameters> {
 
@@ -93,5 +94,11 @@ public class RemoveVmHostDevicesCommand extends AbstractVmHostDevicesCommand<VmH
 
     public List<String> getNamesRemoved() {
         return new ArrayList<>(getPrimaryDeviceNames());
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST_DEVICES);
     }
 }

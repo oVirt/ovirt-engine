@@ -832,6 +832,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Gluster Volume Snapshot config")
     String VAR__TYPE__GLUSTER_VOLUME_SNAPSHOT_CONFIG();
 
+    @DefaultStringValue("$type Host devices")
+    String VAR__TYPE__HOST_DEVICES();
+
     @DefaultStringValue("$action run")
     String VAR__ACTION__RUN();
 
