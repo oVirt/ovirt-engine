@@ -6,6 +6,7 @@
 	xmlns:f="urn:import:org.ovirt.engine.ui.common.widget.form"
 	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
+	<ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
 	<ui:style>
 		.sourcePropertyStyle {
 			width: 390px;
@@ -35,12 +36,25 @@
 			height: 165px;
 		}
 
-        .messageStyle {
+        .messageSectionStyle {
+            height: 20px;
+		}
+
+        .floatLeft {
+            float: left;
+        }
+
+        .errorStyle {
             color: red;
             vertical-align: bottom;
-            height: 20px;
             line-height: 15px;
-            margin-left: 5px;
+            margin-left: 3px;
+        }
+
+        .warningStyle {
+            vertical-align: bottom;
+            line-height: 15px;
+            margin-left: 3px;
         }
 
 		.loadButtonStyle {
@@ -98,7 +112,16 @@
 			        </g:FlowPanel>
 			    </g:FlowPanel>
 
-				<g:Label ui:field="message" addStyleNames="{style.messageStyle}" />
+				<g:FlowPanel addStyleNames="{style.messageSectionStyle}">
+					<g:FlowPanel ui:field="errorPanel" visible="false">
+						<g:Image resource='{resources.logErrorImage}' addStyleNames="{style.floatLeft}" />
+						<g:Label ui:field="errorMessage" addStyleNames="{style.errorStyle} {style.floatLeft}" />
+					</g:FlowPanel>
+					<g:FlowPanel ui:field="warningPanel" visible="false">
+						<g:Image resource='{resources.logWarningImage}' addStyleNames="{style.floatLeft}" />
+						<g:Label ui:field="warningMessage" addStyleNames="{style.warningStyle} {style.floatLeft}" />
+					</g:FlowPanel>
+				</g:FlowPanel>
 				<w:VerticalSplitTable ui:field="vmsTable" />
 			</g:VerticalPanel>
 		</d:content>
