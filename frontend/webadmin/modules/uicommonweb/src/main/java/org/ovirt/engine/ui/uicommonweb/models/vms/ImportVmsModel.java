@@ -454,7 +454,17 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         AsyncDataProvider.getInstance().getVmsFromExternalServer(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
-                updateVms((List<VM>) returnValue);
+                List<VM> remoteVms = (List<VM>) returnValue;
+                List<VM> remoteDownVms = new ArrayList<>();
+                for (VM vm : remoteVms) {
+                    if (vm.isDown()) {
+                        remoteDownVms.add(vm);
+                    }
+                }
+                if (remoteVms.size() != remoteDownVms.size()) {
+                    setWarning(constants.runningVmsWereFilteredOnImportVm());
+                }
+                updateVms(remoteDownVms);
             }
         }),
         getDataCenters().getSelectedItem().getId(),

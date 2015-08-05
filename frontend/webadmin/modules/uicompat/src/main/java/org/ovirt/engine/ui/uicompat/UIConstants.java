@@ -2493,6 +2493,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Not available when no Data Center is up.")
     String notAvailableWithNoUpDC();
 
+    @DefaultStringValue("Some VMs are running in the external system and therefore have been filtered")
+    String runningVmsWereFilteredOnImportVm();
+
     @DefaultStringValue("Not available when no Export Domain is active.")
     String notAvailableWithNoActiveExportDomain();
 
