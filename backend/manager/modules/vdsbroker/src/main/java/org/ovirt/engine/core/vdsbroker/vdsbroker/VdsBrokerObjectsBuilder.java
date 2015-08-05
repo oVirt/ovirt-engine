@@ -250,7 +250,7 @@ public class VdsBrokerObjectsBuilder {
         DiskImage image = new DiskImage();
         image.setDiskAlias((String) map.get(VdsProperties.Alias));
         image.setSize(Long.parseLong((String) map.get(VdsProperties.DISK_VIRTUAL_SIZE)));
-        image.setActualSize(Long.parseLong((String) map.get(VdsProperties.DISK_ALLOCATION)));
+        image.setActualSizeInBytes(Long.parseLong((String) map.get(VdsProperties.DISK_ALLOCATION)));
         image.setId(Guid.newGuid());
 
         return image;
