@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.io.File;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -49,7 +48,7 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
         }
 
         if (!getVm().isRunningOrPaused()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(getVm().getStatus()));
+            return failVmStatusIllegal();
         }
 
         if ((IsoDomainListSyncronizer.getInstance().findActiveISODomain(getVm().getStoragePoolId()) == null)

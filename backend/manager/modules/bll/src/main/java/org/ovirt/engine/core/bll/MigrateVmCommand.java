@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.VdsFreeMemoryChecker;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -413,7 +412,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
 
         case NotResponding:
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(VMStatus.NotResponding));
+            return failVmStatusIllegal();
 
         case Paused:
             if (vm.getVmPauseStatus() == VmPauseStatus.EIO) {

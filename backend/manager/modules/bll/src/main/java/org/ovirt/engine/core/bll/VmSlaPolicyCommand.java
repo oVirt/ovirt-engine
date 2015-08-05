@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmSlaPolicyParameters;
@@ -35,8 +34,7 @@ public class VmSlaPolicyCommand<T extends VmSlaPolicyParameters> extends VmManag
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
         if (getVm().getStatus() != VMStatus.Up) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL,
-                    LocalizedVmStatus.from(getVm().getStatus()));
+            return failVmStatusIllegal();
         }
         if (!FeatureSupported.vmSlaPolicy(getVm().getVdsGroupCompatibilityVersion())) {
             return failCanDoAction(EngineMessage.VM_SLA_POLICY_NOT_SUPPORTED);

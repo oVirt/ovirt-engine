@@ -7,7 +7,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
-import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.HotSetNumberOfCpusParameters;
@@ -51,8 +50,7 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
         if (getVm().getStatus() != VMStatus.Up) {
-            canDo = failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL,
-                    LocalizedVmStatus.from(getVm().getStatus()));
+            canDo = failVmStatusIllegal();
         }
         if (getParameters().getVm().getCpuPerSocket() >
                 Config.<Integer>getValue(

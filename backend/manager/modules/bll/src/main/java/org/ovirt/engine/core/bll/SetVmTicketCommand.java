@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
@@ -117,7 +116,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         // to the console:
         final VMStatus status = vm.getStatus();
         if (status != VMStatus.Up && status != VMStatus.Paused && status != VMStatus.PoweringUp && status != VMStatus.PoweringDown && status != VMStatus.RebootInProgress) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
+            return failVmStatusIllegal();
         }
 
         // Nothing else, all checks have been performed using permission

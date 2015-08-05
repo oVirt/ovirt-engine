@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.PostZeroHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -596,5 +597,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected Snapshot getActiveSnapshot() {
         return getSnapshotDao().get(getVm().getId(), SnapshotType.ACTIVE);
+    }
+
+    /** Helper method for failing canDoAction on invalid VM status */
+    protected boolean failVmStatusIllegal() {
+        return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(getVm().getStatus()));
     }
 }

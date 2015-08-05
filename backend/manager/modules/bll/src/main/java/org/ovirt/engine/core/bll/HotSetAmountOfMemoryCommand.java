@@ -9,7 +9,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
-import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.HotSetAmountOfMemoryParameters;
@@ -63,8 +62,7 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
         }
 
         if (getVm().getStatus() != VMStatus.Up) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL,
-                    LocalizedVmStatus.from(getVm().getStatus()));
+            return failVmStatusIllegal();
         }
 
         if (getParameters().getPlugAction() == PlugAction.PLUG) {

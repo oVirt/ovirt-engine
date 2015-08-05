@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -51,9 +50,7 @@ public class PauseVmCommand<T extends VmOperationParameterBase> extends VmOperat
 
             if (retValue && (vm.getStatus() == VMStatus.WaitForLaunch || vm.getStatus() == VMStatus.MigratingFrom
                     || vm.getStatus() == VMStatus.NotResponding)) {
-                retValue = false;
-                message.add(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL.toString());
-                message.add(LocalizedVmStatus.from(vm.getStatus()));
+                retValue = failVmStatusIllegal();
             } else if (!vm.isRunning()) {
                 retValue = false;
                 message.add(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING.toString());

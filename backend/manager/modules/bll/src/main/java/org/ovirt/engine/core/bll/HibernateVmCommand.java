@@ -8,7 +8,6 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
-import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -192,7 +191,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
         VMStatus vmStatus = getVm().getStatus();
         if (vmStatus == VMStatus.WaitForLaunch || vmStatus == VMStatus.NotResponding) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vmStatus));
+            return failVmStatusIllegal();
         }
 
         if (vmStatus != VMStatus.Up) {
