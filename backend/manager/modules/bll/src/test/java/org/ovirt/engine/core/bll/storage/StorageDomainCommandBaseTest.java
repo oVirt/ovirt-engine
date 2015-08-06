@@ -183,7 +183,7 @@ public class StorageDomainCommandBaseTest {
         cmd = spy(new TestStorageCommandBase(parameters));
     }
 
-    class TestStorageCommandBase extends StorageDomainCommandBase<StorageDomainParametersBase> {
+    private static class TestStorageCommandBase extends StorageDomainCommandBase<StorageDomainParametersBase> {
 
         public TestStorageCommandBase(StorageDomainParametersBase parameters) {
             super(parameters);
