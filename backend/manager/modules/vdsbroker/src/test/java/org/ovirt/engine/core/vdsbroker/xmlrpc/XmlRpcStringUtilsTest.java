@@ -17,30 +17,30 @@ public class XmlRpcStringUtilsTest {
     @Test
     public void testOneKeyVal() {
         Map<String, String> map = XmlRpcStringUtils.string2Map(ONE_KEY_VAL);
-        assertEquals(map.size(), 1);
+        assertEquals(1, map.size());
     }
 
     @Test
     public void testMulKeyVal() {
         Map<String, String> map = XmlRpcStringUtils.string2Map(MUL_KEY_VAL);
-        assertEquals(map.size(), 4);
+        assertEquals(4, map.size());
     }
 
     @Test
     public void testEmptyKeyVal() {
         Map<String, String> map = XmlRpcStringUtils.string2Map(EMPTY_KEY_VAL);
-        assertEquals(map.size(), 2);
+        assertEquals(2, map.size());
     }
 
     @Test
     public void testEmptySignKeyVal() {
         Map<String, String> map = XmlRpcStringUtils.string2Map(EMPTY_SIGN_KEY_VAL);
-        assertEquals(map.size(), 1);
+        assertEquals(1, map.size());
     }
 
     @Test
     public void testNullKeyVal() {
         Map<String, String> map = XmlRpcStringUtils.string2Map(NULL_KEY_VAL);
-        assertEquals(map.size(), 0);
+        assertEquals(0, map.size());
     }
 }
