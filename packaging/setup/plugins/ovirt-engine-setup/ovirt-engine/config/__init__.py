@@ -22,6 +22,7 @@
 from otopi import util
 
 
+from . import aaakerbldap
 from . import jboss
 from . import java
 from . import database
@@ -40,6 +41,7 @@ from . import storage
 
 @util.export
 def createPlugins(context):
+    aaakerbldap.Plugin(context=context)
     jboss.Plugin(context=context)
     java.Plugin(context=context)
     database.Plugin(context=context)
