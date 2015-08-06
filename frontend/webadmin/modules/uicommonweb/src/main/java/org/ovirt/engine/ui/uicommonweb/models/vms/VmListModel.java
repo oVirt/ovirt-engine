@@ -2011,8 +2011,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
         getGuideCommand().setIsExecutionAllowed(getGuideContext() != null || singleVmSelected);
 
-        getConsoleConnectCommand().setIsExecutionAllowed(singleVmSelected && isConsoleCommandsExecutionAllowed());
-        getEditConsoleCommand().setIsExecutionAllowed(isConsoleEditEnabled());
+        getConsoleConnectCommand().setIsExecutionAllowed(isConsoleCommandsExecutionAllowed());
+        getEditConsoleCommand().setIsExecutionAllowed(singleVmSelected && isConsoleEditEnabled());
         getCancelConvertCommand().setIsExecutionAllowed(isSelectedVmBeingConverted());
     }
 
