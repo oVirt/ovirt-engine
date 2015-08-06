@@ -18,12 +18,12 @@ public class RpmVersionUtilsTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testIllegalRpmSplitNoDashes() {
-        assertEquals(-1, RpmVersionUtils.splitRpmToParts("abcdef"));
+        RpmVersionUtils.splitRpmToParts("abcdef");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testIllegalRpmSplitNoEnoughDashes() {
-        assertEquals(-1, RpmVersionUtils.splitRpmToParts("abcdef-123"));
+        RpmVersionUtils.splitRpmToParts("abcdef-123");
     }
 
     @Test
