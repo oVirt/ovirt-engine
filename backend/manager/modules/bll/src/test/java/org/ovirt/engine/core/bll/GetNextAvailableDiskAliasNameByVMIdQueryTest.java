@@ -25,8 +25,8 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
     private VmDao vmDao;
 
     private VM vm;
-    private final Guid vmId = Guid.newGuid();
-    private final String VM_NAME = "VmTESTNaME";
+    private static final Guid vmId = Guid.newGuid();
+    private static final String VM_NAME = "VmTESTNaME";
 
     @Override
     protected void setUpSpyQuery() throws Exception {
@@ -93,7 +93,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
     /**
      * Populates the VM disk map with the amount of disks specified, each with a default disk alias
      */
-    private void populateVmDiskMap(VM vm, int numOfDisks) {
+    private static void populateVmDiskMap(VM vm, int numOfDisks) {
         Map<Guid, Disk> diskMap = vm.getDiskMap();
 
         for (Integer i = 0; i < numOfDisks; i++) {
