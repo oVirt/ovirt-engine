@@ -46,10 +46,10 @@ import org.ovirt.engine.core.utils.RandomUtils;
 @RunWith(MockitoJUnitRunner.class)
 public class VmInterfaceManagerTest {
 
-    private final String NETWORK_NAME = "networkName";
-    private final String VM_NAME = "vmName";
-    private final static Version VERSION_3_2 = new Version(3, 2);
-    private final static int OS_ID = 0;
+    private static final String NETWORK_NAME = "networkName";
+    private static final String VM_NAME = "vmName";
+    private static final Version VERSION_3_2 = new Version(3, 2);
+    private static final int OS_ID = 0;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -196,7 +196,7 @@ public class VmInterfaceManagerTest {
     /**
      * @return A new interface that can be used in tests.
      */
-    protected VmNic createNewInterface() {
+    private static VmNic createNewInterface() {
         VmNic iface = new VmNic();
         iface.setId(Guid.newGuid());
         iface.setMacAddress(RandomUtils.instance().nextString(10));
@@ -204,7 +204,7 @@ public class VmInterfaceManagerTest {
         return iface;
     }
 
-    protected VmNetworkInterface createNewViewableInterface(boolean plugged) {
+    private static VmNetworkInterface createNewViewableInterface(boolean plugged) {
         VmNetworkInterface iface = new VmNetworkInterface();
         iface.setId(Guid.newGuid());
         iface.setMacAddress(RandomUtils.instance().nextString(10));
@@ -223,7 +223,7 @@ public class VmInterfaceManagerTest {
      *            whether the VM interface plugged or not
      * @return the VM instance with the appropriate data.
      */
-    private VM createVM(String vmName, String networkName, boolean pluggedInterface) {
+    private static VM createVM(String vmName, String networkName, boolean pluggedInterface) {
         VM vm = new VM();
         vm.setId(Guid.newGuid());
         vm.setName(vmName);
