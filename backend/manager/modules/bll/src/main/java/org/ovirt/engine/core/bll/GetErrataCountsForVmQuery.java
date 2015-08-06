@@ -30,14 +30,12 @@ public class GetErrataCountsForVmQuery<P extends IdQueryParameters> extends Quer
     @Override
     protected void executeQueryCommand() {
         VM vm = vmDao.get(getParameters().getId());
-
-        Provider<?> provider = getHostProvider(vm);
-
         if (vm == null) {
             failWith(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_EXIST);
             return;
         }
 
+        Provider<?> provider = getHostProvider(vm);
         if (provider == null) {
             failWith(EngineMessage.NO_FOREMAN_PROVIDER_FOR_VM);
             return;
