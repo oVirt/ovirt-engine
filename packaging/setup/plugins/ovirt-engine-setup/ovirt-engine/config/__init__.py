@@ -25,6 +25,7 @@ from otopi import util
 from . import aaa
 from . import aaainternal
 from . import aaajdbc
+from . import aaakerbldap
 from . import jboss
 from . import java
 from . import database
@@ -46,6 +47,7 @@ def createPlugins(context):
     aaa.Plugin(context=context)
     aaainternal.Plugin(context=context)
     aaajdbc.Plugin(context=context)
+    aaakerbldap.Plugin(context=context)
     jboss.Plugin(context=context)
     java.Plugin(context=context)
     database.Plugin(context=context)
