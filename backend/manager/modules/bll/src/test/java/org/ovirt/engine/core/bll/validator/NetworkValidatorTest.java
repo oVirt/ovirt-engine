@@ -45,13 +45,13 @@ import org.ovirt.engine.core.utils.RandomUtils;
 @RunWith(MockitoJUnitRunner.class)
 public class NetworkValidatorTest {
 
-    private final String NAMEABLE_NAME = "nameable";
-    private final String DEFAULT_NETWORK_NAME = "mynetwork";
-    private final String OTHER_NETWORK_NAME = "myothernetwork";
-    private final Guid DEFAULT_GUID = Guid.newGuid();
-    private final Guid OTHER_GUID = Guid.newGuid();
-    private final int DEFAULT_VLAN_ID = 0;
-    private final int OTHER_VLAN_ID = 1;
+    private static final String NAMEABLE_NAME = "nameable";
+    private static final String DEFAULT_NETWORK_NAME = "mynetwork";
+    private static final String OTHER_NETWORK_NAME = "myothernetwork";
+    private static final Guid DEFAULT_GUID = Guid.newGuid();
+    private static final Guid OTHER_GUID = Guid.newGuid();
+    private static final int DEFAULT_VLAN_ID = 0;
+    private static final int OTHER_VLAN_ID = 1;
 
     @Rule
     public MockConfigRule mockConfigRule = new MockConfigRule();
@@ -234,7 +234,7 @@ public class NetworkValidatorTest {
         assertThat(validator.vlanIdNotUsed(), matcher);
     }
 
-    private List<Network> getSingletonVlanNetworkList(int vlanId, Guid networkId) {
+    private static List<Network> getSingletonVlanNetworkList(int vlanId, Guid networkId) {
         Network network = new Network();
         network.setVlanId(vlanId);
         network.setId(networkId);
@@ -277,14 +277,14 @@ public class NetworkValidatorTest {
         assertThat(validator.notIscsiBondNetwork(), matcher);
     }
 
-    private List<Network> getSingletonNamedNetworkList(String networkName, Guid networkId) {
+    private static List<Network> getSingletonNamedNetworkList(String networkName, Guid networkId) {
         Network network = mock(Network.class);
         when(network.getName()).thenReturn(networkName);
         when(network.getId()).thenReturn(networkId);
         return Collections.singletonList(network);
     }
 
-    private List<IscsiBond> getIscsiBondList() {
+    private static List<IscsiBond> getIscsiBondList() {
         List<IscsiBond> iscsiBondList = new ArrayList<>();
         IscsiBond iscsiBond = new IscsiBond();
         iscsiBond.setId(Guid.newGuid());
@@ -331,7 +331,7 @@ public class NetworkValidatorTest {
                 getSingletonNamedNetworkList(DEFAULT_NETWORK_NAME, DEFAULT_GUID));
     }
 
-    private Matcher<ValidationResult> failsWithNetworkInUse() {
+    private static Matcher<ValidationResult> failsWithNetworkInUse() {
         return failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_IN_ONE_USE);
     }
 
