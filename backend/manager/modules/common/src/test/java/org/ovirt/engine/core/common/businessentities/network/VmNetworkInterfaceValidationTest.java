@@ -156,16 +156,16 @@ public class VmNetworkInterfaceValidationTest {
      * @param shouldValidationFail
      *            Should the validation fail due to invalid format, or not.
      */
-    private void assertMacAddressFormatValidation(String macAddress,
-            Class<?> validationGroup,
-            boolean shouldValidationFail) {
+    private static void assertMacAddressFormatValidation(String macAddress,
+                                                         Class<?> validationGroup,
+                                                         boolean shouldValidationFail) {
         assertNicValidation(createNic(macAddress, VALID_NIC_NAME, VALID_NIC_TYPE),
                 validationGroup,
                 shouldValidationFail,
                 VmNetworkInterface.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID);
     }
 
-    private NetworkInterface<?> createNic(String macAddress, String name, VmInterfaceType vmInterfaceType) {
+    private static NetworkInterface<?> createNic(String macAddress, String name, VmInterfaceType vmInterfaceType) {
         NetworkInterface<?> nic = new VmNetworkInterface();
         nic.setName(name);
         nic.setMacAddress(macAddress);
@@ -185,10 +185,10 @@ public class VmNetworkInterfaceValidationTest {
      * @param possibleViolation
      *            Violation that should or shounldn't occur (determined by previous parameter),
      */
-    private void assertNicValidation(NetworkInterface<?> nic,
-            Class<?> validationGroup,
-            boolean shouldValidationFail,
-            String possibleViolation) {
+    private static void assertNicValidation(NetworkInterface<?> nic,
+                                            Class<?> validationGroup,
+                                            boolean shouldValidationFail,
+                                            String possibleViolation) {
         List<String> violations = ValidationUtils.validateInputs(
                 Arrays.asList(new Class<?>[] { validationGroup }), new TestParams(nic));
 
@@ -198,18 +198,18 @@ public class VmNetworkInterfaceValidationTest {
                 violations.contains(possibleViolation));
     }
 
-    private String createInvalidMacAddress() {
+    private static String createInvalidMacAddress() {
         return VALID_MAC_ADDRESS.replace(VALID_MAC_ADDRESS.charAt(random.nextInt(VALID_MAC_ADDRESS.length())), 'x');
     }
 
     /**
      * @return A MAC address that is at least 1 char long but shorter than a valid MAC address.
      */
-    private String createShortMacAddress() {
+    private static String createShortMacAddress() {
         return VALID_MAC_ADDRESS.substring(random.nextInt(VALID_MAC_ADDRESS.length() - 2) + 1);
     }
 
-    private class TestParams extends VdcActionParametersBase {
+    private static class TestParams extends VdcActionParametersBase {
 
         @Valid
         private NetworkInterface<?> nic;
