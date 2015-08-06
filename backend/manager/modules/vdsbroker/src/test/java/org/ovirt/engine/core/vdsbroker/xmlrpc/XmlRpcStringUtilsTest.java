@@ -8,11 +8,11 @@ import org.junit.Test;
 
 public class XmlRpcStringUtilsTest {
 
-    private final String ONE_KEY_VAL = "key1=val1";
-    private final String MUL_KEY_VAL = "key1=val1,key2=val2,key3=val3,key4=val4";
-    private final String EMPTY_KEY_VAL = "key1=val1,key2=";
-    private final String EMPTY_SIGN_KEY_VAL = "This string has no equal sign for the key";
-    private final String NULL_KEY_VAL = null;
+    private static final String ONE_KEY_VAL = "key1=val1";
+    private static final String MUL_KEY_VAL = "key1=val1,key2=val2,key3=val3,key4=val4";
+    private static final String EMPTY_KEY_VAL = "key1=val1,key2=";
+    private static final String EMPTY_SIGN_KEY_VAL = "This string has no equal sign for the key";
+    private static final String NULL_KEY_VAL = null;
 
     @Test
     public void testOneKeyVal() {
