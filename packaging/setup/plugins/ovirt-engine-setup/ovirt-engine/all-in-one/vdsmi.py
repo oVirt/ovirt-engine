@@ -287,7 +287,6 @@ class Plugin(plugin.PluginBase):
             self._ovirtsdk_xml.params.Host(
                 name=self.environment[oenginecons.AIOEnv.LOCAL_HOST],
                 address=self.environment[osetupcons.ConfigEnv.FQDN],
-                reboot_after_installation=False,
                 override_iptables=False,
                 cluster=engine_api.clusters.get(
                     self.environment[oenginecons.AIOEnv.LOCAL_CLUSTER]

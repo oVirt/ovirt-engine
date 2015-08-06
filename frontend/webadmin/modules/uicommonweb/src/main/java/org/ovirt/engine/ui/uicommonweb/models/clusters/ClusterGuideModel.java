@@ -658,7 +658,6 @@ public class ClusterGuideModel extends GuideModel {
         }
         vdsActionParams.setAuthMethod(model.getAuthenticationMethod());
         vdsActionParams.setOverrideFirewall(model.getOverrideIpTables().getEntity());
-        vdsActionParams.setRebootAfterInstallation(model.getCluster().getSelectedItem().supportsVirtService());
         vdsActionParams.setFenceAgents(model.getFenceAgentListModel().getFenceAgents());
         model.startProgress(null);
 

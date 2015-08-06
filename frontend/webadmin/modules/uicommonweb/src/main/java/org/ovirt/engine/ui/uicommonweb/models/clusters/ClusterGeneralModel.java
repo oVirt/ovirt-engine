@@ -488,7 +488,6 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
             parameters.setvds(host);
             parameters.setPassword(hostDetailModel.getPassword());
             parameters.setOverrideFirewall(hostsModel.isConfigureFirewall());
-            parameters.setRebootAfterInstallation(getEntity().supportsVirtService());
             parametersList.add(parameters);
         }
 

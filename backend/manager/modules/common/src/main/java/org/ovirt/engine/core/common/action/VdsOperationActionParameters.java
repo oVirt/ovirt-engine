@@ -23,11 +23,6 @@ public class VdsOperationActionParameters extends VdsActionParameters {
 
     private boolean enableSerialConsole;
 
-    /**
-     * reboot the installed Host when done
-     */
-    private boolean rebootAfterInstallation;
-
     private AuthenticationMethod authMethod;
 
     private Guid networkProviderId;
@@ -65,7 +60,6 @@ public class VdsOperationActionParameters extends VdsActionParameters {
         vdsStatic = vdsStaticVal;
         password = passwordVal;
         authMethod = AuthenticationMethod.Password;
-        rebootAfterInstallation = true;
         enableSerialConsole = true;
     }
 
@@ -75,7 +69,6 @@ public class VdsOperationActionParameters extends VdsActionParameters {
 
     public VdsOperationActionParameters() {
         authMethod = AuthenticationMethod.Password;
-        rebootAfterInstallation = true;
         enableSerialConsole = true;
     }
 
@@ -134,14 +127,6 @@ public class VdsOperationActionParameters extends VdsActionParameters {
 
     public boolean getActivateHost() {
         return activateHost;
-    }
-
-    public boolean isRebootAfterInstallation() {
-        return rebootAfterInstallation;
-    }
-
-    public void setRebootAfterInstallation(boolean rebootAfterInstallation) {
-        this.rebootAfterInstallation = rebootAfterInstallation;
     }
 
     public Guid getNetworkProviderId() {

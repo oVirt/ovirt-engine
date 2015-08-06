@@ -96,9 +96,6 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         if (host.isSetOverrideIptables()) {
             addParams.setOverrideFirewall(host.isOverrideIptables());
         }
-        if (host.isSetRebootAfterInstallation()) {
-            addParams.setRebootAfterInstallation(host.isRebootAfterInstallation());
-        }
         if (host.isSetPowerManagement() && host.getPowerManagement().isSetAgents()) {
             List<FenceAgent> agents = new LinkedList<>();
             for (Agent agent : host.getPowerManagement().getAgents().getAgents()) {

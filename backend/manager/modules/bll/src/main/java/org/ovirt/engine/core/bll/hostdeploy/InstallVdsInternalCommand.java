@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.network.NetworkConfigurator;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.transport.ProtocolDetector;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
@@ -103,24 +102,10 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
 
             T parameters = getParameters();
             deploy.setCorrelationId(getCorrelationId());
-            boolean configureNetworkUsingHostDeploy = !FeatureSupported.setupManagementNetwork(
-                getVds().getVdsGroupCompatibilityVersion()
-            );
 
             deploy.addUnit(
-                new VdsDeployMiscUnit(
-                    (
-                        parameters.isRebootAfterInstallation() &&
-                        configureNetworkUsingHostDeploy
-                    )
-                ),
-                new VdsDeployVdsmUnit(
-                    (
-                        configureNetworkUsingHostDeploy ?
-                        managementNetworkUtil.getManagementNetwork(getVdsGroupId()).getName() :
-                        null
-                    )
-                ),
+                new VdsDeployMiscUnit(),
+                new VdsDeployVdsmUnit(),
                 new VdsDeployPKIUnit(),
                 new VdsDeployKdumpUnit()
             );
@@ -201,9 +186,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                             }
                         }
                     }
-                    if (!configureNetworkUsingHostDeploy) {
-                        configureManagementNetwork();
-                    }
+                    configureManagementNetwork();
                     if (!getParameters().getActivateHost() && VDSStatus.Maintenance.equals(vdsInitialStatus)) {
                         setVdsStatus(VDSStatus.Maintenance);
                     } else {

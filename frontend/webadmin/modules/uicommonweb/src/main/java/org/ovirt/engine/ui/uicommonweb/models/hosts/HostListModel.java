@@ -911,8 +911,6 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         cancelConfirm();
         model.startProgress(null);
 
-        final boolean isVirt = model.getCluster().getSelectedItem().supportsVirtService();
-
         if (model.getIsNew()) {
             AddVdsActionParameters parameters = new AddVdsActionParameters();
             parameters.setVdsId(host.getId());
@@ -922,7 +920,6 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 parameters.setPassword(model.getUserPassword().getEntity());
             }
             parameters.setOverrideFirewall(model.getOverrideIpTables().getEntity());
-            parameters.setRebootAfterInstallation(isVirt);
             parameters.setAuthMethod(model.getAuthenticationMethod());
 
             Provider<?> networkProvider = model.getNetworkProviders().getSelectedItem();
@@ -964,7 +961,6 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             parameters.setVdsId(host.getId());
             parameters.setPassword(""); //$NON-NLS-1$
             parameters.setInstallHost(false);
-            parameters.setRebootAfterInstallation(isVirt);
             parameters.setAuthMethod(model.getAuthenticationMethod());
             parameters.setFenceAgents(model.getFenceAgentListModel().getFenceAgents());
             if (model.getExternalHostProviderEnabled().getEntity() && model.getProviders().getSelectedItem() != null) {
@@ -1334,10 +1330,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                VDSGroup cluster = (VDSGroup) returnValue;
                 UpdateVdsActionParameters internalParam = (UpdateVdsActionParameters) model;
 
-                internalParam.setRebootAfterInstallation(cluster.supportsVirtService());
                 Frontend.getInstance().runAction(
                         VdcActionType.InstallVds,
                         internalParam,

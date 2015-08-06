@@ -6,16 +6,12 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
-import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSType;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -44,17 +40,6 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
                     "Host is hypervisor"
                 );
                 _setNode();
-            }
-            return true;
-        }},
-        new Callable<Boolean>() { public Boolean call() throws Exception {
-            if (_isNode) {
-                _isLegacyNode = (Boolean)_deploy.getParser().cliEnvironmentGet(
-                    VdsmEnv.OVIRT_NODE_HAS_OWN_BRIDGES
-                );
-            }
-            else {
-                _deploy.getParser().cliNoop();
             }
             return true;
         }},
@@ -96,26 +81,6 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
             );
             return true;
         }},
-        new Callable<Boolean>() { public Boolean call() throws Exception {
-            if (_managementNetwork != null) {
-                _deploy.getParser().cliEnvironmentSet(
-                    VdsmEnv.MANAGEMENT_BRIDGE_NAME,
-                    _managementNetwork
-                );
-            }
-            else if (_isLegacyNode) {
-                final ManagementNetworkUtil managmentNetworkUtil = Injector.get(ManagementNetworkUtil.class);
-                final Guid clusterId = _deploy.getVds().getVdsGroupId();
-                final Network managementNetwork = managmentNetworkUtil.getManagementNetwork(clusterId);
-                _deploy.getParser().cliEnvironmentSet(
-                    VdsmEnv.MANAGEMENT_BRIDGE_NAME,
-                    managementNetwork.getName());
-            }
-            else {
-                _deploy.getParser().cliNoop();
-            }
-            return true;
-        }},
         new Callable<Boolean>() {
             public Boolean call() throws Exception {
                 String minimal = Config.<String> getValue(ConfigValues.BootstrapMinimalVdsmVersion);
@@ -153,9 +118,7 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
     );
 
     private VdsDeployBase _deploy;
-    private String _managementNetwork = null;
     private boolean _isNode = false;
-    private boolean _isLegacyNode = false;
 
     /**
      * set vds object with unique id.
@@ -235,10 +198,6 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
                 return null;
             }
         });
-    }
-
-    public VdsDeployVdsmUnit(String managementNetwork) {
-        _managementNetwork = managementNetwork;
     }
 
     // VdsDeployUnit interface

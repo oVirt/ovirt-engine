@@ -960,7 +960,6 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
             parameters.setvds(host);
             parameters.setPassword(hostDetailModel.getPassword());
             parameters.setOverrideFirewall(hostsModel.isConfigureFirewall());
-            parameters.setRebootAfterInstallation(hostsModel.getClusterModel().getEnableOvirtService().getIsSelected());
 
             parametersList.add(parameters);
         }

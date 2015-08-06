@@ -2049,8 +2049,6 @@
           <xs:element name="summary" type="VmSummary" minOccurs="0" maxOccurs="1"/>
           <xs:element name="override_iptables" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="protocol" type="xs:string" minOccurs="0" maxOccurs="1"/>
-          <!-- when installing a host, optionally reboot the host -->
-          <xs:element name="reboot_after_installation" type="xs:boolean" minOccurs="0"/>
           <xs:element name="os" type="OperatingSystem" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="hooks" minOccurs="0"/>
           <xs:element name="libvirt_version" type="Version" minOccurs="0" maxOccurs="1"/>

@@ -1901,7 +1901,7 @@ actions:
           host.power_management.enabled: 'xs:boolean', host.power_management.address: 'xs:string', host.power_management.username: 'xs:string', host.power_management.automatic_pm_enabled: 'xs:boolean',
           host.power_management.password: 'xs:string', host.power_management.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'},
           host.power_management.pm_proxy--COLLECTION: {propietary : 'xs:string'}, host.power_management.agents.agent--COLLECTION:{type: 'xs:string',
-          address: 'xs:string', username: 'xs:string', password: 'xs:string', options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}, encrypt_options: 'xs:boolean'}, host.reboot_after_installation: 'xs:boolean', host.override_iptables: 'xs:boolean',
+          address: 'xs:string', username: 'xs:string', password: 'xs:string', options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}, encrypt_options: 'xs:boolean'}, host.override_iptables: 'xs:boolean',
           host.power_management.kdump_detection: 'xs:boolean', host.protocol: 'xs:int'}
         description: add a new host to the system providing the host root password. This has been deprecated and provided for backwards compatibility
       - mandatoryArguments: {host.name: 'xs:string', host.address: 'xs:string', host.cluster.id|name: 'xs:string'}
@@ -1913,7 +1913,7 @@ actions:
           host.power_management.enabled: 'xs:boolean', host.power_management.address: 'xs:string', host.power_management.username: 'xs:string',
           host.power_management.password: 'xs:string', host.power_management.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'},
           host.power_management.pm_proxy--COLLECTION: {propietary : 'xs:string'}, host.power_management.agents.agent--COLLECTION:{type: 'xs:string', address: 'xs:string',
-          username: 'xs:string', password: 'xs:string', options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}, encrypt_options: 'xs:boolean'}, host.reboot_after_installation: 'xs:boolean', host.override_iptables: 'xs:boolean',
+          username: 'xs:string', password: 'xs:string', options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}, encrypt_options: 'xs:boolean'}, host.override_iptables: 'xs:boolean',
           host.power_management.kdump_detection: 'xs:boolean', host.protocol: 'xs:int'}
         description: add a new host to the system providing the ssh password or fingerprint
 - name: /hosts/{host:id}/activate|rel=activate

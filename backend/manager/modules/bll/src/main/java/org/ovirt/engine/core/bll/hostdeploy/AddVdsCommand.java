@@ -175,7 +175,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             installVdsParameters.setAuthMethod(getParameters().getAuthMethod());
             installVdsParameters.setOverrideFirewall(getParameters().getOverrideFirewall());
             installVdsParameters.setActivateHost(getParameters().getActivateHost());
-            installVdsParameters.setRebootAfterInstallation(getParameters().isRebootAfterInstallation());
             installVdsParameters.setNetworkProviderId(getParameters().getNetworkProviderId());
             installVdsParameters.setNetworkMappings(getParameters().getNetworkMappings());
             installVdsParameters.setEnableSerialConsole(getParameters().getEnableSerialConsole());
