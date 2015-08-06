@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.utils;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
@@ -28,11 +29,8 @@ public class RpmVersionUtilsTest {
 
     @Test
     public void testISplitRpm() {
-
-        String[] parts = RpmVersionUtils.splitRpmToParts("ovirt-iso-node-2.6.0-20130820.fc18.x86_64");
-        assertEquals("ovirt-iso-node", parts[0]);
-        assertEquals("2.6.0", parts[1]);
-        assertEquals("20130820.fc18.x86_64", parts[2]);
+        assertArrayEquals(new String[]{"ovirt-iso-node", "2.6.0", "20130820.fc18.x86_64"},
+                RpmVersionUtils.splitRpmToParts("ovirt-iso-node-2.6.0-20130820.fc18.x86_64"));
     }
 
     @Test
