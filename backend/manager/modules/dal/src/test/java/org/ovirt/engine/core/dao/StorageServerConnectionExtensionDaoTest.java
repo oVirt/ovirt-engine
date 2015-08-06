@@ -48,6 +48,7 @@ public class StorageServerConnectionExtensionDaoTest extends BaseDaoTestCase {
         dao.update(ssce);
 
         StorageServerConnectionExtension ssceFromDb = dao.get(EXISTING_STORAGE_SERVER_CONNECTION_EXTENSION_ID);
+        assertEquals(ssce, ssceFromDb);
     }
 
     @Test
