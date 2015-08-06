@@ -22,14 +22,14 @@ public class MTUValidatorTest {
     @Test
     public void invalidLowMTU() {
         Set<ConstraintViolation<MtuContainer>> validate = validate(new MtuContainer(30));
-        Assert.assertTrue(validate.size() > 0);
+        Assert.assertTrue(!validate.isEmpty());
 
     }
 
     @Test
     public void useDefaultMTU() {
         Set<ConstraintViolation<MtuContainer>> validate = validate(new MtuContainer(0));
-        Assert.assertTrue(validate.size() == 0);
+        Assert.assertTrue(validate.isEmpty());
     }
 
     private <T extends Object> Set<ConstraintViolation<T>> validate(T object) {
