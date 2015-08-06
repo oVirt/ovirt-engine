@@ -99,6 +99,7 @@ public class ImportVmTemplateCommandTest {
         assertInvalidVolumeInfoCombination(VolumeFormat.Unassigned, VolumeType.Preallocated, StorageType.LOCALFS);
     }
 
+    @Test
     public void testValidateUniqueTemplateNameInDC() {
         ImportVmTemplateCommand command =
                 setupVolumeFormatAndTypeTest(VolumeFormat.RAW, VolumeType.Preallocated, StorageType.NFS);
