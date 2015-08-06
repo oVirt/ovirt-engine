@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -89,8 +88,8 @@ public class UpdateVdsGroupCommandTest {
             mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_2.getValue(), migrationMap)
             );
 
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
 
     @Mock
     DbFacade dbFacadeMock;

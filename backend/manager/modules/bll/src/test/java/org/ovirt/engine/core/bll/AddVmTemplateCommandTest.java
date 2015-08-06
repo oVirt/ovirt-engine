@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -53,6 +54,10 @@ public class AddVmTemplateCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.VmPriorityMaxValue, 100));
+
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
+
     private AddVmTemplateCommand<AddVmTemplateParameters> cmd;
     private VM vm;
     private VDSGroup vdsGroup;
@@ -63,6 +68,8 @@ public class AddVmTemplateCommandTest {
     private VdsGroupDao vdsGroupDao;
     @Mock
     private StoragePoolDao storagePoolDao;
+    @Mock
+    private CpuFlagsManagerHandler cpuFlagsManagerHandler;
     @Mock
     private OsRepository osRepository;
     @Mock
@@ -126,6 +133,7 @@ public class AddVmTemplateCommandTest {
     }
 
     protected void mockOsRepository() {
+        injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
         VmHandler.init();
         when(osRepository.isWindows(0)).thenReturn(true);

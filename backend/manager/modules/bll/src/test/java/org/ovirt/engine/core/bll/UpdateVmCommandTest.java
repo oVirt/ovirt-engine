@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -74,8 +75,8 @@ public class UpdateVmCommandTest {
             "ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr";
     private static String CPU_ID = "0";
 
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
 
     @Mock
     private VmDao vmDao;
