@@ -3,9 +3,6 @@ package org.ovirt.engine.core.services;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -126,55 +123,6 @@ public class RegisterServlet extends HttpServlet {
         }
     }
 
-    protected void registerV0(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        String hostAddress = request.getParameter("vds_ip");
-        String hostVdsPortString = request.getParameter("port");
-        String hostName = request.getParameter("vds_name");
-        String hostUniqueId = request.getParameter("vds_unique_id");
-
-        if (hostAddress == null) {
-            throw new RuntimeException("Missing vds_ip");
-        }
-
-        int hostVdsPort = VDSM_PORT;
-        if (hostVdsPortString != null) {
-            hostVdsPort = Integer.parseInt(hostVdsPortString);
-        }
-
-        log.info(
-            "Registration request: source='{}', secured='{}', address='{}', vdsPort={}, name='{}', uniqueId='{}'",
-            request.getRemoteHost(),
-            request.isSecure(),
-            hostAddress,
-            hostVdsPort,
-            hostName,
-            hostUniqueId
-        );
-
-        if (hostUniqueId != null) {
-            // remove legacy mac
-            hostUniqueId = hostUniqueId.split("_")[0];
-        }
-
-        doRegister(
-            hostAddress,
-            SSH_PORT,
-            null,
-            null,
-            hostVdsPort,
-            hostName,
-            hostUniqueId
-        );
-
-        response.setContentType("text/html");
-        try (PrintWriter out = response.getWriter()) {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-            format.setTimeZone(TimeZone.getTimeZone("UTC"));
-            out.print(format.format(new Date()));
-        }
-    }
-
     protected void registerV1(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String hostAddress = request.getParameter("address");
@@ -228,17 +176,6 @@ public class RegisterServlet extends HttpServlet {
         }
     }
 
-    protected void doV0(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        try {
-            registerV0(request, response);
-        }
-        catch (Exception e) {
-            log.error("Registration failed: {}", e.getMessage());
-            log.debug("Exception", e);
-            response.sendError(response.SC_INTERNAL_SERVER_ERROR, e.getMessage());
-        }
-    }
-
     protected void doV1(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             String cmd = request.getParameter("command");
@@ -271,13 +208,9 @@ public class RegisterServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int version = -1;
         String versionString = request.getParameter("version");
-        int version;
-        if (versionString == null) {
-            version = 0;
-        }
-        else {
-            version = -1;
+        if (versionString != null) {
             try {
                 version = Integer.parseInt(versionString);
             }
@@ -289,10 +222,6 @@ public class RegisterServlet extends HttpServlet {
                 String m = String.format("Invalid registration protocol version %s", version);
                 log.error(m);
                 response.sendError(response.SC_BAD_REQUEST, m);
-            break;
-
-            case 0:
-                doV0(request, response);
             break;
 
             case 1:
