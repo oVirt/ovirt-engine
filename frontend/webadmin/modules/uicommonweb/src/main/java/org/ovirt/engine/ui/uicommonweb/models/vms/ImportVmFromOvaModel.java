@@ -96,6 +96,8 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
             }
         }
 
+        updateNetworkInterfacesForVm(vm);
+
         if (importVmData.isExistsInSystem() ||
                 (Boolean) (importVmData.getClone().getEntity())) {
             prm.setImportAsNewEntity(true);

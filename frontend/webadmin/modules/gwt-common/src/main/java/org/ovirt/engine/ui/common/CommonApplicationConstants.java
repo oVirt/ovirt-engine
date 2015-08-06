@@ -849,6 +849,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Network Name")
     String networkNameInterface();
 
+    @DefaultStringValue("Original Network Name")
+    String originalNetworkNameInterface();
+
     @DefaultStringValue("Profile Name")
     String profileNameInterface();
 

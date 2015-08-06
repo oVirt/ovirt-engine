@@ -1,13 +1,13 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.vm;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
@@ -38,6 +38,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportNetworkData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportSource;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExternalProviderModel;
@@ -52,6 +53,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.ImportVmFrom
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportVmGeneralSubTabView;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.CustomSelectionCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
+
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
@@ -362,15 +364,25 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
 
         Column<VmNetworkInterface, String> networkColumn = new Column<VmNetworkInterface, String>(customSelectionCellNetwork) {
             @Override
-            public String getValue(VmNetworkInterface object) {
-                ArrayList<String> networkList = new ArrayList<String>();
-                for (Network network : importModel.getNetworks()) {
-                    networkList.add(network.getName());
+            public String getValue(VmNetworkInterface iface) {
+                ImportNetworkData importNetworkData = importModel.getNetworkImportData(iface);
+                List<String> networkNames = importNetworkData.getNetworkNames();
+                ((CustomSelectionCell) getCell()).setOptions(networkNames);
+                if (networkNames.isEmpty()) {
+                    return ""; //$NON-NLS-1$
                 }
-                ((CustomSelectionCell) getCell()).setOptions(networkList);
-                return networkList.isEmpty() ? "" : networkList.get(0);  //$NON-NLS-1$
+                String selectedNetworkName = importNetworkData.getSelectedNetworkName();
+                return selectedNetworkName != null ? selectedNetworkName : networkNames.get(0);
             }
         };
+
+        networkColumn.setFieldUpdater(new FieldUpdater<VmNetworkInterface, String>() {
+            @Override
+            public void update(int index, VmNetworkInterface iface, String value) {
+                importModel.getNetworkImportData(iface).setSelectedNetworkName(value);
+                nicTable.asEditor().edit(importModel.getImportNetworkInterfaceListModel());
+            }
+        });
 
         nicTable.addColumn(networkColumn, constants.networkNameInterface(), "150px"); //$NON-NLS-1$
     }
@@ -381,15 +393,27 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
 
         Column<VmNetworkInterface, String> profileColumn = new Column<VmNetworkInterface, String>(customSelectionCellNetwork) {
             @Override
-            public String getValue(VmNetworkInterface object) {
-                ArrayList<String> networkList = new ArrayList<String>();
-                for (VnicProfileView network : importModel.getNetworkProfiles()) {
-                    networkList.add(network.getName());
+            public String getValue(VmNetworkInterface iface) {
+                ImportNetworkData importNetworkData = importModel.getNetworkImportData(iface);
+                List<String> networkProfileNames = new ArrayList<>();
+                for (VnicProfileView networkProfile : importNetworkData.getFilteredNetworkProfiles()) {
+                    networkProfileNames.add(networkProfile.getName());
                 }
-                ((CustomSelectionCell) getCell()).setOptions(networkList);
-                return networkList.isEmpty() ? "" : networkList.get(0);  //$NON-NLS-1$
+                ((CustomSelectionCell) getCell()).setOptions(networkProfileNames);
+                if (networkProfileNames.isEmpty()) {
+                    return ""; //$NON-NLS-1$
+                }
+                VnicProfileView selectedNetworkProfile = importModel.getNetworkImportData(iface).getSelectedNetworkProfile();
+                return selectedNetworkProfile != null ? selectedNetworkProfile.getName() : networkProfileNames.get(0);
             }
         };
+
+        profileColumn.setFieldUpdater(new FieldUpdater<VmNetworkInterface, String>() {
+            @Override
+            public void update(int index, VmNetworkInterface iface, String value) {
+                importModel.getNetworkImportData(iface).setSelectedNetworkProfile(value);
+            }
+        });
 
         nicTable.addColumn(profileColumn, constants.profileNameInterface(), "150px"); //$NON-NLS-1$
     }
@@ -465,7 +489,15 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
                 return object.getName();
             }
         };
-        nicTable.addColumn(nameColumn, constants.nameInterface(), "150px"); //$NON-NLS-1$
+        nicTable.addColumn(nameColumn, constants.nameInterface(), "125px"); //$NON-NLS-1$
+
+        AbstractTextColumn<VmNetworkInterface> originalNetworkNameColumn = new AbstractTextColumn<VmNetworkInterface>() {
+            @Override
+            public String getValue(VmNetworkInterface object) {
+                return object.getRemoteNetworkName();
+            }
+        };
+        nicTable.addColumn(originalNetworkNameColumn, constants.originalNetworkNameInterface(), "160px"); //$NON-NLS-1$
 
         addNetworkColumn();
         addNetworkProfileColumn();

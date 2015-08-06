@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -51,7 +50,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
     private ListModel<VolumeType> allocation;
     private final Map<String, ImportDiskData> diskImportDataMap = new HashMap<String, ImportDiskData>();
     private VmImportDiskListModel importDiskListModel;
-    private List<Network> networks;
+    private VmImportInterfaceListModel importInterfaceListModel;
     private List<VnicProfileView> networkProfiles;
     private ListModel<String> iso;
     private EntityModel<Boolean> attachDrivers;
@@ -60,6 +59,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
             VmImportInterfaceListModel vmImportInterfaceListModel, final ClusterListModel<Void> cluster, final QuotaListModel clusterQuota) {
         super(cluster, clusterQuota);
         this.importDiskListModel = importDiskListModel;
+        this.importInterfaceListModel = vmImportInterfaceListModel;
         setStorage(new ListModel<StorageDomain>());
         setAllocation(new ListModel<VolumeType>());
         getAllocation().setItems(Arrays.asList(VolumeType.Sparse, VolumeType.Preallocated));
@@ -78,16 +78,16 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
 
     private final Map<String, ImportNetworkData> networkImportDataMap = new HashMap<String, ImportNetworkData>();
 
-    public List<Network> getNetworks() {
-        return networks;
-    }
-
     public List<VnicProfileView> getNetworkProfiles() {
         return networkProfiles;
     }
 
     public SearchableListModel getImportDiskListModel() {
         return importDiskListModel;
+    }
+
+    public SearchableListModel getImportNetworkInterfaceListModel() {
+        return importInterfaceListModel;
     }
 
     public void init(List<VM> externalVms, final Guid dataCenterId) {
@@ -126,18 +126,12 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
 
                 // get cluster
                 getCluster().setItems(null);
-                AsyncDataProvider.getInstance().getNetworkList(new AsyncQuery(ImportVmFromExternalProviderModel.this, new INewAsyncCallback() {
+                AsyncDataProvider.getInstance().getVnicProfilesByDcId(new AsyncQuery(ImportVmFromExternalProviderModel.this,  new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        networks = (List<Network>) returnValue;
-
-                        AsyncDataProvider.getInstance().getVnicProfilesByDcId(new AsyncQuery(ImportVmFromExternalProviderModel.this,  new INewAsyncCallback() {
-                            @Override
-                            public void onSuccess(Object model, Object returnValue) {
-                                networkProfiles = (List<VnicProfileView>) returnValue;
-                                initClusterAndStorage(dataCenter);
-                            }
-                        }), dataCenter.getId());
+                        networkProfiles = (List<VnicProfileView>) returnValue;
+                        initNetworksList();
+                        initClusterAndStorage(dataCenter);
                     }
                 }), dataCenter.getId());
             }
@@ -200,19 +194,18 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         diskImportDataMap.put(alias, data);
     }
 
-    protected void addNetworkImportData(String macAddr,
-            List<Network> networks) {
-        ImportNetworkData data = new ImportNetworkData();
-        data.setNetworks(networks);
-        networkImportDataMap.put(macAddr, data);
+    protected void addNetworkImportData(VmNetworkInterface iface) {
+        networkImportDataMap.put(
+                iface.getVmName() + "$" + iface.getName(), //$NON-NLS-1$
+                new ImportNetworkData(networkProfiles));
     }
 
     protected void initNetworksList() {
         for (Object item : getItems()) {
             ImportVmData importVmData = (ImportVmData) item;
             VM vm = importVmData.getVm();
-            for (VmNetworkInterface inface : vm.getInterfaces()) {
-                addNetworkImportData(inface.getMacAddress(), networks);
+            for (VmNetworkInterface iface : vm.getInterfaces()) {
+                addNetworkImportData(iface);
             }
         }
     }
@@ -326,9 +319,8 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         return importData;
     }
 
-    public ImportNetworkData getNetworkImportData(String macAddr) {
-        ImportNetworkData importData = networkImportDataMap.get(macAddr);
-        return importData;
+    public ImportNetworkData getNetworkImportData(VmNetworkInterface iface) {
+        return networkImportDataMap.get(iface.getVmName() + "$" + iface.getName()); //$NON-NLS-1$
     }
 
     @Override
@@ -350,5 +342,16 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
 
     public void setAttachDrivers(EntityModel<Boolean> attachTools) {
         this.attachDrivers = attachTools;
+    }
+
+    protected void updateNetworkInterfacesForVm(VM vm) {
+        for (VmNetworkInterface iface : vm.getInterfaces()) {
+            ImportNetworkData importNetworkData = getNetworkImportData(iface);
+            VnicProfileView profile = importNetworkData.getSelectedNetworkProfile();
+            if (profile != null) {
+                iface.setNetworkName(profile.getNetworkName());
+                iface.setVnicProfileName(profile.getName());
+            }
+        }
     }
 }

@@ -107,6 +107,8 @@ public class ImportVmFromVmwareModel extends ImportVmFromExternalProviderModel {
                 }
             }
 
+            updateNetworkInterfacesForVm(vm);
+
             if (((ImportVmData) item).isExistsInSystem() ||
                     (Boolean) ((ImportVmData) item).getClone().getEntity()) {
                 prm.setImportAsNewEntity(true);
