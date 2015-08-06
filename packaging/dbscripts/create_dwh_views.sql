@@ -312,27 +312,12 @@ LEFT
 OUTER JOIN users AS e ON a.created_by_user_id = e.user_id
 LEFT
 JOIN (SELECT DISTINCT ON (vm_id) vm_id,vds_id FROM vm_host_pinning_map ORDER BY vm_id) f
-    ON f.vm_id = a.vm_guid
+    ON f.vm_id = a.vm_guid,
+(SELECT var_datetime FROM dwh_history_timekeeping WHERE var_name = 'lastSync' ) as lastSync
 WHERE ( a.entity_type = 'VM'
     AND b.entity_type = 'TEMPLATE' )
-    AND ( ( a._create_date > (
-                SELECT
-                    var_datetime
-                FROM
-                    dwh_history_timekeeping
-                WHERE ( var_name = 'lastSync' ) ) )
-        OR ( a._update_date > (
-                SELECT
-                    var_datetime
-                FROM
-                    dwh_history_timekeeping AS history_timekeeping_1
-                WHERE ( var_name = 'lastSync' ) ) )
-        OR ( b._update_date > (
-                SELECT
-                    var_datetime
-                FROM
-                    dwh_history_timekeeping AS history_timekeeping_1
-                WHERE ( var_name = 'lastSync' ) ) ) );
+    AND greatest(a._create_date, a._update_date, b._update_date) > lastSync.var_datetime;
+
 CREATE
 OR REPLACE VIEW dwh_vm_history_view AS
 SELECT
