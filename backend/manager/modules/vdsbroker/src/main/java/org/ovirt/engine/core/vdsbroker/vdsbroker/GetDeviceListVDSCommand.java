@@ -146,7 +146,9 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
 
         if (xlun.containsKey(DEVTYPE_FIELD)) {
             String devtype = xlun.get(DEVTYPE_FIELD).toString();
-            if (!DEVTYPE_VALUE_FCP.equalsIgnoreCase(devtype)) {
+            if (DEVTYPE_VALUE_FCP.equalsIgnoreCase(devtype)) {
+                lun.setLunType(StorageType.FCP);
+            } else {
                 lun.setLunType(StorageType.ISCSI);
             }
         }
