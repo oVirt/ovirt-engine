@@ -65,14 +65,14 @@ public class NoRepetitiveStaticIpInListConstraintTest {
         Assert.assertEquals(isValid, validate.isEmpty());
     }
 
-    private VdsNetworkInterface createVdsNetworkInterfaceWithStaticIp(String ip) {
+    private static VdsNetworkInterface createVdsNetworkInterfaceWithStaticIp(String ip) {
         VdsNetworkInterface networkInterface = new VdsNetworkInterface();
         networkInterface.setAddress(ip);
         networkInterface.setBootProtocol(NetworkBootProtocol.STATIC_IP);
         return networkInterface;
     }
 
-    private class NoRepetitiveStaticIpInListContainer {
+    private static class NoRepetitiveStaticIpInListContainer {
         @NoRepetitiveStaticIpInList
         private List<VdsNetworkInterface> value;
 
