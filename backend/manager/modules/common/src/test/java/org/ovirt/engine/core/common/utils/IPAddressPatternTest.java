@@ -77,7 +77,7 @@ public class IPAddressPatternTest {
         });
     }
 
-    private class IPAdress {
+    private static class IPAdress {
 
         @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_STATIC_IP_BAD_FORMAT")
         private String address;
