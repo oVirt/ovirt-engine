@@ -67,17 +67,13 @@ public class StorageServerConnectionExtensionDaoTest extends BaseDaoTestCase {
         dao.save(newssce);
 
         StorageServerConnectionExtension ssceFromDb = dao.get(newId);
-        assertStorageServerConnectionExtensionEquality(newssce, ssceFromDb);
+        assertEquals(newssce, ssceFromDb);
     }
 
     @Test
     public void testGetAll() {
         List<StorageServerConnectionExtension> results = dao.getAll();
         assertEquals(NUM_OF_EXISTING_STORAGE_SERVER_CONNECTION_EXTENSIONS, results.size());
-    }
-
-    private void assertStorageServerConnectionExtensionEquality(StorageServerConnectionExtension ssce1, StorageServerConnectionExtension ssce2) {
-        assertEquals(ssce1, ssce2);
     }
 
     private void fillWithRandomData(StorageServerConnectionExtension ssce) {
