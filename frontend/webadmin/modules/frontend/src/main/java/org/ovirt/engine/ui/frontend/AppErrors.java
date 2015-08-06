@@ -3668,16 +3668,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("The selected Host is not associated with a Foreman/Satellite provider. No errata for the Host are available.")
     String NO_FOREMAN_PROVIDER_FOR_HOST();
 
-    // TODO-GS: use the next three messages for these conditions (follow-up patch)
-    @DefaultStringValue("Foreman/Katello/Satellite: the engine is not registered with this provider. The engine's DNS name must be a registered host in Katello. No errata for the engine are available.")
-    String FOREMAN_ENGINE_NOT_REGISTERED();
-
-    @DefaultStringValue("Foreman/Katello/Satellite: the selected VM is not registered with this provider. No errata for the VM are available.")
-    String FOREMAN_VM_NOT_REGISTERED();
-
-    @DefaultStringValue("Foreman/Katello/Satellite: the selected Host is not registered with this provider. No errata for the Host are available.")
-    String FOREMAN_HOST_NOT_REGISTERED();
-
     @DefaultStringValue("Cannot ${action} ${type}. VM must be pinned to a host.")
     String ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST();
 
