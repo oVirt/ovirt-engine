@@ -106,7 +106,7 @@ public class ConfiguredRangeValidatorTest {
         return configUtils;
     }
 
-    private class ConfiguredRangeContainer {
+    private static class ConfiguredRangeContainer {
         @ConfiguredRange(min = TEST_MIN_RANGE, maxConfigValue = ConfigValues.vdsTimeout)
         private int value;
 
@@ -115,7 +115,7 @@ public class ConfiguredRangeValidatorTest {
         }
     }
 
-    private class ConfiguredRangeContainerDefaultMin {
+    private static class ConfiguredRangeContainerDefaultMin {
         @ConfiguredRange(maxConfigValue = ConfigValues.vdsTimeout)
         private int value;
 
@@ -124,7 +124,7 @@ public class ConfiguredRangeValidatorTest {
         }
     }
 
-    private class ConfiguredRangeContainerWithConfMin {
+    private static class ConfiguredRangeContainerWithConfMin {
         @ConfiguredRange(minConfigValue = ConfigValues.ConnectToServerTimeoutInSeconds,
                 maxConfigValue = ConfigValues.vdsTimeout)
         private int value;
@@ -134,7 +134,7 @@ public class ConfiguredRangeValidatorTest {
         }
     }
 
-    private class ConfiguredRangeContainerWithBothMinAttributes {
+    private static class ConfiguredRangeContainerWithBothMinAttributes {
         @ConfiguredRange(min = TEST_MIN_RANGE + 2, minConfigValue = ConfigValues.ConnectToServerTimeoutInSeconds,
                 maxConfigValue = ConfigValues.vdsTimeout)
         private int value;
