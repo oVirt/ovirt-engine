@@ -37,11 +37,11 @@ import org.ovirt.engine.core.dao.network.VnicProfileDao;
 @RunWith(MockitoJUnitRunner.class)
 public class VnicProfileValidatorTest {
 
-    private final String NAMEABLE_NAME = "nameable";
-    private final String DEFAULT_VNIC_PROFILE_NAME = "myvnicprofile";
-    private final String OTHER_VNIC_PROFILE_NAME = "myothervnicprofile";
-    private final Guid DEFAULT_GUID = Guid.newGuid();
-    private final Guid OTHER_GUID = Guid.newGuid();
+    private static final String NAMEABLE_NAME = "nameable";
+    private static final String DEFAULT_VNIC_PROFILE_NAME = "myvnicprofile";
+    private static final String OTHER_VNIC_PROFILE_NAME = "myothervnicprofile";
+    private static final Guid DEFAULT_GUID = Guid.newGuid();
+    private static final Guid OTHER_GUID = Guid.newGuid();
 
     @Mock
     private DbFacade dbFacade;
@@ -151,7 +151,7 @@ public class VnicProfileValidatorTest {
         assertThat(validator.vnicProfileNameNotUsed(), matcher);
     }
 
-    private List<VnicProfile> getSingletonNamedVnicProfileList(String vnicProfileName, Guid vnicProfileId) {
+    private static List<VnicProfile> getSingletonNamedVnicProfileList(String vnicProfileName, Guid vnicProfileId) {
         VnicProfile vnicProfile = mock(VnicProfile.class);
         when(vnicProfile.getName()).thenReturn(vnicProfileName);
         when(vnicProfile.getId()).thenReturn(vnicProfileId);
@@ -186,7 +186,7 @@ public class VnicProfileValidatorTest {
                 getSingletonNamedVnicProfileList(DEFAULT_VNIC_PROFILE_NAME, DEFAULT_GUID));
     }
 
-    private Matcher<ValidationResult> failsWithVnicProfileInUse() {
+    private static Matcher<ValidationResult> failsWithVnicProfileInUse() {
         return failsWith(EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_IN_ONE_USE);
     }
 
