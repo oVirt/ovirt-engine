@@ -65,8 +65,8 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
     private VdsNetworkInterface nicC = createNic("nicC"); //$NON-NLS-1$
     private VdsNetworkInterface nicD = createNic("nicD"); //$NON-NLS-1$
 
-    private final Guid existingBondId = Guid.newGuid();
-    private final String existingBondName = "existingBond"; //$NON-NLS-1$
+    private static final Guid existingBondId = Guid.newGuid();
+    private static final String existingBondName = "existingBond"; //$NON-NLS-1$
     private Bond existingBond = createBond(existingBondId, existingBondName, Arrays.asList(nicA, nicB));
     private Bond newlyCreatedBond = createBond(null, "newlyCreatedBond", Collections.<VdsNetworkInterface>emptyList()); //$NON-NLS-1$
 
