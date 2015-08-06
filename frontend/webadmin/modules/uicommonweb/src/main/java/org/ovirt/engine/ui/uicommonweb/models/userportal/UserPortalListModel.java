@@ -361,7 +361,6 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        UserPortalListModel userPortalListModel = (UserPortalListModel) model;
                         ArrayList<VM> vms = new ArrayList<VM>();
                         ArrayList<VmPool> pools = new ArrayList<VmPool>();
 
