@@ -50,12 +50,6 @@ public class EngineConfigTest {
     }
 
     @Test
-    public void setInvalidStringValue() throws Exception {
-        final String key = "LDAP_Security_mode";
-        Assert.assertFalse(config.getEngineConfigLogic().persist(key, "GSSAPI-invalid-value")); // not valid
-    }
-
-    @Test
     public void setStringValueFromFlag() throws Exception {
         final String certificateFileNameKey = "CertificateFileName";
         // Backing up current CertificateFileName

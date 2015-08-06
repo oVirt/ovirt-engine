@@ -188,9 +188,6 @@
       <logger category="org.ovirt.engine.core.dal.dbbroker.PostgresDbEngineDialect\$PostgresJdbcTemplate">
         <level name="WARN"/>
       </logger>
-      <logger category="org.springframework.ldap">
-        <level name="ERROR"/>
-      </logger>
 
       <root-logger>
         <level name="INFO"/>

@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.TimeZoneQueryParams;
 
-public class GetDefaultTimeZoneQueryTest extends AbstractSysprepQueryTest<TimeZoneQueryParams, GetDefaultTimeZoneQuery<TimeZoneQueryParams>> {
+public class GetDefaultTimeZoneQueryTest extends AbstractUserQueryTest<TimeZoneQueryParams, GetDefaultTimeZoneQuery<TimeZoneQueryParams>> {
 
     /** The default time zone for the test */
     private static final String DEFAULT_WINDOWS_TIME_ZONE = "Israel Standard Time";

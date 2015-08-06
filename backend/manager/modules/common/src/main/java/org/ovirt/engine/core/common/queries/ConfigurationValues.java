@@ -14,10 +14,6 @@ public enum ConfigurationValues {
     MaxVmsInPool(ConfigAuthType.User),
     MaxVdsMemOverCommit(ConfigAuthType.User),
     MaxVdsMemOverCommitForServers(ConfigAuthType.User),
-    AdUserName,
-    // TODO remove remarks and AdUserPassword completely in version 3.1.
-    // AdUserPassword field format has been changed.
-    // AdUserPassword,
     ValidNumOfMonitors(ConfigAuthType.User),
     EnableUSBAsDefault(ConfigAuthType.User),
     SpiceSecureChannels(ConfigAuthType.User),
@@ -60,7 +56,6 @@ public enum ConfigurationValues {
     HostedEngineStorageDomainName,
     StoragePoolNameSizeLimit(ConfigAuthType.User),
     SANWipeAfterDelete(ConfigAuthType.User),
-    AuthenticationMethod(ConfigAuthType.User),
     UserDefinedVMProperties(ConfigAuthType.User),
     PredefinedVMProperties(ConfigAuthType.User),
     VdsFenceOptionTypes,

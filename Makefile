@@ -178,7 +178,6 @@ GENERATED = \
 	packaging/bin/pki-common.sh \
 	packaging/conf/notifier-logging.properties \
 	packaging/conf/ovirt-vmconsole-proxy.conf \
-	packaging/etc/engine-manage-domains/engine-manage-domains.conf \
 	packaging/etc/engine.conf.d/README \
 	packaging/etc/notifier/notifier.conf.d/README \
 	packaging/etc/ovirt-fence-kdump-listener.conf.d/README \
@@ -422,7 +421,6 @@ install-layout: \
 	ln -sf "$(DATA_DIR)/setup/bin/ovirt-engine-remove" "$(DESTDIR)$(BIN_DIR)/engine-cleanup"
 	ln -sf "$(DATA_DIR)/setup/bin/ovirt-engine-upgrade-check" "$(DESTDIR)$(BIN_DIR)/engine-upgrade-check"
 	ln -sf "$(DATA_DIR)/bin/engine-config.sh" "$(DESTDIR)$(BIN_DIR)/engine-config"
-	ln -sf "$(DATA_DIR)/bin/engine-manage-domains.sh" "$(DESTDIR)$(BIN_DIR)/engine-manage-domains"
 	ln -sf "$(DATA_DIR)/bin/engine-backup.sh" "$(DESTDIR)$(BIN_DIR)/engine-backup"
 	ln -sf "$(DATA_DIR)/bin/ovirt-engine-extensions-tool.sh" "$(DESTDIR)$(BIN_DIR)/ovirt-engine-extensions-tool"
 
@@ -502,7 +500,6 @@ install-dev:	\
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/host-deploy"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/setup"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/notifier"
-	install -d "$(DESTDIR)$(PKG_LOG_DIR)/engine-manage-domains"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/dump"
 
 	if [ -e "$(DESTDIR)$(PKG_STATE_DIR)/jboss_runtime/deployments" ]; then \

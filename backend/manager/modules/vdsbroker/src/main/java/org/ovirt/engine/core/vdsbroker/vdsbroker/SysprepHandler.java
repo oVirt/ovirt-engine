@@ -15,13 +15,10 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.utils.FileUtil;
-import org.ovirt.engine.core.utils.collections.DomainsPasswordMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class SysprepHandler {
-    private static final Map<String, String> userPerDomain = new HashMap<String, String>();
-    private static Map<String, String> passwordPerDomain = new HashMap<String, String>();
     public static final Map<String, Integer> timeZoneIndex = new HashMap<String, Integer>();
     private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
@@ -29,35 +26,6 @@ public final class SysprepHandler {
 
     static {
         initTimeZones();
-        fillUsersMap();
-        fillPasswordsMap();
-    }
-
-    /**
-     * TODO: This code is the exact code as in UsersDomainCacheManagerService, until we have a suitable location that
-     * them both can use. Note that every change in one will probably require the same change in the other
-     */
-    private static void fillUsersMap() {
-        String userPerDomainEntry = Config.<String> getValue(ConfigValues.AdUserName);
-        if (!userPerDomainEntry.isEmpty()) {
-            String[] domainUserPairs = userPerDomainEntry.split(",");
-
-            for (String domainUserPair : domainUserPairs) {
-                String[] parts = domainUserPair.split(":");
-                String domain = parts[0].trim().toLowerCase();
-                String userName = parts[1].trim();
-
-                userPerDomain.put(domain, userName);
-            }
-        }
-    }
-
-    /**
-     * TODO: This code is the exact code as in UsersDomainCacheManagerService, until we have a suitable location that
-     * them both can use. Note that every change in one will probably require the same change in the other
-     */
-    private static void fillPasswordsMap() {
-        passwordPerDomain = Config.<DomainsPasswordMap> getValue(ConfigValues.AdUserPassword);
     }
 
     public static String getSysPrep(VM vm, SysPrepParams sysPrepParams) {
@@ -142,11 +110,9 @@ public final class SysprepHandler {
 
         if (sysPrepParams == null || sysPrepParams.getSysPrepUserName() == null
                 || sysPrepParams.getSysPrepPassword() == null) {
-            adminUserName = useDefaultIfNull("user", userPerDomain.get(domainName.toLowerCase()),
-                    Config.<String> getValue(ConfigValues.SysPrepDefaultUser), true);
+            adminUserName = Config.<String> getValue(ConfigValues.SysPrepDefaultUser);
 
-            adminPassword = useDefaultIfNull("password", passwordPerDomain.get(domainName.toLowerCase()),
-                    Config.<String> getValue(ConfigValues.SysPrepDefaultPassword), false);
+            adminPassword = Config.<String> getValue(ConfigValues.SysPrepDefaultPassword);
         } else {
             adminUserName = sysPrepParams.getSysPrepUserName();
             adminPassword = sysPrepParams.getSysPrepPassword();

@@ -3,16 +3,11 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
-
-import java.util.HashMap;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigCommon;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 
 public class SysprepHandlerTest {
@@ -20,8 +15,6 @@ public class SysprepHandlerTest {
     @Before
     public void setup() {
         IConfigUtilsInterface configUtils = Mockito.mock(IConfigUtilsInterface.class);
-        when(configUtils.getValue(ConfigValues.AdUserPassword, ConfigCommon.defaultConfigurationVersion)).thenReturn(new HashMap<String, String>());
-        when(configUtils.getValue(ConfigValues.AdUserName, ConfigCommon.defaultConfigurationVersion)).thenReturn("");
         Config.setConfigUtils(configUtils);
     }
 

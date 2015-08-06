@@ -1,5 +1,0 @@
-jaasFile=@ENGINE_USR@/conf/jaas.conf
-krb5confFile=@ENGINE_ETC@/krb5.conf
-engineConfigExecutable=@ENGINE_USR@/bin/engine-config.sh
-localHostEntry=localhost
-useDnsLookup=true

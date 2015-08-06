@@ -100,12 +100,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.springframework.ldap</groupId>
-      <artifactId>spring-ldap-core</artifactId>
-      <version>${spring.ldap.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
       <version>${spring.version}</version>
@@ -480,12 +474,6 @@
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
                 <moduleName>org.quartz</moduleName>
-              </module>
-
-              <module>
-                <groupId>org.springframework.ldap</groupId>
-                <artifactId>spring-ldap-core</artifactId>
-                <moduleName>org.springframework.ldap</moduleName>
               </module>
 
               <module>

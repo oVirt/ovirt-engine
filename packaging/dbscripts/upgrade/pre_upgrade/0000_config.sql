@@ -62,9 +62,6 @@ select fn_db_add_config_value('CpuPinningEnabled','false','3.0');
 select fn_db_add_config_value('AdminDomain','internal','general');
 select fn_db_add_config_value('AdminPassword','','general');
 select fn_db_add_config_value('AdminUser','admin','general');
-select fn_db_add_config_value('AdUserId','','general');
-select fn_db_add_config_value('AdUserName','','general');
-select fn_db_add_config_value('AdUserPassword','','general');
 select fn_db_add_config_value('AdvancedNFSOptionsEnabled','false','3.0');
 select fn_db_add_config_value('AffinityRulesEnforcementManagerEnabled', 'true', 'general');
 select fn_db_add_config_value('AgentAppName','ovirt-guest-agent-common,ovirt-guest-agent','general');
@@ -83,8 +80,6 @@ select fn_db_add_config_value('CommandCoordinatorThreadPoolSize','10','general')
 select fn_db_add_config_value('CommandEntityAgingThreshold','30','general');
 select fn_db_add_config_value('CommandEntityCleanupTime','03:35:35','general');
 select fn_db_add_config_value('OnlyRequiredNetworksMandatoryForVdsSelection','false','general');
---Handling Authentication Method
-select fn_db_add_config_value('AuthenticationMethod','LDAP','general');
 --Handling Auto Approve Patterns
 select fn_db_add_config_value('AutoApprovePatterns','','general');
 select fn_db_add_config_value('AutoInstallCertificateOnApprove','true','general');
@@ -118,8 +113,6 @@ select fn_db_add_config_value('DefaultWorkgroup','WORKGROUP','general');
 select fn_db_add_config_value('DisableFenceAtStartupInSec','300','general');
 select fn_db_add_config_value('DirectLUNDiskEnabled','false','3.0');
 select fn_db_add_config_value('PopulateDirectLUNDiskDescriptionWithLUNId','4','general');
---Handling NetBIOS Domain Name
-select fn_db_add_config_value('DomainName','example.com','general');
 -- Host time drift
 select fn_db_add_config_value('EnableHostTimeDrift','false','general');
 -- list of os/remote-viewer minimal version supported by ovirt. Format: "linux:3.0;windows:2.5"
@@ -398,16 +391,6 @@ select fn_db_add_config_value('IPTablesConfigSiteCustom','','general');
 select fn_db_add_config_value('IsMultilevelAdministrationOn','true','general');
 select fn_db_add_config_value('JobCleanupRateInMinutes','10','general');
 select fn_db_add_config_value('JobPageSize','100','general');
---Handling Keystore URL
-select fn_db_add_config_value('LdapQueryPageSize','1000','general');
-select fn_db_add_config_value('LDAPQueryTimeout','30','general');
-select fn_db_add_config_value('LDAPConnectTimeout','30','general');
-select fn_db_add_config_value('LDAPOperationTimeout','30','general');
---Handling LDAP Security Authentication Method
-select fn_db_add_config_value('LDAPSecurityAuthentication','GSSAPI','general');
-select fn_db_add_config_value('LDAPServerPort','389','general');
-select fn_db_add_config_value('LdapServers','','general');
-select fn_db_add_config_value('LDAPProviderTypes','','general');
 select fn_db_add_config_value('LeaseRetries','3','general');
 select fn_db_add_config_value('LeaseTimeSec','60','general');
 select fn_db_add_config_value('LicenseCertificateFingerPrint','5f 38 41 89 b1 33 49 0c 24 13 6b b3 e5 ba 9e c7 fd 83 80 3b','general');
@@ -426,7 +409,6 @@ select fn_db_add_config_value('ManagedDevicesWhiteList','','general');
 select fn_db_add_config_value('DefaultManagementNetwork','ovirtmgmt','general');
 select fn_db_add_config_value('MaxAuditLogMessageLength','10000','general');
 select fn_db_add_config_value('MaxBlockDiskSize','8192','general');
-select fn_db_add_config_value('MaxLDAPQueryPartsNumber','100','general');
 select fn_db_add_config_value('MaxMacsCountInPool','100000','general');
 select fn_db_add_config_value('MaxNumberOfHostsInStoragePool','250','general');
 select fn_db_add_config_value_for_versions_up_to('MaxNumOfCpuPerSocket', '16', '3.6');
@@ -915,14 +897,8 @@ select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x8
 --   Update only if default not changed section
 ------------------------------------------------------------------------------------
 
-select fn_db_update_default_config_value('AdUserId','example.com:00000000-0000-0000-0000-000000000000','','general',false);
-select fn_db_update_default_config_value('AdUserName','example.com:SampleUser','','general',false);
-select fn_db_update_default_config_value('AdUserPassword','example.com:SamplePassword','','general',false);
 -- Increase AsyncTaskZombieTaskLifeInMinutes to 50 hours if it's the default 5 hours.
 select fn_db_update_default_config_value('AsyncTaskZombieTaskLifeInMinutes','300','3000','general',false);
-select fn_db_update_default_config_value('DomainName','example.com','','general',false);
-select fn_db_update_default_config_value('LDAPSecurityAuthentication','GSSAPI','default:GSSAPI','general',false);
-select fn_db_update_default_config_value('LDAPSecurityAuthentication','SIMPLE','default:SIMPLE','general',false);
 select fn_db_update_default_config_value('VdsLocalDisksCriticallyLowFreeSpace','100','500','general',false);
 select fn_db_update_default_config_value('VdsLocalDisksLowFreeSpace','1000', '100','general',false);
 select fn_db_update_default_config_value('GuestToolsSetupIsoPrefix','RHEV-toolsSetup_', 'ovirt-guest-tools-','general', false);
@@ -946,8 +922,12 @@ select fn_db_update_default_config_value('GlusterStorageDeviceListMountPointsToI
 ------------------------------------------------------------------------------------
 
 select fn_db_delete_config_value_all_versions('SupportedStorageFormats');
+select fn_db_delete_config_value('AdUserId','general');
+select fn_db_delete_config_value('AdUserName','general');
+select fn_db_delete_config_value('AdUserPassword','general');
 select fn_db_delete_config_value('AsyncPollingCyclesBeforeCallbackCleanup','general');
 select fn_db_delete_config_value('AsyncPollingCyclesBeforeRefreshSuspend','general');
+select fn_db_delete_config_value('AuthenticationMethod','general');
 select fn_db_delete_config_value('AutoMode','general');
 select fn_db_delete_config_value('AutoSuspendTimeInMinutes','general');
 select fn_db_delete_config_value('CABaseDirectory','general');
@@ -963,6 +943,7 @@ select fn_db_delete_config_value('CertificatePassword','general');
 select fn_db_delete_config_value('CustomPublicConfig_AppsWebSite','general');
 select fn_db_delete_config_value('DebugSearchLogging','general');
 select fn_db_delete_config_value('DefaultWorkgroup','general');
+select fn_db_delete_config_value('DomainName','general');
 select fn_db_delete_config_value('ENMailDomain','general');
 select fn_db_delete_config_value('ENMailEnableSsl','general');
 select fn_db_delete_config_value('ENMailHost','general');
@@ -979,14 +960,23 @@ select fn_db_delete_config_value('FreeSpaceLow','general');
 select fn_db_delete_config_value('HotPlugUnsupportedOsList','general');
 select fn_db_delete_config_value('HotPlugSupportedOsList','general');
 select fn_db_delete_config_value('ImagesSyncronizationTimeout','general');
-select fn_db_delete_config_value('keystorePass','general');
-select fn_db_delete_config_value('keystoreUrl','general');
+select fn_db_delete_config_value('LDAPConnectTimeout','general');
+select fn_db_delete_config_value('LDAPOperationTimeout','general');
+select fn_db_delete_config_value('LDAPProviderTypes','general');
+select fn_db_delete_config_value('LDAPQueryTimeout','general');
+select fn_db_delete_config_value('LDAPSecurityAuthentication','general');
+select fn_db_delete_config_value('LDAPServerPort','general');
+select fn_db_delete_config_value('LdapQueryPageSize','general');
+select fn_db_delete_config_value('LdapServers','general');
 select fn_db_delete_config_value('LdapServers','3.0');
 select fn_db_delete_config_value('LicenseCertificateFingerPrint','general');
+select fn_db_delete_config_value('keystorePass','general');
+select fn_db_delete_config_value('keystoreUrl','general');
 select fn_db_delete_config_value('LocalAdminPassword','general');
 select fn_db_delete_config_value('LogDBCommands','general');
 select fn_db_delete_config_value('LogVdsRegistration','general');
 select fn_db_delete_config_value('LogXmlRpcData','general');
+select fn_db_delete_config_value('MaxLDAPQueryPartsNumber','general');
 select fn_db_delete_config_value('NetConsolePort','general');
 select fn_db_delete_config_value('ProductKey2003','general');
 select fn_db_delete_config_value('ProductKey2003x64','general');
@@ -1121,78 +1111,6 @@ update vdc_options set version = '3.0' where version = '2.3';
 --                 complex updates using a temporary function section
 --                 each temporary function name should start with __temp
 ------------------------------------------------------------------------------------
-
--- remove default security authentication
-
-CREATE OR REPLACE FUNCTION __temp_upgrade_remove_default_security_auth(a_input VARCHAR(40))
-  RETURNS void AS
-$BODY$
-   DECLARE
-   v_entry VARCHAR(4000);
-   v_pos integer;
-BEGIN
-    v_entry := option_value FROM vdc_options WHERE option_name='LDAPSecurityAuthentication';
-    v_pos := strpos(lower(v_entry), ',' || lower(a_input) || ',');
-
-    IF (v_pos = 0) THEN
-                UPDATE vdc_options
-                SET option_value = regexp_replace(option_value, ',?' || a_input || ',?' ,'','i')
-                WHERE option_name = 'LDAPSecurityAuthentication';
-    ELSE
-                UPDATE vdc_options
-                SET option_value = regexp_replace(option_value, ',' || a_input || ',' ,',','i')
-                WHERE option_name = 'LDAPSecurityAuthentication';
-    END IF;
-
-END; $BODY$
-LANGUAGE plpgsql;
-
-SELECT __temp_upgrade_remove_default_security_auth('default:GSSAPI');
-SELECT __temp_upgrade_remove_default_security_auth('default:SIMPLE');
-
-DROP FUNCTION __temp_upgrade_remove_default_security_auth(VARCHAR);
-
-
---- upgrade domains to have a provider type
-
-create or replace function __temp_update_ldap_provier_types()
-RETURNS void
-AS $procedure$
-    DECLARE
-    v_domains text;
-    v_provider_types text;
-    v_temp text;
-    v_values record;
-    boo smallint;
-
-BEGIN
-
-    v_temp := '';
-    v_domains := (SELECT option_value FROM vdc_options where option_name = 'DomainName');
-    v_provider_types := (SELECT option_value FROM vdc_options where option_name = 'LDAPProviderTypes');
-    boo := (SELECT count(*) from regexp_matches(v_provider_types ,'[:]'));
-
-    IF (boo = 0) THEN
-
-        FOR v_values in select regexp_split_to_table(v_domains, ',') as val
-        LOOP
-            IF (length(v_values.val) > 0) THEN
-                v_temp := v_temp || v_values.val || ':general,';
-            END IF;
-        END LOOP;
-
-        v_temp = rtrim(v_temp,',');
-
-        UPDATE vdc_options SET option_value = v_temp where option_name = 'LDAPProviderTypes';
-
-    END IF;
-
-END; $procedure$
-LANGUAGE plpgsql;
-
-SELECT  __temp_update_ldap_provier_types();
-DROP FUNCTION __temp_update_ldap_provier_types();
-
 
 create or replace function __temp_set_pg_major_release()
 RETURNS void

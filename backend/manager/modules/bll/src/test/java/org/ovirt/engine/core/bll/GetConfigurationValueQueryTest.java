@@ -23,16 +23,6 @@ public class GetConfigurationValueQueryTest extends AbstractUserQueryTest<GetCon
         assertQueryExecution(ConfigurationValues.MaxVmsInPool, false, true);
     }
 
-    @Test
-    public void testExecuteQueryAdminConfigFiltered() {
-        assertQueryExecution(ConfigurationValues.AdUserName, true, false);
-    }
-
-    @Test
-    public void testExecuteQueryAdminConfigNotFiltered() {
-        assertQueryExecution(ConfigurationValues.AdUserName, false, true);
-    }
-
     private void assertQueryExecution(ConfigurationValues configValue, boolean isFiltered, boolean shouldSucceed) {
         // Mock the parameters
         Version version = RandomUtils.instance().pickRandom(Version.ALL);

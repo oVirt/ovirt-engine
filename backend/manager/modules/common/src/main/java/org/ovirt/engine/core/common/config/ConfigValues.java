@@ -10,23 +10,9 @@ import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 
 public enum ConfigValues {
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("9b9002d1-ec33-4083-8a7b-31f6b8931648")
-    AdUserId,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Postgres")
     DBEngine,
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("administrator")
-    AdUserName,
-    @TypeConverterAttribute(Map.class)
-    @DefaultValueAttribute("EXAMPLE.COM:123456")
-    @OptionBehaviourAttribute(behaviour = OptionBehaviour.DomainsPasswordMap)
-    AdUserPassword,
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("EXAMPLE.COM")
-    DomainName,
 
     /**
      * Timeout in seconds for the completion of calls to VDSM. It should
@@ -313,9 +299,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("12:00")
     VmPoolLeaseEndTime,
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("LDAP")
-    AuthenticationMethod,
     @Reloadable
     @TypeConverterAttribute(List.class)
     @DefaultValueAttribute("1,2,4")
@@ -714,10 +697,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("Etc/GMT")
     DefaultGeneralTimeZone,
 
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("389")
-    LDAPServerPort,
-
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
@@ -739,10 +718,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/data/images/rhev")
     RhevhLocalFSPath,
-
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("default:GSSAPI")
-    LDAPSecurityAuthentication,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
@@ -817,15 +792,6 @@ public enum ConfigValues {
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("1000")
-    LdapQueryPageSize,
-
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("100")
-    MaxLDAPQueryPartsNumber,
-
-    @Reloadable
-    @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     FenceStartStatusRetries,
 
@@ -833,11 +799,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
     FenceStartStatusDelayBetweenRetriesInSec,
-
-    @Reloadable
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("30")
-    LDAPQueryTimeout,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ILIKE")
@@ -861,10 +822,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60000")
     UnknownTaskPrePollingLapse,
-
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    LdapServers,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("3.0.0.0")
@@ -1092,10 +1049,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     SendVmTicketUID,
 
-    @DefaultValueAttribute("")
-    @TypeConverterAttribute(String.class)
-    LDAPProviderTypes,
-
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     AdvancedNFSOptionsEnabled,
@@ -1218,16 +1171,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ovirt-engine")
     SSHKeyAlias,
-
-    @Reloadable
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("30")
-    LDAPOperationTimeout,
-
-    @Reloadable
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("30")
-    LDAPConnectTimeout,
 
     /*
      * Whether to allow a cluster with both Virt and Gluster services enabled

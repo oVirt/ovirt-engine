@@ -272,7 +272,6 @@ Requires:	openstack-java-resteasy-connector >= %{openstack_java_version}
 Requires:	postgresql-jdbc
 Requires:	quartz
 Requires:	snmp4j
-Requires:	spring-ldap
 Requires:	springframework-aop
 Requires:	springframework-beans
 Requires:	springframework-context
@@ -667,7 +666,7 @@ make %{make_common_opts} install DESTDIR="%{buildroot}"
 # /var creation
 #
 install -dm 755 "%{buildroot}/%{engine_state}"/{content,setup/answers}
-install -dm 755 "%{buildroot}/%{engine_log}"/{host-deploy,setup,notifier,engine-manage-domains,dump}
+install -dm 755 "%{buildroot}/%{engine_log}"/{host-deploy,setup,notifier,dump}
 install -dm 755 "%{buildroot}/%{engine_cache}"
 install -dm 755 "%{buildroot}/%{engine_run}/notifier"
 
@@ -845,7 +844,6 @@ common/org/apache/xmlrpc/main/xmlrpc-common.jar
 common/org/postgresql/main/postgresql.jar postgresql-jdbc.jar
 common/org/quartz/main/quartz.jar
 common/org/snmp4j/main/snmp4j.jar
-common/org/springframework/ldap/main/spring-ldap-core.jar spring-ldap/spring-ldap-core.jar
 common/org/springframework/main/spring-aop.jar springframework/spring-aop.jar
 common/org/springframework/main/spring-asm.jar objectweb-asm/asm.jar
 common/org/springframework/main/spring-beans.jar springframework/spring-beans.jar
@@ -1214,23 +1212,18 @@ fi
 
 %config %{_sysconfdir}/logrotate.d/ovirt-engine-notifier
 %config(noreplace) %{engine_etc}/engine-config/engine-config.conf
-%config(noreplace) %{engine_etc}/engine-manage-domains/engine-manage-domains.conf
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/notifier
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_run}/notifier
 %dir %{engine_etc}/engine-config
-%dir %{engine_etc}/engine-manage-domains
 %dir %{engine_etc}/notifier
 %ghost %config(noreplace) %{engine_etc}/notifier/notifier.conf
 %{_bindir}/engine-backup
 %{_bindir}/engine-config
-%{_bindir}/engine-manage-domains
 %{_bindir}/ovirt-engine-extensions-tool
 %{_mandir}/man8/engine-backup.*
 %{_mandir}/man8/engine-config.*
-%{_mandir}/man8/engine-manage-domains.*
 %{engine_data}/bin/engine-backup.sh
 %{engine_data}/bin/engine-config.sh
-%{engine_data}/bin/engine-manage-domains.sh
 %{engine_data}/bin/engine-prolog.sh
 %{engine_data}/bin/ovirt-engine-extensions-tool.sh
 %{engine_data}/bin/ovirt-engine-crypto-tool.sh

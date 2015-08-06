@@ -36,8 +36,6 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.SearchEngineIllegalCharacterException;
 import org.ovirt.engine.core.common.errors.SqlInjectionException;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -60,6 +58,8 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<P> {
     private static final HashMap<String, QueryData> queriesCache = new HashMap<>();
+    public static final String LDAP = "LDAP";
+
     @Inject
     private QuotaManager quotaManager;
 
@@ -417,11 +417,9 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     else {
                         searchText = prefix + COLON + searchText;
                     }
-                    curSyntaxChecker = SyntaxCheckerFactory.createADSyntaxChecker(Config
-                            .<String>getValue(ConfigValues.AuthenticationMethod));
+                    curSyntaxChecker = SyntaxCheckerFactory.createADSyntaxChecker(LDAP);
                 } else {
-                    curSyntaxChecker = SyntaxCheckerFactory
-                            .createBackendSyntaxChecker(Config.<String>getValue(ConfigValues.AuthenticationMethod));
+                    curSyntaxChecker = SyntaxCheckerFactory.createBackendSyntaxChecker(LDAP);
                 }
                 SyntaxContainer searchObj = curSyntaxChecker.analyzeSyntaxState(searchText, true);
                 // set the case-sensitive flag

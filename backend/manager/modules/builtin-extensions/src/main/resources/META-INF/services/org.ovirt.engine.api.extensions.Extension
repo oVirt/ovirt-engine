@@ -1,4 +1,2 @@
 org.ovirt.engine.extensions.aaa.builtin.internal.InternalAuthn
 org.ovirt.engine.extensions.aaa.builtin.internal.InternalAuthz
-org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapAuthz
-org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapAuthn
