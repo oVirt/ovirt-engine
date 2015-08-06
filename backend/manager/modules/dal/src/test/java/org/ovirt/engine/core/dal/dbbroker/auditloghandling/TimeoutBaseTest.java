@@ -68,7 +68,7 @@ public class TimeoutBaseTest {
         assertTrue(result);
     }
 
-    public class TestTimeoutBase extends TimeoutBase {
+    public static class TestTimeoutBase extends TimeoutBase {
 
         @Override
         protected String getKey() {
