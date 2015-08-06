@@ -672,6 +672,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         commands.add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
         UnitVmModel model = new UnitVmModel(new NewVmModelBehavior(), this);
         setupNewVmModel(model, VmType.Server, getSystemTreeSelectedItem(), commands);
+        model.initForemanProviders(null);
     }
 
     private void editConsole() {
