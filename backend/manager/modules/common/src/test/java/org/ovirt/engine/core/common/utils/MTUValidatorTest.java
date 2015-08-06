@@ -36,7 +36,7 @@ public class MTUValidatorTest {
         return validator.validate(object);
     }
 
-    private class MtuContainer {
+    private static class MtuContainer {
         @MTU
         private int mtu;
 
