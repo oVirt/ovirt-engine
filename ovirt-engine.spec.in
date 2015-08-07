@@ -43,67 +43,18 @@
 %global EXTRA_BUILD_FLAGS %{?_ovirt_build_extra_flags:%{_ovirt_build_extra_flags}}%{?ovirt_build_extra_flags: %{ovirt_build_extra_flags}}
 %endif
 
-%if 0%{?fedora}
-%global ovirt_install_systemd 1
-%global ovirt_install_systemv 0
+#
+# Supported distributions:
+# Fedora >= 22
+# EL >= 7
+#
+
 %global ovirt_install_poms 1
-%global ovirt_require_maven 1
 %global ovirt_provides_jboss 1
 %global jboss ovirt-engine-wildfly
 %global ovirt_wildfly_overlay 1
 %global ovirt_wildfly_fixup 1
-%if %{fedora} >= 21
-%global docker docker
 %global ovirt_with_aio 1
-%else
-%global docker docker-io
-# all-in-one can't work on fc20 due to missing vdsm
-%global ovirt_with_aio 0
-%endif
-%endif
-
-%if 0%{?rhel}
-%if 0%{?rhel} >= 7
-%global ovirt_install_systemd 1
-%global ovirt_install_systemv 0
-%global ovirt_install_poms 1
-%global ovirt_require_maven 1
-%global ovirt_provides_jboss 1
-%global jboss ovirt-engine-wildfly
-%global ovirt_wildfly_overlay 1
-%global ovirt_wildfly_fixup 1
-%global docker docker
-%global ovirt_with_aio 1
-%else
-%global ovirt_install_systemd 0
-%global ovirt_install_systemv 1
-%global ovirt_install_poms 0
-%global ovirt_require_maven 0
-%global ovirt_provides_jboss 1
-%global jboss ovirt-engine-wildfly
-%global ovirt_wildfly_overlay 1
-%global ovirt_wildfly_fixup 1
-%global docker docker-io
-
-# all-in-one can't work on el6 due to missing vdsm
-%global ovirt_with_aio 0
-
-# emulate fedora java for simplicity
-%undefine add_maven_depmap
-%define add_maven_depmap(f:) \
-	_jarpart="%2" \
-	_filelist=".mfiles%{-f*:-%{-f*}}" \
-	_jpath= \
-	for _dir in "%{_jnidir}" "%{_javajnidir}" "%{_javadir}"; do \
-		if [ -f "%{buildroot}/${_dir}/${_jarpart}" ]; then \
-			_jpath="${_dir}/${_jarpart}" \
-		fi \
-	done \
-	[ -n "${_jpath}" ] && echo "${_jpath}" >> "${_filelist}" \
-	%{nil}
-
-%endif
-%endif
 
 %global ovirt_product_name oVirt Engine
 %global ovirt_product_name_short oVirt Engine
@@ -205,23 +156,11 @@ Source0:	http://resources.ovirt.org/pub/ovirt-master-snapshot/src/@PACKAGE_NAME@
 
 BuildArch:	noarch
 
-%if 0%{?rhel}
-%if 0%{?rhel} >= 7
 BuildRequires:	java-devel >= 1.7.0
-%else
-BuildRequires:	java7-devel
-%endif
-%endif
-%if 0%{?fedora}
-BuildRequires:	java-devel >= 1.7.0
-%endif
-
 BuildRequires:	jpackage-utils
 BuildRequires:	make
 BuildRequires:	python
-%if %{ovirt_require_maven}
 BuildRequires:	maven
-%endif
 BuildRequires:	unzip
 
 Requires:	%{jboss}
@@ -238,37 +177,38 @@ Requires:	%{name}-userportal = %{version}-%{release}
 Requires:	%{name}-webadmin-portal = %{version}-%{release}
 Requires:	%{name}-websocket-proxy >= %{version}-%{release}
 Requires:	%{name}-vmconsole-proxy-helper >= %{version}-%{release}
+Requires:	apache-commons-compress
+Requires:	apache-commons-configuration
+Requires:	apache-commons-jxpath
 Requires:	fop
+Requires:	jakarta-commons-httpclient
 Requires:	java
 # rhbz#1028966
 Requires:	java-openjdk > 1:1.7.0.45-2.4.3.3.el6
 Requires:	jpackage-utils
+Requires:	objectweb-asm
 Requires:	ovirt-image-uploader >= 3.6.0
 Requires:	ovirt-iso-uploader >= 3.6.0
 Requires:	%{patternfly}
+Requires:	postgresql-jdbc
 Requires:	postgresql-server >= 8.4.7
 Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
+Requires:	xmlrpc-client
 Requires:	yum-plugin-versionlock
 
 %if 0%{?fedora}
-%if %{fedora} >= 19
-Requires:	apache-commons-compress
-Requires:	apache-commons-configuration
-Requires:	apache-commons-jxpath
-Requires:	jakarta-commons-httpclient
-Requires:	objectweb-asm
+Requires:	apache-sshd
+Requires:	openstack-java-cinder-client >= %{openstack_java_version}
+Requires:	openstack-java-cinder-model >= %{openstack_java_version}
 Requires:	openstack-java-client >= %{openstack_java_version}
 Requires:	openstack-java-glance-client >= %{openstack_java_version}
 Requires:	openstack-java-glance-model >= %{openstack_java_version}
-Requires:	openstack-java-cinder-client >= %{openstack_java_version}
-Requires:	openstack-java-cinder-model >= %{openstack_java_version}
 Requires:	openstack-java-keystone-client >= %{openstack_java_version}
 Requires:	openstack-java-keystone-model >= %{openstack_java_version}
 Requires:	openstack-java-quantum-client >= %{openstack_java_version}
 Requires:	openstack-java-quantum-model >= %{openstack_java_version}
 Requires:	openstack-java-resteasy-connector >= %{openstack_java_version}
-Requires:	postgresql-jdbc
 Requires:	quartz
 Requires:	snmp4j
 Requires:	springframework-aop
@@ -278,11 +218,6 @@ Requires:	springframework-expression
 Requires:	springframework-instrument
 Requires:	springframework-jdbc
 Requires:	springframework-tx
-Requires:	xmlrpc-client
-%endif
-%if %{fedora} >= 21
-Requires:	apache-sshd
-%endif
 %endif
 
 # We can't require exactly the same version and release of the
@@ -295,9 +230,7 @@ Requires:	%{name}-setup >= %{version}-%{release}
 Conflicts:	freeipa-server
 Conflicts:	ipa-server
 
-%if %{ovirt_install_systemd}
 BuildRequires:	systemd
-%endif
 
 %description
 %{ovirt_product_name} is a feature-rich server virtualization management
@@ -351,39 +284,21 @@ Requires:	python-cheetah
 Requires:	spice-html5
 Requires:	vdsm-jsonrpc-java >= 1.1.4
 
-%if %{ovirt_install_systemd}
 Requires(post):		systemd
 Requires(preun):	systemd
 Requires(postun):	systemd
-%endif
 
 %pre backend
 %ovirt_create_user_engine
 
 %post backend
-%if %{ovirt_install_systemd}
 %systemd_post ovirt-engine.service
-%endif
-%if %{ovirt_install_systemv}
-chkconfig --add ovirt-engine
-%endif
 
 %preun backend
-%if %{ovirt_install_systemd}
 %systemd_preun ovirt-engine.service
-%endif
-
-%if %{ovirt_install_systemv}
-if [ $1 -eq 0 ]; then
-	service ovirt-engine stop > /dev/null 2>&1 || true
-	chkconfig --del ovirt-engine
-fi
-%endif
 
 %postun backend
-%if %{ovirt_install_systemd}
 %systemd_postun ovirt-engine.service
-%endif
 
 %description backend
 The backend engine of %{ovirt_product_name_short}
@@ -512,11 +427,9 @@ Requires:	logrotate
 Requires:	python-psycopg2
 Requires:	bzip2
 
-%if %{ovirt_install_systemd}
 Requires(post):		systemd
 Requires(preun):	systemd
 Requires(postun):	systemd
-%endif
 
 %description tools
 %{ovirt_product_name_short} Tools
@@ -525,35 +438,16 @@ Requires(postun):	systemd
 %ovirt_create_user_engine
 
 %post tools
-%if %{ovirt_install_systemd}
 %systemd_post ovirt-engine-notifier.service
 %systemd_post ovirt-fence-kdump-listener.service
-%endif
-%if %{ovirt_install_systemv}
-chkconfig --add ovirt-engine-notifier
-chkconfig --add ovirt-fence-kdump-listener
-%endif
 
 %postun tools
-%if %{ovirt_install_systemd}
 %systemd_postun ovirt-engine-notifier.service
 %systemd_postun ovirt-fence-kdump-listener.service
-%endif
 
 %preun tools
-%if %{ovirt_install_systemd}
 %systemd_preun ovirt-engine-notifier.service
 %systemd_preun ovirt-fence-kdump-listener.service
-%endif
-
-%if %{ovirt_install_systemv}
-if [ $1 -eq 0 ]; then
-	service ovirt-engine-notifier stop > /dev/null 2>&1 || true
-	chkconfig --del ovirt-engine-notifier
-	service ovirt-fence-kdump-listener stop > /dev/null 2>&1 || true
-	chkconfig --del ovirt-fence-kdump-listener
-fi
-%endif
 
 %package websocket-proxy
 Summary:	%{ovirt_product_name_short} Websocket Proxy
@@ -563,11 +457,9 @@ Requires:	numpy
 Requires:	python-websockify
 Requires:	%{name}-setup-plugin-websocket-proxy >= %{version}-%{release}
 
-%if %{ovirt_install_systemd}
 Requires(post):		systemd
 Requires(preun):	systemd
 Requires(postun):	systemd
-%endif
 
 %description websocket-proxy
 %{ovirt_product_name_short} Websocket Proxy
@@ -576,29 +468,13 @@ Requires(postun):	systemd
 %ovirt_create_user_engine
 
 %post websocket-proxy
-%if %{ovirt_install_systemd}
 %systemd_post ovirt-websocket-proxy.service
-%endif
-%if %{ovirt_install_systemv}
-chkconfig --add ovirt-websocket-proxy
-%endif
 
 %postun websocket-proxy
-%if %{ovirt_install_systemd}
 %systemd_postun ovirt-websocket-proxy.service
-%endif
 
 %preun websocket-proxy
-%if %{ovirt_install_systemd}
 %systemd_preun ovirt-websocket-proxy.service
-%endif
-
-%if %{ovirt_install_systemv}
-if [ $1 -eq 0 ]; then
-	service ovirt-websocket-proxy stop > /dev/null 2>&1 || true
-	chkconfig --del ovirt-websocket-proxy
-fi
-%endif
 
 %package setup-plugin-websocket-proxy
 Summary:	Setup and upgrade specific plugins for websocket-proxy
@@ -646,7 +522,7 @@ Summary:	Docker container plugin for %{ovirt_product_name_short}'s setup
 Group:		%{ovirt_product_group}
 Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
 Requires:	%{name}-setup-plugin-ovirt-engine = %{version}-%{release}
-Requires:	%{docker}
+Requires:	docker
 Requires:	python-docker-py
 
 %description setup-plugin-dockerc
@@ -800,52 +676,49 @@ while read dst src; do
 	rm -f "%{buildroot}${dst}"
 	ln -s "${src}" "%{buildroot}${dst}"
 done << __EOF__
+common/org/aopalliance/main/aopalliance.jar
+common/org/apache/avalon/framework/main/avalon-framework-api.jar
+common/org/apache/avalon/framework/main/avalon-framework-impl.jar
+common/org/apache/commons/compress/main/commons-compress.jar
+common/org/apache/commons/configuration/main/commons-configuration.jar
+common/org/apache/commons/httpclient/main/commons-httpclient.jar
+common/org/apache/commons/jxpath/main/commons-jxpath.jar
 common/org/apache/ws/commons/main/ws-commons-util.jar
 common/org/apache/xmlgraphics/batik/main/batik-awt-util.jar batik/batik-awt-util.jar
 common/org/apache/xmlgraphics/batik/main/batik-bridge.jar batik/batik-bridge.jar
 common/org/apache/xmlgraphics/batik/main/batik-css.jar batik/batik-css.jar
-common/org/apache/xmlgraphics/batik/main/batik-ext.jar batik/batik-ext.jar
 common/org/apache/xmlgraphics/batik/main/batik-extension.jar batik/batik-extension.jar
+common/org/apache/xmlgraphics/batik/main/batik-ext.jar batik/batik-ext.jar
 common/org/apache/xmlgraphics/batik/main/batik-gvt.jar batik/batik-gvt.jar
 common/org/apache/xmlgraphics/batik/main/batik-svg-dom.jar batik/batik-svg-dom.jar
 common/org/apache/xmlgraphics/batik/main/batik-transcoder.jar batik/batik-transcoder.jar
 common/org/apache/xmlgraphics/batik/main/batik-util.jar batik/batik-util.jar
 common/org/apache/xmlgraphics/commons/main/xmlgraphics-commons.jar
 common/org/apache/xmlgraphics/fop/main/fop.jar
+common/org/apache/xmlrpc/main/xmlrpc-client.jar
+common/org/apache/xmlrpc/main/xmlrpc-common.jar
 common/org/ebaysf/web/cors-filter/main/cors-filter.jar ebay-cors-filter/cors-filter.jar
 common/org/ovirt/otopi/main/otopi.jar otopi/otopi.jar
 common/org/ovirt/ovirt-host-deploy/main/ovirt-host-deploy.jar ovirt-host-deploy/ovirt-host-deploy.jar
 common/org/ovirt/vdsm-jsonrpc-java/main/vdsm-jsonrpc-java-client.jar vdsm-jsonrpc-java/vdsm-jsonrpc-java-client.jar
+common/org/postgresql/main/postgresql.jar postgresql-jdbc.jar
+common/org/tukaani/xz/main/xz.jar
 tools/org/slf4j/main/slf4j-api.jar slf4j/slf4j-api.jar
 tools/org/slf4j/main/slf4j-jdk14.jar slf4j/slf4j-jdk14.jar
+
 %if 0%{?fedora}
-%if %{fedora} >= 19
-%if %{fedora} >= 21
 common/com/mchange/c3p0/main/c3p0.jar c3p0/c3p0.jar
-common/org/apache/sshd/main/sshd-core.jar apache-sshd/sshd-core.jar
-%else
-common/com/mchange/c3p0/main/c3p0.jar
-%endif
-common/com/woorea/openstack/sdk/main/glance-client.jar openstack-java-sdk/glance-client.jar
-common/com/woorea/openstack/sdk/main/glance-model.jar openstack-java-sdk/glance-model.jar
 common/com/woorea/openstack/sdk/main/cinder-client.jar openstack-java-sdk/cinder-client.jar
 common/com/woorea/openstack/sdk/main/cinder-model.jar openstack-java-sdk/cinder-model.jar
+common/com/woorea/openstack/sdk/main/glance-client.jar openstack-java-sdk/glance-client.jar
+common/com/woorea/openstack/sdk/main/glance-model.jar openstack-java-sdk/glance-model.jar
 common/com/woorea/openstack/sdk/main/keystone-client.jar openstack-java-sdk/keystone-client.jar
 common/com/woorea/openstack/sdk/main/keystone-model.jar openstack-java-sdk/keystone-model.jar
 common/com/woorea/openstack/sdk/main/openstack-client.jar openstack-java-sdk/openstack-client.jar
 common/com/woorea/openstack/sdk/main/quantum-client.jar openstack-java-sdk/quantum-client.jar
 common/com/woorea/openstack/sdk/main/quantum-model.jar openstack-java-sdk/quantum-model.jar
 common/com/woorea/openstack/sdk/main/resteasy-connector.jar openstack-java-sdk/resteasy-connector.jar
-common/org/aopalliance/main/aopalliance.jar
-common/org/apache/avalon/framework/main/avalon-framework-api.jar
-common/org/apache/avalon/framework/main/avalon-framework-impl.jar
-common/org/apache/commons/compress/main/commons-compress.jar
-common/org/apache/commons/configuration/main/commons-configuration.jar commons-configuration.jar
-common/org/apache/commons/httpclient/main/commons-httpclient.jar
-common/org/apache/commons/jxpath/main/commons-jxpath.jar commons-jxpath.jar
-common/org/apache/xmlrpc/main/xmlrpc-client.jar
-common/org/apache/xmlrpc/main/xmlrpc-common.jar
-common/org/postgresql/main/postgresql.jar postgresql-jdbc.jar
+common/org/apache/sshd/main/sshd-core.jar apache-sshd/sshd-core.jar
 common/org/quartz/main/quartz.jar
 common/org/snmp4j/main/snmp4j.jar
 common/org/springframework/main/spring-aop.jar springframework/spring-aop.jar
@@ -857,37 +730,16 @@ common/org/springframework/main/spring-expression.jar springframework/spring-exp
 common/org/springframework/main/spring-instrument.jar springframework/spring-instrument.jar
 common/org/springframework/main/spring-jdbc.jar springframework/spring-jdbc.jar
 common/org/springframework/main/spring-tx.jar springframework/spring-tx.jar
-common/org/tukaani/xz/main/xz.jar
-%endif
-%endif
-%if 0%{?rhel}
-%if %{rhel} >= 7
-common/org/apache/avalon/framework/main/avalon-framework-api.jar
-common/org/apache/avalon/framework/main/avalon-framework-impl.jar
-common/org/aopalliance/main/aopalliance.jar
-%else
-common/org/apache/avalon/framework/main/avalon-framework-api.jar avalon-framework.jar
-common/org/apache/avalon/framework/main/avalon-framework-impl.jar avalon-framework.jar
-%endif
 %endif
 __EOF__
 
 #
 # Register services
 #
-%if %{ovirt_install_systemd}
 install -dm 755 "%{buildroot}%{_unitdir}"
 for service in ovirt-engine ovirt-engine-notifier ovirt-fence-kdump-listener ovirt-websocket-proxy; do
 	cp "%{buildroot}%{engine_data}/services/${service}/${service}.systemd" "%{buildroot}%{_unitdir}/${service}.service"
 done
-%endif
-
-%if %{ovirt_install_systemv}
-install -dm 755 "%{buildroot}%{_initddir}"
-for service in ovirt-engine ovirt-engine-notifier ovirt-fence-kdump-listener ovirt-websocket-proxy; do
-	cp "%{buildroot}%{engine_data}/services/${service}/${service}.sysv" "%{buildroot}%{_initddir}/${service}"
-done
-%endif
 
 #
 # Package customization
@@ -1042,12 +894,7 @@ fi
 %{engine_jboss_modules}/
 
 %{engine_data}/services/ovirt-engine
-%if %{ovirt_install_systemd}
 %{_unitdir}/ovirt-engine.service
-%endif
-%if %{ovirt_install_systemv}
-%{_initddir}/ovirt-engine
-%endif
 
 #
 # PKI
@@ -1199,12 +1046,7 @@ fi
 %{engine_data}/services/ovirt-websocket-proxy
 %{engine_etc}/ovirt-websocket-proxy.conf.d/
 
-%if %{ovirt_install_systemd}
 %{_unitdir}/ovirt-websocket-proxy.service
-%endif
-%if %{ovirt_install_systemv}
-%{_initddir}/ovirt-websocket-proxy
-%endif
 
 %files vmconsole-proxy-helper
 
@@ -1241,18 +1083,13 @@ fi
 %{engine_etc}/notifier/notifier.conf.d/
 %{engine_etc}/ovirt-fence-kdump-listener.conf.d/
 
-%if %{ovirt_install_systemd}
 %{_unitdir}/ovirt-engine-notifier.service
 %{_unitdir}/ovirt-fence-kdump-listener.service
-%endif
-%if %{ovirt_install_systemv}
-%{_initddir}/ovirt-engine-notifier
-%{_initddir}/ovirt-fence-kdump-listener
-%endif
 
 %changelog
 * Wed Aug  5 2015 Sandro Bonazzola <sbonazzo@redhat.com> - 4.0.0
 - Bump version to 4.0.0
+- Dropped Fedora < 22 and EL < 7 support
 
 * Thu Jul 10 2014 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.0
 - Update dependencies and removed legacy provides / requires
