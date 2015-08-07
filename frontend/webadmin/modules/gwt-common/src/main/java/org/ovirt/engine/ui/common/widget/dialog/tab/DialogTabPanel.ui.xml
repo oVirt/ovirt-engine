@@ -17,7 +17,6 @@
         .contentContainer {
             overflow: hidden;
             padding-left: 5px;
-            height: 100%;
         }
 
         .header {
