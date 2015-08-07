@@ -396,144 +396,96 @@ class OvirtUtils(base.Base):
                 transaction=False,
             )
 
+    def _dropObjects(self, statement, objectType, objects):
+        for name in [o['objectname'] for o in objects]:
+            statement.execute(
+                statement=(
+                    """
+                        DROP {type} IF EXISTS {name} CASCADE
+                    """
+                ).format(
+                    type=objectType,
+                    name=name,
+                ),
+                ownConnection=True,
+                transaction=False,
+            )
+
     def clearDatabase(self):
-
-        self.createLanguage('plpgsql')
-
         statement = Statement(
             environment=self.environment,
             dbenvkeys=self._dbenvkeys,
         )
 
-        statement.execute(
-            statement="""
-                create or replace
-                function
-                    oesetup_generate_drop_all_syntax()
-                    returns setof text
-                AS $procedure$ begin
-                    return query
-                        select
-                            'drop function if exists ' ||
-                            ns.nspname ||
-                            '.' ||
-                            proname ||
-                            '(' ||
-                                oidvectortypes(proargtypes) ||
-                            ') cascade;'
-                        from
-                            pg_proc inner join pg_namespace ns on (
-                                pg_proc.pronamespace=ns.oid
-                            )
-                        where
-                            ns.nspname = 'public'
-                        union
-                        select
-                            'drop type if exists ' ||
-                            c.relname::information_schema.sql_identifier ||
-                            ' ' ||
-                            'cascade;'
-                        from
-                            pg_namespace n, pg_class c, pg_type t
-                        where
-                            n.oid = c.relnamespace and t.typrelid = c.oid and
-                            c.relkind = 'c'::"char" and n.nspname = 'public';
-                end; $procedure$
-                language plpgsql;
+        objectsToDrop = {
+            'VIEW': """
+                SELECT table_schema || '.' || table_name AS objectname
+                FROM information_schema.views
+                WHERE table_schema = 'public'
             """,
-            args=dict(),
-            ownConnection=True,
-            transaction=False,
-        )
 
-        spdrops = statement.execute(
-            statement="""
-                select oesetup_generate_drop_all_syntax as drop
-                from oesetup_generate_drop_all_syntax()
+            'TABLE': """
+                SELECT table_schema || '.' || table_name AS objectname
+                FROM information_schema.tables
+                WHERE table_schema = 'public'
             """,
-            ownConnection=True,
-            transaction=False,
-        )
-        for spdrop in [t['drop'] for t in spdrops]:
-            statement.execute(
-                statement=spdrop,
-                ownConnection=True,
-                transaction=False,
-            )
 
-        tables = statement.execute(
-            statement="""
-                select table_name
-                from information_schema.views
-                where table_schema = %(schemaname)s
+            'SEQUENCE': """
+                SELECT
+                    sequence_schema || '.' || sequence_name AS objectname
+                FROM information_schema.sequences
+                WHERE sequence_schema = 'public'
             """,
-            args=dict(
-                schemaname='public',
-            ),
-            ownConnection=True,
-            transaction=False,
-        )
-        for view in [t['table_name'] for t in tables]:
-            statement.execute(
-                statement=(
-                    """
-                        drop view if exists {view} cascade
-                    """
-                ).format(
-                    view=view,
-                ),
-                ownConnection=True,
-                transaction=False,
-            )
 
-        seqs = statement.execute(
-            statement="""
-                select relname as seqname
-                from pg_class
-                where relkind=%(relkind)s
+            'TYPE': """
+                SELECT
+                    c.relname::information_schema.sql_identifier
+                    AS objectname
+                FROM pg_namespace n, pg_class c, pg_type t
+                WHERE
+                    n.oid = c.relnamespace AND
+                    t.typrelid = c.oid AND
+                    c.relkind = 'c'::"char" AND
+                    n.nspname = 'public'
             """,
-            args=dict(
-                relkind='S',
-            ),
-            ownConnection=True,
-            transaction=False,
-        )
-        for seq in [t['seqname'] for t in seqs]:
-            statement.execute(
-                statement=(
-                    """
-                        drop sequence if exists {sequence} cascade
-                    """
-                ).format(
-                    sequence=seq,
-                ),
-                ownConnection=True,
-                transaction=False,
-            )
 
-        tables = statement.execute(
-            statement="""
-                select tablename
-                from pg_tables
-                where schemaname = %(schemaname)s
+            'FUNCTION': """
+                SELECT
+                    ns.nspname ||
+                    '.' ||
+                    proname ||
+                    '(' || oidvectortypes(proargtypes) || ')'
+                    AS objectname
+                FROM
+                    pg_proc INNER JOIN pg_namespace ns ON (
+                        pg_proc.pronamespace=ns.oid
+                    )
+                WHERE ns.nspname = 'public'
             """,
-            args=dict(
-                schemaname='public',
-            ),
-            ownConnection=True,
-            transaction=False,
-        )
-        for table in [t['tablename'] for t in tables]:
-            statement.execute(
-                statement=(
-                    """
-                        drop table if exists {table} cascade
-                    """
-                ).format(
-                    table=table,
-                ),
-                ownConnection=True,
-                transaction=False,
+
+            'SCHEMA': """
+                SELECT schema_name AS objectname
+                FROM information_schema.schemata
+            """,
+        }
+
+        # it's important to drop object types in logical order
+        for objectType in (
+            'VIEW',
+            'TABLE',
+            'SEQUENCE',
+            'FUNCTION',
+            'TYPE',
+            'SCHEMA'
+        ):
+            self._dropObjects(
+                statement=statement,
+                objectType=objectType,
+                objects=statement.execute(
+                    statement=objectsToDrop[objectType],
+                    ownConnection=True,
+                    transaction=False,
+                )
             )
 
     def _backup_restore_filters_info(self):
