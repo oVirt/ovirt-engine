@@ -980,6 +980,10 @@ public class VdsBrokerObjectsBuilder {
                 Map<String, Object> librbd1 = (Map<String, Object>) packages.get(VdsProperties.librbdPackageName);
                 vds.setLibrbdVersion(getPackageRpmVersion(VdsProperties.librbdPackageName, librbd1));
             }
+            if (packages.containsKey(VdsProperties.glusterfsCliPackageName)) {
+                Map<String, Object> glusterfsCli = (Map<String, Object>) packages.get(VdsProperties.glusterfsCliPackageName);
+                vds.setGlusterfsCliVersion(getPackageRpmVersion(VdsProperties.glusterfsCliPackageName, glusterfsCli));
+            }
             if (packages.containsKey(VdsProperties.spiceServerPackageName)) {
                 Map<String, Object> spice = (Map<String, Object>) packages.get(VdsProperties.spiceServerPackageName);
                 vds.setSpiceVersion(getPackageVersionFormated2(spice));
