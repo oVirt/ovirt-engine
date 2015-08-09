@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.vdscommands.GetVmsFromExternalProviderParameters;
 
@@ -23,6 +24,7 @@ public class GetVmsFromExternalProviderVDSCommand<T extends GetVmsFromExternalPr
         for (Map<String, Object> map : vmListReturn.vmList) {
             VM vm = VdsBrokerObjectsBuilder.buildVmsDataFromExternalProvider(map);
             if (vm != null) {
+                vm.setOrigin(OriginType.VMWARE); // should be changed when addition sources will be supported
                 vms.add(vm);
             }
         }
