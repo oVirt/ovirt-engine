@@ -238,8 +238,13 @@ public class VdsBrokerObjectsBuilder {
         }
 
         if (xmlRpcStruct.containsKey(VdsProperties.NETWORKS)) {
+            int idx = 0;
             for (Object networkMap : (Object[]) xmlRpcStruct.get(VdsProperties.NETWORKS)) {
-                vmStatic.getInterfaces().add(buildNetworkInterfaceFromExternalProvider((Map<String, Object>)networkMap));
+                VmNetworkInterface nic = buildNetworkInterfaceFromExternalProvider((Map<String, Object>) networkMap);
+                nic.setName(String.format("nic%d", ++idx));
+                nic.setVmName(vmStatic.getName());
+                nic.setVmId(vmStatic.getId());
+                vmStatic.getInterfaces().add(nic);
             }
         }
 
@@ -259,7 +264,7 @@ public class VdsBrokerObjectsBuilder {
     private static VmNetworkInterface buildNetworkInterfaceFromExternalProvider(Map<String, Object> map) {
         VmNetworkInterface nic = new VmNetworkInterface();
         nic.setMacAddress((String) map.get(VdsProperties.MAC_ADDR));
-        nic.setName((String) map.get(VdsProperties.BRIDGE));
+        nic.setRemoteNetworkName((String) map.get(VdsProperties.BRIDGE));
 
         nic.setType(VmInterfaceType.pv.getValue());
         if (map.containsKey(VdsProperties.Model)) {
