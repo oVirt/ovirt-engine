@@ -13,7 +13,7 @@ public class StorageServerConnectionExtensionMapper {
         if (restConnectionModel.isSetId()) {
             engineConnectionExt.setId(new Guid(restConnectionModel.getId()));
         }
-        if (restConnectionModel.isSetHost()) {
+        if (restConnectionModel.isSetHost() && restConnectionModel.getHost().isSetId()) {
             engineConnectionExt.setHostId(new Guid(restConnectionModel.getHost().getId()));
         }
         if (restConnectionModel.isSetTarget()) {
@@ -34,7 +34,9 @@ public class StorageServerConnectionExtensionMapper {
 
         modelConnectionExt.setId(connectionExtension.getId().toString());
         Host host = new Host();
-        host.setId(connectionExtension.getHostId().toString());
+        if (connectionExtension.getHostId() != null) {
+            host.setId(connectionExtension.getHostId().toString());
+        }
         modelConnectionExt.setHost(host);
         modelConnectionExt.setTarget(connectionExtension.getIqn());
         modelConnectionExt.setUsername(connectionExtension.getUserName());
