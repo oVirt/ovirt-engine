@@ -262,15 +262,6 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
         };
         table.addColumn(diskColumn, constants.disksVm(), "50px"); //$NON-NLS-1$
 
-        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                ImportVmData selectedObject =
-                        ((SingleSelectionModel<ImportVmData>) event.getSource()).getSelectedObject();
-                customSelectionCellFormatType.setEnabled((Boolean) selectedObject.getCollapseSnapshots().getEntity());
-            }
-        });
-
         ScrollPanel sp = new ScrollPanel();
         sp.add(table);
         splitLayoutPanel.add(sp);
