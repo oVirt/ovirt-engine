@@ -16,6 +16,11 @@ public class VmNetworkInterface extends VmNic {
     private boolean plugged;
     private String qosName;
 
+    /** when this object represents a NIC that is attached to VM which is defined
+     *  in a remote environment, this field contains the name of the network in
+     *  the remote environment which the NIC is connected to */
+    private String remoteNetworkName;
+
     public VmNetworkInterface() {
         plugged = true;
     }
@@ -95,6 +100,14 @@ public class VmNetworkInterface extends VmNic {
         this.qosName = qosName;
     }
 
+    public String getRemoteNetworkName() {
+        return remoteNetworkName;
+    }
+
+    public void setRemoteNetworkName(String remoteNetworkName) {
+        this.remoteNetworkName = remoteNetworkName;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
@@ -112,6 +125,7 @@ public class VmNetworkInterface extends VmNic {
                 .append("vmName", getVmName())
                 .append("vmTemplateId", getVmTemplateId())
                 .append("QoSName", getQosName())
+                .append("remoteNetworkName", getRemoteNetworkName())
                 .build();
     }
 
