@@ -6,20 +6,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
-import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -189,18 +184,6 @@ public class CINDERStorageHelper extends StorageHelperBase {
         return isActiveStorageDomainAvailable(StorageType.CINDER, poolId);
     }
 
-    private boolean isActiveStorageDomainAvailable(final StorageType storageType, Guid poolId) {
-        List<StorageDomain> storageDomains = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(poolId);
-        return CollectionUtils.exists(storageDomains, new Predicate() {
-            @Override
-            public boolean evaluate(Object o) {
-                StorageDomain storageDomain = (StorageDomain) o;
-                return storageDomain.getStorageType() == storageType &&
-                        storageDomain.getStatus() == StorageDomainStatus.Active;
-            }
-        });
-    }
-
     private boolean handleLibvirtSecrets(CommandContext cmdContext, VDS vds, Guid poolId) {
         List<LibvirtSecret> libvirtSecrets =
                 DbFacade.getInstance().getLibvirtSecretDao().getAllByStoragePoolIdFilteredByActiveStorageDomains(poolId);
@@ -210,12 +193,6 @@ public class CINDERStorageHelper extends StorageHelperBase {
             return false;
         }
         return true;
-    }
-
-    private void setNonOperational(CommandContext cmdContext, Guid vdsId, NonOperationalReason reason) {
-        Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds,
-                new SetNonOperationalVdsParameters(vdsId, reason),
-                ExecutionHandler.createInternalJobContext(cmdContext));
     }
 
     private boolean registerLibvirtSecretsImpl(VDS vds, List<LibvirtSecret> libvirtSecrets, boolean clearUnusedSecrets) {

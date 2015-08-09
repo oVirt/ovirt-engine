@@ -50,6 +50,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String NonOperationalReason___LIBRBD_PACKAGE_NOT_AVAILABLE();
 
+    String NonOperationalReason___VDS_CANNOT_CONNECT_TO_GLUSTERFS();
+
     String NonOperationalReason___LIBVIRT_SECRETS_REGISTRATION_FAILURE();
 
     String UsbPolicy___ENABLED_LEGACY();

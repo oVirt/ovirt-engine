@@ -5,14 +5,20 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
+import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -123,6 +129,24 @@ public abstract class StorageHelperBase implements IStorageHelper {
                     storageConnectionsForStorageTypeMap);
         }
         return storageConnectionsForStorageTypeMap;
+    }
+
+    protected boolean isActiveStorageDomainAvailable(final StorageType storageType, Guid poolId) {
+        List<StorageDomain> storageDomains = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(poolId);
+        return CollectionUtils.exists(storageDomains, new Predicate() {
+            @Override
+            public boolean evaluate(Object o) {
+                StorageDomain storageDomain = (StorageDomain) o;
+                return storageDomain.getStorageType() == storageType &&
+                        storageDomain.getStatus() == StorageDomainStatus.Active;
+            }
+        });
+    }
+
+    protected void setNonOperational(CommandContext cmdContext, Guid vdsId, NonOperationalReason reason) {
+        Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds,
+                new SetNonOperationalVdsParameters(vdsId, reason),
+                ExecutionHandler.createInternalJobContext(cmdContext));
     }
 
     protected static LunDao getLunDao() {
