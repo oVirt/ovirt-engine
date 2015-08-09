@@ -1121,11 +1121,11 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {storagedomain.name: 'xs:string'}
         description: update the storage domain
-      - mandatoryArguments: {storagedomain.host.id|name: 'xs:string', storagedomain.storage.logical_unit--COLLECTION: {logical_unit.address: 'xs:string',
+      - mandatoryArguments: {storagedomain.storage.logical_unit--COLLECTION: {logical_unit.address: 'xs:string',
             logical_unit.port: 'xs:int', logical_unit.target: 'xs:string', logical_unit.username: 'xs:string', logical_unit.password: 'xs:string',
             logical_unit.serial: 'xs:string', logical_unit.vendor_id: 'xs:string', logical_unit.product_id: 'xs:string',
             logical_unit.lun_mapping: 'xs:int', logical_unit.portal: 'xs:string', logical_unit.paths: 'xs:int', logical_unit.id: 'xs:string'}}
-        optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage.override_luns: 'xs:boolean',
+        optionalArguments: {storagedomain.host.id--DEPRECATED: 'xs:string', storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage.override_luns: 'xs:boolean',
           storagedomain.wipe_after_delete: 'xs:boolean', storagedomain.warning_low_space_indicator: 'xs:int', storagedomain.critical_space_action_blocker: 'xs:int'}
         description: update the storage domain
 - name: /storagedomains|rel=add
