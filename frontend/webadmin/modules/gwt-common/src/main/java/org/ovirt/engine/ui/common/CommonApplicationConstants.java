@@ -301,10 +301,10 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Select the guest's time zone")
     String cloudInitTimeZoneToolTip();
 
-    @DefaultStringValue("Choose a root password for the guest")
+    @DefaultStringValue("Choose a password for the guest")
     String cloudInitRootPasswordToolTip();
 
-    @DefaultStringValue("Verify the root password for the guest")
+    @DefaultStringValue("Verify the password for the guest")
     String cloudInitRootPasswordVerificationToolTip();
 
     @DefaultStringValue("Choose a password for the admin login")
