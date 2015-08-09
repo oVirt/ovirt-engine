@@ -532,7 +532,7 @@ public class SchedulingManager implements BackendService {
         SchedulingResult result = new SchedulingResult();
         ArrayList<PolicyUnitImpl> internalFilters = new ArrayList<>();
         ArrayList<PolicyUnitImpl> externalFilters = new ArrayList<>();
-        filters = new ArrayList<>(filters);
+        filters = (filters != null) ? new ArrayList<>(filters) : new ArrayList<Guid>();
 
         sortFilters(filters, filterPositionMap);
         for (Guid filter : filters) {
