@@ -225,7 +225,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
             public LunModel getValue(LunModel object) {
                 return object;
             }
-        }, constants.devAdditionalSizeSanStorage(), "70px"); //$NON-NLS-1$
+        }, constants.devAdditionalSizeSanStorage(), "100px"); //$NON-NLS-1$
 
         table.addColumn(new AbstractLunTextColumn() {
             @Override
