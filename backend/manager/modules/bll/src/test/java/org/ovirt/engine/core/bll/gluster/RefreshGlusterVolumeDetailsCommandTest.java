@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -46,11 +46,11 @@ public class RefreshGlusterVolumeDetailsCommandTest {
     private Guid volumeId2 = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
     private Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
 
     @Mock
-    GlusterVolumeDao volumeDao;
+    private GlusterVolumeDao volumeDao;
 
     /**
      * The command under test.

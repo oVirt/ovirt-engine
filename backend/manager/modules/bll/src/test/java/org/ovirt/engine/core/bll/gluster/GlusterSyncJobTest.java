@@ -20,6 +20,7 @@ import java.util.Map;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
@@ -108,8 +109,9 @@ public class GlusterSyncJobTest {
 
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
+
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
 
     private GlusterSyncJob glusterManager;
     private GlusterAuditLogUtil logUtil;
@@ -170,14 +172,14 @@ public class GlusterSyncJobTest {
     private VDSGroup existingCluster;
     private VDS existingServer1;
     private VDS existingServer2;
-    private final List<VDS> existingServers = new ArrayList<VDS>();
+    private final List<VDS> existingServers = new ArrayList<>();
     private GlusterVolumeEntity existingDistVol;
     private GlusterVolumeEntity existingReplVol;
     private GlusterVolumeEntity newVolume;
-    private final List<GlusterVolumeEntity> existingVolumes = new ArrayList<GlusterVolumeEntity>();
-    private final List<Guid> removedBrickIds = new ArrayList<Guid>();
-    private final List<Guid> addedBrickIds = new ArrayList<Guid>();
-    private final List<GlusterBrickEntity> bricksWithChangedStatus = new ArrayList<GlusterBrickEntity>();
+    private final List<GlusterVolumeEntity> existingVolumes = new ArrayList<>();
+    private final List<Guid> removedBrickIds = new ArrayList<>();
+    private final List<Guid> addedBrickIds = new ArrayList<>();
+    private final List<GlusterBrickEntity> bricksWithChangedStatus = new ArrayList<>();
 
     @Before
     public void before() {
@@ -391,17 +393,17 @@ public class GlusterSyncJobTest {
         inOrder.verify(brickDao, times(2)).save(argThat(isAddedBrick()));
 
         // add new options
-        Map<String, GlusterVolumeOptionEntity> newOptions = new HashMap<String, GlusterVolumeOptionEntity>();
+        Map<String, GlusterVolumeOptionEntity> newOptions = new HashMap<>();
         newOptions.put(OPTION_AUTH_REJECT, existingReplVol.getOption(OPTION_AUTH_REJECT));
-        List<GlusterVolumeOptionEntity> list1 = new ArrayList<GlusterVolumeOptionEntity>(newOptions.values());
+        List<GlusterVolumeOptionEntity> list1 = new ArrayList<>(newOptions.values());
         Collections.sort(list1);
         inOrder.verify(optionDao, times(1)).saveAll(list1);
 
         // update modified options
-        Map<String, GlusterVolumeOptionEntity> existingOptions = new HashMap<String, GlusterVolumeOptionEntity>();
+        Map<String, GlusterVolumeOptionEntity> existingOptions = new HashMap<>();
         existingReplVol.getOption(OPTION_NFS_DISABLE).setValue(OPTION_VALUE_ON);
         existingOptions.put(OPTION_NFS_DISABLE, existingReplVol.getOption(OPTION_NFS_DISABLE));
-        List<GlusterVolumeOptionEntity> list = new ArrayList<GlusterVolumeOptionEntity>(existingOptions.values());
+        List<GlusterVolumeOptionEntity> list = new ArrayList<>(existingOptions.values());
         Collections.sort(list);
         inOrder.verify(optionDao, times(1)).updateAll("UpdateGlusterVolumeOption", list);
 
@@ -500,7 +502,7 @@ public class GlusterSyncJobTest {
                 if (!(argument instanceof Guid)) {
                     return false;
                 }
-                return ((Guid) argument).equals(existingReplVol.getOption(OPTION_NFS_DISABLE).getId());
+                return argument.equals(existingReplVol.getOption(OPTION_NFS_DISABLE).getId());
             }
         };
     }
@@ -555,7 +557,7 @@ public class GlusterSyncJobTest {
         capacityInfo.setUsedSize(400000L);
         volDetails.setCapacityInfo(capacityInfo);
 
-        List<BrickDetails> brickDetailsList = new ArrayList<BrickDetails>();
+        List<BrickDetails> brickDetailsList = new ArrayList<>();
         for (GlusterBrickEntity brick : volume.getBricks()) {
             BrickDetails brickDetails = new BrickDetails();
             BrickProperties properties = new BrickProperties();
@@ -586,7 +588,7 @@ public class GlusterSyncJobTest {
      * - new volume test-new-vol fetched from gluster (means it was added from gluster cli, and should be added to db<br>
      */
     private Map<Guid, GlusterVolumeEntity> getFetchedVolumesList() {
-        Map<Guid, GlusterVolumeEntity> volumes = new HashMap<Guid, GlusterVolumeEntity>();
+        Map<Guid, GlusterVolumeEntity> volumes = new HashMap<>();
 
         GlusterVolumeEntity fetchedReplVol = createReplVol();
         fetchedReplVol.removeOption(OPTION_AUTH_ALLOW); // option removed
@@ -626,7 +628,7 @@ public class GlusterSyncJobTest {
     }
 
     private List<GlusterServerInfo> getFetchedServersList() {
-        List<GlusterServerInfo> servers = new ArrayList<GlusterServerInfo>();
+        List<GlusterServerInfo> servers = new ArrayList<>();
         servers.add(new GlusterServerInfo(SERVER_ID_1, SERVER_NAME_1, PeerStatus.CONNECTED));
         servers.add(new GlusterServerInfo(SERVER_ID_2, SERVER_NAME_2, PeerStatus.CONNECTED));
         return servers;

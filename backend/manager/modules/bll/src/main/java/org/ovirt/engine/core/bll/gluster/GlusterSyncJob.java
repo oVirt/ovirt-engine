@@ -69,7 +69,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GlusterSyncJob extends GlusterJob {
     private final Logger log = LoggerFactory.getLogger(GlusterSyncJob.class);
-    private static final GlusterSyncJob instance = new GlusterSyncJob();
+    private static GlusterSyncJob instance = null;
     private final AuditLogDirector auditLogDirector;
     private final BackendInternal backend;
 
@@ -79,6 +79,13 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     public static GlusterSyncJob getInstance() {
+        if (instance == null) {
+            synchronized (GlusterSyncJob.class) {
+                if (instance == null) {
+                    instance = new GlusterSyncJob();
+                }
+            }
+        }
         return instance;
     }
 
