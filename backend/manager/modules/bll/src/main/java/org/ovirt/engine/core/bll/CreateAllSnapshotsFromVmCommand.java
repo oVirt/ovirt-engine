@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -147,6 +148,22 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         return cachedSelectedActiveDisks;
     }
 
+    protected List<DiskImage> getDisksListForChecks() {
+        List<DiskImage> disksListForChecks = getDisksList();
+        if (getParameters().getDiskIdsToIgnoreInChecks().isEmpty()) {
+            return disksListForChecks;
+        }
+
+        List<DiskImage> toReturn = new LinkedList<>();
+        for (DiskImage diskImage : disksListForChecks) {
+            if (!getParameters().getDiskIdsToIgnoreInChecks().contains(diskImage.getId())) {
+                toReturn.add(diskImage);
+            }
+        }
+
+        return toReturn;
+    }
+
     protected List<DiskImage> getSnappableVmDisks() {
         List<Disk> disks = getDiskDao().getAllForVm(getVm().getId());
         return ImagesHandler.filterImageDisks(disks, false, true, false);
@@ -154,14 +171,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     private boolean validateStorage() {
         List<DiskImage> vmDisksList = getSnappableVmDisks();
-        if (vmDisksList.size() > 0) {
-            // TODO: Add a validator factory for Cinder and image disks (after disks will be refacored)
-            DiskImagesValidator diskImagesValidator = createDiskImageValidator(vmDisksList);
-            if (!(validate(diskImagesValidator.diskImagesNotLocked())
-                    && validate(diskImagesValidator.diskImagesNotIllegal()))) {
-                return false;
-            }
-        }
         vmDisksList = ImagesHandler.getDisksDummiesForStorageAllocations(vmDisksList);
         List<DiskImage> allDisks = new ArrayList<>(vmDisksList);
 
@@ -637,6 +646,15 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 && validate(vmValidator.vmNotDuringMigration())
                 && validate(vmValidator.vmNotRunningStateless()))) {
             return false;
+        }
+
+        List<DiskImage> disksList = getDisksListForChecks();
+        if (disksList.size() > 0) {
+            DiskImagesValidator diskImagesValidator = createDiskImageValidator(disksList);
+            if (!(validate(diskImagesValidator.diskImagesNotLocked())
+                    && validate(diskImagesValidator.diskImagesNotIllegal()))) {
+                return false;
+            }
         }
 
         return validateStorage();
