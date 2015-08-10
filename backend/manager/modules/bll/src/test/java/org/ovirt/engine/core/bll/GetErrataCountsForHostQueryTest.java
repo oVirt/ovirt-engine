@@ -82,7 +82,7 @@ public class GetErrataCountsForHostQueryTest extends AbstractQueryTest<IdQueryPa
         getQuery().executeQueryCommand();
 
         assertNotNull(getQuery().getQueryReturnValue().getReturnValue());
-        ErrataCounts returnValue = (ErrataCounts) getQuery().getQueryReturnValue().getReturnValue();
+        ErrataCounts returnValue = getQuery().getQueryReturnValue().getReturnValue();
         for (ErrataType type : ErrataType.values()) {
             assertEquals(0, returnValue.getCountByType(type));
         }
@@ -93,7 +93,7 @@ public class GetErrataCountsForHostQueryTest extends AbstractQueryTest<IdQueryPa
         setupToReportErrata(expectedErrata());
         getQuery().executeQueryCommand();
 
-        ErrataCounts counts = (ErrataCounts) getQuery().getQueryReturnValue().getReturnValue();
+        ErrataCounts counts = getQuery().getQueryReturnValue().getReturnValue();
         assertEquals(11, counts.getTotal());
         assertEquals(5, counts.getCountByType(ErrataType.BUGFIX));
         assertEquals(4, counts.getCountByType(ErrataType.ENHANCEMENT));
