@@ -46,8 +46,10 @@ public class GetErrataCountsForHostQueryTest extends AbstractQueryTest<IdQueryPa
     @Mock
     private VdsStatic host;
 
+    @Override
     @Before
-    public void setup() {
+    public void setUp() throws Exception {
+        super.setUp();
         when(getDbFacadeMockInstance().getVdsStaticDao()).thenReturn(vdsStaticDao);
         when(getDbFacadeMockInstance().getProviderDao()).thenReturn(providerDao);
     }
