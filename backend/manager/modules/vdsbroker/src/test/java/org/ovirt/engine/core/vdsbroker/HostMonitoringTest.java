@@ -31,7 +31,7 @@ import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 
 /**
- Host and Vms Monitoring now split to 2 classes - all VMs related tests have been move to {@link org.ovirt.engine.core.vdsbroker.VmsMonitoringTest}
+ Host and Vms Monitoring now split to 2 classes - all VMs related tests have been move to {@link org.ovirt.engine.core.vdsbroker.VmAnalyzerTest}
  */
 @RunWith(MockitoJUnitRunner.class)
 public class HostMonitoringTest {
