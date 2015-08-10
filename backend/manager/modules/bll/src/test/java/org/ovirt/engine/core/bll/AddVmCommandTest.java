@@ -614,6 +614,7 @@ public class AddVmCommandTest {
         mcr.mockConfigValue(ConfigValues.VirtIoScsiEnabled, Version.v3_3, true);
         mcr.mockConfigValue(ConfigValues.ValidNumOfMonitors, Arrays.asList("1,2,4".split(",")));
         mcr.mockConfigValue(ConfigValues.IsMigrationSupported, Version.v3_3, migrationMap);
+        mcr.mockConfigValue(ConfigValues.MaxIoThreadsPerVm, 127);
     }
 
     protected static VM createVm() {

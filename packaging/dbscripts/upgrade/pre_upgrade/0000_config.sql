@@ -288,6 +288,8 @@ select fn_db_add_config_value('HostPackagesUpdateTimeInHours','24','general');
 select fn_db_add_config_value_for_versions_up_to('LiveStorageMigrationBetweenDifferentStorageTypes', 'false', '3.5');
 select fn_db_add_config_value_for_versions_up_to('VmStatsEventsSupported','false','3.5');
 
+select fn_db_add_config_value('MaxIoThreadsPerVm','127','general');
+
 -- by default use no proxy
 select fn_db_add_config_value('SpiceProxyDefault','','general');
 

@@ -163,6 +163,7 @@ public enum ConfigurationValues {
     NetworkSriovSupported,
     HostDevicePassthroughCapabilities,
     LiveStorageMigrationBetweenDifferentStorageTypes,
+    MaxIoThreadsPerVm,
     RefreshLunSupported;
 
     public static enum ConfigAuthType {

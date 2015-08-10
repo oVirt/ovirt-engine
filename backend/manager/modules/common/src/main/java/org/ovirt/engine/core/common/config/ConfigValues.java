@@ -2193,6 +2193,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     ChangeNetworkUnderBridgeInUseSupported,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("127")
+    MaxIoThreadsPerVm,
+
     Invalid
 
 }
