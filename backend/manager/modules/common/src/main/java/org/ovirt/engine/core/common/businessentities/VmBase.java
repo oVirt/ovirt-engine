@@ -21,14 +21,17 @@ import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.IntegerContainedInConfigValueList;
 import org.ovirt.engine.core.common.validation.annotation.NullOrStringContainedInConfigValueList;
+import org.ovirt.engine.core.common.validation.annotation.SizeFromConfigValue;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NExtraName;
 import org.ovirt.engine.core.common.validation.annotation.ValidSerialNumberPolicy;
 import org.ovirt.engine.core.common.validation.annotation.ValidTimeZone;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
+import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.common.validation.group.StartEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
+import org.ovirt.engine.core.common.validation.group.UpdateVm;
 import org.ovirt.engine.core.compat.Guid;
 
 @ValidTimeZone(groups = {CreateEntity.class, UpdateEntity.class, ImportEntity.class, StartEntity.class})
@@ -87,6 +90,12 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @CopyOnNewVersion
     @EditableOnVmStatusField
     @EditableOnTemplate
+    @SizeFromConfigValue(
+            maxConfig = ConfigValues.MaxIoThreadsPerVm,
+            min = 0,
+            groups = { CreateEntity.class, UpdateEntity.class, CreateVm.class, UpdateVm.class },
+            message = "ACTION_TYPE_FAILED_NUM_OF_IOTHREADS_INCORRECT"
+    )
     private int numOfIoThreads;
 
     @EditableOnVmStatusField(isHotsetAllowed = true)

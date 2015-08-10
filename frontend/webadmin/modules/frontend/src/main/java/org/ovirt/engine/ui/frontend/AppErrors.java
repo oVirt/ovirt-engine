@@ -3758,4 +3758,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Authentication Key UUID does not exist.")
     String LIBVIRT_SECRET_UUID_NOT_EXISTS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Num of IO Threads is not in supported limit.")
+    String ACTION_TYPE_FAILED_NUM_OF_IOTHREADS_INCORRECT();
+
 }
