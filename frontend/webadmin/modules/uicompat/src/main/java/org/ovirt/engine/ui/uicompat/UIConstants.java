@@ -2082,7 +2082,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Cannot have more than one non-VLAN network on one interface.")
     String nullOperationTooManyNonVlans();
 
-    @DefaultStringValue("Cannot have a non-VLAN VM network and VLAN-tagged networks on one interface.")
+    @DefaultStringValue("Cannot mix non-VLAN VM network and VLAN-tagged networks on same interface.")
     String nullOperationVmWithVlans();
 
     @DefaultStringValue("disk_type=")
