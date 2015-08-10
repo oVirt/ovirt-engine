@@ -149,7 +149,7 @@ public class VmsMonitoring {
             vdsManager.vmsMonitoringInitFinished();
         } catch (RuntimeException ex) {
             log.error("Failed during vms monitoring on host {} error is: {}", vdsManager.getVdsName(), ex);
-            log.debug("Exception:", ex);
+            log.error("Exception:", ex);
         } finally {
             unlockVmsManager();
         }

@@ -221,6 +221,18 @@ public class VmAnalyzerTest {
     }
 
     @Theory
+    public void vmNotRunningOnHostWithBalloonEnabled(VmTestPairs data) {
+        //given
+        initMocks(data, false);
+        when(vdsManagerVds.isBalloonEnabled()).thenReturn(true);
+        //when
+        assumeTrue(data.vdsmVm() == null);
+        //then
+        vmAnalyzer.analyze();
+        assertTrue(vmAnalyzer.isMovedToDown());
+    }
+
+    @Theory
     public void proceedGuaranteedMemoryCheck() {
         //TODO add tests here
     }
