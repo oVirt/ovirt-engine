@@ -348,12 +348,11 @@ public class VmAnalyzer {
 
     private void proceedBalloonCheck() {
         if (getVdsManager().getCopyVds().isBalloonEnabled()) {
-            VmBalloonInfo balloonInfo = vdsmVm.getVmStatistics().getVmBalloonInfo();
-            Guid vmId = vdsmVm.getVmDynamic().getId();
-            if (dbVm == null) {
+            if (dbVm == null || vdsmVm == null) {
                 return;
             }
-
+            VmBalloonInfo balloonInfo = vdsmVm.getVmStatistics().getVmBalloonInfo();
+            Guid vmId = vdsmVm.getVmDynamic().getId();
             /* last memory is null the first time we check it or when
                we're not getting the balloon info from vdsm
             */
