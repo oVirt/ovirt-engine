@@ -112,12 +112,16 @@ public class ConnectHostToStoragePoolServersCommand extends
     }
 
     private boolean isActiveCinderDomainAvailable() {
+        return isActiveStorageDomainAvailable(StorageType.CINDER);
+    }
+
+    private boolean isActiveStorageDomainAvailable(final StorageType storageType) {
         List<StorageDomain> storageDomains = storageDomainDAO.getAllForStoragePool(getStoragePoolId());
         return CollectionUtils.exists(storageDomains, new Predicate() {
             @Override
             public boolean evaluate(Object o) {
                 StorageDomain storageDomain = (StorageDomain) o;
-                return storageDomain.getStorageType().isCinderDomain() &&
+                return storageDomain.getStorageType() == storageType &&
                         storageDomain.getStatus() == StorageDomainStatus.Active;
             }
         });
