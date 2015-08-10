@@ -52,6 +52,16 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDaoDbFacade<NetworkA
     }
 
     @Override
+    public NetworkAttachment getNetworkAttachmentByNicIdAndNetworkId(Guid nicId, Guid networkId) {
+        Objects.requireNonNull(nicId, "nicId cannot be null");
+        Objects.requireNonNull(networkId, "networkId cannot be null");
+
+        return getCallsHandler().executeRead("GetNetworkAttachmentByNicIdAndNetworkId",
+                networkAttachmentRowMapper,
+                getCustomMapSqlParameterSource().addValue("nic_id", nicId).addValue("network_id", networkId));
+    }
+
+    @Override
     public List<NetworkAttachment> getAllForHost(Guid hostId) {
         return getCallsHandler().executeReadList("GetNetworkAttachmentsByHostId",
                 networkAttachmentRowMapper,
