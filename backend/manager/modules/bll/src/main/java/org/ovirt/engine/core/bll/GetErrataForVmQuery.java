@@ -28,7 +28,7 @@ public class GetErrataForVmQuery<P extends IdQueryParameters> extends QueriesCom
     @Override
     protected void executeQueryCommand() {
         VM vm = vmDao.get(getParameters().getId());
-        if (vm == null || vm.getVmHost() == null) {
+        if (vm == null || vm.getDynamicData().getVmHost() == null) {
             getQueryReturnValue().setReturnValue(Collections.<Erratum> emptyList());
             return;
         }

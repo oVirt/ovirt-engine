@@ -25,14 +25,14 @@ public class GetErratumByIdForVmQuery<P extends HostErratumQueryParameters> exte
     @Override
     protected void executeQueryCommand() {
         VM vm = vmDao.get(getParameters().getId());
-        if (vm == null || vm.getVmHost() == null || vm.getProviderId() == null) {
+        if (vm == null || vm.getDynamicData().getVmHost() == null || vm.getProviderId() == null) {
             return;
         }
 
         Provider<?> provider = providerDao.get(vm.getProviderId());
         if (provider != null) {
             HostProviderProxy proxy = ProviderProxyFactory.getInstance().create(provider);
-            getQueryReturnValue().setReturnValue(proxy.getErratumForHost(vm.getVmHost(), getParameters().getErratumId()));
+            getQueryReturnValue().setReturnValue(proxy.getErratumForHost(vm.getDynamicData().getVmHost(), getParameters().getErratumId()));
         }
     }
 }

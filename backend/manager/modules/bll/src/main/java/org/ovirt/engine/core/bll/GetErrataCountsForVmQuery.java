@@ -42,7 +42,7 @@ public class GetErrataCountsForVmQuery<P extends IdQueryParameters> extends Quer
         }
 
         HostProviderProxy proxy = getHostProviderProxy(provider);
-        List<Erratum> errata = proxy.getErrataForHost(vm.getVmHost()); // vm.getVmHost() == vm's hostname
+        List<Erratum> errata = proxy.getErrataForHost(vm.getDynamicData().getVmHost()); // vm.getVmHost() == vm's hostname
         ErrataCounts stats = new ErrataCounts();
         for (Erratum erratum : errata) {
             stats.addToCounts(erratum);
