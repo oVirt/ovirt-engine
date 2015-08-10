@@ -746,7 +746,7 @@ public enum NetworkOperation {
 
         @Override
         public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
-            return appendDetachNetworkSuggestion(getVerb(op1), (NetworkInterfaceModel) op2);
+            return getVerb(op1);
         }
 
         @Override
@@ -781,7 +781,7 @@ public enum NetworkOperation {
 
         @Override
         public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
-            return appendDetachNetworkSuggestion(getVerb(op1), (NetworkInterfaceModel) op2);
+            return getVerb(op1);
         }
 
         @Override
