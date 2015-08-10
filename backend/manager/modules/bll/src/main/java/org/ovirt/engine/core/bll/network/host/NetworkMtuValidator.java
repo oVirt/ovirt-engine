@@ -3,10 +3,8 @@ package org.ovirt.engine.core.bll.network.host;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
@@ -15,6 +13,8 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class NetworkMtuValidator {
 
@@ -74,22 +74,26 @@ public class NetworkMtuValidator {
     }
 
     private boolean networksOnNicMatchMtu(List<Network> networksOnNic) {
-        Set<String> checkNetworks = new HashSet<>(networksOnNic.size());
 
-        for (Network networkOnNic : networksOnNic) {
-            for (Network otherNetworkOnNic : networksOnNic) {
-                if (!checkNetworks.contains(networkOnNic.getName())
-                    && networkOnNic.getMtu() != otherNetworkOnNic.getMtu()
-                    && (NetworkUtils.isNonVmNonVlanNetwork(networkOnNic)
-                    || NetworkUtils.isNonVmNonVlanNetwork(otherNetworkOnNic))) {
-                    return false;
-                }
+        final Network nonVlanNetwork = LinqUtils.firstOrNull(networksOnNic, new Predicate<Network>() {
+            @Override
+            public boolean eval(Network network) {
+                return !NetworkUtils.isVlan(network);
             }
+        });
 
-            checkNetworks.add(networkOnNic.getName());
+        if (nonVlanNetwork == null) {
+            return true;
         }
 
-        return true;
+        final Network mismatchMtuNetwork = LinqUtils.firstOrNull(networksOnNic, new Predicate<Network>() {
+            @Override
+            public boolean eval(Network network) {
+                return network.getMtu() != nonVlanNetwork.getMtu();
+            }
+        });
+
+        return mismatchMtuNetwork == null;
     }
 
 }
