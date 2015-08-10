@@ -80,6 +80,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
         doReturn(memoryImageBuilder).when(cmd).getMemoryImageBuilder();
         doReturn(true).when(cmd).validateCinder();
         doReturn(Guid.newGuid()).when(cmd).getStorageDomainIdForVmMemory(anyList());
+        doReturn(getEmptyDiskList()).when(cmd).getDisksListForChecks();
     }
 
     @Test
@@ -211,6 +212,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
         setUpGeneralValidations();
         setUpDiskValidations();
         doReturn(getNonEmptyDiskList()).when(cmd).getSnappableVmDisks();
+        doReturn(getNonEmptyDiskList()).when(cmd).getDisksListForChecks();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED)).when(diskImagesValidator)
                 .diskImagesNotLocked();
         assertFalse(cmd.canDoAction());
@@ -224,6 +226,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
         setUpGeneralValidations();
         setUpDiskValidations();
         doReturn(getNonEmptyDiskList()).when(cmd).getSnappableVmDisks();
+        doReturn(getNonEmptyDiskList()).when(cmd).getDisksListForChecks();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_ILLEGAL)).when(diskImagesValidator)
                 .diskImagesNotIllegal();
         assertFalse(cmd.canDoAction());
