@@ -61,19 +61,6 @@ public class NetworkMtuValidatorTest {
                     Arrays.asList("netA(1)", "netB(2)"))));
     }
 
-    /**
-     * this is probably not a valid scenario, but validation method allows this.
-     */
-    @Test
-    public void testNetworksOnNicMatchMtuIgnoreMtuDifferenceWhenBothNetworksAreVmNetworks() throws Exception {
-        List<Network> networks = Arrays.asList(createNetwork(1, true, "netA"), createNetwork(2, true, "netB"));
-
-        Map<String, List<Network>> networksOnNics = Collections.singletonMap("nicName", networks);
-
-        NetworkMtuValidator networkMtuValidator = new NetworkMtuValidator(new BusinessEntityMap<>(networks));
-        assertThat(networkMtuValidator.validateMtu(networksOnNics), isValid());
-    }
-
     @Test
     public void testGetNetworksOnNics() throws Exception {
         Network networkA = createNetwork(1, true, "netA");
