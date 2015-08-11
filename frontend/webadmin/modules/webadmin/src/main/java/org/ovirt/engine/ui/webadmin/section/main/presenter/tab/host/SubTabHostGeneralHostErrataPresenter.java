@@ -82,7 +82,9 @@ public class SubTabHostGeneralHostErrataPresenter extends
     @ProxyEvent
     public void onHostSelectionChange(HostSelectionChangeEvent event) {
         updateMainTabSelection(event.getSelectedItems());
-        currentSelectedHost = event.getSelectedItems().get(0);
+        currentSelectedHost = event.getSelectedItems().isEmpty()
+                ? null
+                : event.getSelectedItems().get(0);
         updateModel(currentErrataCountModel);
     }
 
