@@ -258,13 +258,13 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("{0} in Data Center {1}")
     String networkDc(String networkName, String dcName);
 
-    @DefaultMessage("Vnic {0} from VM {1}")
+    @DefaultMessage("vNIC {0} from VM {1}")
     String vnicFromVm(String vnic, String vm);
 
     @DefaultMessage("VM Interface Profile {0} from Network {1}")
     String vnicProfileFromNetwork(String vnicProfile, String network);
 
-    @DefaultMessage("Vnic {0} from Template {1}")
+    @DefaultMessage("vNIC {0} from Template {1}")
     String vnicFromTemplate(String vnic, String template);
 
     @DefaultMessage("Non-VM networks are not supported for Cluster version {0}")
@@ -312,7 +312,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Custom({0})")
     String customSpmPriority(int priority);
-
     @DefaultMessage("Brick Details not supported for this Cluster''s compatibility version({0}).")
     String brickDetailsNotSupportedInClusterCompatibilityVersion(String version);
 
@@ -322,7 +321,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("{0} ({1})")
     String commonMessageWithBrackets(String subject, String inBrackets);
 
-    @DefaultMessage("This Network QoS is used by {0} Vnic Profiles.\nAre you sure you want to remove this Network QoS?\n\n Profiles using this QoS:\n")
+    @DefaultMessage("This Network QoS is used by {0} vNIC Profiles.\nAre you sure you want to remove this Network QoS?\n\n Profiles using this QoS:\n")
     String removeNetworkQoSMessage(int numOfProfiles);
 
     @DefaultMessage("This Storage QoS is used by {0} Disk Profiles.\nAre you sure you want to remove this Storage QoS?\n\n Profiles using this QoS:\n")
