@@ -54,6 +54,10 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
     public AddVdsGroupCommand(T parameters) {
         super(parameters);
         setStoragePoolId(getVdsGroup().getStoragePoolId());
+    }
+
+    @Override
+    protected void init() {
         updateMigrateOnError();
     }
 

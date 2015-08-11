@@ -79,7 +79,10 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
 
     public UpdateVdsGroupCommand(T parameters) {
         this(parameters, null);
+    }
 
+    @Override
+    protected void init() {
         updateMigrateOnError();
     }
 
