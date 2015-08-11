@@ -36,7 +36,7 @@ public class GetErrataForVmQuery<P extends IdQueryParameters> extends QueriesCom
         Provider<?> provider = providerDao.get(vm.getProviderId());
         if (provider != null) {
             HostProviderProxy proxy = ProviderProxyFactory.getInstance().create(provider);
-            getQueryReturnValue().setReturnValue(proxy.getErrataForHost(vm.getVmHost()));
+            getQueryReturnValue().setReturnValue(proxy.getErrataForHost(vm.getDynamicData().getVmHost()));
         } else {
             getQueryReturnValue().setReturnValue(Collections.<Erratum> emptyList());
         }
