@@ -584,7 +584,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
         setExternalHostName(new ListModel<VDS>());
         getExternalHostName().setIsAvailable(false);
-        setExternalHostProviderEnabled(new EntityModel<Boolean>());
+        setExternalHostProviderEnabled(new EntityModel<>(false));
         getExternalHostProviderEnabled().setIsAvailable(false);
         setProviders(new ListModel<Provider<OpenstackNetworkProviderProperties>>());
         getProviders().setIsAvailable(false);
