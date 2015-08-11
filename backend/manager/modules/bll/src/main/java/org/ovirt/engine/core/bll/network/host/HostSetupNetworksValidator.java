@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.network.host;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,6 +19,7 @@ import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
 import org.ovirt.engine.core.bll.validator.HostNetworkQosValidator;
 import org.ovirt.engine.core.bll.validator.NetworkAttachmentValidator;
 import org.ovirt.engine.core.bll.validator.NetworkAttachmentsValidator;
+import org.ovirt.engine.core.bll.validator.network.DetachNetworkUsedByVmValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -52,7 +52,6 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils.ListCreator;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +65,8 @@ public class HostSetupNetworksValidator {
     static final String VAR_INTERFACE_NAME = "interfaceName";
     static final String VAR_LABELED_INTERFACE_NAME = "labeledInterfaceName";
     static final String VAR_NIC_NAME = "nicName";
+    static final String VAR_VM_NAME = "vmName";
+    static final String VAR_VM_NAMES = "vmNames";
     static final String VAR_LABEL = "label";
 
     private final NetworkExclusivenessValidator networkExclusivenessValidator;
@@ -349,20 +350,10 @@ public class HostSetupNetworksValidator {
         for (NetworkAttachment removedAttachment : removedNetworkAttachments) {
             removedNetworks.add(existingNetworkRelatedToAttachment(removedAttachment).getName());
         }
-
-        final List<String> vmNames = getVmInterfaceManager().findActiveVmsUsingNetworks(host.getId(), removedNetworks);
-
-        if (vmNames.isEmpty()) {
-            return ValidationResult.VALID;
-        } else {
-            final List<String> sortedRemovedNetworks = new ArrayList<>(removedNetworks);
-            Collections.sort(sortedRemovedNetworks);
-
-            EngineMessage engineMessage = EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS;
-            return new ValidationResult(engineMessage,
-                LinqUtils.concat(ReplacementUtils.replaceAllWith(VAR_NETWORK_NAMES, sortedRemovedNetworks),
-                    ReplacementUtils.getListVariableAssignmentStringUsingAllValues(engineMessage, vmNames)));
-        }
+        final List<String> vmsNames = getVmInterfaceManager().findActiveVmsUsingNetworks(host.getId(), removedNetworks);
+        final List<String> removedNetworksList = new ArrayList<>(removedNetworks);
+        DetachNetworkUsedByVmValidator detachNetworkUsedByVmValidator = new DetachNetworkUsedByVmValidator(vmsNames, removedNetworksList);
+        return  detachNetworkUsedByVmValidator.validate();
     }
 
     ValidationResult validRemovedBonds(Collection<NetworkAttachment> attachmentsToConfigure) {
@@ -728,7 +719,7 @@ public class HostSetupNetworksValidator {
 
         return new ValidationResult(EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS,
             ReplacementUtils.getVariableAssignmentString(EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS,
-                networkAttachmentId.toString()));
+                    networkAttachmentId.toString()));
 
     }
 

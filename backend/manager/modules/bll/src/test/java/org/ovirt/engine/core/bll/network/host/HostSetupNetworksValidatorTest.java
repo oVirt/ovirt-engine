@@ -11,12 +11,10 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.bll.network.host.HostSetupNetworksValidator.VAR_NETWORK_NAMES;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import static org.ovirt.engine.core.utils.ReplacementUtils.replaceWith;
-import static org.ovirt.engine.core.utils.linq.LinqUtils.concat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +31,6 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -587,57 +584,6 @@ public class HostSetupNetworksValidatorTest {
         networkAttachment.setNetworkId(network.getId());
         networkAttachment.setNetworkName(network.getName());
         return networkAttachment;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testValidateNotRemovingUsedNetworkByVmsWhenUsedByVms() throws Exception {
-        String nameOfNetworkA = "networkA";
-        String nameOfNetworkB = "networkB";
-        Network networkA = createNetworkWithName(nameOfNetworkA);
-        Network networkB = createNetworkWithName(nameOfNetworkB);
-
-        VdsNetworkInterface nicA = createNic("nicA");
-        VdsNetworkInterface nicB = createNic("nicB");
-
-        NetworkAttachment networkAttachmentA = createNetworkAttachment(networkA);
-        networkAttachmentA.setNicId(nicA.getId());
-        NetworkAttachment networkAttachmentB = createNetworkAttachment(networkB);
-        networkAttachmentB.setNicId(nicB.getId());
-
-        HostSetupNetworksValidator validator = spy(new HostSetupNetworksValidatorBuilder()
-            .setParams(new ParametersBuilder()
-                .addRemovedNetworkAttachments(networkAttachmentA, networkAttachmentB)
-                .build())
-            .addExistingInterfaces(Arrays.asList(nicA, nicB))
-            .addExistingAttachments(Arrays.asList(networkAttachmentA, networkAttachmentB))
-            .addNetworks(Arrays.asList(networkA, networkB))
-            .build());
-
-        VmInterfaceManager vmInterfaceManagerMock = mock(VmInterfaceManager.class);
-        doReturn(vmInterfaceManagerMock).when(validator).getVmInterfaceManager();
-
-        List<String> vmNames = Arrays.asList("vmName1", "vmName2");
-        when(vmInterfaceManagerMock.findActiveVmsUsingNetworks(any(Guid.class), any(Collection.class)))
-            .thenReturn(vmNames);
-
-        final List<String> errorNetworkNames = Arrays.asList(nameOfNetworkA, nameOfNetworkB);
-        EngineMessage engineMessage = EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS;
-        assertThat(validator.validateNotRemovingUsedNetworkByVms(),
-                failsWith(engineMessage,
-                        concat(
-                            ReplacementUtils.replaceAllWith(VAR_NETWORK_NAMES, errorNetworkNames),
-                            ReplacementUtils.getListVariableAssignmentStringUsingAllValues(engineMessage, vmNames))));
-
-
-
-
-
-        ArgumentCaptor<Collection> collectionArgumentCaptor = ArgumentCaptor.forClass(Collection.class);
-        verify(vmInterfaceManagerMock).findActiveVmsUsingNetworks(eq(host.getId()), collectionArgumentCaptor.capture());
-        assertThat(collectionArgumentCaptor.getValue().size(), is(2));
-        assertThat(collectionArgumentCaptor.getValue().contains(nameOfNetworkA), is(true));
-        assertThat(collectionArgumentCaptor.getValue().contains(nameOfNetworkB), is(true));
     }
 
     public VdsNetworkInterface createNic(String nicName) {
