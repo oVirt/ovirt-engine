@@ -2353,6 +2353,28 @@ actions:
   description: get all host devices
 - name: /hosts/{host:id}/devices/{device:id}|rel=get
   description: get the specified host device
+- name: /hosts/{host:id}/storageconnectionextensions|rel=get
+  description: get all host's storage connection extensions.
+- name: /hosts/{host:id}/storageconnectionextensions|rel=add
+  description: add a storage connection extensions to the host.
+  request:
+    body:
+      parameterType: StorageConnectionExtension
+      signatures:
+      - mandatoryArguments: {storageconnectionextension.target: 'xs:string', storageconnectionextension.username: 'xs:string', storageconnectionextension.password: 'xs:string'}
+        optionalArguments: {}
+- name: /hosts/{host:id}/storageconnectionextensions|{storageconnectionextension:id}|rel=get
+  description: get the specified host's storage connection extensions.
+- name: /hosts/{host:id}/storageconnectionextensions|{storageconnectionextension:id}|rel=delete
+  description: delete the specified host's storage connection extension.
+- name: /hosts/{host:id}/storageconnectionextensions|{storageconnectionextension:id}|rel=update
+  description: update the specified host's storage connection extension.
+  request:
+    body:
+      parameterType: StorageConnectionExtension
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {storageconnectionextension.target: 'xs:string', storageconnectionextension.username: 'xs:string', storageconnectionextension.password: 'xs:string'}
 - name: /networks|rel=get
   description: get the list of all networks in the system
   request:
