@@ -340,9 +340,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following disks already exist: ${diskAliases}. Please import as a clone.")
     String ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The cluster has an empty processor name.")
-    String ACTION_TYPE_FAILED_CLUSTER_EMPTY_PROCESSOR_NAME();
-
     @DefaultStringValue("Cannot ${action} ${type}. The cluster does not have a defined architecture.")
     String ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE();
 
@@ -1113,12 +1110,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("$type Storage Device")
     String VAR__TYPE__STORAGE_DEVICE();
-
-    @DefaultStringValue("Cannot ${action} ${type}. The chosen disk drive letter is already in use, please select a free one.")
-    String ACTION_TYPE_FAILED_DISK_LETTER_ALREADY_IN_USE();
-
-    @DefaultStringValue("Cannot ${action} ${type}. The VM has exceeded maximum number of available disks.")
-    String ACTION_TYPE_FAILED_DISK_LIMITATION_EXCEEDED();
 
     @DefaultStringValue("Cannot ${action} ${type}. The disk is already attached to VM.")
     String ACTION_TYPE_FAILED_DISK_ALREADY_ATTACHED();
@@ -2020,9 +2011,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Disk ${DiskName} is being removed.")
     String ACTION_TYPE_FAILED_DISK_IS_BEING_REMOVED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Disk ${DiskName} OVF data is currently being updated.")
-    String ACTION_TYPE_FAILED_OVF_DISK_IS_BEING_UPDATED();
-
     @DefaultStringValue("Cannot ${action} ${type}. Storage Domain OVF data is currently being updated.")
     String ACTION_TYPE_FAILED_DOMAIN_OVF_ON_UPDATE();
 
@@ -2504,9 +2492,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The ISO Storage Domain is being used by the following VMs: ${VmNames}.")
     String ERROR_CANNOT_DEACTIVATE_STORAGE_DOMAIN_WITH_ISO_ATTACHED();
-
-    @DefaultStringValue("MAC Address is in use.")
-    String MAC_ADDRESS_IS_IN_USE();
 
     @DefaultStringValue("General command validation failure.")
     String CAN_DO_ACTION_GENERAL_FAILURE();
@@ -3335,9 +3320,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Disk snapshot cannot be resized.")
     String ACTION_TYPE_FAILED_CANNOT_RESIZE_DISK_SNAPSHOT();
 
-    @DefaultStringValue("Cannot ${action}. The selected disk format is not supported.")
-    String ACTION_TYPE_FAILED_NOT_SUPPORTED_IMAGE_FORMAT();
-
     @DefaultStringValue("$action extend image size")
     String VAR__ACTION__EXTEND_IMAGE_SIZE();
 
@@ -3421,9 +3403,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. A VM is being created and attached to pool ${VmPoolName}.")
     String ACTION_TYPE_FAILED_VM_IS_BEING_CREATED_AND_ATTACHED_TO_POOL();
-
-    @DefaultStringValue("Cannot ${action} ${type}. VM ${VmName} is being attached to pool ${VmPoolName}.")
-    String ACTION_TYPE_FAILED_VM_IS_BEING_ATTACHED_TO_POOL();
 
     @DefaultStringValue("$filterType external")
     String VAR__FILTERTYPE__INTERNAL();
@@ -3571,9 +3550,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. iSCSI Bond is only supported on Data Center compatibility versions 3.4 and higher.")
     String ISCSI_BOND_NOT_SUPPORTED();
-
-    @DefaultStringValue("Cannot ${action} ${type}. An IDE disk can't be read-only.")
-    String ACTION_TYPE_FAILED_IDE_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR();
 
     @DefaultStringValue("Cannot ${action} ${type}. Custom serial number must be non-empty when \"Custom\" serial number policy is specified.")
     String ACTION_TYPE_FAILED_INVALID_SERIAL_NUMBER();
