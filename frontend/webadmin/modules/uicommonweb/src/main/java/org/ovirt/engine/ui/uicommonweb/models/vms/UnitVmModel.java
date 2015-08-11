@@ -2765,7 +2765,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         if (getIoThreadsEnabled().getEntity()) {
-            getNumOfIoThreads().validateEntity(new IValidation[] {new NotNullIntegerValidation(1, Integer.MAX_VALUE)});
+            getNumOfIoThreads().validateEntity(new IValidation[] {new NotNullIntegerValidation(1, AsyncDataProvider.getInstance().getMaxIoThreadsPerVm())});
         }
 
         setValidTab(TabName.RESOURCE_ALLOCATION_TAB, getMinAllocatedMemory().getIsValid() && getNumOfIoThreads().getIsValid());
