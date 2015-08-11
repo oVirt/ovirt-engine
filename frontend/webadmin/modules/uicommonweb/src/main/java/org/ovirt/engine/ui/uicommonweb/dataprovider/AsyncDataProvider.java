@@ -3746,6 +3746,10 @@ public class AsyncDataProvider {
                 version.toString());
     }
 
+    public Integer getMaxIoThreadsPerVm() {
+        return (Integer) getConfigValuePreConverted(ConfigurationValues.MaxIoThreadsPerVm);
+    }
+
     public ArrayList<VDSGroup> getClusterByServiceList(List<VDSGroup> list,
             boolean supportsVirtService,
             boolean supportsGlusterService) {
