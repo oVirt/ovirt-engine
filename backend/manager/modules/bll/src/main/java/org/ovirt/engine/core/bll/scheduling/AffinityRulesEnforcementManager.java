@@ -45,12 +45,10 @@ import org.slf4j.LoggerFactory;
 public class AffinityRulesEnforcementManager implements BackendService {
     //Fields
     protected Map<VDSGroup, AffinityRulesEnforcementPerCluster> perClusterMap;
-    private Iterator<AffinityRulesEnforcementPerCluster> AreClusterIterator = Collections.emptyIterator();
+    private Iterator<AffinityRulesEnforcementPerCluster> areClusterIterator = Collections.emptyIterator();
     private int currentInterval;
 
     protected Logger log = LoggerFactory.getLogger(getClass());
-
-    private String jobId;
 
     @Inject
     protected AuditLogDirector auditLogDirector;
@@ -69,8 +67,8 @@ public class AffinityRulesEnforcementManager implements BackendService {
         //Check that AffinityRulesEnforcementPerCluster exist in perClusterMap for each cluster in the engine.
         List<VDSGroup> vdsGroups = getClusters();
 
-        for(VDSGroup vdsGroup : vdsGroups) {
-            if(!perClusterMap.containsKey(vdsGroup)) {
+        for (VDSGroup vdsGroup : vdsGroups) {
+            if (!perClusterMap.containsKey(vdsGroup)) {
                 AffinityRulesEnforcementPerCluster perCluster = perClusterProvider.get();
                 perCluster.setClusterId(vdsGroup.getId());
                 perClusterMap.put(vdsGroup, perCluster);
@@ -78,13 +76,12 @@ public class AffinityRulesEnforcementManager implements BackendService {
         }
 
         // Initialize Migrations in perClusters.
-        for(AffinityRulesEnforcementPerCluster perCluster : perClusterMap.values()) {
+        for (AffinityRulesEnforcementPerCluster perCluster : perClusterMap.values()) {
             perCluster.initMigrations();
         }
 
         AuditLogableBase logable = new AuditLogableBase();
         auditLogDirector.log(logable, AuditLogType.AFFINITY_RULES_ENFORCEMENT_MANAGER_START);
-
 
         scheduleJobs(currentInterval, getInitialInterval());
     }
@@ -94,7 +91,7 @@ public class AffinityRulesEnforcementManager implements BackendService {
     }
 
     private Integer getInitialInterval() {
-        return Config.<Integer> getValue(ConfigValues.AffinityRulesEnforcementManagerInitialDelay);
+        return Config.<Integer>getValue(ConfigValues.AffinityRulesEnforcementManagerInitialDelay);
     }
 
     /**
@@ -103,7 +100,7 @@ public class AffinityRulesEnforcementManager implements BackendService {
      * @return - The regular interval from the ConfigValues.
      */
     private Integer getRegularInterval() {
-        return Config.<Integer> getValue(ConfigValues.AffinityRulesEnforcementManagerRegularInterval);
+        return Config.<Integer>getValue(ConfigValues.AffinityRulesEnforcementManagerRegularInterval);
     }
 
     private Integer getMaximumMigrationTries() {
@@ -118,7 +115,7 @@ public class AffinityRulesEnforcementManager implements BackendService {
      * @return - The long interval from the ConfigValues.
      */
     private Integer getStandbyInterval() {
-        return Config.<Integer> getValue(ConfigValues.AffinityRulesEnforcementManagerStandbyInterval);
+        return Config.<Integer>getValue(ConfigValues.AffinityRulesEnforcementManagerStandbyInterval);
     }
 
     /**
@@ -130,18 +127,18 @@ public class AffinityRulesEnforcementManager implements BackendService {
 
         log.debug("Affinity Rules Enforcement Manager interval reached.");
 
-        if (AreClusterIterator == null || !AreClusterIterator.hasNext()) {
-            AreClusterIterator = perClusterMap.values().iterator();
+        if (areClusterIterator == null || !areClusterIterator.hasNext()) {
+            areClusterIterator = perClusterMap.values().iterator();
         }
 
         AffinityRulesEnforcementPerCluster perCluster;
 
         while (true) {
-            if (!AreClusterIterator.hasNext()) {
+            if (!areClusterIterator.hasNext()) {
                 return;
             }
 
-            perCluster = AreClusterIterator.next();
+            perCluster = areClusterIterator.next();
             log.debug("Checking affinity rules compliance for cluster {}", perCluster.getClusterId());
 
             if (perCluster.checkIfCurrentlyMigrating()) {
@@ -162,8 +159,7 @@ public class AffinityRulesEnforcementManager implements BackendService {
             currentInterval = getStandbyInterval();
             perCluster.setMigrationTries(0);
             return;
-        }
-        else if(currentInterval > getRegularInterval()) {
+        } else if (currentInterval > getRegularInterval()) {
             currentInterval = getRegularInterval();
             perCluster.setMigrationTries(0);
         }
@@ -172,8 +168,8 @@ public class AffinityRulesEnforcementManager implements BackendService {
         vm = perCluster.chooseNextVmToMigrate();
 
         // No action for the current cluster, check if other clusters are OK
-        while (vm == null && AreClusterIterator.hasNext()) {
-            perCluster = AreClusterIterator.next();
+        while (vm == null && areClusterIterator.hasNext()) {
+            perCluster = areClusterIterator.next();
 
             if (perCluster.checkIfCurrentlyMigrating()) {
                 log.debug("Migration in progress, checking different cluster.");
@@ -202,14 +198,14 @@ public class AffinityRulesEnforcementManager implements BackendService {
 
     protected VdcReturnValueBase executeMigration(MigrateVmParameters parameters) {
         return Backend.getInstance().runInternalAction(VdcActionType.MigrateVm,
-                    parameters,
-                    ExecutionHandler.createInternalJobContext());
+                parameters,
+                ExecutionHandler.createInternalJobContext());
     }
 
     private List<Guid> getInitialHosts() {
         List<Guid> initialHosts = new ArrayList<>();
 
-        for(VDS host : vdsDao.getAll()) {
+        for (VDS host : vdsDao.getAll()) {
             initialHosts.add(host.getId());
         }
 
@@ -226,8 +222,8 @@ public class AffinityRulesEnforcementManager implements BackendService {
         //Check that AffinityRulesEnforcementPerCluster exist in perClusterMap for each cluster in the engine.
         List<VDSGroup> vdsGroups = getClusters();
 
-        for(VDSGroup vdsGroup : vdsGroups) {
-            if(!perClusterMap.containsKey(vdsGroup)) {
+        for (VDSGroup vdsGroup : vdsGroups) {
+            if (!perClusterMap.containsKey(vdsGroup)) {
                 AffinityRulesEnforcementPerCluster perCluster = perClusterProvider.get();
                 perCluster.setClusterId(vdsGroup.getId());
                 perClusterMap.put(vdsGroup, perCluster);
@@ -235,14 +231,14 @@ public class AffinityRulesEnforcementManager implements BackendService {
         }
 
         // Initialize Migrations in perClusters.
-        for(AffinityRulesEnforcementPerCluster perCluster : perClusterMap.values()) {
+        for (AffinityRulesEnforcementPerCluster perCluster : perClusterMap.values()) {
             perCluster.initMigrations();
         }
     }
 
     private void scheduleJobs(long regularInterval, long longInterval) {
         /* start the interval refreshing */
-        jobId = Injector.get(SchedulerUtilQuartzImpl.class).scheduleAFixedDelayJob(
+        Injector.get(SchedulerUtilQuartzImpl.class).scheduleAFixedDelayJob(
                 this,
                 "refresh",
                 new Class[] {},

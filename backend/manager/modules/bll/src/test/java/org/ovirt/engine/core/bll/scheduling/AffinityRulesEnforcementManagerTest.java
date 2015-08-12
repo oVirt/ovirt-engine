@@ -117,9 +117,9 @@ public class AffinityRulesEnforcementManagerTest {
                 super.wakeup();
 
                 addInjectionsToPerClusterObjects();
-                }
+            }
 
-                @Override
+            @Override
             public void refresh() {
                 addInjectionsToPerClusterObjects();
                 super.refresh();
@@ -127,7 +127,7 @@ public class AffinityRulesEnforcementManagerTest {
 
             private void addInjectionsToPerClusterObjects() {
                 //Adding affinity group dao to all perCluster objects in the maps.
-                for(Entry<VDSGroup, AffinityRulesEnforcementPerCluster> entry: arem.perClusterMap.entrySet()) {
+                for (Entry<VDSGroup, AffinityRulesEnforcementPerCluster> entry : arem.perClusterMap.entrySet()) {
                     AffinityRulesEnforcementPerCluster perCluster = perClusterProvider.get();
                     perCluster.setClusterId(entry.getKey().getId());
                     perCluster.setSchedulingManager(schedulingManager);
@@ -149,7 +149,7 @@ public class AffinityRulesEnforcementManagerTest {
         arem.wakeup();
         arem.refresh();
 
-        for(AffinityRulesEnforcementPerCluster perCluster : arem.perClusterMap.values()) {
+        for (AffinityRulesEnforcementPerCluster perCluster : arem.perClusterMap.values()) {
             perCluster.wakeup();
         }
     }
@@ -220,7 +220,7 @@ public class AffinityRulesEnforcementManagerTest {
 
         //Adding new Vm for both affinity groups
         Guid vmId = addNewVm(vdsGroup.getId(), true);
-        for(Guid id : agList) {
+        for (Guid id : agList) {
             AffinityGroup ag = _affinityGroupDao.get(id);
             List<Guid> entities = ag.getEntityIds();
             entities.add(vmId);
