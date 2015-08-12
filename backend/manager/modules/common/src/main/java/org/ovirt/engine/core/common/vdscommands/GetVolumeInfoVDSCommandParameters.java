@@ -18,6 +18,11 @@ public class GetVolumeInfoVDSCommandParameters extends VdsIdVDSCommandParameters
         this.imageId = imageId;
     }
 
+    public GetVolumeInfoVDSCommandParameters(Guid storagePoolId, Guid storageDomainId,
+                                             Guid imageGroupId, Guid imageId) {
+        this(null, storagePoolId, storageDomainId, imageGroupId, imageId);
+    }
+
     public GetVolumeInfoVDSCommandParameters() {}
 
     public Guid getStoragePoolId() {

@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
+import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.GetVolumeInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -306,11 +308,27 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         return getParameters().isImportEntity() ? getDestinationDiskImage() : getDiskImage();
     }
 
+    private VDSReturnValue getVolumeInfo(Guid storagePoolId, Guid newStorageDomainID, Guid newImageGroupId,
+                                         Guid newImageId) {
+        if (isDataCenterWithSpm()) {
+            return runVdsCommand(
+                    VDSCommandType.GetImageInfo,
+                    new GetImageInfoVDSCommandParameters(storagePoolId, newStorageDomainID, newImageGroupId,
+                            newImageId));
+        } else {
+            return VdsCommandsHelper.runVdsCommandWithFailover(
+                    VDSCommandType.GetVolumeInfo,
+                    new GetVolumeInfoVDSCommandParameters(storagePoolId, newStorageDomainID, newImageGroupId,
+                            newImageId), storagePoolId, null);
+        }
+    }
+
     @Override
     protected void endSuccessfully() {
         if (getDestinationDiskImage() != null) {
             Guid storagePoolId = getDestinationDiskImage().getStoragePoolId() != null ? getDestinationDiskImage()
                     .getStoragePoolId() : Guid.Empty;
+            setStoragePoolId(storagePoolId);
 
             Guid newImageGroupId = getDestinationDiskImage().getId() != null ? getDestinationDiskImage()
                     .getId() : Guid.Empty;
@@ -319,10 +337,8 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
             // complete IRS data to DB disk image:
             try {
-                DiskImage newImageIRS = (DiskImage) runVdsCommand(
-                        VDSCommandType.GetImageInfo,
-                        new GetImageInfoVDSCommandParameters(storagePoolId, newStorageDomainID, newImageGroupId,
-                                newImageId)).getReturnValue();
+                DiskImage newImageIRS = (DiskImage) getVolumeInfo(storagePoolId, newStorageDomainID, newImageGroupId,
+                        newImageId).getReturnValue();
 
                 if (newImageIRS != null) {
                     completeImageData(newImageIRS);
