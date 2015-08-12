@@ -40,9 +40,4 @@ public class GetVmsFromExternalProviderVDSCommand<T extends GetVmsFromExternalPr
     protected Object getReturnValueFromBroker() {
         return vmListReturn;
     }
-
-    @Override
-    protected boolean getIsPrintReturnValue() {
-        return false;
-    }
 }

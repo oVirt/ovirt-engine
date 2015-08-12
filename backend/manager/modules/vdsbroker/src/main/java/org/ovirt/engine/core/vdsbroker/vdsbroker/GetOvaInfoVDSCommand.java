@@ -34,9 +34,4 @@ public class GetOvaInfoVDSCommand<T extends GetOvaInfoParameters> extends VdsBro
     protected Object getReturnValueFromBroker() {
         return vmListReturn;
     }
-
-    @Override
-    protected boolean getIsPrintReturnValue() {
-        return false;
-    }
 }
