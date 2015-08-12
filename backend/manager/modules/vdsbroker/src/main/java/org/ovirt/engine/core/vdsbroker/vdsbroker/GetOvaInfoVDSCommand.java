@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.vdscommands.GetOvaInfoParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetOvaInfoVDSCommand<T extends GetOvaInfoParameters> extends VdsBrokerCommand<T> {
-    private VMListReturnForXmlRpc vmListReturn;
+    private OneVmReturnForXmlRpc vmReturn;
 
     public GetOvaInfoVDSCommand(T parameters) {
         super(parameters);
@@ -16,9 +16,9 @@ public class GetOvaInfoVDSCommand<T extends GetOvaInfoParameters> extends VdsBro
 
     @Override
     protected void executeVdsBrokerCommand() {
-        vmListReturn = getBroker().getExternalVmFromOva(getParameters().getPath());
+        vmReturn = getBroker().getExternalVmFromOva(getParameters().getPath());
         proceedProxyReturnValue();
-        Map<String, Object> map = vmListReturn.vmList[0];
+        Map<String, Object> map = vmReturn.vm;
         map.put(VdsProperties.vm_guid, Guid.newGuid().toString());
         map.put(VdsProperties.vm_arch, ArchitectureType.x86_64.toString());
         VM vm = VdsBrokerObjectsBuilder.buildVmsDataFromExternalProvider(map);
@@ -27,12 +27,12 @@ public class GetOvaInfoVDSCommand<T extends GetOvaInfoParameters> extends VdsBro
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return vmListReturn.status;
+        return vmReturn.status;
     }
 
     @Override
     protected Object getReturnValueFromBroker() {
-        return vmListReturn;
+        return vmReturn;
     }
 
     @Override
