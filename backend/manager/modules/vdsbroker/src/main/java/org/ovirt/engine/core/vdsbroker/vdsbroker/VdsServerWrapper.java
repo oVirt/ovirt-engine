@@ -2029,10 +2029,10 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public VMListReturnForXmlRpc getExternalVmFromOva(String ovaPath) {
+    public OneVmReturnForXmlRpc getExternalVmFromOva(String ovaPath) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getExternalVmFromOva(ovaPath);
-            return new VMListReturnForXmlRpc(xmlRpcReturnValue);
+            return new OneVmReturnForXmlRpc(xmlRpcReturnValue);
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
         }

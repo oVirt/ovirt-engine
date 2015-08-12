@@ -2093,7 +2093,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public VMListReturnForXmlRpc getExternalVmFromOva(String ovaPath) {
+    public OneVmReturnForXmlRpc getExternalVmFromOva(String ovaPath) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.getExternalVmFromOva")
                         .withParameter("ova_path", ovaPath)
@@ -2101,6 +2101,6 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("vmList")
                 .withResponseType(Object[].class);
-        return new VMListReturnForXmlRpc(response);
+        return new OneVmReturnForXmlRpc(response);
     }
 }
