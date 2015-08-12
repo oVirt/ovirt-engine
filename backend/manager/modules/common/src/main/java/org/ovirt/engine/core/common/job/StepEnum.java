@@ -27,6 +27,9 @@ public enum StepEnum {
     REBALANCING_VOLUME,
     REMOVING_BRICKS,
 
+    // Storage
+    ALLOCATE_VOLUME,
+
     /**
      * Maps VDSM tasks type to {@code StepEnum} so it can be resolvable as readable description
      */
