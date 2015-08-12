@@ -100,9 +100,7 @@ public class ConnectHostToStoragePoolServersCommand extends
     }
 
     private boolean connectStorageServersByType(StorageType storageType, List<StorageServerConnections> connections) {
-        if (storageType == StorageType.ISCSI) {
-            connections = ISCSIStorageHelper.updateIfaces(connections, getVds().getId());
-        }
+        StorageHelperDirector.getInstance().getItem(storageType).prepareConnectHostToStoragePoolServers(getParameters(), connections);
 
         Map<String, String> retValues = (Map<String, String>) runVdsCommand(
                         VDSCommandType.ConnectStorageServer,
