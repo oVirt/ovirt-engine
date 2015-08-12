@@ -462,7 +462,6 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        condition=lambda self: self.environment[oenginecons.PKIEnv.RENEW],
         before=(
             oenginecons.Stages.CA_AVAILABLE,
         ),
@@ -544,29 +543,30 @@ class Plugin(plugin.PluginBase):
                         ),
                     )
 
-        if self._expired(
-            X509.load_cert(
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
-            )
-        ):
-            self._ca_was_renewed = True
-            self.logger.info(_('Renewing CA'))
-            self.execute(
-                args=(
-                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_CREATE,
-                    '--renew',
-                    '--keystore-password=%s' % (
-                        self.environment[oenginecons.PKIEnv.STORE_PASS],
+        if self.environment[oenginecons.PKIEnv.RENEW]:
+            if self._expired(
+                X509.load_cert(
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+                )
+            ):
+                self._ca_was_renewed = True
+                self.logger.info(_('Renewing CA'))
+                self.execute(
+                    args=(
+                        oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_CREATE,
+                        '--renew',
+                        '--keystore-password=%s' % (
+                            self.environment[oenginecons.PKIEnv.STORE_PASS],
+                        ),
                     ),
-                ),
-                envAppend={
-                    'JAVA_HOME': self.environment[
-                        oengcommcons.ConfigEnv.JAVA_HOME
-                    ],
-                },
-            )
+                    envAppend={
+                        'JAVA_HOME': self.environment[
+                            oengcommcons.ConfigEnv.JAVA_HOME
+                        ],
+                    },
+                )
 
-        self._enrollCertificates(True, uninstall_files)
+            self._enrollCertificates(True, uninstall_files)
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
