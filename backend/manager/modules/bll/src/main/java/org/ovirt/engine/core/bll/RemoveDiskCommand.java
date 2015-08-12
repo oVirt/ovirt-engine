@@ -142,12 +142,19 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             return false;
         }
 
-        if (diskImage.getVmEntityType() != null && diskImage.getVmEntityType().isTemplateType()) {
-            // Temporary fix until re factoring vm_images_view and image_storage_domain_view
-            diskImage.setStorageIds(getDiskImageDao().get(diskImage.getImageId()).getStorageIds());
-        } else if ((getParameters().getStorageDomainId() == null) || (Guid.Empty.equals(getParameters().getStorageDomainId()))) {
+        boolean isVmTemplateType = diskImage.getVmEntityType() != null &&
+                diskImage.getVmEntityType().isTemplateType();
+
+        if (Guid.isNullOrEmpty(getParameters().getStorageDomainId())) {
+            if (isVmTemplateType) {
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CANT_DELETE_TEMPLATE_DISK_WITHOUT_SPECIFYING_DOMAIN);
+            }
             getParameters().setStorageDomainId(diskImage.getStorageIds().get(0));
             setStorageDomainId(diskImage.getStorageIds().get(0));
+        }
+
+        if (isVmTemplateType) {
+            diskImage.setStorageIds(getDiskImageDao().get(diskImage.getImageId()).getStorageIds());
         }
 
         if (!diskImage.getStorageIds().contains(getParameters().getStorageDomainId())) {

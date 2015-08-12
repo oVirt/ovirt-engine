@@ -1147,6 +1147,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Provided wrong storage domain, which is not related to disk.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_IS_WRONG();
 
+    @DefaultStringValue("Cannot ${action} ${type}. A storage domain must be specified when deleting one of a template's disk's copies.")
+    String ACTION_TYPE_FAILED_CANT_DELETE_TEMPLATE_DISK_WITHOUT_SPECIFYING_DOMAIN();
+
     @DefaultStringValue("Cannot ${action} ${type}. The chosen CPU is not supported.")
     String ACTION_TYPE_FAILED_CPU_NOT_FOUND();
 
