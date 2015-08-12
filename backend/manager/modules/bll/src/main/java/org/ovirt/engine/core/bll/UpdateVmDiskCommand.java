@@ -765,11 +765,23 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 getOldDisk().getSgio() != getNewDisk().getSgio();
     }
 
+    /**
+     * Command's canDoAction conditions: requiring all connected VMs down.
+     * @return true - if disk type is IMAGE or is CINDER, and updating quota
+     */
     private boolean updateImageParametersRequiringVmDownRequested() {
-        if (getOldDisk().getDiskStorageType().isInternal()) {
+        if (!getOldDisk().getDiskStorageType().isInternal()) {
             return false;
         }
         Guid oldQuotaId = ((DiskImage) getOldDisk()).getQuotaId();
+        /*
+         * oldQuotaId == null : Initial quota, not assigned yet.
+         * happens when: quota is disabled or,
+         * quota enabled, but disk never attached with a quota
+         */
+        if (oldQuotaId == null) {
+            return false;
+        }
         return !Objects.equals(oldQuotaId, getQuotaId());
     }
 
