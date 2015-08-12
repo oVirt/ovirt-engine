@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -12,6 +13,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public interface IStorageHelper {
+
+    void prepareConnectHostToStoragePoolServers(ConnectHostToStoragePoolServersParameters parameters, List<StorageServerConnections> connections);
 
     boolean connectStorageToDomainByVdsId(StorageDomain storageDomain, Guid vdsId);
 
