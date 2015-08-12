@@ -63,7 +63,6 @@ public class AffinityRulesEnforcementPerCluster {
         this.migrationTries = 0;
     }
 
-
     public void setClusterId(Guid clusterId) {
         this.clusterId = clusterId;
     }
@@ -92,7 +91,7 @@ public class AffinityRulesEnforcementPerCluster {
     public boolean lastMigrationFailed() {
 
         //Checking last migration tail existence and that it's status is failure.
-        if( lastMigrations.isEmpty()) {
+        if (lastMigrations.isEmpty()) {
             return false; //lastMigrations empty so migration didn't fail.
         }
 
@@ -119,9 +118,9 @@ public class AffinityRulesEnforcementPerCluster {
         List<AffinityGroup> allHardAffinityGroups = getAllAffinityGroups();
 
         //Filtering all non enforcing groups (Leaving only hard affinity groups).
-        for(Iterator<AffinityGroup> it = allHardAffinityGroups.iterator(); it.hasNext();) {
+        for (Iterator<AffinityGroup> it = allHardAffinityGroups.iterator(); it.hasNext(); ) {
             AffinityGroup ag = it.next();
-            if(!ag.isEnforcing()) {
+            if (!ag.isEnforcing()) {
                 it.remove();
             }
         }
@@ -132,7 +131,7 @@ public class AffinityRulesEnforcementPerCluster {
                 unifiedPositiveAffinityGroups);
 
         // Add negative affinity groups
-        for (AffinityGroup ag: allHardAffinityGroups) {
+        for (AffinityGroup ag : allHardAffinityGroups) {
             if (ag.isPositive()) {
                 continue;
             }
@@ -142,14 +141,15 @@ public class AffinityRulesEnforcementPerCluster {
 
         // Create a set of all VMs in affinity groups
         Set<Guid> allVms = new HashSet<>();
-        for (AffinityGroup group: unifiedAffinityGroups) {
+        for (AffinityGroup group : unifiedAffinityGroups) {
             allVms.addAll(group.getEntityIds());
         }
 
         Map<Guid, Guid> vmToHost = createMapOfVmToHost(allVms);
 
         // There is no need to migrate when no collision was detected
-        Set<AffinityGroup> violatedAffinityGroups = checkForAffinityGroupViolations(unifiedAffinityGroups, vmToHost, FailMode.GET_ALL);
+        Set<AffinityGroup> violatedAffinityGroups =
+                checkForAffinityGroupViolations(unifiedAffinityGroups, vmToHost, FailMode.GET_ALL);
         if (violatedAffinityGroups.isEmpty()) {
             log.debug("No affinity group collision detected for cluster {}. Standing by.", clusterId);
             return null;
@@ -160,7 +160,7 @@ public class AffinityRulesEnforcementPerCluster {
         List<AffinityGroup> affGroupsBySize = new ArrayList<>(violatedAffinityGroups);
         Collections.sort(affGroupsBySize, new AffinityGroupComparator());
 
-        for (AffinityGroup affinityGroup: affGroupsBySize) {
+        for (AffinityGroup affinityGroup : affGroupsBySize) {
             Guid candidateVm;
 
             if (affinityGroup.isPositive()) {
@@ -200,10 +200,10 @@ public class AffinityRulesEnforcementPerCluster {
     private Map<Guid, Guid> createMapOfVmToHost(Set<Guid> allVms) {
         Map<Guid, Guid> outputMap = new HashMap<>();
 
-        for(VM vm : vmDao.getVmsByIds(new ArrayList<>(allVms))) {
+        for (VM vm : vmDao.getVmsByIds(new ArrayList<>(allVms))) {
             Guid hostId = vm.getRunOnVds();
 
-            if(hostId != null) {
+            if (hostId != null) {
                 outputMap.put(vm.getId(), hostId);
             }
         }
@@ -216,7 +216,7 @@ public class AffinityRulesEnforcementPerCluster {
      * the other VMs.
      *
      * @param affinityGroup broken affinity rule
-     * @param vmToHost vm to host assignments
+     * @param vmToHost      vm to host assignments
      * @return a vm that should migrate
      */
     private Guid findVmViolatingNegativeAg(AffinityGroup affinityGroup, Map<Guid, Guid> vmToHost) {
@@ -225,7 +225,7 @@ public class AffinityRulesEnforcementPerCluster {
 
         // When a VM runs on an already occupied host, report both
         // the vm and the previous occupant as candidates for migration
-        for (Guid vm: affinityGroup.getEntityIds()) {
+        for (Guid vm : affinityGroup.getEntityIds()) {
             Guid host = vmToHost.get(vm);
 
             // Ignore stopped VMs
@@ -250,17 +250,18 @@ public class AffinityRulesEnforcementPerCluster {
     /**
      * Select a VM from the broken affinity group that is running on a host with the minimal amount
      * of VMs from the broken affinity group.
-     *
+     * <p>
      * Ex.: Host1: A, B, C, D  Host2: E, F  -> select E or F
+     *
      * @param affinityGroup broken affinity group
-     * @param vmToHost vm to host assignments
+     * @param vmToHost      vm to host assignments
      * @return a VM that should migrate
      */
     private Guid findVmViolatingPositiveAg(AffinityGroup affinityGroup, Map<Guid, Guid> vmToHost) {
         Map<Guid, List<Guid>> hostCount = new HashMap<>();
 
         // Prepare affinity group related host counts
-        for (Guid vm: affinityGroup.getEntityIds()) {
+        for (Guid vm : affinityGroup.getEntityIds()) {
             Guid host = vmToHost.get(vm);
 
             // Ignore stopped VMs
@@ -296,7 +297,7 @@ public class AffinityRulesEnforcementPerCluster {
         int maxNumberOfVms = Integer.MAX_VALUE;
         Guid bestHost = null;
 
-        for(Map.Entry<Guid, ? extends Collection<Guid>> entry: mapOfHostsToVms.entrySet()) {
+        for (Map.Entry<Guid, ? extends Collection<Guid>> entry : mapOfHostsToVms.entrySet()) {
             if (entry.getValue().size() < maxNumberOfVms) {
                 maxNumberOfVms = entry.getValue().size();
                 bestHost = entry.getKey();
@@ -308,21 +309,21 @@ public class AffinityRulesEnforcementPerCluster {
 
     /**
      * Create a map of Host to VMs and VM to Host assignments.
-     *
+     * <p>
      * The return value is a map where each host (key) has a set of VMs
      * running on it assigned as value.
-     *
+     * <p>
      * vmToHost is filled with VM -> Host map when not null.
      */
     protected Map<Guid, Set<Guid>> createMapOfHostsToVms(Iterable<Guid> vms,
             Map<Guid, Guid> vmToHost) {
         Map<Guid, Set<Guid>> output = new HashMap<>();
-        for(Guid vmId : vms) {
+        for (Guid vmId : vms) {
             VM vm = vmDao.get(vmId);
             Guid vdsId = vm.getRunOnVds();
 
             // We will not add any Vms which are not running on any host.
-            if(vdsId == null) {
+            if (vdsId == null) {
                 continue;
             }
 
@@ -330,10 +331,9 @@ public class AffinityRulesEnforcementPerCluster {
                 vmToHost.put(vm.getId(), vdsId);
             }
 
-            if(!output.containsKey(vdsId)) {
+            if (!output.containsKey(vdsId)) {
                 output.put(vdsId, new HashSet<Guid>());
-            }
-            else {
+            } else {
                 output.get(vdsId).add(vm.getId());
             }
         }
@@ -345,7 +345,7 @@ public class AffinityRulesEnforcementPerCluster {
      * Detect whether the current VM to VDS assignment violates current Affinity Groups.
      *
      * @param affinityGroups Unified affinity groups
-     * @param vmToHost Mapping of VM to currently assigned VDS
+     * @param vmToHost       Mapping of VM to currently assigned VDS
      * @return broken AffinityGroups
      */
     static protected Set<AffinityGroup> checkForAffinityGroupViolations(Iterable<AffinityGroup> affinityGroups,
@@ -353,13 +353,13 @@ public class AffinityRulesEnforcementPerCluster {
 
         Set<AffinityGroup> broken = new HashSet<>();
 
-        for (AffinityGroup affinity: affinityGroups) {
+        for (AffinityGroup affinity : affinityGroups) {
             // Negative groups
             if (!affinity.isPositive()) {
                 // Record all hosts that are already occupied by VMs from this group
                 Map<Guid, Guid> usedHosts = new HashMap<>();
 
-                for (Guid vm: affinity.getEntityIds()) {
+                for (Guid vm : affinity.getEntityIds()) {
                     Guid host = vmToHost.get(vm);
                     if (host == null) {
                         continue;
@@ -379,12 +379,12 @@ public class AffinityRulesEnforcementPerCluster {
                     }
                 }
 
-            // Positive groups
+                // Positive groups
             } else {
                 // All VMs from this group have to be running on a single host
                 Guid targetHost = null;
 
-                for (Guid vm: affinity.getEntityIds()) {
+                for (Guid vm : affinity.getEntityIds()) {
                     Guid host = vmToHost.get(vm);
                     if (host == null) {
                         continue;
