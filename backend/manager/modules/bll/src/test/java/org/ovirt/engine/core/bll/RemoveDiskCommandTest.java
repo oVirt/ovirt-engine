@@ -128,6 +128,13 @@ public class RemoveDiskCommandTest {
     }
 
     @Test
+    public void testCanDoActionTemplateWithNoDomain() {
+        disk.setVmEntityType(VmEntityType.TEMPLATE);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+                EngineMessage.ACTION_TYPE_FAILED_CANT_DELETE_TEMPLATE_DISK_WITHOUT_SPECIFYING_DOMAIN);
+    }
+
+    @Test
     public void testCanDoActionOvfDiskNotIllegal() {
         disk.setImageStatus(ImageStatus.OK);
         disk.setContentType(DiskContentType.OVF_STORE);
