@@ -93,13 +93,17 @@ public class HaReservationHandling {
                 curVmMemSize = (int) Math.round(vm.getMemSizeMb() * (vm.getUsageMemPercent() / 100.0));
             }
 
+            // Make sure we reserve at least the guaranteed amount of memory or more
+            // if the VM is using more than that.
+            curVmMemSize = Math.max(curVmMemSize, vm.getMinAllocatedMem());
+
             int curVmCpuPercent = 0;
             if (vm.getUsageCpuPercent() != null) {
                 curVmCpuPercent =
                         vm.getUsageCpuPercent() * vm.getNumOfCpus()
                                 / SlaValidator.getEffectiveCpuCores(host, cluster.getCountThreadsAsCores());
             }
-            log.debug("VM '{}'. CPU usage: {}%, RAM usage: {}MB", vm.getName(), curVmCpuPercent, curVmMemSize);
+            log.debug("VM '{}'. CPU usage: {}%, RAM required: {}MB", vm.getName(), curVmCpuPercent, curVmMemSize);
 
             boolean foundForCurVm = false;
             for (Pair<Guid, Pair<Integer, Integer>> hostData : hostsUnutilizedResources) {
