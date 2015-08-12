@@ -174,6 +174,7 @@ public enum VdcActionType {
     DestroyImage(239, QuotaDependency.STORAGE),
     MergeExtend(241, QuotaDependency.STORAGE),
     DestroyImageCheck(242, QuotaDependency.NONE),
+    CreateVolume(243, QuotaDependency.STORAGE),
 
     // VmPoolCommands
     AddVmPoolWithVms(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.BOTH),
