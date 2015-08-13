@@ -21,6 +21,9 @@
 
 import base64
 import gettext
+import os
+import random
+import string
 
 from M2Crypto import RSA
 
@@ -42,6 +45,15 @@ def _(m):
 @util.export
 class Plugin(plugin.PluginBase):
     """aaa plugin."""
+
+    @staticmethod
+    def _generatePassword():
+        return ''.join([
+            random.SystemRandom().choice(
+                string.ascii_letters +
+                string.digits
+            ) for i in range(22)
+        ])
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -197,7 +209,9 @@ class Plugin(plugin.PluginBase):
                     self.environment[
                         oenginecons.ConfigEnv.ADMIN_PASSWORD
                     ] = ''
-                else:
+                elif os.path.exists(
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_STORE
+                ):
                     def _getRSA():
                         rc, stdout, stderr = self.execute(
                             args=(
@@ -223,6 +237,22 @@ class Plugin(plugin.PluginBase):
                     ] = _getRSA().private_decrypt(
                         data=base64.b64decode(adminPassword),
                         padding=RSA.pkcs1_padding,
+                    )
+                else:
+                    self.environment[
+                        oenginecons.ConfigEnv.ADMIN_PASSWORD
+                    ] = self._generatePassword()
+                    self.logger.warning(
+                        _(
+                            "Cannot decrypt admin's password during upgrade. "
+                            "Admin's password was set to a random password: "
+                            "{password}. Please replace password as soon as "
+                            "possible."
+                        ).format(
+                            password=self.environment[
+                                oenginecons.ConfigEnv.ADMIN_PASSWORD
+                            ],
+                        )
                     )
 
     @plugin.event(
