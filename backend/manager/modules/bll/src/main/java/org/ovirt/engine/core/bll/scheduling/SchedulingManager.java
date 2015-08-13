@@ -387,7 +387,8 @@ public class SchedulingManager implements BackendService {
                     }
                 }
             }
-        } else { // no dedicated hosts
+        }
+        if (runnableHosts.isEmpty()) { // no dedicated hosts found
             runnableHosts = availableVdsList;
         }
 
