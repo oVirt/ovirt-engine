@@ -665,10 +665,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("specificHost")
     public RadioButton specificHost;
 
-    @UiField
-    @Ignore
-    public EnableableFormLabel specificHostLabel;
-
     @UiField(provided = true)
     @Path(value = "defaultHost.selectedItems")
     @WithElementId("defaultHost")

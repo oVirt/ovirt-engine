@@ -618,8 +618,9 @@
                         <g:VerticalPanel verticalAlignment='ALIGN_MIDDLE'>
                             <ge:EntityModelRadioButtonEditor ui:field="isAutoAssignEditor" />
                             <g:HorizontalPanel verticalAlignment='ALIGN_TOP'>
-                                <g:RadioButton ui:field="specificHost" addStyleNames="{style.radioButtonSpecificHost}" />
-                                <l:EnableableFormLabel ui:field="specificHostLabel" text="{constants.specificVmPopup}" addStyleNames="avmpw_specificHostLabel_pfly_fix" />
+                                <g:HTMLPanel addStyleNames="avw_contentWidgetContainer_pfly_fix">
+                                    <g:RadioButton ui:field="specificHost" addStyleNames="{style.radioButtonSpecificHost}" text="{constants.specificVmPopup}"/>
+                                </g:HTMLPanel>
                                 <e:ListModelMultipleSelectListBoxEditor ui:field="defaultHostEditor" addStyleNames="{style.hostSelector}"/>
                             </g:HorizontalPanel>
                         </g:VerticalPanel>
