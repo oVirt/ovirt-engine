@@ -115,7 +115,7 @@ public class AffinityGroupDaoTest extends BaseDaoTestCase {
         existing.getEntityIds().clear();
         dao.update(existing);
         AffinityGroup fetched = dao.get(existing.getId());
-        assertNull(fetched.getEntityNames());
+        assertTrue(fetched.getEntityNames().isEmpty());
     }
 
     @Test
