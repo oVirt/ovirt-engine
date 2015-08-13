@@ -134,6 +134,14 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         vlanColumn.makeSortable(NetworkConditionFieldAutoCompleter.VLAN_ID);
         getTable().ensureColumnPresent(vlanColumn, constants.vlanNetwork(), virtMode, "60px"); //$NON-NLS-1$
 
+        AbstractTextColumn<NetworkView> qosColumn = new AbstractTextColumn<NetworkView>() {
+            @Override
+            public String getValue(NetworkView object) {
+                return object.getQosName() == null ? "-" : object.getQosName().toString();//$NON-NLS-1$
+            }
+        };
+        qosColumn.makeSortable(NetworkConditionFieldAutoCompleter.QOS);
+        getTable().ensureColumnPresent(qosColumn, constants.qosName(), virtMode, "60px");//$NON-NLS-1$
 
         AbstractTextColumn<NetworkView> labelColumn = new AbstractTextColumn<NetworkView>() {
             @Override

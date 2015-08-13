@@ -11,6 +11,7 @@ public class NetworkView extends Network {
     private String dataCenterName;
     private Version compatibilityVersion;
     private String providerName;
+    private String qosName;
 
     public String getDataCenterName() {
         return dataCenterName;
@@ -36,6 +37,14 @@ public class NetworkView extends Network {
         this.providerName = providerName;
     }
 
+    public String getQosName() {
+        return qosName;
+    }
+
+    public void setQosName(String qosName) {
+        this.qosName = qosName;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -43,6 +52,7 @@ public class NetworkView extends Network {
         result = prime * result + ((getCompatibilityVersion() == null) ? 0 : getCompatibilityVersion().hashCode());
         result = prime * result + ((getDataCenterName() == null) ? 0 : getDataCenterName().hashCode());
         result = prime * result + ((getProviderName() == null) ? 0 : getProviderName().hashCode());
+        result = prime * result + ((getQosName() == null) ? 0 : getQosName().hashCode());
         return result;
     }
 
@@ -73,6 +83,9 @@ public class NetworkView extends Network {
             return false;
         }
         if (!Objects.equals(getProviderName(), other.getProviderName())) {
+            return false;
+        }
+        if (!Objects.equals(getQosName(), other.getQosName())) {
             return false;
         }
         return true;
