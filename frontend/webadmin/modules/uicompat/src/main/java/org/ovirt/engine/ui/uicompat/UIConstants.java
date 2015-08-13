@@ -1246,10 +1246,10 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Error while retrieving list of domains. Please consult your Storage Administrator.")
     String errorWhileRetrievingListOfDomainsImportSanStorage();
 
-    @DefaultStringValue("Value doesn't not match pattern: key=value,key=value...")
+    @DefaultStringValue("Value does not match pattern: key=value,key=value...")
     String valueDoesntNotMatchPatternKeyValueKeyValueInvalidReason();
 
-    @DefaultStringValue("Value doesn't not match pattern: key=value,key,key=value...")
+    @DefaultStringValue("Value does not match pattern: key=value,key,key=value...")
     String valueDoesntNotNatchPatternKeyValueKeyKeyValueInvalidReason();
 
     @DefaultStringValue("Data Center is not accessible.")
