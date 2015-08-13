@@ -62,14 +62,6 @@ public class AffinityRulesUtils {
          */
         for(Iterator<AffinityGroup> it = affinityGroups.iterator(); it.hasNext();) {
             AffinityGroup ag = it.next();
-            /*
-             * This check is done in order to prevent getting NullPointerException when the entityIds list
-             * is null. This can can happen when using the REST api to add an affinity group.
-             */
-            if(ag.getEntityIds() == null) {
-                it.remove();
-                continue;
-            }
 
             for(Guid id : ag.getEntityIds()) {
                 Set<Guid> temp = new HashSet<>();

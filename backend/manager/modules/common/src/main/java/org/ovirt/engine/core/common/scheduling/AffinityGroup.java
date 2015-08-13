@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.scheduling;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -64,6 +65,8 @@ public class AffinityGroup implements BusinessEntity<Guid>, IVdcQueryable, Namea
     public AffinityGroup() {
         this.positive = true;
         this.enforcing = true;
+        this.entityIds = new ArrayList<>();
+        this.entityNames = new ArrayList<>();
     }
 
     @Override
@@ -123,6 +126,9 @@ public class AffinityGroup implements BusinessEntity<Guid>, IVdcQueryable, Namea
 
     public void setEntityIds(List<Guid> entityIds) {
         this.entityIds = entityIds;
+        if (entityIds == null) {
+            this.entityIds = new ArrayList<>();
+        }
     }
 
     public List<String> getEntityNames() {
@@ -131,6 +137,9 @@ public class AffinityGroup implements BusinessEntity<Guid>, IVdcQueryable, Namea
 
     public void setEntityNames(List<String> entityNames) {
         this.entityNames = entityNames;
+        if (entityNames == null) {
+            this.entityNames = new ArrayList<>();
+        }
     }
 
     @Override
