@@ -6,24 +6,34 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
+import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -83,6 +93,26 @@ public class CINDERStorageHelper extends StorageHelperBase {
         List<LibvirtSecret> libvirtSecrets = getLibvirtSecretDao().getAllByProviderId(provider.getId());
         VDS vds = getVdsDao().get(vdsId);
         return unregisterLibvirtSecrets(storageDomain, vds, libvirtSecrets);
+    }
+
+    @Override
+    public boolean prepareConnectHostToStoragePoolServers(CommandContext cmdContext, ConnectHostToStoragePoolServersParameters parameters, List<StorageServerConnections> connections) {
+        boolean connectSucceeded = true;
+        if (FeatureSupported.cinderProviderSupported(parameters.getStoragePool().getCompatibilityVersion()) &&
+                isActiveCinderDomainAvailable(parameters.getStoragePoolId())) {
+            // Validate librbd1 package availability
+            boolean isLibrbdAvailable = isLibrbdAvailable(parameters.getVds());
+            if (!isLibrbdAvailable) {
+                log.error("Couldn't found librbd1 package on vds {} (needed for Cinder storage domains).",
+                        parameters.getVds().getName());
+                setNonOperational(cmdContext, parameters.getVdsId(), NonOperationalReason.LIBRBD_PACKAGE_NOT_AVAILABLE);
+            }
+            connectSucceeded &= isLibrbdAvailable;
+
+            // Register libvirt secrets if needed
+            connectSucceeded &= handleLibvirtSecrets(cmdContext, parameters.getVds(), parameters.getStoragePoolId());
+        }
+        return connectSucceeded;
     }
 
     public static Pair<Boolean, EngineFault> registerLibvirtSecrets(StorageDomain storageDomain, VDS vds,
@@ -153,6 +183,46 @@ public class CINDERStorageHelper extends StorageHelperBase {
             }
         }
         return new Pair<Boolean, AuditLogType>(true, null);
+    }
+
+    private boolean isActiveCinderDomainAvailable(Guid poolId) {
+        return isActiveStorageDomainAvailable(StorageType.CINDER, poolId);
+    }
+
+    private boolean isActiveStorageDomainAvailable(final StorageType storageType, Guid poolId) {
+        List<StorageDomain> storageDomains = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(poolId);
+        return CollectionUtils.exists(storageDomains, new Predicate() {
+            @Override
+            public boolean evaluate(Object o) {
+                StorageDomain storageDomain = (StorageDomain) o;
+                return storageDomain.getStorageType() == storageType &&
+                        storageDomain.getStatus() == StorageDomainStatus.Active;
+            }
+        });
+    }
+
+    private boolean handleLibvirtSecrets(CommandContext cmdContext, VDS vds, Guid poolId) {
+        List<LibvirtSecret> libvirtSecrets =
+                DbFacade.getInstance().getLibvirtSecretDao().getAllByStoragePoolIdFilteredByActiveStorageDomains(poolId);
+        if (!libvirtSecrets.isEmpty() && !registerLibvirtSecretsImpl(vds, libvirtSecrets, false)) {
+            log.error("Failed to register libvirt secret on vds {}.", vds.getName());
+            setNonOperational(cmdContext, vds.getId(), NonOperationalReason.LIBVIRT_SECRETS_REGISTRATION_FAILURE);
+            return false;
+        }
+        return true;
+    }
+
+    private void setNonOperational(CommandContext cmdContext, Guid vdsId, NonOperationalReason reason) {
+        Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds,
+                new SetNonOperationalVdsParameters(vdsId, reason),
+                ExecutionHandler.createInternalJobContext(cmdContext));
+    }
+
+    private boolean registerLibvirtSecretsImpl(VDS vds, List<LibvirtSecret> libvirtSecrets, boolean clearUnusedSecrets) {
+        VDSReturnValue returnValue = Backend.getInstance().getResourceManager().RunVdsCommand(
+                VDSCommandType.RegisterLibvirtSecrets,
+                new RegisterLibvirtSecretsVDSParameters(vds.getId(), libvirtSecrets, clearUnusedSecrets));
+        return returnValue.getSucceeded();
     }
 
     private <T> void execute(final Callable<T> callable) {

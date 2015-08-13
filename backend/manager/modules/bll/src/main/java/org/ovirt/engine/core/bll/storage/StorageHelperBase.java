@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
@@ -97,8 +98,10 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     @Override
-    public void prepareConnectHostToStoragePoolServers(ConnectHostToStoragePoolServersParameters parameters, List<StorageServerConnections> connections) {
-        // default implementation
+    public boolean prepareConnectHostToStoragePoolServers(CommandContext cmdContext,
+            ConnectHostToStoragePoolServersParameters parameters,
+            List<StorageServerConnections> connections) {
+        return true;
     }
 
     @Override

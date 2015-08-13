@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
@@ -112,19 +113,24 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    public void prepareConnectHostToStoragePoolServers(ConnectHostToStoragePoolServersParameters parameters, List<StorageServerConnections> connections) {
-        prepareStorageServer(parameters, connections);
+    public boolean prepareConnectHostToStoragePoolServers(CommandContext cmdContext,
+            ConnectHostToStoragePoolServersParameters parameters,
+            List<StorageServerConnections> connections) {
+        return prepareStorageServer(parameters, connections);
     }
 
     @Override
-    public void prepareDisconnectHostFromStoragePoolServers(HostStoragePoolParametersBase parameters, List<StorageServerConnections> connections) {
+    public void prepareDisconnectHostFromStoragePoolServers(HostStoragePoolParametersBase parameters,
+            List<StorageServerConnections> connections) {
         prepareStorageServer(parameters, connections);
     }
 
-    private void prepareStorageServer(HostStoragePoolParametersBase parameters, List<StorageServerConnections> connections) {
+    private boolean prepareStorageServer(HostStoragePoolParametersBase parameters,
+            List<StorageServerConnections> connections) {
         List<StorageServerConnections> res = updateIfaces(connections, parameters.getVds().getId());
         connections.clear();
         connections.addAll(res);
+        return true;
     }
 
     private static void setInterfaceProperties(StorageServerConnections conn, VdsNetworkInterface iface) {
@@ -139,7 +145,9 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         // if we have lun id then filter by this lun
         // else get vg's luns from db
         List<String> lunsByVg =
-                lunId.isEmpty() ? LinqUtils.transformToList(DbFacade.getInstance().getLunDao().getAllForVolumeGroup(vgId),
+                lunId.isEmpty() ? LinqUtils.transformToList(DbFacade.getInstance()
+                        .getLunDao()
+                        .getAllForVolumeGroup(vgId),
                         new Function<LUNs, String>() {
                             @Override
                             public String eval(LUNs a) {
@@ -311,6 +319,8 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         // Synchronize LUN details comprising the storage domain with the DB
         StorageDomainParametersBase parameters = new StorageDomainParametersBase(storageDomain.getId());
         parameters.setVdsId(vdsId);
-        return Backend.getInstance().runInternalAction(VdcActionType.SyncLunsInfoForBlockStorageDomain, parameters).getSucceeded();
+        return Backend.getInstance()
+                .runInternalAction(VdcActionType.SyncLunsInfoForBlockStorageDomain, parameters)
+                .getSucceeded();
     }
 }
