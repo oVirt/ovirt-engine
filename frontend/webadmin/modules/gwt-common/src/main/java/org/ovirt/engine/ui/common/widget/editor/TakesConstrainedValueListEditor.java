@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.editor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -41,6 +42,7 @@ public class TakesConstrainedValueListEditor<T> extends TakesConstrainedValueEdi
 
     public void setListValue(List<T> value) {
         //Make sure to send a copy so we don't accidentally wipe out the original values.
-        ((TakesListValue<T>)peer).setListValue(new ArrayList<>(value));
+        List<T> listValue = value == null ? Collections.<T>emptyList() : new ArrayList<>(value);
+        ((TakesListValue<T>)peer).setListValue(listValue);
     }
 }

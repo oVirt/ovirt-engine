@@ -495,15 +495,15 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                             throw new IllegalArgumentException("The return value should be List<VDS> or VdcQueryReturnValue with return value List<VDS>"); //$NON-NLS-1$
                         }
 
-                        VDS oldDefaultHost = model.getDefaultHost().getSelectedItem();
+                        List<VDS> oldDefaultHosts = model.getDefaultHost().getSelectedItems();
                         if (model.getBehavior().getSystemTreeSelectedItem() != null
                                 && model.getBehavior().getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host) {
                             VDS host = (VDS) model.getBehavior().getSystemTreeSelectedItem().getEntity();
                             for (VDS vds : hosts) {
                                 if (host.getId().equals(vds.getId())) {
                                     model.getDefaultHost()
-                                            .setItems(new ArrayList<VDS>(Arrays.asList(new VDS[] { vds })));
-                                    model.getDefaultHost().setSelectedItem(vds);
+                                            .setItems(new ArrayList<>(Collections.singletonList(vds)));
+                                    model.getDefaultHost().setSelectedItems(Collections.singletonList(vds));
                                     model.getDefaultHost().setIsChangeable(false);
                                     model.getDefaultHost().setChangeProhibitionReason(constants.cannotChangeHostInTreeContext());
                                     break;
@@ -513,15 +513,19 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         else {
                             model.getDefaultHost().setItems(hosts);
 
-                            if (oldDefaultHost != null) {
-                                // Trying to get host object from hosts list
-                                oldDefaultHost = Linq.firstOrDefault(hosts, new Linq.HostPredicate(oldDefaultHost.getId()));
+                            // attempt to preserve selection as much as possible
+                            if (oldDefaultHosts != null && !oldDefaultHosts.isEmpty()) {
+                                Set<VDS> oldSelectedIntersectionNewHosts = new HashSet<>(oldDefaultHosts);
+                                oldSelectedIntersectionNewHosts.retainAll(hosts);
+                                oldDefaultHosts = new ArrayList<>(oldSelectedIntersectionNewHosts);
                             }
 
-                            // If found 'oldDefaultHost' in existing list, select it;
-                            // otherwise, select first in hosts list.
-                            model.getDefaultHost().setSelectedItem(oldDefaultHost != null ?
-                                    oldDefaultHost : Linq.firstOrDefault(hosts));
+                            List<VDS> hostsToSelect = oldDefaultHosts != null && !oldDefaultHosts.isEmpty()
+                                              ? oldDefaultHosts
+                                              : (!hosts.isEmpty()
+                                                      ? Collections.singletonList(hosts.get(0))
+                                                      : Collections.<VDS>emptyList());
+                            model.getDefaultHost().setSelectedItems(hostsToSelect);
                         }
                         changeDefaultHost();
 
