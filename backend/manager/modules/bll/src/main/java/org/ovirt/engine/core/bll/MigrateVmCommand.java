@@ -475,7 +475,13 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
-        if (getParameters().getTargetVdsGroupId() != null) {
+
+        // this runs before canDoAction so the getVm() can be null - instead of failing on NPE here we pass the parent permissions and let the canDoAction to return proper error
+        if (getVm() == null) {
+            return permissionList;
+        }
+
+        if (getParameters().getTargetVdsGroupId() != null && !getParameters().getTargetVdsGroupId().equals(getVm().getVdsGroupId())) {
             // additional permissions needed since changing the cluster
             permissionList.addAll(VmHandler.getPermissionsNeededToChangeCluster(getParameters().getVmId(), getParameters().getTargetVdsGroupId()));
         }
