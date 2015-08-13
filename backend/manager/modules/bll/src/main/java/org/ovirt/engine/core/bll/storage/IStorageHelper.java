@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
@@ -16,7 +17,9 @@ import org.ovirt.engine.core.compat.Guid;
 
 public interface IStorageHelper {
 
-    void prepareConnectHostToStoragePoolServers(ConnectHostToStoragePoolServersParameters parameters, List<StorageServerConnections> connections);
+    boolean prepareConnectHostToStoragePoolServers(CommandContext cmdContext,
+            ConnectHostToStoragePoolServersParameters parameters,
+            List<StorageServerConnections> connections);
 
     void prepareDisconnectHostFromStoragePoolServers(HostStoragePoolParametersBase parameters, List<StorageServerConnections> connections);
 
