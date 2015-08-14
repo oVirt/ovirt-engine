@@ -439,6 +439,14 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     HighUtilizationForEvenlyDistribute,
+
+    // The percentage represents a minimum load for all cores
+    // to consider a host over utilized for scheduling.
+    // To clarify: all cores have to be loaded above this level
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("90")
+    HighUtilizationForScheduling,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("200")

@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CompatibilityVersionFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.CpuOverloadPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuPinningPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EmulatedMachineFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionBalancePolicyUnit;
@@ -42,6 +43,7 @@ public class InternalPolicyUnits {
 
     static {
         enabledUnits.add(CpuLevelFilterPolicyUnit.class);
+        enabledUnits.add(CpuOverloadPolicyUnit.class);
         enabledUnits.add(CPUPolicyUnit.class);
         enabledUnits.add(EmulatedMachineFilterPolicyUnit.class);
         enabledUnits.add(EvenDistributionBalancePolicyUnit.class);

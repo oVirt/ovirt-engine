@@ -35,8 +35,10 @@ public class CPUPolicyUnit extends PolicyUnitImpl {
     @Override
     public List<VDS> filter(Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
         List<VDS> list = new ArrayList<>();
+
         for (VDS vds : hosts) {
             Integer cores = SlaValidator.getEffectiveCpuCores(vds, cluster.getCountThreadsAsCores());
+
             if (cores != null && vm.getNumOfCpus(false) > cores) {
                 messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__NOT_ENOUGH_CORES.toString());
                 log.debug("Host '{}' has less cores ({}) than vm cores ({})",
@@ -45,6 +47,7 @@ public class CPUPolicyUnit extends PolicyUnitImpl {
                         vm.getNumOfCpus());
                 continue;
             }
+
             list.add(vds);
         }
         return list;

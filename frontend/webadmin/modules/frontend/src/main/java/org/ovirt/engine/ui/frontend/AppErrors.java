@@ -2311,6 +2311,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__DETAIL__OLD_OS();
 
+    String VAR__DETAIL__CPU_OVERLOADED();
+
     String VAR__DETAIL__UNSUPPORTED_EMULATED_MACHINE();
 
     String VAR__DETAIL__UNSUPPORTED_COMPATIBILITY_VERSION();

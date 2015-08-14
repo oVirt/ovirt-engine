@@ -282,8 +282,8 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
         return underUtilizedHosts;
     }
 
-    protected int calcSpmCpuConsumption(VDS vds) {
-        return vds.getSpmStatus() == VdsSpmStatus.None ? 0 : Config
+    public static int calcSpmCpuConsumption(VDS vds) {
+        return (vds.getSpmStatus() == VdsSpmStatus.None) ? 0 : Config
                 .<Integer> getValue(ConfigValues.SpmVCpuConsumption)
                 * Config.<Integer> getValue(ConfigValues.VcpuConsumptionPercentage) / vds.getCpuCores();
     }

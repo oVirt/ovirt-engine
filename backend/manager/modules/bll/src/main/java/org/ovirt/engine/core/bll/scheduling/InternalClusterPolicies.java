@@ -8,6 +8,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CompatibilityVersionFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.CpuOverloadPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuPinningPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EmulatedMachineFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionBalancePolicyUnit;
@@ -51,6 +52,7 @@ public class InternalClusterPolicies {
                 .addFilters(LabelFilterPolicyUnit.class)
                 .addFilters(CPUPolicyUnit.class)
                 .addFilters(CpuLevelFilterPolicyUnit.class)
+                .addFilters(CpuOverloadPolicyUnit.class)
                 .addFilters(EmulatedMachineFilterPolicyUnit.class)
                 .addFilters(HostDeviceFilterPolicyUnit.class)
                 .addFilters(HostedEngineHAClusterFilterPolicyUnit.class)
@@ -67,6 +69,9 @@ public class InternalClusterPolicies {
                 .addFunction(1, HostedEngineHAClusterWeightPolicyUnit.class)
                 .addFunction(1, HaReservationWeightPolicyUnit.class)
                 .addFunction(1, VmAffinityWeightPolicyUnit.class)
+
+                .set(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES, "2")
+                .set(PolicyUnitParameter.HIGH_UTILIZATION, "80")
                 .register();
 
         createBuilder("20d25257-b4bd-4589-92a6-c4c5c5d3fd1a")
@@ -77,6 +82,7 @@ public class InternalClusterPolicies {
                 .addFilters(LabelFilterPolicyUnit.class)
                 .addFilters(CPUPolicyUnit.class)
                 .addFilters(CpuLevelFilterPolicyUnit.class)
+                .addFilters(CpuOverloadPolicyUnit.class)
                 .addFilters(EmulatedMachineFilterPolicyUnit.class)
                 .addFilters(HostDeviceFilterPolicyUnit.class)
                 .addFilters(HostedEngineHAClusterFilterPolicyUnit.class)
@@ -107,6 +113,7 @@ public class InternalClusterPolicies {
                 .addFilters(LabelFilterPolicyUnit.class)
                 .addFilters(CPUPolicyUnit.class)
                 .addFilters(CpuLevelFilterPolicyUnit.class)
+                .addFilters(CpuOverloadPolicyUnit.class)
                 .addFilters(EmulatedMachineFilterPolicyUnit.class)
                 .addFilters(HostDeviceFilterPolicyUnit.class)
                 .addFilters(HostedEngineHAClusterFilterPolicyUnit.class)
@@ -138,6 +145,7 @@ public class InternalClusterPolicies {
                 .addFilters(LabelFilterPolicyUnit.class)
                 .addFilters(CPUPolicyUnit.class)
                 .addFilters(CpuLevelFilterPolicyUnit.class)
+                .addFilters(CpuOverloadPolicyUnit.class)
                 .addFilters(EmulatedMachineFilterPolicyUnit.class)
                 .addFilters(HostDeviceFilterPolicyUnit.class)
                 .addFilters(HostedEngineHAClusterFilterPolicyUnit.class)
