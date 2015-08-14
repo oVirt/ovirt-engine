@@ -28,6 +28,7 @@ public class HttpURLConnectionBuilder {
     private String trustStore;
     private String trustStoreType = KeyStore.getDefaultType();
     private String trustStorePassword = "changeit";
+    private Integer connectTimeout;
     private Integer readTimeout;
     private URL url;
 
@@ -94,6 +95,11 @@ public class HttpURLConnectionBuilder {
         return this;
     }
 
+    public HttpURLConnectionBuilder setConnectTimeout(Integer connectTimeout) {
+        this.connectTimeout = connectTimeout;
+        return this;
+    }
+
     public HttpURLConnectionBuilder setReadTimeout(Integer readTimeout) {
         this.readTimeout = readTimeout;
         return this;
@@ -112,6 +118,9 @@ public class HttpURLConnectionBuilder {
         URLConnection connection = url.openConnection();
         connection.setAllowUserInteraction(false);
         connection.setUseCaches(false);
+        if (connectTimeout != null) {
+            connection.setConnectTimeout(connectTimeout);
+        }
         if (readTimeout != null) {
             connection.setReadTimeout(readTimeout);
         }
