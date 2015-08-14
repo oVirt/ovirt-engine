@@ -383,7 +383,6 @@ public class HostModule extends AbstractGinModule {
         return result;
     }
 
-
     @Override
     protected void configure() {
         bind(new TypeLiteral<HostListModel<Void>>() {}).in(Singleton.class);
@@ -406,7 +405,6 @@ public class HostModule extends AbstractGinModule {
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<HostListModel<Void>, HostHardwareGeneralModel>>(){})
             .to(new TypeLiteral<DetailTabModelProvider<HostListModel<Void>, HostHardwareGeneralModel>>(){}).in(Singleton.class);
-
         // Search-able Detail Models
         bind(new TypeLiteral<SearchableDetailModelProvider<Map<String, String>, HostListModel<Void>, HostHooksListModel>>(){})
             .to(new TypeLiteral<SearchableDetailTabModelProvider<Map<String, String>, HostListModel<Void>, HostHooksListModel>>(){})
@@ -421,10 +419,8 @@ public class HostModule extends AbstractGinModule {
             .to(new TypeLiteral<SearchableDetailTabModelProvider<HostDeviceView, HostListModel<Void>, HostDeviceListModel>>(){})
             .in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, HostListModel<Void>, PermissionListModel<VDS>>>() {
-        })
-            .to(new TypeLiteral<PermissionModelProvider<VDS, HostListModel<Void>>>() {
-            }).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, HostListModel<Void>, PermissionListModel<VDS>>>(){})
+            .to(new TypeLiteral<PermissionModelProvider<VDS, HostListModel<Void>>>() {}).in(Singleton.class);
     }
 
 }

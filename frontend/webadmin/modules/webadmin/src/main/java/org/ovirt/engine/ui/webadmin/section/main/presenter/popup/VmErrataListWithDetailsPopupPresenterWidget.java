@@ -9,8 +9,8 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
 public class VmErrataListWithDetailsPopupPresenterWidget
-    extends ErrataListWithDetailsPopupPresenterWidget<SearchableDetailModelProvider<Erratum, VmListModel<Void>,
-        VmErrataListModel>> {
+    extends ErrataListWithDetailsPopupPresenterWidget<SearchableDetailModelProvider<Erratum,
+        VmListModel<Void>, VmErrataListModel>> {
 
     public interface ViewDef extends ErrataListWithDetailsPopupPresenterWidget.ViewDef {};
 

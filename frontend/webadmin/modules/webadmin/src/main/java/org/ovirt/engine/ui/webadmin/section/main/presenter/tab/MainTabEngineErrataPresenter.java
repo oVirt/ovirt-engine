@@ -37,7 +37,8 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
  * Presenter for the main tab that contains errata (singular: Erratum) for the engine itself.
  * Note: this tab is only show when 'Errata' is selected in the System Tree.
  */
-public class MainTabEngineErrataPresenter extends AbstractMainTabWithDetailsPresenter<Erratum, EngineErrataListModel, MainTabEngineErrataPresenter.ViewDef, MainTabEngineErrataPresenter.ProxyDef> {
+public class MainTabEngineErrataPresenter extends AbstractMainTabWithDetailsPresenter<Erratum,
+    EngineErrataListModel, MainTabEngineErrataPresenter.ViewDef, MainTabEngineErrataPresenter.ProxyDef> {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 

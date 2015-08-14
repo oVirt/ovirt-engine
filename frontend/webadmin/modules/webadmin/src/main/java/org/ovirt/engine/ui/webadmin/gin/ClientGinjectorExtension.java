@@ -54,7 +54,7 @@ import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
-import org.ovirt.engine.ui.uicommonweb.models.ErratumModel;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HostErrataCountModel;
 import org.ovirt.engine.ui.uicommonweb.models.HostErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SessionListModel;
@@ -481,7 +481,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
     SearchableDetailModelProvider<Permission, VnicProfileListModel, PermissionListModel<VnicProfileView>> getSubTabVnicProfilePermissionModelProvider();
 
     // Errata
-    DetailTabModelProvider<EngineErrataListModel, ErratumModel> getErrataDetailProvider();
+    DetailTabModelProvider<EngineErrataListModel, EntityModel<Erratum>> getErrataDetailProvider();
 
     // Widgets
     VfsConfigPopupView getVfsConfigPopupView();

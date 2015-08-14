@@ -17,7 +17,8 @@ public class HostErrataListWithDetailsPopupPresenterWidget
     @Inject
     public HostErrataListWithDetailsPopupPresenterWidget(EventBus eventBus,
             HostErrataListWithDetailsPopupPresenterWidget.ViewDef view,
-            SearchableDetailModelProvider<Erratum, HostListModel<Void>, HostErrataListModel> modelProvider) {
+            SearchableDetailModelProvider<Erratum, HostListModel<Void>,
+            HostErrataListModel> modelProvider) {
         super(eventBus, view, modelProvider);
     }
 }

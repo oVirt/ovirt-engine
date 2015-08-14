@@ -43,7 +43,7 @@ public abstract class AbstractErrataCountModel extends EntityModel<HasErrata> {
 
     private Guid guid;
 
-    private String name;
+    private String filterCommand;
 
     public AbstractErrataCountModel() {
         showSecurityCommand = new UICommand(SHOW_SECURITY_COMMAND, this);
@@ -61,7 +61,7 @@ public abstract class AbstractErrataCountModel extends EntityModel<HasErrata> {
         } else if (SHOW_SECURITY_COMMAND.equals(command.getName()) ||
                 SHOW_BUGS_COMMAND.equals(command.getName()) ||
                 SHOW_ENHANCEMENTS_COMMAND.equals(command.getName())) {
-            showErrataListWithDetailsPopup();
+            showErrataListWithDetailsPopup(command.getName());
         } else {
             super.executeCommand(command);
         }
@@ -96,25 +96,24 @@ public abstract class AbstractErrataCountModel extends EntityModel<HasErrata> {
         this.errataCounts.getEntityChangedEvent().addListener(listener);
     }
 
-    public void setMessage(String errorMessage) {
-        super.setMessage(errorMessage);
-        // ^ publishes an onPropertyChanged ("Message") event, bus notifies the Presenter
-    }
-
-    public void addErrorMessageChangeListener(IEventListener<PropertyChangedEventArgs> listener) {
+    public void addPropertyChangeListener(IEventListener<PropertyChangedEventArgs> listener) {
         getPropertyChangedEvent().addListener(listener);
     }
 
     public void runQuery(Guid guid) {
+        startProgress("getCount"); //$NON-NLS-1$
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.setHandleFailure(true);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
+                stopProgress();
                 AbstractErrataCountModel errataCountModel = (AbstractErrataCountModel) model;
                 VdcQueryReturnValue returnValueObject = (VdcQueryReturnValue) returnValue;
                 ErrataCounts resultEntity = returnValueObject.getReturnValue();
+                //Set message to null to make sure the actual setMessage creates an event.
+                errataCountModel.setMessage(null);
                 if (resultEntity != null && returnValueObject.getSucceeded()) {
                     errataCountModel.setErrataCounts(resultEntity);
                 }
@@ -126,14 +125,6 @@ public abstract class AbstractErrataCountModel extends EntityModel<HasErrata> {
         };
 
         Frontend.getInstance().runQuery(getQueryType(), new IdQueryParameters(guid), _asyncQuery);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public void setGuid(Guid id) {
@@ -153,7 +144,29 @@ public abstract class AbstractErrataCountModel extends EntityModel<HasErrata> {
         return "errata"; //$NON-NLS-1$
     }
 
+    public String getFilterCommand() {
+        return filterCommand;
+    }
+
+    public void setFilterCommand(String filterCommand) {
+        this.filterCommand = filterCommand;
+    }
+
     protected abstract VdcQueryType getQueryType();
 
-    protected abstract void showErrataListWithDetailsPopup();
+    protected abstract void showErrataListWithDetailsPopup(String filterCommand);
+
+    protected void showErrataListWithDetailsPopup(String filterCommand, String title) {
+        if (getWindow() != null) {
+            return;
+        }
+
+        HostErrataCountModel transferObj = new HostErrataCountModel();
+        transferObj.setFilterCommand(filterCommand);
+        transferObj.setTitle(title);
+        transferObj.setGuid(getGuid());
+
+        setWindow(transferObj);
+        initCommands(transferObj);
+    }
 }

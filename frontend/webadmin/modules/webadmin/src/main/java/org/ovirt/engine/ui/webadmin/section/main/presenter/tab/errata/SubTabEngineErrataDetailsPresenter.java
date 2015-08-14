@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
-import org.ovirt.engine.ui.uicommonweb.models.ErratumModel;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -28,7 +28,9 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
  * Note: this tab is only show when 'Errata' is selected in the System Tree and an Erratum is selected
  * in the main tab.
  */
-public class SubTabEngineErrataDetailsPresenter extends AbstractSubTabPresenter<Erratum, EngineErrataListModel, ErratumModel, SubTabEngineErrataDetailsPresenter.ViewDef, SubTabEngineErrataDetailsPresenter.ProxyDef> {
+public class SubTabEngineErrataDetailsPresenter extends AbstractSubTabPresenter<Erratum,
+    EngineErrataListModel, EntityModel<Erratum>, SubTabEngineErrataDetailsPresenter.ViewDef,
+    SubTabEngineErrataDetailsPresenter.ProxyDef> {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -41,13 +43,13 @@ public class SubTabEngineErrataDetailsPresenter extends AbstractSubTabPresenter<
     }
 
     @TabInfo(container = ErrataSubTabPanelPresenter.class)
-    static TabData getTabData(DetailTabModelProvider<EngineErrataListModel, ErratumModel> modelProvider) {
+    static TabData getTabData(DetailTabModelProvider<EngineErrataListModel, EntityModel<Erratum>> modelProvider) {
         return new ModelBoundTabData(constants.errataDetailsSubTabLabel(), 1, modelProvider);
     }
 
     @Inject
     public SubTabEngineErrataDetailsPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, DetailTabModelProvider<EngineErrataListModel, ErratumModel> modelProvider) {
+            PlaceManager placeManager, DetailTabModelProvider<EngineErrataListModel, EntityModel<Erratum>> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, ErrataSubTabPanelPresenter.TYPE_SetTabContent);
     }
 

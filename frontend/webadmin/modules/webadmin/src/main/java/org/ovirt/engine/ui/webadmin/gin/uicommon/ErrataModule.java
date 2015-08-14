@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
-import org.ovirt.engine.ui.uicommonweb.models.ErratumModel;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -37,13 +37,13 @@ public class ErrataModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public DetailTabModelProvider<EngineErrataListModel, ErratumModel> getErrataDetailProvider(final EventBus eventBus,
+    public DetailTabModelProvider<EngineErrataListModel, EntityModel<Erratum>> getErrataDetailProvider(final EventBus eventBus,
             final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<EngineErrataListModel> mainModelProvider,
-            final Provider<ErratumModel> modelProvider) {
+            final Provider<EntityModel<Erratum>> modelProvider) {
 
-        DetailTabModelProvider<EngineErrataListModel, ErratumModel> result = new
-                DetailTabModelProvider<EngineErrataListModel, ErratumModel>(eventBus, defaultConfirmPopupProvider);
+        DetailTabModelProvider<EngineErrataListModel, EntityModel<Erratum>> result = new
+                DetailTabModelProvider<EngineErrataListModel, EntityModel<Erratum>>(eventBus, defaultConfirmPopupProvider);
 
         result.setMainModelProvider(mainModelProvider);
         result.setModelProvider(modelProvider);

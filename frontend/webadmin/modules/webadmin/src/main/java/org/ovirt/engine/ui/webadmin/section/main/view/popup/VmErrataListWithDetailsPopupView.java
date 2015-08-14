@@ -10,8 +10,8 @@ public class VmErrataListWithDetailsPopupView extends ErrataListWithDetailsPopup
     implements VmErrataListWithDetailsPopupPresenterWidget.ViewDef {
 
     @Inject
-    public VmErrataListWithDetailsPopupView(EventBus eventBus, VmErrataListModel modelProvider) {
-        super(eventBus, modelProvider);
+    public VmErrataListWithDetailsPopupView(EventBus eventBus, VmErrataListModel listModel) {
+        super(eventBus, listModel);
     }
 
 }
