@@ -27,7 +27,7 @@ public class GetErrataCountsForHostQuery<P extends IdQueryParameters> extends Qu
 
         Provider<?> provider = getHostProvider(host);
         if (provider == null) {
-            failWith(EngineMessage.NO_FOREMAN_PROVIDER_FOR_ENGINE);
+            failWith(EngineMessage.NO_FOREMAN_PROVIDER_FOR_HOST);
             return;
         }
 

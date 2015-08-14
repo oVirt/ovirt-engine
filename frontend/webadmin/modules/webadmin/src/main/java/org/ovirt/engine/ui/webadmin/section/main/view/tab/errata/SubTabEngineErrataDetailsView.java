@@ -1,29 +1,25 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.errata;
 
-import javax.inject.Inject;
-
-import org.gwtbootstrap3.client.ui.html.Span;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
-import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
-import org.ovirt.engine.ui.uicommonweb.models.ErratumModel;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.errata.SubTabEngineErrataDetailsPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.ErrataListWithDetailsPopupView;
+import org.ovirt.engine.ui.webadmin.widget.errata.ErrataDetailModelForm;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 
 /**
  * View for the sub tab that shows details for an engine Erratum selected in the main tab.
  */
-public class SubTabEngineErrataDetailsView extends AbstractSubTabFormView<Erratum, EngineErrataListModel, ErratumModel>
-        implements SubTabEngineErrataDetailsPresenter.ViewDef {
+public class SubTabEngineErrataDetailsView extends AbstractSubTabFormView<Erratum, EngineErrataListModel,
+        EntityModel<Erratum>> implements SubTabEngineErrataDetailsPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabEngineErrataDetailsView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -33,44 +29,29 @@ public class SubTabEngineErrataDetailsView extends AbstractSubTabFormView<Erratu
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    public interface Style extends CssResource {
-        String errataTitleLabel();
-        String errataTitlePanel();
-    }
+    @UiField (provided = true)
+    ErrataDetailModelForm errataDetailModelForm;
 
-    private GeneralFormPanel errataDetailFormPanel;
-    private Span errataTitle;
+    @UiField
+    HTMLPanel errataTitle;
 
     @UiField
     FlowPanel errataDetailPanel;
 
-    @UiField
-    public Style style;
-
-    @Inject
-    public SubTabEngineErrataDetailsView(DetailTabModelProvider<EngineErrataListModel, ErratumModel> modelProvider) {
-        super(modelProvider);
+    public SubTabEngineErrataDetailsView() {
+        //Don't care about the provider, as its not used.
+        super(null);
+        errataDetailModelForm = new ErrataDetailModelForm();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         generateIds();
-    }
-
-    private void buildErrataDetailPanel() {
-        errataDetailPanel.clear();
-        errataDetailFormPanel = new GeneralFormPanel();
-        errataTitle = new Span();
-        errataTitle.setStyleName(style.errataTitleLabel());
-        FlowPanel errataTitlePanel = new FlowPanel();
-        errataTitlePanel.setStyleName(style.errataTitlePanel());
-        errataTitlePanel.add(errataTitle);
-        errataDetailPanel.add(errataTitlePanel);
-        errataDetailPanel.add(errataDetailFormPanel);
+        errataDetailModelForm.initialize();
     }
 
     public void updateErrataDetailFormPanel(Erratum erratum) {
-        buildErrataDetailPanel();
-        errataTitle.setText(erratum.getTitle());
-        // share the panel configuration with ErrataListWithDetailsPopupView
-        ErrataListWithDetailsPopupView.buildErrataDetailForm(errataDetailFormPanel, erratum);
+        errataTitle.clear();
+        errataTitle.add(new HTML(erratum.getTitle()));
+        errataDetailModelForm.setModel(new EntityModel<>(erratum));
+        errataDetailModelForm.update();
     }
 
     @Override

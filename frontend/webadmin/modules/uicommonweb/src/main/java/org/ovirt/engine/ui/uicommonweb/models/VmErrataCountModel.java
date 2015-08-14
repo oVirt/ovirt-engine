@@ -15,19 +15,8 @@ public class VmErrataCountModel extends AbstractErrataCountModel {
     private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
     @Override
-    protected void showErrataListWithDetailsPopup() {
-
-        if (getWindow() != null) {
-            return;
-        }
-
-        VmErrataCountModel transferObj = new VmErrataCountModel();
-        transferObj.setTitle(messages.errataForVm(getName()));
-        transferObj.setGuid(getGuid());
-        transferObj.setName(getName());
-
-        setWindow(transferObj);
-        initCommands(transferObj);
+    protected void showErrataListWithDetailsPopup(String filterCommand) {
+        super.showErrataListWithDetailsPopup(filterCommand, messages.errataForVm(getEntity().getName()));
     }
 
     @Override

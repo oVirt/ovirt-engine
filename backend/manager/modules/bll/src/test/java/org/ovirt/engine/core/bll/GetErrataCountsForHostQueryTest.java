@@ -72,7 +72,7 @@ public class GetErrataCountsForHostQueryTest extends AbstractQueryTest<IdQueryPa
 
         assertFalse(getQuery().getQueryReturnValue().getSucceeded());
         assertNull(getQuery().getQueryReturnValue().getReturnValue());
-        assertEquals(EngineMessage.NO_FOREMAN_PROVIDER_FOR_ENGINE.name(), getQuery().getQueryReturnValue()
+        assertEquals(EngineMessage.NO_FOREMAN_PROVIDER_FOR_HOST.name(), getQuery().getQueryReturnValue()
                 .getExceptionString());
     }
 

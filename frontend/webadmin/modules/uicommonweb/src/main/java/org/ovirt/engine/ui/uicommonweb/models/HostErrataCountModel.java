@@ -15,19 +15,8 @@ public class HostErrataCountModel extends AbstractErrataCountModel {
     private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
     @Override
-    protected void showErrataListWithDetailsPopup() {
-
-        if (getWindow() != null) {
-            return;
-        }
-
-        HostErrataCountModel transferObj = new HostErrataCountModel();
-        transferObj.setTitle(messages.errataForHost(getName()));
-        transferObj.setGuid(getGuid());
-        transferObj.setName(getName());
-
-        setWindow(transferObj);
-        initCommands(transferObj);
+    protected void showErrataListWithDetailsPopup(String filterCommand) {
+        super.showErrataListWithDetailsPopup(filterCommand, messages.errataForHost(getEntity().getName()));
     }
 
     @Override

@@ -11,16 +11,17 @@ import com.google.gwt.user.cellview.client.Column;
  */
 public interface HasColumns<T> {
 
-    public abstract void addColumn(Column<T, ?> column, String headerText);
+    void addColumn(Column<T, ?> column, String headerText);
 
-    public abstract void addColumn(Column<T, ?> column, String headerText, String width);
+    void addColumn(Column<T, ?> column, String headerText, String width);
 
-    public abstract void addColumnWithHtmlHeader(Column<T, ?> column, SafeHtml headerHtml);
+    void addColumnWithHtmlHeader(Column<T, ?> column, SafeHtml headerHtml);
 
-    public abstract void addColumnWithHtmlHeader(Column<T, ?> column, SafeHtml headerHtml, String width);
+    void addColumnWithHtmlHeader(Column<T, ?> column, SafeHtml headerHtml, String width);
 
-    public abstract void addColumn(Column<T, ?> column, SafeHtmlHeader header);
+    void addColumn(Column<T, ?> column, SafeHtmlHeader header);
 
-    public abstract void addColumn(Column<T, ?> column, SafeHtmlHeader header, String width);
+    void addColumn(Column<T, ?> column, SafeHtmlHeader header, String width);
 
+    void enableColumnResizing();
 }

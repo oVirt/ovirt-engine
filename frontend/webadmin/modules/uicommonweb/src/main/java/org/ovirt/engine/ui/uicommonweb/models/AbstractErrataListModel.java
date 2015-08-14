@@ -28,7 +28,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
  * @see {@link VmErrataListModel}
  *
  */
-public abstract class AbstractErrataListModel extends ListWithSimpleDetailsModel<HasErrata, EntityModel<Erratum>> {
+public abstract class AbstractErrataListModel extends ListWithSimpleDetailsModel<HasErrata, Erratum> {
 
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
@@ -104,16 +104,16 @@ public abstract class AbstractErrataListModel extends ListWithSimpleDetailsModel
         Frontend.getInstance().runQuery(getQueryType(), new IdQueryParameters(guid), _asyncQuery);
     }
 
-    protected Collection<EntityModel<Erratum>> filter(Collection<Erratum> resultList) {
-        List<EntityModel<Erratum>> ret = new ArrayList<>();
+    protected Collection<Erratum> filter(Collection<Erratum> resultList) {
+        List<Erratum> ret = new ArrayList<>();
+        if (filter == null || (filter.isSecurity() && filter.isBugs() && filter.isEnhancements())) {
+            return resultList;
+        }
         for (Erratum e : resultList) {
-            if ((filter == null || (filter.isSecurity() && filter.isBugs() && filter.isEnhancements())) ||
-                    (filter.isSecurity() && e.getType() == Erratum.ErrataType.SECURITY) ||
+            if ((filter.isSecurity() && e.getType() == Erratum.ErrataType.SECURITY) ||
                     (filter.isBugs() && e.getType() == Erratum.ErrataType.BUGFIX) ||
                     (filter.isEnhancements() && e.getType() == Erratum.ErrataType.ENHANCEMENT) ) {
-                EntityModel<Erratum> erratum = new EntityModel<>();
-                erratum.setEntity(e);
-                ret.add(erratum);
+                ret.add(e);
             }
         }
 
@@ -132,15 +132,11 @@ public abstract class AbstractErrataListModel extends ListWithSimpleDetailsModel
         this.filter = filter;
     }
 
+    public ErrataFilterValue getItemsFilter() {
+        return this.filter;
+    }
     public void reFilter() {
         setItems(filter(unfilteredResultList));
-    }
-
-    /**
-     * Override and return the place token.
-     */
-    protected String getPlace() {
-        return null;
     }
 
     protected abstract VdcQueryType getQueryType();

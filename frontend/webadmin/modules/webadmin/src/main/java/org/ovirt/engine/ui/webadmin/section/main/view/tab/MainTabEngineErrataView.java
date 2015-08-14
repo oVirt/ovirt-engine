@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabEngineErrataPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabTableView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.ErrataTableView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabVirtualMachineView.ViewIdHandler;
 import org.ovirt.engine.ui.webadmin.widget.errata.ErrataFilterPanel;
 
 import com.google.gwt.core.client.GWT;
@@ -27,7 +28,8 @@ import com.google.inject.Inject;
  * a message upon failing to retrieve the errata. (Errata query results rely on integration with a
  * Katello provider, and if the provider has an issue, we want to notify the user right in the tab body.
  */
-public class MainTabEngineErrataView extends AbstractMainTabTableView<Erratum, EngineErrataListModel> implements MainTabEngineErrataPresenter.ViewDef {
+public class MainTabEngineErrataView extends AbstractMainTabTableView<Erratum,
+    EngineErrataListModel> implements MainTabEngineErrataPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<MainTabEngineErrataView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -57,15 +59,18 @@ public class MainTabEngineErrataView extends AbstractMainTabTableView<Erratum, E
     public MainTabEngineErrataView(MainModelProvider<Erratum, EngineErrataListModel> modelProvider) {
         super(modelProvider);
 
-        initWidget(uiBinder.createAndBindUi(this));
-        errorMessagePanel.setVisible(false);
-        errorMessagePanel.setType(Type.WARNING);
+        ViewIdHandler.idHandler.generateAndSetIds(this);
 
         // configure the table columns -- share config with ErrataTableView
         ErrataTableView.initErrataGrid(getTable());
 
+        initWidget(uiBinder.createAndBindUi(this));
+        errorMessagePanel.setVisible(false);
+        errorMessagePanel.setType(Type.WARNING);
+
         initFilterPanel();
         getTable().setTableOverhead(errataFilterPanel);
+        getTable().enableColumnResizing();
 
         tablePanel.add(getTable());
         ViewIdHandler.idHandler.generateAndSetIds(this);

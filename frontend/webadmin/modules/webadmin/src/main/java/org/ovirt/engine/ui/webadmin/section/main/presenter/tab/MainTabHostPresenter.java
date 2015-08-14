@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
+import org.ovirt.engine.ui.uicommonweb.models.AbstractErrataCountModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHardwareGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
@@ -68,8 +69,8 @@ public class MainTabHostPresenter extends AbstractMainTabWithDetailsPresenter<VD
 
     @Override
     protected PlaceRequest getSubTabRequest() {
-        HasEntity<VDS> activeDetailModel = modelProvider.getModel().getActiveDetailModel();
-        if (activeDetailModel instanceof HostHardwareGeneralModel) {
+        HasEntity<?> activeDetailModel = modelProvider.getModel().getActiveDetailModel();
+        if (activeDetailModel instanceof HostHardwareGeneralModel || activeDetailModel instanceof AbstractErrataCountModel) {
             //Since the host hardware section has been merged into the general sub sub tab, it no longer has its
             //own place. So we need to make sure it stays on the host-general sub tab, if not it will generate
             //an invalid sub tab and go to the VM main tab.

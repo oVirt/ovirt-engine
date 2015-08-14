@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-        xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:e="urn:import:com.google.gwt.editor.ui.client"
-        xmlns:f="urn:import:org.ovirt.engine.ui.common.widget.form"
-        xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
-    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+        xmlns:g="urn:import:com.google.gwt.user.client.ui"
+        xmlns:er="urn:import:org.ovirt.engine.ui.webadmin.widget.errata">
 
-    <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.tab.errata.SubTabEngineErrataDetailsView.Style">
+    <ui:style>
         .errataTitleLabel {
             font-weight: bold;
         }
@@ -18,7 +16,11 @@
         }
     </ui:style>
 
-    <g:FlowPanel ui:field="errataDetailPanel"/>
-
+    <g:FlowPanel ui:field="errataDetailPanel">
+        <g:FlowPanel addStyleNames="{style.errataTitlePanel}">
+            <g:HTMLPanel tag="span" ui:field="errataTitle" addStyleNames="{style.errataTitleLabel}"/>
+        </g:FlowPanel>
+        <er:ErrataDetailModelForm ui:field="errataDetailModelForm" />
+    </g:FlowPanel>
 
 </ui:UiBinder>

@@ -10,7 +10,7 @@ public class HostErrataListWithDetailsPopupView extends ErrataListWithDetailsPop
     implements HostErrataListWithDetailsPopupPresenterWidget.ViewDef {
 
     @Inject
-    public HostErrataListWithDetailsPopupView(EventBus eventBus, HostErrataListModel modelProvider) {
-        super(eventBus, modelProvider);
+    public HostErrataListWithDetailsPopupView(EventBus eventBus, HostErrataListModel listModel) {
+        super(eventBus, listModel);
     }
 }

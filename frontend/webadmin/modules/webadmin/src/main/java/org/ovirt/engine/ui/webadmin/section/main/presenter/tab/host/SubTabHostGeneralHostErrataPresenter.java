@@ -54,6 +54,7 @@ public class SubTabHostGeneralHostErrataPresenter extends
         AbstractUiCommandButton getTotalEnhancement();
         void showErrorMessage(SafeHtml errorMessage);
         void showCounts(ErrataCounts counts);
+        void showProgress();
     }
 
     @TabInfo(container = HostGeneralSubTabPanelPresenter.class)
@@ -61,7 +62,7 @@ public class SubTabHostGeneralHostErrataPresenter extends
         return new ModelBoundTabData(constants.hostGeneralErrataSubTabLabel(), 7, errataCountModelProvider);
     }
 
-    private final HostErrataCountModel currentErrataCountModel;
+    private final HostErrataCountModel errataCountModel;
     private VDS currentSelectedHost;
 
     @Inject
@@ -71,7 +72,7 @@ public class SubTabHostGeneralHostErrataPresenter extends
         super(eventBus, view, proxy, placeManager, errataCountModelProvider,
                 HostGeneralSubTabPanelPresenter.TYPE_SetTabContent);
 
-        currentErrataCountModel = getModelProvider().getModel();
+        errataCountModel = getModelProvider().getModel();
     }
 
     @Override
@@ -85,7 +86,15 @@ public class SubTabHostGeneralHostErrataPresenter extends
         currentSelectedHost = event.getSelectedItems().isEmpty()
                 ? null
                 : event.getSelectedItems().get(0);
-        updateModel(currentErrataCountModel);
+        if (isVisible()) {
+            updateModel();
+        }
+    }
+
+    @Override
+    protected void onReveal() {
+        super.onReveal();
+        updateModel();
     }
 
     /* (non-Javadoc)
@@ -119,24 +128,29 @@ public class SubTabHostGeneralHostErrataPresenter extends
 
         // Handle the counts changing -> simple view update.
         //
-        currentErrataCountModel.addErrataCountsChangeListener(new IEventListener<EventArgs>() {
+        errataCountModel.addErrataCountsChangeListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 // bus published message that the counts changed. update view.
-                ErrataCounts counts = currentErrataCountModel.getErrataCounts();
+                ErrataCounts counts = errataCountModel.getErrataCounts();
                 getView().showCounts(counts);
             }
         });
 
         // Handle the count model getting a query error -> simple view update.
         //
-        currentErrataCountModel.addErrorMessageChangeListener(new IEventListener<PropertyChangedEventArgs>() {
+        errataCountModel.addPropertyChangeListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-
-                if (currentErrataCountModel.getMessage() != null && !currentErrataCountModel.getMessage().isEmpty()) {
-                    // bus published message that an error occurred communicating with Katello. Show the alert panel.
-                    getView().showErrorMessage(SafeHtmlUtils.fromString(currentErrataCountModel.getMessage()));
+                if ("Message".equals(args.propertyName)) { //$NON-NLS-1$
+                    if (errataCountModel.getMessage() != null && !errataCountModel.getMessage().isEmpty()) {
+                        // bus published message that an error occurred communicating with Katello. Show the alert panel.
+                        getView().showErrorMessage(SafeHtmlUtils.fromString(errataCountModel.getMessage()));
+                    }
+                } else if (PropertyChangedEventArgs.PROGRESS.equals(args.propertyName)) {
+                    if (errataCountModel.getProgress() != null) {
+                        getView().showProgress();
+                    }
                 }
             }
         });
@@ -146,15 +160,17 @@ public class SubTabHostGeneralHostErrataPresenter extends
     protected void onBind() {
         super.onBind();
 
-        getView().getTotalSecurity().setCommand(currentErrataCountModel.getShowSecurityCommand());
-        getView().getTotalBugFix().setCommand(currentErrataCountModel.getShowBugsCommand());
-        getView().getTotalEnhancement().setCommand(currentErrataCountModel.getShowEnhancementsCommand());
+        getView().getTotalSecurity().setCommand(errataCountModel.getShowSecurityCommand());
+        getView().getTotalBugFix().setCommand(errataCountModel.getShowBugsCommand());
+        getView().getTotalEnhancement().setCommand(errataCountModel.getShowEnhancementsCommand());
     }
 
-    private void updateModel(HostErrataCountModel model) {
+
+    private void updateModel() {
         if (currentSelectedHost != null) {
-            model.setGuid(currentSelectedHost.getId());
-            model.runQuery(currentSelectedHost.getId());
+            errataCountModel.setGuid(currentSelectedHost.getId());
+            errataCountModel.setEntity(currentSelectedHost);
+            errataCountModel.runQuery(currentSelectedHost.getId());
         }
     }
 }

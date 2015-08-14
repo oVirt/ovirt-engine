@@ -1,16 +1,13 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine;
 
 import org.ovirt.engine.core.common.businessentities.ErrataCounts;
-import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.AbstractUiCommandButton;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.VmErrataCountModel;
-import org.ovirt.engine.ui.uicommonweb.models.VmErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -59,6 +56,7 @@ public class SubTabVirtualMachineErrataPresenter extends AbstractSubTabPresenter
         void showErrorMessage(SafeHtml errorMessage);
         void clearErrorMessage();
         void showCounts(ErrataCounts counts);
+        void showProgress();
     }
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
@@ -73,8 +71,7 @@ public class SubTabVirtualMachineErrataPresenter extends AbstractSubTabPresenter
     @Inject
     public SubTabVirtualMachineErrataPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            DetailTabModelProvider<VmListModel<Void>, VmErrataCountModel> errataCountModelProvider,
-            SearchableDetailModelProvider<Erratum, VmListModel<Void>, VmErrataListModel> errataListModelProvider) {
+            DetailTabModelProvider<VmListModel<Void>, VmErrataCountModel> errataCountModelProvider) {
         super(eventBus, view, proxy, placeManager, errataCountModelProvider,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
         errataCountModel = errataCountModelProvider.getModel();
@@ -92,6 +89,14 @@ public class SubTabVirtualMachineErrataPresenter extends AbstractSubTabPresenter
         if (event.getSelectedItems() != null && !event.getSelectedItems().isEmpty()) {
             currentSelectedVm = event.getSelectedItems().get(0);
         }
+        if (isVisible()) {
+            updateModel();
+        }
+    }
+
+    @Override
+    protected void onReveal() {
+        super.onReveal();
         updateModel();
     }
 
@@ -137,7 +142,7 @@ public class SubTabVirtualMachineErrataPresenter extends AbstractSubTabPresenter
 
         // Handle the count model getting a query error -> simple view update.
         //
-        errataCountModel.addErrorMessageChangeListener(new IEventListener<PropertyChangedEventArgs>() {
+        errataCountModel.addPropertyChangeListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 if ("Message".equals(args.propertyName)) { //$NON-NLS-1$
@@ -146,6 +151,10 @@ public class SubTabVirtualMachineErrataPresenter extends AbstractSubTabPresenter
                         getView().showErrorMessage(SafeHtmlUtils.fromString(errataCountModel.getMessage()));
                     } else {
                         getView().clearErrorMessage();
+                    }
+                } else if (PropertyChangedEventArgs.PROGRESS.equals(args.propertyName)) {
+                    if (errataCountModel.getProgress() != null) {
+                        getView().showProgress();
                     }
                 }
             }

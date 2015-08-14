@@ -15,15 +15,27 @@ public class ErrataFilterValue {
         this.enhancements = enhancements;
     }
 
-    protected boolean isSecurity() {
+    public void setSecurity(boolean security) {
+        this.security = security;
+    }
+
+    public void setBugs(boolean bugs) {
+        this.bugs = bugs;
+    }
+
+    public void setEnhancements(boolean enhancements) {
+        this.enhancements = enhancements;
+    }
+
+    public boolean isSecurity() {
         return security;
     }
 
-    protected boolean isBugs() {
+    public boolean isBugs() {
         return bugs;
     }
 
-    protected boolean isEnhancements() {
+    public boolean isEnhancements() {
         return enhancements;
     }
 

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 import org.ovirt.engine.core.common.businessentities.ErrataCounts;
 import org.ovirt.engine.core.common.businessentities.Erratum.ErrataSeverity;
 import org.ovirt.engine.core.common.businessentities.Erratum.ErrataType;
+import org.ovirt.engine.core.common.businessentities.HasErrata;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
@@ -28,7 +29,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
-public abstract class AbstractSubTabErrataCountView<I, M extends ListWithDetailsModel, C extends AbstractErrataCountModel>
+public abstract class AbstractSubTabErrataCountView<I extends HasErrata, M extends ListWithDetailsModel, C extends AbstractErrataCountModel>
     extends AbstractSubTabFormView<I, M, C> implements Editor<AbstractErrataCountModel>,
         AbstractSubTabPresenter.ViewDef<I> {
 
@@ -72,10 +73,9 @@ public abstract class AbstractSubTabErrataCountView<I, M extends ListWithDetails
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
-        errorMessagePanel.setVisible(false);
         errorMessagePanel.setType(Type.WARNING);
 
-        formPanel.setVisible(false);
+        showProgress();
 
         // at this point, only the loading image is visible.
 
@@ -91,6 +91,12 @@ public abstract class AbstractSubTabErrataCountView<I, M extends ListWithDetails
         formBuilder.addFormItem(new FormItem(constants.totalSecurity(), totalSecurity, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.totalBugFix(), totalBugFix, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.totalEnhancement(), totalEnhancement, 2, 0));
+    }
+
+    public void showProgress() {
+        progressDotsImage.setVisible(true);
+        errorMessagePanel.setVisible(false);
+        formPanel.setVisible(false);
     }
 
     @Override
@@ -119,7 +125,6 @@ public abstract class AbstractSubTabErrataCountView<I, M extends ListWithDetails
 
     public void showCounts(ErrataCounts errataCounts) {
         clearErrorMessage();
-        errorMessagePanel.setVisible(false);
         progressDotsImage.setVisible(false);
 
         getTotalSecurity().setLabel(buildSecurityString(errataCounts));
