@@ -187,6 +187,10 @@
         .topElement {
             padding-top: 15px;
         }
+
+        .serialNumberPolicy {
+            margin-left: 9px;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="800px" height="560px">
@@ -304,7 +308,7 @@
                                     <ge:EntityModelCheckBoxEditor ui:field="enableTrustedServiceEditor" />
                                     <ge:EntityModelCheckBoxEditor ui:field="enableHaReservationEditor" />
                                 </g:FlowPanel>
-                                <vm:SerialNumberPolicyWidget ui:field="serialNumberPolicyEditor" />
+                                <vm:SerialNumberPolicyWidget ui:field="serialNumberPolicyEditor" addStyleNames="{style.serialNumberPolicy}" />
                                 <e:ListModelListBoxEditor ui:field="autoConvergeEditor" label="{constants.autoConvergeLabel}" />
                                 <e:ListModelListBoxEditor ui:field="migrateCompressedEditor" label="{constants.migrateCompressedLabel}" />
                             </g:FlowPanel>

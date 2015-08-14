@@ -423,6 +423,10 @@
             width: 20px;
         }
 
+        .serialNumberPolicy {
+          margin-top: 9px;
+        }
+
     </ui:style>
 
     <t:DialogTabPanel width="100%" height="100%" ui:field="mainTabPanel">
@@ -537,7 +541,7 @@
                         </g:FlowPanel>
                             <g:Label ui:field="generalLabel" addStyleNames="{style.sectionLabel}" text="{constants.initialRunGeneral}" />
                             <w:EntityModelWidgetWithInfo ui:field="timeZoneEditorWithInfo" />
-                            <vm:SerialNumberPolicyWidget ui:field="serialNumberPolicyEditor" checkboxStyle="{style.checkboxWithLongLabel}" />
+                            <vm:SerialNumberPolicyWidget ui:field="serialNumberPolicyEditor" addStyleNames="{style.serialNumberPolicy}" />
                         </g:FlowPanel>
                 </t:content>
             </t:DialogTab>
