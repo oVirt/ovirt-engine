@@ -672,6 +672,7 @@ class OvirtUtils(base.Base):
         # TODO: verify and get rid of all the '.*'s
 
         '.*language "plpgsql" already exists',
+        ' *Command was: CREATE PROCEDURAL LANGUAGE plpgsql;',
         '.*must be owner of language plpgsql',
         # psql
         'ERROR:  must be owner of extension plpgsql',
@@ -704,6 +705,10 @@ class OvirtUtils(base.Base):
         (
             'pg_restore: \[archiver \(db\)\] Error from TOC entry \d+'
             '; 0 0 COMMENT EXTENSION plpgsql'
+        ),
+        (
+            'pg_restore: \[archiver \(db\)\] Error from TOC entry \d+'
+            '; \d+ \d+ PROCEDURAL LANGUAGE plpgsql'
         ),
         'pg_restore: WARNING:',
         'WARNING: ',
