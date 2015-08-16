@@ -1866,6 +1866,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("VirtIO-SCSI can be enabled from Resource Allocation tab on VM dialog")
     String diskInterfaceInfo();
 
+    @DefaultStringValue("Volume Types should be manually created and configured in Cinder.")
+    String cinderVolumeTypeInfoIcon();
+
     @DefaultStringValue("When one of the activated VM disks uses SCSI reservation, the VM can't be migrated.")
     String scsiReservationInfoIcon();
 
