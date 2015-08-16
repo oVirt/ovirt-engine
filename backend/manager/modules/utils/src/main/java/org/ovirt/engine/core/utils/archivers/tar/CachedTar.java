@@ -26,7 +26,7 @@ public class CachedTar {
     private File archive;
     private File dir;
 
-    private void create(long timestamp) throws IOException {
+    private void create() throws IOException {
         File temp = null;
         OutputStream os = null;
         try {
@@ -60,16 +60,6 @@ public class CachedTar {
         }
 
         try {
-            if (!temp.setLastModified(timestamp)) {
-                throw new IOException(
-                    String.format(
-                        "Cannot set last modified '%1$s' to '%2$d'",
-                        temp.getCanonicalPath(),
-                        timestamp
-                    )
-                );
-            }
-
             if (!temp.renameTo(this.archive)) {
                 throw new IOException(
                     String.format(
@@ -94,29 +84,15 @@ public class CachedTar {
     }
 
     private void ensure() throws IOException {
-        if (!this.archive.exists()) {
+        if (!this.archive.exists() || this.nextCheckTime <= System.currentTimeMillis()) {
             log.info(
                 String.format(
-                    "Tarball '%1$s' is missing, creating",
+                    "Tarball '%1$s' refresh",
                     this.archive.getAbsolutePath()
                 )
             );
             this.nextCheckTime = System.currentTimeMillis() + this.refreshInterval;
-            create(getTimestampRecursive(this.dir));
-        }
-        else if (this.nextCheckTime <= System.currentTimeMillis()) {
-            this.nextCheckTime = System.currentTimeMillis() + this.refreshInterval;
-
-            long treeTimestamp = getTimestampRecursive(this.dir);
-            if (archive.lastModified() != treeTimestamp) {
-                log.info(
-                    String.format(
-                        "Tarball '%1$s' is out of date, re-creating",
-                        this.archive.getAbsolutePath()
-                    )
-                );
-                create(treeTimestamp);
-            }
+            create();
         }
     }
 
@@ -150,28 +126,5 @@ public class CachedTar {
     public File getFile() throws IOException {
         ensure();
         return this.archive;
-    }
-
-    /**
-     * Returns the maximum timestamp of directory tree.
-     *
-     * @param file
-     *            directory/file name.
-     * @return max timestamp.
-     */
-    private static long getTimestampRecursive(File file) {
-        if (file.isDirectory()) {
-            long m = 0;
-            for (String name : file.list()) {
-                m = Math.max(m, getTimestampRecursive(new File(file, name)));
-            }
-            return m;
-        }
-        else if (file.isFile()) {
-            return file.lastModified();
-        }
-        else {
-            return 0;
-        }
     }
 }
