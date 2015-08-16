@@ -9,9 +9,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class HostNetworkQosParametersModel extends QosParametersModel<HostNetworkQos> {
@@ -30,21 +27,6 @@ public class HostNetworkQosParametersModel extends QosParametersModel<HostNetwor
 
     public EntityModel<String> getOutAverageRealtime() {
         return outAverageRealtime;
-    }
-
-    public HostNetworkQosParametersModel() {
-        getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev,
-                    Object sender,
-                    PropertyChangedEventArgs args) {
-                boolean value = getIsChangable();
-                getOutAverageLinkshare().setIsChangeable(value);
-                getOutAverageUpperlimit().setIsChangeable(value);
-                getOutAverageRealtime().setIsChangeable(value);
-            }
-        });
     }
 
     @Override
