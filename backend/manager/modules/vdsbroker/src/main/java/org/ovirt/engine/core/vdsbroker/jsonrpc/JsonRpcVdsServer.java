@@ -383,7 +383,7 @@ public class JsonRpcVdsServer implements IVdsServer {
         JsonRpcRequest request = new RequestBuilder("VM.changeFloppy").withParameter("vmID", vmId)
                 .withParameter("driveSpec", imageLocation).build();
         Map<String, Object> response =
-                new FutureMap(this.client, request).withResponseKey("status");
+                new FutureMap(this.client, request).withResponseKey("vmList");
         return new OneVmReturnForXmlRpc(response);
     }
 
