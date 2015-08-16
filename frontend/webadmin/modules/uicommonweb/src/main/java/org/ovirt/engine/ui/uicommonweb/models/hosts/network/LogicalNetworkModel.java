@@ -2,7 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -43,7 +45,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         networksOnTarget.add(this);
 
         if (!hasVlan()) {
-            restoreNetworkParameters(targetNic.getIface());
+            restoreNicParameters(targetNic.getIface());
         }
 
         if (isManagement()) {
@@ -66,7 +68,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             bridge.setVdsId(targetNicEntity.getVdsId());
             bridge.setVdsName(targetNicEntity.getVdsName());
             bridge.setBridged(getNetwork().isVmNetwork());
-            restoreNetworkParameters(bridge);
+            restoreNicParameters(bridge);
             return bridge;
         } else {
             targetNicEntity.setNetworkName(getName());
@@ -76,19 +78,28 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         }
     }
 
-    private void restoreNetworkParameters(VdsNetworkInterface nic) {
+    private void restoreNicParameters(VdsNetworkInterface nic) {
         NetworkParameters netParams = getSetupModel().getNetworkToLastDetachParams().get(getName());
         if (netParams != null) {
             nic.setBootProtocol(netParams.getBootProtocol());
             nic.setAddress(netParams.getAddress());
             nic.setSubnet(netParams.getSubnet());
             nic.setGateway(netParams.getGateway());
-            //commenting out as we decided, has to be fixed in following separate UI patch
-//            nic.setQosOverridden(netParams.getQosOverridden());
             nic.setQos(netParams.getQos());
             nic.setCustomProperties(netParams.getCustomProperties());
         } else if (nic.getBootProtocol() == null) {
             nic.setBootProtocol(isManagement() ? NetworkBootProtocol.DHCP : NetworkBootProtocol.NONE);
+        }
+    }
+
+    public void restoreNetworkAttachmentParameters(NetworkAttachment attachment) {
+        NetworkParameters netParams = getSetupModel().getNetworkToLastDetachParams().get(getName());
+        if (netParams != null) {
+            if (netParams.isQosOverridden()) {
+                attachment.setHostNetworkQos(netParams.getQos());
+            }
+
+            attachment.setProperties(netParams.getCustomProperties());
         }
     }
 
@@ -109,17 +120,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         // clear network name
         VdsNetworkInterface nicEntity = attachingNic.getIface();
 
-        NetworkParameters netParams = new NetworkParameters();
-        VdsNetworkInterface detachedDevice = hasVlan() ? vlanNicModel.getIface() : nicEntity;
-        netParams.setBootProtocol(detachedDevice.getBootProtocol());
-        netParams.setAddress(detachedDevice.getAddress());
-        netParams.setSubnet(detachedDevice.getSubnet());
-        netParams.setGateway(detachedDevice.getGateway());
-        //commenting out as we decided, has to be fixed in following separate UI patch
-//        netParams.setQosOverridden(detachedDevice.isQosOverridden());
-        netParams.setQos(detachedDevice.getQos());
-        netParams.setCustomProperties(detachedDevice.getCustomProperties());
-        getSetupModel().getNetworkToLastDetachParams().put(getName(), netParams);
+        storeAttachmentParamsBeforeDetach();
 
         if (!hasVlan()) {
             nicEntity.setNetworkName(null);
@@ -127,8 +128,6 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             nicEntity.setAddress(null);
             nicEntity.setSubnet(null);
             nicEntity.setGateway(null);
-            //commenting out as we decided, has to be fixed in following separate UI patch
-            //nicEntity.setQosOverridden(false);
             nicEntity.setQos(null);
             nicEntity.setCustomProperties(null);
             nicEntity.setNetworkImplementationDetails(null);
@@ -142,7 +141,31 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         if (syncNetworkValues) {
             syncNetworkValues();
         }
+    }
 
+    private void storeAttachmentParamsBeforeDetach() {
+        NetworkAttachment networkAttachment = getSetupModel().getNetworkAttachmentForNetwork(getNetwork().getId());
+        NetworkParameters netParams = new NetworkParameters();
+
+        IPv4Address ipAdrdress =
+                networkAttachment.getIpConfiguration() != null
+                        && networkAttachment.getIpConfiguration().hasPrimaryAddressSet() ?
+                        networkAttachment.getIpConfiguration().getPrimaryAddress()
+                        : null;
+
+        if (ipAdrdress != null) {
+            netParams.setBootProtocol(ipAdrdress.getBootProtocol());
+            netParams.setAddress(ipAdrdress.getAddress());
+            netParams.setSubnet(ipAdrdress.getNetmask());
+            netParams.setGateway(ipAdrdress.getGateway());
+        }
+
+        netParams.setQos(networkAttachment.getHostNetworkQos());
+
+        netParams.setQosOverridden(networkAttachment.isQosOverridden());
+        netParams.setCustomProperties(networkAttachment.getProperties());
+
+        getSetupModel().getNetworkToLastDetachParams().put(getName(), netParams);
     }
 
     private void syncNetworkValues() {
@@ -229,12 +252,12 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
 
     public boolean isInSync() {
         NetworkImplementationDetails details = getNetworkImplementationDetails();
-        return details != null ? details.isInSync() : true;
+        return details == null || details.isInSync();
     }
 
     public boolean isManaged() {
         NetworkImplementationDetails details = getNetworkImplementationDetails();
-        return details != null ? details.isManaged() : true;
+        return details == null || details.isManaged();
     }
 
     public NetworkImplementationDetails getNetworkImplementationDetails() {

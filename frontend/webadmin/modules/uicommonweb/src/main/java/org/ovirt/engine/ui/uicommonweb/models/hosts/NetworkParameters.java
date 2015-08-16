@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
 public class NetworkParameters {
 
@@ -18,18 +17,6 @@ public class NetworkParameters {
 
 
     public NetworkParameters() {
-    }
-
-    public NetworkParameters(VdsNetworkInterface nic) {
-        setBootProtocol(nic.getBootProtocol());
-        setAddress(nic.getAddress());
-        setSubnet(nic.getSubnet());
-        setGateway(nic.getGateway());
-
-        //commenting out as we decided, has to be fixed in following separate UI patch
-        //setQosOverridden(nic.isQosOverridden());
-        setQos(nic.getQos());
-        setCustomProperties(nic.getCustomProperties());
     }
 
     public NetworkBootProtocol getBootProtocol() {
@@ -57,7 +44,7 @@ public class NetworkParameters {
         this.gateway = gateway;
     }
 
-    public boolean getQosOverridden() {
+    public boolean isQosOverridden() {
         return qosOverridden;
     }
 

@@ -300,7 +300,7 @@ public class HostInterfaceModel extends EntityModel {
             getAddress().setEntity(originalNetParams.getAddress());
             getSubnet().setEntity(originalNetParams.getSubnet());
             getGateway().setEntity(originalNetParams.getGateway());
-            getQosOverridden().setEntity(originalNetParams.getQosOverridden());
+            getQosOverridden().setEntity(originalNetParams.isQosOverridden());
             getQosModel().init(originalNetParams.getQos());
             getCustomPropertiesModel().deserialize(KeyValueModel.convertProperties(originalNetParams.getCustomProperties()));
         }
