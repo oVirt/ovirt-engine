@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import org.junit.Before;
@@ -14,16 +16,20 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.lock.InMemoryLockManager;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
@@ -44,6 +50,9 @@ public class RemoveDiskCommandTest {
 
     @Mock
     private VmDeviceDao vmDeviceDao;
+
+    @Mock
+    private DiskImageDao diskImageDao;
 
     private RemoveDiskCommand<RemoveDiskParameters> cmd;
     private DiskImage disk;
@@ -92,6 +101,30 @@ public class RemoveDiskCommandTest {
         vm.setStatus(VMStatus.Up);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+    }
+
+
+    @Test
+    public void testCanDoActionTemplateEntity() {
+        disk.setVmEntityType(VmEntityType.TEMPLATE);
+
+        StorageDomain domain = new StorageDomain();
+        domain.setId(Guid.newGuid());
+        domain.setStatus(StorageDomainStatus.Active);
+        cmd.getParameters().setStorageDomainId(domain.getId());
+
+        ArrayList<Guid> storageIds = new ArrayList<>();
+        storageIds.add(domain.getId());
+        storageIds.add(Guid.newGuid());
+        disk.setStorageIds(storageIds);
+
+        doReturn(domain).when(cmd).getStorageDomain();
+        doReturn(new VmTemplate()).when(cmd).getVmTemplate();
+        doReturn(true).when(cmd).checkDerivedDisksFromDiskNotExist(any(DiskImage.class));
+        doReturn(disk).when(diskImageDao).get(any(Guid.class));
+        doReturn(diskImageDao).when(cmd).getDiskImageDao();
+
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
     }
 
     @Test
