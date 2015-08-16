@@ -2,20 +2,6 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import org.ovirt.engine.core.common.businessentities.MigrationMethod;
 
-//-----------------------------------------------------
-//
-//-----------------------------------------------------
-//TODO: BrokerFactory, StatusForXmlRpc can be consolidated for all brokers
-//      (currently in vdsBroker and irsBroker)
-//public static class VdsBrokerFactory
-//{
-//    //TODO: messed up because could not make real factory here
-//    public static IVdsBroker create(string host, uint port)
-//    {
-//        return new VdsBroker(host, port);
-//    }
-//}
-
 public final class VdsProperties {
     // vds configuration (i.e. VdsStatic)
     // vds runtime (i.e. VdsDynamic req getVdsCapabilities)
