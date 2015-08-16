@@ -1,103 +1,111 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	         xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
-             xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
+             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+             xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+             xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+             xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
 
-	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 
-	<ui:style>
-		.container {
-			width: 100%;
-		}
+    <ui:style>
+        .container {
+            width: 100%;
+        }
 
-		.errorMessageLabel {
-			color: #CD2127;
-			width: 100%;
-			text-align: center;
-			margin-top: 10px;
-		}
+        .errorMessageLabel {
+            color: #CD2127;
+            width: 100%;
+            text-align: center;
+            margin-top: 10px;
+        }
 
         @external obrand_diskTypePanel;
-		.obrand_diskTypePanel {
-			height: 36px;
-			width: 100%;
-			padding-top: 6px;
-			margin-bottom: 6px;
-			color: white;
-			font-weight: bold;
-			display: block;
-		}
+        .obrand_diskTypePanel {
+            height: 36px;
+            width: 100%;
+            padding-top: 6px;
+            margin-bottom: 6px;
+            color: white;
+            font-weight: bold;
+            display: block;
+        }
 
-		.mainPanel {
-			width: 100%;
-		}
+        .mainPanel {
+            width: 100%;
+        }
 
-		.boxEditor {
-			width: 435px;
-		}
+        .boxEditor {
+            width: 435px;
+        }
 
-		.checkBoxEditor {
-			padding-left: 75px;
-		}
+        .checkBoxEditor {
+            padding-left: 75px;
+        }
 
         .checkBoxSecondary {
             margin-left: 20px;
         }
 
-		.externalDiskPanel {
-			height: 298px;
-			width: 100%;
-			bottom: 12px;
-			position: absolute;
-		}
+        .externalDiskPanel {
+            height: 298px;
+            width: 100%;
+            bottom: 12px;
+            position: absolute;
+        }
 
         .infoIcon {
             float: left;
             padding-top: 5px;
             padding-left: 2px;
         }
-	</ui:style>
+    </ui:style>
 
-	<g:FlowPanel addStyleNames="{style.container}">
-        <w:RadioButtonsHorizontalPanel ui:field="diskTypePanel" name="diskTypePanel" addStyleNames="{style.obrand_diskTypePanel}"/>
-		<g:VerticalPanel ui:field="createDiskPanel" addStyleNames="{style.mainPanel}">
-			<g:HorizontalPanel>
-				<g:VerticalPanel>
-					<ge:IntegerEntityModelTextBoxEditor ui:field="sizeEditor" addStyleNames="{style.boxEditor}"/>
-          <ge:StringEntityModelTextBoxEditor ui:field="sizeExtendEditor" addStyleNames="{style.boxEditor}"/>
-					<ge:StringEntityModelTextBoxEditor ui:field="aliasEditor" addStyleNames="{style.boxEditor}"/>
-					<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" addStyleNames="{style.boxEditor}"/>
+    <g:FlowPanel addStyleNames="{style.container}">
+        <w:RadioButtonsHorizontalPanel ui:field="diskTypePanel" name="diskTypePanel"
+                                       addStyleNames="{style.obrand_diskTypePanel}"/>
+        <g:VerticalPanel ui:field="createDiskPanel" addStyleNames="{style.mainPanel}">
+            <g:HorizontalPanel>
+                <g:VerticalPanel>
+                    <ge:IntegerEntityModelTextBoxEditor ui:field="sizeEditor" addStyleNames="{style.boxEditor}"/>
+                    <ge:StringEntityModelTextBoxEditor ui:field="sizeExtendEditor" addStyleNames="{style.boxEditor}"/>
+                    <ge:StringEntityModelTextBoxEditor ui:field="aliasEditor" addStyleNames="{style.boxEditor}"/>
+                    <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" addStyleNames="{style.boxEditor}"/>
                     <g:HorizontalPanel>
-					    <e:ListModelListBoxEditor ui:field="interfaceEditor" addStyleNames="{style.boxEditor}"/>
+                        <e:ListModelListBoxEditor ui:field="interfaceEditor" addStyleNames="{style.boxEditor}"/>
                         <d:InfoIcon ui:field="interfaceInfoIcon" addStyleNames="{style.infoIcon}" visible="false"/>
                     </g:HorizontalPanel>
-					<e:ListModelListBoxEditor ui:field="datacenterEditor" addStyleNames="{style.boxEditor}"/>
-					<e:ListModelListBoxEditor ui:field="storageDomainEditor" addStyleNames="{style.boxEditor}"/>
-					<e:ListModelListBoxEditor ui:field="volumeTypeEditor" addStyleNames="{style.boxEditor}"/>
-                                       <e:ListModelListBoxEditor ui:field="cinderVolumeTypeEditor" addStyleNames="{style.boxEditor}"/>
-                                       <e:ListModelListBoxEditor ui:field="diskProfileEditor" addStyleNames="{style.boxEditor}"/>
-					<e:ListModelListBoxEditor ui:field="quotaEditor" addStyleNames="{style.boxEditor}"/>
-					<e:ListModelListBoxEditor ui:field="hostListEditor" addStyleNames="{style.boxEditor}"/>
-					<e:ListModelListBoxEditor ui:field="storageTypeEditor" addStyleNames="{style.boxEditor}"/>
-				</g:VerticalPanel>
-				<g:VerticalPanel>
+                    <e:ListModelListBoxEditor ui:field="datacenterEditor" addStyleNames="{style.boxEditor}"/>
+                    <e:ListModelListBoxEditor ui:field="storageDomainEditor" addStyleNames="{style.boxEditor}"/>
+                    <e:ListModelListBoxEditor ui:field="volumeTypeEditor" addStyleNames="{style.boxEditor}"/>
+                    <e:ListModelListBoxEditor ui:field="cinderVolumeTypeEditor" addStyleNames="{style.boxEditor}"/>
+                    <e:ListModelListBoxEditor ui:field="diskProfileEditor" addStyleNames="{style.boxEditor}"/>
+                    <e:ListModelListBoxEditor ui:field="quotaEditor" addStyleNames="{style.boxEditor}"/>
+                    <e:ListModelListBoxEditor ui:field="hostListEditor" addStyleNames="{style.boxEditor}"/>
+                    <e:ListModelListBoxEditor ui:field="storageTypeEditor" addStyleNames="{style.boxEditor}"/>
+                </g:VerticalPanel>
+                <g:VerticalPanel>
                     <ge:EntityModelCheckBoxEditor ui:field="plugDiskToVmEditor" addStyleNames="{style.checkBoxEditor}"/>
-					<ge:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor" addStyleNames="{style.checkBoxEditor}"/>
-					<ge:EntityModelCheckBoxEditor ui:field="isBootableEditor" addStyleNames="{style.checkBoxEditor}" />
-					<ge:EntityModelCheckBoxEditor ui:field="isShareableEditor" addStyleNames="{style.checkBoxEditor}"/>
+                    <ge:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor"
+                                                  addStyleNames="{style.checkBoxEditor}"/>
+                    <ge:EntityModelCheckBoxEditor ui:field="isBootableEditor" addStyleNames="{style.checkBoxEditor}"/>
+                    <ge:EntityModelCheckBoxEditor ui:field="isShareableEditor" addStyleNames="{style.checkBoxEditor}"/>
                     <ge:EntityModelCheckBoxEditor ui:field="isReadOnlyEditor" addStyleNames="{style.checkBoxEditor}"/>
-                    <ge:EntityModelCheckBoxEditor ui:field="isScsiPassthroughEditor" addStyleNames="{style.checkBoxEditor}"/>
-                    <ge:EntityModelCheckBoxEditor ui:field="isSgIoUnfilteredEditor" addStyleNames="{style.checkBoxEditor} {style.checkBoxSecondary}"/>
-					<g:HorizontalPanel>
-						<ge:EntityModelCheckBoxEditor ui:field="isUsingScsiReservationEditor" addStyleNames="{style.checkBoxEditor} {style.checkBoxSecondary}"/>
-						<d:InfoIcon ui:field="scsiReservationInfoIcon" addStyleNames="{style.infoIcon}" visible="false"/>
-					</g:HorizontalPanel>
-				</g:VerticalPanel>
-			</g:HorizontalPanel>
-			<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />
-			<g:FlowPanel ui:field="externalDiskPanel" addStyleNames="{style.externalDiskPanel}"/>
-		</g:VerticalPanel>
-	</g:FlowPanel>
+                    <ge:EntityModelCheckBoxEditor ui:field="isScsiPassthroughEditor"
+                                                  addStyleNames="{style.checkBoxEditor}"/>
+                    <ge:EntityModelCheckBoxEditor ui:field="isSgIoUnfilteredEditor"
+                                                  addStyleNames="{style.checkBoxEditor} {style.checkBoxSecondary}"/>
+                    <g:HorizontalPanel>
+                        <ge:EntityModelCheckBoxEditor ui:field="isUsingScsiReservationEditor"
+                                                      addStyleNames="{style.checkBoxEditor} {style.checkBoxSecondary}"/>
+                        <d:InfoIcon ui:field="scsiReservationInfoIcon" addStyleNames="{style.infoIcon}"
+                                    visible="false"/>
+                    </g:HorizontalPanel>
+                </g:VerticalPanel>
+            </g:HorizontalPanel>
+            <g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}"/>
+            <g:FlowPanel ui:field="externalDiskPanel" addStyleNames="{style.externalDiskPanel}"/>
+        </g:VerticalPanel>
+    </g:FlowPanel>
 
 </ui:UiBinder>
