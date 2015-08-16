@@ -231,7 +231,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
       return new DiskImagesValidator(Arrays.asList(disk));
     }
 
-    private boolean checkDerivedDisksFromDiskNotExist(DiskImage diskImage) {
+    protected boolean checkDerivedDisksFromDiskNotExist(DiskImage diskImage) {
         return validate(createDiskImagesValidator(diskImage).diskImagesHaveNoDerivedDisks(getParameters().getStorageDomainId()));
     }
 
