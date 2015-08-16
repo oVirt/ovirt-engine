@@ -132,7 +132,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     private Map<String, String> labelToIface = new HashMap<>();
 
-    private final List<String> networksToSync = new ArrayList<>();
+    private final Set<String> networksToSync = new HashSet<>();
 
     // The purpose of this map is to keep the network parameters while moving the network from one nic to another
     private final Map<String, NetworkParameters> networkToLastDetachParams;
@@ -334,24 +334,27 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             /*****************
              * Network Dialog
              *****************/
-            final LogicalNetworkModel logicalNetwork = (LogicalNetworkModel) item;
-            final VdsNetworkInterface entity =
-                    logicalNetwork.hasVlan() ? logicalNetwork.getVlanNicModel().getIface()
-                            : logicalNetwork.getAttachedToNic().getIface();
+            final LogicalNetworkModel logicalNetworkModel = (LogicalNetworkModel) item;
+            final VdsNetworkInterface nic =
+                    logicalNetworkModel.hasVlan() ? logicalNetworkModel.getVlanNicModel().getIface()
+                            : logicalNetworkModel.getAttachedToNic().getIface();
 
             final HostInterfaceModel networkDialogModel;
             String version = getEntity().getVdsGroupCompatibilityVersion().getValue();
-            if (logicalNetwork.isManagement()) {
+            final Network network = logicalNetworkModel.getNetwork();
+            final String logicalNetworkModelName = network.getName();
+
+            if (logicalNetworkModel.isManagement()) {
                 networkDialogModel = new HostManagementNetworkModel(true);
                 networkDialogModel.setTitle(ConstantsManager.getInstance().getConstants().editManagementNetworkTitle());
-                networkDialogModel.setEntity(logicalNetwork.getNetwork());
+                networkDialogModel.setEntity(network);
                 networkDialogModel.setNoneBootProtocolAvailable(false);
                 networkDialogModel.getInterface().setIsAvailable(false);
             } else {
                 networkDialogModel = new HostInterfaceModel(true);
                 networkDialogModel.setTitle(ConstantsManager.getInstance()
                         .getMessages()
-                        .editNetworkTitle(logicalNetwork.getName()));
+                        .editNetworkTitle(logicalNetworkModelName));
                 networkDialogModel.getName().setIsAvailable(false);
                 networkDialogModel.getNetwork().setIsChangeable(false);
                 networkDialogModel.getGateway()
@@ -359,40 +362,24 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                                 version));
             }
 
-            networkDialogModel.getNetwork().setSelectedItem(logicalNetwork.getNetwork());
-            networkDialogModel.setOriginalNetParams(netToBeforeSyncParams.get(logicalNetwork.getName()));
-            networkDialogModel.getAddress().setEntity(entity.getAddress());
-            networkDialogModel.getSubnet().setEntity(entity.getSubnet());
-            networkDialogModel.getGateway().setEntity(entity.getGateway());
-            networkDialogModel.setStaticIpChangeAllowed(!getEntity().getHostName().equals(entity.getAddress()));
+            networkDialogModel.getNetwork().setSelectedItem(network);
+            networkDialogModel.setOriginalNetParams(netToBeforeSyncParams.get(logicalNetworkModelName));
+            networkDialogModel.getAddress().setEntity(nic.getAddress());
+            networkDialogModel.getSubnet().setEntity(nic.getSubnet());
+            networkDialogModel.getGateway().setEntity(nic.getGateway());
+            networkDialogModel.setStaticIpChangeAllowed(!getEntity().getHostName().equals(nic.getAddress()));
             networkDialogModel.getBondingOptions().setIsAvailable(false);
-            networkDialogModel.setBootProtocol(entity.getBootProtocol());
+            networkDialogModel.setBootProtocol(nic.getBootProtocol());
 
             if ((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.HostNetworkQosSupported,
                     version)) {
                 networkDialogModel.getQosOverridden().setIsAvailable(true);
                 networkDialogModel.getQosModel().setIsAvailable(true);
-                //commenting out as we decided, has to be fixed in following separate UI patch
-//                networkDialogModel.getQosOverridden().setEntity(entity.isQosOverridden());
-//                if (entity.isQosOverridden()) {
-//                    networkDialogModel.getQosModel().init(entity.getQos());
-//                } else {
-                    Guid qosId = logicalNetwork.getNetwork().getQosId();
-                    if (qosId != null) {
-                        networkDialogModel.startProgress();
-                        Frontend.getInstance().runQuery(VdcQueryType.GetQosById,
-                                new IdQueryParameters(qosId),
-                                new AsyncQuery(new INewAsyncCallback() {
+                NetworkAttachment networkAttachment =
+                        getNetworkAttachmentForNetwork(network.getId());
+                networkDialogModel.getQosOverridden().setEntity(networkAttachment.isQosOverridden());
+                networkDialogModel.getQosModel().init(nic.getQos());
 
-                                    @Override
-                                    public void onSuccess(Object model, Object returnValue) {
-                                        networkDialogModel.getQosModel()
-                                                .init((HostNetworkQos) ((VdcQueryReturnValue) returnValue).getReturnValue());
-                                        networkDialogModel.stopProgress();
-                                    }
-                                }));
-                    }
-//                }
             }
 
             if ((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.NetworkCustomPropertiesSupported,
@@ -404,18 +391,18 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                                 version));
                 // TODO: extract this (and as much surrounding code as possible) into a custom properties utility common
                 // to backend and frontend (lvernia)
-                if (!logicalNetwork.getNetwork().isVmNetwork()) {
+                if (!network.isVmNetwork()) {
                     validProperties.remove("bridge_opts"); //$NON-NLS-1$
                 }
                 validProperties.putAll(KeyValueModel.convertProperties((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.UserDefinedNetworkCustomProperties,
                         version)));
                 customPropertiesModel.setKeyValueMap(validProperties);
-                customPropertiesModel.deserialize(KeyValueModel.convertProperties(entity.getCustomProperties()));
+                customPropertiesModel.deserialize(KeyValueModel.convertProperties(nic.getCustomProperties()));
             }
 
-            networkDialogModel.getIsToSync().setIsChangeable(!logicalNetwork.isInSync());
+            networkDialogModel.getIsToSync().setIsChangeable(!logicalNetworkModel.isInSync());
             networkDialogModel.getIsToSync()
-                    .setEntity(networksToSync.contains(logicalNetwork.getName()));
+                    .setEntity(networksToSync.contains(logicalNetworkModelName));
 
             editPopup = networkDialogModel;
 
@@ -426,40 +413,61 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                     if (!networkDialogModel.validate()) {
                         return;
                     }
-                    entity.setBootProtocol(networkDialogModel.getBootProtocol());
+                    nic.setBootProtocol(networkDialogModel.getBootProtocol());
                     if (networkDialogModel.getIsStaticAddress()) {
-                        entity.setAddress(networkDialogModel.getAddress().getEntity());
-                        entity.setSubnet(networkDialogModel.getSubnet().getEntity());
-                        entity.setGateway(networkDialogModel.getGateway().getEntity());
+                        nic.setAddress(networkDialogModel.getAddress().getEntity());
+                        nic.setSubnet(networkDialogModel.getSubnet().getEntity());
+                        nic.setGateway(networkDialogModel.getGateway().getEntity());
                     }
 
-                    if (networkDialogModel.getQosModel().getIsAvailable()) {
-                        boolean qosOverridden = networkDialogModel.getQosOverridden().getEntity();
-                        HostNetworkQos qos = null;
-                        //commenting out as we decided, has to be fixed in following separate UI patch
-//                        entity.setQosOverridden(qosOverridden);
-                        if (qosOverridden) {
-                            qos = new HostNetworkQos();
-                            networkDialogModel.getQosModel().flush(qos);
-                        }
-                        entity.setQos(qos);
+                    HostNetworkQos displayedQos = getDisplayedQos();
+
+                    if (displayedQos != null) {
+                        nic.setQos(displayedQos);
                     }
 
                     if (networkDialogModel.getCustomPropertiesModel().getIsAvailable()) {
-                        entity.setCustomProperties(KeyValueModel.convertProperties(networkDialogModel.getCustomPropertiesModel()
-                                .serialize()));
+                        nic.setCustomProperties(KeyValueModel.convertProperties(networkDialogModel.getCustomPropertiesModel()
+                            .serialize()));
                     }
 
                     if (networkDialogModel.getIsToSync().getEntity()) {
-                        networksToSync.add(logicalNetwork.getName());
+                        networksToSync.add(logicalNetworkModelName);
                     } else {
-                        networksToSync.remove(logicalNetwork.getName());
+                        networksToSync.remove(logicalNetworkModelName);
                     }
 
-                    removePreviousNetworkAttachmentInstanceFromRequestAndAddNewOne(logicalNetwork, entity);
+                    removePreviousNetworkAttachmentInstanceFromRequestAndAddNewOne(logicalNetworkModel, nic, getOverridingHostNetworkQos(displayedQos));
 
                     sourceListModel.setConfirmWindow(null);
                 }
+
+                private HostNetworkQos getDisplayedQos() {
+                    HostNetworkQos displayedQos = null;
+
+                    if (networkDialogModel.getQosModel().getIsAvailable()) {
+                        displayedQos = new HostNetworkQos();
+                        networkDialogModel.getQosModel().flush(displayedQos);
+                    }
+
+                    return displayedQos;
+                }
+
+                private HostNetworkQos getOverridingHostNetworkQos(HostNetworkQos displayedQos) {
+                    boolean qosAvailableAndSet = displayedQos != null
+                            && networkDialogModel.getQosOverridden().getEntity();
+
+                    if (qosAvailableAndSet) {
+                        if (networkDialogModel.getQosModel().getIsChangable()) {
+                            return displayedQos;
+                        } else {
+                            return getNetworkAttachmentForNetwork(network.getId()).getHostNetworkQos();
+                        }
+                    } else {
+                        return null;
+                    }
+                }
+
             };
         }
 
@@ -483,6 +491,36 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         sourceListModel.setConfirmWindow(editPopup);
     }
 
+    public NetworkAttachment getNetworkAttachmentForNetwork(Guid networkId) {
+        if (networkId == null) {
+            throw new IllegalArgumentException();
+        }
+
+        NetworkAttachment updatedAttachment =
+                new MapNetworkAttachments(hostSetupNetworksParametersData.newOrModifiedNetworkAttachments).byNetworkId()
+                        .get(networkId);
+
+        if (updatedAttachment != null) {
+            return updatedAttachment;
+        }
+
+        NetworkAttachment existingAttachment = getExistingAttachmentByNetworkId(networkId);
+
+        if (existingAttachment != null && !shouldBeRemoved(existingAttachment.getId())) {
+            return existingAttachment;
+        }
+
+        throw new IllegalArgumentException(
+                "Unable to find network attachment for network id " //$NON-NLS-1$
+                        + networkId);
+    }
+
+    private boolean shouldBeRemoved(Guid attachmentId) {
+        Set<Guid> removedAttachmentIds =
+                new HashSet<>(Entities.getIds(hostSetupNetworksParametersData.removedNetworkAttachments));
+        return removedAttachmentIds.contains(attachmentId);
+    }
+
     private void onBondEditUpdateParams(Bond bond) {
         for (Iterator<Bond> iter = hostSetupNetworksParametersData.newOrModifiedBonds.iterator(); iter.hasNext();) {
             Bond oldModifiedBond = iter.next();
@@ -496,7 +534,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     }
 
     public void removePreviousNetworkAttachmentInstanceFromRequestAndAddNewOne(
-            LogicalNetworkModel logicalNetwork, VdsNetworkInterface entity) {
+        LogicalNetworkModel logicalNetwork, VdsNetworkInterface entity, HostNetworkQos overridingQos) {
 
         Network updatedNetwork = logicalNetwork.getNetwork();
         Guid updatedNetworkId = updatedNetwork.getId();
@@ -517,11 +555,12 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         hostSetupNetworksParametersData.newOrModifiedNetworkAttachments.remove(previousUpdate);
 
         NetworkAttachment updatedNetworkAttachment =
-                NetworkOperation.newNetworkAttachment(updatedNetwork,
-                        logicalNetwork.getAttachedToNic().getIface(),
-                        logicalNetwork.getVlanNicModel() == null ? null : logicalNetwork.getVlanNicModel().getIface(),
-                        networkAttachmentId,
-                        hostSetupNetworksParametersData.networksToSync);
+            NetworkOperation.newNetworkAttachment(updatedNetwork,
+                logicalNetwork.getAttachedToNic().getIface(),
+                logicalNetwork.getVlanNicModel() == null ? null : logicalNetwork.getVlanNicModel().getIface(),
+                networkAttachmentId,
+                hostSetupNetworksParametersData.networksToSync,
+                overridingQos);
         hostSetupNetworksParametersData.newOrModifiedNetworkAttachments.add(updatedNetworkAttachment);
     }
 
@@ -785,7 +824,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 nicToNetwork.get(ifName).add(networkModel);
 
                 if (!networkModel.isInSync() && networkModel.isManaged()) {
-                    netToBeforeSyncParams.put(networkName, new NetworkParameters(nic));
+                    NetworkAttachment existingNetworkAttachment = getExistingAttachmentByNetworkId(networkModel.getNetwork().getId());
+                    netToBeforeSyncParams.put(networkName, createBeforeSyncNetParams(nic, existingNetworkAttachment));
                 }
             }
         }
@@ -869,6 +909,27 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         }
         initLabeledNetworksErrorMessages(errorLabelNetworks, nicModels);
         setNics(nicModels);
+    }
+
+    private NetworkParameters createBeforeSyncNetParams(VdsNetworkInterface nic, NetworkAttachment attachment) {
+        NetworkParameters params = new NetworkParameters();
+        params.setBootProtocol(nic.getBootProtocol());
+        params.setAddress(nic.getAddress());
+        params.setSubnet(nic.getSubnet());
+        params.setGateway(nic.getGateway());
+        params.setQos(nic.getQos());
+
+        params.setQosOverridden(attachment.isQosOverridden());
+        params.setCustomProperties(attachment.getProperties());
+
+        return params;
+    }
+
+    private NetworkAttachment getExistingAttachmentByNetworkId(Guid networkId) {
+        NetworkAttachment existingNetworkAttachment =
+                new MapNetworkAttachments(existingNetworkAttachments).byNetworkId()
+                        .get(networkId);
+        return existingNetworkAttachment;
     }
 
     private void initLabeledNetworksErrorMessages(List<LogicalNetworkModel> errorLabelNetworks, Map<String, NetworkInterfaceModel> nicModels){
@@ -1060,7 +1121,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         return networkToLastDetachParams;
     }
 
-    public List<String> getNetworksToSync() {
+    public Set<String> getNetworksToSync() {
         return networksToSync;
     }
 

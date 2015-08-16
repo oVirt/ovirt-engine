@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -195,18 +196,24 @@ public enum NetworkOperation {
                         }
                     }
 
+                    NetworkAttachment newNetworkAttachment;
                     if (networkUsedInPreexistingAttachment) {
-                        Guid oldNetworkAttachmentId = allNetworkAttachmentMap.get(networkToAttach.getId()).getId();
-                        dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.add(
-                                newNetworkAttachment(networkToAttach,
-                                        targetNic,
-                                        vlanBridge,
-                                        oldNetworkAttachmentId, dataFromHostSetupNetworksModel.networksToSync));
+                        NetworkAttachment oldNetworkAttachment = allNetworkAttachmentMap.get(networkToAttach.getId());
+                        Guid oldNetworkAttachmentId = oldNetworkAttachment.getId();
+                        newNetworkAttachment = newNetworkAttachment(networkToAttach,
+                                targetNic,
+                                vlanBridge,
+                                oldNetworkAttachmentId,
+                                dataFromHostSetupNetworksModel.networksToSync,
+                                null);
+                        dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.add(newNetworkAttachment);
                     } else {
-                        dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.add(
-                                newNetworkAttachment(networkToAttach,
-                                        targetNic, vlanBridge, dataFromHostSetupNetworksModel.networksToSync));
+                        newNetworkAttachment = newNetworkAttachment(networkToAttach,
+                                targetNic, vlanBridge, dataFromHostSetupNetworksModel.networksToSync);
+                        dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.add(newNetworkAttachment);
                     }
+
+                    networkModelToAttach.restoreNetworkAttachmentParameters(newNetworkAttachment);
 
                     if (vlanBridge != null) {
                         dataFromHostSetupNetworksModel.allNics.add(vlanBridge);
@@ -1005,15 +1012,15 @@ public enum NetworkOperation {
     public static NetworkAttachment newNetworkAttachment(Network network,
             VdsNetworkInterface baseNic,
             VdsNetworkInterface vlanDevice,
-            List<String> networksToSync) {
-        return newNetworkAttachment(network, baseNic, vlanDevice, null, networksToSync);
+            Set<String> networksToSync) {
+        return newNetworkAttachment(network, baseNic, vlanDevice, null, networksToSync, null);
     }
 
     public static NetworkAttachment newNetworkAttachment(Network network,
             VdsNetworkInterface baseNic,
             VdsNetworkInterface vlanDevice,
             Guid networkAttachmentId,
-            List<String> networksToSync) {
+            Set<String> networksToSync, HostNetworkQos overridingQos) {
         VdsNetworkInterface targetNic = vlanDevice == null ? baseNic : vlanDevice;
 
         NetworkAttachment networkAttachment = new NetworkAttachment();
@@ -1023,15 +1030,25 @@ public enum NetworkOperation {
         networkAttachment.setNicName(baseNic.getName());
         networkAttachment.setOverrideConfiguration(networksToSync.contains(network.getName()));
         networkAttachment.setProperties(targetNic.getCustomProperties());
-        IpConfiguration ipConfiguration = new IpConfiguration();
-        networkAttachment.setIpConfiguration(ipConfiguration);
-        ipConfiguration.getIPv4Addresses().add(newPrimaryAddress(targetNic));
+
+        networkAttachment.setHostNetworkQos(overridingQos);
+
+        // TODO MM: check that in case ipConfiguration is out of sync this will not overwrite attachment data.
+        fillIpConfigurationData(networkAttachment, targetNic);
 
         return networkAttachment;
     }
 
+    private static void fillIpConfigurationData(NetworkAttachment networkAttachment,
+        VdsNetworkInterface nicToWhichIsNetworkAttached) {
+        IpConfiguration ipConfiguration = new IpConfiguration();
+        networkAttachment.setIpConfiguration(ipConfiguration);
+        ipConfiguration.getIPv4Addresses().add(newPrimaryAddress(nicToWhichIsNetworkAttached));
+    }
+
     public static IPv4Address newPrimaryAddress(VdsNetworkInterface targetNic) {
         IPv4Address primaryAddress = new IPv4Address();
+
         primaryAddress.setGateway(targetNic.getGateway());
         primaryAddress.setNetmask(targetNic.getSubnet());
         primaryAddress.setAddress(targetNic.getAddress());

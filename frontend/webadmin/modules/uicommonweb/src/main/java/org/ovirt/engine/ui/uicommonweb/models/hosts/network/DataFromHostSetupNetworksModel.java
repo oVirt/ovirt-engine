@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 public class DataFromHostSetupNetworksModel {
     public List<VdsNetworkInterface> allNics;
     public List<NetworkAttachment> existingNetworkAttachments;
-    public List<String> networksToSync;
+    public Set<String> networksToSync;
 
     public Set<NicLabel> addedLabels = new HashSet<>();
     public Set<NicLabel> removedLabels = new HashSet<>();
@@ -29,7 +29,7 @@ public class DataFromHostSetupNetworksModel {
     }
 
     public DataFromHostSetupNetworksModel(List<VdsNetworkInterface> allNics,
-            List<NetworkAttachment> existingNetworkAttachments, List<String> networksToSync) {
+            List<NetworkAttachment> existingNetworkAttachments, Set<String> networksToSync) {
         this.allNics = allNics;
         this.existingNetworkAttachments = existingNetworkAttachments;
         this.networksToSync = networksToSync;
