@@ -10,24 +10,24 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 @SuppressWarnings("unused")
 public class RemoveStorageModel extends Model {
 
-    private ListModel<VDS> privateHostList;
+    private ListModel<VDS> hostList;
 
     public ListModel<VDS> getHostList() {
-        return privateHostList;
+        return hostList;
     }
 
     private void setHostList(ListModel<VDS> value) {
-        privateHostList = value;
+        hostList = value;
     }
 
-    private EntityModel<Boolean> privateFormat;
+    private EntityModel<Boolean> format;
 
     public EntityModel<Boolean> getFormat() {
-        return privateFormat;
+        return format;
     }
 
     private void setFormat(EntityModel<Boolean> value) {
-        privateFormat = value;
+        format = value;
     }
 
     public RemoveStorageModel() {

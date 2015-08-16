@@ -37,13 +37,13 @@ import com.google.inject.Provider;
 
 public class VmBackupModel extends ManageBackupModel<VM> {
 
-    private VmAppListModel privateAppListModel;
+    private VmAppListModel appListModel;
     protected ImportVmFromExportDomainModel importModel;
 
     protected Provider<? extends ImportVmFromExportDomainModel> importModelProvider;
 
     public VmAppListModel getAppListModel() {
-        return privateAppListModel;
+        return appListModel;
     }
 
     protected void setModelProvider(Provider<? extends ImportVmFromExportDomainModel> importModelProvider) {
@@ -61,7 +61,7 @@ public class VmBackupModel extends ManageBackupModel<VM> {
         setHelpTag(HelpTag.vm_import);
         setHashName("vm_import"); // //$NON-NLS-1$
 
-        privateAppListModel = new VmAppListModel();
+        appListModel = new VmAppListModel();
         setIsTimerDisabled(true);
     }
 

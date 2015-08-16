@@ -41,16 +41,16 @@ public class PosixStorageModel extends FileStorageModel {
         container = value;
     }
 
-    private StorageDomainType privateRole = StorageDomainType.values()[0];
+    private StorageDomainType role = StorageDomainType.values()[0];
 
     @Override
     public StorageDomainType getRole() {
-        return privateRole;
+        return role;
     }
 
     @Override
     public void setRole(StorageDomainType value) {
-        privateRole = value;
+        role = value;
     }
 
     private EntityModel<String> vfsType;

@@ -30,14 +30,14 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class StorageSnapshotListModel extends SearchableListModel<StorageDomain, DiskImage> {
-    private UICommand privateRemoveCommand;
+    private UICommand removeCommand;
 
     public UICommand getRemoveCommand() {
-        return privateRemoveCommand;
+        return removeCommand;
     }
 
     private void setRemoveCommand(UICommand value) {
-        privateRemoveCommand = value;
+        removeCommand = value;
     }
 
     public StorageSnapshotListModel() {

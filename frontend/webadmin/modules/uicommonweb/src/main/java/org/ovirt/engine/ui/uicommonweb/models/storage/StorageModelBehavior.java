@@ -15,14 +15,14 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
 public abstract class StorageModelBehavior extends Model {
-    private StorageModel privateModel;
+    private StorageModel model;
 
     public StorageModel getModel() {
-        return privateModel;
+        return model;
     }
 
     public void setModel(StorageModel value) {
-        privateModel = value;
+        model = value;
     }
 
     public List<StoragePool> filterDataCenter(List<StoragePool> source) {

@@ -682,16 +682,16 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         listModel.getInvalidityReasons().addAll(result.getReasons());
     }
 
-    private SystemTreeItemModel privateSystemTreeSelectedItem;
+    private SystemTreeItemModel systemTreeSelectedItem;
 
     @Override
     public SystemTreeItemModel getSystemTreeSelectedItem() {
-        return privateSystemTreeSelectedItem;
+        return systemTreeSelectedItem;
     }
 
     @Override
     public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        privateSystemTreeSelectedItem = value;
+        systemTreeSelectedItem = value;
     }
 
     public boolean isStorageActive() {

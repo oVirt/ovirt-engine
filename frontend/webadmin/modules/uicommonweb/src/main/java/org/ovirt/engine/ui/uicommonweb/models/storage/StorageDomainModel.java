@@ -11,14 +11,14 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class StorageDomainModel extends EntityModel {
 
-    private StorageDomain privateStorageDomain;
+    private StorageDomain storageDomain;
 
     public StorageDomain getStorageDomain() {
-        return privateStorageDomain;
+        return storageDomain;
     }
 
     public void setStorageDomain(StorageDomain value) {
-        privateStorageDomain = value;
+        storageDomain = value;
     }
 
     private ArrayList<DiskImage> disks;

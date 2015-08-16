@@ -36,15 +36,15 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public abstract class SanStorageModelBase extends SearchableListModel implements IStorageModel {
 
-    private UICommand privateUpdateCommand;
+    private UICommand updateCommand;
 
     @Override
     public UICommand getUpdateCommand() {
-        return privateUpdateCommand;
+        return updateCommand;
     }
 
     private void setUpdateCommand(UICommand value) {
-        privateUpdateCommand = value;
+        updateCommand = value;
     }
 
     private UICommand loginCommand;
@@ -57,91 +57,91 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         loginCommand = value;
     }
 
-    private UICommand privateDiscoverTargetsCommand;
+    private UICommand discoverTargetsCommand;
 
     public UICommand getDiscoverTargetsCommand() {
-        return privateDiscoverTargetsCommand;
+        return discoverTargetsCommand;
     }
 
     private void setDiscoverTargetsCommand(UICommand value) {
-        privateDiscoverTargetsCommand = value;
+        discoverTargetsCommand = value;
     }
 
-    private StorageModel privateContainer;
+    private StorageModel container;
 
     @Override
     public StorageModel getContainer() {
-        return privateContainer;
+        return container;
     }
 
     @Override
     public void setContainer(StorageModel value) {
-        privateContainer = value;
+        container = value;
     }
 
-    private StorageDomainType privateRole = StorageDomainType.values()[0];
+    private StorageDomainType role = StorageDomainType.values()[0];
 
     @Override
     public StorageDomainType getRole() {
-        return privateRole;
+        return role;
     }
 
     @Override
     public void setRole(StorageDomainType value) {
-        privateRole = value;
+        role = value;
     }
 
     @Override
     public abstract StorageType getType();
 
-    private EntityModel<String> privateAddress;
+    private EntityModel<String> address;
 
     public EntityModel<String> getAddress() {
-        return privateAddress;
+        return address;
     }
 
     private void setAddress(EntityModel<String> value) {
-        privateAddress = value;
+        address = value;
     }
 
-    private EntityModel<String> privatePort;
+    private EntityModel<String> port;
 
     public EntityModel<String> getPort() {
-        return privatePort;
+        return port;
     }
 
     private void setPort(EntityModel<String> value) {
-        privatePort = value;
+        port = value;
     }
 
-    private EntityModel<String> privateUserName;
+    private EntityModel<String> userName;
 
     public EntityModel<String> getUserName() {
-        return privateUserName;
+        return userName;
     }
 
     private void setUserName(EntityModel<String> value) {
-        privateUserName = value;
+        userName = value;
     }
 
-    private EntityModel<String> privatePassword;
+    private EntityModel<String> password;
 
     public EntityModel<String> getPassword() {
-        return privatePassword;
+        return password;
     }
 
     private void setPassword(EntityModel<String> value) {
-        privatePassword = value;
+        password = value;
     }
 
-    private EntityModel<Boolean> privateUseUserAuth;
+    private EntityModel<Boolean> useUserAuth;
 
     public EntityModel<Boolean> getUseUserAuth() {
-        return privateUseUserAuth;
+        return useUserAuth;
     }
 
     private void setUseUserAuth(EntityModel<Boolean> value) {
-        privateUseUserAuth = value;
+        useUserAuth = value;
     }
 
     private boolean proposeDiscoverTargets;

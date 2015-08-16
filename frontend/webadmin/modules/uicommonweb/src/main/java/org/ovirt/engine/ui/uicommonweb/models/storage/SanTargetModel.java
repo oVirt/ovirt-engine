@@ -16,24 +16,24 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class SanTargetModel extends EntityModel<StorageServerConnections> {
 
     public static final EventDefinition loggedInEventDefinition;
-    private Event<EventArgs> privateLoggedInEvent;
+    private Event<EventArgs> loggedInEvent;
 
     public Event<EventArgs> getLoggedInEvent() {
-        return privateLoggedInEvent;
+        return loggedInEvent;
     }
 
     private void setLoggedInEvent(Event<EventArgs> value) {
-        privateLoggedInEvent = value;
+        loggedInEvent = value;
     }
 
-    private UICommand privateLoginCommand;
+    private UICommand loginCommand;
 
     public UICommand getLoginCommand() {
-        return privateLoginCommand;
+        return loginCommand;
     }
 
     public void setLoginCommand(UICommand value) {
-        privateLoginCommand = value;
+        loginCommand = value;
     }
 
     private String address;

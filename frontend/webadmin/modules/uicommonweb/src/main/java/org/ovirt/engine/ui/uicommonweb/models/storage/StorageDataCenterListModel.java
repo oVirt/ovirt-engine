@@ -43,97 +43,97 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 @SuppressWarnings("unused")
 public class StorageDataCenterListModel extends SearchableListModel<StorageDomain, StorageDomain> {
 
-    private UICommand privateAttachCommand;
+    private UICommand attachCommand;
 
     public UICommand getAttachCommand() {
-        return privateAttachCommand;
+        return attachCommand;
     }
 
     private void setAttachCommand(UICommand value) {
-        privateAttachCommand = value;
+        attachCommand = value;
     }
 
-    private UICommand privateDetachCommand;
+    private UICommand detachCommand;
 
     public UICommand getDetachCommand() {
-        return privateDetachCommand;
+        return detachCommand;
     }
 
     private void setDetachCommand(UICommand value) {
-        privateDetachCommand = value;
+        detachCommand = value;
     }
 
-    private UICommand privateActivateCommand;
+    private UICommand activateCommand;
 
     public UICommand getActivateCommand() {
-        return privateActivateCommand;
+        return activateCommand;
     }
 
     private void setActivateCommand(UICommand value) {
-        privateActivateCommand = value;
+        activateCommand = value;
     }
 
-    private UICommand privateMaintenanceCommand;
+    private UICommand maintenanceCommand;
 
     public UICommand getMaintenanceCommand() {
-        return privateMaintenanceCommand;
+        return maintenanceCommand;
     }
 
     private void setMaintenanceCommand(UICommand value) {
-        privateMaintenanceCommand = value;
+        maintenanceCommand = value;
     }
 
     /**
      * Gets the value indicating whether multiple data centers can be selected to attach storage to.
      */
-    private boolean privateAttachMultiple;
+    private boolean attachMultiple;
 
     public boolean getAttachMultiple() {
-        return privateAttachMultiple;
+        return attachMultiple;
     }
 
     private void setAttachMultiple(boolean value) {
-        privateAttachMultiple = value;
+        attachMultiple = value;
     }
 
-    private ArrayList<VdcActionParametersBase> privatedetachPrms;
+    private ArrayList<VdcActionParametersBase> detachPrms;
 
     public ArrayList<VdcActionParametersBase> getdetachPrms() {
-        return privatedetachPrms;
+        return detachPrms;
     }
 
     public void setdetachPrms(ArrayList<VdcActionParametersBase> value) {
-        privatedetachPrms = value;
+        detachPrms = value;
     }
 
-    private ArrayList<VdcActionParametersBase> privateremovePrms;
+    private ArrayList<VdcActionParametersBase> removePrms;
 
     public ArrayList<VdcActionParametersBase> getremovePrms() {
-        return privateremovePrms;
+        return removePrms;
     }
 
     public void setremovePrms(ArrayList<VdcActionParametersBase> value) {
-        privateremovePrms = value;
+        removePrms = value;
     }
 
-    private ArrayList<EntityModel> privateattachCandidateDatacenters;
+    private ArrayList<EntityModel> attachCandidateDatacenters;
 
     public ArrayList<EntityModel> getattachCandidateDatacenters() {
-        return privateattachCandidateDatacenters;
+        return attachCandidateDatacenters;
     }
 
     public void setattachCandidateDatacenters(ArrayList<EntityModel> value) {
-        privateattachCandidateDatacenters = value;
+        attachCandidateDatacenters = value;
     }
 
-    private ArrayList<StoragePool> privateavailableDatacenters;
+    private ArrayList<StoragePool> availableDatacenters;
 
     public ArrayList<StoragePool> getavailableDatacenters() {
-        return privateavailableDatacenters;
+        return availableDatacenters;
     }
 
     public void setavailableDatacenters(ArrayList<StoragePool> value) {
-        privateavailableDatacenters = value;
+        availableDatacenters = value;
     }
 
     private List<StoragePool> selectedDataCentersForAttach;
