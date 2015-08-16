@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -178,6 +179,10 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
     @UiField(provided = true)
     @Ignore
+    InfoIcon cinderVolumeTypeInfoIcon;
+
+    @UiField(provided = true)
+    @Ignore
     InfoIcon scsiReservationInfoIcon;
 
     @UiField
@@ -275,7 +280,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         isSgIoUnfilteredEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         interfaceInfoIcon = new InfoIcon(templates.italicText(constants.diskInterfaceInfo()));
-
+        cinderVolumeTypeInfoIcon = new InfoIcon(templates.italicText(constants.cinderVolumeTypeInfoIcon()));
         scsiReservationInfoIcon = new InfoIcon(templates.italicText(constants.scsiReservationInfoIcon()));
     }
 
@@ -316,6 +321,14 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
                 // Show the info icon if VirtIO-SCSI is supported by the cluster but disabled for the VM
                 interfaceInfoIcon.setVisible(clusterVersion.compareTo(Version.v3_3) >= 0 && !isVirtioScsiEnabled);
+            }
+        });
+
+        disk.getCinderVolumeType().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                Collection<String> volumeTypes = disk.getCinderVolumeType().getItems();
+                cinderVolumeTypeInfoIcon.setVisible(volumeTypes == null || volumeTypes.isEmpty());
             }
         });
 
