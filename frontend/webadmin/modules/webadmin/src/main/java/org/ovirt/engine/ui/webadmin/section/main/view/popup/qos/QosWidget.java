@@ -18,10 +18,10 @@ public abstract class QosWidget<T extends QosBase, P extends QosParametersModel<
     protected SimpleBeanEditorDriver<P, QosWidget<T, P>> driver;
 
     private QosParametersModel<? extends QosBase> model;
-    private final IEventListener<PropertyChangedEventArgs> availabilityListener;
+    private final IEventListener<PropertyChangedEventArgs> propertyChangeListener;
 
     public QosWidget() {
-        availabilityListener = new IEventListener<PropertyChangedEventArgs>() {
+        propertyChangeListener = new IEventListener<PropertyChangedEventArgs>() {
 
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev,
@@ -29,6 +29,8 @@ public abstract class QosWidget<T extends QosBase, P extends QosParametersModel<
                     PropertyChangedEventArgs args) {
                 if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                     toggleVisibility();
+                } else if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
+                    updateChangeability(model.getIsChangable());
                 }
             }
         };
@@ -38,16 +40,21 @@ public abstract class QosWidget<T extends QosBase, P extends QosParametersModel<
         mainPanel.setVisible(model.getIsAvailable());
     }
 
+    protected void updateChangeability(boolean enabled) {
+        // Do nothing
+    }
+
     @Override
     public void edit(P model) {
         driver.edit(model);
 
         if (this.model != null) {
-            this.model.getPropertyChangedEvent().removeListener(availabilityListener);
+            this.model.getPropertyChangedEvent().removeListener(propertyChangeListener);
         }
         this.model = model;
-        model.getPropertyChangedEvent().addListener(availabilityListener);
+        model.getPropertyChangedEvent().addListener(propertyChangeListener);
         toggleVisibility();
+        updateChangeability(model.getIsChangable());
     }
 
     @Override

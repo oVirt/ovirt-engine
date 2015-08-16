@@ -270,6 +270,7 @@ public class HostInterfaceModel extends EntityModel {
                         revertChanges();
                     }
                     setBootProtocolsAvailable(value);
+                    getQosOverridden().setIsChangeable(value);
                     updateQosChangeability();
                     getCustomPropertiesModel().setIsChangeable(value);
                 }

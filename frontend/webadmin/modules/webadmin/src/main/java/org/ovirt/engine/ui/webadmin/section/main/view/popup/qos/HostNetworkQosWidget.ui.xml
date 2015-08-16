@@ -10,13 +10,17 @@
             padding-left: 5px;
 	    }
 
+	    .lineHeight {
+            line-height: 20px;
+	    }
+
         .valueBox {
             width: 100px;
 	    }
     </ui:style>
 
     <g:FlowPanel ui:field="mainPanel" >
-        <g:Label text="{constants.hostNetworkQosOutLabel}" addStyleNames="{style.paddingLeft}" />
+        <e:StringEntityModelLabelEditor ui:field="qosOutLabel" addStyleNames="{style.lineHeight} {style.paddingLeft}" />
         <e:StringEntityModelTextBoxEditor ui:field="outAverageLinkshare" addStyleNames="{style.paddingLeft}" />
         <e:StringEntityModelTextBoxEditor ui:field="outAverageUpperlimit" addStyleNames="{style.paddingLeft}" />
         <e:StringEntityModelTextBoxEditor ui:field="outAverageRealtime" addStyleNames="{style.paddingLeft}" />
