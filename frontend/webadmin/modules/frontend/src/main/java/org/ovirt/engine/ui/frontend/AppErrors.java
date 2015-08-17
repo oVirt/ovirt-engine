@@ -403,9 +403,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM is not found.")
     String ACTION_TYPE_FAILED_VM_NOT_FOUND();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Cannot use 'Latest Version' when using clone from Template.")
-    String ACTION_TYPE_FAILED_CANNOT_USE_LATEST_WITH_CLONE();
-
     @DefaultStringValue("Cannot ${action} ${type}. Vm is set to use a specific version, and not automatically update to the latest version.")
     String ACTION_TYPE_FAILED_VM_NOT_SET_FOR_LATEST();
 
