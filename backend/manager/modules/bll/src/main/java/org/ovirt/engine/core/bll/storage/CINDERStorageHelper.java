@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -9,7 +10,9 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -135,6 +138,21 @@ public class CINDERStorageHelper extends StorageHelperBase {
             }
         }
         return true;
+    }
+
+    @Override
+    public Pair<Boolean, AuditLogType> disconnectHostFromStoragePoolServersCommandCompleted(HostStoragePoolParametersBase parameters) {
+        if (FeatureSupported.cinderProviderSupported(parameters.getStoragePool().getCompatibilityVersion())) {
+            // unregister all libvirt secrets if needed
+            VDSReturnValue returnValue = Backend.getInstance().getResourceManager().RunVdsCommand(
+                    VDSCommandType.RegisterLibvirtSecrets,
+                    new RegisterLibvirtSecretsVDSParameters(parameters.getVds().getId(), Collections.<LibvirtSecret>emptyList(), true));
+            if (!returnValue.getSucceeded()) {
+                log.error("Failed to unregister libvirt secret on vds {}.", parameters.getVds().getName());
+                return new Pair<Boolean, AuditLogType>(false, AuditLogType.FAILED_TO_REGISTER_LIBVIRT_SECRET_ON_VDS);
+            }
+        }
+        return new Pair<Boolean, AuditLogType>(true, null);
     }
 
     private <T> void execute(final Callable<T> callable) {

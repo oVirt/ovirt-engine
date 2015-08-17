@@ -106,6 +106,11 @@ public abstract class StorageHelperBase implements IStorageHelper {
         // default implementation
     }
 
+    @Override
+    public Pair<Boolean, AuditLogType> disconnectHostFromStoragePoolServersCommandCompleted(HostStoragePoolParametersBase parameters) {
+        return new Pair<Boolean, AuditLogType>(true, null);
+    }
+
     public static Map<StorageType, List<StorageServerConnections>> filterConnectionsByStorageType(LUNs lun) {
         Map<StorageType, List<StorageServerConnections>> storageConnectionsForStorageTypeMap =
                 new EnumMap<>(StorageType.class);

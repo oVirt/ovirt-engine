@@ -7,12 +7,15 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
@@ -36,8 +39,11 @@ public class DisconnectHostFromStoragePoolServersCommand extends
 
         for (Map.Entry<StorageType, List<StorageServerConnections>> connectionToType : getConnectionsTypeMap().entrySet()) {
             disconnectStorageByType(connectionToType.getKey(), connectionToType.getValue());
+            Pair<Boolean, AuditLogType> result = StorageHelperDirector.getInstance().getItem(connectionToType.getKey()).disconnectHostFromStoragePoolServersCommandCompleted(getParameters());
+            if (!result.getFirst()) {
+                auditLogDirector.log(new AuditLogableBase(getParameters().getVdsId()), result.getSecond());
+            }
         }
-        unregisterLibvirtSecrets();
     }
 
     private void disconnectStorageByType(StorageType storageType, List<StorageServerConnections> connections) {
