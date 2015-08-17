@@ -82,11 +82,6 @@ class VLanElementPanel extends TogglePanel {
                 hostVLan.getInterface().getNetworkImplementationDetails(),
                 hostVLan.getAddress());
 
-        Style gridStyle = row.getElement().getStyle();
-        gridStyle.setBorderColor("white"); //$NON-NLS-1$
-        gridStyle.setBorderWidth(1, Unit.PX);
-        gridStyle.setBorderStyle(BorderStyle.SOLID);
-
         return row;
     }
 
@@ -122,6 +117,12 @@ class VLanElementPanel extends TogglePanel {
         row.setWidget(0, 1, createSyncPanel(networkImplementationDetails));
         row.setWidget(0, 2, networkNameLabel);
         row.setWidget(0, 3, new Label(address));
+
+        Style gridStyle = row.getElement().getStyle();
+        gridStyle.setBorderColor("white"); //$NON-NLS-1$
+        gridStyle.setBorderWidth(1, Unit.PX);
+        gridStyle.setBorderStyle(BorderStyle.SOLID);
+
         return row;
     }
 
