@@ -363,6 +363,7 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
         public void onBlur(BlurEvent blurEvent) {
             if (eventHandler != null) {
                 eventHandler.removeHandler();
+                eventHandler = null;
             }
 
             // process only if it will not be processed by other handlers
@@ -379,8 +380,10 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
 
         @Override
         public void onFocus(FocusEvent event) {
-            eventHandler =
-                    Event.addNativePreviewHandler(new EnterIgnoringNativePreviewHandler<T>(ListModelTypeAheadListBox.this));
+            if (eventHandler != null) {
+                eventHandler =
+                        Event.addNativePreviewHandler(new EnterIgnoringNativePreviewHandler<T>(ListModelTypeAheadListBox.this));
+            }
         }
     }
 
