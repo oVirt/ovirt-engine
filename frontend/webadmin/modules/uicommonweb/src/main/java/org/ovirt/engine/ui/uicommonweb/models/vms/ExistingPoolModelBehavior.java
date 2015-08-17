@@ -64,9 +64,6 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
     public void postDataCenterWithClusterSelectedItemChanged() {
         super.postDataCenterWithClusterSelectedItemChanged();
 
-        setupWindowModelFrom(pool.getStaticData());
-        getModel().setIsDisksAvailable(true);
-
         Iterable<DataCenterWithCluster> dataCenterWithClusters = getModel().getDataCenterWithClustersList().getItems();
         DataCenterWithCluster selectDataCenterWithCluster =
                 Linq.firstOrDefault(dataCenterWithClusters,
