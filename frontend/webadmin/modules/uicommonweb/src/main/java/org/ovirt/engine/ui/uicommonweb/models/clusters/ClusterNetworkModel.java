@@ -19,7 +19,7 @@ public class ClusterNetworkModel extends EntityModel<Network> {
             originalNetworkCluster = null;
             attached = false;
             // Init with default values
-            getEntity().setCluster(new NetworkCluster(!network.isExternal()));
+            getEntity().setCluster(new NetworkCluster(false));
         } else {
             originalNetworkCluster = (NetworkCluster) Cloner.clone(network.getCluster());
         }
