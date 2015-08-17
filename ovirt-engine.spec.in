@@ -231,7 +231,7 @@ Requires:	ovirt-engine-wildfly-overlay
 %endif
 
 Requires:	%{name}-backend = %{version}-%{release}
-Requires:	%{name}-cli
+Requires:	%{name}-cli >= 3.6.0.0
 Requires:	%{name}-dbscripts = %{version}-%{release}
 Requires:	%{name}-restapi = %{version}-%{release}
 Requires:	%{name}-tools = %{version}-%{release}
