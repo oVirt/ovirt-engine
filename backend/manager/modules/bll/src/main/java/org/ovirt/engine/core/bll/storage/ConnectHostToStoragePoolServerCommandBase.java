@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage;
 
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -95,11 +94,4 @@ public abstract class ConnectHostToStoragePoolServerCommandBase<T extends Storag
         return true;
     }
 
-    protected boolean unregisterLibvirtSecrets() {
-        if (FeatureSupported.cinderProviderSupported(getStoragePool().getCompatibilityVersion())) {
-            // Unregister all libvirt secrets if needed
-            return registerLibvirtSecrets(Collections.<LibvirtSecret>emptyList(), true);
-        }
-        return true;
-    }
 }
