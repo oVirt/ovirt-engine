@@ -667,6 +667,6 @@
 
     <socket-binding name="txn-recovery-environment" port="8704"/>
     <socket-binding name="txn-status-manager" port="8705"/>
-    <socket-binding name="management" port="8706"/>
+    <socket-binding name="management" port="8706" interface="$getstring('ENGINE_JMX_INTERFACE')"/>
   </socket-binding-group>
 </server>
