@@ -8,6 +8,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
+import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -97,6 +98,11 @@ public abstract class StorageHelperBase implements IStorageHelper {
 
     @Override
     public void prepareConnectHostToStoragePoolServers(ConnectHostToStoragePoolServersParameters parameters, List<StorageServerConnections> connections) {
+        // default implementation
+    }
+
+    @Override
+    public void prepareDisconnectHostFromStoragePoolServers(HostStoragePoolParametersBase parameters, List<StorageServerConnections> connections) {
         // default implementation
     }
 
