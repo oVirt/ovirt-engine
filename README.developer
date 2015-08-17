@@ -290,6 +290,11 @@ Useful commands:
   Get Threading info
   ls /core-service=platform-mbean/type=threading/
 
+By default JMX access is available only to localhost, to open JMX to world,
+add ${PREFIX}/etc/ovirt-engine/engine.conf.d/20-setup-jmx-debug.conf with:
+
+  ENGINE_JMX_INTERFACE=public
+
 GWT DEBUG
 
 $ make install-dev PREFIX="${PREFIX}"

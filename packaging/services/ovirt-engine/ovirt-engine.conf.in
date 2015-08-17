@@ -78,6 +78,11 @@ ENGINE_PERM_MAX=256m
 ENGINE_DEBUG_ADDRESS=
 
 #
+# Specify JMX interface, can be loopback or public
+#
+ENGINE_JMX_INTERFACE=loopback
+
+#
 # Set this if you wish to write engine log to console as well.
 #
 ENGINE_LOG_TO_CONSOLE=false
