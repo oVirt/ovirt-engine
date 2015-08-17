@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
+import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -112,6 +113,15 @@ public class ISCSIStorageHelper extends StorageHelperBase {
 
     @Override
     public void prepareConnectHostToStoragePoolServers(ConnectHostToStoragePoolServersParameters parameters, List<StorageServerConnections> connections) {
+        prepareStorageServer(parameters, connections);
+    }
+
+    @Override
+    public void prepareDisconnectHostFromStoragePoolServers(HostStoragePoolParametersBase parameters, List<StorageServerConnections> connections) {
+        prepareStorageServer(parameters, connections);
+    }
+
+    private void prepareStorageServer(HostStoragePoolParametersBase parameters, List<StorageServerConnections> connections) {
         List<StorageServerConnections> res = updateIfaces(connections, parameters.getVds().getId());
         connections.clear();
         connections.addAll(res);
