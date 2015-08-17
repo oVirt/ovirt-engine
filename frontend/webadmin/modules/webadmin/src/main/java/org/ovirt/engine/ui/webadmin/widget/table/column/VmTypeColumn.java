@@ -17,6 +17,8 @@ public class VmTypeColumn extends AbstractImageResourceColumn<VM> {
 
     private final static ApplicationResources resources = AssetProvider.getResources();
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Override
     public ImageResource getValue(VM vm) {
             if (vm.getVmPoolId() == null) {
@@ -39,9 +41,27 @@ public class VmTypeColumn extends AbstractImageResourceColumn<VM> {
 
     @Override
     public SafeHtml getTooltip(VM vm) {
-        VmTypeConfig config = VmTypeConfig.from(vm.getVmType(), vm.isStateless(), vm.isNextRunConfigurationExists());
-        String tooltipContent = config.getTooltip();
+        String tooltipContent;
+        if (vm.getVmPoolId() == null) {
+            VmTypeConfig config = VmTypeConfig.from(vm.getVmType(), vm.isStateless(), vm.isNextRunConfigurationExists());
+            tooltipContent = config.getTooltip();
+        } else {
+            tooltipContent = getPoolVmTooltip(vm.getVmType());
+        }
+
         return SafeHtmlUtils.fromString(tooltipContent);
+    }
+
+    private String getPoolVmTooltip(VmType vmType) {
+        switch (vmType) {
+            case Server:
+                return constants.pooledServer();
+            case Desktop:
+                return constants.pooledDesktop();
+            default:
+                return constants.pooledDesktop();
+        }
+
     }
 
 }

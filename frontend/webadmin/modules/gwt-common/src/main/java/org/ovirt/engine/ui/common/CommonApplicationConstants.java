@@ -1773,6 +1773,12 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Stateless Desktop with newer configuration for next run")
     String statelessDesktopChanges();
 
+    @DefaultStringValue("Desktop (Pool)")
+    String pooledDesktop();
+
+    @DefaultStringValue("Server (Pool)")
+    String pooledServer();
+
     @DefaultStringValue("Run Once")
     String runOnce();
 
