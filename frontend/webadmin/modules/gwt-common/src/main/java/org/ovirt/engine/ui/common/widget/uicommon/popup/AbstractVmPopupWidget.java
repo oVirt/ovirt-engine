@@ -73,6 +73,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxEditor
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.MemorySizeEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
@@ -275,7 +276,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @Path(value = "memSize.entity")
     @WithElementId("memSize")
-    public EntityModelTextBoxEditor<Integer> memSizeEditor;
+    public MemorySizeEntityModelTextBoxEditor memSizeEditor;
 
     @Path(value = "totalCPUCores.entity")
     @WithElementId("totalCPUCores")
@@ -936,8 +937,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         initListBoxEditors();
         // Contains a special parser/renderer
-        memSizeEditor = new EntityModelTextBoxEditor<Integer>(
-                new MemorySizeRenderer<Integer>(), new MemorySizeParser(), new ModeSwitchingVisibilityRenderer());
+        memSizeEditor = new MemorySizeEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
 
         minAllocatedMemoryEditor = new EntityModelTextBoxEditor<Integer>(
                 new MemorySizeRenderer<Integer>(), new MemorySizeParser(), new ModeSwitchingVisibilityRenderer());
