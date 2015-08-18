@@ -73,7 +73,8 @@ public class FenceAgentExecutor {
                     Status.ERROR,
                     PowerStatus.UNKNOWN,
                     String.format(
-                            "Failed to run fence action on host '%s', no proxy was found",
+                            "Failed to run %s on host '%s'. No other host was available to serve as proxy for the operation.",
+                            getActionText(action),
                             fencedHost.getHostName()));
         }
 
@@ -104,6 +105,19 @@ public class FenceAgentExecutor {
                     e.getMessage());
         }
         return result;
+    }
+
+    private Object getActionText(FenceActionType action) {
+        switch (action) {
+        case START:
+            return "fence action: 'Start'";
+        case STOP:
+            return "fence action: 'Stop'";
+        case STATUS:
+            return "fence status-check";
+        default:
+            return ""; // won't happen
+        }
     }
 
     protected FenceOperationResult executeFenceAction(FenceActionType action, FenceAgent agent, VDS proxyHost) {
