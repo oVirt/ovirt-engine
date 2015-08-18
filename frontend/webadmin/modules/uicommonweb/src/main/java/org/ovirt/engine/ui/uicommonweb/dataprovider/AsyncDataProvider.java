@@ -181,6 +181,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkQoSModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBondInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.FcpStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.GlusterStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IStorageModel;
@@ -3661,7 +3662,7 @@ public class AsyncDataProvider {
 
         EntityModel<String> entityModel = new EntityModel<String>();
         entityModel.setEntity(""); //$NON-NLS-1$
-        list.add(new KeyValuePairCompat<String, EntityModel<String>>("custom", entityModel)); //$NON-NLS-1$
+        list.add(new KeyValuePairCompat<String, EntityModel<String>>(HostBondInterfaceModel.CUSTOM_BONDING_MODE, entityModel));
         return list;
     }
 
