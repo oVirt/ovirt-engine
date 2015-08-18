@@ -25,7 +25,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.HostnameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -33,6 +32,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.MatchFieldsValidator;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SubnetMaskValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.VmInitNetworkNameValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -762,7 +762,7 @@ public class VmInitModel extends Model {
 
                 if (params.getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
                     if (!validateHidden(getNetworkList(), name, null,
-                                    new IValidation[] { new AsciiNameValidation(), new NotEmptyValidation()})
+                                    new IValidation[] { new VmInitNetworkNameValidation(), new NotEmptyValidation()})
                             || !validateHidden(getNetworkIpAddress(), params.getIp(), null,
                                     new IValidation[] { new IpAddressValidation() })
                             || !validateHidden(getNetworkNetmask(), params.getNetmask(), null,

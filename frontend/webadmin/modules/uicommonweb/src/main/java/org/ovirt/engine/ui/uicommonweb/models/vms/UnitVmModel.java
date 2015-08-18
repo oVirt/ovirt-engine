@@ -2665,8 +2665,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                     && getTemplateWithVersion().getIsValid());
         }
 
-        setValidTab(TabName.INITIAL_RUN_TAB, getTimeZone().getIsValid());
-
         setValidTab(TabName.HOST_TAB, isValidTab(TabName.HOST_TAB) && getMigrationDowntime().getIsValid());
 
         boolean diskAliasesValid = getDisksAllocationModel().getIsValid();
@@ -2676,7 +2674,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         setValidTab(TabName.BOOT_OPTIONS_TAB, getCdImage().getIsValid() && getKernel_path().getIsValid());
         boolean vmInitIsValid = getVmInitModel().validate();
-        setValidTab(TabName.FIRST_RUN, vmInitIsValid);
+        setValidTab(TabName.INITIAL_RUN_TAB, vmInitIsValid);
 
         getIcon().validateEntity(new IValidation[]{new IconWithOsDefaultValidation()});
         setValidTab(TabName.ICON_TAB, getIcon().getIsValid());
@@ -2750,8 +2748,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getEmulatedMachine().validateSelectedItem(new IValidation[] { new I18NExtraNameOrNoneValidation(), new LengthValidation(
                 BusinessEntitiesDefinitions.VM_EMULATED_MACHINE_SIZE)});
         getCustomCpu().validateSelectedItem(new IValidation[] { new I18NExtraNameOrNoneValidation() , new LengthValidation(BusinessEntitiesDefinitions.VM_CPU_NAME_SIZE)});
-
-        setValidTab(TabName.INITIAL_RUN_TAB, getTimeZone().getIsValid());
 
         setValidTab(TabName.CONSOLE_TAB, getUsbPolicy().getIsValid() && getNumOfMonitors().getIsValid()
                 && getSpiceProxy().getIsValid());
