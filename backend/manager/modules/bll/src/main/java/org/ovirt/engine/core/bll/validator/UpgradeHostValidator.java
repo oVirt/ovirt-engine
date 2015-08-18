@@ -23,12 +23,12 @@ public class UpgradeHostValidator {
     }
 
     public ValidationResult statusSupportedForHostUpgrade() {
-        return ValidationResult.failWith(EngineMessage.VDS_CANNOT_INSTALL_STATUS_ILLEGAL)
+        return ValidationResult.failWith(EngineMessage.CANNOT_UPGRADE_HOST_STATUS_ILLEGAL)
                 .unless(VdcActionUtils.canExecute(Arrays.asList(host), VDS.class, VdcActionType.UpgradeHost));
     }
 
     public ValidationResult statusSupportedForHostUpgradeInternal() {
-        return ValidationResult.failWith(EngineMessage.VDS_CANNOT_INSTALL_STATUS_ILLEGAL)
+        return ValidationResult.failWith(EngineMessage.CANNOT_UPGRADE_HOST_STATUS_ILLEGAL)
                 .when(host.getStatus() != VDSStatus.Maintenance);
     }
 

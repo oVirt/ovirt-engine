@@ -54,7 +54,7 @@ public class UpgradeHostValidatorTest {
         host.setStatus(VDSStatus.Unassigned);
 
         assertThat(new UpgradeHostValidator(host).statusSupportedForHostUpgrade(),
-                failsWith(EngineMessage.VDS_CANNOT_INSTALL_STATUS_ILLEGAL));
+                failsWith(EngineMessage.CANNOT_UPGRADE_HOST_STATUS_ILLEGAL));
     }
 
     @Test
@@ -69,7 +69,7 @@ public class UpgradeHostValidatorTest {
         when(host.getStatus()).thenReturn(VDSStatus.Unassigned);
 
         assertThat(validator.statusSupportedForHostUpgradeInternal(),
-                failsWith(EngineMessage.VDS_CANNOT_INSTALL_STATUS_ILLEGAL));
+                failsWith(EngineMessage.CANNOT_UPGRADE_HOST_STATUS_ILLEGAL));
     }
 
     @Test
