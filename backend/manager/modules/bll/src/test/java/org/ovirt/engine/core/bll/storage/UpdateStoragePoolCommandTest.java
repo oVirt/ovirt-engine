@@ -55,8 +55,8 @@ public class UpdateStoragePoolCommandTest {
     private static final Version VERSION_1_1 = new Version(1, 1);
     private static final Version VERSION_1_2 = new Version(1, 2);
     private static final Version VERSION_2_0 = new Version(2, 0);
-    private static final Guid DEFAULT_VDS_GROUP_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA95");
-    private static final Guid NON_DEFAULT_VDS_GROUP_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA96");
+    private static final Guid DEFAULT_VDS_GROUP_ID = Guid.newGuid();
+    private static final Guid NON_DEFAULT_VDS_GROUP_ID = Guid.newGuid();
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
