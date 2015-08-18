@@ -89,8 +89,6 @@ public class UpdateStoragePoolCommandTest {
     @Mock
     private ManagementNetworkUtil managementNetworkUtil;
 
-    private final List<Network> allDcNetworks = new ArrayList<>();
-
     @Before
     public void setUp() {
         when(spDao.get(any(Guid.class))).thenReturn(createDefaultStoragePool());
@@ -462,6 +460,7 @@ public class UpdateStoragePoolCommandTest {
     }
 
     private void addNetworksToPool(int numberOfNetworks, boolean isManagement) {
+        List<Network> allDcNetworks = new ArrayList<>();
         for (int i = 0; i < numberOfNetworks; i++) {
             final Guid networkId = Guid.newGuid();
             Network network = createNetwork(networkId);
