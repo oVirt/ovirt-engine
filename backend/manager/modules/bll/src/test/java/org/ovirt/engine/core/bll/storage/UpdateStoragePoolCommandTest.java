@@ -194,7 +194,6 @@ public class UpdateStoragePoolCommandTest {
         assertTrue(cmd.canDoAction());
     }
 
-    // TODO:
     @Test
     public void lowerVersionMgmtNetworkNonSupportedFeatures() {
         storagePoolWithLowerVersion();
