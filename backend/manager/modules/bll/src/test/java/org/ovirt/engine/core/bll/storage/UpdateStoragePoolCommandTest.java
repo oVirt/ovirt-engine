@@ -438,12 +438,7 @@ public class UpdateStoragePoolCommandTest {
     }
 
     private void addManagementNetworksToPool(int numberOfNetworks) {
-        for (int i=0; i<numberOfNetworks; i++) {
-            final Guid managementNetworkId = Guid.newGuid();
-            allDcNetworks.add(createNetwork(managementNetworkId));
-            when(managementNetworkUtil.isManagementNetwork(managementNetworkId)).thenReturn(true);
-        }
-        when(networkDao.getAllForDataCenter(any(Guid.class))).thenReturn(allDcNetworks);
+        addNetworksToPool(numberOfNetworks, true);
     }
 
     private Network createNetwork(Guid networkId) {
@@ -463,12 +458,16 @@ public class UpdateStoragePoolCommandTest {
     }
 
     private void addNonManagementNetworksToPool(int numberOfNetworks) {
+        addNetworksToPool(numberOfNetworks, false);
+    }
+
+    private void addNetworksToPool(int numberOfNetworks, boolean isManagement) {
         for (int i = 0; i < numberOfNetworks; i++) {
             final Guid networkId = Guid.newGuid();
             Network network = createNetwork(networkId);
             network.setId(networkId);
             allDcNetworks.add(network);
-            when(managementNetworkUtil.isManagementNetwork(networkId)).thenReturn(false);
+            when(managementNetworkUtil.isManagementNetwork(networkId)).thenReturn(isManagement);
         }
         when(networkDao.getAllForDataCenter(any(Guid.class))).thenReturn(allDcNetworks);
     }
