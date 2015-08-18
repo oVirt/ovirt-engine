@@ -801,6 +801,14 @@ class OvirtUtils(base.Base):
         )
 
     @staticmethod
+    def _lower_equal_no_dash(key, current, expected):
+        return OvirtUtils._lower_equal(
+            key,
+            current.replace('-', ''),
+            expected.replace('-', ''),
+        )
+
+    @staticmethod
     def _error_message(key, current, expected, format_str, name):
         return format_str.format(
             key=key,
@@ -814,7 +822,7 @@ class OvirtUtils(base.Base):
             {
                 'key': 'server_encoding',
                 'expected': 'UTF8',
-                'ok': self._lower_equal,
+                'ok': self._lower_equal_no_dash,
                 'check_on_use': True,
                 'needed_on_create': False,
                 'error_msg': _(
@@ -854,7 +862,7 @@ class OvirtUtils(base.Base):
                 'expected': self.environment[
                     oengcommcons.ProvisioningEnv.POSTGRES_LC_MESSAGES
                 ],
-                'ok': self._lower_equal,
+                'ok': self._lower_equal_no_dash,
                 'check_on_use': True,
                 'needed_on_create': True,
                 'error_msg': _(
@@ -893,6 +901,12 @@ class OvirtUtils(base.Base):
                 transaction=False,
             )[0][key]
             if not item['ok'](key, current, expected):
+                self.logger.debug(
+                    "Mismatch: key='%s', current='%s', expected='%s'",
+                    key,
+                    current,
+                    expected,
+                )
                 raise RuntimeError(
                     self._error_message(
                         key=key,
