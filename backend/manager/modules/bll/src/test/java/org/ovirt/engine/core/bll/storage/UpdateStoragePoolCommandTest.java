@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -80,8 +81,6 @@ public class UpdateStoragePoolCommandTest {
     @Mock
     private StorageDomainStaticDao sdDao;
     @Mock
-    private List<StorageDomainStatic> sdList;
-    @Mock
     private VdsGroupDao vdsGroupDao;
     @Mock
     private VdsDao vdsDao;
@@ -95,7 +94,7 @@ public class UpdateStoragePoolCommandTest {
     @Before
     public void setUp() {
         when(spDao.get(any(Guid.class))).thenReturn(createDefaultStoragePool());
-        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(sdList);
+        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.<StorageDomainStatic>emptyList());
         when(vdsGroupDao.getAllForStoragePool(any(Guid.class))).thenReturn(createClusterList());
 
         spyCommand(new StoragePoolManagementParameter(createNewStoragePool()));
@@ -119,7 +118,6 @@ public class UpdateStoragePoolCommandTest {
         doReturn(networkDao).when(cmd).getNetworkDao();
         doReturn(managementNetworkUtil).when(cmd).getManagementNetworkUtil();
         doReturn(poolValidator).when(cmd).createStoragePoolValidator();
-        doReturn(true).when(sdList).isEmpty();
     }
 
     @Test
@@ -135,7 +133,8 @@ public class UpdateStoragePoolCommandTest {
 
     @Test
     public void hasDomains() {
-        domainListNotEmpty();
+        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn
+                (Collections.singletonList(new StorageDomainStatic()));
         canDoActionFailed(EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS);
     }
 
@@ -347,11 +346,6 @@ public class UpdateStoragePoolCommandTest {
 
     private void storagePoolWithLocalFS() {
         spyCommand(new StoragePoolManagementParameter(createDefaultStoragePool()));
-    }
-
-    private void domainListNotEmpty() {
-        when(sdList.isEmpty()).thenReturn(false);
-        when(sdList.size()).thenReturn(1);
     }
 
     private static Set<Version> createVersionSet() {
