@@ -13,7 +13,6 @@ import java.util.List;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.network.host.HostSetupNetworksValidator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -82,9 +81,9 @@ public class HostInterfaceValidatorTest {
         VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName();
         vdsNetworkInterface.setVdsId(Guid.newGuid());
         Guid hostId = Guid.newGuid();
-        Matcher<ValidationResult> matcher = failsWith(EngineMessage.NIC_NOT_EXISTS_ON_HOST,
-            ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_NIC_NOT_EXISTS_ON_HOST_ENTITY,
-                hostId.toString()));
+        final EngineMessage engineMessage = EngineMessage.NIC_NOT_EXISTS_ON_HOST;
+        Matcher<ValidationResult> matcher = failsWith(engineMessage,
+            ReplacementUtils.getVariableAssignmentString(engineMessage, hostId.toString()));
         assertThat(new HostInterfaceValidator(vdsNetworkInterface).interfaceInHost(hostId), matcher);
 
     }
@@ -133,8 +132,8 @@ public class HostInterfaceValidatorTest {
     private void assertCorrectSlaveCountInValidBondsWhenInsufficientBonds(int numberOfSlaves) {
         String bondName = "bondName";
         Matcher<ValidationResult> matcher = failsWith(EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT,
-            ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_BONDS_INVALID_SLAVE_COUNT_LIST,
-                bondName));
+            ReplacementUtils.getVariableAssignmentString(EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT, bondName));
+
         assertCorrectSlaveCountInValidBonds(
             numberOfSlaves,
             String.format("bonded interface with only %1$d slaves is not valid bond", numberOfSlaves),
@@ -317,9 +316,9 @@ public class HostInterfaceValidatorTest {
     public void testInterfaceIsBondWhenInterfaceIsNotBonded() throws Exception {
         VdsNetworkInterface iface = createVdsNetworkInterfaceWithName();
         iface.setBonded(false);
-        Matcher<ValidationResult> matcher = failsWith(EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND,
-            ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_NETWORK_INTERFACE_IS_NOT_BOND_ENTITY,
-                iface.getName()));
+        final EngineMessage engineMessage = EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND;
+        Matcher<ValidationResult> matcher = failsWith(engineMessage,
+            ReplacementUtils.getVariableAssignmentString(engineMessage, iface.getName()));
         assertThat(new HostInterfaceValidator(iface).interfaceIsBondOrNull(), matcher);
 
     }

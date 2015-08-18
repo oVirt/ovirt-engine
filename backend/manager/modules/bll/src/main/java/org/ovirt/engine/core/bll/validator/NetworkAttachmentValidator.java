@@ -8,7 +8,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
-import org.ovirt.engine.core.bll.network.host.HostSetupNetworksValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -70,8 +69,10 @@ public class NetworkAttachmentValidator {
 
     public ValidationResult networkAttachmentIsSet() {
         //TODO MM: what to do with this? this actually does not mean, that the attachment does not exist, we just did not get one, and we don't even know how one searched for it, so we also don't know what to complain about.
-        return ValidationResult.failWith(EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS,
-            HostSetupNetworksValidator.VAR_NETWORK_ATTACHMENT_NOT_EXISTS_ENTITY, "null").when(attachment == null);
+        EngineMessage engineMessage = EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS;
+        return ValidationResult.failWith(engineMessage,
+            ReplacementUtils.getVariableAssignmentString(engineMessage, null))
+            .when(attachment == null);
     }
 
     public ValidationResult networkExists() {

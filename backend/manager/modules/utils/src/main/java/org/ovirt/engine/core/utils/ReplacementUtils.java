@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class ReplacementUtils {
 
@@ -15,6 +16,8 @@ public class ReplacementUtils {
     protected static final String DEFAULT_SEPARATOR = "," + System.lineSeparator();
     private static final String COUNTER_SUFFIX = "_COUNTER";
     private static final String SET_VARIABLE_VALUE_FORMAT = "${0} {1}";
+    private static final String LIST_SUFFIX = "_LIST";
+    private static final String ENTITY_SUFFIX  = "_ENTITY";
 
     private ReplacementUtils() {
     }
@@ -93,6 +96,10 @@ public class ReplacementUtils {
         return replaceWith(propertyName, items, DEFAULT_SEPARATOR, DEFAULT_MAX_NUMBER_OF_PRINTED_ITEMS);
     }
 
+    public static Collection<String> replaceAllWith(String propertyName, Collection<?> items) {
+        return replaceWith(propertyName, items, DEFAULT_SEPARATOR, items.size());
+    }
+
 
 
     /**
@@ -120,5 +127,30 @@ public class ReplacementUtils {
         }
 
         return replaceWith(propertyName, printedItems);
+    }
+
+    public static String getVariableName(EngineMessage engineMessage) {
+        return engineMessage + ENTITY_SUFFIX;
+    }
+
+    public static String getListVariableName(EngineMessage engineMessage) {
+        return engineMessage + LIST_SUFFIX;
+    }
+
+    public static Collection<String> getListVariableAssignmentString(EngineMessage engineMessage, Collection<?> values) {
+        return ReplacementUtils.replaceWith(ReplacementUtils.getListVariableName(engineMessage), values);
+    }
+
+    public static Collection<String> getListVariableAssignmentStringUsingAllValues(EngineMessage engineMessage, Collection<?> values) {
+        return ReplacementUtils.replaceAllWith(ReplacementUtils.getListVariableName(engineMessage), values);
+    }
+
+    //TODO MM: this is older construct which probably will not be needed after dropping of SetupNetworksHelper. When that's done, messages needs to be revisited and 'getVariableAssignmentString' can be used instead.
+    public static String getVariableAssignmentStringWithMultipleValues(EngineMessage engineMessage, String value) {
+        return createSetVariableString(getListVariableName(engineMessage), value);
+    }
+
+    public static String getVariableAssignmentString(EngineMessage engineMessage, String value) {
+        return createSetVariableString(getVariableName(engineMessage), value);
     }
 }

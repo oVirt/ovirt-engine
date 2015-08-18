@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.network.host.HostSetupNetworksValidator;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -18,8 +17,6 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
 public class HostInterfaceValidator {
 
     public static final String VAR_LABELED_NIC = "LabeledNic ";
-    public static final String VAR_NETWORK_INTERFACE_IS_NOT_BOND_ENTITY = "NETWORK_INTERFACE_IS_NOT_BOND_ENTITY";
-    public static final String VAR_NIC_NOT_EXISTS_ON_HOST_ENTITY = "NIC_NOT_EXISTS_ON_HOST_ENTITY";
     public static final String VAR_NIC_LABEL = "NicLabel";
     public static final String VAR_BOND_NAME = "bondName";
     public static final String VAR_INTERFACE_NAME = "interfaceName";
@@ -52,15 +49,17 @@ public class HostInterfaceValidator {
     }
 
     public ValidationResult interfaceInHost(Guid hostId) {
-        return ValidationResult.failWith(EngineMessage.NIC_NOT_EXISTS_ON_HOST,
-            ReplacementUtils.createSetVariableString(VAR_NIC_NOT_EXISTS_ON_HOST_ENTITY, hostId.toString()))
+        final EngineMessage engineMessage = EngineMessage.NIC_NOT_EXISTS_ON_HOST;
+        return ValidationResult.failWith(engineMessage,
+            ReplacementUtils.getVariableAssignmentString(engineMessage, hostId.toString()))
             .when(!iface.getVdsId().equals(hostId));
     }
 
     public ValidationResult interfaceIsBondOrNull() {
         String ifaceName = iface == null ? "null" : iface.getName();
-        return ValidationResult.failWith(EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND,
-            ReplacementUtils.createSetVariableString(VAR_NETWORK_INTERFACE_IS_NOT_BOND_ENTITY, ifaceName))
+        final EngineMessage engineMessage = EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND;
+        return ValidationResult.failWith(engineMessage,
+            ReplacementUtils.getVariableAssignmentString(engineMessage, ifaceName))
 
             .when(iface != null && !iface.isBond());
     }
@@ -71,9 +70,9 @@ public class HostInterfaceValidator {
         }
 
         int slavesCount = getSlaveCount(nics);
+        String ifaceName = iface.getName();
         return ValidationResult.failWith(EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT,
-            ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_BONDS_INVALID_SLAVE_COUNT_LIST,
-                iface.getName()))
+            ReplacementUtils.getVariableAssignmentString(EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT, ifaceName))
             .when(slavesCount < 2);
     }
 
