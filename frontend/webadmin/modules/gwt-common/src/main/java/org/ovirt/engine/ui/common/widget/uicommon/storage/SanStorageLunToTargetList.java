@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.TableLayout;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.Header;
@@ -123,17 +124,17 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         @Override
         public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
             String propName = args.propertyName;
-            EntityModelCellTable<ListModel> table = (EntityModelCellTable<ListModel>) ev.getContext();
+            final EntityModelCellTable<ListModel> table = (EntityModelCellTable<ListModel>) ev.getContext();
 
             if (propName.equals("IsSelected")) { //$NON-NLS-1$
-                LunModel lunModel = (LunModel) sender;
-
-                if (!lunModel.getIsSelected()) {
-                    table.getSelectionModel().setSelected(lunModel, false);
-                } else {
-                    table.getSelectionModel().setSelected(lunModel, true);
-                }
-                table.redraw();
+                final LunModel lunModel = (LunModel) sender;
+                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                    @Override
+                    public void execute() {
+                        table.getSelectionModel().setSelected(lunModel, lunModel.getIsSelected());
+                        table.redraw();
+                    }
+                });
             }
         }
     };
