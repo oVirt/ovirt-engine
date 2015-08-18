@@ -69,7 +69,7 @@ final class ManageLabeledNetworksParametersBuilderImpl extends NetworkParameters
                 combinedInterfaces.add(nic);
                 final VdsNetworkInterface nicRemainedAfterRemove = interfacesRemainedAfterRemoveByName.get(nicName);
                 final VdsNetworkInterface originalNic = originalInterfacesByName.get(nicName);
-                final String networkName = getNonVlanCombinedNetworkName(nicName,
+                final String networkName = getNonVlanCombinedNetworkName(nic.getNetworkName(),
                         nicRemainedAfterRemove.getNetworkName(),
                         originalNic == null ? null : originalNic.getNetworkName());
                 nic.setNetworkName(networkName);
