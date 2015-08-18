@@ -6,6 +6,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
@@ -21,7 +22,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
@@ -453,7 +453,7 @@ public class UpdateStoragePoolCommandTest {
     }
 
     private void setupNetworkValidator(boolean valid) {
-        NetworkValidator validator = Mockito.mock(NetworkValidator.class);
+        NetworkValidator validator = mock(NetworkValidator.class);
         when(validator.canNetworkCompatabilityBeDecreased()).thenReturn(valid);
         when(cmd.getNetworkValidator(any(Network.class))).thenReturn(validator);
     }
