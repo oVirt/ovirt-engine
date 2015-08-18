@@ -23,7 +23,7 @@
                         <e:ListModelListBoxEditor ui:field="bondEditor" />
                         <e:ListModelListBoxEditor ui:field="networkEditor" />
                         <e:ListModelListBoxEditor ui:field="bondingModeEditor" />
-                        <ge:StringEntityModelTextBoxEditor ui:field="customEditor" visible="false" />
+                        <ge:StringEntityModelTextBoxEditor ui:field="customBondEditor" visible="false" />
                         <ge:StringEntityModelLabelEditor ui:field="bootProtocolLabel" />
                         <e:EnumRadioEditor ui:field="bootProtocol" />
                         <ge:StringEntityModelTextBoxEditor ui:field="address" />
