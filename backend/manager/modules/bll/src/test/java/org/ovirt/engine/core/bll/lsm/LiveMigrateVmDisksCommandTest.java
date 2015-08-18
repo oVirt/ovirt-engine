@@ -65,10 +65,10 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.LiveSnapshotEnabled, Version.v3_1.toString(), true),
-            mockConfig(ConfigValues.LiveSnapshotEnabled, Version.v3_6.toString(), true),
-            mockConfig(ConfigValues.LiveStorageMigrationBetweenDifferentStorageTypes, Version.v3_1.toString(), false),
-            mockConfig(ConfigValues.LiveStorageMigrationBetweenDifferentStorageTypes, Version.v3_6.toString(), true)
+            mockConfig(ConfigValues.LiveSnapshotEnabled, Version.v3_1, true),
+            mockConfig(ConfigValues.LiveSnapshotEnabled, Version.v3_6, true),
+            mockConfig(ConfigValues.LiveStorageMigrationBetweenDifferentStorageTypes, Version.v3_1, false),
+            mockConfig(ConfigValues.LiveStorageMigrationBetweenDifferentStorageTypes, Version.v3_6, true)
     );
 
     @Mock

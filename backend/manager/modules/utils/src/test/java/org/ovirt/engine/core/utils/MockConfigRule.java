@@ -73,6 +73,10 @@ public class MockConfigRule extends TestWatcher {
         return new MockConfigDescriptor<T>(value, version, returnValue);
     }
 
+    public static <T> MockConfigDescriptor<T> mockConfig(ConfigValues value, Version version, T returnValue) {
+        return new MockConfigDescriptor<T>(value, version.toString(), returnValue);
+    }
+
     /** Mock the default version configuration of a single value - this can be given as an argument to the rule's constructor */
     public static <T> MockConfigDescriptor<T> mockConfig(ConfigValues value, T returnValue) {
         return new MockConfigDescriptor<T>(value, ConfigCommon.defaultConfigurationVersion, returnValue);

@@ -69,8 +69,8 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     @Override
     public Set<MockConfigRule.MockConfigDescriptor<Boolean>> getExtraConfigDescriptors() {
         return new HashSet<>(Arrays.asList(
-                mockConfig(ConfigValues.GlusterHostUUIDSupport, Version.v3_2.toString(), false),
-                mockConfig(ConfigValues.GlusterHostUUIDSupport, Version.v3_3.toString(), true)));
+                mockConfig(ConfigValues.GlusterHostUUIDSupport, Version.v3_2, false),
+                mockConfig(ConfigValues.GlusterHostUUIDSupport, Version.v3_3, true)));
     }
 
     private VDSGroup getVdsGroup(Version ver) {

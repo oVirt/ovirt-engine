@@ -49,8 +49,8 @@ public class CreateBrickCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GlusterBrickProvisioningEnabled, Version.v3_6.toString(), true),
-            mockConfig(ConfigValues.GlusterBrickProvisioningEnabled, Version.v3_5.toString(), false)
+            mockConfig(ConfigValues.GlusterBrickProvisioningEnabled, Version.v3_6, true),
+            mockConfig(ConfigValues.GlusterBrickProvisioningEnabled, Version.v3_5, false)
             );
 
     @Test

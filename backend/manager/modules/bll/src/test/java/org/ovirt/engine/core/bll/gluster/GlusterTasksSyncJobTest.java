@@ -98,8 +98,8 @@ public class GlusterTasksSyncJobTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GlusterAsyncTasksSupport, Version.v3_2.toString(), false),
-            mockConfig(ConfigValues.GlusterAsyncTasksSupport, Version.v3_3.toString(), true),
+            mockConfig(ConfigValues.GlusterAsyncTasksSupport, Version.v3_2, false),
+            mockConfig(ConfigValues.GlusterAsyncTasksSupport, Version.v3_3, true),
             mockConfig(ConfigValues.DefaultMinThreadPoolSize, 10),
             mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20),
             mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10),

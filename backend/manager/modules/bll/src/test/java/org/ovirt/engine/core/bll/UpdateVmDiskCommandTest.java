@@ -128,7 +128,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.ShareableDiskEnabled, Version.v3_1.toString(), true)
+            mockConfig(ConfigValues.ShareableDiskEnabled, Version.v3_1, true)
     );
 
     @Rule

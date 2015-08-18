@@ -101,12 +101,12 @@ public class HostSetupNetworksValidatorTest {
 
     @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule(
-        mockConfig(ConfigValues.NetworkCustomPropertiesSupported, Version.v3_4.toString(), false),
-        mockConfig(ConfigValues.NetworkCustomPropertiesSupported, Version.v3_5.toString(), true),
-        mockConfig(ConfigValues.NetworkCustomPropertiesSupported, Version.v3_6.toString(), true),
-        mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_4.toString(), false),
-        mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_5.toString(), false),
-        mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_6.toString(), true));
+        mockConfig(ConfigValues.NetworkCustomPropertiesSupported, Version.v3_4, false),
+        mockConfig(ConfigValues.NetworkCustomPropertiesSupported, Version.v3_5, true),
+        mockConfig(ConfigValues.NetworkCustomPropertiesSupported, Version.v3_6, true),
+        mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_4, false),
+        mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_5, false),
+        mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_6, true));
 
     @Mock
     private ManagementNetworkUtil managementNetworkUtil;

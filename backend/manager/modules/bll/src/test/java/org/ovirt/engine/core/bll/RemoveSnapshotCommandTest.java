@@ -53,7 +53,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
 
     @Rule
     public MockConfigRule mcr =
-            new MockConfigRule(mockConfig(ConfigValues.LiveMergeSupported, Version.v3_5.toString(), true));
+            new MockConfigRule(mockConfig(ConfigValues.LiveMergeSupported, Version.v3_5, true));
 
     @Mock
     private VmTemplateDao vmTemplateDao;

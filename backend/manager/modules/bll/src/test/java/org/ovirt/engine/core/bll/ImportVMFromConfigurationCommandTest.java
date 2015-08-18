@@ -67,7 +67,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.VirtIoScsiEnabled, Version.v3_2.toString(), false)
+            mockConfig(ConfigValues.VirtIoScsiEnabled, Version.v3_2, false)
             );
 
     @Mock

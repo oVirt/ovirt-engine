@@ -72,10 +72,10 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
     @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule(
-        mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_5.toString(), false),
-        mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_6.toString(), true),
-        mockConfig(ConfigValues.ChangeNetworkUnderBridgeInUseSupported, Version.v3_5.toString(), false),
-        mockConfig(ConfigValues.ChangeNetworkUnderBridgeInUseSupported, Version.v3_6.toString(), true));
+        mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_5, false),
+        mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_6, true),
+        mockConfig(ConfigValues.ChangeNetworkUnderBridgeInUseSupported, Version.v3_5, false),
+        mockConfig(ConfigValues.ChangeNetworkUnderBridgeInUseSupported, Version.v3_6, true));
 
 
     private final VDS host;

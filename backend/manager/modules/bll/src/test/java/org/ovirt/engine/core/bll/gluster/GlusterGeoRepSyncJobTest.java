@@ -73,8 +73,8 @@ public class GlusterGeoRepSyncJobTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GlusterGeoReplicationEnabled, Version.v3_5.toString(), true),
-            mockConfig(ConfigValues.GlusterGeoReplicationEnabled, Version.v3_4.toString(), false),
+            mockConfig(ConfigValues.GlusterGeoReplicationEnabled, Version.v3_5, true),
+            mockConfig(ConfigValues.GlusterGeoReplicationEnabled, Version.v3_4, false),
             mockConfig(ConfigValues.DefaultMinThreadPoolSize, 10),
             mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20),
             mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10)

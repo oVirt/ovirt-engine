@@ -43,7 +43,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GlusterGeoReplicationEnabled, Version.v3_6.toString(), true),
+            mockConfig(ConfigValues.GlusterGeoReplicationEnabled, Version.v3_6, true),
             mockConfig(ConfigValues.GlusterGeoReplicationEnabled, NOT_SUPPORTED_VERSION.toString(), false)
             );
 

@@ -94,8 +94,8 @@ public class GlusterSnapshotSyncJobTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GlusterVolumeSnapshotSupported, Version.v3_5.toString(), true),
-            mockConfig(ConfigValues.GlusterVolumeSnapshotSupported, Version.v3_4.toString(), false),
+            mockConfig(ConfigValues.GlusterVolumeSnapshotSupported, Version.v3_5, true),
+            mockConfig(ConfigValues.GlusterVolumeSnapshotSupported, Version.v3_4, false),
             mockConfig(ConfigValues.DefaultMinThreadPoolSize, 10),
             mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20),
             mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10)

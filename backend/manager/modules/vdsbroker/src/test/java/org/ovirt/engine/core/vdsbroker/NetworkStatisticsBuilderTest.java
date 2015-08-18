@@ -22,8 +22,8 @@ public class NetworkStatisticsBuilderTest {
 
     @ClassRule
     public static MockConfigRule mockConfig = new MockConfigRule(
-            mockConfig(ConfigValues.TotalNetworkStatisticsReported, Version.v3_5.toString(), false),
-            mockConfig(ConfigValues.TotalNetworkStatisticsReported, Version.v3_6.toString(), true));
+            mockConfig(ConfigValues.TotalNetworkStatisticsReported, Version.v3_5, false),
+            mockConfig(ConfigValues.TotalNetworkStatisticsReported, Version.v3_6, true));
 
     private final NetworkStatisticsBuilder statsBuilder;
     private final NetworkInterface<NetworkStatistics> existingIface;

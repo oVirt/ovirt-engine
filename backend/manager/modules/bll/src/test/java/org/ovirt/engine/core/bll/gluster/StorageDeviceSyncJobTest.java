@@ -77,8 +77,8 @@ public class StorageDeviceSyncJobTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GlusterBrickProvisioningEnabled, Version.v3_6.toString(), true),
-            mockConfig(ConfigValues.GlusterBrickProvisioningEnabled, Version.v3_5.toString(), false),
+            mockConfig(ConfigValues.GlusterBrickProvisioningEnabled, Version.v3_6, true),
+            mockConfig(ConfigValues.GlusterBrickProvisioningEnabled, Version.v3_5, false),
             mockConfig(ConfigValues.DefaultMinThreadPoolSize, 10),
             mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20),
             mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10)

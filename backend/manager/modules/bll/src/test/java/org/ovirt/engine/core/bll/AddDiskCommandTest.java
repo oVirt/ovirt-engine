@@ -69,8 +69,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.MaxBlockDiskSize, MAX_BLOCK_SIZE),
-            mockConfig(ConfigValues.ShareableDiskEnabled, Version.v3_1.toString(), true),
-            mockConfig(ConfigValues.VirtIoScsiEnabled, Version.v3_3.toString(), true)
+            mockConfig(ConfigValues.ShareableDiskEnabled, Version.v3_1, true),
+            mockConfig(ConfigValues.VirtIoScsiEnabled, Version.v3_3, true)
             );
 
     @Mock
