@@ -1450,7 +1450,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getMemoryBalloonDeviceEnabled().setEntity(true);
         getMemoryBalloonDeviceEnabled().setIsAvailable(false);
 
-        setSpiceProxyEnabled(new EntityModel<Boolean>());
+        setSpiceProxyEnabled(new EntityModel<Boolean>(false));
         setSpiceProxy(new EntityModel<String>());
 
         setIsSubTemplate(new NotChangableForVmInPoolEntityModel<Boolean>(false));

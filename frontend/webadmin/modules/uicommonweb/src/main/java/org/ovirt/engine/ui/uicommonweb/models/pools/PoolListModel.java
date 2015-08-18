@@ -259,7 +259,6 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
 
                         PoolModel model = new PoolModel(behavior);
                         model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
-                        model.startProgress("");
                         model.setIsAdvancedModeLocalStorageKey("wa_pool_dialog");  //$NON-NLS-1$
                         setWindow(model);
 
