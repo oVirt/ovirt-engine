@@ -232,6 +232,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The host has not completed a successul installation before.")
     String CANNOT_UPGRADE_HOST_WITHOUT_OS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Valid Host statuses for upgrade are Up, Maintenance or Non-Operational.")
+    String CANNOT_UPGRADE_HOST_STATUS_ILLEGAL();
+
     @DefaultStringValue("The Host Port number cannot be changed without reinstalling the Host.")
     String VDS_PORT_CHANGE_REQUIRE_INSTALL();
 
