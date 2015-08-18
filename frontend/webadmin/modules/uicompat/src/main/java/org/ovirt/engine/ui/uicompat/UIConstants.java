@@ -864,6 +864,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Name can contain only 'A-Z', 'a-z', '0-9', '_', '-' or '.' characters.")
     String noSpecialCharactersWithDotMsg();
 
+    @DefaultStringValue("Name can contain only 'A-Z', 'a-z', '0-9', '_', '-' or ':' characters.")
+    String vmInitNetworkNameValidationMsg();
+
     @DefaultStringValue("Only alphanumeric and some special characters that conform to the standard ASCII character set are allowed.")
     String asciiOrNoneValidationMsg();
 
@@ -2894,5 +2897,4 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Problem retrieving errata:")
     String katelloProblemRetrievingErrata();
-
 }

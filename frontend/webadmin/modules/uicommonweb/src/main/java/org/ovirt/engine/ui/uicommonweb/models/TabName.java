@@ -24,7 +24,6 @@ public enum TabName {
     RESOURCE_ALLOCATION_TAB,
     SYSTEM_TAB,
     TAB_RNG,
-    FIRST_RUN,
     ICON_TAB,
     PF_TAB,
     VFS_CONFIG_TAB,
