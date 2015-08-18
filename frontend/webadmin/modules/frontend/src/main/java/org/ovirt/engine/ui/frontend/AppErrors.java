@@ -1525,7 +1525,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The specified network is already labeled.")
     String ACTION_TYPE_FAILED_NETWORK_ALREADY_LABELED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The following networks cannot be removed from the network interface since they are managed by the label: ${ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_LIST}. Please remove the label from the network interface in order to remove the network.")
+    @DefaultStringValue("Cannot ${action} ${type}. The following networks cannot be removed from the network interface since they are managed by the label: ${ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_ENTITY}. Please remove the label from the network interface in order to remove the network.")
     String ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC();
 
     @DefaultStringValue("Cannot ${action} ${type}. Network '${networkName}' cannot be moved to another network interface since it's managed by label '${ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY}'. Please remove the label from the network interface in order to remove the network.")
@@ -1714,7 +1714,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following external networks cannot be configured on host via 'Setup Networks': ${ACTION_TYPE_FAILED_EXTERNAL_NETWORKS_CANNOT_BE_PROVISIONED_LIST}")
     String ACTION_TYPE_FAILED_EXTERNAL_NETWORKS_CANNOT_BE_PROVISIONED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The following Logical Networks are attached to more than one Network Interface: ${NETWORKS_ALREADY_ATTACHED_TO_IFACES_LIST}.")
+    @DefaultStringValue("Cannot ${action} ${type}. The following Logical Networks are attached to more than one Network Interface: ${NETWORKS_ALREADY_ATTACHED_TO_IFACES_ENTITY}.")
     String NETWORKS_ALREADY_ATTACHED_TO_IFACES();
 
     @DefaultStringValue("Cannot ${action} ${type}. The following Network Interfaces do not exist on the Host: ${NETWORK_INTERFACES_DONT_EXIST_LIST}.")

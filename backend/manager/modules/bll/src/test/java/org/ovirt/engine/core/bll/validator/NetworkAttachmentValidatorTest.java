@@ -24,7 +24,6 @@ import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
-import org.ovirt.engine.core.bll.network.host.HostSetupNetworksValidator;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
@@ -101,10 +100,10 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
     @Test
     public void testNetworkAttachmentIsSetWhenAttachmentIsNull() {
+        EngineMessage engineMessage = EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS;
         assertThat(createNetworkAttachmentValidator(null).networkAttachmentIsSet(),
-            failsWith(EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS,
-                HostSetupNetworksValidator.VAR_NETWORK_ATTACHMENT_NOT_EXISTS_ENTITY,
-                "null"));
+            failsWith(engineMessage,
+                ReplacementUtils.getVariableAssignmentString(engineMessage, "null")));
     }
 
     @Test

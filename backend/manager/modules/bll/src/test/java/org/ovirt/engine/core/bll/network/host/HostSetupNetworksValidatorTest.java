@@ -11,8 +11,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.bll.network.host.HostSetupNetworksValidator.COMMA_SEPARATOR;
-import static org.ovirt.engine.core.bll.network.host.HostSetupNetworksValidator.VAR_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST;
 import static org.ovirt.engine.core.bll.network.host.HostSetupNetworksValidator.VAR_NETWORK_NAMES;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
@@ -184,10 +182,9 @@ public class HostSetupNetworksValidatorTest {
             Collections.<NetworkAttachment> emptyList(),
             Collections.singletonList(labeledNetwork));
 
-        assertThat(validator.notRemovingLabeledNetworks(networkAttachment),
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC,
-                        ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_LIST,
-                                labeledNetwork.getName())));
+        EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC;
+        assertThat(validator.notRemovingLabeledNetworks(networkAttachment), failsWith(engineMessage,
+            ReplacementUtils.getVariableAssignmentString(engineMessage, labeledNetwork.getName())));
 
     }
 
@@ -304,13 +301,11 @@ public class HostSetupNetworksValidatorTest {
             Collections.singletonList(labeledNetwork)
         );
 
+        EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC;
         assertThat(validator.notMovingLabeledNetworkToDifferentNic(updatedNetworkAttachment),
-            failsWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC,
-                ReplacementUtils.createSetVariableString(
-                    "networkName", labeledNetwork.getName()),
-                ReplacementUtils.createSetVariableString(
-                    HostSetupNetworksValidator.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY,
-                    labeledNetwork.getLabel())));
+            failsWith(engineMessage,
+                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME, labeledNetwork.getName()),
+                    ReplacementUtils.getVariableAssignmentString(engineMessage, labeledNetwork.getLabel())));
     }
 
     @Test
@@ -349,9 +344,9 @@ public class HostSetupNetworksValidatorTest {
     @Test
     public void notMovingLabeledNetworkToDifferentNicNoLabelOnNic() {
         notMovingLabeledNetworkToDifferentNicCommonTest(/* nicContainslabel */false,
-                false,
+            false,
                 /* labelShouldBeAddedToNic */false,
-                true);
+            true);
     }
 
     @Test
@@ -406,13 +401,12 @@ public class HostSetupNetworksValidatorTest {
         if (valid) {
             assertThat(validator.notMovingLabeledNetworkToDifferentNic(updatedAttachment), isValid());
         } else {
+            EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC;
             assertThat(validator.notMovingLabeledNetworkToDifferentNic(updatedAttachment),
-                    failsWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC,
-                            ReplacementUtils.createSetVariableString(
-                                    "networkName", movedNetwork.getName()),
-                            ReplacementUtils.createSetVariableString(
-                                HostSetupNetworksValidator.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY,
-                                movedNetwork.getLabel())));
+
+                    failsWith(engineMessage,
+                            ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME, movedNetwork.getName()),
+                            ReplacementUtils.getVariableAssignmentString(engineMessage, movedNetwork.getLabel())));
         }
     }
 
@@ -436,11 +430,10 @@ public class HostSetupNetworksValidatorTest {
         HostSetupNetworksValidator validator = createHostSetupNetworksValidator(params,
                 Collections.singletonList(notABond));
 
+        final EngineMessage engineMessage = EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND;
         assertThat(validator.validRemovedBonds(Collections.<NetworkAttachment> emptyList()),
-            failsWith(EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND,
-                ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_NETWORK_INTERFACE_IS_NOT_BOND_ENTITY,
-                        notABond.getName())));
-
+            failsWith(engineMessage,
+                ReplacementUtils.getVariableAssignmentString(engineMessage, notABond.getName())));
     }
 
     @Test
@@ -454,10 +447,10 @@ public class HostSetupNetworksValidatorTest {
             .setParams(params)
             .build();
 
+        EngineMessage engineMessage = EngineMessage.NETWORK_BOND_RECORD_DOES_NOT_EXISTS;
         assertThat(validator.validRemovedBonds(Collections.<NetworkAttachment> emptyList()),
-            failsWith(EngineMessage.NETWORK_BOND_RECORD_DOES_NOT_EXISTS,
-                replaceWith(
-                    HostSetupNetworksValidator.VAR_NETWORK_BOND_RECORD_DOES_NOT_EXISTS_LIST,
+            failsWith(engineMessage,
+                ReplacementUtils.getListVariableAssignmentString(engineMessage,
                     Collections.singletonList(idOfInexistingInterface))));
 
     }
@@ -483,8 +476,7 @@ public class HostSetupNetworksValidatorTest {
             Collections.<Guid> singletonList(null)));
 
         assertThat(validator.validRemovedBonds(Collections.singletonList(requiredNetworkAttachment)),
-            failsWith(EngineMessage.BOND_USED_BY_NETWORK_ATTACHMENTS,
-                    replacements));
+            failsWith(EngineMessage.BOND_USED_BY_NETWORK_ATTACHMENTS, replacements));
 
     }
 
@@ -574,7 +566,7 @@ public class HostSetupNetworksValidatorTest {
         Network networkB = createNetworkWithName("networkB");
 
         NetworkAttachment networkAttachmentA = createNetworkAttachment(networkA, (Guid) null);
-        NetworkAttachment networkAttachmentB = createNetworkAttachment(networkB, (Guid)null);
+        NetworkAttachment networkAttachmentB = createNetworkAttachment(networkB, (Guid) null);
 
         HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
         params.setNetworkAttachments(Arrays.asList(networkAttachmentA, networkAttachmentB));
@@ -626,7 +618,7 @@ public class HostSetupNetworksValidatorTest {
 
         HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
         params.setRemovedNetworkAttachments(new HashSet<>(Arrays.asList(networkAttachmentA.getId(),
-                networkAttachmentB.getId())));
+            networkAttachmentB.getId())));
 
         HostSetupNetworksValidator validator = spy(createHostSetupNetworksValidator(params,
             Arrays.asList(nicA, nicB),
@@ -641,13 +633,16 @@ public class HostSetupNetworksValidatorTest {
             .thenReturn(vmNames);
 
         final List<String> errorNetworkNames = Arrays.asList(nameOfNetworkA, nameOfNetworkB);
+        EngineMessage engineMessage = EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS;
         assertThat(validator.validateNotRemovingUsedNetworkByVms(),
-                failsWith(EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS,
-                        concat(replaceWith(VAR_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST,
-                                vmNames,
-                                COMMA_SEPARATOR,
-                                vmNames.size()),
-                                replaceWith(VAR_NETWORK_NAMES, errorNetworkNames, COMMA_SEPARATOR, vmNames.size()))));
+                failsWith(engineMessage,
+                        concat(
+                            ReplacementUtils.replaceAllWith(VAR_NETWORK_NAMES, errorNetworkNames),
+                            ReplacementUtils.getListVariableAssignmentStringUsingAllValues(engineMessage, vmNames))));
+
+
+
+
 
         ArgumentCaptor<Collection> collectionArgumentCaptor = ArgumentCaptor.forClass(Collection.class);
         verify(vmInterfaceManagerMock).findActiveVmsUsingNetworks(eq(host.getId()), collectionArgumentCaptor.capture());
@@ -736,10 +731,10 @@ public class HostSetupNetworksValidatorTest {
         HostSetupNetworksValidator validator = createHostSetupNetworksValidator(Collections.singletonList(networkA));
 
         assertThat(validator.networksUniquelyConfiguredOnHost(Arrays.asList(networkAttachment,
-                        networkAttachmentReferencingSameNetwork)),
-                failsWith(EngineMessage.NETWORKS_ALREADY_ATTACHED_TO_IFACES,
-                        ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORKS_ALREADY_ATTACHED_TO_IFACES_LIST,
-                                networkName)));
+                networkAttachmentReferencingSameNetwork)),
+            failsWith(EngineMessage.NETWORKS_ALREADY_ATTACHED_TO_IFACES,
+                ReplacementUtils.getVariableAssignmentString(EngineMessage.NETWORKS_ALREADY_ATTACHED_TO_IFACES,
+                    networkName)));
 
     }
 
@@ -755,9 +750,9 @@ public class HostSetupNetworksValidatorTest {
     @Test
     public void testValidModifiedBondsFailsWhenReferencingExistingNonBondInterface() throws Exception {
         Bond bond = createBond();
-        ValidationResult notABondValidationResult = new ValidationResult(EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND,
-            HostInterfaceValidator.VAR_NETWORK_INTERFACE_IS_NOT_BOND_ENTITY,
-            bond.getName());
+        final EngineMessage engineMessage = EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND;
+        ValidationResult notABondValidationResult = new ValidationResult(engineMessage,
+            ReplacementUtils.getVariableAssignmentString(engineMessage, bond.getName()));
 
         doTestValidModifiedBonds(bond,
             ValidationResult.VALID,
@@ -774,7 +769,7 @@ public class HostSetupNetworksValidatorTest {
             ValidationResult.VALID,
             ValidationResult.VALID,
             new ValidationResult(EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT,
-                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_BONDS_INVALID_SLAVE_COUNT_LIST,
+                ReplacementUtils.getVariableAssignmentString(EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT,
                     bond.getName())),
 
             ValidationResult.VALID);
@@ -782,11 +777,10 @@ public class HostSetupNetworksValidatorTest {
 
     @Test
     public void testValidModifiedBondsFailsWhenSlavesValidationFails() throws Exception {
-        ValidationResult slavesValidationResult = new ValidationResult(EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE,
-            ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE_ENTITY,
-                "slaveA"),
-            ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME,
-                "networkName"));
+        EngineMessage engineMessage = EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE;
+        ValidationResult slavesValidationResult = new ValidationResult(engineMessage,
+            ReplacementUtils.getVariableAssignmentString(engineMessage, "slaveA"),
+            ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME, "networkName"));
 
         Bond bond = createBond();
         bond.setSlaves(Arrays.asList("slaveA", "slaveB"));
@@ -871,8 +865,7 @@ public class HostSetupNetworksValidatorTest {
         params.setBonds(Collections.singletonList(bond));
 
         ValidationResult cannotBeSlaveValidationResult = new ValidationResult(EngineMessage.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE,
-            HostInterfaceValidator.VAR_INTERFACE_NAME,
-            bond.getName());
+            ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_INTERFACE_NAME, bond.getName()));
         doTestValidateModifiedBondSlaves(
             params,
             null,
@@ -897,6 +890,7 @@ public class HostSetupNetworksValidatorTest {
         HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
         params.setBonds(Collections.singletonList(bond));
 
+        EngineMessage engineMessage = EngineMessage.NETWORK_INTERFACE_ALREADY_IN_BOND;
         doTestValidateModifiedBondSlaves(
             params,
             Arrays.asList(bond, differentBond, slaveA, slaveB),
@@ -904,10 +898,8 @@ public class HostSetupNetworksValidatorTest {
             Collections.<Network> emptyList(),
             ValidationResult.VALID,
             ValidationResult.VALID,
-            new ValidationResult(EngineMessage.NETWORK_INTERFACE_ALREADY_IN_BOND,
-                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_INTERFACE_ALREADY_IN_BOND_ENTITY,
-                    slaveB.getName())));
-
+            new ValidationResult(engineMessage,
+                ReplacementUtils.getVariableAssignmentString(engineMessage, slaveB.getName())));
     }
 
     @Test
@@ -988,6 +980,7 @@ public class HostSetupNetworksValidatorTest {
         HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
         params.setBonds(Collections.singletonList(bond));
 
+        EngineMessage engineMessage = EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE;
         doTestValidateModifiedBondSlaves(
             params,
             Arrays.asList(bond, slaveA, slaveB),
@@ -995,12 +988,10 @@ public class HostSetupNetworksValidatorTest {
             Collections.singletonList(networkBeingRemoved),
             ValidationResult.VALID,
             ValidationResult.VALID,
-            new ValidationResult(EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE,
-                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE_ENTITY,
-                    slaveA.getName()),
+            new ValidationResult(engineMessage,
+                ReplacementUtils.getVariableAssignmentString(engineMessage, slaveA.getName()),
                 ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME,
                     networkBeingRemoved.getName())));
-
     }
 
     @Test
@@ -1108,13 +1099,12 @@ public class HostSetupNetworksValidatorTest {
                 .addNetworks(networkA)
                 .build());
 
+        EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED;
         assertThat(validator.validateCustomProperties(null,
                 Collections.<String, String> emptyMap(),
                 Collections.<String, String> emptyMap()),
-            failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED,
-                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED_LIST,
-                    networkA.getName())));
-
+            failsWith(engineMessage,
+                ReplacementUtils.getVariableAssignmentStringWithMultipleValues(engineMessage, networkA.getName())));
     }
 
     @Test
@@ -1141,12 +1131,12 @@ public class HostSetupNetworksValidatorTest {
         //noinspection unchecked
         doReturn(Collections.emptyList()).when(validator).translateErrorMessages(any(List.class));
 
+        EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT;
         assertThat(validator.validateCustomProperties(SimpleCustomPropertiesUtil.getInstance(),
                 Collections.<String, String> emptyMap(),
                 Collections.<String, String> emptyMap()),
-            failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT,
-                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT_LIST,
-                    networkA.getName())));
+            failsWith(engineMessage,
+                ReplacementUtils.getVariableAssignmentStringWithMultipleValues(engineMessage, networkA.getName())));
 
     }
 
@@ -1219,12 +1209,11 @@ public class HostSetupNetworksValidatorTest {
 
         assertThat(validate, not(isValid()));
 
+        EngineMessage engineMessage = EngineMessage.NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME;
         assertThat(validate,
-            failsWith(EngineMessage.NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME,
-                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME_ENTITY,
-                    nicA.getName()),
-                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME,
-                    networkA.getName())));
+            failsWith(engineMessage,
+                ReplacementUtils.getVariableAssignmentString(engineMessage, nicA.getName()),
+                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME, networkA.getName())));
     }
 
     @Test
@@ -1291,11 +1280,10 @@ public class HostSetupNetworksValidatorTest {
     }
 
     private void assertValidateSlaveHasNoLabelsFailed(HostSetupNetworksValidator validator, String slaveName) {
+        final EngineMessage engineMessage = EngineMessage.LABEL_ATTACH_TO_IMPROPER_INTERFACE;
         assertThat(validator.validateSlaveHasNoLabels(slaveName),
-            failsWith(EngineMessage.LABEL_ATTACH_TO_IMPROPER_INTERFACE,
-                ReplacementUtils.createSetVariableString(
-                    "LABEL_ATTACH_TO_IMPROPER_INTERFACE_ENTITY",
-                    slaveName)));
+            failsWith(engineMessage,
+                ReplacementUtils.getVariableAssignmentString(engineMessage, slaveName)));
     }
 
     @Test
@@ -1363,8 +1351,7 @@ public class HostSetupNetworksValidatorTest {
 
         assertThat(validator.validateQosOverriddenInterfaces(),
             ValidationResultMatchers.failsWith(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
-                ReplacementUtils.createSetVariableString(
-                    HostSetupNetworksValidator.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED_LIST,
+                ReplacementUtils.getVariableAssignmentStringWithMultipleValues(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
                     network.getName())));
     }
 
