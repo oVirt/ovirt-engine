@@ -8,6 +8,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -49,15 +50,28 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateStoragePoolCommandTest {
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
-
     private static final Version VERSION_1_0 = new Version(1, 0);
     private static final Version VERSION_1_1 = new Version(1, 1);
     private static final Version VERSION_1_2 = new Version(1, 2);
     private static final Version VERSION_2_0 = new Version(2, 0);
     private static final Guid DEFAULT_VDS_GROUP_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA95");
     private static final Guid NON_DEFAULT_VDS_GROUP_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA96");
+
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.AutoRegistrationDefaultVdsGroupID, DEFAULT_VDS_GROUP_ID),
+            mockConfig(ConfigValues.NonVmNetworkSupported, false),
+            mockConfig(ConfigValues.MTUOverrideSupported, false),
+            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_0.getValue(), false),
+            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_1.getValue(), false),
+            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_2.getValue(), false),
+            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_3.getValue(), false),
+            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_4.getValue(), true),
+            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_5.getValue(), true),
+            mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_1.getValue(), false),
+            mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_1.getValue(), false)
+    );
+
 
     private UpdateStoragePoolCommand<StoragePoolManagementParameter> cmd;
 
@@ -106,18 +120,6 @@ public class UpdateStoragePoolCommandTest {
         doReturn(managementNetworkUtil).when(cmd).getManagementNetworkUtil();
         doReturn(poolValidator).when(cmd).createStoragePoolValidator();
         doReturn(true).when(sdList).isEmpty();
-
-        mcr.mockConfigValue(ConfigValues.AutoRegistrationDefaultVdsGroupID, DEFAULT_VDS_GROUP_ID);
-        mcr.mockConfigValue(ConfigValues.NonVmNetworkSupported, false);
-        mcr.mockConfigValue(ConfigValues.MTUOverrideSupported, false);
-        mcr.mockConfigValue(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_0, false);
-        mcr.mockConfigValue(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_1, false);
-        mcr.mockConfigValue(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_2, false);
-        mcr.mockConfigValue(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_3, false);
-        mcr.mockConfigValue(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_4, true);
-        mcr.mockConfigValue(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_5, true);
-        mcr.mockConfigValue(ConfigValues.PosixStorageEnabled, Version.v3_1, false);
-        mcr.mockConfigValue(ConfigValues.GlusterFsStorageEnabled, Version.v3_1, false);
     }
 
     @Test
