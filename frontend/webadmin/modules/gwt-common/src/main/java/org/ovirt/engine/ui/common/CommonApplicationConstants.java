@@ -1975,7 +1975,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Description")
     String descriptionInstanceTypeGeneral();
 
-    @DefaultStringValue("The fields is attached to the currently selected instance type")
+    @DefaultStringValue("The field is attached to the currently selected instance type")
     String attachedToInstanceType();
 
     @DefaultStringValue("The field is not attached to any instance type")
