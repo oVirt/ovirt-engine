@@ -37,6 +37,8 @@ def _(m):
 class Const(object):
     # TODO: if we add package management, add package names here
 
+    VMCONSOLE_PROXY_SERVICE_NAME = 'ovirt-vmconsole-proxy-sshd'
+
     VMCONSOLE_PROXY_PKI_NAME = 'vmconsole-proxy'
 
     VMCONSOLE_PROXY_HELPER_PKI_NAME = 'vmconsole-proxy-helper'
