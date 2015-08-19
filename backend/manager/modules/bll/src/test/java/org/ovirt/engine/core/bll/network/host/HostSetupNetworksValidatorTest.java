@@ -833,14 +833,13 @@ public class HostSetupNetworksValidatorTest {
         Bond bond = createBond();
         bond.setSlaves(Arrays.asList("slaveA", "slaveB"));
 
-        doTestValidateModifiedBondSlaves(
-            new ParametersBuilder().addBonds(bond).build(),
-            null,
-            Collections.<NetworkAttachment> emptyList(),
-            Collections.<Network> emptyList(),
-            new ValidationResult(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST),
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addBonds(bond))
+            .build();
+        _doTestValidateModifiedBondSlaves(
+            spy(validator), new ValidationResult(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST),
             ValidationResult.VALID,
-            new ValidationResult(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST));
+            failsWith(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST));
     }
 
     @Test
@@ -849,15 +848,15 @@ public class HostSetupNetworksValidatorTest {
         bond.setSlaves(Arrays.asList("slaveA", "slaveB"));
 
         ValidationResult cannotBeSlaveValidationResult = new ValidationResult(EngineMessage.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE,
-            ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_INTERFACE_NAME, bond.getName()));
-        doTestValidateModifiedBondSlaves(
-            new ParametersBuilder().addBonds(bond).build(),
-            null,
-            Collections.<NetworkAttachment> emptyList(),
-            Collections.<Network> emptyList(),
-            ValidationResult.VALID,
+        ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_INTERFACE_NAME, bond.getName()));
+
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addBonds(bond))
+            .build();
+        _doTestValidateModifiedBondSlaves(
+            spy(validator), ValidationResult.VALID,
             cannotBeSlaveValidationResult,
-            cannotBeSlaveValidationResult);
+            failsWith(cannotBeSlaveValidationResult));
 
     }
 
@@ -869,17 +868,18 @@ public class HostSetupNetworksValidatorTest {
         VdsNetworkInterface slaveA = createBondSlave(bond, "slaveA");
         VdsNetworkInterface slaveB = createBondSlave(differentBond, "slaveB");
 
-        bond.setSlaves(Arrays.asList(slaveA.getName(), slaveB.getName()));
+        setBondSlaves(bond, slaveA, slaveB);
 
         EngineMessage engineMessage = EngineMessage.NETWORK_INTERFACE_ALREADY_IN_BOND;
-        doTestValidateModifiedBondSlaves(
-            new ParametersBuilder().addBonds(bond).build(),
-            Arrays.asList(bond, differentBond, slaveA, slaveB),
-            Collections.<NetworkAttachment> emptyList(),
-            Collections.<Network> emptyList(),
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addBonds(bond))
+            .addExistingInterfaces(bond, differentBond, slaveA, slaveB)
+            .build();
+
+        _doTestValidateModifiedBondSlaves(
+            spy(validator), ValidationResult.VALID,
             ValidationResult.VALID,
-            ValidationResult.VALID,
-            new ValidationResult(engineMessage,
+            failsWith(engineMessage,
                 ReplacementUtils.getVariableAssignmentString(engineMessage, slaveB.getName())));
     }
 
@@ -891,15 +891,15 @@ public class HostSetupNetworksValidatorTest {
         VdsNetworkInterface slaveA = createBondSlave(bond, "slaveA");
         VdsNetworkInterface slaveB = createBondSlave(differentBond, "slaveB");
 
-        bond.setSlaves(Arrays.asList(slaveA.getName(), slaveB.getName()));
-        doTestValidateModifiedBondSlaves(
-            new ParametersBuilder().addRemovedBonds(differentBond.getId()).build(),
-            Arrays.asList(bond, differentBond, slaveA, slaveB),
-            Collections.<NetworkAttachment> emptyList(),
-            Collections.<Network> emptyList(),
+        setBondSlaves(bond, slaveA, slaveB);
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addRemovedBonds(differentBond.getId()))
+            .addExistingInterfaces(bond, differentBond, slaveA, slaveB)
+            .build();
+        _doTestValidateModifiedBondSlaves(
+            spy(validator), ValidationResult.VALID,
             ValidationResult.VALID,
-            ValidationResult.VALID,
-            ValidationResult.VALID);
+            isValid());
     }
 
     @Test
@@ -912,17 +912,17 @@ public class HostSetupNetworksValidatorTest {
         VdsNetworkInterface slaveC = createBondSlave(differentBond, "slaveC");
         VdsNetworkInterface slaveD = createBondSlave(differentBond, "slaveD");
 
-        bond.setSlaves(Arrays.asList(slaveA.getName(), slaveB.getName()));
-        differentBond.setSlaves(Arrays.asList(slaveC.getName(), slaveD.getName()));
+        setBondSlaves(bond, slaveA, slaveB);
+        setBondSlaves(differentBond, slaveC, slaveD);
 
-        doTestValidateModifiedBondSlaves(
-            new ParametersBuilder().addBonds(bond, differentBond).build(),
-            Arrays.asList(bond, differentBond, slaveA, slaveB, slaveC, slaveD),
-            Collections.<NetworkAttachment> emptyList(),
-            Collections.<Network> emptyList(),
+        HostSetupNetworksValidator build = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addBonds(bond, differentBond))
+            .addExistingInterfaces(bond, differentBond, slaveA, slaveB, slaveC, slaveD)
+            .build();
+        _doTestValidateModifiedBondSlaves(
+            spy(build), ValidationResult.VALID,
             ValidationResult.VALID,
-            ValidationResult.VALID,
-            ValidationResult.VALID);
+            isValid());
     }
 
     public Bond createBond(String bondName) {
@@ -950,17 +950,20 @@ public class HostSetupNetworksValidatorTest {
 
         VdsNetworkInterface slaveB = createBondSlave(bond, "slaveB");
 
-        bond.setSlaves(Arrays.asList(slaveA.getName(), slaveB.getName()));
+        setBondSlaves(bond, slaveA, slaveB);
 
         EngineMessage engineMessage = EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE;
-        doTestValidateModifiedBondSlaves(
-            new ParametersBuilder().addBonds(bond).build(),
-            Arrays.asList(bond, slaveA, slaveB),
-            Collections.singletonList(attachmentOfNetworkToSlaveA),
-            Collections.singletonList(networkBeingRemoved),
+        final HostSetupNetworksValidator build = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addBonds(bond))
+            .addExistingInterfaces(bond, slaveA, slaveB)
+            .addExistingAttachments(attachmentOfNetworkToSlaveA)
+            .addNetworks(networkBeingRemoved)
+            .build();
+
+        _doTestValidateModifiedBondSlaves(
+            spy(build), ValidationResult.VALID,
             ValidationResult.VALID,
-            ValidationResult.VALID,
-            new ValidationResult(engineMessage,
+            failsWith(engineMessage,
                 ReplacementUtils.getVariableAssignmentString(engineMessage, slaveA.getName()),
                 ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME,
                     networkBeingRemoved.getName())));
@@ -981,31 +984,28 @@ public class HostSetupNetworksValidatorTest {
         removedNetworkAttachment.setId(Guid.newGuid());
         removedNetworkAttachment.setNicName(slaveA.getName());
 
-        bond.setSlaves(Arrays.asList(slaveA.getName(), slaveB.getName()));
-        doTestValidateModifiedBondSlaves(
-            new ParametersBuilder().addRemovedNetworkAttachments(removedNetworkAttachment).build(),
-            Arrays.asList(bond, slaveA, slaveB),
-            Collections.singletonList(removedNetworkAttachment),
-            Collections.singletonList(networkBeingRemoved),
+        setBondSlaves(bond, slaveA, slaveB);
+        final HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addRemovedNetworkAttachments(removedNetworkAttachment))
+            .addExistingInterfaces(bond, slaveA, slaveB)
+            .addExistingAttachments(removedNetworkAttachment)
+            .addNetworks(networkBeingRemoved)
+            .build();
+
+        _doTestValidateModifiedBondSlaves(spy(validator),
             ValidationResult.VALID,
             ValidationResult.VALID,
-            ValidationResult.VALID);
+            isValid());
     }
 
-    private void doTestValidateModifiedBondSlaves(HostSetupNetworksParameters params,
-        List<VdsNetworkInterface> existingInterfaces,
-        List<NetworkAttachment> existingAttachments,
-        Collection<Network> networks,
+    private void setBondSlaves(Bond bond, VdsNetworkInterface slaveA, VdsNetworkInterface slaveB) {
+        bond.setSlaves(Arrays.asList(slaveA.getName(), slaveB.getName()));
+    }
+
+    private void _doTestValidateModifiedBondSlaves(HostSetupNetworksValidator validator,
         ValidationResult interfaceExistValidationResult,
         ValidationResult interfaceIsValidSlaveValidationResult,
-        ValidationResult expectedValidationResult) {
-
-        HostSetupNetworksValidator validator = spy(new HostSetupNetworksValidatorBuilder()
-            .setParams(params)
-            .addExistingInterfaces(existingInterfaces)
-            .addExistingAttachments(existingAttachments)
-            .addNetworks(networks)
-            .build());
+        Matcher<ValidationResult> matcher) {
 
         HostInterfaceValidator hostInterfaceValidatorMock = mock(HostInterfaceValidator.class);
         when(hostInterfaceValidatorMock.interfaceExists()).thenReturn(interfaceExistValidationResult);
@@ -1015,12 +1015,7 @@ public class HostSetupNetworksValidatorTest {
 
         doReturn(hostInterfaceValidatorMock).when(validator).createHostInterfaceValidator(any(VdsNetworkInterface.class));
 
-        if (expectedValidationResult.isValid()) {
-            assertThat(validator.validNewOrModifiedBonds(), isValid());
-        } else {
-            assertThat(validator.validNewOrModifiedBonds(),
-                failsWith(expectedValidationResult.getMessage(), expectedValidationResult.getVariableReplacements()));
-        }
+        assertThat(validator.validNewOrModifiedBonds(), matcher);
     }
 
 
@@ -1146,7 +1141,7 @@ public class HostSetupNetworksValidatorTest {
 
         Bond bond = new Bond();
         bond.setName("bond1");
-        bond.setSlaves(Arrays.asList(nicA.getName(), nicB.getName()));
+        setBondSlaves(bond, nicA, nicB);
 
         when(networkDaoMock.get(eq(networkA.getId()))).thenReturn(networkA);
         when(networkClusterDaoMock.get(new NetworkClusterId(host.getVdsGroupId(), networkA.getId())))
@@ -1538,7 +1533,6 @@ public class HostSetupNetworksValidatorTest {
 
             parameters.getBonds().addAll(Arrays.asList(bonds));
             return this;
-
         }
 
         public ParametersBuilder addRemovedLabels(String... removedLabels) {

@@ -78,6 +78,13 @@ public class ValidationResultMatchers {
         return new Fails(expectedError, variableReplacements.toArray(new String[variableReplacements.size()]));
     }
 
+    public static Matcher<ValidationResult> failsWith(ValidationResult validationResult) {
+        if (ValidationResult.VALID.equals(validationResult)) {
+            throw new IllegalArgumentException("Illegal matcher usage: you cannot pass ValidationResult.VALID here.");
+        }
+        return failsWith(validationResult.getMessage(), validationResult.getVariableReplacements());
+    }
+
     /**
      * @param matcher
      *            The matcher to match against {@link ValidationResult#getVariableReplacements()}
