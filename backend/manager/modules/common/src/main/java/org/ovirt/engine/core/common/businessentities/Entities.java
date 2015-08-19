@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 /**
  * General utility class for common entities functions
  */
-//TODO MM: this mapping creating static utils enforces doing calculation over and over again. Move this to newly create businessEntity map or into its (newly created) parent.
 public class Entities {
 
     private final static Logger log = LoggerFactory.getLogger(Entities.class);

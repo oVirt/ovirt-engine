@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
-//TODO MM: I know this is wrong. Please advise me, how to pass these structures around, access them and properly maintain labels collections. This code is so convoluted, that I do not have courage to touch it.
 public class DataFromHostSetupNetworksModel {
     public List<VdsNetworkInterface> allNics;
     public List<NetworkAttachment> existingNetworkAttachments;

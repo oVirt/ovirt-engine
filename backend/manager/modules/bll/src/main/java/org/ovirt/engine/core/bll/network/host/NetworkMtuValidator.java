@@ -67,8 +67,7 @@ public class NetworkMtuValidator {
                 net.getName(),
                 net.getMtu() == 0 ? "default" : String.valueOf(net.getMtu())));
         }
-        //TODO MM: formerly here was one-liner with all mtuDiffNetworks which clearly goes against unified list output.
-        //String replacements = String.format("[%s]", ValidatorUtils.commaSeparated(mtuDiffNetworks));
+
         return new ValidationResult(EngineMessage.NETWORK_MTU_DIFFERENCES,
             ReplacementUtils.replaceWith(VAR_NETWORK_MTU_DIFFERENCES_LIST, mtuDiffNetworks));
     }

@@ -245,43 +245,6 @@ public class HostInterfaceValidatorTest {
     }
 
     @Test
-    public void testNetworkCanBeAttachedNetworkAttachmentCannotBeAddedOnVlanInterfaces() throws Exception {
-        VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName();
-        vdsNetworkInterface.setVlanId(1);
-
-        String networkName = "networkName";
-
-        assertThat(new HostInterfaceValidator(vdsNetworkInterface).networkCanBeAttached(networkName),
-            failsWith(EngineMessage.CANNOT_ADD_NETWORK_ATTACHMENT_ON_SLAVE_OR_VLAN,
-                ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_NETWORK_NAME, networkName),
-                ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_NIC_NAME,
-                    vdsNetworkInterface.getName())));
-
-    }
-
-    @Test
-    public void testNetworkCanBeAttachedNetworkAttachmentCannotBeAddedOnBondSlave() throws Exception {
-        VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName();
-        vdsNetworkInterface.setBondName("bondName");
-
-        String networkName = "networkName";
-
-        assertThat(new HostInterfaceValidator(vdsNetworkInterface).networkCanBeAttached(networkName),
-            failsWith(EngineMessage.CANNOT_ADD_NETWORK_ATTACHMENT_ON_SLAVE_OR_VLAN,
-                ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_NETWORK_NAME, networkName),
-                ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_NIC_NAME,
-                    vdsNetworkInterface.getName())));
-
-    }
-
-    @Test
-    public void testNetworkCanBeAttached() throws Exception {
-        VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName();
-        String networkName = "networkName";
-        assertThat(new HostInterfaceValidator(vdsNetworkInterface).networkCanBeAttached(networkName), isValid());
-    }
-
-    @Test
     public void testInterfaceByNameExists() throws Exception {
         assertThat(new HostInterfaceValidator(createVdsNetworkInterfaceWithName()).interfaceByNameExists(), isValid());
     }

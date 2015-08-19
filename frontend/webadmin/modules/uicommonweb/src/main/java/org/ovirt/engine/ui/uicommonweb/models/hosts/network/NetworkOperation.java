@@ -30,8 +30,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
  * Some Operations have required parameters
  *
  */
-//TODO MM: NetworkOperation contains duplicates; getVerb, isNullOperation to constructor
-//TODO MM: fix naming: model/entity etc. (.*?)Model should be named as \1Model and \1Model.getEntity should be called \1 and not entity. Etc.
 public enum NetworkOperation {
 
     BREAK_BOND {
@@ -674,7 +672,7 @@ public enum NetworkOperation {
 
         @Override
         public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
-            return appendDetachNetworkSuggestion(getVerb(op1), (NetworkInterfaceModel) op2);
+            return appendDetachNetworkSuggestion(getVerb(op1), op2);
         }
 
         @Override
@@ -710,7 +708,7 @@ public enum NetworkOperation {
 
         @Override
         public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
-            return appendDetachNetworkSuggestion(getVerb(op1), (NetworkInterfaceModel) op2);
+            return appendDetachNetworkSuggestion(getVerb(op1), op2);
         }
 
         @Override
@@ -891,7 +889,7 @@ public enum NetworkOperation {
      *            first operand
      * @param op2
      *            second operand
-     * @return
+     * @return NetworkCommand
      */
     public NetworkCommand getCommand(final NetworkItemModel<?> op1,
             final NetworkItemModel<?> op2,
@@ -946,9 +944,7 @@ public enum NetworkOperation {
     public abstract String getVerb(NetworkItemModel<?> op1);
 
     /**
-     * Is this Operation Unary?
-     *
-     * @return
+     * @return whether is this Operation Unary?
      */
     public boolean isUnary() {
         return false;

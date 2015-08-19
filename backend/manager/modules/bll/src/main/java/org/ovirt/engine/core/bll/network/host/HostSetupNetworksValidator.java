@@ -65,6 +65,7 @@ public class HostSetupNetworksValidator {
     static final String VAR_LABELED_INTERFACE_NAME = "labeledInterfaceName";
     static final String VAR_NIC_NAME = "nicName";
 
+
     private final NetworkExclusivenessValidator networkExclusivenessValidator;
 
     private HostSetupNetworksParameters params;
@@ -293,11 +294,9 @@ public class HostSetupNetworksValidator {
             Collections.sort(sortedRemovedNetworks);
 
             EngineMessage engineMessage = EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS;
-            return new ValidationResult(
-                engineMessage,
-                    LinqUtils.concat(
-                            ReplacementUtils.replaceAllWith(VAR_NETWORK_NAMES, sortedRemovedNetworks),
-                            ReplacementUtils.getListVariableAssignmentStringUsingAllValues(engineMessage, vmNames)));
+            return new ValidationResult(engineMessage,
+                LinqUtils.concat(ReplacementUtils.replaceAllWith(VAR_NETWORK_NAMES, sortedRemovedNetworks),
+                    ReplacementUtils.getListVariableAssignmentStringUsingAllValues(engineMessage, vmNames)));
         }
     }
 
@@ -573,7 +572,7 @@ public class HostSetupNetworksValidator {
             vr = skipValidation(vr) ? vr : validator.networkAttachmentIsSet();
             vr = skipValidation(vr) ? vr : referencedNetworkAttachmentActuallyExists(attachment.getId());
 
-            //TODO MM: complain about unset network id.
+            vr = skipValidation(vr) ? vr : networkIdIsSet(attachment);
             vr = skipValidation(vr) ? vr : validator.networkExists();
             vr = skipValidation(vr) ? vr : validateCoherentNicIdentification(attachment);
             vr = skipValidation(vr) ? vr : validateCoherentNetworkIdentification(attachment);
@@ -602,6 +601,11 @@ public class HostSetupNetworksValidator {
         }
 
         return vr;
+    }
+
+    private ValidationResult networkIdIsSet(NetworkAttachment attachment) {
+        return ValidationResult.failWith(EngineMessage.NETWORK_ATTACHMENT_NETWORK_ID_IS_NOT_SET)
+            .when(attachment.getNetworkId() == null);
     }
 
     private ValidationResult referencedNetworkAttachmentActuallyExists(Guid networkAttachmentId) {
