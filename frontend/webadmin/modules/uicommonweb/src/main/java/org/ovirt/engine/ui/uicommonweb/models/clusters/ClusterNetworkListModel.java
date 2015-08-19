@@ -183,7 +183,12 @@ public class ClusterNetworkListModel extends SearchableListModel<VDSGroup, Netwo
 
     @Override
     protected void entityChanging(VDSGroup newValue, VDSGroup oldValue) {
-        getNewNetworkCommand().setIsExecutionAllowed(newValue != null && newValue.getStoragePoolId() != null);
+        getNewNetworkCommand().setIsExecutionAllowed(!isClusterDetached(newValue));
+        getManageCommand().setIsExecutionAllowed(!isClusterDetached(newValue));
+    }
+
+    private boolean isClusterDetached(VDSGroup cluster) {
+        return cluster == null || cluster.getStoragePoolId() == null;
     }
 
     @Override
