@@ -83,9 +83,7 @@ public class CertificationValidityChecker implements BackendService {
                     List<Certificate> peerCertificates = hostManager.getVdsProxy().getPeerCertificates();
 
                     if (peerCertificates == null || peerCertificates.isEmpty()) {
-                        AuditLogableBase noCertEvent = new AuditLogableBase();
-                        noCertEvent.setVds(host);
-                        auditLogDirector.log(noCertEvent, AuditLogType.HOST_CERTIFICATION_IS_INVALID);
+                        log.error("Failed to retrieve peer certifications for host '{}'", host.getName());
                     } else {
                         checkCertificate((X509Certificate) peerCertificates.get(0),
                                 AuditLogType.HOST_CERTIFICATION_HAS_EXPIRED,
