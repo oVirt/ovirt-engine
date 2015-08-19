@@ -54,7 +54,7 @@ public class ErrataListWithDetailsPopupView extends AbstractModelBoundPopupView<
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
-    private static FullDateTimeRenderer renderer = new FullDateTimeRenderer(false, false);
+    private static FullDateTimeRenderer renderer = new FullDateTimeRenderer(false);
 
     @UiField
     SplitLayoutPanel splitLayoutPanel;

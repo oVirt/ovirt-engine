@@ -147,7 +147,7 @@ public class ErrataTableView extends Composite {
             }
         }, constants.errataSeverity(), "150px"); //$NON-NLS-1$
 
-        grid.addColumn(new AbstractFullDateTimeColumn<EntityModel<Erratum>>(false, false) {
+        grid.addColumn(new AbstractFullDateTimeColumn<EntityModel<Erratum>>(false) {
             @Override
             protected Date getRawValue(EntityModel<Erratum> erratum) {
                 return erratum.getEntity().getIssued();
