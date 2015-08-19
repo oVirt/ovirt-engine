@@ -352,6 +352,9 @@ public class VmAnalyzer {
                 return;
             }
             VmBalloonInfo balloonInfo = vdsmVm.getVmStatistics().getVmBalloonInfo();
+            if (balloonInfo == null) {
+                return;
+            }
             Guid vmId = vdsmVm.getVmDynamic().getId();
             /* last memory is null the first time we check it or when
                we're not getting the balloon info from vdsm
