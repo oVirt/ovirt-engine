@@ -63,8 +63,6 @@ public class ClusterNetworkListModel extends SearchableListModel<VDSGroup, Netwo
         privateSetAsDisplayCommand = value;
     }
 
-    private final Network displayNetwork = null;
-
     public ClusterNetworkListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().logicalNetworksTitle());
         setHelpTag(HelpTag.logical_networks);
