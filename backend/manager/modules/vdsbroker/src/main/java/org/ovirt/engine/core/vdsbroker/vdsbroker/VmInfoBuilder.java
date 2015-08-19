@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -1325,13 +1324,15 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             }
 
             // if user didn't set specific NUMA conf
-            // create a default one with the first numa node of the host
+            // create a default one with one guest numa node
             if (vmNumaNodes.isEmpty()) {
                 if (FeatureSupported.hotPlugMemory(vm.getVdsGroupCompatibilityVersion(), vm.getClusterArch())) {
                     VmNumaNode vmNode = new VmNumaNode();
-                    vmNode.setIndex(totalVdsNumaNodes.get(0).getIndex());
+                    vmNode.setIndex(0);
                     vmNode.setMemTotal(vm.getMemSizeMb());
-                    vmNode.setCpuIds(totalVdsNumaNodes.get(0).getCpuIds());
+                    for (int i = 0; i < vm.getNumOfCpus(); i++) {
+                        vmNode.getCpuIds().add(i);
+                    }
                     vmNumaNodes.add(vmNode);
                 } else {
                     // no need to send numa if memory hotplug not supported
