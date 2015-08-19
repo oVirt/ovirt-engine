@@ -138,7 +138,9 @@ public class HostSetupNetworksValidatorTest {
         NetworkAttachment networkAttachment = createNetworkAttachment(unlabeledNetwork);
 
         HostSetupNetworksValidator validator =
-            createHostSetupNetworksValidator(Collections.singletonList(unlabeledNetwork));
+            new HostSetupNetworksValidatorBuilder()
+                .addNetworks(Collections.singletonList(unlabeledNetwork))
+                .build();
         assertThat(validator.notRemovingLabeledNetworks(networkAttachment), isValid());
     }
 
@@ -155,7 +157,9 @@ public class HostSetupNetworksValidatorTest {
         existingNic.setName("existingNicName");
 
         HostSetupNetworksValidator validator =
-            createHostSetupNetworksValidator(Collections.singletonList(labeledNetwork));
+            new HostSetupNetworksValidatorBuilder()
+                .addNetworks(Collections.singletonList(labeledNetwork))
+                .build();
         assertThat(validator.notRemovingLabeledNetworks(networkAttachment), isValid());
     }
 
@@ -176,11 +180,10 @@ public class HostSetupNetworksValidatorTest {
         existingNic.setLabels(Collections.singleton(label));
         existingNic.setName(nicName);
 
-        HostSetupNetworksValidator validator = createHostSetupNetworksValidator(
-            new HostSetupNetworksParameters(host.getId()),
-            Collections.singletonList(existingNic),
-            Collections.<NetworkAttachment> emptyList(),
-            Collections.singletonList(labeledNetwork));
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .addExistingInterfaces(Collections.singletonList(existingNic))
+            .addNetworks(Collections.singletonList(labeledNetwork))
+            .build();
 
         EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC;
         assertThat(validator.notRemovingLabeledNetworks(networkAttachment), failsWith(engineMessage,
@@ -191,30 +194,33 @@ public class HostSetupNetworksValidatorTest {
     @Test
     public void testNotRemovingLabeledNetworksLabelRemovedFromNicValid() {
         VdsNetworkInterface nicWithLabel = createNic("nicWithLabel");
-        nicWithLabel.setLabels(Collections.singleton("lbl1"));
+        final String labelName = "lbl1";
+        nicWithLabel.setLabels(Collections.singleton(labelName));
 
-        Network network = createNetworkWithNameAndLabel("net", "lbl1");
+        Network network = createNetworkWithNameAndLabel("net", labelName);
         NetworkAttachment removedAttachment = createNetworkAttachment(network, nicWithLabel);
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.getRemovedLabels().add("lbl1");
-
-        assertTestNotRemovingLabeledNetworksValid(nicWithLabel, removedAttachment, params, network);
+        assertTestNotRemovingLabeledNetworksValid(nicWithLabel,
+            removedAttachment,
+            new ParametersBuilder().addRemovedLabels(labelName).build(),
+            network);
     }
 
     @Test
     public void testNotRemovingLabeledNetworksLabelMovedToAnotherNicValid() {
         VdsNetworkInterface nicWithLabel = createNic("nicWithLabel");
-        nicWithLabel.setLabels(Collections.singleton("lbl1"));
+        final String labelName = "lbl1";
+        nicWithLabel.setLabels(Collections.singleton(labelName));
 
-        Network network = createNetworkWithNameAndLabel("net", "lbl1");
+        Network network = createNetworkWithNameAndLabel("net", labelName);
         NetworkAttachment removedAttachment = createNetworkAttachment(network, nicWithLabel);
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        NicLabel nicLabel = new NicLabel(Guid.newGuid(), nicWithLabel.getName() + "not", "lbl1");
-        params.getLabels().add(nicLabel);
+        NicLabel nicLabel = new NicLabel(Guid.newGuid(), nicWithLabel.getName() + "not", labelName);
 
-        assertTestNotRemovingLabeledNetworksValid(nicWithLabel, removedAttachment, params, network);
+        assertTestNotRemovingLabeledNetworksValid(nicWithLabel,
+            removedAttachment,
+            new ParametersBuilder().addLabels(nicLabel).build(),
+            network);
     }
 
     @Test
@@ -228,39 +234,40 @@ public class HostSetupNetworksValidatorTest {
         NetworkAttachment addedAttachment = new NetworkAttachment(removedAttachment);
         addedAttachment.setId(Guid.newGuid());
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.getNetworkAttachments().add(addedAttachment);
-
-        assertTestNotRemovingLabeledNetworksValid(nicWithLabel, removedAttachment, params, network);
+        assertTestNotRemovingLabeledNetworksValid(nicWithLabel,
+            removedAttachment,
+            new ParametersBuilder().addNetworkAttachments(addedAttachment).build(),
+            network);
     }
 
     @Test
     public void testNotRemovingLabeledNetworksLabelAddedToNicOldAttachRemovedNewAttachWithSameNetworkAddedToNicValid() {
         VdsNetworkInterface nic = createNic("nicWithNoLabel");
+        NicLabel nicLabel = new NicLabel(nic.getId(), nic.getName(), "lbl1");
 
-        Network network = createNetworkWithNameAndLabel("net", "lbl1");
+        Network network = createNetworkWithNameAndLabel("net", nicLabel.getLabel());
         NetworkAttachment removedAttachment = createNetworkAttachment(network, nic);
         NetworkAttachment addedAttachment = new NetworkAttachment(removedAttachment);
         addedAttachment.setId(Guid.newGuid());
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.getNetworkAttachments().add(addedAttachment);
-
-        NicLabel nicLabel = new NicLabel(nic.getId(), nic.getName(), "lbl1");
-        params.getLabels().add(nicLabel);
-
-        assertTestNotRemovingLabeledNetworksValid(nic, removedAttachment, params, network);
+        assertTestNotRemovingLabeledNetworksValid(nic,
+            removedAttachment,
+            new ParametersBuilder()
+                .addNetworkAttachments(addedAttachment)
+                .addLabels(nicLabel)
+                .build(),
+            network);
     }
 
     private void assertTestNotRemovingLabeledNetworksValid(VdsNetworkInterface nic,
             NetworkAttachment removedAttachment,
             HostSetupNetworksParameters params, Network network) {
-        HostSetupNetworksValidator validator =
-                new HostSetupNetworksValidatorBuilder().setParams(params)
-                        .setHost(host)
-                        .setExistingInterfaces(Collections.singletonList(nic))
-                        .addNetworks(network)
-                        .build();
+
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(params)
+            .addExistingInterfaces(nic)
+            .addNetworks(network)
+            .build();
 
         assertThat(validator.notRemovingLabeledNetworks(removedAttachment), isValid());
     }
@@ -291,21 +298,19 @@ public class HostSetupNetworksValidatorTest {
         updatedNetworkAttachment.setNicId(existingNic2.getId());
         updatedNetworkAttachment.setNicName(existingNic2.getName());
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setNetworkAttachments(Collections.singletonList(updatedNetworkAttachment));
-
-        HostSetupNetworksValidator validator = createHostSetupNetworksValidator(
-            params,
-            Arrays.asList(existingNic, existingNic2),
-            Collections.singletonList(existingNetworkAttachment),
-            Collections.singletonList(labeledNetwork)
-        );
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addNetworkAttachments(updatedNetworkAttachment))
+            .addExistingInterfaces(Arrays.asList(existingNic, existingNic2))
+            .addExistingAttachments(Collections.singletonList(existingNetworkAttachment))
+            .addNetworks(Collections.singletonList(labeledNetwork))
+            .build();
 
         EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC;
         assertThat(validator.notMovingLabeledNetworkToDifferentNic(updatedNetworkAttachment),
             failsWith(engineMessage,
-                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME, labeledNetwork.getName()),
-                    ReplacementUtils.getVariableAssignmentString(engineMessage, labeledNetwork.getLabel())));
+                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME,
+                    labeledNetwork.getName()),
+                ReplacementUtils.getVariableAssignmentString(engineMessage, labeledNetwork.getLabel())));
     }
 
     @Test
@@ -323,13 +328,12 @@ public class HostSetupNetworksValidatorTest {
         bond.setLabels(Collections.singleton(label));
         bond.setName(nicName);
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setRemovedBonds(Collections.singleton(bond.getId()));
-
-        HostSetupNetworksValidator validator = createHostSetupNetworksValidator(params,
-            Collections.<VdsNetworkInterface> singletonList(bond),
-            null,
-            Collections.singletonList(labeledNetwork));
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addRemovedBonds(bond.getId()))
+            .addExistingInterfaces(Collections.<VdsNetworkInterface> singletonList(bond))
+            .addExistingAttachments((List<NetworkAttachment>) null)
+            .addNetworks(Collections.singletonList(labeledNetwork))
+            .build();
         assertThat(validator.notRemovingLabeledNetworks(networkAttachment), isValid());
     }
 
@@ -391,13 +395,12 @@ public class HostSetupNetworksValidatorTest {
             params.getLabels().add(nicLabel);
         }
 
-        HostSetupNetworksValidator validator =
-                new HostSetupNetworksValidatorBuilder().setParams(params)
-                        .setHost(host)
-                        .setExistingInterfaces(Collections.singletonList(nic))
-                        .setExistingAttachments(Collections.singletonList(existingAttachment))
-                        .addNetworks(movedNetwork)
-                        .build();
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(params)
+            .addExistingInterfaces(nic)
+            .addExistingAttachments(existingAttachment)
+            .addNetworks(movedNetwork)
+            .build();
         if (valid) {
             assertThat(validator.notMovingLabeledNetworkToDifferentNic(updatedAttachment), isValid());
         } else {
@@ -412,10 +415,9 @@ public class HostSetupNetworksValidatorTest {
 
     @Test
     public void testValidRemovedBondsWhenNotRemovingAnyBond() throws Exception {
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setRemovedBonds(Collections.<Guid> emptySet());
-
-        HostSetupNetworksValidator validator = createHostSetupNetworksValidator(params, null);
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .addExistingInterfaces((List<VdsNetworkInterface>) null)
+            .build();
 
         assertThat(validator.validRemovedBonds(Collections.<NetworkAttachment> emptyList()), isValid());
     }
@@ -424,11 +426,10 @@ public class HostSetupNetworksValidatorTest {
     public void testValidRemovedBondsWhenReferencedInterfaceIsNotBond() throws Exception {
         VdsNetworkInterface notABond = createNic("nicName");
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setRemovedBonds(Collections.singleton(notABond.getId()));
-
-        HostSetupNetworksValidator validator = createHostSetupNetworksValidator(params,
-                Collections.singletonList(notABond));
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addRemovedBonds(notABond.getId()))
+            .addExistingInterfaces(Collections.singletonList(notABond))
+            .build();
 
         final EngineMessage engineMessage = EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND;
         assertThat(validator.validRemovedBonds(Collections.<NetworkAttachment> emptyList()),
@@ -438,13 +439,9 @@ public class HostSetupNetworksValidatorTest {
 
     @Test
     public void testValidRemovedBondsWhenReferencedInterfaceBondViaInexistingId() throws Exception {
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
         Guid idOfInexistingInterface = Guid.newGuid();
-        params.setRemovedBonds(Collections.singleton(idOfInexistingInterface));
-
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
-            .setHost(host)
-            .setParams(params)
+            .setParams(new ParametersBuilder().addRemovedBonds(idOfInexistingInterface))
             .build();
 
         EngineMessage engineMessage = EngineMessage.NETWORK_BOND_RECORD_DOES_NOT_EXISTS;
@@ -460,11 +457,10 @@ public class HostSetupNetworksValidatorTest {
         String nicName = "nicName";
         bond.setName(nicName);
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setRemovedBonds(Collections.singleton(bond.getId()));
-
-        HostSetupNetworksValidator validator = createHostSetupNetworksValidator(params,
-            Collections.<VdsNetworkInterface> singletonList(bond));
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addRemovedBonds(bond.getId()))
+            .addExistingInterfaces(Collections.<VdsNetworkInterface> singletonList(bond))
+            .build();
 
         NetworkAttachment requiredNetworkAttachment = new NetworkAttachment();
         requiredNetworkAttachment.setNicName(nicName);
@@ -485,11 +481,10 @@ public class HostSetupNetworksValidatorTest {
         String nicName = "nicName";
         bond.setName(nicName);
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setRemovedBonds(Collections.singleton(bond.getId()));
-
-        HostSetupNetworksValidator validator = createHostSetupNetworksValidator(params,
-            Collections.<VdsNetworkInterface> singletonList(bond));
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addRemovedBonds(bond.getId()))
+            .addExistingInterfaces(Collections.<VdsNetworkInterface> singletonList(bond))
+            .build();
 
         assertThat(validator.validRemovedBonds(Collections.<NetworkAttachment>emptyList()), isValid());
     }
@@ -504,9 +499,7 @@ public class HostSetupNetworksValidatorTest {
         NetworkAttachment networkAttachmentB = createNetworkAttachment(networkB);
 
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
-            .setHost(host)
-            .setParams(new HostSetupNetworksParameters(host.getId()))
-            .setExistingAttachments(Arrays.asList(networkAttachmentA, networkAttachmentB))
+            .addExistingAttachments(networkAttachmentA, networkAttachmentB)
             .build();
 
         Collection<NetworkAttachment> attachmentsToConfigure = validator.getAttachmentsToConfigure();
@@ -523,13 +516,9 @@ public class HostSetupNetworksValidatorTest {
         NetworkAttachment networkAttachmentA = createNetworkAttachment(networkA);
         NetworkAttachment networkAttachmentB = createNetworkAttachment(networkB);
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setNetworkAttachments(Arrays.asList(networkAttachmentA, networkAttachmentB));
-
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
-            .setHost(host)
-            .setParams(params)
-            .setExistingAttachments(Arrays.asList(networkAttachmentA, networkAttachmentB))
+            .setParams(new ParametersBuilder().addNetworkAttachments(networkAttachmentA, networkAttachmentB))
+            .addExistingAttachments(networkAttachmentA, networkAttachmentB)
             .build();
 
         Collection<NetworkAttachment> attachmentsToConfigure = validator.getAttachmentsToConfigure();
@@ -546,13 +535,14 @@ public class HostSetupNetworksValidatorTest {
         NetworkAttachment networkAttachmentA = createNetworkAttachment(networkA);
         NetworkAttachment networkAttachmentB = createNetworkAttachment(networkB);
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setNetworkAttachments(Collections.singletonList(networkAttachmentB));
-        params.setRemovedNetworkAttachments(Collections.singleton(networkAttachmentA.getId()));
-        HostSetupNetworksValidator validator = createHostSetupNetworksValidator(params,
-            Collections.<VdsNetworkInterface> emptyList(),
-            Arrays.asList(networkAttachmentA, networkAttachmentB),
-            null);
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder()
+                .addNetworkAttachments(networkAttachmentB)
+                .addRemovedNetworkAttachments(networkAttachmentA)
+                .build())
+            .addExistingAttachments(Arrays.asList(networkAttachmentA, networkAttachmentB))
+            .addNetworks((Collection<Network>) null)
+            .build();
 
         Collection<NetworkAttachment> attachmentsToConfigure = validator.getAttachmentsToConfigure();
         assertThat(attachmentsToConfigure.size(), is(1));
@@ -568,12 +558,9 @@ public class HostSetupNetworksValidatorTest {
         NetworkAttachment networkAttachmentA = createNetworkAttachment(networkA, (Guid) null);
         NetworkAttachment networkAttachmentB = createNetworkAttachment(networkB, (Guid) null);
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setNetworkAttachments(Arrays.asList(networkAttachmentA, networkAttachmentB));
-        HostSetupNetworksValidator validator = createHostSetupNetworksValidator(params,
-            Collections.<VdsNetworkInterface> emptyList(),
-            Collections.<NetworkAttachment> emptyList(),
-            null);
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addNetworkAttachments(networkAttachmentA, networkAttachmentB))
+            .build();
 
         Collection<NetworkAttachment> attachmentsToConfigure = validator.getAttachmentsToConfigure();
         assertThat(attachmentsToConfigure.size(), is(2));
@@ -616,14 +603,14 @@ public class HostSetupNetworksValidatorTest {
         NetworkAttachment networkAttachmentB = createNetworkAttachment(networkB);
         networkAttachmentB.setNicId(nicB.getId());
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setRemovedNetworkAttachments(new HashSet<>(Arrays.asList(networkAttachmentA.getId(),
-            networkAttachmentB.getId())));
-
-        HostSetupNetworksValidator validator = spy(createHostSetupNetworksValidator(params,
-            Arrays.asList(nicA, nicB),
-            Arrays.asList(networkAttachmentA, networkAttachmentB),
-            Arrays.asList(networkA, networkB)));
+        HostSetupNetworksValidator validator = spy(new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder()
+                .addRemovedNetworkAttachments(networkAttachmentA, networkAttachmentB)
+                .build())
+            .addExistingInterfaces(Arrays.asList(nicA, nicB))
+            .addExistingAttachments(Arrays.asList(networkAttachmentA, networkAttachmentB))
+            .addNetworks(Arrays.asList(networkA, networkB))
+            .build());
 
         VmInterfaceManager vmInterfaceManagerMock = mock(VmInterfaceManager.class);
         doReturn(vmInterfaceManagerMock).when(validator).getVmInterfaceManager();
@@ -683,12 +670,8 @@ public class HostSetupNetworksValidatorTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testValidateNotRemovingUsedNetworkByVmsWhenNotUsedByVms() throws Exception {
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-
-        HostSetupNetworksValidator validator = spy(createHostSetupNetworksValidator(params,
-            Collections.<VdsNetworkInterface> emptyList(),
-            null,
-            Collections.<Network> emptyList()));
+        HostSetupNetworksValidator validator = spy(new HostSetupNetworksValidatorBuilder()
+            .build());
 
         VmInterfaceManager vmInterfaceManagerMock = mock(VmInterfaceManager.class);
         doReturn(vmInterfaceManagerMock).when(validator).getVmInterfaceManager();
@@ -710,7 +693,9 @@ public class HostSetupNetworksValidatorTest {
         NetworkAttachment networkAttachmentA = createNetworkAttachment(networkA);
         NetworkAttachment networkAttachmentB = createNetworkAttachment(networkB);
 
-        HostSetupNetworksValidator validator = createHostSetupNetworksValidator(Arrays.asList(networkA, networkB));
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .addNetworks(Arrays.asList(networkA, networkB))
+            .build();
 
         assertThat(validator.networksUniquelyConfiguredOnHost(Arrays.asList(networkAttachmentA, networkAttachmentB)),
             isValid());
@@ -728,7 +713,9 @@ public class HostSetupNetworksValidatorTest {
         NetworkAttachment networkAttachment = createNetworkAttachment(networkA);
         NetworkAttachment networkAttachmentReferencingSameNetwork = createNetworkAttachment(networkA);
 
-        HostSetupNetworksValidator validator = createHostSetupNetworksValidator(Collections.singletonList(networkA));
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .addNetworks(Collections.singletonList(networkA))
+            .build();
 
         assertThat(validator.networksUniquelyConfiguredOnHost(Arrays.asList(networkAttachment,
                 networkAttachmentReferencingSameNetwork)),
@@ -810,11 +797,14 @@ public class HostSetupNetworksValidatorTest {
         ValidationResult interfaceIsBondValidationResult,
         ValidationResult expectedValidationResult,
         ValidationResult slavesValidationValidationResult) {
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setBonds(Collections.singletonList(bond));
 
         HostSetupNetworksValidator validator =
-            spy(createHostSetupNetworksValidator(params, null, null, null));
+            spy(new HostSetupNetworksValidatorBuilder()
+                .setParams(new ParametersBuilder().addBonds(bond))
+                .addExistingInterfaces((List<VdsNetworkInterface>) null)
+                .addExistingAttachments((List<NetworkAttachment>) null)
+                .addNetworks((Collection<Network>) null)
+                .build());
 
         HostInterfaceValidator hostInterfaceValidatorMock = mock(HostInterfaceValidator.class);
         when(hostInterfaceValidatorMock.interfaceByNameExists()).thenReturn(interfaceByNameExistValidationResult);
@@ -843,11 +833,8 @@ public class HostSetupNetworksValidatorTest {
         Bond bond = createBond();
         bond.setSlaves(Arrays.asList("slaveA", "slaveB"));
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setBonds(Collections.singletonList(bond));
-
         doTestValidateModifiedBondSlaves(
-            params,
+            new ParametersBuilder().addBonds(bond).build(),
             null,
             Collections.<NetworkAttachment> emptyList(),
             Collections.<Network> emptyList(),
@@ -861,13 +848,10 @@ public class HostSetupNetworksValidatorTest {
         Bond bond = createBond();
         bond.setSlaves(Arrays.asList("slaveA", "slaveB"));
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setBonds(Collections.singletonList(bond));
-
         ValidationResult cannotBeSlaveValidationResult = new ValidationResult(EngineMessage.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE,
             ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_INTERFACE_NAME, bond.getName()));
         doTestValidateModifiedBondSlaves(
-            params,
+            new ParametersBuilder().addBonds(bond).build(),
             null,
             Collections.<NetworkAttachment> emptyList(),
             Collections.<Network> emptyList(),
@@ -887,12 +871,9 @@ public class HostSetupNetworksValidatorTest {
 
         bond.setSlaves(Arrays.asList(slaveA.getName(), slaveB.getName()));
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setBonds(Collections.singletonList(bond));
-
         EngineMessage engineMessage = EngineMessage.NETWORK_INTERFACE_ALREADY_IN_BOND;
         doTestValidateModifiedBondSlaves(
-            params,
+            new ParametersBuilder().addBonds(bond).build(),
             Arrays.asList(bond, differentBond, slaveA, slaveB),
             Collections.<NetworkAttachment> emptyList(),
             Collections.<Network> emptyList(),
@@ -910,12 +891,9 @@ public class HostSetupNetworksValidatorTest {
         VdsNetworkInterface slaveA = createBondSlave(bond, "slaveA");
         VdsNetworkInterface slaveB = createBondSlave(differentBond, "slaveB");
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setRemovedBonds(Collections.singleton(differentBond.getId()));
-
         bond.setSlaves(Arrays.asList(slaveA.getName(), slaveB.getName()));
         doTestValidateModifiedBondSlaves(
-            params,
+            new ParametersBuilder().addRemovedBonds(differentBond.getId()).build(),
             Arrays.asList(bond, differentBond, slaveA, slaveB),
             Collections.<NetworkAttachment> emptyList(),
             Collections.<Network> emptyList(),
@@ -937,17 +915,14 @@ public class HostSetupNetworksValidatorTest {
         bond.setSlaves(Arrays.asList(slaveA.getName(), slaveB.getName()));
         differentBond.setSlaves(Arrays.asList(slaveC.getName(), slaveD.getName()));
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setBonds(Arrays.asList(bond, differentBond));
-
         doTestValidateModifiedBondSlaves(
-                params,
-                Arrays.asList(bond, differentBond, slaveA, slaveB, slaveC, slaveD),
-                Collections.<NetworkAttachment>emptyList(),
-                Collections.<Network>emptyList(),
-                ValidationResult.VALID,
-                ValidationResult.VALID,
-                ValidationResult.VALID);
+            new ParametersBuilder().addBonds(bond, differentBond).build(),
+            Arrays.asList(bond, differentBond, slaveA, slaveB, slaveC, slaveD),
+            Collections.<NetworkAttachment> emptyList(),
+            Collections.<Network> emptyList(),
+            ValidationResult.VALID,
+            ValidationResult.VALID,
+            ValidationResult.VALID);
     }
 
     public Bond createBond(String bondName) {
@@ -977,12 +952,9 @@ public class HostSetupNetworksValidatorTest {
 
         bond.setSlaves(Arrays.asList(slaveA.getName(), slaveB.getName()));
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setBonds(Collections.singletonList(bond));
-
         EngineMessage engineMessage = EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE;
         doTestValidateModifiedBondSlaves(
-            params,
+            new ParametersBuilder().addBonds(bond).build(),
             Arrays.asList(bond, slaveA, slaveB),
             Collections.singletonList(attachmentOfNetworkToSlaveA),
             Collections.singletonList(networkBeingRemoved),
@@ -1009,12 +981,9 @@ public class HostSetupNetworksValidatorTest {
         removedNetworkAttachment.setId(Guid.newGuid());
         removedNetworkAttachment.setNicName(slaveA.getName());
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setRemovedNetworkAttachments(Collections.singleton(removedNetworkAttachment.getId()));
-
         bond.setSlaves(Arrays.asList(slaveA.getName(), slaveB.getName()));
         doTestValidateModifiedBondSlaves(
-            params,
+            new ParametersBuilder().addRemovedNetworkAttachments(removedNetworkAttachment).build(),
             Arrays.asList(bond, slaveA, slaveB),
             Collections.singletonList(removedNetworkAttachment),
             Collections.singletonList(networkBeingRemoved),
@@ -1031,10 +1000,12 @@ public class HostSetupNetworksValidatorTest {
         ValidationResult interfaceIsValidSlaveValidationResult,
         ValidationResult expectedValidationResult) {
 
-        HostSetupNetworksValidator validator = spy(createHostSetupNetworksValidator(params,
-            existingInterfaces,
-            existingAttachments,
-            networks));
+        HostSetupNetworksValidator validator = spy(new HostSetupNetworksValidatorBuilder()
+            .setParams(params)
+            .addExistingInterfaces(existingInterfaces)
+            .addExistingAttachments(existingAttachments)
+            .addNetworks(networks)
+            .build());
 
         HostInterfaceValidator hostInterfaceValidatorMock = mock(HostInterfaceValidator.class);
         when(hostInterfaceValidatorMock.interfaceExists()).thenReturn(interfaceExistValidationResult);
@@ -1063,11 +1034,10 @@ public class HostSetupNetworksValidatorTest {
         NetworkAttachment networkAttachmentB = createNetworkAttachment(networkB);
         networkAttachmentB.setProperties(new HashMap<String, String>());
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setNetworkAttachments(Arrays.asList(networkAttachmentA, networkAttachmentB));
-
-        HostSetupNetworksValidator validator =
-            createHostSetupNetworksValidator(Arrays.asList(networkA, networkB), params);
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addNetworkAttachments(networkAttachmentA, networkAttachmentB))
+            .addNetworks(Arrays.asList(networkA, networkB))
+            .build();
 
         assertThat(validator.validateCustomProperties(SimpleCustomPropertiesUtil.getInstance(),
                 Collections.<String, String> emptyMap(),
@@ -1086,7 +1056,6 @@ public class HostSetupNetworksValidatorTest {
         customProperties.put("a", "b");
         networkAttachment.setProperties(customProperties);
 
-        VDS host = new VDS();
         host.setVdsGroupCompatibilityVersion(Version.v3_4);
 
         HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
@@ -1094,7 +1063,6 @@ public class HostSetupNetworksValidatorTest {
 
         HostSetupNetworksValidator validator =
             spy(new HostSetupNetworksValidatorBuilder()
-                .setHost(host)
                 .setParams(params)
                 .addNetworks(networkA)
                 .build());
@@ -1117,15 +1085,10 @@ public class HostSetupNetworksValidatorTest {
         customProperties.put("a", "b");
         networkAttachment.setProperties(customProperties);
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setNetworkAttachments(Collections.singletonList(networkAttachment));
-
-        HostSetupNetworksValidator validator =
-            spy(new HostSetupNetworksValidatorBuilder()
-                .setHost(host)
-                .setParams(params)
-                .addNetworks(networkA)
-                .build());
+        HostSetupNetworksValidator validator = spy(new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addNetworkAttachments(networkAttachment))
+            .addNetworks(networkA)
+            .build());
 
         //this was added just because of DI issues with 'Backend.getInstance().getErrorsTranslator()' is 'spyed' method
         //noinspection unchecked
@@ -1150,13 +1113,9 @@ public class HostSetupNetworksValidatorTest {
         customProperties.put("a", "b");
         networkAttachment.setProperties(customProperties);
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setNetworkAttachments(Collections.singletonList(networkAttachment));
-
         HostSetupNetworksValidator validator =
             new HostSetupNetworksValidatorBuilder()
-                .setHost(host)
-                .setParams(params)
+                .setParams(new ParametersBuilder().addNetworkAttachments(networkAttachment))
                 .addNetworks(networkA)
                 .build();
 
@@ -1189,20 +1148,16 @@ public class HostSetupNetworksValidatorTest {
         bond.setName("bond1");
         bond.setSlaves(Arrays.asList(nicA.getName(), nicB.getName()));
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setNetworkAttachments(Collections.singletonList(networkAttachment));
-        params.setBonds(Collections.singletonList(bond));
-
         when(networkDaoMock.get(eq(networkA.getId()))).thenReturn(networkA);
         when(networkClusterDaoMock.get(new NetworkClusterId(host.getVdsGroupId(), networkA.getId())))
             .thenReturn(mock(NetworkCluster.class));
 
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
-            .setExistingAttachments(Collections.<NetworkAttachment> emptyList())
-            .setParams(params)
-            .setExistingInterfaces(Arrays.asList(nicA, nicB))
+            .setParams(new ParametersBuilder()
+                .addNetworkAttachments(networkAttachment)
+                .addBonds(bond).build())
+            .addExistingInterfaces(nicA, nicB)
             .addNetworks(networkA)
-            .setHost(host)
             .build();
 
         ValidationResult validate = validator.validate();
@@ -1213,29 +1168,29 @@ public class HostSetupNetworksValidatorTest {
         assertThat(validate,
             failsWith(engineMessage,
                 ReplacementUtils.getVariableAssignmentString(engineMessage, nicA.getName()),
-                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME, networkA.getName())));
+                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME,
+                    networkA.getName())));
     }
 
     @Test
     public void validateSlaveHasNoLabelsHasNoOldNorNewLabelsValid() {
         VdsNetworkInterface slave = createNic("slave");
-        HostSetupNetworksValidator validator =
-                new HostSetupNetworksValidatorBuilder().setParams(new HostSetupNetworksParameters(host.getId()))
-                        .setExistingInterfaces(Collections.singletonList(slave)).setHost(host).build();
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .addExistingInterfaces(slave)
+            .build();
         assertThat(validator.validateSlaveHasNoLabels(slave.getName()), isValid());
     }
 
     @Test
     public void validateSlaveHasNoLabelsOldLabelWasRemovedValid() {
+        final String removedLabelName = "lbl1";
         VdsNetworkInterface slave = createNic("slave");
-        slave.setLabels(Collections.singleton("lbl1"));
+        slave.setLabels(Collections.singleton(removedLabelName));
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.getRemovedLabels().add("lbl1");
-
-        HostSetupNetworksValidator validator =
-                new HostSetupNetworksValidatorBuilder().setParams(params)
-                        .setExistingInterfaces(Collections.singletonList(slave)).setHost(host).build();
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addRemovedLabels(removedLabelName))
+            .addExistingInterfaces(slave)
+            .build();
         assertThat(validator.validateSlaveHasNoLabels(slave.getName()), isValid());
     }
 
@@ -1243,14 +1198,12 @@ public class HostSetupNetworksValidatorTest {
     public void validateSlaveHasNoLabelsOldLabelWasMovedToAnotherNicValid() {
         VdsNetworkInterface slave = createNic("slave");
         slave.setLabels(Collections.singleton("lbl1"));
-
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
         NicLabel nicLabel = new NicLabel(Guid.newGuid(), slave.getName() + "not", "lbl1");
-        params.getLabels().add(nicLabel);
 
-        HostSetupNetworksValidator validator =
-                new HostSetupNetworksValidatorBuilder().setParams(params)
-                        .setExistingInterfaces(Collections.singletonList(slave)).setHost(host).build();
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addLabels(nicLabel))
+            .addExistingInterfaces(slave)
+            .build();
         assertThat(validator.validateSlaveHasNoLabels(slave.getName()), isValid());
     }
 
@@ -1259,23 +1212,22 @@ public class HostSetupNetworksValidatorTest {
         VdsNetworkInterface slave = createNic("slave");
         slave.setLabels(Collections.singleton("lbl1"));
 
-        HostSetupNetworksValidator validator =
-                new HostSetupNetworksValidatorBuilder().setParams(new HostSetupNetworksParameters(host.getId()))
-                        .setExistingInterfaces(Collections.singletonList(slave)).setHost(host).build();
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+                .addExistingInterfaces(slave)
+                .build();
         assertValidateSlaveHasNoLabelsFailed(validator, slave.getName());
     }
 
     @Test
     public void validateSlaveHasNoLabelsHasNewLabel() {
         VdsNetworkInterface slave = createNic("slave");
-
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
         NicLabel nicLabel = new NicLabel(slave.getId(), slave.getName(), "lbl1");
-        params.getLabels().add(nicLabel);
 
-        HostSetupNetworksValidator validator =
-                new HostSetupNetworksValidatorBuilder().setParams(params)
-                        .setExistingInterfaces(Collections.singletonList(slave)).setHost(host).build();
+
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+                .setParams(new ParametersBuilder().addLabels(nicLabel))
+                .addExistingInterfaces(slave)
+                .build();
         assertValidateSlaveHasNoLabelsFailed(validator, slave.getName());
     }
 
@@ -1288,12 +1240,11 @@ public class HostSetupNetworksValidatorTest {
 
     @Test
     public void modifiedAttachmentNotRemovedAttachmentModifiedAndRemoved() {
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
         NetworkAttachment modifiedAttachment = createNetworkAttachment(new Network());
-        params.getRemovedNetworkAttachments().add(modifiedAttachment.getId());
 
-        HostSetupNetworksValidator validator =
-                new HostSetupNetworksValidatorBuilder().setParams(params).setHost(host).build();
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addRemovedNetworkAttachments(modifiedAttachment))
+            .build();
 
         assertThat(validator.modifiedAttachmentNotRemoved(modifiedAttachment),
             failsWith(EngineMessage.NETWORK_ATTACHMENT_IN_BOTH_LISTS,
@@ -1303,10 +1254,7 @@ public class HostSetupNetworksValidatorTest {
 
     @Test
     public void modifiedAttachmentNotRemovedAttachmentModifiedButNotRemovedValid() {
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-
-        HostSetupNetworksValidator validator =
-                new HostSetupNetworksValidatorBuilder().setParams(params).setHost(host).build();
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder().build();
 
         NetworkAttachment modifiedAttachment = createNetworkAttachment(new Network());
         assertThat(validator.modifiedAttachmentNotRemoved(modifiedAttachment), isValid());
@@ -1326,8 +1274,8 @@ public class HostSetupNetworksValidatorTest {
 
     @Test
     public void testValidateQosOverriddenInterfacesWhenNoAttachmentsPassed() {
-        List<NetworkAttachment> networkAttachments = Collections.emptyList();
-        HostSetupNetworksValidator validator = createHostSetupNetworkValidator(networkAttachments);
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .build();
 
         assertThat(validator.validateQosOverriddenInterfaces(), ValidationResultMatchers.isValid());
     }
@@ -1336,8 +1284,9 @@ public class HostSetupNetworksValidatorTest {
     public void testValidateQosOverriddenInterfacesWhenAttachmentDoesNotHaveQosOverridden() {
         NetworkAttachment networkAttachment = new NetworkAttachment();
 
-        List<NetworkAttachment> networkAttachments = Collections.singletonList(networkAttachment);
-        HostSetupNetworksValidator validator = createHostSetupNetworkValidator(networkAttachments);
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addNetworkAttachments(networkAttachment))
+            .build();
 
         assertThat(validator.validateQosOverriddenInterfaces(), ValidationResultMatchers.isValid());
     }
@@ -1415,8 +1364,6 @@ public class HostSetupNetworksValidatorTest {
     @Test
     public void testValidateQosNotPartiallyConfiguredWhenNotUpdatingAttachments() {
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
-            .setHost(host)
-            .setParams(new HostSetupNetworksParameters(host.getId()))
             .build();
 
         Collection<NetworkAttachment> networkAttachments = Collections.emptyList();
@@ -1465,10 +1412,8 @@ public class HostSetupNetworksValidatorTest {
 
 
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
-            .setHost(host)
-            .setParams(new HostSetupNetworksParameters(host.getId()))
             .addNetworks(network1, network2)
-            .setExistingInterfaces(Arrays.asList(baseNic, vlanNic1, vlanNic2))
+            .addExistingInterfaces(baseNic, vlanNic1, vlanNic2)
             .build();
 
 
@@ -1480,14 +1425,8 @@ public class HostSetupNetworksValidatorTest {
         networkAttachment.setNetworkId(network.getId());
         networkAttachment.setHostNetworkQos(new HostNetworkQos());
 
-        List<NetworkAttachment> networkAttachments = Collections.singletonList(networkAttachment);
-
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setNetworkAttachments(networkAttachments);
-
         return new HostSetupNetworksValidatorBuilder()
-            .setHost(host)
-            .setParams(params)
+            .setParams(new ParametersBuilder().addNetworkAttachments(networkAttachment))
             .addNetworks(network)
             .build();
     }
@@ -1503,23 +1442,19 @@ public class HostSetupNetworksValidatorTest {
 
     private void attachmentAndNicLabelReferenceSameLabelCommonTest(boolean referenceSameNic, boolean valid) {
         VdsNetworkInterface nic = createNic("nic");
-        Network network = createNetworkWithNameAndLabel("net", "lbl1");
+        final String labelName = "lbl1";
+        Network network = createNetworkWithNameAndLabel("net", labelName);
         NetworkAttachment attachment = createNetworkAttachment(network, nic);
 
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
+        NicLabel nicLabel = referenceSameNic
+            ? new NicLabel(nic.getId(), nic.getName(), labelName)
+            : new NicLabel(Guid.newGuid(), nic.getName() + "not", labelName);
 
-        NicLabel nicLabel =
-                referenceSameNic ? new NicLabel(nic.getId(), nic.getName(), "lbl1") : new NicLabel(Guid.newGuid(),
-                        nic.getName() + "not",
-                        "lbl1");
-        params.getLabels().add(nicLabel);
-
-        HostSetupNetworksValidator validator =
-                new HostSetupNetworksValidatorBuilder().setParams(params)
-                        .addNetworks(network)
-                        .setExistingInterfaces(Collections.singletonList(nic))
-                        .setHost(host)
-                        .build();
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addLabels(nicLabel))
+            .addNetworks(network)
+            .addExistingInterfaces(nic)
+            .build();
 
         if (valid) {
             assertThat(validator.validateAttachmentAndNicReferenceSameLabelNotConflict(attachment), isValid());
@@ -1542,62 +1477,109 @@ public class HostSetupNetworksValidatorTest {
         return slave;
     }
 
-    private HostSetupNetworksValidator createHostSetupNetworkValidator(List<NetworkAttachment> networkAttachments) {
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setNetworkAttachments(networkAttachments);
+    public class ParametersBuilder {
+        private HostSetupNetworksParameters parameters = new HostSetupNetworksParameters(host.getId());
 
-        return new HostSetupNetworksValidatorBuilder()
-            .setHost(host)
-            .setParams(params)
-            .build();
-    }
+        private HostSetupNetworksParameters build() {
+            //for case host instance was changed after instantiating this class.
+            parameters.setVdsId(host.getId());
+            return parameters;
+        }
 
-    private HostSetupNetworksValidator createHostSetupNetworksValidator(List<Network> networks) {
-        return createHostSetupNetworksValidator(networks, new HostSetupNetworksParameters(host.getId()));
-    }
+        public ParametersBuilder addNetworkAttachments(NetworkAttachment... networkAttachments) {
+            if (nullParameters(networkAttachments)) {
+                return this;
+            }
 
-    private HostSetupNetworksValidator createHostSetupNetworksValidator(List<Network> networks,
-        HostSetupNetworksParameters params) {
-        return new HostSetupNetworksValidatorBuilder()
-            .setHost(host)
-            .setParams(params)
-            .addNetworks(networks)
-            .build();
-    }
+            if (parameters.getNetworkAttachments() == null) {
+                parameters.setNetworkAttachments(new ArrayList<NetworkAttachment>());
+            }
 
-    private HostSetupNetworksValidator createHostSetupNetworksValidator(HostSetupNetworksParameters params,
-        List<VdsNetworkInterface> existingIfaces) {
+            parameters.getNetworkAttachments().addAll(Arrays.asList(networkAttachments));
+            return this;
+        }
 
-        return new HostSetupNetworksValidatorBuilder()
-            .setHost(host)
-            .setParams(params)
-            .setExistingInterfaces(existingIfaces)
-            .build();
-    }
+        public ParametersBuilder addRemovedBonds(Guid... ids) {
+            if (nullParameters(ids)) {
+                return this;
+            }
 
-    private HostSetupNetworksValidator createHostSetupNetworksValidator(HostSetupNetworksParameters params,
-        List<VdsNetworkInterface> existingIfaces,
-        List<NetworkAttachment> existingAttachments,
-        Collection<Network> networks) {
+            if (parameters.getRemovedBonds() == null) {
+                parameters.setRemovedBonds(new HashSet<Guid>());
+            }
 
-        return new HostSetupNetworksValidatorBuilder()
-            .setHost(host)
-            .setParams(params)
-            .setExistingInterfaces(existingIfaces)
-            .setExistingAttachments(existingAttachments)
-            .addNetworks(networks)
-            .build();
+            parameters.getRemovedBonds().addAll(Arrays.asList(ids));
+            return this;
+        }
+
+        public ParametersBuilder addRemovedNetworkAttachments(NetworkAttachment... networkAttachments) {
+            if (nullParameters(networkAttachments)) {
+                return this;
+            }
+
+            if (parameters.getRemovedNetworkAttachments() == null) {
+                parameters.setRemovedNetworkAttachments(new HashSet<Guid>());
+            }
+
+            for (NetworkAttachment networkAttachment : networkAttachments) {
+                parameters.getRemovedNetworkAttachments().add(networkAttachment.getId());
+            }
+            return this;
+        }
+
+        public ParametersBuilder addBonds(Bond... bonds) {
+            if (nullParameters(bonds)) {
+                return this;
+            }
+
+            if (parameters.getBonds() == null) {
+                parameters.setBonds(new ArrayList<Bond>());
+            }
+
+            parameters.getBonds().addAll(Arrays.asList(bonds));
+            return this;
+
+        }
+
+        public ParametersBuilder addRemovedLabels(String... removedLabels) {
+            if (nullParameters(removedLabels)) {
+                return this;
+            }
+
+            if (parameters.getRemovedLabels() == null) {
+                parameters.setRemovedLabels(new HashSet<String>());
+            }
+
+            parameters.getRemovedLabels().addAll(Arrays.asList(removedLabels));
+            return this;
+        }
+
+        public ParametersBuilder addLabels(NicLabel... nicLabels) {
+            if (nullParameters(nicLabels)) {
+                return this;
+            }
+
+            if (parameters.getLabels() == null) {
+                parameters.setLabels(new HashSet<NicLabel>());
+            }
+
+            parameters.getLabels().addAll(Arrays.asList(nicLabels));
+            return this;
+        }
+
+        private <T>boolean nullParameters(T[] ids) {
+            return ids == null;
+        }
     }
 
     public class HostSetupNetworksValidatorBuilder {
-        private VDS host;
-        private HostSetupNetworksParameters params;
-        private List<VdsNetworkInterface> existingInterfaces = Collections.emptyList();
-        private List<NetworkAttachment> existingAttachments = Collections.emptyList();
+        private HostSetupNetworksParameters params = new ParametersBuilder().build();
+        private List<VdsNetworkInterface> existingInterfaces = new ArrayList<>();
+        private List<NetworkAttachment> existingAttachments = new ArrayList<>();
         private List<Network> networks = new ArrayList<>();
 
-        public HostSetupNetworksValidatorBuilder setHost(VDS host) {
-            this.host = host;
+        public HostSetupNetworksValidatorBuilder setEmptyParams() {
+            setParams(new ParametersBuilder().build());
             return this;
         }
 
@@ -1606,18 +1588,46 @@ public class HostSetupNetworksValidatorTest {
             return this;
         }
 
-        public HostSetupNetworksValidatorBuilder setExistingInterfaces(List<VdsNetworkInterface> existingInterfaces) {
-            this.existingInterfaces = existingInterfaces;
+        public HostSetupNetworksValidatorBuilder setParams(ParametersBuilder builder) {
+            return setParams(builder.build());
+        }
+
+        public HostSetupNetworksValidatorBuilder addExistingInterfaces(Collection<VdsNetworkInterface> existingInterfaces) {
+            if (existingInterfaces == null) {
+                return this;
+            }
+
+            this.existingInterfaces.addAll(existingInterfaces);
             return this;
         }
 
-        public HostSetupNetworksValidatorBuilder setExistingAttachments(List<NetworkAttachment> existingAttachments) {
-            this.existingAttachments = existingAttachments;
+        public HostSetupNetworksValidatorBuilder addExistingInterfaces(VdsNetworkInterface... existingInterfaces) {
+            if (existingInterfaces == null) {
+                return this;
+            }
+
+            return addExistingInterfaces(Arrays.asList(existingInterfaces));
+        }
+
+        public HostSetupNetworksValidatorBuilder addExistingAttachments(NetworkAttachment... existingAttachments) {
+            if (existingAttachments == null) {
+                return this;
+            }
+
+            return addExistingAttachments(Arrays.asList(existingAttachments));
+        }
+
+        public HostSetupNetworksValidatorBuilder addExistingAttachments(Collection<NetworkAttachment> existingAttachments) {
+            if (existingAttachments == null) {
+                return this;
+            }
+
+            this.existingAttachments.addAll(existingAttachments);
             return this;
         }
 
         public HostSetupNetworksValidatorBuilder addNetworks(Network ... networks) {
-            if (networks.length == 0) {
+            if (networks == null) {
                 return this;
             }
 
