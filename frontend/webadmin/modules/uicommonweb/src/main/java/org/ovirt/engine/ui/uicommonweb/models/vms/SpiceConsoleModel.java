@@ -315,21 +315,24 @@ public class SpiceConsoleModel extends ConsoleModel {
                 new AsyncQuery(new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        final ConsoleOptions options = ((VdcQueryReturnValue) returnValue).getReturnValue();
-
-                        options.setTitle(getClientTitle());
-                        options.setAdminConsole(getConfigurator().getSpiceAdminConsole() ? true : !getEntity().getHasSpiceDriver());
-                        if (!options.isSpiceProxyEnabled()) {
-                            options.setSpiceProxy(null); // override spice proxy from backend
+                        final ConsoleOptions configuredOptions = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        // overriding global server settings by frontend settings
+                        configuredOptions.setRemapCtrlAltDelete(options.isRemapCtrlAltDelete());
+                        configuredOptions.setTitle(getClientTitle());
+                        configuredOptions.setAdminConsole(getConfigurator().getSpiceAdminConsole()
+                                                ? true
+                                                : !getEntity().getHasSpiceDriver());
+                        if (!configuredOptions.isSpiceProxyEnabled()) {
+                            configuredOptions.setSpiceProxy(null); // override spice proxy from backend
                         }
-                        createAndSetMenu(options, repoImages);
+                        createAndSetMenu(configuredOptions, repoImages);
 
                         // Subscribe to events.
                         getspice().getDisconnectedEvent().addListener(SpiceConsoleModel.this);
                         getspice().getMenuItemSelectedEvent().addListener(SpiceConsoleModel.this);
 
                         try {
-                            getspice().setOptions(options);
+                            getspice().setOptions(configuredOptions);
                             if (getspice() instanceof HasForeignMenuData) {
                                 setForeignMenuData((HasForeignMenuData) getspice());
                             }
