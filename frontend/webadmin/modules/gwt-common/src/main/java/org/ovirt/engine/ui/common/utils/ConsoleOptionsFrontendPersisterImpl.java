@@ -3,10 +3,13 @@ package org.ovirt.engine.ui.common.utils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.ovirt.engine.core.common.console.ConsoleOptions;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.PoolConsolesImpl;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
@@ -100,13 +103,14 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
     private void loadConsolesWithKeymaker(VmConsoles consoles, KeyMaker keyMaker) {
         String selectedProtocolString = clientStorage.getLocalItem(keyMaker.make(SELECTED_PROTOCOL));
         if (selectedProtocolString == null || "".equals(selectedProtocolString)) {
-            // if the protocol is not set, nothing is set - ignore
+            setOptionsDefaults(consoles);
             return;
         }
 
         ConsoleProtocol selectedProtocol = ConsoleProtocol.valueOf(selectedProtocolString);
 
         if (!consoles.canSelectProtocol(selectedProtocol)) {
+            setOptionsDefaults(consoles);
             return;
         }
 
@@ -119,13 +123,35 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         }
     }
 
+    private void setOptionsDefaults(VmConsoles console) {
+        final ConsoleProtocol consoleProtocol = console.getSelectedProcotol();
+        if (consoleProtocol == ConsoleProtocol.SPICE) {
+            setDefaults(asSpice(console).getOptions());
+            return;
+        }
+        if (consoleProtocol == ConsoleProtocol.VNC) {
+            setDefaults(asVnc(console).getOptions());
+            return;
+        }
+    }
+
+    private void setDefaults(ConsoleOptions options) {
+        options.setRemapCtrlAltDelete(getRemapCtrlAltDelDefault());
+    }
+
+    private boolean getRemapCtrlAltDelDefault() {
+        return (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
+                ConfigurationValues.RemapCtrlAltDelDefault);
+    }
+
     private void loadVncData(VmConsoles vmConsoles, KeyMaker keyMaker) {
         vmConsoles.selectProtocol(ConsoleProtocol.VNC);
 
         try {
             vmConsoles.getConsoleModel(VncConsoleModel.class).setVncImplementation(VncConsoleModel.ClientConsoleMode
                     .valueOf(clientStorage.getLocalItem(keyMaker.make(VNC_CLIENT_MODE))));
-            asVnc(vmConsoles).getOptions().setRemapCtrlAltDelete(readBool(keyMaker.make(REMAP_CAD_VNC)));
+            asVnc(vmConsoles).getOptions().setRemapCtrlAltDelete(
+                    readBool(keyMaker.make(REMAP_CAD_VNC), getRemapCtrlAltDelDefault()));
         } catch (Exception e) {
             logger.log(Level.WARNING, "Failed loading VNC data. Exception message: " + e.getMessage()); //$NON-NLS-1$
         }
@@ -192,7 +218,8 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         spice.getOptions().setFullScreen(readBool(keyMaker.make(OPEN_IN_FULL_SCREEN)));
         spice.getOptions().setSmartcardEnabledOverridden(readBool(keyMaker.make(SMARTCARD_ENABLED_OVERRIDDEN)));
         spice.getOptions().setUsbAutoShare(readBool(keyMaker.make(USB_AUTOSHARE)));
-        spice.getOptions().setRemapCtrlAltDelete(readBool(keyMaker.make(REMAP_CAD_SPICE)));
+        spice.getOptions().setRemapCtrlAltDelete(
+                readBool(keyMaker.make(REMAP_CAD_SPICE), getRemapCtrlAltDelDefault()));
     }
 
     protected ISpice asSpice(VmConsoles vmConsoles) {
@@ -215,6 +242,17 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
 
     private boolean readBool(String key) {
         return Boolean.parseBoolean(clientStorage.getLocalItem(key));
+    }
+
+    private boolean readBool(String key, boolean defaultValue) {
+        final String rawValue = clientStorage.getLocalItem(key);
+        if ("true".equalsIgnoreCase(rawValue)) { //$NON-NLS-1$
+            return true;
+        }
+        if ("false".equalsIgnoreCase(rawValue)) { //$NON-NLS-1$
+            return false;
+        }
+        return defaultValue;
     }
 
     private void storeBool(String key, boolean value) {
