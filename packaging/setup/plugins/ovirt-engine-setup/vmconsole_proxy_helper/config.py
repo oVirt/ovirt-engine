@@ -305,5 +305,26 @@ class Plugin(plugin.PluginBase):
                 )
             )
 
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CLOSEUP,
+        condition=lambda self: (
+            not self.environment[
+                osetupcons.CoreEnv.DEVELOPER_MODE
+            ] and self.environment[
+                ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
+            ]
+        ),
+    )
+    def _closeup(self):
+        self.logger.info(_('Restarting ovirt-vmconsole proxy service'))
+        for state in (False, True):
+            self.services.state(
+                name=ovmpcons.Const.VMCONSOLE_PROXY_SERVICE_NAME,
+                state=state,
+            )
+        self.services.startup(
+            name=ovmpcons.Const.VMCONSOLE_PROXY_SERVICE_NAME,
+            state=True,
+        )
 
 # vim: expandtab tabstop=4 shiftwidth=4
