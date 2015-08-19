@@ -156,14 +156,4 @@ public class HostInterfaceValidator {
         }
         return slavesCount;
     }
-
-    //TODO MM: seems to be unused.
-    public ValidationResult networkCanBeAttached(String networkName) {
-        return ValidationResult.failWith(EngineMessage.CANNOT_ADD_NETWORK_ATTACHMENT_ON_SLAVE_OR_VLAN,
-            ReplacementUtils.createSetVariableString(VAR_NETWORK_NAME, networkName),
-            ReplacementUtils.createSetVariableString(VAR_NIC_NAME, iface.getName()))
-
-                .when(NetworkUtils.isVlan(iface) || iface.isPartOfBond());
-    }
-
 }
