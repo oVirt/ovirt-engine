@@ -58,7 +58,7 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
     /**
      * The quota description.
      */
-    @Size(min = 1, max = BusinessEntitiesDefinitions.QUOTA_DESCRIPTION_SIZE)
+    @Size(min = 0, max = BusinessEntitiesDefinitions.QUOTA_DESCRIPTION_SIZE)
     private String description;
 
     /**
