@@ -516,6 +516,16 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetVdsInterfaceByName(v_host_id UUID, v_name VARCHAR(50)) RETURNS SETOF vds_interface_view STABLE
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM vds_interface_view
+   WHERE name = v_name
+   AND vds_id = v_host_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
 
 Create or replace FUNCTION GetInterfacesByClusterId(v_cluster_id UUID)
 RETURNS SETOF vds_interface_view STABLE

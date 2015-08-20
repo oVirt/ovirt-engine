@@ -141,11 +141,21 @@ public interface InterfaceDao extends Dao {
     /**
      * Returns the VdsNetworkInterface with the specified id.
      *
-     * @param id
-     *            the VdsNetworkInterface Id
-     * @return the VdsNetworkInterfaces
+     * @param id the VdsNetworkInterface Id
+     *
+     * @return the VdsNetworkInterface having such id.
      */
     VdsNetworkInterface get(Guid id);
+
+    /**
+     * Returns the VdsNetworkInterface with the specified name.
+     *
+     * @param name the VdsNetworkInterface name
+     * @param hostId the id of the host
+     *
+     * @return the VdsNetworkInterface having such id.
+     */
+    VdsNetworkInterface get(Guid hostId, String name);
 
     /**
      * Retrieves all interfaces with given IP address from all hosts of the given cluster
