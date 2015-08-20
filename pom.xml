@@ -615,10 +615,6 @@
               <artifactId>${animal.sniffer.signature}</artifactId>
               <version>1.0</version>
             </signature>
-            <ignores>
-              <ignore>sun.security.krb5.Config</ignore>
-              <ignore>sun.misc.Signal</ignore>
-            </ignores>
           </configuration>
         </plugin>
 
