@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
@@ -88,6 +89,7 @@ public class UpdateStoragePoolCommandTest {
     private NetworkDao networkDao;
     @Mock
     private ManagementNetworkUtil managementNetworkUtil;
+    private StoragePoolValidator poolValidator;
 
     @Before
     public void setUp() {
@@ -102,9 +104,6 @@ public class UpdateStoragePoolCommandTest {
         UpdateStoragePoolCommand<StoragePoolManagementParameter> realCommand =
                 new UpdateStoragePoolCommand<>(params);
 
-        StoragePoolValidatorForTesting poolValidator = spy(new StoragePoolValidatorForTesting(params.getStoragePool()));
-        doReturn(vdsGroupDao).when(poolValidator).getVdsGroupDao();
-
         cmd = spy(realCommand);
         doReturn(10).when(cmd).getStoragePoolNameSizeLimit();
         doReturn(createVersionSet().contains(cmd.getStoragePool().getCompatibilityVersion())).when(cmd)
@@ -115,6 +114,10 @@ public class UpdateStoragePoolCommandTest {
         doReturn(vdsDao).when(cmd).getVdsDao();
         doReturn(networkDao).when(cmd).getNetworkDao();
         doReturn(managementNetworkUtil).when(cmd).getManagementNetworkUtil();
+
+        // Spy the StoragePoolValidator:
+        poolValidator = spy(new StoragePoolValidator(params.getStoragePool()));
+        doReturn(ValidationResult.VALID).when(poolValidator).isNotLocalfsWithDefaultCluster();
         doReturn(poolValidator).when(cmd).createStoragePoolValidator();
     }
 
@@ -239,6 +242,9 @@ public class UpdateStoragePoolCommandTest {
         mcr.mockConfigValue(ConfigValues.AutoRegistrationDefaultVdsGroupID, DEFAULT_VDS_GROUP_ID);
         addDefaultClusterToPool();
         storagePoolWithLocalFS();
+        doReturn(new ValidationResult
+                (EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS))
+                .when(poolValidator).isNotLocalfsWithDefaultCluster();
         canDoActionFailed(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS);
     }
 
@@ -474,17 +480,6 @@ public class UpdateStoragePoolCommandTest {
     private void canDoActionFailed(final EngineMessage reason) {
         assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(reason.toString()));
-    }
-
-    protected class StoragePoolValidatorForTesting extends StoragePoolValidator {
-        public StoragePoolValidatorForTesting(StoragePool storagePool) {
-            super(storagePool);
-        }
-
-        // This function overrides a protected function in StoragePoolValidator (which is not accessible in this package) for mocking ability.
-        public VdsGroupDao getVdsGroupDao() {
-            return super.getVdsGroupDao();
-        }
     }
 
     protected class AttachDomainValidatorForTesting extends StorageDomainToPoolRelationValidator {
