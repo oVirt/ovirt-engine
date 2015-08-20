@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
@@ -123,33 +124,33 @@ public class UpdateStoragePoolCommandTest {
 
     @Test
     public void happyPath() {
-        assertTrue(cmd.canDoAction());
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
     }
 
     @Test
     public void nameExists() {
         newPoolNameIsAlreadyTaken();
-        canDoActionFailed(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
     }
 
     @Test
     public void hasDomains() {
         when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn
                 (Collections.singletonList(new StorageDomainStatic()));
-        canDoActionFailed(EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS);
     }
 
     @Test
     public void unsupportedVersion() {
         storagePoolWithInvalidVersion();
-        canDoActionFailed(VersionSupport.getUnsupportedVersionMessage());
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VersionSupport.getUnsupportedVersionMessage());
     }
 
     @Test
     public void lowerVersionNoHostsNoNetwork() {
         storagePoolWithLowerVersion();
         addNonDefaultClusterToPool();
-        assertTrue(cmd.canDoAction());
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
     }
 
     @Test
@@ -157,7 +158,7 @@ public class UpdateStoragePoolCommandTest {
         storagePoolWithLowerVersion();
         addNonDefaultClusterToPool();
         addHostsToCluster();
-        assertTrue(cmd.canDoAction());
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
     }
 
     @Test
@@ -165,7 +166,7 @@ public class UpdateStoragePoolCommandTest {
         storagePoolWithLowerVersion();
         addNonDefaultClusterToPool();
         addNonManagementNetworkToPool();
-        canDoActionFailed(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
     }
 
     @Test
@@ -175,7 +176,7 @@ public class UpdateStoragePoolCommandTest {
         addManagementNetworkToPool();
         addNonManagementNetworksToPool(2);
         setupNetworkValidator(true);
-        canDoActionFailed(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
     }
 
     @Test
@@ -184,7 +185,7 @@ public class UpdateStoragePoolCommandTest {
         addNonDefaultClusterToPool();
         addHostsToCluster();
         addNonManagementNetworkToPool();
-        canDoActionFailed(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
     }
 
     @Test
@@ -193,7 +194,7 @@ public class UpdateStoragePoolCommandTest {
         addNonDefaultClusterToPool();
         addManagementNetworksToPool(2);
         setupNetworkValidator(true);
-        assertTrue(cmd.canDoAction());
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
     }
 
     @Test
@@ -202,13 +203,13 @@ public class UpdateStoragePoolCommandTest {
         addNonDefaultClusterToPool();
         addManagementNetworksToPool(2);
         setupNetworkValidator(false);
-        canDoActionFailed(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
     }
 
     @Test
     public void versionHigherThanCluster() {
         storagePoolWithVersionHigherThanCluster();
-        canDoActionFailed(EngineMessage.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS);
     }
 
     @Test
@@ -245,7 +246,7 @@ public class UpdateStoragePoolCommandTest {
         doReturn(new ValidationResult
                 (EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS))
                 .when(poolValidator).isNotLocalfsWithDefaultCluster();
-        canDoActionFailed(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS);
     }
 
     @Test
@@ -259,7 +260,7 @@ public class UpdateStoragePoolCommandTest {
         StorageDomain sd = createStorageDomain(StorageFormatType.V3, StorageType.UNKNOWN);
         setAttachedDomains(sd);
 
-        canDoActionFailed(EngineMessage.ACTION_TYPE_FAILED_DECREASING_COMPATIBILITY_VERSION_CAUSES_STORAGE_FORMAT_DOWNGRADING);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_DECREASING_COMPATIBILITY_VERSION_CAUSES_STORAGE_FORMAT_DOWNGRADING);
     }
 
     @Test
@@ -280,7 +281,7 @@ public class UpdateStoragePoolCommandTest {
         StorageDomain sd = createStorageDomain(StorageFormatType.V3, storageType);
         setAttachedDomains(sd);
 
-        canDoActionFailed(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAINS_ARE_NOT_SUPPORTED_IN_DOWNGRADED_VERSION);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAINS_ARE_NOT_SUPPORTED_IN_DOWNGRADED_VERSION);
     }
 
     @Test
@@ -293,7 +294,7 @@ public class UpdateStoragePoolCommandTest {
         StorageDomain sdNFS = createStorageDomain(StorageFormatType.V3, StorageType.NFS);
         setAttachedDomains(sdISCI, sdNFS);
 
-        canDoActionFailed(EngineMessage.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
     }
 
     private StorageDomain createStorageDomain(StorageFormatType formatType, StorageType storageType) {
@@ -473,10 +474,5 @@ public class UpdateStoragePoolCommandTest {
             when(managementNetworkUtil.isManagementNetwork(networkId)).thenReturn(isManagement);
         }
         when(networkDao.getAllForDataCenter(any(Guid.class))).thenReturn(allDcNetworks);
-    }
-
-    private void canDoActionFailed(final EngineMessage reason) {
-        assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(reason.toString()));
     }
 }
