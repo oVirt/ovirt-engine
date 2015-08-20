@@ -73,12 +73,17 @@
             padding: 0 5px;
             margin-top: 5px;
         }
-        .panelTitle {
-            font-size: 14px;
+
+        .smallPanelTitle, .panelTitle {
             padding-left: 3px;
             padding-bottom: 10px;
             display: inline-block;
         }
+
+        .panelTitle {
+            font-size: 14px;
+        }
+
         .panelInfo {
             display: inline-block;
             margin-left: 5px;
@@ -227,7 +232,7 @@
                                 <ge:EntityModelCheckBoxEditor ui:field="enableOptionalReasonEditor" />
                                 <ge:EntityModelCheckBoxEditor ui:field="enableHostMaintenanceReasonEditor" />
                                 <g:FlowPanel>
-                                    <g:Label ui:field="rngLabel"  addStyleNames="{style.panelTitle}" />
+                                    <g:Label ui:field="rngLabel"  addStyleNames="{style.smallPanelTitle}" />
                                     <ge:EntityModelCheckBoxEditor ui:field="rngRandomSourceRequired" />
                                     <ge:EntityModelCheckBoxEditor ui:field="rngHwrngSourceRequired" />
                                 </g:FlowPanel>
