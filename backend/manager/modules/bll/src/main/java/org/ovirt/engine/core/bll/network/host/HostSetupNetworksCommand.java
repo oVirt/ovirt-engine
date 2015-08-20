@@ -55,9 +55,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
-import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -100,9 +98,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private NetworkClusterDao networkClusterDao;
 
     @Inject
-    private NetworkAttachmentDao networkAttachmentDao;
-
-    @Inject
     private NetworkDao networkDao;
 
     @Inject
@@ -110,9 +105,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     @Inject
     private VmDao vmDao;
-
-    @Inject
-    private HostNetworkQosDao hostNetworkQosDao;
 
     @Inject
     private InterfaceDao interfaceDao;
@@ -192,8 +184,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 networkDao,
                 vdsDao,
                 hostSetupNetworksValidatorHelper,
-                vmDao,
-                effectiveHostNetworkQos);
+                vmDao);
 
         return validator.validate();
     }
