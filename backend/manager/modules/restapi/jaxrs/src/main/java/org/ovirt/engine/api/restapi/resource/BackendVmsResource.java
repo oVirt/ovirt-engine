@@ -780,8 +780,10 @@ public class BackendVmsResource extends
         Set<Guid> hostsGuidsSet = new HashSet<Guid>();
         // if there is single host element, with host name
         if (placementPolicy.isSetHost()) {
-            validateParameters(placementPolicy, "host.id|name");
-            updateIdForSingleHost(placementPolicy.getHost(), hostsGuidsSet);
+            Host host = placementPolicy.getHost();
+            if(host.isSetId() || host.isSetName()) {
+                updateIdForSingleHost(host, hostsGuidsSet);
+            }
         }
         // or there is Hosts element containing any hosts
         if (placementPolicy.isSetHosts()
