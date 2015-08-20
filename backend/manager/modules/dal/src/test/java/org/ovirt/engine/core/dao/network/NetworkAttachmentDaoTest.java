@@ -198,4 +198,22 @@ public class NetworkAttachmentDaoTest extends BaseDaoTestCase {
         dao.remove(networkAttachment.getId());
         assertNull(dao.get(networkAttachment.getId()));
     }
+
+    @Test
+    public void testGetAllForNetwork() {
+        final List<NetworkAttachment> allForNetwork = dao.getAllForNetwork(FixturesTool.NETWORK_NO_CLUSTERS_ATTACHED);
+        assertNotNull(allForNetwork);
+        assertEquals(2, allForNetwork.size());
+    }
+
+    @Test
+    public void testGetNetworkAttachmentByNicIdAndNetworkId() {
+        final Guid nicId = FixturesTool.VDS_NETWORK_INTERFACE2;
+        final Guid networkId = FixturesTool.NETWORK_ENGINE_2;
+        final NetworkAttachment networkAttachmentByNicIdAndNetworkId =
+            dao.getNetworkAttachmentByNicIdAndNetworkId(nicId, networkId);
+
+        assertNotNull(networkAttachmentByNicIdAndNetworkId);
+        assertNetworkAttachmentEquals(networkAttachmentFromFixtures(), networkAttachmentByNicIdAndNetworkId);
+    }
 }
