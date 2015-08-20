@@ -405,7 +405,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         }
 
         try {
+            if (getCallback() != null || parentHasCallback()) {
+                persistCommand(getParameters().getParentCommand(), getCallback() != null);
+            }
+
             actionAllowed = getReturnValue().isValid() || internalValidate();
+
             if (!isExternal) {
                 ExecutionHandler.endStep(getExecutionContext(), validatingStep, actionAllowed);
             }
@@ -879,6 +884,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             addValidationMessage(EngineMessage.CAN_DO_ACTION_GENERAL_FAILURE);
         } finally {
             if (!returnValue) {
+                setCommandStatus(CommandStatus.ENDED_WITH_FAILURE);
                 freeLock();
             }
         }
@@ -1468,10 +1474,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
         getReturnValue().setValid(true);
         getReturnValue().setIsSyncronious(true);
-
-        if (getCallback() != null || parentHasCallback()) {
-            persistCommand(getParameters().getParentCommand(), getCallback() != null);
-        }
 
         if (!hasTaskHandlers() || getExecutionIndex() == 0) {
             ExecutionHandler.addStep(getExecutionContext(), StepEnum.EXECUTING, null);
