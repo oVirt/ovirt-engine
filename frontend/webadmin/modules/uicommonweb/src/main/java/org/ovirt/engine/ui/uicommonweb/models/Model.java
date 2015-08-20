@@ -46,15 +46,15 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
 
     public static final String CANCEL_COMMAND = "Cancel"; //$NON-NLS-1$
 
-    private Event<PropertyChangedEventArgs> privatePropertyChangedEvent;
+    private Event<PropertyChangedEventArgs> propertyChangedEvent;
 
     @Override
     public Event<PropertyChangedEventArgs> getPropertyChangedEvent() {
-        return privatePropertyChangedEvent;
+        return propertyChangedEvent;
     }
 
     private void setPropertyChangedEvent(Event<PropertyChangedEventArgs> value) {
-        privatePropertyChangedEvent = value;
+        propertyChangedEvent = value;
     }
 
     private Model window;
@@ -101,35 +101,35 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
         }
     }
 
-    private Configurator privateConfigurator;
+    private Configurator configurator;
 
     public Configurator getConfigurator() {
-        return privateConfigurator;
+        return configurator;
     }
 
     private void setConfigurator(Configurator value) {
-        privateConfigurator = value;
+        configurator = value;
     }
 
-    private ILogger privateLogger;
+    private ILogger logger;
 
     protected ILogger getLogger() {
-        return privateLogger;
+        return logger;
     }
 
     private void setLogger(ILogger value) {
-        privateLogger = value;
+        logger = value;
     }
 
-    private UICommand privateLastExecutedCommand;
+    private UICommand lastExecutedCommand;
 
     @Override
     public UICommand getLastExecutedCommand() {
-        return privateLastExecutedCommand;
+        return lastExecutedCommand;
     }
 
     private void setLastExecutedCommand(UICommand value) {
-        privateLastExecutedCommand = value;
+        lastExecutedCommand = value;
     }
 
     private ProgressModel progress;
@@ -159,23 +159,15 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
         this.advancedMode = advancedMode;
     }
 
-    private String privatehashName;
-
-    private String gethashName() {
-        return privatehashName;
-    }
-
-    private void sethashName(String value) {
-        privatehashName = value;
-    }
+    private String hashName;
 
     @Override
     public String getHashName() {
-        return gethashName();
+        return hashName;
     }
 
     public void setHashName(String value) {
-        sethashName(value);
+        hashName = value;
         onPropertyChanged(new PropertyChangedEventArgs("HashName")); //$NON-NLS-1$
     }
 
@@ -244,14 +236,14 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
         }
     }
 
-    private List<String> privateInvalidityReasons;
+    private List<String> invalidityReasons;
 
     public List<String> getInvalidityReasons() {
-        return privateInvalidityReasons;
+        return invalidityReasons;
     }
 
     public void setInvalidityReasons(List<String> value) {
-        privateInvalidityReasons = value;
+        invalidityReasons = value;
     }
 
     private int availableInModes;
@@ -317,15 +309,15 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
         return this;
     }
 
-    private String privateChangeProhibitionReason;
+    private String changeProhibitionReason;
 
     public String getChangeProhibitionReason() {
-        return privateChangeProhibitionReason;
+        return changeProhibitionReason;
     }
 
     public void setChangeProhibitionReason(String value) {
-        if (!ObjectUtils.objectsEqual(privateChangeProhibitionReason, value)) {
-            privateChangeProhibitionReason = value;
+        if (!ObjectUtils.objectsEqual(changeProhibitionReason, value)) {
+            changeProhibitionReason = value;
             onPropertyChanged(new PropertyChangedEventArgs("ChangeProhibitionReason")); //$NON-NLS-1$
         }
     }
@@ -369,14 +361,14 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
         }
     }
 
-    private List<UICommand> privateCommands;
+    private List<UICommand> commands;
 
     public List<UICommand> getCommands() {
-        return privateCommands;
+        return commands;
     }
 
     public void setCommands(List<UICommand> value) {
-        privateCommands = value;
+        commands = value;
     }
 
     public UICommand getDefaultCommand() {
@@ -403,14 +395,14 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
         return null;
     }
 
-    private UICommand privateOpenDocumentationCommand;
+    private UICommand openDocumentationCommand;
 
     public UICommand getOpenDocumentationCommand() {
-        return privateOpenDocumentationCommand;
+        return openDocumentationCommand;
     }
 
     public void setOpenDocumentationCommand(UICommand value) {
-        privateOpenDocumentationCommand = value;
+        openDocumentationCommand = value;
     }
 
     private String message;
