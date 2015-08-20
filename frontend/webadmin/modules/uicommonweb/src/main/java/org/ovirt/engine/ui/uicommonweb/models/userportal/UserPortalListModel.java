@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -93,7 +94,6 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 import com.google.inject.Inject;
 
 public class UserPortalListModel extends AbstractUserPortalListModel {
-
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
     public static final EventDefinition searchCompletedEventDefinition;
     private Event<EventArgs> privateSearchCompletedEvent;
@@ -1086,14 +1086,20 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void executed(FrontendActionAsyncResult result) {
-                            VmManagementParametersBase param = getUpdateVmParameters(applyCpuChangesLater);
-                            Frontend.getInstance()
+                            VdcReturnValueBase returnValueBase = result.getReturnValue();
+                            if (returnValueBase != null && returnValueBase.getSucceeded()) {
+                                VmManagementParametersBase param = getUpdateVmParameters(applyCpuChangesLater);
+                                Frontend.getInstance()
                                     .runAction(VdcActionType.UpdateVm,
                                             param,
                                             new UnitVmModelNetworkAsyncCallback(model,
                                                     defaultNetworkCreatingManager,
                                                     gettempVm().getId()),
                                             this);
+                            }
+                            else {
+                                getWindow().stopProgress();
+                            }
                         }
                     }, this);
         }
