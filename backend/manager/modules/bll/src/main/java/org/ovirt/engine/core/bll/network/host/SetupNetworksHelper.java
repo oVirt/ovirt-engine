@@ -14,10 +14,8 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.ovirt.engine.core.bll.Backend;
-import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
-import org.ovirt.engine.core.bll.validator.HostNetworkQosValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -25,25 +23,40 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.violation.DetailedViolation;
 import org.ovirt.engine.core.utils.violation.Violation;
 import org.ovirt.engine.core.utils.violation.ViolationRenderer;
+import org.ovirt.engine.core.vdsbroker.CalculateBaseNic;
+import org.ovirt.engine.core.vdsbroker.EffectiveHostNetworkQos;
+import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SetupNetworksHelper {
-    private static final float QOS_OVERCOMMITMENT_THRESHOLD = 0.75f;
+    private  static final float QOS_OVERCOMMITMENT_THRESHOLD = HostSetupNetworksValidator.QOS_OVERCOMMITMENT_THRESHOLD;
+    protected static final String VIOLATING_ENTITIES_LIST_FORMAT = "${0}_LIST {1}";
     private static final Logger log = LoggerFactory.getLogger(SetupNetworksHelper.class);
+    private final NetworkDao networkDao;
+    private final NetworkAttachmentDao networkAttachmentDao;
+    private final InterfaceDao interfaceDao;
+    private final GlusterBrickDao glusterBrickDao;
+    private final CalculateBaseNic calculateBaseNic;
     private SetupNetworksParameters params;
     private VDS vds;
     private Map<EngineMessage, ViolationRenderer> violations = new HashMap<>();
@@ -73,6 +86,8 @@ public class SetupNetworksHelper {
     private boolean networkCustomPropertiesSupported;
 
     private final ManagementNetworkUtil managementNetworkUtil;
+    private EffectiveHostNetworkQos effectiveHostNetworkQos;
+    private final NetworkImplementationDetailsUtils networkImplementationDetailsUtils;
 
     public SetupNetworksHelper(SetupNetworksParameters parameters,
                                VDS vds,
@@ -84,6 +99,13 @@ public class SetupNetworksHelper {
         this.vds = vds;
 
         setSupportedFeatures();
+        networkDao = Injector.get(NetworkDao.class);
+        networkAttachmentDao = Injector.get(NetworkAttachmentDao.class);
+        interfaceDao = Injector.get(InterfaceDao.class);
+        glusterBrickDao = Injector.get(GlusterBrickDao.class);
+        effectiveHostNetworkQos = Injector.get(EffectiveHostNetworkQos.class);
+        networkImplementationDetailsUtils = Injector.get(NetworkImplementationDetailsUtils.class);
+        calculateBaseNic = Injector.get(CalculateBaseNic.class);
     }
 
     private void setSupportedFeatures() {
@@ -170,8 +192,8 @@ public class SetupNetworksHelper {
                 continue;
             }
             List<GlusterBrickEntity> bricks =
-                    getDbFacade().getGlusterBrickDao().getAllByClusterAndNetworkId(vds.getVdsGroupId(),
-                            removedNetwork.getId());
+                    glusterBrickDao.getAllByClusterAndNetworkId(vds.getVdsGroupId(),
+                        removedNetwork.getId());
             if (!bricks.isEmpty()) {
                 addViolation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_NETWORK_FROM_BRICK, network);
             }
@@ -194,18 +216,14 @@ public class SetupNetworksHelper {
                 Set<String> existingLabels =
                         NetworkUtils.isLabeled(existingNic) ? existingNic.getLabels() : Collections.<String> emptySet();
                 if (!CollectionUtils.isEqualCollection(newLabels, existingLabels)
-                        || (StringUtils.isNotEmpty(nic.getNetworkName()) && qosOrCustomPropertiesChanged(nic, existingNic))) {
+                        || (StringUtils.isNotEmpty(nic.getNetworkName()) && customPropertiesChanged(nic, existingNic))) {
                     existingNic.setLabels(newLabels);
-                    existingNic.setQosOverridden(nic.isQosOverridden());
+
                     existingNic.setCustomProperties(nic.getCustomProperties());
                     modifiedInterfaces.add(existingNic);
                 }
             }
         }
-    }
-
-    private boolean qosOrCustomPropertiesChanged(VdsNetworkInterface nic, VdsNetworkInterface existingNic) {
-        return nic.isQosOverridden() != existingNic.isQosOverridden() || customPropertiesChanged(nic, existingNic);     //TODO MM: missing qos values comparison??
     }
 
     /**
@@ -274,47 +292,12 @@ public class SetupNetworksHelper {
                     net.getMtu() == 0 ? "default" : String.valueOf(net.getMtu())));
         }
         addViolation(EngineMessage.NETWORK_MTU_DIFFERENCES,
-                String.format("[%s]", StringUtils.join(mtuDiffNetworks, ", ")));
+            String.format("[%s]", StringUtils.join(mtuDiffNetworks, ", ")));
     }
 
     private void validateNetworkQos() {
-        validateQosOverriddenInterfaces();
         validateQosNotPartiallyConfigured();
         validateQosCommitment();
-    }
-
-    /**
-     * Validates that the feature is supported if any QoS configuration was specified, and that the values associated
-     * with it are valid.
-     */
-    private void validateQosOverriddenInterfaces() {
-        for (VdsNetworkInterface iface : params.getInterfaces()) {
-            String networkName = iface.getNetworkName();
-
-            // check that:
-            // 1. the interface has a network attached to it, otherwise QoS settings should be wiped anyway
-            // 2. if QoS isn't overridden - no problem
-            if (networkName == null || !iface.isQosOverridden()) {
-                continue;
-            }
-
-            if (!hostNetworkQosSupported) {
-                addViolation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED, networkName);
-            }
-
-            // next checks are only relevant if non-empty QoS was supplied
-            if (iface.getQos() != null && !iface.getQos().isEmpty()) {
-                HostNetworkQosValidator qosValidator = new HostNetworkQosValidator(iface.getQos());
-                if (qosValidator.requiredValuesPresent() != ValidationResult.VALID) {
-                    addViolation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_MISSING_VALUES,
-                            networkName);
-                }
-                if (qosValidator.valuesConsistent() != ValidationResult.VALID) {
-                    addViolation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_INCONSISTENT_VALUES,
-                            networkName);
-                }
-            }
-        }
     }
 
     /**
@@ -326,9 +309,14 @@ public class SetupNetworksHelper {
 
         // first map which interfaces have some QoS configured on them, and which interfaces lack some QoS configuration
         for (VdsNetworkInterface iface : params.getInterfaces()) {
-            Network network = getExistingClusterNetworks().get(iface.getNetworkName());
-            String baseIfaceName = NetworkUtils.stripVlan(iface);
-            if (NetworkUtils.qosConfiguredOnInterface(iface, network)) {
+            String networkName = iface.getNetworkName();
+
+            Network network = getExistingClusterNetworks().get(networkName);
+            VdsNetworkInterface baseNic = calculateBaseNic.getBaseNic(iface, existingIfaces);
+            NetworkAttachment networkAttachment = baseNic == null || network == null ? null :
+                networkAttachmentDao.getNetworkAttachmentByNicIdAndNetworkId(baseNic.getId(), network.getId());
+            String baseIfaceName = baseNic == null ? null : baseNic.getName();
+            if (NetworkUtils.qosConfiguredOnInterface(networkAttachment, network)) {
                 someSubInterfacesHaveQos.add(baseIfaceName);
             } else {
                 notAllSubInterfacesHaveQos.add(baseIfaceName);
@@ -349,8 +337,11 @@ public class SetupNetworksHelper {
         // first accumulate the commitment on all base interfaces by sub-interfaces
         for (VdsNetworkInterface iface : params.getInterfaces()) {
             String networkName = iface.getNetworkName();
+
             Network network = getExistingClusterNetworks().get(networkName);
-            if (NetworkUtils.qosConfiguredOnInterface(iface, network)) {
+
+            NetworkAttachment networkAttachment = getNetworkAttachment(iface, network);
+            if (NetworkUtils.qosConfiguredOnInterface(networkAttachment, network)) {
                 String baseIfaceName = NetworkUtils.stripVlan(iface);
                 VdsNetworkInterface baseInterface = ifaceByNames.get(baseIfaceName);
                 Integer speed = interfacesSpeed.getInterfaceSpeed(baseInterface);
@@ -365,9 +356,8 @@ public class SetupNetworksHelper {
                     baseInterfaceCommitment = 0f;
                 }
 
-                HostNetworkQos qos =
-                        iface.isQosOverridden() ? iface.getQos() : getDbFacade().getHostNetworkQosDao()
-                                .get(network.getQosId());
+                HostNetworkQos qos = effectiveHostNetworkQos.getQos(networkAttachment, network);
+
                 Integer subInterfaceCommitment = qos.getOutAverageRealtime();
                 if (subInterfaceCommitment != null) {
                     baseInterfaceCommitment += (float) subInterfaceCommitment / speed;
@@ -392,12 +382,19 @@ public class SetupNetworksHelper {
         }
     }
 
+    private NetworkAttachment getNetworkAttachment(VdsNetworkInterface iface, Network network) {
+        VdsNetworkInterface baseNic = calculateBaseNic.getBaseNic(iface, existingIfaces);
+        return baseNic == null || network == null ? null :
+            networkAttachmentDao.getNetworkAttachmentByNicIdAndNetworkId(baseNic.getId(), network.getId());
+    }
+
     private void validateCustomProperties() {
         String version = vds.getVdsGroupCompatibilityVersion().getValue();
         SimpleCustomPropertiesUtil util = SimpleCustomPropertiesUtil.getInstance();
         Map<String, String> validProperties =
-                util.convertProperties(Config.<String>getValue(ConfigValues.PreDefinedNetworkCustomProperties, version));
-        validProperties.putAll(util.convertProperties(Config.<String>getValue(ConfigValues.UserDefinedNetworkCustomProperties,
+                util.convertProperties(Config.<String> getValue(ConfigValues.PreDefinedNetworkCustomProperties,
+                    version));
+        validProperties.putAll(util.convertProperties(Config.<String> getValue(ConfigValues.UserDefinedNetworkCustomProperties,
                 version)));
         Map<String, String> validPropertiesNonVm = new HashMap<>(validProperties);
         validPropertiesNonVm.remove("bridge_opts");
@@ -527,7 +524,7 @@ public class SetupNetworksHelper {
     private Map<String, Network> getExistingClusterNetworks() {
         if (existingClusterNetworks == null) {
             existingClusterNetworks = Entities.entitiesByName(
-                    getDbFacade().getNetworkDao().getAllForCluster(vds.getVdsGroupId()));
+                networkDao.getAllForCluster(vds.getVdsGroupId()));
         }
 
         return existingClusterNetworks;
@@ -535,15 +532,14 @@ public class SetupNetworksHelper {
 
     private Map<String, VdsNetworkInterface> getExistingIfaces() {
         if (existingIfaces == null) {
-            List<VdsNetworkInterface> ifaces =
-                    getDbFacade().getInterfaceDao().getAllInterfacesForVds(params.getVdsId());
-            HostNetworkQosDao qosDao = getDbFacade().getHostNetworkQosDao();
+            List<VdsNetworkInterface> ifaces = interfaceDao.getAllInterfacesForVds(params.getVdsId());
 
             for (VdsNetworkInterface iface : ifaces) {
                 Network network = getExistingClusterNetworks().get(iface.getNetworkName());
-                iface.setNetworkImplementationDetails(NetworkUtils.calculateNetworkImplementationDetails(network,
-                        network == null ? null : qosDao.get(network.getQosId()),
-                        iface));
+
+                NetworkImplementationDetails networkImplementationDetails =
+                    networkImplementationDetailsUtils.calculateNetworkImplementationDetails(iface, network);
+                iface.setNetworkImplementationDetails(networkImplementationDetails);
             }
 
             existingIfaces = Entities.entitiesByName(ifaces);
@@ -601,7 +597,8 @@ public class SetupNetworksHelper {
                     iface.setVlanId(existingIface.getVlanId());
                     if (networkShouldBeSynced(networkName)) {
                         modifiedNetworks.add(network);
-                        if (network.getQosId() != null && !hostNetworkQosSupported) {
+
+                        if (unableToApplyQos(iface, network)) {
                             addViolation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED, networkName);
                         }
                     } else if (networkWasModified(iface)) {
@@ -628,6 +625,17 @@ public class SetupNetworksHelper {
                 }
             }
         }
+    }
+
+    private boolean unableToApplyQos(VdsNetworkInterface iface, Network network) {
+        return !hostNetworkQosSupported && qosShouldBeApplied(iface, network);
+    }
+
+    private boolean qosShouldBeApplied(VdsNetworkInterface iface, Network network) {
+        NetworkAttachment networkAttachment = getNetworkAttachment(iface, network);
+
+        HostNetworkQos qos = effectiveHostNetworkQos.getQos(networkAttachment, network);
+        return qos != null && !qos.isEmpty();
     }
 
     /**
@@ -669,8 +677,7 @@ public class SetupNetworksHelper {
     private boolean networkIpAddressUsedByBrickChanged(VdsNetworkInterface iface, Network network) {
         if (iface.getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
             List<GlusterBrickEntity> bricks =
-                    getDbFacade().getGlusterBrickDao()
-                            .getAllByClusterAndNetworkId(vds.getVdsGroupId(), network.getId());
+                    glusterBrickDao.getAllByClusterAndNetworkId(vds.getVdsGroupId(), network.getId());
             if (bricks.isEmpty()) {
                 return false;
             }

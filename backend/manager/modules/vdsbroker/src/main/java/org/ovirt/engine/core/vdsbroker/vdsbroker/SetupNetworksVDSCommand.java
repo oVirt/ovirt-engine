@@ -13,14 +13,18 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.validation.MaskValidator;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
+import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.vdsbroker.CalculateBaseNic;
+import org.ovirt.engine.core.vdsbroker.EffectiveHostNetworkQos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +45,15 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
     @Inject
     private ManagementNetworkUtil managementNetworkUtil;
 
+    @Inject
+    NetworkAttachmentDao networkAttachmentDao;
+
+    @Inject
+    EffectiveHostNetworkQos effectiveHostNetworkQos;
+
+    @Inject
+    CalculateBaseNic calculateBaseNic;
+
     public SetupNetworksVDSCommand(T parameters) {
         super(parameters);
     }
@@ -52,7 +65,6 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
 
     private Map<String, Object> generateNetworks() {
         Map<String, Object> networks = new HashMap<String, Object>();
-        HostNetworkQosDao qosDao = getDbFacade().getHostNetworkQosDao();
         VDS host = getParameters().getVds();
 
         boolean hostNetworkQosSupported = FeatureSupported.hostNetworkQos(host.getVdsGroupCompatibilityVersion());
@@ -96,9 +108,12 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                 opts.put(VdsProperties.STP, network.getStp() ? "yes" : "no");
             }
 
-            if (hostNetworkQosSupported && NetworkUtils.qosConfiguredOnInterface(iface, network)) {
-                HostNetworkQosMapper qosMapper = new HostNetworkQosMapper(opts);
-                qosMapper.serialize(iface.isQosOverridden() ? iface.getQos() : qosDao.get(network.getQosId()));
+            VdsNetworkInterface baseNic = calculateBaseNic.getBaseNic(iface);
+            NetworkAttachment networkAttachment =
+                networkAttachmentDao.getNetworkAttachmentByNicIdAndNetworkId(baseNic.getId(), network.getId());
+            if (hostNetworkQosSupported && NetworkUtils.qosConfiguredOnInterface(networkAttachment, network)) {
+                HostNetworkQos hostNetworkQos = effectiveHostNetworkQos.getQos(networkAttachment, network);
+                new HostNetworkQosMapper(opts).serialize(hostNetworkQos);
             }
 
             if (defaultRouteSupported

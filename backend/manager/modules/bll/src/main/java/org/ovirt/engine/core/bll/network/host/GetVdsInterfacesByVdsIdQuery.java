@@ -4,27 +4,54 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
-import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 
 public class GetVdsInterfacesByVdsIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+
     public GetVdsInterfacesByVdsIdQuery(P parameters) {
         super(parameters);
     }
 
+    @Inject
+    private VdsStaticDao vdsStaticDao;
+
+    @Inject
+    private HostNetworkQosDao qosDao;
+
+    @Inject
+    private NetworkDao networkDao;
+
+    @Inject
+    private NetworkAttachmentDao networkAttachmentDao;
+
+    @Inject
+    private InterfaceDao interfaceDao;
+
+    @Inject
+    private NetworkImplementationDetailsUtils networkImplementationDetailsUtils;
+
+
     @Override
     protected void executeQueryCommand() {
-        final List<VdsNetworkInterface> list = getDbFacade().getInterfaceDao()
-                .getAllInterfacesForVds(getParameters().getId(), getUserID(), getParameters().isFiltered());
+        final List<VdsNetworkInterface> vdsInterfaces =
+            interfaceDao.getAllInterfacesForVds(getParameters().getId(), getUserID(), getParameters().isFiltered());
 
         // 1. here we return all interfaces (eth0, eth1, eth2) - the first
         // condition
@@ -44,30 +71,39 @@ public class GetVdsInterfacesByVdsIdQuery<P extends IdQueryParameters> extends Q
         // we don't return bond1 because he is not connected to network and has
         // no child interfaces
 
-        List<VdsNetworkInterface> interfaces = new ArrayList<>(list.size());
+        List<VdsNetworkInterface> interfaces = new ArrayList<>(vdsInterfaces.size());
 
-        if (!list.isEmpty()) {
-            VdsStatic vdsStatic = getDbFacade().getVdsStaticDao().get(getParameters().getId());
-            HostNetworkQosDao qosDao = getDbFacade().getHostNetworkQosDao();
-            Map<String, Network> networks = Entities.entitiesByName(
-                    getDbFacade().getNetworkDao().getAllForCluster(vdsStatic.getVdsGroupId()));
-            for (final VdsNetworkInterface i : list) {
-                if (!Boolean.TRUE.equals(i.getBonded())
-                        || LinqUtils.filter(list, new Predicate<VdsNetworkInterface>() {
-                                @Override
-                                public boolean eval(VdsNetworkInterface bond) {
-                                    return StringUtils.equals(bond.getBondName(), i.getName());
-                                }
-                            }).size() > 0) {
-                    interfaces.add(i);
-                    Network network = networks.get(i.getNetworkName());
-                    i.setNetworkImplementationDetails(NetworkUtils.calculateNetworkImplementationDetails(network,
-                            network == null ? null : qosDao.get(network.getQosId()),
-                            i));
+        if (!vdsInterfaces.isEmpty()) {
+            VdsStatic vdsStatic = vdsStaticDao.get(getParameters().getId());
+            Map<String, Network> networks =
+                Entities.entitiesByName(networkDao.getAllForCluster(vdsStatic.getVdsGroupId()));
+
+            for (final VdsNetworkInterface nic : vdsInterfaces) {
+                if (!nic.isBond() || nicDoesHaveSlaves(vdsInterfaces, nic)) {
+                    interfaces.add(nic);
+                    Network network = networks.get(nic.getNetworkName());
+
+                    NetworkImplementationDetails networkImplementationDetails =
+                        networkImplementationDetailsUtils.calculateNetworkImplementationDetails(nic, network);
+                    nic.setNetworkImplementationDetails(networkImplementationDetails);
                 }
             }
         }
 
         getQueryReturnValue().setReturnValue(interfaces);
+    }
+
+    private boolean nicDoesHaveSlaves(List<VdsNetworkInterface> vdsInterfaces, VdsNetworkInterface nic) {
+        return getSlavesOfBond(vdsInterfaces, nic).size() > 0;
+    }
+
+    private List<VdsNetworkInterface> getSlavesOfBond(List<VdsNetworkInterface> vdsInterfaces,
+        final VdsNetworkInterface nic) {
+        return LinqUtils.filter(vdsInterfaces, new Predicate<VdsNetworkInterface>() {
+            @Override
+            public boolean eval(VdsNetworkInterface bond) {
+                return StringUtils.equals(bond.getBondName(), nic.getName());
+            }
+        });
     }
 }

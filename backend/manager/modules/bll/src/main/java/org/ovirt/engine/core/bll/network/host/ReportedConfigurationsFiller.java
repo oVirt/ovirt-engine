@@ -16,29 +16,29 @@ import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurati
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkInSyncWithVdsNetworkInterface;
+import org.ovirt.engine.core.vdsbroker.EffectiveHostNetworkQos;
 
 @Singleton
 public class ReportedConfigurationsFiller {
 
-    private HostNetworkQosDao hostNetworkQosDao;
-    private InterfaceDao interfaceDao;
-    private NetworkDao networkDao;
-    private VdsDao vdsDao;
+    private final InterfaceDao interfaceDao;
+    private final NetworkDao networkDao;
+    private final VdsDao vdsDao;
+    private EffectiveHostNetworkQos effectiveHostNetworkQos;
 
     @Inject
-    public ReportedConfigurationsFiller(HostNetworkQosDao hostNetworkQosDao,
-        InterfaceDao interfaceDao,
+    public ReportedConfigurationsFiller(InterfaceDao interfaceDao,
         NetworkDao networkDao,
-        VdsDao vdsDao) {
+        VdsDao vdsDao,
+        EffectiveHostNetworkQos effectiveHostNetworkQos) {
 
-        this.hostNetworkQosDao = hostNetworkQosDao;
         this.interfaceDao = interfaceDao;
         this.networkDao = networkDao;
         this.vdsDao = vdsDao;
+        this.effectiveHostNetworkQos = effectiveHostNetworkQos;
     }
 
     public void fillReportedConfigurations(List<NetworkAttachment> networkAttachments, Guid hostId) {
@@ -49,35 +49,34 @@ public class ReportedConfigurationsFiller {
         BusinessEntityMap<Network> networkMap =
             new BusinessEntityMap<>(networkDao.getAllForCluster(vdsDao.get(hostId).getVdsGroupId()));
 
-        QosDaoCache qosDaoCache = new QosDaoCache(hostNetworkQosDao);
-
         for (NetworkAttachment networkAttachment : networkAttachments) {
-            fillReportedConfigurations(networkNameToNicMap, networkMap, qosDaoCache, networkAttachment);
+            fillReportedConfigurations(networkNameToNicMap, networkMap, networkAttachment);
         }
     }
 
     private void fillReportedConfigurations(Map<String, VdsNetworkInterface> networkNameToNicMap,
-        BusinessEntityMap<Network> networkMap, QosDaoCache qosDaoCache, NetworkAttachment networkAttachment) {
+        BusinessEntityMap<Network> networkMap,
+        NetworkAttachment networkAttachment) {
         Network network = networkMap.get(networkAttachment.getNetworkId());
-        HostNetworkQos networkQos = qosDaoCache.get(network.getQosId());
 
         VdsNetworkInterface nic =
             getNicToWhichIsNetworkAttached(networkNameToNicMap, networkMap, networkAttachment);
 
-        //TODO MM: for case we have out of sync db with attachment which references inexisting network. Not sure if that's needed.
         if (nic != null) {
             ReportedConfigurations reportedConfigurations =
-                createNetworkInSyncWithVdsNetworkInterface(network, networkQos, nic).reportConfigurationsOnHost();
+                createNetworkInSyncWithVdsNetworkInterface(networkAttachment, nic, network).reportConfigurationsOnHost();
             networkAttachment.setReportedConfigurations(reportedConfigurations);
         }
     }
 
-    NetworkInSyncWithVdsNetworkInterface createNetworkInSyncWithVdsNetworkInterface(Network network,
-        HostNetworkQos networkQos, VdsNetworkInterface nic) {
-        return new NetworkInSyncWithVdsNetworkInterface(nic, network, networkQos);
+    NetworkInSyncWithVdsNetworkInterface createNetworkInSyncWithVdsNetworkInterface(NetworkAttachment networkAttachment,
+        VdsNetworkInterface nic,
+        Network network) {
+
+        HostNetworkQos hostNetworkQos = effectiveHostNetworkQos.getQos(networkAttachment, network);
+        return new NetworkInSyncWithVdsNetworkInterface(nic, network, hostNetworkQos);
     }
 
-    //TODO MM: generify and use MapNetworkAttachments
     private Map<String, VdsNetworkInterface> nicsByNetworkId(List<VdsNetworkInterface> nics) {
         Map<String, VdsNetworkInterface> result = new HashMap<>();
         for (VdsNetworkInterface nic : nics) {
@@ -91,6 +90,7 @@ public class ReportedConfigurationsFiller {
     private VdsNetworkInterface getNicToWhichIsNetworkAttached(Map<String, VdsNetworkInterface> networkNameToNicMap,
         BusinessEntityMap<Network> networkMap,
         NetworkAttachment networkAttachment) {
+
         Guid networkId = networkAttachment.getNetworkId();
         Network network = networkMap.get(networkId);
         return networkNameToNicMap.get(network.getName());

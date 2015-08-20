@@ -28,6 +28,7 @@ import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.vdsbroker.EffectiveHostNetworkQos;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReportedConfigurationsFillerTest {
@@ -43,6 +44,9 @@ public class ReportedConfigurationsFillerTest {
 
     @Mock
     private VdsDao vdsDao;
+
+    @Mock
+    private EffectiveHostNetworkQos effectiveHostNetworkQos;
 
     @Spy
     @InjectMocks
@@ -121,9 +125,10 @@ public class ReportedConfigurationsFillerTest {
         networkAttachment.setNicName(baseNic.getName());
         networkAttachment.setNetworkId(baseNicNetwork.getId());
 
+        when(effectiveHostNetworkQos.getQos(networkAttachment, baseNicNetwork)).thenReturn(baseNicNetworkQos);
         filler.fillReportedConfiguration(networkAttachment, hostId);
 
-        verify(filler).createNetworkInSyncWithVdsNetworkInterface(baseNicNetwork, baseNicNetworkQos, baseNic);
+        verify(filler).createNetworkInSyncWithVdsNetworkInterface(networkAttachment, baseNic, baseNicNetwork);
     }
 
     @Test
@@ -139,8 +144,9 @@ public class ReportedConfigurationsFillerTest {
         networkAttachment.setNicName(baseNic.getName());
         networkAttachment.setNetworkId(vlanNetwork.getId());
 
+        when(effectiveHostNetworkQos.getQos(networkAttachment, vlanNetwork)).thenReturn(vlanNetworkQos);
         filler.fillReportedConfiguration(networkAttachment, hostId);
 
-        verify(filler).createNetworkInSyncWithVdsNetworkInterface(vlanNetwork, vlanNetworkQos, vlanNic);
+        verify(filler).createNetworkInSyncWithVdsNetworkInterface(networkAttachment, vlanNic, vlanNetwork);
     }
 }

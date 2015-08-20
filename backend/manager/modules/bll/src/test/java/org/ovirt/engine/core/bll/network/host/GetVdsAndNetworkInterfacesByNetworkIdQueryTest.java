@@ -22,7 +22,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 
 /**
  * A test for the {@link GetVdsAndNetworkInterfacesByNetworkIdQuery} class. It tests the flow (i.e., that the query
@@ -50,6 +52,10 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQueryTest
     private Network networkMocked;
     @Mock
     private HostNetworkQos hostNetworkQos;
+    @Mock
+    private NetworkImplementationDetailsUtils networkImplementationDetailsUtils;
+    @Mock
+    private NetworkAttachmentDao networkAttachmentDao;
 
     @Test
     public void testExecuteQueryCommand() {
@@ -77,7 +83,9 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQueryTest
         doReturn(vdsDaoMocked).when(getQuery()).getVdsDao();
         doReturn(interfaceDaoMocked).when(getQuery()).getInterfaceDao();
         doReturn(networkDaoMocked).when(getQuery()).getNetworkDao();
-        doReturn(hostNetworkQosDaoMocked).when(getQuery()).getHostNetworkQosDao();
+        doReturn(networkImplementationDetailsUtils).when(getQuery()).getNetworkImplementationDetailsUtils();
+        doReturn(networkAttachmentDao).when(getQuery()).getNetworkAttachmentDao();
+
     }
 
     private void setupVdsDao() {

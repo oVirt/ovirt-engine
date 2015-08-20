@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -54,6 +55,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -63,6 +65,8 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.EffectiveHostNetworkQos;
+import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkTopologyPersister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +86,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private List<NetworkAttachment> existingAttachments;
     private List<HostNetwork> networksToConfigure;
     private BusinessEntityMap<VdsNetworkInterface> existingNicsBusinessEntityMap;
-    private final QosDaoCache qosDaoCache = new QosDaoCache(getDbFacade().getHostNetworkQosDao());
     private List<Network> clusterNetworks;
 
     @Inject
@@ -109,6 +112,9 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private VmDao vmDao;
 
     @Inject
+    private HostNetworkQosDao hostNetworkQosDao;
+
+    @Inject
     private InterfaceDao interfaceDao;
 
     @Inject
@@ -116,6 +122,12 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     @Inject
     HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper;
+
+    @Inject
+    private EffectiveHostNetworkQos effectiveHostNetworkQos;
+
+    @Inject
+    private NetworkImplementationDetailsUtils networkImplementationDetailsUtils;
 
     public HostSetupNetworksCommand(T parameters) {
         this(parameters, null);
@@ -180,7 +192,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 networkDao,
                 vdsDao,
                 hostSetupNetworksValidatorHelper,
-                vmDao);
+                vmDao,
+                effectiveHostNetworkQos);
 
         return validator.validate();
     }
@@ -240,18 +253,17 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 Entities.businessEntitiesById(getExistingAttachments());
             NetworkAttachment existingNetworkAttachment = existingNetworkAttachmentMap.get(networkAttachment.getId());
 
-            VdsNetworkInterface vdsNetworkInterface =
-                    Entities.hostInterfacesByNetworkName(getExistingNics()).get(existingNetworkAttachment.getNetworkName());
-            Network network = getNetworkBusinessEntityMap().get(existingNetworkAttachment.getNetworkId());
-            HostNetworkQos qos = qosDaoCache.get(network.getQosId());
+            VdsNetworkInterface nic =
+                    Entities.hostInterfacesByNetworkName(getExistingNics())
+                            .get(existingNetworkAttachment.getNetworkName());
 
-            boolean networkInSync = NetworkUtils.isNetworkInSync(vdsNetworkInterface, network, qos);
-            if (!networkInSync) {
+            NetworkImplementationDetails networkImplementationDetails = nic.getNetworkImplementationDetails();
+            boolean networkIsNotInSync = networkImplementationDetails != null && !networkImplementationDetails.isInSync();
 
+            if (networkIsNotInSync) {
                 return new ValidationResult(EngineMessage.NETWORKS_NOT_IN_SYNC,
-                        ReplacementUtils.createSetVariableString(
-                                "NETWORK_NOT_IN_SYNC",
-                                network.getName()));
+                    ReplacementUtils.createSetVariableString("NETWORK_NOT_IN_SYNC",
+                        existingNetworkAttachment.getNetworkName()));
             }
         }
 
@@ -351,9 +363,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
             for (VdsNetworkInterface iface : existingNics) {
                 Network network = getNetworkBusinessEntityMap().get(iface.getNetworkName());
-                HostNetworkQos hostNetworkQos = network == null ? null : qosDaoCache.get(network.getQosId());
-                VdsNetworkInterface.NetworkImplementationDetails networkImplementationDetails =
-                    NetworkUtils.calculateNetworkImplementationDetails(network, hostNetworkQos, iface);
+                NetworkImplementationDetails networkImplementationDetails =
+                    networkImplementationDetailsUtils.calculateNetworkImplementationDetails(iface, network);
                 iface.setNetworkImplementationDetails(networkImplementationDetails);
             }
         }
@@ -411,14 +422,11 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                     networkToConfigure.setDefaultRoute(true);
                 }
 
-                //TODO MM:  if it's newly created interface, it won't be discovered and Qos cannot be evaluated.
-                VdsNetworkInterface iface = nics.get(attachment.getNicId(), attachment.getNicName());
-                boolean qosConfiguredOnInterface =
-                    iface == null ? false : NetworkUtils.qosConfiguredOnInterface(iface, network);
-                networkToConfigure.setQosConfiguredOnInterface(qosConfiguredOnInterface);
-                if (qosConfiguredOnInterface) {
-                    networkToConfigure.setQos(
-                        iface.isQosOverridden() ? iface.getQos() : qosDaoCache.get(network.getQosId()));
+                if (NetworkUtils.qosConfiguredOnInterface(attachment, network)) {
+                    networkToConfigure.setQosConfiguredOnInterface(true);
+
+                    HostNetworkQos hostNetworkQos = effectiveHostNetworkQos.getQos(attachment, network);
+                    networkToConfigure.setQos(hostNetworkQos);
                 }
 
                 networksToConfigure.add(networkToConfigure);
@@ -627,4 +635,5 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         }
         return clusterNetworks;
     }
+
 }

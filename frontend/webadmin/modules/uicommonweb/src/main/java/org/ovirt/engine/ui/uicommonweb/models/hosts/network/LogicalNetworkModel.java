@@ -83,7 +83,8 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             nic.setAddress(netParams.getAddress());
             nic.setSubnet(netParams.getSubnet());
             nic.setGateway(netParams.getGateway());
-            nic.setQosOverridden(netParams.getQosOverridden());
+            //commenting out as we decided, has to be fixed in following separate UI patch
+//            nic.setQosOverridden(netParams.getQosOverridden());
             nic.setQos(netParams.getQos());
             nic.setCustomProperties(netParams.getCustomProperties());
         } else if (nic.getBootProtocol() == null) {
@@ -114,7 +115,8 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         netParams.setAddress(detachedDevice.getAddress());
         netParams.setSubnet(detachedDevice.getSubnet());
         netParams.setGateway(detachedDevice.getGateway());
-        netParams.setQosOverridden(detachedDevice.isQosOverridden());
+        //commenting out as we decided, has to be fixed in following separate UI patch
+//        netParams.setQosOverridden(detachedDevice.isQosOverridden());
         netParams.setQos(detachedDevice.getQos());
         netParams.setCustomProperties(detachedDevice.getCustomProperties());
         getSetupModel().getNetworkToLastDetachParams().put(getName(), netParams);
@@ -125,7 +127,8 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             nicEntity.setAddress(null);
             nicEntity.setSubnet(null);
             nicEntity.setGateway(null);
-            nicEntity.setQosOverridden(false);
+            //commenting out as we decided, has to be fixed in following separate UI patch
+            //nicEntity.setQosOverridden(false);
             nicEntity.setQos(null);
             nicEntity.setCustomProperties(null);
             nicEntity.setNetworkImplementationDetails(null);

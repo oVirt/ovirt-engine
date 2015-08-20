@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -29,6 +30,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -39,12 +41,15 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
+import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.NetworkInSyncWithVdsNetworkInterface;
 import org.ovirt.engine.core.utils.RandomUtils;
+import org.ovirt.engine.core.vdsbroker.CalculateBaseNic;
+import org.ovirt.engine.core.vdsbroker.EffectiveHostNetworkQos;
 
 @RunWith(MockitoJUnitRunner.class)
-@SuppressWarnings({"unchecked" , "rawtypes"})
+@SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
 public class SetupNetworksVDSCommandTest {
 
     @Mock
@@ -58,6 +63,15 @@ public class SetupNetworksVDSCommandTest {
 
     @Mock
     private Version version;
+
+    @Mock
+    private CalculateBaseNic calculateBaseNic;
+
+    @Mock
+    private NetworkAttachmentDao networkAttachmentDao;
+
+    @Mock
+    private EffectiveHostNetworkQos effectiveHostNetworkQos;
 
     @Rule
     public MockConfigRule configRule = new MockConfigRule();
@@ -107,7 +121,7 @@ public class SetupNetworksVDSCommandTest {
         Network net = createNetwork(RandomUtils.instance().nextInt(0, 4000));
         VdsNetworkInterface vlan = createVlan(bond, net);
 
-        List<VdsNetworkInterface> ifaces = new ArrayList<VdsNetworkInterface>(slaves);
+        List<VdsNetworkInterface> ifaces = new ArrayList<>(slaves);
         ifaces.add(bond);
         ifaces.add(vlan);
 
@@ -138,7 +152,7 @@ public class SetupNetworksVDSCommandTest {
                         Collections.<String> emptyList(),
                         Collections.<VdsNetworkInterface> emptyList(),
                         Collections.<String> emptySet(),
-                        Arrays.asList(nic));
+                        Collections.singletonList(nic));
 
         createCommand(parameters).execute();
         verifyMethodPassedToHost();
@@ -153,7 +167,7 @@ public class SetupNetworksVDSCommandTest {
     public void bondModified() {
         VdsNetworkInterface bond = createBond();
         List<VdsNetworkInterface> slaves = createSlaves(bond);
-        List<VdsNetworkInterface> ifaces = new ArrayList<VdsNetworkInterface>(slaves);
+        List<VdsNetworkInterface> ifaces = new ArrayList<>(slaves);
         ifaces.add(bond);
 
         SetupNetworksVdsCommandParameters parameters =
@@ -215,23 +229,56 @@ public class SetupNetworksVDSCommandTest {
         Guid qosId = Guid.newGuid();
         network.setQosId(qosId);
         HostNetworkQos qos = createQos();
-        qos.setId(qosId);
         when(qosDao.get(qosId)).thenReturn(qos);
+
+        NetworkAttachment networkAttachment = createNetworkAttachment(iface, null);
+
+        when(effectiveHostNetworkQos.getQos(any(NetworkAttachment.class), any(Network.class))).thenReturn(qos);
+        when(networkAttachmentDao
+            .getNetworkAttachmentByNicIdAndNetworkId(eq(networkAttachment.getNicId()), eq(network.getId())))
+            .thenReturn(networkAttachment);
 
         qos(network, iface, qos, true);
     }
 
     @Test
-    public void qosOnInterface() {
+    public void qosOnAttachment() {
         Network network = createNetwork(null);
         VdsNetworkInterface iface = createNic("eth0", null, null, network.getName());
 
         HostNetworkQos qos = createQos();
-        iface.setQos(qos);
-        iface.setQosOverridden(true);
-        when(qosDao.get(any(Guid.class))).thenReturn(createQos());
+
+        NetworkAttachment networkAttachment = createNetworkAttachment(iface, qos);
+
+        when(effectiveHostNetworkQos.getQos(any(NetworkAttachment.class), any(Network.class))).thenReturn(qos);
+        when(networkAttachmentDao
+            .getNetworkAttachmentByNicIdAndNetworkId(eq(networkAttachment.getNicId()), eq(network.getId())))
+            .thenReturn(networkAttachment);
 
         qos(network, iface, qos, true);
+    }
+
+    @Test
+    public void qosNeitherOnAttachmentOrNetwork() {
+        Network network = createNetwork(null);
+        VdsNetworkInterface iface = createNic("eth0", null, null, network.getName());
+
+        NetworkAttachment networkAttachment = createNetworkAttachment(iface, null);
+
+        when(networkAttachmentDao
+            .getNetworkAttachmentByNicIdAndNetworkId(eq(networkAttachment.getNicId()), eq(network.getId())))
+            .thenReturn(networkAttachment);
+
+        qos(network, iface, null, true);
+    }
+
+    private NetworkAttachment createNetworkAttachment(VdsNetworkInterface iface, HostNetworkQos qos) {
+        NetworkAttachment networkAttachment = new NetworkAttachment();
+        networkAttachment.setId(Guid.newGuid());
+        networkAttachment.setNicId(iface.getId());
+        networkAttachment.setNicName(iface.getName());
+        networkAttachment.setHostNetworkQos(qos);
+        return networkAttachment;
     }
 
     /**
@@ -280,7 +327,7 @@ public class SetupNetworksVDSCommandTest {
 
     private List<VdsNetworkInterface> createSlaves(VdsNetworkInterface bond) {
         int slaveCount = RandomUtils.instance().nextInt(2, 100);
-        List<VdsNetworkInterface> slaves = new ArrayList<VdsNetworkInterface>(slaveCount);
+        List<VdsNetworkInterface> slaves = new ArrayList<>(slaveCount);
         for (int i = 0; i < slaveCount; i++) {
             slaves.add(createNic("eth" + i, bond.getName(), null, null));
         }
@@ -295,13 +342,13 @@ public class SetupNetworksVDSCommandTest {
         final VdsDao vdsDao = mock(VdsDao.class);
 
         when(dbFacade.getVdsStaticDao()).thenReturn(vdsStaticDao);
-        when(dbFacade.getVdsDao()).thenReturn(vdsDao);
-        when(dbFacade.getHostNetworkQosDao()).thenReturn(qosDao);
 
         when(vdsDao.get(any(Guid.class))).thenReturn(host);
 
         // No way to avoid these calls by regular mocking, so must implement anonymously.
-        return new SetupNetworksVDSCommand<SetupNetworksVdsCommandParameters>(parameters) {
+        SetupNetworksVDSCommand<SetupNetworksVdsCommandParameters> result =
+            new SetupNetworksVDSCommand<SetupNetworksVdsCommandParameters>(
+            parameters) {
 
             @Override
             protected IVdsServer initializeVdsBroker(Guid vdsId) {
@@ -313,6 +360,13 @@ public class SetupNetworksVDSCommandTest {
                 return dbFacade;
             }
         };
+
+
+        result.networkAttachmentDao = networkAttachmentDao;
+        result.effectiveHostNetworkQos = effectiveHostNetworkQos;
+        result.calculateBaseNic = calculateBaseNic;
+
+        return result;
     }
 
     private VdsNetworkInterface createVdsInterface(String name,
@@ -337,25 +391,38 @@ public class SetupNetworksVDSCommandTest {
     }
 
     private VdsNetworkInterface createBond() {
-        return createVdsInterface("bond0", true, null, RandomUtils.instance().nextString(100), null, null, null, null);
+        VdsNetworkInterface bond =
+            createVdsInterface("bond0", true, null, RandomUtils.instance().nextString(100), null, null, null, null);
+        when(calculateBaseNic.getBaseNic(bond)).thenReturn(bond);
+
+        return bond;
     }
 
     private VdsNetworkInterface createNic(String name,
             String bondName,
             NetworkBootProtocol bootProtocol,
             String network) {
-        return createVdsInterface(name, false, bondName, null, bootProtocol, network, null, null);
+        VdsNetworkInterface nic =
+            createVdsInterface(name, false, bondName, null, bootProtocol, network, null, null);
+
+        when(calculateBaseNic.getBaseNic(nic)).thenReturn(nic);
+
+        return nic;
     }
 
-    private VdsNetworkInterface createVlan(VdsNetworkInterface iface, Network net) {
-        return createVdsInterface(iface.getName() + "." + net.getVlanId(),
-                false,
-                null,
-                null,
-                NetworkBootProtocol.NONE,
-                net.getName(),
-                iface.getName(),
-                net.getVlanId());
+    private VdsNetworkInterface createVlan(VdsNetworkInterface baseNic, Network net) {
+        VdsNetworkInterface vlanNic = createVdsInterface(baseNic.getName() + "." + net.getVlanId(),
+            false,
+            null,
+            null,
+            NetworkBootProtocol.NONE,
+            net.getName(),
+            baseNic.getName(),
+            net.getVlanId());
+
+        when(calculateBaseNic.getBaseNic(vlanNic)).thenReturn(baseNic);
+
+        return vlanNic;
     }
 
     private Network createNetwork(Integer vlanId) {
@@ -374,6 +441,7 @@ public class SetupNetworksVDSCommandTest {
 
     private HostNetworkQos createQos() {
         HostNetworkQos qos = new HostNetworkQos();
+        qos.setId(Guid.newGuid());
         qos.setOutAverageLinkshare(RandomUtils.instance().nextInt(0, 100));
         qos.setOutAverageUpperlimit(RandomUtils.instance().nextInt(0, 2000));
         qos.setOutAverageRealtime(RandomUtils.instance().nextInt(0, 2000));

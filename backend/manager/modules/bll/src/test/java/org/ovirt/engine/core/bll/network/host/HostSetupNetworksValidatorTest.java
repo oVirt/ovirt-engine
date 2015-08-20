@@ -8,6 +8,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.network.host.HostSetupNetworksValidator.VAR_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST;
 import static org.ovirt.engine.core.bll.network.host.HostSetupNetworksValidator.VAR_NETWORK_NAMES;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -39,10 +41,13 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
+import org.ovirt.engine.core.bll.validator.HostNetworkQosValidator;
+import org.ovirt.engine.core.bll.validator.ValidationResultMatchers;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -62,6 +67,7 @@ import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.ReplacementUtils;
+import org.ovirt.engine.core.vdsbroker.EffectiveHostNetworkQos;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HostSetupNetworksValidatorTest {
@@ -84,11 +90,19 @@ public class HostSetupNetworksValidatorTest {
     @Mock
     private VmDao vmDao;
 
+    @Mock
+    private EffectiveHostNetworkQos effectiveHostNetworkQos;
+
     private Bond bond;
+
     @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule(
         mockConfig(ConfigValues.NetworkCustomPropertiesSupported, Version.v3_4.toString(), false),
-        mockConfig(ConfigValues.NetworkCustomPropertiesSupported, Version.v3_5.toString(), true));
+        mockConfig(ConfigValues.NetworkCustomPropertiesSupported, Version.v3_5.toString(), true),
+        mockConfig(ConfigValues.NetworkCustomPropertiesSupported, Version.v3_6.toString(), true),
+        mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_4.toString(), false),
+        mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_5.toString(), false),
+        mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_6.toString(), true));
 
     @Before
     public void setUp() throws Exception {
@@ -151,7 +165,7 @@ public class HostSetupNetworksValidatorTest {
             new HostSetupNetworksParameters(host.getId()),
             Collections.singletonList(existingNic),
             Collections.<NetworkAttachment> emptyList(),
-            new BusinessEntityMap<>(Collections.singletonList(labeledNetwork)));
+            Collections.singletonList(labeledNetwork));
 
         assertThat(validator.notRemovingLabeledNetworks(networkAttachment),
             failsWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC,
@@ -230,8 +244,8 @@ public class HostSetupNetworksValidatorTest {
         HostSetupNetworksValidator validator =
                 new HostSetupNetworksValidatorBuilder().setParams(params)
                         .setHost(host)
-                        .setExistingInterfaces(Arrays.asList(nic))
-                        .setNetworkBusinessEntityMap(new BusinessEntityMap<>(Arrays.asList(network)))
+                        .setExistingInterfaces(Collections.singletonList(nic))
+                        .addNetworks(network)
                         .build();
 
         assertThat(validator.notRemovingLabeledNetworks(removedAttachment), isValid());
@@ -270,15 +284,16 @@ public class HostSetupNetworksValidatorTest {
             params,
             Arrays.asList(existingNic, existingNic2),
             Collections.singletonList(existingNetworkAttachment),
-            new BusinessEntityMap<>(Collections.singletonList(labeledNetwork))
+            Collections.singletonList(labeledNetwork)
         );
 
         assertThat(validator.notMovingLabeledNetworkToDifferentNic(updatedNetworkAttachment),
             failsWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC,
-                    ReplacementUtils.createSetVariableString(
-                            "networkName", labeledNetwork.getName()),
-                    ReplacementUtils.createSetVariableString(
-                            HostSetupNetworksValidator.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY, labeledNetwork.getLabel())));
+                ReplacementUtils.createSetVariableString(
+                    "networkName", labeledNetwork.getName()),
+                ReplacementUtils.createSetVariableString(
+                    HostSetupNetworksValidator.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY,
+                    labeledNetwork.getLabel())));
     }
 
     @Test
@@ -302,16 +317,16 @@ public class HostSetupNetworksValidatorTest {
         HostSetupNetworksValidator validator = createHostSetupNetworksValidator(params,
             Collections.<VdsNetworkInterface> singletonList(bond),
             null,
-            new BusinessEntityMap<>(Collections.singletonList(labeledNetwork)));
+            Collections.singletonList(labeledNetwork));
         assertThat(validator.notRemovingLabeledNetworks(networkAttachment), isValid());
     }
 
     @Test
     public void notMovingLabeledNetworkToDifferentNicNewLabelIsAddedToNic() {
         notMovingLabeledNetworkToDifferentNicCommonTest(/* nicContainslabel */false,
-                false,
+            false,
                 /* labelShouldBeAddedToNic */true,
-                false);
+            false);
     }
 
     @Test
@@ -326,16 +341,16 @@ public class HostSetupNetworksValidatorTest {
     public void notMovingLabeledNetworkToDifferentNicHasLabel() {
         notMovingLabeledNetworkToDifferentNicCommonTest(/* nicContainslabel */true,
                 /* labelShouldBeRemovedFromNic */ false,
-                false,
-                false);
+            false,
+            false);
     }
 
     @Test
     public void notMovingLabeledNetworkToDifferentNicLabelIsRemovedFromNic() {
         notMovingLabeledNetworkToDifferentNicCommonTest(/* nicContainslabel */true,
                 /* labelShouldBeRemovedFromNic */true,
-                false,
-                true);
+            false,
+            true);
     }
 
     private void notMovingLabeledNetworkToDifferentNicCommonTest(boolean nicContainslabel, boolean labelShouldBeRemovedFromNic,
@@ -367,9 +382,9 @@ public class HostSetupNetworksValidatorTest {
         HostSetupNetworksValidator validator =
                 new HostSetupNetworksValidatorBuilder().setParams(params)
                         .setHost(host)
-                        .setExistingInterfaces(Arrays.asList(nic))
-                        .setExistingAttachments(Arrays.asList(existingAttachment))
-                        .setNetworkBusinessEntityMap(new BusinessEntityMap<>(Arrays.asList(movedNetwork)))
+                        .setExistingInterfaces(Collections.singletonList(nic))
+                        .setExistingAttachments(Collections.singletonList(existingAttachment))
+                        .addNetworks(movedNetwork)
                         .build();
         if (valid) {
             assertThat(validator.notMovingLabeledNetworkToDifferentNic(updatedAttachment), isValid());
@@ -379,7 +394,8 @@ public class HostSetupNetworksValidatorTest {
                             ReplacementUtils.createSetVariableString(
                                     "networkName", movedNetwork.getName()),
                             ReplacementUtils.createSetVariableString(
-                                    HostSetupNetworksValidator.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY, movedNetwork.getLabel())));
+                                HostSetupNetworksValidator.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY,
+                                movedNetwork.getLabel())));
         }
     }
 
@@ -424,8 +440,8 @@ public class HostSetupNetworksValidatorTest {
         assertThat(validator.validRemovedBonds(Collections.<NetworkAttachment> emptyList()),
             failsWith(EngineMessage.NETWORK_BOND_RECORD_DOES_NOT_EXISTS,
                 replaceWith(
-                        HostSetupNetworksValidator.VAR_NETWORK_BOND_RECORD_DOES_NOT_EXISTS_LIST,
-                        Collections.singletonList(idOfInexistingInterface))));
+                    HostSetupNetworksValidator.VAR_NETWORK_BOND_RECORD_DOES_NOT_EXISTS_LIST,
+                    Collections.singletonList(idOfInexistingInterface))));
 
     }
 
@@ -447,7 +463,7 @@ public class HostSetupNetworksValidatorTest {
         replacements.add(ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_BOND_NAME, nicName));
         //null -- new network attachment with null id.
         replacements.addAll(replaceWith(HostSetupNetworksValidator.VAR_ATTACHMENT_IDS,
-                Collections.<Guid>singletonList(null)));
+            Collections.<Guid> singletonList(null)));
 
         assertThat(validator.validRemovedBonds(Collections.singletonList(requiredNetworkAttachment)),
             failsWith(EngineMessage.BOND_USED_BY_NETWORK_ATTACHMENTS,
@@ -540,7 +556,7 @@ public class HostSetupNetworksValidatorTest {
         Network networkA = createNetworkWithName("networkA");
         Network networkB = createNetworkWithName("networkB");
 
-        NetworkAttachment networkAttachmentA = createNetworkAttachment(networkA, (Guid)null);
+        NetworkAttachment networkAttachmentA = createNetworkAttachment(networkA, (Guid) null);
         NetworkAttachment networkAttachmentB = createNetworkAttachment(networkB, (Guid)null);
 
         HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
@@ -593,12 +609,12 @@ public class HostSetupNetworksValidatorTest {
 
         HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
         params.setRemovedNetworkAttachments(new HashSet<>(Arrays.asList(networkAttachmentA.getId(),
-                networkAttachmentB.getId())));
+            networkAttachmentB.getId())));
 
         HostSetupNetworksValidator validator = spy(createHostSetupNetworksValidator(params,
             Arrays.asList(nicA, nicB),
             Arrays.asList(networkAttachmentA, networkAttachmentB),
-            new BusinessEntityMap<>(Arrays.asList(networkA, networkB))));
+            Arrays.asList(networkA, networkB)));
 
         VmInterfaceManager vmInterfaceManagerMock = mock(VmInterfaceManager.class);
         doReturn(vmInterfaceManagerMock).when(validator).getVmInterfaceManager();
@@ -628,6 +644,15 @@ public class HostSetupNetworksValidatorTest {
         return existingNic;
     }
 
+    public VdsNetworkInterface createVlanNic(VdsNetworkInterface baseNic, String nicName, Integer vlanId) {
+        VdsNetworkInterface existingNic = new VdsNetworkInterface();
+        existingNic.setId(Guid.newGuid());
+        existingNic.setName(nicName);
+        existingNic.setVlanId(vlanId);
+        existingNic.setBaseInterface(baseNic.getName());
+        return existingNic;
+    }
+
     private Network createNetworkWithName(String nameOfNetworkA) {
         Network networkA = new Network();
         networkA.setName(nameOfNetworkA);
@@ -649,7 +674,7 @@ public class HostSetupNetworksValidatorTest {
         HostSetupNetworksValidator validator = spy(createHostSetupNetworksValidator(params,
             Collections.<VdsNetworkInterface> emptyList(),
             null,
-            new BusinessEntityMap<>(Collections.<Network> emptyList())));
+            Collections.<Network> emptyList()));
 
         VmInterfaceManager vmInterfaceManagerMock = mock(VmInterfaceManager.class);
         doReturn(vmInterfaceManagerMock).when(validator).getVmInterfaceManager();
@@ -999,7 +1024,7 @@ public class HostSetupNetworksValidatorTest {
         HostSetupNetworksValidator validator = spy(createHostSetupNetworksValidator(params,
             existingInterfaces,
             existingAttachments,
-            new BusinessEntityMap<>(networks)));
+            networks));
 
         HostInterfaceValidator hostInterfaceValidatorMock = mock(HostInterfaceValidator.class);
         when(hostInterfaceValidatorMock.interfaceExists()).thenReturn(interfaceExistValidationResult);
@@ -1061,7 +1086,7 @@ public class HostSetupNetworksValidatorTest {
             spy(new HostSetupNetworksValidatorBuilder()
                 .setHost(host)
                 .setParams(params)
-                .setNetworkBusinessEntityMap(new BusinessEntityMap<>(Collections.singletonList(networkA)))
+                .addNetworks(networkA)
                 .build());
 
         assertThat(validator.validateCustomProperties(null,
@@ -1090,7 +1115,7 @@ public class HostSetupNetworksValidatorTest {
             spy(new HostSetupNetworksValidatorBuilder()
                 .setHost(host)
                 .setParams(params)
-                .setNetworkBusinessEntityMap(new BusinessEntityMap<>(Collections.singletonList(networkA)))
+                .addNetworks(networkA)
                 .build());
 
         //this was added just because of DI issues with 'Backend.getInstance().getErrorsTranslator()' is 'spyed' method
@@ -1123,13 +1148,13 @@ public class HostSetupNetworksValidatorTest {
             new HostSetupNetworksValidatorBuilder()
                 .setHost(host)
                 .setParams(params)
-                .setNetworkBusinessEntityMap(new BusinessEntityMap<>(Collections.singletonList(networkA)))
+                .addNetworks(networkA)
                 .build();
 
         //we do not test SimpleCustomPropertiesUtil here, we just state what happens if it does not find ValidationError
         SimpleCustomPropertiesUtil simpleCustomPropertiesUtilMock = mock(SimpleCustomPropertiesUtil.class);
         when(simpleCustomPropertiesUtilMock.validateProperties(any(Map.class), any(Map.class)))
-            .thenReturn(Collections.<ValidationError>emptyList());
+            .thenReturn(Collections.<ValidationError> emptyList());
 
         assertThat(validator.validateCustomProperties(simpleCustomPropertiesUtilMock,
                 Collections.<String, String> emptyMap(),
@@ -1167,7 +1192,7 @@ public class HostSetupNetworksValidatorTest {
             .setExistingAttachments(Collections.<NetworkAttachment> emptyList())
             .setParams(params)
             .setExistingInterfaces(Arrays.asList(nicA, nicB))
-            .setNetworkBusinessEntityMap(new BusinessEntityMap<>(Collections.singletonList(networkA)))
+            .addNetworks(networkA)
             .setHost(host)
             .build();
 
@@ -1188,7 +1213,7 @@ public class HostSetupNetworksValidatorTest {
         VdsNetworkInterface slave = createNic("slave");
         HostSetupNetworksValidator validator =
                 new HostSetupNetworksValidatorBuilder().setParams(new HostSetupNetworksParameters(host.getId()))
-                        .setExistingInterfaces(Arrays.asList(slave)).setHost(host).build();
+                        .setExistingInterfaces(Collections.singletonList(slave)).setHost(host).build();
         assertThat(validator.validateSlaveHasNoLabels(slave.getName()), isValid());
     }
 
@@ -1202,7 +1227,7 @@ public class HostSetupNetworksValidatorTest {
 
         HostSetupNetworksValidator validator =
                 new HostSetupNetworksValidatorBuilder().setParams(params)
-                        .setExistingInterfaces(Arrays.asList(slave)).setHost(host).build();
+                        .setExistingInterfaces(Collections.singletonList(slave)).setHost(host).build();
         assertThat(validator.validateSlaveHasNoLabels(slave.getName()), isValid());
     }
 
@@ -1217,7 +1242,7 @@ public class HostSetupNetworksValidatorTest {
 
         HostSetupNetworksValidator validator =
                 new HostSetupNetworksValidatorBuilder().setParams(params)
-                        .setExistingInterfaces(Arrays.asList(slave)).setHost(host).build();
+                        .setExistingInterfaces(Collections.singletonList(slave)).setHost(host).build();
         assertThat(validator.validateSlaveHasNoLabels(slave.getName()), isValid());
     }
 
@@ -1228,7 +1253,7 @@ public class HostSetupNetworksValidatorTest {
 
         HostSetupNetworksValidator validator =
                 new HostSetupNetworksValidatorBuilder().setParams(new HostSetupNetworksParameters(host.getId()))
-                        .setExistingInterfaces(Arrays.asList(slave)).setHost(host).build();
+                        .setExistingInterfaces(Collections.singletonList(slave)).setHost(host).build();
         assertValidateSlaveHasNoLabelsFailed(validator, slave.getName());
     }
 
@@ -1242,16 +1267,16 @@ public class HostSetupNetworksValidatorTest {
 
         HostSetupNetworksValidator validator =
                 new HostSetupNetworksValidatorBuilder().setParams(params)
-                        .setExistingInterfaces(Arrays.asList(slave)).setHost(host).build();
+                        .setExistingInterfaces(Collections.singletonList(slave)).setHost(host).build();
         assertValidateSlaveHasNoLabelsFailed(validator, slave.getName());
     }
 
     private void assertValidateSlaveHasNoLabelsFailed(HostSetupNetworksValidator validator, String slaveName) {
         assertThat(validator.validateSlaveHasNoLabels(slaveName),
-                failsWith(EngineMessage.LABEL_ATTACH_TO_IMPROPER_INTERFACE,
-                        ReplacementUtils.createSetVariableString(
-                                "LABEL_ATTACH_TO_IMPROPER_INTERFACE_ENTITY",
-                                slaveName)));
+            failsWith(EngineMessage.LABEL_ATTACH_TO_IMPROPER_INTERFACE,
+                ReplacementUtils.createSetVariableString(
+                    "LABEL_ATTACH_TO_IMPROPER_INTERFACE_ENTITY",
+                    slaveName)));
     }
 
     @Test
@@ -1264,9 +1289,9 @@ public class HostSetupNetworksValidatorTest {
                 new HostSetupNetworksValidatorBuilder().setParams(params).setHost(host).build();
 
         assertThat(validator.modifiedAttachmentNotRemoved(modifiedAttachment),
-                failsWith(EngineMessage.NETWORK_ATTACHMENT_IN_BOTH_LISTS,
-                        ReplacementUtils.createSetVariableString("NETWORK_ATTACHMENT_IN_BOTH_LISTS_ENTITY",
-                                modifiedAttachment.getId().toString())));
+            failsWith(EngineMessage.NETWORK_ATTACHMENT_IN_BOTH_LISTS,
+                ReplacementUtils.createSetVariableString("NETWORK_ATTACHMENT_IN_BOTH_LISTS_ENTITY",
+                    modifiedAttachment.getId().toString())));
     }
 
     @Test
@@ -1282,12 +1307,192 @@ public class HostSetupNetworksValidatorTest {
 
     @Test
     public void attachmentAndNicLabelReferenceSameLabelNotConflict() {
-        attachmentAndNicLabelReferenceSameLabelCommonTest(/* referenceSameNic */true, true);
+        final boolean referenceSameNic = true;
+        attachmentAndNicLabelReferenceSameLabelCommonTest(referenceSameNic, true);
     }
 
     @Test
     public void attachmentAndNicLabelReferenceSameLabelConflict() {
-        attachmentAndNicLabelReferenceSameLabelCommonTest(/* referenceSameNic */false, false);
+        boolean referenceSameNic = false;
+        attachmentAndNicLabelReferenceSameLabelCommonTest(referenceSameNic, false);
+    }
+
+    @Test
+    public void testValidateQosOverriddenInterfacesWhenNoAttachmentsPassed() {
+        List<NetworkAttachment> networkAttachments = Collections.emptyList();
+        HostSetupNetworksValidator validator = createHostSetupNetworkValidator(networkAttachments);
+
+        assertThat(validator.validateQosOverriddenInterfaces(), ValidationResultMatchers.isValid());
+    }
+
+    @Test
+    public void testValidateQosOverriddenInterfacesWhenAttachmentDoesNotHaveQosOverridden() {
+        NetworkAttachment networkAttachment = new NetworkAttachment();
+
+        List<NetworkAttachment> networkAttachments = Collections.singletonList(networkAttachment);
+        HostSetupNetworksValidator validator = createHostSetupNetworkValidator(networkAttachments);
+
+        assertThat(validator.validateQosOverriddenInterfaces(), ValidationResultMatchers.isValid());
+    }
+
+    @Test
+    public void testValidateQosOverriddenInterfacesWhenHostNetworkQosIsNotSupported() {
+        Network network = createNetworkWithName("network");
+
+        HostSetupNetworksValidator validator = createValidatorForTestingValidateQosOverridden(network);
+
+
+        assertThat(validator.validateQosOverriddenInterfaces(),
+            ValidationResultMatchers.failsWith(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
+                ReplacementUtils.createSetVariableString(
+                    HostSetupNetworksValidator.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED_LIST,
+                    network.getName())));
+    }
+
+    @Test
+    public void testValidateQosOverriddenInterfacesWhenAttachmentHasQosOverriddenAndRequiredValuesNotPresent() {
+        EngineMessage hostNetworkQosValidatorFailure =
+            EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_MISSING_VALUES;
+
+        host.setVdsGroupCompatibilityVersion(Version.v3_6);
+        Network network = createNetworkWithName("network");
+        HostSetupNetworksValidator validator = createValidatorForTestingValidateQosOverridden(network);
+
+        HostSetupNetworksValidator validatorSpy = spy(validator);
+        HostNetworkQosValidator hostNetworkQosValidatorMock = mock(HostNetworkQosValidator.class);
+
+        when(hostNetworkQosValidatorMock.requiredQosValuesPresentForOverriding(eq(network.getName()))).
+            thenReturn(new ValidationResult(hostNetworkQosValidatorFailure));
+
+        doReturn(hostNetworkQosValidatorMock).when(validatorSpy)
+            .createHostNetworkQosValidator(any(HostNetworkQos.class));
+
+
+        assertThat(validatorSpy.validateQosOverriddenInterfaces(),
+            ValidationResultMatchers.failsWith(hostNetworkQosValidatorFailure));
+        verify(hostNetworkQosValidatorMock).requiredQosValuesPresentForOverriding(eq(network.getName()));
+        verifyNoMoreInteractions(hostNetworkQosValidatorMock);
+
+    }
+
+    @Test
+    public void testValidateQosOverriddenInterfacesWhenAttachmentHasQosOverriddenAndRequiredValuesPresentButInconsistent() {
+        EngineMessage hostNetworkQosValidatorFailure =
+            EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INCONSISTENT_VALUES;
+
+        host.setVdsGroupCompatibilityVersion(Version.v3_6);
+        Network network = createNetworkWithName("network");
+        HostSetupNetworksValidator validator = createValidatorForTestingValidateQosOverridden(network);
+
+        HostSetupNetworksValidator validatorSpy = spy(validator);
+        HostNetworkQosValidator hostNetworkQosValidatorMock = mock(HostNetworkQosValidator.class);
+
+
+        when(hostNetworkQosValidatorMock.requiredQosValuesPresentForOverriding(eq(network.getName()))).
+            thenReturn(ValidationResult.VALID);
+
+        when(hostNetworkQosValidatorMock.valuesConsistent(eq(network.getName()))).
+            thenReturn(new ValidationResult(hostNetworkQosValidatorFailure));
+
+        doReturn(hostNetworkQosValidatorMock).when(validatorSpy)
+            .createHostNetworkQosValidator(any(HostNetworkQos.class));
+
+
+        assertThat(validatorSpy.validateQosOverriddenInterfaces(),
+            ValidationResultMatchers.failsWith(hostNetworkQosValidatorFailure));
+        verify(hostNetworkQosValidatorMock).requiredQosValuesPresentForOverriding(eq(network.getName()));
+        verify(hostNetworkQosValidatorMock).valuesConsistent(eq(network.getName()));
+        verifyNoMoreInteractions(hostNetworkQosValidatorMock);
+
+    }
+
+    @Test
+    public void testValidateQosNotPartiallyConfiguredWhenNotUpdatingAttachments() {
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setHost(host)
+            .setParams(new HostSetupNetworksParameters(host.getId()))
+            .build();
+
+        Collection<NetworkAttachment> networkAttachments = Collections.emptyList();
+        assertThat(validator.validateQosNotPartiallyConfigured(networkAttachments), isValid());
+    }
+
+    @Test
+    public void testValidateQosNotPartiallyConfiguredWhenBothHasQos() {
+        testValidateQosNotPartiallyConfigured(true, true, isValid());
+    }
+
+    @Test
+    public void testValidateQosNotPartiallyConfiguredWhenNoneHasQos() {
+        testValidateQosNotPartiallyConfigured(true, true, isValid());
+    }
+
+    @Test
+    public void testValidateQosNotPartiallyConfiguredWhenOnlyOneHasQos() {
+        testValidateQosNotPartiallyConfigured(true,
+            false,
+            failsWith(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS));
+    }
+
+    private void testValidateQosNotPartiallyConfigured(boolean networkAttachment1HasQos,
+        boolean networkAttachment2HasQos,
+        Matcher<ValidationResult> matcher) {
+        VdsNetworkInterface baseNic = createNic("baseNic");
+        VdsNetworkInterface vlanNic1 = createVlanNic(baseNic, "vlanNic1", 10);
+        VdsNetworkInterface vlanNic2 = createVlanNic(baseNic, "vlanNic2", 11);
+        Network network1 = createNetworkWithName("network1");
+        Network network2 = createNetworkWithName("network2");
+        NetworkAttachment networkAttachment1 = createNetworkAttachment(network1, baseNic);
+        NetworkAttachment networkAttachment2 = createNetworkAttachment(network2, baseNic);
+        HostNetworkQos qos = createHostNetworkQos(10, 10, 10);
+
+
+        if (networkAttachment1HasQos) {
+            networkAttachment1.setHostNetworkQos(qos);
+        }
+
+        if (networkAttachment2HasQos) {
+            networkAttachment2.setHostNetworkQos(qos);
+        }
+
+        Collection<NetworkAttachment> networkAttachments = Arrays.asList(networkAttachment1, networkAttachment2);
+
+
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setHost(host)
+            .setParams(new HostSetupNetworksParameters(host.getId()))
+            .addNetworks(network1, network2)
+            .setExistingInterfaces(Arrays.asList(baseNic, vlanNic1, vlanNic2))
+            .build();
+
+
+        assertThat(validator.validateQosNotPartiallyConfigured(networkAttachments), matcher);
+    }
+
+    private HostSetupNetworksValidator createValidatorForTestingValidateQosOverridden(Network network) {
+        NetworkAttachment networkAttachment = new NetworkAttachment();
+        networkAttachment.setNetworkId(network.getId());
+        networkAttachment.setHostNetworkQos(new HostNetworkQos());
+
+        List<NetworkAttachment> networkAttachments = Collections.singletonList(networkAttachment);
+
+        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
+        params.setNetworkAttachments(networkAttachments);
+
+        return new HostSetupNetworksValidatorBuilder()
+            .setHost(host)
+            .setParams(params)
+            .addNetworks(network)
+            .build();
+    }
+
+    private HostNetworkQos createHostNetworkQos(int outAverageRealtime,
+        int outAverageUpperlimit, int outAverageLinkshare) {
+        HostNetworkQos qos = new HostNetworkQos();
+        qos.setOutAverageRealtime(outAverageRealtime);
+        qos.setOutAverageUpperlimit(outAverageUpperlimit);
+        qos.setOutAverageLinkshare(outAverageLinkshare);
+        return qos;
     }
 
     private void attachmentAndNicLabelReferenceSameLabelCommonTest(boolean referenceSameNic, boolean valid) {
@@ -1305,8 +1510,8 @@ public class HostSetupNetworksValidatorTest {
 
         HostSetupNetworksValidator validator =
                 new HostSetupNetworksValidatorBuilder().setParams(params)
-                        .setNetworkBusinessEntityMap(new BusinessEntityMap<>(Arrays.asList(network)))
-                        .setExistingInterfaces(Arrays.asList(nic))
+                        .addNetworks(network)
+                        .setExistingInterfaces(Collections.singletonList(nic))
                         .setHost(host)
                         .build();
 
@@ -1331,6 +1536,16 @@ public class HostSetupNetworksValidatorTest {
         return slave;
     }
 
+    private HostSetupNetworksValidator createHostSetupNetworkValidator(List<NetworkAttachment> networkAttachments) {
+        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
+        params.setNetworkAttachments(networkAttachments);
+
+        return new HostSetupNetworksValidatorBuilder()
+            .setHost(host)
+            .setParams(params)
+            .build();
+    }
+
     private HostSetupNetworksValidator createHostSetupNetworksValidator(List<Network> networks) {
         return createHostSetupNetworksValidator(networks, new HostSetupNetworksParameters(host.getId()));
     }
@@ -1340,7 +1555,7 @@ public class HostSetupNetworksValidatorTest {
         return new HostSetupNetworksValidatorBuilder()
             .setHost(host)
             .setParams(params)
-            .setNetworkBusinessEntityMap(new BusinessEntityMap<>(networks))
+            .addNetworks(networks)
             .build();
     }
 
@@ -1357,14 +1572,14 @@ public class HostSetupNetworksValidatorTest {
     private HostSetupNetworksValidator createHostSetupNetworksValidator(HostSetupNetworksParameters params,
         List<VdsNetworkInterface> existingIfaces,
         List<NetworkAttachment> existingAttachments,
-        BusinessEntityMap<Network> networkBusinessEntityMap) {
+        Collection<Network> networks) {
 
         return new HostSetupNetworksValidatorBuilder()
             .setHost(host)
             .setParams(params)
             .setExistingInterfaces(existingIfaces)
             .setExistingAttachments(existingAttachments)
-            .setNetworkBusinessEntityMap(networkBusinessEntityMap)
+            .addNetworks(networks)
             .build();
     }
 
@@ -1373,7 +1588,7 @@ public class HostSetupNetworksValidatorTest {
         private HostSetupNetworksParameters params;
         private List<VdsNetworkInterface> existingInterfaces = Collections.emptyList();
         private List<NetworkAttachment> existingAttachments = Collections.emptyList();
-        private BusinessEntityMap<Network> networkBusinessEntityMap = new BusinessEntityMap<>(Collections.<Network> emptyList());
+        private List<Network> networks = new ArrayList<>();
 
         public HostSetupNetworksValidatorBuilder setHost(VDS host) {
             this.host = host;
@@ -1395,8 +1610,21 @@ public class HostSetupNetworksValidatorTest {
             return this;
         }
 
-        public HostSetupNetworksValidatorBuilder setNetworkBusinessEntityMap(BusinessEntityMap<Network> networkBusinessEntityMap) {
-            this.networkBusinessEntityMap = networkBusinessEntityMap;
+        public HostSetupNetworksValidatorBuilder addNetworks(Network ... networks) {
+            if (networks.length == 0) {
+                return this;
+            }
+
+            addNetworks(Arrays.asList(networks));
+            return this;
+        }
+
+        public HostSetupNetworksValidatorBuilder addNetworks(Collection<Network> networks) {
+            if (networks == null) {
+                return this;
+            }
+
+            this.networks.addAll(networks);
             return this;
         }
 
@@ -1405,13 +1633,14 @@ public class HostSetupNetworksValidatorTest {
                 params,
                 existingInterfaces,
                 existingAttachments,
-                networkBusinessEntityMap,
+                new BusinessEntityMap<>(networks),
                 managementNetworkUtil,
                 networkClusterDaoMock,
                     networkDaoMock,
                 vdsDaoMock,
                 new HostSetupNetworksValidatorHelper(),
-                vmDao);
+                vmDao,
+                effectiveHostNetworkQos);
         }
     }
 }

@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.utils;
 
+import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE;
+import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_REAL_TIME;
+import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT;
+
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -14,12 +18,12 @@ public class NetworkInSyncWithVdsNetworkInterface {
     private final VdsNetworkInterface iface;
     private final Network network;
     private final HostNetworkQos ifaceQos;
-    private final HostNetworkQos networkQos;
+    private final HostNetworkQos hostNetworkQos;
 
-    public NetworkInSyncWithVdsNetworkInterface(VdsNetworkInterface iface, Network network, HostNetworkQos networkQos) {
+    public NetworkInSyncWithVdsNetworkInterface(VdsNetworkInterface iface, Network network, HostNetworkQos hostNetworkQos) {
         this.iface = iface;
         this.network = network;
-        this.networkQos = networkQos;
+        this.hostNetworkQos = hostNetworkQos;
 
         ifaceQos = iface.getQos();
     }
@@ -27,18 +31,18 @@ public class NetworkInSyncWithVdsNetworkInterface {
     public NetworkInSyncWithVdsNetworkInterface(VdsNetworkInterface iface,
             Network network,
             HostNetworkQos ifaceQos,
-            HostNetworkQos networkQos) {
+            HostNetworkQos hostNetworkQos) {
         this.iface = iface;
         this.network = network;
         this.ifaceQos = ifaceQos;
-        this.networkQos = networkQos;
+        this.hostNetworkQos = hostNetworkQos;
     }
 
     public boolean isNetworkInSync() {
         return isNetworkMtuInSync()
                 && isNetworkVlanIdInSync()
                 && isNetworkBridgedFlagInSync()
-                && (qosParametersEqual() || iface.isQosOverridden());
+                && qosParametersEqual();
     }
 
     public ReportedConfigurations reportConfigurationsOnHost () {
@@ -51,12 +55,11 @@ public class NetworkInSyncWithVdsNetworkInterface {
         result.add(ReportedConfigurationType.BRIDGED, iface.isBridged(), network.isVmNetwork(), isNetworkBridgedFlagInSync());
         result.add(ReportedConfigurationType.VLAN, iface.getVlanId(), network.getVlanId(), isNetworkVlanIdInSync());
 
-        boolean reportHostQos = ifaceQos != null;
+        boolean reportHostQos = ifaceQos != null || hostNetworkQos != null;
         if (reportHostQos) {
-            //TODO MM: lets say, that Qos is overridden, so whole network is 'inSync' while following parameters are 'out of sync'. Can be little bit confusing.
-            result.add(ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE, ifaceQos.getOutAverageLinkshare(), networkQos.getOutAverageLinkshare(), isOutAverageLinkShareInSync());
-            result.add(ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT, ifaceQos.getOutAverageUpperlimit(), networkQos.getOutAverageUpperlimit(),  isOutAverageUpperLimitInSync());
-            result.add(ReportedConfigurationType.OUT_AVERAGE_REAL_TIME, ifaceQos.getOutAverageRealtime(), networkQos.getOutAverageRealtime(), isOutAverageRealTimeInSync());
+            result.add(OUT_AVERAGE_LINK_SHARE, getOutAverageLinkshare(ifaceQos), getOutAverageLinkshare(hostNetworkQos), isOutAverageLinkShareInSync());
+            result.add(OUT_AVERAGE_UPPER_LIMIT, getOutAverageUpperlimit(ifaceQos), getOutAverageUpperlimit(hostNetworkQos), isOutAverageUpperLimitInSync());
+            result.add(OUT_AVERAGE_REAL_TIME, getOutAverageRealtime(ifaceQos), getOutAverageRealtime(hostNetworkQos), isOutAverageRealTimeInSync());
         }
 
         return result;
@@ -78,27 +81,50 @@ public class NetworkInSyncWithVdsNetworkInterface {
     }
 
     public boolean qosParametersEqual() {
-        if (ifaceQos == networkQos) {
+        if (ifaceQos == hostNetworkQos) {
             return true;
         }
 
-        if (ifaceQos == null || networkQos == null) {
+        boolean ifaceQosUnset = qosUnset(ifaceQos);
+        boolean hostNetworkQosUnset = qosUnset(hostNetworkQos);
+
+        if (ifaceQosUnset && hostNetworkQosUnset) {
+            return true;
+        }
+
+        if (ifaceQosUnset != hostNetworkQosUnset) {
             return false;
         }
 
         return isOutAverageLinkShareInSync() && isOutAverageUpperLimitInSync() && isOutAverageRealTimeInSync();
     }
 
+    private boolean qosUnset(HostNetworkQos ifaceQos) {
+        return ifaceQos == null || ifaceQos.isEmpty();
+    }
+
     private boolean isOutAverageRealTimeInSync() {
-        return ObjectUtils.objectsEqual(ifaceQos.getOutAverageRealtime(), networkQos.getOutAverageRealtime());
+        return ObjectUtils.objectsEqual(getOutAverageRealtime(ifaceQos), getOutAverageRealtime(hostNetworkQos));
     }
 
     private boolean isOutAverageUpperLimitInSync() {
-        return ObjectUtils.objectsEqual(ifaceQos.getOutAverageUpperlimit(), networkQos.getOutAverageUpperlimit());
+        return ObjectUtils.objectsEqual(getOutAverageUpperlimit(ifaceQos), getOutAverageUpperlimit(hostNetworkQos));
     }
 
     private boolean isOutAverageLinkShareInSync() {
-        return ObjectUtils.objectsEqual(ifaceQos.getOutAverageLinkshare(), networkQos.getOutAverageLinkshare());
+        return ObjectUtils.objectsEqual(getOutAverageLinkshare(ifaceQos), getOutAverageLinkshare(hostNetworkQos));
+    }
+
+    private static Integer getOutAverageRealtime(HostNetworkQos qos) {
+        return qos == null ? null : qos.getOutAverageRealtime();
+    }
+
+    private static Integer getOutAverageUpperlimit(HostNetworkQos qos) {
+        return qos == null ? null : qos.getOutAverageUpperlimit();
+    }
+
+    private static Integer getOutAverageLinkshare(HostNetworkQos qos) {
+        return qos == null ? null : qos.getOutAverageLinkshare();
     }
 
 }

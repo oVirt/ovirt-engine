@@ -47,7 +47,6 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     private boolean bridged;
     private NetworkImplementationDetails networkImplementationDetails;
     private HostNetworkQos qos;
-    private boolean qosOverridden;
     private Map<String, String> customProperties;
 
     @ValidNetworkLabelFormat(message = "NETWORK_LABEL_FORMAT_INVALID")
@@ -387,20 +386,6 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         this.qos = qos;
     }
 
-    /**
-     * Gets whether QoS overriding is enabled.
-     */
-    public boolean isQosOverridden() {
-        return qosOverridden;
-    }
-
-    /**
-     * Sets whether QoS overriding is enabled.
-     */
-    public void setQosOverridden(boolean qosOverridden) {
-        this.qosOverridden = qosOverridden;
-    }
-
     public Set<String> getLabels() {
         return labels;
     }
@@ -429,7 +414,6 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
      */
     public void overrideEngineManagedAttributes(VdsNetworkInterface sourceNic) {
         setLabels(sourceNic.getLabels());
-        setQosOverridden(sourceNic.isQosOverridden());
         setCustomProperties(sourceNic.getCustomProperties());
     }
 
@@ -447,7 +431,6 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
                 .append("type", getType())
                 .append("networkImplementationDetails", getNetworkImplementationDetails())
                 .append("qos", getQos())
-                .append("qosOverridden", isQosOverridden())
                 .append("customProperties", getCustomProperties());
     }
 
@@ -475,7 +458,6 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         result = prime * result + ((baseInterface == null) ? 0 : baseInterface.hashCode());
         result = prime * result + ((vlanId == null) ? 0 : vlanId.hashCode());
         result = prime * result + ((qos == null) ? 0 : qos.hashCode());
-        result = prime * result + (qosOverridden ? 1231 : 1237);
         result = prime * result + ((labels == null) ? 0 : labels.hashCode());
         result = prime * result + ((customProperties == null) ? 0 : customProperties.hashCode());
         return result;
@@ -576,9 +558,6 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
             return false;
         }
         if (!ObjectUtils.objectsEqual(qos, other.qos)) {
-            return false;
-        }
-        if (qosOverridden != other.qosOverridden) {
             return false;
         }
         if (!ObjectUtils.objectsEqual(labels, other.labels)) {
