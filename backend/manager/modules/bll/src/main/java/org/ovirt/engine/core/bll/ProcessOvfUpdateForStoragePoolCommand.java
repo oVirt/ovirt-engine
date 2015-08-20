@@ -14,7 +14,7 @@ import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.LockProperties;
-import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
+import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
@@ -38,7 +38,7 @@ import org.ovirt.engine.core.compat.KeyValuePairCompat;
 
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
-public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParametersBase> extends StorageHandlingCommandBase<T> {
+public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateForStoragePoolParameters> extends StorageHandlingCommandBase<T> {
 
     private int itemsCountPerUpdate;
     private List<Guid> proccessedIdsInfo;
@@ -195,10 +195,12 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
      */
     protected void performOvfUpdate(StoragePool pool,
                                     Map<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndTemplateMetadata) {
-        if (!ovfOnAnyDomainSupported(pool)) {
+        if (ovfOnAnyDomainSupported(pool)) {
+            markDomainsWithOvfsForOvfUpdate(vmsAndTemplateMetadata.keySet());
+        } else if (getParameters().isUpdateStorage()) {
             getOvfUpdateProcessHelper().executeUpdateVmInSpmCommand(pool.getId(), vmsAndTemplateMetadata, Guid.Empty);
         } else {
-            markDomainsWithOvfsForOvfUpdate(vmsAndTemplateMetadata.keySet());
+            log.info("No storage update was performed.");
         }
 
         int i = 0;

@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
-import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
+import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -52,7 +52,8 @@ public class OvfDataUpdater {
     }
 
     protected VdcReturnValueBase performOvfUpdateForStoragePool(Guid storagePoolId) {
-        return Backend.getInstance().runInternalAction(VdcActionType.ProcessOvfUpdateForStoragePool, new StoragePoolParametersBase(storagePoolId));
+        ProcessOvfUpdateForStoragePoolParameters parameters = new ProcessOvfUpdateForStoragePoolParameters(storagePoolId);
+        return Backend.getInstance().runInternalAction(VdcActionType.ProcessOvfUpdateForStoragePool, parameters);
     }
 
     @OnTimerMethodAnnotation("ovfUpdate_timer")
