@@ -123,7 +123,7 @@ public abstract class ProfileBaseModel<P extends ProfileBase, Q extends QosBase,
         // Save changes.
         flush();
 
-        startProgress(null);
+        startProgress();
 
         Frontend.getInstance().runAction(vdcActionType,
                 getParameters(),

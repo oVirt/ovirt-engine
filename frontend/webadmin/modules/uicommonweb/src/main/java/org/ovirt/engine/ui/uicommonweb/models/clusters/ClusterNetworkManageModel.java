@@ -179,7 +179,7 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
             }
         }
 
-        startProgress(null);
+        startProgress();
         needsAnyChange = !(toAttach.isEmpty() && toDetach.isEmpty() && toUpdate.isEmpty());
 
         if (needsAnyChange) {

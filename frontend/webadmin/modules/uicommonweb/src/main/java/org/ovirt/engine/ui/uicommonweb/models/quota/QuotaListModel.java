@@ -172,7 +172,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
         Quota newQuota = new Quota();
         qModel.setEntity(newQuota);
         setWindow(qModel);
-        qModel.startProgress(null);
+        qModel.startProgress();
 
         if (populateDataCenter) {
             AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
@@ -439,7 +439,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
                 }
 
                 setWindow(qModel);
-                qModel.startProgress(null);
+                qModel.startProgress();
 
                 qModel.getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 
@@ -606,7 +606,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
             prms.add(crudParameters);
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveQuota, prms,
                 new IFrontendMultipleActionAsyncCallback() {

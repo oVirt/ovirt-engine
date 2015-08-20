@@ -378,7 +378,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 } else {
                     Guid qosId = logicalNetwork.getNetwork().getQosId();
                     if (qosId != null) {
-                        networkDialogModel.startProgress(null);
+                        networkDialogModel.startProgress();
                         Frontend.getInstance().runQuery(VdcQueryType.GetQosById,
                                 new IdQueryParameters(qosId),
                                 new AsyncQuery(new INewAsyncCallback() {
@@ -670,7 +670,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     private void initAllModels(boolean fetchFromBackend) {
         if (fetchFromBackend) {
             // run query for networks, this chains the query for nics, and also stops progress when done
-            startProgress(null);
+            startProgress();
             queryLabels();
         } else {
             initLabelModels();

@@ -277,7 +277,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         model.setTitle(ConstantsManager.getInstance().getConstants().assignQuotaForDisk());
         model.setHelpTag(HelpTag.change_quota_disks);
         model.setHashName("change_quota_disks"); //$NON-NLS-1$
-        model.startProgress(null);
+        model.startProgress();
         model.init(disks);
 
         model.getCommands().add(UICommand.createDefaultOkUiCommand("onChangeQuota", this)); //$NON-NLS-1$
@@ -299,7 +299,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
             paramerterList.add(parameters);
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -363,7 +363,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
     private void unplug() {
         final ConfirmationModel model = (ConfirmationModel) getWindow();
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.HotUnPlugDiskFromVm, createHotPlugDiskToVmParameters(false),
                 new IFrontendMultipleActionAsyncCallback() {
@@ -436,7 +436,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         model.setIsSourceStorageDomainNameAvailable(true);
         model.setEntity(this);
         model.init(disks);
-        model.startProgress(null);
+        model.startProgress();
     }
 
     private void scanAlignment() {

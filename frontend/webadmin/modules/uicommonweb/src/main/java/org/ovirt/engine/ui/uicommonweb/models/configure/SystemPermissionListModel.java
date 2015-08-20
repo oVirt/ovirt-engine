@@ -161,7 +161,7 @@ public class SystemPermissionListModel extends SearchableListModel {
             }
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.AddSystemPermission, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -216,7 +216,7 @@ public class SystemPermissionListModel extends SearchableListModel {
                 list.add(tempVar);
             }
 
-            model.startProgress(null);
+            model.startProgress();
 
             Frontend.getInstance().runMultipleAction(VdcActionType.RemoveSystemPermission, list,
                     new IFrontendMultipleActionAsyncCallback() {

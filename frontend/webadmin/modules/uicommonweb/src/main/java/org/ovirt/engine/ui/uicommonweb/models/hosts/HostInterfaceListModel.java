@@ -1045,7 +1045,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
             parameters.setGateway(model.getGateway().getEntity());
         }
 
-        model.startProgress(null);
+        model.startProgress();
         setcurrentModel(model);
 
         Frontend.getInstance().runAction(actionType, parameters,
@@ -1354,7 +1354,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                 }
             }
 
-            model.startProgress(null);
+            model.startProgress();
             setcurrentModel(model);
 
             Frontend.getInstance().runAction(VdcActionType.UpdateNetworkToVdsInterface, parameters,
@@ -1419,7 +1419,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                 parameters.setGateway(model.getGateway().getEntity());
             }
 
-            model.startProgress(null);
+            model.startProgress();
             setcurrentModel(model);
 
             Frontend.getInstance().runAction(VdcActionType.AddBond, parameters,
@@ -1494,7 +1494,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                 Network tempVar = Linq.findNetworkByName(networks, nic.getNetworkName());
                 Network net = (tempVar != null) ? tempVar : defaultNetwork;
 
-                hostInterfaceListModel.startProgress(null);
+                hostInterfaceListModel.startProgress();
 
                 Frontend.getInstance().runAction(VdcActionType.DetachNetworkFromVdsInterface,
                         new AttachNetworkToVdsParameters(getEntity().getId(), net, nic),
@@ -1590,7 +1590,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                         Network tempVar3 = Linq.findNetworkByName(networks, nic.getNetworkName());
                         Network net = (tempVar3 != null) ? tempVar3 : defaultNetwork;
 
-                        hostInterfaceModel.startProgress(null);
+                        hostInterfaceModel.startProgress();
                         setcurrentModel(hostInterfaceModel);
 
                         Frontend.getInstance().runAction(VdcActionType.DetachNetworkFromVdsInterface,
@@ -1701,7 +1701,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                 parameters.setSubnet(model.getSubnet().getEntity());
             }
 
-            model.startProgress(null);
+            model.startProgress();
             setcurrentModel(model);
 
             Frontend.getInstance().runAction(actionType, parameters,
@@ -1759,7 +1759,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
             return;
         }
 
-        model.startProgress(null);
+        model.startProgress();
         setcurrentModel(model);
         new SaveNetworkConfigAction(this, model, getEntity()).execute();
     }
@@ -1786,7 +1786,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                 Network tempVar = Linq.findNetworkByName(networks, nic.getNetworkName());
                 Network net = (tempVar != null) ? tempVar : defaultNetwork;
 
-                hostInterfaceListModel.startProgress(null);
+                hostInterfaceListModel.startProgress();
                 setcurrentModel(hostInterfaceListModel);
 
                 Frontend.getInstance().runAction(VdcActionType.DetachNetworkFromVdsInterface,

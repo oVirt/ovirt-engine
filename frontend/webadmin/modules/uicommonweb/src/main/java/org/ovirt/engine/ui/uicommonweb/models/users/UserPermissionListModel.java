@@ -123,7 +123,7 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
                 list.add(tempVar);
             }
 
-            model.startProgress(null);
+            model.startProgress();
 
             Frontend.getInstance().runMultipleAction(VdcActionType.RemovePermission, list,
                     new IFrontendMultipleActionAsyncCallback() {

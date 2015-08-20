@@ -137,7 +137,7 @@ public class PoolVmListModel extends VmListModel<VmPool> {
             list.add(new RemoveVmFromPoolParameters(vm.getId(), true));
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVmFromPool, list,
                 new IFrontendMultipleActionAsyncCallback() {

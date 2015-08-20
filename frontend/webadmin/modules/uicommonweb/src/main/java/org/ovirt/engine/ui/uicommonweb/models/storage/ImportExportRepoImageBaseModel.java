@@ -162,7 +162,7 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
             }
         };
 
-        startProgress(null);
+        startProgress();
         AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(this, callback));
     }
 
@@ -191,7 +191,7 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
             }
         };
 
-        startProgress(null);
+        startProgress();
 
         if (storagePoolId != null) {
             AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this, callback), storagePoolId);
@@ -213,7 +213,7 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
             }
         };
 
-        startProgress(null);
+        startProgress();
 
         if (storagePoolId != null) {
             AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(this, callback), storagePoolId);
@@ -249,7 +249,7 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
             }
         };
 
-        startProgress(null);
+        startProgress();
         Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForStorage,
                 new IdQueryParameters(storageDomain.getId()),
                 new AsyncQuery(this, callback));

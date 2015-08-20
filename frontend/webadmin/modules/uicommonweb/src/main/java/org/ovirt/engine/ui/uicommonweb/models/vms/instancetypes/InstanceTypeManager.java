@@ -148,7 +148,7 @@ public abstract class InstanceTypeManager {
      * be properly populated.
      */
     public void updateFields() {
-        getModel().startProgress(null);
+        getModel().startProgress();
         doUpdateManagedFieldsFrom(getSource());
     }
 
@@ -169,7 +169,7 @@ public abstract class InstanceTypeManager {
      * On activation it stops the progress
      */
     public void deactivateAndStartProgress() {
-        model.startProgress(null);
+        model.startProgress();
         deactivate(new ActivatedListener() {
             @Override
             public void activated() {
@@ -245,7 +245,7 @@ public abstract class InstanceTypeManager {
                 return;
             }
 
-            model.startProgress(null);
+            model.startProgress();
             doUpdateManagedFieldsFrom(template);
         }
     }

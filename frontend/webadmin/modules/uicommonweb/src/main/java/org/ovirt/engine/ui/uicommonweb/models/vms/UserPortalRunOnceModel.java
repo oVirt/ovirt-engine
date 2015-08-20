@@ -25,7 +25,7 @@ public class UserPortalRunOnceModel extends RunOnceModel {
 
    @Override
    protected void onRunOnce() {
-       startProgress(null);
+       startProgress();
 
        Frontend.getInstance().runAction(VdcActionType.RunVmOnce, createRunVmOnceParams(),
                new IFrontendActionAsyncCallback() {

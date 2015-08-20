@@ -327,7 +327,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
         configModel.setTitle(constants.geoReplicationOptions());
         configModel.setHashName("volume_geo_rep_configuration_display");//$NON-NLS-1$
         configModel.setHelpTag(HelpTag.volume_geo_rep_configuration_display);
-        configModel.startProgress(null);
+        configModel.startProgress();
 
         fetchConfigForSession(selectedGeoRepSession);
         setWindow(configModel);
@@ -373,7 +373,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
 
         LinkedHashMap<String, String> oldConfigs = geoRepConfigModel.getConfigs();
 
-        geoRepConfigModel.startProgress(null);
+        geoRepConfigModel.startProgress();
 
         for (EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>> newConfigEntity : geoRepConfigModel.getConfigsModel()
                 .getItems()) {
@@ -432,7 +432,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
         if (!createModel.validate()) {
             return;
         }
-        createModel.startProgress(null);
+        createModel.startProgress();
         final Guid masterVolumeId = getEntity().getId();
         final String remoteVolumeName = createModel.getSlaveVolumes().getSelectedItem().getName();
         final String remoteHostName = createModel.getSlaveHosts().getSelectedItem().getFirst();
@@ -455,7 +455,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
                             if (createModel.getStartSession().getEntity()) {
                                 initializeGeoRepActionConfirmation(constants.geoReplicationStartTitle(), HelpTag.volume_geo_rep_start_confirmation, "volume_geo_rep_start_confirmation", constants.geoRepForceHelp(), messages.geoRepForceTitle(constants.startGeoRep()), "onStartGeoRepSession", getEntity().getName(), remoteVolumeName, remoteHostName, null);//$NON-NLS-1$//$NON-NLS-2$
                                 final GlusterVolumeGeoRepActionConfirmationModel cModel = (GlusterVolumeGeoRepActionConfirmationModel) getWindow();
-                                cModel.startProgress(null);
+                                cModel.startProgress();
                                 Frontend.getInstance().runAction(VdcActionType.StartGlusterVolumeGeoRep,
                                         new GlusterVolumeGeoRepSessionParameters(masterVolumeId,
                                                 remoteVolumeName,
@@ -602,7 +602,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
 
     private void onGeoRepSessionAction(VdcActionType actionType) {
         final GlusterVolumeGeoRepActionConfirmationModel cModel = (GlusterVolumeGeoRepActionConfirmationModel) getWindow();
-        cModel.startProgress(null);
+        cModel.startProgress();
         boolean force = cModel.getForce().getEntity();
         GlusterGeoRepSession selectedSession = getSelectedItem();
         GlusterVolumeGeoRepSessionParameters sessionParamters = new GlusterVolumeGeoRepSessionParameters(selectedSession.getMasterVolumeId(), selectedSession.getId());

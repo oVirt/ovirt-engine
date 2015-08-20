@@ -70,7 +70,7 @@ public abstract class UiAction {
         }
 
         if (model.getProgress() == null) {
-            model.startProgress(null);
+            model.startProgress();
             actionFlowState.setStartedProgress(true);
         }
 

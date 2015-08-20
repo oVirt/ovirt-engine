@@ -111,7 +111,7 @@ public class GlusterVolumeSnapshotConfigModel extends Model {
     }
 
     private void populateConfigOptions() {
-        startProgress(null);
+        startProgress();
 
         AsyncDataProvider.getInstance().getGlusterSnapshotConfig(new AsyncQuery(this, new INewAsyncCallback() {
 

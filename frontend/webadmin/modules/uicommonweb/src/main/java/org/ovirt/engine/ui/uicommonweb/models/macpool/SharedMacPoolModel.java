@@ -75,7 +75,7 @@ public class SharedMacPoolModel extends MacPoolModel {
             return;
         }
 
-        startProgress(null);
+        startProgress();
         MacPool macPool = flush();
         Frontend.getInstance().runAction(actionType, new MacPoolParameters(macPool), new IFrontendActionAsyncCallback() {
 

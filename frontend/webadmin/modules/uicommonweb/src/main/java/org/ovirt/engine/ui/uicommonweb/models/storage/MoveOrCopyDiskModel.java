@@ -342,7 +342,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     }
 
     protected void doExecute() {
-        startProgress(null);
+        startProgress();
     }
 
     protected ArrayList<VdcActionParametersBase> getParameters() {

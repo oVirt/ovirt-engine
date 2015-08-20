@@ -170,7 +170,7 @@ public class AttachDiskModel extends NewDiskModel {
             callbacks.add(i == disksToAttach.size() - 1 ? onFinishCallback : null);
         }
 
-        startProgress(null);
+        startProgress();
 
         Frontend.getInstance().runMultipleActions(actionTypes, paramerterList, callbacks, null, this);
     }

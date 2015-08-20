@@ -267,7 +267,7 @@ public class GlusterHookResolveConflictsModel extends Model {
         getContentModel().getMd5Checksum().setEntity(selectedServer.getChecksum());
 
         if (selectedServer.getContentType() == GlusterHookContentType.TEXT) {
-            startProgress(null);
+            startProgress();
             AsyncDataProvider.getInstance().getGlusterHookContent(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object model, Object returnValue) {

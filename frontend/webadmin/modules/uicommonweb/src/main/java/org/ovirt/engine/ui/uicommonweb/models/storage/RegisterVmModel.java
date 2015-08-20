@@ -38,7 +38,7 @@ public class RegisterVmModel extends RegisterEntityModel<VM> {
             parameters.add(params);
         }
 
-        startProgress(null);
+        startProgress();
         Frontend.getInstance().runMultipleAction(VdcActionType.ImportVmFromConfiguration, parameters, new IFrontendMultipleActionAsyncCallback() {
             @Override
             public void executed(FrontendMultipleActionAsyncResult result) {

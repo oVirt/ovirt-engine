@@ -1060,7 +1060,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                     return;
                 }
 
-                model.startProgress(null);
+                model.startProgress();
 
                 Frontend.getInstance().runMultipleAction(VdcActionType.ExportVm, parameters,
                         new IFrontendMultipleActionAsyncCallback() {
@@ -1083,7 +1083,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 parameter.setTemplateMustExists(false);
             }
 
-            model.startProgress(null);
+            model.startProgress();
 
             Frontend.getInstance().runMultipleAction(VdcActionType.ExportVm, parameters,
                     new IFrontendMultipleActionAsyncCallback() {
@@ -1111,7 +1111,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             return;
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         getTemplatesNotPresentOnExportDomain();
     }
@@ -1135,7 +1135,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             list.add(parameters);
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ExportVm, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -1275,7 +1275,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                         model.getName().getEntity(),
                         model.getDescription().getEntity());
         BuilderExecutor.build(model, addVmTemplateParameters, new UnitToAddVmTemplateParametersBuilder());
-        model.startProgress(null);
+        model.startProgress();
         Frontend.getInstance().runAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
@@ -1354,7 +1354,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             return;
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Guid targetClusterId = model.getClusters().getSelectedItem() != null ? model.getClusters().getSelectedItem().getId() : null;
 
@@ -1500,7 +1500,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             list.add(parametersFactory.createActionParameters(vm));
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(actionType, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -1611,7 +1611,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             list.add(new RemoveVmParameters(entry.getKey(), false, (Boolean) entry.getValue().getEntity()));
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVm, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -1706,7 +1706,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 (ObjectUtils.objectsEqual(model.getIsoImage().getSelectedItem(), ConsoleModel.getEjectLabel())) ? "" //$NON-NLS-1$
                         : model.getIsoImage().getSelectedItem();
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runAction(VdcActionType.ChangeDisk, new ChangeDiskCommandParameters(vm.getId(), isoName),
                 new IFrontendActionAsyncCallback() {
@@ -1833,7 +1833,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             ChangeVMClusterParameters parameters =
                     new ChangeVMClusterParameters(newClusterID, getcurrentVm().getId());
 
-            model.startProgress(null);
+            model.startProgress();
 
             Frontend.getInstance().runAction(VdcActionType.ChangeVMCluster, parameters,
                     new IFrontendActionAsyncCallback() {
@@ -1857,7 +1857,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                     this);
         }
         else {
-            model.startProgress(null);
+            model.startProgress();
             VmManagementParametersBase updateVmParams = getUpdateVmParameters(applyCpuChangesLater);
             Frontend.getInstance().runAction(VdcActionType.UpdateVm, updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
         }

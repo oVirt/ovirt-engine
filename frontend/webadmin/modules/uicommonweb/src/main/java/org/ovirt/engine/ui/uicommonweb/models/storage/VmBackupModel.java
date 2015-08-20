@@ -103,7 +103,7 @@ public class VmBackupModel extends ManageBackupModel<VM> {
             return;
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.model = this;
@@ -161,7 +161,7 @@ public class VmBackupModel extends ManageBackupModel<VM> {
         ImportVmFromExportDomainModel model = importModelProvider.get();
         model.setEntity(getEntity().getId());
         setWindow(model);
-        model.startProgress(null);
+        model.startProgress();
         model.getCommands().add(UICommand.createDefaultOkUiCommand("OnRestore", this)); //$NON-NLS-1$
         model.getCommands().add(UICommand.createCancelUiCommand(CANCEL_COMMAND, this)); //$NON-NLS-1$);
         model.init(getSelectedItems(), getEntity().getId());

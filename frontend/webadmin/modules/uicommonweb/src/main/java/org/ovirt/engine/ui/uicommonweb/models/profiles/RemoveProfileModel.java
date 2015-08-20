@@ -48,7 +48,7 @@ public abstract class RemoveProfileModel<P extends ProfileBase> extends Confirma
 
         }
 
-        startProgress(null);
+        startProgress();
 
         Frontend.getInstance().runMultipleAction(getRemoveActionType(), vdcActionParametersBaseList,
                 new IFrontendMultipleActionAsyncCallback() {

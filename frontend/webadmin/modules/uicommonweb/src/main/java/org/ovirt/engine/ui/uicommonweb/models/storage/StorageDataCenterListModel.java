@@ -369,7 +369,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         }
 
         setSelectedDataCentersForAttach(items);
-        model.startProgress(null);
+        model.startProgress();
 
         if (getEntity().getStorageDomainType() == StorageDomainType.Data) {
             StoragePool dataCenter = items.get(0);
@@ -591,7 +591,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         }
 
         final ConfirmationModel confirmationModel = (ConfirmationModel) getWindow();
-        confirmationModel.startProgress(null);
+        confirmationModel.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.DeactivateStorageDomainWithOvfUpdate, list,
                 new IFrontendMultipleActionAsyncCallback() {

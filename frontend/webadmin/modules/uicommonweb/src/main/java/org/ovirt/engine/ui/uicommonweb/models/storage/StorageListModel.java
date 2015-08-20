@@ -625,7 +625,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
         StorageDomain storageDomain = getSelectedItem();
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ForceRemoveStorageDomain,
                 new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[]{new StorageDomainParametersBase(storageDomain.getId())})),
@@ -672,7 +672,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             return;
         }
 
-        getWindow().startProgress(null);
+        getWindow().startProgress();
 
         Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveLocal" }))).run(); //$NON-NLS-1$
     }
@@ -682,7 +682,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             return;
         }
 
-        getWindow().startProgress(null);
+        getWindow().startProgress();
 
         Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveNfs" }))).run(); //$NON-NLS-1$
     }
@@ -693,7 +693,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             return;
         }
 
-        getWindow().startProgress(null);
+        getWindow().startProgress();
 
         Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] {"SavePosix"}))).run(); //$NON-NLS-1$
     }
@@ -719,7 +719,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         }
 
         cancelConfirm();
-        getWindow().startProgress(null);
+        getWindow().startProgress();
 
         Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveSan" }))).run(); //$NON-NLS-1$
     }

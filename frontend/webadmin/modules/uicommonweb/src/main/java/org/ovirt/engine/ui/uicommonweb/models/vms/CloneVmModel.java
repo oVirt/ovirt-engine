@@ -69,7 +69,7 @@ public class CloneVmModel extends Model {
             return;
         }
 
-        startProgress(null);
+        startProgress();
 
         AsyncDataProvider.getInstance().isVmNameUnique(new AsyncQuery(this, new INewAsyncCallback() {
 

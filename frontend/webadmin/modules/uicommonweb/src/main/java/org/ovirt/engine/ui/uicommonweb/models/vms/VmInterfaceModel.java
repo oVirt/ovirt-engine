@@ -378,7 +378,7 @@ public abstract class VmInterfaceModel extends Model {
 
         nic.setPlugged(getPlugged().getEntity());
 
-        startProgress(null);
+        startProgress();
 
         Frontend.getInstance().runAction(getVdcActionType(),
                 createVdcActionParameters(nic),

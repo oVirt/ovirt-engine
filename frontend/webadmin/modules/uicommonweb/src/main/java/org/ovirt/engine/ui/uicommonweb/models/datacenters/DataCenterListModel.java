@@ -439,7 +439,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         windowModel.getLatch().setIsAvailable(true);
         windowModel.getLatch().setIsChangeable(true);
 
-        windowModel.startProgress(null);
+        windowModel.startProgress();
 
         AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -517,7 +517,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
                         parameters.add(new ReconstructMasterParameters(getSelectedItem().getId(),
                                 a.getId()));
                     }
-                    windowModel.startProgress(null);
+                    windowModel.startProgress();
                     Frontend.getInstance().runMultipleAction(VdcActionType.RecoveryStoragePool, parameters,
                             new IFrontendMultipleActionAsyncCallback() {
                                 @Override
@@ -550,7 +550,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
             parameters.add(new StoragePoolParametersBase(a.getId()));
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveStoragePool, parameters,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -614,7 +614,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
 
             final StoragePool sp = getSelectedItem();
 
-            startProgress(null);
+            startProgress();
 
             AsyncQuery _asyncQuery = new AsyncQuery();
             _asyncQuery.setModel(this);
@@ -755,7 +755,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
                 .getSelectedItem());
         dataCenter.setMacPoolId(model.getMacPoolListModel().getSelectedItem().getId());
 
-        model.startProgress(null);
+        model.startProgress();
 
 
         if (model.getIsNew()) {

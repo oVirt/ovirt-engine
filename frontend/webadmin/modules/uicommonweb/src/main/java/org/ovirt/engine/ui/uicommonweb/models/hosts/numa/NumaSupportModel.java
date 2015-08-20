@@ -82,7 +82,7 @@ public class NumaSupportModel extends Model {
     }
 
     protected void initHostNUMATopology() {
-        startProgress(null);
+        startProgress();
         AsyncDataProvider.getInstance().getHostNumaTopologyByHostId(new AsyncQuery(new INewAsyncCallback() {
 
             @SuppressWarnings("unchecked")

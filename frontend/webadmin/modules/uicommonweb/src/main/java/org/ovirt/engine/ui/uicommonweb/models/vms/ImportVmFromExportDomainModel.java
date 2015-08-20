@@ -488,7 +488,7 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
     }
 
     public void importVms(IFrontendMultipleActionAsyncCallback callback) {
-        startProgress(null);
+        startProgress();
         Frontend.getInstance().runMultipleAction(
                 VdcActionType.ImportVm,
                 buildImportVmParameters(),

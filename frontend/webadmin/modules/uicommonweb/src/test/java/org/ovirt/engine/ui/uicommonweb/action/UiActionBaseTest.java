@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -52,7 +51,7 @@ public abstract class UiActionBaseTest {
     protected void assertAllDone(List<UiAction> actions, boolean shouldCallProgressActions) {
         assertTrue(getFlowState(actions).isAllDone());
         int numOfProgressInteractions = shouldCallProgressActions ? 1 : 0;
-        verify(model, times(numOfProgressInteractions)).startProgress(any(String.class));
+        verify(model, times(numOfProgressInteractions)).startProgress();
         verify(model, times(numOfProgressInteractions)).stopProgress();
 
         UiAction previousAction = null;
@@ -70,7 +69,7 @@ public abstract class UiActionBaseTest {
 
     protected void assertNotAllDone(ActionFlowState flowState) {
         assertFalse(flowState.isAllDone());
-        verify(model).startProgress(any(String.class));
+        verify(model).startProgress();
         verify(model, never()).stopProgress();
     }
 

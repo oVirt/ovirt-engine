@@ -39,7 +39,7 @@ public class ModelWithPinnedHost extends Model {
     }
 
     protected void initHosts() {
-        startProgress(null);
+        startProgress();
         AsyncDataProvider.getInstance().getHostListByClusterId(new AsyncQuery(new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {

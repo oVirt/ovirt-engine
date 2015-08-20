@@ -412,7 +412,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
             parametersList.add(parameters);
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         IFrontendActionAsyncCallback nopCallback = new IFrontendActionAsyncCallback() {
             @Override

@@ -220,7 +220,7 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
             return;
         }
 
-        lvModel.startProgress(null);
+        lvModel.startProgress();
 
         List<StorageDevice> selectedDevices = new ArrayList<StorageDevice>();
         for (StorageDevice device : lvModel.getStorageDevices().getSelectedItems()) {

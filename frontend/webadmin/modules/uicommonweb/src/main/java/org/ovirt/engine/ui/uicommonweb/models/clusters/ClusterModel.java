@@ -822,7 +822,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
     }
 
     public void initTunedProfiles() {
-        this.startProgress(null);
+        this.startProgress();
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterTunedProfiles, new VdcQueryParametersBase(), new AsyncQuery(new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
@@ -1663,7 +1663,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                             updateAddtionClusterFeatureList(features, featuresEnabled);
                         }
                     };
-                    ClusterModel.this.startProgress(null);
+                    ClusterModel.this.startProgress();
                     AsyncDataProvider.getInstance().getClusterFeaturesByClusterId(asyncQuery, getEntity().getId());
                 } else {
                     updateAddtionClusterFeatureList(features,
@@ -1671,7 +1671,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                 }
             }
         };
-        this.startProgress(null);
+        this.startProgress();
         AsyncDataProvider.getInstance().getClusterFeaturesByVersionAndCategory(asyncQuery, version, category);
     }
 

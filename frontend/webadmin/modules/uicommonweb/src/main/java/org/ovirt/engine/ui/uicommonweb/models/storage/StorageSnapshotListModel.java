@@ -164,7 +164,7 @@ public class StorageSnapshotListModel extends SearchableListModel<StorageDomain,
             paramerterList.add(parameters);
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveDiskSnapshots, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {

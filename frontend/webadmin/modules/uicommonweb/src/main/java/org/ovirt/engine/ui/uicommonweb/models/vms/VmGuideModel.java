@@ -26,7 +26,7 @@ public class VmGuideModel extends GuideModel {
         super.onEntityChanged();
 
         if (getEntity() != null) {
-            startProgress(null);
+            startProgress();
             AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(this,  new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -40,7 +40,7 @@ public class VmGuideModel extends GuideModel {
     public void updateOptions(boolean containsDisks) {
         getCompulsoryActions().clear();
         getOptionalActions().clear();
-        startProgress(null);
+        startProgress();
 
         // Add disk action.
         UICommand newDiskAction = new UICommand("NewDisk", this); //$NON-NLS-1$

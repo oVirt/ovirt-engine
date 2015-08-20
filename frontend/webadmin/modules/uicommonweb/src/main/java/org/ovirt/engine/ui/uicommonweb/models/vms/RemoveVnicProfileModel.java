@@ -59,7 +59,7 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
 
         }
 
-        startProgress(null);
+        startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVnicProfile, list,
                 new IFrontendMultipleActionAsyncCallback() {

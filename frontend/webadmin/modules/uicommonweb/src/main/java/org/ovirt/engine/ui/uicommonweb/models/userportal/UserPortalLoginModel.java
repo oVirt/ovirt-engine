@@ -113,7 +113,7 @@ public class UserPortalLoginModel extends LoginModel {
             return;
         }
 
-        startProgress(null);
+        startProgress();
 
         getUserName().setIsChangeable(false);
         getPassword().setIsChangeable(false);

@@ -111,7 +111,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
         volumeParameterModel.setHelpTag(HelpTag.add_option);
         volumeParameterModel.setHashName("add_option"); //$NON-NLS-1$
         setWindow(volumeParameterModel);
-        volumeParameterModel.startProgress(null);
+        volumeParameterModel.startProgress();
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -165,7 +165,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
         option.setKey(model.getSelectedKey().getEntity());
         option.setValue(model.getValue().getEntity());
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runAction(VdcActionType.SetGlusterVolumeOption,
                 new GlusterVolumeOptionParameters(option),
@@ -212,7 +212,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
 
         volumeParameterModel.getKeyList().setIsChangeable(false);
         volumeParameterModel.getSelectedKey().setIsChangeable(false);
-        volumeParameterModel.startProgress(null);
+        volumeParameterModel.startProgress();
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -303,7 +303,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
         ResetGlusterVolumeOptionsParameters parameters =
                 new ResetGlusterVolumeOptionsParameters(selectedOption.getVolumeId(), selectedOption, false);
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runAction(VdcActionType.ResetGlusterVolumeOptions,
                 parameters,
@@ -351,7 +351,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
         ResetGlusterVolumeOptionsParameters parameters =
                 new ResetGlusterVolumeOptionsParameters(volume.getId(), null, false);
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runAction(VdcActionType.ResetGlusterVolumeOptions,
                 parameters,

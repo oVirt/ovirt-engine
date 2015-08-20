@@ -74,7 +74,7 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        startProgress(null);
+        startProgress();
 
         ArrayList<VdcActionParametersBase> actionParameters = new ArrayList<VdcActionParametersBase>();
 

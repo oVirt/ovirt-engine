@@ -83,7 +83,7 @@ public class EditVnicProfileModel extends VnicProfileModel {
 
         IdQueryParameters params =
                 new IdQueryParameters(getProfile().getId());
-        startProgress(null);
+        startProgress();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmsByVnicProfileId,
                 params,
                 asyncQuery);

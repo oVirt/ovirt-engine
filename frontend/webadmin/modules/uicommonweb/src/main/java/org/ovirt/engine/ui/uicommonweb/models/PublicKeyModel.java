@@ -41,7 +41,7 @@ public class PublicKeyModel extends Model {
         getCommands().add(UICommand.createDefaultOkUiCommand("OnSetConsoleKey", target)); //$NON-NLS-1$
         getCommands().add(UICommand.createCancelUiCommand("Cancel", target)); //$NON-NLS-1$
 
-        startProgress(null);
+        startProgress();
 
         AsyncDataProvider.getInstance().getUserProfile(new AsyncQuery(target,
                 new INewAsyncCallback() {
@@ -64,7 +64,7 @@ public class PublicKeyModel extends Model {
             return;
         }
 
-        startProgress(null);
+        startProgress();
 
         AsyncDataProvider.getInstance().getUserProfile(new AsyncQuery(target,
                 new INewAsyncCallback() {

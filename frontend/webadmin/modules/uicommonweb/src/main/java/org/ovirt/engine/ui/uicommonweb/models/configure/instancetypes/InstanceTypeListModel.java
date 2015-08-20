@@ -132,7 +132,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
 
         final ConfirmationModel window = new ConfirmationModel();
         setConfirmWindow(window);
-        window.startProgress(null);
+        window.startProgress();
 
         window.setHelpTag(HelpTag.remove_instance_type);
         window.setHashName("remove_instance_type"); //$NON-NLS-1$
@@ -238,7 +238,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
         setRngDeviceToParams(model, addInstanceTypeParameters);
         BuilderExecutor.build(model, addInstanceTypeParameters, new UnitToGraphicsDeviceParamsBuilder());
 
-        getWindow().startProgress(null);
+        getWindow().startProgress();
 
         Frontend.getInstance().runAction(
                 VdcActionType.AddVmTemplate,
@@ -271,7 +271,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
         setRngDeviceToParams(model, updateInstanceTypeParameters);
         BuilderExecutor.build(model, updateInstanceTypeParameters, new UnitToGraphicsDeviceParamsBuilder());
 
-        getWindow().startProgress(null);
+        getWindow().startProgress();
 
         Frontend.getInstance().runAction(
                 VdcActionType.UpdateVmTemplate,
@@ -290,7 +290,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
             return;
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Guid instanceTypeId = getSelectedItem().getId();
 

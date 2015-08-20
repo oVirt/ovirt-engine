@@ -182,7 +182,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     public void init() {
-        startProgress(null);
+        startProgress();
         setTitle(constants.importVirtualMachinesTitle());
         setHelpTag(HelpTag.import_virtual_machine);
         setHashName("import_virtual_machine"); //$NON-NLS-1$
@@ -402,7 +402,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     public void loadVmsFromExportDomain() {
         clearProblem();
-        startProgress(null);
+        startProgress();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExportDomain,
                 new GetAllFromExportDomainQueryParameters(getDataCenters().getSelectedItem().getId(), exportDomain.getId()),
                 new AsyncQuery(this, new INewAsyncCallback() {
@@ -419,7 +419,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             return;
         }
 
-        startProgress(null);
+        startProgress();
         AsyncDataProvider.getInstance().getVmFromOva(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
@@ -450,7 +450,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             return;
         }
 
-        startProgress(null);
+        startProgress();
         AsyncDataProvider.getInstance().getVmsFromExternalServer(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {

@@ -216,7 +216,7 @@ public class SnapshotModel extends EntityModel<Snapshot> {
     public void initialize() {
         super.initialize();
 
-        startProgress(null);
+        startProgress();
         initMessages();
     }
 
@@ -374,7 +374,7 @@ public class SnapshotModel extends EntityModel<Snapshot> {
         if (getProgress() != null || !validate()) {
             return;
         }
-        startProgress(null);
+        startProgress();
 
         VM vm = getVm();
         ArrayList<VdcActionParametersBase> params = new ArrayList<VdcActionParametersBase>();

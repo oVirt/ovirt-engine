@@ -387,7 +387,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
             return;
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runAction(VdcActionType.RemoveTag, new TagsActionParametersBase(getSelectedItem().getId()),
                 new IFrontendActionAsyncCallback() {
@@ -466,7 +466,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
         tempVar.setdescription(model.getDescription().getEntity());
         Tags tag = tempVar;
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runAction(model.getIsNew() ? VdcActionType.AddTag : VdcActionType.UpdateTag,
                 new TagsOperationParameters(tag),

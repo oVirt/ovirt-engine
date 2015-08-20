@@ -159,7 +159,7 @@ public abstract class AffinityGroupListModel<E extends BusinessEntity<Guid>> ext
             parameters.add(new AffinityGroupCRUDParameters(affinityGroup.getId(), affinityGroup));
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveAffinityGroup, parameters,
                 new IFrontendMultipleActionAsyncCallback() {

@@ -447,7 +447,7 @@ public class ProviderModel extends Model {
         }
 
         flush();
-        startProgress(null);
+        startProgress();
         if (provider.getUrl().startsWith(Uri.SCHEME_HTTPS)) {
             AsyncDataProvider.getInstance().getProviderCertificateChain(new AsyncQuery(this, new INewAsyncCallback() {
 

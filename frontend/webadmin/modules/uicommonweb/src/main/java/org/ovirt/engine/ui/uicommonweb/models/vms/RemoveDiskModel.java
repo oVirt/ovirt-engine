@@ -80,7 +80,7 @@ public class RemoveDiskModel extends ConfirmationModel {
             paramerterList.add(parameters);
         }
 
-        startProgress(null);
+        startProgress();
 
         Frontend.getInstance().runMultipleAction(actionType, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {

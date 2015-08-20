@@ -47,7 +47,7 @@ public class RemoveExternalSubnetModel extends ConfirmationModel {
 
         }
 
-        startProgress(null);
+        startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveSubnetFromProvider,
                 list,

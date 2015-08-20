@@ -59,7 +59,7 @@ public abstract class AffinityGroupModel extends Model {
     }
 
     public void init() {
-        startProgress(null);
+        startProgress();
         //TODO: should be by cluster id and remove clusterName method from resolver.
         AsyncDataProvider.getInstance().getVmListByClusterName(new AsyncQuery(this, new INewAsyncCallback() {
 
@@ -144,7 +144,7 @@ public abstract class AffinityGroupModel extends Model {
         group.setPositive(getPositive().getEntity());
         group.setEntityIds(getVmsSelectionModel().getSelectedVmIds());
 
-        startProgress(null);
+        startProgress();
 
         Frontend.getInstance().runAction(saveActionType,
                 new AffinityGroupCRUDParameters(group.getId(), group),

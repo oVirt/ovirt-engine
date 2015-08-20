@@ -161,7 +161,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel<VDSGroup, G
             list.add(new GlusterHookParameters(hook.getId()));
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.DisableGlusterHook, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -200,7 +200,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel<VDSGroup, G
         contentModel.setHashName("view_gluster_hook"); //$NON-NLS-1$
         setWindow(contentModel);
 
-        contentModel.startProgress(null);
+        contentModel.startProgress();
 
         AsyncDataProvider.getInstance().getGlusterHookContent(new AsyncQuery(contentModel, new INewAsyncCallback() {
             @Override
@@ -248,7 +248,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel<VDSGroup, G
         hookEntity.setServerHooks(new ArrayList<GlusterServerHook>());
         conflictsModel.setGlusterHookEntity(hookEntity);
         setWindow(conflictsModel);
-        conflictsModel.startProgress(null);
+        conflictsModel.startProgress();
 
         AsyncDataProvider.getInstance().getGlusterHook(new AsyncQuery(conflictsModel, new INewAsyncCallback() {
             @Override
@@ -315,7 +315,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel<VDSGroup, G
             return;
         }
 
-        resolveConflictsModel.startProgress(null);
+        resolveConflictsModel.startProgress();
 
         GlusterHookEntity hookEntity = resolveConflictsModel.getGlusterHookEntity();
 

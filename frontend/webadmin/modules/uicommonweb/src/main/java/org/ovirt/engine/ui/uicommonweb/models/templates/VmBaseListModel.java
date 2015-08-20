@@ -105,7 +105,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
 
         ExportVmModel model = new ExportVmModel();
         setWindow(model);
-        model.startProgress(null);
+        model.startProgress();
         setupExportModel(model);
 
         AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this,
@@ -355,7 +355,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
             return;
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         VM vm = getcurrentVm();
         if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {

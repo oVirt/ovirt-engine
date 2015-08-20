@@ -337,7 +337,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
             list.add(new VmPoolParametersBase(pool.getVmPoolId()));
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVmPool, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -474,7 +474,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
             vm.setQuotaId(model.getQuota().getSelectedItem().getId());
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         if (model.getIsNew()) {
             if (model.getIcon().getEntity().isCustom()) {

@@ -592,7 +592,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             list.add(parameters);
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.FenceVdsManualy, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -909,7 +909,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
 
         cancelConfirm();
-        model.startProgress(null);
+        model.startProgress();
 
         if (model.getIsNew()) {
             AddVdsActionParameters parameters = new AddVdsActionParameters();
@@ -1067,7 +1067,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         // - All the selected hosts belongs to same cluster
         // - the cluster should be a gluster only cluster
         if (clusters.size() == 1) {
-            model.startProgress(null);
+            model.startProgress();
             AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
@@ -1100,7 +1100,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             list.add(new RemoveVdsParameters(vds.getId(), force));
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVds, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -1209,7 +1209,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         }
         list.add(new MaintenanceNumberOfVdssParameters(vdss, false, model.getReason().getEntity()));
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.MaintenanceNumberOfVdss, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -1269,7 +1269,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.getHostVersion().setEntity(host.getHostOs());
         model.getHostVersion().setIsAvailable(false);
 
-        getWindow().startProgress(null);
+        getWindow().startProgress();
         model.getUserPassword().setIsAvailable(true);
         model.getUserPassword().setIsChangeable(true);
 
@@ -1403,7 +1403,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             list.add(new FenceVdsActionParameters(vds.getId()));
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RestartVds, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -1468,7 +1468,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             list.add(new FenceVdsActionParameters(vds.getId()));
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.StopVds, list,
                 new IFrontendMultipleActionAsyncCallback() {

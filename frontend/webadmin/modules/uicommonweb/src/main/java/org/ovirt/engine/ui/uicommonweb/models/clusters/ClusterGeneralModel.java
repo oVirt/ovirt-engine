@@ -259,7 +259,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
         glusterSwiftModel.setHashName("manage_gluster_swift"); //$NON-NLS-1$
         setWindow(glusterSwiftModel);
 
-        glusterSwiftModel.startProgress(null);
+        glusterSwiftModel.startProgress();
         glusterSwiftModel.getSwiftStatus().setEntity(getGlusterSwiftStatus());
         glusterSwiftModel.getStartSwift().setIsChangeable(getGlusterSwiftStatus() == GlusterServiceStatus.STOPPED
                 || getGlusterSwiftStatus() == GlusterServiceStatus.MIXED
@@ -317,7 +317,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
         }
 
         ManageGlusterSwiftModel glusterSwiftModel = (ManageGlusterSwiftModel) getWindow();
-        glusterSwiftModel.startProgress(null);
+        glusterSwiftModel.startProgress();
         if (glusterSwiftModel.getIsManageServerLevel().getEntity()) {
             ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>();
             for (Object model : glusterSwiftModel.getHostServicesList().getItems()) {
@@ -428,7 +428,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
 
         hostsModel.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
 
-        hostsModel.startProgress(null);
+        hostsModel.startProgress();
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -467,7 +467,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
             return;
         }
 
-        hostsModel.startProgress(null);
+        hostsModel.startProgress();
         ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>();
         for (Object object : hostsModel.getHosts().getItems()) {
             HostDetailModel hostDetailModel = (HostDetailModel) ((EntityModel) object).getEntity();
@@ -531,7 +531,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
 
         hostsModel.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
 
-        hostsModel.startProgress(null);
+        hostsModel.startProgress();
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);

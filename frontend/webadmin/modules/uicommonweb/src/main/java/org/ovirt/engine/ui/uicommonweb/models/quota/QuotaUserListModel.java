@@ -219,7 +219,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
             }
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         PermissionsOperationsParameters permissionParams;
@@ -275,7 +275,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
                 list.add(tempVar);
             }
 
-            model.startProgress(null);
+            model.startProgress();
 
             Frontend.getInstance().runMultipleAction(VdcActionType.RemovePermission, list,
                     new IFrontendMultipleActionAsyncCallback() {

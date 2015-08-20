@@ -124,7 +124,7 @@ public class RolePermissionListModel extends SearchableListModel<Role, Permissio
                 list.add(tempVar);
             }
 
-            model.startProgress(null);
+            model.startProgress();
 
             Frontend.getInstance().runMultipleAction(VdcActionType.RemovePermission, list,
                     new IFrontendMultipleActionAsyncCallback() {

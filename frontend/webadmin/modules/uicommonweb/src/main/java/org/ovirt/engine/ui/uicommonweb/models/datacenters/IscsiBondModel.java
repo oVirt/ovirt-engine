@@ -143,7 +143,7 @@ public class IscsiBondModel extends Model {
     private void addBond() {
         AddIscsiBondParameters params = new AddIscsiBondParameters(createIscsiBond());
 
-        startProgress(null);
+        startProgress();
         Frontend.getInstance().runAction(VdcActionType.AddIscsiBond, params, new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {
@@ -160,7 +160,7 @@ public class IscsiBondModel extends Model {
 
         EditIscsiBondParameters params = new EditIscsiBondParameters(newIscsiBond);
 
-        startProgress(null);
+        startProgress();
         Frontend.getInstance().runAction(VdcActionType.EditIscsiBond, params, new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {

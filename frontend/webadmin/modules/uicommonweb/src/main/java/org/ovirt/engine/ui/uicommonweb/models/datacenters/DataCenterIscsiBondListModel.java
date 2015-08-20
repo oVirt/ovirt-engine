@@ -161,7 +161,7 @@ public class DataCenterIscsiBondListModel extends SearchableListModel<StoragePoo
             params.add(new RemoveIscsiBondParameters(((IscsiBond) item).getId()));
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveIscsiBond, params,
             new IFrontendMultipleActionAsyncCallback() {

@@ -91,7 +91,7 @@ public class StorageIsoListModel extends SearchableListModel<StorageDomain, Repo
         imagesListParams.setForceRefresh(true);
         imagesListParams.setRefresh(getIsQueryFirstTime());
 
-        startProgress(null);
+        startProgress();
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);

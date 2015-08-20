@@ -187,7 +187,7 @@ public abstract class VnicProfileModel extends Model {
         // Save changes.
         flush();
 
-        startProgress(null);
+        startProgress();
 
         Frontend.getInstance().runAction(getVdcActionType(),
                 getActionParameters(),
@@ -253,7 +253,7 @@ public abstract class VnicProfileModel extends Model {
         GetDeviceCustomPropertiesParameters params = new GetDeviceCustomPropertiesParameters();
         params.setVersion(dcCompatibilityVersion);
         params.setDeviceType(VmDeviceGeneralType.INTERFACE);
-        startProgress(null);
+        startProgress();
         Frontend.getInstance().runQuery(VdcQueryType.GetDeviceCustomProperties,
                 params,
                 new AsyncQuery(this,

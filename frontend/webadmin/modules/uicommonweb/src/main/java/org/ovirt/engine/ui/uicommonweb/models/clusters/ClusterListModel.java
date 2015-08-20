@@ -500,7 +500,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
             prms.add(currentParam);
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.UpdateVdsGroup, prms,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -526,7 +526,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
             prms.add(new VdsGroupParametersBase(((VDSGroup) a).getId()));
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVdsGroup, prms,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -793,7 +793,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
             cluster.getRequiredRngSources().add(VmRngDevice.Source.HWRNG);
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         final Network managementNetwork = model.getManagementNetwork().getSelectedItem();
         final ManagementNetworkOnClusterOperationParameters clusterOperationParameters =
@@ -819,7 +819,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
     }
 
     private void fetchAndImportClusterHosts(final ClusterModel clusterModel) {
-        getWindow().startProgress(null);
+        getWindow().startProgress();
         AsyncQuery aQuery = new AsyncQuery();
         aQuery.setModel(this);
         aQuery.setHandleFailure(true);
@@ -939,7 +939,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
     }
 
     private void addHosts(final MultipleHostsModel hostsModel) {
-        hostsModel.startProgress(null);
+        hostsModel.startProgress();
         ArrayList<VdcActionParametersBase> parametersList = new ArrayList<>();
         for (Object object : hostsModel.getHosts().getItems()) {
             HostDetailModel hostDetailModel = (HostDetailModel) ((EntityModel) object).getEntity();
@@ -1131,7 +1131,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
      */
     @SuppressWarnings("unchecked")
     private void checkForNonResponsiveHosts(final ConfirmationModel confirmModel) {
-        startProgress(null);
+        startProgress();
         Frontend.getInstance().runQuery(VdcQueryType.GetHostsByClusterId,
                 new IdQueryParameters(getSelectedItem().getId()),
                 new AsyncQuery(this, new INewAsyncCallback() {

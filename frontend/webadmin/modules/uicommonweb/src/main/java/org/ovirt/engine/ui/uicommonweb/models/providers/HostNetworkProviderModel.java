@@ -73,7 +73,7 @@ public class HostNetworkProviderModel extends EntityModel {
                 getNetworkProviders().setSelectedItem(null);
             }
         };
-        startProgress(null);
+        startProgress();
         AsyncDataProvider.getInstance().getAllNetworkProviders(getProvidersQuery);
     }
 

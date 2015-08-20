@@ -468,7 +468,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             list.add(new GlusterVolumeActionParameters(volume.getId(), false));
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.DeleteGlusterVolume, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -831,7 +831,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             return;
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         final GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getSelectedItem();
         GlusterVolumeRebalanceParameters param = new GlusterVolumeRebalanceParameters(volumeEntity.getId(), false, false);
@@ -1116,7 +1116,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             list.add(new GlusterVolumeActionParameters(volume.getId(), false));
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.StopGlusterVolume, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -1254,7 +1254,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
         volume.setAccessControlList(volumeModel.getAllowAccess().getEntity());
 
-        volumeModel.startProgress(null);
+        volumeModel.startProgress();
 
         CreateGlusterVolumeParameters parameter =
                 new CreateGlusterVolumeParameters(volume, volumeModel.isForceAddBricks());

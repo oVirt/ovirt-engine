@@ -38,7 +38,7 @@ public class UserPortalVmEventListModel extends VmEventListModel {
 
     @Override
     protected void onEntityContentChanged() {
-        startProgress(null);
+        startProgress();
         super.onEntityContentChanged();
     }
 }

@@ -195,7 +195,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         }
 
         final ConfirmationModel confirmationModel = (ConfirmationModel) getWindow();
-        confirmationModel.startProgress(null);
+        confirmationModel.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.DeactivateStorageDomainWithOvfUpdate, pb, new IFrontendMultipleActionAsyncCallback() {
             @Override
@@ -558,7 +558,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
             }
         }
 
-        confirmModel.startProgress(null);
+        confirmModel.startProgress();
 
         if (getpb_remove().size() > 0) {
             AsyncQuery _asyncQuery = new AsyncQuery();

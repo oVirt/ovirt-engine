@@ -145,7 +145,7 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
                 treeSelectedItem.getType() == SystemTreeItemType.DataCenter ? treeSelectedItem : null;
 
         if (treeSelectedDc != null) {
-            profileModel.startProgress(null);
+            profileModel.startProgress();
             StoragePool dc = (StoragePool) treeSelectedDc.getEntity();
 
             AsyncQuery _asyncQuery = new AsyncQuery();

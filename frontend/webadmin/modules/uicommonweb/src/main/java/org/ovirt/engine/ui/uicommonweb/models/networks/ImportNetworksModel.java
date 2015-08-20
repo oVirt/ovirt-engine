@@ -127,7 +127,7 @@ public class ImportNetworksModel extends Model {
     }
 
     protected void initProviderList() {
-        startProgress(null);
+        startProgress();
         AsyncDataProvider.getInstance().getAllNetworkProviders(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
@@ -197,7 +197,7 @@ public class ImportNetworksModel extends Model {
             }
         };
 
-        startProgress(null);
+        startProgress();
         AsyncDataProvider.getInstance().getDataCenterList(dcQuery);
     }
 

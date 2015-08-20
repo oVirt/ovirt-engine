@@ -222,7 +222,7 @@ public class ClusterGuideModel extends GuideModel {
         if (getEntity() == null) {
             return;
         }
-        startProgress(null);
+        startProgress();
         if (getEntity().getStoragePoolId() != null) {
             //Datacenter associated with this cluster.
             AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
@@ -396,7 +396,7 @@ public class ClusterGuideModel extends GuideModel {
                 parameterList.add(new ChangeVDSClusterParameters(cluster.getId(), host.getId()));
             }
         }
-        model.startProgress(null);
+        model.startProgress();
         Frontend.getInstance().runMultipleAction(VdcActionType.ChangeVDSCluster, parameterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
@@ -597,7 +597,7 @@ public class ClusterGuideModel extends GuideModel {
         if (dataCenter != null) {
             VDSGroup cluster = getEntity();
             cluster.setStoragePoolId(dataCenter.getEntity().getId());
-            dataCentersModel.startProgress(null);
+            dataCentersModel.startProgress();
 
             Frontend.getInstance().runAction(VdcActionType.UpdateVdsGroup, new ManagementNetworkOnClusterOperationParameters(cluster),
                 new IFrontendActionAsyncCallback() {
@@ -659,7 +659,7 @@ public class ClusterGuideModel extends GuideModel {
         vdsActionParams.setAuthMethod(model.getAuthenticationMethod());
         vdsActionParams.setOverrideFirewall(model.getOverrideIpTables().getEntity());
         vdsActionParams.setFenceAgents(model.getFenceAgentListModel().getFenceAgents());
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runAction(VdcActionType.AddVds, vdsActionParams,
                 new IFrontendActionAsyncCallback() {

@@ -291,7 +291,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
         model.setIsSourceStorageDomainNameAvailable(true);
         model.setEntity(this);
         model.init(disks);
-        model.startProgress(null);
+        model.startProgress();
     }
 
     private void scanAlignment() {
@@ -345,7 +345,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
         model.setTitle(ConstantsManager.getInstance().getConstants().assignQuotaForDisk());
         model.setHelpTag(HelpTag.change_quota_disks);
         model.setHashName("change_quota_disks"); //$NON-NLS-1$
-        model.startProgress(null);
+        model.startProgress();
         model.init(disks);
 
         UICommand command = UICommand.createDefaultOkUiCommand("onChangeQuota", this); //$NON-NLS-1$
@@ -368,7 +368,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
             paramerterList.add(parameters);
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -396,7 +396,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
         model.setHashName("copy_disks"); //$NON-NLS-1$
         model.setEntity(this);
         model.init(disks);
-        model.startProgress(null);
+        model.startProgress();
     }
 
     private void remove() {
@@ -420,7 +420,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
             paramerterList.add(parameters);
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveDisk, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {

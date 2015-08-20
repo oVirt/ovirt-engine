@@ -195,7 +195,7 @@ public class DataCenterModel extends Model {
         getMacPoolModel().setIsChangeable(false);
         getMacPoolListModel().getItemsChangedEvent().addListener(this);
         getMacPoolListModel().getSelectedItemChangedEvent().addListener(this);
-        startProgress(null);
+        startProgress();
         Frontend.getInstance().runQuery(VdcQueryType.GetAllMacPools,
                 new VdcQueryParametersBase(),
                 new AsyncQuery(new INewAsyncCallback() {

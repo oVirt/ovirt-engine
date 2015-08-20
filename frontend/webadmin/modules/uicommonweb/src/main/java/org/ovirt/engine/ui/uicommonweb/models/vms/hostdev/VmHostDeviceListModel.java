@@ -159,7 +159,7 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
             return;
         }
 
-        model.startProgress(null);
+        model.startProgress();
         if (getEntity().getDedicatedVmForVdsList().isEmpty() || !getEntity().getDedicatedVmForVdsList().contains(model.getPinnedHost().getSelectedItem().getId())) {
             pinVmToHost(model.getPinnedHost().getSelectedItem().getId(), new IFrontendActionAsyncCallback() {
                 @Override
@@ -201,7 +201,7 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
             return;
         }
 
-        model.startProgress(null);
+        model.startProgress();
         ArrayList<String> deviceNames = getSelectedDeviceNames();
         Frontend.getInstance().runAction(VdcActionType.RemoveVmHostDevices, new VmHostDevicesParameters(getEntity().getId(), deviceNames), new IFrontendActionAsyncCallback() {
             @Override
@@ -223,7 +223,7 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
     private void onRepin() {
         final RepinHostModel model = (RepinHostModel) getWindow();
 
-        model.startProgress(null);
+        model.startProgress();
         pinVmToHost(model.getPinnedHost().getSelectedItem().getId(), new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {

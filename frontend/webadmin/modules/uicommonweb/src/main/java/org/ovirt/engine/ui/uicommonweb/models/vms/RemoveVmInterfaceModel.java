@@ -59,7 +59,7 @@ public class RemoveVmInterfaceModel extends ConfirmationModel {
 
         }
 
-        startProgress(null);
+        startProgress();
 
         Frontend.getInstance().runMultipleAction(getActionType(), list,
                 new IFrontendMultipleActionAsyncCallback() {

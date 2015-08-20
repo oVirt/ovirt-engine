@@ -163,7 +163,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
                 list.add(tempVar);
             }
 
-            model.startProgress(null);
+            model.startProgress();
 
             Frontend.getInstance().runMultipleAction(VdcActionType.RemovePermission, list,
                     new IFrontendMultipleActionAsyncCallback() {
@@ -233,7 +233,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
             }
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.AddPermission, list,
                 new IFrontendMultipleActionAsyncCallback() {

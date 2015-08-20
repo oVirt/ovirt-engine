@@ -198,7 +198,7 @@ public class BookmarkListModel extends SearchableListModel {
             }
         };
 
-        getWindow().startProgress(null);
+        getWindow().startProgress();
 
         Frontend.getInstance().runAction(VdcActionType.RemoveBookmark, parameters, async);
     }
@@ -264,7 +264,7 @@ public class BookmarkListModel extends SearchableListModel {
         tempVar.setbookmark_value(model.getSearchString().getEntity());
         org.ovirt.engine.core.common.businessentities.Bookmark bookmark = tempVar;
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runAction(model.getIsNew() ? VdcActionType.AddBookmark : VdcActionType.UpdateBookmark,
                 new BookmarksOperationParameters(bookmark),

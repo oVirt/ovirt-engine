@@ -512,7 +512,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         getOptionalActions().clear();
 
         if (getEntity() != null) {
-            startProgress(null);
+            startProgress();
 
             if (!getEntity().isLocal()) {
                 updateOptionsNonLocalFSData();
@@ -683,7 +683,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
             return;
         }
 
-        getWindow().startProgress(null);
+        getWindow().startProgress();
 
         Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveLocal" }))).run(); //$NON-NLS-1$
     }
@@ -820,7 +820,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
             return;
         }
 
-        getWindow().startProgress(null);
+        getWindow().startProgress();
 
         Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveNfs" }))).run(); //$NON-NLS-1$
     }
@@ -952,7 +952,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
             return;
         }
 
-        getWindow().startProgress(null);
+        getWindow().startProgress();
 
         Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveSan" }))).run(); //$NON-NLS-1$
     }
@@ -1018,7 +1018,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         }
 
         cancelConfirm();
-        getWindow().startProgress(null);
+        getWindow().startProgress();
 
         StorageModel model = (StorageModel) getWindow();
         SanStorageModel sanModel = (SanStorageModel) model.getCurrentStorageItem();
@@ -1271,7 +1271,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                     .serialize()));
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runAction(VdcActionType.AddVdsGroup, new ManagementNetworkOnClusterOperationParameters(cluster),
                 new IFrontendActionAsyncCallback() {
@@ -1361,7 +1361,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
             }
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ChangeVDSCluster, parameterList,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -1510,7 +1510,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         }
         addVdsParams.setOverrideFirewall(model.getOverrideIpTables().getEntity());
         addVdsParams.setFenceAgents(model.getFenceAgentListModel().getFenceAgents());
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runAction(VdcActionType.AddVds, addVdsParams,
                 new IFrontendActionAsyncCallback() {

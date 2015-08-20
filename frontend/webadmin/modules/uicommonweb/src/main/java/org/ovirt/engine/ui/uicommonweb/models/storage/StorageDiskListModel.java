@@ -158,7 +158,7 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Obj
             paramerterList.add(parameters);
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveDisk, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {

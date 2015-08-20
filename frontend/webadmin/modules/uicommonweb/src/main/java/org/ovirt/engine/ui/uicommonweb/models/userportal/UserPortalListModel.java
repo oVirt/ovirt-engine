@@ -549,7 +549,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             postNameUniqueCheck(this);
         }
         else {
-            model.startProgress(null);
+            model.startProgress();
             String name = model.getName().getEntity();
 
             // Check name unicitate.
@@ -807,7 +807,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     }
 
     private void onRemove() {
-        getConfirmWindow().startProgress(null);
+        getConfirmWindow().startProgress();
 
         List<VdcActionParametersBase> paramsList = new ArrayList<VdcActionParametersBase>();
         for (VM vm : getSelectedVms()) {
@@ -906,7 +906,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
         VM vm = (VM) selectedItem.getEntity();
         AttachCdModel model = (AttachCdModel) getWindow();
-        model.startProgress(null);
+        model.startProgress();
         String isoName =
                 (model.getIsoImage().getSelectedItem().equals(ConsoleModel.getEjectLabel())) ? "" //$NON-NLS-1$
                         : model.getIsoImage().getSelectedItem();
@@ -936,7 +936,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             return;
         }
 
-        model.startProgress(null);
+        model.startProgress();
         // Check name uniqueness.
         AsyncDataProvider.getInstance().isVmNameUnique(new AsyncQuery(this,
                 new INewAsyncCallback() {

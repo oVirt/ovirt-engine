@@ -247,7 +247,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
             return;
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         getTemplatesNotPresentOnExportDomain();
     }
@@ -356,7 +356,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
             list.add(tempVar);
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ExportVmTemplate, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -535,7 +535,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
             list.add(new VmTemplateParametersBase(a.getId()));
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVmTemplate, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -664,7 +664,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         buildTemplateOnSave(model, template);
         template.setCreatedByUserId(selectedItem.getCreatedByUserId());
 
-        model.startProgress(null);
+        model.startProgress();
 
         template.setVmInit(model.getVmInitModel().buildCloudInitParameters(model));
         UpdateVmTemplateParameters parameters = new UpdateVmTemplateParameters(template);

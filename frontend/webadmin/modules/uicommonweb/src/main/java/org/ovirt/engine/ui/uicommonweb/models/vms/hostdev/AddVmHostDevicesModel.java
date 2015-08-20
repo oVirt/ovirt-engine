@@ -81,7 +81,7 @@ public class AddVmHostDevicesModel extends ModelWithPinnedHost {
     }
 
     private void fetchExistingDevices() {
-        startProgress(null);
+        startProgress();
         AsyncDataProvider.getInstance().getConfiguredVmHostDevices(new AsyncQuery(new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
@@ -112,7 +112,7 @@ public class AddVmHostDevicesModel extends ModelWithPinnedHost {
         availableHostDevices.setItems(new ArrayList<EntityModel<HostDeviceView>>());
         selectedHostDevices.setItems(new ArrayList<EntityModel<HostDeviceView>>());
 
-        startProgress(null);
+        startProgress();
         AsyncDataProvider.getInstance().getHostDevicesByHostId(new AsyncQuery(new INewAsyncCallback() {
             @Override
             public void onSuccess(final Object model, Object returnValue) {

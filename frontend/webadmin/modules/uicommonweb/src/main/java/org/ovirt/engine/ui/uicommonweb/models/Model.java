@@ -485,6 +485,10 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
         executeCommand(uiCommand);
     }
 
+    public void startProgress() {
+        startProgress(null);
+    }
+
     /**
      * Assigns a new instance to the Progress property, indicating start of some operation on the model.
      *

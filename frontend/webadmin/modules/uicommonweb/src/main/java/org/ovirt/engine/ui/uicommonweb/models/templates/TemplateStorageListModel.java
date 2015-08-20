@@ -170,7 +170,7 @@ public class TemplateStorageListModel extends SearchableListModel {
             parameters.add(params);
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveDisk, parameters,
                 new IFrontendMultipleActionAsyncCallback() {

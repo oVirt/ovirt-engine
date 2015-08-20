@@ -537,7 +537,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
     private void runTryBackToAllSnapshotsOfVm(final Model model, VM vm, Snapshot snapshot, boolean memory, List<DiskImage> disks) {
         if (model != null) {
-            model.startProgress(null);
+            model.startProgress();
         }
 
         Frontend.getInstance().runAction(VdcActionType.TryBackToAllSnapshotsOfVm, new TryBackToAllSnapshotsOfVmParameters(
@@ -601,7 +601,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         VM selectedVm = getEntity();
         final UnitVmModel model = new UnitVmModel(createNewTemplateBehavior(), this);
         setWindow(model);
-        model.startProgress(null);
+        model.startProgress();
         model.getVmType().setSelectedItem(selectedVm.getVmType());
         model.getIsHighlyAvailable().setEntity(selectedVm.getStaticData().isAutoStartup());
 
@@ -691,7 +691,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                         model.getDescription().getEntity(),
                         getSelectedItem().getId());
         BuilderExecutor.build(model, parameters, new UnitToAddVmTemplateParametersBuilder());
-        model.startProgress(null);
+        model.startProgress();
         Frontend.getInstance().runAction(VdcActionType.AddVmTemplateFromSnapshot,
                 parameters,
                 new IFrontendActionAsyncCallback() {
@@ -734,7 +734,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         model.setIsAdvancedModeLocalStorageKey("wa_snapshot_dialog");  //$NON-NLS-1$
         setWindow(model);
 
-        model.startProgress(null);
+        model.startProgress();
 
         AsyncDataProvider.getInstance().getVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -806,7 +806,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             parameters.setVmId(new Guid(model.getVmId().getEntity()));
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runAction(VdcActionType.AddVmFromSnapshot, parameters,
                 new IFrontendActionAsyncCallback() {

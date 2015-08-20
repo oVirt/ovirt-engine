@@ -503,7 +503,7 @@ public class NewClusterPolicyModel extends Model {
         if (!validate()) {
             return;
         }
-        startProgress(null);
+        startProgress();
         ClusterPolicy policy = new ClusterPolicy();
         policy.setId(clusterPolicy.getId());
         policy.setName(getName().getEntity());

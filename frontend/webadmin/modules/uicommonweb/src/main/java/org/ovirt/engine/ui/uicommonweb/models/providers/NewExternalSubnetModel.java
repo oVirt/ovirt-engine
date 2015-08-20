@@ -70,7 +70,7 @@ public class NewExternalSubnetModel extends Model {
         // Save changes.
         flush();
 
-        startProgress(null);
+        startProgress();
 
         ProviderNetwork providedBy = getNetwork().getEntity().getProvidedBy();
 

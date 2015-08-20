@@ -445,7 +445,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
 
         VdcReturnValueBase returnValue;
 
-        model.startProgress(null);
+        model.startProgress();
 
         if (commandType != CommandType.Edit) {
             // Add a new role.

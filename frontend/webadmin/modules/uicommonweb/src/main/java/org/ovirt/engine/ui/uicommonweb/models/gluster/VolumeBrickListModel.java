@@ -473,7 +473,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
             brickList.add(brickEntity);
         }
 
-        volumeBrickModel.startProgress(null);
+        volumeBrickModel.startProgress();
 
         GlusterVolumeBricksActionParameters parameter = new GlusterVolumeBricksActionParameters(volumeEntity.getId(),
                         brickList,
@@ -788,7 +788,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
             }
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         boolean isMigrate = model.getMigrateData().getEntity();
 
@@ -856,7 +856,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
 
         GlusterVolumeRemoveBricksParameters parameter =
                 new GlusterVolumeRemoveBricksParameters(volumeEntity.getId(), list);
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runAction(VdcActionType.StopRemoveGlusterVolumeBricks, parameter, new IFrontendActionAsyncCallback() {
             @Override
@@ -920,7 +920,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
 
         GlusterVolumeRemoveBricksParameters parameter =
                 new GlusterVolumeRemoveBricksParameters(volumeEntity.getId(), list);
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runAction(VdcActionType.CommitRemoveGlusterVolumeBricks,
                 parameter,
@@ -1084,7 +1084,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
 
         GlusterVolumeRemoveBricksParameters parameter =
                 new GlusterVolumeRemoveBricksParameters(volumeEntity.getId(), list);
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runAction(VdcActionType.StopRemoveGlusterVolumeBricks,
                 parameter,
@@ -1185,7 +1185,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         newBrick.setServerName(server.getHostName());
         newBrick.setBrickDirectory(replaceBrickModel.getBrickDirectory().getEntity());
 
-        replaceBrickModel.startProgress(null);
+        replaceBrickModel.startProgress();
 
         GlusterVolumeReplaceBrickActionParameters parameter =
                 new GlusterVolumeReplaceBrickActionParameters(volumeEntity.getId(),
@@ -1247,7 +1247,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         brickModel.setTitle(ConstantsManager.getInstance().getConstants().advancedDetailsBrickTitle());
         brickModel.setHelpTag(HelpTag.brick_advanced);
         brickModel.setHashName("brick_advanced"); //$NON-NLS-1$
-        brickModel.startProgress(null);
+        brickModel.startProgress();
 
         AsyncDataProvider.getInstance().getGlusterVolumeBrickDetails(new AsyncQuery(this, new INewAsyncCallback() {
             @Override

@@ -301,7 +301,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
             prms.add(importVmTemplateParameters);
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ImportVmTemplate, prms,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -414,7 +414,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         ImportTemplateModel model = importModelProvider.get();
         model.setEntity(getEntity().getId());
         setWindow(model);
-        model.startProgress(null);
+        model.startProgress();
         model.getCommands().add(UICommand.createDefaultOkUiCommand("OnRestore", this)); //$NON-NLS-1$
         model.getCommands().add(UICommand.createCancelUiCommand(CANCEL_COMMAND, this)); //$NON-NLS-1$);
         model.init(getSelectedItems(), getEntity().getId());

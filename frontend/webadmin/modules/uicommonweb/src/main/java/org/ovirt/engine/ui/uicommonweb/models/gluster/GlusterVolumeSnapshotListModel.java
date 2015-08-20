@@ -308,7 +308,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
             paramsList.add(param);
         }
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.DeleteGlusterVolumeSnapshot,
                 paramsList,
@@ -397,7 +397,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
 
         final ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
 
-        model.startProgress(null);
+        model.startProgress();
 
         Frontend.getInstance().runAction(action, param, new IFrontendActionAsyncCallback() {
             @Override
@@ -431,7 +431,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
         snapshotModel.setTitle(ConstantsManager.getInstance().getConstants().createScheduleVolumeSnapshotTitle());
         setWindow(snapshotModel);
 
-        snapshotModel.startProgress(null);
+        snapshotModel.startProgress();
 
         snapshotModel.getClusterName().setEntity(volumeEntity.getVdsGroupName());
         snapshotModel.getVolumeName().setEntity(volumeEntity.getName());
@@ -523,7 +523,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
 
         ScheduleGlusterVolumeSnapshotParameters params =
                 new ScheduleGlusterVolumeSnapshotParameters(schedule, snapshotModel.getDisableCliSchedule().getEntity());
-        snapshotModel.startProgress(null);
+        snapshotModel.startProgress();
 
         VdcActionType actionType = null;
         if (reschedule) {
@@ -558,7 +558,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
         CreateGlusterVolumeSnapshotParameters parameter =
                 new CreateGlusterVolumeSnapshotParameters(snapshot, false);
 
-        snapshotModel.startProgress(null);
+        snapshotModel.startProgress();
         Frontend.getInstance().runAction(VdcActionType.CreateGlusterVolumeSnapshot,
                 parameter,
                 new IFrontendActionAsyncCallback() {
@@ -593,7 +593,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
         snapshotModel.setTitle(constants.editVolumeSnapshotScheduleTitle());
         setWindow(snapshotModel);
 
-        snapshotModel.startProgress(null);
+        snapshotModel.startProgress();
 
         AsyncDataProvider.getInstance().getVolumeSnapshotSchedule(new AsyncQuery(this, new INewAsyncCallback() {
 

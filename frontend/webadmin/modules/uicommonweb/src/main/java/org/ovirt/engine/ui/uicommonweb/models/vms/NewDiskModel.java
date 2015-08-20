@@ -181,7 +181,7 @@ public class NewDiskModel extends AbstractDiskModel {
             return;
         }
 
-        startProgress(null);
+        startProgress();
 
         AddDiskParameters parameters = new AddDiskParameters(getVmId(), getDisk());
         parameters.setPlugDiskToVm(getIsPlugged().getEntity());

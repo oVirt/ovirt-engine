@@ -205,7 +205,7 @@ public class LoginModel extends Model {
             return;
         }
 
-        startProgress(null);
+        startProgress();
         disableLoginScreen();
 
         AsyncQuery _asyncQuery = new AsyncQuery();
