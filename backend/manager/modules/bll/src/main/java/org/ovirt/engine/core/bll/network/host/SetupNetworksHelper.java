@@ -49,7 +49,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SetupNetworksHelper {
-    private  static final float QOS_OVERCOMMITMENT_THRESHOLD = HostSetupNetworksValidator.QOS_OVERCOMMITMENT_THRESHOLD;
     protected static final String VIOLATING_ENTITIES_LIST_FORMAT = "${0}_LIST {1}";
     private static final Logger log = LoggerFactory.getLogger(SetupNetworksHelper.class);
     private final NetworkDao networkDao;
@@ -74,8 +73,6 @@ public class SetupNetworksHelper {
 
     /** Map of all bonds which were processed by the helper. Key = bond name, Value = list of slave NICs. */
     private Map<String, List<VdsNetworkInterface>> bonds = new HashMap<>();
-
-    private InterfacesSpeed interfacesSpeed = new InterfacesSpeed(bonds);
 
     /** All network`s names that are attached to some sort of interface. */
     private Set<String> attachedNetworksNames = new HashSet<>();
@@ -297,7 +294,6 @@ public class SetupNetworksHelper {
 
     private void validateNetworkQos() {
         validateQosNotPartiallyConfigured();
-        validateQosCommitment();
     }
 
     /**
@@ -327,57 +323,6 @@ public class SetupNetworksHelper {
         for (String ifaceName : someSubInterfacesHaveQos) {
             if (notAllSubInterfacesHaveQos.contains(ifaceName)) {
                 addViolation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS, ifaceName);
-            }
-        }
-    }
-
-    private void validateQosCommitment() {
-        Map<String, Float> relativeCommitmentByBaseInterface = new HashMap<>();
-
-        // first accumulate the commitment on all base interfaces by sub-interfaces
-        for (VdsNetworkInterface iface : params.getInterfaces()) {
-            String networkName = iface.getNetworkName();
-
-            Network network = getExistingClusterNetworks().get(networkName);
-
-            NetworkAttachment networkAttachment = getNetworkAttachment(iface, network);
-            if (NetworkUtils.qosConfiguredOnInterface(networkAttachment, network)) {
-                String baseIfaceName = NetworkUtils.stripVlan(iface);
-                VdsNetworkInterface baseInterface = ifaceByNames.get(baseIfaceName);
-                Integer speed = interfacesSpeed.getInterfaceSpeed(baseInterface);
-
-                // if effective interface speed can't be figured out, no need to consider it now (fail later)
-                if (speed == null) {
-                    continue;
-                }
-
-                Float baseInterfaceCommitment = relativeCommitmentByBaseInterface.get(baseIfaceName);
-                if (baseInterfaceCommitment == null) {
-                    baseInterfaceCommitment = 0f;
-                }
-
-                HostNetworkQos qos = effectiveHostNetworkQos.getQos(networkAttachment, network);
-
-                Integer subInterfaceCommitment = qos.getOutAverageRealtime();
-                if (subInterfaceCommitment != null) {
-                    baseInterfaceCommitment += (float) subInterfaceCommitment / speed;
-                }
-
-                relativeCommitmentByBaseInterface.put(baseIfaceName, baseInterfaceCommitment);
-            }
-        }
-
-        // if any base interface speed couldn't be figured out be protective - add a violation
-        if (interfacesSpeed.containsInterfaceWithoutKnownSpeed()) {
-            for (String interfaceName : interfacesSpeed.namesOfInterfacesWithoutKnownSpeed()) {
-                addViolation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED, interfaceName);
-            }
-        }
-
-        // if any base interface is over-committed - add a violation
-        for (Entry<String, Float> entry : relativeCommitmentByBaseInterface.entrySet()) {
-            if (entry.getValue() > QOS_OVERCOMMITMENT_THRESHOLD) {
-                addViolation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, entry.getKey());
             }
         }
     }
@@ -470,10 +415,6 @@ public class SetupNetworksHelper {
         for (Entry<EngineMessage, ViolationRenderer> violationEntry : violations.entrySet()) {
             final List<String> renderedViolationMessages = violationEntry.getValue().render();
             violationMessages.addAll(renderedViolationMessages);
-
-            if (violationEntry.getKey() == EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT) {
-                violationMessages.add("$commitmentThreshold " + (int) (100 * QOS_OVERCOMMITMENT_THRESHOLD));
-            }
         }
 
         return violationMessages;

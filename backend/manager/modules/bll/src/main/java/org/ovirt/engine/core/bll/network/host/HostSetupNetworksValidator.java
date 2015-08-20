@@ -36,7 +36,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
-import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
@@ -50,13 +49,10 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils.ListCreator;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.vdsbroker.EffectiveHostNetworkQos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HostSetupNetworksValidator {
-    public static final float QOS_OVERCOMMITMENT_THRESHOLD = 0.75f;
-
     private static final Logger log = LoggerFactory.getLogger(HostSetupNetworksValidator.class);
 
     private static final String LIST_SUFFIX = "_LIST";
@@ -97,8 +93,6 @@ public class HostSetupNetworksValidator {
         EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED + LIST_SUFFIX;
     static final String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED_LIST =
         EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED + LIST_SUFFIX;
-    static final String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT_LIST =
-        EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT + LIST_SUFFIX;
 
 
     static final String VAR_BOND_NAME = "BondName";
@@ -126,8 +120,6 @@ public class HostSetupNetworksValidator {
     private Map<Guid, NetworkAttachment> networkAttachmentsByNetworkId;
     private Map<String, NicLabel> nicLabelByLabel;
     private HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper;
-    private List<VdsNetworkInterface> existingInterfaces;
-    private EffectiveHostNetworkQos effectiveHostNetworkQos;
 
     public HostSetupNetworksValidator(VDS host,
         HostSetupNetworksParameters params,
@@ -139,12 +131,10 @@ public class HostSetupNetworksValidator {
         NetworkDao networkDao,
         VdsDao vdsDao,
         HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper,
-        VmDao vmDao,
-        EffectiveHostNetworkQos effectiveHostNetworkQos) {
+        VmDao vmDao) {
 
         this.host = host;
         this.params = params;
-        this.existingInterfaces = existingInterfaces;
         this.existingAttachments = existingAttachments;
         this.managementNetworkUtil = managementNetworkUtil;
         this.networkClusterDao = networkClusterDao;
@@ -169,7 +159,6 @@ public class HostSetupNetworksValidator {
         nicLabelByLabel = Entities.entitiesByName(params.getLabels());
 
         this.hostSetupNetworksValidatorHelper = hostSetupNetworksValidatorHelper;
-        this.effectiveHostNetworkQos = effectiveHostNetworkQos;
     }
 
     private void setSupportedFeatures() {
@@ -208,7 +197,6 @@ public class HostSetupNetworksValidator {
 
         vr = skipValidation(vr) ? vr : validateQosOverriddenInterfaces();
         vr = skipValidation(vr) ? vr : validateQosNotPartiallyConfigured(attachmentsToConfigure);
-        vr = skipValidation(vr) ? vr : validateQosCommitment(attachmentsToConfigure);
         return vr;
     }
 
@@ -293,104 +281,6 @@ public class HostSetupNetworksValidator {
         }
 
         return ValidationResult.VALID;
-    }
-
-    private ValidationResult validateQosCommitment(Collection<NetworkAttachment> attachmentsToConfigure) {
-        InterfacesSpeed interfacesSpeed = new InterfacesSpeed(createBondNameToSlavesMap());
-
-        Map<String, Float> relativeCommitment =
-            countRelativeCommitmentByBaseInterfaceName(interfacesSpeed, attachmentsToConfigure);
-
-        // if any base interface speed couldn't be figured out be protective - add a violation
-        if (interfacesSpeed.containsInterfaceWithoutKnownSpeed()) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED,
-                ReplacementUtils.createSetVariableString(
-                    ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED_LIST,
-                    interfacesSpeed.namesOfInterfacesWithoutKnownSpeed()));
-        }
-
-        // if any base interface is over-committed - add a violation
-        for (Map.Entry<String, Float> entry : relativeCommitment.entrySet()) {
-            if (entry.getValue() > QOS_OVERCOMMITMENT_THRESHOLD) {
-                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT,
-                    ReplacementUtils.createSetVariableString(ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT_LIST,
-                        entry.getKey()));
-            }
-        }
-
-        return ValidationResult.VALID;
-    }
-
-    private Map<String, List<VdsNetworkInterface>> createBondNameToSlavesMap() {
-        Map<String, List<VdsNetworkInterface>> modifiedBondsToSlaves = new HashMap<>();
-        for (Bond modifiedBond : params.getBonds()) {
-            for (String slaveName : modifiedBond.getSlaves()) {
-                MultiValueMapUtils.addToMap(modifiedBond.getName(),
-                    existingInterfacesMap.get(slaveName),
-                    modifiedBondsToSlaves,
-                    new ListCreator<VdsNetworkInterface>());
-            }
-        }
-
-        Map<String, List<VdsNetworkInterface>> existingBondsToSlaves =
-            NetworkCommonUtils.getBondNameToBondSlavesMap(existingInterfaces);
-
-        for (Guid removedBondId : params.getRemovedBonds()) {
-            VdsNetworkInterface removedBond = existingInterfacesMap.get(removedBondId);
-            existingBondsToSlaves.remove(removedBond.getName());
-        }
-
-        Map<String, List<VdsNetworkInterface>> result = new HashMap<>();
-        result.putAll(existingBondsToSlaves);
-
-        result.putAll(modifiedBondsToSlaves);
-
-        return result;
-    }
-
-    private Map<String, Float> countRelativeCommitmentByBaseInterfaceName(InterfacesSpeed interfacesSpeed,
-        Collection<NetworkAttachment> attachmentsToConfigure) {
-        Map<String, Float> relativeCommitmentByBaseInterfaceName = new HashMap<>();
-
-        // first accumulate the commitment on all base interfaces by sub-interfaces
-        for (NetworkAttachment networkAttachment : attachmentsToConfigure) {
-            Network existingNetworkByName = getNetworkRelatedToAttachment(networkAttachment);
-            if (NetworkUtils.qosConfiguredOnInterface(networkAttachment, existingNetworkByName)) {
-                String baseInterfaceName = networkAttachment.getNicName();
-
-                Bond modifiedBond = bondsMap.get(baseInterfaceName);
-
-                // TODO MM: this code won't be needed once the bonds passed to the command will contain only the
-                // relevant data (name, mode, slaves)
-                if (modifiedBond != null) {
-                    modifiedBond.setSpeed(null);
-                }
-
-                VdsNetworkInterface nic =
-                    modifiedBond == null ? existingInterfacesMap.get(baseInterfaceName) : modifiedBond;
-                Integer speed = interfacesSpeed.getInterfaceSpeed(nic);
-
-                // if effective interface speed can't be figured out, no need to consider it now (fail later)
-                if (speed == null) {
-                    continue;
-                }
-
-                Float baseInterfaceCommitment = relativeCommitmentByBaseInterfaceName.get(baseInterfaceName);
-                if (baseInterfaceCommitment == null) {
-                    baseInterfaceCommitment = 0f;
-                }
-
-                HostNetworkQos qos = effectiveHostNetworkQos.getQos(networkAttachment, existingNetworkByName);
-
-                Integer subInterfaceCommitment = qos.getOutAverageRealtime();
-                if (subInterfaceCommitment != null) {
-                    baseInterfaceCommitment += (float) subInterfaceCommitment / speed;
-                }
-
-                relativeCommitmentByBaseInterfaceName.put(baseInterfaceName, baseInterfaceCommitment);
-            }
-        }
-        return relativeCommitmentByBaseInterfaceName;
     }
 
     private ValidationResult validateNetworkExclusiveOnNics(Collection<NetworkAttachment> attachmentsToConfigure) {

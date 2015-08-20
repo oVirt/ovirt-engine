@@ -1639,8 +1639,7 @@ public class HostSetupNetworksValidatorTest {
                     networkDaoMock,
                 vdsDaoMock,
                 new HostSetupNetworksValidatorHelper(),
-                vmDao,
-                effectiveHostNetworkQos);
+                vmDao);
         }
     }
 }

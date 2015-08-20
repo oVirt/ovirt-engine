@@ -64,16 +64,8 @@ public class SetupNetworksHelperTest {
 
     private static final String BOND_NAME = "bond0";
     private static final String MANAGEMENT_NETWORK_NAME = "management";
-    private static final String BOND_MODE_0 = "mode=0 miimon=100";
-    private static final String BOND_MODE_1 = "mode=1 miimon=100";
-    private static final String BOND_MODE_2 = "mode=2 miimon=100";
-    private static final String BOND_MODE_3 = "mode=3 miimon=100";
     private static final String BOND_MODE_4 = "mode=4 miimon=100";
-    private static final String BOND_MODE_5 = "mode=5 miimon=100";
-    private static final String BOND_MODE_6 = "mode=6 miimon=100";
     private static final int DEFAULT_MTU = 1500;
-    private static final int LOW_BANDWIDTH = 500;
-    private static final int HIGH_BANDWIDTH = 2000;
     private static final int DEFAULT_SPEED = 1000;
     private static final String LIST_SUFFIX = "_LIST";
 
@@ -435,10 +427,6 @@ public class SetupNetworksHelperTest {
         return createHelper(createParametersForNics(iface), Version.v3_4);
     }
 
-    private SetupNetworksHelper qosValuesTest(HostNetworkQos qos) {
-        return qosValuesTest(createNetwork(MANAGEMENT_NETWORK_NAME), qos);
-    }
-
     @Test
     public void qosValuesModified() {
         Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
@@ -539,137 +527,6 @@ public class SetupNetworksHelperTest {
         qos.setOutAverageRealtime(totalCommitment / 3);
         return constructBond ? setupCompositeQosConfiguration(true, qos, slaveSpeed, masterSpeed, bondOptions)
                 : setupCompositeQosConfiguration(false, true, qos, masterSpeed);
-    }
-
-    private SetupNetworksHelper qosCommitmentNicSetup(int totalCommitment, Integer nicSpeed) {
-        return qosCommitmentSetup(false, totalCommitment, null, nicSpeed, null);
-    }
-
-    @Test
-    public void qosValidCommitmentReportedNicSpeed() {
-        SetupNetworksHelper helper = qosCommitmentNicSetup(DEFAULT_SPEED / 2, DEFAULT_SPEED);
-        validateAndExpectNoViolations(helper);
-    }
-
-    @Test
-    public void qosOverCommitmentReportedNicSpeed() {
-        SetupNetworksHelper helper = qosCommitmentNicSetup(DEFAULT_SPEED, DEFAULT_SPEED);
-        validateAndExpectViolation(helper, EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, BOND_NAME);
-    }
-
-    @Test
-    public void qosCommitmentMissingNicSpeed() {
-        SetupNetworksHelper helper = qosCommitmentNicSetup(DEFAULT_SPEED / 2, null);
-        validateAndExpectViolation(helper,
-                EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED,
-                BOND_NAME);
-    }
-
-    private SetupNetworksHelper qosCommitmentBondSetup(int totalCommitment,
-            Integer slaveSpeed,
-            Integer bondSpeed,
-            String bondOptions) {
-        return qosCommitmentSetup(true, totalCommitment, slaveSpeed, bondSpeed, bondOptions);
-    }
-
-    private SetupNetworksHelper qosCommitmentReportedBondSpeed(int totalCommitment) {
-        return qosCommitmentBondSetup(totalCommitment, null, DEFAULT_SPEED, BOND_MODE_4);
-    }
-
-    @Test
-    public void qosValidCommitmentReportedBondSpeed() {
-        SetupNetworksHelper helper = qosCommitmentReportedBondSpeed(DEFAULT_SPEED / 2);
-        validateAndExpectNoViolations(helper);
-    }
-
-    @Test
-    public void qosOverCommitmentReportedBondSpeed() {
-        SetupNetworksHelper helper = qosCommitmentReportedBondSpeed(DEFAULT_SPEED);
-        validateAndExpectViolation(helper, EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, BOND_NAME);
-    }
-
-    private SetupNetworksHelper qosCommitmendMissingBondSpeed(String bondOptions) {
-        return qosCommitmentBondSetup(DEFAULT_SPEED, DEFAULT_SPEED, null, bondOptions);
-    }
-
-    @Test
-    public void qosCommitmentMissingBondSpeedMode0() {
-        SetupNetworksHelper helper = qosCommitmendMissingBondSpeed(BOND_MODE_0);
-        validateAndExpectNoViolations(helper);
-    }
-
-    @Test
-    public void qosCommitmentMissingBondSpeedMode2() {
-        SetupNetworksHelper helper = qosCommitmendMissingBondSpeed(BOND_MODE_2);
-        validateAndExpectNoViolations(helper);
-    }
-
-    @Test
-    public void qosCommitmentMissingBondSpeedMode4() {
-        SetupNetworksHelper helper = qosCommitmendMissingBondSpeed(BOND_MODE_4);
-        validateAndExpectNoViolations(helper);
-    }
-
-    @Test
-    public void qosCommitmentMissingBondSpeedMode5() {
-        SetupNetworksHelper helper = qosCommitmendMissingBondSpeed(BOND_MODE_5);
-        validateAndExpectNoViolations(helper);
-    }
-
-    @Test
-    public void qosCommitmentMissingBondSpeedMode6() {
-        SetupNetworksHelper helper = qosCommitmendMissingBondSpeed(BOND_MODE_6);
-        validateAndExpectNoViolations(helper);
-    }
-
-    @Test
-    public void qosCommitmentMissingBondSpeedMode1() {
-        SetupNetworksHelper helper = qosCommitmendMissingBondSpeed(BOND_MODE_1);
-        validateAndExpectViolation(helper, EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, BOND_NAME);
-    }
-
-    @Test
-    public void qosCommitmentMissingBondSpeedMode3() {
-        SetupNetworksHelper helper = qosCommitmendMissingBondSpeed(BOND_MODE_3);
-        validateAndExpectViolation(helper, EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, BOND_NAME);
-    }
-
-    private SetupNetworksHelper qosBondSpeedSetup(Integer slaveSpeed, Integer bondSpeed) {
-        return setupCompositeQosConfiguration(true, createQos(), slaveSpeed, bondSpeed, BOND_MODE_4);
-    }
-
-    @Test
-    public void qosBondSpeedReported() {
-        SetupNetworksHelper helper = qosBondSpeedSetup(DEFAULT_SPEED, null);
-        validateAndExpectNoViolations(helper);
-    }
-
-    @Test
-    public void qosBondSpeedMissing() {
-        SetupNetworksHelper helper = qosBondSpeedSetup(null, DEFAULT_SPEED);
-        validateAndExpectNoViolations(helper);
-    }
-
-    @Test
-    public void qosBondSpeedZero() {
-        SetupNetworksHelper helper = qosBondSpeedSetup(0, DEFAULT_SPEED);
-        validateAndExpectNoViolations(helper);
-    }
-
-    @Test
-    public void qosBondAndSlaveSpeedsMissing() {
-        SetupNetworksHelper helper = qosBondSpeedSetup(null, null);
-        validateAndExpectViolation(helper,
-            EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED,
-            BOND_NAME);
-    }
-
-    @Test
-    public void qosBondAndSlaveSpeedsZero() {
-        SetupNetworksHelper helper = qosBondSpeedSetup(0, 0);
-        validateAndExpectViolation(helper,
-            EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED,
-            BOND_NAME);
     }
 
     @Test
@@ -1791,15 +1648,6 @@ public class SetupNetworksHelperTest {
         assertNetworkRemoved(helper, networkName);
         assertNoBondsRemoved(helper);
         assertNoInterfacesModified(helper);
-    }
-
-    private void validateAndAssertQosOverridden(SetupNetworksHelper helper, VdsNetworkInterface iface) {
-        validateAndExpectNoViolations(helper);
-        assertNoBondsModified(helper);
-        assertNoNetworksModified(helper);
-        assertNoNetworksRemoved(helper);
-        assertNoBondsRemoved(helper);
-        assertInterfaceModified(helper, iface);
     }
 
     private void assertBondRemoved(SetupNetworksHelper helper, String expectedBondName) {
