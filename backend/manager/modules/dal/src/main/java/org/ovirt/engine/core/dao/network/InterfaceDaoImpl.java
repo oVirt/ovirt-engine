@@ -260,6 +260,15 @@ public class InterfaceDaoImpl extends BaseDaoDbFacade implements InterfaceDao {
     }
 
     @Override
+    public VdsNetworkInterface get(Guid hostId, String name) {
+        return getCallsHandler().executeRead("GetVdsInterfaceByName",
+                vdsNetworkInterfaceRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("host_id", hostId)
+                        .addValue("name", name));
+    }
+
+    @Override
     public List<VdsNetworkInterface> getAllInterfacesByClusterId(Guid clusterId) {
         return getCallsHandler().executeReadList("GetInterfacesByClusterId",
                 vdsNetworkInterfaceRowMapper,

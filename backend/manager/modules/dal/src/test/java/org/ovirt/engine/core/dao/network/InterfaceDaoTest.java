@@ -396,4 +396,10 @@ public class InterfaceDaoTest extends BaseDaoTestCase {
         assertNull(nic2.getNetworkName());
         assertNotNull(nic3.getNetworkName());
     }
+
+    @Test
+    public void testGetByName() {
+        VdsNetworkInterface result = dao.get(existingVdsInterface.getVdsId(), existingVdsInterface.getName());
+        assertEquals(existingVdsInterface, result);
+    }
 }
