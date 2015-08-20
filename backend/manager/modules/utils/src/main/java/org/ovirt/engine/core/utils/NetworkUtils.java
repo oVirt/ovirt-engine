@@ -11,10 +11,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -108,52 +107,20 @@ public final class NetworkUtils {
     }
 
     /**
-     * Fill network details for the given network devices from the given networks.<br>
-     * {@link VdsNetworkInterface.NetworkImplementationDetails#isInSync()} will be <code>true</code> IFF the logical network
-     * properties are exactly the same as those defined on the network device.
-     * @param network
-     *            The network definition to fill the details from.
-     * @param iface
-     *            The network device to update.
-     */
-    public static VdsNetworkInterface.NetworkImplementationDetails calculateNetworkImplementationDetails(
-            Network network,
-        HostNetworkQos hostNetworkQos,
-            VdsNetworkInterface iface) {
-        if (StringUtils.isEmpty(iface.getNetworkName())) {
-            return null;
-        }
-
-        if (network != null) {
-            if (new NetworkInSyncWithVdsNetworkInterface(iface, network, hostNetworkQos).isNetworkInSync()) {
-                return new VdsNetworkInterface.NetworkImplementationDetails(true, true);
-            } else {
-                return new VdsNetworkInterface.NetworkImplementationDetails(false, true);
-            }
-        } else {
-            return new VdsNetworkInterface.NetworkImplementationDetails();
-        }
-    }
-
-    /**
-     * Check whether the interface has any QoS configured on it, whether via its attached network or overridden.
+     * Check whether the network attachment has any QoS configured on it, whether via its network or overridden.
      *
-     * @param iface
+     * @param networkAttachment
      *            The network interface.
      * @param network
      *            The network attached to the interface.
      * @return true iff any QoS is applied to the interface.
      */
-    public static boolean qosConfiguredOnInterface(VdsNetworkInterface iface, Network network) {
-        if (iface.isQosOverridden()) {
-            return iface.getQos() != null && !iface.getQos().isEmpty();
+    public static boolean qosConfiguredOnInterface(NetworkAttachment networkAttachment, Network network) {
+        if (networkAttachment != null && networkAttachment.isQosOverridden()) {
+            return networkAttachment.getHostNetworkQos() != null && !networkAttachment.getHostNetworkQos().isEmpty();   //TODO MM: I think that is empty is wrong, since qos can be overridden back to unlimited.
         } else {
             return network != null && network.getQosId() != null;
         }
-    }
-
-    public static boolean isNetworkInSync(VdsNetworkInterface iface, Network network, HostNetworkQos hostNetworkQos) {
-        return new NetworkInSyncWithVdsNetworkInterface(iface, network, hostNetworkQos).isNetworkInSync();
     }
 
     /**

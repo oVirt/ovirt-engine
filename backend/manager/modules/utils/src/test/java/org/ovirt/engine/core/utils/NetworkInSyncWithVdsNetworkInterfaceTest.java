@@ -58,8 +58,6 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         assertThat(testedInstanceWithSameNonQosValues.isNetworkInSync(), is(true));
     }
 
-
-
     @Test
     public void testIsNetworkInSyncWhenVlanIdDifferent() throws Exception {
         iface.setMtu(1);
@@ -91,13 +89,13 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     @Test
     public void testIsNetworkInSyncWhenIfaceQosIsNull() throws Exception {
         iface.setQos(null);
-        assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(false));
+        assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(true));
     }
 
     @Test
     public void testIsNetworkInSyncWhenNetworkQosIsNull() throws Exception {
         networkQos = null;
-        assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(false));
+        assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(true));
     }
 
     @Test
@@ -110,14 +108,12 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     @Test
     public void testIsNetworkInSyncWhenIfaceQosIsNullIfaceQosOverridden() throws Exception {
         iface.setQos(null);
-        iface.setQosOverridden(true);
         assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(true));
     }
 
     @Test
     public void testIsNetworkInSyncWhenNetworkQosIsNullIfaceQosOverridden() throws Exception {
         networkQos = null;
-        iface.setQosOverridden(true);
         assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(true));
     }
 
@@ -129,14 +125,6 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testIsNetworkInSyncWhenAverageLinkShareDifferentIfaceQosOverridden() throws Exception {
-        ifaceQos.setOutAverageLinkshare(1);
-        networkQos.setOutAverageLinkshare(2);
-        iface.setQosOverridden(true);
-        assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(true));
-    }
-
-    @Test
     public void testIsNetworkInSyncWhenAverageUpperLimitDifferent() throws Exception {
         ifaceQos.setOutAverageUpperlimit(1);
         networkQos.setOutAverageUpperlimit(2);
@@ -144,26 +132,10 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testIsNetworkInSyncWhenAverageUpperLimitDifferentIfaceQosOverridden() throws Exception {
-        ifaceQos.setOutAverageUpperlimit(1);
-        networkQos.setOutAverageUpperlimit(2);
-        iface.setQosOverridden(true);
-        assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(true));
-    }
-
-    @Test
     public void testIsNetworkInSyncWhenAverageRealTimeDifferent() throws Exception {
         ifaceQos.setOutAverageRealtime(1);
         networkQos.setOutAverageRealtime(2);
         assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(false));
-    }
-
-    @Test
-    public void testIsNetworkInSyncWhenAverageRealTimeDifferentIfaceQosOverridden() throws Exception {
-        ifaceQos.setOutAverageRealtime(1);
-        networkQos.setOutAverageRealtime(2);
-        iface.setQosOverridden(true);
-        assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(true));
     }
 
     public NetworkInSyncWithVdsNetworkInterface createTestedInstanceWithSameNonQosValues() {
@@ -244,21 +216,30 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         List<ReportedConfiguration> reportedConfigurationList = reportedConfigurations.getReportedConfigurationList();
 
         List<ReportedConfiguration> expectedReportedConfigurations = Arrays.asList(
-                new ReportedConfiguration(ReportedConfigurationType.MTU,
-                        Integer.toString(iface.getMtu()),
-                        Integer.toString(network.getMtu()),
-                        true),
-                new ReportedConfiguration(ReportedConfigurationType.BRIDGED,
-                        Boolean.toString(iface.isBridged()),
-                        Boolean.toString(network.isVmNetwork()),
-                        true),
-                new ReportedConfiguration(ReportedConfigurationType.VLAN,
-                        Integer.toString(iface.getVlanId()),
-                        Integer.toString(network.getVlanId()),
-                        true)
+            new ReportedConfiguration(ReportedConfigurationType.MTU,
+                Integer.toString(iface.getMtu()),
+                Integer.toString(network.getMtu()),
+                true),
+            new ReportedConfiguration(ReportedConfigurationType.BRIDGED,
+                Boolean.toString(iface.isBridged()),
+                Boolean.toString(network.isVmNetwork()),
+                true),
+            new ReportedConfiguration(ReportedConfigurationType.VLAN,
+                Integer.toString(iface.getVlanId()),
+                Integer.toString(network.getVlanId()),
+                true),
+            new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE,
+                null,
+                networkQos.getOutAverageLinkshare().toString(), false),
+            new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_REAL_TIME,
+                null,
+                networkQos.getOutAverageRealtime().toString(), false),
+            new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT,
+                null,
+                networkQos.getOutAverageUpperlimit().toString(), false)
         );
 
         assertThat(reportedConfigurationList.containsAll(expectedReportedConfigurations), is(true));
-        assertThat(reportedConfigurationList.size(), is(3));
+        assertThat(reportedConfigurationList.size(), is(expectedReportedConfigurations.size()));
     }
 }

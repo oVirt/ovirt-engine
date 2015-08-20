@@ -372,10 +372,11 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                     version)) {
                 networkDialogModel.getQosOverridden().setIsAvailable(true);
                 networkDialogModel.getQosModel().setIsAvailable(true);
-                networkDialogModel.getQosOverridden().setEntity(entity.isQosOverridden());
-                if (entity.isQosOverridden()) {
-                    networkDialogModel.getQosModel().init(entity.getQos());
-                } else {
+                //commenting out as we decided, has to be fixed in following separate UI patch
+//                networkDialogModel.getQosOverridden().setEntity(entity.isQosOverridden());
+//                if (entity.isQosOverridden()) {
+//                    networkDialogModel.getQosModel().init(entity.getQos());
+//                } else {
                     Guid qosId = logicalNetwork.getNetwork().getQosId();
                     if (qosId != null) {
                         networkDialogModel.startProgress(null);
@@ -391,7 +392,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                                     }
                                 }));
                     }
-                }
+//                }
             }
 
             if ((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.NetworkCustomPropertiesSupported,
@@ -435,7 +436,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                     if (networkDialogModel.getQosModel().getIsAvailable()) {
                         boolean qosOverridden = networkDialogModel.getQosOverridden().getEntity();
                         HostNetworkQos qos = null;
-                        entity.setQosOverridden(qosOverridden);
+                        //commenting out as we decided, has to be fixed in following separate UI patch
+//                        entity.setQosOverridden(qosOverridden);
                         if (qosOverridden) {
                             qos = new HostNetworkQos();
                             networkDialogModel.getQosModel().flush(qos);

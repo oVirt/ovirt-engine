@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
+import org.ovirt.engine.core.bll.validator.HostNetworkQosValidator;
 import org.ovirt.engine.core.bll.validator.NetworkAttachmentValidator;
 import org.ovirt.engine.core.bll.validator.NetworkAttachmentsValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -26,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
@@ -34,9 +36,11 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -44,11 +48,15 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
+import org.ovirt.engine.core.utils.collections.MultiValueMapUtils.ListCreator;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.vdsbroker.EffectiveHostNetworkQos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HostSetupNetworksValidator {
+    public static final float QOS_OVERCOMMITMENT_THRESHOLD = 0.75f;
+
     private static final Logger log = LoggerFactory.getLogger(HostSetupNetworksValidator.class);
 
     private static final String LIST_SUFFIX = "_LIST";
@@ -85,6 +93,14 @@ public class HostSetupNetworksValidator {
             EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED + LIST_SUFFIX;
     static final String VAR_ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT_LIST =
             EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT + LIST_SUFFIX;
+    static final String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED_LIST =
+        EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED + LIST_SUFFIX;
+    static final String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED_LIST =
+        EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED + LIST_SUFFIX;
+    static final String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT_LIST =
+        EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT + LIST_SUFFIX;
+
+
     static final String VAR_BOND_NAME = "BondName";
     static final String VAR_NETWORK_NAME = "networkName";
     static final String VAR_NETWORK_NAMES = "networkNames";
@@ -96,6 +112,7 @@ public class HostSetupNetworksValidator {
     private List<NetworkAttachment> existingAttachments;
     private final ManagementNetworkUtil managementNetworkUtil;
     private boolean networkCustomPropertiesSupported;
+    private boolean hostNetworkQosSupported;
     private List<VdsNetworkInterface> removedBondVdsNetworkInterface;
     private BusinessEntityMap<VdsNetworkInterface> removedBondVdsNetworkInterfaceMap;
     private List<NetworkAttachment> removedNetworkAttachments;
@@ -109,21 +126,25 @@ public class HostSetupNetworksValidator {
     private Map<Guid, NetworkAttachment> networkAttachmentsByNetworkId;
     private Map<String, NicLabel> nicLabelByLabel;
     private HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper;
+    private List<VdsNetworkInterface> existingInterfaces;
+    private EffectiveHostNetworkQos effectiveHostNetworkQos;
 
     public HostSetupNetworksValidator(VDS host,
-            HostSetupNetworksParameters params,
-            List<VdsNetworkInterface> existingInterfaces,
-            List<NetworkAttachment> existingAttachments,
-            BusinessEntityMap<Network> networkBusinessEntityMap,
-            ManagementNetworkUtil managementNetworkUtil,
-            NetworkClusterDao networkClusterDao,
-            NetworkDao networkDao,
-            VdsDao vdsDao,
-            HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper,
-            VmDao vmDao) {
+        HostSetupNetworksParameters params,
+        List<VdsNetworkInterface> existingInterfaces,
+        List<NetworkAttachment> existingAttachments,
+        BusinessEntityMap<Network> networkBusinessEntityMap,
+        ManagementNetworkUtil managementNetworkUtil,
+        NetworkClusterDao networkClusterDao,
+        NetworkDao networkDao,
+        VdsDao vdsDao,
+        HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper,
+        VmDao vmDao,
+        EffectiveHostNetworkQos effectiveHostNetworkQos) {
 
         this.host = host;
         this.params = params;
+        this.existingInterfaces = existingInterfaces;
         this.existingAttachments = existingAttachments;
         this.managementNetworkUtil = managementNetworkUtil;
         this.networkClusterDao = networkClusterDao;
@@ -148,11 +169,14 @@ public class HostSetupNetworksValidator {
         nicLabelByLabel = Entities.entitiesByName(params.getLabels());
 
         this.hostSetupNetworksValidatorHelper = hostSetupNetworksValidatorHelper;
+        this.effectiveHostNetworkQos = effectiveHostNetworkQos;
     }
 
     private void setSupportedFeatures() {
-        networkCustomPropertiesSupported =
-            FeatureSupported.networkCustomProperties(host.getVdsGroupCompatibilityVersion());
+        Version clusterCompatibilityVersion = host.getVdsGroupCompatibilityVersion();
+
+        networkCustomPropertiesSupported = FeatureSupported.networkCustomProperties(clusterCompatibilityVersion);
+        hostNetworkQosSupported = FeatureSupported.hostNetworkQos(clusterCompatibilityVersion);
     }
 
     List<String> translateErrorMessages(List<String> messages) {
@@ -174,17 +198,199 @@ public class HostSetupNetworksValidator {
         vr = skipValidation(vr) ? vr : new NetworkMtuValidator(networkBusinessEntityMap).validateMtu(
             attachmentsToConfigure);
         vr = skipValidation(vr) ? vr : validateCustomProperties();
+        vr = skipValidation(vr) ? vr : validateQos(attachmentsToConfigure);
 
-        // TODO: Cover qos change not supported and network sync. see SetupNetworkHelper.validateNetworkQos()
-        // Violation - EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED
-        // Violation - EngineMessage.NETWORKS_NOT_IN_SYNC
+        return vr;
+    }
 
+    private ValidationResult validateQos(Collection<NetworkAttachment> attachmentsToConfigure) {
+        ValidationResult vr = ValidationResult.VALID;
+
+        vr = skipValidation(vr) ? vr : validateQosOverriddenInterfaces();
+        vr = skipValidation(vr) ? vr : validateQosNotPartiallyConfigured(attachmentsToConfigure);
+        vr = skipValidation(vr) ? vr : validateQosCommitment(attachmentsToConfigure);
         return vr;
     }
 
     private ValidationResult attachmentsDontReferenceSameNetworkDuplicately(Collection<NetworkAttachment> attachments) {
         return new NetworkAttachmentsValidator(attachments, networkBusinessEntityMap)
             .verifyUserAttachmentsDoesNotReferenceSameNetworkDuplicately();
+    }
+
+    /**
+     * Validates that the feature is supported if any QoS configuration was specified, and that the values associated
+     * with it are valid.
+     */
+    ValidationResult validateQosOverriddenInterfaces() {
+        for (NetworkAttachment networkAttachment : params.getNetworkAttachments()) {
+            if (networkAttachment.isQosOverridden()) {
+                Network network = getNetworkRelatedToAttachment(networkAttachment);
+                String networkName = network.getName();
+                if (!hostNetworkQosSupported) {
+                    return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
+                        ReplacementUtils.createSetVariableString(ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED_LIST,
+                            networkName));
+                }
+
+
+                HostNetworkQos hostNetworkQos = networkAttachment.getHostNetworkQos();
+                HostNetworkQosValidator qosValidator = createHostNetworkQosValidator(hostNetworkQos);
+
+                ValidationResult requiredValuesPresent =
+                    qosValidator.requiredQosValuesPresentForOverriding(networkName);
+                if (!requiredValuesPresent.isValid()) {
+                    return requiredValuesPresent;
+                }
+
+                ValidationResult valuesConsistent = qosValidator.valuesConsistent(networkName);
+                if (!valuesConsistent.isValid()) {
+                    return valuesConsistent;
+                }
+            }
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    HostNetworkQosValidator createHostNetworkQosValidator(HostNetworkQos hostNetworkQos) {
+        return new HostNetworkQosValidator(hostNetworkQos);
+    }
+
+    private Network getNetworkRelatedToAttachment(NetworkAttachment networkAttachment) {
+        Guid networkId = networkAttachment.getNetworkId();
+        return getNetworkByNetworkId(networkId);
+    }
+
+    private Network getNetworkByNetworkId(Guid networkId) {
+        return networkBusinessEntityMap.get(networkId);
+    }
+
+    /**
+     * Ensure that either none or all of the networks on a single interface have QoS configured on them.
+     */
+    ValidationResult validateQosNotPartiallyConfigured(Collection<NetworkAttachment> attachmentsToConfigure) {
+        Set<String> someSubInterfacesHaveQos = new HashSet<>();
+        Set<String> notAllSubInterfacesHaveQos = new HashSet<>();
+
+        // first map which interfaces have some QoS configured on them, and which interfaces lack some QoS configuration
+        for (NetworkAttachment networkAttachment : attachmentsToConfigure) {
+            Network network = getNetworkRelatedToAttachment(networkAttachment);
+            if (NetworkUtils.qosConfiguredOnInterface(networkAttachment, network)) {
+                someSubInterfacesHaveQos.add(networkAttachment.getNicName());
+            } else {
+                notAllSubInterfacesHaveQos.add(networkAttachment.getNicName());
+            }
+        }
+
+        // if any base interface has some sub-interfaces with QoS and some without - this is a partial configuration
+        for (String ifaceName : someSubInterfacesHaveQos) {
+            if (notAllSubInterfacesHaveQos.contains(ifaceName)) {
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS,
+                    ReplacementUtils.createSetVariableString(
+                        "ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS_LIST",
+                        ifaceName));
+            }
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    private ValidationResult validateQosCommitment(Collection<NetworkAttachment> attachmentsToConfigure) {
+        InterfacesSpeed interfacesSpeed = new InterfacesSpeed(createBondNameToSlavesMap());
+
+        Map<String, Float> relativeCommitment =
+            countRelativeCommitmentByBaseInterfaceName(interfacesSpeed, attachmentsToConfigure);
+
+        // if any base interface speed couldn't be figured out be protective - add a violation
+        if (interfacesSpeed.containsInterfaceWithoutKnownSpeed()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED,
+                ReplacementUtils.createSetVariableString(
+                    ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED_LIST,
+                    interfacesSpeed.namesOfInterfacesWithoutKnownSpeed()));
+        }
+
+        // if any base interface is over-committed - add a violation
+        for (Map.Entry<String, Float> entry : relativeCommitment.entrySet()) {
+            if (entry.getValue() > QOS_OVERCOMMITMENT_THRESHOLD) {
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT,
+                    ReplacementUtils.createSetVariableString(ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT_LIST,
+                        entry.getKey()));
+            }
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    private Map<String, List<VdsNetworkInterface>> createBondNameToSlavesMap() {
+        Map<String, List<VdsNetworkInterface>> modifiedBondsToSlaves = new HashMap<>();
+        for (Bond modifiedBond : params.getBonds()) {
+            for (String slaveName : modifiedBond.getSlaves()) {
+                MultiValueMapUtils.addToMap(modifiedBond.getName(),
+                    existingInterfacesMap.get(slaveName),
+                    modifiedBondsToSlaves,
+                    new ListCreator<VdsNetworkInterface>());
+            }
+        }
+
+        Map<String, List<VdsNetworkInterface>> existingBondsToSlaves =
+            NetworkCommonUtils.getBondNameToBondSlavesMap(existingInterfaces);
+
+        for (Guid removedBondId : params.getRemovedBonds()) {
+            VdsNetworkInterface removedBond = existingInterfacesMap.get(removedBondId);
+            existingBondsToSlaves.remove(removedBond.getName());
+        }
+
+        Map<String, List<VdsNetworkInterface>> result = new HashMap<>();
+        result.putAll(existingBondsToSlaves);
+
+        result.putAll(modifiedBondsToSlaves);
+
+        return result;
+    }
+
+    private Map<String, Float> countRelativeCommitmentByBaseInterfaceName(InterfacesSpeed interfacesSpeed,
+        Collection<NetworkAttachment> attachmentsToConfigure) {
+        Map<String, Float> relativeCommitmentByBaseInterfaceName = new HashMap<>();
+
+        // first accumulate the commitment on all base interfaces by sub-interfaces
+        for (NetworkAttachment networkAttachment : attachmentsToConfigure) {
+            Network existingNetworkByName = getNetworkRelatedToAttachment(networkAttachment);
+            if (NetworkUtils.qosConfiguredOnInterface(networkAttachment, existingNetworkByName)) {
+                String baseInterfaceName = networkAttachment.getNicName();
+
+                Bond modifiedBond = bondsMap.get(baseInterfaceName);
+
+                // TODO MM: this code won't be needed once the bonds passed to the command will contain only the
+                // relevant data (name, mode, slaves)
+                if (modifiedBond != null) {
+                    modifiedBond.setSpeed(null);
+                }
+
+                VdsNetworkInterface nic =
+                    modifiedBond == null ? existingInterfacesMap.get(baseInterfaceName) : modifiedBond;
+                Integer speed = interfacesSpeed.getInterfaceSpeed(nic);
+
+                // if effective interface speed can't be figured out, no need to consider it now (fail later)
+                if (speed == null) {
+                    continue;
+                }
+
+                Float baseInterfaceCommitment = relativeCommitmentByBaseInterfaceName.get(baseInterfaceName);
+                if (baseInterfaceCommitment == null) {
+                    baseInterfaceCommitment = 0f;
+                }
+
+                HostNetworkQos qos = effectiveHostNetworkQos.getQos(networkAttachment, existingNetworkByName);
+
+                Integer subInterfaceCommitment = qos.getOutAverageRealtime();
+                if (subInterfaceCommitment != null) {
+                    baseInterfaceCommitment += (float) subInterfaceCommitment / speed;
+                }
+
+                relativeCommitmentByBaseInterfaceName.put(baseInterfaceName, baseInterfaceCommitment);
+            }
+        }
+        return relativeCommitmentByBaseInterfaceName;
     }
 
     private ValidationResult validateNetworkExclusiveOnNics(Collection<NetworkAttachment> attachmentsToConfigure) {
@@ -275,7 +481,7 @@ public class HostSetupNetworksValidator {
             MultiValueMapUtils.addToMap(attachment.getNicName(),
                 attachment.getId(),
                 map,
-                new MultiValueMapUtils.ListCreator<Guid>());
+                new ListCreator<Guid>());
 
         }
 

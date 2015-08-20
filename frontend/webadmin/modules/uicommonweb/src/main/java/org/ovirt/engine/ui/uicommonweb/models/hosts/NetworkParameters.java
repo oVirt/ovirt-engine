@@ -25,7 +25,9 @@ public class NetworkParameters {
         setAddress(nic.getAddress());
         setSubnet(nic.getSubnet());
         setGateway(nic.getGateway());
-        setQosOverridden(nic.isQosOverridden());
+
+        //commenting out as we decided, has to be fixed in following separate UI patch
+        //setQosOverridden(nic.isQosOverridden());
         setQos(nic.getQos());
         setCustomProperties(nic.getCustomProperties());
     }

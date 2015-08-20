@@ -28,12 +28,11 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.predicates.DisplayInterfaceEqualityPredicate;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.predicates.IsNetworkOnInterfacePredicate;
@@ -44,35 +43,35 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
     private final VmDynamicDao vmDynamicDao;
     private final InterfaceDao interfaceDao;
     private final NetworkDao networkDao;
-    private final HostNetworkQosDao hostNetworkQosDao;
     private final ResourceManager resourceManager;
     private final ManagementNetworkUtil managementNetworkUtil;
     private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private final NetworkAttachmentDao networkAttachmentDao;
+    private final NetworkImplementationDetailsUtils networkImplementationDetailsUtils;
 
     @Inject
     HostNetworkTopologyPersisterImpl(VmDynamicDao vmDynamicDao,
                                      InterfaceDao interfaceDao,
                                      NetworkAttachmentDao networkAttachmentDao,
                                      NetworkDao networkDao,
-                                     HostNetworkQosDao hostNetworkQosDao,
                                      ResourceManager resourceManager,
+                                     NetworkImplementationDetailsUtils networkImplementationDetailsUtils,
                                      ManagementNetworkUtil managementNetworkUtil) {
         Validate.notNull(networkDao, "networkAttachmentDao can not be null");
         Validate.notNull(networkDao, "networkDao can not be null");
         Validate.notNull(interfaceDao, "interfaceDao can not be null");
         Validate.notNull(vmDynamicDao, "vmDynamicDao can not be null");
-        Validate.notNull(hostNetworkQosDao, "hostNetworkQosDao can not be null");
         Validate.notNull(resourceManager, "resourceManager can not be null");
+        Validate.notNull(networkImplementationDetailsUtils, "networkImplementationDetailsUtils can not be null");
         Validate.notNull(managementNetworkUtil, "managementNetworkUtil can not be null");
 
         this.vmDynamicDao = vmDynamicDao;
         this.interfaceDao = interfaceDao;
         this.networkDao = networkDao;
-        this.hostNetworkQosDao = hostNetworkQosDao;
         this.resourceManager = resourceManager;
         this.managementNetworkUtil = managementNetworkUtil;
         this.networkAttachmentDao = networkAttachmentDao;
+        this.networkImplementationDetailsUtils = networkImplementationDetailsUtils;
     }
 
     @Override
@@ -224,10 +223,9 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
 
         for (VdsNetworkInterface iface : host.getInterfaces()) {
             Network network = networks.get(iface.getNetworkName());
+
             NetworkImplementationDetails networkImplementationDetails =
-                    NetworkUtils.calculateNetworkImplementationDetails(network,
-                            network == null ? null : hostNetworkQosDao.get(network.getQosId()),
-                            iface);
+                networkImplementationDetailsUtils.calculateNetworkImplementationDetails(iface, network);
 
             if (networkImplementationDetails != null
                 && !networkImplementationDetails.isInSync()

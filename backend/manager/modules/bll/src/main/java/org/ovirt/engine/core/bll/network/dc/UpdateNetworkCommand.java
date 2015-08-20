@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -49,12 +50,16 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 
 @NonTransactiveCommandAttribute
 public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkModification<T> implements RenamedEntityInfoProvider {
@@ -70,6 +75,18 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Inject
     private VmDao vmDao;
+
+    @Inject
+    private HostNetworkQosDao hostNetworkQosDao;
+
+    @Inject
+    private NetworkAttachmentDao networkAttachmentDao;
+
+    @Inject
+    private InterfaceDao interfaceDao;
+
+    @Inject
+    private NetworkImplementationDetailsUtils networkImplementationDetailsUtils;
 
     private Network oldNetwork;
 
@@ -501,9 +518,11 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
             Set<Guid> hostIdsToSync = new HashSet<>();
             for (VdsNetworkInterface nic : nics) {
-                if (!NetworkUtils.isNetworkInSync(nic,
-                        getNetwork(),
-                        getDbFacade().getHostNetworkQosDao().get(getNetwork().getQosId()))) {
+                NetworkImplementationDetails networkImplementationDetails =
+                    networkImplementationDetailsUtils.calculateNetworkImplementationDetails(nic, getNetwork());
+                boolean networkShouldBeSynced = networkImplementationDetails != null && !networkImplementationDetails.isInSync();
+
+                if (networkShouldBeSynced) {
                     hostIdsToSync.add(nic.getVdsId());
                 }
             }
