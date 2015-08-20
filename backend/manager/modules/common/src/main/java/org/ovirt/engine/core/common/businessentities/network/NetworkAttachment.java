@@ -29,6 +29,8 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
 
     private Guid nicId;
 
+    private HostNetworkQos hostNetworkQos;
+
     private String nicName;
 
     @Valid
@@ -65,6 +67,10 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
     @Override
     public void setId(Guid id) {
         this.id = id;
+
+        if (isQosOverridden()) {
+            hostNetworkQos.setId(id);
+        }
     }
 
     public Guid getNetworkId() {
@@ -138,6 +144,21 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
 
     public void setNetworkName(String networkName) {
         this.networkName = networkName;
+    }
+
+    public HostNetworkQos getHostNetworkQos() {
+        return hostNetworkQos;
+    }
+
+    public void setHostNetworkQos(HostNetworkQos hostNetworkQos) {
+        this.hostNetworkQos = hostNetworkQos;
+        if (this.hostNetworkQos != null) {
+            this.hostNetworkQos.setId(this.getId());
+        }
+    }
+
+    public boolean isQosOverridden() {
+        return hostNetworkQos != null;
     }
 
     @Override

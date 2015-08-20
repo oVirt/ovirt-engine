@@ -18,6 +18,15 @@ public interface NetworkAttachmentDao extends GenericDao<NetworkAttachment, Guid
     List<NetworkAttachment> getAllForNic(Guid nicId);
 
     /**
+     * Retrieves all network attachments associated with the given network.
+     *
+     * @param networkId
+     *            the network ID
+     * @return the list of network attachments
+     */
+    List<NetworkAttachment> getAllForNetwork(Guid networkId);
+
+    /**
      * Retrieves all network attachments associated with the given host.
      *
      * @param hostId
