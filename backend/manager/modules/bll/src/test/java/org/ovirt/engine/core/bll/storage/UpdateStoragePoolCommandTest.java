@@ -293,11 +293,6 @@ public class UpdateStoragePoolCommandTest {
         StorageDomain sdNFS = createStorageDomain(StorageFormatType.V3, StorageType.NFS);
         setAttachedDomains(sdISCI, sdNFS);
 
-        List<StorageType> storageTypes = new ArrayList<>();
-        storageTypes.add(sdISCI.getStorageType());
-        storageTypes.add(sdNFS.getStorageType());
-
-        doReturn(storageTypes).when(spDao).getStorageTypesInPool(any(Guid.class));
         canDoActionFailed(EngineMessage.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
     }
 
@@ -315,9 +310,12 @@ public class UpdateStoragePoolCommandTest {
             sdListWithDomains.add(sd.getStorageStaticData());
 
             // Set the specific validator for this domain.
-            AttachDomainValidatorForTesting attachDomainValidator = spy(new AttachDomainValidatorForTesting(sd.getStorageStaticData(), cmd.getStoragePool()));
+            StorageDomainToPoolRelationValidator attachDomainValidator =
+                    spy(new StorageDomainToPoolRelationValidator(sd.getStorageStaticData(), cmd.getStoragePool()));
+            doReturn(new ValidationResult
+                    (EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAINS_ARE_NOT_SUPPORTED_IN_DOWNGRADED_VERSION))
+                    .when(attachDomainValidator).isStorageDomainTypeFitsPoolIfMixed();
             doReturn(attachDomainValidator).when(cmd).getAttachDomainValidator(sd.getStorageStaticData());
-            doReturn(spDao).when(attachDomainValidator).getStoragePoolDao();
         }
 
         when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(sdListWithDomains);
@@ -480,16 +478,5 @@ public class UpdateStoragePoolCommandTest {
     private void canDoActionFailed(final EngineMessage reason) {
         assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(reason.toString()));
-    }
-
-    protected class AttachDomainValidatorForTesting extends StorageDomainToPoolRelationValidator {
-        public AttachDomainValidatorForTesting(StorageDomainStatic domainStatic, StoragePool pool) {
-            super(domainStatic, pool);
-        }
-
-        // This function overrides a protected function in StorageDomainToPoolRelationValidator (which is not accessible in this package) for mocking ability.
-        public StoragePoolDao getStoragePoolDao() {
-            return super.getStoragePoolDao();
-        }
     }
 }
