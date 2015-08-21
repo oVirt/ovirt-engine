@@ -55,6 +55,10 @@ class Plugin(plugin.PluginBase):
             odockerccons.ConfigEnv.DOCKERC_NEEDED,
             False
         )
+        self.environment.setdefault(
+            odockerccons.ConfigEnv.DOCKERC_CTAG,
+            odockerccons.Const.DEFAULT_CTAG
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
