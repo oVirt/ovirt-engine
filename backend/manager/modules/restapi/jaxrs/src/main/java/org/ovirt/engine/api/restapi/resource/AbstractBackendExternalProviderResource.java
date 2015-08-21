@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.ExternalProvider;
 import org.ovirt.engine.api.resource.ExternalProviderCertificatesResource;
@@ -76,13 +77,16 @@ public abstract class AbstractBackendExternalProviderResource<R extends External
         Provider provider = BackendExternalProviderHelper.getProvider(this, id);
         List<CertificateInfo> entities = getBackendCollection(
             CertificateInfo.class,
-                VdcQueryType.GetProviderCertificateChain, new ProviderQueryParameters(provider)
+            VdcQueryType.GetProviderCertificateChain, new ProviderQueryParameters(provider)
         );
-        if (entities.size() == 0) {
-            return null;
+        String certificate = null;
+        if (CollectionUtils.isNotEmpty(entities)) {
+            certificate = entities.get(0).getPayload();
         }
-        return performAction(VdcActionType.ImportProviderCertificate,
-                new ImportProviderCertificateParameters(provider, entities.get(0).getPayload()));
+        return performAction(
+            VdcActionType.ImportProviderCertificate,
+            new ImportProviderCertificateParameters(provider, certificate)
+        );
     }
 
     @Override
