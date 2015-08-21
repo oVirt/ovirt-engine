@@ -80,21 +80,22 @@ public class SubTabHostGeneralHardwareView
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 3, 4);
-        formBuilder.setRelativeColumnWidth(0, 3);
-        formBuilder.setRelativeColumnWidth(1, 4);
-        formBuilder.setRelativeColumnWidth(2, 5);
-        formBuilder.addFormItem(new FormItem(constants.hardwareManufacturerGeneral(), hardwareManufacturer, 0, 0));
-        formBuilder.addFormItem(new FormItem(constants.hardwareFamilyGeneral(), hardwareFamily, 0, 1));
-        formBuilder.addFormItem(new FormItem(constants.hardwareProductNameGeneral(), hardwareProductName, 0, 2));
-        formBuilder.addFormItem(new FormItem(constants.hardwareVersionGeneral(), hardwareVersion, 1, 0));
-        formBuilder.addFormItem(new FormItem(constants.hardwareUUIDGeneral(), hardwareUUID, 1, 1));
-        formBuilder.addFormItem(new FormItem(constants.hardwareSerialNumberGeneral(), hardwareSerialNumber, 1, 2));
+        formBuilder.setRelativeColumnWidth(0, 4);
+        formBuilder.setRelativeColumnWidth(1, 5);
+        formBuilder.setRelativeColumnWidth(2, 3);
+        formBuilder.addFormItem(new FormItem(constants.hardwareManufacturerGeneral(), hardwareManufacturer, 0, 0), 5, 7);
+        formBuilder.addFormItem(new FormItem(constants.hardwareVersionGeneral(), hardwareVersion, 1, 0), 5, 7);
+        formBuilder.addFormItem(new FormItem(constants.cpuModelHostGeneral(), cpuModel, 2, 0), 5, 7);
+        formBuilder.addFormItem(new FormItem(constants.numOfCoresPerSocketHostGeneral(), coresPerSocket, 3, 0), 5, 7);
 
-        formBuilder.addFormItem(new FormItem(constants.cpuModelHostGeneral(), cpuModel, 0).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.cpuTypeHostGeneral(), cpuType, 1).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.numOfSocketsHostGeneral(), numberOfSockets, 2).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.numOfCoresPerSocketHostGeneral(), coresPerSocket, 0).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.numOfThreadsPerCoreHostGeneral(), threadsPerCore, 1).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.hardwareFamilyGeneral(), hardwareFamily, 0, 1), 4, 8);
+        formBuilder.addFormItem(new FormItem(constants.hardwareUUIDGeneral(), hardwareUUID, 1, 1), 4, 8);
+        formBuilder.addFormItem(new FormItem(constants.cpuTypeHostGeneral(), cpuType, 2, 1), 4, 8);
+        formBuilder.addFormItem(new FormItem(constants.numOfThreadsPerCoreHostGeneral(), threadsPerCore, 3, 1), 4, 8);
+
+        formBuilder.addFormItem(new FormItem(constants.hardwareProductNameGeneral(), hardwareProductName, 0, 2), 4, 8);
+        formBuilder.addFormItem(new FormItem(constants.hardwareSerialNumberGeneral(), hardwareSerialNumber, 1, 2), 4, 8);
+        formBuilder.addFormItem(new FormItem(constants.numOfSocketsHostGeneral(), numberOfSockets, 2, 2), 4, 8);
 
     }
 
@@ -113,7 +114,7 @@ public class SubTabHostGeneralHardwareView
     }
 
     private void refreshHBADeviceInfo(VDS selectedItem) {
-        /* refresh all the information about HBA (FC, iSCSI) devices */
+        /* refresh all the information about Host Bus Adapter (FC, iSCSI) devices */
         hbaInventory.clear();
 
         if (selectedItem != null && getDetailModel().getHbaDevices() != null) {
@@ -128,6 +129,8 @@ public class SubTabHostGeneralHardwareView
                         getElement().getStyle().setBorderWidth(1, Unit.PX);
                         getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
                         getElement().getStyle().setBorderColor("black"); //$NON-NLS-1$
+                        getElement().getStyle().setMarginLeft(5, Unit.PX);
+                        getElement().getStyle().setMarginBottom(5, Unit.PX);
                         getElement().getStyle().setProperty("width", "auto"); //$NON-NLS-1$ //$NON-NLS-2$
                     }
                 };
@@ -142,11 +145,11 @@ public class SubTabHostGeneralHardwareView
                         hbaDevice.get(HostHardwareGeneralModel.HbaDeviceKeys.WWNPS));
 
                 FormBuilder hbaFormBuilder = new FormBuilder(hbaFormPanel, 1, 4);
+                hbaFormBuilder.setRelativeColumnWidth(0, 12);
                 hbaFormBuilder.addFormItem(new FormItem(constants.hbaModelName(), interfaceName, 0, 0));
                 hbaFormBuilder.addFormItem(new FormItem(constants.hbaDeviceType(), interfaceType, 1, 0));
                 hbaFormBuilder.addFormItem(new FormItem(constants.hbaWWNN(), interfaceWWNN, 2, 0));
                 hbaFormBuilder.addFormItem(new FormItem(constants.hbaWWPNs(), portWWPNs, 3, 0));
-                hbaFormBuilder.setRelativeColumnWidth(0, 3);
                 hbaInventory.add(hbaFormPanel);
             }
         }
