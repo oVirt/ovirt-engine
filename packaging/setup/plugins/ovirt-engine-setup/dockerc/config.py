@@ -136,21 +136,25 @@ class Plugin(plugin.PluginBase):
             odockerccons.ConfigEnv.DOCKERC_GLANCE
         ]
 
+        tag = ':' + self.environment[
+            odockerccons.ConfigEnv.DOCKERC_CTAG
+        ]
+
         self._dimages = [
             {
-                'image': odockerccons.Const.C_IMAGE_RABBITMQ,
+                'image': odockerccons.Const.C_IMAGE_RABBITMQ + tag,
                 'name': odockerccons.Const.C_NAME_RABBITMQ
             },
             {
-                'image': odockerccons.Const.C_IMAGE_MARIADBDATA,
+                'image': odockerccons.Const.C_IMAGE_MARIADBDATA + tag,
                 'name': odockerccons.Const.C_NAME_MARIADBDATA
             },
             {
-                'image': odockerccons.Const.C_IMAGE_MARIADBAPP,
+                'image': odockerccons.Const.C_IMAGE_MARIADBAPP + tag,
                 'name': odockerccons.Const.C_NAME_MARIADBAPP
             },
             {
-                'image': odockerccons.Const.C_IMAGE_KEYSTONE,
+                'image': odockerccons.Const.C_IMAGE_KEYSTONE + tag,
                 'name': odockerccons.Const.C_NAME_KEYSTONE
             }
         ]
@@ -160,7 +164,7 @@ class Plugin(plugin.PluginBase):
         ]:
             self._dimages.append(
                 {
-                    'image': odockerccons.Const.C_IMAGE_CINDER,
+                    'image': odockerccons.Const.C_IMAGE_CINDER + tag,
                     'name': odockerccons.Const.C_NAME_CINDER
                 }
             )
@@ -171,11 +175,11 @@ class Plugin(plugin.PluginBase):
             self._dimages.extend(
                 [
                     {
-                        'image': odockerccons.Const.C_IMAGE_GLANCE_REG,
+                        'image': odockerccons.Const.C_IMAGE_GLANCE_REG + tag,
                         'name': odockerccons.Const.C_NAME_GLANCE_REG
                     },
                     {
-                        'image': odockerccons.Const.C_IMAGE_GLANCE_API,
+                        'image': odockerccons.Const.C_IMAGE_GLANCE_API + tag,
                         'name': odockerccons.Const.C_NAME_GLANCE_API
                     },
                 ]

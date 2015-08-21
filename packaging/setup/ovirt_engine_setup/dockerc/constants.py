@@ -32,24 +32,26 @@ def _(m):
 
 @util.export
 class Const(object):
-    C_IMAGE_RABBITMQ = 'kollaglue/centos-rdo-rabbitmq:latest'
+    C_IMAGE_RABBITMQ = 'kollaglue/centos-rdo-rabbitmq'
     C_NAME_RABBITMQ = 'rabbitmq'
-    C_IMAGE_MARIADBDATA = 'kollaglue/centos-rdo-mariadb-data:latest'
+    C_IMAGE_MARIADBDATA = 'kollaglue/centos-rdo-mariadb-data'
     C_NAME_MARIADBDATA = 'mariadbdata'
-    C_IMAGE_MARIADBAPP = 'kollaglue/centos-rdo-mariadb-app:latest'
+    C_IMAGE_MARIADBAPP = 'kollaglue/centos-rdo-mariadb-app'
     C_NAME_MARIADBAPP = 'mariadbapp'
-    C_IMAGE_KEYSTONE = 'kollaglue/centos-rdo-keystone:latest'
+    C_IMAGE_KEYSTONE = 'kollaglue/centos-rdo-keystone'
     C_NAME_KEYSTONE = 'keystone'
 
-    C_IMAGE_CINDER = 'kollaglue/centos-rdo-cinder:latest'
+    C_IMAGE_CINDER = 'kollaglue/centos-rdo-cinder'
     C_NAME_CINDER = 'cinder'
 
-    C_IMAGE_GLANCE_REG = 'kollaglue/centos-rdo-glance-registry:latest'
+    C_IMAGE_GLANCE_REG = 'kollaglue/centos-rdo-glance-registry'
     C_NAME_GLANCE_REG = 'glance-registry'
-    C_IMAGE_GLANCE_API = 'kollaglue/centos-rdo-glance-api:latest'
+    C_IMAGE_GLANCE_API = 'kollaglue/centos-rdo-glance-api'
     C_NAME_GLANCE_API = 'glance-api'
 
     DOCKER_SERVICE_NANE = 'docker'
+
+    DEFAULT_CTAG = 'kilo'
 
     # Admin user password
     ADMIN_USER_PASSWORD = 'steakfordinner'
@@ -116,6 +118,13 @@ class ConfigEnv(object):
         return 'OVESETUP_CONFIG/dockerDaemon'
 
     DOCKERC_NEEDED = 'OVESETUP_CONFIG/dockercNeeded'
+
+    @osetupattrs(
+        answerfile=True,
+        postinstallfile=True,
+    )
+    def DOCKERC_CTAG(self):
+        return 'OVESETUP_CONFIG/dockercTag'
 
 
 @util.export
