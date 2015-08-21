@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.provider.ProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.businessentities.CertificateInfo;
@@ -35,15 +36,15 @@ public class GetProviderCertificateChainQuery<P extends ProviderQueryParameters>
         try {
             ProviderProxy proxy = ProviderProxyFactory.getInstance().create(provider);
             List<? extends Certificate> chain = proxy.getCertificateChain();
-            if (!chain.isEmpty()) {
-                List<CertificateInfo> results = new ArrayList<>();
+            List<CertificateInfo> results = new ArrayList<>();
+            if (CollectionUtils.isNotEmpty(chain)) {
                 for (Certificate cert : chain) {
                     if (cert instanceof X509Certificate) {
                         results.add(createCertificateInfo((X509Certificate) cert));
                     }
                 }
-                getQueryReturnValue().setReturnValue(results);
             }
+            getQueryReturnValue().setReturnValue(results);
         } catch (Exception e) {
             log.error("Error in encoding certificate: {}", e.getMessage());
             log.debug("Exception", e);
