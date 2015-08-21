@@ -3,6 +3,10 @@ package org.ovirt.engine.core.extensions.mgr;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -139,9 +143,12 @@ public class ExtensionsManager extends Observable {
     }
 
     public String load(File file) {
-        try (FileInputStream inputStream = new FileInputStream(file)) {
+        try (
+            InputStream is = new FileInputStream(file);
+            Reader reader = new InputStreamReader(is, Charset.forName("UTF-8"));
+        ) {
             Properties props = new Properties();
-            props.load(inputStream);
+            props.load(reader);
             return loadImpl(props, file);
         } catch (IOException exception) {
             throw new ConfigurationException(String.format("Can't load object configuration file '%1$s': %2$s",
