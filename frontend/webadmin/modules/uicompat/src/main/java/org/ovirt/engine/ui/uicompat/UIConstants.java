@@ -73,7 +73,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Profiles")
     String networkProfilesTitle();
 
-    @DefaultStringValue("New Cluster - Guide Me")
+    @DefaultStringValue("Cluster - Guide Me")
     String newClusterGuideMeTitle();
 
     @DefaultStringValue("Edit Cluster")
@@ -191,7 +191,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Data Centers")
     String dataCentersTitle();
 
-    @DefaultStringValue("New Data Center - Guide Me")
+    @DefaultStringValue("Data Center - Guide Me")
     String newDataCenterGuideMeTitle();
 
     @DefaultStringValue("Configure Later")
@@ -771,7 +771,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Retrieving CDs...")
     String retrievingCDsTitle();
 
-    @DefaultStringValue("New Virtual Machine - Guide Me")
+    @DefaultStringValue("Virtual Machine - Guide Me")
     String newVirtualMachineGuideMeTitle();
 
     @DefaultStringValue("Remove Virtual Machine(s)")
