@@ -91,8 +91,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
                                 .getStorageDomainId(), getImageGroupId(), getParameters().getDiskInfo().getSize(),
                                 getParameters().getDiskInfo().getVolumeType(), getParameters().getDiskInfo()
                                         .getVolumeFormat(), getDestinationImageId(),
-                                getJsonDiskDescription(getParameters().getDiskInfo().getDiskAlias(),
-                                        getParameters().getDiskInfo().getDiskDescription())
+                                getJsonDiskDescription(getParameters().getDiskInfo())
                         ));
         if (vdsReturnValue.getSucceeded()) {
             getParameters().setVdsmTaskIds(new ArrayList<Guid>());

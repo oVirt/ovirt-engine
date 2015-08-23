@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.EngineContext;
@@ -19,7 +18,6 @@ import org.ovirt.engine.core.common.vdscommands.StoragePoolDomainAndGroupIdBaseV
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.JsonHelper;
 
 public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParameters> extends QueriesCommandBase<P> {
 
@@ -88,9 +86,7 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
         DiskImage newDiskImage = (DiskImage) imageInfoReturn.getReturnValue();
         if (StringUtils.isNotEmpty(newDiskImage.getDescription())) {
             try {
-                Map<String, Object> diskDescriptionMap = JsonHelper.jsonToMap(newDiskImage.getDescription());
-                newDiskImage.setDiskAlias((String) diskDescriptionMap.get(ImagesHandler.DISK_ALIAS));
-                newDiskImage.setDiskDescription((String) diskDescriptionMap.get(ImagesHandler.DISK_DESCRIPTION));
+                ImagesHandler.enrichDiskByJsonDescription(newDiskImage.getDescription(), newDiskImage);
             } catch (IOException e) {
                 log.warn("Exception while parsing JSON for disk. Exception: '{}'", e);
             }
