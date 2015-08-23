@@ -1,4 +1,5 @@
 package org.ovirt.engine.core.bll;
+
 import static org.junit.Assert.assertNotSame;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -10,7 +11,6 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
 
@@ -19,15 +19,12 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
-import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.EngineSessionDao;
-import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -74,10 +71,6 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
         when(engineSessionDaoMock.save(any(EngineSession.class))).thenReturn(RandomUtils.instance().nextLong());
         when(engineSessionDaoMock.remove(any(Long.class))).thenReturn(1);
         when(dbFacadeMock.getEngineSessionDao()).thenReturn(engineSessionDaoMock);
-
-        PermissionDao permissionsDaoMock = mock(PermissionDao.class);
-        when(permissionsDaoMock.getAllForEntity(any(Guid.class), any(Long.class), any(Boolean.class))).thenReturn(new ArrayList<Permission>());
-        when(dbFacadeMock.getPermissionDao()).thenReturn(permissionsDaoMock);
 
         SessionDataContainer.getInstance().setDbFacade(dbFacadeMock);
 
