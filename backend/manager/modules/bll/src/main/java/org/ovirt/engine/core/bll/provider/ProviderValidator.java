@@ -34,4 +34,11 @@ public class ProviderValidator {
     public ValidationResult validateAddProvider() {
         return ValidationResult.VALID;
     }
+
+    /**
+     * Specific validations that each sub-class can override and implement
+     */
+    public ValidationResult validateRemoveProvider() {
+        return ValidationResult.VALID;
+    }
 }

@@ -31,6 +31,8 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
 
     private Provider<?> deletedProvider;
 
+    private ProviderProxy providerProxy;
+
     public RemoveProviderCommand(Guid commandId) {
         super(commandId);
     }
@@ -52,19 +54,34 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
         return provider == null ? null : provider.getName();
     }
 
+    protected boolean validateRemoveProvider() {
+        if (getProviderProxy() != null) {
+            ProviderValidator providerValidator = getProviderProxy().getProviderValidator();
+            return validate(providerValidator.validateRemoveProvider());
+        }
+        return true;
+    }
+
+    public ProviderProxy getProviderProxy() {
+        if (providerProxy == null) {
+            providerProxy = ProviderProxyFactory.getInstance().create(getParameters().getProvider());
+        }
+        return providerProxy;
+    }
+
     @Override
     protected boolean canDoAction() {
         RemoveProviderValidator validator = new RemoveProviderValidator(vmDao, getDeletedProvider());
-        return validate(validator.providerIsSet()) && validate(validator.providerNetworksNotUsed());
+        return validate(validator.providerIsSet()) && validate(validator.providerNetworksNotUsed())
+                && validateRemoveProvider();
     }
 
     @Override
     protected void executeCommand() {
         final Guid providerId = getParameters().getProvider().getId();
 
-        ProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(getParameters().getProvider());
-        if (providerProxy != null) {
-            providerProxy.onRemoval();
+        if (getProviderProxy() != null) {
+            getProviderProxy().onRemoval();
         }
 
         getProviderDao().remove(providerId);

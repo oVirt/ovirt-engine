@@ -4,19 +4,25 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
+import org.ovirt.engine.core.bll.storage.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 
 public class CinderProviderValidator extends ProviderValidator {
+
+    StorageDomain CinderStorageDomain;
 
     public CinderProviderValidator(Provider<?> provider) {
         super(provider);
@@ -31,6 +37,32 @@ public class CinderProviderValidator extends ProviderValidator {
             return validateAttachStorageDomain();
         }
         return ValidationResult.VALID;
+    }
+
+    public ValidationResult validateRemoveProvider() {
+        if (getStorageDomain() == null) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+        }
+        StorageDomainStatus status = getStorageDomain().getStatus();
+        if (status != StorageDomainStatus.Inactive && status != StorageDomainStatus.Maintenance
+                && status != StorageDomainStatus.Unknown) {
+            if (status.isStorageDomainInProcess()) {
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED);
+            }
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,
+                    String.format("$%s %s", "status", status));
+        }
+        return CINDERStorageHelper.isCinderHasNoImages(getStorageDomain().getId());
+    }
+
+    private StorageDomain getStorageDomain() {
+        if (CinderStorageDomain == null) {
+            List<StorageDomain> providerStorageList = getStorageDomainDao().getAllByConnectionId(provider.getId());
+            if (!providerStorageList.isEmpty()) {
+                CinderStorageDomain = providerStorageList.get(0);
+            }
+        }
+        return CinderStorageDomain;
     }
 
     private ValidationResult validateAttachStorageDomain() {
@@ -61,6 +93,10 @@ public class CinderProviderValidator extends ProviderValidator {
 
     protected StoragePoolDao getStoragePoolDao() {
         return DbFacade.getInstance().getStoragePoolDao();
+    }
+
+    protected StorageDomainDao getStorageDomainDao() {
+        return DbFacade.getInstance().getStorageDomainDao();
     }
 
     /**
