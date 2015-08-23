@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.codec.DecoderException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -76,7 +77,7 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
             try {
                 MetadataDiskDescriptionHandler.getInstance()
                         .enrichDiskByJsonDescription(newDiskImage.getDescription(), newDiskImage);
-            } catch (IOException e) {
+            } catch (IOException | DecoderException e) {
                 log.warn("Exception while parsing JSON for disk. Exception: '{}'", e);
             }
         }
