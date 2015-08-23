@@ -29,7 +29,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.InjectorRule;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
@@ -116,20 +115,14 @@ public class SetupNetworksHelperTest {
     @Mock
     private NetworkAttachmentDao networkAttachmentDao;
 
-    private EffectiveHostNetworkQos effectiveHostNetworkQos;
-
     @Mock
     private CalculateBaseNic calculateBaseNic;
-
-    @Spy
-    private NetworkImplementationDetailsUtils networkImplementationDetailsUtilsSpy =
-        new NetworkImplementationDetailsUtils(effectiveHostNetworkQos, networkAttachmentDao, calculateBaseNic);
 
     /* --- Tests for networks functionality --- */
 
     @Before
     public void setUp() throws Exception {
-        effectiveHostNetworkQos = new EffectiveHostNetworkQos(qosDao);
+        final EffectiveHostNetworkQos effectiveHostNetworkQos = new EffectiveHostNetworkQos(qosDao);
         injectorRule.bind(NetworkDao.class, networkDao);
         injectorRule.bind(NetworkAttachmentDao.class, networkAttachmentDao);
         injectorRule.bind(InterfaceDao.class, interfaceDao);
@@ -379,6 +372,7 @@ public class SetupNetworksHelperTest {
         validateAndAssertNetworkModified(helper, net);
     }
 
+    @Test
     public void managementNetworkChangedCorrectlyWithIpHostname() {
         Network net = createManagementNetwork();
         mockExistingNetworks(net);
@@ -483,13 +477,6 @@ public class SetupNetworksHelperTest {
         }
     }
 
-    private SetupNetworksHelper setupCompositeQosConfiguration(boolean constructBond,
-            boolean qosOnAll,
-            HostNetworkQos qos,
-            Integer nicSpeed) {
-        return setupCompositeQosConfiguration(constructBond, qosOnAll, qos, null, nicSpeed, null);
-    }
-
     private SetupNetworksHelper setupCompositeQosConfiguration(boolean qosOnAll,
             HostNetworkQos qos,
             Integer slaveSpeed,
@@ -514,19 +501,6 @@ public class SetupNetworksHelperTest {
         validateAndExpectViolation(helper,
             EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS,
             BOND_NAME);
-    }
-
-    private SetupNetworksHelper qosCommitmentSetup(boolean constructBond,
-            int totalCommitment,
-            Integer slaveSpeed,
-            Integer masterSpeed,
-            String bondOptions) {
-
-        HostNetworkQos qos = new HostNetworkQos();
-        qos.setOutAverageLinkshare(10);
-        qos.setOutAverageRealtime(totalCommitment / 3);
-        return constructBond ? setupCompositeQosConfiguration(true, qos, slaveSpeed, masterSpeed, bondOptions)
-                : setupCompositeQosConfiguration(false, true, qos, masterSpeed);
     }
 
     @Test
@@ -952,7 +926,7 @@ public class SetupNetworksHelperTest {
     @Test
     public void onlyOneSlaveForBonding() {
         VdsNetworkInterface bond = createBond(BOND_NAME, null);
-        List<VdsNetworkInterface> slaves = Arrays.asList(createNic("nic0", null));
+        List<VdsNetworkInterface> slaves = Collections.singletonList(createNic("nic0", null));
 
         mockExistingIfacesWithBond(bond, slaves);
 
@@ -982,6 +956,7 @@ public class SetupNetworksHelperTest {
         mockExistingIfacesWithBond(bond, slaves);
         mockExistingNetworks(network);
         slaves.get(0).setBondName(bond.getName());
+        @SuppressWarnings("deprecation")
         SetupNetworksParameters parameters = createParametersForBond(bond, slaves);
 
         SetupNetworksHelper helper = createHelper(parameters);
@@ -1000,6 +975,7 @@ public class SetupNetworksHelperTest {
 
         mockExistingIfacesWithBond(bond, slaves);
         slaves.get(0).setBondName(null);
+        //noinspection deprecation
         SetupNetworksParameters parameters = new SetupNetworksParameters();
         parameters.setInterfaces(slaves);
         parameters.getInterfaces().add(bond);
@@ -1023,6 +999,8 @@ public class SetupNetworksHelperTest {
         mockExistingIfacesWithBond(bond, ifaces);
         mockExistingNetworks(network);
 
+        //noinspection deprecation
+        @SuppressWarnings("deprecation")
         SetupNetworksParameters parameters = new SetupNetworksParameters();
         ifaces.add(bond);
         parameters.setInterfaces(ifaces);
@@ -1041,6 +1019,7 @@ public class SetupNetworksHelperTest {
         List<VdsNetworkInterface> ifaces = createNics(bond.getName());
 
         mockExistingIfacesWithBond(bond, ifaces);
+        //noinspection deprecation
         SetupNetworksParameters parameters = new SetupNetworksParameters();
         ifaces.add(bond);
         parameters.setInterfaces(ifaces);
@@ -1063,6 +1042,7 @@ public class SetupNetworksHelperTest {
         mockExistingIfacesWithBond(bond, ifaces);
 
         bond.setNetworkName(network.getName());
+        //noinspection deprecation
         SetupNetworksParameters parameters = createParametersForBond(bond, ifaces);
         SetupNetworksHelper helper = createHelper(parameters);
 
@@ -1080,6 +1060,7 @@ public class SetupNetworksHelperTest {
     public void bondWithNoNetowrkAttached() {
         VdsNetworkInterface bond = createBond(BOND_NAME, null);
         List<VdsNetworkInterface> ifacesToBond = createNics(null);
+        //noinspection deprecation
         SetupNetworksParameters parameters = createParametersForBond(bond, ifacesToBond);
 
         SetupNetworksHelper helper = createHelper(parameters);
@@ -1098,6 +1079,7 @@ public class SetupNetworksHelperTest {
         List<VdsNetworkInterface> slaves = createNics(bond.getName());
 
         mockExistingIfacesWithBond(bond, slaves);
+        //noinspection deprecation
         SetupNetworksParameters parameters = new SetupNetworksParameters();
         for (VdsNetworkInterface slave : slaves) {
             parameters.getInterfaces().add(enslaveOrReleaseNIC(slave, null));
@@ -1121,6 +1103,7 @@ public class SetupNetworksHelperTest {
         mockExistingIfacesWithBond(bond, slaves);
         bond.setNetworkName(null);
 
+        //noinspection deprecation
         SetupNetworksParameters parameters = createParametersForBond(bond, slaves);
         SetupNetworksHelper helper = createHelper(parameters);
 
@@ -1197,6 +1180,7 @@ public class SetupNetworksHelperTest {
         mockExistingNetworks(network);
         mockExistingIfacesWithBond(bond, ifacesToBond);
 
+        //noinspection deprecation
         SetupNetworksParameters parameters = createParametersForBond(bond, ifacesToBond);
         parameters.getInterfaces().add(createVlan(bond, 100, network.getName()));
 
@@ -1214,6 +1198,7 @@ public class SetupNetworksHelperTest {
         VdsNetworkInterface bond = createBond(BOND_NAME, null);
         VdsNetworkInterface anotherBond = createBond(BOND_NAME + "1", null);
         List<VdsNetworkInterface> ifacesToBond = createNics(null);
+        //noinspection deprecation
         SetupNetworksParameters parameters = createParametersForBond(bond, ifacesToBond);
 
         parameters.getInterfaces().add(createVlan(anotherBond, 100, "net"));
@@ -1707,7 +1692,7 @@ public class SetupNetworksHelperTest {
     }
 
     private void assertInterfaceModified(SetupNetworksHelper helper, VdsNetworkInterface iface) {
-        Set<String> modifiedNames = new HashSet<String>();
+        Set<String> modifiedNames = new HashSet<>();
         for (VdsNetworkInterface modifiedIface : helper.getModifiedInterfaces()) {
             modifiedNames.add(modifiedIface.getName());
         }
@@ -1758,15 +1743,6 @@ public class SetupNetworksHelperTest {
     /**
      * Base method to create any sort of network interface with the given parameters.
      *
-     * @param id
-     * @param name
-     * @param bonded
-     * @param bondName
-     * @param baseInterfaceName
-     * @param vlanId
-     * @param networkName
-     * @param bridged
-     * @param address
      * @return A network interface.
      */
     private VdsNetworkInterface createVdsInterface(Guid id,
@@ -1821,6 +1797,7 @@ public class SetupNetworksHelperTest {
 
     private void mockCalculateBaseNicWhenBaseNicIsPassed(VdsNetworkInterface nic) {
         when(calculateBaseNic.getBaseNic(eq(nic))).thenReturn(nic);
+        //noinspection unchecked
         when(calculateBaseNic.getBaseNic(eq(nic), any(Map.class))).thenReturn(nic);
     }
 
@@ -1933,6 +1910,7 @@ public class SetupNetworksHelperTest {
 
     private void mockCalculateBaseNicWhenVlanNicIsPassed(VdsNetworkInterface baseNic, VdsNetworkInterface vlanNic) {
         when(calculateBaseNic.getBaseNic(eq(vlanNic))).thenReturn(baseNic);
+        //noinspection unchecked
         when(calculateBaseNic.getBaseNic(eq(vlanNic), any(Map.class))).thenReturn(baseNic);
     }
 
@@ -1977,7 +1955,7 @@ public class SetupNetworksHelperTest {
      * @return List of interfaces which optionally are slaves of the given bond.
      */
     private List<VdsNetworkInterface> createNics(String bondName, int count) {
-        List<VdsNetworkInterface> ifaces = new ArrayList<VdsNetworkInterface>(count);
+        List<VdsNetworkInterface> ifaces = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             VdsNetworkInterface nic = createNic("eth" + i, null);
 
@@ -1998,6 +1976,7 @@ public class SetupNetworksHelperTest {
      *            The NICs to use in parameters.
      * @return Parameters with the NIC.
      */
+    @SuppressWarnings("deprecation")
     private SetupNetworksParameters createParametersForNics(VdsNetworkInterface... nics) {
         SetupNetworksParameters parameters = new SetupNetworksParameters();
         parameters.setInterfaces(Arrays.asList(nics));
@@ -2013,6 +1992,7 @@ public class SetupNetworksHelperTest {
      *            The interfaces to use as bond slaves.
      * @return Parameters that define a bond over 2 interfaces.
      */
+    @SuppressWarnings("deprecation")
     private SetupNetworksParameters createParametersForBond(VdsNetworkInterface bond,
             List<VdsNetworkInterface> bondedIfaces) {
         SetupNetworksParameters parameters = new SetupNetworksParameters();
@@ -2032,6 +2012,7 @@ public class SetupNetworksHelperTest {
      *            The NIC to use in parameters.
      * @return Parameters with the NIC.
      */
+    @SuppressWarnings("deprecation")
     private SetupNetworksParameters createParametersForSync(VdsNetworkInterface nic) {
         return createParametersForSync(nic.getNetworkName(), nic);
     }
@@ -2045,7 +2026,9 @@ public class SetupNetworksHelperTest {
      *            The name of network to be synchronized.
      * @return Parameters with the NIC.
      */
+    @SuppressWarnings("deprecation")
     private SetupNetworksParameters createParametersForSync(String network, VdsNetworkInterface... nics) {
+        //noinspection deprecation
         SetupNetworksParameters params = createParametersForNics(nics);
         params.setNetworksToSync(Collections.singletonList(network));
         return params;
@@ -2065,7 +2048,7 @@ public class SetupNetworksHelperTest {
     }
 
     private Map<String, String> createCustomProperties() {
-        Map<String, String> customProperties = new HashMap<String, String>();
+        Map<String, String> customProperties = new HashMap<>();
         customProperties.put("bridge_opts", "forward_delay=1500");
         return customProperties;
     }
@@ -2135,20 +2118,24 @@ public class SetupNetworksHelperTest {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private SetupNetworksHelper createHelper(SetupNetworksParameters params) {
         return createHelper(params, Version.v3_3);
     }
 
+    @SuppressWarnings("deprecation")
     private SetupNetworksHelper createHelper(SetupNetworksParameters params, Version compatibilityVersion) {
         VDS vds = mock(VDS.class);
         when(vds.getId()).thenReturn(Guid.Empty);
         return createHelper(params, vds, compatibilityVersion);
     }
 
+    @SuppressWarnings("deprecation")
     private SetupNetworksHelper createHelper(SetupNetworksParameters params, VDS vds) {
         return createHelper(params, vds, Version.v3_3);
     }
 
+    @SuppressWarnings("deprecation")
     private SetupNetworksHelper createHelper(SetupNetworksParameters params, VDS vds, Version compatibilityVersion) {
         when(vds.getVdsGroupCompatibilityVersion()).thenReturn(compatibilityVersion);
 
