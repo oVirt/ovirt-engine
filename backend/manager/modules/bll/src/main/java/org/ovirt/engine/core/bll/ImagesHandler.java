@@ -64,9 +64,9 @@ import org.slf4j.LoggerFactory;
 
 public final class ImagesHandler {
     public static final String DISK = "_Disk";
-    public static final String DISK_ALIAS = "DiskAlias";
-    public static final String DISK_DESCRIPTION = "DiskDescription";
     public static final String DefaultDriveName = "1";
+    private static final String DISK_ALIAS = "DiskAlias";
+    private static final String DISK_DESCRIPTION = "DiskDescription";
     private static final Logger log = LoggerFactory.getLogger(ImagesHandler.class);
 
     /**
@@ -880,13 +880,18 @@ public final class ImagesHandler {
      * description are preserved in the disk meta data. If the meta data will be added with more fields
      * UpdateVmDiskCommand should be changed accordingly.
      */
-    public static String getJsonDiskDescription(String diskAlias, String diskDescription) throws IOException {
+    public static String getJsonDiskDescription(Disk disk) throws IOException {
         Map<String, Object> description = new TreeMap<>();
-        description.put(DISK_ALIAS, diskAlias);
-        description.put(DISK_DESCRIPTION, diskDescription != null ? diskDescription : "");
+        description.put(DISK_ALIAS, disk.getDiskAlias());
+        description.put(DISK_DESCRIPTION, disk.getDiskDescription() != null ? disk.getDiskDescription() : "");
         return JsonHelper.mapToJson(description, false);
     }
 
+    public static void enrichDiskByJsonDescription(String jsonDiskDescription, Disk disk) throws IOException {
+        Map<String, Object> diskDescriptionMap = JsonHelper.jsonToMap(jsonDiskDescription);
+        disk.setDiskAlias((String) diskDescriptionMap.get(DISK_ALIAS));
+        disk.setDiskDescription((String) diskDescriptionMap.get(DISK_DESCRIPTION));
+    }
 
     /**
      * This method is used for storage allocation validations, where the disks are the template's,

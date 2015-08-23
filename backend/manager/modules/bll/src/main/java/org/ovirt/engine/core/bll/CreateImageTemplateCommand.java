@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.PostZeroHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -61,13 +60,13 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         VolumeFormat targetFormat = getTargetVolumeFormat(newImage.getVolumeFormat(), newImage.getVolumeType(),
                 getParameters().getDestinationStorageDomainId());
 
-        String diskAlias =
-                getParameters().getDiskAlias() != null ? getParameters().getDiskAlias() : getDiskImage().getDiskAlias();
+        newImage.setDiskAlias(getParameters().getDiskAlias() != null ?
+                getParameters().getDiskAlias() : getDiskImage().getDiskAlias());
         VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.CopyImage,
                 PostZeroHandler.fixParametersWithPostZero(
                         new CopyImageVDSCommandParameters(storagePoolId, getParameters().getStorageDomainId(),
                                 getParameters().getVmId(), imageGroupId, snapshotId, destinationImageGroupID,
-                                getDestinationImageId(), getJsonDiskDescription(diskAlias, StringUtils.defaultString(newImage.getDescription())),
+                                getDestinationImageId(), getJsonDiskDescription(newImage),
                                 getParameters().getDestinationStorageDomainId(), CopyVolumeType.SharedVol,
                                 targetFormat, newImage.getVolumeType(), getDiskImage().isWipeAfterDelete(), false)));
 
@@ -80,7 +79,6 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
                         getParameters().getDestinationStorageDomainId()));
 
         newImage.setId(destinationImageGroupID);
-        newImage.setDiskAlias(diskAlias);
         newImage.setDiskDescription(getParameters().getDescription() != null ?
                 getParameters().getDescription() : getDiskImage().getDiskDescription());
         newImage.setVmSnapshotId(getParameters().getVmSnapshotId());
