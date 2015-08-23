@@ -55,14 +55,16 @@
         <d:content>
             <g:SplitLayoutPanel ui:field="horizontalSplitLayoutPanel">
                 <g:center>
-                    <g:FlowPanel ui:field="groupPanel">
-                        <g:FlowPanel ui:field="hostSummaryPanel" addStyleNames="{style.hostInfoPanel}">
+                    <g:ScrollPanel>
+                        <g:FlowPanel ui:field="groupPanel">
+                            <g:FlowPanel ui:field="hostSummaryPanel" addStyleNames="{style.hostInfoPanel}">
+                            </g:FlowPanel>
+                            <g:FlowPanel addStyleNames="{style.socketScrollPanel}">
+                                <g:FlowPanel ui:field="socketListPanel" addStyleNames="{style.socketListPanel}"/>
+                            </g:FlowPanel>
+                            <g:SimplePanel addStyleNames="{style.endFloat}" />
                         </g:FlowPanel>
-                        <g:FlowPanel addStyleNames="{style.socketScrollPanel}">
-                            <g:FlowPanel ui:field="socketListPanel" addStyleNames="{style.socketListPanel}"/>
-                        </g:FlowPanel>
-                        <g:SimplePanel addStyleNames="{style.endFloat}" />
-                    </g:FlowPanel>
+                    </g:ScrollPanel>
                 </g:center>
                 <g:east size="300">
                     <g:FlowPanel ui:field="unassignedvNumaNodesContainer" addStyleNames="{style.unassignedPanel}">
