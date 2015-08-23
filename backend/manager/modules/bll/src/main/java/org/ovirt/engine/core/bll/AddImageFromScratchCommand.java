@@ -116,8 +116,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
 
     private String getJsonDiskDescription() {
         try {
-            return ImagesHandler.getJsonDiskDescription(getParameters().getDiskInfo().getDiskAlias(),
-                    getParameters().getDiskInfo().getDiskDescription());
+            return ImagesHandler.getJsonDiskDescription(getParameters().getDiskInfo());
         } catch (IOException e) {
             log.error("Exception while generating json for disk. ERROR: '{}'", e);
             return StringUtils.EMPTY;
