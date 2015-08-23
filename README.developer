@@ -272,6 +272,7 @@ Access JMX shell using provide OPTIONAL_COMMAND for non interactive usage:
 
 $ "${JBOSS_HOME}/bin/jboss-cli.sh" \
     --connect \
+    --timeout=30000 \
     --controller=localhost:8706 \
     --user=admin@internal \
     OPTIONAL_COMMAND
