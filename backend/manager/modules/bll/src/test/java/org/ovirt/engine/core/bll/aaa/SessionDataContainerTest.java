@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.Date;
@@ -14,18 +13,21 @@ import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.EngineSessionDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**
  * A test case for the {@link SessionDataContainer} class.
  */
+@RunWith(MockitoJUnitRunner.class)
 public class SessionDataContainerTest {
 
-    private SessionDataContainer container;
     private static final String TEST_KEY = "someKey";
     private static final String TEST_VALUE = "someValue";
     private static final String TEST_SESSION_ID = "someSession";
@@ -36,15 +38,15 @@ public class SessionDataContainerTest {
     public MockConfigRule mcr = new MockConfigRule(
             MockConfigRule.mockConfig(ConfigValues.UserSessionTimeOutInterval, 2));
 
+    @Mock
+    private EngineSessionDao engineSessionDao;
+
+    @InjectMocks
+    private SessionDataContainer container;
+
     @Before
     public void setUpContainer() {
-        container = spy(SessionDataContainer.getInstance());
-        DbFacade dbFacadeMock = mock(DbFacade.class);
-        when(container.getDbFacade()).thenReturn(dbFacadeMock);
-
-        EngineSessionDao engineSessionDaoMock = mock(EngineSessionDao.class);
-        when(engineSessionDaoMock.remove(any(Long.class))).thenReturn(1);
-        when(dbFacadeMock.getEngineSessionDao()).thenReturn(engineSessionDaoMock);
+        when(engineSessionDao.remove(any(Long.class))).thenReturn(1);
 
         DbUser user = mock(DbUser.class);
         container.setUser(TEST_SESSION_ID, user);

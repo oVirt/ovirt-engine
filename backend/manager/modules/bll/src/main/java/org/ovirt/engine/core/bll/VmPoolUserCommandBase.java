@@ -13,7 +13,7 @@ public abstract class VmPoolUserCommandBase<T extends VmPoolUserParameters> exte
         super(parameters);
     }
 
-    protected void initUser() {
+    protected void initPoolUser() {
         DbUser user = getDbUser();
         if (user != null && user.getId() == null) {
             user.setId(Guid.newGuid());

@@ -18,11 +18,8 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
@@ -49,14 +46,10 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 /**
  * A test case for {@link AddVmTemplateCommand}
  */
-@RunWith(MockitoJUnitRunner.class)
-public class AddVmTemplateCommandTest {
+public class AddVmTemplateCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.VmPriorityMaxValue, 100));
-
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
 
     private AddVmTemplateCommand<AddVmTemplateParameters> cmd;
     private VM vm;
@@ -105,6 +98,10 @@ public class AddVmTemplateCommandTest {
 
         // Using the compensation constructor since the normal one contains DB access
         cmd = spy(new AddVmTemplateCommand<AddVmTemplateParameters>(params) {
+
+            @Override
+            protected void initUser() {
+            }
 
             @Override
             protected List<DiskImage> getVmDisksFromDB() {

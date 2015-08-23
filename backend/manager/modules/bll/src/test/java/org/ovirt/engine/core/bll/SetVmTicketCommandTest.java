@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 
-public class SetVmTicketCommandTest {
+public class SetVmTicketCommandTest extends BaseCommandTest {
     // The command that will be tested:
     private SetVmTicketCommand<SetVmTicketParameters> command;
 

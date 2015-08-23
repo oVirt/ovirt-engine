@@ -11,9 +11,7 @@ import java.util.Collections;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.lock.InMemoryLockManager;
 import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -44,8 +42,7 @@ import org.ovirt.engine.core.utils.lock.LockManager;
 
 
 /** A test case for {@link GetDiskAlignmentCommandTest} */
-@RunWith(MockitoJUnitRunner.class)
-public class GetDiskAlignmentCommandTest {
+public class GetDiskAlignmentCommandTest extends BaseCommandTest {
     private LockManager lockManager = new InMemoryLockManager();
 
     @Rule

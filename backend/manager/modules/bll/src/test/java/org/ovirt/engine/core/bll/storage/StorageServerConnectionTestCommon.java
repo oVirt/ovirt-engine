@@ -4,6 +4,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
@@ -13,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class StorageServerConnectionTestCommon {
+public abstract class StorageServerConnectionTestCommon extends BaseCommandTest {
 
     protected StorageServerConnectionParametersBase parameters;
 

@@ -173,7 +173,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
     protected void executeCommand() {
         getParameters().setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);
 
-        initUser();
+        initPoolUser();
         boolean isPrestartedVm = false;
         Guid vmToAttach;
         synchronized (_lockObject) {

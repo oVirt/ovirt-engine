@@ -12,9 +12,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -34,8 +33,7 @@ import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RefreshLunsSizeCommandTest {
+public class RefreshLunsSizeCommandTest extends BaseCommandTest {
 
     private static final String STORAGE = "STORAGE";
     private static final Version SUPPORTED_VERSION = new Version(3, 6);

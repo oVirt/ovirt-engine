@@ -12,9 +12,7 @@ import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -34,8 +32,7 @@ import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AttachDiskToVmCommandTest {
+public class AttachDiskToVmCommandTest extends BaseCommandTest {
 
     private Guid vmId;
     private Guid diskId;

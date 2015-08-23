@@ -11,9 +11,8 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterClusterParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -26,8 +25,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsGroupDao;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class RefreshGlusterHooksCommandTest {
+public class RefreshGlusterHooksCommandTest extends BaseCommandTest {
     private static final Guid CLUSTER_ID = Guid.newGuid();
     /**
      * The command under test.

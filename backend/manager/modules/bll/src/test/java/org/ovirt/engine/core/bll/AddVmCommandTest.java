@@ -28,11 +28,9 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -79,9 +77,8 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(MockitoJUnitRunner.class)
 @SuppressWarnings("serial")
-public class AddVmCommandTest {
+public class AddVmCommandTest extends BaseCommandTest {
 
     private static final Guid STORAGE_DOMAIN_ID_1 = Guid.newGuid();
     private static final Guid STORAGE_DOMAIN_ID_2 = Guid.newGuid();
@@ -392,6 +389,11 @@ public class AddVmCommandTest {
         AddVmFromTemplateCommand<AddVmParameters> concrete =
                 new AddVmFromTemplateCommand<AddVmParameters>(param) {
                     @Override
+                    protected void initUser() {
+                        // Stub for testing
+                    }
+
+                    @Override
                     protected void initTemplateDisks() {
                         // Stub for testing
                     }
@@ -425,6 +427,11 @@ public class AddVmCommandTest {
         param.setStorageDomainId(Guid.newGuid());
         AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd =
                 new AddVmFromSnapshotCommand<AddVmFromSnapshotParameters>(param) {
+                    @Override
+                    protected void initUser() {
+                        // Stub for testing
+                    }
+
                     @Override
                     protected void initTemplateDisks() {
                         // Stub for testing
@@ -633,6 +640,12 @@ public class AddVmCommandTest {
     private AddVmCommand<AddVmParameters> createCommand(VM vm) {
         AddVmParameters param = new AddVmParameters(vm);
         AddVmCommand<AddVmParameters> cmd = new AddVmCommand<AddVmParameters>(param) {
+
+            @Override
+            protected void initUser() {
+                // Stub for testing
+            }
+
             @Override
             protected void initTemplateDisks() {
                 // Stub for testing

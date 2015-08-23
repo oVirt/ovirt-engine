@@ -26,6 +26,9 @@ public class TerminateSessionCommand<T extends TerminateSessionParameters> exten
     @Inject
     private Predicate<Guid> isSystemSuperUserPredicate;
 
+    @Inject
+    private SessionDataContainer sessionDataContainer;
+
     public TerminateSessionCommand(T parameters) {
         this(parameters, null);
     }
@@ -36,8 +39,7 @@ public class TerminateSessionCommand<T extends TerminateSessionParameters> exten
 
     @Override
     protected void executeCommand() {
-        String terminatedSessionId = SessionDataContainer.getInstance().getSessionIdBySeqId(
-                getParameters().getTerminatedSessionDbId());
+        String terminatedSessionId = sessionDataContainer.getSessionIdBySeqId(getParameters().getTerminatedSessionDbId());
 
         if (terminatedSessionId == null) {
             log.info(
@@ -48,7 +50,7 @@ public class TerminateSessionCommand<T extends TerminateSessionParameters> exten
         }
 
         // store terminated user username for audit log
-        DbUser terminatedUser = SessionDataContainer.getInstance().getUser(terminatedSessionId, false);
+        DbUser terminatedUser = sessionDataContainer.getUser(terminatedSessionId, false);
         if (terminatedUser != null) {
             addCustomValue(
                     "TerminatedSessionUsername",

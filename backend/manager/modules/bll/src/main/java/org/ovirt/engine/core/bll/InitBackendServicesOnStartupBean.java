@@ -45,6 +45,9 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
     @Inject
     private Instance<SchedulingManager> schedulingManagerProvider;
 
+    @Inject
+    private SessionDataContainer sessionDataContainer;
+
     /**
      * This method is called upon the bean creation as part
      * of the management Service bean life cycle.
@@ -86,7 +89,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
             loadService(SchedulingManager.class);
 
-            SessionDataContainer.getInstance().cleanupEngineSessionsOnStartup();
+            sessionDataContainer.cleanupEngineSessionsOnStartup();
 
             loadService(HostDeviceManager.class);
             loadService(DwhHeartBeat.class);

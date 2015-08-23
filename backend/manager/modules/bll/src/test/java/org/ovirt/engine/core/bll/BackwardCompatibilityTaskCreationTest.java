@@ -77,8 +77,6 @@ public class BackwardCompatibilityTaskCreationTest extends DbDependentTestBase {
 
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule(BeanType.SCHEDULER, mock(SchedulerUtil.class));
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
 
     @Before
     public void before() {

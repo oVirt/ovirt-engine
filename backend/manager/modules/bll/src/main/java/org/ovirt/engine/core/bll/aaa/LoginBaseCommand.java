@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -74,6 +76,9 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
     private String engineSessionId;
 
+    @Inject
+    private SessionDataContainer sessionDataContainer;
+
     public LoginBaseCommand(T parameters) {
         super(parameters);
     }
@@ -133,16 +138,16 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-        SessionDataContainer.getInstance().setUser(engineSessionId, getCurrentUser());
-        SessionDataContainer.getInstance().refresh(engineSessionId);
-        SessionDataContainer.getInstance().setProfile(engineSessionId, profile);
-        SessionDataContainer.getInstance().setAuthRecord(engineSessionId, authRecord);
-        SessionDataContainer.getInstance().setPrincipalRecord(engineSessionId, principalRecord);
+        sessionDataContainer.setUser(engineSessionId, getCurrentUser());
+        sessionDataContainer.refresh(engineSessionId);
+        sessionDataContainer.setProfile(engineSessionId, profile);
+        sessionDataContainer.setAuthRecord(engineSessionId, authRecord);
+        sessionDataContainer.setPrincipalRecord(engineSessionId, principalRecord);
 
         // Add the user password to the session, as it will be needed later
         // when trying to log on to virtual machines:
         if (getParameters().getPassword() != null) {
-            SessionDataContainer.getInstance().setPassword(engineSessionId, getParameters().getPassword());
+            sessionDataContainer.setPassword(engineSessionId, getParameters().getPassword());
         }
 
         int userSessionHardLimit = Config.<Integer> getValue(ConfigValues.UserSessionHardLimit);
@@ -162,7 +167,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                 log.debug("Exception", e);
             }
         }
-        SessionDataContainer.getInstance().setHardLimit(engineSessionId, validTo);
+        sessionDataContainer.setHardLimit(engineSessionId, validTo);
         return true;
     }
 
@@ -210,7 +215,6 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             }
             DbUser curUser = null;
             String curPassword = null;
-            SessionDataContainer sessionDataContainer = SessionDataContainer.getInstance();
             if (StringUtils.isEmpty(getParameters().getSessionId())) {
                 curUser = sessionDataContainer.getUser(engineSessionId, false);
                 curPassword = sessionDataContainer.getPassword(engineSessionId);

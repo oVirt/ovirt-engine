@@ -10,9 +10,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.bll.lock.InMemoryLockManager;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
@@ -29,8 +28,7 @@ import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.lock.LockManager;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class ReconstructMasterDomainCommandTest {
+public class ReconstructMasterDomainCommandTest extends BaseCommandTest {
 
     private LockManager lockManager = new InMemoryLockManager();
 

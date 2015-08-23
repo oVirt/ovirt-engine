@@ -12,9 +12,8 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -34,8 +33,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 /**
  * A test case for the {@link UpdateStorageDomainCommand} class.
  */
-@RunWith(MockitoJUnitRunner.class)
-public class UpdateStorageDomainCommandTest {
+public class UpdateStorageDomainCommandTest extends BaseCommandTest {
     private Guid sdId;
     private StorageDomain sd;
     private StoragePool sp;

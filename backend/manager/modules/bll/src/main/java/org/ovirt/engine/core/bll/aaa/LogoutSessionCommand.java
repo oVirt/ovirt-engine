@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.aaa;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authn;
@@ -17,6 +19,10 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
  * Tries to log out a user identified by its session id
  */
 public class LogoutSessionCommand<T extends VdcActionParametersBase> extends CommandBase<T> {
+
+    @Inject
+    private SessionDataContainer sessionDataContainer;
+
     public LogoutSessionCommand(T parameters) {
         this(parameters, null);
     }
@@ -32,12 +38,12 @@ public class LogoutSessionCommand<T extends VdcActionParametersBase> extends Com
 
     @Override
     protected boolean canDoAction() {
-        return SessionDataContainer.getInstance().isSessionExists(getParameters().getSessionId());
+        return sessionDataContainer.isSessionExists(getParameters().getSessionId());
     }
 
     @Override
     protected void executeCommand() {
-        AuthenticationProfile profile = SessionDataContainer.getInstance().getProfile(getParameters().getSessionId());
+        AuthenticationProfile profile = sessionDataContainer.getProfile(getParameters().getSessionId());
         if (profile == null) {
             setSucceeded(false);
         } else {
@@ -47,10 +53,10 @@ public class LogoutSessionCommand<T extends VdcActionParametersBase> extends Com
                         Authn.InvokeCommands.LOGOUT
                         ).mput(
                                 Authn.InvokeKeys.AUTH_RECORD,
-                                SessionDataContainer.getInstance().getAuthRecord(getParameters().getSessionId())
+                                sessionDataContainer.getAuthRecord(getParameters().getSessionId())
                         ));
             }
-            SessionDataContainer.getInstance().removeSessionOnLogout(getParameters().getSessionId());
+            sessionDataContainer.removeSessionOnLogout(getParameters().getSessionId());
             setSucceeded(true);
         }
     }

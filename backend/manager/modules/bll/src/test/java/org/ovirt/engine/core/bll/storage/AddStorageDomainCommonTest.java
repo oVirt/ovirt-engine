@@ -11,9 +11,8 @@ import java.util.Collections;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -37,8 +36,7 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AddStorageDomainCommonTest {
+public class AddStorageDomainCommonTest extends BaseCommandTest {
 
     private AddStorageDomainCommon<StorageDomainManagementParameter> cmd;
 

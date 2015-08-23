@@ -13,9 +13,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
@@ -25,8 +23,7 @@ import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 /** A test case for the {@link UpdateQuotaCommand} class. */
-@RunWith(MockitoJUnitRunner.class)
-public class UpdateQuotaCommandTest {
+public class UpdateQuotaCommandTest extends BaseCommandTest {
     /** The command to test */
     private UpdateQuotaCommand command;
 

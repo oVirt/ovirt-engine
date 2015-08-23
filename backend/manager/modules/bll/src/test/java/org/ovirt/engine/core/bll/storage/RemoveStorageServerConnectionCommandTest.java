@@ -13,9 +13,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
@@ -30,8 +29,7 @@ import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RemoveStorageServerConnectionCommandTest {
+public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 

@@ -8,9 +8,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -26,8 +24,7 @@ import org.ovirt.engine.core.dao.VdsDao;
 
 /** A test case for the {@link ForceSelectSPMCommand} command */
 
-@RunWith(MockitoJUnitRunner.class)
-public class ForceSelectSPMCommandTest {
+public class ForceSelectSPMCommandTest extends BaseCommandTest {
 
     private Guid vdsId = Guid.newGuid();
     private Guid storagePoolId = Guid.newGuid();

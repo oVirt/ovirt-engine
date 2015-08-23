@@ -9,9 +9,8 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -26,8 +25,7 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ActivateStorageDomainCommandTest {
+public class ActivateStorageDomainCommandTest extends BaseCommandTest {
     @Mock
     private StorageDomainDao storageDomainDao;
     @Mock

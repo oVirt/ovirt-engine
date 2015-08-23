@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.mockito.Mockito.doReturn;
 
 import org.mockito.Mock;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
@@ -13,7 +14,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
-public class GeoRepSessionCommandTest {
+public class GeoRepSessionCommandTest extends BaseCommandTest {
 
     @Mock
     GlusterGeoRepDao geoRepDao;

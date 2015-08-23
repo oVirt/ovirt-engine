@@ -14,9 +14,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.bll.CommandAssertUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -32,8 +31,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
-@RunWith(MockitoJUnitRunner.class)
-public class DetachStorageConnectionFromStorageDomainCommandTest {
+public class DetachStorageConnectionFromStorageDomainCommandTest extends BaseCommandTest {
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 

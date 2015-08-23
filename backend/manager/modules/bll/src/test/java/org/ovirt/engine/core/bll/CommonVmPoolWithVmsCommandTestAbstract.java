@@ -61,7 +61,7 @@ import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-public abstract class CommonVmPoolWithVmsCommandTestAbstract {
+public abstract class CommonVmPoolWithVmsCommandTestAbstract extends BaseCommandTest {
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.MaxVmNameLengthWindows, 15),

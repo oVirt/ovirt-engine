@@ -11,9 +11,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -37,8 +35,7 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 
 /** A test case for the {@link RemoveDiskSnapshotsCommand} class. */
-@RunWith(MockitoJUnitRunner.class)
-public class RemoveDiskSnapshotsCommandTest {
+public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
 
     private RemoveDiskSnapshotsCommand<RemoveDiskSnapshotsParameters> cmd;
 

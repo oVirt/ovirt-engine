@@ -17,10 +17,9 @@ import java.util.List;
 
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
@@ -48,8 +47,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(MockitoJUnitRunner.class)
-public class StartRemoveGlusterVolumeBricksCommandTest {
+public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
     private static final Version SUPPORTED_VERSION = new Version(3, 4);
     private static final Version UNSUPPORTED_VERSION = new Version(3, 3);
 

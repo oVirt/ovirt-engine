@@ -20,9 +20,7 @@ import java.util.Map;
 
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -63,8 +61,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AddDiskCommandTest {
+public class AddDiskCommandTest extends BaseCommandTest {
     private static final Logger log = LoggerFactory.getLogger(AddDiskCommandTest.class);
     private static int MAX_BLOCK_SIZE = 8192;
     private static int MAX_PCI_SLOTS = 26;

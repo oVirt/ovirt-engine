@@ -9,6 +9,7 @@ import java.util.HashMap;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
@@ -16,7 +17,7 @@ import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParam
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-public class ClusterPolicyCRUDCommandTest {
+public class ClusterPolicyCRUDCommandTest extends BaseCommandTest {
 
     @Rule
     public MockConfigRule mockConfigRule =

@@ -10,14 +10,12 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.compat.Guid;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SyncLunsInfoForBlockStorageDomainCommandTest {
+public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTest {
 
     private SyncLunsInfoForBlockStorageDomainCommand<StorageDomainParametersBase> command;
     private StorageDomainParametersBase parameters;

@@ -11,9 +11,8 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -23,8 +22,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(MockitoJUnitRunner.class)
-public class UpgradeOvirtNodeInternalCommandTest {
+public class UpgradeOvirtNodeInternalCommandTest extends BaseCommandTest {
 
     private static final String OVIRT_ISO_PREFIX = "^rhevh-(.*)\\.*\\.iso$";
     private static final String OVIRT_ISOS_REPOSITORY_PATH = "src/test/resources/ovirt-isos";

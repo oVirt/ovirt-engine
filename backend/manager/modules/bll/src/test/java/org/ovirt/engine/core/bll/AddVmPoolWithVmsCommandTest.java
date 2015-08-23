@@ -23,11 +23,15 @@ public class AddVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTestA
         param.setStorageDomainId(firstStorageDomainId);
         AddVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> command =
                 spy(new AddVmPoolWithVmsCommand<AddVmPoolWithVmsParameters>(param) {
-            @Override
-            protected void initTemplate() {
-                // do nothing - is done here and not with mockito since it's called in the ctor
-            }
-        });
+                    @Override
+                    protected void initUser() {
+                    }
+
+                    @Override
+                    protected void initTemplate() {
+                        // do nothing - is done here and not with mockito since it's called in the ctor
+                    }
+                });
         return command;
     }
 

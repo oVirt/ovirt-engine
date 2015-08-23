@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.queries.ConsoleOptionsParams;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetConsoleDescriptorFileQueryTest {
+public class GetConsoleDescriptorFileQueryTest extends BaseCommandTest {
 
     @Test
     public void shouldFailWhenVmNull() throws Exception {

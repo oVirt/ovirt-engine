@@ -5,9 +5,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
@@ -15,8 +13,7 @@ import org.ovirt.engine.core.dao.RoleDao;
 import org.ovirt.engine.core.dao.RoleGroupMapDao;
 
 /** An abstract base class for tests for roles commands */
-@RunWith(MockitoJUnitRunner.class)
-public abstract class AbstractRolesCommandTestBase {
+public abstract class AbstractRolesCommandTestBase extends BaseCommandTest {
     private RolesParameterBase params;
     private RolesCommandBase<? extends RolesParameterBase> command;
     private Role role;

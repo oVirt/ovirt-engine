@@ -15,9 +15,8 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -47,8 +46,7 @@ import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 
-@RunWith(MockitoJUnitRunner.class)
-public class DeactivateStorageDomainCommandTest {
+public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
 
     @Rule
     public MockEJBStrategyRule ejbRule = new MockEJBStrategyRule(BeanType.EVENTQUEUE_MANAGER, mock(EventQueue.class));
@@ -82,12 +80,13 @@ public class DeactivateStorageDomainCommandTest {
     public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
 
     StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase(Guid.newGuid(), Guid.newGuid());
-    DeactivateStorageDomainCommand<StorageDomainPoolParametersBase> cmd =
-            spy(new DeactivateStorageDomainCommand<StorageDomainPoolParametersBase>(params));
+    DeactivateStorageDomainCommand<StorageDomainPoolParametersBase> cmd;
 
     @Before
     public void setup() {
         map = new StoragePoolIsoMap();
+
+        cmd = spy(new DeactivateStorageDomainCommand<StorageDomainPoolParametersBase>(params));
         doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
         doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         doReturn(eventQueue).when(cmd).getEventQueue();

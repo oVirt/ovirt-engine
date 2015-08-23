@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
@@ -18,6 +20,9 @@ public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperat
     public VmLogonCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
+
+    @Inject
+    private SessionDataContainer sessionDataContainer;
 
     @Override
     protected void setActionMessageParameters () {
@@ -49,7 +54,7 @@ public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperat
 
         // Send the log on command to the virtual machine:
         final DbUser currentUser = getCurrentUser();
-        final String password = SessionDataContainer.getInstance().getPassword(getParameters().getSessionId());
+        final String password = sessionDataContainer.getPassword(getParameters().getSessionId());
         final String domainController = currentUser != null ? currentUser.getDomain() : "";
         final boolean sentToVM = runVdsCommand(
                         VDSCommandType.VmLogon,

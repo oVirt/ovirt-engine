@@ -5,16 +5,13 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.AuditLogDao;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RemoveAuditLogByIdCommandTest {
+public class RemoveAuditLogByIdCommandTest extends BaseCommandTest {
 
     RemoveAuditLogByIdCommand<RemoveAuditLogByIdParameters> command;
 

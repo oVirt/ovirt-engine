@@ -9,9 +9,7 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
@@ -21,8 +19,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AddQuotaCommandTest {
+public class AddQuotaCommandTest extends BaseCommandTest {
     @Mock
     private QuotaDao quotaDao;
 

@@ -14,9 +14,8 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -26,8 +25,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDao;
 
-@RunWith(MockitoJUnitRunner.class)
-public class StorageDomainCommandBaseTest {
+public class StorageDomainCommandBaseTest extends BaseCommandTest {
     private static final Guid[] GUIDS = new Guid[] {
             new Guid("11111111-1111-1111-1111-111111111111"),
             new Guid("22222222-2222-2222-2222-222222222222")

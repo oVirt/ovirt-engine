@@ -13,9 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -42,8 +40,7 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 
-@RunWith(MockitoJUnitRunner.class)
-public class MoveOrCopyDiskCommandTest {
+public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     private final Guid diskImageGuid = Guid.newGuid();
     private Guid destStorageId = Guid.newGuid();

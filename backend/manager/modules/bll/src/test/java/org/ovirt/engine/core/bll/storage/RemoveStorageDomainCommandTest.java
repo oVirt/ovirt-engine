@@ -12,9 +12,8 @@ import java.util.Collections;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.bll.CommandAssertUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -38,8 +37,7 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 /** A test case for the {@link RemoveStorageDomainCommand} */
-@RunWith(MockitoJUnitRunner.class)
-public class RemoveStorageDomainCommandTest {
+public class RemoveStorageDomainCommandTest extends BaseCommandTest {
     @ClassRule
     public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
 

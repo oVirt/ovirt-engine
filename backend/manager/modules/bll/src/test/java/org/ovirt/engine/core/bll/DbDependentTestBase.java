@@ -10,7 +10,7 @@ import org.mockito.Mockito;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.springframework.context.annotation.Bean;
 
-public class DbDependentTestBase {
+public class DbDependentTestBase extends BaseCommandTest {
     private static DbFacade dbFacade;
 
     @BeforeClass

@@ -9,9 +9,8 @@ import java.util.Collections;
 import java.util.HashSet;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.gluster.SetUpMountBrokerParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -20,8 +19,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SetupGlusterGeoRepMountBrokerInternalCommandTest {
+public class SetupGlusterGeoRepMountBrokerInternalCommandTest extends BaseCommandTest {
 
     @Mock
     GlusterVolumeDao volumeDao;

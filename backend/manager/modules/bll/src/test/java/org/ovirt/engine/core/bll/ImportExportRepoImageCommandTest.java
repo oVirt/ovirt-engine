@@ -28,7 +28,7 @@ import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.lock.LockManager;
 
 
-public class ImportExportRepoImageCommandTest {
+public class ImportExportRepoImageCommandTest extends BaseCommandTest {
 
     private LockManager lockManager = new InMemoryLockManager();
 

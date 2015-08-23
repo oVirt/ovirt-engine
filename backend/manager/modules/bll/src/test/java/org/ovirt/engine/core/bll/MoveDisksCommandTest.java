@@ -15,9 +15,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -31,8 +29,7 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.VmDao;
 
-@RunWith(MockitoJUnitRunner.class)
-public class MoveDisksCommandTest {
+public class MoveDisksCommandTest extends BaseCommandTest {
 
     private final Guid diskImageId = Guid.newGuid();
     private final Guid templateDiskImageId = Guid.newGuid();

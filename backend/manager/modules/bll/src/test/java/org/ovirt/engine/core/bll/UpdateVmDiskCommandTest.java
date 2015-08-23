@@ -30,10 +30,8 @@ import java.util.Map;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -86,8 +84,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class UpdateVmDiskCommandTest {
+public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     private Guid diskImageGuid = Guid.newGuid();
     private Guid vmId = Guid.newGuid();

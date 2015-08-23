@@ -116,6 +116,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private Instance<SchedulerUtil> taskSchedulers;
     @Inject @Any
     private Instance<BackendService> services;
+    @Inject
+    private SessionDataContainer sessionDataContainer;
 
     public static BackendInternal getInstance() {
         return Injector.get(BackendInternal.class);
@@ -260,7 +262,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         initExecutionMessageDirector();
 
         taskSchedulers.select(SchedulerUtilQuartzImpl.class).get()
-                .scheduleAFixedDelayJob(SessionDataContainer.getInstance(),
+                .scheduleAFixedDelayJob(sessionDataContainer,
                 "cleanExpiredUsersSessions", new Class[] {}, new Object[] {},
                 1,
                 1, TimeUnit.MINUTES);
@@ -519,7 +521,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         if (isPerformUserCheck) {
             String sessionId = parameters.getSessionId();
             if (StringUtils.isEmpty(sessionId)
-                    || SessionDataContainer.getInstance().getUser(sessionId, parameters.getRefresh()) == null) {
+                    || sessionDataContainer.getUser(sessionId, parameters.getRefresh()) == null) {
                 return getErrorQueryReturnValue(EngineMessage.USER_IS_NOT_LOGGED_IN);
             }
         }

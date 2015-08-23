@@ -7,17 +7,14 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.JobDao;
 import org.slf4j.Logger;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ClearExternalJobCommandTest {
+public class ClearExternalJobCommandTest extends BaseCommandTest {
 
     private static final Guid jobId = Guid.newGuid();
     private static final Guid nonExistingJobId = Guid.newGuid();

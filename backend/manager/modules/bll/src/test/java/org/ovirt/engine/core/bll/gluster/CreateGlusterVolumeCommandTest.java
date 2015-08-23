@@ -8,10 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.gluster.GlusterVolumeValidator;
@@ -34,8 +33,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CreateGlusterVolumeCommandTest {
+public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
 
     @Mock
     GlusterVolumeDao volumeDao;

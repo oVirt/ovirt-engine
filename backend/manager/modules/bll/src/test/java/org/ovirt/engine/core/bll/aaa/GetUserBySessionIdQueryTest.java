@@ -11,8 +11,6 @@ import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.EngineSessionDao;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -27,14 +25,10 @@ public class GetUserBySessionIdQueryTest extends AbstractUserQueryTest<VdcQueryP
     public void setupEnvironment() {
         CorrelationIdTracker.clean();
         DbUser user = mock(DbUser.class);
-        DbFacade dbFacadeMock = mock(DbFacade.class);
-        SessionDataContainer.getInstance().setDbFacade(dbFacadeMock);
 
-        EngineSessionDao engineSessionDaoMock = mock(EngineSessionDao.class);
-        when(engineSessionDaoMock.remove(any(Long.class))).thenReturn(1);
-        when(dbFacadeMock.getEngineSessionDao()).thenReturn(engineSessionDaoMock);
+        when(engineSessionDao.remove(any(Long.class))).thenReturn(1);
 
-        SessionDataContainer.getInstance().setUser(sessionID, user);
+        sessionDataContainer.setUser(sessionID, user);
     }
 
     @Test
@@ -48,6 +42,6 @@ public class GetUserBySessionIdQueryTest extends AbstractUserQueryTest<VdcQueryP
 
     @After
     public void tearDown() {
-        SessionDataContainer.getInstance().removeSessionOnLogout(sessionID);
+        sessionDataContainer.removeSessionOnLogout(sessionID);
     }
 }

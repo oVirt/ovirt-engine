@@ -51,7 +51,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.springframework.util.Assert;
 
-public class ImportVmTemplateCommandTest {
+public class ImportVmTemplateCommandTest extends BaseCommandTest {
 
     @Test
     public void insufficientDiskSpace() {

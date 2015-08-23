@@ -20,10 +20,8 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
@@ -35,8 +33,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
-@RunWith(MockitoJUnitRunner.class)
-public class MoveOrCopyTemplateCommandTest {
+public class MoveOrCopyTemplateCommandTest extends BaseCommandTest {
 
     private Guid[] diskIds;
 

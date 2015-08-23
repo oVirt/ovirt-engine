@@ -17,18 +17,16 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.EngineSessionDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>> {
+public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>> extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -67,17 +65,14 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
         DbFacade dbFacadeMock = mock(DbFacade.class);
         DbUser dbUserMock = mock(DbUser.class);
 
-        EngineSessionDao engineSessionDaoMock = mock(EngineSessionDao.class);
-        when(engineSessionDaoMock.save(any(EngineSession.class))).thenReturn(RandomUtils.instance().nextLong());
-        when(engineSessionDaoMock.remove(any(Long.class))).thenReturn(1);
-        when(dbFacadeMock.getEngineSessionDao()).thenReturn(engineSessionDaoMock);
+        when(engineSessionDao.save(any(EngineSession.class))).thenReturn(RandomUtils.instance().nextLong());
+        when(engineSessionDao.remove(any(Long.class))).thenReturn(1);
 
-        SessionDataContainer.getInstance().setDbFacade(dbFacadeMock);
-
-        SessionDataContainer.getInstance().setUser(parameters.getSessionId(), dbUserMock);
+        sessionDataContainer.setUser(parameters.getSessionId(), dbUserMock);
 
         Constructor<? extends Q> con = getQueryType().getConstructor(getParameterType());
         query = spy(con.newInstance(parameters));
+        doReturn(sessionDataContainer).when(query).getSessionDataContainer();
         doReturn(dbFacadeMock).when(query).getDbFacade();
         doReturn(dbUserMock).when(query).initUser();
         query.postConstruct();

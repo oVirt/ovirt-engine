@@ -23,9 +23,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -63,8 +61,7 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 /** A test case for the {@link UpdateVmCommand}. */
-@RunWith(MockitoJUnitRunner.class)
-public class UpdateVmCommandTest {
+public class UpdateVmCommandTest extends BaseCommandTest {
 
     private VM vm;
     private VmStatic vmStatic;
@@ -173,6 +170,11 @@ public class UpdateVmCommandTest {
         params.setVmStaticData(vmStatic);
 
         command = spy(new UpdateVmCommand<VmManagementParametersBase>(params) {
+            @Override
+            protected void initUser() {
+                // Stub for testing
+            }
+
             @Override
             public VDSGroup getVdsGroup() {
                 return group;

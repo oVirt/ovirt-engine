@@ -46,6 +46,9 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     @Inject
     protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
+    @Inject
+    private SessionDataContainer sessionDataContainer;
+
     public QueriesCommandBase(P parameters) {
         this(parameters, null);
     }
@@ -84,8 +87,8 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
                 parameters.getRefresh());
     }
 
-    SessionDataContainer getSessionDataContainer() {
-        return SessionDataContainer.getInstance();
+    protected SessionDataContainer getSessionDataContainer() {
+        return sessionDataContainer;
     }
 
     @Override

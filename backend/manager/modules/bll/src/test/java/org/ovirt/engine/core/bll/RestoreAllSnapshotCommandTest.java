@@ -13,9 +13,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -44,8 +42,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RestoreAllSnapshotCommandTest {
+public class RestoreAllSnapshotCommandTest extends BaseCommandTest {
 
     @Mock
     private VDSBrokerFrontend vdsBrokerFrontend;

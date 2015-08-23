@@ -7,11 +7,12 @@ import static org.mockito.Mockito.spy;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
-public class RemoveAdGroupCommandTest {
+public class RemoveAdGroupCommandTest extends BaseCommandTest {
 
     /**
      * The command under test.

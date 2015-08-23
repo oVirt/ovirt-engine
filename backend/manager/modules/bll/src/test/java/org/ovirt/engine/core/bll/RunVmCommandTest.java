@@ -70,7 +70,7 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(Theories.class)
-public class RunVmCommandTest {
+public class RunVmCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(

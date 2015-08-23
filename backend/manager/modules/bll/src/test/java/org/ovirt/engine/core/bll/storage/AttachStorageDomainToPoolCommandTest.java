@@ -15,11 +15,10 @@ import java.util.Collections;
 
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -50,8 +49,7 @@ import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AttachStorageDomainToPoolCommandTest {
+public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
     @Mock
     private StoragePoolIsoMapDao isoMapDao;
     @Mock

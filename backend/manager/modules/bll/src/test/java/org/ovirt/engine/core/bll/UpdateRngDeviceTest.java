@@ -18,7 +18,7 @@ import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 
-public class UpdateRngDeviceTest {
+public class UpdateRngDeviceTest extends BaseCommandTest {
 
     @Test
     public void testCanDoAction() {

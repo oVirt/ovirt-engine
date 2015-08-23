@@ -6,6 +6,9 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
@@ -17,9 +20,10 @@ import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.EngineSessionDao;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 
+@Singleton
 public class SessionDataContainer {
 
     private static class SessionInfo {
@@ -41,17 +45,8 @@ public class SessionDataContainer {
     private static final String PRINCIPAL_RECORD_PARAMETER_NAME = "principal_record";
     private static final String SOFT_LIMIT_INTERVAL_PARAMETER_NAME = "soft_limit_interval";
 
-    private static SessionDataContainer dataProviderInstance = new SessionDataContainer();
-
-    private DbFacade dbFacade;
-
-    private SessionDataContainer() {
-    }
-
-    public static SessionDataContainer getInstance() {
-        return dataProviderInstance;
-    }
-
+    @Inject
+    private EngineSessionDao engineSessionDao;
 
     /**
      * Get data by session and internal key
@@ -104,7 +99,7 @@ public class SessionDataContainer {
         SessionInfo sessionInfo = getSessionInfo(sessionId);
         if (sessionInfo != null) {
             sessionInfo.contentOfSession.put(ENGINE_SESSION_SEQ_ID,
-                    getDbFacade().getEngineSessionDao().save(new EngineSession(getUser(sessionId, false), sessionId)));
+                    engineSessionDao.save(new EngineSession(getUser(sessionId, false), sessionId)));
         }
     }
 
@@ -127,7 +122,7 @@ public class SessionDataContainer {
     }
 
     public void cleanupEngineSessionsOnStartup() {
-        getDbFacade().getEngineSessionDao().removeAll();
+        engineSessionDao.removeAll();
     }
 
     /**
@@ -278,21 +273,7 @@ public class SessionDataContainer {
                 message,
                 msgArgs
                 );
-        getDbFacade().getEngineSessionDao().remove(getEngineSessionSeqId(sessionId));
+        engineSessionDao.remove(getEngineSessionSeqId(sessionId));
         sessionInfoMap.remove(sessionId);
-    }
-
-
-    // these are public for *TEST* only due to limitation of java.
-
-    public void setDbFacade(DbFacade dbFacade) {
-        this.dbFacade = dbFacade;
-    }
-
-    public DbFacade getDbFacade() {
-        if (dbFacade == null) {
-            dbFacade = DbFacade.getInstance();
-        }
-        return dbFacade;
     }
 }

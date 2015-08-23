@@ -5,17 +5,15 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.gluster.ResetGlusterVolumeOptionsParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ResetGlusterVolumeOptionsCommandTest {
+public class ResetGlusterVolumeOptionsCommandTest extends BaseCommandTest {
 
     @Mock
     GlusterVolumeDao volumeDao;

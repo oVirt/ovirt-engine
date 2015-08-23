@@ -27,7 +27,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 
-public class UpdateWatchdogCommandTest {
+public class UpdateWatchdogCommandTest extends BaseCommandTest {
 
     private VmWatchdogType vmWatchdogType = VmWatchdogType.i6300esb;
 

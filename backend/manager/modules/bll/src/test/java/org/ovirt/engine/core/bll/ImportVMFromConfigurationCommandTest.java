@@ -24,9 +24,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -53,8 +51,7 @@ import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.ovf.OvfVmIconDefaultsProvider;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ImportVMFromConfigurationCommandTest {
+public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     private Guid vmId;
     private Guid storageDomainId;
     private Guid storagePoolId;
@@ -210,6 +207,10 @@ public class ImportVMFromConfigurationCommandTest {
             @Override
             protected UnregisteredOVFDataDao getUnregisteredOVFDataDao() {
                 return unregisteredOVFDataDao;
+            }
+
+            @Override
+            protected void initUser() {
             }
 
             public VDSGroup getVdsGroup() {

@@ -10,9 +10,7 @@ import org.jgroups.util.UUID;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -23,8 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** A test case for the {@link QueriesCommandBase} class. */
-@RunWith(MockitoJUnitRunner.class)
-public class QueriesCommandBaseTest {
+public class QueriesCommandBaseTest extends BaseCommandTest {
     private static final Logger log = LoggerFactory.getLogger(QueriesCommandBaseTest.class);
 
     @Mock
@@ -158,7 +155,7 @@ public class QueriesCommandBaseTest {
         }
 
         @Override
-        SessionDataContainer getSessionDataContainer() {
+        protected SessionDataContainer getSessionDataContainer() {
             return mockSessionDataContainer;
         }
     }

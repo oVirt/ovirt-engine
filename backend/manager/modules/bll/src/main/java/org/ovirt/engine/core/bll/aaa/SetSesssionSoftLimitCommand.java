@@ -3,11 +3,16 @@ package org.ovirt.engine.core.bll.aaa;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.SetSesssionSoftLimitCommandParameters;
 
 public class SetSesssionSoftLimitCommand<T extends SetSesssionSoftLimitCommandParameters> extends CommandBase<T> {
+
+    @Inject
+    private SessionDataContainer sessionDataContainer;
 
     public SetSesssionSoftLimitCommand(T params) {
         super(params);
@@ -15,8 +20,8 @@ public class SetSesssionSoftLimitCommand<T extends SetSesssionSoftLimitCommandPa
 
     @Override
     protected void executeCommand() {
-        if (SessionDataContainer.getInstance().isSessionExists(getParameters().getSessionId())) {
-            SessionDataContainer.getInstance().setSoftLimitInterval(getParameters().getSessionId(),
+        if (sessionDataContainer.isSessionExists(getParameters().getSessionId())) {
+            sessionDataContainer.setSoftLimitInterval(getParameters().getSessionId(),
                     getParameters().getSoftLimit());
             setSucceeded(true);
         } else {

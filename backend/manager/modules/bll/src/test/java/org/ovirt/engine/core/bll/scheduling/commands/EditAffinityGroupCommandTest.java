@@ -11,9 +11,8 @@ import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -25,8 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
-@RunWith(MockitoJUnitRunner.class)
-public class EditAffinityGroupCommandTest {
+public class EditAffinityGroupCommandTest extends BaseCommandTest {
     private static final String AFFINITY_GROUP_NAME = "test123";
     Guid clusterId = Guid.newGuid();
     EditAffinityGroupCommand command;

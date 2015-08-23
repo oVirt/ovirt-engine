@@ -125,6 +125,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private List<QuotaConsumptionParameter> consumptionParameters;
     @Inject
     private QuotaManager quotaManager;
+
+    @Inject
+    private SessionDataContainer sessionDataContainer;
+
     /** Indicates whether the acquired locks should be released after the execute method or not */
     private boolean releaseLocksAtEndOfExecute = true;
     /** Object which is representing a lock that some commands will acquire */
@@ -188,6 +192,20 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         taskHandlers = initTaskHandlers();
     }
 
+    protected void initUser() {
+        DbUser user = getSessionDataContainer().getUser(context.getEngineContext().getSessionId(), true);
+        if (user != null) {
+            setCurrentUser(user);
+        }
+        if (getSessionDataContainer().getPrincipalName(context.getEngineContext().getSessionId()) == null) {
+            // command was most probably executed from Quartz job, so session doesn't contain any user info
+            // we need to set username to fake internal user so audit logs will not contain "null@N/A" as username
+            setUserName("SYSTEM");
+        } else {
+            setUserName(getSessionDataContainer().getUserName(context.getEngineContext().getSessionId()));
+        }
+    }
+
     /**
      * Constructor for command creation when compensation is applied on startup
      */
@@ -216,18 +234,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * context instance creation)
      */
     private void initCommandBase() {
-        DbUser user =
-            SessionDataContainer.getInstance().getUser(context.getEngineContext().getSessionId(), true);
-        if (user != null) {
-            setCurrentUser(user);
-        }
-        if (SessionDataContainer.getInstance().getPrincipalName(context.getEngineContext().getSessionId()) == null) {
-            // command was most probably executed from Quartz job, so session doesn't contain any user info
-            // we need to set username to fake internal user so audit logs will not contain "null@N/A" as username
-            setUserName("SYSTEM");
-        } else {
-            setUserName(SessionDataContainer.getInstance().getUserName(context.getEngineContext().getSessionId()));
-        }
+        initUser();
+
         ExecutionContext executionContext = context.getExecutionContext();
         if (executionContext.getJob() != null) {
             setJobId(executionContext.getJob().getId());
@@ -2395,6 +2403,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return MacPoolPerDcSingleton.getInstance().poolForDataCenter(getStoragePoolId());
     }
 
+    protected SessionDataContainer getSessionDataContainer() {
+        return sessionDataContainer;
+    }
+
     protected long getEngineSessionSeqId() {
         String sessionId = getParameters().getSessionId();
         if (sessionId == null && getContext() != null) {
@@ -2403,7 +2415,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         if (sessionId == null) {
             throw new RuntimeException("No sessionId found for command " + getClass().getName());
         }
-        return SessionDataContainer.getInstance().getEngineSessionSeqId(sessionId);
+        return getSessionDataContainer().getEngineSessionSeqId(sessionId);
     }
 
     protected <P extends VdcActionParametersBase> P withRootCommandInfo(P params, VdcActionType actionType) {

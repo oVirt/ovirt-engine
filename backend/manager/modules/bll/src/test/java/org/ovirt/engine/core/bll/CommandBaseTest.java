@@ -31,15 +31,13 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDao;
-import org.ovirt.engine.core.dao.EngineSessionDao;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 /** A test case for {@link CommandBase} */
-public class CommandBaseTest {
+public class CommandBaseTest extends BaseCommandTest {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.IsMultilevelAdministrationOn, false),
@@ -51,25 +49,20 @@ public class CommandBaseTest {
 
     protected String session = "someSession";
 
-
     @Before
     public void setupEnvironment() {
         CorrelationIdTracker.clean();
         DbUser user = mock(DbUser.class);
-        DbFacade dbFacadeMock = mock(DbFacade.class);
-        SessionDataContainer.getInstance().setDbFacade(dbFacadeMock);
 
-        EngineSessionDao engineSessionDaoMock = mock(EngineSessionDao.class);
-        when(engineSessionDaoMock.remove(any(Long.class))).thenReturn(1);
-        when(dbFacadeMock.getEngineSessionDao()).thenReturn(engineSessionDaoMock);
+        when(engineSessionDao.remove(any(Long.class))).thenReturn(1);
 
-        SessionDataContainer.getInstance().setUser(session, user);
+        sessionDataContainer.setUser(session, user);
     }
 
     @After
     public void clearEnvironment() {
         CorrelationIdTracker.clean();
-        SessionDataContainer.getInstance().removeSessionOnLogout(session);
+        sessionDataContainer.removeSessionOnLogout(session);
     }
 
     /** A dummy class for testing CommandBase's functionality */
@@ -128,10 +121,15 @@ public class CommandBaseTest {
         // Mock the parameters
         VdcActionParametersBase paramterMock = mock(VdcActionParametersBase.class);
         when(paramterMock.getSessionId()).thenReturn(session);
-        SessionDataContainer.getInstance().setUser(session, user);
+        sessionDataContainer.setUser(session, user);
 
         // Create a command
-        CommandBase<VdcActionParametersBase> command = new CommandBaseDummy(paramterMock);
+        CommandBase<VdcActionParametersBase> command = new CommandBaseDummy(paramterMock) {
+            @Override
+            protected SessionDataContainer getSessionDataContainer() {
+                return sessionDataContainer;
+            }
+        };
         command.postConstruct();
 
         // Check the session

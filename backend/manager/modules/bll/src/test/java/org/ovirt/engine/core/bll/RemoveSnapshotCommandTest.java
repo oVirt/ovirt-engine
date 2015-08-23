@@ -21,9 +21,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
@@ -48,8 +46,7 @@ import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 /** A test case for the {@link RemoveSnapshotCommand} class. */
-@RunWith(MockitoJUnitRunner.class)
-public class RemoveSnapshotCommandTest {
+public class RemoveSnapshotCommandTest extends BaseCommandTest {
 
     /** The command to test */
     private RemoveSnapshotCommand<RemoveSnapshotParameters> cmd;

@@ -6,13 +6,14 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.fails
 
 import org.junit.Before;
 import org.junit.Test;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
-public class ConnectStorageToVdsCommandTest {
+public class ConnectStorageToVdsCommandTest extends BaseCommandTest {
 
     private ConnectStorageToVdsCommand command;
     private StorageServerConnectionParametersBase params;

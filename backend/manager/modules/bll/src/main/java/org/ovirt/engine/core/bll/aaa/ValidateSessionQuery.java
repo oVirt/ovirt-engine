@@ -39,6 +39,6 @@ public class ValidateSessionQuery<P extends VdcQueryParametersBase> extends Quer
     }
 
     protected Object getSessionUser(String sessionID) {
-        return SessionDataContainer.getInstance().getUser(sessionID, false);
+        return getSessionDataContainer().getUser(sessionID, false);
     }
 }

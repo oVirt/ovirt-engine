@@ -12,9 +12,8 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -22,8 +21,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
-@RunWith(MockitoJUnitRunner.class)
-public class GetManagementNetworkCandidatesQueryTest {
+public class GetManagementNetworkCandidatesQueryTest extends BaseCommandTest {
 
     public static final Guid DC_ID = Guid.newGuid();
     public static final Guid USER_ID = Guid.newGuid();

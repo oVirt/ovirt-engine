@@ -1,4 +1,5 @@
 package org.ovirt.engine.core.bll.gluster;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -10,9 +11,8 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -30,8 +30,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CreateGlusterVolumeGeoRepSessionCommandTest {
+public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest {
     private static final Version NOT_SUPPORTED_VERSION = Version.v3_4;
 
     private static final Version SUPPORTED_VERSION = Version.v3_6;

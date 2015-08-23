@@ -29,9 +29,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
@@ -67,8 +65,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ImportVmCommandTest {
+public class ImportVmCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -176,6 +173,11 @@ public class ImportVmCommandTest {
     private ImportVmCommand<ImportVmParameters> setupDiskSpaceTest(ImportVmParameters parameters) {
         final ImportValidator validator = spy(new ImportValidator(parameters));
         ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(parameters) {
+
+            @Override
+            protected void initUser() {
+            }
+
             @Override
             protected ImportValidator getImportValidator() {
                 return validator;
@@ -315,6 +317,11 @@ public class ImportVmCommandTest {
         parameters.getVm().setName(name);
         parameters.setImportAsNewEntity(isImportAsNewEntity);
         ImportVmCommand<ImportVmParameters> command = new ImportVmCommand<ImportVmParameters>(parameters) {
+
+            @Override
+            protected void initUser() {
+            }
+
             @Override
             public VDSGroup getVdsGroup() {
                 return null;
@@ -339,6 +346,11 @@ public class ImportVmCommandTest {
         parameters.getVm().setUserDefinedProperties(tooLongString);
         parameters.setImportAsNewEntity(true);
         ImportVmCommand<ImportVmParameters> command = new ImportVmCommand<ImportVmParameters>(parameters) {
+
+            @Override
+            protected void initUser() {
+            }
+
             @Override
             public VDSGroup getVdsGroup() {
                 return null;
@@ -352,6 +364,11 @@ public class ImportVmCommandTest {
         parameters.getVm().setUserDefinedProperties(tooLongString);
         parameters.setImportAsNewEntity(false);
         command = new ImportVmCommand<ImportVmParameters>(parameters) {
+
+            @Override
+            protected void initUser() {
+            }
+
             @Override
             public VDSGroup getVdsGroup() {
                 return null;
@@ -371,6 +388,11 @@ public class ImportVmCommandTest {
     public void testManagedDeviceSyncWithNewDiskId() {
         ImportVmParameters parameters = createParameters();
         ImportVmCommand<ImportVmParameters> command = new ImportVmCommand<ImportVmParameters>(parameters) {
+
+            @Override
+            protected void initUser() {
+            }
+
             @Override
             public VDSGroup getVdsGroup() {
                 return null;
@@ -407,6 +429,11 @@ public class ImportVmCommandTest {
         ImportVmParameters params = createParameters();
         params.setCopyCollapse(true);
         ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params) {
+
+            @Override
+            protected void initUser() {
+            }
+
             @Override
             public VDSGroup getVdsGroup() {
                 return null;
@@ -433,6 +460,11 @@ public class ImportVmCommandTest {
         DiskImage diskImage = params.getVm().getImages().get(0);
         diskImage.setVmSnapshotId(Guid.Empty);
         ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params) {
+
+            @Override
+            protected void initUser() {
+            }
+
             @Override
             public VDSGroup getVdsGroup() {
                 return null;
@@ -465,6 +497,11 @@ public class ImportVmCommandTest {
         ImportVmParameters params = createParameters();
         params.setCopyCollapse(false);
         ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params) {
+
+            @Override
+            protected void initUser() {
+            }
+
             @Override
             public VDSGroup getVdsGroup() {
                 return null;
@@ -496,6 +533,11 @@ public class ImportVmCommandTest {
 
         params.setCopyCollapse(false);
         ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params) {
+
+            @Override
+            protected void initUser() {
+            }
+
             @Override
             public VDSGroup getVdsGroup() {
                 return null;

@@ -9,10 +9,9 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -26,8 +25,7 @@ import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.springframework.dao.DataIntegrityViolationException;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AttachNetworkToClusterInternalCommandTest {
+public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
 
     /**
      * Since the command isn't in the same package as AuditLogableBase which defines the Dao accessors they

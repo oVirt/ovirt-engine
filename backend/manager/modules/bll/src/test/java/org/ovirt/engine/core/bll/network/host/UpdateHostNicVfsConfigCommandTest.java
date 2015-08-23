@@ -10,9 +10,8 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.VfsConfigValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -23,8 +22,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 
-@RunWith(MockitoJUnitRunner.class)
-public class UpdateHostNicVfsConfigCommandTest {
+public class UpdateHostNicVfsConfigCommandTest extends BaseCommandTest {
 
     private UpdateHostNicVfsConfigParameters param;
     private UpdateHostNicVfsConfigCommand command;

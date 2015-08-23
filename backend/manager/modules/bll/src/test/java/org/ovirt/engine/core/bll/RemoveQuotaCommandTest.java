@@ -12,9 +12,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -28,8 +26,7 @@ import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RemoveQuotaCommandTest {
+public class RemoveQuotaCommandTest extends BaseCommandTest {
 
     private final Guid generalGuidQuota = Guid.newGuid();
     private final Guid storagePoolUUID = Guid.newGuid();

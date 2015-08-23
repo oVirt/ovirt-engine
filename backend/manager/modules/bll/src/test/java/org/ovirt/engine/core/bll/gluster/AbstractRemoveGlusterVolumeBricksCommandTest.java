@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.junit.ClassRule;
 import org.mockito.Mock;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -25,7 +26,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-public abstract class AbstractRemoveGlusterVolumeBricksCommandTest {
+public abstract class AbstractRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
 
     protected static final Version SUPPORTED_VERSION = new Version(3, 4);
     protected static final Version UNSUPPORTED_VERSION = new Version(3, 3);

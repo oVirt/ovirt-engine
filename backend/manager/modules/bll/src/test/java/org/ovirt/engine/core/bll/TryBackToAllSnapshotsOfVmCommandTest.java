@@ -7,9 +7,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -20,8 +18,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDao;
 
 /** A test case for the {@link TryBackToAllSnapshotsOfVmCommand} class. */
-@RunWith(MockitoJUnitRunner.class)
-public class TryBackToAllSnapshotsOfVmCommandTest {
+public class TryBackToAllSnapshotsOfVmCommandTest extends BaseCommandTest {
     private TryBackToAllSnapshotsOfVmCommand<TryBackToAllSnapshotsOfVmParameters> cmd;
 
     @Mock

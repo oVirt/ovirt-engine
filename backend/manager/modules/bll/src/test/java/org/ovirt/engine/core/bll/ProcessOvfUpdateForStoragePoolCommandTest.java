@@ -30,11 +30,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -67,8 +65,7 @@ import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ProcessOvfUpdateForStoragePoolCommandTest {
+public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     private final static int ITEMS_COUNT_PER_UPDATE = 100;
     private ProcessOvfUpdateForStoragePoolCommand<ProcessOvfUpdateForStoragePoolParameters> command;
 

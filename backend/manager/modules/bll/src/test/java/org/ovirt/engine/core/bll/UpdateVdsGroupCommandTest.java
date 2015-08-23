@@ -522,7 +522,12 @@ public class UpdateVdsGroupCommandTest {
             param = new ManagementNetworkOnClusterOperationParameters(group, managementNetworkId);
         }
         injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
-        cmd = spy(new UpdateVdsGroupCommand<>(param));
+        cmd = spy(new UpdateVdsGroupCommand<ManagementNetworkOnClusterOperationParameters>(param) {
+            @Override
+            protected void initUser() {
+                // Stub for testing
+            }
+        });
 
         doReturn(0).when(cmd).compareCpuLevels(any(VDSGroup.class));
 

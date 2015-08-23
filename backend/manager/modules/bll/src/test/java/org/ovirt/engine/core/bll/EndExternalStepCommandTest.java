@@ -7,9 +7,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.EndExternalStepParameters;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
@@ -19,8 +17,7 @@ import org.ovirt.engine.core.dao.StepDao;
 import org.slf4j.Logger;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class EndExternalStepCommandTest {
+public class EndExternalStepCommandTest extends BaseCommandTest {
 
     private  EndExternalStepParameters parameters;
     private static final Guid jobId = Guid.newGuid();

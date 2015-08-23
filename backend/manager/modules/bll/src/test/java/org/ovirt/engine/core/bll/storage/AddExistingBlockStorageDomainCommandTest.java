@@ -16,9 +16,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -29,8 +28,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AddExistingBlockStorageDomainCommandTest {
+public class AddExistingBlockStorageDomainCommandTest extends BaseCommandTest {
 
     private AddExistingBlockStorageDomainCommand<StorageDomainManagementParameter> command;
     private StorageDomainManagementParameter parameters;

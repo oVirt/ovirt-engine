@@ -18,10 +18,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -48,8 +46,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RemoveVdsCommandTest {
+public class RemoveVdsCommandTest extends BaseCommandTest {
     @Mock
     private VdsDynamicDao vdsDynamicDao;
 

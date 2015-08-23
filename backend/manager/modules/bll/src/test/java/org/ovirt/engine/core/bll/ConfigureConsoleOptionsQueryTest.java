@@ -11,9 +11,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -30,8 +28,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ConfigureConsoleOptionsQueryTest {
+public class ConfigureConsoleOptionsQueryTest extends BaseCommandTest {
 
     @Mock
     BackendInternal backend;

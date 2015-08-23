@@ -16,9 +16,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.memory.MemoryImageBuilder;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -34,8 +32,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDao;
 
 /** A test case for the {@link CreateAllSnapshotsFromVmCommand} class. */
-@RunWith(MockitoJUnitRunner.class)
-public class CreateAllSnapshotsFromVmCommandTest {
+public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     private CreateAllSnapshotsFromVmCommand<CreateAllSnapshotsFromVmParameters> cmd;
 
     @Mock
