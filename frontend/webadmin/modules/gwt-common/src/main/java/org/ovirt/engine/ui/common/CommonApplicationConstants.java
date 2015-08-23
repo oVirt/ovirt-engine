@@ -2281,7 +2281,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("External status: ")
     String ExternalStatus();
 
-    @DefaultStringValue("Foreman/Satelite")
+    @DefaultStringValue("Foreman/Satellite")
     String foremanLabel();
 
     @DefaultStringValue("Provider")
