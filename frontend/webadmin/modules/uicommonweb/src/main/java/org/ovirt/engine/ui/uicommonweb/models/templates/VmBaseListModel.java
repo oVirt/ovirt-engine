@@ -293,6 +293,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
         for (UICommand uicommand : uiCommands) {
             model.getCommands().add(uicommand);
         }
+        model.initForemanProviders(null);
     }
 
     protected void validateVm(final UnitVmModel model, final String vmName) {
