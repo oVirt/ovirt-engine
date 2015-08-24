@@ -196,6 +196,19 @@
         .serialNumberPolicy {
             margin-left: 9px;
         }
+
+        .thresholdCheckboxWidth {
+            width: 30px;
+        }
+
+        .thresholdLabelWidth {
+            width: 80%;
+        }
+
+        .thresholdIconWidth {
+            width: 32px;
+        }
+
     </ui:style>
 
     <d:SimpleDialogPanel width="800px" height="560px">
@@ -348,8 +361,9 @@
                             </b:Row>
                             <b:Row>
                               <b:Column size="LG_7">
-                                <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfConnectivityBrokenCheckBox" usePatternFly="true" addStyleNames="{style.floatLeft}" />
-                                <d:InfoIcon ui:field="skipFencingIfConnectivityBrokenInfo" />
+                                <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfConnectivityBrokenCheckBox" usePatternFly="true" addStyleNames="{style.floatLeft} {style.thresholdCheckboxWidth}" />
+                                <g:Label ui:field="skipFencingIfConnectivityBrokenCheckBoxLabel" addStyleNames="{style.floatLeft} {style.thresholdLabelWidth}" />
+                                <d:InfoIcon ui:field="skipFencingIfConnectivityBrokenInfo" addStyleNames="{style.floatLeft} {style.thresholdIconWidth}" />
                               </b:Column>
                               <b:Column size="LG_5">
                                 <e:ListModelListBoxEditor ui:field="hostsWithBrokenConnectivityThresholdEditor" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_7" addStyleNames="{style.floatLeft}" />

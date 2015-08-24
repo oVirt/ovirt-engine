@@ -47,7 +47,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
@@ -425,6 +424,10 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @WithElementId
     EntityModelCheckBoxEditor skipFencingIfConnectivityBrokenCheckBox;
 
+    @UiField
+    @Ignore
+    Label skipFencingIfConnectivityBrokenCheckBoxLabel;
+
     @UiField(provided = true)
     @Path(value = "hostsWithBrokenConnectivityThreshold.selectedItem")
     @WithElementId
@@ -438,7 +441,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
 
     private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationResources resources = AssetProvider.getResources();
     private final static ApplicationConstants constants = AssetProvider.getConstants();
     private final static ApplicationMessages messages = AssetProvider.getMessages();
 
@@ -561,7 +563,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
         fencingEnabledCheckBox.setLabel(constants.fencingEnabled());
         skipFencingIfSDActiveCheckBox.setLabel(constants.skipFencingIfSDActive());
-        skipFencingIfConnectivityBrokenCheckBox.setLabel(constants.skipFencingWhenConnectivityBroken());
+        skipFencingIfConnectivityBrokenCheckBoxLabel.setText(constants.skipFencingWhenConnectivityBroken());
         hostsWithBrokenConnectivityThresholdEditor.setLabel(constants.hostsWithBrokenConnectivityThresholdLabel());
     }
 
