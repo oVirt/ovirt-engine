@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -122,23 +123,24 @@ public class ImagesHandlerTest {
 
     @Test
     public void testJsonDiskDescription() throws IOException {
-        String jsonDescription = null;
-        jsonDescription = ImagesHandler.getJsonDiskDescription("DiskAlias", "DiskDescription");
-        assertTrue("Should be map of disk alias and disk description",
-                jsonDescription.equals("{\"DiskAlias\":\"DiskAlias\",\"DiskDescription\":\"DiskDescription\"}"));
+        assertDiskDescriptionMap("DiskAlias", "DiskDescription");
     }
 
     @Test
     public void testJsonNullDiskDescription() throws IOException {
-        String jsonDescription = ImagesHandler.getJsonDiskDescription("DiskAlias", null);
-        assertTrue("Should be map of disk alias and disk description",
-                jsonDescription.equals("{\"DiskAlias\":\"DiskAlias\",\"DiskDescription\":\"\"}"));
+        assertDiskDescriptionMap("DiskAlias", null);
     }
 
     @Test
     public void testJsonEmptyDiskDescription() throws IOException {
-        String jsonDescription = ImagesHandler.getJsonDiskDescription("DiskAlias", "");
-        assertTrue("Should be map of disk alias and disk description",
-                jsonDescription.equals("{\"DiskAlias\":\"DiskAlias\",\"DiskDescription\":\"\"}"));
+        assertDiskDescriptionMap("DiskAlias", "");
+    }
+
+    private static void assertDiskDescriptionMap(String diskAlias, String diskDescription) throws IOException {
+        assertEquals("Should be map of disk alias and disk description",
+                String.format("{\"DiskAlias\":\"%s\"," +
+                                "\"DiskDescription\":\"%s\"}",
+                        diskAlias, StringUtils.defaultString(diskDescription)),
+                ImagesHandler.getJsonDiskDescription(diskAlias, diskDescription));
     }
 }
