@@ -121,7 +121,7 @@
 						<ge:EntityModelCheckBoxEditor ui:field="useUserAuthEditor" addStyleNames="{style.userAuthLabel}" />
 						<g:HorizontalPanel>
 							<ge:StringEntityModelTextBoxEditor ui:field="chapUserEditor" addStyleNames="{style.textBoxEditorChap}" />
-							<ge:StringEntityModelTextBoxEditor ui:field="chapPassEditor" addStyleNames="{style.textBoxEditorChap}" />
+							<ge:StringEntityModelPasswordBoxEditor ui:field="chapPassEditor" addStyleNames="{style.textBoxEditorChap}" />
 						</g:HorizontalPanel>
 					</g:VerticalPanel>										
 				</g:HorizontalPanel>
