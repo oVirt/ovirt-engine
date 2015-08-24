@@ -4060,8 +4060,9 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {}
-        optionalArguments: {}
+      - mandatoryArguments:
+          certificates.certificate--COLLECTION:
+            content: xs:string
 - name: /externalhostproviders/{externalhostprovider:id}/certificates|rel=get
   description: get the list of certificates of the external host provider
 - name: /externalhostproviders/{externalhostprovider:id}/certificates/{certificate:id}|rel=get
@@ -4150,8 +4151,9 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {}
-        optionalArguments: {}
+      - mandatoryArguments:
+          certificates.certificate--COLLECTION:
+            content: xs:string
 - name: /openstackimageproviders/{openstackimageprovider:id}/images/{image:id}/import|rel=import
   description: imports the OpenStack image
   request:
