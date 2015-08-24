@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -155,22 +156,24 @@ public class ImagesHandlerTest {
 
     @Test
     public void testJsonDiskDescription() throws IOException {
-        String jsonDescription = ImagesHandler.getJsonDiskDescription("DiskAlias", "DiskDescription");
-        assertEquals("Should be map of disk alias and disk description",
-                "{\"DiskAlias\":\"DiskAlias\",\"DiskDescription\":\"DiskDescription\"}", jsonDescription);
+        assertDiskDescriptionMap("DiskAlias", "DiskDescription");
     }
 
     @Test
     public void testJsonNullDiskDescription() throws IOException {
-        String jsonDescription = ImagesHandler.getJsonDiskDescription("DiskAlias", null);
-        assertEquals("Should be map of disk alias and disk description",
-                "{\"DiskAlias\":\"DiskAlias\",\"DiskDescription\":\"\"}", jsonDescription);
+        assertDiskDescriptionMap("DiskAlias", null);
     }
 
     @Test
     public void testJsonEmptyDiskDescription() throws IOException {
-        String jsonDescription = ImagesHandler.getJsonDiskDescription("DiskAlias", "");
+        assertDiskDescriptionMap("DiskAlias", "");
+    }
+
+    private static void assertDiskDescriptionMap(String diskAlias, String diskDescription) throws IOException {
         assertEquals("Should be map of disk alias and disk description",
-                "{\"DiskAlias\":\"DiskAlias\",\"DiskDescription\":\"\"}", jsonDescription);
+                String.format("{\"DiskAlias\":\"%s\"," +
+                                "\"DiskDescription\":\"%s\"}",
+                        diskAlias, StringUtils.defaultString(diskDescription)),
+                ImagesHandler.getJsonDiskDescription(diskAlias, diskDescription));
     }
 }
