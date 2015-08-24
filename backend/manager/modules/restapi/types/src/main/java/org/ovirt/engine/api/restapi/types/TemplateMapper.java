@@ -1,9 +1,12 @@
 package org.ovirt.engine.api.restapi.types;
 
+
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Architecture;
 import org.ovirt.engine.api.model.Boot;
+
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.TemplateStatus;
@@ -17,6 +20,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 
+
 public class TemplateMapper extends VmBaseMapper {
 
     @Mapping(from = Template.class, to = VmTemplate.class)
@@ -24,6 +28,10 @@ public class TemplateMapper extends VmBaseMapper {
         VmTemplate entity = incoming != null ? incoming : new VmTemplate();
 
         mapVmBaseModelToEntity(entity, model);
+
+        if (model.isSetInitialization()) {
+            entity.setVmInit(InitializationMapper.map(model.getInitialization(), new VmInit()));
+        }
 
         if (model.isSetCpu() && model.getCpu().isSetArchitecture()) {
             Architecture archType = Architecture.fromValue(model.getCpu().getArchitecture());
@@ -58,6 +66,10 @@ public class TemplateMapper extends VmBaseMapper {
 
         mapVmBaseModelToEntity(staticVm, model);
 
+        if (model.isSetInitialization()) {
+            staticVm.setVmInit(InitializationMapper.map(model.getInitialization(), new VmInit()));
+        }
+
         if (model.isSetDomain() && model.getDomain().isSetName()) {
             if (staticVm.getVmInit() == null) {
                 staticVm.setVmInit(new VmInit());
@@ -73,6 +85,9 @@ public class TemplateMapper extends VmBaseMapper {
 
         mapVmBaseEntityToModel(model, entity);
 
+        if (entity.getVmInit() != null) {
+            model.setInitialization(InitializationMapper.map(entity.getVmInit(), null));
+        }
         if (entity.getStatus() != null) {
             model.setStatus(StatusUtils.create(map(entity.getStatus(), null)));
         }

@@ -2691,6 +2691,8 @@ actions:
           template.large_icon.id: xs:string
           template.large_icon.media_type: xs:string
           template.large_icon.data: xs:string
+          template.initialization.configuration.type: xs:string
+          template.initialization.configuration.data: xs:string
         description: update the specified template in the system
 - name: /templates|rel=add
   description: add a new template to the system
@@ -2765,6 +2767,8 @@ actions:
           template.large_icon.id: xs:string
           template.large_icon.media_type: xs:string
           template.large_icon.data: xs:string
+          template.initialization.configuration.type: xs:string
+          template.initialization.configuration.data: xs:string
         description: add a new template to the system
 - name: /templates/{template:id}/export|rel=export
   description: export the specified template to the export domain

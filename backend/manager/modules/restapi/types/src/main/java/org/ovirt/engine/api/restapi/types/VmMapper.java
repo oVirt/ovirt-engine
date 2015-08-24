@@ -31,8 +31,6 @@ import org.ovirt.engine.api.model.Files;
 import org.ovirt.engine.api.model.GraphicsConsole;
 import org.ovirt.engine.api.model.GraphicsType;
 import org.ovirt.engine.api.model.GuestInfo;
-import org.ovirt.engine.api.model.GuestNicConfiguration;
-import org.ovirt.engine.api.model.GuestNicsConfiguration;
 import org.ovirt.engine.api.model.GuestOperatingSystem;
 import org.ovirt.engine.api.model.HighAvailability;
 import org.ovirt.engine.api.model.Host;
@@ -256,7 +254,7 @@ public class VmMapper extends VmBaseMapper {
             staticVm.setQuotaId(GuidUtils.asGuid(vm.getQuota().getId()));
         }
         if (vm.isSetInitialization()) {
-            staticVm.setVmInit(map(vm.getInitialization(), new VmInit()));
+            staticVm.setVmInit(InitializationMapper.map(vm.getInitialization(), new VmInit()));
         }
         // The Domain is now set to VmInit
         // we only set it for backward compatibility,
@@ -544,7 +542,7 @@ public class VmMapper extends VmBaseMapper {
         }
 
         if (entity.getVmInit() != null) {
-            model.setInitialization(map(entity.getVmInit(), null));
+            model.setInitialization(InitializationMapper.map(entity.getVmInit(), null));
         }
         model.setNextRunConfigurationExists(entity.isNextRunConfigurationExists());
         model.setNumaTuneMode(map(entity.getNumaTuneMode(), null));
@@ -1086,203 +1084,6 @@ public class VmMapper extends VmBaseMapper {
             }
         }
         return entity;
-    }
-
-    @Mapping(from = Initialization.class, to = VmInit.class)
-    public static VmInit map(Initialization model, VmInit template) {
-        VmInit entity = template != null ? template : new VmInit();
-
-        if (model.isSetHostName()) {
-            entity.setHostname(model.getHostName());
-        }
-
-        if (model.isSetDomain()) {
-            entity.setDomain(model.getDomain());
-        }
-
-        if (model.isSetTimezone()) {
-            entity.setTimeZone(model.getTimezone());
-        }
-
-        if (model.isSetAuthorizedSshKeys()) {
-            entity.setAuthorizedKeys(model.getAuthorizedSshKeys());
-        }
-
-        if (model.isSetRegenerateSshKeys()) {
-            entity.setRegenerateKeys(model.isRegenerateSshKeys());
-        }
-
-        if (model.isSetDnsServers()) {
-            entity.setDnsServers(model.getDnsServers());
-        }
-
-        if (model.isSetDnsSearch()) {
-            entity.setDnsSearch(model.getDnsSearch());
-        }
-
-        if (model.isSetWindowsLicenseKey()) {
-            entity.setWinKey(model.getWindowsLicenseKey());
-        }
-
-        if (model.isSetRootPassword()) {
-            entity.setRootPassword(model.getRootPassword());
-        }
-
-        if (model.isSetCustomScript()) {
-            entity.setCustomScript(model.getCustomScript());
-        }
-
-        if (model.isSetNicConfigurations()) {
-            List<VmInitNetwork> networks = new ArrayList<VmInitNetwork>();
-            for (GuestNicConfiguration nic : model.getNicConfigurations().getNicConfigurations()) {
-                networks.add(map(nic, null));
-            }
-            entity.setNetworks(networks);
-        }
-
-        if (model.isSetInputLocale()) {
-            entity.setInputLocale(model.getInputLocale());
-        }
-
-        if (model.isSetUiLanguage()) {
-            entity.setUiLanguage(model.getUiLanguage());
-        }
-
-        if (model.isSetSystemLocale()) {
-            entity.setSystemLocale(model.getSystemLocale());
-        }
-
-        if (model.isSetUserLocale()) {
-            entity.setUserLocale(model.getUserLocale());
-        }
-
-        if (model.isSetUserName()) {
-            entity.setUserName(model.getUserName());
-        }
-
-        if (model.isSetActiveDirectoryOu()) {
-            entity.setUserName(model.getActiveDirectoryOu());
-        }
-
-        if (model.isSetOrgName()) {
-            entity.setOrgName(model.getOrgName());
-        }
-        return entity;
-    }
-
-    @Mapping(from = VmInit.class, to = Initialization.class)
-    public static Initialization map(VmInit entity, Initialization template) {
-        Initialization model = template != null ? template :
-            new Initialization();
-
-        if (entity.getHostname() != null) {
-            model.setHostName(entity.getHostname());
-        }
-        if (StringUtils.isNotBlank(entity.getDomain())) {
-            model.setDomain(entity.getDomain());
-        }
-        if (entity.getTimeZone() != null) {
-            model.setTimezone(entity.getTimeZone());
-        }
-        if (entity.getAuthorizedKeys() != null) {
-            model.setAuthorizedSshKeys(entity.getAuthorizedKeys());
-        }
-        if (entity.getRegenerateKeys() != null) {
-            model.setRegenerateSshKeys(entity.getRegenerateKeys());
-        }
-        if (entity.getDnsServers() != null) {
-            model.setDnsServers(entity.getDnsServers());
-        }
-        if (entity.getDnsSearch() != null) {
-            model.setDnsSearch(entity.getDnsSearch());
-        }
-        if (entity.getWinKey() != null) {
-            model.setWindowsLicenseKey(entity.getWinKey());
-        }
-        if (entity.getRootPassword() != null || entity.isPasswordAlreadyStored()) {
-            model.setRootPassword("******");
-        }
-        if (entity.getCustomScript() != null) {
-            model.setCustomScript(entity.getCustomScript());
-        }
-        if (entity.getNetworks() != null) {
-            model.setNicConfigurations(new GuestNicsConfiguration());
-            for (VmInitNetwork network : entity.getNetworks()) {
-                model.getNicConfigurations().getNicConfigurations().add(map(network, null));
-            }
-        }
-        if (entity.getInputLocale() != null) {
-            model.setInputLocale(entity.getInputLocale());
-        }
-        if (entity.getUiLanguage() != null) {
-            model.setUiLanguage(entity.getUiLanguage());
-        }
-        if (entity.getSystemLocale() != null) {
-            model.setSystemLocale(entity.getSystemLocale());
-        }
-        if (entity.getUserLocale() != null) {
-            model.setUserLocale(entity.getUserLocale());
-        }
-        if (entity.getUserName() != null) {
-            model.setUserName(entity.getUserName());
-        }
-        if (entity.getActiveDirectoryOU() != null) {
-            model.setActiveDirectoryOu(entity.getActiveDirectoryOU());
-        }
-        if (entity.getOrgName() != null) {
-            model.setOrgName(entity.getOrgName());
-        }
-        return model;
-    }
-
-    @Mapping(from = GuestNicConfiguration.class, to = VmInitNetwork.class)
-    public static VmInitNetwork map(GuestNicConfiguration model, VmInitNetwork template) {
-        VmInitNetwork entity = template != null ? template : new VmInitNetwork();
-
-        if (model.isSetName()) {
-            entity.setName(model.getName());
-        }
-
-        if (model.isOnBoot()) {
-            entity.setStartOnBoot(model.isOnBoot());
-        }
-
-        if (model.isSetBootProtocol()) {
-            entity.setBootProtocol(BootProtocolMapper.map(BootProtocol.fromValue(model.getBootProtocol()), NetworkBootProtocol.NONE));
-        }
-
-        if (model.isSetIp()) {
-            if (model.getIp().isSetAddress()) {
-                entity.setIp(model.getIp().getAddress());
-            }
-            if (model.getIp().isSetNetmask()) {
-                entity.setNetmask(model.getIp().getNetmask());
-            }
-
-            if (model.getIp().isSetGateway()) {
-                entity.setGateway(model.getIp().getGateway());
-            }
-        }
-
-        return entity;
-    }
-
-    @Mapping(from = VmInitNetwork.class, to = GuestNicConfiguration.class)
-    public static GuestNicConfiguration map(VmInitNetwork entity, GuestNicConfiguration template) {
-        GuestNicConfiguration model = template != null ? template : new GuestNicConfiguration();
-
-        model.setName(entity.getName());
-        model.setOnBoot(entity.getStartOnBoot());
-        if (entity.getBootProtocol() != null) {
-            model.setBootProtocol(BootProtocolMapper.map(entity.getBootProtocol(), null).value());
-        }
-        IP ip = new IP();
-        model.setIp(ip);
-        ip.setAddress(entity.getIp());
-        ip.setNetmask(entity.getNetmask());
-        ip.setGateway(entity.getGateway());
-
-        return model;
     }
 
     @Mapping(from = CloudInit.class, to = VmInit.class)

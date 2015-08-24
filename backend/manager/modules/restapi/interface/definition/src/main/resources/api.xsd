@@ -3507,6 +3507,7 @@
           <xs:element name="time_zone" type="TimeZone" minOccurs="0" maxOccurs="1"/>
           <xs:element name="small_icon" type="Icon"  minOccurs="0" maxOccurs="1"/>
           <xs:element name="large_icon" type="Icon"  minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="initialization" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -3534,7 +3535,6 @@
           <xs:element name="payloads" type="Payloads" minOccurs="0"/>
           <xs:element name="statistics" type="Statistics" minOccurs="0" maxOccurs="1"/>
           <xs:element name="disks" type="Disks" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="initialization" minOccurs="0" maxOccurs="1"/>
           <xs:element name="nics" type="Nics" minOccurs="0" maxOccurs="1"/>
           <xs:element name="tags" type="Tags" minOccurs="0" maxOccurs="1"/>
           <xs:element name="snapshots" type="Snapshots" minOccurs="0" maxOccurs="1"/>
