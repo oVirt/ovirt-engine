@@ -275,12 +275,12 @@ $ "${JBOSS_HOME}/bin/jboss-cli.sh" \
     --timeout=30000 \
     --controller=localhost:8706 \
     --user=admin@internal \
-    OPTIONAL_COMMAND
+    --commands="OPTIONAL_COMMA_SEPARATED_COMMANDS"
 
 Useful commands:
 
   Modify log level
-  /subsystem=logging/logger=org.ovirt.engine.core.bll:write-attribute(name=level,value=DEBUG)"
+  /subsystem=logging/logger=org.ovirt.engine.core.bll:write-attribute(name=level,value=DEBUG)
 
   Create a new log category
   /subsystem=logging/logger=org.ovirt.engine:add
