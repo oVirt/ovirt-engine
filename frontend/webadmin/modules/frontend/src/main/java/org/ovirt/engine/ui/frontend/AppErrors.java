@@ -4,7 +4,7 @@ import com.google.gwt.i18n.client.Constants;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 
 public interface AppErrors extends ConstantsWithLookup {
-    @DefaultStringValue("Not enough MAC addresses left in MAC Address Pool.")
+    @DefaultStringValue("Cannot ${action} ${type}. Not enough MAC addresses left in MAC Address Pool.")
     String MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES();
 
     @DefaultStringValue("Cannot ${action} ${type}. Several ${entities} (${DATACENTERS_USING_MAC_POOL_COUNTER}) are using this ${type}:\n${DATACENTERS_USING_MAC_POOL}\n - Please remove it from all ${entities} that are using it and try again.")
