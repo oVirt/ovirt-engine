@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.widget.FocusComposite;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -81,7 +82,7 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
 
     @UiField
     @Path(value = "password.entity")
-    StringEntityModelTextBoxEditor chapPassEditor;
+    StringEntityModelPasswordBoxEditor chapPassEditor;
 
     @UiField
     UiCommandButton discoverButton;
