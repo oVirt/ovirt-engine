@@ -32,11 +32,6 @@ public class ListModelMultipleSelectListBox<T> extends ListModelListBox<List<T>>
     private List<T> selectedList = new ArrayList<>();
 
     /**
-     * The indexes of the acceptable items.
-     */
-    private List<T> itemIndex = new ArrayList<>();
-
-    /**
      * Constructor
      * @param renderer The rendered used to render the values.
      */
@@ -65,7 +60,10 @@ public class ListModelMultipleSelectListBox<T> extends ListModelListBox<List<T>>
             listBox.setItemSelected(listBox.getSelectedIndex(), false);
         }
         for (T item: selectedList) {
-            listBox.setItemSelected(itemIndex.indexOf(item), true);
+            int itemIndex = typedItemList.indexOf(item);
+            if (itemIndex > -1 && itemIndex < listBox.getItemCount()) {
+                listBox.setItemSelected(itemIndex, true);
+            }
         }
     }
 
@@ -125,10 +123,8 @@ public class ListModelMultipleSelectListBox<T> extends ListModelListBox<List<T>>
         super.setAcceptableValues(newValues);
         // Store the rendered values so we can reverse them to find the right typed value. This will
         // break if more than one type value renders to the same string.
-        itemIndex.clear();
         for (List<T> value : newValues) {
             addToItems(value);
-            itemIndex.add(value.get(0));
         }
     }
 
