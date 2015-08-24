@@ -141,6 +141,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
 
     private void initTable(ImportExportRepoImageBaseModel model) {
         imageList = new EntityModelCellTable<>(SelectionMode.NONE, true);
+        imageList.enableColumnResizing();
         imageList.addColumn(new AbstractEntityModelTextColumn<Object>() {
             @Override
             public String getText(Object image) {
@@ -151,10 +152,10 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
                 }
                 return constants.unknown();
             }
-        }, constants.fileNameIso());
+        }, constants.fileNameIso(), "150px"); //$NON-NLS-1$
         if (model.isImportModel()) {
             imageList.addColumn(new DiskAliasTextColumn(new DiskAliasFieldUpdater()),
-                    templates.sub(constants.diskSnapshotAlias(), constants.clickToEdit()));
+                    templates.sub(constants.diskSnapshotAlias(), constants.clickToEdit()), "150px"); //$NON-NLS-1$
         }
         imageList.addColumn(new AbstractEntityModelTextColumn<Object>() {
             @Override
@@ -166,7 +167,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
                 }
                 return constants.unknown();
             }
-        }, constants.typeIso());
+        }, constants.typeIso(), "100px"); //$NON-NLS-1$
         imageList.addColumn(new AbstractDiskSizeColumn<EntityModel>() {
             @Override
             protected Long getRawValue(EntityModel object) {
@@ -177,7 +178,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
                 }
                 return null;
             }
-        }, constants.actualSizeTemplate());
+        }, constants.actualSizeTemplate(), "100px"); //$NON-NLS-1$
 
         imageList.setWidth("100%", true); //$NON-NLS-1$
         imageListPanel.setWidget(imageList);
