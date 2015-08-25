@@ -1,291 +1,153 @@
 package org.ovirt.engine.core.bll.scheduling;
 
-import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
-
-import javax.enterprise.inject.Instance;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.InjectorRule;
-import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesEnforcementPerCluster;
-import org.ovirt.engine.core.common.action.MigrateVmParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesEnforcer;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsGroupDao;
-import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AffinityRulesEnforcementManagerTest {
-    private AffinityRulesEnforcementManager arem;
 
     @Rule
     public MockConfigRule mockConfigRule = new MockConfigRule(
             mockConfig(ConfigValues.AffinityRulesEnforcementManagerRegularInterval, 1),
-            mockConfig(ConfigValues.AffinityRulesEnforcementManagerInitialDelay, 1),
-            mockConfig(ConfigValues.AffinityRulesEnforcementManagerMaximumMigrationTries, 1),
-            mockConfig(ConfigValues.AffinityRulesEnforcementManagerStandbyInterval, 1),
-            mockConfig(ConfigValues.VdsLoadBalancingIntervalInMinutes, 1),
-            mockConfig(ConfigValues.VdsHaReservationIntervalInMinutes, 1),
-            mockConfig(ConfigValues.EnableVdsLoadBalancing, true)
+            mockConfig(ConfigValues.AffinityRulesEnforcementManagerInitialDelay, 1)
     );
 
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
-
     @Mock
-    private AffinityRulesEnforcementPerCluster perCluster;
-
+    private AuditLogDirector auditLogDirector;
     @Mock
-    private VdsGroupDao _vdsGroupDao; //Clusters
-
+    private VdsGroupDao vdsGroupDao;
     @Mock
-    private AffinityGroupDao _affinityGroupDao;
-
-    private VDSGroup cluster;
-
-    @Mock
-    private VdsDao _vdsDao;
-
-    @Mock
-    private VmDao _vmDao;
-
-    @Mock
-    private AuditLogDirector _auditLogDirector;
-
+    private VmDynamicDao vmDynamicDao;
     @Mock
     private SchedulerUtilQuartzImpl scheduler;
+    @Mock
+    private BackendInternal backend;
 
     @Mock
-    private SchedulingManager schedulingManager;
-
+    private AffinityRulesEnforcer rulesEnforcer;
     @Mock
-    private Instance<AffinityRulesEnforcementPerCluster> _perClusterProvider;
+    VM vm1;
+    @Mock
+    VM vm2;
 
-    private class TestingAffinityRulesEnforcementPerCluster extends AffinityRulesEnforcementPerCluster {
-        private TestingAffinityRulesEnforcementPerCluster() {
-            this.affinityGroupDao = _affinityGroupDao;
-            this.vmDao = _vmDao;
-            this.vdsDao = _vdsDao;
-            this.vdsGroupDao = _vdsGroupDao;
-        }
-    }
+    @InjectMocks @Spy
+    private AffinityRulesEnforcementManager arem;
 
+    private VDSGroup vdsGroup1;
+
+    private VDSGroup vdsGroup2;
+
+    /**
+     * Setup a basic scenario with two clusters:
+     *  - vm1 runs on vdsGroup1
+     *  - vm2 runs on vdsGroup2.
+     * In the default setup  we tell the AffinityRulesEnforcmenetManager, that in each cluster, something needs to be migrated.
+     */
     @Before
     public void setup() {
-        initVdsGroup();
-        initMocks();
+        vdsGroup1 = createVdsGroup();
+        vdsGroup2 = createVdsGroup();
+        when(vdsGroupDao.getAll()).thenReturn(Arrays.asList(vdsGroup1, vdsGroup2));
 
-        arem = new AffinityRulesEnforcementManager() {
-            @Override
-            public void wakeup() {
-                this.auditLogDirector = _auditLogDirector;
-                this.vdsDao = _vdsDao;
-                this.vdsGroupDao = _vdsGroupDao;
+        when(rulesEnforcer.chooseNextVmToMigrate(eq(vdsGroup1))).thenReturn(vm1);
+        when(rulesEnforcer.chooseNextVmToMigrate(eq(vdsGroup2))).thenReturn(vm2);
 
-                doReturn(new TestingAffinityRulesEnforcementPerCluster()).when(_perClusterProvider).get();
-
-                this.perClusterProvider = _perClusterProvider;
-
-                super.wakeup();
-
-                addInjectionsToPerClusterObjects();
-            }
-
-            @Override
-            public void refresh() {
-                addInjectionsToPerClusterObjects();
-                super.refresh();
-            }
-
-            private void addInjectionsToPerClusterObjects() {
-                //Adding affinity group dao to all perCluster objects in the maps.
-                for (Entry<VDSGroup, AffinityRulesEnforcementPerCluster> entry : arem.perClusterMap.entrySet()) {
-                    AffinityRulesEnforcementPerCluster perCluster = perClusterProvider.get();
-                    perCluster.setClusterId(entry.getKey().getId());
-                    perCluster.setSchedulingManager(schedulingManager);
-                    entry.setValue(perCluster);
-                }
-            }
-
-            @Override
-            protected List<VDSGroup> getClusters() {
-                List<VDSGroup> vdsGroups = new ArrayList<>();
-                vdsGroups.add(cluster);
-                return vdsGroups;
-            }
-
-            @Override protected VdcReturnValueBase executeMigration(MigrateVmParameters parameters) {
-                return null;
-            }
-        };
         arem.wakeup();
-        arem.refresh();
-
-        for (AffinityRulesEnforcementPerCluster perCluster : arem.perClusterMap.values()) {
-            perCluster.wakeup();
-        }
     }
 
-    protected void initVdsGroup() {
-        //Initiating cluster
+    protected VDSGroup createVdsGroup() {
         Guid id = Guid.newGuid();
-        cluster = new VDSGroup();
+        VDSGroup cluster = new VDSGroup();
         cluster.setVdsGroupId(id);
         cluster.setId(id);
         cluster.setName("Default cluster");
-    }
-
-    protected void initMocks() {
-        injectorRule.bind(SchedulerUtilQuartzImpl.class, scheduler);
-        when(scheduler.scheduleAFixedDelayJob(any(),
-                anyString(),
-                any(Class[].class),
-                any(Object[].class),
-                anyLong(),
-                anyLong(),
-                any(TimeUnit.class)
-        )).thenReturn("jobId");
-
-        when(schedulingManager.canSchedule(any(VDSGroup.class),
-                any(VM.class),
-                anyListOf(Guid.class),
-                anyListOf(Guid.class),
-                anyListOf(Guid.class),
-                anyListOf(String.class)
-        )).thenReturn(true);
+        return cluster;
     }
 
     @Test
-    public void simplePositiveEnforcementUAGTest() {
-        VDSGroup vdsGroup = arem.perClusterMap.keySet().iterator().next();
-
-        //Add 2 hosts
-        VDS vdsId1 = _vdsDao.get(addHost(vdsGroup.getId()));
-        VDS vdsId2 = _vdsDao.get(addHost(vdsGroup.getId()));
-
-        //Creating Affinity Group list with one positive affinity groups.
-        List<Guid> agList = new ArrayList<>();
-
-        List<Guid> vmList = new ArrayList<>();
-        vmList.add(addNewVm(vdsId1.getId(), true));
-        vmList.add(addNewVm(vdsId2.getId(), true));
-        agList.add(addAffinityGroup(vmList, vdsGroup.getId(), true));
-
+    public void shouldMigrateOneVmPerCluster() {
+        when(rulesEnforcer.chooseNextVmToMigrate(eq(vdsGroup1))).thenReturn(vm1, mock(VM.class), mock(VM.class));
         arem.refresh();
+        verify(arem, times(1)).migrateVM(eq(vm1));
+        verify(arem, times(1)).migrateVM(eq(vm2));
+        verify(arem, times(2)).migrateVM(any(VM.class));
     }
 
     @Test
-    public void positiveEnforcementUAGTest() {
-        VDSGroup vdsGroup = arem.perClusterMap.keySet().iterator().next();
-        AffinityRulesEnforcementPerCluster perCluster = arem.perClusterMap.get(vdsGroup);
-
-        //Creating Affinity Group list with two positive affinity groups.
-        List<Guid> agList = new ArrayList<>();
-
-        List<Guid> vmList = new ArrayList<>();
-        vmList.add(addNewVm(vdsGroup.getId(), true));
-        agList.add(addAffinityGroup(vmList, vdsGroup.getId(), true));
-
-        vmList = new ArrayList<>();
-        vmList.add(addNewVm(vdsGroup.getId(), true));
-        agList.add(addAffinityGroup(vmList, vdsGroup.getId(), true));
-
-        //Adding new Vm for both affinity groups
-        Guid vmId = addNewVm(vdsGroup.getId(), true);
-        for (Guid id : agList) {
-            AffinityGroup ag = _affinityGroupDao.get(id);
-            List<Guid> entities = ag.getEntityIds();
-            entities.add(vmId);
-            ag.setEntityIds(entities);
-        }
-
-        assertNull(perCluster.chooseNextVmToMigrate());
+    public void shouldNotMigrateVmOnCluster2MigratingFromCluster() {
+        final VmDynamic migratingVM = new VmDynamic();
+        migratingVM.setRunOnVds(vdsGroup2.getId());
+        when(vmDynamicDao.getAllByStatus(eq(VMStatus.MigratingFrom))).thenReturn(Arrays.asList(migratingVM));
+        arem.refresh();
+        verify(arem).migrateVM(vm1);
+        verify(arem, times(1)).migrateVM(any(VM.class));
     }
 
-    private Guid addNewVm(Guid vdsToRunOn, Boolean isRunning) {
-        Guid guid = Guid.newGuid();
-
-        VMStatus isResponding = VMStatus.Up; //All vms status is up
-
-        VM vm = mock(VM.class);
-        when(_vmDao.get(guid)).thenReturn(vm);
-        doReturn(vdsToRunOn).when(vm).getRunOnVds();
-        doReturn(isRunning).when(vm).isRunning();
-        doReturn(isResponding).when(vm).getStatus();
-
-        _vmDao.saveIsInitialized(guid, true);
-
-        return guid;
+    @Test
+    public void shouldNotMigrateVmOnCluster2MigratingToCluster() {
+        final VmDynamic migratingVM = new VmDynamic();
+        migratingVM.setMigratingToVds(vdsGroup2.getId());
+        when(vmDynamicDao.getAllByStatus(eq(VMStatus.MigratingFrom))).thenReturn(Arrays.asList(migratingVM));
+        arem.refresh();
+        verify(arem).migrateVM(vm1);
+        verify(arem, times(1)).migrateVM(any(VM.class));
     }
 
-    private Guid addHost(Guid vdsGroupId) {
-        Guid id = Guid.newGuid();
-
-        VDS vds = mock(VDS.class);
-        doReturn(id).when(vds).getId();
-        doReturn(vdsGroupId).when(vds).getVdsGroupId();
-
-        when(_vdsDao.get(id)).thenReturn(vds);
-
-        List<VDS> vdsList = _vdsDao.getAllForVdsGroup(vdsGroupId);
-        vdsList.add(vds);
-
-        when(_vdsDao.getAllForVdsGroup(vdsGroupId)).thenReturn(vdsList);
-
-        return id;
+    @Test
+    public void shouldNotMigrateVmOnCluster2NothingToDo() {
+        when(rulesEnforcer.chooseNextVmToMigrate(eq(vdsGroup2))).thenReturn(null);
+        arem.refresh();
+        verify(arem).migrateVM(vm1);
+        verify(arem, times(1)).migrateVM(any(VM.class));
     }
 
-    private Guid addAffinityGroup(List<Guid> vmList, Guid vdsGroupId, Boolean isPositive) {
-        Guid id = Guid.newGuid();
-        AffinityGroup ag = mock(AffinityGroup.class);
-        doReturn(id).when(ag).getId();
-        doReturn(isPositive).when(ag).isPositive();
-        doReturn(vmList).when(ag).getEntityIds();
-        doReturn(vdsGroupId).when(ag).getClusterId();
-        doReturn(true).when(ag).isEnforcing();
+    @Test
+    public void shouldHaveNotingToMigrate() {
+        when(rulesEnforcer.chooseNextVmToMigrate(any(VDSGroup.class))).thenReturn(null);
+        verify(arem, never()).migrateVM(any(VM.class));
+    }
 
-        when(_affinityGroupDao.get(id)).thenReturn(ag);
-
-        //Adding when() for getAllAffinityGroupsByClusterId() to return affinity groups list.
-        List<AffinityGroup> agList = _affinityGroupDao.getAllAffinityGroupsByClusterId(vdsGroupId);
-        agList.add(ag);
-
-        when(_affinityGroupDao.getAllAffinityGroupsByClusterId(vdsGroupId)).thenReturn(agList);
-
-        //Adding when() for getAll()
-        agList = _affinityGroupDao.getAll();
-        agList.add(ag);
-
-        when(_affinityGroupDao.getAll()).thenReturn(agList);
-
-        return id;
+    @Test
+    public void shouldScheduleRegularInterval() {
+        verify(scheduler).scheduleAFixedDelayJob(anyObject(),
+                eq("refresh"),
+                eq(new Class[] {}),
+                eq(new Object[] {}),
+                eq(1L),
+                anyLong(),
+                eq(TimeUnit.MINUTES));
     }
 }
