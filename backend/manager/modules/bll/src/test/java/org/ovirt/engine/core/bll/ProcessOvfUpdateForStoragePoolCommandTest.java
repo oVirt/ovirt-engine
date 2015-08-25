@@ -36,7 +36,7 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
-import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
+import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -70,7 +70,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 @RunWith(MockitoJUnitRunner.class)
 public class ProcessOvfUpdateForStoragePoolCommandTest {
     private final static int ITEMS_COUNT_PER_UPDATE = 100;
-    private ProcessOvfUpdateForStoragePoolCommand<StoragePoolParametersBase> command;
+    private ProcessOvfUpdateForStoragePoolCommand<ProcessOvfUpdateForStoragePoolParameters> command;
 
     @Mock
     private StoragePoolDAO storagePoolDAO;
@@ -115,7 +115,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest {
 
     @Before
     public void setUp() {
-        command = Mockito.spy(new ProcessOvfUpdateForStoragePoolCommand<>(new StoragePoolParametersBase()));
+        command = Mockito.spy(new ProcessOvfUpdateForStoragePoolCommand<>(new ProcessOvfUpdateForStoragePoolParameters()));
         ovfUpdateProcessHelper = Mockito.spy(new OvfUpdateProcessHelper());
         doReturn(ITEMS_COUNT_PER_UPDATE).when(command).loadConfigValue();
         doReturn(new ArrayList<DiskImage>()).when(ovfUpdateProcessHelper).getAllImageSnapshots(any(DiskImage.class));

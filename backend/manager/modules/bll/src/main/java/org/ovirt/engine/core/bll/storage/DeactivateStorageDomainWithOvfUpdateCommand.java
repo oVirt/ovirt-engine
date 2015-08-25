@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.CreateOvfStoresForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
+import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
-import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -57,12 +57,16 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
         changeDomainStatusWithCompensation(map, StorageDomainStatus.Unknown, StorageDomainStatus.Locked, getCompensationContext());
 
         if (shouldPerformOvfUpdate()) {
-            runInternalAction(VdcActionType.ProcessOvfUpdateForStoragePool, new StoragePoolParametersBase(getStoragePoolId()), null);
+            ProcessOvfUpdateForStoragePoolParameters parameters = new ProcessOvfUpdateForStoragePoolParameters(getStoragePoolId());
+            parameters.setUpdateStorage(false);
+            runInternalAction(VdcActionType.ProcessOvfUpdateForStoragePool, parameters, null);
 
-            VdcReturnValueBase tmpRetValue = runInternalActionWithTasksContext(VdcActionType.ProcessOvfUpdateForStorageDomain,
-                    createProcessOvfUpdateForDomainParams(), null);
+            if (ovfOnAnyDomainSupported()) {
+                VdcReturnValueBase tmpRetValue = runInternalActionWithTasksContext(VdcActionType.ProcessOvfUpdateForStorageDomain,
+                        createProcessOvfUpdateForDomainParams(), null);
 
-            getReturnValue().getVdsmTaskIdList().addAll(tmpRetValue.getInternalVdsmTaskIdList());
+                getReturnValue().getVdsmTaskIdList().addAll(tmpRetValue.getInternalVdsmTaskIdList());
+            }
         }
 
         if (getReturnValue().getVdsmTaskIdList().isEmpty()) {
@@ -74,7 +78,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
     }
 
     protected boolean shouldPerformOvfUpdate() {
-        return !getParameters().isInactive() && ovfOnAnyDomainSupported() && getStorageDomain().getStatus() == StorageDomainStatus.Active
+        return !getParameters().isInactive() && getStorageDomain().getStatus() == StorageDomainStatus.Active
                 && getStorageDomain().getStorageDomainType().isDataDomain();
     }
 
