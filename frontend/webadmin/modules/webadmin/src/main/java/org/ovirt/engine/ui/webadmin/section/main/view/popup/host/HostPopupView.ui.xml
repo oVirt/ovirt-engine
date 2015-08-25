@@ -236,6 +236,11 @@
             padding: 0px !important;
             border-width: 0px !important;
         }
+
+        .radioLabel {
+            float: left;
+            padding-left: 5px;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="740px" height="715px">
@@ -322,7 +327,8 @@
                                 </b:Row>
                                 <b:Row ui:field="passwordSection">
                                     <b:Column size="LG_5">
-                                        <g:RadioButton ui:field="rbPassword" />
+                                        <g:RadioButton ui:field="rbPassword" addStyleNames="{style.floatLeft}" />
+                                        <g:Label ui:field="rbPasswordLabel" addStyleNames="{style.radioLabel}" />
                                         <g:Label ui:field="rootPasswordLabel" addStyleNames="{style.headerAuthLabel}" visible="false"/>
                                     </b:Column>
                                     <b:Column size="LG_7">
@@ -331,7 +337,8 @@
                                 </b:Row>
                                 <b:Row ui:field="pkSection">
                                     <b:Column size="LG_5">
-                                        <g:RadioButton ui:field="rbPublicKey" />
+                                        <g:RadioButton ui:field="rbPublicKey" addStyleNames="{style.floatLeft}"/>
+                                        <g:Label ui:field="rbPublicKeyLabel" addStyleNames="{style.radioLabel}" />
                                     </b:Column>
                                     <b:Column size="LG_7">
                                         <ge:StringEntityModelTextAreaLabelEditor ui:field="publicKeyEditor" usePatternFly="true" />

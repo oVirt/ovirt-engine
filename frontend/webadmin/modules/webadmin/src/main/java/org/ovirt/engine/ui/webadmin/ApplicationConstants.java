@@ -636,7 +636,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String hostPopupDefaultUsername();
 
     @DefaultStringValue("SSH Public Key")
-    String hostPopupPublicKeyLable();
+    String hostPopupPublicKeyLabel();
 
     @DefaultStringValue("Password")
     String hostPopupPasswordLabel();
