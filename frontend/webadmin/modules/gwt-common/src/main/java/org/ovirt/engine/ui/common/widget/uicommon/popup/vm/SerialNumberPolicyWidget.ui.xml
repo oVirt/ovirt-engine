@@ -13,12 +13,6 @@
       width: 100%;
     }
 
-    .hPanel {
-      position: relative;
-      top: -8px;
-      padding-left: 9px;
-    }
-
     .serialNumberPolicy {
       float: left;
       margin-left: 9px;
@@ -34,37 +28,10 @@
       padding-left: 15px;
     }
 
-    .serialNumberInfoIcon {
-      display: inline;
-      float: left;
-      position: relative;
-      top: 9px;
-      left: 9px;
-    }
-
-    .checkbox {
-      margin-left: -9px;
-      width: auto;
-      float: left;
-      clear: both;
-    }
-
-    .checkbox label {
-      margin-left: 18px;
-      margin-top: -18px;
-      display: block;
-      line-height: 20px;
-      width: 400px;
-      float: left;
-    }
-
   </ui:style>
 
   <g:FlowPanel addStyleNames="{style.container}">
-    <g:HorizontalPanel addStyleNames="{style.hPanel}">
-      <ge:EntityModelCheckBoxEditor ui:field="overrideSerialNumberPolicy" label="{constants.overrideSerialNumberPolicy}" addStyleNames="{style.checkbox}" />
-      <d:InfoIcon ui:field="serialNumberInfoIcon" addStyleNames="{style.serialNumberInfoIcon}" />
-    </g:HorizontalPanel>
+    <w:EntityModelWidgetWithInfo ui:field="overrideSerialNumberPolicyWithInfo" />
     <e:EnumRadioEditor ui:field="serialNumberPolicy" />
     <ge:StringEntityModelTextBoxOnlyEditor ui:field="customSerialNumber" addStyleNames="{style.customSerialNumber}" />
     <g:HTMLPanel>
