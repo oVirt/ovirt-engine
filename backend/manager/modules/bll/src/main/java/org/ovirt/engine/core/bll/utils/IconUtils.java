@@ -166,4 +166,9 @@ public class IconUtils {
             DbFacade.getInstance().getVmIconDao().removeIfUnused(iconId);
         }
     }
+
+    public static void preserveIcons(VmBase vmBaseFromOvf, VmBase vmBaseFromDb) {
+        vmBaseFromOvf.setSmallIconId(vmBaseFromDb.getSmallIconId());
+        vmBaseFromOvf.setLargeIconId(vmBaseFromDb.getLargeIconId());
+    }
 }

@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -541,6 +542,7 @@ public class SnapshotsManager {
             new VMStaticOvfLogHandler(tempVM.getStaticData()).resetDefaults(oldVmStatic);
 
             vm.setStaticData(tempVM.getStaticData());
+            IconUtils.preserveIcons(vm.getStaticData(), oldVmStatic);
             vm.setImages(images);
             vm.setInterfaces(interfaces);
 
