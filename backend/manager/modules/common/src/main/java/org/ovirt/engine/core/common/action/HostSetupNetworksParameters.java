@@ -58,6 +58,16 @@ public class HostSetupNetworksParameters extends VdsActionParameters {
         setRemovedLabels(new HashSet<String>());
     }
 
+    public boolean isEmptyRequest() {
+        return networkAttachments.isEmpty() &&
+            removedNetworkAttachments.isEmpty() &&
+            bonds.isEmpty() &&
+            removedBonds.isEmpty() &&
+            removedUnmanagedNetworks.isEmpty() &&
+            labels.isEmpty() &&
+            removedLabels.isEmpty();
+    }
+
     public boolean rollbackOnFailure() {
         return rollbackOnFailure;
     }

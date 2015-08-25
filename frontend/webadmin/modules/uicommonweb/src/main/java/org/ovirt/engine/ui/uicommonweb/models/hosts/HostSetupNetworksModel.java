@@ -242,10 +242,6 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         return operationFactory.commandsFor(item, hostSetupNetworksParametersData);
     }
 
-    public List<VdsNetworkInterface> getAllNics() {
-        return allNics;
-    }
-
     public List<LogicalNetworkModel> getNetworks() {
         return new ArrayList<>(networkMap.values());
     }
@@ -1181,27 +1177,33 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     public void onSetupNetworks() {
         // Determines the connectivity timeout in seconds
         AsyncDataProvider.getInstance().getNetworkConnectivityCheckTimeoutInSeconds(new AsyncQuery(sourceListModel,
-                                                                                                   new INewAsyncCallback() {
-                                                                                                       @Override
-                                                                                                       public void onSuccess(Object target, Object returnValue) {
-                                                                                                           getConnectivityTimeout().setEntity((Integer) returnValue);
-                                                                                                           postOnSetupNetworks();
-                                                                                                       }
-                                                                                                   }));
+            new INewAsyncCallback() {
+                @Override
+                public void onSuccess(Object target, Object returnValue) {
+                    getConnectivityTimeout().setEntity((Integer) returnValue);
+                    postOnSetupNetworks();
+                }
+            }));
     }
 
     public void postOnSetupNetworks() {
-        HostSetupNetworksParameters hostSetupNetworksParameters = createHostSetupNetworksParameters();
-        UiAction setupNetworksAction = new UiVdcAction(VdcActionType.HostSetupNetworks,
-                hostSetupNetworksParameters,
-                this,
-                true);
-
+        UiAction setupNetworksAction = createSetupNetworksAction();
         setupNetworksAction
                 .then(getVfsConfigAction())
-                .then(getCommitNetworkChangesAction()).onAllExecutionsFinish(getCloseAction());
+                .then(getCommitNetworkChangesAction())
+                .onAllExecutionsFinish(getCloseAction());
 
         setupNetworksAction.runAction();
+    }
+
+    private UiAction createSetupNetworksAction() {
+        final HostSetupNetworksParameters hostSetupNetworksParameters = createHostSetupNetworksParameters();
+        return new UiVdcAction(VdcActionType.HostSetupNetworks, hostSetupNetworksParameters, this, true) {
+            @Override
+            protected boolean shouldExecute() {
+                return !hostSetupNetworksParameters.isEmptyRequest();
+            }
+        };
     }
 
     public UiAction getCommitNetworkChangesAction() {
@@ -1233,7 +1235,6 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     public HostSetupNetworksParameters createHostSetupNetworksParameters() {
         HostSetupNetworksParameters result = new HostSetupNetworksParameters(getEntity().getId());
-
 
         result.setNetworkAttachments(hostSetupNetworksParametersData.newOrModifiedNetworkAttachments);
         result.setRemovedNetworkAttachments(

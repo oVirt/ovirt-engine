@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
@@ -17,6 +18,10 @@ public class GetHostBondsByHostIdQuery<P extends IdQueryParameters> extends Quer
 
     public GetHostBondsByHostIdQuery(P parameters) {
         super(parameters);
+    }
+
+    public GetHostBondsByHostIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

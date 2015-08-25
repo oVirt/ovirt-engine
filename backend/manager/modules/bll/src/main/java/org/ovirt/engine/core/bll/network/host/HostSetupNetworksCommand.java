@@ -5,8 +5,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -47,6 +49,9 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -62,6 +67,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -106,6 +112,9 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     @Inject
     private NetworkDao networkDao;
+
+    @Inject
+    private NetworkAttachmentDao networkAttachmentDao;
 
     @Inject
     private VdsDao vdsDao;
@@ -169,6 +178,27 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             return validate(hostValidatorResult);
         }
 
+        completeMissingDataInParameters();
+
+        IdQueryParameters idParameters = new IdQueryParameters(getVdsId());
+        VdcQueryReturnValue existingBondsResponse = runInternalQuery(VdcQueryType.GetHostBondsByHostId, idParameters);
+        if (!existingBondsResponse.getSucceeded()) {
+            return false;
+        }
+        List<VdsNetworkInterface> existingBonds = existingBondsResponse.getReturnValue();
+
+        removeUnchangedAttachments(networkAttachmentDao.getAllForHost(getVdsId()));
+        removeUnchangedBonds(existingBonds);
+
+        ValidationResult hostSetupNetworkValidatorResult = validateWithHostSetupNetworksValidator(host);
+        if (!hostSetupNetworkValidatorResult.isValid()) {
+            return validate(hostSetupNetworkValidatorResult);
+        }
+
+        return validate(checkForOutOfSyncNetworks());
+    }
+
+    private void completeMissingDataInParameters() {
         NicNameNicIdCompleter nicNameNicIdCompleter = new NicNameNicIdCompleter(getExistingNics());
         nicNameNicIdCompleter.completeNetworkAttachments(getParameters().getNetworkAttachments());
         nicNameNicIdCompleter.completeBonds(getParameters().getBonds());
@@ -188,13 +218,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 getClusterNetworks(),
                 getExistingNicsBusinessEntityMap());
         labelsCompleter.completeNetworkAttachments();
-
-        ValidationResult hostSetupNetworkValidatorResult = validateWithHostSetupNetworksValidator(host);
-        if (!hostSetupNetworkValidatorResult.isValid()) {
-            return validate(hostSetupNetworkValidatorResult);
-        }
-
-        return validate(checkForOutOfSyncNetworks());
     }
 
     private ValidationResult validateWithHostSetupNetworksValidator(VDS host) {
@@ -249,6 +272,84 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             }
         } catch (TimeoutException e) {
             log.debug("Host Setup networks command timed out for {} seconds", timeout);
+        }
+    }
+
+    private void removeUnchangedBonds(List<VdsNetworkInterface> existingNics) {
+        Map<Guid, VdsNetworkInterface> nicsById = Entities.businessEntitiesById(existingNics);
+
+        for (Iterator<Bond> iterator = getParameters().getBonds().iterator(); iterator.hasNext();) {
+            Bond bondFromRequest =  iterator.next();
+            Guid idOfBondFromRequest = bondFromRequest.getId();
+
+            boolean bondFromRequestIsNewBond = idOfBondFromRequest == null;
+            if (!bondFromRequestIsNewBond) {
+                if (bondFromRequestIsEqualToAlreadyExistingNic(bondFromRequest, nicsById.get(idOfBondFromRequest))) {
+                    iterator.remove();
+                }
+            }
+        }
+    }
+
+    // TODO MM: The bonds in the parameters shouldn't contain the whole VdsNetworkInterface. 0nly the id, name, bondOptions and slaves.
+    private boolean bondFromRequestIsEqualToAlreadyExistingNic(Bond bondFromRequest, VdsNetworkInterface existingNic) {
+        return existingNic != null
+                && existingNic instanceof Bond
+                && Objects.equals(bondFromRequest.getId(), existingNic.getId())
+                && Objects.equals(bondFromRequest.getName(), existingNic.getName())
+                && Objects.equals(bondFromRequest.getBondOptions(), existingNic.getBondOptions())
+                && bondsHasSameSlaves(bondFromRequest, (Bond) existingNic);
+
+    }
+
+    /**
+     * @param existingNetworkAttachment {@link NetworkAttachment} to compare.
+     * @return true if passed in {@link NetworkAttachment networkAttachment} is deeply equal to {@code this}
+     * {@link NetworkAttachment}
+     */
+    public boolean attachmentFromRequestIsEqualToAlreadyExistingOne(NetworkAttachment networkAttachmentFromRequest, NetworkAttachment existingNetworkAttachment) {
+        return existingNetworkAttachment != null
+                && Objects.equals(networkAttachmentFromRequest.getId(), existingNetworkAttachment.getId())
+                && Objects.equals(networkAttachmentFromRequest.getNetworkId(), existingNetworkAttachment.getNetworkId())
+                && Objects.equals(networkAttachmentFromRequest.getNetworkName(), existingNetworkAttachment.getNetworkName())
+                && Objects.equals(networkAttachmentFromRequest.getNicId(), existingNetworkAttachment.getNicId())
+                && Objects.equals(networkAttachmentFromRequest.getHostNetworkQos(), existingNetworkAttachment.getHostNetworkQos())
+                && Objects.equals(networkAttachmentFromRequest.getNicName(), existingNetworkAttachment.getNicName())
+                && Objects.equals(networkAttachmentFromRequest.getIpConfiguration(), existingNetworkAttachment.getIpConfiguration())
+                && Objects.equals(networkAttachmentFromRequest.getProperties(), existingNetworkAttachment.getProperties());
+    }
+
+    private boolean bondsHasSameSlaves(Bond bondFromRequest, Bond existingNic) {
+        List<String> slavesOfBondFromRequest = replaceNullWithEmptyList(bondFromRequest.getSlaves());
+        List<String> slavesOfExistingBond = replaceNullWithEmptyList(existingNic.getSlaves());
+
+        //bonds can be in any order, and I don't want to change this order during this check.
+        return slavesOfBondFromRequest.size() == slavesOfExistingBond.size()
+                && slavesOfBondFromRequest.containsAll(slavesOfExistingBond);
+
+    }
+
+    private List<String> replaceNullWithEmptyList(List<String> list) {
+        return list == null ? Collections.<String>emptyList() : list;
+    }
+
+    private void removeUnchangedAttachments(List<NetworkAttachment> existingAttachments) {
+        Map<Guid, NetworkAttachment> existingAttachmentsById = Entities.businessEntitiesById(existingAttachments);
+
+        for (Iterator<NetworkAttachment> iterator = getParameters().getNetworkAttachments().iterator(); iterator.hasNext();) {
+            NetworkAttachment attachmentFromRequest =  iterator.next();
+            Guid idOfAttachmentFromRequest = attachmentFromRequest.getId();
+
+            boolean attachmentFromRequestIsNewAttachment = idOfAttachmentFromRequest == null;
+            // when flag 'isOverrideConfiguration' is set, NetworkAttachment from request cannot be ignored.
+            boolean overridingConfiguration = attachmentFromRequest.isOverrideConfiguration();
+
+            if (!attachmentFromRequestIsNewAttachment && !overridingConfiguration) {
+                NetworkAttachment existingAttachment = existingAttachmentsById.get(idOfAttachmentFromRequest);
+                if (attachmentFromRequestIsEqualToAlreadyExistingOne(attachmentFromRequest, existingAttachment)) {
+                    iterator.remove();
+                }
+            }
         }
     }
 
@@ -346,13 +447,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     }
 
     private boolean noChangesDetected() {
-        return getNetworksToConfigure().isEmpty()
-                && getRemovedNetworks().isEmpty()
-                && getParameters().getBonds().isEmpty()
-                && getRemovedBondNames().isEmpty()
-                && getRemovedUnmanagedNetworks().isEmpty()
-                && getParameters().getLabels().isEmpty()
-                && getParameters().getRemovedLabels().isEmpty();
+        return getParameters().isEmptyRequest();
     }
 
     private List<VdsNetworkInterface> getRemovedBonds() {
@@ -581,8 +676,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
         nicsToConfigure.addAll(interfaceDao.getAllInterfacesForVds(getVdsId()));
 
-        // TODO MM: The bonds in the parameters shouldn't contain the whole VdsNetworkInterface. 0nly the id, name and
-        // slaves.
+        // TODO MM: The bonds in the parameters shouldn't contain the whole VdsNetworkInterface. 0nly the id, name, bondOptions and slaves.
         for (Bond bond : getParameters().getBonds()) {
             if (bond.getId() == null) {
                 Bond newBond = new Bond(bond.getName());
