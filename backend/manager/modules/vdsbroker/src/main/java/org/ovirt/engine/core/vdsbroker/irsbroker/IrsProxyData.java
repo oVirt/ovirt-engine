@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1163,98 +1164,24 @@ public class IrsProxyData {
 
     public void updateVdsDomainsData(final Guid vdsId, final String vdsName,
                                      final ArrayList<VDSDomainsData> data) {
-
-        Set<Guid> domainsInMaintenance = null;
         StoragePool storagePool =
                 DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
         if (storagePool != null
                 && (storagePool.getStatus() == StoragePoolStatus.Up || storagePool.getStatus() == StoragePoolStatus.NonResponsive)) {
 
             try {
-                Map<Guid, DomainMonitoringResult> domainsProblematicReportInfo = new HashMap<>();
-                // build a list of all domains in pool
-                // which are in status Active or Unknown
-                Set<Guid> activeDomainsInPool = new HashSet<Guid>(
-                        DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
-                                _storagePoolId, StorageDomainStatus.Active));
-                Set<Guid> unknownDomainsInPool = new HashSet<>(DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
-                        _storagePoolId, StorageDomainStatus.Unknown));
-                Set<Guid> inActiveDomainsInPool =
-                        new HashSet<Guid>(DbFacade.getInstance()
-                                .getStorageDomainStaticDao()
-                                .getAllIds(_storagePoolId, StorageDomainStatus.Inactive));
-
-                // build a list of all the domains in
-                // pool (activeDomainsInPool and unknownDomainsInPool) that are not
-                // visible by the host.
-                Set<Guid> dataDomainIds = new HashSet<Guid>();
+                Set<Guid> monitoredDomains = new HashSet<Guid>();
                 for (VDSDomainsData tempData : data) {
-                    dataDomainIds.add(tempData.getDomainId());
-                }
-                for (Guid tempDomainId : activeDomainsInPool) {
-                    if (!dataDomainIds.contains(tempDomainId)) {
-                        domainsProblematicReportInfo.put(tempDomainId, DomainMonitoringResult.NOT_REPORTED);
-                    }
+                    monitoredDomains.add(tempData.getDomainId());
                 }
 
-                for (Guid tempDomainId : unknownDomainsInPool) {
-                    if (!dataDomainIds.contains(tempDomainId)) {
-                        domainsProblematicReportInfo.put(tempDomainId, DomainMonitoringResult.NOT_REPORTED);
-                    }
-                }
+                Map<Guid, DomainMonitoringResult> domainsProblematicReportInfo = handleMonitoredDomainsForHost(vdsId,
+                        vdsName,
+                        data,
+                        monitoredDomains,
+                        storagePool);
 
-                // build a list of domains that the host
-                // reports as in problem (code!=0) or (code==0
-                // && lastChecl >
-                // ConfigValues.MaxStorageVdsTimeoutCheckSec)
-                // and are contained in the Active or
-                // Unknown domains in pool
-                for (VDSDomainsData tempData : data) {
-                    if (activeDomainsInPool.contains(tempData.getDomainId()) || unknownDomainsInPool.contains(tempData.getDomainId())) {
-                        DomainMonitoringResult domainMonitoringResult = analyzeDomainReport(tempData, storagePool, false);
-                        if (domainMonitoringResult.invalidAndActual()) {
-                            domainsProblematicReportInfo.put(tempData.getDomainId(), domainMonitoringResult);
-                        } else if (domainMonitoringResult.actual() && tempData.getDelay() > Config.<Double> getValue(ConfigValues.MaxStorageVdsDelayCheckSec)) {
-                            logDelayedDomain(vdsId, tempData);
-                        }
-                    }
-
-                    else if ((inActiveDomainsInPool.contains(tempData.getDomainId()) ||
-                            // in data centers with spm, unknown domains are moving to Active status according to the pool metadata.
-                            (FeatureSupported.dataCenterWithoutSpm(storagePool.getCompatibilityVersion()) && unknownDomainsInPool.contains(tempData.getDomainId())))
-                            && analyzeDomainReport(tempData, storagePool, false).validAndActual()) {
-                        log.warn("Storage Domain '{}' was reported by Host '{}' as Active in Pool '{}', moving to active status",
-                                getDomainIdTuple(tempData.getDomainId()),
-                                vdsName,
-                                _storagePoolId);
-                        StoragePoolIsoMap map =
-                                DbFacade.getInstance()
-                                        .getStoragePoolIsoMapDao()
-                                        .get(new StoragePoolIsoMapId(tempData.getDomainId(), _storagePoolId));
-                        map.setStatus(StorageDomainStatus.Active);
-                        DbFacade.getInstance().getStoragePoolIsoMapDao().update(map);
-
-                        // For block domains, synchronize LUN details comprising the storage domain with the DB
-                        StorageDomain storageDomain = DbFacade.getInstance().getStorageDomainDao().get(tempData.getDomainId());
-                        if (storageDomain.getStorageType().isBlockDomain()) {
-                            ResourceManager.getInstance().getEventListener().syncLunsInfoForBlockStorageDomain(
-                                    storageDomain.getId(), vdsId);
-                        }
-                    }
-                }
-
-                Set<Guid> maintInPool = new HashSet<Guid>(
-                        DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
-                                _storagePoolId, StorageDomainStatus.Maintenance));
-                maintInPool.addAll(DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
-                        _storagePoolId, StorageDomainStatus.PreparingForMaintenance));
-
-                domainsInMaintenance = new HashSet<Guid>();
-                for (Guid tempDomainId : maintInPool) {
-                    if (!dataDomainIds.contains(tempDomainId)) {
-                        domainsInMaintenance.add(tempDomainId);
-                    }
-                }
+                Set<Guid> domainsInMaintenance = handleDomainsInMaintenanceForHost(monitoredDomains);
 
                 updateDomainInProblem(vdsId, vdsName, domainsProblematicReportInfo, domainsInMaintenance);
             } catch (RuntimeException ex) {
@@ -1262,6 +1189,108 @@ public class IrsProxyData {
                 log.debug("Exception", ex);
             }
         }
+    }
+
+    /**
+     * The methods inspects which domains status can be changed to Maintenance according to the host
+     * domains report.
+     * @param monitoredDomains domains that the host monitors
+     * @return domains that are not monitored by the host and are in
+     * @link StorageDomainStatus#Maintenance or @link StorageDomainStatus#PreparingForMaintenance.
+     */
+    private Set<Guid> handleDomainsInMaintenanceForHost(Collection<Guid> monitoredDomains) {
+        Set<Guid>  domainsInMaintenance = new HashSet<Guid>();
+        Set<Guid> maintInPool = new HashSet<Guid>(
+                DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
+                        _storagePoolId, StorageDomainStatus.Maintenance));
+        maintInPool.addAll(DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
+                _storagePoolId, StorageDomainStatus.PreparingForMaintenance));
+
+        for (Guid tempDomainId : maintInPool) {
+            if (!monitoredDomains.contains(tempDomainId)) {
+                domainsInMaintenance.add(tempDomainId);
+            }
+        }
+
+        return domainsInMaintenance;
+    }
+
+    /**
+     * Provides handling for the domains that are monitored by the given host.
+     * @return map between the domain id and the reason for domains that
+     * the host reporting is problematic for.
+     */
+    private Map<Guid, DomainMonitoringResult> handleMonitoredDomainsForHost(final Guid vdsId, final String vdsName,
+            final ArrayList<VDSDomainsData> data, Collection<Guid> monitoredDomains, StoragePool storagePool) {
+        Map<Guid, DomainMonitoringResult> domainsProblematicReportInfo = new HashMap<>();
+        // build a list of all domains in pool
+        // which are in status Active or Unknown
+        Set<Guid> activeDomainsInPool = new HashSet<Guid>(
+                DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
+                        _storagePoolId, StorageDomainStatus.Active));
+        Set<Guid> unknownDomainsInPool = new HashSet<>(DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
+                _storagePoolId, StorageDomainStatus.Unknown));
+        Set<Guid> inActiveDomainsInPool =
+                new HashSet<Guid>(DbFacade.getInstance()
+                        .getStorageDomainStaticDao()
+                        .getAllIds(_storagePoolId, StorageDomainStatus.Inactive));
+
+        // build a list of all the domains in
+        // pool (activeDomainsInPool and unknownDomainsInPool) that are not
+        // visible by the host.
+        for (Guid tempDomainId : activeDomainsInPool) {
+            if (!monitoredDomains.contains(tempDomainId)) {
+                domainsProblematicReportInfo.put(tempDomainId, DomainMonitoringResult.NOT_REPORTED);
+            }
+        }
+
+        for (Guid tempDomainId : unknownDomainsInPool) {
+            if (!monitoredDomains.contains(tempDomainId)) {
+                domainsProblematicReportInfo.put(tempDomainId, DomainMonitoringResult.NOT_REPORTED);
+            }
+        }
+
+        // build a list of domains that the host
+        // reports as in problem (code!=0) or (code==0
+        // && lastChecl >
+        // ConfigValues.MaxStorageVdsTimeoutCheckSec)
+        // and are contained in the Active or
+        // Unknown domains in pool
+        for (VDSDomainsData tempData : data) {
+            if (activeDomainsInPool.contains(tempData.getDomainId()) || unknownDomainsInPool.contains(tempData.getDomainId())) {
+                DomainMonitoringResult domainMonitoringResult = analyzeDomainReport(tempData, storagePool, false);
+                if (domainMonitoringResult.invalidAndActual()) {
+                    domainsProblematicReportInfo.put(tempData.getDomainId(), domainMonitoringResult);
+                } else if (domainMonitoringResult.actual() && tempData.getDelay() > Config.<Double> getValue(ConfigValues.MaxStorageVdsDelayCheckSec)) {
+                    logDelayedDomain(vdsId, tempData);
+                }
+            }
+
+            else if ((inActiveDomainsInPool.contains(tempData.getDomainId()) ||
+                    // in data centers with spm, unknown domains are moving to Active status according to the pool metadata.
+                    (FeatureSupported.dataCenterWithoutSpm(storagePool.getCompatibilityVersion()) && unknownDomainsInPool.contains(tempData.getDomainId())))
+                    && analyzeDomainReport(tempData, storagePool, false).validAndActual()) {
+                log.warn("Storage Domain '{}' was reported by Host '{}' as Active in Pool '{}', moving to active status",
+                        getDomainIdTuple(tempData.getDomainId()),
+                        vdsName,
+                        _storagePoolId);
+                StoragePoolIsoMap map =
+                        DbFacade.getInstance()
+                                .getStoragePoolIsoMapDao()
+                                .get(new StoragePoolIsoMapId(tempData.getDomainId(), _storagePoolId));
+                map.setStatus(StorageDomainStatus.Active);
+                DbFacade.getInstance().getStoragePoolIsoMapDao().update(map);
+
+                // For block domains, synchronize LUN details comprising the storage domain with the DB
+                StorageDomain storageDomain = DbFacade.getInstance().getStorageDomainDao().get(tempData.getDomainId());
+                if (storageDomain.getStorageType().isBlockDomain()) {
+                    ResourceManager.getInstance().getEventListener().syncLunsInfoForBlockStorageDomain(
+                            storageDomain.getId(), vdsId);
+                }
+            }
+        }
+
+        return domainsProblematicReportInfo;
     }
 
     private void updateDomainInProblem(final Guid vdsId, final String vdsName, final Map<Guid, DomainMonitoringResult> domainsInProblem,
