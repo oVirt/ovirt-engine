@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter;
 
-import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.AbstractTabbedModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.MacPoolModel;
@@ -12,9 +12,9 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class DataCenterPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<DataCenterModel, DataCenterPopupPresenterWidget.ViewDef> {
+public class DataCenterPopupPresenterWidget extends AbstractTabbedModelBoundPopupPresenterWidget<DataCenterModel, DataCenterPopupPresenterWidget.ViewDef> {
 
-    public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<DataCenterModel> {
+    public interface ViewDef extends AbstractTabbedModelBoundPopupPresenterWidget.ViewDef<DataCenterModel> {
         void updateMacPool(MacPoolModel macPoolModel);
         HasUiCommandClickHandlers getMacPoolButton();
     }
