@@ -75,39 +75,39 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 2, 4);
-        formBuilder.setRelativeColumnWidth(0, 4);
-        formBuilder.setRelativeColumnWidth(1, 3);
-        formBuilder.addFormItem(new FormItem(constants.nameNetwork(), name, 0, 0));
-        formBuilder.addFormItem(new FormItem(constants.idNetwork(), id, 1, 0));
-        formBuilder.addFormItem(new FormItem(constants.descriptionNetwork(), description, 2, 0));
+        formBuilder.setRelativeColumnWidth(0, 5);
+        formBuilder.setRelativeColumnWidth(1, 5);
+        formBuilder.addFormItem(new FormItem(constants.nameNetwork(), name, 0, 0), 3, 9);
+        formBuilder.addFormItem(new FormItem(constants.idNetwork(), id, 1, 0), 3, 9);
+        formBuilder.addFormItem(new FormItem(constants.descriptionNetwork(), description, 2, 0), 3, 9);
 
         formBuilder.addFormItem(new FormItem(constants.vmNetwork(), vmNetwork, 0, 1) {
             @Override
             public boolean getIsAvailable() {
                 return ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly);
             }
-        });
+        }, 3, 9);
 
         formBuilder.addFormItem(new FormItem(constants.vlanNetwork(), vlan, 1, 1) {
             @Override
             public boolean getIsAvailable() {
                 return ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly);
             }
-        });
+        }, 3, 9);
 
         formBuilder.addFormItem(new FormItem(constants.mtuNetwork(), mtu, 2, 1) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().getExternalId() == null;
             }
-        });
+        }, 3, 9);
 
         formBuilder.addFormItem(new FormItem(constants.externalIdProviderNetwork(), externalId, 3, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().getExternalId() != null;
             }
-        });
+        }, 3, 9);
     }
 
     @Override
