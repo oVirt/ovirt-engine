@@ -2292,11 +2292,13 @@ SELECT
     network.label AS label,
     storage_pool.name AS storage_pool_name,
     storage_pool.compatibility_version AS compatibility_version,
-    providers.name AS provider_name
+    providers.name AS provider_name,
+    qos.name AS qos_name
 FROM
     network
 INNER JOIN storage_pool ON network.storage_pool_id = storage_pool.id
-LEFT JOIN providers ON network.provider_network_provider_id = providers.id;
+LEFT JOIN providers ON network.provider_network_provider_id = providers.id
+LEFT JOIN qos ON qos.id = network.qos_id;
 CREATE
 OR REPLACE VIEW vnic_profiles_view AS
 SELECT
