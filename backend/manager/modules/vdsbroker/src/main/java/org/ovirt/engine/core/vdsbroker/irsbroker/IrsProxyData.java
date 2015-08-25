@@ -227,7 +227,7 @@ public class IrsProxyData {
                             } else {
                                 List<StorageDomain> storageDomains = DbFacade.getInstance().getStorageDomainDao()
                                         .getAllForStoragePool(storagePool.getId());
-                                domainsInMaintenanceCheck(storageDomains);
+                                domainsInMaintenanceCheck(storageDomains, storagePool);
                             }
                         }
                     }
@@ -358,18 +358,18 @@ public class IrsProxyData {
             }
         }
 
-        domainsInMaintenanceCheck(domainsInDb);
+        domainsInMaintenanceCheck(domainsInDb, storagePool);
     }
 
-    private void domainsInMaintenanceCheck(List<StorageDomain> storageDomains) {
+    private void domainsInMaintenanceCheck(List<StorageDomain> storageDomains, StoragePool pool) {
         for (StorageDomain domainInDb : storageDomains) {
             if (domainInDb.getStatus() == StorageDomainStatus.PreparingForMaintenance) {
-                queueDomainMaintenanceCheck(domainInDb);
+                queueDomainMaintenanceCheck(domainInDb, pool);
             }
         }
     }
 
-    public void queueDomainMaintenanceCheck(final StorageDomain domain) {
+    public void queueDomainMaintenanceCheck(final StorageDomain domain, final StoragePool pool) {
         getEventQueue()
                 .submitEventAsync(new Event(_storagePoolId, domain.getId(), null, EventType.DOMAINFAILOVER, ""),
                         new Callable<EventResult>() {
@@ -384,6 +384,10 @@ public class IrsProxyData {
                                     DbFacade.getInstance().getStoragePoolIsoMapDao().updateStatus(
                                             domain.getStoragePoolIsoMapData().getId(),
                                             StorageDomainStatus.Maintenance);
+                                    AuditLogableBase auditLogableBase = new AuditLogableBase();
+                                    auditLogableBase.addCustomValue("StorageDomainName", domain.getName());
+                                    auditLogableBase.addCustomValue("StoragePoolName", pool.getName());
+                                    new AuditLogDirector().log(auditLogableBase, AuditLogType.STORAGE_DOMAIN_MOVED_TO_MAINTENANCE);
                                 }
                                 return null;
                             }
