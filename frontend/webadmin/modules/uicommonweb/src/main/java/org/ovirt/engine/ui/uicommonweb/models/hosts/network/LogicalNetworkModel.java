@@ -145,6 +145,9 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
 
     private void storeAttachmentParamsBeforeDetach() {
         NetworkAttachment networkAttachment = getSetupModel().getNetworkAttachmentForNetwork(getNetwork().getId());
+        if (networkAttachment == null) {
+            return;
+        }
         NetworkParameters netParams = new NetworkParameters();
 
         IPv4Address ipAdrdress =

@@ -377,7 +377,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 networkDialogModel.getQosModel().setIsAvailable(true);
                 NetworkAttachment networkAttachment =
                         getNetworkAttachmentForNetwork(network.getId());
-                networkDialogModel.getQosOverridden().setEntity(networkAttachment.isQosOverridden());
+                networkDialogModel.getQosOverridden().setEntity(networkAttachment != null && networkAttachment.isQosOverridden());
                 networkDialogModel.getQosModel().init(nic.getQos());
 
             }
@@ -492,8 +492,9 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     }
 
     public NetworkAttachment getNetworkAttachmentForNetwork(Guid networkId) {
+        //unset networkId may mean a bug, but also it can be unmanaged network, which does not have ids.
         if (networkId == null) {
-            throw new IllegalArgumentException();
+            return null;
         }
 
         NetworkAttachment updatedAttachment =
