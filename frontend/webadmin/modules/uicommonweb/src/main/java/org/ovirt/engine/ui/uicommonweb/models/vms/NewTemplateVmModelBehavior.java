@@ -284,6 +284,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                     volumeTypes.setItems(new ArrayList<>(Arrays.asList(cinderDisk.getVolumeType())), cinderDisk.getVolumeType());
                     diskModel.setVolumeType(volumeTypes);
                     diskModel.getAlias().setEntity(cinderDisk.getDiskAlias());
+                    diskModel.getVolumeFormat().setIsChangeable(false);
                     break;
             }
             diskModel.setDisk(disk);
