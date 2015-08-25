@@ -82,7 +82,7 @@ public class NetworkView extends Network {
         } else if (!getDataCenterName().equals(other.getDataCenterName())) {
             return false;
         }
-        if (Objects.equals(getProviderName(), other.getProviderName())) {
+        if (!Objects.equals(getProviderName(), other.getProviderName())) {
             return false;
         }
         if (!Objects.equals(getQosName(), other.getQosName())) {
