@@ -292,10 +292,18 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @WithElementId("rbPublicKey")
     public RadioButton rbPublicKey;
 
+    @UiField
+    @Ignore
+    public Label rbPublicKeyLabel;
+
     @UiField(provided = true)
     @Ignore
     @WithElementId("rbPassword")
     public RadioButton rbPassword;
+
+    @UiField
+    @Ignore
+    public Label rbPasswordLabel;
 
     @UiField(provided = true)
     @Ignore
@@ -541,8 +549,8 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         authSshPortEditor.setLabel(constants.hostPopupPortLabel());
         authLabel.setText(constants.hostPopupAuthLabel());
         rootPasswordLabel.setText(constants.hostPopupAuthLabelForExternalHost());
-        rbPassword.setText(constants.hostPopupPasswordLabel());
-        rbPublicKey.setText(constants.hostPopupPublicKeyLable());
+        rbPasswordLabel.setText(constants.hostPopupPasswordLabel());
+        rbPublicKeyLabel.setText(constants.hostPopupPublicKeyLabel());
         rbProvisionedHost.setText(constants.provisionedHostsLabel());
         rbDiscoveredHost.setText(constants. discoveredHostsLabel());
         fingerprintLabel.setText(constants.hostPopupHostFingerprintLabel());
@@ -797,7 +805,9 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
             displayPassPkWindow(true);
         }
         rbPublicKey.setVisible(!isDiscovered);
+        rbPublicKeyLabel.setVisible(!isDiscovered);
         rbPassword.setVisible(!isDiscovered);
+        rbPasswordLabel.setVisible(!isDiscovered);
         publicKeyEditor.setVisible(!isDiscovered);
         authSshPortEditor.setVisible(!isDiscovered);
         userNameEditor.setVisible(!isDiscovered);
