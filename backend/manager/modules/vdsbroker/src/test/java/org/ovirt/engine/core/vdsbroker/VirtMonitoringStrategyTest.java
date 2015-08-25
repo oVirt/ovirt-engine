@@ -45,10 +45,7 @@ public class VirtMonitoringStrategyTest {
     public void testVirtIsMonitoringNeeded() {
         VDS vds = new VDS();
         vds.setStatus(VDSStatus.NonOperational);
-        vds.setVmCount(1);
         assertTrue(virtStrategy.isMonitoringNeeded(vds));
-        vds.setVmCount(0);
-        assertFalse(virtStrategy.isMonitoringNeeded(vds));
         vds.setStatus(VDSStatus.Up);
         assertTrue(virtStrategy.isMonitoringNeeded(vds));
     }

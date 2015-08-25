@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.SpmStatus;
 import org.ovirt.engine.core.common.businessentities.SpmStatusResult;
@@ -101,6 +103,15 @@ public class IrsProxyData {
     private final String domainRecoverOnHostJobId;
     private final HashSet<Guid> triedVdssList = new HashSet<Guid>();
     private Guid currentVdsId;
+
+    private static Set<VDSStatus> vdsConnectedToPoolStatuses;
+
+    static {
+        vdsConnectedToPoolStatuses = EnumSet.copyOf(StoragePoolDomainHelper.vdsDomainsActiveMonitoringStatus);
+        vdsConnectedToPoolStatuses.addAll(StoragePoolDomainHelper.vdsDomainsMaintenanceMonitoringStatus);
+        vdsConnectedToPoolStatuses.add(VDSStatus.NonResponsive);
+        vdsConnectedToPoolStatuses.add(VDSStatus.PreparingForMaintenance);
+    }
 
     private Guid preferredHostId;
 
@@ -203,8 +214,7 @@ public class IrsProxyData {
                         // so all the domains need to move to "unknown" status as otherwise their status won't change.
                         if (DbFacade.getInstance()
                                 .getVdsDao()
-                                .getAllForStoragePoolAndStatuses(_storagePoolId,
-                                        StoragePoolDomainHelper.reportingVdsStatus)
+                                .getAllForStoragePoolAndStatuses(_storagePoolId, StoragePoolDomainHelper.vdsDomainsActiveMonitoringStatus)
                                 .isEmpty()) {
                             StoragePoolDomainHelper.updateApplicablePoolDomainsStatuses(_storagePoolId,
                                     StoragePoolDomainHelper.storageDomainMonitoredStatus,
@@ -242,22 +252,12 @@ public class IrsProxyData {
 
     private int _errorAttempts;
 
-    private static Set<Guid> getVdsConnectedToPool(Guid storagePoolId) {
-        Set<Guid> vdsNotInMaintenance = new HashSet<>();
-
+    private static Collection<Guid> getVdsConnectedToPool(Guid storagePoolId) {
         // Note - this method is used as it returns only hosts from VIRT supported clusters
         // (we use the domain monitoring results only from those clusters hosts).
         // every change to it should be inspected carefully.
-        for (VDS vds : DbFacade.getInstance().getVdsDao().getAllForStoragePoolAndStatus(storagePoolId, null)) {
-            if (vds.getStatus() == VDSStatus.Up
-                    || vds.getStatus() == VDSStatus.NonResponsive
-                    || vds.getStatus() == VDSStatus.PreparingForMaintenance
-                    || vds.getStatus() == VDSStatus.NonOperational) {
-                vdsNotInMaintenance.add(vds.getId());
-            }
-        }
-
-        return vdsNotInMaintenance;
+        return Entities.getIds(DbFacade.getInstance().getVdsDao().getAllForStoragePoolAndStatuses(storagePoolId,
+                vdsConnectedToPoolStatuses));
     }
 
     @SuppressWarnings("unchecked")
@@ -377,7 +377,7 @@ public class IrsProxyData {
                         new Callable<EventResult>() {
                             @Override
                             public EventResult call() {
-                                Set<Guid> vdsConnectedToPool = getVdsConnectedToPool(_storagePoolId);
+                                Collection<Guid> vdsConnectedToPool = getVdsConnectedToPool(_storagePoolId);
                                 Set<Guid> vdsDomInMaintenance = _domainsInMaintenance.get(domain.getId());
                                 if (vdsConnectedToPool.isEmpty() ||
                                         (vdsDomInMaintenance != null &&
@@ -1172,7 +1172,8 @@ public class IrsProxyData {
         StoragePool storagePool =
                 DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
         if (storagePool != null
-                && (storagePool.getStatus() == StoragePoolStatus.Up || storagePool.getStatus() == StoragePoolStatus.NonResponsive)) {
+                && (storagePool.getStatus() == StoragePoolStatus.Up
+                || storagePool.getStatus() == StoragePoolStatus.NonResponsive)) {
 
             Guid vdsId = vds.getId();
             String vdsName = vds.getName();
@@ -1182,13 +1183,21 @@ public class IrsProxyData {
                     monitoredDomains.add(tempData.getDomainId());
                 }
 
-                Map<Guid, DomainMonitoringResult> domainsProblematicReportInfo = handleMonitoredDomainsForHost(vdsId,
-                        vdsName,
-                        data,
-                        monitoredDomains,
-                        storagePool);
+                Map<Guid, DomainMonitoringResult> domainsProblematicReportInfo = Collections.emptyMap();
 
-                Set<Guid> domainsInMaintenance = handleDomainsInMaintenanceForHost(monitoredDomains);
+                if (StoragePoolDomainHelper.vdsDomainsActiveMonitoringStatus.contains(vds.getStatus())) {
+                    domainsProblematicReportInfo =
+                            handleMonitoredDomainsForHost(vdsId,
+                                    vdsName,
+                                    data,
+                                    monitoredDomains,
+                                    storagePool);
+                }
+
+                Set<Guid> domainsInMaintenance = Collections.emptySet();
+                if (StoragePoolDomainHelper.vdsDomainsMaintenanceMonitoringStatus.contains(vds.getStatus())) {
+                    domainsInMaintenance = handleDomainsInMaintenanceForHost(monitoredDomains);
+                }
 
                 updateDomainInProblem(vdsId, vdsName, domainsProblematicReportInfo, domainsInMaintenance);
             } catch (RuntimeException ex) {
@@ -1198,12 +1207,13 @@ public class IrsProxyData {
         }
     }
 
-    private boolean shouldProcessVdsDomainReport(VDS vds) {
+    private static boolean shouldProcessVdsDomainReport(VDS vds) {
         // NOTE - if this condition is ever updated, every place that acts upon the reporting
         // should be updated as well, only hosts the we collect the report from should be affected
         // from it.
         return vds.getVdsGroupSupportsVirtService() &&
-                StoragePoolDomainHelper.reportingVdsStatus.contains(vds.getStatus());
+                (StoragePoolDomainHelper.vdsDomainsActiveMonitoringStatus.contains(vds.getStatus()) ||
+                StoragePoolDomainHelper.vdsDomainsMaintenanceMonitoringStatus.contains(vds.getStatus()));
     }
 
     /**
