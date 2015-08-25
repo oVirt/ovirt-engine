@@ -47,6 +47,8 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameter
 public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParametersBase> extends
         StorageDomainCommandBase<T> {
 
+    private boolean isLastMaster;
+
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         Scope scope = getParameters().isSkipLock() ? Scope.None : Scope.Execution;
@@ -207,7 +209,6 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 getParameters().isInactive() ? StorageDomainStatus.Locked : StorageDomainStatus.PreparingForMaintenance);
 
         final StorageDomain newMaster;
-        final boolean isLastMaster;
 
         if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
             newMaster = electNewMaster();
@@ -398,10 +399,16 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getParameters().getIsInternal() ? getSucceeded() ? AuditLogType.SYSTEM_DEACTIVATED_STORAGE_DOMAIN
-                : AuditLogType.SYSTEM_DEACTIVATE_STORAGE_DOMAIN_FAILED
-                : getSucceeded() ? AuditLogType.USER_DEACTIVATED_STORAGE_DOMAIN
-                        : AuditLogType.USER_DEACTIVATE_STORAGE_DOMAIN_FAILED;
+        return getParameters().getIsInternal() ?
+                getSucceeded() ? AuditLogType.SYSTEM_DEACTIVATED_STORAGE_DOMAIN
+                        : AuditLogType.SYSTEM_DEACTIVATE_STORAGE_DOMAIN_FAILED
+                :
+                getSucceeded() ?
+                        (isLastMaster ?
+                                AuditLogType.USER_DEACTIVATED_LAST_MASTER_STORAGE_DOMAIN :
+                                AuditLogType.USER_DEACTIVATED_STORAGE_DOMAIN)
+                        :
+                        AuditLogType.USER_DEACTIVATE_STORAGE_DOMAIN_FAILED;
     }
 
     @Override
