@@ -45,6 +45,12 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
     }
 
     @Override
+    public List<VmDynamic> getAllByStatus(VMStatus vmStatus){
+        return getCallsHandler().executeReadList("GetAllFromVmDynamicWithStatus", createEntityRowMapper(),
+        getCustomMapSqlParameterSource().addValue("status", vmStatus.getValue()));
+    }
+
+    @Override
     public void updateStatus(Guid vmGuid, VMStatus status) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_guid", vmGuid)

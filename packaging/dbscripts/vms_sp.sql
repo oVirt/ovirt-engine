@@ -507,6 +507,13 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetAllFromVmDynamicWithStatus(v_status INTEGER) RETURNS SETOF vm_dynamic STABLE
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT vm_dynamic.*
+      FROM vm_dynamic where status = v_status;
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmDynamicByVmGuid(v_vm_guid UUID) RETURNS SETOF vm_dynamic STABLE
