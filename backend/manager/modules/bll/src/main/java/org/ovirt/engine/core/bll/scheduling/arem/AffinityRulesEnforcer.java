@@ -7,123 +7,47 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.linq.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is intended to represent one cluster in the Affinity Rules Enforcement manager.
- * It will be used to track last migration done in the cluster, When there is a broken affinity
- * rule, find a VM to migrate and find affinity rules collisions.
+ * Class to detect affinity group violations and select VMs for
+ * migration, to resolve the violations.
  */
-public class AffinityRulesEnforcementPerCluster {
-    List<MigrationEntryDS> lastMigrations;
-    Integer migrationTries;
-    Guid clusterId;
+public class AffinityRulesEnforcer {
 
-    private static final Logger log = LoggerFactory.getLogger(AffinityRulesEnforcementPerCluster.class);
+    private static final Logger log = LoggerFactory.getLogger(AffinityRulesEnforcer.class);
 
     @Inject
-    protected AffinityGroupDao affinityGroupDao;
+    private AffinityGroupDao affinityGroupDao;
     @Inject
-    protected VmDao vmDao;
+    private VmDao vmDao;
     @Inject
-    protected VdsDao vdsDao;
-    @Inject
-    protected VdsGroupDao vdsGroupDao;
-    @Inject
-    protected SchedulingManager schedulingManager;
+    private SchedulingManager schedulingManager;
 
     protected enum FailMode {
         IMMEDIATELY, // Fail when first violation is detected
         GET_ALL // Collect all violations
     }
 
-    @PostConstruct
-    public void wakeup() {
-        this.lastMigrations = new ArrayList<>();
-        this.migrationTries = 0;
-    }
-
-    public void setClusterId(Guid clusterId) {
-        this.clusterId = clusterId;
-    }
-
-    public Guid getClusterId() {
-        return clusterId;
-    }
-
-    public void initMigrations() {
-        this.lastMigrations = new ArrayList<>();
-        this.migrationTries = 0;
-    }
-
-    public Boolean checkIfCurrentlyMigrating() {
-        if (this.lastMigrations.isEmpty()) {
-            return false;
-        }
-
-        VdcReturnValueBase migrationStatus = this.lastMigrations.get(0).getMigrationStatus();
-
-        // null migrationStatus indicates that migration is still running.
-        return migrationStatus == null || migrationStatus.getSucceeded();
-
-    }
-
-    public boolean lastMigrationFailed() {
-
-        //Checking last migration tail existence and that it's status is failure.
-        if (lastMigrations.isEmpty()) {
-            return false; //lastMigrations empty so migration didn't fail.
-        }
-
-        MigrationEntryDS lastMigrationTail = lastMigrations.get(0);
-
-        //Migration succeeded. Therefore, it did not fail.
-        return !lastMigrationTail.getMigrationStatus().getSucceeded();
-    }
-
-    public void updateMigrationFailure() {
-        migrationTries++;
-        lastMigrations.get(0).setMigrationReturnValue(null); //To avoid considering it a migration failure again.
-    }
-
-    public Integer getMigrationTries() {
-        return migrationTries;
-    }
-
-    public void setMigrationTries(Integer migrationTries) {
-        this.migrationTries = migrationTries;
-    }
-
-    public VM chooseNextVmToMigrate() {
-        List<AffinityGroup> allHardAffinityGroups = getAllAffinityGroups();
-
-        //Filtering all non enforcing groups (Leaving only hard affinity groups).
-        for (Iterator<AffinityGroup> it = allHardAffinityGroups.iterator(); it.hasNext(); ) {
-            AffinityGroup ag = it.next();
-            if (!ag.isEnforcing()) {
-                it.remove();
-            }
-        }
+    public VM chooseNextVmToMigrate(VDSGroup vdsGroup) {
+        List<AffinityGroup> allHardAffinityGroups = getAllHardAffinityGroups(vdsGroup);
 
         Set<Set<Guid>> unifiedPositiveAffinityGroups = AffinityRulesUtils.getUnifiedPositiveAffinityGroups(
                 allHardAffinityGroups);
@@ -132,11 +56,9 @@ public class AffinityRulesEnforcementPerCluster {
 
         // Add negative affinity groups
         for (AffinityGroup ag : allHardAffinityGroups) {
-            if (ag.isPositive()) {
-                continue;
+            if (!ag.isPositive()) {
+                unifiedAffinityGroups.add(ag);
             }
-
-            unifiedAffinityGroups.add(ag);
         }
 
         // Create a set of all VMs in affinity groups
@@ -151,7 +73,7 @@ public class AffinityRulesEnforcementPerCluster {
         Set<AffinityGroup> violatedAffinityGroups =
                 checkForAffinityGroupViolations(unifiedAffinityGroups, vmToHost, FailMode.GET_ALL);
         if (violatedAffinityGroups.isEmpty()) {
-            log.debug("No affinity group collision detected for cluster {}. Standing by.", clusterId);
+            log.debug("No affinity group collision detected for cluster {}. Standing by.", vdsGroup.getId());
             return null;
         }
 
@@ -179,14 +101,12 @@ public class AffinityRulesEnforcementPerCluster {
             // Test whether any migration is possible, this uses current AffinityGroup settings
             // and so won't allow more breakage
             VM vm = vmDao.get(candidateVm);
-            VDSGroup cluster = vdsGroupDao.get(clusterId);
-            boolean canMove = schedulingManager.canSchedule(cluster, vm,
+            boolean canMove = schedulingManager.canSchedule(vdsGroup, vm,
                     new ArrayList<Guid>(), new ArrayList<Guid>(),
                     null, new ArrayList<String>());
 
             if (canMove) {
                 log.debug("VM {} is a viable candidate for solving affinity group violation situation.", candidateVm);
-                lastMigrations.add(new MigrationEntryDS(candidateVm, vmToHost.get(candidateVm)));
                 return vm;
             }
             log.debug("VM {} is NOT a viable candidate for solving affinity group violation situation.", candidateVm);
@@ -307,39 +227,6 @@ public class AffinityRulesEnforcementPerCluster {
         return bestHost;
     }
 
-    /**
-     * Create a map of Host to VMs and VM to Host assignments.
-     * <p>
-     * The return value is a map where each host (key) has a set of VMs
-     * running on it assigned as value.
-     * <p>
-     * vmToHost is filled with VM -> Host map when not null.
-     */
-    protected Map<Guid, Set<Guid>> createMapOfHostsToVms(Iterable<Guid> vms,
-            Map<Guid, Guid> vmToHost) {
-        Map<Guid, Set<Guid>> output = new HashMap<>();
-        for (Guid vmId : vms) {
-            VM vm = vmDao.get(vmId);
-            Guid vdsId = vm.getRunOnVds();
-
-            // We will not add any Vms which are not running on any host.
-            if (vdsId == null) {
-                continue;
-            }
-
-            if (vmToHost != null) {
-                vmToHost.put(vm.getId(), vdsId);
-            }
-
-            if (!output.containsKey(vdsId)) {
-                output.put(vdsId, new HashSet<Guid>());
-            } else {
-                output.get(vdsId).add(vm.getId());
-            }
-        }
-
-        return output;
-    }
 
     /**
      * Detect whether the current VM to VDS assignment violates current Affinity Groups.
@@ -409,12 +296,13 @@ public class AffinityRulesEnforcementPerCluster {
         return broken;
     }
 
-    public List<AffinityGroup> getAllAffinityGroups() {
-        return affinityGroupDao.getAllAffinityGroupsByClusterId(clusterId);
-    }
-
-    public void updateMigrationStatus(VdcReturnValueBase migrationStatus) {
-        lastMigrations.get(0).setMigrationReturnValue(migrationStatus);
+    public List<AffinityGroup> getAllHardAffinityGroups(VDSGroup vdsGroup) {
+        return LinqUtils.filter(affinityGroupDao.getAllAffinityGroupsByClusterId(vdsGroup.getId()),
+                new Predicate<AffinityGroup>() {
+                    @Override public boolean eval(AffinityGroup affinityGroup) {
+                        return affinityGroup.isEnforcing();
+                    }
+                });
     }
 
     private static class AffinityGroupComparator implements Comparator<AffinityGroup>, Serializable {
@@ -422,9 +310,5 @@ public class AffinityRulesEnforcementPerCluster {
         public int compare(AffinityGroup o1, AffinityGroup o2) {
             return Integer.compare(o1.getEntityIds().size(), o2.getEntityIds().size());
         }
-    }
-
-    public void setSchedulingManager(SchedulingManager schedulingManager) {
-        this.schedulingManager = schedulingManager;
     }
 }
