@@ -5,16 +5,19 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
+import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
+import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.BooleanRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.MacPoolModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -29,7 +32,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.inject.Inject;
 
-public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterModel> implements DataCenterPopupPresenterWidget.ViewDef {
+public class DataCenterPopupView extends AbstractTabbedModelBoundPopupView<DataCenterModel> implements DataCenterPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<DataCenterModel, DataCenterPopupView> {
     }
@@ -41,6 +44,13 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
     interface ViewIdHandler extends ElementIdHandler<DataCenterPopupView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
+
+    @UiField
+    DialogTabPanel tabPanel;
+
+    @UiField
+    @WithElementId
+    DialogTab generalTab;
 
     @UiField
     @Path(value = "name.entity")
@@ -71,6 +81,10 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
     @Path(value = "quotaEnforceTypeListModel.selectedItem")
     @WithElementId
     ListModelListBoxEditor<QuotaEnforcementTypeEnum> quotaEnforceTypeEditor;
+
+    @UiField
+    @WithElementId
+    DialogTab macPoolTab;
 
     @UiField(provided = true)
     @Path(value = "macPoolListModel.selectedItem")
@@ -158,8 +172,19 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
         this.asWidget().addContentStyleName(styleName);
     }
 
+    @Override
+    protected void populateTabMap() {
+        getTabNameMapping().put(TabName.GENERAL_TAB, this.generalTab);
+        getTabNameMapping().put(TabName.MAC_POOL_TAB, macPoolTab);
+    }
+
     interface Style extends CssResource {
         String contentStyle();
+    }
+
+    @Override
+    public DialogTabPanel getTabPanel() {
+        return tabPanel;
     }
 
 }

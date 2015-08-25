@@ -20,9 +20,12 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
+import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.MacPoolModel;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
@@ -33,7 +36,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidati
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
-public class DataCenterModel extends Model {
+public class DataCenterModel extends Model implements HasValidatedTabs {
     private StoragePool privateEntity;
 
     public StoragePool getEntity() {
@@ -330,8 +333,13 @@ public class DataCenterModel extends Model {
 
         getMacPoolModel().validate();
 
-        return getName().getIsValid() && getDescription().getIsValid() && getComment().getIsValid()
-                && getVersion().getIsValid() && getMacPoolModel().getIsValid();
+        boolean generalTabValid = getName().getIsValid() && getDescription().getIsValid() && getComment().getIsValid()
+                && getVersion().getIsValid();
+        setValidTab(TabName.GENERAL_TAB, generalTabValid);
+        boolean macPoolTabValid = getMacPoolModel().getIsValid();
+        setValidTab(TabName.MAC_POOL_TAB, macPoolTabValid);
+        ValidationCompleteEvent.fire(getEventBus(), this);
+        return  generalTabValid && macPoolTabValid;
     }
 
 }

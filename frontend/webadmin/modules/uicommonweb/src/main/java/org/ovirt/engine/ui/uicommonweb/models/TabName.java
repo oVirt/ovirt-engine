@@ -27,6 +27,7 @@ public enum TabName {
     ICON_TAB,
     PF_TAB,
     VFS_CONFIG_TAB,
-    FOREMAN_TAB;
+    FOREMAN_TAB,
+    MAC_POOL_TAB;
 
 }
