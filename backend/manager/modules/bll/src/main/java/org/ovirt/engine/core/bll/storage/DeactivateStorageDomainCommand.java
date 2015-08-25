@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,6 +14,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -23,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -42,6 +46,7 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameters;
+import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParametersBase> extends
@@ -312,6 +317,21 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         }
 
         setSucceeded(true);
+    }
+
+    @Override
+    protected List<VDS> getAllRunningVdssInPool() {
+        Set<VDSStatus> vdsStatus = EnumSet.copyOf(StoragePoolDomainHelper.vdsDomainsActiveMonitoringStatus);
+        if (isStoragePoolMemoryBackend()) {
+            vdsStatus.addAll(StoragePoolDomainHelper.vdsDomainsMaintenanceMonitoringStatus);
+        }
+
+        return getVdsDao().getAllForStoragePoolAndStatuses(getStoragePool().getId(), vdsStatus);
+    }
+
+    private boolean isStoragePoolMemoryBackend() {
+        return FeatureSupported.storagePoolMemoryBackend(
+                getStoragePool().getCompatibilityVersion());
     }
 
     private void deactivateCinderStorageDomain() {

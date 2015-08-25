@@ -31,7 +31,12 @@ public class StoragePoolDomainHelper {
     public static final Set<StorageDomainStatus> storageDomainMonitoredStatus =
             Collections.unmodifiableSet(EnumSet.of(StorageDomainStatus.Inactive, StorageDomainStatus.Active));
 
-    public static final Set<VDSStatus> reportingVdsStatus = Collections.unmodifiableSet(EnumSet.of(VDSStatus.Up));
+    public static final Set<VDSStatus> vdsDomainsActiveMonitoringStatus = Collections.unmodifiableSet(EnumSet.of(VDSStatus.Up));
+
+    public static final Set<VDSStatus> vdsDomainsMaintenanceMonitoringStatus =
+            Collections.unmodifiableSet(EnumSet.of(
+                    VDSStatus.Up,
+                    VDSStatus.NonOperational));
 
     public static Map<String, String> buildStoragePoolDomainsMap(List<StoragePoolIsoMap> storagePoolIsoMaps) {
         Map<String, String> storageDomains = new HashMap<String, String>();

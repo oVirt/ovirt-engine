@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
@@ -103,7 +102,7 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
         when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new StorageDomain());
 
         doReturn(backendInternal).when(cmd).getBackend();
-        when(vdsDao.getAllForStoragePoolAndStatus(any(Guid.class), any(VDSStatus.class))).thenReturn(Collections.<VDS>emptyList());
+        doReturn(Collections.<VDS>emptyList()).when(cmd).getAllRunningVdssInPool();
         when(backendInternal.getResourceManager()).thenReturn(vdsBrokerFrontend);
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
