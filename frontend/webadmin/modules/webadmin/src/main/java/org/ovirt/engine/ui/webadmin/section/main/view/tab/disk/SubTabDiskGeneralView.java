@@ -71,36 +71,36 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 1, 8);
 
-        formBuilder.addFormItem(new FormItem(constants.aliasDisk(), alias, 0, 0));
-        formBuilder.addFormItem(new FormItem(constants.descriptionDisk(), description, 1, 0));
-        formBuilder.addFormItem(new FormItem(constants.idDisk(), diskId, 2, 0));
-        formBuilder.addFormItem(new FormItem(constants.diskAlignment(), alignment, 3, 0));
+        formBuilder.addFormItem(new FormItem(constants.aliasDisk(), alias, 0, 0), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.descriptionDisk(), description, 1, 0), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.idDisk(), diskId, 2, 0), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.diskAlignment(), alignment, 3, 0), 2, 10);
         formBuilder.addFormItem(new FormItem(constants.lunIdSanStorage(), lunId, 4, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().isLun();
             }
-        });
+        }, 2, 10);
         formBuilder.addFormItem(new FormItem(constants.diskProfile(), diskProfileName, 5, 0) {
             @Override
             public boolean getIsAvailable() {
                 return !getDetailModel().isLun();
             }
-        });
+        }, 2, 10);
         formBuilder.addFormItem(new FormItem(constants.quota(), quotaName, 6, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().isQuotaAvailable();
             }
-        });
+        }, 2, 10);
         formBuilder.addFormItem(new FormItem(constants.wipeAfterDelete(), wipeAfterDelete, 7, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().isImage();
             }
-        });
+        }, 2, 10);
 
-        formBuilder.setRelativeColumnWidth(0, 3);
+        formBuilder.setRelativeColumnWidth(0, 12);
     }
 
     @Override
