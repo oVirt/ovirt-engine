@@ -54,10 +54,12 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
     public List<VmConsoles> getAutoConnectableConsoles() {
         List<VmConsoles> autoConnectableConsoles = new LinkedList<VmConsoles>();
 
-        for (UserPortalItemModel upItem : items) {
+        if (items != null) {
+            for (UserPortalItemModel upItem : items) {
 
-            if (!upItem.isPool() && upItem.getVmConsoles().canConnectToConsole()) {
-                autoConnectableConsoles.add(upItem.getVmConsoles());
+                if (!upItem.isPool() && upItem.getVmConsoles().canConnectToConsole()) {
+                    autoConnectableConsoles.add(upItem.getVmConsoles());
+                }
             }
         }
 
