@@ -417,7 +417,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     private void doUpdateTimeZone(final String selectedTimeZone) {
         final Collection<TimeZoneModel> timeZones = TimeZoneModel.getTimeZones(getTimeZoneType());
         getModel().getTimeZone().setItems(timeZones);
-        getModel().getTimeZone().setSelectedItem(Linq.firstOrDefault(timeZones, new Linq.TimeZonePredicate(selectedTimeZone)));
+        getModel().getTimeZone().setSelectedItem(Linq.firstOrDefault(timeZones,
+                new Linq.TimeZonePredicate(selectedTimeZone)));
     }
 
     protected void initPriority(int priority) {
@@ -853,7 +854,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                             new AsyncQuery(getModel(), new INewAsyncCallback() {
                                                 @Override
                                                 public void onSuccess(Object target, Object returnValue) {
-                                                    ArrayList<VmTemplate> templatesChain = new ArrayList<VmTemplate>((List<VmTemplate>)returnValue);
+                                                    ArrayList<VmTemplate> templatesChain =
+                                                            new ArrayList<VmTemplate>((List<VmTemplate>) returnValue);
                                                     initTemplateWithVersion(templatesChain, templateId, useLatest);
                                                 }
                                             }), rawTemplate.getBaseTemplateId());
@@ -862,7 +864,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                             ? new LatestVmTemplate(rawTemplate)
                                             : rawTemplate;
                                     if (template.isBaseTemplate()) {
-                                        TemplateWithVersion templateCouple = new TemplateWithVersion(template, template);
+                                        TemplateWithVersion templateCouple =
+                                                new TemplateWithVersion(template, template);
                                         setReadOnlyTemplateWithVersion(templateCouple);
                                     } else {
                                         AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery(null,
@@ -870,7 +873,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                                             @Override
                                                             public void onSuccess(Object nothing, Object returnValue) {
                                                                 VmTemplate baseTemplate = (VmTemplate) returnValue;
-                                                                TemplateWithVersion templateCouple = new TemplateWithVersion(baseTemplate, template);
+                                                                TemplateWithVersion templateCouple =
+                                                                        new TemplateWithVersion(baseTemplate, template);
                                                                 setReadOnlyTemplateWithVersion(templateCouple);
                                                             }
                                                         }),
@@ -945,20 +949,57 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public void updateHaAvailability() {
         boolean automaticMigrationAllowed = getModel().getMigrationMode().getSelectedItem()
                 == MigrationSupport.MIGRATABLE;
-        if (!automaticMigrationAllowed) {
+        final Collection<VDS> allowedHosts = getModel().getDefaultHost().getSelectedItems();
+        Collection<VDS> presentHosts = getModel().getDefaultHost().getItems();
+        int pinToHostSize = allowedHosts == null ? 0 : allowedHosts.size();
+        boolean isHighlyAvailable = getModel().getIsHighlyAvailable().getEntity();
+        Boolean isAutoAssign = getModel().getIsAutoAssign().getEntity();
+
+        // This is needed for the unittests to not crash..
+        if (presentHosts == null) {
+            presentHosts = new ArrayList<>();
+        }
+
+        if (!automaticMigrationAllowed
+                && (pinToHostSize == 1
+                    || (pinToHostSize == 0 && presentHosts.size() < 2))
+                && (!isAutoAssign || presentHosts.size() < 2)
+                && !isHighlyAvailable) {
             getModel().getIsHighlyAvailable().setChangeProhibitionReason(constants.hostNonMigratable());
             getModel().getIsHighlyAvailable().setEntity(false);
+            isHighlyAvailable = false;
         }
-        getModel().getIsHighlyAvailable().setIsChangeable(automaticMigrationAllowed);
+
+        getModel().getIsHighlyAvailable().setIsChangeable(isHighlyAvailable
+                || automaticMigrationAllowed
+                || (isAutoAssign && presentHosts.size() >= 2)
+                || pinToHostSize >= 2
+                || (pinToHostSize == 0 && presentHosts.size() >= 2));
     }
 
     public void updateMigrationAvailability() {
         Boolean haHost = getModel().getIsHighlyAvailable().getEntity();
-        if (haHost) {
+        final Collection<VDS> allowedHosts = getModel().getDefaultHost().getSelectedItems();
+        Collection<VDS> presentHosts = getModel().getDefaultHost().getItems();
+        int pinToHostSize = allowedHosts == null ? 0 : allowedHosts.size();
+        Boolean isAutoAssign = getModel().getIsAutoAssign().getEntity();
+
+        // This is needed for the unittests to not crash..
+        if (presentHosts == null) {
+            presentHosts = new ArrayList<>();
+        }
+
+        if (haHost
+                && (pinToHostSize == 1
+                    || (pinToHostSize == 0 && presentHosts.size() < 2))
+                && (!isAutoAssign || presentHosts.size() < 2)) {
             getModel().getMigrationMode().setChangeProhibitionReason(constants.hostIsHa());
             getModel().getMigrationMode().setSelectedItem(MigrationSupport.MIGRATABLE);
         }
-        getModel().getMigrationMode().setIsChangeable(!haHost);
+        getModel().getMigrationMode().setIsChangeable(!haHost
+                || (isAutoAssign && presentHosts.size() >= 2)
+                || pinToHostSize >= 2
+                || (pinToHostSize == 0 && presentHosts.size() >= 2));
     }
 
     public void updateCpuSharesAmountChangeability() {
