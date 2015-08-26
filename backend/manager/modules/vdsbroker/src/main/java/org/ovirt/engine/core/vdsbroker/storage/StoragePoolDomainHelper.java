@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.VDSError;
@@ -29,6 +30,8 @@ public class StoragePoolDomainHelper {
 
     public static final Set<StorageDomainStatus> storageDomainMonitoredStatus =
             Collections.unmodifiableSet(EnumSet.of(StorageDomainStatus.Inactive, StorageDomainStatus.Active));
+
+    public static final Set<VDSStatus> reportingVdsStatus = Collections.unmodifiableSet(EnumSet.of(VDSStatus.Up));
 
     public static Map<String, String> buildStoragePoolDomainsMap(List<StoragePoolIsoMap> storagePoolIsoMaps) {
         Map<String, String> storageDomains = new HashMap<String, String>();
