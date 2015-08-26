@@ -6,19 +6,25 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.businessentities.VMStatus.Up;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -185,6 +191,27 @@ public class AffinityRulesEnforcerTest {
         assertTrue(Arrays.asList(vm1, vm4, vm6).contains(enforcer.chooseNextVmToMigrate(vdsGroup)));
     }
 
+    @Test
+    public void shouldSelectFirstSchedulableFromCandidatePool() {
+        // Because three VMs are running on host1 and only two Vms (vm5 and vm6) are running on host3
+        // the enforcer will detect vm5 and vm6 as possible candidates for migration
+        affinityGroups.add(createAffinityGroup(vdsGroup, true, vm1, vm2, vm3, vm5, vm6));
+
+        // Say no to the first scheduling attempt and yes to the second one, to force the enforcer
+        // to check every possible candidate
+        when(schedulingManager.canSchedule(eq(vdsGroup), any(VM.class), anyList(), anyList(),
+                anyList(), anyList())).thenReturn(false, true);
+
+        // There is no fixed order so we only know that one of those VMs will be selected for migration
+        assertTrue(Arrays.asList(vm5, vm6).contains(enforcer.chooseNextVmToMigrate(vdsGroup)));
+
+        // Verify that the enforcer tried to schedule both candidate VMs.
+        verify(schedulingManager).canSchedule(eq(vdsGroup), eq(vm5), anyList(), anyList(),
+                anyList(), anyList());
+        verify(schedulingManager).canSchedule(eq(vdsGroup), eq(vm6), anyList(), anyList(),
+                anyList(), anyList());
+    }
+
     private VDSGroup createVdsGroup() {
         Guid id = Guid.newGuid();
         VDSGroup cluster = new VDSGroup();
@@ -226,9 +253,20 @@ public class AffinityRulesEnforcerTest {
     }
 
     private void prepareVmDao(VM... vmList) {
-        List<VM> vms = Arrays.asList(vmList);
-        when(vmDao.getVmsByIds(anyList())).thenReturn(vms);
-        for (VM vm : vms) {
+        final List<VM> vms = Arrays.asList(vmList);
+        doAnswer(new Answer() {
+            @Override public Object answer(InvocationOnMock invocation) throws Throwable {
+                final List<VM> selectedVms = new ArrayList<>();
+                final Set<Guid> vmIds = new HashSet<>((List<Guid>) invocation.getArguments()[0]);
+                for(VM vm :vms){
+                    if(vmIds.contains(vm.getId())){
+                        selectedVms.add(vm);
+                    }
+                }
+                return selectedVms;
+            }
+        }).when(vmDao).getVmsByIds(anyList());
+        for (VM vm : vmList) {
             when(vmDao.get(eq(vm.getId()))).thenReturn(vm);
         }
     }

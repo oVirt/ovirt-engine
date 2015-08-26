@@ -42,6 +42,7 @@ public class AffinityRulesEnforcer {
     private VmDao vmDao;
     @Inject
     private SchedulingManager schedulingManager;
+    private final Random random = new Random();
 
     protected enum FailMode {
         IMMEDIATELY, // Fail when first violation is detected
@@ -85,33 +86,35 @@ public class AffinityRulesEnforcer {
         Collections.sort(affGroupsBySize, Collections.reverseOrder(new AffinityGroupComparator()));
 
         for (AffinityGroup affinityGroup : affGroupsBySize) {
-            Guid candidateVm;
+            final List<VM> candidateVms;
 
             if (affinityGroup.isPositive()) {
-                candidateVm = findVmViolatingPositiveAg(affinityGroup, vmToHost);
-                log.info("Positive affinity group violation detected for VM {}", candidateVm);
+                candidateVms = vmDao.getVmsByIds(findVmViolatingPositiveAg(affinityGroup, vmToHost));
+                log.info("Positive affinity group violation detected");
             } else {
-                candidateVm = findVmViolatingNegativeAg(affinityGroup, vmToHost);
-                log.info("Negative affinity group violation detected for VM {}", candidateVm);
+                candidateVms = vmDao.getVmsByIds(findVmViolatingNegativeAg(affinityGroup, vmToHost));
+                log.info("Negative affinity group violation detected");
             }
 
-            // No candidate found
-            if (candidateVm == null) {
-                continue;
-            }
+            while (!candidateVms.isEmpty()) {
+                final int index = random.nextInt(candidateVms.size());
+                final VM candidateVm = candidateVms.get(index);
 
-            // Test whether any migration is possible, this uses current AffinityGroup settings
-            // and so won't allow more breakage
-            VM vm = vmDao.get(candidateVm);
-            boolean canMove = schedulingManager.canSchedule(vdsGroup, vm,
-                    new ArrayList<Guid>(), new ArrayList<Guid>(),
-                    null, new ArrayList<String>());
+                // Test whether any migration is possible, this uses current AffinityGroup settings
+                // and so won't allow more breakage
+                boolean canMove = schedulingManager.canSchedule(vdsGroup, candidateVm,
+                        new ArrayList<Guid>(), new ArrayList<Guid>(),
+                        null, new ArrayList<String>());
 
-            if (canMove) {
-                log.debug("VM {} is a viable candidate for solving affinity group violation situation.", candidateVm);
-                return vm;
+                if (canMove) {
+                    log.debug("VM {} is a viable candidate for solving affinity group violation situation.",
+                            candidateVm.getId());
+                    return candidateVm;
+                }
+                log.debug("VM {} is NOT a viable candidate for solving affinity group violation situation.",
+                        candidateVm.getId());
+                candidateVms.remove(index);
             }
-            log.debug("VM {} is NOT a viable candidate for solving affinity group violation situation.", candidateVm);
 
         }
 
@@ -134,14 +137,13 @@ public class AffinityRulesEnforcer {
     }
 
     /**
-     * Select a VM from the broken affinity group that is running on the same host as some of
-     * the other VMs.
+     * Select VMs from the broken affinity group that are running on the same host.
      *
      * @param affinityGroup broken affinity rule
      * @param vmToHost      vm to host assignments
-     * @return a vm that should migrate
+     * @return a list of vms which are candidates for migration
      */
-    private Guid findVmViolatingNegativeAg(AffinityGroup affinityGroup, Map<Guid, Guid> vmToHost) {
+    private List<Guid> findVmViolatingNegativeAg(AffinityGroup affinityGroup, Map<Guid, Guid> vmToHost) {
         Map<Guid, Guid> firstAssignment = new HashMap<>();
         Set<Guid> violatingVms = new HashSet<>();
 
@@ -164,22 +166,20 @@ public class AffinityRulesEnforcer {
         }
 
         List<Guid> violatingVmsArray = new ArrayList<>(violatingVms);
-        // Select random VM from the selected host
-        int index = new Random().nextInt(violatingVmsArray.size());
-        return violatingVmsArray.get(index);
+        return violatingVmsArray;
     }
 
     /**
-     * Select a VM from the broken affinity group that is running on a host with the minimal amount
+     * Select VMs from the broken affinity group that are running on the host with the minimal amount
      * of VMs from the broken affinity group.
      * <p>
      * Ex.: Host1: A, B, C, D  Host2: E, F  -> select E or F
      *
      * @param affinityGroup broken affinity group
      * @param vmToHost      vm to host assignments
-     * @return a VM that should migrate
+     * @return a list of vms which are candidates for migration
      */
-    private Guid findVmViolatingPositiveAg(AffinityGroup affinityGroup, Map<Guid, Guid> vmToHost) {
+    private List<Guid> findVmViolatingPositiveAg(AffinityGroup affinityGroup, Map<Guid, Guid> vmToHost) {
         Map<Guid, List<Guid>> hostCount = new HashMap<>();
 
         // Prepare affinity group related host counts
@@ -205,9 +205,7 @@ public class AffinityRulesEnforcer {
             return null;
         }
 
-        // Select random VM from the selected host
-        int index = new Random().nextInt(hostCount.get(host).size());
-        return hostCount.get(host).get(index);
+        return hostCount.get(host);
     }
 
     /**
@@ -228,7 +226,6 @@ public class AffinityRulesEnforcer {
 
         return bestHost;
     }
-
 
     /**
      * Detect whether the current VM to VDS assignment violates current Affinity Groups.
