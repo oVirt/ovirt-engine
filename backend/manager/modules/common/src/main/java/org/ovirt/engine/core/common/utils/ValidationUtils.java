@@ -32,6 +32,8 @@ public class ValidationUtils {
     public static final String ISO_SUFFIX_PATTERN = "^$|^.+\\.iso$";
     public static final String BASE_64_PATTERN =
             "^([A-Za-z0-9+/]{4})*(()|[A-Za-z0-9+/][AQgw]==|[A-Za-z0-9+/]{2}[AEIMQUYcgkosw048]=)$";
+    public static final String KEY_EQUALS_VALUE_SPACE_SEPARATED = "^[^\\s=]+=[^\\s=]+(\\s+[^\\s=]+=[^\\s=]+)*$";
+    public static final String EMPTY_STRING = "^$";
 
     /**
      * the mask will be replaced with zero-padded number in the generated names of the VMs in the pool, see
