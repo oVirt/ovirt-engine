@@ -583,6 +583,7 @@ public class LinkHelper {
         TYPES.put(Balance.class, map);
 
         map = new ParentToCollectionMap(QosResource.class, QoSsResource.class, DataCenter.class);
+        map.add(QosResource.class, QoSsResource.class, Network.class);
         TYPES.put(QoS.class, map);
 
         map = new ParentToCollectionMap(IscsiBondResource.class, IscsiBondsResource.class, DataCenter.class);

@@ -20,11 +20,12 @@ public class QosMapper {
         model.setName(entity.getName());
 
         model.setType(QosTypeMapper.qosTypeToString(entity.getQosType()));
-        model.setDataCenter(new DataCenter());
 
         Guid storagePoolId = entity.getStoragePoolId();
         if (storagePoolId != null) {
-            model.getDataCenter().setId(storagePoolId.toString());
+            DataCenter dataCenter = new DataCenter();
+            dataCenter.setId(storagePoolId.toString());
+            model.setDataCenter(dataCenter);
         }
 
         model.setDescription(entity.getDescription());
@@ -128,7 +129,7 @@ public class QosMapper {
     @Mapping(from = QoS.class, to = QosBase.class)
     public static QosBase map(QoS model, QosBase template) {
         QosBase entity = template == null ? null : template;
-        QosType qosType = QosTypeMapper.map (model.getType(), entity == null ? null : entity.getQosType());
+        QosType qosType = QosTypeMapper.map (model.getType().toLowerCase(), entity == null ? null : entity.getQosType());
 
         if (entity == null) {
             entity = createNewQosEntityForQosType(qosType);
