@@ -71,16 +71,11 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
      * Checks that a given CPU pinning string is valid Adds an appropriate message to CanDoAction messages if validation
      * fails
      *
-     * @param cpuPinning
-     *            String to validate
-     * @param maxVcpus
-     *            Number of vCPUs in the VM
-     * @param maxPcpus
-     *            Number of pCPUs in the host
+     * @param cpuPinning String to validate
+     * @param vmStatic   vm data, containing vcpu information
      * @return if the given cpuPinning is valid
      */
     public boolean isCpuPinningValid(final String cpuPinning, VmStatic vmStatic) {
-
 
         if (StringUtils.isEmpty(cpuPinning)) {
             return true;
@@ -98,9 +93,11 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
         int maxvCPU = vmStatic.getNumOfCpus();
 
         // can not check if no dedicated vds was configured
-        if (vmStatic.getDedicatedVmForVdsList().isEmpty()){
+        if (vmStatic.getDedicatedVmForVdsList().isEmpty()) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_WITH_UNDEFINED_HOST);
         }
+
+        // check if vcpu rules are valid
         for (String rule : rules) {
             // [0] vcpu, [1] pcpu
             String[] splitRule = rule.split("#");
@@ -125,6 +122,17 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             }
         }
 
+        /**
+         * TODO: Validate host.
+         * Commit aa53774e785398394f28782089b9fa5d8497efb1 says that online cpu reporting does
+         * not properly work for ppc64 and that host validation was therefore removed. Although
+         * we could work around this by just letting the validation pass when no information is
+         * provided there is one real blocker.
+         *
+         * The engine is currently only informed about online CPUs via getVdsCapabilities which
+         * we do not regularly trigger. This makes the online cpu data very unreliable. We can
+         * add host validation as soon as we get updates about the availability of cpu cores.
+         */
         return true;
     }
 

@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 
 import org.junit.Assert;
@@ -15,13 +17,11 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
-
 public class VmManagementCommandBaseTest {
 
     @Test
     public void isCpuPinningValidWithoutPinnedHost() {
-        VmManagementCommandBase<VmManagementParametersBase> test =
-                spy(new VmManagementCommandBase<VmManagementParametersBase>(Guid.Empty));
+        VmManagementCommandBase<VmManagementParametersBase> test = new VmManagementCommandBase<>(Guid.Empty);
         VmStatic vmStatic = new VmStatic();
         vmStatic.setNumOfSockets(6);
         vmStatic.setCpuPerSocket(2);
@@ -33,9 +33,27 @@ public class VmManagementCommandBaseTest {
     }
 
     @Test
+    public void isCpuPinningValidWithMultiplePinnedHosts() {
+        VmManagementCommandBase<VmManagementParametersBase> test =
+                spy(new VmManagementCommandBase<>(Guid.Empty));
+        VmStatic vmStatic = new VmStatic();
+        vmStatic.setNumOfSockets(6);
+        vmStatic.setCpuPerSocket(2);
+        // Add two host ids
+        vmStatic.setDedicatedVmForVdsList(Arrays.asList(Guid.newGuid(), Guid.newGuid()));
+        final VDS dedicatedVds = new VDS();
+        dedicatedVds.setCpuThreads(16);
+        dedicatedVds.setOnlineCpus("0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15");
+        dedicatedVds.setVdsGroupCompatibilityVersion(Version.v3_2);
+
+        doReturn(dedicatedVds).when(test).getVds(any(Guid.class));
+        Assert.assertTrue(test.isCpuPinningValid("0#0", vmStatic));
+    }
+
+    @Test
     public void isCpuPinningValid() {
         VmManagementCommandBase<VmManagementParametersBase> test =
-                spy(new VmManagementCommandBase<VmManagementParametersBase>(Guid.Empty));
+                spy(new VmManagementCommandBase<>(Guid.Empty));
         VmStatic vmStatic = new VmStatic();
         vmStatic.setNumOfSockets(6);
         vmStatic.setCpuPerSocket(2);
@@ -46,8 +64,6 @@ public class VmManagementCommandBaseTest {
         dedicatedVds.setVdsGroupCompatibilityVersion(Version.v3_2);
 
         doReturn(dedicatedVds).when(test).getVds(Guid.Empty);
-
-
 
         Assert.assertTrue("null value must be accepted",
                 test.isCpuPinningValid(null, vmStatic));
@@ -96,7 +112,6 @@ public class VmManagementCommandBaseTest {
                 test.isCpuPinningValid("0#1__1#2", vmStatic));
         Assert.assertFalse("trailing junk",
                 test.isCpuPinningValid("0#1_1#2...", vmStatic));
-
 
         // negative logical validation
         ArrayList<String> canDoActionMessages = test.getReturnValue().getCanDoActionMessages();
