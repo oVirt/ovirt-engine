@@ -32,7 +32,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.utils.log.LoggedUtils;
-import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.BrokerCommandBase;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
@@ -63,14 +62,9 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
      */
     public static void updateVdsDomainsData(VDS vds, Guid storagePoolId,
             ArrayList<VDSDomainsData> vdsDomainData) {
-        // NOTE - if this condition is ever updated, every place that acts upon the reporting
-        // should be updated as well, only hosts the we collect the report from should be affected
-        // from it.
-        if (StoragePoolDomainHelper.reportingVdsStatus.contains(vds.getStatus()) && vds.getVdsGroupSupportsVirtService()) {
-            IrsProxyData proxy = _irsProxyData.get(storagePoolId);
-            if (proxy != null) {
-                proxy.updateVdsDomainsData(vds.getId(), vds.getName(), vdsDomainData);
-            }
+        IrsProxyData proxy = _irsProxyData.get(storagePoolId);
+        if (proxy != null) {
+            proxy.updateVdsDomainsData(vds, vdsDomainData);
         }
     }
 

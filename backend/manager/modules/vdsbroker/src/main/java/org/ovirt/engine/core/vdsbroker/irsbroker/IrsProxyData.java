@@ -203,7 +203,8 @@ public class IrsProxyData {
                         // so all the domains need to move to "unknown" status as otherwise their status won't change.
                         if (DbFacade.getInstance()
                                 .getVdsDao()
-                                .getAllForStoragePoolAndStatuses(_storagePoolId, StoragePoolDomainHelper.reportingVdsStatus)
+                                .getAllForStoragePoolAndStatuses(_storagePoolId,
+                                        StoragePoolDomainHelper.reportingVdsStatus)
                                 .isEmpty()) {
                             StoragePoolDomainHelper.updateApplicablePoolDomainsStatuses(_storagePoolId,
                                     StoragePoolDomainHelper.storageDomainMonitoredStatus,
@@ -1162,13 +1163,19 @@ public class IrsProxyData {
     private final Map<Guid, Guid> vdsHandeledReportsOnUnseenDomains = new ConcurrentHashMap<>();
     private final Map<Guid, String> _timers = new HashMap<Guid, String>();
 
-    public void updateVdsDomainsData(final Guid vdsId, final String vdsName,
+    public void updateVdsDomainsData(VDS vds,
                                      final ArrayList<VDSDomainsData> data) {
+        if (!shouldProcessVdsDomainReport(vds)) {
+            return;
+        }
+
         StoragePool storagePool =
                 DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
         if (storagePool != null
                 && (storagePool.getStatus() == StoragePoolStatus.Up || storagePool.getStatus() == StoragePoolStatus.NonResponsive)) {
 
+            Guid vdsId = vds.getId();
+            String vdsName = vds.getName();
             try {
                 Set<Guid> monitoredDomains = new HashSet<Guid>();
                 for (VDSDomainsData tempData : data) {
@@ -1189,6 +1196,14 @@ public class IrsProxyData {
                 log.debug("Exception", ex);
             }
         }
+    }
+
+    private boolean shouldProcessVdsDomainReport(VDS vds) {
+        // NOTE - if this condition is ever updated, every place that acts upon the reporting
+        // should be updated as well, only hosts the we collect the report from should be affected
+        // from it.
+        return vds.getVdsGroupSupportsVirtService() &&
+                StoragePoolDomainHelper.reportingVdsStatus.contains(vds.getStatus());
     }
 
     /**
