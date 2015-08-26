@@ -2629,6 +2629,7 @@
           <xs:element name="required" type="xs:boolean" minOccurs="0"/>
           <xs:element name="profile_required" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="labels" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="qos" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -4127,6 +4128,7 @@
           <xs:element name="override_configuration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="labels" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="properties" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="qos" minOccurs="0" maxOccurs="1"/>
           <!-- Also a rel="master" link for bonded nics -->
         </xs:sequence>
       </xs:extension>

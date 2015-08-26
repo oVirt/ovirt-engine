@@ -8,10 +8,12 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.IP;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkStatus;
+import org.ovirt.engine.api.model.QoS;
 import org.ovirt.engine.api.model.Usages;
 import org.ovirt.engine.api.model.VLAN;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.compat.Guid;
 
 public class NetworkMapper {
 
@@ -70,6 +72,11 @@ public class NetworkMapper {
         if (model.isSetRequired()) {
             entity.getCluster().setRequired(model.isRequired());
         }
+
+        if (model.isSetQos() && model.getQos().isSetId()) {
+            entity.setQosId(GuidUtils.asGuid(model.getQos().getId()));
+        }
+
         return entity;
     }
 
@@ -120,6 +127,14 @@ public class NetworkMapper {
             model.setDisplay(entity.getCluster().isDisplay());
             model.setRequired(entity.getCluster().isRequired());
         }
+
+        Guid entityQosId = entity.getQosId();
+        if (entityQosId != null) {
+            QoS qos = new QoS();
+            qos.setId(entityQosId.toString());
+            model.setQos(qos);
+        }
+
         return model;
     }
 

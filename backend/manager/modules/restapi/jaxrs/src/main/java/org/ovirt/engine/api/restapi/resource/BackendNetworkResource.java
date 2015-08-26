@@ -32,6 +32,11 @@ public class BackendNetworkResource extends AbstractBackendNetworkResource imple
     }
 
     @Override
+    protected Network addParents(Network model) {
+        return parent.addParents(model);
+    }
+
+    @Override
     public Network update(Network incoming) {
         validateEnums(Network.class, incoming);
         return performUpdate(incoming,

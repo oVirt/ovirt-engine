@@ -17,6 +17,7 @@ import org.ovirt.engine.api.model.VLAN;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
@@ -90,6 +91,10 @@ public class HostNicMapper {
         if (model.isSetProperties()) {
             entity.setCustomProperties(CustomPropertiesParser.toMap(model.getProperties()));
         }
+
+        if (model.isSetQos()) {
+            entity.setQos((HostNetworkQos) QosMapper.map(model.getQos(), null));
+        }
         return entity;
     }
 
@@ -118,6 +123,10 @@ public class HostNicMapper {
             if (model.getBonding().isSetOptions()) {
                 entity.setBondOptions(calculateBondingOptionsString(model));
             }
+        }
+
+        if (model.isSetQos()) {
+            entity.setQos((HostNetworkQos) QosMapper.map(model.getQos(), null));
         }
 
         return entity;
@@ -219,6 +228,11 @@ public class HostNicMapper {
 
         if (entity.hasCustomProperties()) {
             model.setProperties(CustomPropertiesParser.fromMap(entity.getCustomProperties()));
+        }
+
+        HostNetworkQos qos = entity.getQos();
+        if (qos != null) {
+            model.setQos(QosMapper.map(qos, null));
         }
 
         return model;

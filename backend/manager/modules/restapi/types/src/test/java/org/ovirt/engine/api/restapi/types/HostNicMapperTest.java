@@ -3,6 +3,8 @@ package org.ovirt.engine.api.restapi.types;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Bonding;
 import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.QoS;
+import org.ovirt.engine.api.model.QosType;
 import org.ovirt.engine.api.model.Slaves;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
@@ -86,5 +88,15 @@ public class HostNicMapperTest extends AbstractInvertibleMappingTest<HostNIC, Vd
         for (HostNIC slave : model.getBonding().getSlaves().getSlaves()) {
             assertTrue(entity.getSlaves().contains(slave.getName()));
         }
+    }
+
+    @Override
+    protected HostNIC postPopulate(HostNIC model) {
+        HostNIC hostNIC = super.postPopulate(model);
+        QoS qos = hostNIC.getQos();
+        qos.setType(QosType.HOSTNETWORK.name());
+        qos.setName(null);
+        qos.setDataCenter(null);
+        return hostNIC;
     }
 }
