@@ -436,6 +436,15 @@ public class FeatureSupported {
 
     /**
      * @param version
+     *          Compatibility version to check for.
+     * @return  <code>true</code> if Virtio Serial Console is supported for the given version.
+     */
+    public static boolean virtioSerialConsole(Version version) {
+        return supportedInConfig(ConfigValues.VirtioSerialConsoleSupported, version);
+    }
+
+    /**
+     * @param version
      *            Compatibility version to check for.
      * @return <code>true</code> if the pool memory backend is supported for the given version.
      */

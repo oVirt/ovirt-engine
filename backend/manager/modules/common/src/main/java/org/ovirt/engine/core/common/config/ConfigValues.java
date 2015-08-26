@@ -1863,6 +1863,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("{\"x86_64\":\"false\",\"ppc64\":\"false\"}")
     HotUnplugMemorySupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    VirtioSerialConsoleSupported,
+
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     ChangePasswordMsg,

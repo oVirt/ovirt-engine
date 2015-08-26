@@ -162,7 +162,16 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             }
 
             if (parameters.getEnableSerialConsole()) {
-                deploy.addUnit(new VdsDeployVmconsoleUnit());
+                /* in 3.6.0 we always enable serial console without user intervention. */
+                if (FeatureSupported.virtioSerialConsole(getVds().getVdsGroupCompatibilityVersion())) {
+                    deploy.addUnit(new VdsDeployVmconsoleUnit());
+                } else {
+                    log.warn(
+                            "Installation of Host {} will skip Virtio Serial Console, because it is not supported for clusterLevel {}",
+                            getVds().getName(),
+                            getVds().getVdsGroupCompatibilityVersion()
+                    );
+                }
             }
 
             switch (getParameters().getAuthMethod()) {
