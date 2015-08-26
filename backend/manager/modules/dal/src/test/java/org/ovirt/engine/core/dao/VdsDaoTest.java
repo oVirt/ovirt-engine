@@ -4,14 +4,17 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -318,17 +321,24 @@ public class VdsDaoTest extends BaseDaoTestCase {
         assertGetAllForVdsGroupCorrectResult(result);
     }
 
+    private void prepareHostWithDifferentStatus() {
+        dbFacade.getVdsDynamicDao().updateStatus(existingVds.getId(), VDSStatus.Maintenance);
+        existingVds.setStatus(VDSStatus.Maintenance);
+        assertNotEquals(existingVds.getStatus(), existingVds2.getStatus());
+    }
+
     @Test
-    public void testGetAllForStoragePoolAndStatus() {
-        assertNotNull(existingVds.getStatus());
-        List<VDS> result = dao.getAllForStoragePoolAndStatus(existingVds.getStoragePoolId(), existingVds.getStatus());
+    public void testGetAllForStoragePoolAndStatuses() {
+        prepareHostWithDifferentStatus();
+        List<VDS> result = dao.getAllForStoragePoolAndStatuses(existingVds.getStoragePoolId(), EnumSet.of(existingVds.getStatus(), existingVds2.getStatus()));
+        assertTrue(CollectionUtils.disjunction(result, Arrays.asList(existingVds, existingVds2)).isEmpty());
         assertCorrectGetAllResult(result);
     }
 
     @Test
-    public void testGetAllForStoragePoolAndStatusForAllStatuses() {
-        dbFacade.getVdsDynamicDao().updateStatus(existingVds.getId(), VDSStatus.Maintenance);
-        List<VDS> result = dao.getAllForStoragePoolAndStatus(existingVds.getStoragePoolId(), null);
+    public void testGetAllForStoragePoolAndStatusesForAllStatuses() {
+        prepareHostWithDifferentStatus();
+        List<VDS> result = dao.getAllForStoragePoolAndStatuses(existingVds.getStoragePoolId(), null);
         EnumSet<VDSStatus> statuses = EnumSet.noneOf(VDSStatus.class);
         for (VDS vds : result) {
             statuses.add(vds.getStatus());

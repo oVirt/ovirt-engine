@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -155,6 +156,15 @@ public interface VdsDao extends Dao, SearchDao<VDS>, AutoRecoverDao<VDS> {
      * @return the list of VDS instances
      */
     List<VDS> getAllForStoragePoolAndStatus(Guid storagePool, VDSStatus status);
+
+    /**
+     * Retrieves all VDS instances by storage pool ID and statuses.
+     * NOTE- only hosts from VIRT service supporting cluster are returned
+     * @param storagePool The storage pool's ID
+     * @param statuses The statuses of vds, null for all statuses
+     * @return the list of VDS instances
+     */
+    List<VDS> getAllForStoragePoolAndStatuses(Guid storagePool, Set<VDSStatus> statuses);
 
     /**
      * Retrieves all VDS instances in the given Storage Pool, that are in status "UP"

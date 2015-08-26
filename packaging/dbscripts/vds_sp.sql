@@ -839,15 +839,18 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
--- Returns all VDS for a given pool and having given status
-CREATE OR REPLACE FUNCTION getVdsByStoragePoolIdWithStatus(v_storage_pool_id UUID, v_status integer) RETURNS SETOF vds STABLE
+-- Returns all VDS for a given pool with one of the given statuses or in any status in case v_statuses is NULL.
+CREATE OR REPLACE FUNCTION getVdsByStoragePoolIdWithStatuses(v_storage_pool_id UUID,
+                                                             v_statuses VARCHAR(150))
+RETURNS SETOF vds STABLE
     AS $procedure$
 BEGIN
     BEGIN
         RETURN QUERY SELECT vds.*
         FROM vds
         INNER JOIN vds_groups vdsgroup ON vds.vds_group_id = vdsgroup.vds_group_id
-        WHERE (v_status IS NULL OR vds.status = v_status) AND (vds.storage_pool_id = v_storage_pool_id)
+        WHERE (v_statuses IS NULL OR vds.status IN (SELECT * FROM fnSplitterInteger(v_statuses)))
+        AND (vds.storage_pool_id = v_storage_pool_id)
         AND vdsgroup.virt_service = true;
     END;
     RETURN;
