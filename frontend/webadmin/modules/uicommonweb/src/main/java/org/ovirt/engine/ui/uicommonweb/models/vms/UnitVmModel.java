@@ -1772,6 +1772,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             }
             else if (sender == getDefaultHost()) {
                 defaultHost_SelectedItemChanged(sender, args);
+                behavior.updateHaAvailability();
+                behavior.updateMigrationAvailability();
             }
             else if (sender == getOSType()) {
                 getBehavior().deactivateInstanceTypeManager(new InstanceTypeManager.ActivatedListener() {
@@ -1841,6 +1843,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 behavior.updateCpuPinningVisibility();
                 behavior.updateHaAvailability();
                 behavior.updateNumaEnabled();
+                behavior.updateMigrationAvailability();
             }
             else if (sender == getProvisioning()) {
                 provisioning_SelectedItemChanged(sender, args);

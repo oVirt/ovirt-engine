@@ -2362,10 +2362,10 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Changing Host Clusters is taking longer than expected, please close the 'Guide Me' window and activate hosts via the Hosts tab")
     String hostChangeClusterTimeOut();
 
-    @DefaultStringValue("Host cannot be set highly available when 'Do not allow migration' or 'Allow manual migration' is selected")
+    @DefaultStringValue("Host cannot be set highly available when 'Do not allow migration' is selected and pinning to a single hosts is requested.")
     String hostNonMigratable();
 
-    @DefaultStringValue("Host must be migratable when highly available is selected")
+    @DefaultStringValue("Host must be migratable or pinned to multiple hosts when high availability is requested.")
     String hostIsHa();
 
     @DefaultStringValue("Cannot change Cluster's trust support state while host/s existed in the cluster")
