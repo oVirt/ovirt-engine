@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.BondNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.KeyValueFormatValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SubnetMaskValidation;
@@ -253,7 +254,7 @@ public class HostBondInterfaceModel extends Model {
         }
 
         if (getBondingOptions().getSelectedItem().getKey().equals(CUSTOM_BONDING_MODE)) {
-            getCustomBondEditor().validateEntity(new IValidation[] { new NotEmptyValidation() });
+            getCustomBondEditor().validateEntity(new IValidation[] { new KeyValueFormatValidation() });
         }
 
         return getBond().getIsValid() && getNetwork().getIsValid() && getAddress().getIsValid()
