@@ -53,6 +53,14 @@ BEGIN
 END; $function$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION public.fnSplitterInteger(ids TEXT)  RETURNS SETOF INTEGER IMMUTABLE AS
+$function$
+BEGIN
+    RETURN QUERY
+        SELECT CAST(regexp_split_to_table(ids, ',') AS INTEGER);
+END; $function$
+LANGUAGE plpgsql;
+
 
 CREATE OR REPLACE FUNCTION fnSplitterUuid(ids TEXT)  RETURNS SETOF UUID IMMUTABLE AS
 $function$
