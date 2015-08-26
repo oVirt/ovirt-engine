@@ -203,7 +203,7 @@ public class IrsProxyData {
                         // so all the domains need to move to "unknown" status as otherwise their status won't change.
                         if (DbFacade.getInstance()
                                 .getVdsDao()
-                                .getAllForStoragePoolAndStatus(_storagePoolId, IrsBrokerCommand.reportingVdsStatus)
+                                .getAllForStoragePoolAndStatuses(_storagePoolId, StoragePoolDomainHelper.reportingVdsStatus)
                                 .isEmpty()) {
                             StoragePoolDomainHelper.updateApplicablePoolDomainsStatuses(_storagePoolId,
                                     StoragePoolDomainHelper.storageDomainMonitoredStatus,

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-
 import javax.inject.Inject;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -18,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -36,6 +34,7 @@ import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.utils.log.LoggedUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.BrokerCommandBase;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
@@ -48,7 +47,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
     @Inject
     private EventQueue eventQueue;
     private static Map<Guid, IrsProxyData> _irsProxyData = new ConcurrentHashMap<Guid, IrsProxyData>();
-    static final VDSStatus reportingVdsStatus = VDSStatus.Up;
 
     private static final Logger log = LoggerFactory.getLogger(IrsBrokerCommand.class);
 
@@ -67,7 +65,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         // NOTE - if this condition is ever updated, every place that acts upon the reporting
         // should be updated as well, only hosts the we collect the report from should be affected
         // from it.
-        if (vds.getStatus() == reportingVdsStatus && vds.getVdsGroupSupportsVirtService()) {
+        if (StoragePoolDomainHelper.reportingVdsStatus.contains(vds.getStatus()) && vds.getVdsGroupSupportsVirtService()) {
             IrsProxyData proxy = _irsProxyData.get(storagePoolId);
             if (proxy != null) {
                 proxy.updateVdsDomainsData(vds.getId(), vds.getName(), vdsDomainData);
