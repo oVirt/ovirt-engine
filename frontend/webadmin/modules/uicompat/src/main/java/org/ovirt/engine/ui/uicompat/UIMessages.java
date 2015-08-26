@@ -11,6 +11,15 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("One of the parameters isn''t supported (available parameter(s): {0})")
     String customPropertyOneOfTheParamsIsntSupported(String parameters);
 
+    @DefaultMessage("This field should be in the format of: {0}")
+    String customPropertiesValuesShouldBeInFormatReason(String format);
+
+    @DefaultMessage("< key >=< value > separated with space")
+    String keyValueFormat();
+
+    @DefaultMessage("This field can be empty or contain a {0}")
+    String emptyOrValidKeyValueFormatMessage(String format);
+
     @DefaultMessage("the value for parameter <{0}> should be in the format of: <{1}>")
     String customPropertyValueShouldBeInFormatReason(String parameter, String format);
 
