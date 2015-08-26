@@ -61,7 +61,7 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
     protected boolean validate() {
         HostInterfaceValidator validator = new HostInterfaceValidator(getNic());
 
-        return validate(validator.interfaceExists()) &&
+        return validate(validator.interfaceExists(getParameters().getNicId())) &&
                 validate(validator.interfaceAlreadyLabeledWith(getLabel())) &&
                 validate(validator.anotherInterfaceAlreadyLabeledWithThisLabel(getLabel(), getHostInterfaces()));
     }

@@ -103,13 +103,13 @@ public class NetworkValidatorTest {
 
     @Test
     public void networkSet() throws Exception {
-        assertThat(validator.networkIsSet(), isValid());
+        assertThat(validator.networkIsSet(Guid.newGuid()), isValid());
     }
 
     @Test
     public void networkNull() throws Exception {
         validator = new NetworkValidator(vmDao, null);
-        assertThat(validator.networkIsSet(), failsWith(EngineMessage.NETWORK_NOT_EXISTS));
+        assertThat(validator.networkIsSet(Guid.newGuid()), failsWith(EngineMessage.NETWORK_HAVING_ID_NOT_EXISTS));
     }
 
     @Test

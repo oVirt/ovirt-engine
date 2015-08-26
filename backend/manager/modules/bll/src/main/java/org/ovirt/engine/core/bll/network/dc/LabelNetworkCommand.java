@@ -56,7 +56,7 @@ public class LabelNetworkCommand<T extends LabelNetworkParameters> extends Comma
     @Override
     protected boolean validate() {
         NetworkValidator validator = new NetworkValidator(vmDao, getNetwork());
-        return validate(validator.networkIsSet())
+        return validate(validator.networkIsSet(getParameters().getNetworkId()))
                 && validate(validator.notLabeled())
                 && validate(validator.notExternalNetwork());
     }

@@ -50,7 +50,7 @@ public class VnicProfileValidator {
     }
 
     public ValidationResult networkExists() {
-        return new NetworkValidator(vmDao, getNetwork()).networkIsSet();
+        return new NetworkValidator(vmDao, getNetwork()).networkIsSet(vnicProfile.getNetworkId());
     }
 
     public ValidationResult networkQosExistsOrNull() {

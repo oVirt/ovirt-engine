@@ -54,7 +54,7 @@ public class UnlabelNetworkCommand<T extends UnlabelNetworkParameters> extends C
     @Override
     protected boolean validate() {
         NetworkValidator validatorNew = new NetworkValidator(vmDao, getNetwork());
-        return validate(validatorNew.networkIsSet());
+        return validate(validatorNew.networkIsSet(getParameters().getNetworkId()));
     }
 
     @Override

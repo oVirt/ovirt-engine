@@ -107,7 +107,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
     @Override
     protected boolean validate() {
         NetworkValidator validator = new NetworkValidator(vmDao, getNetworkDao().get(getNetwork().getId()));
-        return validate(validator.networkIsSet())
+        return validate(validator.networkIsSet(getParameters().getId()))
                 && validate(validator.notRemovingManagementNetwork())
                 && validate(validator.notIscsiBondNetwork())
                 && validate(validator.networkNotUsedByVms())

@@ -369,7 +369,6 @@ public enum NetworkOperation {
 
                     Map<String, Bond> bondsMap = Entities.entitiesByName(dataFromHostSetupNetworksModel.newOrModifiedBonds);
 
-                    //TODO MM: removing and adding back a slave will end up in bond update even if there's no need for that.
                     boolean bondIsAlreadyBeingUpdated = bondsMap.containsKey(bondName);
                     if (!bondIsAlreadyBeingUpdated) {
                         dataFromHostSetupNetworksModel.newOrModifiedBonds.add(bond);
@@ -1052,7 +1051,6 @@ public enum NetworkOperation {
 
         networkAttachment.setHostNetworkQos(overridingQos);
 
-        // TODO MM: check that in case ipConfiguration is out of sync this will not overwrite attachment data.
         fillIpConfigurationData(networkAttachment, targetNic);
 
         return networkAttachment;

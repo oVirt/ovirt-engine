@@ -68,7 +68,6 @@ public class NetworkAttachmentValidator {
     }
 
     public ValidationResult networkAttachmentIsSet() {
-        //TODO MM: what to do with this? this actually does not mean, that the attachment does not exist, we just did not get one, and we don't even know how one searched for it, so we also don't know what to complain about.
         EngineMessage engineMessage = EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS;
         return ValidationResult.failWith(engineMessage,
             ReplacementUtils.getVariableAssignmentString(engineMessage, null))
@@ -76,7 +75,34 @@ public class NetworkAttachmentValidator {
     }
 
     public ValidationResult networkExists() {
-        return getNetworkValidator().networkIsSet();
+        Guid networkId = attachment.getNetworkId();
+        String networkName = attachment.getNetworkName();
+
+        /*
+         * following code relies on fact, that completors were ran and fixed the user input, so we need to consider
+         * what original user input looked like, and how it was altered by completors.
+         */
+
+        // User did not specify neither id nor name.
+        if (networkId ==null && networkName == null) {
+            return new ValidationResult(EngineMessage.NETWORK_ATTACHMENT_NETWORK_ID_OR_NAME_IS_NOT_SET);
+        }
+
+        // User specified id, for which completors did not find Network record.
+        if (networkId != null && networkName == null) {
+            EngineMessage engineMessage = EngineMessage.NETWORK_HAVING_ID_NOT_EXISTS;
+            return new ValidationResult(engineMessage,
+                    ReplacementUtils.getVariableAssignmentString(engineMessage, networkId.toString()));
+        }
+
+        // User specified name, for which completors did not find Network record.
+        if (networkId == null && networkName != null) {
+            EngineMessage engineMessage = EngineMessage.NETWORK_HAVING_NAME_NOT_EXISTS;
+            return new ValidationResult(engineMessage,
+                    ReplacementUtils.getVariableAssignmentString(engineMessage, networkName));
+        }
+
+        return ValidationResult.VALID;
     }
 
     public ValidationResult networkNotUsedByVms() {
@@ -92,15 +118,15 @@ public class NetworkAttachmentValidator {
         List<String> vmNames =
                 vmInterfaceManager.findActiveVmsUsingNetworks(host.getId(), Collections.singleton(networkName));
 
-        //TODO MM: this error message seems very crippled & missing some translations.
         return new PluralMessages().getNetworkInUse(vmNames,
                 EngineMessage.VAR__ENTITIES__VM,
                 EngineMessage.VAR__ENTITIES__VMS);
     }
 
     public ValidationResult notExternalNetwork() {
-        //TODO MM: already used elsewhere, how to fix?
-        return ValidationResult.failWith(EngineMessage.EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED)
+        EngineMessage engineMessage = EngineMessage.EXTERNAL_NETWORK_HAVING_NAME_CANNOT_BE_PROVISIONED;
+        return ValidationResult.failWith(engineMessage,
+            ReplacementUtils.getVariableAssignmentString(engineMessage, getNetwork().getName()))
 
             .when(getNetwork().isExternal());
     }
@@ -110,11 +136,10 @@ public class NetworkAttachmentValidator {
     }
 
     public ValidationResult networkAttachedToCluster() {
-        //TODO MM: already used elsewhere, how to fix?
-
-        return ValidationResult.failWith(EngineMessage.NETWORK_NOT_EXISTS_IN_CLUSTER)
-
-                .when(getNetworkCluster() == null);
+        EngineMessage engineMessage = EngineMessage.NETWORK_OF_GIVEN_NAME_NOT_EXISTS_IN_CLUSTER;
+        return ValidationResult.failWith(engineMessage,
+            ReplacementUtils.getVariableAssignmentString(engineMessage, this.attachment.getNetworkName()))
+            .when(getNetworkCluster() == null);
     }
 
     public ValidationResult bootProtocolSetForRoleNetwork() {
@@ -137,11 +162,9 @@ public class NetworkAttachmentValidator {
                 getNetworkCluster().isGluster();
     }
 
-    public ValidationResult nicExists() {
-        //TODO MM: already used elsewhere, how to fix?
-        return ValidationResult.failWith(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST)
-
-                .when(attachment.getNicName() == null);
+    public ValidationResult nicNameIsSet() {
+        return ValidationResult.failWith(EngineMessage.HOST_NETWORK_INTERFACE_DOES_NOT_HAVE_NAME_SET)
+                .when(attachment.getNicName() == null && attachment.getNicId() == null);
     }
 
     /**
@@ -184,13 +207,17 @@ public class NetworkAttachmentValidator {
 
     public ValidationResult validateGateway() {
         IpConfiguration ipConfiguration = attachment.getIpConfiguration();
-        //TODO MM: already used elsewhere, how to fix?
-        return ValidationResult.failWith(EngineMessage.NETWORK_ATTACH_ILLEGAL_GATEWAY).when(ipConfiguration != null
 
+        boolean invalidGateway = ipConfiguration != null
             && ipConfiguration.hasPrimaryAddressSet()
             && StringUtils.isNotEmpty(ipConfiguration.getPrimaryAddress().getGateway())
             && !managementNetworkUtil.isManagementNetwork(getNetwork().getId(), host.getClusterId())
-            && !FeatureSupported.multipleGatewaysSupported(host.getClusterCompatibilityVersion()));
+            && !FeatureSupported.multipleGatewaysSupported(host.getClusterCompatibilityVersion());
+
+        EngineMessage engineMessage = EngineMessage.NETWORK_ATTACH_HAVING_NAME_ILLEGAL_GATEWAY;
+        return ValidationResult.failWith(engineMessage,
+            ReplacementUtils.getVariableAssignmentString(engineMessage, attachment.getNetworkName()))
+            .when(invalidGateway);
     }
 
     public ValidationResult networkNotAttachedToHost() {

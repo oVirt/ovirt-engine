@@ -24,8 +24,7 @@ public class UpdateNetworkAttachmentCommand<T extends NetworkAttachmentParameter
     protected boolean validate() {
         NetworkAttachment networkAttachment = getParameters().getNetworkAttachment();
         if (networkAttachment == null) {
-
-            return failValidation(EngineMessage.NETWORK_ATTACHMENT_NOT_SPECIFIED);    //TODO MM: how to identify 'null-valued' attachment? Maybe better error message?
+            return failValidation(EngineMessage.NETWORK_ATTACHMENT_NOT_SPECIFIED);
         }
 
         if (networkAttachment.getId() == null) {

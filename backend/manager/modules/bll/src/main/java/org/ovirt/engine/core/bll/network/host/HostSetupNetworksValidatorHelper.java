@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class HostSetupNetworksValidatorHelper {
 
@@ -37,9 +38,9 @@ public class HostSetupNetworksValidatorHelper {
             Guid referringId,
             String referringName) {
         return new String[] {
-                String.format("$referrerId %s", violatingEntityId),
-                String.format("$referringId %s", referringId),
-                String.format("$referringName %s", referringName)
+            ReplacementUtils.createSetVariableString("referrerId", violatingEntityId),
+            ReplacementUtils.createSetVariableString("referringId", referringId),
+            ReplacementUtils.createSetVariableString("referringName", referringName)
         };
     }
 

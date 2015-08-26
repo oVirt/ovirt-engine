@@ -36,8 +36,6 @@ public class MapNetworkAttachments {
     private <K, I> Map<K, Set<I>> groupMultipleValues(CalculateKey<I, K> calculateKey, Collection<I> instances) {
         Map<K, Set<I>> result = new HashMap<>(instances.size());
 
-
-        //TODO MM: it would be great if we can move MultiValueMapUtils so it's accessible here.
         for (I instance : instances) {
             getSetForKey(calculateKey.keyFrom(instance), result).add(instance);
         }

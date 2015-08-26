@@ -114,43 +114,46 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
                 isValid());
     }
 
-    /* tests whether validation is properly delegated. NetworkAttachmentValidator#networkExists
-    delegates to NetworkValidator#networkIsSet. This test spies on creation of NetworkValidator, and returns mocked
-    implementation which returns failing ValidationResult on NetworkValidator#networkIsSet. Finally it's tested, whether
-    this ValidationResult was propagated correctly.
-     */
     @Test
-    public void testNetworkExistsWhenValidationFails() {
-        NetworkAttachmentValidator networkAttachmentValidatorSpy = Mockito.spy(
-            createNetworkAttachmentValidator(new NetworkAttachment()));
-
-        doReturn(networkValidatorMock).when(networkAttachmentValidatorSpy).getNetworkValidator();
-
-        String variableReplacements = "a";
-        ValidationResult propagatedResult = new ValidationResult(EngineMessage.NETWORK_NOT_EXISTS,
-            variableReplacements);
-        when(networkValidatorMock.networkIsSet()).thenReturn(propagatedResult);
-
-        assertThat("ValidationResult is not correctly propagated",
-                networkAttachmentValidatorSpy.networkExists(),
-            failsWith(EngineMessage.NETWORK_NOT_EXISTS, variableReplacements));
+    public void testNetworkExistWhenNeitherIdNorNameIsSpecified() {
+        NetworkAttachment networkAttachment = new NetworkAttachment();
+        NetworkAttachmentValidator validator = createNetworkAttachmentValidator(networkAttachment);
+        assertThat(validator.networkExists(),
+                failsWith(EngineMessage.NETWORK_ATTACHMENT_NETWORK_ID_OR_NAME_IS_NOT_SET));
     }
 
-    /* tests whether validation is properly delegated. NetworkAttachmentValidator#networkExists
-    delegates to NetworkValidator#networkIsSet. This test spies on creation of NetworkValidator, and returns mocked
-    implementation which returns valid ValidationResult on NetworkValidator#networkIsSet. Finally it's tested, whether
-    this ValidationResult was propagated correctly.
-     */
     @Test
-    public void testNetworkExists() {
-        NetworkAttachmentValidator networkAttachmentValidatorSpy = Mockito.spy(
-            createNetworkAttachmentValidator(new NetworkAttachment()));
+    public void testNetworkExistWhenOnlyNetworkIdIsSet() {
+        Guid networkId = Guid.newGuid();
 
-        doReturn(networkValidatorMock).when(networkAttachmentValidatorSpy).getNetworkValidator();
-        when(networkValidatorMock.networkIsSet()).thenReturn(ValidationResult.VALID);
+        NetworkAttachment networkAttachment = new NetworkAttachment();
+        networkAttachment.setNetworkId(networkId);
+        NetworkAttachmentValidator validator = createNetworkAttachmentValidator(networkAttachment);
+        EngineMessage engineMessage = EngineMessage.NETWORK_HAVING_ID_NOT_EXISTS;
+        assertThat(validator.networkExists(),
+                failsWith(engineMessage,
+                        ReplacementUtils.getVariableAssignmentString(engineMessage, networkId.toString())));
+    }
 
-        assertThat("ValidationResult is not correctly propagated",
-            networkAttachmentValidatorSpy.networkExists(), isValid());
+    @Test
+    public void testNetworkExistWhenOnlyNetworkNameIsSet() {
+        String networkName = "network";
+
+        NetworkAttachment networkAttachment = new NetworkAttachment();
+        networkAttachment.setNetworkName(networkName);
+        NetworkAttachmentValidator validator = createNetworkAttachmentValidator(networkAttachment);
+        EngineMessage engineMessage = EngineMessage.NETWORK_HAVING_NAME_NOT_EXISTS;
+        assertThat(validator.networkExists(),
+                failsWith(engineMessage,
+                        ReplacementUtils.getVariableAssignmentString(engineMessage, networkName)));
+    }
+
+    @Test
+    public void testNetworkExistWhenBothNetworkNameAndNetworkIdAreSet() {
+        NetworkAttachment networkAttachment = new NetworkAttachment();
+        networkAttachment.setNetworkName("network");
+        networkAttachment.setNetworkId(Guid.newGuid());
+        assertThat(createNetworkAttachmentValidator(networkAttachment).networkExists(), isValid());
     }
 
     @Test
@@ -164,7 +167,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         NetworkAttachment attachment = new NetworkAttachment();
         attachment.setNetworkId(externalNetwork.getId());
         assertThat(createNetworkAttachmentValidator(attachment).notExternalNetwork(),
-            failsWith(EngineMessage.EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED));
+            failsWith(EngineMessage.EXTERNAL_NETWORK_HAVING_NAME_CANNOT_BE_PROVISIONED));
     }
 
     @Test
@@ -216,18 +219,20 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     public void testNetworkAttachedToClusterWhenNotAttached() {
         Network network = new Network();
         network.setId(Guid.newGuid());
+        network.setName("networkName");
 
         NetworkAttachment attachment = new NetworkAttachment();
         attachment.setNetworkId(network.getId());
+        attachment.setNetworkName(network.getName());
 
         NetworkClusterId networkClusterId = new NetworkClusterId(host.getClusterId(), network.getId());
         when(networkClusterDaoMock.get(eq(networkClusterId))).thenReturn(null);
         when(networkDaoMock.get(eq(network.getId()))).thenReturn(network);
 
+        EngineMessage engineMessage = EngineMessage.NETWORK_OF_GIVEN_NAME_NOT_EXISTS_IN_CLUSTER;
         assertThat(createNetworkAttachmentValidator(attachment).networkAttachedToCluster(),
-            failsWith(EngineMessage.NETWORK_NOT_EXISTS_IN_CLUSTER));
+            failsWith(engineMessage, ReplacementUtils.getVariableAssignmentString(engineMessage, network.getName())));
     }
-
 
     private NetworkAttachment createNetworkAttachmentWithIpConfiguration(NetworkBootProtocol bootProtocol,
             String address,
@@ -368,8 +373,8 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     public void testNicExistsWhenNicNameIsNull() {
         NetworkAttachment attachment = new NetworkAttachment();
         attachment.setNicName(null);
-        assertThat(createNetworkAttachmentValidator(attachment).nicExists(),
-                failsWith(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST));
+        assertThat(createNetworkAttachmentValidator(attachment).nicNameIsSet(),
+                failsWith(EngineMessage.HOST_NETWORK_INTERFACE_DOES_NOT_HAVE_NAME_SET));
     }
 
     @Test
@@ -378,7 +383,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         attachment.setNicId(null);
         attachment.setNicName("whatever");
 
-        assertThat(createNetworkAttachmentValidator(attachment).nicExists(), isValid());
+        assertThat(createNetworkAttachmentValidator(attachment).nicNameIsSet(), isValid());
     }
 
     @Test
@@ -514,7 +519,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     @Test
     public void testValidateGatewayIsNotManagementNetworkAndMultipleGatewaysNotSupported() {
         doTestValidateGateway("someGateway", false, false,
-                failsWith(EngineMessage.NETWORK_ATTACH_ILLEGAL_GATEWAY));
+                failsWith(EngineMessage.NETWORK_ATTACH_HAVING_NAME_ILLEGAL_GATEWAY));
     }
 
     @Test

@@ -120,7 +120,7 @@ public class VnicProfileValidatorTest {
     @Test
     public void networkDoesntExist() throws Exception {
         when(networkDao.get(any(Guid.class))).thenReturn(null);
-        assertThat(validator.networkExists(), failsWith(EngineMessage.NETWORK_NOT_EXISTS));
+        assertThat(validator.networkExists(), failsWith(EngineMessage.NETWORK_HAVING_ID_NOT_EXISTS));
     }
 
     @Test

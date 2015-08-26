@@ -122,7 +122,7 @@ public final class NetworkUtils {
      */
     public static boolean qosConfiguredOnInterface(NetworkAttachment networkAttachment, Network network) {
         if (networkAttachment != null && networkAttachment.isQosOverridden()) {
-            return networkAttachment.getHostNetworkQos() != null && !networkAttachment.getHostNetworkQos().isEmpty();   //TODO MM: I think that is empty is wrong, since qos can be overridden back to unlimited.
+            return networkAttachment.getHostNetworkQos() != null && !networkAttachment.getHostNetworkQos().isEmpty();
         } else {
             return network != null && network.getQosId() != null;
         }

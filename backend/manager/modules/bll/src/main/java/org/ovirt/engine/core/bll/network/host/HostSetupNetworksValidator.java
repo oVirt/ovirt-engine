@@ -61,10 +61,11 @@ public class HostSetupNetworksValidator {
 
     static final String VAR_BOND_NAME = "BondName";
     static final String VAR_NETWORK_NAME = "networkName";
-    static final String VAR_NETWORK_NAMES = "networkNames";
+    public static final String VAR_NETWORK_NAMES = "networkNames";
     static final String VAR_ATTACHMENT_IDS = "attachmentIds";
     static final String VAR_INTERFACE_NAME = "interfaceName";
-    static final String VAR_LABELED_INTERFACE_NAME = "labeledInterfaceName";
+    static final String VAR_NIC_ID = "nicId";
+    static final String VAR_LABELED_NIC_NAME = "labeledNicName";
     static final String VAR_NIC_NAME = "nicName";
     static final String VAR_VM_NAME = "vmName";
     static final String VAR_VM_NAMES = "vmNames";
@@ -337,10 +338,9 @@ public class HostSetupNetworksValidator {
             boolean alreadyUsedNetworkId = usedNetworkIds.contains(attachment.getNetworkId());
             if (alreadyUsedNetworkId) {
                 Network network = existingNetworkRelatedToAttachment(attachment);
-                return new ValidationResult(EngineMessage.NETWORKS_ALREADY_ATTACHED_TO_IFACES,
-                    ReplacementUtils.getVariableAssignmentString(EngineMessage.NETWORKS_ALREADY_ATTACHED_TO_IFACES,
-                        network.getName()));
-
+                EngineMessage engineMessage = EngineMessage.NETWORKS_ALREADY_ATTACHED_TO_IFACES;
+                return new ValidationResult(engineMessage,
+                    ReplacementUtils.getVariableAssignmentStringWithMultipleValues(engineMessage, network.getName()));
             } else {
                 usedNetworkIds.add(attachment.getNetworkId());
             }
@@ -365,7 +365,7 @@ public class HostSetupNetworksValidator {
         List<Guid> invalidBondIds = Entities.idsNotReferencingExistingRecords(params.getRemovedBonds(),
             existingInterfacesMap.unmodifiableEntitiesByIdMap());
         if (!invalidBondIds.isEmpty()) {
-            EngineMessage engineMessage = EngineMessage.NETWORK_BOND_RECORD_DOES_NOT_EXISTS;
+            EngineMessage engineMessage = EngineMessage.NETWORK_BOND_RECORDS_DOES_NOT_EXISTS;
             return new ValidationResult(engineMessage,
                 ReplacementUtils.getListVariableAssignmentString(engineMessage, invalidBondIds));
 
@@ -386,11 +386,13 @@ public class HostSetupNetworksValidator {
             if (cantRemoveRequiredInterface) {
                 List<Guid> networkAttachmentsForNic = nicNameToAttachedNetworkAttachmentIds.get(bondName);
 
+                EngineMessage engineMessage = EngineMessage.BOND_USED_BY_NETWORK_ATTACHMENTS;
+
                 List<String> replacements = new ArrayList<>();
-                replacements.add(ReplacementUtils.createSetVariableString(VAR_BOND_NAME, bondName));
+                replacements.add(ReplacementUtils.getVariableAssignmentString(engineMessage, bondName));
                 replacements.addAll(ReplacementUtils.replaceWith(VAR_ATTACHMENT_IDS, networkAttachmentsForNic));
 
-                return new ValidationResult(EngineMessage.BOND_USED_BY_NETWORK_ATTACHMENTS, replacements);
+                return new ValidationResult(engineMessage, replacements);
 
             }
         }
@@ -448,22 +450,49 @@ public class HostSetupNetworksValidator {
     ValidationResult validNewOrModifiedBonds() {
         for (Bond modifiedOrNewBond : params.getBonds()) {
             String bondName = modifiedOrNewBond.getName();
+            Guid bondId = modifiedOrNewBond.getId();
+
+            /*
+             * following code relies on fact, that completors were ran and fixed the user input, so we need to consider
+             * what original user input looked like, and how it was altered by completors.
+             */
+
+            /*
+             * bondId is provided, but bondName not. This means that user attempted update, but bond of such ID does not
+             * exit, thus completors did not complete name.
+             */
+            if (bondId != null && bondName == null) {
+                return new ValidationResult(EngineMessage.HOST_NETWORK_INTERFACE_HAVING_ID_DOES_NOT_EXIST,
+                        ReplacementUtils.createSetVariableString(VAR_NIC_ID, bondId));
+            }
+
+            /*
+             * user did not provide neither bondId nor bondName. That means he probably attempted new bond creation
+             * but forgot to provide bondName.
+             */
+            if (bondId == null && bondName == null) {
+                return new ValidationResult(EngineMessage.BOND_DOES_NOT_HAVE_NEITHER_ID_NOR_NAME_SPECIFIED);
+            }
+
+
+            /*
+             * if (bondId == null && bondName != null) …
+             * User provided only bondName, and completors failed to find existing bonds id for that name.
+             * We cannot tell, what user wanted to do(create/update). We have to assume, it's new record creation, which
+             * is valid scenario.
+             */
+
             ValidationResult validateCoherentNicIdentification = validateCoherentNicIdentification(modifiedOrNewBond);
             if (!validateCoherentNicIdentification.isValid()) {
                 return validateCoherentNicIdentification;
             }
 
-            //does not test, whether interface exists, but only if the instance is non-null and its name is set.
-            ValidationResult interfaceByNameExists = createHostInterfaceValidator(modifiedOrNewBond).interfaceByNameExists();
-            if (!interfaceByNameExists.isValid()) {
-                return interfaceByNameExists;
-            }
-
-            boolean validBondName = bondName != null && bondName.matches(BusinessEntitiesDefinitions.BOND_NAME_PATTERN);
+            boolean validBondName = bondName.matches(BusinessEntitiesDefinitions.BOND_NAME_PATTERN);
 
             if (!validBondName) {
-                return new ValidationResult(EngineMessage.NETWORK_BOND_NAME_BAD_FORMAT,
-                    ReplacementUtils.getVariableAssignmentString(EngineMessage.NETWORK_BOND_NAME_BAD_FORMAT, bondName));
+                EngineMessage engineMessage = EngineMessage.NETWORK_BOND_NAME_BAD_FORMAT;
+                return new ValidationResult(engineMessage,
+                    ReplacementUtils.getVariableAssignmentString(engineMessage, bondName));
 
             }
 
@@ -496,7 +525,7 @@ public class HostSetupNetworksValidator {
             VdsNetworkInterface potentialSlave = existingInterfacesMap.get(slaveName);
             HostInterfaceValidator slaveHostInterfaceValidator = createHostInterfaceValidator(potentialSlave);
 
-            ValidationResult interfaceExists = slaveHostInterfaceValidator.interfaceExists();
+            ValidationResult interfaceExists = slaveHostInterfaceValidator.interfaceExists(slaveName);
             if (!interfaceExists.isValid()) {
                 return interfaceExists;
             }
@@ -505,16 +534,19 @@ public class HostSetupNetworksValidator {
             if (!interfaceIsValidSlave.isValid()) {
                 return interfaceIsValidSlave;
             }
-
-            /* definition of currently processed bond references this slave, but this slave already 'slaves' for
-                another bond. This is ok only when this bond will be removed as a part of this request
-                or the slave will be removed from its former bond, as a part of this request. */
+            /*
+             * definition of currently processed bond references this slave, but this slave already 'slaves' for
+             * another bond. This is ok only when this bond will be removed as a part of this request
+             * or the slave will be removed from its former bond, as a part of this request.
+             */
             String currentSlavesBondName = potentialSlave.getBondName();
             if (potentialSlave.isPartOfBond() &&
-                        /* we're creating new bond, and it's definition contains reference to slave already assigned
-                        to a different bond. */
+                        /*
+                         * we're creating new bond, and it's definition contains reference to slave already assigned
+                         * to a different bond.
+                         */
                 (!potentialSlave.isPartOfBond(modifiedOrNewBond.getName())
-                    //…but this bond is also removed in this request, so it's ok.
+                    //… but this bond is also removed in this request, so it's ok.
                     && !isBondRemoved(currentSlavesBondName)
 
                     //… or slave was removed from its former bond
@@ -633,7 +665,6 @@ public class HostSetupNetworksValidator {
             vr = skipValidation(vr) ? vr : validator.networkAttachmentIsSet();
             vr = skipValidation(vr) ? vr : referencedNetworkAttachmentActuallyExists(attachment.getId());
 
-            vr = skipValidation(vr) ? vr : networkIdIsSet(attachment);
             vr = skipValidation(vr) ? vr : validator.networkExists();
             vr = skipValidation(vr) ? vr : validateCoherentNicIdentification(attachment);
             vr = skipValidation(vr) ? vr : validateCoherentNetworkIdentification(attachment);
@@ -645,8 +676,7 @@ public class HostSetupNetworksValidator {
             vr = skipValidation(vr) ? vr : validator.networkAttachedToCluster();
             vr = skipValidation(vr) ? vr : validator.bootProtocolSetForRoleNetwork();
 
-            //this is not nic exist, but only nic is set.
-            vr = skipValidation(vr) ? vr : validator.nicExists();
+            vr = skipValidation(vr) ? vr : validator.nicNameIsSet();
             vr = skipValidation(vr) ? vr : nicActuallyExistsOrReferencesNewBond(attachment);
 
             vr = skipValidation(vr) ? vr : validator.networkIpAddressWasSameAsHostnameAndChanged(existingInterfacesMap);
@@ -664,11 +694,6 @@ public class HostSetupNetworksValidator {
         return vr;
     }
 
-    private ValidationResult networkIdIsSet(NetworkAttachment attachment) {
-        return ValidationResult.failWith(EngineMessage.NETWORK_ATTACHMENT_NETWORK_ID_IS_NOT_SET)
-            .when(attachment.getNetworkId() == null);
-    }
-
     private ValidationResult referencedNetworkAttachmentActuallyExists(Guid networkAttachmentId) {
         boolean doesNotReferenceExistingNetworkAttachment = networkAttachmentId == null;
         if (doesNotReferenceExistingNetworkAttachment) {
@@ -681,7 +706,10 @@ public class HostSetupNetworksValidator {
             }
         }
 
-        return new ValidationResult(EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS);
+        EngineMessage engineMessage = EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS;
+        String id = networkAttachmentId.toString();
+        String replacement = ReplacementUtils.getVariableAssignmentString(engineMessage, id);
+        return new ValidationResult(engineMessage, replacement);
     }
 
     private ValidationResult validateCoherentNetworkIdentification(NetworkAttachment attachment) {
@@ -707,7 +735,7 @@ public class HostSetupNetworksValidator {
         Guid nicId = bond.getId();
         String nicName = bond.getName();
         EngineMessage message = EngineMessage.BOND_REFERENCES_NICS_INCOHERENTLY;
-        return hostSetupNetworksValidatorHelper.validateCoherentIdentification(bond.getName(), nicId, nicName, message, existingInterfacesMap);
+        return hostSetupNetworksValidatorHelper.validateCoherentIdentification(nicName, nicId, nicName, message, existingInterfacesMap);
 
     }
 
@@ -748,16 +776,16 @@ public class HostSetupNetworksValidator {
     }
 
     private ValidationResult nicActuallyExistsOrReferencesNewBond(NetworkAttachment attachment) {
+        String nicName = attachment.getNicName();
+        Guid nicId = attachment.getNicId();
+
         boolean nicActuallyExistsOrReferencesNewBond =
-                isNicActuallyExistsOrReferencesNewBond(attachment.getNicName(), attachment.getNicId());
+                isNicActuallyExistsOrReferencesNewBond(nicName, nicId);
 
-        if (nicActuallyExistsOrReferencesNewBond) {
-            return ValidationResult.VALID;
-        }
-
-        // TODO MM: this message also exist in different code without interface id being mentioned. How to fix?
-        // Duplicate message / fix other code as well?
-        return new ValidationResult(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST);
+        return ValidationResult.failWith(EngineMessage.HOST_NETWORK_INTERFACE_HAVING_ID_OR_NAME_DOES_NOT_EXIST,
+            ReplacementUtils.createSetVariableString(VAR_NIC_ID, nicId),
+            ReplacementUtils.createSetVariableString(VAR_NIC_NAME, nicName)
+        ).when(!nicActuallyExistsOrReferencesNewBond);
     }
 
     private boolean isNicActuallyExistsOrReferencesNewBond(String nicName, Guid nicId) {
@@ -819,7 +847,7 @@ public class HostSetupNetworksValidator {
                 networkAttachmentsByNetworkId.get(removedNetwork.getId()) != null;
         EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC;
         return ValidationResult.failWith(engineMessage,
-                ReplacementUtils.getVariableAssignmentString(engineMessage, removedNetwork.getName()))
+                ReplacementUtils.getVariableAssignmentStringWithMultipleValues(engineMessage, removedNetwork.getName()))
                 .when(!networkAttachedToNicByAnotherAttachment
                     && isNicToConfigureContainTheLabel(attachment.getNicName(), removedNetwork.getLabel()));
 
@@ -858,8 +886,8 @@ public class HostSetupNetworksValidator {
         EngineMessage engineMessage = EngineMessage.NETWORK_SHOULD_BE_ATTACHED_VIA_LABEL_TO_ANOTHER_NIC;
         return ValidationResult.failWith(engineMessage,
                 ReplacementUtils.getVariableAssignmentString(engineMessage, network.getName()),
-                ReplacementUtils.createSetVariableString(VAR_INTERFACE_NAME, attachment.getNicName()),
-                ReplacementUtils.createSetVariableString(VAR_LABELED_INTERFACE_NAME, nicThatShouldHaveTheLabel))
+                ReplacementUtils.createSetVariableString(VAR_NIC_NAME, attachment.getNicName()),
+                ReplacementUtils.createSetVariableString(VAR_LABELED_NIC_NAME, nicThatShouldHaveTheLabel))
                 .unless(nicThatShouldHaveTheLabel == null || nicThatShouldHaveTheLabel.equals(attachment.getNicName()));
 
     }

@@ -23,7 +23,6 @@ public class HostValidator {
 
     private ValidationResult hostExist() {
         if (host == null) {
-            //TODO MM: message is used on many places without host name mentioned. How to fix this?
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
         }
 
@@ -38,10 +37,6 @@ public class HostValidator {
                 || host.getStatus() == VDSStatus.Installing && internalExecution;
 
         if (!hostStatusLegalForSetupNetworks) {
-            //TODO MM: what to do with this? First following line does not make any sense to me, one after it tried to add host name, while there's no variable for host and message is reused elsewhere. Variants: a) do add variable to message and everywhere, do to report host name in that message.
-            //            violations.addViolation(___EngineMessage.VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL, host.getName());
-            //            violations.addViolation(___EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL, host.getName());
-
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL,
                 ReplacementUtils.replaceWith(VAR_HOST_STATUS, supportedStatuses, ",", supportedStatuses.size()));
         }

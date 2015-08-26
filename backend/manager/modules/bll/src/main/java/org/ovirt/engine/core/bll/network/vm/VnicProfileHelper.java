@@ -32,6 +32,7 @@ import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class VnicProfileHelper {
     private Set<String> invalidNetworkNames = new HashSet<>();
@@ -204,13 +205,13 @@ public class VnicProfileHelper {
         }
 
         if (vm.getClusterId() == null) {
-            return new ValidationResult(EngineMessage.NETWORK_NOT_EXISTS_IN_CLUSTER);
+            return networkOfGivenNameNotExistsInCluster(networkName);
         }
 
         // if the network was provided with changed name, resolve a suitable profile for it
         Network network = getNetworkDao().getByNameAndCluster(networkName, vm.getClusterId());
         if (network == null) {
-            return new ValidationResult(EngineMessage.NETWORK_NOT_EXISTS_IN_CLUSTER);
+            return networkOfGivenNameNotExistsInCluster(networkName);
         }
 
         List<VnicProfile> vnicProfiles = getVnicProfileDao().getAllForNetwork(network.getId());
@@ -222,6 +223,12 @@ public class VnicProfileHelper {
         }
 
         return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CANNOT_FIND_VNIC_PROFILE_FOR_NETWORK);
+    }
+
+    private static ValidationResult networkOfGivenNameNotExistsInCluster(String networkName) {
+        EngineMessage engineMessage = EngineMessage.NETWORK_OF_GIVEN_NAME_NOT_EXISTS_IN_CLUSTER;
+        return new ValidationResult(engineMessage,
+            ReplacementUtils.getVariableAssignmentString(engineMessage, networkName));
     }
 
     private Map<String, Network> getNetworksInCluster() {

@@ -1411,7 +1411,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Network '${NetworkName}' is mandatory, it cannot be modified.")
     String NETWORK_DEFAULT_UPDATE_NAME_INVALID();
 
-    @DefaultStringValue("Network Interface already belongs to the bond.")
+    @DefaultStringValue("Network Interface '${NETWORK_INTERFACE_ALREADY_IN_BOND_ENTITY}' already belongs to the bond.")
     String NETWORK_INTERFACE_ALREADY_IN_BOND();
 
     @DefaultStringValue("Cannot ${action} ${type}. Multiple network attachments (${ACTION_TYPE_FAILED_NETWORK_ATTACHMENTS_REFERENCES_SAME_NETWORK_DUPLICATELY_LIST}) references same network (${ACTION_TYPE_FAILED_NETWORK_ATTACHMENTS_REFERENCES_SAME_NETWORK_DUPLICATELY_ENTITY}).")
@@ -1426,10 +1426,10 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Network Interface '${NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME_ENTITY}' cannot become slave, because you're also attaching network '${networkName}' to it.")
     String NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Network Interface '$NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE_ENTITY' cannot become slave, there's network '${networkName}' attached to it.")
+    @DefaultStringValue("Cannot ${action} ${type}. Network Interface '${NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE_ENTITY}' cannot become slave, there's network '${networkName}' attached to it.")
     String NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Network Interface '${interfaceName}' cannot be slave: Neither bond nor vlan can be slave.")
+    @DefaultStringValue("Cannot ${action} ${type}. Network Interface '${nicName}' cannot be slave: Neither bond nor vlan can be slave.")
     String NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE();
 
     @DefaultStringValue("Cannot ${action} ${type}. Network interface '${NETWORK_INTERFACE_REFERENCED_AS_A_SLAVE_MULTIPLE_TIMES_ENTITY}' is used multiple times in new or modified bonds in this request. Slave can be neither shared by multiple bonds nor used multiple times in one bond.")
@@ -1447,14 +1447,14 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. New Network attachment cannot be created with given ID. Please remove Network Attachment ID (id '${NETWORK_ATTACHMENT_CANNOT_BE_CREATED_WITH_SPECIFIC_ID_ENTITY}') from request.")
     String NETWORK_ATTACHMENT_CANNOT_BE_CREATED_WITH_SPECIFIC_ID();
 
-    @DefaultStringValue("Cannot remove bond, because it's used by Network Attachments.")
+    @DefaultStringValue("Cannot remove bond ${BOND_USED_BY_NETWORK_ATTACHMENTS_ENTITY}, because it's used by Network Attachments: ${attachmentIds}.")
     String BOND_USED_BY_NETWORK_ATTACHMENTS();
 
     @DefaultStringValue("Cannot ${action} ${type}. Given Network Attachment does not exist")
     String NETWORK_ATTACHMENT_NOT_EXISTS();
 
-    @DefaultStringValue("Cannot ${action} ${type}. There's unset networkId among given network attachments.")
-    String NETWORK_ATTACHMENT_NETWORK_ID_IS_NOT_SET();
+    @DefaultStringValue("Cannot ${action} ${type}. There's unset networkId or networkName among given network attachments. At least one of them should be set.")
+    String NETWORK_ATTACHMENT_NETWORK_ID_OR_NAME_IS_NOT_SET();
 
     @DefaultStringValue("Cannot ${action} ${type}. Following Network Attachments do not exist: ${NETWORK_ATTACHMENTS_NOT_EXISTS_LIST}.")
     String NETWORK_ATTACHMENTS_NOT_EXISTS();
@@ -1513,6 +1513,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("The specified Logical Network doesn't exist.")
     String NETWORK_NOT_EXISTS();
 
+    @DefaultStringValue("Logical Network (id '${NETWORK_HAVING_ID_NOT_EXISTS_ENTITY}') doesn't exist.")
+    String NETWORK_HAVING_ID_NOT_EXISTS();
+
+    @DefaultStringValue("Logical Network (name '${NETWORK_HAVING_NAME_NOT_EXISTS_ENTITY}') doesn't exist.")
+    String NETWORK_HAVING_NAME_NOT_EXISTS();
+
     @DefaultStringValue("The specified Network QoS doesn't exist.")
     String ACTION_TYPE_FAILED_NETWORK_QOS_NOT_EXISTS();
 
@@ -1543,19 +1549,23 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("The specified external network cannot be configured on the host's interface.")
     String EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED();
 
+    @DefaultStringValue("The external network '${EXTERNAL_NETWORK_HAVING_NAME_CANNOT_BE_PROVISIONED_ENTITY}' cannot be configured on the host's interface.")
+    String EXTERNAL_NETWORK_HAVING_NAME_CANNOT_BE_PROVISIONED();
+
     @DefaultStringValue("Network label must be formed only from: English letters, numbers, hyphen or underscore.")
     String NETWORK_LABEL_FORMAT_INVALID();
 
     @DefaultStringValue("Cannot ${action} ${type}. The specified network is already labeled.")
     String ACTION_TYPE_FAILED_NETWORK_ALREADY_LABELED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The following networks cannot be removed from the network interface since they are managed by the label: ${ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_ENTITY}. Please remove the label from the network interface in order to remove the network.")
+    //variable cannot be ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_ENTITY due to Violation and SetupNetworksHelper classes which dictates _LIST format.
+    @DefaultStringValue("Cannot ${action} ${type}. The following networks cannot be removed from the network interface since they are managed by the label: ${ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_LIST}. Please remove the label from the network interface in order to remove the network.")
     String ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC();
 
     @DefaultStringValue("Cannot ${action} ${type}. Network '${networkName}' cannot be moved to another network interface since it's managed by label '${ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY}'. Please remove the label from the network interface in order to remove the network.")
     String ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Cannot attach network '${NETWORK_SHOULD_BE_ATTACHED_VIA_LABEL_TO_ANOTHER_NIC_ENTITY}' to network interface '${interfaceName}', it should be attached via label to network interface '${labeledInterfaceName}'.")
+    @DefaultStringValue("Cannot ${action} ${type}. Cannot attach network '${NETWORK_SHOULD_BE_ATTACHED_VIA_LABEL_TO_ANOTHER_NIC_ENTITY}' to network interface '${nicName}', it should be attached via label to network interface '${labeledNicName}'.")
     String NETWORK_SHOULD_BE_ATTACHED_VIA_LABEL_TO_ANOTHER_NIC();
 
     @DefaultStringValue("Cannot ${action} ${type}. The following networks cannot be removed from the network interface since they are used by gluster volume bricks: ${ACTION_TYPE_FAILED_CANNOT_REMOVE_NETWORK_FROM_BRICK_LIST}. Please remove or replace the bricks in order to remove the network.")
@@ -1747,7 +1757,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following external networks cannot be configured on host via 'Setup Networks': ${ACTION_TYPE_FAILED_EXTERNAL_NETWORKS_CANNOT_BE_PROVISIONED_LIST}")
     String ACTION_TYPE_FAILED_EXTERNAL_NETWORKS_CANNOT_BE_PROVISIONED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The following Logical Networks are attached to more than one Network Interface: ${NETWORKS_ALREADY_ATTACHED_TO_IFACES_ENTITY}.")
+    @DefaultStringValue("Cannot ${action} ${type}. The following Logical Networks are attached to more than one Network Interface: ${NETWORKS_ALREADY_ATTACHED_TO_IFACES_LIST}.")
     String NETWORKS_ALREADY_ATTACHED_TO_IFACES();
 
     @DefaultStringValue("Cannot ${action} ${type}. The following Network Interfaces do not exist on the Host: ${NETWORK_INTERFACES_DONT_EXIST_LIST}.")
@@ -1755,6 +1765,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The following Logical Networks do not exist in the Host's Cluster: ${NETWORKS_DONT_EXIST_IN_CLUSTER_LIST}.")
     String NETWORKS_DONT_EXIST_IN_CLUSTER();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The following Logical Networks: ${networkIds} do not exist in the Data Center: ${dataCenterId}.")
+    String NETWORKS_DONT_EXIST_IN_DATA_CENTER();
 
     @DefaultStringValue("Cannot ${action} ${type}. The following Network Interfaces can have only a single VM Logical Network, or at most one non-VM Logical Network and/or several VLAN Logical Networks: ${NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK_LIST}.")
     String NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK();
@@ -2195,7 +2208,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("This field must contain a subnet in either of the following formats:\n\txxx.xxx.xxx.xxx where xxx is between 0 and 255.\n\txx where xx is between 0-32")
     String UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_FORMAT();
 
-    @DefaultStringValue("Bad bond name, it must begin with the prefix 'bond' followed by a number.")
+    @DefaultStringValue("Bad bond name '${NETWORK_BOND_NAME_BAD_FORMAT_ENTITY}'. Bond name must begin with the prefix 'bond' followed by a number.")
     String NETWORK_BOND_NAME_BAD_FORMAT();
 
     @DefaultStringValue("Bad network name, network cannot start with 'bond'")
@@ -2281,6 +2294,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("The default gateway should be set only on the Management Network")
     String NETWORK_ATTACH_ILLEGAL_GATEWAY();
+
+    @DefaultStringValue("The default gateway set on network '${NETWORK_ATTACH_ILLEGAL_GATEWAY_ENTITY}', but it should be set only on the Management Network.")
+    String NETWORK_ATTACH_HAVING_NAME_ILLEGAL_GATEWAY();
 
     @DefaultStringValue("A slave interface is not properly configured. Please verify slaves do not contain any of the following properties: network name, boot protocol, IP address, netmask, gateway or vlan-ID notation (as part of interface's name or explicitly).")
     String SLAVE_INTERFACE_IS_MISCONFIGURED();
@@ -3088,6 +3104,24 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The host network interface does not exist.")
     String HOST_NETWORK_INTERFACE_NOT_EXIST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The host network interface (id ${nicId}, name ${nicName}) does not exist.")
+    String HOST_NETWORK_INTERFACE_HAVING_ID_OR_NAME_DOES_NOT_EXIST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The host network interface (name ${HOST_NETWORK_INTERFACE_HAVING_NAME_DOES_NOT_EXIST_ENTITY}) does not exist.")
+    String HOST_NETWORK_INTERFACE_HAVING_NAME_DOES_NOT_EXIST();
+
+    @DefaultStringValue("Logical Network '${NETWORK_OF_GIVEN_NAME_NOT_EXISTS_IN_CLUSTER_ENTITY}' does not exist in Cluster.")
+    String NETWORK_OF_GIVEN_NAME_NOT_EXISTS_IN_CLUSTER();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The host network interface (id ${nicId}) does not exist.")
+    String HOST_NETWORK_INTERFACE_HAVING_ID_DOES_NOT_EXIST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The host network interface does not have name set.")
+    String HOST_NETWORK_INTERFACE_DOES_NOT_HAVE_NAME_SET();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Among the given bonds, there is a bond with neither nicName nor nicId. If you wish to add a new bond, the nicName is mandatory. If you wish to update an existing bond you should pass nicName or nicId or both of them.")
+    String BOND_DOES_NOT_HAVE_NEITHER_ID_NOR_NAME_SPECIFIED();
 
     @DefaultStringValue("Cannot ${action} ${type}. The VM Network Interface is plugged to a running VM.")
     String ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_DEVICE();

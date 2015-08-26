@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -194,7 +195,7 @@ public class HostSetupNetworksValidatorTest {
 
         EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC;
         assertThat(validator.notRemovingLabeledNetworks(networkAttachment), failsWith(engineMessage,
-            ReplacementUtils.getVariableAssignmentString(engineMessage, labeledNetwork.getName())));
+            ReplacementUtils.getVariableAssignmentStringWithMultipleValues(engineMessage, labeledNetwork.getName())));
 
     }
 
@@ -451,7 +452,7 @@ public class HostSetupNetworksValidatorTest {
             .setParams(new ParametersBuilder().addRemovedBonds(idOfInexistingInterface))
             .build();
 
-        EngineMessage engineMessage = EngineMessage.NETWORK_BOND_RECORD_DOES_NOT_EXISTS;
+        EngineMessage engineMessage = EngineMessage.NETWORK_BOND_RECORDS_DOES_NOT_EXISTS;
         assertThat(validator.validRemovedBonds(Collections.<NetworkAttachment> emptyList()),
             failsWith(engineMessage,
                 ReplacementUtils.getListVariableAssignmentString(engineMessage,
@@ -473,13 +474,14 @@ public class HostSetupNetworksValidatorTest {
         requiredNetworkAttachment.setNicName(nicName);
 
         List<String> replacements = new ArrayList<>();
-        replacements.add(ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_BOND_NAME, nicName));
+        EngineMessage engineMessage = EngineMessage.BOND_USED_BY_NETWORK_ATTACHMENTS;
+        replacements.add(ReplacementUtils.getVariableAssignmentString(engineMessage, nicName));
         //null -- new network attachment with null id.
         replacements.addAll(replaceWith(HostSetupNetworksValidator.VAR_ATTACHMENT_IDS,
             Collections.<Guid> singletonList(null)));
 
         assertThat(validator.validRemovedBonds(Collections.singletonList(requiredNetworkAttachment)),
-            failsWith(EngineMessage.BOND_USED_BY_NETWORK_ATTACHMENTS, replacements));
+            failsWith(engineMessage, replacements));
 
     }
 
@@ -493,7 +495,7 @@ public class HostSetupNetworksValidatorTest {
             .addExistingInterfaces(Collections.<VdsNetworkInterface>singletonList(bond))
             .build();
 
-        assertThat(validator.validRemovedBonds(Collections.<NetworkAttachment>emptyList()), isValid());
+        assertThat(validator.validRemovedBonds(Collections.<NetworkAttachment> emptyList()), isValid());
     }
 
     @SuppressWarnings("unchecked")
@@ -752,17 +754,16 @@ public class HostSetupNetworksValidatorTest {
         assertThat(validator.networksUniquelyConfiguredOnHost(Arrays.asList(networkAttachment,
                 networkAttachmentReferencingSameNetwork)),
             failsWith(EngineMessage.NETWORKS_ALREADY_ATTACHED_TO_IFACES,
-                ReplacementUtils.getVariableAssignmentString(EngineMessage.NETWORKS_ALREADY_ATTACHED_TO_IFACES,
+                ReplacementUtils.getVariableAssignmentStringWithMultipleValues(EngineMessage.NETWORKS_ALREADY_ATTACHED_TO_IFACES,
                     networkName)));
 
     }
 
     @Test
-    public void testValidModifiedBondsFailsWhenBondIsUnnamed() throws Exception {
+    public void testValidModifiedBondsFailsWhenBondNotHaveNameAndId() throws Exception {
         doTestValidModifiedBonds(new Bond(),
-            new ValidationResult(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST),
-            ValidationResult.VALID,
-            new ValidationResult(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST),
+                ValidationResult.VALID,
+            new ValidationResult(EngineMessage.BOND_DOES_NOT_HAVE_NEITHER_ID_NOR_NAME_SPECIFIED),
             ValidationResult.VALID);
     }
 
@@ -774,8 +775,7 @@ public class HostSetupNetworksValidatorTest {
             ReplacementUtils.getVariableAssignmentString(engineMessage, bond.getName()));
 
         doTestValidModifiedBonds(bond,
-            ValidationResult.VALID,
-            notABondValidationResult,
+                notABondValidationResult,
             notABondValidationResult,
 
             ValidationResult.VALID);
@@ -785,8 +785,7 @@ public class HostSetupNetworksValidatorTest {
     public void testValidModifiedBondsFailsWhenInsufficientNumberOfSlaves() throws Exception {
         Bond bond = createBond();
         doTestValidModifiedBonds(bond,
-            ValidationResult.VALID,
-            ValidationResult.VALID,
+                ValidationResult.VALID,
             new ValidationResult(EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT,
                 ReplacementUtils.getVariableAssignmentString(EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT,
                     bond.getName())),
@@ -804,8 +803,7 @@ public class HostSetupNetworksValidatorTest {
         Bond bond = createBond();
         bond.setSlaves(Arrays.asList("slaveA", "slaveB"));
         doTestValidModifiedBonds(bond,
-            ValidationResult.VALID,
-            ValidationResult.VALID,
+                ValidationResult.VALID,
             /*this mocks validateModifiedBondSlaves to just verify, that caller method will behave ok, when
             validateModifiedBondSlaves return invalid result*/
             slavesValidationResult,
@@ -818,17 +816,15 @@ public class HostSetupNetworksValidatorTest {
         Bond bond = new Bond("bond1");
         bond.setSlaves(Arrays.asList("slaveA", "slaveB"));
         doTestValidModifiedBonds(bond,
-            ValidationResult.VALID,
-            ValidationResult.VALID,
+                ValidationResult.VALID,
             ValidationResult.VALID,
             ValidationResult.VALID);
     }
 
     private void doTestValidModifiedBonds(Bond bond,
-        ValidationResult interfaceByNameExistValidationResult,
-        ValidationResult interfaceIsBondValidationResult,
-        ValidationResult expectedValidationResult,
-        ValidationResult slavesValidationValidationResult) {
+            ValidationResult interfaceIsBondValidationResult,
+            ValidationResult expectedValidationResult,
+            ValidationResult slavesValidationValidationResult) {
 
         HostSetupNetworksValidator validator =
             spy(new HostSetupNetworksValidatorBuilder()
@@ -839,7 +835,6 @@ public class HostSetupNetworksValidatorTest {
                 .build());
 
         HostInterfaceValidator hostInterfaceValidatorMock = mock(HostInterfaceValidator.class);
-        when(hostInterfaceValidatorMock.interfaceByNameExists()).thenReturn(interfaceByNameExistValidationResult);
         when(hostInterfaceValidatorMock.interfaceIsBondOrNull()).thenReturn(interfaceIsBondValidationResult);
 
         doReturn(hostInterfaceValidatorMock).when(validator).createHostInterfaceValidator(any(VdsNetworkInterface.class));
@@ -850,13 +845,6 @@ public class HostSetupNetworksValidatorTest {
         } else {
             assertThat(validator.validNewOrModifiedBonds(),
                 failsWith(expectedValidationResult.getMessage(), expectedValidationResult.getVariableReplacements()));
-        }
-
-        verify(hostInterfaceValidatorMock).interfaceByNameExists();
-
-        //assert only if previous call was successful, otherwise this method was not called.
-        if (interfaceByNameExistValidationResult.isValid()) {
-            verify(hostInterfaceValidatorMock).interfaceIsBondOrNull();
         }
     }
 
@@ -880,7 +868,7 @@ public class HostSetupNetworksValidatorTest {
         bond.setSlaves(Arrays.asList("slaveA", "slaveB"));
 
         ValidationResult cannotBeSlaveValidationResult = new ValidationResult(EngineMessage.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE,
-        ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_INTERFACE_NAME, bond.getName()));
+        ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_NIC_NAME, bond.getName()));
 
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
             .setParams(new ParametersBuilder().addBonds(bond))
@@ -1040,8 +1028,8 @@ public class HostSetupNetworksValidatorTest {
         Matcher<ValidationResult> matcher) {
 
         HostInterfaceValidator hostInterfaceValidatorMock = mock(HostInterfaceValidator.class);
-        when(hostInterfaceValidatorMock.interfaceExists()).thenReturn(interfaceExistValidationResult);
-        when(hostInterfaceValidatorMock.interfaceByNameExists()).thenReturn(interfaceExistValidationResult);
+        when(hostInterfaceValidatorMock.interfaceExists(anyString())).thenReturn(interfaceExistValidationResult);
+        when(hostInterfaceValidatorMock.interfaceHasNameSet()).thenReturn(interfaceExistValidationResult);
         when(hostInterfaceValidatorMock.interfaceIsValidSlave()).thenReturn(interfaceIsValidSlaveValidationResult);
         when(hostInterfaceValidatorMock.interfaceIsBondOrNull()).thenReturn(ValidationResult.VALID);        //TODO MM: test for this.
 
@@ -1635,12 +1623,12 @@ public class HostSetupNetworksValidatorTest {
         if (valid) {
             assertThat(validator.validateAttachmentAndNicReferenceSameLabelNotConflict(attachment), isValid());
         } else {
+            EngineMessage engineMessage = EngineMessage.NETWORK_SHOULD_BE_ATTACHED_VIA_LABEL_TO_ANOTHER_NIC;
             assertThat(validator.validateAttachmentAndNicReferenceSameLabelNotConflict(attachment),
-                    failsWith(EngineMessage.NETWORK_SHOULD_BE_ATTACHED_VIA_LABEL_TO_ANOTHER_NIC,
-                            ReplacementUtils.createSetVariableString("NETWORK_SHOULD_BE_ATTACHED_VIA_LABEL_TO_ANOTHER_NIC_ENTITY",
-                                    network.getName()),
-                            ReplacementUtils.createSetVariableString("interfaceName", attachment.getNicName()),
-                            ReplacementUtils.createSetVariableString("labeledInterfaceName", nicLabel.getNicName())));
+                failsWith(engineMessage,
+                    ReplacementUtils.getVariableAssignmentString(engineMessage, network.getName()),
+                    ReplacementUtils.createSetVariableString("nicName", attachment.getNicName()),
+                    ReplacementUtils.createSetVariableString("labeledNicName", nicLabel.getNicName())));
         }
     }
 

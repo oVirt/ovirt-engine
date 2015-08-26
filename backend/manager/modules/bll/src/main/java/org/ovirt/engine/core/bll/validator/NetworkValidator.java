@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.PluralMessages;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.di.Injector;
@@ -124,10 +125,11 @@ public class NetworkValidator {
     /**
      * @return An error iff the network isn't set.
      */
-    public ValidationResult networkIsSet() {
-        //TODO MM: already used elsewhere, how to fix?
-        return ValidationResult.failWith(EngineMessage.NETWORK_NOT_EXISTS)
-                .when(network == null);
+    public ValidationResult networkIsSet(Guid networkId) {
+        EngineMessage engineMessage = EngineMessage.NETWORK_HAVING_ID_NOT_EXISTS;
+        return ValidationResult.failWith(engineMessage,
+            ReplacementUtils.getVariableAssignmentString(engineMessage, String.valueOf(networkId)))
+            .when(network == null);
     }
 
     /**

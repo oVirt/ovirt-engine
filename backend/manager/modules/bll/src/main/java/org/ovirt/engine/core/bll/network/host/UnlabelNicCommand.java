@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
@@ -15,7 +16,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class UnlabelNicCommand<T extends LabelNicParameters> extends CommandBase<T> {
 
@@ -55,15 +55,11 @@ public class UnlabelNicCommand<T extends LabelNicParameters> extends CommandBase
 
     @Override
     protected boolean validate() {
-        if (getNic() == null) {
-            return failValidation(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST);
-        }
+        Guid nicId = getParameters().getNicId();
+        HostInterfaceValidator hostInterfaceValidator = new HostInterfaceValidator(getNic());
 
-        if (!NetworkUtils.isLabeled(getNic()) || !getNic().getLabels().contains(getLabel())) {
-            return failValidation(EngineMessage.INTERFACE_NOT_LABELED);
-        }
-
-        return true;
+        return validate(hostInterfaceValidator.interfaceExists(nicId))
+                && validate(hostInterfaceValidator.nicIsNotLabeledWithSpecifiedLabel(getLabel()));
     }
 
     @Override
