@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunStatus;
@@ -134,11 +135,14 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
         if (size != null) {
             lun.setDeviceSize((int) (size / SizeConverter.BYTES_IN_GB));
         }
-        if(xlun.containsKey("pvsize")){
-            Long pvSize = IrsBrokerCommand.assignLongValue(xlun, "pvsize");
-            if(pvSize!=null)
-                lun.setPvSize(SizeConverter.convert(pvSize,
-                        SizeConverter.SizeUnit.BYTES, SizeConverter.SizeUnit.GiB).intValue());
+        if (xlun.containsKey("pvsize")) {
+            String pvSizeStr = (String) xlun.get("pvsize");
+            if (!StringUtils.isEmpty(pvSizeStr)) {
+                Long pvSize = IrsBrokerCommand.assignLongValue(xlun, "pvsize");
+                if (pvSize != null)
+                    lun.setPvSize(SizeConverter.convert(pvSize,
+                            SizeConverter.SizeUnit.BYTES, SizeConverter.SizeUnit.GiB).intValue());
+            }
         }
         if (xlun.containsKey("vendorID")) {
             lun.setVendorName(xlun.get("vendorID").toString());
