@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -95,12 +96,23 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
         return super.canDoAction();
     }
 
+
+    @Override
+    protected boolean isVmStatusValid(VMStatus status) {
+        if (getSnapshot().getType() == Snapshot.SnapshotType.ACTIVE) {
+            return status == VMStatus.Down;
+        }
+
+        return true;
+    }
+
     protected SnapshotsValidator createSnapshotsValidator() {
         return new SnapshotsValidator();
     }
 
     @Override
     protected List<DiskImage> getVmDisksFromDB() {
+
         if (cachedDisksFromDb == null) {
             cachedDisksFromDb =
                     ImagesHandler.filterImageDisks(getVm().getDiskMap().values(),
