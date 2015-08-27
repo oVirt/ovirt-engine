@@ -76,13 +76,13 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("There was an attempt to change VM values while the VM is not down. Please shut down the VM in order to modify these properties.")
     String VM_CANNOT_UPDATE_ILLEGAL_FIELD();
 
-    @DefaultStringValue("VM is configured to be 'Network bootable', but no Network Interface is configured.\nAlternatives:\n-Select a different boot device (using the 'Run Once' command or 'Edit VM' command on Boot Option Sub-Tab).\n-Configure Network Interface and rerun the VM.")
+    @DefaultStringValue("VM is configured to be 'Network bootable', but no Network Interface is configured.\nAlternatives:\n- Select a different boot device (using the 'Run Once' command or 'Edit VM' command on Boot Option Sub-Tab).\n- Configure Network Interface and rerun the VM.")
     String VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK();
 
-    @DefaultStringValue("Cannot ${action} ${type} with attached CD without an active ISO domain.\nAlternatives:\n-Attach an ISO Domain (to enable CD operations).\n-Change the boot sequence, using the Edit VM command (Boot Sub-Tab).\n-Select a different boot device (using the 'Run Once' command).")
+    @DefaultStringValue("Cannot ${action} ${type} with attached CD without an active ISO domain.\nAlternatives:\n- Attach an ISO Domain (to enable CD operations).\n- Change the boot sequence, using the Edit VM command (Boot Sub-Tab).\n- Select a different boot device (using the 'Run Once' command).")
     String VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO();
 
-    @DefaultStringValue("Cannot ${action} ${type} without at least one bootable disk.\nAlternatives:\n-Create a disk for this VM, and rerun the VM.\n-Change the boot sequence using the Edit VM command (Boot Option Sub-Tab).\n-Use the 'Run Once' command to select a different boot option and rerun the VM.")
+    @DefaultStringValue("Cannot ${action} ${type} without at least one bootable disk.\nAlternatives:\n- Create a disk for this VM, and rerun the VM.\n- Change the boot sequence using the Edit VM command (Boot Option Sub-Tab).\n- Use the Run-Once command to select a different boot option and rerun the VM.")
     String VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK();
 
     @DefaultStringValue("Cannot ${action} ${type}. Stateless flag on VM conflicts with running the VM in Preview mode. Either remove the Stateless flag from the VM or run the VM not in Preview mode.")
