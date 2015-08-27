@@ -45,7 +45,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -506,10 +505,6 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
 
     protected DiskImageDao getDiskImageDao() {
         return super.getDiskImageDao();
-    }
-
-    protected DiskDao getDiskDao() {
-        return getDbFacade().getDiskDao();
     }
 
     protected VmDeviceDao getVmDeviceDao() {
