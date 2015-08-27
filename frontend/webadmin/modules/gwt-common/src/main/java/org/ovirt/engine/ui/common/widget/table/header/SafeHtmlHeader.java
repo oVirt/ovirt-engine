@@ -5,9 +5,7 @@ import java.util.Set;
 
 import org.ovirt.engine.ui.common.widget.table.cell.SafeHtmlCell;
 import org.ovirt.engine.ui.common.widget.table.column.ColumnWithElementId;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
@@ -23,13 +21,6 @@ public class SafeHtmlHeader extends AbstractHeader<SafeHtml> implements ColumnWi
     private SafeHtml tooltipText;
 
     public static final SafeHtmlHeader BLANK_HEADER = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("")); //$NON-NLS-1$
-
-    interface CellTemplate extends SafeHtmlTemplates {
-        @Template("<span class=\"hasTooltip\">{0}</span>")
-        SafeHtml hasTooltip(SafeHtml html);
-    }
-
-    private static final CellTemplate templates = GWT.create(CellTemplate.class);
 
     public SafeHtmlHeader(SafeHtmlCell safeHtmlCell) {
         this(null, null, safeHtmlCell);

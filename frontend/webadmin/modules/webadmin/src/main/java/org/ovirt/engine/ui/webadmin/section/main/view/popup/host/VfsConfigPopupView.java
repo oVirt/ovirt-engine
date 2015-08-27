@@ -283,7 +283,7 @@ public class VfsConfigPopupView extends AbstractModelBoundPopupView<VfsConfigMod
 
         @Override
         public SafeHtml getTooltip() {
-            return templates.textForCheckBoxHeader(constants.attachAll());
+            return VfsConfigPopupView.templates.textForCheckBoxHeader(constants.attachAll());
         }
     }
 

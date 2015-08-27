@@ -6,7 +6,6 @@ import java.util.Set;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
 import com.google.gwt.cell.client.ValueUpdater;
-import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -63,18 +62,7 @@ public abstract class AbstractCell<C> extends com.google.gwt.cell.client.Abstrac
         if (tooltipContent == null) {
             tooltipContent = getTooltip(value);
         }
-
-        if (BrowserEvents.MOUSEOVER.equals(event.getType())) {
-            TooltipMixin.configureTooltip(parent, tooltipContent, event);
-        }
-
-        if (BrowserEvents.MOUSEOUT.equals(event.getType())) {
-            TooltipMixin.reapAllTooltips();
-        }
-
-        if (BrowserEvents.MOUSEDOWN.equals(event.getType())) {
-            TooltipMixin.hideAllTooltips();
-        }
+        TooltipMixin.handleTooltipEvent(parent, tooltipContent, event);
 
         super.onBrowserEvent(context, parent, value, event, valueUpdater);
     }

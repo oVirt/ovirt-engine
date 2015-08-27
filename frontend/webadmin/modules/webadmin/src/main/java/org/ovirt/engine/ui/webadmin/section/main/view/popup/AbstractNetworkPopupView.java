@@ -44,7 +44,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -315,8 +314,8 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             }
 
             @Override
-            public SafeHtml getTooltip() {
-                return templates.textForCheckBoxHeader(constants.attachAll());
+            public String getLabel() {
+                return constants.attachAll();
             }
         };
         AbstractCheckboxHeader requiredAllHeader = new AbstractCheckboxHeader() {
@@ -344,9 +343,10 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             }
 
             @Override
-            public SafeHtml getTooltip() {
-                return templates.textForCheckBoxHeader(constants.requiredAll());
+            public String getLabel() {
+                return constants.requiredAll();
             }
+
         };
 
         clustersTable.addColumn(new AbstractTextColumn<NetworkClusterModel>() {
