@@ -260,7 +260,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // relevant only if template created from vm
         if (isVmInDb) {
             VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(getVmId());
-            if (vmDynamic.getStatus() != VMStatus.Down) {
+            if (!isVmStatusValid(vmDynamic.getStatus())) {
                 throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
             }
 
@@ -454,7 +454,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
-        if (isVmInDb && getVm().getStatus() != VMStatus.Down) {
+        if (isVmInDb && !isVmStatusValid(getVm().getStatus())) {
             return failCanDoAction(EngineMessage.VMT_CANNOT_CREATE_TEMPLATE_FROM_DOWN_VM);
         }
         // validate uniqueness of template name. If template is a regular template, uniqueness
@@ -520,6 +520,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         } else {
             return doClusterRelatedChecks();
         }
+    }
+
+    protected boolean isVmStatusValid(VMStatus status) {
+        return status == VMStatus.Down;
     }
 
     protected boolean isDisksAliasNotEmpty() {
