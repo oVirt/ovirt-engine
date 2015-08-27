@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.SortedMap;
 
 import org.gwtbootstrap3.client.ui.constants.Styles;
+import org.ovirt.engine.ui.common.css.OvirtCss;
+import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.OptGroupElement;
@@ -23,7 +26,6 @@ import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -53,7 +55,7 @@ public abstract class GroupedListModelListBox<T> extends ListModelListBox<T> {
     FlowPanel groupLabelContainer;
 
     @UiField
-    Label groupLabel;
+    EnableableFormLabel groupLabel;
 
     @UiField
     public Style style;
@@ -173,6 +175,14 @@ public abstract class GroupedListModelListBox<T> extends ListModelListBox<T> {
         } else {
             container.addStyleName(style.container_legacy());
         }
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        final String oldStyleName = enabled ? OvirtCss.LABEL_DISABLED : OvirtCss.LABEL_ENABLED;
+        final String newStyleName = enabled ? OvirtCss.LABEL_ENABLED : OvirtCss.LABEL_DISABLED;
+        groupLabel.getElement().replaceClassName(oldStyleName, newStyleName);
     }
 
     private void updateGroupLabel() {
