@@ -16,7 +16,7 @@ public class LinqUtils {
      *
      * Returns first object from the collection that matches the predicate, or null if no such object was found
      */
-    public static <T> T firstOrNull(Collection<T> collection, Predicate<T> predicate) {
+    public static <T> T firstOrNull(Collection<T> collection, Predicate<? super T> predicate) {
         for (T t : collection) {
             if (predicate.eval(t))
                 return t;
@@ -43,8 +43,9 @@ public class LinqUtils {
      *
      * Returns a new list which contains all the objects from original collection with function applied to them.
      */
-    public static <IN, OUT> List<OUT> transformToList(final Collection<IN> collection, final Function<IN, OUT> f) {
-        LinkedList<OUT> list = new LinkedList<OUT>();
+    public static <IN, OUT> List<OUT> transformToList(final Collection<IN> collection,
+            final Function<? super IN, OUT> f) {
+        LinkedList<OUT> list = new LinkedList<>();
         for (IN in : collection) {
             list.add(f.eval(in));
         }
@@ -56,8 +57,8 @@ public class LinqUtils {
      *
      * Returns list containing all objects from original collection that matches the predicate
      */
-    public static <T> List<T> filter(Collection<T> collection, Predicate<T> predicate) {
-        LinkedList<T> results = new LinkedList<T>();
+    public static <T> List<T> filter(Collection<T> collection, Predicate<? super T> predicate) {
+        LinkedList<T> results = new LinkedList<>();
         for (T t : collection) {
             if (predicate.eval(t))
                 results.add(t);
@@ -74,8 +75,9 @@ public class LinqUtils {
      *
      * See DefaultMapper if you want to map keys only (similar to single parameter toDictionary())
      */
-    public static <IN, KEY, VALUE> Map<KEY, VALUE> toMap(Collection<IN> collection, Mapper<IN, KEY, VALUE> mapper) {
-        Map<KEY, VALUE> map = new LinkedHashMap<KEY, VALUE>();
+    public static <IN, KEY, VALUE> Map<KEY, VALUE> toMap(Collection<IN> collection,
+            Mapper<? super IN, KEY, VALUE> mapper) {
+        Map<KEY, VALUE> map = new LinkedHashMap<>();
         for (IN in : collection) {
             map.put(mapper.createKey(in), mapper.createValue(in));
         }
@@ -94,7 +96,8 @@ public class LinqUtils {
      * @param <VALUE> value type of the output Map
      * @return the transformed Map
      */
-    public static <IN, KEY, VALUE> Map<KEY, List<VALUE>> toMultiMap(Collection<IN> collection, Mapper<IN, KEY, VALUE> mapper) {
+    public static <IN, KEY, VALUE> Map<KEY, List<VALUE>> toMultiMap(Collection<IN> collection,
+            Mapper<? super IN, KEY, VALUE> mapper) {
         final Map<KEY, List<VALUE>> map = new HashMap<>();
         for (IN in : collection) {
             final KEY key = mapper.createKey(in);
