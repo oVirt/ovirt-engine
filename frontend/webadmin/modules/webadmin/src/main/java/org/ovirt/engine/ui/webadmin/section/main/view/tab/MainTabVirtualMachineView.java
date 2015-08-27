@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,8 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
+import org.ovirt.engine.ui.common.widget.action.DropdownActionButton;
+import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.cell.Cell;
 import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
@@ -42,13 +45,17 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.MigrationProgressColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ReasonColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
+
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 
 public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableView<VM, VmListModel<Void>> implements MainTabVirtualMachinePresenter.ViewDef {
+
+    private final EventBus eventBus;
 
     interface ViewIdHandler extends ElementIdHandler<MainTabVirtualMachineView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -58,8 +65,10 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public MainTabVirtualMachineView(MainModelProvider<VM, VmListModel<Void>> modelProvider) {
+    public MainTabVirtualMachineView(MainModelProvider<VM, VmListModel<Void>> modelProvider, EventBus eventBus) {
         super(modelProvider);
+
+        this.eventBus = eventBus;
 
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
@@ -348,6 +357,15 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return SafeHtmlUtils.fromSafeConstant(constants.rebootVm());
             }
         });
+
+        List<ActionButtonDefinition<VM>> consoleOptionsSubActions = new LinkedList<>();
+        consoleOptionsSubActions.add(new UiCommandButtonDefinition<VM>(eventBus, constants.consoleOptions()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getEditConsoleCommand();
+            }
+        });
+
         // TODO: separator
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.consoleVm(),
                 resources.consoleImage(), resources.consoleDisabledImage()) {
@@ -360,7 +378,13 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             public SafeHtml getTooltip() {
                 return SafeHtmlUtils.fromSafeConstant(constants.consoleVm());
             }
-        });
+        }, new DropdownActionButton<>(consoleOptionsSubActions, new DropdownActionButton.SelectedItemsProvider<VM>() {
+            @Override
+            public List<VM> getSelectedItems() {
+                return getMainModel().getSelectedItems();
+            }
+        }));
+
         // TODO: separator
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.consoleOptions(),
                 CommandLocation.OnlyFromContext) { //$NON-NLS-1$

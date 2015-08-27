@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.common.widget.action;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
@@ -41,12 +43,18 @@ public class DropdownActionButton<T> extends AbstractActionButton {
 
     MenuPanelPopup menuPopup;
 
+    private List<Pair<MenuItem, ActionButtonDefinition<T>>> items = new ArrayList<>();
+
+    private final SelectedItemsProvider<T> selectedItemsProvider;
+
     private final static CommonApplicationResources resources = AssetProvider.getResources();
 
-    public DropdownActionButton(List<ActionButtonDefinition<T>> actions, List selectedItems) {
+    public DropdownActionButton(List<ActionButtonDefinition<T>> actions, SelectedItemsProvider<T> selectedItemsProvider) {
+        this.selectedItemsProvider = selectedItemsProvider;
+
         initDropdownButton();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        initMenuPopup(actions, selectedItems);
+        initMenuPopup(actions);
         addMouseHandlers();
     }
 
@@ -64,7 +72,7 @@ public class DropdownActionButton<T> extends AbstractActionButton {
         });
     }
 
-    private void initMenuPopup(List<ActionButtonDefinition<T>> actions, final List selectedItems) {
+    private void initMenuPopup(List<ActionButtonDefinition<T>> actions) {
         menuPopup = new MenuPanelPopup(true);
 
         for (final ActionButtonDefinition<T> buttonDef : actions) {
@@ -72,12 +80,14 @@ public class DropdownActionButton<T> extends AbstractActionButton {
                 @Override
                 public void execute() {
                     menuPopup.asPopupPanel().hide();
-                    buttonDef.onClick(selectedItems);
+                    buttonDef.onClick(selectedItemsProvider.getSelectedItems());
                 }
             });
             menuItem.addStyleName(style.menuItem());
-            updateMenuItem(menuItem, buttonDef, selectedItems);
+            updateMenuItem(menuItem, buttonDef, selectedItemsProvider.getSelectedItems());
             menuPopup.getMenuBar().addItem(menuItem);
+
+            items.add(new Pair<>(menuItem, buttonDef));
         }
 
         menuPopup.asPopupPanel().setAutoHideEnabled(true);
@@ -132,6 +142,10 @@ public class DropdownActionButton<T> extends AbstractActionButton {
     @Override
     public void setEnabled(boolean enabled) {
         button.setEnabled(enabled);
+        for (Pair<MenuItem, ActionButtonDefinition<T>> item : items) {
+            updateMenuItem(item.getFirst(), item.getSecond(), selectedItemsProvider.getSelectedItems());
+        }
+
         dropdownButton.setEnabled(enabled);
     }
 
@@ -141,6 +155,10 @@ public class DropdownActionButton<T> extends AbstractActionButton {
         String buttonMouseOut();
 
         String menuItem();
+    }
+
+    public interface SelectedItemsProvider<T> {
+        List<T> getSelectedItems();
     }
 
 }
