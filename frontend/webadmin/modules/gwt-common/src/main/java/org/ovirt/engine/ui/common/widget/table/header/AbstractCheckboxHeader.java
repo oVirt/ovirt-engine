@@ -5,6 +5,8 @@ import java.util.Set;
 
 import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
+
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -13,12 +15,13 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public abstract class AbstractCheckboxHeader extends AbstractHeader<Boolean> {
+    private static final String CHECKBOX_HEADER_STYLE = "position: relative; top: 3px"; //$NON-NLS-1$
 
     private static final SafeHtml INPUT_CHECKED_DISABLED = SafeHtmlUtils.fromSafeConstant(
-            "<input type=\"checkbox\" disabled=\"\" tabindex=\"-1\" tabindex=\"-1\" checked/>"); //$NON-NLS-1$
+            "<input type=\"checkbox\" disabled=\"\" tabindex=\"-1\" tabindex=\"-1\" checked style=\"" + CHECKBOX_HEADER_STYLE + "\"/>"); //$NON-NLS-1$ $NON-NLS-2$
 
     private static final SafeHtml INPUT_UNCHECKED_DISABLED = SafeHtmlUtils.fromSafeConstant(
-            "<input type=\"checkbox\" disabled=\"\" tabindex=\"-1\"/>"); //$NON-NLS-1$
+            "<input type=\"checkbox\" disabled=\"\" tabindex=\"-1\" style=\"" + CHECKBOX_HEADER_STYLE + "\"/>"); //$NON-NLS-1$ $NON-NLS-2$
 
     public AbstractCheckboxHeader() {
         super(new CheckboxCell(true, false) {
@@ -45,6 +48,28 @@ public abstract class AbstractCheckboxHeader extends AbstractHeader<Boolean> {
                 selectionChanged(value);
             }
         });
+
+        if (getTooltip() != null) {
+            ((CheckboxCell) getCell()).setTooltip(getTooltip());
+        }
+
+        if (getLabel() != null) {
+            if (SafeHtmlUtils.EMPTY_SAFE_HTML.equals(getTooltip())) {
+                ((CheckboxCell) getCell()).setLabel(SafeHtmlUtils.fromString(getLabel()));
+            } else {
+                ((CheckboxCell) getCell()).setLabel(templates.hasTooltip(SafeHtmlUtils.fromString(getLabel())));
+            }
+        }
+
+        ((CheckboxCell) getCell()).setAdditionalStyles(CHECKBOX_HEADER_STYLE);
+    }
+
+    /**
+     * Override to set the value of the label.
+     * @return A string representing the label, or null if not defined.
+     */
+    public String getLabel() {
+        return null;
     }
 
     @Override
@@ -54,6 +79,9 @@ public abstract class AbstractCheckboxHeader extends AbstractHeader<Boolean> {
                 sb.append(INPUT_CHECKED_DISABLED);
             } else {
                 sb.append(INPUT_UNCHECKED_DISABLED);
+            }
+            if (getLabel() != null && !StringUtils.isEmpty(getLabel())) {
+                sb.append(SafeHtmlUtils.fromString(getLabel()));
             }
         } else {
             super.render(context, sb);
@@ -65,6 +93,8 @@ public abstract class AbstractCheckboxHeader extends AbstractHeader<Boolean> {
     abstract public boolean isEnabled();
 
     @Override
-    public abstract SafeHtml getTooltip();
+    public SafeHtml getTooltip() {
+        return SafeHtmlUtils.EMPTY_SAFE_HTML;
+    };
 
 }

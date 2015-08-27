@@ -243,8 +243,8 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         }
 
         @Override
-        public SafeHtml getTooltip() {
-              return templates.textForCheckBoxHeader(constants.requiredAll());
+        public String getLabel() {
+            return constants.requiredAll();
         }
     }
 
@@ -314,9 +314,10 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         }
 
         @Override
-        public SafeHtml getTooltip() {
-            return templates.textForCheckBoxHeader(constants.assignAll());
+        public String getLabel() {
+            return constants.assignAll();
         }
+
     }
 
     private static final class MigrationNetworkIndicatorCheckboxColumn extends AbstractCheckboxColumn<ClusterNetworkModel> {

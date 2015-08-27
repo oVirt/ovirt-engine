@@ -173,14 +173,14 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
                     @Override
                     public void render(Context context, SafeHtmlBuilder sb) {
                         super.render(context, sb);
-                        sb.append(templates.tableHeaderInlineImage(
+                        sb.append(ImportNetworksPopupView.templates.tableHeaderInlineImage(
                                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.dialogIconHelp())
                                 .getHTML())));
                     }
 
                     @Override
                     public SafeHtml getTooltip() {
-                        return templates.textForCheckBoxHeader(constants.publicNetwork());
+                        return ImportNetworksPopupView.templates.textForCheckBoxHeader(constants.publicNetwork());
                     }
                 };
 

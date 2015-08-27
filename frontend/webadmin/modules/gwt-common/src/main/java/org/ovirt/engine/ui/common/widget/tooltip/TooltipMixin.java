@@ -89,6 +89,21 @@ public class TooltipMixin {
         ElementTooltip.hideAll();
     }
 
+    public static void handleTooltipEvent(Element parent, SafeHtml tooltipContent, NativeEvent event) {
+
+        if (BrowserEvents.MOUSEOVER.equals(event.getType())) {
+            configureTooltip(parent, tooltipContent, event);
+        }
+
+        if (BrowserEvents.MOUSEOUT.equals(event.getType())) {
+            reapAllTooltips();
+        }
+
+        if (BrowserEvents.MOUSEDOWN.equals(event.getType())) {
+            hideAllTooltips();
+        }
+    }
+
     public static ElementTooltip addTooltipToElement(SafeHtml tooltipContent, Element element, Placement placement) {
         ElementTooltip tooltip = new ElementTooltip(element);
 

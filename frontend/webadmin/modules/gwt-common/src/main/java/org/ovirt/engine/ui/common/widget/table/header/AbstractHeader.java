@@ -2,10 +2,14 @@ package org.ovirt.engine.ui.common.widget.table.header;
 
 import org.ovirt.engine.ui.common.widget.table.cell.Cell;
 import org.ovirt.engine.ui.common.widget.table.column.ColumnWithElementId;
+
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.cellview.client.Header;
 
 /**
@@ -15,6 +19,13 @@ import com.google.gwt.user.cellview.client.Header;
  * @param <H> Cell data type.
  */
 public abstract class AbstractHeader<H> extends Header<H> implements ColumnWithElementId, TooltipHeader {
+
+    public interface CellTemplate extends SafeHtmlTemplates {
+        @Template("<span class=\"hasTooltip\">{0}</span>")
+        SafeHtml hasTooltip(SafeHtml html);
+    }
+
+    protected static final CellTemplate templates = GWT.create(CellTemplate.class);
 
     private ValueUpdater<H> updater = null;
 
