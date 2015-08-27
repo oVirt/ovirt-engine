@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Assert;
@@ -103,16 +105,7 @@ public class VmMapperTest extends
         from.getTimeZone().setName("Australia/Darwin");
         from.setTimezone(from.getTimeZone().getName());
         // VmPlacement - multiple hosts
-        VmPlacementPolicy placementPolicy = new VmPlacementPolicy();
-        Hosts hostsList = new Hosts();
-        String[] guidStrings = new String [] {Guid.EVERYONE.toString(), Guid.SYSTEM.toString()};
-        for (int i = 0; i < guidStrings.length; i++) {
-            Host newHost = new Host();
-            newHost.setId(guidStrings[i]);
-            hostsList.getHosts().add(newHost);
-        }
-        placementPolicy.setHosts(hostsList);
-        from.setPlacementPolicy(placementPolicy);
+        from.setPlacementPolicy(createPlacementPolicy(Guid.EVERYONE, Guid.SYSTEM));
         // Guest Nics configurations
         for (GuestNicConfiguration guestNic : from.getInitialization().getNicConfigurations().getNicConfigurations()) {
             guestNic.setBootProtocol(MappingTestHelper.shuffle(BootProtocol.class).value());
@@ -125,6 +118,18 @@ public class VmMapperTest extends
         from.getMigration().setCompressed(InheritableBoolean.TRUE.value());
         from.getDisplay().setDisconnectAction(DisplayDisconnectAction.LOCK_SCREEN.toString());
         return from;
+    }
+
+    private VmPlacementPolicy createPlacementPolicy(Guid... guids) {
+        VmPlacementPolicy placementPolicy = new VmPlacementPolicy();
+        Hosts hostsList = new Hosts();
+        for (Guid guid : guids) {
+            Host newHost = new Host();
+            newHost.setId(guid.toString());
+            hostsList.getHosts().add(newHost);
+        }
+        placementPolicy.setHosts(hostsList);
+        return placementPolicy;
     }
 
     @Override
@@ -217,6 +222,21 @@ public class VmMapperTest extends
         VmPayload vmPayload = VmMapper.map(payload, null);
         assertEquals(payload.getType(), vmPayload.getDeviceType().name());
         assertEquals(payload.getVolumeId(), vmPayload.getVolumeId());
+    }
+
+    @Test
+    public void testUpdateHostPinningPolicy() {
+        final VmStatic vmTemplate = new VmStatic();
+        vmTemplate.setDedicatedVmForVdsList(Guid.newGuid());
+        final VM vm = new VM();
+        vm.setPlacementPolicy(createPlacementPolicy(Guid.newGuid(), Guid.newGuid()));
+        final VmStatic mappedVm = VmMapper.map(vm, vmTemplate);
+
+        final List<Guid> hosts = new ArrayList<>();
+        for (Host host : vm.getPlacementPolicy().getHosts().getHosts()){
+            hosts.add(Guid.createGuidFromString(host.getId()));
+        }
+        assertEquals(new HashSet(hosts), new HashSet(mappedVm.getDedicatedVmForVdsList()));
     }
 
 

@@ -235,7 +235,6 @@ public class VmMapper extends VmBaseMapper {
             // read multiple hosts if there are few
             if (vm.getPlacementPolicy().isSetHosts()
                     && vm.getPlacementPolicy().getHosts().getHosts().size() > 0) {
-                hostGuidsSet.addAll(staticVm.getDedicatedVmForVdsList());
                 for (Host currHost : vm.getPlacementPolicy().getHosts().getHosts()) {
                     Guid hostGuid;
                     if (currHost.isSetId()) {
