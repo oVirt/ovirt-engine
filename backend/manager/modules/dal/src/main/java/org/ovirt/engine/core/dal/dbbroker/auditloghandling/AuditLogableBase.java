@@ -28,6 +28,7 @@ import org.ovirt.engine.core.dao.AsyncTaskDao;
 import org.ovirt.engine.core.dao.AuditLogDao;
 import org.ovirt.engine.core.dao.DbGroupDao;
 import org.ovirt.engine.core.dao.DbUserDao;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.RoleDao;
 import org.ovirt.engine.core.dao.RoleGroupMapDao;
@@ -757,6 +758,10 @@ public class AuditLogableBase extends TimeoutBase {
 
     public VmIconDao getVmIconDao() {
         return getDbFacade().getVmIconDao();
+    }
+
+    public DiskDao getDiskDao() {
+        return getDbFacade().getDiskDao();
     }
 
     public DbFacade getDbFacade() {

@@ -34,7 +34,6 @@ import org.ovirt.engine.core.common.vdscommands.UploadImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DiskDao;
 
 @SuppressWarnings("unused")
 public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends CommandBase<T> {
@@ -191,10 +190,6 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
     @Override
     public Guid getStoragePoolId() {
         return getDiskImage() != null ? getDiskImage().getStoragePoolId() : null;
-    }
-
-    protected DiskDao getDiskDao() {
-        return getDbFacade().getDiskDao();
     }
 
     protected DiskImage getDiskImage() {
