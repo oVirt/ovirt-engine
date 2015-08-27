@@ -82,7 +82,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type} with attached CD without an active ISO domain.\nAlternatives:\n-Attach an ISO Domain (to enable CD operations).\n-Change the boot sequence, using the Edit VM command (Boot Sub-Tab).\n-Select a different boot device (using the 'Run Once' command).")
     String VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO();
 
-    @DefaultStringValue("Cannot ${action} ${type} without at least one bootable disk.\nAlternatives:\n-Create a disk for this VM, and rerun the VM.\n-Change the boot sequence using the Edit VM command (Boot Option Sub-Tab).\n-Use the Run-Once command to select a different boot option and rerun the VM.")
+    @DefaultStringValue("Cannot ${action} ${type} without at least one bootable disk.\nAlternatives:\n-Create a disk for this VM, and rerun the VM.\n-Change the boot sequence using the Edit VM command (Boot Option Sub-Tab).\n-Use the 'Run Once' command to select a different boot option and rerun the VM.")
     String VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK();
 
     @DefaultStringValue("Cannot ${action} ${type}. Stateless flag on VM conflicts with running the VM in Preview mode. Either remove the Stateless flag from the VM or run the VM not in Preview mode.")
