@@ -172,8 +172,12 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
             protected UICommand resolveCommand() {
                 return getModel().getPreviewCommand();
             }
-        }, new DropdownActionButton<Snapshot>(previewSubActions, getModel().getSelectedItems()));
-
+        }, new DropdownActionButton<Snapshot>(previewSubActions, new DropdownActionButton.SelectedItemsProvider<Snapshot>() {
+            @Override
+            public List<Snapshot> getSelectedItems() {
+                return getModel().getSelectedItems();
+            }
+        }));
 
         getTable().addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), constants.commitSnapshot()) {
             @Override
