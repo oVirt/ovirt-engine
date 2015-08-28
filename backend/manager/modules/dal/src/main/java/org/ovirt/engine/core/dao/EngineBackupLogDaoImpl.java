@@ -1,25 +1,54 @@
 package org.ovirt.engine.core.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.persistence.TypedQuery;
 
 import org.ovirt.engine.core.common.businessentities.EngineBackupLog;
-import org.ovirt.engine.core.common.businessentities.EngineBackupLogId;
-import org.ovirt.engine.core.dao.jpa.AbstractJpaDao;
+import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class EngineBackupLogDaoImpl extends AbstractJpaDao<EngineBackupLog, EngineBackupLogId> implements EngineBackupLogDao {
+public class EngineBackupLogDaoImpl extends BaseDaoDbFacade implements EngineBackupLogDao {
 
-    protected EngineBackupLogDaoImpl() {
-        super(EngineBackupLog.class);
+    private static class EngineBackupLogRowMapper implements RowMapper<EngineBackupLog> {
+        public static final EngineBackupLogRowMapper INSTANCE = new EngineBackupLogRowMapper();
+
+        @Override
+        public EngineBackupLog mapRow(ResultSet rs, int rowNum) throws SQLException {
+            EngineBackupLog entity = new EngineBackupLog();
+            entity.setScope(rs.getString("scope"));
+            entity.setDoneAt(DbFacadeUtils.fromDate(rs.getTimestamp("done_at")));
+            entity.setPassed(rs.getBoolean("is_passed"));
+            entity.setFqdn(rs.getString("fqdn"));
+            entity.setOutputMessage(rs.getString("output_message"));
+            entity.setLogPath(rs.getString("log_path"));
+            return entity;
+        }
     }
 
     @Override
     public EngineBackupLog getLastSuccessfulEngineBackup(String scope) {
-        TypedQuery<EngineBackupLog> query = getEntityManager().createNamedQuery("EngineBackupLog.getLatest",
-                EngineBackupLog.class).setParameter("scope", scope).setMaxResults(1);
-        return singleResult(query);
+        return getCallsHandler().executeRead("GetLastSuccessfulEngineBackup", EngineBackupLogRowMapper.INSTANCE,
+                getCustomMapSqlParameterSource().addValue("scope", scope));
+    }
+
+
+    @Override
+    public void save(EngineBackupLog engineBackupLog) {
+
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("scope", engineBackupLog.getScope())
+                .addValue("done_at", engineBackupLog.getDoneAt())
+                .addValue("status", engineBackupLog.isPassed() ? 1 : -1)
+                .addValue("fqdn", engineBackupLog.getFqdn())
+                .addValue("output_message", engineBackupLog.getOutputMessage())
+                .addValue("log_path", engineBackupLog.getLogPath());
+
+        getCallsHandler().executeModification("LogEngineBackupEvent", parameterSource);
     }
 }

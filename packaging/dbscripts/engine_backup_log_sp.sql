@@ -37,3 +37,16 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetLastSuccessfulEngineBackup(v_scope VARCHAR(64))
+RETURNS SETOF engine_backup_log STABLE
+   AS $procedure$
+BEGIN
+     RETURN QUERY SELECT *
+     FROM engine_backup_log
+     WHERE scope = v_scope and is_passed
+     ORDER BY scope, done_at DESC
+     LIMIT 1;
+END; $procedure$
+LANGUAGE plpgsql;
+
+

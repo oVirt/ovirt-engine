@@ -9,6 +9,14 @@ public class EngineBackupLogId implements Serializable {
     private String scope;
     private Date doneAt;
 
+    public EngineBackupLogId() {
+    }
+
+    public EngineBackupLogId(String scope, Date doneAt) {
+        this.scope = scope;
+        this.doneAt = doneAt;
+    }
+
     public String getScope() {
         return scope;
     }
@@ -27,11 +35,14 @@ public class EngineBackupLogId implements Serializable {
 
     @Override
     public int hashCode() {
-        return  Objects.hash(scope, doneAt);
+        return Objects.hash(scope, doneAt);
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
         if (this == obj) {
             return true;
         }
