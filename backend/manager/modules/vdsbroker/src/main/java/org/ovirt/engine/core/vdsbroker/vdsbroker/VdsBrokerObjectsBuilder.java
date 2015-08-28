@@ -2180,11 +2180,26 @@ public class VdsBrokerObjectsBuilder {
 
             for (VdsNumaNode vdsNumaNode : newNumaNodeList) {
                 int index = vdsNumaNode.getIndex();
-                List<Integer> distances = extractIntegerList(numaNodeDistanceMap, String.valueOf(index));
-                Map<Integer, Integer> distanceMap = new HashMap<>(distances.size());
-                for (int i = 0; i < distances.size(); i++) {
-                    distanceMap.put(newNumaNodeList.get(i).getIndex(), distances.get(i));
+                Map<Integer, Integer> distanceMap = new HashMap<>();
+
+                if (numaNodeDistanceMap != null) {
+                    // Save the received NUMA node distances
+                    List<Integer> distances = extractIntegerList(numaNodeDistanceMap, String.valueOf(index));
+                    for (int i = 0; i < distances.size(); i++) {
+                        distanceMap.put(newNumaNodeList.get(i).getIndex(), distances.get(i));
+                    }
+                } else {
+                    // Save faked distances
+                    for (VdsNumaNode otherNumaNode : newNumaNodeList) {
+                        // There is no distance if the node is the same one
+                        if (otherNumaNode.getIndex() == vdsNumaNode.getIndex()) {
+                            continue;
+                        }
+
+                        distanceMap.put(otherNumaNode.getIndex(), 0);
+                    }
                 }
+
                 VdsNumaNode newNumaNode = NumaUtils.getVdsNumaNodeByIndex(newNumaNodeList, index);
                 if (newNumaNode != null) {
                     newNumaNode.setNumaNodeDistances(distanceMap);
