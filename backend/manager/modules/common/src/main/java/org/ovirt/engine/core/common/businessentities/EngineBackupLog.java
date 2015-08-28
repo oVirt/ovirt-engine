@@ -3,42 +3,16 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
-@Entity
-@Table(name = "engine_backup_log")
-@IdClass(EngineBackupLogId.class)
-@NamedQueries({
-        @NamedQuery(name = "EngineBackupLog.getLatest", query = "select e from EngineBackupLog e where e.scope = :scope and passed = true order by doneAt DESC")
-})
+
 public class EngineBackupLog implements IVdcQueryable, BusinessEntity<EngineBackupLogId> {
 
-    @Id
-    @Column(name="scope")
     private String scope;
-
-    @Id
-    @Column(name="done_at")
     private Date doneAt;
-
-    @Column(name="is_passed")
     private boolean passed;
-
-    @Column(name="output_message")
     private String outputMessage;
-
-    @Column(name="fqdn")
     private String fqdn;
-
-    @Column(name = "log_path")
     private String logPath;
 
     public String getScope() {
@@ -96,10 +70,13 @@ public class EngineBackupLog implements IVdcQueryable, BusinessEntity<EngineBack
 
     @Override
     public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof EngineBackupLog)) {
+        if (obj.getClass() != this.getClass()) {
             return false;
         }
         EngineBackupLog other = (EngineBackupLog) obj;
@@ -120,21 +97,19 @@ public class EngineBackupLog implements IVdcQueryable, BusinessEntity<EngineBack
     }
 
     @Override
+    public Object getQueryableId() {
+        return new EngineBackupLogId(getScope(), getDoneAt());
+    }
+
+    @Override
     public EngineBackupLogId getId() {
-        EngineBackupLogId key = new EngineBackupLogId();
-        key.setScope(scope);
-        key.setDoneAt(doneAt);
+        EngineBackupLogId key = new EngineBackupLogId(scope, doneAt);
         return key;
     }
 
     @Override
-    public Object getQueryableId() {
-        return getId();
-    }
-
-    @Override
     public void setId(EngineBackupLogId id) {
-        scope = id.getScope();
         doneAt = id.getDoneAt();
+        scope = id.getScope();
     }
 }

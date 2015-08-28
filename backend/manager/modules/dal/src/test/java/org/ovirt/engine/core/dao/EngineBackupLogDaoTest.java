@@ -12,10 +12,9 @@ import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.EngineBackupLog;
-import org.ovirt.engine.core.common.businessentities.EngineBackupLogId;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-public class EngineBackupLogDaoTest extends BaseHibernateDaoTestCase<EngineBackupLogDao, EngineBackupLog, EngineBackupLogId> {
+public class EngineBackupLogDaoTest extends BaseDaoTestCase {
 
     private EngineBackupLogDao dao;
     private EngineBackupLog existingEngineBackupLog;
@@ -79,30 +78,5 @@ public class EngineBackupLogDaoTest extends BaseHibernateDaoTestCase<EngineBacku
         assertNotNull(entry);
         assertNotEquals(entry.getDoneAt(), existingEngineBackupLog.getDoneAt());
         assertTrue(entry.isPassed());
-    }
-
-    @Override protected EngineBackupLogDao getDao() {
-        return dao;
-    }
-
-    @Override protected EngineBackupLog getExistingEntity() {
-        return existingEngineBackupLog;
-    }
-
-    @Override protected EngineBackupLog getNonExistentEntity() {
-        return newEntity;
-    }
-
-    @Override protected int getAllEntitiesCount() {
-        return 1;
-    }
-
-    @Override protected EngineBackupLog modifyEntity(EngineBackupLog entity) {
-        entity.setOutputMessage("test");
-        return entity;
-    }
-
-    @Override protected void verifyEntityModification(EngineBackupLog result) {
-        assertEquals("test", result.getOutputMessage());
     }
 }
