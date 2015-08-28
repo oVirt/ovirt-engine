@@ -69,6 +69,7 @@ class Plugin(plugin.PluginBase):
                 'user',
                 'add',
                 name,
+                '--attribute=firstName=%s' % name,
             ) + (
                 (
                     '--id=%s' % id,
