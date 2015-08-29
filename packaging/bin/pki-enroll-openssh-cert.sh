@@ -39,6 +39,7 @@ sign() {
 		cat "${PKIDIR}/private/ca.pem" > "${TMPCA}"
 		ssh-keygen \
 			-s "${TMPCA}" \
+			-P "" \
 			-I "${id}" \
 			${host:+-h} \
 			-V "-1h:+${days}d" \
