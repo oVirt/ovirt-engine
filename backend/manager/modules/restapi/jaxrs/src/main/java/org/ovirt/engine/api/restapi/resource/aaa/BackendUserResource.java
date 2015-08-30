@@ -9,6 +9,7 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedRolesResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
+import org.ovirt.engine.api.resource.aaa.SSHPublicKeysResource;
 import org.ovirt.engine.api.resource.aaa.UserResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 import org.ovirt.engine.api.restapi.resource.BackendAssignedPermissionsResource;
@@ -65,6 +66,11 @@ public class BackendUserResource
                                                              VdcQueryType.GetPermissionsByAdElementId,
                                                              new IdQueryParameters(guid),
                                                              User.class));
+    }
+
+    @Override
+    public SSHPublicKeysResource getSSHPublicKeysResource() {
+        return inject(new BackendSSHPublicKeysResource(guid));
     }
 
     public User getUserByNameAndDomain(String userName, String domainName) {

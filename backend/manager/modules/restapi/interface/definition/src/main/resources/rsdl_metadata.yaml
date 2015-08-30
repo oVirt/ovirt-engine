@@ -2995,6 +2995,20 @@ actions:
       - mandatoryArguments: {permit.id|name: 'xs:string'}
         optionalArguments: {}
         description: add a new permit for the role assigned to the user
+- name: /users/{user:id}/sshpublickeys|rel=get
+  description: get the list of SSH public keys registered by the user
+- name: /users/{user:id}/sshpublickeys/{sshpublickey:id}|rel=get
+  description: get the details of the specified SSH public key registered by the user
+- name: /users/{user:id}/sshpublickeys/{sshpublickey:id}|rel=delete
+  description: delete the specified SSH public key registered by the use
+- name: /users/{user:id}/sshpublickeys|rel=add
+  description: register a new SSH public key for the user
+  request:
+    body:
+      parameterType: SSHPublicKey
+      signatures:
+      - mandatoryArguments:
+          ssh_public_key.id|name: xs:string
 - name: /users/{user:id}/tags|rel=get
   description: get the list of tags attached to the user
 - name: /users/{user:id}/tags/{tag:id}|rel=get

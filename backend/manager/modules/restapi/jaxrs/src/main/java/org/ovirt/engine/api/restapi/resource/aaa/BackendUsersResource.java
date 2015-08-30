@@ -43,7 +43,7 @@ public class BackendUsersResource
         extends AbstractBackendCollectionResource<User, DbUser>
         implements UsersResource {
 
-    static final String[] SUB_COLLECTIONS = { "permissions", "roles", "tags" };
+    static final String[] SUB_COLLECTIONS = { "permissions", "roles", "sshpublickeys", "tags" };
 
     private static final String USERS_SEARCH_PATTERN = "usrname != \"\"";
     private static final String AND_SEARCH_PATTERN = " and ";

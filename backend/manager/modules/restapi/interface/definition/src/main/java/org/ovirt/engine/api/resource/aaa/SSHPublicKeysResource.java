@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2010 Red Hat, Inc.
+* Copyright (c) 2015 Red Hat, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -16,36 +16,28 @@
 
 package org.ovirt.engine.api.resource.aaa;
 
-import javax.ws.rs.DELETE;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.User;
+import org.ovirt.engine.api.model.SSHPublicKey;
+import org.ovirt.engine.api.model.SSHPublicKeys;
 import org.ovirt.engine.api.resource.ApiMediaType;
-import org.ovirt.engine.api.resource.AssignedPermissionsResource;
-import org.ovirt.engine.api.resource.AssignedRolesResource;
-import org.ovirt.engine.api.resource.AssignedTagsResource;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-public interface UserResource {
+public interface SSHPublicKeysResource {
 
     @GET
-    public User get();
+    public SSHPublicKeys list();
 
-    @DELETE
-    public Response remove();
+    @POST
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    public Response add(SSHPublicKey pubkey);
 
-    @Path("roles")
-    public AssignedRolesResource getRolesResource();
-
-    @Path("permissions")
-    public AssignedPermissionsResource getPermissionsResource();
-
-    @Path("tags")
-    public AssignedTagsResource getTagsResource();
-
-    @Path("sshpublickeys")
-    public SSHPublicKeysResource getSSHPublicKeysResource();
+    @Path("{id}")
+    public SSHPublicKeyResource getSSHPublicKeySubResource(@PathParam("id") String id);
 }
