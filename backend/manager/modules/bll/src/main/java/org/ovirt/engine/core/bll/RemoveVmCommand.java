@@ -352,6 +352,9 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         if (getParameters().isRemoveDisks()) {
             List<CinderDisk> cinderDisks =
                     ImagesHandler.filterDisksBasedOnCinder(getVm().getDiskMap().values());
+            if (cinderDisks.isEmpty()) {
+                return Collections.emptyList();
+            }
             RemoveAllVmCinderDisksParameters param = new RemoveAllVmCinderDisksParameters(getVmId(), cinderDisks);
             param.setParentHasTasks(!getReturnValue().getVdsmTaskIdList().isEmpty());
             Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
