@@ -1262,6 +1262,7 @@ public class VdsUpdateRunTimeInfo {
             if (deviceId == null || vmDevice == null) {
                 deviceId = addNewVmDevice(vmId, device, logicalName);
             } else {
+                vmDevice.setIsPlugged(Boolean.TRUE);
                 vmDevice.setAddress(((Map<String, String>) device.get(VdsProperties.Address)).toString());
                 vmDevice.setAlias(StringUtils.defaultString((String) device.get(VdsProperties.Alias)));
                 vmDevice.setLogicalName(logicalName);
@@ -1307,6 +1308,7 @@ public class VdsUpdateRunTimeInfo {
 
             if (device.getIsManaged()) {
                 if (device.getIsPlugged()) {
+                    device.setIsPlugged(Boolean.FALSE);
                     device.setAddress("");
                     addVmDeviceToList(device);
                     log.debugFormat("VM {0} managed pluggable device was unplugged : {1}", vmId, device);
