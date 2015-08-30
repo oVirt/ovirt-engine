@@ -151,7 +151,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         if (authRecord.<String> get(AuthRecord.VALID_TO) != null) {
             try {
                 Date fromExtension =
-                        new SimpleDateFormat("yyyyMMddHHmmssZ").parse(authRecord.<String> get(AuthRecord.VALID_TO));
+                        new SimpleDateFormat("yyyyMMddHHmmssX").parse(authRecord.<String> get(AuthRecord.VALID_TO));
                 if (validTo != null) {
                     validTo = validTo.compareTo(fromExtension) < 0 ? validTo : fromExtension;
                 } else {
