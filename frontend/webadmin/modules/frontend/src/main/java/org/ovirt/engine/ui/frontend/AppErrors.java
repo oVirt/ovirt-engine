@@ -3044,7 +3044,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Enabling both Virt and Gluster services is not allowed.")
     String VDS_GROUP_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED();
 
-    @DefaultStringValue("Console connection denied. Another user has already accessed the console of this VM. The VM should be rebooted to allow another user to access it, or changed by an admin to not enforce reboot between users accessing its console.")
+    @DefaultStringValue("Console connection denied. Another user has already accessed the console of this VM. The VM should either be rebooted to allow another user to access it, or changed by an admin to not enforce a reboot between users accessing its console.")
     String USER_CANNOT_FORCE_RECONNECT_TO_VM();
 
     @DefaultStringValue("Engine is running in Maintenance mode and is not accepting commands.")
