@@ -2242,6 +2242,38 @@
     </xs:complexContent>
   </xs:complexType>
 
+
+  <xs:element name="ssh_public_key" type="SSHPublicKey"/>
+
+  <xs:element name="ssh_public_keys" type="SSHPublicKeys"/>
+
+  <xs:complexType name="SSHPublicKey">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="content" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="user" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="SSHPublicKeys">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="ssh_public_key" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="SSHPublicKeys"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="user" type="User"/>
 
   <xs:element name="users" type="Users"/>
