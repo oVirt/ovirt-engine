@@ -104,7 +104,7 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
         String newImageId = proxy.createImageFromDiskImage(diskImage);
         getParameters().setParentCommand(VdcActionType.ExportRepoImage);
 
-        Guid taskId = getAsyncTaskId();
+        Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getImageGroupID()));
 
         VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.UploadImage,
