@@ -91,7 +91,7 @@ class Plugin(plugin.PluginBase):
 
     def _setupSchema(self):
         self.logger.info(
-            _('Creating/refreshing Engine AAA database schema')
+            _("Creating/refreshing Engine 'internal' domain database schema")
         )
         args = [
             oenginecons.FileLocations.AAA_JDBC_DB_SCHMA_TOOL,
