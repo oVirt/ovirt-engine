@@ -150,6 +150,13 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     @Inject
     private NetworkAttachmentIpConfigurationValidator networkAttachmentIpConfigurationValidator;
 
+    @Inject
+    private UnmanagedNetworkValidator unmanagedNetworkValidator;
+
+    public HostSetupNetworksCommand(T parameters) {
+        this(parameters, null);
+    }
+
     public HostSetupNetworksCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setVdsId(parameters.getVdsId());
@@ -267,7 +274,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 hostSetupNetworksValidatorHelper,
                 vmDao,
                 networkExclusivenessValidatorResolver,
-                networkAttachmentIpConfigurationValidator);
+                networkAttachmentIpConfigurationValidator,
+                unmanagedNetworkValidator);
 
         return validator.validate();
     }

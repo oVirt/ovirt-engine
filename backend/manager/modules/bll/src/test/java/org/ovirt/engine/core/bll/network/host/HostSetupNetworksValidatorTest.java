@@ -1820,7 +1820,8 @@ public class HostSetupNetworksValidatorTest {
                 new HostSetupNetworksValidatorHelper(),
                 vmDao,
                 mockNetworkExclusivenessValidatorResolver,
-                mockNetworkAttachmentIpConfigurationValidator);
+                mockNetworkAttachmentIpConfigurationValidator,
+                new UnmanagedNetworkValidator());
         }
     }
 }

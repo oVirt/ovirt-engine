@@ -95,6 +95,7 @@ public class HostSetupNetworksValidator {
     private HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper;
     private List<VdsNetworkInterface> existingInterfaces;
     private NetworkAttachmentIpConfigurationValidator networkAttachmentIpConfigurationValidator;
+    private UnmanagedNetworkValidator unmanagedNetworkValidator;
 
     public HostSetupNetworksValidator(VDS host,
             HostSetupNetworksParameters params,
@@ -108,7 +109,8 @@ public class HostSetupNetworksValidator {
             HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper,
             VmDao vmDao,
             NetworkExclusivenessValidatorResolver networkExclusivenessValidatorResolver,
-            NetworkAttachmentIpConfigurationValidator networkAttachmentIpConfigurationValidator) {
+            NetworkAttachmentIpConfigurationValidator networkAttachmentIpConfigurationValidator,
+            UnmanagedNetworkValidator unmanagedNetworkValidator) {
 
         this.host = host;
         this.params = params;
@@ -140,7 +142,10 @@ public class HostSetupNetworksValidator {
         nicLabelByLabel = Entities.entitiesByName(params.getLabels());
 
         this.hostSetupNetworksValidatorHelper = hostSetupNetworksValidatorHelper;
+
         this.networkAttachmentIpConfigurationValidator = networkAttachmentIpConfigurationValidator;
+
+        this.unmanagedNetworkValidator = unmanagedNetworkValidator;
     }
 
     private void setSupportedFeatures() {
@@ -171,6 +176,7 @@ public class HostSetupNetworksValidator {
         vr = skipValidation(vr) ? vr : validateCustomProperties();
         vr = skipValidation(vr) ? vr : validateQos(attachmentsToConfigure);
         vr = skipValidation(vr) ? vr : validateBondModeVsNetworksAttachedToIt(attachmentsToConfigure);
+        vr = skipValidation(vr) ? vr : unmanagedNetworkValidator.validate(params, existingInterfaces, networkBusinessEntityMap);
 
         return vr;
     }
@@ -606,6 +612,18 @@ public class HostSetupNetworksValidator {
                 }
             }
         }
+
+        for (VdsNetworkInterface iface : existingInterfaces) {
+            if (slaveName.equals(NetworkUtils.stripVlan(iface))) {
+                if (iface.getNetworkImplementationDetails() != null &&
+                    !iface.getNetworkImplementationDetails().isManaged()) {
+                    return new ValidationResult(EngineMessage.NETWORK_INTERFACE_WITH_UNMANAGED_NETWORK_CANNOT_BE_SLAVE,
+                            ReplacementUtils.createSetVariableString(VAR_NETWORK_NAME, iface.getNetworkName()),
+                            ReplacementUtils.createSetVariableString(VAR_NIC_NAME, slaveName));
+                }
+            }
+        }
+
         return ValidationResult.VALID;
     }
 

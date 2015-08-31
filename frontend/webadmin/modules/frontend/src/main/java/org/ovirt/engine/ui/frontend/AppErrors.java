@@ -3914,4 +3914,20 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. VM has PCI host devices attached.")
     String ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES();
+
+    @DefaultStringValue("Cannot add label ${label} to network interface ${nic}. Network interface has an unmanaged network attached.")
+    String ACTION_TYPE_FAILED_HOST_NETWORK_LABEL_ON_UNMANAGED_NETWORK();
+
+    @DefaultStringValue("Cannot add network ${network} to network interface ${nic}. Network interface has an unmanaged network attached.")
+    String ACTION_TYPE_FAILED_HOST_NETWORK_ATTACHEMENT_ON_UNMANAGED_NETWORK();
+
+    @DefaultStringValue("Network interface ${nicName} can not be a slave. It has an unmanaged network ${networkName} attached.")
+    String NETWORK_INTERFACE_WITH_UNMANAGED_NETWORK_CANNOT_BE_SLAVE();
+
+    @DefaultStringValue("Cannot remove unmanaged network ${network} from host, as it is an existing cluster network.")
+    String REMOVED_UNMANAGED_NETWORK_IS_A_CLUSTER_NETWORK();
+
+    @DefaultStringValue("Cannot remove unmanaged network ${network} from host, as it does not exist on the host.")
+    String REMOVED_UNMANAGED_NETWORK_DOES_NOT_EXISIT_ON_HOST();
 }
+
