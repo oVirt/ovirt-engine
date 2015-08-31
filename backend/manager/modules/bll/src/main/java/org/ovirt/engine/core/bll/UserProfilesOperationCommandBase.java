@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.UserProfileParameters;
+import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.UserProfileDao;
@@ -16,6 +17,8 @@ import org.ovirt.engine.core.uutils.ssh.OpenSSHUtils;
 
 
 public abstract class UserProfilesOperationCommandBase<T extends UserProfileParameters> extends CommandBase<T> {
+
+    protected UserProfile cachedUserProfile;
 
     @Inject
     protected UserProfileDao userProfileDao;
@@ -60,5 +63,12 @@ public abstract class UserProfilesOperationCommandBase<T extends UserProfilePara
         return Collections.singletonList(new PermissionSubject(getUserId(),
                                                                VdcObjectType.System,
                                                                getActionType().getActionGroup()));
+    }
+
+    protected UserProfile getUserProfile() {
+        if (cachedUserProfile == null) {
+            cachedUserProfile = userProfileDao.getByUserId(getUserId());
+        }
+        return cachedUserProfile;
     }
 }

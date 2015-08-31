@@ -22,7 +22,7 @@ public class UpdateUserProfileCommand<T extends UserProfileParameters> extends U
             return false;
         }
 
-        if (userProfileDao.getByUserId(getUserId()) == null) {
+        if (getUserProfile() == null) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_PROFILE_NOT_EXIST);
         }
 
@@ -42,7 +42,7 @@ public class UpdateUserProfileCommand<T extends UserProfileParameters> extends U
 
     @Override
     protected void executeCommand() {
-        UserProfile profile = userProfileDao.getByUserId(getUserId());
+        UserProfile profile = getUserProfile();
         /* we want to update only the SSH key right now, so discard anything else */
         profile.setSshPublicKey(getParameters().getUserProfile().getSshPublicKey());
         userProfileDao.update(profile);
