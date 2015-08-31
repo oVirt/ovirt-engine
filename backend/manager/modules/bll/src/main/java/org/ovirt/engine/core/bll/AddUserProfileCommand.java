@@ -9,6 +9,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 
 public class AddUserProfileCommand<T extends UserProfileParameters> extends UserProfilesOperationCommandBase<T> {
+
     public AddUserProfileCommand(T parameters) {
         this(parameters, null);
     }
@@ -23,7 +24,7 @@ public class AddUserProfileCommand<T extends UserProfileParameters> extends User
             return false;
         }
 
-        if (userProfileDao.getByUserId(getUserId()) != null) {
+        if (getUserProfile() != null) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_PROFILE_ALREADY_EXISTS);
         }
 

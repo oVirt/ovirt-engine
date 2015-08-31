@@ -18,15 +18,7 @@ public class RemoveUserProfileCommand<T extends UserProfileParameters> extends U
 
     @Override
     protected boolean canDoAction() {
-        UserProfile dbProfile = userProfileDao.getByUserId(getUserId());
-        UserProfile givenProfile = getParameters().getUserProfile();
-
-        if (dbProfile == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_PROFILE_NOT_EXIST);
-        }
-        if (!dbProfile.getId().equals(givenProfile.getId())) {
-            log.warn("Profile ID mismatch: expected in profile {} received {}",
-                    dbProfile.getId().toString(), givenProfile.getId().toString());
+        if (getUserProfile() == null) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_PROFILE_NOT_EXIST);
         }
 
@@ -46,7 +38,8 @@ public class RemoveUserProfileCommand<T extends UserProfileParameters> extends U
 
     @Override
     protected void executeCommand() {
-        userProfileDao.remove(getParameters().getUserProfile().getId());
+        UserProfile profile = getUserProfile();
+        userProfileDao.remove(profile.getId());
         setSucceeded(true);
     }
 }
