@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -74,7 +75,7 @@ public class AAAServiceImpl implements ModuleService {
                         );
                     }
 
-                    Dump.PRINCIPAL_RECORD.dump(outMap.<ExtMap>get(Authz.InvokeKeys.PRINCIPAL_RECORD));
+                    Dump.PRINCIPAL_RECORD.dump(module, outMap.<ExtMap>get(Authz.InvokeKeys.PRINCIPAL_RECORD));
                 }
             }
         ),
@@ -102,7 +103,7 @@ public class AAAServiceImpl implements ModuleService {
                         getFieldNameByValue(Authn.AuthResult.class, outMap.<Integer> get(Authn.InvokeKeys.RESULT))
                     );
 
-                    Dump.AUTH_RECORD.dump(outMap.<ExtMap>get(Authn.InvokeKeys.AUTH_RECORD));
+                    Dump.AUTH_RECORD.dump(module, outMap.<ExtMap>get(Authn.InvokeKeys.AUTH_RECORD));
 
                     if (outMap.<Integer> get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
                         throw new RuntimeException(
@@ -173,7 +174,7 @@ public class AAAServiceImpl implements ModuleService {
                     );
 
                     ExtMap authRecord = outMap.<ExtMap>get(Authn.InvokeKeys.AUTH_RECORD);
-                    Dump.AUTH_RECORD.dump(authRecord);
+                    Dump.AUTH_RECORD.dump(module, authRecord);
 
                     if (outMap.<Integer> get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
                         module.acctReport(
@@ -194,7 +195,7 @@ public class AAAServiceImpl implements ModuleService {
 
                     if(mappingExtension != null) {
                         log.info("API: -->Mapping.InvokeCommands.MAP_AUTH_RECORD");
-                        Dump.AUTH_RECORD.dump(authRecord);
+                        Dump.AUTH_RECORD.dump(module, authRecord);
                         authRecord = mappingExtension.invoke(
                             new ExtMap().mput(
                                 Base.InvokeKeys.COMMAND,
@@ -209,7 +210,7 @@ public class AAAServiceImpl implements ModuleService {
                             authRecord
                         );
                         log.info("API: <--Mapping.InvokeCommands.MAP_AUTH_RECORD");
-                        Dump.AUTH_RECORD.dump(authRecord);
+                        Dump.AUTH_RECORD.dump(module, authRecord);
                     }
 
                     log.info("API: -->Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD principal='{}'", authRecord.get(Authn.AuthRecord.PRINCIPAL));
@@ -235,7 +236,7 @@ public class AAAServiceImpl implements ModuleService {
                     );
 
                     ExtMap principalRecord = outMap.<ExtMap> get(Authz.InvokeKeys.PRINCIPAL_RECORD);
-                    Dump.PRINCIPAL_RECORD.dump(principalRecord);
+                    Dump.PRINCIPAL_RECORD.dump(module, principalRecord);
 
                     if (outMap.<Integer> get(Authz.InvokeKeys.STATUS) != Authz.Status.SUCCESS) {
                         if (principalRecord == null) {
@@ -307,7 +308,7 @@ public class AAAServiceImpl implements ModuleService {
                     ExtensionProxy authzExtension = module.getExtensionsManager().getExtensionByName((String) module.argMap.get("extension-name"));
                     ExtUUID entity = getQueryEntity((String)module.argMap.get("entity"));
                     ExtMap filter = createQueryFilter(entity, module.argMap);
-                    Dump.QUERY_FILTER_RECORD.dump(filter, "");
+                    Dump.QUERY_FILTER_RECORD.dump(module, filter, "");
 
                     Collection<String> namespaces = authzExtension.getContext().get(
                         Authz.ContextKeys.AVAILABLE_NAMESPACES,
@@ -363,9 +364,9 @@ public class AAAServiceImpl implements ModuleService {
                             } else {
                                 for (ExtMap result : results) {
                                     if (Authz.QueryEntity.PRINCIPAL.equals(entity)) {
-                                        Dump.PRINCIPAL_RECORD.dump(result);
+                                        Dump.PRINCIPAL_RECORD.dump(module, result);
                                     } else if (Authz.QueryEntity.GROUP.equals(entity)) {
-                                        Dump.GROUP_RECORD.dump(result);
+                                        Dump.GROUP_RECORD.dump(module, result);
                                     }
                                 }
                             }
@@ -423,17 +424,17 @@ public class AAAServiceImpl implements ModuleService {
     }
 
     private interface DumpFormat {
-        void dump(ExtMap map, String indent);
+        void dump(AAAServiceImpl module, ExtMap map, String indent);
     }
 
     private enum Dump {
         AUTH_RECORD(
             new DumpFormat() {
                 @Override
-                public void dump(ExtMap map, String indent) {
+                public void dump(AAAServiceImpl module, ExtMap map, String indent) {
                     if (map != null) {
                         log.info("--- Begin AuthRecord ---");
-                        dumpRecord(map, Collections.<ExtKey>emptyList(), "AuthRecord", "");
+                        dumpRecord(module, map, Collections.<ExtKey>emptyList(), "AuthRecord", "");
                         log.info("--- End   AuthRecord ---");
                     }
                 }
@@ -442,12 +443,12 @@ public class AAAServiceImpl implements ModuleService {
         PRINCIPAL_RECORD(
             new DumpFormat() {
                 @Override
-                public void dump(ExtMap map, String indent) {
+                public void dump(AAAServiceImpl module, ExtMap map, String indent) {
                     if (map != null) {
                         log.info("{}--- Begin PrincipalRecord ---", indent);
-                        dumpRecord(map, Arrays.asList(Authz.PrincipalRecord.GROUPS), "PrincipalRecord", indent);
+                        dumpRecord(module, map, Arrays.asList(Authz.PrincipalRecord.GROUPS), "PrincipalRecord", indent);
                         for (ExtMap group : map.get(Authz.PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
-                            GROUP_RECORD.dump(group, indent + "  ");
+                            GROUP_RECORD.dump(module, group, indent + "  ");
                         }
                         log.info("{}--- End   PrincipalRecord ---", indent);
                     }
@@ -457,12 +458,12 @@ public class AAAServiceImpl implements ModuleService {
         GROUP_RECORD(
             new DumpFormat() {
                 @Override
-                public void dump(ExtMap map, String indent) {
+                public void dump(AAAServiceImpl module, ExtMap map, String indent) {
                     if (map != null) {
                         log.info("{}--- Begin GroupRecord ---", indent);
-                        dumpRecord(map, Arrays.asList(Authz.GroupRecord.GROUPS), "GroupRecord", indent);
+                        dumpRecord(module, map, Arrays.asList(Authz.GroupRecord.GROUPS), "GroupRecord", indent);
                         for (ExtMap group : map.get(Authz.GroupRecord.GROUPS, Collections.<ExtMap> emptyList())) {
-                            dump(group, indent + "  ");
+                            dump(module, group, indent + "  ");
                         }
                         log.info("{}--- End   GroupRecord ---", indent);
                     }
@@ -472,12 +473,12 @@ public class AAAServiceImpl implements ModuleService {
         QUERY_FILTER_RECORD(
             new DumpFormat() {
                 @Override
-                public void dump(ExtMap map, String indent) {
+                public void dump(AAAServiceImpl module, ExtMap map, String indent) {
                     if (map != null) {
                         log.info("{}--- Begin QueryFilterRecord ---", indent);
-                        dumpRecord(map, Arrays.asList(Authz.QueryFilterRecord.FILTER), "QueryFilterRecord", indent);
+                        dumpRecord(module, map, Arrays.asList(Authz.QueryFilterRecord.FILTER), "QueryFilterRecord", indent);
                         for (ExtMap filter : map.get(Authz.QueryFilterRecord.FILTER, Collections.<ExtMap> emptyList())) {
-                            dump(filter, indent + "  ");
+                            dump(module, filter, indent + "  ");
                         }
                         log.info("{}--- End QueryFilterRecord ---", indent);
                     }
@@ -491,32 +492,47 @@ public class AAAServiceImpl implements ModuleService {
             this.dumpFormat = dumpFormat;
         }
 
-        private static void dumpRecord(ExtMap extMap, List<ExtKey> ignore, String title, String indent) {
+        private static void dumpRecord(AAAServiceImpl module, ExtMap extMap, List<ExtKey> ignore, String title, String indent) {
             if (extMap != null) {
                 log.debug("{}{}: {}", indent, title, extMap);
-                for (Map.Entry<ExtKey, Object> entry : extMap.entrySet()) {
-                    if (ignore.contains(entry.getKey())) {
+                Collection<ExtKey> keys = extMap.keySet();
+                if (module.argModuleMap.get("key") != null) {
+                    Collection<ExtKey> k = new HashSet<>();
+                    for (String uuid : (List<String>)module.argModuleMap.get("key")) {
+                        k.add(new ExtKey("Unknown", Object.class, uuid));
+                    }
+                    keys.retainAll(k);
+                }
+                for (ExtKey key : keys) {
+                    if (ignore.contains(key)) {
                         continue;
                     }
-                    if ((entry.getKey().getFlags() & ExtKey.Flags.SKIP_DUMP) != 0) {
+                    if ((key.getFlags() & ExtKey.Flags.SKIP_DUMP) != 0) {
                         continue;
                     }
-                    log.info(
-                        "{}    {}: {}",
-                        indent,
-                        entry.getKey().getUuid().getName(),
-                        (entry.getKey().getFlags() & ExtKey.Flags.SENSITIVE) != 0 ? "***" : entry.getValue()
+                    module.output(
+                        ((String)module.argModuleMap.get("format")).replace(
+                            "{key}",
+                            key.getUuid().getUuid().toString()
+                        ).replace(
+                            "{name}",
+                            key.getUuid().getName()
+                        ).replace(
+                            "{value}",
+                            (key.getFlags() & ExtKey.Flags.SENSITIVE) != 0 ? "***" : extMap.get(key).toString()
+                        ),
+                        indent
                     );
                 }
             }
         }
 
-        public void dump(ExtMap map, String indent) {
-            dumpFormat.dump(map, indent);
+        public void dump(AAAServiceImpl module, ExtMap map, String indent) {
+            dumpFormat.dump(module, map, indent);
         }
 
-        public void dump(ExtMap map) {
-            dump(map, "");
+        public void dump(AAAServiceImpl module, ExtMap map) {
+            dump(module, map, "");
         }
     }
 
@@ -559,6 +575,14 @@ public class AAAServiceImpl implements ModuleService {
         }
 
         return ret;
+    }
+
+    private void output(String s, String logIndent) {
+        if ("log".equals(argModuleMap.get("output"))) {
+            log.info("{}{}", logIndent, s);
+        } else if ("stdout".equals(argModuleMap.get("output"))) {
+            System.out.println(s);
+        }
     }
 
     private static String getPassword(String what) {
