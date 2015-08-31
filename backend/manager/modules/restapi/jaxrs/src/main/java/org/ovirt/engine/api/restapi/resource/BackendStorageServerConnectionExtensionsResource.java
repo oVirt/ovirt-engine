@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
-import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.StorageConnectionExtension;
@@ -17,7 +16,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-@Path("/storageconnectionextensions")
 public class BackendStorageServerConnectionExtensionsResource
         extends AbstractBackendCollectionResource<StorageConnectionExtension, StorageServerConnectionExtension>
         implements StorageServerConnectionExtensionsResource {
