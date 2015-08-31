@@ -5371,17 +5371,20 @@
     <table name="user_profiles">
         <column>profile_id</column>
         <column>user_id</column>
+        <column>ssh_public_key_id</column>
         <column>ssh_public_key</column>
         <column>user_portal_vm_auto_login</column>
         <row>
             <value>38cb5663-96bc-485c-834a-cbbc03acc820</value>
             <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value>39df6903-7eda-46c3-bd54-50be69a0d512</value>
             <value>key1</value>
             <value>FALSE</value>
         </row>
         <row>
             <value>38cb5663-96bc-485c-834a-cbbc03acc821</value>
             <value>81940459-2ec4-4afa-bbaa-22549555293b</value>
+            <value>3a5f6ee7-fc24-4620-bf05-a8b2863431d5</value>
             <value>key2</value>
             <value>FALSE</value>
         </row>

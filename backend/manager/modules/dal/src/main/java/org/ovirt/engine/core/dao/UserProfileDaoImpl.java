@@ -25,6 +25,7 @@ public class UserProfileDaoImpl extends BaseDao implements UserProfileDao {
             UserProfile entity = new UserProfile();
             entity.setId(getGuidDefaultEmpty(rs, "profile_id"));
             entity.setUserId(getGuidDefaultEmpty(rs, "user_id"));
+            entity.setSshPublicKeyId(getGuidDefaultEmpty(rs, "ssh_public_key_id"));
             entity.setSshPublicKey(rs.getString("ssh_public_key"));
             entity.setLoginName(rs.getString("login_name"));
             entity.setUserPortalVmLoginAutomatically(rs.getBoolean("user_portal_vm_auto_login"));
@@ -63,6 +64,7 @@ public class UserProfileDaoImpl extends BaseDao implements UserProfileDao {
         getCallsHandler().executeModification("InsertUserProfile",
                 createIdParameterMapper(profile.getId())
                         .addValue("user_id", profile.getUserId())
+                        .addValue("ssh_public_key_id", profile.getSshPublicKeyId())
                         .addValue("ssh_public_key", profile.getSshPublicKey())
                         .addValue("user_portal_vm_auto_login", profile.isUserPortalVmLoginAutomatically()));
     }
@@ -72,6 +74,7 @@ public class UserProfileDaoImpl extends BaseDao implements UserProfileDao {
         getCallsHandler().executeModification("UpdateUserProfile",
                                   createIdParameterMapper(profile.getId())
                                                   .addValue("user_id", profile.getUserId())
+                                                  .addValue("ssh_public_key_id", profile.getSshPublicKeyId())
                                                   .addValue("ssh_public_key", profile.getSshPublicKey())
                                                   .addValue("user_portal_vm_auto_login", profile.isUserPortalVmLoginAutomatically()));
     }

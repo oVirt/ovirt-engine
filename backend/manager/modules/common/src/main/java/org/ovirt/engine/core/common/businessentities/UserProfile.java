@@ -10,6 +10,8 @@ public class UserProfile  implements IVdcQueryable {
 
     private Guid userId;
 
+    private Guid sshPublicKeyId;
+
     private String sshPublicKey;
 
     private String loginName;
@@ -18,6 +20,7 @@ public class UserProfile  implements IVdcQueryable {
 
     public UserProfile() {
         userPortalVmLoginAutomatically = true;
+        sshPublicKeyId = Guid.Empty;
         sshPublicKey = "";
     }
 
@@ -42,6 +45,14 @@ public class UserProfile  implements IVdcQueryable {
         this.userId = user_id;
     }
 
+    public Guid getSshPublicKeyId() {
+        return sshPublicKeyId;
+    }
+
+    public void setSshPublicKeyId(Guid ssh_public_key_id) {
+        this.sshPublicKeyId = ssh_public_key_id;
+    }
+
     public String getSshPublicKey() {
         return sshPublicKey;
     }
@@ -62,6 +73,7 @@ public class UserProfile  implements IVdcQueryable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((sshPublicKeyId == null) ? 0 : sshPublicKeyId.hashCode());
         result = prime * result + ((sshPublicKey == null) ? 0 : sshPublicKey.hashCode());
         result = prime * result + ((Boolean) userPortalVmLoginAutomatically).hashCode();
         result = prime * result + ((loginName == null) ? 0 : loginName.hashCode());
@@ -80,7 +92,8 @@ public class UserProfile  implements IVdcQueryable {
             return false;
         }
         UserProfile other = (UserProfile) obj;
-        return  ObjectUtils.objectsEqual(sshPublicKey, other.sshPublicKey)
+        return  ObjectUtils.objectsEqual(sshPublicKeyId, other.sshPublicKeyId)
+             && ObjectUtils.objectsEqual(sshPublicKey, other.sshPublicKey)
              && ObjectUtils.objectsEqual(isUserPortalVmLoginAutomatically(), other.isUserPortalVmLoginAutomatically())
              && ObjectUtils.objectsEqual(loginName, other.loginName);
     }
