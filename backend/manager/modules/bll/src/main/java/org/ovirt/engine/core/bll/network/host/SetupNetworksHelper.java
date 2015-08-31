@@ -42,6 +42,8 @@ import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.violation.DetailedViolation;
 import org.ovirt.engine.core.utils.violation.Violation;
 import org.ovirt.engine.core.utils.violation.ViolationRenderer;
@@ -275,13 +277,24 @@ public class SetupNetworksHelper {
             if (!checkedNetworks.contains(network.getName())) {
                 List<Network> networksOnInterface = findNetworksOnInterface(ifacesByNetworkName.get(network.getName()));
                 boolean mtuMismatched = false;
-                for (Network net : networksOnInterface) {
-                    checkedNetworks.add(net.getName());
-                    if (net.getMtu() != network.getMtu()
-                            && (NetworkUtils.isNonVmNonVlanNetwork(network) || NetworkUtils.isNonVmNonVlanNetwork(net))) {
-                        mtuMismatched = true;
+                final Network nonVlanNetwork = LinqUtils.firstOrNull(networksOnInterface, new Predicate<Network>() {
+                    @Override
+                    public boolean eval(Network network) {
+                        return !NetworkUtils.isVlan(network);
                     }
+                });
+
+                if (nonVlanNetwork != null) {
+                    final Network mismatchMtuNetwork =
+                            LinqUtils.firstOrNull(networksOnInterface, new Predicate<Network>() {
+                                @Override
+                                public boolean eval(Network network) {
+                                    return network.getMtu() != nonVlanNetwork.getMtu();
+                                }
+                            });
+                    mtuMismatched = mismatchMtuNetwork != null;
                 }
+
                 if (mtuMismatched) {
                     reportMTUDifferences(networksOnInterface);
                 }
