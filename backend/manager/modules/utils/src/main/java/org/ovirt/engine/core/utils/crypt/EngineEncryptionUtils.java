@@ -146,7 +146,7 @@ public class EngineEncryptionUtils {
      * @param source string to encrypt.
      * @return encrypted string.
      * @throws GeneralSecurityException
-     * Please notice that empty strings are not encrypted and returend as-is.
+     * Please note that empty strings are not encrypted and are returned as-is.
      */
     public static String encrypt(String source) throws GeneralSecurityException {
         if (source == null || source.trim().length() == 0) {
@@ -166,7 +166,7 @@ public class EngineEncryptionUtils {
      * @param source string to decrypt.
      * @return decrypted string.
      * @throws GeneralSecurityException
-     * Please notice that empty strings are not decrypted and returend as-is.
+     * Please note that empty strings are not decrypted and are returned as-is.
      */
     public static String decrypt(String source) throws GeneralSecurityException {
         if (source == null || source.trim().length() == 0) {
