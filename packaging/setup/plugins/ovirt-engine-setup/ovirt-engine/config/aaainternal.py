@@ -21,13 +21,11 @@
 
 import uuid
 import gettext
-import io
 import os
 
 from otopi import constants as otopicons
 from otopi import filetransaction, plugin, util
 
-import configparser
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
@@ -46,31 +44,6 @@ class Plugin(plugin.PluginBase):
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
 
-    def _parseConfiguration(self, propFile):
-        if not os.path.exists(propFile):
-            return {}
-
-        fake = io.StringIO()
-        with open(propFile) as f:
-            fake.write(u'[root]\n')
-            fake.write(unicode(f.read()))
-        fake.seek(0, os.SEEK_SET)
-
-        cp = configparser.ConfigParser()
-        cp.readfp(fake)
-        return dict(cp.items('root'))
-
-    def _loadExistingAdminUserId(self):
-        return self._parseConfiguration(
-            os.path.join(
-                oenginecons.FileLocations.OVIRT_ENGINE_EXTENSIONS_DIR,
-                'internal-authz.properties'
-            )
-        ).get(
-            'config.authz.user.id',
-            None
-        )
-
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         priority=plugin.Stages.PRIORITY_LAST,
@@ -87,13 +60,7 @@ class Plugin(plugin.PluginBase):
             oenginecons.ConfigEnv.ADMIN_USER_AUTHZ_TYPE
         ] = self.MY_TYPE
 
-        self.environment[
-            oenginecons.ConfigEnv.ADMIN_USER_ID
-        ] = self._loadExistingAdminUserId()
-
-        if self.environment[
-            oenginecons.ConfigEnv.ADMIN_USER_ID
-        ] is None:
+        if self.environment[oenginecons.ConfigEnv.ADMIN_USER_ID] is None:
             self.environment[
                 oenginecons.ConfigEnv.ADMIN_USER_ID
             ] = str(uuid.uuid4())
