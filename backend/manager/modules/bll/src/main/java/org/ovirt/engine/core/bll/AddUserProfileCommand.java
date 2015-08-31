@@ -47,6 +47,9 @@ public class AddUserProfileCommand<T extends UserProfileParameters> extends User
         UserProfile profile = getParameters().getUserProfile();
         profile.setId(Guid.newGuid());
         profile.setUserId(getUserId()); /* must be overridden */
+        if (!profile.getSshPublicKey().isEmpty() && Guid.isNullOrEmpty(profile.getSshPublicKeyId())) {
+            profile.setSshPublicKeyId(Guid.newGuid());
+        }
         userProfileDao.save(profile);
         setSucceeded(true);
     }

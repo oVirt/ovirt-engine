@@ -25,6 +25,7 @@ public class UserProfileDaoImpl extends BaseDao implements UserProfileDao {
             UserProfile entity = new UserProfile();
             entity.setId(getGuidDefaultEmpty(rs, "profile_id"));
             entity.setUserId(getGuidDefaultEmpty(rs, "user_id"));
+            entity.setSshPublicKeyId(getGuidDefaultEmpty(rs, "ssh_public_key_id"));
             entity.setSshPublicKey(rs.getString("ssh_public_key"));
             entity.setLoginName(rs.getString("login_name"));
             return entity;
@@ -60,9 +61,10 @@ public class UserProfileDaoImpl extends BaseDao implements UserProfileDao {
     @Override
     public void save(UserProfile profile) {
         getCallsHandler().executeModification("InsertUserProfile",
-                                  createIdParameterMapper(profile.getId())
-                                                  .addValue("user_id", profile.getUserId())
-                                                  .addValue("ssh_public_key", profile.getSshPublicKey()));
+                createIdParameterMapper(profile.getId())
+                        .addValue("user_id", profile.getUserId())
+                        .addValue("ssh_public_key_id", profile.getSshPublicKeyId())
+                        .addValue("ssh_public_key", profile.getSshPublicKey()));
     }
 
     @Override
@@ -70,6 +72,7 @@ public class UserProfileDaoImpl extends BaseDao implements UserProfileDao {
         getCallsHandler().executeModification("UpdateUserProfile",
                                   createIdParameterMapper(profile.getId())
                                                   .addValue("user_id", profile.getUserId())
+                                                  .addValue("ssh_public_key_id", profile.getSshPublicKeyId())
                                                   .addValue("ssh_public_key", profile.getSshPublicKey()));
     }
 

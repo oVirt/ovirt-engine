@@ -44,6 +44,7 @@ public class UpdateUserProfileCommand<T extends UserProfileParameters> extends U
     protected void executeCommand() {
         UserProfile profile = getUserProfile();
         /* we want to update only the SSH key right now, so discard anything else */
+        profile.setSshPublicKeyId(getParameters().getUserProfile().getSshPublicKeyId());
         profile.setSshPublicKey(getParameters().getUserProfile().getSshPublicKey());
         userProfileDao.update(profile);
         setSucceeded(true);
