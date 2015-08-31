@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.UserProfileParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.UserProfileDao;
 import org.ovirt.engine.core.uutils.ssh.OpenSSHUtils;
 
@@ -29,6 +30,16 @@ public abstract class UserProfilesOperationCommandBase<T extends UserProfilePara
 
     @Override
     protected boolean canDoAction() {
+        Guid userId = getParameters().getUserProfile().getUserId();
+
+        if (Guid.isNullOrEmpty(userId)) {
+            // null/Empty GUID == current user. Fix parameters for later use (e.g. subclasses).
+            userId = getUserId();
+            getParameters().getUserProfile().setUserId(userId);
+        } else if (!userId.equals(getUserId())) {
+            return failCanDoAction(EngineMessage.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
+        }
+
         String sshPublicKey = getParameters().getUserProfile().getSshPublicKey();
 
         if (sshPublicKey == null || sshPublicKey.isEmpty()) {
