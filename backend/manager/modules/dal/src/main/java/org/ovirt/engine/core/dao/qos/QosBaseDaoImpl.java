@@ -8,15 +8,15 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
+import org.ovirt.engine.core.dao.DefaultGenericDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-public abstract class QosBaseDaoFacadeImpl<T extends QosBase> extends DefaultGenericDaoDbFacade<T, Guid> implements QosDao<T> {
+public abstract class QosBaseDaoImpl<T extends QosBase> extends DefaultGenericDao<T, Guid> implements QosDao<T> {
     private static final String QOS = "qos";
     private final QosType qosType;
 
-    public QosBaseDaoFacadeImpl(QosType qosType) {
+    public QosBaseDaoImpl(QosType qosType) {
         super(QOS);
         this.qosType = qosType;
         setProcedureNameForSave(MessageFormat.format(DEFAULT_SAVE_PROCEDURE_FORMAT, qosType.name() + QOS));

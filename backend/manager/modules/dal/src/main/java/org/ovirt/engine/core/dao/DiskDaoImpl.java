@@ -19,7 +19,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class DiskDaoImpl extends BaseDaoDbFacade implements DiskDao {
+public class DiskDaoImpl extends BaseDao implements DiskDao {
 
     @Override
     public Disk get(Guid id) {

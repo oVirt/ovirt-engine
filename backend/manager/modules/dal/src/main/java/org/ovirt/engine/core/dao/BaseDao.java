@@ -16,7 +16,7 @@ import org.ovirt.engine.core.dal.dbbroker.SimpleJdbcCallsHandler;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
-public abstract class BaseDaoDbFacade {
+public abstract class BaseDao {
     protected static final String SEPARATOR = ",";
 
     @Inject
@@ -28,7 +28,7 @@ public abstract class BaseDaoDbFacade {
     @Inject
     private SimpleJdbcCallsHandler callsHandler;
 
-    public BaseDaoDbFacade() {
+    public BaseDao() {
     }
 
     protected JdbcTemplate getJdbcTemplate() {

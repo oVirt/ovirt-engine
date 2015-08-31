@@ -29,7 +29,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
  */
 @Named
 @Singleton
-public class AuditLogDaoImpl extends BaseDaoDbFacade implements AuditLogDao {
+public class AuditLogDaoImpl extends BaseDao implements AuditLogDao {
 
     @SuppressWarnings("synthetic-access")
     private static final AuditLogRowMapper auditLogRowMapper = new AuditLogRowMapper();

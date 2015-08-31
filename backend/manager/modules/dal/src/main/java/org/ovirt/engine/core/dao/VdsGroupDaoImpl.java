@@ -36,7 +36,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class VdsGroupDaoImpl extends BaseDaoDbFacade implements VdsGroupDao {
+public class VdsGroupDaoImpl extends BaseDao implements VdsGroupDao {
     private static final Logger log = LoggerFactory.getLogger(VdsGroupDaoImpl.class);
 
     @Override

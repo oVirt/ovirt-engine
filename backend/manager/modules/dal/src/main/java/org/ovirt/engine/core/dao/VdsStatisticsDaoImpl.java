@@ -23,7 +23,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class VdsStatisticsDaoImpl extends BaseDaoDbFacade implements VdsStatisticsDao {
+public class VdsStatisticsDaoImpl extends BaseDao implements VdsStatisticsDao {
 
     private static final class VdsStatisticsRowMapper implements RowMapper<VdsStatistics> {
         public static final VdsStatisticsRowMapper instance = new VdsStatisticsRowMapper();

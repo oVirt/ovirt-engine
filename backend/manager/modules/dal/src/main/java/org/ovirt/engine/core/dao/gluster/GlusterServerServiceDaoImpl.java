@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatu
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
+import org.ovirt.engine.core.dao.MassOperationsGenericDao;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
@@ -23,7 +23,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 @Named
 @Singleton
 @SuppressWarnings("deprecation")
-public class GlusterServerServiceDaoImpl extends MassOperationsGenericDaoDbFacade<GlusterServerService, Guid> implements GlusterServerServiceDao {
+public class GlusterServerServiceDaoImpl extends MassOperationsGenericDao<GlusterServerService, Guid> implements GlusterServerServiceDao {
 
     private static final ParameterizedRowMapper<GlusterServerService> serviceRowMapper =
             new GlusterServerServiceRowMapper();

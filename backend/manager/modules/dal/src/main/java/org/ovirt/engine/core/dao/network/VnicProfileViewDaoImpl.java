@@ -10,13 +10,13 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.DefaultReadDaoDbFacade;
+import org.ovirt.engine.core.dao.DefaultReadDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDaoImpl.VnicProfileRowMapperBase;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class VnicProfileViewDaoImpl extends DefaultReadDaoDbFacade<VnicProfileView, Guid> implements VnicProfileViewDao {
+public class VnicProfileViewDaoImpl extends DefaultReadDao<VnicProfileView, Guid> implements VnicProfileViewDao {
 
     public VnicProfileViewDaoImpl() {
         super("VnicProfileView");

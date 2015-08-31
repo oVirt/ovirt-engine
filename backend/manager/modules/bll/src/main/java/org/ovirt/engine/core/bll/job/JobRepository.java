@@ -39,7 +39,7 @@ public interface JobRepository {
     void saveJob(Job job);
 
     /**
-     * Retrieves the {@link Job} entity with the given id, including all steps
+     * Retrieves the {@link Job} entity with the given id.
      *
      * @param id
      *            The id to look by (can't be <code>null</code>).
@@ -66,6 +66,23 @@ public interface JobRepository {
      * @return a list of {@link Job} if found a match or an empty list.
      */
     List<Job> getJobsByEntityAndAction(Guid entityId, VdcActionType actionType);
+
+    /**
+     * Retrieves the {@link Job} entity with the given id, populated with its Steps.
+     *
+     * @param jobId
+     *            The id to look by (can't be <code>null</code>).
+     * @return The entity instance, or <code>null</code> if not found.
+     */
+    Job getJobWithSteps(Guid jobId);
+
+    /**
+     * Update the {@link Job} entity with its Steps.
+     *
+     * @param job
+     *            The job to update with its steps(can't be <code>null</code>).
+     */
+    void loadJobSteps(Job job);
 
     /**
      * Update the {@link Step} entity with its Steps.

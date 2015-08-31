@@ -8,11 +8,11 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
+import org.ovirt.engine.core.dao.MassOperationsGenericDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-public abstract class NetworkStatisticsDaoImpl<T extends NetworkStatistics> extends MassOperationsGenericDaoDbFacade<T, Guid> {
+public abstract class NetworkStatisticsDaoImpl<T extends NetworkStatistics> extends MassOperationsGenericDao<T, Guid> {
 
     protected NetworkStatisticsDaoImpl(String entityStoredProcedureName) {
         super(entityStoredProcedureName);

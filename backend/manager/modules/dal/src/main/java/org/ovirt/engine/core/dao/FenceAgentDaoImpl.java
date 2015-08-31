@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class FenceAgentDaoImpl extends BaseDaoDbFacade implements FenceAgentDao {
+public class FenceAgentDaoImpl extends BaseDao implements FenceAgentDao {
 
     @Override
     public List<FenceAgent> getFenceAgentsForHost(Guid hostId) {

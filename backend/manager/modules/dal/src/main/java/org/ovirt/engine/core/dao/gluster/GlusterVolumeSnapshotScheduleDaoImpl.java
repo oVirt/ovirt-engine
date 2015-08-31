@@ -11,13 +11,13 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotSchedule;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotScheduleRecurrence;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDaoDbFacade;
+import org.ovirt.engine.core.dao.BaseDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class GlusterVolumeSnapshotScheduleDaoImpl extends BaseDaoDbFacade implements GlusterVolumeSnapshotScheduleDao {
+public class GlusterVolumeSnapshotScheduleDaoImpl extends BaseDao implements GlusterVolumeSnapshotScheduleDao {
 
     private static final RowMapper<GlusterVolumeSnapshotSchedule> snapshotScheduleRowMapper =
             new GlusterVolumeSnapshotScheduleRowMapper();

@@ -7,7 +7,6 @@ import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Singleton;
 
 import org.junit.BeforeClass;
@@ -26,15 +25,12 @@ public class DaoCdiIntegrationTest {
     }
 
     @Test
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void testSingletonDaoAnnotationPresent() {
 
         for (Class daoClass : daoClasses) {
             if (isConcreteClass(daoClass)) {
-                assertTrue("A concrete Dao class has to be annotated with @ApplicationScoped or @Singleton: "
-                        + daoClass.getCanonicalName(),
-                        daoClass.isAnnotationPresent(ApplicationScoped.class)
-                                || daoClass.isAnnotationPresent(Singleton.class));
+                assertTrue("A concrete DAO class has to be annotated with @Singleton: " + daoClass.getCanonicalName(),
+                        daoClass.isAnnotationPresent(Singleton.class));
             }
         }
     }
@@ -43,10 +39,8 @@ public class DaoCdiIntegrationTest {
     public void testSingletonDaoAnnotationNotPresentOnAbstractClass() {
         for (Class daoClass : daoClasses) {
             if (isAbstractClass(daoClass)) {
-                assertFalse("An abstract Dao class cannot be annotated with @ApplicationScoped or @Singleton: "
-                        + daoClass.getCanonicalName(),
-                        daoClass.isAnnotationPresent(ApplicationScoped.class)
-                                || daoClass.isAnnotationPresent(Singleton.class));
+                assertFalse("An abstract DAO class cannot be annotated with @Singleton: " + daoClass.getCanonicalName(),
+                        daoClass.isAnnotationPresent(Singleton.class));
             }
         }
     }
@@ -56,10 +50,8 @@ public class DaoCdiIntegrationTest {
         for (Class daoClass : daoClasses) {
             if (isParametrizedClass(daoClass)) {
                 assertFalse(
-                        "A parametrized Dao class cannot be annotated with @ApplicationScoped or @Singleton: "
-                                + daoClass.getCanonicalName(),
-                        daoClass.isAnnotationPresent(ApplicationScoped.class)
-                                || daoClass.isAnnotationPresent(Singleton.class));
+                        "A parametrized DAO class cannot be annotated with @Singleton: " + daoClass.getCanonicalName(),
+                        daoClass.isAnnotationPresent(Singleton.class));
             }
         }
     }

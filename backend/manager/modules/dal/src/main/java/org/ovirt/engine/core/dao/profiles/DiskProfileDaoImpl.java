@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class DiskProfileDaoImpl extends ProfileBaseDaoFacadeImpl<DiskProfile> implements DiskProfileDao {
+public class DiskProfileDaoImpl extends ProfileBaseDaoImpl<DiskProfile> implements DiskProfileDao {
     private static final DiskProfileDaoDbFacadaeImplMapper MAPPER = new DiskProfileDaoDbFacadaeImplMapper();
 
     public DiskProfileDaoImpl() {

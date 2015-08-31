@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +16,7 @@ import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.compat.Guid;
 
-public class StepDaoTest extends BaseHibernateDaoTestCase<StepDao, Step, Guid> {
+public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
 
     private static final Guid EXISTING_JOB_WITH_MULTIPLE_STEPS = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5889");
     private static final int TOTAL_STEPS_OF_MULTI_STEP_JOB = 8;
@@ -32,25 +31,46 @@ public class StepDaoTest extends BaseHibernateDaoTestCase<StepDao, Step, Guid> {
     private static final Guid REBALANCING_GLUSTER_VOLUME_STEP_ID = new Guid("cd75984e-1fd4-48fb-baf8-e45800a61a66");
     private static final int TOTAL_STEPS_OF_REBALANCING_GLUSTER_VOLUME = 1;
 
-    private StepDao dao;
-    private Step existingStep;
-    private Step newStep;
-
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        dao = dbFacade.getStepDao();
-        existingStep = dao.get(EXISTING_STEP_ID);
-        newStep = generateNewEntity();
     }
 
-    private Step generateNewEntity() {
+    @Override
+    protected Guid getExistingEntityId() {
+        return EXISTING_STEP_ID;
+    }
+
+    @Override
+    protected StepDao prepareDao() {
+        return dbFacade.getStepDao();
+    }
+
+    @Override
+    protected Guid generateNonExistingId() {
+        return Guid.newGuid();
+    }
+
+    @Override
+    protected int getEneitiesTotalCount() {
+        return TOTAL_STEPS;
+    }
+
+    @Override
+    protected Step generateNewEntity() {
         Step step = new Step(StepEnum.EXECUTING);
         step.setJobId(EXISTING_JOB_ID);
         step.setStepNumber(1);
         step.setDescription("Execution step");
         step.setCorrelationId("Some correlation id");
         return step;
+    }
+
+    @Override
+    protected void updateExistingEntity() {
+        existingEntity.setStatus(JobExecutionStatus.FINISHED);
+        existingEntity.setEndTime(new Date());
     }
 
     @Test
@@ -73,12 +93,6 @@ public class StepDaoTest extends BaseHibernateDaoTestCase<StepDao, Step, Guid> {
     public void getStepsByParentStepId() {
         List<Step> steps = dao.getStepsByParentStepId(EXISTING_STEP_WITH_SUB_STEPS);
         assertEquals("Verify Job has steps", TOTAL_STEPS_OF_PARENT_STEP, steps.size());
-    }
-
-    @Test
-    public void getStepsWithChildSteps() {
-        Step step = dao.get(EXISTING_STEP_WITH_SUB_STEPS);
-        assertEquals("Verify Job has steps", TOTAL_STEPS_OF_PARENT_STEP, step.getSteps().size());
     }
 
     @Test
@@ -109,50 +123,5 @@ public class StepDaoTest extends BaseHibernateDaoTestCase<StepDao, Step, Guid> {
         List<Guid> externalIds = dao.getExternalIdsForRunningSteps(ExternalSystemType.GLUSTER);
         assertEquals("Verify external ids present", 1, externalIds.size());
         assertEquals("Invalid TaskId", IN_PROGRESS_REBALANCING_GLUSTER_VOLUME_TASK_ID, externalIds.get(0));
-    }
-
-    @Override
-    protected StepDao getDao() {
-        return dao;
-    }
-
-    @Override
-    protected Step getExistingEntity() {
-        return existingStep;
-    }
-
-    @Override
-    protected Step getNonExistentEntity() {
-        return newStep;
-    }
-
-    @Override
-    protected int getAllEntitiesCount() {
-        return TOTAL_STEPS;
-    }
-
-    @Override
-    protected Step modifyEntity(Step entity) {
-        entity.setStatus(JobExecutionStatus.FINISHED);
-        entity.setEndTime(new Date());
-        List<Step> childSteps = new ArrayList<>();
-        Step childStep = new Step();
-        childStep.setStepNumber(1);
-        childStep.setJobId(entity.getJobId());
-        childStep.setStepType(StepEnum.ADD_VM_TO_POOL);
-        childStep.setDescription("DESCRIPTION");
-        childStep.setStartTime(new Date());
-        childStep.setCorrelationId("Some correlation ID");
-        childStep.setParentStepId(entity.getId());
-        dao.save(childStep);
-        childSteps.add(childStep);
-        entity.setSteps(childSteps);
-        return entity;
-    }
-
-    @Override
-    protected void verifyEntityModification(Step result) {
-        assertEquals(JobExecutionStatus.FINISHED, result.getStatus());
-        assertEquals(1, result.getSteps().size());
     }
 }

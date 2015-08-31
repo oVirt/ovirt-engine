@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class CpuQosDaoImpl extends QosBaseDaoFacadeImpl<CpuQos> implements CpuQosDao {
+public class CpuQosDaoImpl extends QosBaseDaoImpl<CpuQos> implements CpuQosDao {
     public CpuQosDaoImpl() {
         super(QosType.CPU);
     }

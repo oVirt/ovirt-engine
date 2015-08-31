@@ -17,13 +17,13 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
-import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
+import org.ovirt.engine.core.dao.MassOperationsGenericDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class GlusterBrickDaoImpl extends MassOperationsGenericDaoDbFacade<GlusterBrickEntity, Guid> implements GlusterBrickDao {
+public class GlusterBrickDaoImpl extends MassOperationsGenericDao<GlusterBrickEntity, Guid> implements GlusterBrickDao {
     // The brick row mapper can't be static as its' type (GlusterBrickRowMapper) is a non-static inner class
     // There will still be a single instance of it, as the Dao itself will be instantiated only once
     private final RowMapper<GlusterBrickEntity> brickRowMapper = new GlusterBrickRowMapper();

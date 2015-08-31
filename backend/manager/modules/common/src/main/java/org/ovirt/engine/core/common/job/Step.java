@@ -3,23 +3,7 @@ package org.ovirt.engine.core.common.job;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.compat.Guid;
@@ -28,35 +12,6 @@ import org.ovirt.engine.core.compat.Guid;
  * represents a meaningful phase of the Job. A Step could be a parent of other steps (e.g. step named EXECUTION could
  * have a list of steps beneath it which are also part of the job)
  */
-@Entity
-@Table(name = "step")
-@Cacheable(true)
-@NamedQueries({
-        @NamedQuery(
-                name = "Step.updateJobStepsCompleted",
-                query = "update Step s "
-                        + "set s.status = :status, s.endTime = :endTime "
-                        + "where s.status = :startedStatus and s.jobId = :jobId"),
-        @NamedQuery(
-                name = "Step.getStepsByExternalId",
-                query = "select s "
-                        + "from Step s "
-                        + "where s.externalSystem.externalId = :externalId "
-                        + "order by s.parentStepId, s.stepNumber"),
-        @NamedQuery(
-                name = "Step.getExternalIdsForRunningSteps",
-                query = "select s.externalSystem.externalId "
-                        + "from Job j inner join j.steps s "
-                        + "where j.status = :status and s.externalSystem.externalSystemType = :type"),
-        @NamedQuery(
-                name = "Step.getStepsByJobIdForVdsmAndGluster",
-                query = "select s "
-                        + "from Step s "
-                        + "where s.jobId = :jobId "
-                        + "and s.externalSystem.externalId is not null "
-                        + "and s.externalSystem.externalSystemType in :systemType")
-})
-
 public class Step implements IVdcQueryable, BusinessEntity<Guid> {
 
     /**
@@ -67,93 +22,72 @@ public class Step implements IVdcQueryable, BusinessEntity<Guid> {
     /**
      * The Step ID uniquely identifies a disk in the system.
      */
-    @Id
-    @Column(name = "step_id")
-    @Type(type = "org.ovirt.engine.core.dao.jpa.GuidUserType")
     private Guid id;
 
     /**
      * The job which the step comprises
      */
-    @Column(name = "job_id")
-    @Type(type = "org.ovirt.engine.core.dao.jpa.GuidUserType")
     private Guid jobId;
 
     /**
      * The direct parent step of the current step
      */
-    @Column(name = "parent_step_id")
-    @Type(type = "org.ovirt.engine.core.dao.jpa.GuidUserType")
     private Guid parentStepId;
 
     /**
      * The step type
      */
-    @Column(name = "step_type")
-    @Enumerated(EnumType.STRING)
     private StepEnum stepType;
 
     /**
      * The description of the step
      */
-    @Column(name = "description")
     private String description;
 
     /**
      * The order of the step in current hierarchy level
      */
-    @Column(name = "step_number")
     private int stepNumber;
 
     /**
      * The status of the step
      */
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
     private JobExecutionStatus status;
 
     /**
      * The start time of the step
      */
-    @Column(name = "start_time")
     private Date startTime;
 
     /**
      * The end time of the step
      */
-    @Column(name = "end_time")
     private Date endTime;
 
     /**
      * A pass-thru string to identify this step as part of a wider action
      */
-    @Column(name = "correlation_id")
     private String correlationId;
 
     /**
      * A flag defining if this step were invoked from external plug-in
      */
-    @Column(name = "is_external")
     private boolean external;
 
     /**
      * An external system referenced by the step (e.g. VDSM)
      */
-    @Embedded
     private ExternalSystem externalSystem;
 
     /**
      * The successors steps
      */
-    @OneToMany(mappedBy = "parentStepId", fetch = FetchType.EAGER)
-    @OrderBy("stepNumber")
     private List<Step> steps;
 
     public Step() {
         status = JobExecutionStatus.STARTED;
         externalSystem = new ExternalSystem();
         steps = new ArrayList<Step>();
-        id = Guid.newGuid();
     }
 
     public Step(StepEnum stepType) {
@@ -344,7 +278,22 @@ public class Step implements IVdcQueryable, BusinessEntity<Guid> {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((correlationId == null) ? 0 : correlationId.hashCode());
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
+        result = prime * result + ((externalSystem == null) ? 0 : externalSystem.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((jobId == null) ? 0 : jobId.hashCode());
+        result = prime * result + ((parentStepId == null) ? 0 : parentStepId.hashCode());
+        result = prime * result + ((startTime == null) ? 0 : startTime.hashCode());
+        result = prime * result + ((status == null) ? 0 : status.hashCode());
+        result = prime * result + stepNumber;
+        result = prime * result + ((stepType == null) ? 0 : stepType.hashCode());
+        result = prime * result + ((steps == null) ? 0 : steps.hashCode());
+        result = prime * result + (external ? 1231 : 1237);
+        return result;
     }
 
     @Override
@@ -352,10 +301,89 @@ public class Step implements IVdcQueryable, BusinessEntity<Guid> {
         if (this == obj) {
             return true;
         }
+        if (obj == null) {
+            return false;
+        }
         if (!(obj instanceof Step)) {
             return false;
         }
         Step other = (Step) obj;
-        return Objects.equals(id, other.id);
+        if (correlationId == null) {
+            if (other.correlationId != null) {
+                return false;
+            }
+        } else if (!correlationId.equals(other.correlationId)) {
+            return false;
+        }
+        if (description == null) {
+            if (other.description != null) {
+                return false;
+            }
+        } else if (!description.equals(other.description)) {
+            return false;
+        }
+        if (endTime == null) {
+            if (other.endTime != null) {
+                return false;
+            }
+        } else if (!endTime.equals(other.endTime)) {
+            return false;
+        }
+        if (externalSystem == null) {
+            if (other.externalSystem != null) {
+                return false;
+            }
+        } else if (!externalSystem.equals(other.externalSystem)) {
+            return false;
+        }
+        if (id == null) {
+            if (other.id != null) {
+                return false;
+            }
+        } else if (!id.equals(other.id)) {
+            return false;
+        }
+        if (jobId == null) {
+            if (other.jobId != null) {
+                return false;
+            }
+        } else if (!jobId.equals(other.jobId)) {
+            return false;
+        }
+        if (parentStepId == null) {
+            if (other.parentStepId != null) {
+                return false;
+            }
+        } else if (!parentStepId.equals(other.parentStepId)) {
+            return false;
+        }
+        if (startTime == null) {
+            if (other.startTime != null) {
+                return false;
+            }
+        } else if (!startTime.equals(other.startTime)) {
+            return false;
+        }
+        if (status != other.status) {
+            return false;
+        }
+        if (stepNumber != other.stepNumber) {
+            return false;
+        }
+        if (stepType != other.stepType) {
+            return false;
+        }
+        if (steps == null) {
+            if (other.steps != null) {
+                return false;
+            }
+        } else if (!steps.equals(other.steps)) {
+            return false;
+        }
+        if (external != other.external) {
+            return false;
+        }
+        return true;
     }
+
 }

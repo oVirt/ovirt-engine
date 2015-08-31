@@ -28,7 +28,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class StorageServerConnectionDaoImpl extends BaseDaoDbFacade implements
+public class StorageServerConnectionDaoImpl extends BaseDao implements
         StorageServerConnectionDao {
 
     @Override

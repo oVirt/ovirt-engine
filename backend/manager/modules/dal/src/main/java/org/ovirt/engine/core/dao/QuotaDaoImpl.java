@@ -24,7 +24,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
  */
 @Named
 @Singleton
-public class QuotaDaoImpl extends BaseDaoDbFacade implements QuotaDao {
+public class QuotaDaoImpl extends BaseDao implements QuotaDao {
 
     /**
      * Save <code>Quota</code> entity with specific <code>Quota</code> storage and <code>Quota</code> vdsGroup

@@ -17,7 +17,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class LunDaoImpl extends MassOperationsGenericDaoDbFacade<LUNs, String> implements LunDao {
+public class LunDaoImpl extends MassOperationsGenericDao<LUNs, String> implements LunDao {
 
     public LunDaoImpl() {
         super("luns");

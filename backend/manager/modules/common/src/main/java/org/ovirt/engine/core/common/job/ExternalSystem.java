@@ -2,18 +2,11 @@ package org.ovirt.engine.core.common.job;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-
-import org.hibernate.annotations.Type;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Represents an external system task associated with a Step.
  */
-@Embeddable
 public class ExternalSystem implements Serializable{
 
     /**
@@ -24,15 +17,11 @@ public class ExternalSystem implements Serializable{
     /**
      * An external Id which associated with the step (e.g. VDSM Task Id)
      */
-    @Column(name = "external_id")
-    @Type(type = "org.ovirt.engine.core.dao.jpa.GuidUserType")
     private Guid externalId;
 
     /**
      * An external system type (e.g. VDSM) which its execution unit is identified by {@link #externalId}
      */
-    @Column(name = "external_system_type")
-    @Enumerated(EnumType.STRING)
     private ExternalSystemType externalSystemType;
 
     public Guid getId() {

@@ -9,12 +9,12 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeeping;
 import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeepingVariable;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
-import org.ovirt.engine.core.dao.BaseDaoDbFacade;
+import org.ovirt.engine.core.dao.BaseDao;
 import org.springframework.jdbc.core.RowMapper;
 
 @Named
 @Singleton
-public class DwhHistoryTimekeepingDaoImpl extends BaseDaoDbFacade implements DwhHistoryTimekeepingDao {
+public class DwhHistoryTimekeepingDaoImpl extends BaseDao implements DwhHistoryTimekeepingDao {
     private static class DwhHistoryTimekeepingMapper implements RowMapper<DwhHistoryTimekeeping> {
         private static final DwhHistoryTimekeepingMapper instance = new DwhHistoryTimekeepingMapper();
 

@@ -19,7 +19,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class VmJobDaoImpl extends MassOperationsGenericDaoDbFacade<VmJob, Guid> implements VmJobDao {
+public class VmJobDaoImpl extends MassOperationsGenericDao<VmJob, Guid> implements VmJobDao {
 
     public VmJobDaoImpl() {
         super("VmJobs");

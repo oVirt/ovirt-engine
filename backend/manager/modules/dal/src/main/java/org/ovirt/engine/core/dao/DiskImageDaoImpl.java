@@ -32,7 +32,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class DiskImageDaoImpl extends BaseDaoDbFacade implements DiskImageDao {
+public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
 
     @Override
     public DiskImage get(Guid id) {

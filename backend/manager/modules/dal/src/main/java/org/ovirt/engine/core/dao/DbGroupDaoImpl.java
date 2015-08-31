@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class DbGroupDaoImpl extends BaseDaoDbFacade implements DbGroupDao {
+public class DbGroupDaoImpl extends BaseDao implements DbGroupDao {
 
     @Override
     public DbGroup get(Guid id) {

@@ -13,7 +13,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class EngineBackupLogDaoImpl extends BaseDaoDbFacade implements EngineBackupLogDao {
+public class EngineBackupLogDaoImpl extends BaseDao implements EngineBackupLogDao {
 
     private static class EngineBackupLogRowMapper implements RowMapper<EngineBackupLog> {
         public static final EngineBackupLogRowMapper INSTANCE = new EngineBackupLogRowMapper();

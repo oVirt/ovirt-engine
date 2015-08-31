@@ -8,13 +8,13 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
-import org.ovirt.engine.core.dao.qos.QosBaseDaoFacadeImpl;
+import org.ovirt.engine.core.dao.qos.QosBaseDaoImpl;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class HostNetworkQosDaoImpl extends QosBaseDaoFacadeImpl<HostNetworkQos> implements HostNetworkQosDao {
+public class HostNetworkQosDaoImpl extends QosBaseDaoImpl<HostNetworkQos> implements HostNetworkQosDao {
 
     private static final String OUT_AVERAGE_LINKSHARE = "out_average_linkshare";
     private static final String OUT_AVERAGE_UPPERLIMIT = "out_average_upperlimit";

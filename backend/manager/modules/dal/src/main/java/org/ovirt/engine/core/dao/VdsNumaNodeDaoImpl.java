@@ -22,7 +22,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class VdsNumaNodeDaoImpl extends BaseDaoDbFacade implements VdsNumaNodeDao {
+public class VdsNumaNodeDaoImpl extends BaseDao implements VdsNumaNodeDao {
 
     @Override
     public List<VdsNumaNode> getAllVdsNumaNodeByVdsId(Guid vdsId) {

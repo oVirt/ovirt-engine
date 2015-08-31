@@ -19,7 +19,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class LibvirtSecretDaoImpl extends DefaultGenericDaoDbFacade<LibvirtSecret, Guid> implements LibvirtSecretDao {
+public class LibvirtSecretDaoImpl extends DefaultGenericDao<LibvirtSecret, Guid> implements LibvirtSecretDao {
 
     LibvirtSecretDaoImpl() {
         super("LibvirtSecret");

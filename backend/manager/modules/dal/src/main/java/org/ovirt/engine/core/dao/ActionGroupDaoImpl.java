@@ -23,7 +23,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class ActionGroupDaoImpl extends BaseDaoDbFacade implements ActionGroupDao {
+public class ActionGroupDaoImpl extends BaseDao implements ActionGroupDao {
 
     private static final ConcurrentMap<VdcActionType, ActionVersionMap> cache =
             new ConcurrentHashMap<VdcActionType, ActionVersionMap>();

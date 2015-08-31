@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class CpuProfileDaoImpl extends ProfileBaseDaoFacadeImpl<CpuProfile> implements CpuProfileDao {
+public class CpuProfileDaoImpl extends ProfileBaseDaoImpl<CpuProfile> implements CpuProfileDao {
     private static final CpuProfileDaoDbFacadaeImplMapper MAPPER = new CpuProfileDaoDbFacadaeImplMapper();
 
     public CpuProfileDaoImpl() {

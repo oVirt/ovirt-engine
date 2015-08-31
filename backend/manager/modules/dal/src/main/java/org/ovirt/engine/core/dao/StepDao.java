@@ -27,14 +27,6 @@ public interface StepDao extends GenericDao<Step, Guid> {
     List<Step> getStepsByJobId(Guid jobId);
 
     /**
-     * Retrieve all the entities of type {@link Step} for a specific {@code Job} that have external system ID configured
-     * to it
-     *
-     * @return A list of all the job's steps in a flat collection, or an empty list if none is found.
-     */
-    List<Step> getStepsByJobIdForVdsmAndGluster(Guid jobId);
-
-    /**
      * Retrieve all the entities of type {@link Step} by a specific step-parent-id.
      *
      * @return A list of all the parent-sub-steps in a flat collection, or an empty list if none is found.

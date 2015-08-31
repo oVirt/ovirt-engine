@@ -11,13 +11,13 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDaoDbFacade;
+import org.ovirt.engine.core.dao.BaseDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class NetworkClusterDaoImpl extends BaseDaoDbFacade implements NetworkClusterDao {
+public class NetworkClusterDaoImpl extends BaseDao implements NetworkClusterDao {
 
     private static final RowMapper<NetworkCluster> mapper =
             new RowMapper<NetworkCluster>() {

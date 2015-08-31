@@ -28,7 +28,7 @@ import org.springframework.jdbc.core.RowMapper;
  */
 @Named
 @Singleton
-public class VmDaoImpl extends BaseDaoDbFacade implements VmDao {
+public class VmDaoImpl extends BaseDao implements VmDao {
 
     @Override
     public VM get(Guid id) {

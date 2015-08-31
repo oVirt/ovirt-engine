@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -17,11 +16,9 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
-import org.ovirt.engine.core.common.job.Step;
-import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.compat.Guid;
 
-public class JobDaoTest extends BaseHibernateDaoTestCase<JobDao, Job, Guid> {
+public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
 
     private static final Guid EXISTING_JOB_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5889");
     private static final Guid NO_VDSM_TASKS_JOB_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5333");
@@ -29,22 +26,34 @@ public class JobDaoTest extends BaseHibernateDaoTestCase<JobDao, Job, Guid> {
     private static final int NUMBER_OF_JOBS_FOR_EXISTING_CORRELATION_ID = 1;
     private static final int TOTAL_JOBS = 6;
 
-    private JobDao dao;
-    private StepDao stepDao;
-    private Job existingEntity;
-    private Job newEntity;
-
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        dao = dbFacade.getJobDao();
-        stepDao = dbFacade.getStepDao();
-        existingEntity = dao.get(EXISTING_JOB_ID);
-        newEntity = generateNewEntity();
     }
 
-    private Job generateNewEntity() {
+    @Override
+    protected Guid getExistingEntityId() {
+        return EXISTING_JOB_ID;
+    }
+
+    @Override
+    protected JobDao prepareDao() {
+        return dbFacade.getJobDao();
+    }
+
+    @Override
+    protected Guid generateNonExistingId() {
+        return Guid.newGuid();
+    }
+
+    @Override
+    protected int getEneitiesTotalCount() {
+        return TOTAL_JOBS;
+    }
+
+    @Override
+    protected Job generateNewEntity() {
         Job job = new Job();
         job.setId(Guid.newGuid());
         job.setActionType(VdcActionType.ActivateStorageDomain);
@@ -56,6 +65,12 @@ public class JobDaoTest extends BaseHibernateDaoTestCase<JobDao, Job, Guid> {
         job.setLastUpdateTime(new Date());
         job.setCorrelationId(Guid.newGuid().toString());
         return job;
+    }
+
+    @Override
+    protected void updateExistingEntity() {
+        existingEntity.setEndTime(new Date());
+        existingEntity.setStatus(JobExecutionStatus.FINISHED);
     }
 
     @Test
@@ -91,10 +106,10 @@ public class JobDaoTest extends BaseHibernateDaoTestCase<JobDao, Job, Guid> {
     public void updateJobLastUpdateTime() throws ParseException {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date updateDate = df.parse("2012-10-01 10:00:00");
-        Job job = dao.get(EXISTING_JOB_ID);
+        Job job = dao.get(getExistingEntityId());
         Date lastUpdateTime = job.getLastUpdateTime();
-        dao.updateJobLastUpdateTime(EXISTING_JOB_ID, updateDate);
-        Job jobAfterUpdate = dao.get(EXISTING_JOB_ID);
+        dao.updateJobLastUpdateTime(getExistingEntityId(), updateDate);
+        Job jobAfterUpdate = dao.get(getExistingEntityId());
         assertTrue("Compare the previous date is differ than new one",
                 !lastUpdateTime.equals(jobAfterUpdate.getLastUpdateTime()));
         assertEquals("Compare date was persisted by reading it from database",
@@ -131,56 +146,5 @@ public class JobDaoTest extends BaseHibernateDaoTestCase<JobDao, Job, Guid> {
     @Test
     public void checkIfJobHasNoTasks() {
         assertFalse("Job has no steps for VDSM tasks", dao.checkIfJobHasTasks(NO_VDSM_TASKS_JOB_ID));
-    }
-
-    @Test
-    public void testUpdateJobStepsCompleted() {
-        Job job = generateNewEntity();
-        List<Step> steps = new ArrayList<>();
-        Step step = new Step(StepEnum.EXECUTING);
-        step.setJobId(job.getId());
-        step.setDescription("DESCRIPTION");
-        step.setCorrelationId("Some correlation ID");
-        steps.add(step);
-        job.setSteps(steps);
-        dao.update(job);
-        stepDao.updateJobStepsCompleted(job.getId(), job.getStatus(), job.getEndTime());
-    }
-
-    @Test
-    public void testStoredProcedureCall() {
-        dao.deleteRunningJobsOfTasklessCommands();
-    }
-
-    @Override
-    protected JobDao getDao() {
-        return dao;
-    }
-
-    @Override
-    protected Job getExistingEntity() {
-        return existingEntity;
-    }
-
-    @Override
-    protected Job getNonExistentEntity() {
-        return newEntity;
-    }
-
-    @Override
-    protected int getAllEntitiesCount() {
-        return TOTAL_JOBS;
-    }
-
-    @Override
-    protected Job modifyEntity(Job entity) {
-        entity.setEndTime(new Date());
-        entity.setStatus(JobExecutionStatus.FINISHED);
-        return entity;
-    }
-
-    @Override
-    protected void verifyEntityModification(Job result) {
-        assertEquals(JobExecutionStatus.FINISHED, result.getStatus());
     }
 }

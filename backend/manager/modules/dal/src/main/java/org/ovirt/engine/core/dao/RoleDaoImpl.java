@@ -24,7 +24,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class RoleDaoImpl extends BaseDaoDbFacade implements RoleDao {
+public class RoleDaoImpl extends BaseDao implements RoleDao {
 
     private static class RolesRowMapper implements RowMapper<Role> {
 

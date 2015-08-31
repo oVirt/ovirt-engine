@@ -9,13 +9,13 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDaoDbFacade;
+import org.ovirt.engine.core.dao.BaseDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class GlusterVolumeSnapshotConfigDaoImpl extends BaseDaoDbFacade implements GlusterVolumeSnapshotConfigDao {
+public class GlusterVolumeSnapshotConfigDaoImpl extends BaseDao implements GlusterVolumeSnapshotConfigDao {
 
     private static final RowMapper<GlusterVolumeSnapshotConfig> snapshotConfigRowMapper =
             new GlusterVolumeSnapshotConfigRowMapper();

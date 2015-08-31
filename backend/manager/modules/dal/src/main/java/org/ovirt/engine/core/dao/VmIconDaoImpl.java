@@ -16,7 +16,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class VmIconDaoImpl extends DefaultGenericDaoDbFacade<VmIcon, Guid> implements VmIconDao {
+public class VmIconDaoImpl extends DefaultGenericDao<VmIcon, Guid> implements VmIconDao {
 
     private static final String ID_COLUMN = "id";
     private static final String DATA_URL_COLUMN = "data_url";

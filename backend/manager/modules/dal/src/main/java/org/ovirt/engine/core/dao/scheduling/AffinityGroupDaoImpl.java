@@ -11,14 +11,14 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
-import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
+import org.ovirt.engine.core.dao.DefaultGenericDao;
 import org.ovirt.engine.core.utils.GuidUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class AffinityGroupDaoImpl extends DefaultGenericDaoDbFacade<AffinityGroup, Guid> implements AffinityGroupDao {
+public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid> implements AffinityGroupDao {
 
     public AffinityGroupDaoImpl() {
         super("AffinityGroup");

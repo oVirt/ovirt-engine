@@ -19,7 +19,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class HostDeviceDaoImpl extends MassOperationsGenericDaoDbFacade<HostDevice, HostDeviceId> implements HostDeviceDao {
+public class HostDeviceDaoImpl extends MassOperationsGenericDao<HostDevice, HostDeviceId> implements HostDeviceDao {
 
     public HostDeviceDaoImpl() {
         super("HostDevice");

@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class StorageQosDaoImpl extends QosBaseDaoFacadeImpl<StorageQos> implements StorageQosDao {
+public class StorageQosDaoImpl extends QosBaseDaoImpl<StorageQos> implements StorageQosDao {
     public StorageQosDaoImpl() {
         super(QosType.STORAGE);
     }

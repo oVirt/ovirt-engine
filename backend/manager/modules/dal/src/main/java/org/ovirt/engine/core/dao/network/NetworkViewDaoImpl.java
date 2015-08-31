@@ -10,12 +10,12 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.BaseDaoDbFacade;
+import org.ovirt.engine.core.dao.BaseDao;
 import org.ovirt.engine.core.dao.network.NetworkDaoImpl.NetworkRowMapperBase;
 
 @Named
 @Singleton
-public class NetworkViewDaoImpl extends BaseDaoDbFacade implements NetworkViewDao {
+public class NetworkViewDaoImpl extends BaseDao implements NetworkViewDao {
 
     @Override
     public List<NetworkView> getAllWithQuery(String query) {

@@ -11,7 +11,7 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.comparators.InterfaceComparerByMAC;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DefaultReadDaoDbFacade;
+import org.ovirt.engine.core.dao.DefaultReadDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDaoImpl.VmNetworkStatisticsRowMapper;
 import org.ovirt.engine.core.dao.network.VmNicDaoImpl.VmNicRowMapperBase;
 import org.springframework.jdbc.core.RowMapper;
@@ -19,7 +19,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class VmNetworkInterfaceDaoImpl extends DefaultReadDaoDbFacade<VmNetworkInterface, Guid> implements VmNetworkInterfaceDao {
+public class VmNetworkInterfaceDaoImpl extends DefaultReadDao<VmNetworkInterface, Guid> implements VmNetworkInterfaceDao {
 
     public VmNetworkInterfaceDaoImpl() {
         super("VmNetworkInterfaceView");

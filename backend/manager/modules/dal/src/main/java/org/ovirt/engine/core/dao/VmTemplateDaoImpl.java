@@ -28,7 +28,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class VmTemplateDaoImpl extends VmBaseDaoDbFacade<VmTemplate> implements VmTemplateDao {
+public class VmTemplateDaoImpl extends VmBaseDao<VmTemplate> implements VmTemplateDao {
 
     public VmTemplateDaoImpl() {
         super("VmTemplate");

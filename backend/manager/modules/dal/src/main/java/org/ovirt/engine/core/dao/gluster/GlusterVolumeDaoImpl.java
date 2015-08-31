@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
+import org.ovirt.engine.core.dao.MassOperationsGenericDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -37,7 +37,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class GlusterVolumeDaoImpl extends MassOperationsGenericDaoDbFacade<GlusterVolumeEntity, Guid> implements
+public class GlusterVolumeDaoImpl extends MassOperationsGenericDao<GlusterVolumeEntity, Guid> implements
         GlusterVolumeDao {
 
     private static final RowMapper<GlusterVolumeEntity> volumeRowMapper = new GlusterVolumeRowMapper();

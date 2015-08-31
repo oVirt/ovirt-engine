@@ -25,7 +25,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class VmPoolDaoImpl extends BaseDaoDbFacade implements VmPoolDao {
+public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
     @Override
     public void removeVmFromVmPool(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()

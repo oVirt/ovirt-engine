@@ -25,7 +25,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class TagDaoImpl extends BaseDaoDbFacade implements TagDao {
+public class TagDaoImpl extends BaseDao implements TagDao {
     private static class TagRowMapper implements RowMapper<Tags> {
         public static final TagRowMapper instance = new TagRowMapper();
 

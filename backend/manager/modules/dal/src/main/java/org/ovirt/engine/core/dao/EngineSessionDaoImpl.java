@@ -22,7 +22,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class EngineSessionDaoImpl extends BaseDaoDbFacade implements EngineSessionDao {
+public class EngineSessionDaoImpl extends BaseDao implements EngineSessionDao {
 
     private static class EngineSessionRowMapper implements RowMapper<EngineSession> {
         public static final EngineSessionRowMapper instance = new EngineSessionRowMapper();

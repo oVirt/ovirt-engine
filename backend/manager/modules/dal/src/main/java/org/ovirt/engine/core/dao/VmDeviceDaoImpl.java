@@ -23,7 +23,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 @Named
 @Singleton
 public class VmDeviceDaoImpl extends
-        MassOperationsGenericDaoDbFacade<VmDevice, VmDeviceId> implements VmDeviceDao {
+        MassOperationsGenericDao<VmDevice, VmDeviceId> implements VmDeviceDao {
 
     public VmDeviceDaoImpl() {
         super("VmDevice");

@@ -9,13 +9,13 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
+import org.ovirt.engine.core.dao.DefaultGenericDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class VmNicDaoImpl extends DefaultGenericDaoDbFacade<VmNic, Guid> implements VmNicDao {
+public class VmNicDaoImpl extends DefaultGenericDao<VmNic, Guid> implements VmNicDao {
 
     public VmNicDaoImpl() {
         super("VmInterface");

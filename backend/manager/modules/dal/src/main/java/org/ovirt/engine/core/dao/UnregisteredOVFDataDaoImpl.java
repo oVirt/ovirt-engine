@@ -16,7 +16,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 @Named
 @Singleton
-public class UnregisteredOVFDataDaoImpl extends BaseDaoDbFacade implements UnregisteredOVFDataDao {
+public class UnregisteredOVFDataDaoImpl extends BaseDao implements UnregisteredOVFDataDao {
 
     @Override
     public List<OvfEntityData> getAllForStorageDomainByEntityType(Guid storageDomainId, VmEntityType entityType) {

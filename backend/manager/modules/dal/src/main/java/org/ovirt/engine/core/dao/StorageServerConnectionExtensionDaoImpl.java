@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class StorageServerConnectionExtensionDaoImpl extends DefaultGenericDaoDbFacade<StorageServerConnectionExtension, Guid> implements StorageServerConnectionExtensionDao {
+public class StorageServerConnectionExtensionDaoImpl extends DefaultGenericDao<StorageServerConnectionExtension, Guid> implements StorageServerConnectionExtensionDao {
 
     public StorageServerConnectionExtensionDaoImpl() {
         super("StorageServerConnectionExtension");

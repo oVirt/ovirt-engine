@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.util.List;
 import java.util.Random;
 
 import org.junit.Before;
@@ -14,13 +15,13 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * <code>BookmarkDaoTest</code> performs tests against the {@link BookmarkDao} type.
  */
-public class BookmarkDaoTest extends BaseHibernateDaoTestCase<BookmarkDao, Bookmark, Guid> {
+public class BookmarkDaoTest extends BaseDaoTestCase {
     private static final int BOOKMARK_COUNT = 2;
     private static final int BOOKMARK_MAX_RANDOM_NUMBER = 10000;
 
     private BookmarkDao dao;
-    private Bookmark newBookmark;
-    private Bookmark existingBookmark;
+    private Bookmark new_bookmark;
+    private Bookmark existing_bookmark;
 
     @Override
     @Before
@@ -30,44 +31,33 @@ public class BookmarkDaoTest extends BaseHibernateDaoTestCase<BookmarkDao, Bookm
         dao = dbFacade.getBookmarkDao();
 
         // create some test data
-        newBookmark = new Bookmark();
+        new_bookmark = new Bookmark();
         Random r = new Random(System.currentTimeMillis());
-        newBookmark.setbookmark_id(Guid.newGuid());
-        newBookmark.setbookmark_name("newbookmarkname" + (r.nextInt() % BOOKMARK_MAX_RANDOM_NUMBER));
-        newBookmark.setbookmark_value("newbookmarkvalue");
+        new_bookmark.setbookmark_name("newbookmarkname"+ (r.nextInt() % BOOKMARK_MAX_RANDOM_NUMBER));
+        new_bookmark.setbookmark_value("newbookmarkvalue");
 
-        existingBookmark = dao.get(new Guid("a4affabf-7b45-4a6c-b0a9-107d0bbe265e"));
+        existing_bookmark = dao.get(new Guid("a4affabf-7b45-4a6c-b0a9-107d0bbe265e"));
     }
 
-    @Override
-    protected BookmarkDao getDao() {
-        return dao;
+    /**
+     * Ensures that if the id is invalid then no bookmark is returned.
+     */
+    @Test
+    public void testGetWithInvalidId() {
+        Bookmark result = dao.get(Guid.newGuid());
+        assertNull(result);
     }
 
-    @Override
-    protected Bookmark getExistingEntity() {
-        return existingBookmark;
-    }
+    /**
+     * Ensures that, if the id is valid, then retrieving a bookmark works as expected.
+     */
+    @Test
+    public void testGet() {
+        Bookmark result = dao.get(existing_bookmark.getbookmark_id());
 
-    @Override
-    protected Bookmark getNonExistentEntity() {
-        return newBookmark;
-    }
-
-    @Override
-    protected int getAllEntitiesCount() {
-        return BOOKMARK_COUNT;
-    }
-
-    @Override
-    protected Bookmark modifyEntity(Bookmark bookmark) {
-        bookmark.setbookmark_name(bookmark.getbookmark_name().toUpperCase());
-        return bookmark;
-    }
-
-    @Override
-    protected void verifyEntityModification(Bookmark result) {
-        assertEquals(existingBookmark.getbookmark_name(), result.getbookmark_name());
+        assertNotNull(result);
+        assertEquals(existing_bookmark.getbookmark_id(),
+                result.getbookmark_id());
     }
 
     /**
@@ -85,10 +75,61 @@ public class BookmarkDaoTest extends BaseHibernateDaoTestCase<BookmarkDao, Bookm
      */
     @Test
     public void testGetByName() {
-        Bookmark result = dao.getByName(existingBookmark.getbookmark_name());
+        Bookmark result = dao.getByName(existing_bookmark.getbookmark_name());
 
         assertNotNull(result);
-        assertEquals(existingBookmark.getbookmark_name(), result.getbookmark_name());
+        assertEquals(existing_bookmark.getbookmark_name(),
+                result.getbookmark_name());
     }
 
+    /**
+     * Ensures that finding all bookmarks works as expected.
+     */
+    @Test
+    public void testGetAll() {
+        List<Bookmark> result = dao.getAll();
+
+        assertEquals(BOOKMARK_COUNT, result.size());
+    }
+
+    /**
+     * Ensures that saving a bookmark works as expected.
+     */
+    @Test
+    public void testSave() {
+        dao.save(new_bookmark);
+
+        Bookmark result = dao.getByName(new_bookmark.getbookmark_name());
+
+        assertNotNull(result);
+    }
+
+    /**
+     * Ensures that updating a bookmark works as expected.
+     */
+    @Test
+    public void testUpdate() {
+        existing_bookmark.setbookmark_name(existing_bookmark.getbookmark_name()
+                .toUpperCase());
+
+        dao.update(existing_bookmark);
+
+        Bookmark result = dao.get(existing_bookmark.getbookmark_id());
+
+        assertNotNull(result);
+        assertEquals(existing_bookmark.getbookmark_name(),
+                result.getbookmark_name());
+    }
+
+    /**
+     * Ensures that removing a bookmark works as expected.
+     */
+    @Test
+    public void testRemove() {
+        dao.remove(existing_bookmark.getbookmark_id());
+
+        Bookmark result = dao.get(existing_bookmark.getbookmark_id());
+
+        assertNull(result);
+    }
 }

@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class UserProfileDaoImpl extends BaseDaoDbFacade implements UserProfileDao {
+public class UserProfileDaoImpl extends BaseDao implements UserProfileDao {
 
     private static final class UserProfileRowMapper implements RowMapper<UserProfile> {
         public static final UserProfileRowMapper instance = new UserProfileRowMapper();

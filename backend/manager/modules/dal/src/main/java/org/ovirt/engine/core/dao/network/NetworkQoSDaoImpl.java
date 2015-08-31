@@ -8,17 +8,17 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
-import org.ovirt.engine.core.dao.qos.QosBaseDaoFacadeImpl;
+import org.ovirt.engine.core.dao.qos.QosBaseDaoImpl;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class NetworkQoSDaoFacadeImpl extends QosBaseDaoFacadeImpl<NetworkQoS> implements NetworkQoSDao {
+public class NetworkQoSDaoImpl extends QosBaseDaoImpl<NetworkQoS> implements NetworkQoSDao {
 
     protected final RowMapper<NetworkQoS> mapper = createEntityRowMapper();
 
-    public NetworkQoSDaoFacadeImpl(){
+    public NetworkQoSDaoImpl(){
         super(QosType.NETWORK);
     }
 
