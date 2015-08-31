@@ -17,8 +17,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * @param <ID>
  *            The type of the entity's id.
  */
-public abstract class DefaultReadDaoDbFacade<T extends BusinessEntity<ID>, ID extends Serializable>
-        extends BaseDaoDbFacade implements ReadDao<T, ID> {
+public abstract class DefaultReadDao<T extends BusinessEntity<ID>, ID extends Serializable>
+        extends BaseDao implements ReadDao<T, ID> {
 
     protected static final String DEFAULT_GET_PROCEDURE_FORMAT = "Get{0}By{0}Id";
     protected static final String DEFAULT_GET_ALL_PROCEDURE_FORMAT = "GetAllFrom{0}s";
@@ -35,8 +35,8 @@ public abstract class DefaultReadDaoDbFacade<T extends BusinessEntity<ID>, ID ex
      * Initialize default procedure names with the given entity name.<br>
      * The default procedure names are determined by the following formats:
      * <ul>
-     * <li>For {@link GenericDao#get(Serializable)}: {@link DefaultGenericDaoDbFacade#DEFAULT_GET_PROCEDURE_FORMAT}</li>
-     * <li>For {@link GenericDao#getAll()}: {@link DefaultGenericDaoDbFacade#DEFAULT_GET_ALL_PROCEDURE_FORMAT}</li>
+     * <li>For {@link GenericDao#get(Serializable)}: {@link DefaultGenericDao#DEFAULT_GET_PROCEDURE_FORMAT}</li>
+     * <li>For {@link GenericDao#getAll()}: {@link DefaultGenericDao#DEFAULT_GET_ALL_PROCEDURE_FORMAT}</li>
      * </ul>
      *
      * If you wish to use a procedure name different than the default one, please set it accordingly.
@@ -44,7 +44,7 @@ public abstract class DefaultReadDaoDbFacade<T extends BusinessEntity<ID>, ID ex
      * @param entityStoredProcedureName
      *            The name to use in the default procedure names templates.
      */
-    public DefaultReadDaoDbFacade(String entityStoredProcedureName) {
+    public DefaultReadDao(String entityStoredProcedureName) {
         procedureNameForGet = MessageFormat.format(DEFAULT_GET_PROCEDURE_FORMAT, entityStoredProcedureName);
         procedureNameForGetAll = MessageFormat.format(DEFAULT_GET_ALL_PROCEDURE_FORMAT, entityStoredProcedureName);
     }

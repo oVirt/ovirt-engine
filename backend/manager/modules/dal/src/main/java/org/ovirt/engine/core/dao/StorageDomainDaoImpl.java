@@ -25,7 +25,7 @@ import org.springframework.jdbc.core.RowMapper;
 @Named
 @Singleton
 @SuppressWarnings("synthetic-access")
-public class StorageDomainDaoImpl extends BaseDaoDbFacade implements StorageDomainDao {
+public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
 
     @Override
     public Guid getMasterStorageDomainIdForPool(Guid poolId) {

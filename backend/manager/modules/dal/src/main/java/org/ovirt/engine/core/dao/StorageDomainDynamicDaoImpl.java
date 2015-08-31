@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class StorageDomainDynamicDaoImpl extends BaseDaoDbFacade implements StorageDomainDynamicDao{
+public class StorageDomainDynamicDaoImpl extends BaseDao implements StorageDomainDynamicDao{
 
     private static final class StorageDomainDynamicRowMapper implements RowMapper<StorageDomainDynamic> {
         public static final StorageDomainDynamicRowMapper instance = new StorageDomainDynamicRowMapper();

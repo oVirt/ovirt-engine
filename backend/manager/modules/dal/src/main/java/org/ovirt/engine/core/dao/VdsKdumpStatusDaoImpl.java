@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 @Named
 @Singleton
-public class VdsKdumpStatusDaoImpl  extends BaseDaoDbFacade implements VdsKdumpStatusDao {
+public class VdsKdumpStatusDaoImpl  extends BaseDao implements VdsKdumpStatusDao {
     private static class VdsKdumpStatusMapper implements RowMapper<VdsKdumpStatus> {
         private static final VdsKdumpStatusMapper instance = new VdsKdumpStatusMapper();
 

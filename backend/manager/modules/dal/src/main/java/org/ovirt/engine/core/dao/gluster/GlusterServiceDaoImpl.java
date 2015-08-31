@@ -11,14 +11,14 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DefaultReadDaoDbFacade;
+import org.ovirt.engine.core.dao.DefaultReadDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 @Named
 @Singleton
-public class GlusterServiceDaoImpl extends DefaultReadDaoDbFacade<GlusterService, Guid> implements GlusterServiceDao {
+public class GlusterServiceDaoImpl extends DefaultReadDao<GlusterService, Guid> implements GlusterServiceDao {
 
     private static final ParameterizedRowMapper<GlusterService> serviceRowMapper = new GlusterServiceRowMapper();
 

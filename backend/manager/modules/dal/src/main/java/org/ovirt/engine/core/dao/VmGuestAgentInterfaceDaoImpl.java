@@ -16,7 +16,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class VmGuestAgentInterfaceDaoImpl extends BaseDaoDbFacade implements VmGuestAgentInterfaceDao{
+public class VmGuestAgentInterfaceDaoImpl extends BaseDao implements VmGuestAgentInterfaceDao{
 
     private static final String DELIMITER = ",";
 

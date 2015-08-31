@@ -4,28 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
-import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapKey;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-import org.hibernate.annotations.Type;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -37,26 +16,6 @@ import org.ovirt.engine.core.compat.Guid;
  * of steps which describe portions of the entire Job. The Job entity is capable to produce a descriptive tree of
  * steps, reflecting the action parts.
  */
-@Entity
-@Table(name = "job")
-@Cacheable(true)
-@NamedQueries({
-        @NamedQuery(name = "Job.getJobsByCorrelationId",
-                query = "select j from Job j where j.correlationId = :correlationId"),
-        @NamedQuery(name = "Job.getJobsByOffsetAndPageSize",
-                query = "select j from Job j where j.status in (:status) order by lastUpdateTime DESC"),
-        @NamedQuery(name = "Job.getJobsByOffsetAndPageSizeNotInStatus",
-                query = "select j from Job j where j.status not in (:status) order by lastUpdateTime DESC"),
-        @NamedQuery(
-                name = "Job.deleteCompletedJobs",
-                query = "delete from Job j where j.autoCleared = true "
-                        + "and ((j.endTime < :failedEndTime and j.status in (:failStatus)) "
-                        + "or (j.endTime < :successEndTime and j.status = :successStatus))"),
-        @NamedQuery(
-                name = "Job.deleteJobOlderThanDateWithStatus",
-                query = "delete from Job j where j.autoCleared = true and j.endTime < :sinceDate "
-                        + "and j.status in (:statuses)")
-})
 public class Job implements IVdcQueryable, BusinessEntity<Guid> {
 
     /**
@@ -67,99 +26,71 @@ public class Job implements IVdcQueryable, BusinessEntity<Guid> {
     /**
      * The Job ID uniquely identifies a disk in the system.
      */
-
-    @Id
-    @Column(name = "job_id")
-    @Type(type = "org.ovirt.engine.core.dao.jpa.GuidUserType")
     private Guid id;
 
     /**
      * The action type which the Job describes
      */
-    @Column(name = "action_type")
-    @Enumerated(EnumType.STRING)
     private VdcActionType actionType;
 
     /**
      * The description of the job
      */
-    @Column(name = "description")
     private String description;
 
     /**
      * The status of the job
      */
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
     private JobExecutionStatus status;
 
     /**
      * The user id which invoked the job
      */
-    @Column(name = "owner_id")
-    @Type(type = "org.ovirt.engine.core.dao.jpa.GuidUserType")
     private Guid ownerId;
 
     /**
      * Determines whether the Job should be presented
      */
-    @Column(name = "visible")
     private boolean isVisible;
 
     /**
      * The start time of the Job
      */
-    @Column(name = "start_time")
     private Date startTime;
 
     /**
      * The end time of the Job
      */
-    @Column(name = "end_time")
     private Date endTime;
 
     /**
      * Describes when the Job was last updated
      */
-    @Column(name = "last_update_time")
     private Date lastUpdateTime;
 
     /**
      * A pass-thru string to identify one or more Jobs cross-layer
      */
-    @Column(name = "correlation_id")
     private String correlationId;
 
     /**
      * A flag defining if this Job were invoked from external plug-in
      */
-    @Column(name = "is_external")
     private boolean external;
 
     /**
      * A flag indicating if the Job is auto cleared from the table after the configured time for succeeded/failed jobs
      */
-    @Column(name = "is_auto_cleared")
     private boolean autoCleared;
 
     /**
      * A collection which holds the entities associated with the Job
      */
-    @ElementCollection(fetch = FetchType.LAZY)
-    @MapKey(name = "entity_id")
-    @CollectionTable(schema = "jpa", name = "job_subject_entity",
-            joinColumns = @JoinColumn(name = "job_id"))
-    private transient Map<Guid, VdcObjectType> jobSubjectEntities;
+    private Map<Guid, VdcObjectType> jobSubjectEntities;
 
     /**
      * A collection which stores the steps of the Job
      */
-
-    // Note that we have to use a Hibernate annotation here, otherwise we'll
-    // get a Simulatenous Bag exception
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "jobId",
-            orphanRemoval = false)
     private List<Step> steps;
 
     /**
@@ -365,7 +296,22 @@ public class Job implements IVdcQueryable, BusinessEntity<Guid> {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((actionType == null) ? 0 : actionType.hashCode());
+        result = prime * result + ((correlationId == null) ? 0 : correlationId.hashCode());
+        result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + (isVisible ? 1231 : 1237);
+        result = prime * result + ((jobSubjectEntities == null) ? 0 : jobSubjectEntities.hashCode());
+        result = prime * result + ((lastUpdateTime == null) ? 0 : lastUpdateTime.hashCode());
+        result = prime * result + ((ownerId == null) ? 0 : ownerId.hashCode());
+        result = prime * result + ((startTime == null) ? 0 : startTime.hashCode());
+        result = prime * result + ((status == null) ? 0 : status.hashCode());
+        result = prime * result + ((steps == null) ? 0 : steps.hashCode());
+        result = prime * result + (external ? 1231 : 1237);
+        result = prime * result + (autoCleared ? 1231 : 1237);
+        return result;
     }
 
     @Override
@@ -373,10 +319,84 @@ public class Job implements IVdcQueryable, BusinessEntity<Guid> {
         if (this == obj) {
             return true;
         }
+        if (obj == null) {
+            return false;
+        }
         if (!(obj instanceof Job)) {
             return false;
         }
         Job other = (Job) obj;
-        return Objects.equals(id, other.id);
+        if (actionType != other.actionType) {
+            return false;
+        }
+        if (correlationId == null) {
+            if (other.correlationId != null) {
+                return false;
+            }
+        } else if (!correlationId.equals(other.correlationId)) {
+            return false;
+        }
+        if (endTime == null) {
+            if (other.endTime != null) {
+                return false;
+            }
+        } else if (!endTime.equals(other.endTime)) {
+            return false;
+        }
+        if (id == null) {
+            if (other.id != null) {
+                return false;
+            }
+        } else if (!id.equals(other.id)) {
+            return false;
+        }
+        if (isVisible != other.isVisible) {
+            return false;
+        }
+        if (jobSubjectEntities == null) {
+            if (other.jobSubjectEntities != null) {
+                return false;
+            }
+        } else if (!jobSubjectEntities.equals(other.jobSubjectEntities)) {
+            return false;
+        }
+        if (lastUpdateTime == null) {
+            if (other.lastUpdateTime != null) {
+                return false;
+            }
+        } else if (!lastUpdateTime.equals(other.lastUpdateTime)) {
+            return false;
+        }
+        if (ownerId == null) {
+            if (other.ownerId != null) {
+                return false;
+            }
+        } else if (!ownerId.equals(other.ownerId)) {
+            return false;
+        }
+        if (startTime == null) {
+            if (other.startTime != null) {
+                return false;
+            }
+        } else if (!startTime.equals(other.startTime)) {
+            return false;
+        }
+        if (status != other.status) {
+            return false;
+        }
+        if (steps == null) {
+            if (other.steps != null) {
+                return false;
+            }
+        } else if (!steps.equals(other.steps)) {
+            return false;
+        }
+        if (external != other.external) {
+            return false;
+        }
+        if (autoCleared != other.autoCleared) {
+            return false;
+        }
+        return true;
     }
 }

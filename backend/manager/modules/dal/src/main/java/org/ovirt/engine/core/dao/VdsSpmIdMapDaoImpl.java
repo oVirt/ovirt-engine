@@ -19,7 +19,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class VdsSpmIdMapDaoImpl extends BaseDaoDbFacade implements VdsSpmIdMapDao{
+public class VdsSpmIdMapDaoImpl extends BaseDao implements VdsSpmIdMapDao{
 
 
     @Override

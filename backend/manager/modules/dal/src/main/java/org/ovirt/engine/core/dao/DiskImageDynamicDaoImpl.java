@@ -24,7 +24,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class DiskImageDynamicDaoImpl extends MassOperationsGenericDaoDbFacade<DiskImageDynamic, Guid>
+public class DiskImageDynamicDaoImpl extends MassOperationsGenericDao<DiskImageDynamic, Guid>
         implements DiskImageDynamicDao {
 
     private static final class DiskImageDynamicRowMapper implements RowMapper<DiskImageDynamic> {

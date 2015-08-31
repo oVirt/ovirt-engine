@@ -22,12 +22,12 @@ import org.ovirt.engine.core.utils.GuidUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGenericDaoDbFacade<T, Guid> {
+public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, Guid> {
 
     public static final String SMALL_ICON_ID_COLUMN = "small_icon_id";
     public static final String LARGE_ICON_ID_COLUMN = "large_icon_id";
 
-    public VmBaseDaoDbFacade(String entityStoredProcedureName) {
+    public VmBaseDao(String entityStoredProcedureName) {
         super(entityStoredProcedureName);
     }
 
@@ -69,7 +69,7 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
                 .addValue("quota_id", entity.getQuotaId())
                 .addValue("migration_support", entity.getMigrationSupport().getValue())
                 .addValue("dedicated_vm_for_vds", entity.getDedicatedVmForVdsList().isEmpty() ?
-                        null : StringUtils.join(entity.getDedicatedVmForVdsList(), BaseDaoDbFacade.SEPARATOR))
+                        null : StringUtils.join(entity.getDedicatedVmForVdsList(), BaseDao.SEPARATOR))
                 .addValue("min_allocated_mem", entity.getMinAllocatedMem())
                 .addValue("is_run_and_pause", entity.isRunAndPause())
                 .addValue("created_by_user_id", entity.getCreatedByUserId())

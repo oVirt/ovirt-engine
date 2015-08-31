@@ -11,13 +11,13 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
+import org.ovirt.engine.core.dao.DefaultGenericDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class GlusterServerDaoImpl extends DefaultGenericDaoDbFacade<GlusterServer, Guid> implements GlusterServerDao {
+public class GlusterServerDaoImpl extends DefaultGenericDao<GlusterServer, Guid> implements GlusterServerDao {
 
     private static final RowMapper<GlusterServer> glusterServerRowMapper = new GlusterServerRowMapper();
 

@@ -13,7 +13,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
  * Implementation for the {@link MassOperationsDao} which provides a default
- * {@link MassOperationsDao#updateAll(Collection)} method that uses the {@link DefaultGenericDaoDbFacade#update} method
+ * {@link MassOperationsDao#updateAll(Collection)} method that uses the {@link DefaultGenericDao#update} method
  * in a more smart way, reusing the {@link org.springframework.jdbc.core.simple.SimpleJdbcCallOperations}.
  *
  * @param <T>
@@ -21,10 +21,10 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * @param <ID>
  *            The type of the entity's id.
  */
-public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<ID>, ID extends Serializable & Comparable<ID>>
-        extends DefaultGenericDaoDbFacade<T, ID> implements MassOperationsDao<T, ID> {
+public abstract class MassOperationsGenericDao<T extends BusinessEntity<ID>, ID extends Serializable & Comparable<ID>>
+        extends DefaultGenericDao<T, ID> implements MassOperationsDao<T, ID> {
 
-    public MassOperationsGenericDaoDbFacade(String entityStoredProcedureName) {
+    public MassOperationsGenericDao(String entityStoredProcedureName) {
         super(entityStoredProcedureName);
     }
 

@@ -17,7 +17,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class VdcOptionDaoImpl extends BaseDaoDbFacade implements VdcOptionDao {
+public class VdcOptionDaoImpl extends BaseDao implements VdcOptionDao {
 
     private static final class VdcOptionRowMapper implements RowMapper<VdcOption> {
         public static final VdcOptionRowMapper instance = new VdcOptionRowMapper();

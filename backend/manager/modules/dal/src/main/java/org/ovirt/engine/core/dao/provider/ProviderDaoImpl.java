@@ -19,14 +19,14 @@ import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProv
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
-import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
+import org.ovirt.engine.core.dao.DefaultGenericDao;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 @Named
 @Singleton
-public class ProviderDaoImpl extends DefaultGenericDaoDbFacade<Provider<?>, Guid> implements ProviderDao {
+public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implements ProviderDao {
 
     public ProviderDaoImpl() {
         super("Provider");

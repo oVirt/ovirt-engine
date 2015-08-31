@@ -2,8 +2,13 @@ package org.ovirt.engine.core.bll.job;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
@@ -12,6 +17,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.JobSubjectEntityDao;
 import org.ovirt.engine.core.dao.StepDao;
+import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
@@ -82,23 +88,49 @@ public class JobRepositoryImpl implements JobRepository {
 
     @Override
     public void saveJob(final Job job) {
-        jobDao.save(job);
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+
+            @Override
+            public Void runInTransaction() {
+                jobDao.save(job);
+                Set<Entry<Guid, VdcObjectType>> entrySet = job.getJobSubjectEntities().entrySet();
+                for (Entry<Guid, VdcObjectType> entry : entrySet) {
+                    jobSubjectEntityDao.save(job.getId(), entry.getKey(), entry.getValue());
+                }
+                return null;
+            }
+        });
     }
 
     @Override
     public Job getJob(final Guid jobId) {
-        return TransactionSupport.executeInNewTransaction(new TransactionMethod<Job>() {
+        Job job = jobDao.get(jobId);
+        if (job != null) {
+            Map<Guid, VdcObjectType> jobSubjectEntity =
+                    jobSubjectEntityDao.getJobSubjectEntityByJobId(jobId);
+            job.setJobSubjectEntities(jobSubjectEntity);
+        }
+        return job;
+    }
 
-            @Override
-            public Job runInTransaction() {
-                Job job = jobDao.get(jobId);
-                if (job != null) {
-                    // This loads the lazy collection
-                    job.getJobSubjectEntities();
-                }
-                return job;
-            }
-        });
+    @Override
+    public Job getJobWithSteps(final Guid jobId) {
+        Job job = jobDao.get(jobId);
+        if (job != null) {
+            Map<Guid, VdcObjectType> jobSubjectEntity =
+                    jobSubjectEntityDao.getJobSubjectEntityByJobId(jobId);
+            job.setJobSubjectEntities(jobSubjectEntity);
+            loadJobSteps(job);
+        }
+        return job;
+    }
+
+    @Override
+    public void loadJobSteps(final Job job) {
+        List<Step> steps = stepDao.getStepsByJobId(job.getId());
+        if (!steps.isEmpty()) {
+            job.setSteps(buildStepsTree(steps));
+        }
     }
 
     @Override
@@ -107,6 +139,34 @@ public class JobRepositoryImpl implements JobRepository {
         if (!steps.isEmpty()) {
             step.setSteps(steps);
         }
+    }
+
+
+    /**
+     * Gets a list of {@link Step} entities ordered by:
+     * <li> parent step id, preceded by nulls
+     * <li> step number
+     * @param steps
+     * @return a collection of the steps.
+     */
+    private List<Step> buildStepsTree(List<Step> steps) {
+        List<Step> jobDirectSteps = new ArrayList<>();
+
+        // a map of parent step id and a list of child-steps
+        Map<Guid, List<Step>> parentStepMap = new HashMap<>();
+
+        for (Step step : steps) {
+            if (step.getParentStepId() == null) {
+                jobDirectSteps.add(step);
+            } else {
+                MultiValueMapUtils.addToMap(step.getParentStepId(), step, parentStepMap);
+            }
+        }
+
+        for (Step step : steps) {
+            step.setSteps(parentStepMap.get(step.getId()));
+        }
+        return jobDirectSteps;
     }
 
     @Override
@@ -148,13 +208,8 @@ public class JobRepositoryImpl implements JobRepository {
 
             @Override
             public Void runInTransaction() {
-                for (Step step : job.getSteps()) {
-                    if (step.getStatus() == JobExecutionStatus.STARTED) {
-                        step.setStatus(job.getStatus());
-                        step.setEndTime(job.getEndTime());
-                    }
-                }
                 jobDao.update(job);
+                stepDao.updateJobStepsCompleted(job.getId(), job.getStatus(), job.getEndTime());
                 return null;
             }
         });

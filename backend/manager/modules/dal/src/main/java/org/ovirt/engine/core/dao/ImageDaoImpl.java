@@ -19,7 +19,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class ImageDaoImpl extends DefaultGenericDaoDbFacade<Image, Guid> implements ImageDao {
+public class ImageDaoImpl extends DefaultGenericDao<Image, Guid> implements ImageDao {
 
     public ImageDaoImpl() {
         super("Image");

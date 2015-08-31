@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class MacPoolDaoImpl extends DefaultGenericDaoDbFacade<MacPool, Guid> implements MacPoolDao {
+public class MacPoolDaoImpl extends DefaultGenericDao<MacPool, Guid> implements MacPoolDao {
     public MacPoolDaoImpl() {
         super("MacPool");
     }

@@ -3,7 +3,7 @@
 -- General Queries
 
 -- All cluster policies
--- 'Policys' typo is intentional, naming convention for DefaultGenericDaoDbFacade is: "GetAllFrom{0}s",
+-- 'Policys' typo is intentional, naming convention for DefaultGenericDao is: "GetAllFrom{0}s",
 -- where {0} is the business entity (ClusterPolicy).
 Create or replace FUNCTION GetAllFromClusterPolicys() RETURNS SETOF cluster_policies STABLE
 AS $procedure$

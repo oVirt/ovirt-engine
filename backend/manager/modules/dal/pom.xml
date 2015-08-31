@@ -44,11 +44,6 @@
       <artifactId>jta</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-entitymanager</artifactId>
-      <version>${hibernate-jpa.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
       <version>${reflections.version}</version>
@@ -95,28 +90,16 @@
       <version>${spring.version}</version>
       <scope>test</scope>
     </dependency>
-    <!-- JUL is used as logging backend for tests -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.ejb</groupId>
-      <artifactId>ejb-api</artifactId>
-      <version>3.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-entitymanager</artifactId>
-      <version>${hibernate-jpa.version}</version>
-      <scope>provided</scope>
-    </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-library</artifactId>
       <version>${hamcrest.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- JUL is used as logging backend for tests -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jdk14</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -14,13 +14,13 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapsh
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
-import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
+import org.ovirt.engine.core.dao.MassOperationsGenericDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class GlusterVolumeSnapshotDaoImpl extends MassOperationsGenericDaoDbFacade<GlusterVolumeSnapshotEntity, Guid> implements GlusterVolumeSnapshotDao {
+public class GlusterVolumeSnapshotDaoImpl extends MassOperationsGenericDao<GlusterVolumeSnapshotEntity, Guid> implements GlusterVolumeSnapshotDao {
     private static final RowMapper<GlusterVolumeSnapshotEntity> snapshotRowMapper =
             new GlusterVolumeSnapshotRowMapper();
 

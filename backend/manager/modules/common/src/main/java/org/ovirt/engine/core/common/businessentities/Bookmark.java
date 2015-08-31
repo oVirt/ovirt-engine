@@ -1,36 +1,23 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import java.io.Serializable;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Type;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "bookmarks")
-@Cacheable(true)
-@NamedQuery(name = "Bookmark.byName", query = "select b FROM Bookmark b WHERE b.name = :name")
-public class Bookmark implements IVdcQueryable, BusinessEntity<Guid> {
+public class Bookmark implements IVdcQueryable, Serializable {
+
     private static final long serialVersionUID = 8177640907822845847L;
 
-    @Id
-    @Column(name = "bookmark_id")
-    @Type(type = "org.ovirt.engine.core.dao.jpa.GuidUserType")
     private Guid id;
 
     @Size(max = BusinessEntitiesDefinitions.BOOKMARK_NAME_SIZE)
-    @Column(name = "bookmark_name")
     private String name;
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.BOOKMARK_VALUE_SIZE)
-    @Column(name = "bookmark_value")
     private String value;
+
 
     public String getbookmark_name() {
         return name;
@@ -43,6 +30,7 @@ public class Bookmark implements IVdcQueryable, BusinessEntity<Guid> {
     public void setbookmark_value(String value) {
         this.value = value;
     }
+
 
     public void setbookmark_name(String name) {
         this.name = name;
@@ -75,6 +63,7 @@ public class Bookmark implements IVdcQueryable, BusinessEntity<Guid> {
                 && ObjectUtils.objectsEqual(value, other.value));
     }
 
+
     public Guid getbookmark_id() {
         return id;
     }
@@ -86,15 +75,5 @@ public class Bookmark implements IVdcQueryable, BusinessEntity<Guid> {
     @Override
     public Object getQueryableId() {
         return getbookmark_id();
-    }
-
-    @Override
-    public Guid getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Guid id) {
-        this.id = id;
     }
 }

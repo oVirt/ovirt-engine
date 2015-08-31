@@ -16,7 +16,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class VmStaticDaoImpl extends VmBaseDaoDbFacade<VmStatic> implements VmStaticDao {
+public class VmStaticDaoImpl extends VmBaseDao<VmStatic> implements VmStaticDao {
     public static final Integer USE_LATEST_VERSION_NUMBER_INDICATOR = null;
     public static final Integer DONT_USE_LATEST_VERSION_NUMBER_INDICATOR = 1;
 

@@ -23,7 +23,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
  */
 @Named
 @Singleton
-public class VdsStaticDaoImpl extends BaseDaoDbFacade implements VdsStaticDao {
+public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
 
     @Override
     public VdsStatic get(Guid id) {

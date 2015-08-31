@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
-import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
+import org.ovirt.engine.core.dao.MassOperationsGenericDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -27,7 +27,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class GlusterGeoRepDaoImpl extends MassOperationsGenericDaoDbFacade<GlusterGeoRepSession, Guid> implements
+public class GlusterGeoRepDaoImpl extends MassOperationsGenericDao<GlusterGeoRepSession, Guid> implements
         GlusterGeoRepDao {
 
     private static final RowMapper<GlusterGeoRepSession> georepSessionRowMapper = new GeoRepSessionRowMapper();

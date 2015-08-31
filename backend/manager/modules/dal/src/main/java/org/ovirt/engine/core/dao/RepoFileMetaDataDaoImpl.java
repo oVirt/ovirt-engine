@@ -25,7 +25,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class RepoFileMetaDataDaoImpl extends BaseDaoDbFacade implements RepoFileMetaDataDao {
+public class RepoFileMetaDataDaoImpl extends BaseDao implements RepoFileMetaDataDao {
 
     @Override
     public void removeRepoDomainFileList(Guid id, ImageFileType fileType) {

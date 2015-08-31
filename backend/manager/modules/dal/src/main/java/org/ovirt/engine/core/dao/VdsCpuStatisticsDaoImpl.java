@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class VdsCpuStatisticsDaoImpl extends BaseDaoDbFacade implements VdsCpuStatisticsDao {
+public class VdsCpuStatisticsDaoImpl extends BaseDao implements VdsCpuStatisticsDao {
 
     @Override
     public List<CpuStatistics> getAllCpuStatisticsByVdsId(Guid vdsId) {

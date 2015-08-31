@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
+import org.ovirt.engine.core.dao.MassOperationsGenericDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
@@ -25,7 +25,7 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  */
 @Named
 @Singleton
-public class GlusterHooksDaoImpl extends MassOperationsGenericDaoDbFacade<GlusterHookEntity, Guid> implements
+public class GlusterHooksDaoImpl extends MassOperationsGenericDao<GlusterHookEntity, Guid> implements
         GlusterHooksDao {
 
     private static final RowMapper<GlusterHookEntity> glusterHookRowMapper = new GlusterHookRowMapper();

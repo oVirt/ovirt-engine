@@ -5,14 +5,14 @@ import java.sql.SQLException;
 
 import org.ovirt.engine.core.common.businessentities.profiles.ProfileBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
+import org.ovirt.engine.core.dao.DefaultGenericDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-public abstract class ProfileBaseDaoFacadeImpl<T extends ProfileBase> extends DefaultGenericDaoDbFacade<T, Guid> implements ProfilesDao<T> {
+public abstract class ProfileBaseDaoImpl<T extends ProfileBase> extends DefaultGenericDao<T, Guid> implements ProfilesDao<T> {
     protected final RowMapper<T> mapper = createEntityRowMapper();
 
-    public ProfileBaseDaoFacadeImpl(String entityStoredProcedureName) {
+    public ProfileBaseDaoImpl(String entityStoredProcedureName) {
         super(entityStoredProcedureName);
     }
 

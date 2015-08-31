@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class VmInitDaoImpl extends BaseDaoDbFacade implements VmInitDao {
+public class VmInitDaoImpl extends BaseDao implements VmInitDao {
 
     @Override
     public VmInit get(Guid id) {

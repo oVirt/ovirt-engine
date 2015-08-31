@@ -13,7 +13,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class DiskLunMapDaoImpl extends DefaultGenericDaoDbFacade<DiskLunMap, DiskLunMapId>
+public class DiskLunMapDaoImpl extends DefaultGenericDao<DiskLunMap, DiskLunMapId>
         implements DiskLunMapDao {
 
     private static final class DiskLunMapRowMapper implements RowMapper<DiskLunMap> {

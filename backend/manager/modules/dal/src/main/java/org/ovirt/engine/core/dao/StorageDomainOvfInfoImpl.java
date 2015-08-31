@@ -22,7 +22,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class StorageDomainOvfInfoImpl extends DefaultGenericDaoDbFacade<StorageDomainOvfInfo, Guid> implements StorageDomainOvfInfoDao{
+public class StorageDomainOvfInfoImpl extends DefaultGenericDao<StorageDomainOvfInfo, Guid> implements StorageDomainOvfInfoDao{
 
     public StorageDomainOvfInfoImpl() {
         super("StorageDomainOvfInfo");

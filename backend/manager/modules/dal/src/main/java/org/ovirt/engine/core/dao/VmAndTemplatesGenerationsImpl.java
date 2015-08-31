@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 @Named
 @Singleton
-public class VmAndTemplatesGenerationsImpl extends BaseDaoDbFacade implements VmAndTemplatesGenerationsDao {
+public class VmAndTemplatesGenerationsImpl extends BaseDao implements VmAndTemplatesGenerationsDao {
     private static final String ovfSeparator = "<<<ENDOVF>>>";
 
     @Override

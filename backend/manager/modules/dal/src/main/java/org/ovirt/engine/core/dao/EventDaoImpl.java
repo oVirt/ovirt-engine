@@ -19,7 +19,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class EventDaoImpl extends BaseDaoDbFacade implements EventDao {
+public class EventDaoImpl extends BaseDao implements EventDao {
 
     private static final class EventSubscriberRowMapper implements RowMapper<event_subscriber> {
         public static final EventSubscriberRowMapper instance = new EventSubscriberRowMapper();

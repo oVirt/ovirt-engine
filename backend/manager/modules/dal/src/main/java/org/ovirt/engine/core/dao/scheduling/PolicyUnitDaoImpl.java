@@ -10,14 +10,14 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
+import org.ovirt.engine.core.dao.DefaultGenericDao;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class PolicyUnitDaoImpl extends DefaultGenericDaoDbFacade<PolicyUnit, Guid> implements PolicyUnitDao {
+public class PolicyUnitDaoImpl extends DefaultGenericDao<PolicyUnit, Guid> implements PolicyUnitDao {
 
     public PolicyUnitDaoImpl() {
         super("PolicyUnit");

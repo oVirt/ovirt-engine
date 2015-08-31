@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class IscsiBondDaoImpl extends DefaultGenericDaoDbFacade<IscsiBond, Guid> implements IscsiBondDao {
+public class IscsiBondDaoImpl extends DefaultGenericDao<IscsiBond, Guid> implements IscsiBondDao {
 
     public IscsiBondDaoImpl() {
         super("IscsiBond");

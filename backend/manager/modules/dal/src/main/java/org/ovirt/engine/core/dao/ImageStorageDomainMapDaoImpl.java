@@ -16,7 +16,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class ImageStorageDomainMapDaoImpl extends BaseDaoDbFacade implements ImageStorageDomainMapDao {
+public class ImageStorageDomainMapDaoImpl extends BaseDao implements ImageStorageDomainMapDao {
 
     @Override
     public void save(ImageStorageDomainMap entity) {

@@ -15,8 +15,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * @param <ID>
  *            The type of the entity's id.
  */
-public abstract class DefaultGenericDaoDbFacade<T extends BusinessEntity<ID>, ID extends Serializable>
-        extends DefaultReadDaoDbFacade<T, ID> implements GenericDao<T, ID> {
+public abstract class DefaultGenericDao<T extends BusinessEntity<ID>, ID extends Serializable>
+        extends DefaultReadDao<T, ID> implements GenericDao<T, ID> {
 
     protected static final String DEFAULT_SAVE_PROCEDURE_FORMAT = "Insert{0}";
 
@@ -43,13 +43,13 @@ public abstract class DefaultGenericDaoDbFacade<T extends BusinessEntity<ID>, ID
      * Initialize default procedure names with the given entity name.<br>
      * The default procedure names are determined by the following formats:
      * <ul>
-     * <li>For {@link GenericDao#get(Serializable)}: {@link DefaultGenericDaoDbFacade#DEFAULT_GET_PROCEDURE_FORMAT}</li>
-     * <li>For {@link GenericDao#getAll()}: {@link DefaultGenericDaoDbFacade#DEFAULT_GET_ALL_PROCEDURE_FORMAT}</li>
-     * <li>For {@link GenericDao#save(BusinessEntity)}: {@link DefaultGenericDaoDbFacade#DEFAULT_SAVE_PROCEDURE_FORMAT}</li>
+     * <li>For {@link GenericDao#get(Serializable)}: {@link DefaultGenericDao#DEFAULT_GET_PROCEDURE_FORMAT}</li>
+     * <li>For {@link GenericDao#getAll()}: {@link DefaultGenericDao#DEFAULT_GET_ALL_PROCEDURE_FORMAT}</li>
+     * <li>For {@link GenericDao#save(BusinessEntity)}: {@link DefaultGenericDao#DEFAULT_SAVE_PROCEDURE_FORMAT}</li>
      * <li>For {@link GenericDao#update(BusinessEntity)}:
-     * {@link DefaultGenericDaoDbFacade#DEFAULT_UPDATE_PROCEDURE_FORMAT}</li>
+     * {@link DefaultGenericDao#DEFAULT_UPDATE_PROCEDURE_FORMAT}</li>
      * <li>For {@link GenericDao#remove(Serializable)}:
-     * {@link DefaultGenericDaoDbFacade#DEFAULT_REMOVE_PROCEDURE_FORMAT}</li>
+     * {@link DefaultGenericDao#DEFAULT_REMOVE_PROCEDURE_FORMAT}</li>
      * </ul>
      *
      * If you wish to use a procedure name different than the default one, please set it accordingly.
@@ -57,7 +57,7 @@ public abstract class DefaultGenericDaoDbFacade<T extends BusinessEntity<ID>, ID
      * @param entityStoredProcedureName
      *            The name to use in the default procedure names templates.
      */
-    public DefaultGenericDaoDbFacade(String entityStoredProcedureName) {
+    public DefaultGenericDao(String entityStoredProcedureName) {
         super(entityStoredProcedureName);
         procedureNameForSave = MessageFormat.format(DEFAULT_SAVE_PROCEDURE_FORMAT, entityStoredProcedureName);
         procedureNameForUpdate = MessageFormat.format(DEFAULT_UPDATE_PROCEDURE_FORMAT, entityStoredProcedureName);

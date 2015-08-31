@@ -25,7 +25,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Named
 @Singleton
 @SuppressWarnings("synthetic-access")
-public class StoragePoolDaoImpl extends BaseDaoDbFacade implements StoragePoolDao {
+public class StoragePoolDaoImpl extends BaseDao implements StoragePoolDao {
 
     private static final class StoragePoolRawMapper implements RowMapper<StoragePool> {
         @Override

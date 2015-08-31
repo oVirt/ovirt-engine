@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class SnapshotDaoImpl extends DefaultGenericDaoDbFacade<Snapshot, Guid> implements SnapshotDao {
+public class SnapshotDaoImpl extends DefaultGenericDao<Snapshot, Guid> implements SnapshotDao {
 
     private static final RowMapper<Snapshot> ROW_MAPPER = new SnapshotRowMapper();
 

@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class StorageDomainStaticDaoImpl extends DefaultGenericDaoDbFacade<StorageDomainStatic, Guid> implements StorageDomainStaticDao {
+public class StorageDomainStaticDaoImpl extends DefaultGenericDao<StorageDomainStatic, Guid> implements StorageDomainStaticDao {
 
     public StorageDomainStaticDaoImpl() {
         super("storage_domain_static");

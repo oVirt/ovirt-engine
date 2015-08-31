@@ -24,7 +24,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class BusinessEntitySnapshotDaoImpl extends BaseDaoDbFacade implements BusinessEntitySnapshotDao {
+public class BusinessEntitySnapshotDaoImpl extends BaseDao implements BusinessEntitySnapshotDao {
 
     private static class BusinessEntitySnapshotMapper implements RowMapper<BusinessEntitySnapshot> {
 

@@ -16,7 +16,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class StoragePoolIsoMapDaoImpl extends BaseDaoDbFacade implements StoragePoolIsoMapDao {
+public class StoragePoolIsoMapDaoImpl extends BaseDao implements StoragePoolIsoMapDao {
 
     private static final class StoragePoolIsoMapRowMapper implements RowMapper<StoragePoolIsoMap> {
         public static final StoragePoolIsoMapRowMapper instance = new StoragePoolIsoMapRowMapper();

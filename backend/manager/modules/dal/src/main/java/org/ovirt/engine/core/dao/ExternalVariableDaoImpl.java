@@ -12,7 +12,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 @Named
 @Singleton
-public class ExternalVariableDaoImpl extends BaseDaoDbFacade implements ExternalVariableDao {
+public class ExternalVariableDaoImpl extends BaseDao implements ExternalVariableDao {
 
     private static class ExternalVariableMapper implements RowMapper<ExternalVariable> {
         private static final ExternalVariableMapper instance = new ExternalVariableMapper();

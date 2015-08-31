@@ -11,13 +11,13 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
+import org.ovirt.engine.core.dao.MassOperationsGenericDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class GlusterOptionDaoImpl extends MassOperationsGenericDaoDbFacade<GlusterVolumeOptionEntity, Guid> implements GlusterOptionDao {
+public class GlusterOptionDaoImpl extends MassOperationsGenericDao<GlusterVolumeOptionEntity, Guid> implements GlusterOptionDao {
     private static final RowMapper<GlusterVolumeOptionEntity> optionRowMapper = new VolumeOptionRowMapper();
 
     public GlusterOptionDaoImpl() {

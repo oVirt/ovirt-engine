@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.dao;
 
-import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

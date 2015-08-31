@@ -23,7 +23,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class StorageServerConnectionLunMapDaoImpl extends BaseDaoDbFacade implements
+public class StorageServerConnectionLunMapDaoImpl extends BaseDao implements
         StorageServerConnectionLunMapDao {
 
     private static final class StorageServerConnectionLunMapRowMapper

@@ -9,7 +9,7 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
+import org.ovirt.engine.core.dao.MassOperationsGenericDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class StorageDeviceDaoImpl extends MassOperationsGenericDaoDbFacade<StorageDevice, Guid> implements
+public class StorageDeviceDaoImpl extends MassOperationsGenericDao<StorageDevice, Guid> implements
         StorageDeviceDao {
 
     private static final RowMapper<StorageDevice> storageDeviceRowMapper = new StorageDeviceRowMapper();

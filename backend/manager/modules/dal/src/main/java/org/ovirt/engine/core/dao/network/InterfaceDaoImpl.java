@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
-import org.ovirt.engine.core.dao.BaseDaoDbFacade;
+import org.ovirt.engine.core.dao.BaseDao;
 import org.ovirt.engine.core.dao.network.NetworkStatisticsDaoImpl.NetworkStatisticsParametersMapper;
 import org.ovirt.engine.core.dao.network.NetworkStatisticsDaoImpl.NetworkStatisticsRowMapper;
 import org.ovirt.engine.core.utils.SerializationFactory;
@@ -35,7 +35,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class InterfaceDaoImpl extends BaseDaoDbFacade implements InterfaceDao {
+public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
 
     @Inject
     private NetworkQoSDao networkQosDao;

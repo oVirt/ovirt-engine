@@ -24,7 +24,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class PermissionDaoImpl extends BaseDaoDbFacade implements PermissionDao {
+public class PermissionDaoImpl extends BaseDao implements PermissionDao {
     @Override
     public Permission get(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()

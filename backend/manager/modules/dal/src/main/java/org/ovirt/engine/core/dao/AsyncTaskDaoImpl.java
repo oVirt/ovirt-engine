@@ -30,7 +30,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class AsyncTaskDaoImpl extends BaseDaoDbFacade implements AsyncTaskDao {
+public class AsyncTaskDaoImpl extends BaseDao implements AsyncTaskDao {
     private static final Logger log = LoggerFactory.getLogger(AsyncTaskDaoImpl.class);
 
     private static class IdRowMapper implements RowMapper<Guid> {

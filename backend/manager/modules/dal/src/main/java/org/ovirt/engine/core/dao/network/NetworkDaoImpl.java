@@ -17,14 +17,14 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
+import org.ovirt.engine.core.dao.DefaultGenericDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class NetworkDaoImpl extends DefaultGenericDaoDbFacade<Network, Guid> implements NetworkDao {
+public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements NetworkDao {
 
     public NetworkDaoImpl() {
         super("network");

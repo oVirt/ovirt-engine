@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class BaseDiskDaoImpl extends DefaultGenericDaoDbFacade<BaseDisk, Guid> implements BaseDiskDao {
+public class BaseDiskDaoImpl extends DefaultGenericDao<BaseDisk, Guid> implements BaseDiskDao {
 
     public BaseDiskDaoImpl() {
         super("BaseDisk");

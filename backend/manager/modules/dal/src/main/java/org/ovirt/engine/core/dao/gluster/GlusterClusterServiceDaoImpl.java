@@ -12,13 +12,13 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatu
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDaoDbFacade;
+import org.ovirt.engine.core.dao.BaseDao;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 @Named
 @Singleton
-public class GlusterClusterServiceDaoImpl extends BaseDaoDbFacade implements GlusterClusterServiceDao {
+public class GlusterClusterServiceDaoImpl extends BaseDao implements GlusterClusterServiceDao {
     private static final ParameterizedRowMapper<GlusterClusterService> serviceRowMapper =
             new GlusterClusterServiceRowMapper();
 

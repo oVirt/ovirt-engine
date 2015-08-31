@@ -34,7 +34,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
-public class VdsDynamicDaoImpl extends MassOperationsGenericDaoDbFacade<VdsDynamic, Guid> implements VdsDynamicDao {
+public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid> implements VdsDynamicDao {
 
     private static final Logger log = LoggerFactory.getLogger(VdsDynamicDaoImpl.class);
 

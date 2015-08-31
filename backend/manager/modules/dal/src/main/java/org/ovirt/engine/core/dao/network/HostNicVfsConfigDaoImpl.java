@@ -12,14 +12,14 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
+import org.ovirt.engine.core.dao.MassOperationsGenericDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class HostNicVfsConfigDaoImpl extends MassOperationsGenericDaoDbFacade<HostNicVfsConfig, Guid>
+public class HostNicVfsConfigDaoImpl extends MassOperationsGenericDao<HostNicVfsConfig, Guid>
         implements HostNicVfsConfigDao {
 
     private final HostNicVfsConfigRowMapper nicVfsConfigRowMapper = new HostNicVfsConfigRowMapper();

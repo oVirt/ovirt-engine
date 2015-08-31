@@ -21,7 +21,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
  */
 @Named
 @Singleton
-public class DbUserDaoImpl extends BaseDaoDbFacade implements DbUserDao {
+public class DbUserDaoImpl extends BaseDao implements DbUserDao {
     private static class DbUserRowMapper implements RowMapper<DbUser> {
         public static final DbUserRowMapper instance = new DbUserRowMapper();
 

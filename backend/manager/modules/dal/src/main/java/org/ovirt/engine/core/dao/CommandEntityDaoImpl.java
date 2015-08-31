@@ -29,7 +29,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class CommandEntityDaoImpl extends DefaultGenericDaoDbFacade<CommandEntity, Guid> implements CommandEntityDao {
+public class CommandEntityDaoImpl extends DefaultGenericDao<CommandEntity, Guid> implements CommandEntityDao {
 
     private static class IdRowMapper implements RowMapper<Guid> {
         public static final IdRowMapper instance = new IdRowMapper();

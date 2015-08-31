@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class VmStatisticsDaoImpl extends MassOperationsGenericDaoDbFacade<VmStatistics, Guid>
+public class VmStatisticsDaoImpl extends MassOperationsGenericDao<VmStatistics, Guid>
         implements VmStatisticsDao {
 
     public VmStatisticsDaoImpl() {
