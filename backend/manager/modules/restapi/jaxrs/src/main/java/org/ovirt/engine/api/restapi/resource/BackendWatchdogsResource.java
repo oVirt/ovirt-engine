@@ -46,7 +46,7 @@ public class BackendWatchdogsResource
     public WatchdogResource getDeviceSubResource(String watchdogId) {
         return inject(
             new BackendWatchdogResource(
-                true,
+                parentIsVm,
                 parentId,
                 asGuidOr404(watchdogId),
                 this,
