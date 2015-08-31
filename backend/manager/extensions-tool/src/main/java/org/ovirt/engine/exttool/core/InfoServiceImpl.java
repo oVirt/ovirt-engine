@@ -108,12 +108,24 @@ public class InfoServiceImpl implements ModuleService {
                 public void execute(InfoServiceImpl module) {
                     for (ExtensionProxy extension : module.getExtensionsManager().getExtensions()) {
                         ExtMap extContext = extension.getContext();
-                        log.info(
-                            "Extension name={} type={} version={} notes={}",
-                            extContext.get(Base.ContextKeys.INSTANCE_NAME),
-                            extContext.get(Base.ContextKeys.EXTENSION_NAME),
-                            extContext.get(Base.ContextKeys.VERSION),
-                            extContext.get(Base.ContextKeys.EXTENSION_NOTES)
+                        module.output(
+                            ((String)module.argMap.get("format")).replace(
+                                "{instance}",
+                                extContext.<String>get(Base.ContextKeys.INSTANCE_NAME, "")
+                            ).replace(
+                                "{name}",
+                                extContext.<String>get(Base.ContextKeys.EXTENSION_NAME, "")
+                            ).replace(
+                                "{version}",
+                                extContext.<String>get(Base.ContextKeys.VERSION, "")
+                            ).replace(
+                                "{license}",
+                                extContext.<String>get(Base.ContextKeys.LICENSE, "")
+                            ).replace(
+                                "{notes}",
+                                extContext.<String>get(Base.ContextKeys.EXTENSION_NOTES, "")
+                            ),
+                            ""
                         );
                     }
                 }
