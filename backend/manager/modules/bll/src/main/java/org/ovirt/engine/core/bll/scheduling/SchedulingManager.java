@@ -125,7 +125,7 @@ public class SchedulingManager implements BackendService {
         log.info("Initialized Scheduling manager");
     }
 
-    protected void loadExternalScheduler() {
+    private void loadExternalScheduler() {
         if (Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled)) {
             log.info("Starting external scheduler discovery thread");
             ThreadPoolUtil.execute(new Runnable() {
@@ -142,7 +142,7 @@ public class SchedulingManager implements BackendService {
         }
     }
 
-    public void reloadPolicyUnits() {
+    private void reloadPolicyUnits() {
         synchronized (policyUnitsLock) {
             policyUnits = new ConcurrentHashMap<>();
             loadPolicyUnits();
@@ -184,14 +184,14 @@ public class SchedulingManager implements BackendService {
         }
     }
 
-    protected void loadClusterPolicies() {
+    private void loadClusterPolicies() {
         List<ClusterPolicy> allClusterPolicies = getClusterPolicyDao().getAll();
         for (ClusterPolicy clusterPolicy : allClusterPolicies) {
             policyMap.put(clusterPolicy.getId(), clusterPolicy);
         }
     }
 
-    protected void loadPolicyUnits() {
+    private void loadPolicyUnits() {
         List<PolicyUnit> allPolicyUnits = getPolicyUnitDao().getAll();
         for (PolicyUnit policyUnit : allPolicyUnits) {
             if (policyUnit.isInternal()) {
@@ -423,7 +423,7 @@ public class SchedulingManager implements BackendService {
      * In case all of the above conditions are met, we release all the pending scheduling
      * requests.
      */
-    protected void checkAllowOverbooking(VDSGroup cluster) {
+    private void checkAllowOverbooking(VDSGroup cluster) {
         if (OptimizationType.ALLOW_OVERBOOKING == cluster.getOptimizationType()
                 && Config.<Boolean>getValue(ConfigValues.SchedulerAllowOverBooking)
                 && clusterLockMap.get(cluster.getId()).getQueueLength() >=
@@ -446,7 +446,7 @@ public class SchedulingManager implements BackendService {
      * @param vdsList
      * @return
      */
-    protected boolean shouldWeighClusterHosts(VDSGroup cluster, List<VDS> vdsList) {
+    private boolean shouldWeighClusterHosts(VDSGroup cluster, List<VDS> vdsList) {
         Integer threshold = Config.<Integer>getValue(ConfigValues.SpeedOptimizationSchedulingThreshold);
         // threshold is crossed only when cluster is configured for optimized for speed
         boolean crossedThreshold =
@@ -499,7 +499,7 @@ public class SchedulingManager implements BackendService {
         return ids;
     }
 
-    protected Map<String, String> createClusterPolicyParameters(VDSGroup cluster) {
+    private Map<String, String> createClusterPolicyParameters(VDSGroup cluster) {
         Map<String, String> parameters = new HashMap<>();
         if (cluster.getClusterPolicyProperties() != null) {
             parameters.putAll(cluster.getClusterPolicyProperties());
@@ -507,7 +507,7 @@ public class SchedulingManager implements BackendService {
         return parameters;
     }
 
-    protected void updateInitialHostList(List<VDS> vdsList, List<Guid> list, boolean contains) {
+    private void updateInitialHostList(List<VDS> vdsList, List<Guid> list, boolean contains) {
         if (list != null && !list.isEmpty()) {
             List<VDS> toRemoveList = new ArrayList<>();
             Set<Guid> listSet = new HashSet<>(list);
@@ -693,7 +693,7 @@ public class SchedulingManager implements BackendService {
         });
     }
 
-    protected Guid runFunctions(List<Pair<Guid, Integer>> functions,
+    private Guid runFunctions(List<Pair<Guid, Integer>> functions,
             List<VDS> hostList,
             VM vm,
             Map<String, String> parameters) {
@@ -824,11 +824,11 @@ public class SchedulingManager implements BackendService {
         policyMap.remove(clusterPolicyId);
     }
 
-    protected VdsDao getVdsDao() {
+    private VdsDao getVdsDao() {
         return dbFacade.getVdsDao();
     }
 
-    protected VdsGroupDao getVdsGroupDao() {
+    private VdsGroupDao getVdsGroupDao() {
         return dbFacade.getVdsGroupDao();
     }
 
@@ -836,15 +836,15 @@ public class SchedulingManager implements BackendService {
         return dbFacade.getVdsDynamicDao();
     }
 
-    protected PolicyUnitDao getPolicyUnitDao() {
+    private PolicyUnitDao getPolicyUnitDao() {
         return dbFacade.getPolicyUnitDao();
     }
 
-    protected ClusterPolicyDao getClusterPolicyDao() {
+    private ClusterPolicyDao getClusterPolicyDao() {
         return dbFacade.getClusterPolicyDao();
     }
 
-    public void enableLoadBalancer() {
+    private void enableLoadBalancer() {
         if (Config.<Boolean>getValue(ConfigValues.EnableVdsLoadBalancing)) {
             log.info("Start scheduling to enable vds load balancer");
             Injector.get(SchedulerUtilQuartzImpl.class).scheduleAFixedDelayJob(
@@ -859,7 +859,7 @@ public class SchedulingManager implements BackendService {
         }
     }
 
-    public void enableHaReservationCheck() {
+    private void enableHaReservationCheck() {
 
         if (Config.<Boolean>getValue(ConfigValues.EnableVdsLoadBalancing)) {
             log.info("Start HA Reservation check");
