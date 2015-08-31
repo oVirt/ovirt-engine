@@ -15,7 +15,7 @@ public class EntityModelDetachableWidgetWithInfo extends EntityModelWidgetWithIn
 
     @Override
     public void setDetachableIconVisible(boolean visible) {
-        ((HasDetachable) contentWidget).setDetachableIconVisible(visible);
+        getContentWidget().setDetachableIconVisible(visible);
     }
 
     @Override

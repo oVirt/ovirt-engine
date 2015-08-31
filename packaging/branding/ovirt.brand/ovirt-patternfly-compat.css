@@ -155,7 +155,7 @@ span.label {
     top: -2px;
 }
 .avmpw_monitorsLabel_pfly_fix {
-    width: 276px !important;
+    width: 320px !important;
 }
 #InstanceTypesPopupWidget .avmpw_smartcard_pfly_fix {
     position: relative;
@@ -232,9 +232,7 @@ div.avw_contentWidgetContainer_pfly_fix {
     padding-top: 0 !important;
     padding-left: 5px !important;
 }
-.avmpw_maxAssignedVmsPerUserEditorContent_pfly_fix, .avmpw_prestartedVmsEditorContent_pfly_fix {
-    padding-left: 10px;
-}
+
 .avmpw_poolEditVms_pfly_fix {
     padding-bottom: 30px !important;
 }

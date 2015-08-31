@@ -166,6 +166,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         String migrationSelectorInner();
 
         String isVirtioScsiEnabledEditor();
+
+        String totalVcpusStyle();
     }
 
     @UiField
@@ -1621,6 +1623,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         numOfMonitorsEditor.hideLabel();
         migrationModeEditor.addContentWidgetContainerStyleName(style.migrationSelectorInner());
         isVirtioScsiEnabled.addContentWidgetContainerStyleName(style.isVirtioScsiEnabledEditor());
+        applyStylesForDetachableWithInfoIcon();
+    }
+
+    protected void applyStylesForDetachableWithInfoIcon() {
+        totalvCPUsEditorWithInfoIcon.getContentWidget().setContentWrapperStypeName(style.totalVcpusStyle());
     }
 
     @Override

@@ -94,7 +94,7 @@
       .migrationDowntime {
         display: inline;
         float: right;
-        padding-right: 9px;
+        padding-right: 14px;
       }
       <!-- 			turns off the original styles -->
 
@@ -236,12 +236,12 @@
         }
 
         .prestartedVmsEditorContent, .maxAssignedVmsPerUserEditorContent {
-            width: 230px;
+            width: 228px;
         }
 
         .prestartedVmsEditor, .maxAssignedVmsPerUserEditor {
             float: right;
-            width: 230px;
+            width: 238px;
         }
 
         .nameEditorContent {
@@ -268,8 +268,7 @@
 
         .editPrestartedVms, .editIncreaseVms, .editMaxAssignedVmsPerUser {
             float: right;
-            /* width: 250px; pfly_fix */
-            width: 220px;
+            width: 238px;
         }
 
         .prestartedLabel, .nameLabel {
@@ -312,7 +311,7 @@
         }
 
         .cdImageEditor {
-            width: 197px;
+            width: 201px;
         }
 
         .isVirtioScsiEnabledEditor {
@@ -336,7 +335,7 @@
         }
 
         .hostSelector {
-            width: 486px;
+            width: 504px;
         }
 
         .labelToCouple {
@@ -359,7 +358,7 @@
             float: right;
             line-height: 30px;
             padding: 0 5px;
-            width: 230px;
+            width: 248px;
         }
 
         .labelToCoupleCoupleLeft {
@@ -376,10 +375,6 @@
 
         .cpuPinningTextBox {
             width: 197px;
-            padding-left: 5px;
-        }
-
-        .cpuSahresValueTextBox {
             padding-left: 5px;
         }
 
@@ -427,6 +422,10 @@
           margin-top: 9px;
         }
 
+        .totalVcpusStyle {
+            width: 270px;
+        }
+
     </ui:style>
 
     <t:DialogTabPanel width="100%" height="100%" ui:field="mainTabPanel">
@@ -465,7 +464,7 @@
                                     <g:Label ui:field="prestartedLabel" addStyleNames="{style.prestartedLabel}" />
                                     <d:InfoIcon ui:field="newPoolPrestartedVmsIcon" addStyleNames="{style.prestartedVmsIcon} avmpw_infoIcon_pfly_fix" />
                                 </g:FlowPanel>
-                                <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="prestartedVmsEditor" addStyleNames="{style.prestartedVmsEditor}" contentWidgetContainerStyleName="{style.prestartedVmsEditorContent} avmpw_prestartedVmsEditorContent_pfly_fix" />
+                                <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="prestartedVmsEditor" addStyleNames="{style.prestartedVmsEditor}" contentWidgetContainerStyleName="{style.prestartedVmsEditorContent}" />
                             </g:FlowPanel>
 
                             <g:FlowPanel ui:field="newPoolEditMaxAssignedVmsPerUserPanel" addStyleNames="{style.poolEditVms} avmpw_poolEditVms_pfly_fix">
@@ -473,7 +472,7 @@
                                     <g:Label text="{constants.maxAssignedVmsPerUser}" addStyleNames="{style.maxAssignedVmsPerUserLabel}" />
                                     <d:InfoIcon ui:field="newPoolMaxAssignedVmsPerUserIcon" addStyleNames="{style.maxAssignedVmsPerUserIcon} avmpw_infoIcon_pfly_fix" />
                                 </g:FlowPanel>
-                                <ge:EntityModelTextBoxOnlyEditor ui:field="maxAssignedVmsPerUserEditor" addStyleNames="{style.maxAssignedVmsPerUserEditor}" contentWidgetContainerStyleName="{style.maxAssignedVmsPerUserEditorContent} avmpw_maxAssignedVmsPerUserEditorContent_pfly_fix" />
+                                <ge:EntityModelTextBoxOnlyEditor ui:field="maxAssignedVmsPerUserEditor" addStyleNames="{style.maxAssignedVmsPerUserEditor}" contentWidgetContainerStyleName="{style.maxAssignedVmsPerUserEditorContent}" />
                             </g:FlowPanel>
 
                             <!-- Edit VM Pool -->
@@ -688,7 +687,7 @@
                                 <g:FlowPanel ui:field="cpuSharesPanel" addStyleNames="{style.labelToCoupleCouple}">
                                     <g:Label ui:field="cpuSharesEditor" text="{constants.cpuShares}" addStyleNames="{style.labelToCoupleLabel}"/>
                                     <e:ListModelListBoxOnlyEditor ui:field="cpuSharesAmountSelectionEditor" addStyleNames="{style.labelToCoupleCoupleLeft}" contentWidgetContainerStyleName="{style.cpuSahresValueListBox}" />
-                                    <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="cpuSharesAmountEditor" addStyleNames="{style.labelToCoupleCoupleRight}" contentWidgetContainerStyleName="{style.cpuSahresValueTextBox} avmpw_cpuSahresValueTextBox_pfly_fix" />
+                                    <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="cpuSharesAmountEditor" addStyleNames="{style.labelToCoupleCoupleRight}" contentWidgetContainerStyleName="avmpw_cpuSahresValueTextBox_pfly_fix" />
                                 </g:FlowPanel>
                             </g:FlowPanel>
 

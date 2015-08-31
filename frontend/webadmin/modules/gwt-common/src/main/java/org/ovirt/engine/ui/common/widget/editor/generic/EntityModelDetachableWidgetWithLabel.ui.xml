@@ -17,7 +17,7 @@
 
         .contentWrapper {
             float: right;
-            width: 230px;
+            width: 270px;
             padding: 0 5px;
         }
 
@@ -26,12 +26,11 @@
         }
         .contentWidgetWithoutDetachable {
             padding: 0 5px;
-            width: 230px;
         }
 
         .contentWidgetWithDetachable {
             padding: 0 0px;
-            width: 200px;
+            width: 233px;
         }
 
         .label {
