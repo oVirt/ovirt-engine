@@ -149,14 +149,14 @@ public class EngineEncryptionUtils {
      * Please notice that empty strings are not encrypted and returend as-is.
      */
     public static String encrypt(String source) throws GeneralSecurityException {
-        if (source == null || source.trim().length() == 0) {
+        if (source == null || source.length() == 0) {
             return source;
         }
         else {
             Cipher rsa = Cipher.getInstance("RSA");
             rsa.init(Cipher.ENCRYPT_MODE, getCertificate().getPublicKey());
             return new Base64(0).encodeToString(
-                rsa.doFinal(source.trim().getBytes(Charset.forName("UTF-8")))
+                rsa.doFinal(source.getBytes(Charset.forName("UTF-8")))
             );
         }
     }
@@ -169,7 +169,7 @@ public class EngineEncryptionUtils {
      * Please notice that empty strings are not decrypted and returend as-is.
      */
     public static String decrypt(String source) throws GeneralSecurityException {
-        if (source == null || source.trim().length() == 0) {
+        if (source == null || source.length() == 0) {
             return source;
         }
         else {
