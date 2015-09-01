@@ -2149,7 +2149,7 @@ public enum ConfigValues {
     /**
      * The interval in hours of checking the validity of the host's certification
      */
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Double.class)
     @DefaultValueAttribute("24")
     CertificationValidityCheckTimeInHours,
 
