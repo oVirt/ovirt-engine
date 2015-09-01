@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -78,13 +79,32 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase {
         Guid vmNumaNode1 = new Guid("3c2b81e6-5080-4ad1-86a1-cf513b15b517");
         List<VmNumaNode> result = vmNumaNodeDao.getAllPinnedVmNumaNodeByVdsNumaNodeId(vdsNumaNodeId);
 
+        /*
+         * Assert retrieved correct vmNUMAnode
+         */
         assertNotNull(result);
         assertEquals(1, result.size());
 
         assertEquals(vmNumaNode1, result.get(0).getId());
-        assertEquals(vdsNumaNodeId, result.get(0).getVdsNumaNodeList().get(0).getFirst());
+        validateCorrectVdsNumaNode(vdsNumaNodeId, result.get(0).getVdsNumaNodeList());
         assertEquals(true, result.get(0).getVdsNumaNodeList().get(0).getSecond().getFirst());
-        assertEquals(0, result.get(0).getVdsNumaNodeList().get(0).getSecond().getSecond().intValue());
+        validateCorrectIndexNumaNode(0, result.get(0).getVdsNumaNodeList());
+    }
+
+    private void validateCorrectVdsNumaNode(Guid vdsNumaNodeId, List<Pair<Guid, Pair<Boolean, Integer>>> pairsList) {
+        List<Guid> hostIds = new LinkedList<>();
+        for (Pair<Guid, Pair<Boolean, Integer>> pair : pairsList){
+            hostIds.add(pair.getFirst());
+        }
+        assertTrue("correct vdsNumaNode", hostIds.contains(vdsNumaNodeId));
+    }
+
+    private void validateCorrectIndexNumaNode(int expectedIndex, List<Pair<Guid, Pair<Boolean, Integer>>> pairsList) {
+        List<Integer> indexes = new LinkedList<>();
+        for (Pair<Guid, Pair<Boolean, Integer>> pair : pairsList){
+            indexes.add(pair.getSecond().getSecond());
+        }
+        assertTrue("correct index", indexes.contains(expectedIndex));
     }
 
     @Test
@@ -104,13 +124,13 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase {
         assertTrue(nodes.containsKey(vmNumaNode1));
         assertTrue(nodes.containsKey(vmNumaNode2));
 
-        assertEquals(vdsNumaNodeId, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).getFirst());
+        validateCorrectVdsNumaNode(vdsNumaNodeId, nodes.get(vmNumaNode1).getVdsNumaNodeList());
         assertEquals(true, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).getSecond().getFirst());
-        assertEquals(0, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).getSecond().getSecond().intValue());
+        validateCorrectIndexNumaNode(0, nodes.get(vmNumaNode1).getVdsNumaNodeList());
 
-        assertEquals(vdsNumaNodeId, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getFirst());
+        validateCorrectVdsNumaNode(vdsNumaNodeId, nodes.get(vmNumaNode2).getVdsNumaNodeList());
         assertEquals(false, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getSecond().getFirst());
-        assertEquals(0, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getSecond().getSecond().intValue());
+        validateCorrectIndexNumaNode(0, nodes.get(vmNumaNode2).getVdsNumaNodeList());
     }
 
     @Test
