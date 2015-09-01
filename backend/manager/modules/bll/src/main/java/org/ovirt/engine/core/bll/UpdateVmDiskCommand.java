@@ -488,7 +488,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     private String getJsonDiskDescription() throws IOException {
-        return ImagesHandler.getJsonDiskDescription(getParameters().getDiskInfo());
+        return MetadataDiskDescriptionHandler.getJsonDiskDescription(getParameters().getDiskInfo());
     }
 
     protected void updateDiskProfile() {

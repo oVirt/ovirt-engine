@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,10 +10,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.compat.Guid;
@@ -153,34 +150,5 @@ public class ImagesHandlerTest {
         List<DiskImage> intersection = ImagesHandler.imagesIntersection(list1, list2);
 
         assertTrue("Intersection should contain only disk1", intersection.size() == 1 && intersection.contains(disk1));
-    }
-
-    @Test
-    public void testJsonDiskDescription() throws IOException {
-        disk1.setDiskAlias("DiskAlias");
-        disk1.setDiskDescription("DiskDescription");
-        assertDiskDescriptionMap(disk1);
-    }
-
-    @Test
-    public void testJsonNullDiskDescription() throws IOException {
-        disk1.setDiskAlias("DiskAlias");
-        disk1.setDiskDescription(null);
-        assertDiskDescriptionMap(disk1);
-    }
-
-    @Test
-    public void testJsonEmptyDiskDescription() throws IOException {
-        disk1.setDiskAlias("DiskAlias");
-        disk1.setDiskDescription("");
-        assertDiskDescriptionMap(disk1);
-    }
-
-    private static void assertDiskDescriptionMap(Disk disk) throws IOException {
-        assertEquals("Should be map of disk alias and disk description",
-                String.format("{\"DiskAlias\":\"%s\"," +
-                                "\"DiskDescription\":\"%s\"}",
-                        disk.getDiskAlias(), StringUtils.defaultString(disk.getDiskDescription())),
-                ImagesHandler.getJsonDiskDescription(disk));
     }
 }
