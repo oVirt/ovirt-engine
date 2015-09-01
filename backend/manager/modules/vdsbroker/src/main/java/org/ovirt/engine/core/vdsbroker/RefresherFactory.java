@@ -22,7 +22,8 @@ public class RefresherFactory {
         VDS vds = vdsManager.getCopyVds();
         if (FeatureSupported.jsonProtocol(version)
                 && VdsProtocol.STOMP == vds.getProtocol()
-                && FeatureSupported.vmStatsEvents(version)) {
+                && FeatureSupported.vmStatsEvents(version)
+                && FeatureSupported.events(version)) {
             return new EventVmStatsRefresher(vdsManager);
         }
         return new PollListAndAllVmStatsRefresher(vdsManager);
