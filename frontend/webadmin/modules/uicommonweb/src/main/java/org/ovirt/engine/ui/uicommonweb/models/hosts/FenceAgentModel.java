@@ -439,10 +439,40 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
     private void onOk() {
         FenceAgentModel model = (FenceAgentModel) getWindow();
         model.validatePmModels();
+        validateDuplicates(model);
         if (model.isValid()) {
             copyModelValues(model);
             setWindow(null);
         }
+    }
+
+    /**
+     * Check if the containing list model contains a duplicate management ip address.
+     * @param model The model to check against.
+     */
+    private void validateDuplicates(FenceAgentModel model) {
+        //Check for duplicate addresses.
+        for (FenceAgentModel existingModel: getHost().getFenceAgentListModel().getItems()) {
+            if (!checkIfModelIsDuplicate(model, existingModel)) {
+                return;
+            }
+            for (FenceAgentModel concurrentExistingModel: existingModel.getConcurrentList()) {
+                if (!checkIfModelIsDuplicate(model, concurrentExistingModel)) {
+                    return;
+                }
+            }
+        }
+    }
+
+    private boolean checkIfModelIsDuplicate(FenceAgentModel model, FenceAgentModel concurrentExistingModel) {
+        if (model.getManagementIp().getEntity().equals(concurrentExistingModel.getManagementIp().getEntity())) {
+            //Force a change event by setting to true, which will change to false below.
+            model.getManagementIp().setIsValid(true);
+            //Duplicate, need to set the invalidity reason before switching to false to update the widgets properly.
+            model.getManagementIp().getInvalidityReasons().add(constants.duplicateFenceAgentManagementIp());
+            model.getManagementIp().setIsValid(false);
+        }
+        return model.getManagementIp().getIsValid();
     }
 
     /**
