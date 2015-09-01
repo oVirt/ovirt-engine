@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities.storage;
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageServerConnectionExtension implements BusinessEntity<Guid> {
@@ -86,5 +87,14 @@ public class StorageServerConnectionExtension implements BusinessEntity<Guid> {
         result = 31 * result + userName.hashCode();
         result = 31 * result + password.hashCode();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.forInstance(this)
+                .append("hostId", getHostId())
+                .append("target", getIqn())
+                .append("username", getUserName())
+                .build();
     }
 }
