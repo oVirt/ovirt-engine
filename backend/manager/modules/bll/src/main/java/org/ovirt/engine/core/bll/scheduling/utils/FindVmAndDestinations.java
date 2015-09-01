@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -54,22 +53,28 @@ public class FindVmAndDestinations {
     }
 
     public Result invoke(List<VDS> sourceHosts, List<VDS> destinationHosts, VmDao vmDao) {
-        VDS randomHost = sourceHosts.get(new Random().nextInt(sourceHosts.size()));
-        List<VM> migrableVmsOnRandomHost = getMigratableVmsRunningOnVds(vmDao, randomHost.getId());
-
-        VM vmToMigrate = getBestVmToMigrate(migrableVmsOnRandomHost);
-
-        if (vmToMigrate != null
-                && !migrableVmsOnRandomHost.isEmpty()) {
-            return new Result(
-                    vmToMigrate,
-
-                    // check that underutilized host's CPU + predicted VM cpu is less than threshold,
-                    // to prevent the VM to be bounced between hosts.
-                    getValidHosts(destinationHosts, cluster, vmToMigrate, highCpuUtilization, requiredMemory)
-            );
+        List<VDS> validDestinationHosts;
+        // Iterate over source hosts until you find valid vm to migrate, hosts sorted by cpu usage
+        for (VDS sourceHost : sourceHosts){
+            // Get list of all migratable vms on host
+            List<VM> migratableVmsOnHost = getMigratableVmsRunningOnVds(vmDao, sourceHost.getId());
+            if (migratableVmsOnHost != null && !migratableVmsOnHost.isEmpty()){
+                // Sort vms by cpu usage
+                Collections.sort(migratableVmsOnHost, VmCpuUsageComparator.INSTANCE);
+                for (VM vmToMigrate : migratableVmsOnHost){
+                    if (vmToMigrate != null){
+                        // Check if vm not over utilize memory or CPU of destination hosts
+                        validDestinationHosts = getValidHosts(
+                                destinationHosts, cluster, vmToMigrate, highCpuUtilization, requiredMemory
+                        );
+                        if (!validDestinationHosts.isEmpty()){
+                            log.debug("Vm '{}' selected for migration", vmToMigrate.getName());
+                            return new Result(vmToMigrate, validDestinationHosts);
+                        }
+                    }
+                }
+            }
         }
-
         return null;
     }
 
@@ -109,31 +114,6 @@ public class FindVmAndDestinations {
         });
 
         return vms;
-    }
-
-    /**
-     * Return the best VM for migration. The default implementation
-     * returns the VM with the lowest CPU usage.
-     *
-     * @param vms candidate VMs
-     * @return the "best" VM
-     */
-    protected VM getBestVmToMigrate(final List<VM> vms) {
-        VM result = null;
-
-        if (!vms.isEmpty()) {
-            result = Collections.min(vms, VmCpuUsageComparator.INSTANCE);
-        }
-
-        // if no vm found return the vm with min cpu
-        if (result == null) {
-            log.info("VdsLoadBalancer: vm selection - no vm without pending found.");
-            result = Collections.min(vms, VmCpuUsageComparator.INSTANCE);
-        } else {
-            log.info("VdsLoadBalancer: vm selection - selected vm: '{}', cpu: {}.", result.getName(),
-                    result.getUsageCpuPercent());
-        }
-        return result;
     }
 
     /**
