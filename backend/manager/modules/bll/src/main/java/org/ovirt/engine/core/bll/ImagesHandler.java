@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -53,7 +51,6 @@ import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -841,24 +838,6 @@ public final class ImagesHandler {
         dummy.setStorageIds(new ArrayList<Guid>(Collections.singletonList(sdId)));
         dummy.getSnapshots().addAll(ImagesHandler.getAllImageSnapshots(dummy.getImageId()));
         return dummy;
-    }
-
-    /**
-     * Creates and returns a Json string containing the disk alias and the disk description. The disk alias and
-     * description are preserved in the disk meta data. If the meta data will be added with more fields
-     * UpdateVmDiskCommand should be changed accordingly.
-     */
-    public static String getJsonDiskDescription(Disk disk) throws IOException {
-        Map<String, Object> description = new TreeMap<>();
-        description.put(DISK_ALIAS, disk.getDiskAlias());
-        description.put(DISK_DESCRIPTION, disk.getDiskDescription() != null ? disk.getDiskDescription() : "");
-        return JsonHelper.mapToJson(description, false);
-    }
-
-    public static void enrichDiskByJsonDescription(String jsonDiskDescription, Disk disk) throws IOException {
-        Map<String, Object> diskDescriptionMap = JsonHelper.jsonToMap(jsonDiskDescription);
-        disk.setDiskAlias((String) diskDescriptionMap.get(DISK_ALIAS));
-        disk.setDiskDescription((String) diskDescriptionMap.get(DISK_DESCRIPTION));
     }
 
     /**
