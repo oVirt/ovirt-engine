@@ -69,10 +69,9 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToCl
         }
 
         public ValidationResult clusterNetworkNotUsedByVms() {
-            return networkNotUsed(getVmStaticDao().getAllByGroupAndNetworkName(networkCluster.getClusterId(),
-                    network.getName()),
-                    EngineMessage.VAR__ENTITIES__VMS,
-                    EngineMessage.VAR__ENTITIES__VM);
+            return new PluralMessages(EngineMessage.VAR__ENTITIES__VM, EngineMessage.VAR__ENTITIES__VMS)
+                .getNetworkInUse(getEntitiesNames(getVmStaticDao().getAllByGroupAndNetworkName(networkCluster.getClusterId(),
+                    network.getName())));
         }
 
         public ValidationResult clusterNetworkNotUsedByTemplates() {
@@ -84,16 +83,16 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToCl
                     }
                 }
             }
-            return networkNotUsed(templatesUsingNetwork,
-                    EngineMessage.VAR__ENTITIES__VM_TEMPLATES,
-                    EngineMessage.VAR__ENTITIES__VM_TEMPLATE);
+            return new PluralMessages(EngineMessage.VAR__ENTITIES__VM_TEMPLATE,
+                EngineMessage.VAR__ENTITIES__VM_TEMPLATES)
+                .getNetworkInUse(getEntitiesNames(templatesUsingNetwork));
         }
 
         public ValidationResult clusterNetworkNotUsedByBricks() {
-            return networkNotUsed(getGlusterBrickDao().getAllByClusterAndNetworkId(networkCluster.getClusterId(),
-                    network.getId()),
-                    EngineMessage.VAR__ENTITIES__GLUSTER_BRICKS,
-                    EngineMessage.VAR__ENTITIES__GLUSTER_BRICK);
+            return new PluralMessages(EngineMessage.VAR__ENTITIES__GLUSTER_BRICK,
+                EngineMessage.VAR__ENTITIES__GLUSTER_BRICKS)
+                .getNetworkInUse(getEntitiesNames(getGlusterBrickDao().getAllByClusterAndNetworkId(networkCluster.getClusterId(),
+                    network.getId())));
         }
     }
 }

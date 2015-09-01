@@ -1,19 +1,22 @@
 package org.ovirt.engine.core.bll.validator;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.PluralMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
@@ -176,22 +179,7 @@ public class NetworkValidator {
         return String.format("$NetworkName %s", network.getName());
     }
 
-    protected ValidationResult networkNotUsed(List<? extends Nameable> entities,
-            EngineMessage entitiesReplacementPlural,
-            EngineMessage entitiesReplacementSingular) {
-        final Collection<String> entitiesNames = getEntitiesNames(entities);
-        return networkNotUsed(entitiesNames, entitiesReplacementPlural, entitiesReplacementSingular);
-    }
-
-    protected ValidationResult networkNotUsed(Collection<String> entitiesNames,
-            EngineMessage entitiesReplacementPlural,
-            EngineMessage entitiesReplacementSingular) {
-        return new PluralMessages().getNetworkInUse(entitiesNames,
-            entitiesReplacementSingular,
-            entitiesReplacementPlural);
-    }
-
-    private Collection<String> getEntitiesNames(List<? extends Nameable> entities) {
+    protected Collection<String> getEntitiesNames(List<? extends Nameable> entities) {
         List<String> result = new ArrayList<>(entities.size());
 
         for (Nameable itemName : entities) {
@@ -205,24 +193,30 @@ public class NetworkValidator {
      * @return An error iff the network is in use by any VMs.
      */
     public ValidationResult networkNotUsedByVms() {
-        return networkNotUsed(getVms(), EngineMessage.VAR__ENTITIES__VMS, EngineMessage.VAR__ENTITIES__VM);
+        List<VM> vms = getVms();
+        return networkNotUsedByVms(getEntitiesNames(vms));
+    }
+
+    public ValidationResult networkNotUsedByVms(Collection<String> vmNames) {
+        return new PluralMessages(EngineMessage.VAR__ENTITIES__VM, EngineMessage.VAR__ENTITIES__VMS)
+            .getNetworkInUse(vmNames);
     }
 
     /**
      * @return An error iff the network is in use by any hosts.
      */
     public ValidationResult networkNotUsedByHosts() {
-        return networkNotUsed(getDbFacade().getVdsDao().getAllForNetwork(network.getId()),
-            EngineMessage.VAR__ENTITIES__HOSTS, EngineMessage.VAR__ENTITIES__HOST);
+        List<VDS> allForNetwork = getDbFacade().getVdsDao().getAllForNetwork(network.getId());
+        return new PluralMessages(EngineMessage.VAR__ENTITIES__HOST, EngineMessage.VAR__ENTITIES__HOSTS)
+            .getNetworkInUse(getEntitiesNames(allForNetwork));
     }
 
     /**
      * @return An error iff the network is in use by any templates.
      */
     public ValidationResult networkNotUsedByTemplates() {
-        return networkNotUsed(getTemplates(),
-            EngineMessage.VAR__ENTITIES__VM_TEMPLATES,
-            EngineMessage.VAR__ENTITIES__VM_TEMPLATE);
+        return new PluralMessages(EngineMessage.VAR__ENTITIES__VM_TEMPLATE, EngineMessage.VAR__ENTITIES__VM_TEMPLATES)
+            .getNetworkInUse(getEntitiesNames(getTemplates()));
     }
 
     /**
@@ -272,5 +266,53 @@ public class NetworkValidator {
 
     public void setDataCenter(StoragePool dataCenter) {
         this.dataCenter = dataCenter;
+    }
+
+    protected static class PluralMessages {
+
+        private final EngineMessage entitiesReplacementPlural;
+        private final EngineMessage entitiesReplacementSingular;
+
+        public PluralMessages(EngineMessage entitiesReplacementSingular, EngineMessage entitiesReplacementPlural) {
+            this.entitiesReplacementPlural = entitiesReplacementPlural;
+            this.entitiesReplacementSingular = entitiesReplacementSingular;
+        }
+
+        /**
+         * @param names names of entities using the network
+         */
+        public ValidationResult getNetworkInUse(Collection<String> names) {
+            if (names.isEmpty()) {
+                return ValidationResult.VALID;
+            }
+
+            int numberOfEntities = names.size();
+            boolean useSingular = numberOfEntities == 1;
+
+            return useSingular ? getNetworkInUseSingular(names) : getNetworkInUsePlural(names);
+
+
+        }
+
+        private ValidationResult getNetworkInUsePlural(Collection<String> names) {
+            EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_NETWORK_IN_MANY_USES;
+
+            List<String> replacements = Stream.concat(
+                    ReplacementUtils.getListVariableAssignmentString(engineMessage, names).stream(),
+                    Stream.of(entitiesReplacementPlural.name()))
+                    .collect(toList());
+
+            return new ValidationResult(engineMessage, replacements);
+        }
+
+        private ValidationResult getNetworkInUseSingular(Collection<String> names) {
+            String name = names.iterator().next();
+            EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_NETWORK_IN_ONE_USE;
+
+            return new ValidationResult(engineMessage,
+                ReplacementUtils.getVariableAssignmentString(engineMessage, name),
+                entitiesReplacementSingular.name());
+        }
+
     }
 }

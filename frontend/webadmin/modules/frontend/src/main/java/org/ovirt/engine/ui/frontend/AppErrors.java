@@ -1658,10 +1658,10 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The name of the logical network '${NetworkName}' is already used by an existing logical network in the same data-center.\n-Please choose a different name.")
     String ACTION_TYPE_FAILED_NETWORK_NAME_IN_USE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. This logical network is used by ${entities}: ${ENTITIES_USING_NETWORK}\n - Please remove it from this ${entities} and try again.")
+    @DefaultStringValue("Cannot ${action} ${type}. This logical network is used by ${entities}: ${ACTION_TYPE_FAILED_NETWORK_IN_ONE_USE_ENTITY}\\n - Please remove it from this ${entities} and try again.")
     String ACTION_TYPE_FAILED_NETWORK_IN_ONE_USE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. This logical network is used by ${entities}: (${ENTITIES_USING_NETWORK_COUNTER}): ${ENTITIES_USING_NETWORK}\n - Please detach ${entities} using this logical network and try again.")
+    @DefaultStringValue("Cannot ${action} ${type}. This logical network is used by ${entities}: (${ACTION_TYPE_FAILED_NETWORK_IN_ONE_USE_LIST_COUNTER}): ${ACTION_TYPE_FAILED_NETWORK_IN_ONE_USE_LIST}\\n - Please detach ${entities} using this logical network and try again.")
     String ACTION_TYPE_FAILED_NETWORK_IN_MANY_USES();
 
     @DefaultStringValue("Volume Group (VGs) and Logical Volumes (LVs) are not specified.")
