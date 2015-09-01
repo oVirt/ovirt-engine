@@ -52,11 +52,74 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
 
+    <!-- We need the sources of the model in order to analyze them and
+         generate the XML schema: -->
+    <dependency>
+      <groupId>org.ovirt.api</groupId>
+      <artifactId>model</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <type>jar</type>
+      <classifier>sources</classifier>
+      <scope>provided</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
 
     <plugins>
+
+      <!-- Set properties pointing to the .jar files of the dependencies
+           so that we can use a property to locate the model sources .jar
+           file: -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.10</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>properties</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Parse the model and generate the XML schema: -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.4.0</version>
+        <executions>
+          <execution>
+            <id>generate-schema</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>org.ovirt.api.metamodel.tool.Main</mainClass>
+              <arguments>
+                <argument>--model</argument>
+                <argument>${org.ovirt.api:model:jar:sources}</argument>
+                <argument>--in-schema</argument>
+                <argument>${project.basedir}/src/main/schema/api.xsd</argument>
+                <argument>--out-schema</argument>
+                <argument>${project.basedir}/target/generated-schema/api.xsd</argument>
+              </arguments>
+              <includePluginDependencies>true</includePluginDependencies>
+              <includeProjectDependencies>false</includeProjectDependencies>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.ovirt.api</groupId>
+            <artifactId>metamodel-tool</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+          </dependency>
+        </dependencies>
+      </plugin>
 
       <!-- Generate the Java code from the XML schema: -->
       <plugin>
@@ -73,7 +136,7 @@
             <configuration>
               <generatePackage>org.ovirt.engine.api.model</generatePackage>
               <extension>true</extension>
-              <schemaDirectory>${project.basedir}/src/main/schema</schemaDirectory>
+              <schemaDirectory>${project.basedir}/target/generated-schema</schemaDirectory>
               <schemaIncludes>
                 <include>*.xsd</include>
               </schemaIncludes>
@@ -146,7 +209,7 @@
         <directory>${project.basedir}/src/main/resources</directory>
       </resource>
       <resource>
-        <directory>${project.basedir}/src/main/schema</directory>
+        <directory>${project.basedir}/target/generated-schema</directory>
       </resource>
 
     </resources>

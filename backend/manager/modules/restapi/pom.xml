@@ -13,6 +13,8 @@
   <name>oVirt RESTful API Backend Integration</name>
 
   <modules>
+    <module>metamodel</module>
+    <module>model</module>
     <module>types</module>
     <module>jaxrs</module>
     <module>webapp</module>
