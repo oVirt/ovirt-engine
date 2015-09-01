@@ -276,7 +276,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
                 return (p.getUsageCpuPercent() + calcSpmCpuConsumption(p)) < lowUtilization
                         && p.getVmCount() >= minVmCount
                         && (p.getCpuOverCommitTimestamp() == null
-                            || (getTime().getTime() - p.getCpuOverCommitTimestamp().getTime()) <
+                            || (getTime().getTime() - p.getCpuOverCommitTimestamp().getTime()) >=
                                 TimeUnit.MINUTES.toMillis(cpuOverCommitDurationMinutes));
             }
         });
