@@ -132,7 +132,7 @@ public class NumaSupportPopupPresenterWidget extends AbstractModelBoundPopupPres
         VDS selectedVds = supportModel.getHosts().getSelectedItem();
 
         hostSummaryPanel.getView().setTitleWidget(getView().getHostSummaryTitle(
-                selectedVds.getCpuCores() * selectedVds.getCpuSockets(),
+                selectedVds.getCpuThreads(),
                 selectedVds.getUsageCpuPercent(),
                 selectedVds.getPhysicalMemMb(),
                 selectedVds.getMemFree().intValue(),
