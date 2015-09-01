@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,7 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -53,7 +51,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDao;
-import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
@@ -65,8 +62,6 @@ import org.slf4j.LoggerFactory;
 public final class ImagesHandler {
     public static final String DISK = "_Disk";
     public static final String DefaultDriveName = "1";
-    private static final String DISK_ALIAS = "DiskAlias";
-    private static final String DISK_DESCRIPTION = "DiskDescription";
     private static final Logger log = LoggerFactory.getLogger(ImagesHandler.class);
 
     /**
@@ -873,24 +868,6 @@ public final class ImagesHandler {
         dummy.setStorageIds(new ArrayList<>(Collections.singletonList(sdId)));
         dummy.getSnapshots().addAll(getAllImageSnapshots(dummy.getImageId()));
         return dummy;
-    }
-
-    /**
-     * Creates and returns a Json string containing the disk alias and the disk description. The disk alias and
-     * description are preserved in the disk meta data. If the meta data will be added with more fields
-     * UpdateVmDiskCommand should be changed accordingly.
-     */
-    public static String getJsonDiskDescription(Disk disk) throws IOException {
-        Map<String, Object> description = new TreeMap<>();
-        description.put(DISK_ALIAS, disk.getDiskAlias());
-        description.put(DISK_DESCRIPTION, disk.getDiskDescription() != null ? disk.getDiskDescription() : "");
-        return JsonHelper.mapToJson(description, false);
-    }
-
-    public static void enrichDiskByJsonDescription(String jsonDiskDescription, Disk disk) throws IOException {
-        Map<String, Object> diskDescriptionMap = JsonHelper.jsonToMap(jsonDiskDescription);
-        disk.setDiskAlias((String) diskDescriptionMap.get(DISK_ALIAS));
-        disk.setDiskDescription((String) diskDescriptionMap.get(DISK_DESCRIPTION));
     }
 
     /**
