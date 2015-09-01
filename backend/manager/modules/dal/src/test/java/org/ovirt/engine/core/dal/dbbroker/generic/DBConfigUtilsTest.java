@@ -43,9 +43,7 @@ public class DBConfigUtilsTest extends BaseDaoTestCase {
             }
 
             OptionBehaviourAttribute behaviourAttr = configField.getAnnotation(OptionBehaviourAttribute.class);
-            if (behaviourAttr != null
-                    && (behaviourAttr.behaviour() == OptionBehaviour.Password ||
-                            behaviourAttr.behaviour() == OptionBehaviour.DomainsPasswordMap)) {
+            if (behaviourAttr != null && behaviourAttr.behaviour() == OptionBehaviour.Password) {
                 continue; // no cert available for password decrypt
             }
 

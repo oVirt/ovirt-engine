@@ -16,12 +16,7 @@ public enum OptionBehaviour {
     /**
      * value is a comma separated version array - for hashset of versions
      */
-    CommaSeparatedVersionArray,
-
-    /**
-     * Map of password per domain
-     */
-    DomainsPasswordMap;
+    CommaSeparatedVersionArray;
 
     public int getValue() {
         return this.ordinal();

@@ -19,7 +19,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdcOptionDao;
 import org.ovirt.engine.core.utils.ConfigUtilsBase;
-import org.ovirt.engine.core.utils.collections.DomainsPasswordMap;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.slf4j.Logger;
@@ -118,9 +117,6 @@ public class DBConfigUtils extends ConfigUtilsBase {
                                 option.getoption_name(), e.getMessage());
                         log.debug("Exception", e);
                     }
-                    break;
-                case DomainsPasswordMap:
-                    result = new DomainsPasswordMap((String) result);
                     break;
                 case ValueDependent:
                     // get the config that this value depends on
