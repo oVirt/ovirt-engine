@@ -96,24 +96,23 @@ public class FindVmAndDestinations {
     /**
      * Return all VMs that run on a host and can be migrated away.
      *
+     * This method is to be considered private. It is protected to be available
+     * from unit tests.
+     *
      * @param vmDao The data source to get the VM information
      * @param hostId Id of a host the returned VMs run at
      * @return list od VM that run on host and can be migrated
      */
-    private List<VM> getMigratableVmsRunningOnVds(final VmDao vmDao, final Guid hostId) {
+    protected List<VM> getMigratableVmsRunningOnVds(final VmDao vmDao, final Guid hostId) {
         List<VM> vmsFromDB = vmDao.getAllRunningForVds(hostId);
 
-        List<VM> vms = LinqUtils.filter(vmsFromDB, new Predicate<VM>() {
+        return LinqUtils.filter(vmsFromDB, new Predicate<VM>() {
             @Override
             public boolean eval(VM v) {
                 // The VM has to allow migrations and...
-                return v.getMigrationSupport() == MigrationSupport.MIGRATABLE
-                        // must not be pinned to the host
-                        && v.getDedicatedVmForVdsList().contains(hostId) == false;
+                return v.getMigrationSupport() == MigrationSupport.MIGRATABLE;
             }
         });
-
-        return vms;
     }
 
     /**
