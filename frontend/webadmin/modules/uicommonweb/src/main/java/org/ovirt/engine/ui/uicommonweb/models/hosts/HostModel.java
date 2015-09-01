@@ -1024,6 +1024,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         if (vds.isFenceAgentsExist()) {
             orderAgents(vds.getFenceAgents());
             List<FenceAgentModel> agents = new ArrayList<>();
+            //Keep a list of examined agents to prevent duplicate management IPs from showing up in the UI.
+            Set<String> examinedAgents = new HashSet<>();
             for (FenceAgent agent: vds.getFenceAgents()) {
                 FenceAgentModel model = new FenceAgentModel();
                 model.setHost(this);
@@ -1038,17 +1040,20 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 model.getPmEncryptOptions().setEntity(agent.getEncryptOptions());
                 model.setPmOptionsMap(VdsStatic.pmOptionsStringToMap(agent.getOptions()));
                 model.setOrder(agent.getOrder());
-                boolean added = false;
-                for (FenceAgentModel concurrentModel: agents) {
-                    if (model.getOrder().getEntity() != null && model.getOrder().getEntity().equals(concurrentModel.getOrder().getEntity())) {
-                        concurrentModel.getConcurrentList().add(model);
-                        added = true;
-                        break;
+                if (!examinedAgents.contains(model.getManagementIp().getEntity())) {
+                    boolean added = false;
+                    for (FenceAgentModel concurrentModel: agents) {
+                        if (model.getOrder().getEntity() != null && model.getOrder().getEntity().equals(concurrentModel.getOrder().getEntity())) {
+                            concurrentModel.getConcurrentList().add(model);
+                            added = true;
+                            break;
+                        }
+                    }
+                    if (!added) {
+                        agents.add(model);
                     }
                 }
-                if (!added) {
-                    agents.add(model);
-                }
+                examinedAgents.add(model.getManagementIp().getEntity());
             }
             getFenceAgentListModel().setItems(agents);
         }
