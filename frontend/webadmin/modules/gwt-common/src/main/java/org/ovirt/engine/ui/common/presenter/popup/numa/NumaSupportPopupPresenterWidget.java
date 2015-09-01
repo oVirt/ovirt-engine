@@ -128,14 +128,17 @@ public class NumaSupportPopupPresenterWidget extends AbstractModelBoundPopupPres
         for (VM vm: vmsWithVNuma) {
             totalVNuma += vm.getvNumaNodeList().size();
         }
+
+        VDS selectedVds = supportModel.getHosts().getSelectedItem();
+
         hostSummaryPanel.getView().setTitleWidget(getView().getHostSummaryTitle(
-                supportModel.getHosts().getSelectedItem().getCpuCores(),
-                supportModel.getHosts().getSelectedItem().getUsageCpuPercent(),
-                supportModel.getHosts().getSelectedItem().getPhysicalMemMb(),
-                supportModel.getHosts().getSelectedItem().getMemFree().intValue(),
+                selectedVds.getCpuCores() * selectedVds.getCpuSockets(),
+                selectedVds.getUsageCpuPercent(),
+                selectedVds.getPhysicalMemMb(),
+                selectedVds.getMemFree().intValue(),
                 supportModel.getNumaNodeList().size(), totalVNuma));
         hostSummaryPanel.getView().addContentWidget(getView().getHostSummaryContent(
-                supportModel.getHosts().getSelectedItem(), supportModel));
+                selectedVds, supportModel));
         getView().setHostSummaryPanel(hostSummaryPanel);
     }
 }
