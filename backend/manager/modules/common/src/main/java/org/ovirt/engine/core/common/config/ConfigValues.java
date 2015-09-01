@@ -189,10 +189,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("USERID")
     UserId,
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("PASSW0RD")
-    @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
-    Password,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
