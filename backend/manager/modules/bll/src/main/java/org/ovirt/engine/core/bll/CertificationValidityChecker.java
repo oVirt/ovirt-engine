@@ -49,13 +49,17 @@ public class CertificationValidityChecker implements BackendService {
 
     @PostConstruct
     public void scheduleJob() {
+        double interval = Config.<Double>getValue(ConfigValues.CertificationValidityCheckTimeInHours);
+        final int HOURS_TO_MINUTES = 60;
+        long intervalInMinutes = Math.round(interval * HOURS_TO_MINUTES);
+
         scheduler.scheduleAFixedDelayJob(
                 this,
                 "checkCertificationValidity",
                 new Class[0],
                 new Object[0],
                 10,
-                TimeUnit.HOURS.toMinutes(Config.<Integer> getValue(ConfigValues.CertificationValidityCheckTimeInHours)),
+                intervalInMinutes,
                 TimeUnit.MINUTES);
     }
 

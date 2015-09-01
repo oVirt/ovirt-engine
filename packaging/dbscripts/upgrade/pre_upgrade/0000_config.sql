@@ -292,6 +292,9 @@ select fn_db_add_config_value('UserPackageNamesForCheckUpdate','','general');
 -- The internal between checking for new updates availability for the host
 select fn_db_add_config_value('HostPackagesUpdateTimeInHours','24','general');
 
+-- Refresh rate (in hours) for available certification check
+select fn_db_add_config_value('CertificationValidityCheckTimeInHours','24','general');
+
 select fn_db_add_config_value_for_versions_up_to('LiveStorageMigrationBetweenDifferentStorageTypes', 'false', '3.5');
 select fn_db_add_config_value_for_versions_up_to('VmStatsEventsSupported','false','3.5');
 
