@@ -6,8 +6,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 
-import org.apache.commons.lang.CharSet;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.ArrayUtils;
 
 /**
  * <code>RandomUtils</code> is a singleton class with more powerful random generating methods.
@@ -44,7 +43,7 @@ public final class RandomUtils extends Random {
 
     /** The legal characters for an entity name. */
     private static final char[] LEGAL_PROPERTY_CHARS =
-            (CharSet.ASCII_ALPHA.toString() + CharSet.ASCII_NUMERIC.toString() + "_.").toCharArray();
+            (fillRange('a', 'z') + fillRange('A', 'Z') + fillRange('0', '9') + "_.").toCharArray();
 
     /* --- Class Fields --- */
 
@@ -390,7 +389,12 @@ public final class RandomUtils extends Random {
      *            The requested length of the string.
      */
     public String nextString(int length, char[] chars) {
-        return RandomStringUtils.random(length, 0, chars.length, false, false, chars, this);
+        Character[] characters = ArrayUtils.toObject(chars);
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; ++i) {
+            sb.append(pickRandom(characters));
+        }
+        return sb.toString();
     }
 
     /**
@@ -450,5 +454,15 @@ public final class RandomUtils extends Random {
         }
 
         return pickRandom(enumClass.getEnumConstants());
+    }
+
+    /* -- Utility methods -- */
+
+    private static String fillRange(char first, char last) {
+        StringBuilder sb = new StringBuilder((int)last - (int)first + 1);
+        for (char c = first; c <= last; ++ c) {
+            sb.append(c);
+        }
+        return sb.toString();
     }
 }
