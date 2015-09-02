@@ -183,18 +183,23 @@ public class IsoDomainListSyncronizer {
      *            - The imageType we want to fetch the files from the cache.
      * @param forceRefresh
      *            - Indicates if the domain should be refreshed from VDSM.
-     * @throws org.ovirt.engine.core.common.errors.EngineException - if a problem occurs when refreshing the image repo cache.
+     * @throws org.ovirt.engine.core.common.errors.EngineException
+     *             - if a problem occurs when refreshing the image repo cache.
      * @return List of RepoFilesMetaData files.
      */
     public List<RepoImage> getUserRequestForStorageDomainRepoFileList(Guid storageDomainId,
             ImageFileType imageType,
             boolean forceRefresh) {
-        if (!isStorageDomainValid(storageDomainId, imageType, forceRefresh)) {
+        // Query for storageDoaminId is looking for Active ISO domain
+        if (!isStorageDomainIdValid(storageDomainId)) {
             throw new EngineException(EngineError.GetIsoListError);
         }
-        // At any case, if refreshed or not, get Iso list from the cache.
-        return getCachedIsoListByDomainId(storageDomainId, imageType);
 
+        if (forceRefresh && !refreshRepos(storageDomainId, imageType)) {
+            throw new EngineException(EngineError.IMAGES_NOT_SUPPORTED_ERROR);
+        }
+        // In any case, whether refreshed or not, get Iso list from the cache.
+        return getCachedIsoListByDomainId(storageDomainId, imageType);
     }
 
     private boolean refreshRepos(Guid storageDomainId, ImageFileType imageType) {
@@ -877,15 +882,10 @@ public class IsoDomainListSyncronizer {
         auditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_SUCCEEDED);
     }
 
-
-    private boolean isStorageDomainValid(Guid storageDomainId, ImageFileType imageType, boolean forceRefresh) {
-        // Check storage domain Id validity.
+    private boolean isStorageDomainIdValid(Guid storageDomainId) {
         if (storageDomainId == null) {
             log.error("Storage domain ID received from command query is null.");
             return false;
-        }
-        if (forceRefresh) {
-            return refreshRepos(storageDomainId, imageType);
         }
         return true;
     }
