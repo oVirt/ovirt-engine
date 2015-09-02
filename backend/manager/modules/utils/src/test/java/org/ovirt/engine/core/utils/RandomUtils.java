@@ -9,14 +9,14 @@ import java.util.Random;
 import org.apache.commons.lang.ArrayUtils;
 
 /**
- * <code>RandomUtils</code> is a singleton class with more powerful random generating methods.
+ * {@code RandomUtils} is a singleton class with more powerful random generating methods.
  * <P>
  * Useful methods include:
  * <UL>
- * <LI><code>nextXXX()</code> for the <tt>byte</tt> and <tt>short</tt> types.
- * <LI><code>nextXXX(mod)</code> for all types.
- * <LI><code>nextXXX(min, max)</code> for all types.
- * <LI><code>pickRandom()</code> - picks a random element from a given <code>List</code> or <code>Set</code>.
+ * <LI>{@code nextXXX()} for the {@code byte} and {@code short} types.
+ * <LI>{@code nextXXX(mod)} for all types.
+ * <LI>{@code nextXXX(min, max)} for all types.
+ * <LI>{@code pickRandom()} - picks a random element from a given {@code List} or {@code Set}.
  * </UL>
  *
  * @see java.util.Random
@@ -105,21 +105,21 @@ public final class RandomUtils extends Random {
     /* --- Byte-related Methods --- */
 
     /**
-     * Randomizes a <tt>byte</tt> value.
+     * Randomizes a {@code byte} value.
      */
     public byte nextByte() {
         return (byte) super.nextInt();
     }
 
     /**
-     * Randomize a <tt>byte</tt> value between 0 (inclusive) and the specified value (exclusive).
+     * Randomize a {@code byte} value between 0 (inclusive) and the specified value (exclusive).
      */
     public byte nextByte(byte b) {
         return (byte) super.nextInt(b);
     }
 
     /**
-     * Randomize a <tt>byte</tt> value in the given range [min, max].
+     * Randomize a {@code byte} value in the given range [min, max].
      */
     public byte nextByte(byte min, byte max) {
         if (min > max) {
@@ -133,21 +133,21 @@ public final class RandomUtils extends Random {
     /* --- Short-related Methods --- */
 
     /**
-     * Randomizes a <tt>short</tt> value.
+     * Randomizes a {@code short} value.
      */
     public short nextShort() {
         return (short) super.nextInt();
     }
 
     /**
-     * Randomize a <tt>short</tt> value between 0 (inclusive) and the specified value (exclusive).
+     * Randomize a {@code short} value between 0 (inclusive) and the specified value (exclusive).
      */
     public short nextShort(short s) {
         return (short) super.nextInt(s);
     }
 
     /**
-     * Randomize a <tt>short</tt> value in the given range [min, max].
+     * Randomize a {@code short} value in the given range [min, max].
      */
     public short nextShort(short min, short max) {
         if (min > max) {
@@ -161,7 +161,7 @@ public final class RandomUtils extends Random {
     /* --- Integer-related Methods --- */
 
     /**
-     * Randomize an <tt>int</tt> value in the given range [min, max].
+     * Randomize an {@code int} value in the given range [min, max].
      */
     public int nextInt(int min, int max) {
         if (min > max) {
@@ -175,7 +175,7 @@ public final class RandomUtils extends Random {
     /* --- Long-related Methods --- */
 
     /**
-     * Randomize a <tt>long</tt> value between 0 (inclusive) and the specified value (exclusive).
+     * Randomize a {@code long} value between 0 (inclusive) and the specified value (exclusive).
      */
     public long nextLong(long l) {
         if (l <= 0) {
@@ -190,7 +190,7 @@ public final class RandomUtils extends Random {
     }
 
     /**
-     * Randomize a <tt>long</tt> value in the given range [min, max].
+     * Randomize a {@code long} value in the given range [min, max].
      */
     public long nextLong(long min, long max) {
         if (min > max) {
@@ -204,14 +204,14 @@ public final class RandomUtils extends Random {
     /* --- Float-related Methods --- */
 
     /**
-     * Randomize a <tt>float</tt> value between 0.0 (inclusive) and the specified value (exclusive).
+     * Randomize a {@code float} value between 0.0 (inclusive) and the specified value (exclusive).
      */
     public float nextFloat(float f) {
         return nextFloat(f, false);
     }
 
     /**
-     * Randomize a <tt>float</tt> value between 0.0 (inclusive) and the specified value (inclusive or exclusive as
+     * Randomize a {@code float} value between 0.0 (inclusive) and the specified value (inclusive or exclusive as
      * required).
      *
      * @param inclusive
@@ -237,7 +237,7 @@ public final class RandomUtils extends Random {
     }
 
     /**
-     * Randomize a <tt>float</tt> value in the given range [min, max].
+     * Randomize a {@code float} value in the given range [min, max].
      */
     public float nextFloat(float min, float max) {
         if (min > max) {
@@ -251,14 +251,14 @@ public final class RandomUtils extends Random {
     /* --- Double-related Methods --- */
 
     /**
-     * Randomize a <tt>double</tt> value between 0.0 (inclusive) and the specified value (exclusive).
+     * Randomize a {@code double} value between 0.0 (inclusive) and the specified value (exclusive).
      */
     public double nextDouble(double d) {
         return nextDouble(d, false);
     }
 
     /**
-     * Randomize a <tt>double</tt> value between 0.0 (inclusive) and the specified value (inclusive or exclusive as
+     * Randomize a {@code double} value between 0.0 (inclusive) and the specified value (inclusive or exclusive as
      * required).
      *
      * @param inclusive
@@ -286,7 +286,7 @@ public final class RandomUtils extends Random {
     /* --- Collections-related Methods --- */
 
     /**
-     * Picks a random element from the given <code>Collection</code>.
+     * Picks a random element from the given {@code Collection}.
      */
     public <T> T pickRandom(Collection<T> c) {
         int elementIndex = super.nextInt(c.size());
@@ -311,7 +311,7 @@ public final class RandomUtils extends Random {
     /* --- String-related Methods --- */
 
     /**
-     * Randomize a <code>String</code>.
+     * Randomize a {@code String}.
      *
      * @param length
      *            The requested length of the string.
@@ -373,7 +373,7 @@ public final class RandomUtils extends Random {
     }
 
     /**
-     * Randomize a printable <code>String</code>.
+     * Randomize a printable {@code String}.
      *
      * @param length
      *            The requested length of the string.
@@ -383,7 +383,7 @@ public final class RandomUtils extends Random {
     }
 
     /**
-     * Randomize a <code>String</code> made up of the given characters
+     * Randomize a {@code String} made up of the given characters
      *
      * @param length
      *            The requested length of the string.
@@ -398,7 +398,7 @@ public final class RandomUtils extends Random {
     }
 
     /**
-     * Randomize a <code>String</code> of a length in the given range [min, max].
+     * Randomize a {@code String} of a length in the given range [min, max].
      *
      * @param printable
      *            Whether or not, the string should contain only printable characters.
@@ -408,7 +408,7 @@ public final class RandomUtils extends Random {
     }
 
     /**
-     * Randomize a printable <code>String</code> of a length in the given range [min, max].
+     * Randomize a printable {@code String} of a length in the given range [min, max].
      */
     public String nextString(int min, int max) {
         return nextString(nextInt(min, max), true);
@@ -417,7 +417,7 @@ public final class RandomUtils extends Random {
     /* --- General Utility Methods --- */
 
     /**
-     * Creates a <tt>byte</tt> array of the specified size, initialized with random values.
+     * Creates a {@code byte} array of the specified size, initialized with random values.
      */
     public byte[] nextBytes(int size) {
         byte[] data = new byte[size];
