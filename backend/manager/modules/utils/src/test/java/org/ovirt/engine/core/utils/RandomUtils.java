@@ -108,14 +108,14 @@ public final class RandomUtils extends Random {
      * Randomizes a {@code byte} value.
      */
     public byte nextByte() {
-        return (byte) super.nextInt();
+        return (byte) nextInt();
     }
 
     /**
      * Randomize a {@code byte} value between 0 (inclusive) and the specified value (exclusive).
      */
     public byte nextByte(byte b) {
-        return (byte) super.nextInt(b);
+        return (byte) nextInt(b);
     }
 
     /**
@@ -136,14 +136,14 @@ public final class RandomUtils extends Random {
      * Randomizes a {@code short} value.
      */
     public short nextShort() {
-        return (short) super.nextInt();
+        return (short) nextInt();
     }
 
     /**
      * Randomize a {@code short} value between 0 (inclusive) and the specified value (exclusive).
      */
     public short nextShort(short s) {
-        return (short) super.nextInt(s);
+        return (short) nextInt(s);
     }
 
     /**
@@ -169,7 +169,7 @@ public final class RandomUtils extends Random {
                     MIN_MAX_ERROR);
         }
 
-        return (min + super.nextInt(max - min + 1));
+        return (min + nextInt(max - min + 1));
     }
 
     /* --- Long-related Methods --- */
@@ -182,7 +182,7 @@ public final class RandomUtils extends Random {
             throw new IllegalArgumentException("l must be greater than 0!");
         }
 
-        long rand = super.nextLong();
+        long rand = nextLong();
         if (rand == Long.MIN_VALUE) {
             rand++;
         }
@@ -223,13 +223,13 @@ public final class RandomUtils extends Random {
         }
 
         // Randomize a float
-        float rand = super.nextFloat();
+        float rand = nextFloat();
 
         // If the returned value should not include the given one,
         // make sure that the randomized float is not exactly 1.0
         if (!inclusive) {
             while (rand == 1.0F) {
-                rand = super.nextFloat();
+                rand = nextFloat();
             }
         }
 
@@ -270,13 +270,13 @@ public final class RandomUtils extends Random {
         }
 
         // Randomize a double
-        double rand = super.nextDouble();
+        double rand = nextDouble();
 
         // If the returned value should not include the given one,
         // make sure that the randomized float is not exactly 1.0
         if (!inclusive) {
             while (rand == 1.0D) {
-                rand = super.nextDouble();
+                rand = nextDouble();
             }
         }
 
@@ -289,7 +289,7 @@ public final class RandomUtils extends Random {
      * Picks a random element from the given {@code Collection}.
      */
     public <T> T pickRandom(Collection<T> c) {
-        int elementIndex = super.nextInt(c.size());
+        int elementIndex = nextInt(c.size());
 
         Iterator<T> iter = c.iterator();
         for (int i = 0; i < elementIndex; ++i) {
