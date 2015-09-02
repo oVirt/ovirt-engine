@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -858,21 +860,35 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
     private void updateClusterList(HostModel hostModel, List<VDSGroup> clusters) {
         VDSGroup oldCluster = hostModel.getCluster().getSelectedItem();
-
-        hostModel.getCluster().setItems(clusters);
+        List<VDSGroup> filteredClusters = filterClusters(clusters, hostModel.getDataCenter().getItems());
+        hostModel.getCluster().setItems(filteredClusters);
 
         if (oldCluster != null) {
             VDSGroup newSelectedItem =
-                    Linq.firstOrDefault(clusters, new Linq.ClusterPredicate(oldCluster.getId()));
+                    Linq.firstOrDefault(filteredClusters, new Linq.ClusterPredicate(oldCluster.getId()));
             if (newSelectedItem != null) {
                 hostModel.getCluster().setSelectedItem(newSelectedItem);
             }
         }
 
         if (hostModel.getCluster().getSelectedItem() == null) {
-            hostModel.getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
+            hostModel.getCluster().setSelectedItem(Linq.firstOrDefault(filteredClusters));
         }
 
+    }
+
+    private List<VDSGroup> filterClusters(List<VDSGroup> clusters, Collection<StoragePool> dataCenters) {
+        List<VDSGroup> result = new ArrayList<>();
+        Set<Guid> dataCenterIds = new HashSet<>();
+        for (StoragePool dataCenter: dataCenters) {
+            dataCenterIds.add(dataCenter.getId());
+        }
+        for (VDSGroup cluster: clusters) {
+            if (dataCenterIds.contains(cluster.getStoragePoolId())) {
+                result.add(cluster);
+            }
+        }
+        return result;
     }
 
     private void cluster_SelectedItemChanged() {
