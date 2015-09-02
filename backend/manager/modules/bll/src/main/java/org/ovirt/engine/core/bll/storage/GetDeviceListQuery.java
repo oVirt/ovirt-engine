@@ -31,8 +31,12 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
 
         // Get Device List
         VDSBrokerFrontend vdsBrokerFrontend = getVdsBroker();
-        GetDeviceListVDSCommandParameters parameters = new GetDeviceListVDSCommandParameters(
-                getParameters().getId(), getParameters().getStorageType());
+        GetDeviceListVDSCommandParameters parameters =
+                new GetDeviceListVDSCommandParameters(
+                        getParameters().getId(),
+                        getParameters().getStorageType(),
+                        getParameters().isCheckStatus(),
+                        getParameters().getLunIds());
         List<LUNs> luns = (List<LUNs>) vdsBrokerFrontend.RunVdsCommand(
                 VDSCommandType.GetDeviceList, parameters).getReturnValue();
 

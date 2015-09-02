@@ -797,12 +797,27 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public LUNListReturnForXmlRpc getDeviceList(int storageType, String[] devicesList) {
+    public LUNListReturnForXmlRpc getDeviceList(int storageType, String[] devicesList, boolean checkStatus) {
         ArrayList<String> devicesListArray =
                 devicesList != null ? new ArrayList<String>(Arrays.asList(devicesList)) : null;
         JsonRpcRequest request =
                 new RequestBuilder("Host.getDeviceList").withParameter("storageType",
-                        storageType).withOptionalParameterAsList("guids", devicesListArray).build();
+                        storageType)
+                        .withOptionalParameterAsList("guids", devicesListArray)
+                        .withParameter("checkStatus", checkStatus)
+                        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request).withResponseType(Object[].class)
+                        .withResponseKey("devList");
+        return new LUNListReturnForXmlRpc(response);
+    }
+
+    @Override
+    public LUNListReturnForXmlRpc getDeviceList(int storageType) {
+        JsonRpcRequest request =
+                new RequestBuilder("Host.getDeviceList").withParameter("storageType",
+                        storageType)
+                        .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseType(Object[].class)
                         .withResponseKey("devList");

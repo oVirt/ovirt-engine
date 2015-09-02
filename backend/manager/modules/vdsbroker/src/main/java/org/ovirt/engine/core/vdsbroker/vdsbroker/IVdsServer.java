@@ -160,8 +160,9 @@ public interface IVdsServer {
 
     OneVGReturnForXmlRpc getVGInfo(String vgUUID);
 
-    LUNListReturnForXmlRpc getDeviceList(int storageType, String[] devicesList);
+    LUNListReturnForXmlRpc getDeviceList(int storageType);
 
+    LUNListReturnForXmlRpc getDeviceList(int storageType, String[] devicesList, boolean checkStatus);
 
     DevicesVisibilityMapReturnForXmlRpc getDevicesVisibility(String[] devicesList);
 

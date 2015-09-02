@@ -192,7 +192,7 @@ public class BackendStorageDomainsResource
     private List<LUNs> getDeviceList(Guid hostId, StorageType storageType) {
         return getEntity(List.class,
                 VdcQueryType.GetDeviceList,
-                new GetDeviceListQueryParameters(hostId, storageType),
+                new GetDeviceListQueryParameters(hostId, storageType, false, null),
                 "GetDeviceList", true);
     }
 
@@ -238,7 +238,9 @@ public class BackendStorageDomainsResource
      * @param hostId
      */
     private void refreshHostStorage(Guid hostId) {
-        getBackendCollection(VdcQueryType.GetDeviceList, new GetDeviceListQueryParameters(hostId, StorageType.ISCSI));
+        getBackendCollection(VdcQueryType.GetDeviceList, new GetDeviceListQueryParameters(hostId,
+                StorageType.ISCSI,
+                false, null));
     }
 
     private void connectStorageToHost(Guid hostId, StorageType storageType, LogicalUnit unit) {

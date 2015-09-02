@@ -8,14 +8,14 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class GetDeviceListVDSCommandParameters extends VdsIdVDSCommandParametersBase {
     public GetDeviceListVDSCommandParameters(Guid vdsId, StorageType storageType) {
-        super(vdsId);
-        setStorageType(storageType);
+        this(vdsId, storageType, false, null);
     }
 
-    public GetDeviceListVDSCommandParameters(Guid vdsId, StorageType storageType, List lunIds) {
+    public GetDeviceListVDSCommandParameters(Guid vdsId, StorageType storageType, boolean checkStatus, List lunIds) {
         super(vdsId);
         setStorageType(storageType);
         setLunIds(lunIds);
+        setCheckStatus(checkStatus);
     }
 
     private StorageType privateStorageType;
@@ -38,6 +38,16 @@ public class GetDeviceListVDSCommandParameters extends VdsIdVDSCommandParameters
         privateLunIds = value;
     }
 
+    private boolean checkStatus;
+
+    public boolean isCheckStatus() {
+        return checkStatus;
+    }
+
+    public void setCheckStatus(boolean checkStatus) {
+        this.checkStatus = checkStatus;
+    }
+
     public GetDeviceListVDSCommandParameters() {
         privateStorageType = StorageType.UNKNOWN;
     }
@@ -46,6 +56,7 @@ public class GetDeviceListVDSCommandParameters extends VdsIdVDSCommandParameters
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
                 .append("storageType", getStorageType())
+                .append("checkStatus", isCheckStatus())
                 .append("lunIds", getLunIds());
     }
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
@@ -29,9 +30,12 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.common.businessentities.storage.LunStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -77,6 +81,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ITaskTarget;
 import org.ovirt.engine.ui.uicompat.Task;
 import org.ovirt.engine.ui.uicompat.TaskContext;
+
 import com.google.gwt.user.client.Timer;
 
 public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
@@ -997,10 +1002,46 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
     }
 
     public void saveNewSanStorage() {
-        StorageModel model = (StorageModel) getWindow();
-        SanStorageModel sanStorageModel = (SanStorageModel) model.getCurrentStorageItem();
+        StorageModel storageModel = (StorageModel) getWindow();
+        final SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getCurrentStorageItem();
+        Map<LunStatus, List<LUNs>> lunsMapByStatus = sanStorageModel.getLunsMapByStatus(sanStorageModel.getAddedLuns());
+        // The status will be either all Unknown (for DC above 3.5) or either Free/Used
+        // Once we stop supporting 3.5 and below , we will won't need the getLunsMapByStatus method
 
-        ArrayList<String> usedLunsMessages = sanStorageModel.getUsedLunsMessages();
+        if (!lunsMapByStatus.get(LunStatus.Unknown).isEmpty()) {
+            Guid hostId = sanStorageModel.getContainer().getHost().getSelectedItem().getId();
+            Model target = getWidgetModel() != null ? getWidgetModel() : sanStorageModel.getContainer();
+            List<String> unkownStatusLuns = new ArrayList<>();
+            for (LUNs lun : lunsMapByStatus.get(LunStatus.Unknown)) {
+                unkownStatusLuns.add(lun.getLUN_id());
+            }
+            Frontend.getInstance()
+                    .runQuery(VdcQueryType.GetDeviceList,
+                            new GetDeviceListQueryParameters(hostId,
+                                    sanStorageModel.getType(),
+                                    true,
+                                    unkownStatusLuns),
+                            new AsyncQuery(target, new INewAsyncCallback() {
+                                @Override
+                                public void onSuccess(Object target, Object returnValue) {
+                                    VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
+                                    if (response.getSucceeded()) {
+                                        List<LUNs> checkedLuns = (ArrayList<LUNs>) response.getReturnValue();
+                                        postGetLunsMessages(sanStorageModel.getUsedLunsMessages(checkedLuns));
+                                    } else {
+                                        sanStorageModel.setGetLUNsFailure(
+                                                ConstantsManager.getInstance()
+                                                        .getConstants()
+                                                        .couldNotRetrieveLUNsLunsFailure());
+                                    }
+                                }
+                            }, true));
+        } else {
+            postGetLunsMessages(sanStorageModel.getUsedLunsMessages(lunsMapByStatus.get(LunStatus.Used)));
+        }
+    }
+
+    private void postGetLunsMessages(ArrayList<String> usedLunsMessages) {
 
         if (usedLunsMessages.isEmpty()) {
             onSaveSanStorage();
