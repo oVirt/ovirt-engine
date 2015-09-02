@@ -466,8 +466,13 @@ class OvirtUtils(base.Base):
             'SCHEMA': """
                 SELECT schema_name AS objectname
                 FROM information_schema.schemata
+                WHERE schema_owner = %(username)s
             """,
         }
+
+        objectsToDropArgs = dict(
+            username=_ind_env(self, DEK.USER),
+        )
 
         # it's important to drop object types in logical order
         for objectType in (
@@ -483,6 +488,7 @@ class OvirtUtils(base.Base):
                 objectType=objectType,
                 objects=statement.execute(
                     statement=objectsToDrop[objectType],
+                    args=objectsToDropArgs,
                     ownConnection=True,
                     transaction=False,
                 )
