@@ -741,6 +741,8 @@ select fn_db_add_config_value_for_versions_up_to('ChangeNetworkUnderBridgeInUseS
 
 select fn_db_add_config_value_for_versions_up_to('NetworkExclusivenessPermissiveValidation','false','3.5');
 
+select fn_db_add_config_value_for_versions_up_to('GetDeviceListWithoutStatusSupported','false','3.5');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------

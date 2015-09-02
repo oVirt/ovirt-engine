@@ -623,4 +623,13 @@ public class FeatureSupported {
     public static boolean networkExclusivenessPermissiveValidation(Version version) {
         return supportedInConfig(ConfigValues.NetworkExclusivenessPermissiveValidation, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if trunk and VLAN tagged VM network is supported on a single NIC.
+     */
+    public static boolean getDeviceListWithoutStatusSupported(Version version) {
+        return supportedInConfig(ConfigValues.GetDeviceListWithoutStatusSupported, version);
+    }
 }

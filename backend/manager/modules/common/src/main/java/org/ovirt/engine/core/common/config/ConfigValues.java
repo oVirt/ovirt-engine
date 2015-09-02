@@ -2209,6 +2209,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("1048576")
     VMPpc64BitMaxMemorySizeInMB,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    GetDeviceListWithoutStatusSupported,
+
     Invalid
 
 }

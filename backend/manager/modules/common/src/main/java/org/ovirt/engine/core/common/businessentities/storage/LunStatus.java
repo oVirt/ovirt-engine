@@ -3,7 +3,8 @@ package org.ovirt.engine.core.common.businessentities.storage;
 public enum LunStatus {
     Free,
     Used,
-    Unusable;
+    Unusable,
+    Unknown;
 
     public int getValue() {
         return this.ordinal();

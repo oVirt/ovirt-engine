@@ -65,8 +65,10 @@ public class BackendHostStorageResource
     }
 
     protected List<LUNs> getLogicalUnits() {
+        // The checkStatus is true here for backward compatibility in order to have the LUN status
+        // populated as before. We should deprecate in the future or add an option to pass false
         return getBackendCollection(VdcQueryType.GetDeviceList,
-                                    new GetDeviceListQueryParameters(asGuid(hostId), StorageType.UNKNOWN));
+                new GetDeviceListQueryParameters(asGuid(hostId), StorageType.UNKNOWN, true, null));
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.StorageDomain> getVolumeGroups() {

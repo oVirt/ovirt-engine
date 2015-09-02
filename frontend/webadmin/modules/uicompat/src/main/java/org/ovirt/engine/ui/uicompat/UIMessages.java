@@ -180,6 +180,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Used by VG: {0}")
     String lunUsedByVG(String vgID);
 
+    @DefaultMessage("{0} ({1})")
+    String usedLunIdReason(String id, String reason);
+
     @DefaultMessage("Replica count will be reduced from {0} to {1}. Are you sure you want to remove the following Brick(s)?")
     String removeBricksReplicateVolumeMessage(int oldReplicaCount, int newReplicaCount);
 
