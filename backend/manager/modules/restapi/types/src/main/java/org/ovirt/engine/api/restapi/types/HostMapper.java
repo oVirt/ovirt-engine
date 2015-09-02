@@ -217,7 +217,7 @@ public class HostMapper {
         model.setStorageManager(sm);
         SPM spm = new SPM();
         spm.setPriority(entity.getVdsSpmPriority());
-        if (spm.getStatus() != null) {
+        if (entity.getSpmStatus() != null) {
             spm.setStatus(StatusUtils.create(map(entity.getSpmStatus(), null)));
         }
         model.setSpm(spm);
