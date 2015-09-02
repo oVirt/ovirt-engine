@@ -149,6 +149,7 @@ public class QueriesCommandBaseTest {
 
         public ThereIsNoSuchQuery(VdcQueryParametersBase parameters) {
             super(parameters);
+            postConstruct();
         }
 
         @Override

@@ -83,6 +83,7 @@ public class GetManagementNetworkCandidatesQueryTest {
 
         private TestGetManagementNetworkCandidatesQuery(IdQueryParameters params) {
             super(params);
+            postConstruct();
         }
 
         @Override

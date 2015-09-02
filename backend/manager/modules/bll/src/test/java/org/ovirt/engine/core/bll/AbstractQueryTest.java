@@ -80,6 +80,7 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
         query = spy(con.newInstance(parameters));
         doReturn(dbFacadeMock).when(query).getDbFacade();
         doReturn(dbUserMock).when(query).initUser();
+        query.postConstruct();
         return query;
     }
 

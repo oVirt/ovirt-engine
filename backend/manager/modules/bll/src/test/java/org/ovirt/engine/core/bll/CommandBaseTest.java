@@ -132,6 +132,7 @@ public class CommandBaseTest {
 
         // Create a command
         CommandBase<VdcActionParametersBase> command = new CommandBaseDummy(paramterMock);
+        command.postConstruct();
 
         // Check the session
         assertEquals("wrong user id on command", user.getId(), command.getUserId());

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -54,6 +55,13 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         returnValue = new VdcQueryReturnValue();
         queryType = initQueryType();
         this.engineContext = engineContext == null ? new EngineContext().withSessionId(parameters.getSessionId()) : engineContext;
+    }
+
+    /**
+     * @see PostConstruct
+     */
+    @PostConstruct
+    protected final void postConstruct() {
         user = initUser();
     }
 

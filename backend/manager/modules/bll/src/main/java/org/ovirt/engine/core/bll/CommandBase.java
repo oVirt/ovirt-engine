@@ -178,34 +178,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
         this.context = cmdContext;
         _parameters = parameters;
-        DbUser user =
-                SessionDataContainer.getInstance().getUser(cmdContext.getEngineContext().getSessionId(), true);
-        if (user != null) {
-            setCurrentUser(user);
-        }
-        if (SessionDataContainer.getInstance().getPrincipalName(cmdContext.getEngineContext().getSessionId()) == null) {
-            // command was most probably executed from Quartz job, so session doesn't contain any user info
-            // we need to set username to fake internal user so audit logs will not contain "null@N/A" as username
-            setUserName("SYSTEM");
-        } else {
-            setUserName(SessionDataContainer.getInstance().getUserName(cmdContext.getEngineContext().getSessionId()));
-        }
-        ExecutionContext executionContext = cmdContext.getExecutionContext();
-        if (executionContext.getJob() != null) {
-            setJobId(executionContext.getJob().getId());
-        } else if (executionContext.getStep() != null) {
-            setJobId(executionContext.getStep().getJobId());
-        }
 
         Guid commandIdFromParameters = parameters.getCommandId();
         if (commandIdFromParameters == null) {
             commandIdFromParameters = Guid.newGuid();
             getParameters().setCommandId(commandIdFromParameters);
         }
-
         commandId = commandIdFromParameters;
-        taskHandlers = initTaskHandlers();
-        setCorrelationId(parameters.getCorrelationId());
     }
 
     /**
@@ -222,12 +201,41 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     @PostConstruct
     protected final void postConstruct() {
         if (!isCompensationContext()) {
+            initCommandBase();
             init();
         }
     }
 
     private boolean isCompensationContext() {
         return getParameters() == null;
+    }
+
+    /**
+     * Initializes CommandBase instance when parameters are passed in constructor (non compensation
+     * context instance creation)
+     */
+    private void initCommandBase() {
+        DbUser user =
+            SessionDataContainer.getInstance().getUser(context.getEngineContext().getSessionId(), true);
+        if (user != null) {
+            setCurrentUser(user);
+        }
+        if (SessionDataContainer.getInstance().getPrincipalName(context.getEngineContext().getSessionId()) == null) {
+            // command was most probably executed from Quartz job, so session doesn't contain any user info
+            // we need to set username to fake internal user so audit logs will not contain "null@N/A" as username
+            setUserName("SYSTEM");
+        } else {
+            setUserName(SessionDataContainer.getInstance().getUserName(context.getEngineContext().getSessionId()));
+        }
+        ExecutionContext executionContext = context.getExecutionContext();
+        if (executionContext.getJob() != null) {
+            setJobId(executionContext.getJob().getId());
+        } else if (executionContext.getStep() != null) {
+            setJobId(executionContext.getStep().getJobId());
+        }
+
+        taskHandlers = initTaskHandlers();
+        setCorrelationId(_parameters.getCorrelationId());
     }
 
     /**
