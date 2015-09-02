@@ -25,8 +25,8 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Ma
         VM vm = getVmDao().get(getParameters().getVmId());
 
         if (vdsReturnValue.getSucceeded()) {
-            resourceManager.AddAsyncRunningVm(getParameters().getVmId());
-            resourceManager.InternalSetVmStatus(vm, VMStatus.MigratingFrom);
+            resourceManager.addAsyncRunningVm(getParameters().getVmId());
+            resourceManager.internalSetVmStatus(vm, VMStatus.MigratingFrom);
             vm.setMigratingToVds(getParameters().getDstVdsId());
             vmManager.update(vm.getDynamicData());
             getVDSReturnValue().setReturnValue(VMStatus.MigratingFrom);

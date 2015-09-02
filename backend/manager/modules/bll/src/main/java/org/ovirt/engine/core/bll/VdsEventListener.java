@@ -523,7 +523,7 @@ public class VdsEventListener implements IVdsEventListener {
         ThreadPoolUtil.execute(new Runnable() {
             @Override
             public void run() {
-                resourceManagerProvider.get().GetVdsManager(
+                resourceManagerProvider.get().getVdsManager(
                         vdsException.getVdsError().getVdsId()).handleNetworkException(vdsException);
             }
         });

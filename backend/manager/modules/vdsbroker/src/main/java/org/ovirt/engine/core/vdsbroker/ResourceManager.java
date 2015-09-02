@@ -135,7 +135,7 @@ public class ResourceManager implements BackendService {
         // Populate the VDS dictionary
         final List<VDS> allVdsList = hostDao.getAll();
         for (VDS curVds : allVdsList) {
-            AddVds(curVds, true);
+            addVds(curVds, true);
         }
         IrsBrokerCommand.init();
 
@@ -156,11 +156,11 @@ public class ResourceManager implements BackendService {
         }
     }
 
-    public boolean AddAsyncRunningVm(Guid vmId) {
+    public boolean addAsyncRunningVm(Guid vmId) {
         return asyncRunningVms.add(vmId);
     }
 
-    public void RemoveAsyncRunningVm(Guid vmId) {
+    public void removeAsyncRunningVm(Guid vmId) {
         asyncRunningVms.remove(vmId);
         getEventListener().removeAsyncRunningCommand(vmId);
     }
@@ -169,25 +169,25 @@ public class ResourceManager implements BackendService {
         if (asyncRunningVms.contains(vmId)) {
             getEventListener().runningSucceded(vmId);
         }
-        RemoveAsyncRunningVm(vmId);
+        removeAsyncRunningVm(vmId);
     }
 
     /**
      * Initiate rerun event when vm failed to run
      * @param vmId
      */
-    public void RerunFailedCommand(Guid vmId, Guid vdsId) {
+    public void rerunFailedCommand(Guid vmId, Guid vdsId) {
         if (asyncRunningVms.remove(vmId)) {
             // remove async record from broker only
             getEventListener().rerun(vmId);
         }
     }
 
-    public boolean IsVmInAsyncRunningList(Guid vmId) {
+    public boolean isVmInAsyncRunningList(Guid vmId) {
         return asyncRunningVms.contains(vmId);
     }
 
-    public void RemoveVmFromDownVms(Guid vdsId, Guid vmId) {
+    public void removeVmFromDownVms(Guid vdsId, Guid vmId) {
         HashSet<Guid> vms = vdsAndVmsList.get(vdsId);
         if (vms != null) {
             vms.remove(vmId);
@@ -214,11 +214,11 @@ public class ResourceManager implements BackendService {
 
     public void reestablishConnection(Guid vdsId) {
         VDS vds = hostDao.get(vdsId);
-        RemoveVds(vds.getId());
-        AddVds(vds, false);
+        removeVds(vds.getId());
+        addVds(vds, false);
     }
 
-    public void AddVds(VDS vds, boolean isInternal) {
+    public void addVds(VDS vds, boolean isInternal) {
         VdsManager vdsManager = new VdsManager(vds, auditLogDirector, this, dbFacade);
         if (isInternal) {
             VDSStatus status = vds.getStatus();
@@ -248,23 +248,23 @@ public class ResourceManager implements BackendService {
 
     }
 
-    public void RemoveVds(Guid vdsId) {
-        RemoveVds(vdsId, false);
+    public void removeVds(Guid vdsId) {
+        removeVds(vdsId, false);
     }
 
-    public void RemoveVds(Guid vdsId, boolean newHost) {
-        VdsManager vdsManager = GetVdsManager(vdsId, newHost);
+    public void removeVds(Guid vdsId, boolean newHost) {
+        VdsManager vdsManager = getVdsManager(vdsId, newHost);
         if (vdsManager != null) {
             vdsManager.dispose();
             vdsManagersDict.remove(vdsId);
         }
     }
 
-    public VdsManager GetVdsManager(Guid vdsId) {
-        return GetVdsManager(vdsId, false);
+    public VdsManager getVdsManager(Guid vdsId) {
+        return getVdsManager(vdsId, false);
     }
 
-    public VdsManager GetVdsManager(Guid vdsId, boolean newHost) {
+    public VdsManager getVdsManager(Guid vdsId, boolean newHost) {
         VdsManager vdsManger = vdsManagersDict.get(vdsId);
         if (vdsManger == null) {
             if (!newHost) {
@@ -278,9 +278,9 @@ public class ResourceManager implements BackendService {
      * Set vm status to Unknown and save to DB.
      * @param vm
      */
-    public void SetVmUnknown(VM vm) {
-        RemoveAsyncRunningVm(vm.getId());
-        InternalSetVmStatus(vm, VMStatus.Unknown);
+    public void setVmUnknown(VM vm) {
+        removeAsyncRunningVm(vm.getId());
+        internalSetVmStatus(vm, VMStatus.Unknown);
         // log VM transition to unknown status
         AuditLogableBase logable = new AuditLogableBase();
         logable.setVmId(vm.getId());
@@ -302,7 +302,7 @@ public class ResourceManager implements BackendService {
         }
     }
 
-    public boolean IsVmDuringInitiating(Guid vm_guid) {
+    public boolean isVmDuringInitiating(Guid vm_guid) {
         return asyncRunningVms.contains(vm_guid);
     }
 
@@ -315,15 +315,19 @@ public class ResourceManager implements BackendService {
      * @param vm
      * @param status
      */
-    public void InternalSetVmStatus(VM vm, final VMStatus status) {
-        InternalSetVmStatus(vm, status, VmExitStatus.Normal, StringUtils.EMPTY, VmExitReason.Unknown);
+    public void internalSetVmStatus(VM vm, final VMStatus status) {
+        internalSetVmStatus(vm, status, VmExitStatus.Normal, StringUtils.EMPTY, VmExitReason.Unknown);
     }
 
-    public void InternalSetVmStatus(VM vm, final VMStatus status, VmExitStatus exitStatus) {
-        InternalSetVmStatus(vm, status, exitStatus, StringUtils.EMPTY, VmExitReason.Unknown);
+    public void internalSetVmStatus(VM vm, final VMStatus status, VmExitStatus exitStatus) {
+        internalSetVmStatus(vm, status, exitStatus, StringUtils.EMPTY, VmExitReason.Unknown);
     }
 
-    public void InternalSetVmStatus(VM vm, final VMStatus status, final VmExitStatus exitStaus, final String exitMessage, final VmExitReason exitReason) {
+    public void internalSetVmStatus(VM vm,
+            final VMStatus status,
+            final VmExitStatus exitStaus,
+            final String exitMessage,
+            final VmExitReason exitReason) {
         vm.setStatus(status);
         vm.setExitStatus(exitStaus);
         vm.setExitMessage(exitMessage);
@@ -383,14 +387,14 @@ public class ResourceManager implements BackendService {
         }
     }
 
-    public void UpdateVdsStatisticsData(VdsStatistics vdsStatistics) {
-        VdsManager vdsManager = GetVdsManager(vdsStatistics.getId());
+    public void updateVdsStatisticsData(VdsStatistics vdsStatistics) {
+        VdsManager vdsManager = getVdsManager(vdsStatistics.getId());
         if (vdsManager != null) {
             vdsManager.updateStatisticsData(vdsStatistics);
         }
     }
 
-    private static String GetCommandTypeName(VDSCommandType command) {
+    private static String getCommandTypeName(VDSCommandType command) {
         String packageName = command.getPackageName();
         String commandName = String.format("%s.%s%s", packageName, command, VDSCommandPrefix);
         return commandName;
@@ -408,7 +412,7 @@ public class ResourceManager implements BackendService {
         try {
             @SuppressWarnings("unchecked")
             Class<VDSCommandBase<P>> type =
-                    (Class<VDSCommandBase<P>>) Class.forName(GetCommandTypeName(commandType));
+                    (Class<VDSCommandBase<P>>) Class.forName(getCommandTypeName(commandType));
             Constructor<VDSCommandBase<P>> constructor =
                     ReflectionUtils.findConstructor(type, parameters.getClass());
 

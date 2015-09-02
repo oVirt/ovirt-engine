@@ -162,7 +162,7 @@ public class VmAnalyzer {
 
                 // when going to suspend, delete vm from cache later
                 if (prevStatus == VMStatus.SavingState) {
-                    vmsMonitoring.getResourceManager().InternalSetVmStatus(dbVm, VMStatus.Suspended);
+                    vmsMonitoring.getResourceManager().internalSetVmStatus(dbVm, VMStatus.Suspended);
 
                 }
 
@@ -206,7 +206,7 @@ public class VmAnalyzer {
         if (exitStatus != VmExitStatus.Normal) {
             // Vm failed to run - try to rerun it on other Vds
             if (cacheVm != null) {
-                if (vmsMonitoring.getResourceManager().IsVmInAsyncRunningList(vmDynamic.getId())) {
+                if (vmsMonitoring.getResourceManager().isVmInAsyncRunningList(vmDynamic.getId())) {
                     log.info("Running on vds during rerun failed vm: '{}'", vmDynamic.getRunOnVds());
                     rerun = true;
                 } else if (cacheVm.isAutoStartup()) {
@@ -215,12 +215,12 @@ public class VmAnalyzer {
             }
             // if failed in destination right after migration
             else { // => cacheVm == null
-                ResourceManager.getInstance().RemoveAsyncRunningVm(vmDynamic.getId());
+                ResourceManager.getInstance().removeAsyncRunningVm(vmDynamic.getId());
                 saveDynamic(vdsmVm.getVmDynamic());
             }
         } else {
             // Vm moved safely to down status. May be migration - just remove it from Async Running command.
-            vmsMonitoring.getResourceManager().RemoveAsyncRunningVm(vmDynamic.getId());
+            vmsMonitoring.getResourceManager().removeAsyncRunningVm(vmDynamic.getId());
         }
     }
 
@@ -246,7 +246,7 @@ public class VmAnalyzer {
 
         AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), vm.getId());
         auditLog(logable, type);
-        ResourceManager.getInstance().RemoveAsyncRunningVm(vm.getId());
+        ResourceManager.getInstance().removeAsyncRunningVm(vm.getId());
     }
 
     private void clearVm(VmExitStatus exitStatus, String exitMessage, VmExitReason vmExistReason) {
@@ -255,7 +255,7 @@ public class VmAnalyzer {
             // the exit status and message were set, and we don't want to override them here.
             // we will add it to vmDynamicToSave though because it might been removed from it in #updateRepository
             if (dbVm.getStatus() != VMStatus.Suspended && dbVm.getStatus() != VMStatus.Down) {
-                vmsMonitoring.getResourceManager().InternalSetVmStatus(dbVm,
+                vmsMonitoring.getResourceManager().internalSetVmStatus(dbVm,
                         VMStatus.Down,
                         exitStatus,
                         exitMessage,
@@ -264,7 +264,7 @@ public class VmAnalyzer {
             saveDynamic(dbVm.getDynamicData());
             saveStatistics();
             saveVmInterfaces();
-            if (!vmsMonitoring.getResourceManager().IsVmInAsyncRunningList(dbVm.getId())) {
+            if (!vmsMonitoring.getResourceManager().isVmInAsyncRunningList(dbVm.getId())) {
                 movedToDown = true;
             }
         }
@@ -301,7 +301,7 @@ public class VmAnalyzer {
                         }
                     }
                     // set vm status to down if source vm crushed
-                    ResourceManager.getInstance().InternalSetVmStatus(dbVm,
+                    ResourceManager.getInstance().internalSetVmStatus(dbVm,
                             VMStatus.Down,
                             vdsmVm.getVmDynamic().getExitStatus(),
                             vdsmVm.getVmDynamic().getExitMessage(),
@@ -312,7 +312,7 @@ public class VmAnalyzer {
                     type = AuditLogType.VM_MIGRATION_ABORT;
                     logable.addCustomValue("MigrationError", vdsmVm.getVmDynamic().getExitMessage());
 
-                    vmsMonitoring.getResourceManager().RemoveAsyncRunningVm(vdsmVm.getVmDynamic().getId());
+                    vmsMonitoring.getResourceManager().removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
                 }
                 break;
             }
@@ -523,7 +523,7 @@ public class VmAnalyzer {
                     updateVmStatistics();
                     stable = true;
                     if (!getVdsManager().isInitialized()) {
-                        vmsMonitoring.getResourceManager().RemoveVmFromDownVms(
+                        vmsMonitoring.getResourceManager().removeVmFromDownVms(
                                 getVdsManager().getVdsId(),
                                 vdsmVmDynamic.getId());
                     }
@@ -640,7 +640,7 @@ public class VmAnalyzer {
                     dbVm.getId(), dbVm.getName(), getVdsManager().getVdsName());
 
             if (!migrating && !rerun
-                    && vmsMonitoring.getResourceManager().IsVmInAsyncRunningList(dbVm.getId())) {
+                    && vmsMonitoring.getResourceManager().isVmInAsyncRunningList(dbVm.getId())) {
                 rerun = true;
                 log.info("add VM '{}' to rerun treatment", dbVm.getName());
             }
@@ -677,7 +677,7 @@ public class VmAnalyzer {
                 newVmStatus);
 
         // if the DST host goes unresponsive it will take care all MigratingTo and unknown VMs
-        vmsMonitoring.getResourceManager().InternalSetVmStatus(vmToRemove, newVmStatus);
+        vmsMonitoring.getResourceManager().internalSetVmStatus(vmToRemove, newVmStatus);
 
         // save the VM state
         saveDynamic(vmToRemove.getDynamicData());

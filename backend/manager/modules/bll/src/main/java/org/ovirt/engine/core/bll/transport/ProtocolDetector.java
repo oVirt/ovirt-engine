@@ -70,7 +70,7 @@ public class ProtocolDetector {
      * Stops {@code VdsManager} for a host.
      */
     public void stopConnection() {
-        resourceManager.RemoveVds(this.vds.getId());
+        resourceManager.removeVds(this.vds.getId());
     }
 
     /**
@@ -80,7 +80,7 @@ public class ProtocolDetector {
      */
     public boolean attemptFallbackProtocol() {
         vds.setProtocol(VdsProtocol.XML);
-        resourceManager.AddVds(vds, false);
+        resourceManager.addVds(vds, false);
         return attemptConnection();
     }
 

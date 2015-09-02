@@ -256,7 +256,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             // so we need to be sure not to execute fencing before host is non responsive for longer time
             long interval = TimeUnit.SECONDS.toMillis(
                     Config.<Integer>getValue(ConfigValues.HostStorageLeaseAliveCheckingInterval));
-            long lastUpdate = getResourceManager().GetVdsManager(getVdsId()).getLastUpdate();
+            long lastUpdate = getResourceManager().getVdsManager(getVdsId()).getLastUpdate();
             long difference = System.currentTimeMillis() - lastUpdate;
             if (difference < interval) {
                 int sleepMs = (int)(interval - difference);

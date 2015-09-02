@@ -28,7 +28,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
     protected void executeVmCommand() {
         final VM vm = getParameters().getVm();
         vm.setLastStartTime(new Date());
-        if (canExecute() && resourceManager.AddAsyncRunningVm(vm.getId())) {
+        if (canExecute() && resourceManager.addAsyncRunningVm(vm.getId())) {
             VDSReturnValue vdsReturnValue = null;
             try {
                 vdsReturnValue = runCreateVDSCommand();
@@ -41,13 +41,13 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                     vmManager.update(vm.getDynamicData());
                 } else {
                     handleCommandResult(vdsReturnValue);
-                    resourceManager.RemoveAsyncRunningVm(getParameters().getVmId());
+                    resourceManager.removeAsyncRunningVm(getParameters().getVmId());
                 }
             } catch (Exception e) {
                 log.error("Error in excuting CreateVmVDSCommand: {}", e.getMessage());
                 log.error("Exception", e);
                 if (vdsReturnValue != null && !vdsReturnValue.getSucceeded()) {
-                    resourceManager.RemoveAsyncRunningVm(getParameters().getVmId());
+                    resourceManager.removeAsyncRunningVm(getParameters().getVmId());
                 }
                 throw new RuntimeException(e);
             }
@@ -78,7 +78,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
         Guid guid = getParameters().getVm().getId();
         String vmName = getParameters().getVm().getName();
         VmDynamic vmDynamicFromDb = DbFacade.getInstance().getVmDynamicDao().get(guid);
-        if (resourceManager.IsVmDuringInitiating(getParameters().getVm().getId())) {
+        if (resourceManager.isVmDuringInitiating(getParameters().getVm().getId())) {
             log.info("Vm Running failed - vm '{}'({}) already running", vmName, guid);
             getVDSReturnValue().setReturnValue(vmDynamicFromDb.getStatus());
             return false;

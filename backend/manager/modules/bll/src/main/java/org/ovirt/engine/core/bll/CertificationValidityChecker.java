@@ -83,7 +83,7 @@ public class CertificationValidityChecker implements BackendService {
 
             for (VDS host : hostDao.getAll()) {
                 if (host.getStatus() == VDSStatus.Up || host.getStatus() == VDSStatus.NonOperational) {
-                    VdsManager hostManager = resourceManager.GetVdsManager(host.getId());
+                    VdsManager hostManager = resourceManager.getVdsManager(host.getId());
                     List<Certificate> peerCertificates = hostManager.getVdsProxy().getPeerCertificates();
 
                     if (peerCertificates == null || peerCertificates.isEmpty()) {

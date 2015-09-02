@@ -33,7 +33,7 @@ public class RefreshHostCapabilitiesCommand<T extends VdsActionParameters> exten
     @Override
     protected void executeCommand() {
         try (EngineLock monitoringLock = acquireMonitorLock()) {
-            ResourceManager.getInstance().GetVdsManager(getVdsId()).refreshHost(getVds());
+            ResourceManager.getInstance().getVdsManager(getVdsId()).refreshHost(getVds());
             setSucceeded(true);
         }
 

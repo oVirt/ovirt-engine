@@ -22,7 +22,7 @@ public class ResumeVDSCommand<P extends ResumeVDSCommandParameters> extends Mana
         VDSReturnValue vdsReturnValue = resourceManager.runVdsCommand(VDSCommandType.ResumeBroker, parameters);
         if (vdsReturnValue.getSucceeded()) {
             retval = VMStatus.PoweringUp;
-            resourceManager.AddAsyncRunningVm(parameters.getVmId());
+            resourceManager.addAsyncRunningVm(parameters.getVmId());
         } else if (vdsReturnValue.getExceptionObject() != null) {
             log.error("VDS::pause Failed resume VM '{}' in VDS = '{}' error = '{}'", parameters
                     .getVmId(), getParameters().getVdsId(), vdsReturnValue.getExceptionString());

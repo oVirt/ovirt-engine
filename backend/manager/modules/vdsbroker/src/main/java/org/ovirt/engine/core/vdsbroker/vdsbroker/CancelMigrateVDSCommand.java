@@ -16,7 +16,7 @@ public class CancelMigrateVDSCommand<P extends CancelMigrationVDSParameters> ext
         status = getBroker().migrateCancel(vmId.toString());
         proceedProxyReturnValue();
         if (!getParameters().isRerunAfterCancel()) {
-            ResourceManager.getInstance().RemoveAsyncRunningVm(vmId);
+            ResourceManager.getInstance().removeAsyncRunningVm(vmId);
         }
     }
 

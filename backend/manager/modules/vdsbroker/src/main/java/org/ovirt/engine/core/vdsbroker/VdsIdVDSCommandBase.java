@@ -11,7 +11,7 @@ public abstract class VdsIdVDSCommandBase<P extends VdsIdVDSCommandParametersBas
     public VdsIdVDSCommandBase(P parameters, boolean newHost) {
         super(parameters);
         if (!newHost) {
-            _vdsManager = ResourceManager.getInstance().GetVdsManager(parameters.getVdsId());
+            _vdsManager = ResourceManager.getInstance().getVdsManager(parameters.getVdsId());
         }
     }
 

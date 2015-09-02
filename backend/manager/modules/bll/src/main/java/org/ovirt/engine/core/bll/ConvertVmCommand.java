@@ -277,7 +277,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     }
 
     protected VdsManager getVdsManager() {
-        return getResourceManager().GetVdsManager(getVdsId());
+        return getResourceManager().getVdsManager(getVdsId());
     }
 
     protected ResourceManager getResourceManager() {

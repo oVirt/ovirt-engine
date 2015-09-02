@@ -56,7 +56,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
     }
 
     protected IVdsServer initializeVdsBroker(Guid vdsId) {
-        VdsManager vdsmanager = ResourceManager.getInstance().GetVdsManager(vdsId);
+        VdsManager vdsmanager = ResourceManager.getInstance().getVdsManager(vdsId);
         if (vdsmanager == null) {
             throw new EngineException(EngineError.RESOURCE_MANAGER_VDS_NOT_FOUND,
                     String.format("Vds with id: %1$s was not found", vdsId));

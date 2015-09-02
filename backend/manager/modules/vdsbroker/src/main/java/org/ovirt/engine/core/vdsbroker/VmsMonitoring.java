@@ -243,7 +243,7 @@ public class VmsMonitoring {
             // rerun all vms from rerun list
             if (vmAnalyzer.isRerun()) {
                 log.error("Rerun VM '{}'. Called from VDS '{}'", vmAnalyzer.getDbVm().getId(), vdsManager.getVdsName());
-                ResourceManager.getInstance().RerunFailedCommand(vmAnalyzer.getDbVm().getId(), vdsManager.getVdsId());
+                ResourceManager.getInstance().rerunFailedCommand(vmAnalyzer.getDbVm().getId(), vdsManager.getVdsId());
             }
 
             if (vmAnalyzer.isSuccededToRun()) {
@@ -273,7 +273,7 @@ public class VmsMonitoring {
             }
 
             if (vmAnalyzer.isRemoveFromAsync()) {
-                ResourceManager.getInstance().RemoveAsyncRunningVm(vmAnalyzer.getDbVm().getId());
+                ResourceManager.getInstance().removeAsyncRunningVm(vmAnalyzer.getDbVm().getId());
             }
 
             if (vmAnalyzer.isHostedEngineUnmanaged()) {

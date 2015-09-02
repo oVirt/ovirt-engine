@@ -27,7 +27,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
     protected void executeVmCommand() {
 
         final DestroyVmVDSCommandParameters parameters = getParameters();
-        resourceManager.RemoveAsyncRunningVm(parameters.getVmId());
+        resourceManager.removeAsyncRunningVm(parameters.getVmId());
 
         final VM curVm = DbFacade.getInstance().getVmDao().get(parameters.getVmId());
         curVm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForVm(curVm.getId()));
@@ -86,7 +86,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
     private void changeStatus(DestroyVmVDSCommandParameters parameters, VM curVm) {
         // do the state transition only if that VM is really running on SRC
         if (getParameters().getVdsId().equals(curVm.getRunOnVds())) {
-            resourceManager.InternalSetVmStatus(curVm, VMStatus.PoweringDown);
+            resourceManager.internalSetVmStatus(curVm, VMStatus.PoweringDown);
         }
     }
 }

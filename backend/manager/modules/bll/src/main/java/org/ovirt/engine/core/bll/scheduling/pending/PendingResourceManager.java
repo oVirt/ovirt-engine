@@ -228,7 +228,7 @@ public class PendingResourceManager {
             return;
         }
 
-        VdsManager vdsManager = resourceManager.GetVdsManager(hostId);
+        VdsManager vdsManager = resourceManager.getVdsManager(hostId);
 
         int pendingCpus = PendingCpuCores.collectForHost(this, hostId);
         int pendingMemory = PendingMemory.collectForHost(this, hostId);
