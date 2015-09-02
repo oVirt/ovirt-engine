@@ -78,8 +78,8 @@ public class StorageServerConnectionExtensionDaoTest extends BaseDaoTestCase {
 
     private void fillWithRandomData(StorageServerConnectionExtension ssce) {
         ssce.setHostId(Guid.newGuid());
-        ssce.setIqn(RandomUtils.instance().nextString(10));
-        ssce.setUserName(RandomUtils.instance().nextString(10));
-        ssce.setPassword(RandomUtils.instance().nextString(10));
+        ssce.setIqn(RandomUtils.instance().nextXmlString(10));
+        ssce.setUserName(RandomUtils.instance().nextXmlString(10));
+        ssce.setPassword(RandomUtils.instance().nextXmlString(10));
     }
 }
