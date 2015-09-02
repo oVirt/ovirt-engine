@@ -16,7 +16,7 @@ import org.apache.commons.lang.ArrayUtils;
  * <LI>{@code nextXXX()} for the {@code byte} and {@code short} types.
  * <LI>{@code nextXXX(mod)} for all types.
  * <LI>{@code nextXXX(min, max)} for all types.
- * <LI>{@code pickRandom()} - picks a random element from a given {@code List} or {@code Set}.
+ * <LI>{@code pickRandom()} - picks a random element from a given {@code Collection} or array.
  * </UL>
  *
  * @see java.util.Random
