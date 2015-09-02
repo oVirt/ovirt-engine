@@ -137,7 +137,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
         for (VDS vds : getAllRunningVdssInPool()) {
             GetDeviceListVDSCommandParameters parameters =
                     new GetDeviceListVDSCommandParameters(vds.getId(),
-                            getStorageDomain().getStorageType(),
+                            getStorageDomain().getStorageType(), false,
                             lunsToResize);
 
             List<LUNs> luns = (List<LUNs>) runVdsCommand(VDSCommandType.GetDeviceList, parameters).getReturnValue();

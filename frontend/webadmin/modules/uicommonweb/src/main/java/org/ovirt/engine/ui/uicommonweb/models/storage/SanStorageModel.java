@@ -2,7 +2,10 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -148,7 +151,7 @@ public abstract class SanStorageModel extends SanStorageModelBase {
             }
         }, true);
         Frontend.getInstance().runQuery(VdcQueryType.GetDeviceList,
-                new GetDeviceListQueryParameters(host.getId(), getType()),
+                new GetDeviceListQueryParameters(host.getId(), getType(), false, null),
                 asyncQuery);
     }
 
@@ -591,25 +594,42 @@ public abstract class SanStorageModel extends SanStorageModelBase {
         return luns;
     }
 
-    public ArrayList<String> getUsedLunsMessages() {
+    public ArrayList<String> getUsedLunsMessages(List<LUNs> luns) {
         ArrayList<String> usedLunsMessages = new ArrayList<String>();
         UIMessages messages = ConstantsManager.getInstance().getMessages();
 
-        for (LunModel lunModel : getAddedLuns()) {
-            if (lunModel.getStatus() == LunStatus.Used) {
+        for (LUNs lun : luns) {
+            if (lun.getStatus() == LunStatus.Used) {
                 String reason = null;
-                LUNs lun = (LUNs) lunModel.getEntity();
 
                 if (lun.getvolume_group_id() != null && !lun.getvolume_group_id().isEmpty()) {
                     reason = messages.lunUsedByVG(lun.getvolume_group_id());
                 }
 
-                usedLunsMessages.add(reason == null ? lunModel.getLunId() :
-                        lunModel.getLunId() + " (" + reason + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+                usedLunsMessages.add(reason == null ? lun.getLUN_id() :
+                        messages.usedLunIdReason(lun.getLUN_id(), reason));
             }
         }
 
         return usedLunsMessages;
+    }
+
+    public Map<LunStatus, List<LUNs>> getLunsMapByStatus(List<LunModel> lunModels) {
+        Map<LunStatus, List<LUNs>> lunsMapByStatus = new HashMap<>();
+        lunsMapByStatus.put(LunStatus.Unknown, new LinkedList<LUNs>());
+        lunsMapByStatus.put(LunStatus.Used, new LinkedList<LUNs>());
+
+        for (LunModel lunModel : lunModels) {
+            switch (lunModel.getStatus()) {
+            case Used:
+                lunsMapByStatus.get(LunStatus.Used).add(lunModel.getEntity());
+                break;
+            case Unknown:
+                lunsMapByStatus.get(LunStatus.Unknown).add(lunModel.getEntity());
+                break;
+            }
+        }
+        return lunsMapByStatus;
     }
 
     public ArrayList<String> getPartOfSdLunsMessages() {

@@ -666,20 +666,26 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public LUNListReturnForXmlRpc getDeviceList(int storageType, String[] devicesList) {
+    public LUNListReturnForXmlRpc getDeviceList(int storageType, String[] devicesList, boolean checkStatus) {
         try {
-            Map<String, Object> xmlRpcReturnValue = null;
-            if(devicesList != null){
-                xmlRpcReturnValue = vdsServer.getDeviceList(storageType, devicesList);
-            }else{
-                xmlRpcReturnValue = vdsServer.getDeviceList(storageType);
-            }
+            String[] idsList = devicesList == null ? new String[] {} : devicesList;
+            Map<String, Object> xmlRpcReturnValue = vdsServer.getDeviceList(storageType, idsList, checkStatus);
             LUNListReturnForXmlRpc wrapper = new LUNListReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
         }
+    }
 
+    @Override
+    public LUNListReturnForXmlRpc getDeviceList(int storageType) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.getDeviceList(storageType);
+            LUNListReturnForXmlRpc wrapper = new LUNListReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
     }
 
     @Override
