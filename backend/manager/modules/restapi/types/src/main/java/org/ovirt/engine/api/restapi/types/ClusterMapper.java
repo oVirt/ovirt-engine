@@ -47,7 +47,7 @@ public class ClusterMapper {
             entity.setComment(model.getComment());
         }
         if (model.isSetCpu() && model.getCpu().isSetId()) {
-            entity.setCpuName(model.getCpu().getId());
+            entity.setCpuName(getCpuId(model));
         }
         if (model.isSetCpu() && model.getCpu().isSetArchitecture()) {
             Architecture archType = Architecture.fromValue(model.getCpu().getArchitecture());
@@ -128,6 +128,21 @@ public class ClusterMapper {
         }
 
         return entity;
+    }
+
+    // Gets the ID of the CPU. If the CPU is IBM Power 8, allow both
+    // "IBM POWER 8" and "IBM POWER8". The latter is more correct,
+    // but the former is allowed for backwards compatibility. See:
+    // https://bugzilla.redhat.com/1248867
+    private static String getCpuId(Cluster model) {
+        String cpuId = model.getCpu().getId();
+        if (cpuId.equals("IBM POWER 8")) {
+            cpuId = "IBM POWER8";
+        }
+        if (cpuId.equals("IBM POWER 8 v1.0")) {
+            cpuId = "IBM POWER8 v1.0";
+        }
+        return cpuId;
     }
 
     @Mapping(from = VDSGroup.class, to = Cluster.class)
