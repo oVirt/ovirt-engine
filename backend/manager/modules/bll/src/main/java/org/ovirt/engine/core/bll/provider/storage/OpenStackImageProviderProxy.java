@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
-import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -26,7 +25,7 @@ import com.woorea.openstack.glance.model.Image;
 import com.woorea.openstack.glance.model.ImageDownload;
 import com.woorea.openstack.glance.model.Images;
 
-public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProviderProxy<Glance, OpenStackImageProviderProperties, ProviderValidator> {
+public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProviderProxy<Glance, OpenStackImageProviderProperties, GlanceProviderValidator> {
 
     enum GlanceImageFormat {
         RAW("raw"),
@@ -286,9 +285,9 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
     }
 
     @Override
-    public ProviderValidator getProviderValidator() {
+    public GlanceProviderValidator getProviderValidator() {
         if (providerValidator == null) {
-            providerValidator = new ProviderValidator(provider);
+            providerValidator = new GlanceProviderValidator(provider);
         }
         return providerValidator;
     }

@@ -128,7 +128,7 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
                             vdsReturnValue.getCreationInfo(),
                             getParameters().getParentCommand(),
                             VdcObjectType.Disk,
-                            getParameters().getImageGroupID()));
+                            getParameters().getImageGroupID(), getParameters().getDestinationDomainId()));
         }
 
         getReturnValue().setActionReturnValue(newImageId);
