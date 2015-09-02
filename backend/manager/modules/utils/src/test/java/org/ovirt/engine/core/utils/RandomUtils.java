@@ -123,8 +123,7 @@ public final class RandomUtils extends Random {
      */
     public byte nextByte(byte min, byte max) {
         if (min > max) {
-            throw new IllegalArgumentException(
-                    MIN_MAX_ERROR);
+            throw new IllegalArgumentException(MIN_MAX_ERROR);
         }
 
         return (byte) (min + nextByte((byte) (max - min + 1)));
@@ -151,8 +150,7 @@ public final class RandomUtils extends Random {
      */
     public short nextShort(short min, short max) {
         if (min > max) {
-            throw new IllegalArgumentException(
-                    MIN_MAX_ERROR);
+            throw new IllegalArgumentException(MIN_MAX_ERROR);
         }
 
         return (short) (min + nextShort((short) (max - min + 1)));
@@ -165,8 +163,7 @@ public final class RandomUtils extends Random {
      */
     public int nextInt(int min, int max) {
         if (min > max) {
-            throw new IllegalArgumentException(
-                    MIN_MAX_ERROR);
+            throw new IllegalArgumentException(MIN_MAX_ERROR);
         }
 
         return (min + nextInt(max - min + 1));
@@ -194,8 +191,7 @@ public final class RandomUtils extends Random {
      */
     public long nextLong(long min, long max) {
         if (min > max) {
-            throw new IllegalArgumentException(
-                    MIN_MAX_ERROR);
+            throw new IllegalArgumentException(MIN_MAX_ERROR);
         }
 
         return (min + nextLong(max - min + 1));
@@ -241,8 +237,7 @@ public final class RandomUtils extends Random {
      */
     public float nextFloat(float min, float max) {
         if (min > max) {
-            throw new IllegalArgumentException(
-                    MIN_MAX_ERROR);
+            throw new IllegalArgumentException(MIN_MAX_ERROR);
         }
 
         return (min + nextFloat(max - min, true));
@@ -323,9 +318,7 @@ public final class RandomUtils extends Random {
             byte[] data = new byte[length];
 
             for (int i = 0; i < length; ++i) {
-                data[i] = (byte) nextInt(
-                        FIRST_PRINTABLE_CHAR,
-                        LAST_PRINTABLE_CHAR);
+                data[i] = (byte) nextInt(FIRST_PRINTABLE_CHAR, LAST_PRINTABLE_CHAR);
             }
 
             return new String(data);
@@ -354,9 +347,7 @@ public final class RandomUtils extends Random {
     public String nextXmlString(int length) {
         byte[] data = new byte[length];
         for (int i = 0; i < length; ++i) {
-            data[i] = (byte) nextInt(
-                    FIRST_XML_PRINTABLE_CHAR,
-                    LAST_XML_PRINTABLE_CHAR);
+            data[i] = (byte) nextInt(FIRST_XML_PRINTABLE_CHAR, LAST_XML_PRINTABLE_CHAR);
         }
 
         return new String(data);
