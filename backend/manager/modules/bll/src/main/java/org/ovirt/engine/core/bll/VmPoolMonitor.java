@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -74,7 +75,7 @@ public class VmPoolMonitor implements BackendService {
      */
     private void managePrestartedVmsInPool(VmPool vmPool) {
         Guid vmPoolId = vmPool.getVmPoolId();
-        int prestartedVms = VmPoolCommandBase.getNumOfPrestartedVmsInPool(vmPoolId);
+        int prestartedVms = VmPoolCommandBase.getNumOfPrestartedVmsInPool(vmPoolId, new ArrayList<String>());
         int missingPrestartedVms = vmPool.getPrestartedVms() - prestartedVms;
         if (missingPrestartedVms > 0) {
             // We do not want to start too many vms at once
@@ -145,7 +146,7 @@ public class VmPoolMonitor implements BackendService {
      * @return whether or not succeeded to prestart the Vm
      */
     private boolean prestartVm(Guid vmGuid) {
-        if (VmPoolCommandBase.canAttachNonPrestartedVmToUser(vmGuid)) {
+        if (VmPoolCommandBase.canAttachNonPrestartedVmToUser(vmGuid, new ArrayList<String>())) {
             VM vmToPrestart = DbFacade.getInstance().getVmDao().get(vmGuid);
             return runVmAsStateless(vmToPrestart);
         }

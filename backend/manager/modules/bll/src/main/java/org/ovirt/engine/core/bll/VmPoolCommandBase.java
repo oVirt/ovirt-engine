@@ -80,12 +80,12 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         super(parameters, commandContext);
     }
 
-    protected static int getNumOfPrestartedVmsInPool(Guid poolId) {
+    protected static int getNumOfPrestartedVmsInPool(Guid poolId, ArrayList<String> messages) {
         List<VM> vmsInPool = DbFacade.getInstance().getVmDao().getAllForVmPool(poolId);
         int numOfPrestartedVmsInPool = 0;
         if (vmsInPool != null) {
             for (VM vm : vmsInPool) {
-                if (vm.isStartingOrUp() && canAttachPrestartedVmToUser(vm.getId()))
+                if (vm.isStartingOrUp() && canAttachPrestartedVmToUser(vm.getId(), messages))
                     ++numOfPrestartedVmsInPool;
             }
         }
@@ -102,8 +102,8 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
      *            the VM GUID to check.
      * @return True if can be attached, false otherwise.
      */
-    protected static boolean canAttachNonPrestartedVmToUser(Guid vm_guid) {
-        return isVmFree(vm_guid, new ArrayList<String>());
+    protected static boolean canAttachNonPrestartedVmToUser(Guid vm_guid, ArrayList<String> messages) {
+        return isVmFree(vm_guid, messages);
     }
 
     /**
@@ -112,10 +112,10 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
      *            the VM GUID to check.
      * @return True if can be attached, false otherwise.
      */
-    protected static boolean canAttachPrestartedVmToUser(Guid vmId) {
+    protected static boolean canAttachPrestartedVmToUser(Guid vmId, ArrayList<String> messages) {
         // check that there isn't another user already attached to this VM
         // and make sure the Vm is running stateless
-        return !vmAssignedToUser(vmId, new ArrayList<String>()) && vmIsRunningStateless(vmId);
+        return !vmAssignedToUser(vmId, messages) && vmIsRunningStateless(vmId);
     }
 
     private static boolean vmIsRunningStateless(Guid vmId) {
