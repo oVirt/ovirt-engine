@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.common.security;
+package org.ovirt.engine.api.restapi.security;
 
 import java.io.IOException;
 import java.util.Collections;

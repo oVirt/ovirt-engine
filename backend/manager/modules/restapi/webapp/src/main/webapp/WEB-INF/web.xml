@@ -26,7 +26,7 @@ limitations under the License.
 
     <filter>
         <filter-name>CORSSupport</filter-name>
-        <filter-class>org.ovirt.engine.api.common.security.CORSSupportFilter</filter-class>
+        <filter-class>org.ovirt.engine.api.restapi.security.CORSSupportFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>CORSSupport</filter-name>
@@ -35,7 +35,7 @@ limitations under the License.
 
     <filter>
         <filter-name>CSRFProtection</filter-name>
-        <filter-class>org.ovirt.engine.api.common.security.CSRFProtectionFilter</filter-class>
+        <filter-class>org.ovirt.engine.api.restapi.security.CSRFProtectionFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>CSRFProtection</filter-name>
