@@ -55,8 +55,7 @@
       <plugin>
         <groupId>org.jvnet.jaxb2.maven2</groupId>
         <artifactId>maven-jaxb22-plugin</artifactId>
-        <version>${maven-jaxb22-plugin.version}</version>
-
+        <version>0.8.1</version>
         <executions>
           <execution>
             <goals>
@@ -64,7 +63,6 @@
             </goals>
           </execution>
         </executions>
-
         <configuration>
           <generatePackage>org.ovirt.engine.api.model</generatePackage>
           <extension>true</extension>
