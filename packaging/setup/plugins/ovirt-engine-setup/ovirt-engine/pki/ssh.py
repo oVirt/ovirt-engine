@@ -20,6 +20,7 @@
 
 
 import gettext
+import tempfile
 
 from M2Crypto import X509
 
@@ -42,8 +43,7 @@ class Plugin(plugin.PluginBase):
     def _getSSHPublicKey(self, key):
         rc, stdout, stderr = self.execute(
             (
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_SSH_KEYGEN,
-                '-l',
+                self.command.get('ssh-keygen'),
                 '-i',
                 '-m', 'PKCS8',
                 '-f', '/proc/self/fd/0',
@@ -53,15 +53,18 @@ class Plugin(plugin.PluginBase):
         return stdout[0]
 
     def _getSSHPublicKeyFingerprint(self, key):
-        rc, stdout, stderr = self.execute(
-            (
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_SSH_KEYGEN,
-                '-l',
-                '-f', '/proc/self/fd/0',
-            ),
-            stdin=key.split('\n'),
-        )
-        return stdout[0].split()[1]
+        # until openssh-7.1 -l does not support pipe
+        with tempfile.NamedTemporaryFile() as f:
+            f.write(key)
+            f.flush()
+            rc, stdout, stderr = self.execute(
+                (
+                    self.command.get('ssh-keygen'),
+                    '-l',
+                    '-f', f.name,
+                ),
+            )
+            return stdout[0].split()[1]
 
     def _getEnginePublicKey(self):
         rc, cert, stderr = self.execute(
@@ -82,6 +85,12 @@ class Plugin(plugin.PluginBase):
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_PROGRAMS,
+    )
+    def _setup(self):
+        self.command.detect('ssh-keygen')
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
@@ -133,7 +142,9 @@ class Plugin(plugin.PluginBase):
         self.dialog.note(
             text=_('SSH fingerprint: {fingerprint}').format(
                 fingerprint=self._getSSHPublicKeyFingerprint(
-                    self._getEnginePublicKey()
+                    self.environment[
+                        oenginecons.PKIEnv.ENGINE_SSH_PUBLIC_KEY
+                    ]
                 ),
             )
         )

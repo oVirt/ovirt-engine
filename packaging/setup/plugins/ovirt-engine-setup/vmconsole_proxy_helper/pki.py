@@ -456,30 +456,28 @@ class Plugin(plugin.PluginBase):
             destination=None,
         )
 
-        pipe = [
+        res = self.executePipe((
             {
                 'args': (
                     self.command.get('openssl'),
                     'x509',
-                    '-in',
-                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
+                    '-in', (
+                        oenginecons.FileLocations.
+                        OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+                    ),
                     '-noout',
                     '-pubkey',
                 ),
             },
             {
                 'args': (
-                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_SSH_KEYGEN,
+                    self.command.get('ssh-keygen'),
                     '-i',
-                    '-m',
-                    'PKCS8',
-                    '-f',
-                    '/proc/self/fd/0',
+                    '-m', 'PKCS8',
+                    '-f', '/proc/self/fd/0',
                 ),
             },
-        ]
-
-        res = self.executePipe(pipe)
+        ))
 
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
@@ -492,6 +490,13 @@ class Plugin(plugin.PluginBase):
 
         if self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
             self._requireManualIntervention(ca_file)
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_PROGRAMS,
+    )
+    def _setup(self):
+        self.command.detect('openssl')
+        self.command.detect('ssh-keygen')
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,

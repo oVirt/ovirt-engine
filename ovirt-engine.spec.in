@@ -429,8 +429,9 @@ Setup and upgrade scripts for %{ovirt_product_name_short}
 %package setup-plugin-ovirt-engine
 Summary:	Setup and upgrade specific plugins for %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
-Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
 Requires:	%{name} >= 3.5.0
+Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
+Requires:	openssh
 Conflicts:	%{name} < 3.5.0
 
 %description setup-plugin-ovirt-engine
@@ -617,8 +618,9 @@ with ovirt-vmconsole-proxy package
 
 %package setup-plugin-vmconsole-proxy-helper
 Summary:	Setup and upgrade specific plugins for vmconsole-proxy-helper
-Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
 Requires:	%{name}-setup-plugin-ovirt-engine = %{version}-%{release}
+Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
+Requires:	openssh
 
 %description setup-plugin-vmconsole-proxy-helper
 Setup and upgrade specific plugins for vmconsole-proxy-helper
@@ -1066,7 +1068,6 @@ fi
 %{engine_data}/bin/pki-enroll-pkcs12.sh
 %{engine_data}/bin/pki-enroll-request.sh
 %{engine_data}/bin/pki-pkcs12-extract.sh
-%{engine_data}/bin/pki-ssh-keygen.py*
 
 # backward compatibly (pre-3.3.0)
 # force rpm not to remove pki files

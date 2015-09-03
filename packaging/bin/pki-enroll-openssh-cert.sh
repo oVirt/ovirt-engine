@@ -12,18 +12,13 @@ sign() {
 	local sshpub="${PKIDIR}/certs/${name}.pub"
 	local sshcert="${PKIDIR}/certs/${name}-cert.pub"
 
-	local principal_arg="-n"
-
-	# rhel-6 has -Z instead of -n for principals
-	ssh-keygen -V 2>&1 | grep -- -Z | grep -iq principal && principal_arg="-Z"
-
 	common_backup "${sshpub}" "${sshcert}"
 
 	#
 	# TODO: replace when el-6 supports -m PKCS8
 	#
 	openssl x509 -in "${cert}" -noout -pubkey | \
-		"${BINDIR}/pki-ssh-keygen.py" -i -m PKCS8 -f /proc/self/fd/0 \
+		ssh-keygen -i -m PKCS8 -f /proc/self/fd/0 \
 		> "${sshpub}" \
 		|| die "Cannot generate ssh pubkey out of certificate"
 
@@ -43,7 +38,7 @@ sign() {
 			-I "${id}" \
 			${host:+-h} \
 			-V "-1h:+${days}d" \
-			${principals:+${principal_arg} "${principals}"} \
+			${principals:+-n "${principals}"} \
 			$(printf "${options}" | xargs -ix -d',' echo -O x) \
 			"${sshpub}" \
 			|| die "ssh-keygen failed"
