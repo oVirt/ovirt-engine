@@ -554,13 +554,18 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
                                 return;
                             }
                             ArrayList<VDS> hosts = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                            if (localVm.getDedicatedVmForVdsList().size() > 0){
-                                for (VDS host : hosts){
-                                    if (localVm.getDedicatedVmForVdsList().contains(host.getId())){
-                                        model.setDefaultHost(host.getName());
-                                        break;
+                            if (localVm.getDedicatedVmForVdsList().size() > 0) {
+                                String defaultHost = "";
+                                for (VDS host : hosts) {
+                                    if (localVm.getDedicatedVmForVdsList().contains(host.getId())) {
+                                        if (defaultHost.isEmpty()) {
+                                            defaultHost = host.getName();
+                                        } else {
+                                            defaultHost += ", " + host.getName(); //$NON-NLS-1$
+                                        }
                                     }
                                 }
+                                model.setDefaultHost(defaultHost);
                             }
 
                         }

@@ -134,6 +134,9 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
         oS.setText(AsyncDataProvider.getInstance().getOsName(getDetailModel().getOS()));
 
         formBuilder.update(getDetailModel());
+
+        // Add a tooltip to display long named/many hosts
+        defaultHost.setTitle(getDetailModel().getDefaultHost());
     }
 
 }
