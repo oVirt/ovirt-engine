@@ -30,13 +30,13 @@ import org.ovirt.engine.api.model.Permissions;
 /**
  * Represents a permission sub-collection, scoped by User or some entity type.
  */
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface AssignedPermissionsResource {
     @GET
     Permissions list();
 
     @POST
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     Response add(Permission permission);
 
     /**

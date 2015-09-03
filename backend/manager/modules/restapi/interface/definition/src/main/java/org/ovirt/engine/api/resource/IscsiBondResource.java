@@ -7,7 +7,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.IscsiBond;
 
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface IscsiBondResource extends UpdatableResource<IscsiBond> {
     @DELETE
     Response remove();

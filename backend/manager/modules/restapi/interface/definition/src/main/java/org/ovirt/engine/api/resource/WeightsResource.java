@@ -8,7 +8,7 @@ import org.ovirt.engine.api.model.Weight;
 import org.ovirt.engine.api.model.Weights;
 
 @Path("/weights")
-@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface WeightsResource extends PolicyUnitsResource<Weights, Weight> {
     @Override
     @Path("{id}")

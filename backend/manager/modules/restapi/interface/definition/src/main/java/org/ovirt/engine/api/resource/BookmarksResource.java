@@ -12,13 +12,13 @@ import org.ovirt.engine.api.model.Bookmark;
 import org.ovirt.engine.api.model.Bookmarks;
 
 @Path("/bookmarks")
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface BookmarksResource {
     @GET
     Bookmarks list();
 
     @POST
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     Response add(Bookmark bookmark);
 
     @Path("{id}")

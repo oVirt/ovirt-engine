@@ -29,13 +29,13 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource;
 
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface HostResource extends UpdatableResource<Host>, MeasurableResource {
     @DELETE
     Response remove();
 
     @DELETE
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     Response remove(Action action);
 
     @Path("{action: (approve|install|upgrade|fence|activate|deactivate|commitnetconfig|iscsidiscover|iscsilogin|" +
@@ -141,7 +141,7 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
     public UnmanagedNetworksResource getUnmanagedNetworksResource();
 
     @POST
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     @Actionable
     @Path("setupnetworks")
     Response setupNetworks(Action action);

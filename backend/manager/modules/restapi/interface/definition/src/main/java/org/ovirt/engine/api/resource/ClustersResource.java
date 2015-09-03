@@ -28,14 +28,14 @@ import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Clusters;
 
 @Path("/clusters")
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface ClustersResource {
 
     @GET
     public Clusters list();
 
     @POST
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     public Response add(Cluster cluster);
 
     /**

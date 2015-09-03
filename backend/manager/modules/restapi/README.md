@@ -7,3 +7,7 @@ API.
 
 This section enumerates the backwards compatibility breaking changes
 that have been done to the RESTAPI in version 4.0 of the engine.
+
+### Removed YAML support
+
+The support for YAML has been completely removed.

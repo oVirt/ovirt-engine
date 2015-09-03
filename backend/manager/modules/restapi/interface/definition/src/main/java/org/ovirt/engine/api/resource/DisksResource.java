@@ -11,13 +11,13 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 
 @Path("/disks")
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface DisksResource extends ReadOnlyDevicesResource<Disk, Disks> {
     @Path("{identity}")
     @Override
     MovableCopyableDiskResource getDeviceSubResource(@PathParam("identity") String id);
 
     @POST
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     Response add(Disk device);
 }

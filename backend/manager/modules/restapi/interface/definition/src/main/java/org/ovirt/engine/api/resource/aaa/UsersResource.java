@@ -29,14 +29,14 @@ import org.ovirt.engine.api.model.Users;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
 @Path("/users")
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface UsersResource {
 
     @GET
     public Users list();
 
     @POST
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     public Response add(User User);
 
     /**

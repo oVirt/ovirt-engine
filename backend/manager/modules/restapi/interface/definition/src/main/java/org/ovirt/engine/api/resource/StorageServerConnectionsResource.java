@@ -12,7 +12,7 @@ import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageConnections;
 
 @Path("/storageconnections")
-@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface StorageServerConnectionsResource {
     @GET
     public StorageConnections list();
@@ -23,7 +23,7 @@ public interface StorageServerConnectionsResource {
      * @return the new newly added storage connection
      */
     @POST
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     public Response add(StorageConnection storageConnection);
 
     /**

@@ -23,13 +23,13 @@ import javax.ws.rs.Produces;
 
 import org.ovirt.engine.api.model.BaseResource;
 
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface UpdatableResource<R extends BaseResource> {
 
     @GET
     public R get();
 
     @PUT
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     public R update(R resource);
 }

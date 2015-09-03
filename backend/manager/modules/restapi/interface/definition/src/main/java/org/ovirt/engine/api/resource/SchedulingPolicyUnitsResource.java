@@ -8,7 +8,7 @@ import javax.ws.rs.Produces;
 import org.ovirt.engine.api.model.SchedulingPolicyUnits;
 
 @Path("/schedulingpolicyunits")
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface SchedulingPolicyUnitsResource {
 
     @GET

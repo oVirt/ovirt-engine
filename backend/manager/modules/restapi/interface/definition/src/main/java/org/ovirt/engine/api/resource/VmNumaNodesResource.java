@@ -11,14 +11,14 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.VirtualNumaNode;
 import org.ovirt.engine.api.model.VirtualNumaNodes;
 
-@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface VmNumaNodesResource {
 
     @GET
     public VirtualNumaNodes list();
 
     @POST
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     public Response add(VirtualNumaNode node);
 
     @Path("{iden}")

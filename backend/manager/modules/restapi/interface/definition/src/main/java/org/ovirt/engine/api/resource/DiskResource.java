@@ -28,7 +28,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Disk;
 
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface DiskResource extends ReadOnlyDeviceResource<Disk>, MeasurableResource {
     @Path("{action: (export)}/{oid}")
     ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
@@ -44,7 +44,7 @@ public interface DiskResource extends ReadOnlyDeviceResource<Disk>, MeasurableRe
     AssignedPermissionsResource getPermissionsResource();
 
     @POST
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     @Actionable
     @Path("export")
     Response doExport(Action action);

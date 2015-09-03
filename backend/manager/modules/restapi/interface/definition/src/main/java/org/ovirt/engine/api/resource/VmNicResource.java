@@ -14,7 +14,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.NIC;
 
-@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface VmNicResource extends NicResource {
 
     @Path("{action: (activate|deactivate)}/{oid}")
@@ -23,7 +23,7 @@ public interface VmNicResource extends NicResource {
     // TODO remove on 4.1
     @Deprecated
     @POST
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     @Actionable
     @Path("activate")
     public Response activate(Action action);
@@ -31,14 +31,14 @@ public interface VmNicResource extends NicResource {
     // TODO remove on 4.1
     @Deprecated
     @POST
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     @Actionable
     @Path("deactivate")
     public Response deactivate(Action action);
 
     @PUT
     @Override
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     public NIC update(NIC device);
 
     @GET

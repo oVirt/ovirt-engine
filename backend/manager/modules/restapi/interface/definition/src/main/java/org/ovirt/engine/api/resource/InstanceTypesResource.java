@@ -28,14 +28,14 @@ import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.InstanceTypes;
 
 @Path("/instancetypes")
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface InstanceTypesResource {
 
     @GET
     public InstanceTypes list();
 
     @POST
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     public Response add(InstanceType template);
 
     @Path("{id}")

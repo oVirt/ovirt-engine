@@ -29,14 +29,14 @@ import org.ovirt.engine.api.model.OpenStackNetworkProviders;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
 @Path("/openstacknetworkproviders")
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface OpenStackNetworkProvidersResource {
 
     @GET
     public OpenStackNetworkProviders list();
 
     @POST
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     public Response add(OpenStackNetworkProvider provider);
 
     @Path("{id}")

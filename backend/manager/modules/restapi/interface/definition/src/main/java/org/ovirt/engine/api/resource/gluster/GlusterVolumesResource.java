@@ -15,7 +15,7 @@ import org.ovirt.engine.api.resource.ApiMediaType;
 /**
  * Resource interface for the "clusters/{cluster_id}/glustervolumes" resource
  */
-@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface GlusterVolumesResource {
     @GET
     GlusterVolumes list();
@@ -29,7 +29,7 @@ public interface GlusterVolumesResource {
      * @return the new newly created Gluster Volume
      */
     @POST
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     Response add(GlusterVolume volume);
 
     /**

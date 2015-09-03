@@ -7,7 +7,7 @@ import javax.ws.rs.Produces;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface StorageDomainContentDisksResource extends ReadOnlyDevicesResource<Disk, Disks> {
     @Path("{identity}")
     @Override

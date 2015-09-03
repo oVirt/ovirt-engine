@@ -23,7 +23,7 @@ public interface VmGraphicsConsoleResource extends GraphicsConsoleResource {
     public Response generateDescriptor();
 
     @POST
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     @Actionable
     @Path("proxyticket")
     public Response proxyTicket(Action action);

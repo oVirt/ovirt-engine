@@ -19,7 +19,7 @@ import org.ovirt.engine.api.resource.MeasurableResource;
 /**
  * Resource interface for the "clusters/{cluster_id}/glustervolumes/{volume_id}/bricks/{brick_id}" resource
  */
-@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface GlusterBrickResource extends MeasurableResource{
     @Path("{action: (replace)}/{oid}")
     ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
@@ -38,7 +38,7 @@ public interface GlusterBrickResource extends MeasurableResource{
      */
     @Deprecated
     @POST
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     @Actionable
     @Path("replace")
     Response replace(Action action);

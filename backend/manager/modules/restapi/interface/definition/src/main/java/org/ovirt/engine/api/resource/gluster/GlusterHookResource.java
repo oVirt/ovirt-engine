@@ -18,7 +18,7 @@ import org.ovirt.engine.api.resource.ApiMediaType;
 /**
  * Resource interface for the "clusters/{cluster_id}/glusterhooks/{hook_id}" resource
  */
-@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface GlusterHookResource {
     @GET
     GlusterHook get();
@@ -37,7 +37,7 @@ public interface GlusterHookResource {
      * all servers of the cluster. This updates the hook status to ENABLED in database.
      */
     @POST
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     @Actionable
     @Path("enable")
     Response enable(Action action);
@@ -47,7 +47,7 @@ public interface GlusterHookResource {
      * all servers of the cluster. This updates the hook status to DISABLED in database.
      */
     @POST
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     @Actionable
     @Path("disable")
     Response disable(Action action);
@@ -64,7 +64,7 @@ public interface GlusterHookResource {
      *             from the server is used as the master to copy to other servers in cluster.
      */
     @POST
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     @Actionable
     @Path("resolve")
     Response resolve(Action action);

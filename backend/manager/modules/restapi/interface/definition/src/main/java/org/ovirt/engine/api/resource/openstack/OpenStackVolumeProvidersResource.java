@@ -29,13 +29,13 @@ import org.ovirt.engine.api.model.OpenStackVolumeProviders;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
 @Path("/openstackvolumeproviders")
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface OpenStackVolumeProvidersResource {
     @GET
     public OpenStackVolumeProviders list();
 
     @POST
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     public Response add(OpenStackVolumeProvider provider);
 
     @Path("{id}")

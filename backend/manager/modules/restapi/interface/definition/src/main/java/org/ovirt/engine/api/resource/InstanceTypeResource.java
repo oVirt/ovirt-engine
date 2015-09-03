@@ -25,7 +25,7 @@ import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Nics;
 
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface InstanceTypeResource extends UpdatableResource<InstanceType>, AsynchronouslyCreatedResource {
 
     @DELETE

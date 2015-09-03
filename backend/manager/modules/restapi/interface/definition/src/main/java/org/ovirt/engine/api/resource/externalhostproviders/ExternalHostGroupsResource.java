@@ -25,7 +25,7 @@ import org.ovirt.engine.api.model.ExternalHostGroups;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
 @Path("hostgroups")
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface ExternalHostGroupsResource {
     @GET
     public ExternalHostGroups list();

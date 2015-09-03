@@ -26,7 +26,7 @@ import org.ovirt.engine.api.model.Roles;
 /**
  * Represents a roles sub-collection, for example scoped by User.
  */
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface AssignedRolesResource {
 
     @GET

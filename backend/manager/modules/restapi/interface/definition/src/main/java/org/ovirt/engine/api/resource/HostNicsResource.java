@@ -29,7 +29,7 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.HostNIC;
 import org.ovirt.engine.api.model.HostNics;
 
-@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface HostNicsResource {
     @Path("{action: (setupnetworks)}")
     ActionResource getActionSubresource(@PathParam("action") String action);
@@ -38,7 +38,7 @@ public interface HostNicsResource {
     HostNics list();
 
     @POST
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     Response add(HostNIC nic);
 
     /**
@@ -53,7 +53,7 @@ public interface HostNicsResource {
     HostNicResource getHostNicSubResource(@PathParam("id") String id);
 
     @POST
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     @Actionable
     @Path("setupnetworks")
     Response setupNetworks(Action action);

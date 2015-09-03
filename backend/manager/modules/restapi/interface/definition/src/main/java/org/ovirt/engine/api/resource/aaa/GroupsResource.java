@@ -29,14 +29,14 @@ import org.ovirt.engine.api.model.Groups;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
 @Path("/groups")
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface GroupsResource {
 
     @GET
     public Groups list();
 
     @POST
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     public Response add(Group Group);
 
     /**

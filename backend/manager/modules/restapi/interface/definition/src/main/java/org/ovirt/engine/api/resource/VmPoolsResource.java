@@ -28,14 +28,14 @@ import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VmPools;
 
 @Path("/vmpools")
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface VmPoolsResource {
 
     @GET
     public VmPools list();
 
     @POST
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     public Response add(VmPool pool);
 
     /**

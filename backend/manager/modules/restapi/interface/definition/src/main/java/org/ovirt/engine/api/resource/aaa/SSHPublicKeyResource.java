@@ -26,14 +26,14 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.SSHPublicKey;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface SSHPublicKeyResource {
 
     @GET
     public SSHPublicKey get();
 
     @PUT
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     public SSHPublicKey update(SSHPublicKey resource);
 
     @DELETE

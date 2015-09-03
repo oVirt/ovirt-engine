@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.StorageConnectionExtension;
 import org.ovirt.engine.api.model.StorageConnectionExtensions;
 
-@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface StorageServerConnectionExtensionsResource {
     @GET
     public StorageConnectionExtensions list();
@@ -22,7 +22,7 @@ public interface StorageServerConnectionExtensionsResource {
      * @return the new newly added storage connection extension
      */
     @POST
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     public Response add(StorageConnectionExtension storageConnectionExtension);
 
     /**

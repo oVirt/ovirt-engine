@@ -11,13 +11,13 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.IscsiBond;
 import org.ovirt.engine.api.model.IscsiBonds;
 
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface IscsiBondsResource {
     @GET
     IscsiBonds list();
 
     @POST
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     Response add(IscsiBond iscsiBond);
 
     @Path("{id}")

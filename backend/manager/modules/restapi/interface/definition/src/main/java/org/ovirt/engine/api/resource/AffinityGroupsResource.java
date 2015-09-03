@@ -11,13 +11,13 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.AffinityGroup;
 import org.ovirt.engine.api.model.AffinityGroups;
 
-@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface AffinityGroupsResource {
     @GET
     public AffinityGroups list();
 
     @POST
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     public Response add(AffinityGroup affinityGroup);
 
     @Path("{id}")

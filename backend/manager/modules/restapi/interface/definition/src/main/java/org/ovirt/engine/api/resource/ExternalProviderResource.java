@@ -27,7 +27,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.ExternalProvider;
 
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface ExternalProviderResource<R extends ExternalProvider> extends UpdatableResource<R> {
     @Path("certificates")
     public ExternalProviderCertificatesResource getCertificates();
@@ -43,6 +43,6 @@ public interface ExternalProviderResource<R extends ExternalProvider> extends Up
     public Response importCertificates(Action action);
 
     @PUT
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     public R update(R resource);
 }

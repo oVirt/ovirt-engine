@@ -27,7 +27,7 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.OpenStackImage;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface OpenStackImageResource {
     @GET
     public OpenStackImage get();

@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.GraphicsConsole;
 import org.ovirt.engine.api.model.GraphicsConsoles;
 
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface GraphicsConsolesResource {
 
     @GET
@@ -21,7 +21,7 @@ public interface GraphicsConsolesResource {
     public GraphicsConsoleResource getGraphicsConsoleResource(@PathParam("iden") String id);
 
     @POST
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     Response add(GraphicsConsole device);
 
 }

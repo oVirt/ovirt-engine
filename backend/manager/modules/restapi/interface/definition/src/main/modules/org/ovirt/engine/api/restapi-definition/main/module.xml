@@ -30,7 +30,6 @@ limitations under the License.
     <module name="org.ovirt.engine.core.common"/>
     <module name="org.ovirt.engine.core.uutils"/>
     <module name="org.slf4j"/>
-    <module name="org.yaml.snakeyaml"/>
   </dependencies>
 
 </module>

@@ -27,7 +27,7 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.Permits;
 
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface PermitsResource {
 
     @GET
@@ -41,7 +41,7 @@ public interface PermitsResource {
      * @return        the new newly added Permit
      */
     @POST
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     public Response add(Permit permit);
 
 

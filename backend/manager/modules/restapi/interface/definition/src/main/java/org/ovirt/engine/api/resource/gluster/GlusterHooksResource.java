@@ -11,7 +11,7 @@ import org.ovirt.engine.api.resource.ApiMediaType;
 /**
  * Resource interface for the "clusters/{cluster_id}/glusterhooks" resource
  */
-@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface GlusterHooksResource {
     @GET
     GlusterHooks list();

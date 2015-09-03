@@ -16,11 +16,7 @@
 
 package org.ovirt.engine.api.resource;
 
-
 public class ApiMediaType extends javax.ws.rs.core.MediaType {
-    public final static String APPLICATION_X_YAML = "application/x-yaml";
-    public final static javax.ws.rs.core.MediaType APPLICATION_X_YAML_TYPE =
-        new javax.ws.rs.core.MediaType("application", "x-yaml");
     public final static String APPLICATION_PDF = "application/pdf";
     public final static String APPLICATION_X_VIRT_VIEWER = "application/x-virt-viewer";
 }

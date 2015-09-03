@@ -25,7 +25,7 @@ import org.ovirt.engine.api.model.OpenStackImageProvider;
 import org.ovirt.engine.api.resource.ApiMediaType;
 import org.ovirt.engine.api.resource.ExternalProviderResource;
 
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface OpenStackImageProviderResource extends ExternalProviderResource<OpenStackImageProvider> {
     @Path("images")
     OpenStackImagesResource getOpenStackImages();

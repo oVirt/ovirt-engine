@@ -25,7 +25,7 @@ import org.ovirt.engine.api.model.OpenStackNetworks;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
 @Path("networks")
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface OpenStackNetworksResource {
     @GET
     public OpenStackNetworks list();

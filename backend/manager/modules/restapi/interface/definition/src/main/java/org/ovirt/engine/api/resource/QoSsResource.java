@@ -11,14 +11,14 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.QoS;
 import org.ovirt.engine.api.model.QoSs;
 
-@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface QoSsResource {
 
     @GET
     public QoSs list();
 
     @POST
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     public Response add(QoS qos);
 
     @Path("{id}")

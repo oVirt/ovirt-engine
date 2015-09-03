@@ -32,7 +32,7 @@ import org.ovirt.engine.api.model.Templates;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
 
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface StorageDomainResource extends UpdatableResource<StorageDomain> {
 
     @Path("{action: (isattached|refreshluns)}/{oid}")
@@ -66,17 +66,17 @@ public interface StorageDomainResource extends UpdatableResource<StorageDomain> 
     public AssignedDiskProfilesResource getDiskProfilesResource();
 
     @POST
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     @Actionable
     @Path("isattached")
     public Response getIsAttached(Action action);
 
     @DELETE
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     public Response remove(StorageDomain storageDomain);
 
     @POST
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     @Actionable
     @Path("refreshluns")
     public Response refreshLuns(Action action);

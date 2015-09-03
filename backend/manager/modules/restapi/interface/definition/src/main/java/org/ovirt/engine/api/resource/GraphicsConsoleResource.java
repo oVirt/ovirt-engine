@@ -16,8 +16,7 @@ public interface GraphicsConsoleResource {
      * @return GraphicsConsole - the json or XML representation of the console
      */
     @GET
-    @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON,
-            ApiMediaType.APPLICATION_X_YAML})
+    @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     public GraphicsConsole get();
 
     @DELETE

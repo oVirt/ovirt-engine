@@ -16,7 +16,7 @@ public interface StorageServerConnectionResource extends UpdatableResource<Stora
      * @return
      */
     @DELETE
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     public Response remove(Action action);
 
     /**

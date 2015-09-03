@@ -11,13 +11,13 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
 
-@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface AffinityGroupVmsResource {
     @GET
     VMs list();
 
     @POST
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     Response add(VM vm);
 
     @Path("{id}")
