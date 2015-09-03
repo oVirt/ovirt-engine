@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.bll.pm;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -287,6 +289,20 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
 
         assertNotNull(proxyHost);
         assertEquals(proxyHost.getStoragePoolId(), OTHER_DATACENTER_ID);
+    }
+
+    /**
+     * Checks comparison of host supported cluster level with minimal version requirement for fencing policy.
+     */
+    @Test
+    public void testProxyCompatibilityWithFencingPolicy() {
+        VDS host = createHost();
+        host.setSupportedClusterLevels("3.4,3.5");
+        FenceProxyLocator locator = setupLocator();
+
+        assertTrue(locator.isFencingPolicySupported(host, Version.v3_0));
+        assertTrue(locator.isFencingPolicySupported(host, Version.v3_5));
+        assertFalse(locator.isFencingPolicySupported(host, Version.v3_6));
     }
 
     private void mockFencedHost() {
