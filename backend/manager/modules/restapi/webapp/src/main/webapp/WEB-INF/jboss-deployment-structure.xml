@@ -20,22 +20,11 @@ limitations under the License.
 
   <deployment>
     <dependencies>
-
-      <!-- This is to make sure that the backend EJB has been deployed before deploying the RESTAPI, but we don't
-           want to be able to use any classes or resources that it may be exporting: -->
-      <module name="deployment.engine.ear">
-        <imports>
-          <exclude path="**"/>
-        </imports>
-      </module>
-
-      <!-- These are dependencies really needed by the RESTAPI: -->
       <module name="org.ovirt.engine.api.interface-common-jaxrs" annotations="true" services="import"/>
       <module name="org.ovirt.engine.api.restapi-definition" annotations="true" services="import"/>
       <module name="org.ovirt.engine.api.restapi-jaxrs" annotations="true" services="import"/>
       <module name="org.ovirt.engine.api.restapi-types" annotations="true" services="import"/>
       <module name="org.ovirt.engine.core.aaa"/>
-
     </dependencies>
   </deployment>
 
