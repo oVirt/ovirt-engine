@@ -396,13 +396,18 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
                             @Override
                             public void onSuccess(Object model1, Object ReturnValue1) {
                                 PoolGeneralModel poolGeneralModel1 = (PoolGeneralModel) model1;
+                                String defaultHost = "";
                                 ArrayList<VDS> hosts = ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
                                 for (VDS host : hosts) {
                                     if (poolGeneralModel1.getvm().getDedicatedVmForVdsList().contains(host.getId())) {
-                                        poolGeneralModel1.setDefaultHost(host.getName());
-                                        break;
+                                        if (defaultHost.isEmpty()) {
+                                            defaultHost = host.getName();
+                                        } else {
+                                            defaultHost += ", " + host.getName(); //$NON-NLS-1$
+                                        }
                                     }
                                 }
+                                poolGeneralModel1.setDefaultHost(defaultHost);
                             }
                         };
 

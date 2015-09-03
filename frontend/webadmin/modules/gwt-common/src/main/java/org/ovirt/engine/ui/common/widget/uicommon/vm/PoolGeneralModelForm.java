@@ -71,6 +71,9 @@ public class PoolGeneralModelForm extends AbstractModelBoundFormWidget<PoolGener
         // Required because of type conversion
         monitorCount.setText(Integer.toString(getModel().getMonitorCount()));
         oS.setText(AsyncDataProvider.getInstance().getOsName(getModel().getOS()));
+
+        // Add a tooltip to display long named/many hosts
+        defaultHost.setTitle(getModel().getDefaultHost());
     }
 
 }
