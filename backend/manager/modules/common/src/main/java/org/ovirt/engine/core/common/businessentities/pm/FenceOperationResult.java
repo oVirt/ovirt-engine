@@ -45,7 +45,6 @@ public class FenceOperationResult implements Serializable {
         this(status, powerStatus, "");
     }
 
-
     /**
      * Creates instance with specified status, powerStatus and message
      */
@@ -94,7 +93,15 @@ public class FenceOperationResult implements Serializable {
     }
 
     public String getMessage() {
-        return message;
+        // VSDM returns 'Done' by default for fencing operations. This is not useful and appending
+        // it to log messages results in a confusing message. So if the message is 'Done', it's
+        // better to ignore it (return empty string). If it's anything different - return it as is.
+        // (See: https://bugzilla.redhat.com/1203741.)
+        if (message.equals("Done")) {
+            return "";
+        } else {
+            return message;
+        }
     }
 
     public enum Status {
@@ -128,4 +135,3 @@ public class FenceOperationResult implements Serializable {
                 .build();
     }
 }
-
