@@ -162,9 +162,15 @@ public class FenceProxyLocator {
     }
 
     protected boolean isFencingPolicySupported(VDS proxyCandidate, Version minimalSupportedVersion) {
-        boolean supported = fencingPolicy == null
-                || proxyCandidate.getSupportedClusterVersionsSet().contains(minimalSupportedVersion);
-
+        boolean supported = minimalSupportedVersion == null;
+        if (!supported) {
+            for (Version version : proxyCandidate.getSupportedClusterVersionsSet()) {
+                if (version.compareTo(minimalSupportedVersion) >= 0) {
+                    supported = true;
+                    break;
+                }
+            }
+        }
         log.debug("Proxy candidate '{}' supports fencing policy '{}': {}",
                 proxyCandidate.getHostName(),
                 fencingPolicy,
