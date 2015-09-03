@@ -169,7 +169,7 @@ public enum ConfigurationValues {
     NetworkExclusivenessPermissiveValidation,
     HostDevicePassthroughCapabilities,
     LiveStorageMigrationBetweenDifferentStorageTypes,
-    MaxIoThreadsPerVm,
+    MaxIoThreadsPerVm(ConfigAuthType.User),
     RefreshLunSupported;
 
     public static enum ConfigAuthType {
