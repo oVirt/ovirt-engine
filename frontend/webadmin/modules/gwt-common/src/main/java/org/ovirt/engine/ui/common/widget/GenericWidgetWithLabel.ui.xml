@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label">
+
+    <ui:style>
+        .wrapper_legacy {
+            line-height: 30px;
+            text-align: left;
+            padding: 0 12px 0 5px;
+        }
+
+        .label_legacy {
+            font-size: 13px;
+            font-family: Arial, sans-serif;
+            line-height: 16px;
+            padding: 0;
+        }
+
+        .contentWidgetContainer_legacy {
+            float: right;
+            width: 231px;
+            line-height: 16px !important;
+        }
+    </ui:style>
+
+    <g:HTMLPanel ui:field="wrapperPanel" addStyleNames="{style.wrapper_legacy}">
+        <l:EnableableFormLabel ui:field="label" addStyleNames="{style.label_legacy}"/>
+        <g:FlowPanel ui:field="childrenPanel" addStyleNames="{style.contentWidgetContainer_legacy}"/>
+    </g:HTMLPanel>
+
+</ui:UiBinder>

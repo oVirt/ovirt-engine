@@ -46,6 +46,7 @@ import org.ovirt.engine.ui.common.view.TabbedView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.EntityModelDetachableWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
+import org.ovirt.engine.ui.common.widget.GenericWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.HasDetachable;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
@@ -503,7 +504,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField
     @Ignore
-    public Label numOfMonitorsLabel;
+    public GenericWidgetWithLabel monitors;
 
     @UiField(provided = true)
     @Path(value = "isSingleQxlEnabled.entity")
@@ -2262,8 +2263,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 // console tab
                 usbSupportEditor,
                 consoleDisconnectActionEditor,
-                numOfMonitorsLabel,
-                numOfMonitorsEditor,
+                monitors,
                 isSingleQxlEnabledEditor,
                 ssoMethodLabel,
                 ssoMethodNone,
