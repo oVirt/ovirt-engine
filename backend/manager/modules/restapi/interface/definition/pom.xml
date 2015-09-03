@@ -1,4 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -14,7 +20,7 @@
 
   <dependencies>
 
-     <dependency>
+    <dependency>
        <groupId>org.jboss.resteasy</groupId>
        <artifactId>resteasy-jaxrs</artifactId>
     </dependency>
@@ -49,26 +55,69 @@
   </dependencies>
 
   <build>
+
     <plugins>
 
+      <!-- Generate the Java code from the XML schema: -->
       <plugin>
         <groupId>org.jvnet.jaxb2.maven2</groupId>
         <artifactId>maven-jaxb22-plugin</artifactId>
         <version>0.8.1</version>
         <executions>
           <execution>
+            <id>generate-java</id>
+            <phase>generate-sources</phase>
             <goals>
               <goal>generate</goal>
             </goals>
+            <configuration>
+              <generatePackage>org.ovirt.engine.api.model</generatePackage>
+              <extension>true</extension>
+              <schemaDirectory>${project.basedir}/src/main/schema</schemaDirectory>
+              <schemaIncludes>
+                <include>*.xsd</include>
+              </schemaIncludes>
+              <bindingDirectory>${project.basedir}/src/main/schema</bindingDirectory>
+              <bindingIncludes>
+                <include>*.xjb</include>
+              </bindingIncludes>
+            </configuration>
           </execution>
         </executions>
-        <configuration>
-          <generatePackage>org.ovirt.engine.api.model</generatePackage>
-          <extension>true</extension>
-        </configuration>
       </plugin>
 
+      <!-- Generate the RSDL: -->
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-rsdl</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>org.ovirt.engine.api.rsdl.RsdlManager</mainClass>
+              <arguments>
+                <argument>${application.baseuri}</argument>
+                <argument>${project.build.outputDirectory}/rsdl.xml</argument>
+                <argument>${project.build.outputDirectory}/rsdl_gluster.xml</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Create the JBoss module: -->
+      <plugin>
+        <groupId>org.ovirt.engine</groupId>
+        <artifactId>jboss-modules-maven-plugin</artifactId>
+      </plugin>
+
+      <!-- Run style checks: -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
       </plugin>
 
@@ -93,13 +142,21 @@
         </executions>
       </plugin>
 
-      <!-- Create the JBoss module: -->
-      <plugin>
-        <groupId>org.ovirt.engine</groupId>
-        <artifactId>jboss-modules-maven-plugin</artifactId>
-      </plugin>
-
     </plugins>
+
+    <resources>
+
+      <!-- Include the regular resources directory and also the
+           XML schema: -->
+      <resource>
+        <directory>${project.basedir}/src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>${project.basedir}/src/main/schema</directory>
+      </resource>
+
+    </resources>
+
   </build>
 
   <profiles>
@@ -123,37 +180,6 @@
                 </plugin>
             </plugins>
         </build>
-    </profile>
-
-    <profile>
-      <id>build-rsdl</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <phase>compile</phase>
-                <goals>
-                  <goal>java</goal>
-                </goals>
-                <configuration>
-                  <mainClass>org.ovirt.engine.api.rsdl.RsdlManager</mainClass>
-                  <arguments>
-                    <argument>${application.baseuri}</argument>
-                    <argument>${project.build.outputDirectory}/rsdl.xml</argument>
-                    <argument>${project.build.outputDirectory}/rsdl_gluster.xml</argument>
-                  </arguments>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
 
     <profile>
