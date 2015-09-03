@@ -2,10 +2,11 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
-import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.replayAll;
-import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -18,8 +19,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.easymock.EasyMockSupport;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.api.common.invocation.Current;
@@ -40,7 +41,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
-public class BackendApiResourceTest extends Assert {
+public class BackendApiResourceTest extends EasyMockSupport {
 
     private static final String ROOT_TAG_REL = "tags/root";
 
@@ -322,7 +323,7 @@ public class BackendApiResourceTest extends Assert {
     protected void verifyResponse(Response response) {
         assertEquals(200, response.getStatus());
         assertTrue(response.getEntity() instanceof API);
-        verifyApi((API)response.getEntity());
+        verifyApi((API) response.getEntity());
     }
 
     protected void verifyResponseGlusterOnly(Response response) {
@@ -356,14 +357,14 @@ public class BackendApiResourceTest extends Assert {
         assertEquals(REVISION, api.getProductInfo().getVersion().getRevision().intValue());
 
         assertNotNull(api.getSummary());
-        assertEquals(TOTAL_VMS,              api.getSummary().getVMs().getTotal());
-        assertEquals(ACTIVE_VMS,             api.getSummary().getVMs().getActive());
-        assertEquals(TOTAL_HOSTS,            api.getSummary().getHosts().getTotal());
-        assertEquals(ACTIVE_HOSTS,           api.getSummary().getHosts().getActive());
-        assertEquals(TOTAL_USERS,            api.getSummary().getUsers().getTotal());
-        assertEquals(ACTIVE_USERS,           api.getSummary().getUsers().getActive());
-        assertEquals(TOTAL_STORAGE_DOMAINS,  api.getSummary().getStorageDomains().getTotal());
-        assertEquals(ACTIVE_STORAGE_DOMAINS, api.getSummary().getStorageDomains().getActive());
+        assertEquals(TOTAL_VMS,              api.getSummary().getVMs().getTotal().intValue());
+        assertEquals(ACTIVE_VMS,             api.getSummary().getVMs().getActive().intValue());
+        assertEquals(TOTAL_HOSTS,            api.getSummary().getHosts().getTotal().intValue());
+        assertEquals(ACTIVE_HOSTS,           api.getSummary().getHosts().getActive().intValue());
+        assertEquals(TOTAL_USERS,            api.getSummary().getUsers().getTotal().intValue());
+        assertEquals(ACTIVE_USERS,           api.getSummary().getUsers().getActive().intValue());
+        assertEquals(TOTAL_STORAGE_DOMAINS,  api.getSummary().getStorageDomains().getTotal().intValue());
+        assertEquals(ACTIVE_STORAGE_DOMAINS, api.getSummary().getStorageDomains().getActive().intValue());
     }
 
     protected void verifyApiGlusterOnly(API api) {
@@ -389,10 +390,10 @@ public class BackendApiResourceTest extends Assert {
         assertEquals(REVISION, api.getProductInfo().getVersion().getRevision().intValue());
 
         assertNotNull(api.getSummary());
-        assertEquals(TOTAL_HOSTS, api.getSummary().getHosts().getTotal());
-        assertEquals(ACTIVE_HOSTS, api.getSummary().getHosts().getActive());
-        assertEquals(TOTAL_USERS, api.getSummary().getUsers().getTotal());
-        assertEquals(ACTIVE_USERS, api.getSummary().getUsers().getActive());
+        assertEquals(TOTAL_HOSTS, api.getSummary().getHosts().getTotal().intValue());
+        assertEquals(ACTIVE_HOSTS, api.getSummary().getHosts().getActive().intValue());
+        assertEquals(TOTAL_USERS, api.getSummary().getUsers().getTotal().intValue());
+        assertEquals(ACTIVE_USERS, api.getSummary().getUsers().getActive().intValue());
     }
 
 
@@ -413,10 +414,6 @@ public class BackendApiResourceTest extends Assert {
             }
         }
         fail();
-    }
-
-    private static void assertEquals(long expected, Long actual) {
-        assertEquals(expected, actual.longValue());
     }
 
     protected UriInfo setUpUriInfo(String base, String[] relationships) {
