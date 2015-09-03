@@ -1795,7 +1795,7 @@ public enum ConfigValues {
     HotUnplugCpuSupported,
 
     @TypeConverterAttribute(Map.class)
-    @DefaultValueAttribute("{\"x86_64\":\"true\",\"ppc64\":\"false\"}")
+    @DefaultValueAttribute("{\"x86_64\":\"true\",\"ppc64\":\"true\"}")
     HotPlugMemorySupported,
 
     @TypeConverterAttribute(Map.class)
