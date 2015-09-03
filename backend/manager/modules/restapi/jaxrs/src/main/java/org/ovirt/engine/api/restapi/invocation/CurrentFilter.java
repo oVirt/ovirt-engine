@@ -1,4 +1,4 @@
-package org.ovirt.engine.api.common.invocation;
+package org.ovirt.engine.api.restapi.invocation;
 
 import java.io.IOException;
 

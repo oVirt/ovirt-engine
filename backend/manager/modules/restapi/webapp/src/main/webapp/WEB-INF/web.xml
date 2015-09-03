@@ -130,7 +130,7 @@ limitations under the License.
 
     <filter>
         <filter-name>CurrentFilter</filter-name>
-        <filter-class>org.ovirt.engine.api.common.invocation.CurrentFilter</filter-class>
+        <filter-class>org.ovirt.engine.api.restapi.invocation.CurrentFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>CurrentFilter</filter-name>

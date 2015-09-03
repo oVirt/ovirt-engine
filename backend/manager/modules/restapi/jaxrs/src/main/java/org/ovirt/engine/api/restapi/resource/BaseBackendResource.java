@@ -14,11 +14,11 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.api.common.invocation.Current;
-import org.ovirt.engine.api.common.invocation.CurrentManager;
 import org.ovirt.engine.api.common.util.CompletenessAssertor;
 import org.ovirt.engine.api.common.util.EnumValidator;
 import org.ovirt.engine.api.model.Fault;
+import org.ovirt.engine.api.restapi.invocation.Current;
+import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;

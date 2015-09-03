@@ -1,4 +1,4 @@
-package org.ovirt.engine.api.common.invocation;
+package org.ovirt.engine.api.restapi.invocation;
 
 /**
  * This manages the object that contains the data associated to the request that is currently being processed. Ideally
