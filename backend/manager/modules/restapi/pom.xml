@@ -19,10 +19,6 @@
     <module>interface</module>
   </modules>
 
-  <properties>
-    <resteasy.version>2.3.2.Final</resteasy.version>
-  </properties>
-
   <dependencyManagement>
     <dependencies>
 
@@ -30,6 +26,12 @@
         <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
         <version>3.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>resteasy-jaxrs</artifactId>
+        <version>2.3.2.Final</version>
       </dependency>
 
     </dependencies>
