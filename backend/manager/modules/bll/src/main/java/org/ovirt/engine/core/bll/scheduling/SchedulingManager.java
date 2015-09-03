@@ -34,7 +34,6 @@ import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
-import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -55,7 +54,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
@@ -215,21 +213,9 @@ public class SchedulingManager implements BackendService {
             details = new PerHostMessages();
         }
 
-        public Guid getVdsSelected() {
-            return vdsSelected;
-        }
-
-        public void setVdsSelected(Guid vdsSelected) {
-            this.vdsSelected = vdsSelected;
-        }
-
         public void addReason(Guid id, String hostName, EngineMessage filterType, String filterName) {
             filteredOutReasons.put(id, new Pair<>(filterType, filterName));
             hostNames.put(id, hostName);
-        }
-
-        public Set<Entry<Guid, Pair<EngineMessage, String>>> getReasons() {
-            return filteredOutReasons.entrySet();
         }
 
         public Collection<String> getReasonMessages() {
@@ -257,13 +243,6 @@ public class SchedulingManager implements BackendService {
             return details;
         }
 
-        public String getMessage() {
-            return message;
-        }
-
-        public void setMessage(String message) {
-            this.message = message;
-        }
     }
 
     public Guid schedule(VDSGroup cluster,
@@ -489,14 +468,6 @@ public class SchedulingManager implements BackendService {
                         null);
 
         return vdsList != null && !vdsList.isEmpty();
-    }
-
-    static List<Guid> getEntityIds(List<? extends BusinessEntity<Guid>> entities) {
-        ArrayList<Guid> ids = new ArrayList<>();
-        for (BusinessEntity<Guid> entity : entities) {
-            ids.add(entity.getId());
-        }
-        return ids;
     }
 
     private Map<String, String> createClusterPolicyParameters(VDSGroup cluster) {
@@ -830,10 +801,6 @@ public class SchedulingManager implements BackendService {
 
     private VdsGroupDao getVdsGroupDao() {
         return dbFacade.getVdsGroupDao();
-    }
-
-    protected VdsDynamicDao getVdsDynamicDao() {
-        return dbFacade.getVdsDynamicDao();
     }
 
     private PolicyUnitDao getPolicyUnitDao() {
