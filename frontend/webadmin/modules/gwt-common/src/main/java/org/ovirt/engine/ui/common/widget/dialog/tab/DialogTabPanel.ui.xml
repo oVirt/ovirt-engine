@@ -12,6 +12,7 @@
         }
 
         .content {
+            padding-right: 2px; /* to compensate border of the header part */
         }
 
         .contentContainer {

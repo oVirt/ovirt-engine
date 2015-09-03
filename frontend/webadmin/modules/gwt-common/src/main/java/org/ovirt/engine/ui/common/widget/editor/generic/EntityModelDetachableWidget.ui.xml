@@ -19,7 +19,8 @@
         .contentWrapper {
             float: right;
             width: 233px;
-            padding: 0 5px;
+            padding-left: 5px;
+            padding-right: 10px;
         }
 
         .contentWrapperImageOnRight {
@@ -28,19 +29,17 @@
 
         .contentWidgetWithoutDetachable, .contentWidgetWithDetachable {
             float: right;
+            padding: 0px;
         }
 
         .contentWidgetWithoutDetachable {
-            padding: 0 5px;
         }
 
         .contentWidgetWithDetachable {
-            padding: 0 0px;
-            width: 233px;
         }
 
         .contentWidgetContainer {
-            /*width: 230px;*/
+            width: 228px;
          }
     </ui:style>
 

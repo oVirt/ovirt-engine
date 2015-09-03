@@ -215,7 +215,7 @@
         .warningLabel {
             color: red;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-left: 16px;
         }
 
         .poolEditVms {
@@ -326,12 +326,6 @@
             padding-top: 0;
             width: 230px;
             height: 30px;
-        }
-
-        .monitorsLabel {
-            float: left;
-            color: #333333;
-            width: 265px;
         }
 
         .hostSelector {
@@ -573,15 +567,13 @@
                         <e:ListModelListBoxEditor ui:field="vncKeyboardLayoutEditor" />
                         <e:ListModelListBoxEditor ui:field="usbSupportEditor" />
                         <e:ListModelListBoxEditor ui:field="consoleDisconnectActionEditor" />
-                        <g:FlowPanel width="100%">
-                              <g:FlowPanel addStyleNames="{style.monitorPanel}">
-                                 <g:HorizontalPanel verticalAlignment="middle">
-                                 <g:Label text="{constants.monitors}" ui:field="numOfMonitorsLabel" addStyleNames="{style.monitorsLabel} avmpw_monitorsLabel_pfly_fix" />
-                                 <e:ListModelListBoxEditor ui:field="numOfMonitorsEditor" addStyleNames="{style.monitorsStyles}" />
-                                   <ge:EntityModelCheckBoxEditor ui:field="isSingleQxlEnabledEditor" addStyleNames="{style.checkbox}" />
-                                 </g:HorizontalPanel>
-                              </g:FlowPanel>
-                        </g:FlowPanel>
+                        <w:GenericWidgetWithLabel ui:field="monitors" label="{constants.monitors}">
+                            <g:HorizontalPanel verticalAlignment="middle">
+                                <e:ListModelListBoxEditor ui:field="numOfMonitorsEditor" addStyleNames="{style.monitorsStyles}" />
+                                <ge:EntityModelCheckBoxEditor ui:field="isSingleQxlEnabledEditor" addStyleNames="{style.checkbox}" />
+                            </g:HorizontalPanel>
+                        </w:GenericWidgetWithLabel>
+
                         <ge:EntityModelCheckBoxEditor ui:field="isSmartcardEnabledEditor" addStyleNames="{style.floatLeft} avmpw_smartcard_pfly_fix" />
                         <g:Label ui:field="nativeUsbWarningMessage" text="{constants.nativeUsbSupportWarning}" addStyleNames="{style.warningMessageLabel}" />
 
