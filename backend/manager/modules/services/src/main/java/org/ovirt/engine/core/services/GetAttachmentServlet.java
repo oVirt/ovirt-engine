@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.services;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -42,6 +43,7 @@ public class GetAttachmentServlet extends HttpServlet {
         if (ENCODINGTYPE_BINARY.equals(encodingType)) {
             response.getOutputStream().write(Base64.decodeBase64(content));
         } else if (ENCODINGTYPE_PLAIN.equals(encodingType)) {
+            content = URLDecoder.decode(content, "UTF-8");
             content = StringEscapeUtils.unescapeHtml(content);
 
             response.getWriter().write(content);

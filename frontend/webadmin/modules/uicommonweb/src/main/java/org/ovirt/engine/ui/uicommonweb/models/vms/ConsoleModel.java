@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.dom.client.FormElement;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -229,7 +230,7 @@ public abstract class ConsoleModel extends EntityModel<VM> {
     public static void makeConsoleConfigRequest(String fileName, String contentType, String configFileContent) {
         final FlowPanel innerPanel = new FlowPanel();
         innerPanel.add(buildTextArea("contenttype", contentType));//$NON-NLS-1$
-        innerPanel.add(buildTextArea("content", configFileContent));//$NON-NLS-1$
+        innerPanel.add(buildTextArea("content", URL.encodeQueryString(configFileContent)));//$NON-NLS-1$
         innerPanel.add(buildTextArea("encodingtype", "plain"));//$NON-NLS-1$ $NON-NLS-2$
 
         final FormPanel formPanel = new FormPanel(); //$NON-NLS-1$
