@@ -37,7 +37,6 @@ from . import ca
 from . import options
 from . import tools
 from . import iso_domain
-from . import macrange
 from . import public_glance_repository
 from . import storage
 
@@ -59,7 +58,6 @@ def createPlugins(context):
     options.Plugin(context=context)
     tools.Plugin(context=context)
     iso_domain.Plugin(context=context)
-    macrange.Plugin(context=context)
     public_glance_repository.Plugin(context=context)
     storage.Plugin(context=context)
 
