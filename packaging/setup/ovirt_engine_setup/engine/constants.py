@@ -411,7 +411,6 @@ class Const(object):
     PKI_PASSWORD = 'mypass'
     MINIMUM_SPACE_ISODOMAIN_MB = 350
     ISO_DOMAIN_IMAGE_UID = '11111111-1111-1111-1111-111111111111'
-    MAC_RANGE_BASE = '00:1a:4a'
 
     ENGINE_URI = '/ovirt-engine'
     ENGINE_PKI_CA_URI = (
@@ -698,8 +697,6 @@ class ConfigEnv(object):
 
     ISO_DOMAIN_DEFAULT_NFS_MOUNT_POINT = \
         'OVESETUP_CONFIG/isoDomainDefaultMountPoint'
-
-    MAC_RANGE_POOL = 'OVESETUP_CONFIG/macRangePool'
 
     ENGINE_FQDN = 'OVESETUP_ENGINE_CONFIG/fqdn'
 
