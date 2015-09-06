@@ -370,6 +370,8 @@ class Defaults(object):
     DEFAULT_DB_DUMPER = 'pg_custom'
     DEFAULT_DB_RESTORE_JOBS = 2
     DEFAULT_DB_FILTER = None
+    DEFAULT_PKI_RENEWAL_DOC_URL = \
+        'http://www.ovirt.org/OVirt_3.5.4_Release_Notes#PKI'
 
 
 @util.export
@@ -756,6 +758,8 @@ class ConfigEnv(object):
     )
     def ADMIN_PASSWORD(self):
         return 'OVESETUP_CONFIG/adminPassword'
+
+    PKI_RENEWAL_DOC_URL = 'OVESETUP_CONFIG/pkiRenewalDocUrl'
 
 
 @util.export
