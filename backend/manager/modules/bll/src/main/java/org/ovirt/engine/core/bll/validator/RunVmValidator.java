@@ -114,7 +114,10 @@ public class RunVmValidator {
                    validate(validateVmStatusUsingMatrix(vm), messages) &&
                    validate(validateStoragePoolUp(vm, storagePool, getVmImageDisks()), messages) &&
                    validate(vmDuringInitialization(vm), messages) &&
-                   validate(validateStorageDomains(vm, isInternalExecution, getVmImageDisks()), messages) &&
+                    validate(validateStorageDomains(vm,
+                            isInternalExecution,
+                            filterReadOnlyAndPreallocatedDisks(getVmImageDisks())), messages)
+                    &&
                    validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
                    getSchedulingManager().canSchedule(
                            vdsGroup, vm, vdsBlackList, vdsWhiteList, destVdsList, messages);
