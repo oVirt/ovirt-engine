@@ -74,7 +74,8 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
         DiskImage newDiskImage = (DiskImage) imageInfoReturn.getReturnValue();
         if (StringUtils.isNotEmpty(newDiskImage.getDescription())) {
             try {
-                MetadataDiskDescriptionHandler.enrichDiskByJsonDescription(newDiskImage.getDescription(), newDiskImage);
+                MetadataDiskDescriptionHandler.getInstance()
+                        .enrichDiskByJsonDescription(newDiskImage.getDescription(), newDiskImage);
             } catch (IOException e) {
                 log.warn("Exception while parsing JSON for disk. Exception: '{}'", e);
             }
