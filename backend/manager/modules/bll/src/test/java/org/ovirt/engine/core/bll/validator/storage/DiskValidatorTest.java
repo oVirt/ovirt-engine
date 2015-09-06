@@ -221,7 +221,9 @@ public class DiskValidatorTest {
         setupForLun();
 
         List<LUNs> luns = Collections.singletonList(lunDisk.getLun());
-        doReturn(luns).when(lunValidator).executeGetDeviceList(any(Guid.class), any(StorageType.class));
+        doReturn(luns).when(lunValidator).executeGetDeviceList(any(Guid.class),
+                any(StorageType.class),
+                any(String.class));
 
         assertThat(lunValidator.isLunDiskVisible(lunDisk.getLun(), vds), isValid());
     }
@@ -232,7 +234,9 @@ public class DiskValidatorTest {
         setupForLun();
 
         List<LUNs> luns = Collections.emptyList();
-        doReturn(luns).when(lunValidator).executeGetDeviceList(any(Guid.class), any(StorageType.class));
+        doReturn(luns).when(lunValidator).executeGetDeviceList(any(Guid.class),
+                any(StorageType.class),
+                any(String.class));
 
         assertThat(lunValidator.isLunDiskVisible(lunDisk.getLun(), vds),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_INVALID));
