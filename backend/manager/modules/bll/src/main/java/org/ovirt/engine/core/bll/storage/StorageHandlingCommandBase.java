@@ -615,7 +615,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     protected String getJsonDiskDescription(Disk disk) {
         try {
-            return MetadataDiskDescriptionHandler.getJsonDiskDescription(disk);
+            return MetadataDiskDescriptionHandler.getInstance().getJsonDiskDescription(disk);
         } catch (IOException e) {
             log.error("Exception while generating json for disk. ERROR: '{}'", e);
             return StringUtils.EMPTY;

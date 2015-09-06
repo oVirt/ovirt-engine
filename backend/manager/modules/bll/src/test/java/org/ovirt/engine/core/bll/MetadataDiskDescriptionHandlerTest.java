@@ -13,10 +13,12 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 public class MetadataDiskDescriptionHandlerTest {
 
     private DiskImage disk;
+    private MetadataDiskDescriptionHandler metadataDiskDescriptionHandler;
 
     @Before
     public void setUp() {
         disk = new DiskImage();
+        metadataDiskDescriptionHandler = MetadataDiskDescriptionHandler.getInstance();
     }
 
     @Test
@@ -40,11 +42,11 @@ public class MetadataDiskDescriptionHandlerTest {
         assertDiskDescriptionMap(disk);
     }
 
-    private static void assertDiskDescriptionMap(Disk disk) throws IOException {
+    private void assertDiskDescriptionMap(Disk disk) throws IOException {
         assertEquals("Should be map of disk alias and disk description",
                 String.format("{\"DiskAlias\":\"%s\"," +
                                 "\"DiskDescription\":\"%s\"}",
                         disk.getDiskAlias(), StringUtils.defaultString(disk.getDiskDescription())),
-                MetadataDiskDescriptionHandler.getJsonDiskDescription(disk));
+                metadataDiskDescriptionHandler.getJsonDiskDescription(disk));
     }
 }
