@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateVmDisksParameters;
@@ -19,6 +20,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -71,6 +73,16 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_DISKS_SPECIFIED);
         }
 
+        return verifyNoLunDisks();
+    }
+
+    private boolean verifyNoLunDisks() {
+        for (MoveDiskParameters moveDiskParameters : getParameters().getParametersList()) {
+            Disk disk = getDiskDao().get(moveDiskParameters.getImageGroupID());
+            if (!validate(new DiskValidator(disk).validateDiskIsNotLun())) {
+                return false;
+            }
+        }
         return true;
     }
 
@@ -226,11 +238,10 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
 
         for (MoveOrCopyImageGroupParameters parameters : getParameters().getParametersList()) {
             DiskImage diskImage = getDiskImageDao().get(parameters.getImageId());
-            if (diskImage != null) {
-                permissionList.add(new PermissionSubject(diskImage.getId(),
-                        VdcObjectType.Disk,
-                        ActionGroup.CONFIGURE_DISK_STORAGE));
-            }
+            Guid diskId = diskImage == null ? Guid.Empty : diskImage.getId();
+            permissionList.add(new PermissionSubject(diskId,
+                    VdcObjectType.Disk,
+                    ActionGroup.CONFIGURE_DISK_STORAGE));
         }
 
         return permissionList;

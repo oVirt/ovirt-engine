@@ -173,6 +173,13 @@ public class DiskValidator {
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_INVALID);
     }
 
+    public ValidationResult validateDiskIsNotLun() {
+        if (disk.getDiskStorageType() == DiskStorageType.LUN) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_LUN_DISK);
+        }
+        return ValidationResult.VALID;
+    }
+
     @SuppressWarnings("unchecked")
     public List<LUNs> executeGetDeviceList(Guid vdsId, StorageType storageType) {
         GetDeviceListVDSCommandParameters parameters =

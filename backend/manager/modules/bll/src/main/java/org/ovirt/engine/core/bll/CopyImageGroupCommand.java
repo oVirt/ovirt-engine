@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.PostZeroHandler;
+import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
@@ -54,6 +56,16 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         default:
             return super.getImage();
         }
+    }
+
+    @Override
+    protected boolean canDoAction() {
+        return !isDiskLun();
+    }
+
+    private boolean isDiskLun() {
+        Disk disk = getDiskDao().get(getParameters().getImageGroupID());
+        return !validate(new DiskValidator(disk).validateDiskIsNotLun());
     }
 
     @Override

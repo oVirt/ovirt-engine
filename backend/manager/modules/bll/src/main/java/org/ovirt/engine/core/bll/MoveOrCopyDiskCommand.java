@@ -87,7 +87,8 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected boolean canDoAction() {
-        return isImageExist()
+        return super.canDoAction()
+                && isImageExist()
                 && checkOperationIsCorrect()
                 && isDiskUsedAsOvfStore()
                 && isImageNotLocked()

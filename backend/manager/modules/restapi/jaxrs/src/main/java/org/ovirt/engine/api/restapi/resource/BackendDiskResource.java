@@ -12,6 +12,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.ActionResource;
@@ -78,18 +79,33 @@ public class BackendDiskResource extends AbstractBackendActionableResource<Disk,
         validateParameters(action, "storageDomain.id|name");
         Guid storageDomainId = getStorageDomainId(action);
         Disk disk = get();
-        Guid imageId = asGuid(disk.getImageId());
+        Guid imageId = getDiskImageId(disk.getImageId());
         Guid sourceStorageDomainId = getSourceStorageDomainId(disk);
+        MoveDiskParameters innerParams = new MoveDiskParameters(
+                imageId,
+                sourceStorageDomainId,
+                storageDomainId);
+        innerParams.setImageGroupID(asGuid(disk.getId()));
         MoveDisksParameters params =
-                new MoveDisksParameters(Collections.singletonList(new MoveDiskParameters(
-                        imageId,
-                        sourceStorageDomainId,
-                        storageDomainId)));
+                new MoveDisksParameters(Collections.singletonList(innerParams));
         return doAction(VdcActionType.MoveDisks, params, action);
     }
 
     protected Guid getSourceStorageDomainId(Disk disk) {
-        return asGuid(disk.getStorageDomains().getStorageDomains().get(0).getId());
+        if (disk.isSetStorageDomains()) {
+            StorageDomain storageDomain = disk.getStorageDomains().getStorageDomains().get(0);
+            if (storageDomain != null) {
+                return asGuid(storageDomain.getId());
+            }
+        }
+        return null;
+    }
+
+    protected Guid getDiskImageId(String id) {
+        if (id == null) {
+            return null;
+        }
+        return asGuid(id);
     }
 
     @Override
@@ -97,7 +113,7 @@ public class BackendDiskResource extends AbstractBackendActionableResource<Disk,
         validateParameters(action, "storageDomain.id|name");
         Guid storageDomainId = getStorageDomainId(action);
         Disk disk = get();
-        Guid imageId = asGuid(disk.getImageId());
+        Guid imageId = getDiskImageId(disk.getImageId());
         Guid sourceStorageDomainId = getSourceStorageDomainId(disk);
         MoveOrCopyImageGroupParameters params =
                 new MoveOrCopyImageGroupParameters(imageId,
