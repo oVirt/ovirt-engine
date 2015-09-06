@@ -160,7 +160,9 @@ public class DiskValidator {
      * @return whether the specified lun is visible.
      */
     public ValidationResult isLunDiskVisible(final LUNs lun, VDS vds) {
-        List<LUNs> luns = executeGetDeviceList(vds.getId(), lun.getLunType());
+        List<LUNs> luns = executeGetDeviceList(vds.getId(), lun.getLunType(), lun.getLUN_id());
+
+        //TODO Once we stop supporting 3.5 DCs and earlier, we can replace the below by "return !luns.isempty()"
 
         // Search LUN in the device list
         boolean lunExists = CollectionUtils.exists(luns, new Predicate() {
@@ -184,9 +186,9 @@ public class DiskValidator {
     }
 
     @SuppressWarnings("unchecked")
-    public List<LUNs> executeGetDeviceList(Guid vdsId, StorageType storageType) {
+    public List<LUNs> executeGetDeviceList(Guid vdsId, StorageType storageType, String lunId) {
         GetDeviceListVDSCommandParameters parameters =
-                new GetDeviceListVDSCommandParameters(vdsId, storageType);
+                new GetDeviceListVDSCommandParameters(vdsId, storageType, false, Arrays.asList(lunId));
         return (List<LUNs>) getVdsBroker().RunVdsCommand(VDSCommandType.GetDeviceList, parameters).getReturnValue();
     }
 

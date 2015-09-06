@@ -734,7 +734,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
         List<LUNs> luns = Collections.singletonList(disk.getLun());
         DiskValidator diskValidator = spyDiskValidator(disk);
-        doReturn(luns).when(diskValidator).executeGetDeviceList(any(Guid.class), any(StorageType.class));
+        doReturn(luns).when(diskValidator).executeGetDeviceList(any(Guid.class),
+                any(StorageType.class),
+                (any(String.class)));
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
@@ -756,7 +758,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
         List<LUNs> luns = Collections.emptyList();
         DiskValidator diskValidator = spyDiskValidator(disk);
-        doReturn(luns).when(diskValidator).executeGetDeviceList(any(Guid.class), any(StorageType.class));
+        doReturn(luns).when(diskValidator).executeGetDeviceList(any(Guid.class),
+                any(StorageType.class),
+                any(String.class));
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_INVALID);
     }
