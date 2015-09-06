@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -37,6 +38,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -130,11 +132,24 @@ public class RunVmValidator {
                 validate(vmDuringInitialization(vm), messages) &&
                 validate(validateStatelessVm(vm, runVmParam.getRunAsStateless()), messages) &&
                 validate(validateFloppy(), messages) &&
-                validate(validateStorageDomains(vm, isInternalExecution, getVmImageDisks()), messages) &&
+                validate(validateStorageDomains(vm,
+                        isInternalExecution,
+                        filterReadOnlyAndPreallocatedDisks(getVmImageDisks())), messages)
+                &&
                 validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
                 validate(validateMemorySize(vm), messages) &&
                 getSchedulingManager().canSchedule(
                         vdsGroup, vm, vdsBlackList, vdsWhiteList, destVdsList, messages);
+    }
+
+    private List<DiskImage> filterReadOnlyAndPreallocatedDisks(List<DiskImage> vmImageDisks) {
+        List<DiskImage> retVal = new ArrayList<>();
+        for (DiskImage disk : vmImageDisks) {
+            if (!(disk.getVolumeType() == VolumeType.Preallocated || disk.getReadOnly())) {
+                retVal.add(disk);
+            }
+        }
+        return retVal;
     }
 
     private SchedulingManager getSchedulingManager() {
