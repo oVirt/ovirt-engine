@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
@@ -56,6 +57,13 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
     @Test
     public void testCanDoActionSuccess() {
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+    }
+
+    @Test
+    public void testCanDoActionLunDisk() {
+        when(getDiskDao().get(getDiskImageGroupId())).thenReturn(new LunDisk());
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+                EngineMessage.ACTION_TYPE_FAILED_LUN_DISK);
     }
 
     @Test

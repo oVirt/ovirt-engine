@@ -26,14 +26,17 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -48,6 +51,8 @@ public class MoveOrCopyDiskCommandTest {
     private final VmDevice vmDevice = new VmDevice();
 
     @Mock
+    private DiskDao diskDao;
+    @Mock
     private DiskImageDao diskImageDao;
     @Mock
     private StorageDomainDao storageDomainDao;
@@ -58,6 +63,8 @@ public class MoveOrCopyDiskCommandTest {
     @Mock
     private SnapshotsValidator snapshotsValidator;
 
+    private Disk disk;
+
     /**
      * The command under test.
      */
@@ -65,7 +72,7 @@ public class MoveOrCopyDiskCommandTest {
 
     @Test
     public void canDoActionImageNotFound() throws Exception {
-        initializeCommand(ImageOperation.Move);
+        initializeCommand(ImageOperation.Move, new DiskImage());
         when(diskImageDao.get(any(Guid.class))).thenReturn(null);
         when(diskImageDao.getSnapshotById(any(Guid.class))).thenReturn(null);
         assertFalse(command.canDoAction());
@@ -76,7 +83,7 @@ public class MoveOrCopyDiskCommandTest {
 
     @Test
     public void canDoActionWrongDiskImageTypeTemplate() throws Exception {
-        initializeCommand(ImageOperation.Move);
+        initializeCommand(ImageOperation.Move, new DiskImage());
         initTemplateDiskImage();
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -86,7 +93,7 @@ public class MoveOrCopyDiskCommandTest {
 
     @Test
     public void moveShareableDiskToGlusterDomain() {
-        initializeCommand(ImageOperation.Move);
+        initializeCommand(ImageOperation.Move, new DiskImage());
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.GLUSTERFS);
         initVmDiskImage(true);
@@ -99,7 +106,7 @@ public class MoveOrCopyDiskCommandTest {
 
     @Test
     public void moveShareableDisk() {
-        initializeCommand(ImageOperation.Move);
+        initializeCommand(ImageOperation.Move, new DiskImage());
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.NFS);
         initVmDiskImage(true);
@@ -109,7 +116,7 @@ public class MoveOrCopyDiskCommandTest {
 
     @Test
     public void moveDiskToGluster() {
-        initializeCommand(ImageOperation.Move);
+        initializeCommand(ImageOperation.Move, new DiskImage());
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.GLUSTERFS);
         initVmDiskImage(false);
@@ -120,7 +127,7 @@ public class MoveOrCopyDiskCommandTest {
     @Test
     public void canDoActionSameSourceAndDest() throws Exception {
         destStorageId = srcStorageId;
-        initializeCommand(ImageOperation.Move);
+        initializeCommand(ImageOperation.Move, new DiskImage());
         initVmDiskImage(false);
         mockGetVmsListForDisk();
         initSrcStorageDomain();
@@ -132,7 +139,7 @@ public class MoveOrCopyDiskCommandTest {
 
     @Test
     public void canDoActionVmIsNotDown() throws Exception {
-        initializeCommand(ImageOperation.Move);
+        initializeCommand(ImageOperation.Move, new DiskImage());
         initSnapshotValidator();
         initVmDiskImage(false);
         mockGetVmsListForDisk();
@@ -148,7 +155,7 @@ public class MoveOrCopyDiskCommandTest {
 
     @Test
     public void canDoActionDiskIsLocked() throws Exception {
-        initializeCommand(ImageOperation.Move);
+        initializeCommand(ImageOperation.Move, new DiskImage());
         initVmDiskImage(false);
         mockGetVmsListForDisk();
         command.getImage().setImageStatus(ImageStatus.LOCKED);
@@ -160,7 +167,7 @@ public class MoveOrCopyDiskCommandTest {
 
     @Test
     public void canDoActionDiskIsOvfStore() throws Exception {
-        initializeCommand(ImageOperation.Move);
+        initializeCommand(ImageOperation.Move, new DiskImage());
         initVmDiskImage(false);
         command.getImage().setContentType(DiskContentType.OVF_STORE);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
@@ -169,7 +176,7 @@ public class MoveOrCopyDiskCommandTest {
 
     @Test
     public void canDoActionTemplateImageIsLocked() throws Exception {
-        initializeCommand(ImageOperation.Copy);
+        initializeCommand(ImageOperation.Copy, new DiskImage());
         initTemplateDiskImage();
         command.getImage().setImageStatus(ImageStatus.LOCKED);
         doReturn(new VmTemplate()).when(command).getTemplateForImage();
@@ -182,7 +189,7 @@ public class MoveOrCopyDiskCommandTest {
 
     @Test
     public void canDoActionNotEnoughSpace() throws Exception {
-        initializeCommand(ImageOperation.Move);
+        initializeCommand(ImageOperation.Move, new DiskImage());
         initVmForSpace();
         initVmDiskImage(false);
         initSrcStorageDomain();
@@ -193,7 +200,7 @@ public class MoveOrCopyDiskCommandTest {
 
     @Test
     public void canDoActionEnoughSpace() throws Exception {
-        initializeCommand(ImageOperation.Move);
+        initializeCommand(ImageOperation.Move, new DiskImage());
         initSnapshotValidator();
         initVmForSpace();
         initVmDiskImage(false);
@@ -205,7 +212,7 @@ public class MoveOrCopyDiskCommandTest {
 
     @Test
     public void successVmInPreviewForAttachedSnapshot() {
-        initializeCommand(ImageOperation.Move);
+        initializeCommand(ImageOperation.Move, new DiskImage());
         initSnapshotValidator();
         initVmForSpace();
         initVmDiskImage(false);
@@ -217,7 +224,7 @@ public class MoveOrCopyDiskCommandTest {
 
     @Test
     public void canDoActionVmInPreview() {
-        initializeCommand(ImageOperation.Move);
+        initializeCommand(ImageOperation.Move, new DiskImage());
         initSnapshotValidator();
         initVmForSpace();
         initVmDiskImage(false);
@@ -225,6 +232,25 @@ public class MoveOrCopyDiskCommandTest {
         initDestStorageDomain(StorageType.NFS);
         when(snapshotsValidator.vmNotInPreview(any(Guid.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW));
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
+    }
+
+    @Test
+    public void canDoActionFailureOnMovingLunDisk() {
+        initializeCommand(ImageOperation.Move, new LunDisk());
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_LUN_DISK);
+    }
+
+    @Test
+    public void canDoActionFailureOnCopyingLunDisk() {
+        initializeCommand(ImageOperation.Copy, new LunDisk());
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_LUN_DISK);
+    }
+
+    @Test
+    public void canDoActionFailureOnMovingVmLunDisk() {
+        initializeCommand(ImageOperation.Move, new LunDisk());
+        vmDevice.setSnapshotId(Guid.newGuid());
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_LUN_DISK);
     }
 
     protected void initVmForSpace() {
@@ -288,7 +314,7 @@ public class MoveOrCopyDiskCommandTest {
     }
 
     @SuppressWarnings("unchecked")
-    protected void initializeCommand(ImageOperation operation) {
+    protected void initializeCommand(ImageOperation operation, Disk disk) {
         command = spy(new MoveOrCopyDiskCommandDummy(new MoveOrCopyImageGroupParameters(diskImageGuid,
                 srcStorageId,
                 destStorageId,
@@ -296,6 +322,9 @@ public class MoveOrCopyDiskCommandTest {
 
 
         doReturn(vmDao).when(command).getVmDao();
+        doReturn(diskDao).when(command).getDiskDao();
+        this.disk = disk;
+        when(diskDao.get(any(Guid.class))).thenReturn(this.disk);
 
         VM vm = new VM();
         vm.setStatus(VMStatus.Down);

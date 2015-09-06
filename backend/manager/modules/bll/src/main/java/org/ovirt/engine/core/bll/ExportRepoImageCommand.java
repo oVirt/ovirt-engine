@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -66,8 +67,12 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getDiskImage().getId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, getDiskIsBeingExportedMessage()));
+        DiskImage diskImage = getDiskImage();
+        if (diskImage == null) {
+            return null;
+        }
+        return Collections.singletonMap(diskImage.getId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, getDiskIsBeingExportedMessage()));
     }
 
     private String getDiskIsBeingExportedMessage() {
@@ -145,8 +150,11 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionSubjects = new ArrayList<>();
-        permissionSubjects.add(new PermissionSubject(getDiskImage().getId(),
-                VdcObjectType.Disk, ActionGroup.ATTACH_DISK));
+        DiskImage diskImage = getDiskImage();
+        if (diskImage != null) {
+            permissionSubjects.add(new PermissionSubject(diskImage.getId(),
+                    VdcObjectType.Disk, ActionGroup.ATTACH_DISK));
+        }
         permissionSubjects.add(new PermissionSubject(getParameters().getDestinationDomainId(),
                 VdcObjectType.Storage, ActionGroup.CREATE_DISK));
         return permissionSubjects;
@@ -202,6 +210,17 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
         return diskImage;
     }
 
+    private boolean validateDiskImage() {
+        Disk disk = getDiskDao().get(getParameters().getImageGroupID());
+        if (disk != null && !validate(new DiskValidator(disk).validateDiskIsNotLun()) ) {
+            return false;
+        }
+        if (getDiskImage() == null) {
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+        }
+        return true;
+    }
+
     public String getRepoImageName() {
         return getDiskImage() != null ? getDiskImage().getDiskAlias() : "";
     }
@@ -212,8 +231,8 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
 
     @Override
     protected boolean canDoAction() {
-        if (getDiskImage() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+        if (!validateDiskImage()) {
+            return false;
         }
 
         if (!validate(new StorageDomainValidator(getStorageDomain()).isDomainExistAndActive())) {

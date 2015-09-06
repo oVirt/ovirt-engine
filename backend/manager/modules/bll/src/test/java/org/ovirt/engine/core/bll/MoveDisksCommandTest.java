@@ -22,9 +22,12 @@ import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.VmDao;
 
@@ -38,6 +41,9 @@ public class MoveDisksCommandTest {
 
     @Mock
     private DiskImageDao diskImageDao;
+
+    @Mock
+    private DiskDao diskDao;
 
     @Mock
     private VmDao vmDao;
@@ -186,6 +192,16 @@ public class MoveDisksCommandTest {
                 .contains(EngineMessage.ACTION_TYPE_FAILED_MOVE_DISKS_MIXED_PLUGGED_STATUS.toString()));
     }
 
+    @Test
+    public void canDoActionFailureOnMovingLunDisk() {
+        MoveDiskParameters moveDiskParameters1 = new MoveDiskParameters(Guid.newGuid(), srcStorageId, dstStorageId);
+        command.getParameters().setParametersList(Collections.singletonList(moveDiskParameters1));
+
+        initLunDisk();
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_LUN_DISK);
+    }
+
     /** Initialize Entities */
 
     private void initVm(VMStatus vmStatus, Guid runOnVds, Guid diskImageId) {
@@ -217,6 +233,11 @@ public class MoveDisksCommandTest {
         when(diskImageDao.get(diskImageId)).thenReturn(diskImage);
     }
 
+    private void initLunDisk() {
+        Disk lunDisk = new LunDisk();
+        when(diskDao.get(any(Guid.class))).thenReturn(lunDisk);
+    }
+
     private void initDiskImageBasedOnTemplate(Guid diskImageId) {
         DiskImage diskImage = mockDiskImage(diskImageId);
         diskImage.setParentId(templateDiskImageId);
@@ -236,6 +257,7 @@ public class MoveDisksCommandTest {
     private void mockDaos() {
         mockVmDao();
         mockDiskImageDao();
+        mockDiskDao();
     }
 
     private void mockVmDao() {
@@ -244,5 +266,9 @@ public class MoveDisksCommandTest {
 
     private void mockDiskImageDao() {
         doReturn(diskImageDao).when(command).getDiskImageDao();
+    }
+
+    private void mockDiskDao() {
+        doReturn(diskDao).when(command).getDiskDao();
     }
 }
