@@ -359,6 +359,10 @@ class Plugin(plugin.PluginBase):
             oenginecons.PKIEnv.RENEW,
             None
         )
+        self.environment.setdefault(
+            oenginecons.ConfigEnv.PKI_RENEWAL_DOC_URL,
+            oenginecons.Defaults.DEFAULT_PKI_RENEWAL_DOC_URL
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
@@ -451,10 +455,9 @@ class Plugin(plugin.PluginBase):
                         'Renew certificates? '
                         '(@VALUES@) [@DEFAULT@]: '
                     ).format(
-                        url=(
-                            'http://www.ovirt.org/OVirt_3.5.3_Release_Notes'
-                            '#PKI'
-                        ),
+                        url=self.environment[
+                            oenginecons.ConfigEnv.PKI_RENEWAL_DOC_URL
+                        ],
                     ),
                     prompt=True,
                     default=None,

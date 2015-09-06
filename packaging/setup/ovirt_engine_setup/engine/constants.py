@@ -302,6 +302,8 @@ class Defaults(object):
     DEFAULT_DB_PASSWORD = ''
     DEFAULT_DB_SECURED = False
     DEFAULT_DB_SECURED_HOST_VALIDATION = False
+    DEFAULT_PKI_RENEWAL_DOC_URL = \
+        'http://www.ovirt.org/OVirt_3.5.4_Release_Notes#PKI'
 
 
 @util.export
@@ -624,6 +626,8 @@ class ConfigEnv(object):
     )
     def ENGINE_HEAP_MAX(self):
         return 'OVESETUP_CONFIG/engineHeapMax'
+
+    PKI_RENEWAL_DOC_URL = 'OVESETUP_CONFIG/pkiRenewalDocUrl'
 
 
 @util.export
