@@ -226,9 +226,9 @@ public enum VdcActionType {
     ChangeQuotaForDisk(604, ActionGroup.CONSUME_QUOTA, false, QuotaDependency.STORAGE),
 
     // bookmarks
-    AddBookmark(701, QuotaDependency.NONE),
-    RemoveBookmark(702, QuotaDependency.NONE),
-    UpdateBookmark(703, QuotaDependency.NONE),
+    AddBookmark(701, ActionGroup.BOOKMARK_MANAGEMENT, false, QuotaDependency.NONE),
+    RemoveBookmark(702, ActionGroup.BOOKMARK_MANAGEMENT, false, QuotaDependency.NONE),
+    UpdateBookmark(703, ActionGroup.BOOKMARK_MANAGEMENT, false, QuotaDependency.NONE),
     // vdsGroups
     AddVdsGroup(704, ActionGroup.CREATE_CLUSTER, false, QuotaDependency.NONE),
     UpdateVdsGroup(705, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
