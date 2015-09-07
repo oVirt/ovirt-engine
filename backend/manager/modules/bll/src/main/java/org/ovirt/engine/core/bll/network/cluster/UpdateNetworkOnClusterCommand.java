@@ -106,7 +106,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
         final UpdateNetworkClusterValidator networkClusterValidator = createNetworkClusterValidator();
         return validate(networkClusterValidator.managementNetworkUnset()) &&
                 validate(networkClusterValidator.glusterNetworkInUseAndUnset(getVdsGroup())) &&
-               validateAttachment(networkClusterValidator);
+                validateAttachment(networkClusterValidator);
     }
 
     private ValidationResult networkClusterAttachmentExists() {
@@ -138,6 +138,11 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
     }
 
     private UpdateNetworkClusterValidator createNetworkClusterValidator() {
-        return new UpdateNetworkClusterValidator(getNetworkCluster(), getOldNetworkCluster(), getClusterVersion());
+        return new UpdateNetworkClusterValidator(
+                interfaceDao,
+                networkDao,
+                getNetworkCluster(),
+                getOldNetworkCluster(),
+                getClusterVersion());
     }
 }

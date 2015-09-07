@@ -80,7 +80,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
     }
 
     private AttachNetworkClusterValidator createNetworkClusterValidator() {
-        return new AttachNetworkClusterValidator(getNetworkCluster(), getClusterVersion());
+        return new AttachNetworkClusterValidator(interfaceDao, networkDao, getNetworkCluster(), getClusterVersion());
     }
 
     private Version getClusterVersion() {

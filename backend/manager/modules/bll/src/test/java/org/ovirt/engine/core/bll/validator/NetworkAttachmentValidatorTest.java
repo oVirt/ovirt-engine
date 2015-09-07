@@ -100,7 +100,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNetworkAttachmentIsSetWhenAttachmentIsNull() throws Exception {
+    public void testNetworkAttachmentIsSetWhenAttachmentIsNull() {
         assertThat(createNetworkAttachmentValidator(null).networkAttachmentIsSet(),
             failsWith(EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS,
                 HostSetupNetworksValidator.VAR_NETWORK_ATTACHMENT_NOT_EXISTS_ENTITY,
@@ -108,7 +108,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNetworkAttachmentIsSetWhenAttachmentIsNotNull() throws Exception {
+    public void testNetworkAttachmentIsSetWhenAttachmentIsNotNull() {
         assertThat(createNetworkAttachmentValidator(new NetworkAttachment()).networkAttachmentIsSet(),
                 isValid());
     }
@@ -119,7 +119,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     this ValidationResult was propagated correctly.
      */
     @Test
-    public void testNetworkExistsWhenValidationFails() throws Exception {
+    public void testNetworkExistsWhenValidationFails() {
         NetworkAttachmentValidator networkAttachmentValidatorSpy = Mockito.spy(
             createNetworkAttachmentValidator(new NetworkAttachment()));
 
@@ -141,7 +141,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     this ValidationResult was propagated correctly.
      */
     @Test
-    public void testNetworkExists() throws Exception {
+    public void testNetworkExists() {
         NetworkAttachmentValidator networkAttachmentValidatorSpy = Mockito.spy(
             createNetworkAttachmentValidator(new NetworkAttachment()));
 
@@ -153,7 +153,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNotExternalNetworkWhenExternalNetworkIsProvided() throws Exception {
+    public void testNotExternalNetworkWhenExternalNetworkIsProvided() {
         Network externalNetwork = new Network();
         externalNetwork.setId(Guid.newGuid());
         externalNetwork.setProvidedBy(new ProviderNetwork(Guid.newGuid(), ""));
@@ -167,7 +167,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNotExternalNetwork() throws Exception {
+    public void testNotExternalNetwork() {
         Network notExternalNetwork = new Network();
         notExternalNetwork.setId(Guid.newGuid());
         notExternalNetwork.setProvidedBy(null);
@@ -181,7 +181,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNotRemovingManagementNetwork() throws Exception {
+    public void testNotRemovingManagementNetwork() {
         NetworkAttachmentValidator networkAttachmentValidatorSpy = Mockito.spy(
             createNetworkAttachmentValidator(new NetworkAttachment()));
 
@@ -197,12 +197,9 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNetworkAttachedToClusterWhenAttached() throws Exception {
+    public void testNetworkAttachedToClusterWhenAttached() {
         Network network = new Network();
         network.setId(Guid.newGuid());
-
-
-
 
         NetworkAttachment attachment = new NetworkAttachment();
         attachment.setNetworkId(network.getId());
@@ -215,12 +212,9 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNetworkAttachedToClusterWhenNotAttached() throws Exception {
+    public void testNetworkAttachedToClusterWhenNotAttached() {
         Network network = new Network();
         network.setId(Guid.newGuid());
-
-
-
 
         NetworkAttachment attachment = new NetworkAttachment();
         attachment.setNetworkId(network.getId());
@@ -234,7 +228,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testIpConfiguredForStaticBootProtocolWhenIpConfigurationIsNull() throws Exception {
+    public void testIpConfiguredForStaticBootProtocolWhenIpConfigurationIsNull() {
         NetworkAttachment attachment = new NetworkAttachment();
         attachment.setIpConfiguration(null);
 
@@ -243,12 +237,12 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testIpConfiguredForStaticBootProtocolWhenIpConfigurationIsNotNullAndBootProtocolIsDhcp() throws Exception {
+    public void testIpConfiguredForStaticBootProtocolWhenIpConfigurationIsNotNullAndBootProtocolIsDhcp() {
         doTestIpConfiguredForStaticBootProtocolWhenIpConfigurationIsNotNullForBootProtocol(NetworkBootProtocol.DHCP);
     }
 
     @Test
-    public void testIpConfiguredForStaticBootProtocolWhenIpConfigurationIsNotNullAndBootProtocolIsNone() throws Exception {
+    public void testIpConfiguredForStaticBootProtocolWhenIpConfigurationIsNotNullAndBootProtocolIsNone() {
         doTestIpConfiguredForStaticBootProtocolWhenIpConfigurationIsNotNullForBootProtocol(NetworkBootProtocol.NONE);
     }
 
@@ -263,12 +257,12 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testIpConfiguredForStaticBootProtocolWhenIpConfigurationIsNotNullAndBootProtocolIsStaticAndAddressIsNull() throws Exception {
+    public void testIpConfiguredForStaticBootProtocolWhenIpConfigurationIsNotNullAndBootProtocolIsStaticAndAddressIsNull() {
         doTestIpConfiguredForStaticBootProtocol(null, "255.255.255.0");
     }
 
     @Test
-    public void testIpConfiguredForStaticBootProtocolWhenIpConfigurationIsNotNullAndBootProtocolIsStaticAndAddressIsEmpty() throws Exception {
+    public void testIpConfiguredForStaticBootProtocolWhenIpConfigurationIsNotNullAndBootProtocolIsStaticAndAddressIsEmpty() {
         doTestIpConfiguredForStaticBootProtocol("", "255.255.255.0");
     }
 
@@ -279,17 +273,17 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testIpConfiguredForStaticBootProtocolWhenIpConfigurationIsNotNullAndBootProtocolIsStaticAndNetmaskIsNull() throws Exception {
+    public void testIpConfiguredForStaticBootProtocolWhenIpConfigurationIsNotNullAndBootProtocolIsStaticAndNetmaskIsNull() {
         doTestIpConfiguredForStaticBootProtocol("192.168.1.1", null);
     }
 
     @Test
-    public void testIpConfiguredForStaticBootProtocolWhenIpConfigurationIsNotNullAndBootProtocolIsStaticAndNetmaskIsEmpty() throws Exception {
+    public void testIpConfiguredForStaticBootProtocolWhenIpConfigurationIsNotNullAndBootProtocolIsStaticAndNetmaskIsEmpty() {
         doTestIpConfiguredForStaticBootProtocol("192.168.1.1", "");
     }
 
     @Test
-    public void testIpConfiguredForStaticBootProtocolWhenIpConfigurationIsNotNullAndBootProtocolIsStaticAndAddressAndNetmaskIsNotNull() throws Exception {
+    public void testIpConfiguredForStaticBootProtocolWhenIpConfigurationIsNotNullAndBootProtocolIsStaticAndAddressAndNetmaskIsNotNull() {
         doTestIpConfiguredForStaticBootProtocol("192.168.1.1", "255.255.255.0", isValid());
     }
 
@@ -320,62 +314,75 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testBootProtocolSetForDisplayNetworkWhenNullValuedIpConfigurationAndWhenNetworkClusterDisplayIsFalse() {
-        doTestBootProtocolSetForDisplayNetworkWhenNullValuedIpConfigurationAndWhenNetworkClusterDisplay(false,
+    public void testBootProtocolSetForRoleNetworkWhenNullValuedIpConfigurationAndWhenNetworkHasNoRole() {
+        doTestBootProtocolSetForRoleNetworkWhenNullValuedIpConfiguration(false,
                 createNetwork(), isValid());
     }
 
     @Test
-    public void testBootProtocolSetForDisplayNetworkWhenIpConfigurationIsNull() {
+    public void testBootProtocolSetForRoleNetworkWhenIpConfigurationNullAndNotRoleNetwork() {
         Network network = createNetwork();
-        doTestBootProtocolSetForDisplayNetworkWhenNullValuedIpConfigurationAndWhenNetworkClusterDisplay(true,
-            network, failsWith(EngineMessage.ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL,
-                        ReplacementUtils.createSetVariableString(NetworkAttachmentValidator.VAR_ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY,
+
+        doTestBootProtocolSetForRoleNetworkWhenNullValuedIpConfiguration(
+                true,
+                network,
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL,
+                        ReplacementUtils.createSetVariableString(
+                                NetworkAttachmentValidator.VAR_ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY,
                                 network.getName())));
     }
 
-    private void doTestBootProtocolSetForDisplayNetworkWhenNullValuedIpConfigurationAndWhenNetworkClusterDisplay(
-        boolean displayNetwork, Network network, Matcher<ValidationResult> matcher) {
+    private void doTestBootProtocolSetForRoleNetworkWhenNullValuedIpConfiguration(
+            boolean displayNetwork, Network network, Matcher<ValidationResult> matcher) {
 
         NetworkAttachment attachment = new NetworkAttachment();
         attachment.setIpConfiguration(null);
         attachment.setNetworkId(network.getId());
 
-        doTestBootProtocolSetForDisplayNetworkWhenNullValuedIpConfigurationAndWhenNetworkClusterDisplay(
-            displayNetwork,
-            matcher,
-            network,
-            attachment);
+        doTestBootProtocolSetForRoleNetworkWhenNullValuedIpConfiguration(
+                displayNetwork,
+                false,
+                false,
+                matcher,
+                network,
+                attachment);
     }
 
-    private void doTestBootProtocolSetForDisplayNetworkWhenNullValuedIpConfigurationAndWhenNetworkClusterDisplay(
-        boolean displayNetwork,
-        Matcher<ValidationResult> matcher,
-        Network network,
-        NetworkAttachment attachment) {
-
+    private void doTestBootProtocolSetForRoleNetworkWhenNullValuedIpConfiguration(
+            boolean displayNetwork,
+            boolean migrationNetwork,
+            boolean glusterNetwork,
+            Matcher<ValidationResult> matcher,
+            Network network,
+            NetworkAttachment attachment) {
 
         NetworkCluster networkCluster = new NetworkCluster();
         networkCluster.setDisplay(displayNetwork);
+        networkCluster.setMigration(migrationNetwork);
+        networkCluster.setGluster(glusterNetwork);
 
         NetworkClusterId networkClusterId = new NetworkClusterId(host.getVdsGroupId(), attachment.getNetworkId());
         when(networkClusterDaoMock.get(eq(networkClusterId))).thenReturn(networkCluster);
         when(networkDaoMock.get(eq(network.getId()))).thenReturn(network);
 
-        assertThat(createNetworkAttachmentValidator(attachment).bootProtocolSetForDisplayNetwork(), matcher);
+        assertThat(createNetworkAttachmentValidator(attachment).bootProtocolSetForRoleNetwork(), matcher);
     }
 
     @Test
-    public void testBootProtocolSetForDisplayNetworkWhenBootProtocolIsNone() throws Exception {
+    public void testBootProtocolSetForRoleNetworkWhenIpConfigurationIsNull() {
         Network network = createNetwork();
 
         NetworkAttachment attachment =
                 createNetworkAttachmentWithIpConfiguration(NetworkBootProtocol.NONE, null, null);
         attachment.setNetworkId(network.getId());
 
-        doTestBootProtocolSetForDisplayNetworkWhenNullValuedIpConfigurationAndWhenNetworkClusterDisplay(true,
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL,
-                        ReplacementUtils.createSetVariableString(NetworkAttachmentValidator.VAR_ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY,
+        doTestBootProtocolSetForRoleNetworkWhenNullValuedIpConfiguration(
+                true,
+                true,
+                false,
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL,
+                        ReplacementUtils.createSetVariableString(
+                                NetworkAttachmentValidator.VAR_ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY,
                                 network.getName())),
                 network,
                 attachment);
@@ -389,39 +396,43 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testBootProtocolSetForDisplayNetworkWhenNetworkIsNonDisplay() throws Exception {
-        Network network = new Network();
-        network.setId(Guid.newGuid());
+    public void testBootProtocolSetForRoleNetworkWhenBootProtocolIsNone() {
+        Network network = createNetwork();
 
         NetworkAttachment attachment =
             createNetworkAttachmentWithIpConfiguration(NetworkBootProtocol.NONE, null, null);
         attachment.setNetworkId(network.getId());
 
 
-        doTestBootProtocolSetForDisplayNetworkWhenNullValuedIpConfigurationAndWhenNetworkClusterDisplay(false,
+        doTestBootProtocolSetForRoleNetworkWhenNullValuedIpConfiguration(false,
+                true,
+                true,
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL,
+                        ReplacementUtils.createSetVariableString(
+                                NetworkAttachmentValidator.VAR_ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY,
+                                network.getName())),
+                network,
+                attachment);
+    }
+
+    @Test
+    public void testBootProtocolSetForRoleNetworkWhenBootProtocolIsDhcp() {
+        Network network = createNetwork();
+
+        NetworkAttachment attachment =
+            createNetworkAttachmentWithIpConfiguration(NetworkBootProtocol.DHCP, null, null);
+        attachment.setNetworkId(network.getId());
+
+        doTestBootProtocolSetForRoleNetworkWhenNullValuedIpConfiguration(true,
+                false,
+                false,
                 isValid(),
                 network,
                 attachment);
     }
 
     @Test
-    public void testBootProtocolSetForDisplayNetworkWhenBootProtocolIsDhcp() throws Exception {
-        Network network = new Network();
-        network.setId(Guid.newGuid());
-
-        NetworkAttachment attachment =
-            createNetworkAttachmentWithIpConfiguration(NetworkBootProtocol.DHCP, null, null);
-        attachment.setNetworkId(network.getId());
-
-
-        doTestBootProtocolSetForDisplayNetworkWhenNullValuedIpConfigurationAndWhenNetworkClusterDisplay(true,
-            isValid(),
-            network,
-            attachment);
-    }
-
-    @Test
-    public void testNicExistsWhenNicNameIsNull() throws Exception {
+    public void testNicExistsWhenNicNameIsNull() {
         NetworkAttachment attachment = new NetworkAttachment();
         attachment.setNicName(null);
         assertThat(createNetworkAttachmentValidator(attachment).nicExists(),
@@ -429,7 +440,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNicExistsWhenNicNameIsNotNull() throws Exception {
+    public void testNicExistsWhenNicNameIsNotNull() {
         NetworkAttachment attachment = new NetworkAttachment();
         attachment.setNicId(null);
         attachment.setNicName("whatever");
@@ -438,7 +449,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNetworkIpAddressWasSameAsHostnameAndChangedWhenIpConfigurationIsNull() throws Exception {
+    public void testNetworkIpAddressWasSameAsHostnameAndChangedWhenIpConfigurationIsNull() {
 
         NetworkAttachment attachment = new NetworkAttachment();
         attachment.setIpConfiguration(null);
@@ -448,12 +459,12 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNetworkIpAddressWasSameAsHostnameAndChangedWhenIpConfigurationIsDhcp() throws Exception {
+    public void testNetworkIpAddressWasSameAsHostnameAndChangedWhenIpConfigurationIsDhcp() {
         doTestNetworkIpAddressWasSameAsHostnameAndChangedForBootProtocol(NetworkBootProtocol.DHCP);
     }
 
     @Test
-    public void testNetworkIpAddressWasSameAsHostnameAndChangedWhenIpConfigurationIsNone() throws Exception {
+    public void testNetworkIpAddressWasSameAsHostnameAndChangedWhenIpConfigurationIsNone() {
         doTestNetworkIpAddressWasSameAsHostnameAndChangedForBootProtocol(NetworkBootProtocol.NONE);
     }
 
@@ -466,7 +477,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNetworkIpAddressWasSameAsHostnameAndChangedWhenIfaceDoesNotExist() throws Exception {
+    public void testNetworkIpAddressWasSameAsHostnameAndChangedWhenIfaceDoesNotExist() {
 
         NetworkAttachment attachment =
                 createNetworkAttachmentWithIpConfiguration(NetworkBootProtocol.STATIC_IP, null, null);
@@ -479,7 +490,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNetworkIpAddressWasSameAsHostnameAndChanged() throws Exception {
+    public void testNetworkIpAddressWasSameAsHostnameAndChanged() {
         Network network = new Network();
         network.setName("networkName");
         network.setId(Guid.newGuid());
@@ -509,12 +520,12 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNetworkNotChangedWhenOldAttachmentIsNull() throws Exception {
+    public void testNetworkNotChangedWhenOldAttachmentIsNull() {
         assertThat(createNetworkAttachmentValidator(null).networkNotChanged(null), isValid());
     }
 
     @Test
-    public void testNetworkNotChangedWhenDifferentNetworkIds() throws Exception {
+    public void testNetworkNotChangedWhenDifferentNetworkIds() {
         NetworkAttachment oldAttachment = new NetworkAttachment();
         oldAttachment.setId(Guid.newGuid());
         oldAttachment.setNetworkId(Guid.newGuid());
@@ -529,7 +540,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNetworkNotChanged() throws Exception {
+    public void testNetworkNotChanged() {
         Guid networkId = Guid.newGuid();
 
         NetworkAttachment oldAttachment = new NetworkAttachment();
@@ -542,34 +553,34 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testValidateGateway() throws Exception {
+    public void testValidateGateway() {
         host.setVdsGroupCompatibilityVersion(Version.v3_5);
         doTestValidateGateway("someGateway", false, failsWith(EngineMessage.NETWORK_ATTACH_ILLEGAL_GATEWAY));
     }
 
     @Test
-    public void testValidateGatewayWhenIpConfigurationIsNotSet() throws Exception {
+    public void testValidateGatewayWhenIpConfigurationIsNotSet() {
         NetworkAttachment attachment = new NetworkAttachment();
         assertThat(createNetworkAttachmentValidator(attachment).validateGateway(), isValid());
     }
 
     @Test
-    public void testValidateGatewayWhenGatewayIsNotSpecified() throws Exception {
+    public void testValidateGatewayWhenGatewayIsNotSpecified() {
         doTestValidateGateway("", false, isValid());
     }
 
     @Test
-    public void testValidateGatewayWhenGatewayIsNull() throws Exception {
+    public void testValidateGatewayWhenGatewayIsNull() {
         doTestValidateGateway(null, false, isValid());
     }
 
     @Test
-    public void testValidateGatewayWhenRelatedNetworkIsManagementNetwork() throws Exception {
+    public void testValidateGatewayWhenRelatedNetworkIsManagementNetwork() {
         doTestValidateGateway("someGateway", true, isValid());
     }
 
     @Test
-    public void testValidateGatewayWhenMultipleGatewayIsSupported() throws Exception {
+    public void testValidateGatewayWhenMultipleGatewayIsSupported() {
         host.setVdsGroupCompatibilityVersion(Version.v3_6);
         doTestValidateGateway("someGateway", false, isValid());
 
@@ -592,7 +603,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNetworkNotAttachedToHost() throws Exception {
+    public void testNetworkNotAttachedToHost() {
         Network network = createNetwork();
 
         when(networkDaoMock.get(network.getId())).thenReturn(network);
@@ -607,7 +618,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNetworkNotAttachedToHostWhenAttached() throws Exception {
+    public void testNetworkNotAttachedToHostWhenAttached() {
         Network network = createNetwork();
 
         when(networkDaoMock.get(network.getId())).thenReturn(network);
@@ -624,7 +635,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNetworkNotUsedByVmsWhenNotUsed() throws Exception {
+    public void testNetworkNotUsedByVmsWhenNotUsed() {
         Network network = new Network();
         network.setId(Guid.newGuid());
         network.setName("name");
@@ -645,7 +656,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNetworkNotUsedByVmsWhenUsedChangeNotSupported() throws Exception {
+    public void testNetworkNotUsedByVmsWhenUsedChangeNotSupported() {
         Network network = new Network();
         network.setId(Guid.newGuid());
         network.setName("name");
@@ -667,7 +678,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNetworkNotUsedByVmsWhenUsedChangeSupported() throws Exception {
+    public void testNetworkNotUsedByVmsWhenUsedChangeSupported() {
         Network network = new Network();
         network.setId(Guid.newGuid());
         network.setName("name");

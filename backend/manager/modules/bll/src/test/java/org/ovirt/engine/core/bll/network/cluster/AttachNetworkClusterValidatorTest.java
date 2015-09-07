@@ -26,7 +26,7 @@ public class AttachNetworkClusterValidatorTest extends NetworkClusterValidatorTe
 
     @Override
     protected AttachNetworkClusterValidator createValidator() {
-        return new AttachNetworkClusterValidator(networkCluster, version);
+        return new AttachNetworkClusterValidator(interfaceDao, networkDao, networkCluster, version);
     }
 
     @Test

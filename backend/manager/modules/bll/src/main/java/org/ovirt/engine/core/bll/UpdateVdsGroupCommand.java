@@ -52,6 +52,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
 public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperationParameters> extends
@@ -69,6 +70,12 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
     @Inject
     @MomPolicyUpdate
     private Event<VDSGroup> momPolicyUpdatedEvent;
+
+    @Inject
+    private InterfaceDao interfaceDao;
+
+    @Inject
+    private NetworkDao networkDao;
 
     private List<VDS> allForVdsGroup;
     private VDSGroup oldGroup;
@@ -616,7 +623,10 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
     }
 
     UpdateClusterNetworkClusterValidator createManagementNetworkClusterValidator() {
-        return new UpdateClusterNetworkClusterValidator(managementNetworkCluster,
+        return new UpdateClusterNetworkClusterValidator(
+                interfaceDao,
+                networkDao,
+                managementNetworkCluster,
                 getVdsGroup().getCompatibilityVersion());
     }
 

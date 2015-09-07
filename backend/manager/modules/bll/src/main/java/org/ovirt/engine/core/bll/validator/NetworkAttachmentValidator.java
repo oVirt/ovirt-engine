@@ -31,18 +31,19 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class NetworkAttachmentValidator {
 
-    public static final String VAR_ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY = "ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY";
+    public static final String VAR_ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY = "ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY";
     public static final String VAR_ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED_LIST = "ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED_LIST";
     public static final String VAR_NETWORK_ATTACHMENT_ID = "networkAttachmentID";
+
     private final VdsDao vdsDao;
     private final NetworkDao networkDao;
     private final NetworkClusterDao networkClusterDao;
     private final VmInterfaceManager vmInterfaceManager;
     private final VmDao vmDao;
 
-    private NetworkAttachment attachment;
+    private final NetworkAttachment attachment;
+    private final VDS host;
     private Network network;
-    private VDS host;
 
     private final ManagementNetworkUtil managementNetworkUtil;
     private NetworkCluster networkCluster;
@@ -54,7 +55,8 @@ public class NetworkAttachmentValidator {
             VmInterfaceManager vmInterfaceManager,
             NetworkClusterDao networkClusterDao,
             NetworkDao networkDao,
-            VdsDao vdsDao, VmDao vmDao) {
+            VdsDao vdsDao,
+            VmDao vmDao) {
 
         this.attachment = attachment;
         this.host = host;
@@ -91,8 +93,8 @@ public class NetworkAttachmentValidator {
 
         //TODO MM: this error message seems very crippled & missing some translations.
         return new PluralMessages().getNetworkInUse(vmNames,
-            EngineMessage.VAR__ENTITIES__VM,
-            EngineMessage.VAR__ENTITIES__VMS);
+                EngineMessage.VAR__ENTITIES__VM,
+                EngineMessage.VAR__ENTITIES__VMS);
     }
 
     public ValidationResult notExternalNetwork() {
@@ -133,18 +135,24 @@ public class NetworkAttachmentValidator {
             || StringUtils.isEmpty(ipConfiguration.getPrimaryAddress().getNetmask());
     }
 
-    public ValidationResult bootProtocolSetForDisplayNetwork() {
+    public ValidationResult bootProtocolSetForRoleNetwork() {
         IpConfiguration ipConfiguration = attachment.getIpConfiguration();
-        boolean failWhen = (getNetworkCluster().isDisplay() &&
+        boolean failWhen = (isRoleNetwork() &&
                 (ipConfiguration == null
                         || !ipConfiguration.hasPrimaryAddressSet()
                         || ipConfiguration.getPrimaryAddress().getBootProtocol() == NetworkBootProtocol.NONE));
 
-        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL,
-            ReplacementUtils.createSetVariableString(VAR_ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY,
-                getNetwork().getName()))
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL,
+                ReplacementUtils.createSetVariableString(
+                        VAR_ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY,
+                        getNetwork().getName()))
+                .when(failWhen);
+    }
 
-            .when(failWhen);
+    protected boolean isRoleNetwork() {
+        return getNetworkCluster().isDisplay() ||
+                getNetworkCluster().isMigration() ||
+                getNetworkCluster().isGluster();
     }
 
     public ValidationResult nicExists() {

@@ -1,27 +1,97 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
+import java.util.List;
+import java.util.Objects;
+
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.linq.Predicate;
 
 /**
  * Validator class for {@link NetworkCluster} instances.
  */
 public abstract class NetworkClusterValidatorBase {
+
     protected static final String NETWORK_NAME_REPLACEMENT = "$NetworkName %s";
+    private static final String NIC_NAME_REPLACEMENT = "$nicName %s";
+    private static final String HOST_NAME_REPLACEMENT = "$hostName %s";
+
     protected final NetworkCluster networkCluster;
     private final Version version;
 
-    public NetworkClusterValidatorBase(NetworkCluster networkCluster, Version version) {
+    private final InterfaceDao interfaceDao;
+    private final NetworkDao networkDao;
+
+    public NetworkClusterValidatorBase(InterfaceDao interfaceDao,
+            NetworkDao networkDao,
+            NetworkCluster networkCluster,
+            Version version) {
+        Objects.requireNonNull(interfaceDao, "interfaceDao cannot be null");
+        Objects.requireNonNull(networkDao, "networkDao cannot be null");
+
+        this.interfaceDao = interfaceDao;
+        this.networkDao = networkDao;
         this.networkCluster = networkCluster;
         this.version = version;
+    }
+
+    public ValidationResult roleNetworkHasIp() {
+        if (NetworkUtils.isRoleNetwork(networkCluster)) {
+            final Network network = networkDao.get(networkCluster.getNetworkId());
+            final String networkName = network.getName();
+            final ValidationResult roleNetworkHasIpOnAttachedNics = roleNetworkHasIpOnAttachedNics(networkName);
+            if (!roleNetworkHasIpOnAttachedNics.isValid()) {
+                return roleNetworkHasIpOnAttachedNics;
+            }
+        }
+        return ValidationResult.VALID;
+    }
+
+    ValidationResult roleNetworkHasIpOnAttachedNics(String networkName) {
+        final VdsNetworkInterface missingIpNic = findMissingIpNic(networkName);
+        if (missingIpNic != null) {
+            return createMissingIpValidationResult(missingIpNic, networkName);
+        }
+        return ValidationResult.VALID;
+    }
+
+    private ValidationResult createMissingIpValidationResult(
+            VdsNetworkInterface missingIpNic,
+            String networkName) {
+
+        return new ValidationResult(EngineMessage.NETWORK_ADDR_MANDATORY_FOR_ROLE_NETWORK,
+                String.format(NETWORK_NAME_REPLACEMENT, networkName),
+                String.format(NIC_NAME_REPLACEMENT, missingIpNic.getName()),
+                String.format(HOST_NAME_REPLACEMENT, missingIpNic.getVdsName()));
+    }
+
+    private VdsNetworkInterface findMissingIpNic(final String networkName) {
+        final List<VdsNetworkInterface> interfacesByClusterId =
+                interfaceDao.getAllInterfacesByClusterId(networkCluster.getClusterId());
+        final VdsNetworkInterface missingIpNic =
+                LinqUtils.firstOrNull(interfacesByClusterId, new Predicate<VdsNetworkInterface>() {
+                    @Override
+                    public boolean eval(VdsNetworkInterface nic) {
+                        return networkName.equals(nic.getNetworkName()) &&
+                                StringUtils.isEmpty(nic.getAddress());
+                    }
+                });
+
+        return missingIpNic;
     }
 
     /**
@@ -41,14 +111,14 @@ public abstract class NetworkClusterValidatorBase {
     public ValidationResult managementNetworkNotExternal(Network network) {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_EXTERNAL,
                 String.format(NETWORK_NAME_REPLACEMENT, network.getName())).when(
-                        networkCluster.isManagement() &&
+                networkCluster.isManagement() &&
                         network.isExternal());
     }
 
     public ValidationResult managementNetworkRequired(Network network) {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_REQUIRED,
                 String.format(NETWORK_NAME_REPLACEMENT, network.getName())).when(
-                        networkCluster.isManagement() &&
+                networkCluster.isManagement() &&
                         !networkCluster.isRequired());
     }
 
@@ -134,7 +204,6 @@ public abstract class NetworkClusterValidatorBase {
     /**
      * Make sure the gluster network is supported for the cluster version
      *
-     * @param cluster
      * @return error if gluster network role is not supported for the compatibility version
      */
     public ValidationResult glusterNetworkSupported() {
