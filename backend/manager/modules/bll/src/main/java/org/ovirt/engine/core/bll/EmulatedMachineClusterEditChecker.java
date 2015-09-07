@@ -46,10 +46,18 @@ public class EmulatedMachineClusterEditChecker implements ClusterEditChecker<VDS
     }
 
     private static Set<String> getClusterEmulatedMachines(VDSGroup cluster) {
-        return new HashSet<>(Arrays.asList(cluster.getEmulatedMachine().split(",")));
+        if (cluster.getEmulatedMachine() == null) {
+            return new HashSet<>();
+        } else {
+            return new HashSet<>(Arrays.asList(cluster.getEmulatedMachine().split(",")));
+        }
     }
 
     private static Set<String> getHostEmulatedMachines(VDS vds) {
-        return new HashSet<>(Arrays.asList(vds.getSupportedEmulatedMachines().split(",")));
+        if (vds.getSupportedEmulatedMachines() == null) {
+            return new HashSet<>();
+        } else {
+            return new HashSet<>(Arrays.asList(vds.getSupportedEmulatedMachines().split(",")));
+        }
     }
 }
