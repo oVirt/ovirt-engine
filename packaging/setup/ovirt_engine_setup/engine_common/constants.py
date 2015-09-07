@@ -189,6 +189,13 @@ class Stages(object):
 
 @util.export
 @util.codegen
+class DWHConst(object):
+    # Sync with dwh
+    ENGINE_DWHD_SERVICE_NAME = 'ovirt-engine-dwhd'
+
+
+@util.export
+@util.codegen
 @osetupattrsclass
 class DBEnvKeysConst(object):
     HOST = 'host'
