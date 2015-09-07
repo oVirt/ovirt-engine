@@ -512,8 +512,8 @@ public class VmAnalyzer {
                             auditLog(logable, AuditLogType.VM_PAUSED);
 
                             // check exit message to determine why the VM is paused
-                            AuditLogType logType = vmPauseStatusToAuditLogType(vdsmVmDynamic.getPauseStatus());
-                            if (logType != AuditLogType.UNASSIGNED) {
+                            if (vdsmVmDynamic.getPauseStatus().isError()) {
+                                AuditLogType logType = vmPauseStatusToAuditLogType(vdsmVmDynamic.getPauseStatus());
                                 logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
                                 auditLog(logable, logType);
                             }
