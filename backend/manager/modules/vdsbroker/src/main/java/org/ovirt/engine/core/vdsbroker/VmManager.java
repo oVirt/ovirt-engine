@@ -141,4 +141,10 @@ public class VmManager {
         }
         return false;
     }
+
+    void clearLastStatusEventStampIfFromVds(Guid vdsId) {
+        if (vdsId.equals(lastStatusEventReporterId)) {
+            lastStatusEventReporterId = null;
+        }
+    }
 }

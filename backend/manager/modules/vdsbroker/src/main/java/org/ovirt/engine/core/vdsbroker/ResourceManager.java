@@ -507,6 +507,12 @@ public class ResourceManager implements BackendService {
         return vmManagers.get(vmId);
     }
 
+    public void clearLastStatusEventStampsFromVds(Guid vdsId) {
+        for (VmManager vmManager : vmManagers.values()) {
+            vmManager.clearLastStatusEventStampIfFromVds(vdsId);
+        }
+    }
+
     public void onVmDelete(@Observes @VmDeleted Guid vmId) {
         vmManagers.remove(vmId);
     }
