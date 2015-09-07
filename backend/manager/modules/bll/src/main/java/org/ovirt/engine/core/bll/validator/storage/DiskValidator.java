@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -173,9 +174,11 @@ public class DiskValidator {
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_INVALID);
     }
 
-    public ValidationResult validateDiskIsNotLun() {
-        if (disk.getDiskStorageType() == DiskStorageType.LUN) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_LUN_DISK);
+    public ValidationResult validateUnsupportedDiskStorageType(DiskStorageType... diskStorageTypes) {
+        List<DiskStorageType> diskStorageTypeList = Arrays.asList(diskStorageTypes);
+        if (diskStorageTypeList.contains(disk.getDiskStorageType())) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE,
+                    String.format("$diskStorageType %s", disk.getDiskStorageType()));
         }
         return ValidationResult.VALID;
     }

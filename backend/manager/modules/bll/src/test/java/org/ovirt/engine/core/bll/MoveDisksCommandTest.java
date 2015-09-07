@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
@@ -193,10 +194,18 @@ public class MoveDisksCommandTest extends BaseCommandTest {
     public void canDoActionFailureOnMovingLunDisk() {
         MoveDiskParameters moveDiskParameters1 = new MoveDiskParameters(Guid.newGuid(), srcStorageId, dstStorageId);
         command.getParameters().setParametersList(Collections.singletonList(moveDiskParameters1));
-
         initLunDisk();
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
+    }
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_LUN_DISK);
+    @Test
+    public void canDoActionFailureOnMovingCinderDisk() {
+        MoveDiskParameters moveDiskParameters = new MoveDiskParameters(Guid.newGuid(), srcStorageId, dstStorageId);
+        command.getParameters().setParametersList(Collections.singletonList(moveDiskParameters));
+        initCinderDisk();
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
     }
 
     /** Initialize Entities */
@@ -233,6 +242,11 @@ public class MoveDisksCommandTest extends BaseCommandTest {
     private void initLunDisk() {
         Disk lunDisk = new LunDisk();
         when(diskDao.get(any(Guid.class))).thenReturn(lunDisk);
+    }
+
+    private void initCinderDisk() {
+        Disk cinderDisk = new CinderDisk();
+        when(diskDao.get(any(Guid.class))).thenReturn(cinderDisk);
     }
 
     private void initDiskImageBasedOnTemplate(Guid diskImageId) {

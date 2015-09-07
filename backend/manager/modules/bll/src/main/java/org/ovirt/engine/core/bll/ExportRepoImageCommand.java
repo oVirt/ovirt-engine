@@ -212,7 +212,8 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
 
     private boolean validateDiskImage() {
         Disk disk = getDiskDao().get(getParameters().getImageGroupID());
-        if (disk != null && !validate(new DiskValidator(disk).validateDiskIsNotLun()) ) {
+        if (disk != null && !validate(new DiskValidator(disk).validateUnsupportedDiskStorageType(
+                DiskStorageType.LUN, DiskStorageType.CINDER)) ) {
             return false;
         }
         if (getDiskImage() == null) {
