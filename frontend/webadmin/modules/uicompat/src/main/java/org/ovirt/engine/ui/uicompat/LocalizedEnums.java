@@ -1167,4 +1167,6 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String SerialNumberPolicy___VM_ID();
 
     String SerialNumberPolicy___CUSTOM();
+
+    String ArchitectureType___undefined();
 }
