@@ -716,7 +716,6 @@
             </xs:annotation>
           </xs:element>
           <!-- TODO: (deprecated) remove these elements post 4.0 -->
-          <xs:element name="permits" type="Permits" minOccurs="0"/>
           <xs:element name="scheduling_policies" type="SchedulingPolicies" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>

@@ -217,7 +217,6 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             caps.getVersions().add(generateVersionCaps(v));
         }
 
-        caps.setPermits(getPermits());
         caps.setSchedulingPolicies(getSchedulingPolicies());
         return caps;
     }
@@ -701,14 +700,6 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
     private Permit map(PermitType entity) {
         return mappingLocator.getMapper(PermitType.class, Permit.class).map(entity, null);
-    }
-
-    private Permits getPermits() {
-        Permits permits = new Permits();
-        for (PermitType permit : PermitType.values()) {
-            permits.getPermits().add(map(permit));
-        }
-        return permits;
     }
 
     private SchedulingPolicies getSchedulingPolicies() {

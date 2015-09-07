@@ -84,3 +84,11 @@ hosts, and to do so a new `hosts` element was added:
 To preserve backwards compatibility the single `host` element was
 preserved. In 4.0 this has been removed, so applications will need
 to use the `hosts` element even if when pinning to a single host.
+
+### Removed the `capabilities.permits` element
+
+The list of permits is version specific, and it has been added to
+the `version` element long ago, but it has been kept into the
+`capabilities` element as well, just for backwards compatibility.
+
+In 4.0 it has been removed completely from `capabilities`.

@@ -28,7 +28,6 @@ import org.ovirt.engine.api.model.VersionCaps;
 import org.ovirt.engine.api.model.VmAffinities;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.VersionUtils;
-import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -307,13 +306,6 @@ public class BackendCapabilityResourceTest extends AbstractBackendResourceTest {
         assertNotNull(env);
         assertEquals(name, env.getName());
         assertEquals(regexp, env.getRegexp());
-    }
-
-    private void verifyPermits(Capabilities capabilities) {
-        assertTrue(capabilities.isSetPermits());
-        assertTrue(capabilities.getPermits().isSetPermits());
-        assertFalse(capabilities.getPermits().getPermits().isEmpty());
-        assertEquals(ActionGroup.values().length, capabilities.getPermits().getPermits().size());
     }
 
     private void verifySchedulingPolicies(Capabilities capabilities) {
