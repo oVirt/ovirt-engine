@@ -1979,7 +1979,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         getExportCommand().setIsExecutionAllowed(vmsSelected
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.ExportVm));
         getCreateSnapshotCommand().setIsExecutionAllowed(singleVmSelected
-                && !getSelectedItem().isStateless()
+                && !getSelectedItem().isStateless() && !getSelectedItem().isPreviewSnapshot()
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.CreateAllSnapshotsFromVm));
         getRetrieveIsoImagesCommand().setIsExecutionAllowed(singleVmSelected
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.ChangeDisk));
