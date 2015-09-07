@@ -54,3 +54,33 @@ schema and ignored. It has been completely removed now.
 
 The disk `size` property has been replaced by `provisioned_size` long
 ago. It has been completely removed now.
+
+### Removed support for pinning a VM to a single host
+
+Before version 3.6 the API had the possibility to pin a VM to a single
+host, using the `placement_policy` element of the VM entity:
+
+    PUT /vms/{vm:id}
+    <vm>
+      <placement_policy>
+        <host id="{host:id}/">
+      </placement_policy>
+    <vm>
+
+In version 3.6 this capability was enhanced to support multiple
+hosts, and to do so a new `hosts` element was added:
+
+    PUT /vms/{vm:id}
+    <vm>
+      <placement_policy>
+        <hosts>
+          <host id="{host:id}"/>
+          <host id="{host:id}"/>
+          ...
+        </hosts>
+      </placement_policy>
+    <vm>
+
+To preserve backwards compatibility the single `host` element was
+preserved. In 4.0 this has been removed, so applications will need
+to use the `hosts` element even if when pinning to a single host.

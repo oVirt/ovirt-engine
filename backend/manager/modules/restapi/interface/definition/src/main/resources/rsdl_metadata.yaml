@@ -81,7 +81,8 @@ actions:
           vm.console.enabled: xs:boolean
           vm.cpu.topology.sockets: xs:int
           vm.placement_policy.affinity: xs:string
-          vm.placement_policy.host.id|name: xs:string
+          vm.placement_policy.hosts.host--COLLECTION:
+            host.id|name: xs:string
           vm.origin: xs:string
           vm.os.kernel: xs:string
           vm.tunnel_migration: xs:boolean
@@ -169,7 +170,8 @@ actions:
           vm.cpu.topology.sockets: xs:int
           vm.cpu_shares: xs:int
           vm.placement_policy.affinity: xs:string
-          vm.placement_policy.host.id|name: xs:string
+          vm.placement_policy.hosts.host--COLLECTION:
+            host.id|name: xs:string
           vm.origin: xs:string
           vm.os.kernel: xs:string
           vm.disks.clone: xs:boolean
@@ -241,7 +243,8 @@ actions:
           vm.console.enabled: xs:boolean
           vm.cpu.topology.sockets: xs:int
           vm.placement_policy.affinity: xs:string
-          vm.placement_policy.host.id|name: xs:string
+          vm.placement_policy.hosts.host--COLLECTION:
+            host.id|name: xs:string
           vm.origin: xs:string
           vm.os.kernel: xs:string
           vm.tunnel_migration: xs:boolean
@@ -307,7 +310,8 @@ actions:
                 vm.cpu.mode: xs:string
                 vm.cpu.topology.sockets: xs:int
                 vm.placement_policy.affinity: xs:string
-                vm.placement_policy.host.id|name: xs:string
+                vm.placement_policy.hosts.host--COLLECTION:
+                  host.id|name: xs:string
                 vm.origin: xs:string
                 vm.os.kernel: xs:string
                 vm.disks.clone: xs:boolean
@@ -365,7 +369,8 @@ actions:
         optionalArguments:
           action.vm.os.initRd: xs:string
           action.vm.domain.name: xs:string
-          action.vm.placement_policy.host.id|name: xs:string
+          action.vm.placement_policy.hosts.host--COLLECTION:
+            host.id|name: xs:string
           action.vm.placement_policy.affinity: xs:string
           action.vm.os.kernel: xs:string
           action.vm.display.type: xs:string

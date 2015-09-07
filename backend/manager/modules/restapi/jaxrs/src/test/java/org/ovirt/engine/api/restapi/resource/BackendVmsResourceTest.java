@@ -811,8 +811,9 @@ public class BackendVmsResourceTest
 
         VM model = createModel(null);
         model.setPlacementPolicy(new VmPlacementPolicy());
-        model.getPlacementPolicy().setHost(new Host());
-        model.getPlacementPolicy().getHost().setName(NAMES[1]);
+        model.getPlacementPolicy().setHosts(new Hosts());
+        model.getPlacementPolicy().getHosts().getHosts().add(new Host());
+        model.getPlacementPolicy().getHosts().getHosts().get(0).setName(NAMES[1]);
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof VM);
@@ -837,8 +838,9 @@ public class BackendVmsResourceTest
 
         VM model = createModel(null);
         model.setPlacementPolicy(new VmPlacementPolicy());
-        model.getPlacementPolicy().setHost(new Host());
-        model.getPlacementPolicy().getHost().setId(GUIDS[1].toString());
+        model.getPlacementPolicy().setHosts(new Hosts());
+        model.getPlacementPolicy().getHosts().getHosts().add(new Host());
+        model.getPlacementPolicy().getHosts().getHosts().get(0).setId(GUIDS[1].toString());
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof VM);

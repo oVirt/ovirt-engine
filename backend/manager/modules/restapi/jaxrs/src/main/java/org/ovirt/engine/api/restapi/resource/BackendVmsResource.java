@@ -778,14 +778,6 @@ public class BackendVmsResource extends
      */
     protected Set<Guid> validateAndUpdateHostsInPlacementPolicy(VmPlacementPolicy placementPolicy) {
         Set<Guid> hostsGuidsSet = new HashSet<Guid>();
-        // if there is single host element, with host name
-        if (placementPolicy.isSetHost()) {
-            Host host = placementPolicy.getHost();
-            if(host.isSetId() || host.isSetName()) {
-                updateIdForSingleHost(host, hostsGuidsSet);
-            }
-        }
-        // or there is Hosts element containing any hosts
         if (placementPolicy.isSetHosts()
                 && placementPolicy.getHosts().getHosts().size() > 0) {
             for (Host host : placementPolicy.getHosts().getHosts()) {

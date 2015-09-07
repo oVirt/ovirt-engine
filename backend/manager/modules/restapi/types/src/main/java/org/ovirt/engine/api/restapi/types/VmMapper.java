@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.types;
 
-import static org.ovirt.engine.core.compat.Guid.createGuidFromString;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -224,11 +222,6 @@ public class VmMapper extends VmBaseMapper {
             }
            // reset previous dedicated host or hosts
             Set<Guid> hostGuidsSet = new HashSet<>();
-
-            // read single host if exist
-            if (vm.getPlacementPolicy().isSetHost()) {
-                hostGuidsSet.add(createGuidFromString(vm.getPlacementPolicy().getHost().getId()));
-            }
 
             // read multiple hosts if there are few
             if (vm.getPlacementPolicy().isSetHosts()
@@ -515,11 +508,7 @@ public class VmMapper extends VmBaseMapper {
             model.setOrigin(map(entity.getOrigin(), null));
         }
         model.setPlacementPolicy(new VmPlacementPolicy());
-        if (entity.getDedicatedVmForVdsList().size() == 1) {
-            model.getPlacementPolicy().setHost(new Host());
-            model.getPlacementPolicy().getHost().setId(entity.getDedicatedVmForVdsList().get(0).toString());
-        }
-        else if (entity.getDedicatedVmForVdsList().size() > 1) {
+        if (entity.getDedicatedVmForVdsList().size() > 1) {
             Hosts hostsList = new Hosts();
             for (Guid hostGuid : entity.getDedicatedVmForVdsList()) {
                 Host newHost = new Host();

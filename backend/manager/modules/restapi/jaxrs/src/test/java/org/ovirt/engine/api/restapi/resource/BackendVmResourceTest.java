@@ -389,8 +389,9 @@ public class BackendVmResourceTest
 
         VM model = getModel(0);
         model.setPlacementPolicy(new VmPlacementPolicy());
-        model.getPlacementPolicy().setHost(new Host());
-        model.getPlacementPolicy().getHost().setName(NAMES[1]);
+        model.getPlacementPolicy().setHosts(new Hosts());
+        model.getPlacementPolicy().getHosts().getHosts().add(new Host());
+        model.getPlacementPolicy().getHosts().getHosts().get(0).setName(NAMES[1]);
         verifyModel(resource.update(model), 0);
     }
 
@@ -406,8 +407,9 @@ public class BackendVmResourceTest
 
         VM model = getModel(0);
         model.setPlacementPolicy(new VmPlacementPolicy());
-        model.getPlacementPolicy().setHost(new Host());
-        model.getPlacementPolicy().getHost().setId(GUIDS[1].toString());
+        model.getPlacementPolicy().setHosts(new Hosts());
+        model.getPlacementPolicy().getHosts().getHosts().add(new Host());
+        model.getPlacementPolicy().getHosts().getHosts().get(0).setId(GUIDS[1].toString());
         verifyModel(resource.update(model), 0);
     }
 
@@ -736,7 +738,8 @@ public class BackendVmResourceTest
         Action action = new Action();
         action.setVm(new VM());
         VmPlacementPolicy placementPolicy = new VmPlacementPolicy();
-        placementPolicy.setHost(host);
+        placementPolicy.setHosts(new Hosts());
+        placementPolicy.getHosts().getHosts().add(host);
         action.getVm().setPlacementPolicy(placementPolicy);
 
         verifyActionResponse(resource.start(action));
