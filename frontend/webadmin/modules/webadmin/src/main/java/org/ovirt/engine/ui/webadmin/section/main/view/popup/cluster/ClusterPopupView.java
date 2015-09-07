@@ -33,6 +33,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.BooleanRendererWithNullText;
+import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget;
@@ -50,6 +51,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
@@ -611,10 +613,16 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
             }
         });
 
-        architectureEditor = new ListModelListBoxEditor<ArchitectureType>(new NullSafeRenderer<ArchitectureType>() {
+        architectureEditor = new ListModelListBoxEditor<>(new EnumRenderer<ArchitectureType>() {
             @Override
-            public String renderNullSafe(ArchitectureType object) {
-                return object.toString();
+            public String render(ArchitectureType object) {
+                if (object == null || object == ArchitectureType.undefined) {
+                    // only localize the 'undefined' enum value
+                    return super.render(object);
+                } else {
+                    // all other (concrete) architectures should be displayed directly
+                    return object.toString();
+                }
             }
         });
 
