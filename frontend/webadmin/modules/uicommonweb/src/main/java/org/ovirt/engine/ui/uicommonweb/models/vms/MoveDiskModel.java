@@ -165,9 +165,11 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
     protected MoveOrCopyImageGroupParameters createParameters(Guid sourceStorageDomainGuid,
             Guid destStorageDomainGuid,
             DiskImage disk) {
-        return new MoveDiskParameters(disk.getImageId(),
+        MoveDiskParameters moveDiskParameters = new MoveDiskParameters(disk.getImageId(),
                 sourceStorageDomainGuid,
                 destStorageDomainGuid);
+        moveDiskParameters.setImageGroupID(disk.getId());
+        return moveDiskParameters;
     }
 
     @Override
