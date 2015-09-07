@@ -68,6 +68,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.attestation.AttestationService;
 import org.ovirt.engine.core.vdsbroker.attestation.AttestationValue;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
@@ -89,6 +90,8 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private static Integer MAX_RETRIES_GLUSTER_PROBE_STATUS;
     @Inject
     private EventQueue eventQueue;
+    @Inject
+    private ResourceManager resourceManager;
 
     public InitVdsOnUpCommand(HostStoragePoolParametersBase parameters) {
         super(parameters);
@@ -156,6 +159,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     }
 
     private boolean initVirtResources() {
+        resourceManager.clearLastStatusEventStampsFromVds(getVdsId());
         if (InitializeStorage()) {
             processFence();
             processStoragePoolStatus();
