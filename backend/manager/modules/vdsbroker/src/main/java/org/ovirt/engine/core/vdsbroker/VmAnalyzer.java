@@ -483,6 +483,13 @@ public class VmAnalyzer {
                         auditLog(logable, AuditLogType.VM_POWER_DOWN_FAILED);
                     }
 
+                    // log vm recovered from error
+                    if (dbVm.getStatus() == VMStatus.Paused && dbVm.getVmPauseStatus().isError()
+                            && vdsmVmDynamic.getStatus() == VMStatus.Up) {
+                        AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
+                        auditLog(logable, AuditLogType.VM_RECOVERED_FROM_PAUSE_ERROR);
+                    }
+
                     if (dbVm.getStatus() != VMStatus.Up && dbVm.getStatus() != VMStatus.MigratingFrom
                             && vdsmVmDynamic.getStatus() == VMStatus.Up) {
                         // Vm moved to Up status - remove its record from Async

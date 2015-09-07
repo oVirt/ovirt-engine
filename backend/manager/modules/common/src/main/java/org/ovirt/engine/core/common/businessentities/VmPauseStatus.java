@@ -4,14 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum VmPauseStatus {
-    NONE(0),
-    EOTHER(1),
-    EIO(2),
-    ENOSPC(3),
-    EPERM(4),
-    NOERR(5);
+    NONE(0, false),
+    EOTHER(1, true),
+    EIO(2, true),
+    ENOSPC(3, true),
+    EPERM(4, true),
+    NOERR(5, false);
 
     private static final Map<Integer, VmPauseStatus> mappings = new HashMap<Integer, VmPauseStatus>();
+    private final boolean isError;
     private int value;
 
     static {
@@ -23,12 +24,17 @@ public enum VmPauseStatus {
         mappings.put(5, NOERR);
     }
 
-    VmPauseStatus(int value) {
+    VmPauseStatus(int value, boolean isError) {
         this.value = value;
+        this.isError = isError;
     }
 
     public int getValue() {
         return value;
+    }
+
+    public boolean isError() {
+        return isError;
     }
 
     public static VmPauseStatus forValue(int value) {
