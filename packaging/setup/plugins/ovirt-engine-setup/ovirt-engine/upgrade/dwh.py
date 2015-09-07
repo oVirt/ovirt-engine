@@ -116,14 +116,17 @@ class Plugin(plugin.PluginBase):
             if dwh_history_timekeeping.dwhIsUp(self._statement):
                 self.logger.error(
                     _(
-                        'dwhd is currently running.\n'
+                        '{service} is currently running.\n'
                         'Its hostname is {hostname}.\n'
                         'Please stop it before running Setup.'
                     ).format(
+                        service=oengcommcons.DWHConst.ENGINE_DWHD_SERVICE_NAME,
                         hostname=self._dwh_host,
                     )
                 )
-                raise RuntimeError(_('dwhd is currently running'))
+                raise RuntimeError(_('{service} is currently running').format(
+                    service=oengcommcons.DWHConst.ENGINE_DWHD_SERVICE_NAME,
+                ))
             self.logger.info(_('Stopped DWH'))
             self._remote_dwh_stopped = True
 
