@@ -164,7 +164,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected List<Guid> getPredefinedVdsIdListToRunOn() {
-        return getVm().getDedicatedVmForVdsList();
+        // This API needs to be preserved to allow RunOnce overrides,
+        // but the Preferred host filtering needs to be done in a Policy Unit
+        // only to allow the user to disable it.
+        return Collections.emptyList();
     }
 
     private String getMemoryFromActiveSnapshot() {

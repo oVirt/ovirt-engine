@@ -759,7 +759,6 @@ public class SchedulingManager implements BackendService {
         for (Pair<PolicyUnitImpl, Integer> pair : functions) {
             List<Pair<Guid, Integer>> scoreResult = pair.getFirst().score(cluster, hostList, vm, parameters);
             for (Pair<Guid, Integer> result : scoreResult) {
-                Guid hostId = result.getFirst();
                 selector.record(pair.getFirst().getGuid(), result.getFirst(), result.getSecond());
             }
         }
