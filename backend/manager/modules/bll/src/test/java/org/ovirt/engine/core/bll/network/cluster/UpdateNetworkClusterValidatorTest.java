@@ -35,7 +35,7 @@ public class UpdateNetworkClusterValidatorTest extends NetworkClusterValidatorTe
 
     @Override
     protected UpdateNetworkClusterValidator createValidator() {
-        return new UpdateNetworkClusterValidator(networkCluster, oldNetworkCluster, version);
+        return new UpdateNetworkClusterValidator(interfaceDao, networkDao, networkCluster, oldNetworkCluster, version);
     }
 
     @Test

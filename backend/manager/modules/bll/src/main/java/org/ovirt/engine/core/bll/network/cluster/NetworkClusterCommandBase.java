@@ -1,12 +1,22 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.VdsGroupCommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 
 public abstract class NetworkClusterCommandBase<T extends NetworkClusterParameters> extends VdsGroupCommandBase<T> {
+
+    @Inject
+    protected InterfaceDao interfaceDao;
+
+    @Inject
+    protected NetworkDao networkDao;
 
     private Network persistedNetwork;
 
@@ -47,6 +57,7 @@ public abstract class NetworkClusterCommandBase<T extends NetworkClusterParamete
         result = result && validate(validator.managementNetworkChange());
         result = result && validate(validator.migrationPropertySupported());
         result = result && validate(validator.glusterNetworkSupported());
+        result = result && validate(validator.roleNetworkHasIp());
         result = result && (!getPersistedNetwork().isExternal() || validateExternalNetwork(validator));
 
         return result;

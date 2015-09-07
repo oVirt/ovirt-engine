@@ -1453,8 +1453,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Network of given Network Attachment (id ${networkAttachmentID}) cannot be updated.")
     String CANNOT_CHANGE_ATTACHED_NETWORK();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Display network '${ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY}' hasn't boot protocol assigned.")
-    String ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL();
+    @DefaultStringValue("Cannot ${action} ${type}. Display network '${ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY}' hasn't boot protocol assigned.")
+    String ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL();
 
     @DefaultStringValue("Cannot ${action} ${type}. Label '${INTERFACE_ON_NIC_LABEL_NOT_EXIST_ENTITY}' cannot be attached to non-existing/removed '${interfaceName}' network interface.")
     String INTERFACE_ON_NIC_LABEL_NOT_EXIST();
@@ -1995,6 +1995,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Network address must be specified when using static ip")
     String NETWORK_ADDR_MANDATORY_IN_STATIC_IP();
+
+    @DefaultStringValue("Cannot ${action} ${type}. IP address has to be set for the NIC that bears a role network. Network: ${NetworkName}, Nic: ${nicName} on host ${hostName} violates that rule.")
+    String NETWORK_ADDR_MANDATORY_FOR_ROLE_NETWORK();
 
     @DefaultStringValue("Cannot ${action} ${type}. Related operation is currently in progress. Please try again later.")
     String ACTION_TYPE_FAILED_OBJECT_LOCKED();

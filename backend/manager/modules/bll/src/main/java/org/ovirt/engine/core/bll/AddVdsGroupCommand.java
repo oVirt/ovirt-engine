@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
@@ -48,6 +49,9 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
 
     @Inject
     private ClusterFeatureDao clusterFeatureDao;
+
+    @Inject
+    private InterfaceDao interfaceDao;
 
     private Network managementNetwork;
 
@@ -175,7 +179,11 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
 
     private AddClusterNetworkClusterValidator createNetworkClusterValidator() {
         final NetworkCluster networkCluster = createManagementNetworkCluster();
-        return new AddClusterNetworkClusterValidator(networkCluster, getVdsGroup().getCompatibilityVersion());
+        return new AddClusterNetworkClusterValidator(
+                interfaceDao,
+                networkDao,
+                networkCluster,
+                getVdsGroup().getCompatibilityVersion());
     }
 
     private NetworkCluster createManagementNetworkCluster() {

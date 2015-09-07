@@ -14,6 +14,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -241,5 +242,16 @@ public final class NetworkUtils {
             log.debug(msg, host.getHostName(), ex);
             return null;
         }
+    }
+
+    /**
+     * returns whether the network has a role in the cluster
+     *
+     * @param networkCluster
+     *
+     * @return whether the network has a role (display, migration or gluster) in the cluster
+     */
+    public static boolean isRoleNetwork(NetworkCluster networkCluster) {
+        return networkCluster.isDisplay() || networkCluster.isMigration() || networkCluster.isGluster();
     }
 }

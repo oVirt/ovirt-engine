@@ -162,7 +162,7 @@ public abstract class NetworkParametersBuilder {
     }
 
     protected void addBootProtocolForRoleNetwork(NetworkCluster networkCluster, VdsNetworkInterface nic) {
-        if ((networkCluster.isDisplay() || networkCluster.isMigration() || networkCluster.isGluster())
+        if (NetworkUtils.isRoleNetwork(networkCluster)
                 && (nic.getBootProtocol() == null || nic.getBootProtocol() == NetworkBootProtocol.NONE)) {
             nic.setBootProtocol(NetworkBootProtocol.DHCP);
         }

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
@@ -57,4 +58,41 @@ public class NetworkUtilsTest {
         return iface;
     }
 
+    @Test
+    public void isRoleNetworkDisplay() {
+        NetworkCluster networkCluster = createNetworkCluster(true, false, false);
+        assertTrue(NetworkUtils.isRoleNetwork(networkCluster));
+    }
+
+    @Test
+    public void isRoleNetworkMigration() {
+        NetworkCluster networkCluster = createNetworkCluster(false, true, false);
+        assertTrue(NetworkUtils.isRoleNetwork(networkCluster));
+    }
+
+    @Test
+    public void isRoleNetworkGluster() {
+        NetworkCluster networkCluster = createNetworkCluster(false, false, true);
+        assertTrue(NetworkUtils.isRoleNetwork(networkCluster));
+    }
+
+    @Test
+    public void isRoleNetworkAllRoles() {
+        NetworkCluster networkCluster = createNetworkCluster(true, true, true);
+        assertTrue(NetworkUtils.isRoleNetwork(networkCluster));
+    }
+
+    @Test
+    public void isRoleNetworkNoRoles() {
+        NetworkCluster networkCluster = createNetworkCluster(false, false, false);
+        assertFalse(NetworkUtils.isRoleNetwork(networkCluster));
+    }
+
+    private NetworkCluster createNetworkCluster(boolean display, boolean migration, boolean gluster) {
+        NetworkCluster networkCluster = new NetworkCluster();
+        networkCluster.setDisplay(display);
+        networkCluster.setMigration(migration);
+        networkCluster.setGluster(gluster);
+        return networkCluster;
+    }
 }

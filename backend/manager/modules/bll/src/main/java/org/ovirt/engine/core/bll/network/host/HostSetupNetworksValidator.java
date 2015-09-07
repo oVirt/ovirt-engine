@@ -615,7 +615,7 @@ public class HostSetupNetworksValidator {
             vr = skipValidation(vr) ? vr : validator.notExternalNetwork();
             vr = skipValidation(vr) ? vr : validator.networkAttachedToCluster();
             vr = skipValidation(vr) ? vr : validator.ipConfiguredForStaticBootProtocol();
-            vr = skipValidation(vr) ? vr : validator.bootProtocolSetForDisplayNetwork();
+            vr = skipValidation(vr) ? vr : validator.bootProtocolSetForRoleNetwork();
 
             //this is not nic exist, but only nic is set.
             vr = skipValidation(vr) ? vr : validator.nicExists();
