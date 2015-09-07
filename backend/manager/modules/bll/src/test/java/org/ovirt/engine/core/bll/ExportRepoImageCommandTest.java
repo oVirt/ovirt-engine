@@ -63,7 +63,7 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
     public void testCanDoActionLunDisk() {
         when(getDiskDao().get(getDiskImageGroupId())).thenReturn(new LunDisk());
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                EngineMessage.ACTION_TYPE_FAILED_LUN_DISK);
+                EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
     }
 
     @Test

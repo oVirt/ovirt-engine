@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -73,13 +74,15 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_DISKS_SPECIFIED);
         }
 
-        return verifyNoLunDisks();
+        return verifyUnsupportedDisks();
     }
 
-    private boolean verifyNoLunDisks() {
+    private boolean verifyUnsupportedDisks() {
         for (MoveDiskParameters moveDiskParameters : getParameters().getParametersList()) {
             Disk disk = getDiskDao().get(moveDiskParameters.getImageGroupID());
-            if (!validate(new DiskValidator(disk).validateDiskIsNotLun())) {
+            DiskValidator diskValidator = new DiskValidator(disk);
+            if (!validate(diskValidator.validateUnsupportedDiskStorageType(
+                    DiskStorageType.LUN, DiskStorageType.CINDER))) {
                 return false;
             }
         }

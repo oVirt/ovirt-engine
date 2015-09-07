@@ -523,8 +523,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM migration is in progress")
     String ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The provided disk is of type LUN.")
-    String ACTION_TYPE_FAILED_LUN_DISK();
+    @DefaultStringValue("Cannot ${action} ${type}. Action is unsupported for the specified disk type (${diskStorageType}).")
+    String ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE();
 
     @DefaultStringValue("Cannot ${action} ${type}. The provided lun is used by another disk.")
     String ACTION_TYPE_FAILED_DISK_LUN_IS_ALREADY_IN_USE();

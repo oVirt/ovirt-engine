@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -237,20 +238,37 @@ public class MoveOrCopyDiskCommandTest {
     @Test
     public void canDoActionFailureOnMovingLunDisk() {
         initializeCommand(ImageOperation.Move, new LunDisk());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_LUN_DISK);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
     }
 
     @Test
     public void canDoActionFailureOnCopyingLunDisk() {
         initializeCommand(ImageOperation.Copy, new LunDisk());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_LUN_DISK);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
     }
 
     @Test
     public void canDoActionFailureOnMovingVmLunDisk() {
         initializeCommand(ImageOperation.Move, new LunDisk());
         vmDevice.setSnapshotId(Guid.newGuid());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_LUN_DISK);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
+    }
+
+    @Test
+    public void canDoActionFailureOnMovingCinderDisk() {
+        initializeCommand(ImageOperation.Move, new CinderDisk());
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
+    }
+
+    @Test
+    public void canDoActionFailureOnCopyingCinderDisk() {
+        initializeCommand(ImageOperation.Copy, new CinderDisk());
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
     }
 
     protected void initVmForSpace() {

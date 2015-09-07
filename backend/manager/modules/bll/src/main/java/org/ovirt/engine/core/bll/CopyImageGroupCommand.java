@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMapId;
@@ -60,13 +61,11 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected boolean canDoAction() {
-        return !isDiskLun();
-    }
-
-    private boolean isDiskLun() {
         Disk disk = getDiskDao().get(getParameters().getImageGroupID());
         if (disk != null) {
-            return !validate(new DiskValidator(disk).validateDiskIsNotLun());
+            DiskValidator diskValidator = new DiskValidator(disk);
+            return validate(diskValidator.validateUnsupportedDiskStorageType(
+                    DiskStorageType.LUN, DiskStorageType.CINDER));
         }
         return false;
     }
