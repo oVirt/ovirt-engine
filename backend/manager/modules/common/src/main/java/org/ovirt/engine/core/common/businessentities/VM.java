@@ -52,6 +52,8 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
 
     private boolean nextRunConfigurationExists;
 
+    private boolean previewSnapshot;
+
     private String hibernationVolHandle;
 
     private LockInfo lockInfo;
@@ -2029,5 +2031,13 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
 
     public void setBackgroundOperationDescription(String description) {
         this.backgroundOperationDescription = description;
+    }
+
+    public boolean isPreviewSnapshot() {
+        return previewSnapshot;
+    }
+
+    public void setPreviewSnapshot(boolean previewSnapshot) {
+        this.previewSnapshot = previewSnapshot;
     }
 }

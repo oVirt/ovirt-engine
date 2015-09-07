@@ -1070,7 +1070,8 @@ SELECT
     vm_static.custom_serial_number AS custom_serial_number,
     vm_static.is_boot_menu_enabled AS is_boot_menu_enabled,
     vm_dynamic.guest_cpu_count AS guest_cpu_count,
-    ( snapshots.snapshot_id IS NOT NULL ) AS next_run_config_exists,
+    vm_snapshots.next_run_config_exists AS next_run_config_exists,
+    vm_snapshots.is_previewing_snapshot AS is_previewing_snapshot,
     vm_static.numatune_mode AS numatune_mode,
     vm_static.is_spice_file_transfer_enabled AS is_spice_file_transfer_enabled,
     vm_static.is_spice_copy_paste_enabled AS is_spice_copy_paste_enabled,
@@ -1116,9 +1117,12 @@ OUTER JOIN vds_static ON vm_dynamic.run_on_vds = vds_static.vds_id
 LEFT
 OUTER JOIN vm_pool_map_view ON vm_static.vm_guid = vm_pool_map_view.vm_guid
 LEFT
-OUTER
-    JOIN snapshots ON vm_static.vm_guid = snapshots.vm_id
-    AND snapshot_type = 'NEXT_RUN'
+OUTER JOIN (SELECT vm_id,
+                   COUNT(CASE snapshot_type WHEN 'NEXT_RUN' THEN 1 END) > 0 AS next_run_config_exists,
+                   COUNT(CASE snapshot_type WHEN 'PREVIEW' THEN 1 END) > 0 AS is_previewing_snapshot
+            FROM snapshots
+            GROUP BY vm_id) vm_snapshots
+      ON vm_static.vm_guid = vm_snapshots.vm_id
 WHERE
     vm_static.entity_type = 'VM';
 CREATE
@@ -1242,6 +1246,7 @@ SELECT
     vms.is_boot_menu_enabled AS is_boot_menu_enabled,
     vms.guest_cpu_count AS guest_cpu_count,
     vms.next_run_config_exists,
+    vms.is_previewing_snapshot,
     vms.numatune_mode,
     vms.is_spice_file_transfer_enabled,
     vms.is_spice_copy_paste_enabled,
