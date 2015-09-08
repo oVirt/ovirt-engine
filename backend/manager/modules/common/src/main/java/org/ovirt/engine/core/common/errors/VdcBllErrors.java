@@ -313,6 +313,7 @@ public enum VdcBllErrors {
     AcquireHostIdFailure(661),
     ReleaseHostIdFailure(662),
     HostIdMismatch(700),
+    InquireNotSupportedError(702),
     MetaDataGeneralError(749),
     MetaDataKeyError(750),
     MetaDataKeyNotFoundError(751),
