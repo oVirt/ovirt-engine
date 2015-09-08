@@ -206,8 +206,7 @@ public class ModulesMojo extends AbstractMojo {
                     "and group id \"" + module.getGroupId() + "\"");
         }
 
-        // Copy the artifact to the temporary directory (this is needed because the index generator has a bug and will
-        // remove the file if it isn't in the same file system that the temporary file it uses internally):
+        // Copy the artifact to the slot directory:
         File artifactFrom = matchingArtifact.getFile();
         if (artifactFrom == null) {
             throw new MojoExecutionException(
@@ -215,44 +214,31 @@ public class ModulesMojo extends AbstractMojo {
                 module.getGroupId() + "\""
             );
         }
-        File artifactTmp;
-        try {
-            artifactTmp = File.createTempFile("index", null);
-            FileUtils.copyFile(artifactFrom, artifactTmp);
-        }
-        catch (IOException exception) {
-            throw new MojoExecutionException(
-                "Can't create temporary file for \"" + artifactFrom.getAbsolutePath() + "\".",
-                exception
-            );
-        }
-
-        // Add the annotations index to the temporary file:
-        if (generateIndex) {
-            getLog().info("Creating annotations index for \"" + artifactFrom.getAbsolutePath() + "\"");
-            try {
-                JarIndexer.createJarIndex(artifactTmp, new Indexer(), true, false, false);
-            }
-            catch (IOException exception) {
-                throw new MojoExecutionException(
-                    "Can't add annotations index to \"" + artifactTmp.getAbsolutePath() + "\".",
-                     exception
-                );
-            }
-        }
-
-        // Move the temporary artifact file (maybe modified to include the index) to the slot directory:
         File artifactTo = new File(slotDir, module.getResourcePath());
         getLog().info("Copying artifact to \"" + artifactTo.getAbsolutePath() + "\"");
         try {
-            FileUtils.rename(artifactTmp, artifactTo);
+            FileUtils.copyFile(artifactFrom, artifactTo);
         }
         catch (IOException exception) {
             throw new MojoExecutionException(
-                "Can't move temporary file \"" + artifactTmp.getAbsolutePath() + "\" to slot directory \"" +
+                "Can't copy artifact file \"" + artifactFrom.getAbsolutePath() + "\" to slot directory \"" +
                 slotDir.getAbsolutePath() + "\".",
                 exception
             );
+        }
+
+        // Add the annotations index to the artifact file stored in the slot directory:
+        if (generateIndex) {
+            getLog().info("Creating annotations index for \"" + artifactTo.getAbsolutePath() + "\"");
+            try {
+                JarIndexer.createJarIndex(artifactTo, new Indexer(), true, false, false);
+            }
+            catch (IOException exception) {
+                throw new MojoExecutionException(
+                    "Can't add annotations index to \"" + artifactTo.getAbsolutePath() + "\".",
+                     exception
+                );
+            }
         }
     }
 
