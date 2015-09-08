@@ -1329,7 +1329,14 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-
+CREATE OR REPLACE FUNCTION GetAllFromVmWithStatus(v_status INTEGER)
+  RETURNS SETOF vms AS $procedure$
+BEGIN
+  RETURN QUERY SELECT DISTINCT V.*
+               FROM VMS V
+               WHERE V.STATUS = v_status;
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION DeleteVm(v_vm_guid UUID)
 RETURNS VOID
