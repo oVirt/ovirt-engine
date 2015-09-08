@@ -43,7 +43,7 @@ public class FenceExecutor {
     private String proxyHostName;
     private Guid skippedProxyHostId=null;
     private FencingPolicy fencingPolicy;
-    private Version minVersionSupportingFencingPol;
+    private Version minVersionSupportingFencingPol = null;
 
     public FenceExecutor(VDS vds, FenceActionType actionType) {
         this(vds, actionType, null);
@@ -435,12 +435,22 @@ public class FenceExecutor {
                     ret = options.isAgentSupported(_vds.getPmSecondaryType());
                 }
 
-                // check if host supports minimal cluster level needed by fencing policy
-                if (fencingPolicy != null) {
-                    ret = ret && vds.getSupportedClusterVersionsSet().contains(minVersionSupportingFencingPol);
-                }
+                ret = ret && isFencingPolicySupported(vds, minVersionSupportingFencingPol);
 
                 return ret;
+            }
+
+            protected boolean isFencingPolicySupported(VDS proxyCandidate, Version minimalSupportedVersion) {
+                boolean supported = minimalSupportedVersion == null;
+                if (!supported) {
+                    for (Version version : proxyCandidate.getSupportedClusterVersionsSet()) {
+                        if (version.compareTo(minimalSupportedVersion) >= 0) {
+                            supported = true;
+                            break;
+                        }
+                    }
+                }
+                return supported;
             }
         });
         return proxyHost;
