@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
@@ -99,6 +100,31 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         return getOldStoragePool().getQuotaEnforcementType() != getStoragePool().getQuotaEnforcementType();
     }
 
+    private StorageFormatType updatePoolAndDomainsFormat(final Version spVersion) {
+        final StoragePool storagePool = getStoragePool();
+
+        final StorageFormatType targetFormat =
+                VersionStorageFormatUtil.getPreferredForVersion(spVersion, getMasterDomain() == null ? null : getMasterDomain().getStorageType());
+
+        storagePool.setCompatibilityVersion(spVersion);
+        storagePool.setStoragePoolFormatType(targetFormat);
+
+        TransactionSupport.executeInScope(TransactionScopeOption.RequiresNew,
+                new TransactionMethod<Object>() {
+                    @Override
+                    public Object runInTransaction() {
+                        getStoragePoolDao().updatePartial(storagePool);
+                        updateMemberDomainsFormat(targetFormat);
+                        if (FeatureSupported.ovfStoreOnAnyDomain(spVersion)) {
+                            getVmStaticDao().incrementDbGenerationForAllInStoragePool(storagePool.getId());
+                        }
+                        return null;
+                    }
+                });
+
+        return targetFormat;
+    }
+
     private void updateStoragePoolFormatType() {
         final StoragePool storagePool = getStoragePool();
         final Guid spId = storagePool.getId();
@@ -109,25 +135,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             return;
         }
 
-
-
-        final StorageFormatType targetFormat =
-                VersionStorageFormatUtil.getPreferredForVersion(spVersion, getMasterDomain() == null ? null : getMasterDomain().getStorageType());
-
-        storagePool.setStoragePoolFormatType(targetFormat);
-
-        TransactionSupport.executeInScope(TransactionScopeOption.RequiresNew,
-                new TransactionMethod<Object>() {
-                    @Override
-                    public Object runInTransaction() {
-                             getStoragePoolDao().updatePartial(storagePool);
-                        updateMemberDomainsFormat(targetFormat);
-                        if (FeatureSupported.ovfStoreOnAnyDomain(spVersion)) {
-                            getVmStaticDao().incrementDbGenerationForAllInStoragePool(spId);
-                        }
-                        return null;
-                    }
-        });
+        StorageFormatType targetFormat = updatePoolAndDomainsFormat(spVersion);
 
         if (getOldStoragePool().getStatus() == StoragePoolStatus.Up) {
             try {
@@ -139,6 +147,13 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                 log.warn("Upgrade process of Storage Pool '{}' has encountered a problem due to following reason: {}",
                         spId, e.getMessage());
                 auditLogDirector.log(this, AuditLogType.UPGRADE_STORAGE_POOL_ENCOUNTERED_PROBLEMS);
+
+                // if we get this error we know that no update was made, so we can safely revert the db updates
+                // and return.
+                if (e.getVdsError() != null && e.getErrorCode() == EngineError.PoolUpgradeInProgress) {
+                    updatePoolAndDomainsFormat(oldSpVersion);
+                    return;
+                }
             }
         }
 
@@ -153,7 +168,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             StorageDomainType sdType = domain.getStorageDomainType();
 
             if (sdType == StorageDomainType.Data || sdType == StorageDomainType.Master) {
-                log.info("Updating storage domain '{}' (type '{}') to format '{}'",
+                log.info("Setting storage domain '{}' (type '{}') to format '{}'",
                                domain.getId(), sdType, targetFormat);
 
                 domain.setStorageFormat(targetFormat);
