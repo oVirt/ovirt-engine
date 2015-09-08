@@ -2300,6 +2300,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     DisplayUncaughtUIExceptions,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    CheckMixedRhelVersions,
+
     Invalid
 
 }

@@ -71,7 +71,8 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
             vds.setStatus(VDSStatus.NonOperational);
         }
 
-        if (vds.getStatus() != VDSStatus.NonOperational) {
+        if (vds.getStatus() != VDSStatus.NonOperational
+                && Config.<Boolean>getValue(ConfigValues.CheckMixedRhelVersions, vdsGroup.getCompatibilityVersion().getValue())) {
             checkIfNotMixingRhels(vds, vdsGroup);
         }
 
