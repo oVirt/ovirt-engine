@@ -327,16 +327,18 @@ public class SetupNetworksHelper {
         // first map which interfaces have some QoS configured on them, and which interfaces lack some QoS configuration
         for (VdsNetworkInterface iface : params.getInterfaces()) {
             String networkName = iface.getNetworkName();
-
             Network network = getExistingClusterNetworks().get(networkName);
-            VdsNetworkInterface baseNic = calculateBaseNic.getBaseNic(iface, existingIfaces);
-            NetworkAttachment networkAttachment = baseNic == null || network == null ? null :
-                networkAttachmentDao.getNetworkAttachmentByNicIdAndNetworkId(baseNic.getId(), network.getId());
-            String baseIfaceName = baseNic == null ? null : baseNic.getName();
-            if (NetworkUtils.qosConfiguredOnInterface(networkAttachment, network)) {
-                someSubInterfacesHaveQos.add(baseIfaceName);
-            } else {
-                notAllSubInterfacesHaveQos.add(baseIfaceName);
+
+            if (network != null) {
+                NetworkAttachment networkAttachment = getNetworkAttachment(iface, network);
+
+                String baseIfaceName = NetworkUtils.stripVlan(iface);
+
+                if (NetworkUtils.qosConfiguredOnInterface(networkAttachment, network)) {
+                    someSubInterfacesHaveQos.add(baseIfaceName);
+                } else {
+                    notAllSubInterfacesHaveQos.add(baseIfaceName);
+                }
             }
         }
 
@@ -349,9 +351,13 @@ public class SetupNetworksHelper {
     }
 
     private NetworkAttachment getNetworkAttachment(VdsNetworkInterface iface, Network network) {
-        VdsNetworkInterface baseNic = calculateBaseNic.getBaseNic(iface, existingIfaces);
+        Map<String, VdsNetworkInterface> existingIfaces = getExistingIfaces();
+        VdsNetworkInterface existingNic = existingIfaces.get(iface.getName());
+        iface.setId(existingNic == null ? null : existingNic.getId());
+        VdsNetworkInterface baseNic =
+                existingNic == null ? null : calculateBaseNic.getBaseNic(existingNic, existingIfaces);
         return baseNic == null || network == null ? null :
-            networkAttachmentDao.getNetworkAttachmentByNicIdAndNetworkId(baseNic.getId(), network.getId());
+                networkAttachmentDao.getNetworkAttachmentByNicIdAndNetworkId(baseNic.getId(), network.getId());
     }
 
     private void validateCustomProperties() {

@@ -41,6 +41,8 @@ import org.ovirt.engine.core.bll.validator.network.NetworkType;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
+import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
+import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
@@ -461,13 +463,15 @@ public class SetupNetworksHelperTest {
         VdsNetworkInterface vlan2 = createVlan(master, net2.getVlanId(), net2.getName());
 
         vlan1.setQos(qos);
+
         Guid qosId = Guid.newGuid();
         when(qosDao.get(qosId)).thenReturn(qos);
-        NetworkAttachment networkAttachment = new NetworkAttachment();
-        networkAttachment.setHostNetworkQos(qos);
+
+        NetworkAttachment networkAttachment = createNetworkAttachment(net1, master.getId(), vlan1);
+
         when(networkAttachmentDao
-            .getNetworkAttachmentByNicIdAndNetworkId(master.getId(), net1.getId()))
-            .thenReturn(networkAttachment);
+                .getNetworkAttachmentByNicIdAndNetworkId(master.getId(), net1.getId()))
+                .thenReturn(networkAttachment);
 
         net2.setQosId(qosId);
         net3.setQosId(qosOnAll ? qosId : null);
@@ -480,14 +484,36 @@ public class SetupNetworksHelperTest {
             VdsNetworkInterface slave2 = createNic("nic2", null);
             slave2.setSpeed(slaveSpeed);
             master.setBondOptions(bondOptions);
-            mockExistingIfaces(master, slave1, slave2);
+            mockExistingIfaces(master, slave1, slave2, vlan1);
             slave1.setBondName(master.getName());
             slave2.setBondName(master.getName());
             return createHelper(createParametersForNics(master, slave1, slave2, vlan1, vlan2), Version.v3_4);
         } else {
-            mockExistingIfaces(master);
+            mockExistingIfaces(master, vlan1);
             return createHelper(createParametersForNics(master, vlan1, vlan2), Version.v3_4);
         }
+    }
+
+    private NetworkAttachment createNetworkAttachment(Network network,
+            Guid baseNicId,
+            VdsNetworkInterface nic) {
+        NetworkAttachment networkAttachment = new NetworkAttachment();
+
+        networkAttachment.setNicId(baseNicId);
+        networkAttachment.setNetworkId(network.getId());
+
+        networkAttachment.setHostNetworkQos(nic.getQos());
+
+        IpConfiguration ipConfiguration = new IpConfiguration();
+        networkAttachment.setIpConfiguration(ipConfiguration);
+        IPv4Address ipv4Address = new IPv4Address();
+        ipConfiguration.setIPv4Addresses(Collections.singletonList(ipv4Address));
+        ipv4Address.setAddress(nic.getAddress());
+        ipv4Address.setBootProtocol(nic.getBootProtocol());
+        ipv4Address.setGateway(nic.getGateway());
+        ipv4Address.setNetmask(nic.getSubnet());
+
+        return networkAttachment;
     }
 
     private SetupNetworksHelper setupCompositeQosConfiguration(boolean qosOnAll,
@@ -2117,6 +2143,7 @@ public class SetupNetworksHelperTest {
                 original.getSpeed());
 
             vdsInterface.setBootProtocol(original.getBootProtocol());
+            vdsInterface.setQos(original.getQos());
 
             existingIfaces.add(vdsInterface);
 
