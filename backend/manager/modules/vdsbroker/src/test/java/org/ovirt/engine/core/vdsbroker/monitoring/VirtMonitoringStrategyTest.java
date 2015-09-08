@@ -10,23 +10,34 @@ import static org.mockito.Mockito.when;
 
 import java.util.Map;
 
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
+import org.ovirt.engine.core.utils.MockConfigRule;
 public class VirtMonitoringStrategyTest {
+
+    @ClassRule
+    public static MockConfigRule configRule = new MockConfigRule(
+            MockConfigRule.mockConfig(ConfigValues.CheckMixedRhelVersions, Version.v3_5, true)
+    );
 
     private VDS vdsFromDb = new VDS();
 
     public VirtMonitoringStrategyTest() {
         virtStrategy = spy(new VirtMonitoringStrategy(mockCluster(), mockVdsDao()));
-        doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class), any(NonOperationalReason.class), any(Map.class));
+        doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class),
+                any(NonOperationalReason.class),
+                any(Map.class));
     }
 
     private VirtMonitoringStrategy virtStrategy;
@@ -123,6 +134,7 @@ public class VirtMonitoringStrategyTest {
         Cluster value = new Cluster();
         value.setEmulatedMachine("pc-1.0");
         value.getRequiredRngSources().add(VmRngDevice.Source.RANDOM);
+        value.setCompatibilityVersion(Version.v3_5);
         org.mockito.Mockito.when(mock.get(any(Guid.class))).thenReturn(value);
         return mock;
     }

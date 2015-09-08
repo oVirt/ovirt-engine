@@ -1925,5 +1925,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     DisplaySupportedBrowserWarning,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    CheckMixedRhelVersions,
+
     Invalid
 }

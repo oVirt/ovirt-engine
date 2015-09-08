@@ -659,6 +659,8 @@ select fn_db_add_config_value_for_versions_up_to('GetDeviceListWithoutStatusSupp
 
 select fn_db_add_config_value_for_versions_up_to('InitialSizeSparseDiskSupported','false','3.5');
 
+select fn_db_add_config_value('CheckMixedRhelVersions','false','general');
+select fn_db_add_config_value_for_versions_up_to('CheckMixedRhelVersions','true','3.5');
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------
