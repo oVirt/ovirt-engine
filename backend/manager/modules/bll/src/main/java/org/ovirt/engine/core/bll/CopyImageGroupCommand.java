@@ -65,7 +65,10 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     private boolean isDiskLun() {
         Disk disk = getDiskDao().get(getParameters().getImageGroupID());
-        return !validate(new DiskValidator(disk).validateDiskIsNotLun());
+        if (disk != null) {
+            return !validate(new DiskValidator(disk).validateDiskIsNotLun());
+        }
+        return false;
     }
 
     @Override
