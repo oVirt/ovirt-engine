@@ -97,6 +97,7 @@ import org.ovirt.engine.ui.uicompat.ReversibleFlow;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
+
 import com.google.inject.Inject;
 
 @SuppressWarnings("unchecked")
@@ -656,7 +657,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 if (clusterModel.getSelectedItem() != null) {
 
                     Version v3 = new Version(3, 0);
-                    VDSGroup cluster = (VDSGroup) clusterModel.getSelectedItem();
+                    VDSGroup cluster = clusterModel.getSelectedItem();
 
                     boolean isLessThan3 = cluster.getCompatibilityVersion().compareTo(v3) < 0;
 
@@ -1076,14 +1077,14 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
         // Remove Force option will be shown only if
         // - All the selected hosts belongs to same cluster
-        // - the cluster should be a gluster only cluster
+        // - the cluster should have  gluster service enabled
         if (clusters.size() == 1) {
             model.startProgress(null);
             AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     VDSGroup cluster = (VDSGroup) returnValue;
-                    if (cluster != null && cluster.supportsGlusterService() && !cluster.supportsVirtService()) {
+                    if (cluster != null && cluster.supportsGlusterService()) {
                         model.getForce().setIsAvailable(true);
                     }
                     model.stopProgress();
