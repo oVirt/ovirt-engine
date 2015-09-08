@@ -861,6 +861,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("prevLver", prevLVER)
                         .withParameter("enableScsiFencing", SCSIFencing)
                         .withParameter("maxHostID", maxHostId)
+                        .withOptionalParameter("domVersion", storagePoolFormatType)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid")
