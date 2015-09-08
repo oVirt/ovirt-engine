@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.common.vdscommands.SetStoragePoolDescriptionVDSCommandParameters;
@@ -97,6 +98,31 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         return _oldStoragePool.getQuotaEnforcementType() != getStoragePool().getQuotaEnforcementType();
     }
 
+    private StorageFormatType updatePoolAndDomainsFormat(final Version spVersion) {
+        final StoragePool storagePool = getStoragePool();
+
+        final StorageFormatType targetFormat =
+                VersionStorageFormatUtil.getPreferredForVersion(spVersion, getMasterDomain() == null ? null : getMasterDomain().getStorageType());
+
+        storagePool.setcompatibility_version(spVersion);
+        storagePool.setStoragePoolFormatType(targetFormat);
+
+        TransactionSupport.executeInScope(TransactionScopeOption.RequiresNew,
+                new TransactionMethod<Object>() {
+                    @Override
+                    public Object runInTransaction() {
+                        getStoragePoolDAO().updatePartial(storagePool);
+                        updateMemberDomainsFormat(targetFormat);
+                        if (FeatureSupported.ovfStoreOnAnyDomain(spVersion)) {
+                            getVmStaticDAO().incrementDbGenerationForAllInStoragePool(storagePool.getId());
+                        }
+                        return null;
+                    }
+                });
+
+        return targetFormat;
+    }
+
     private void updateStoragePoolFormatType() {
         final StoragePool storagePool = getStoragePool();
         final Guid spId = storagePool.getId();
@@ -107,25 +133,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             return;
         }
 
-
-
-        final StorageFormatType targetFormat =
-                VersionStorageFormatUtil.getPreferredForVersion(spVersion, getMasterDomain() == null ? null : getMasterDomain().getStorageType());
-
-        storagePool.setStoragePoolFormatType(targetFormat);
-
-        TransactionSupport.executeInScope(TransactionScopeOption.RequiresNew,
-                new TransactionMethod<Object>() {
-                    @Override
-                    public Object runInTransaction() {
-                             getStoragePoolDAO().updatePartial(storagePool);
-                        updateMemberDomainsFormat(targetFormat);
-                        if (FeatureSupported.ovfStoreOnAnyDomain(spVersion)) {
-                            getVmStaticDAO().incrementDbGenerationForAllInStoragePool(spId);
-                        }
-                        return null;
-                    }
-        });
+        StorageFormatType targetFormat = updatePoolAndDomainsFormat(spVersion);
 
         if (_oldStoragePool.getStatus() == StoragePoolStatus.Up) {
             try {
@@ -134,8 +142,16 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                 runVdsCommand(VDSCommandType.UpgradeStoragePool,
                     new UpgradeStoragePoolVDSCommandParameters(spId, targetFormat));
             } catch (VdcBLLException e) {
-                log.warnFormat("Upgrade procees of Storage Pool {0} has encountered a problem due to following reason: {1}", spId, e.getMessage());
+                log.warnFormat("Upgrade process of Storage Pool '{0}' has encountered a problem due to following reason: {1}",
+                        spId, e.getMessage());
                 AuditLogDirector.log(this, AuditLogType.UPGRADE_STORAGE_POOL_ENCOUNTERED_PROBLEMS);
+
+                // if we get this error we know that no update was made, so we can safely revert the db updates
+                // and return.
+                if (e.getVdsError() != null && e.getErrorCode() == VdcBllErrors.PoolUpgradeInProgress) {
+                    updatePoolAndDomainsFormat(oldSpVersion);
+                    return;
+                }
             }
         }
 
@@ -150,7 +166,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             StorageDomainType sdType = domain.getStorageDomainType();
 
             if (sdType == StorageDomainType.Data || sdType == StorageDomainType.Master) {
-                log.infoFormat("Updating storage domain {0} (type {1}) to format {2}",
+                log.infoFormat("Setting storage domain '{0}' (type '{1}') to format '{2}'",
                                domain.getId(), sdType, targetFormat);
 
                 domain.setStorageFormat(targetFormat);
