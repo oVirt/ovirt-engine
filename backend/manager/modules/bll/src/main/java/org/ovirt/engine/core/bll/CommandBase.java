@@ -185,6 +185,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             getParameters().setCommandId(commandIdFromParameters);
         }
         commandId = commandIdFromParameters;
+        taskHandlers = initTaskHandlers();
     }
 
     /**
@@ -234,7 +235,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             setJobId(executionContext.getStep().getJobId());
         }
 
-        taskHandlers = initTaskHandlers();
         setCorrelationId(_parameters.getCorrelationId());
     }
 
