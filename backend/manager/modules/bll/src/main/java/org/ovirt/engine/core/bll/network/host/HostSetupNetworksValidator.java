@@ -98,7 +98,7 @@ public class HostSetupNetworksValidator {
     static final String VAR_NETWORK_NAME = "networkName";
     static final String VAR_NETWORK_NAMES = "networkNames";
     static final String VAR_ATTACHMENT_IDS = "attachmentIds";
-
+    private static final String COMMA_SEPARATOR = ", ";
 
     private final NetworkExclusivenessValidator networkExclusivenessValidator;
 
@@ -330,8 +330,10 @@ public class HostSetupNetworksValidator {
             return new ValidationResult(
                     EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS,
                     LinqUtils.concat(
-                            ReplacementUtils.replaceWith(VAR_NETWORK_NAMES, sortedRemovedNetsworks),
-                            ReplacementUtils.replaceWith(VAR_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST, vmNames)));
+                            ReplacementUtils.replaceWith(VAR_NETWORK_NAMES, sortedRemovedNetsworks,
+                                    COMMA_SEPARATOR, sortedRemovedNetsworks.size()),
+                            ReplacementUtils.replaceWith(VAR_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST, vmNames,
+                                    COMMA_SEPARATOR, vmNames.size())));
         }
     }
 
