@@ -60,6 +60,8 @@ public class HostSetupNetworksValidator {
     private static final String LIST_SUFFIX = "_LIST";
     private static final String ENTITY_SUFFIX  = "_ENTITY";
 
+    static final String COMMA_SEPARATOR = ",";
+
     //TODO MM: here? EngineMessage? Elsewhere? (note: some of these are related to this file and it's test only, some even elsewhere
     public static final String VAR_NETWORK_ATTACHMENT_NOT_EXISTS_ENTITY =
             EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS + ENTITY_SUFFIX;
@@ -98,7 +100,6 @@ public class HostSetupNetworksValidator {
     static final String VAR_NETWORK_NAME = "networkName";
     static final String VAR_NETWORK_NAMES = "networkNames";
     static final String VAR_ATTACHMENT_IDS = "attachmentIds";
-    private static final String COMMA_SEPARATOR = ", ";
 
     private final NetworkExclusivenessValidator networkExclusivenessValidator;
 
