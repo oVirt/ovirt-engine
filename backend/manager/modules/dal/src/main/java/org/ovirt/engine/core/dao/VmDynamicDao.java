@@ -19,14 +19,6 @@ public interface VmDynamicDao extends GenericDao<VmDynamic, Guid>, StatusAwareDa
     List<VmDynamic> getAllRunningForVds(Guid vds);
 
     /**
-     * Retrieve all dynamic VMs in a specific state.
-     *
-     * @param vmStatus the requested state
-     * @return the list of dynamic vms
-     */
-    List<VmDynamic> getAllByStatus(VMStatus vmStatus);
-
-    /**
      * Returns the dynamic VM with the specified id.
      *
      * @param id

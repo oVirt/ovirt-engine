@@ -185,6 +185,13 @@ public interface VdsGroupDao extends Dao, SearchDao<VDSGroup> {
     List<VDSGroup> getClustersByClusterPolicyId(Guid clusterPolicyId);
 
     /**
+     * Get all clusters where currently no VM is migrating
+     * @return list of clusters
+     */
+    List<VDSGroup> getWithoutMigratingVms();
+
+
+    /**
      * Retrieves the number of the VMs in the cluster
      * @param vdsGroupId
      * @return

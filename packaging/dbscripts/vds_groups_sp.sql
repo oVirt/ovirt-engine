@@ -243,6 +243,19 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+--This SP returns all VDS groups where currently no migration is going on
+Create or replace FUNCTION GetVdsGroupsWithoutMigratingVms() RETURNS SETOF vds_groups_view STABLE
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT vds_groups_view.*
+      FROM vds_groups_view
+      WHERE vds_group_id not in (
+            SELECT s.vds_group_id
+            FROM vm_static s
+            JOIN vm_dynamic d ON s.vm_guid = d.vm_guid
+            WHERE d.status IN(5,6));
+END; $procedure$
+LANGUAGE plpgsql;
 
 --This SP returns if the VDS group does not have any hosts or VMs
 Create or replace FUNCTION GetIsVdsGroupEmpty(v_vds_group_id UUID) RETURNS BOOLEAN

@@ -1,9 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
@@ -19,15 +17,11 @@ import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsGroupDao;
-import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
@@ -42,8 +36,6 @@ public class AffinityRulesEnforcementManager implements BackendService {
     private AuditLogDirector auditLogDirector;
     @Inject
     private VdsGroupDao vdsGroupDao;
-    @Inject
-    private VmDynamicDao vmDynamicDao;
     @Inject
     private AffinityRulesEnforcer rulesEnforcer;
     @Inject
@@ -83,7 +75,7 @@ public class AffinityRulesEnforcementManager implements BackendService {
         log.debug("Affinity Rules Enforcement Manager interval reached.");
 
         final List<VM> vmCandidates = new ArrayList<>();
-        for (VDSGroup cluster : findMigrationFreeClusters()) {
+        for (VDSGroup cluster : vdsGroupDao.getWithoutMigratingVms()) {
             final VM candidate = rulesEnforcer.chooseNextVmToMigrate(cluster);
             if (candidate != null) {
                 vmCandidates.add(candidate);
@@ -101,26 +93,6 @@ public class AffinityRulesEnforcementManager implements BackendService {
         backend.runInternalAction(VdcActionType.MigrateVm,
                 parameters,
                 ExecutionHandler.createInternalJobContext());
-    }
-
-    /**
-     * Find all clusters where currently no migration is happening
-     *
-     * @return migration-free clusters
-     */
-    private Iterable<VDSGroup> findMigrationFreeClusters() {
-        final List<VmDynamic> migratingVms = vmDynamicDao.getAllByStatus(VMStatus.MigratingFrom);
-
-        final Map<Guid, VDSGroup> allClusters = new HashMap<>();
-        for (VDSGroup cluster : vdsGroupDao.getAll()) {
-            allClusters.put(cluster.getId(), cluster);
-        }
-
-        for (VmDynamic vmDynamic : migratingVms) {
-            allClusters.remove(vmDynamic.getMigratingToVds());
-            allClusters.remove(vmDynamic.getRunOnVds());
-        }
-        return allClusters.values();
     }
 
     private void scheduleJobs(long regularInterval, long longInterval) {

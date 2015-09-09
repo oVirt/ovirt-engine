@@ -18,6 +18,8 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
@@ -441,6 +443,28 @@ public class VdsGroupDaoTest extends BaseDaoTestCase {
     }
 
     /**
+    * Ensure that only clusters where currently no VMs are migrating are found
+    */
+    @Test
+    public void testGetAllClustersWithoutMigratingVMs() {
+        List<VDSGroup> migrationFreeClusters = dao.getWithoutMigratingVms();
+        assertFalse(migrationFreeClusters.isEmpty());
+
+        final int migrationCount = migrationFreeClusters.size();
+        // get a cluster with migrating VMs
+        List<VM> vms = dbFacade.getVmDao().getAllRunningByCluster(FixturesTool.VDS_GROUP_RHEL6_ISCSI);
+        // set every VM to UP
+        for(VM migratingVM : vms) {
+            dbFacade.getVmDynamicDao().updateStatus(migratingVM.getId(), VMStatus.Up);
+            migrationFreeClusters = dao.getWithoutMigratingVms();
+        }
+        assertEquals(migrationCount + 1, migrationFreeClusters.size());
+    }
+
+    /**
+
+
+     /**
      * Asserts the result from {@link VdsGroupDao#getAll()} is correct without filtering
      *
      * @param result
