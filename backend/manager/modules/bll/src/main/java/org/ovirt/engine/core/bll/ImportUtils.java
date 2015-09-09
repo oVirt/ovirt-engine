@@ -62,9 +62,14 @@ public class ImportUtils {
         GraphicsType compatibleType = null;
 
         OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
-        for (Pair<GraphicsType, DisplayType> graphicsDisplayPair : osRepository.getGraphicsAndDisplays().get(vmBase.getOsId()).get(clusterVersion)) {
+        for (Pair<GraphicsType, DisplayType> graphicsDisplayPair : osRepository.getGraphicsAndDisplays(vmBase.getOsId(), clusterVersion)) {
             if (graphicsDisplayPair.getSecond().getDefaultVmDeviceType() == videoDeviceType) {
                 compatibleType = graphicsDisplayPair.getFirst();
+
+                // previously to spice+vnc, QXL was only used by spice, so prefer spice if available
+                if (videoDeviceType == VmDeviceType.QXL && compatibleType == GraphicsType.SPICE) {
+                    break;
+                }
             }
         }
 

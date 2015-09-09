@@ -116,10 +116,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             }
         }
         ensureDomainMap(imageList, getParameters().getDestDomainId());
-
-        ImportUtils.updateGraphicsDevices(
-                getVm() != null ? getVm().getStaticData() : null,
-                getVdsGroup() != null ? getVdsGroup().getCompatibilityVersion() : null);
     }
 
     @Override
@@ -324,6 +320,11 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             vm.setName(getVmName());
         }
         setVm(vm);
+        initGraphicsData();
+    }
+
+    private void initGraphicsData() {
+        ImportUtils.updateGraphicsDevices(getVm().getStaticData(), getVdsGroup().getCompatibilityVersion());
     }
 
     protected DiskImage getActiveVolumeDisk(List<DiskImage> diskList) {
