@@ -11,6 +11,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.bll.network.host.HostSetupNetworksValidator.COMMA_SEPARATOR;
 import static org.ovirt.engine.core.bll.network.host.HostSetupNetworksValidator.VAR_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST;
 import static org.ovirt.engine.core.bll.network.host.HostSetupNetworksValidator.VAR_NETWORK_NAMES;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
@@ -625,7 +626,7 @@ public class HostSetupNetworksValidatorTest {
 
         HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
         params.setRemovedNetworkAttachments(new HashSet<>(Arrays.asList(networkAttachmentA.getId(),
-            networkAttachmentB.getId())));
+                networkAttachmentB.getId())));
 
         HostSetupNetworksValidator validator = spy(createHostSetupNetworksValidator(params,
             Arrays.asList(nicA, nicB),
@@ -642,9 +643,11 @@ public class HostSetupNetworksValidatorTest {
         final List<String> errorNetworkNames = Arrays.asList(nameOfNetworkA, nameOfNetworkB);
         assertThat(validator.validateNotRemovingUsedNetworkByVms(),
                 failsWith(EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS,
-                        concat(replaceWith(VAR_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST, vmNames),
-                               replaceWith(VAR_NETWORK_NAMES, errorNetworkNames))));
-
+                        concat(replaceWith(VAR_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST,
+                                vmNames,
+                                COMMA_SEPARATOR,
+                                vmNames.size()),
+                                replaceWith(VAR_NETWORK_NAMES, errorNetworkNames, COMMA_SEPARATOR, vmNames.size()))));
 
         ArgumentCaptor<Collection> collectionArgumentCaptor = ArgumentCaptor.forClass(Collection.class);
         verify(vmInterfaceManagerMock).findActiveVmsUsingNetworks(eq(host.getId()), collectionArgumentCaptor.capture());

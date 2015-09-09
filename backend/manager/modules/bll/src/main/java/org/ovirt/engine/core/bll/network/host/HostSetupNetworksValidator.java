@@ -60,6 +60,8 @@ public class HostSetupNetworksValidator {
     private static final String LIST_SUFFIX = "_LIST";
     private static final String ENTITY_SUFFIX  = "_ENTITY";
 
+    static final String COMMA_SEPARATOR = ",";
+
     //TODO MM: here? EngineMessage? Elsewhere? (note: some of these are related to this file and it's test only, some even elsewhere
     public static final String VAR_NETWORK_ATTACHMENT_NOT_EXISTS_ENTITY =
             EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS + ENTITY_SUFFIX;
@@ -98,7 +100,6 @@ public class HostSetupNetworksValidator {
     static final String VAR_NETWORK_NAME = "networkName";
     static final String VAR_NETWORK_NAMES = "networkNames";
     static final String VAR_ATTACHMENT_IDS = "attachmentIds";
-
 
     private final NetworkExclusivenessValidator networkExclusivenessValidator;
 
@@ -330,8 +331,10 @@ public class HostSetupNetworksValidator {
             return new ValidationResult(
                     EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS,
                     LinqUtils.concat(
-                            ReplacementUtils.replaceWith(VAR_NETWORK_NAMES, sortedRemovedNetsworks),
-                            ReplacementUtils.replaceWith(VAR_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST, vmNames)));
+                            ReplacementUtils.replaceWith(VAR_NETWORK_NAMES, sortedRemovedNetsworks,
+                                    COMMA_SEPARATOR, sortedRemovedNetsworks.size()),
+                            ReplacementUtils.replaceWith(VAR_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST, vmNames,
+                                    COMMA_SEPARATOR, vmNames.size())));
         }
     }
 
