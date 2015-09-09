@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -98,7 +99,14 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
 
     private void addSelectAllButton(EntityModelCellTable<ListModel<LunModel>> table) {
         // Create 'Select All' check-box
-        Header<Boolean> selectAllHeader = new Header<Boolean>(new CheckboxCell(true, false)) {
+        Header<Boolean> selectAllHeader = new Header<Boolean>(new CheckboxCell(true, false) {
+            @Override
+            public Set<String> getConsumedEvents() {
+                Set<String> consumedEvents = super.getConsumedEvents();
+                consumedEvents.addAll(getParentConsumedEvents());
+                return consumedEvents;
+            }
+        }) {
             @Override
             public Boolean getValue() {
                 return model.getIsAllLunsSelected();
