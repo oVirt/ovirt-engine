@@ -98,7 +98,7 @@ public class IsoDomainListSyncronizer {
     /**
      * private constructor to initialize the quartz scheduler
      */
-    protected IsoDomainListSyncronizer() {
+    private IsoDomainListSyncronizer() {
         init();
     }
 
