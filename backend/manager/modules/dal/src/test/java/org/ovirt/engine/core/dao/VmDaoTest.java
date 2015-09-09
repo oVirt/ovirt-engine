@@ -62,22 +62,6 @@ public class VmDaoTest extends BaseDaoTestCase {
     }
 
     /**
-     * Ensure that only VMs with the requested status are found
-     */
-    @Test
-    public void testGetAllForStatus() {
-        List<VM> migratingVms = dao.getAllByStatus(VMStatus.MigratingFrom);
-        assertFalse(migratingVms.isEmpty());
-
-        final int migrationCount = migratingVms.size();
-        final VM migratingVM = migratingVms.get(0);
-        migratingVM.setStatus(VMStatus.Up);
-        dbFacade.getVmDynamicDao().updateStatus(migratingVM.getId(), migratingVM.getStatus());
-        migratingVms = dao.getAllByStatus(VMStatus.MigratingFrom);
-        assertEquals(migratingVms.size(), migrationCount - 1);
-    }
-
-    /**
      * Ensures that get works as expected.
      */
     @Test

@@ -14,7 +14,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -45,8 +44,7 @@ public class VmDaoImpl extends BaseDao implements VmDao {
     @Override
     public VM getByNameForDataCenter(Guid dataCenterId, String name, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeRead("GetVmByVmNameForDataCenter", VMRowMapper.instance, getCustomMapSqlParameterSource()
-                .addValue("data_center_id", dataCenterId).addValue("vm_name", name).addValue("user_id",
-                        userID).addValue("is_filtered", isFiltered));
+                .addValue("data_center_id", dataCenterId).addValue("vm_name", name).addValue("user_id", userID).addValue("is_filtered", isFiltered));
     }
 
     @Override
@@ -141,13 +139,6 @@ public class VmDaoImpl extends BaseDao implements VmDao {
                 VMRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_id", id));
-    }
-
-    @Override public List<VM> getAllByStatus(VMStatus vmStatus) {
-        return getCallsHandler().executeReadList("GetAllFromVmWithStatus",
-                VMRowMapper.instance,
-                getCustomMapSqlParameterSource()
-                        .addValue("status", vmStatus.getValue()));
     }
 
     @Override

@@ -177,6 +177,15 @@ public class VdsGroupDaoImpl extends BaseDao implements VdsGroupDao {
     }
 
     @Override
+    public List<VDSGroup> getWithoutMigratingVms() {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
+
+        return getCallsHandler().executeReadList("GetVdsGroupsWithoutMigratingVms",
+                VdsGroupRowMapper.instance,
+                parameterSource);
+    }
+
+    @Override
     public void setEmulatedMachine(Guid vdsGroupId, String emulatedMachine, boolean detectEmulatedMachine) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vds_group_id", vdsGroupId)

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -137,14 +136,6 @@ public interface VmDao extends Dao {
      * @return the list of VMs
      */
     List<VM> getAllRunningOnOrMigratingToVds(Guid vds);
-
-    /**
-     * Retrieve all VMs in a specific state.
-     *
-     * @param vmStatus the requested state
-     * @return the list of vms
-     */
-    List<VM> getAllByStatus(VMStatus vmStatus);
 
     /**
      * Returns the list of virtual machines running on the specified VDS instance.

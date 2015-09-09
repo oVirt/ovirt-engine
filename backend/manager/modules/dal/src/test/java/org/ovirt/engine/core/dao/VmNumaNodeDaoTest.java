@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
@@ -23,6 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  *
  */
+@Ignore
 public class VmNumaNodeDaoTest extends BaseDaoTestCase {
 
     private static final Guid ANOTHER_EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
