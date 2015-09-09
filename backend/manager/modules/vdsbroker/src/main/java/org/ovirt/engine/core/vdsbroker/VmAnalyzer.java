@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -490,8 +491,7 @@ public class VmAnalyzer {
                         auditLog(logable, AuditLogType.VM_RECOVERED_FROM_PAUSE_ERROR);
                     }
 
-                    if (dbVm.getStatus() != VMStatus.Up && dbVm.getStatus() != VMStatus.MigratingFrom
-                            && vdsmVmDynamic.getStatus() == VMStatus.Up) {
+                    if (isRunSucceeded(vdsmVmDynamic) || isMigrationSucceeded(vdsmVmDynamic)) {
                         // Vm moved to Up status - remove its record from Async
                         // reportedAndUnchangedVms handling
                         log.debug("removing VM '{}' from successful run VMs list", dbVm.getId());
@@ -550,6 +550,15 @@ public class VmAnalyzer {
         removeVmsFromCache();
     }
 
+    private boolean isRunSucceeded(VmDynamic vdsmVmDynamic) {
+        return !EnumSet.of(VMStatus.Up, VMStatus.MigratingFrom).contains(dbVm.getStatus())
+                && vdsmVmDynamic.getStatus() == VMStatus.Up;
+    }
+
+    private boolean isMigrationSucceeded(VmDynamic vdsmVmDynamic) {
+        return dbVm.getStatus() == VMStatus.MigratingTo && vdsmVmDynamic.getStatus().isRunning();
+    }
+
     private boolean updateVmRunTimeInfo() {
         boolean returnValue = false;
 
@@ -563,7 +572,8 @@ public class VmAnalyzer {
                         .getVmNetworkInterfaceDao()
                         .getAllForVm(dbVm.getId()));
 
-                if (vdsmVm.getVmDynamic().getStatus() == VMStatus.Up) {
+                if ((isVmMigratingToThisVds() && vdsmVm.getVmDynamic().getStatus().isRunning())
+                        || vdsmVm.getVmDynamic().getStatus() == VMStatus.Up) {
                     succeededToRun = true;
                 }
             }
@@ -589,6 +599,10 @@ public class VmAnalyzer {
         }
 
         return returnValue;
+    }
+
+    private boolean isVmMigratingToThisVds() {
+        return dbVm.getStatus() == VMStatus.MigratingFrom && getVdsManager().getVdsId().equals(dbVm.getMigratingToVds());
     }
 
     private AuditLogType vmPauseStatusToAuditLogType(VmPauseStatus pauseStatus) {
