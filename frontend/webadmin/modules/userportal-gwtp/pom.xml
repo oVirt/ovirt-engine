@@ -181,6 +181,9 @@
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
           <packagingExcludes>WEB-INF/deploy/**,WEB-INF/classes/**</packagingExcludes>
+          <archive>
+            <addMavenDescriptor>false</addMavenDescriptor>
+          </archive>
         </configuration>
       </plugin>
       <plugin>
@@ -261,6 +264,9 @@
                         <directory>${project.build.directory}/generated-gwt/userportal</directory>
                     </resource>
                 </webResources>
+                <archive>
+                    <addMavenDescriptor>false</addMavenDescriptor>
+                </archive>
             </configuration>
           </plugin>
         </plugins>
