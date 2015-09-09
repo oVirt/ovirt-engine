@@ -39,7 +39,6 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
 
     @Override
     public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
-        initTemplate();
         super.initialize(systemTreeSelectedItem);
 
         if (!StringHelper.isNullOrEmpty(pool.getVmPoolSpiceProxy())) {
@@ -74,6 +73,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
                         : Linq.firstOrDefault(dataCenterWithClusters));
         getModel().getCpuSharesAmount().setEntity(pool.getCpuShares());
         updateCpuSharesSelection();
+        initTemplate();
         instanceTypeManager.updateAll();
     }
 
@@ -110,10 +110,11 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
             }
             doChangeDefaultHost(pool.getDedicatedVmForVdsList());
             setupWindowModelFrom(template);
-
         } else {
             if (!instanceTypeManager.isActive()) {
                 activateInstanceTypeManager();
+            } else {
+                setupWindowModelFrom(pool.getStaticData());
             }
         }
     }
