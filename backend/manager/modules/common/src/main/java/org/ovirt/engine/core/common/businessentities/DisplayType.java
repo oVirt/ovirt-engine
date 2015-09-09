@@ -3,9 +3,9 @@ package org.ovirt.engine.core.common.businessentities;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 
 public enum DisplayType {
-    vga(VmDeviceType.VGA),
     cirrus(VmDeviceType.CIRRUS),
-    qxl(VmDeviceType.QXL);
+    qxl(VmDeviceType.QXL),
+    vga(VmDeviceType.VGA);
 
     private VmDeviceType defaultVmDeviceType;
 
