@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.hostedengine;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -36,17 +37,20 @@ public class HostedEngineHelper {
 
     @PostConstruct
     private void init() {
-        VmStatic vmStatic = dbFacade.getVmStaticDao().getAllByName(
-                        Config.<String>getValue(ConfigValues.HostedEngineVmName)).get(0);
-        if (vmStatic != null) {
+        List<VmStatic> allByName = dbFacade.getVmStaticDao().getAllByName(
+                Config.<String>getValue(ConfigValues.HostedEngineVmName));
+        if (!allByName.isEmpty()) {
+            VmStatic vmStatic = allByName.get(0);
             hostedEngineVm = dbFacade.getVmDao().get(vmStatic.getId());
             VmHandler.updateDisksFromDb(hostedEngineVm);
-            sd = dbFacade.getStorageDomainStaticDao().getByName(
-                    Config.<String>getValue(ConfigValues.HostedEngineStorageDomainName));
-            if (sd != null) {
-                sdConnection = dbFacade.getStorageServerConnectionDao()
-                        .getAllForDomain(getStorageDomainStatic().getId()).get(0);
-            }
+        }
+
+        sd = dbFacade.getStorageDomainStaticDao().getByName(
+                Config.<String> getValue(ConfigValues.HostedEngineStorageDomainName));
+        if (sd != null) {
+            sdConnection = dbFacade.getStorageServerConnectionDao()
+                    .getAllForDomain(getStorageDomainStatic().getId())
+                    .get(0);
         }
     }
 
