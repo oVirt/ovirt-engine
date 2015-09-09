@@ -96,6 +96,10 @@ public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implem
         return set;
     }
 
+    public Set<String> getParentConsumedEvents() {
+        return super.getConsumedEvents();
+    }
+
     public SafeHtml getLabel() {
         return label;
     }
