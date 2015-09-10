@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool;
 
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -38,8 +37,7 @@ public class MacRangeWidget extends AddRemoveRowWidget<ListModel<MacRangeModel>,
 
     @Override
     protected boolean isGhost(MacRangeModel value) {
-        return StringHelper.isNullOrEmpty(value.getLeftBound().getEntity())
-                && StringHelper.isNullOrEmpty(value.getRightBound().getEntity());
+        return false;
     }
 
 }
