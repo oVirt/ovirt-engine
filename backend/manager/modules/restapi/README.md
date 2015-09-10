@@ -219,3 +219,21 @@ replaced by inner elements:
       </topology>
       ...
     </cpu>
+
+### Use elements instead of attributes in VCPU pin
+
+In the past the VCPU pin element used attributes for its properties:
+
+    <cpu_tune>
+      <vcpu_pin vcpu="0" cpu_set="0"/>
+    </cpu_tune>
+
+This is contrary to the common practice in the RESTAPI. They have been
+replaced by inner elements:
+
+    <cpu_tune>
+      <vcpu_pin>
+        <vcpu>0</vcpu>
+        <cpu_set>0</cpu_set>
+      </vcpu_pin>
+    </cpu_tune>

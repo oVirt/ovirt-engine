@@ -462,8 +462,10 @@
   <xs:element name="vcpu_pin" type="VCpuPin"/>
 
   <xs:complexType name="VCpuPin">
-    <xs:attribute name="vcpu" type="xs:int" use="required"/>
-    <xs:attribute name="cpu_set" type="xs:string" use="required"/>
+    <xs:sequence>
+      <xs:element name="vcpu" type="xs:int" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="cpu_set" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:element name="cpu_tune" type="CpuTune"/>
