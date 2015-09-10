@@ -6,7 +6,6 @@ import org.ovirt.engine.api.model.HostNIC;
 import org.ovirt.engine.api.model.QoS;
 import org.ovirt.engine.api.model.QosType;
 import org.ovirt.engine.api.model.Slaves;
-import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -50,9 +49,6 @@ public class HostNicMapperTest extends AbstractInvertibleMappingTest<HostNIC, Vd
         }
 
         assertNotNull(model.getProperties());
-        assertEquals(CustomPropertiesParser.toMap(model.getProperties()),
-                CustomPropertiesParser.toMap(transform.getProperties()));
-
     }
 
     @Test

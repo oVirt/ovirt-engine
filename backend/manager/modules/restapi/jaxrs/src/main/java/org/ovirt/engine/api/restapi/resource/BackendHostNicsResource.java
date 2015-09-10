@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Bonding;
@@ -24,11 +25,13 @@ import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.HostNicResource;
 import org.ovirt.engine.api.resource.HostNicsResource;
+import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.AddBondParameters;
+import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -347,23 +350,42 @@ public class BackendHostNicsResource
     }
 
     private SetupNetworksParameters toParameters(Action action) {
+        List<HostNIC> hostNics = action.getHostNics().getHostNics();
+        List<VdsNetworkInterface> existingNics = getCollection();
+        BusinessEntityMap<VdsNetworkInterface> existingNicsMapping = new BusinessEntityMap<>(existingNics);
+
         SetupNetworksParameters parameters = new SetupNetworksParameters();
-        parameters.setInterfaces(nicsToInterfaces(action.getHostNics().getHostNics()));
+        parameters.setInterfaces(nicsToInterfaces(hostNics, existingNicsMapping));
+        parameters.setCustomProperties(nicsToCustomProperties(hostNics, existingNicsMapping));
         parameters.setVdsId(Guid.createGuidFromStringDefaultEmpty(getHostId()));
         parameters.setForce(action.isSetForce() ? action.isForce() : false);
         parameters.setCheckConnectivity(action.isSetCheckConnectivity() ? action.isCheckConnectivity() : false);
         if (action.isSetConnectivityTimeout()) {
             parameters.setConectivityTimeout(action.getConnectivityTimeout());
         }
-        parameters.setNetworksToSync(nicsToNetworksToSync(action.getHostNics().getHostNics()));
+        parameters.setNetworksToSync(nicsToNetworksToSync(hostNics));
         return parameters;
     }
 
-    private List<VdsNetworkInterface> nicsToInterfaces(List<HostNIC> hostNics) {
+    private CustomPropertiesForVdsNetworkInterface nicsToCustomProperties(List<HostNIC> hostNics,
+        BusinessEntityMap<VdsNetworkInterface> existingNicsMapping) {
+        CustomPropertiesForVdsNetworkInterface result = new CustomPropertiesForVdsNetworkInterface();
+        for (HostNIC hostNic : hostNics) {
+            if (hostNic.isSetProperties()) {
+                String hostNicName = hostNic.getName();
+                String nicName = StringUtils.isEmpty(hostNicName)
+                    ? existingNicsMapping.get(hostNic.getId()).getName()
+                    : hostNicName;
+
+                result.add(nicName, CustomPropertiesParser.toMap(hostNic.getProperties()));
+            }
+        }
+        return result;
+    }
+
+    private List<VdsNetworkInterface> nicsToInterfaces(List<HostNIC> hostNics,
+        BusinessEntityMap<VdsNetworkInterface> existingNicsMapping) {
         List<VdsNetworkInterface> ifaces = new ArrayList<>(hostNics.size());
-        List<VdsNetworkInterface> existingNics = getCollection();
-        Map<String, VdsNetworkInterface> nicsByName = Entities.entitiesByName(existingNics);
-        Map<Guid, VdsNetworkInterface> nicsById = Entities.businessEntitiesById(existingNics);
 
         for (HostNIC nic : hostNics) {
             VdsNetworkInterface iface = map(nic, null);
@@ -377,12 +399,12 @@ public class BackendHostNicsResource
                 }
             }
 
-            if (nic.isSetName() && nicsByName.containsKey(nic.getName())) {
-                iface.setLabels(nicsByName.get(nic.getName()).getLabels());
+            if (nic.isSetName() && existingNicsMapping.containsKey(nic.getName())) {
+                iface.setLabels(existingNicsMapping.get(nic.getName()).getLabels());
             } else if (nic.isSetId()) {
                 Guid nicId = asGuid(nic.getId());
-                if (nicsById.containsKey(nicId)) {
-                    iface.setLabels(nicsById.get(nicId).getLabels());
+                if (existingNicsMapping.containsKey(nicId)) {
+                    iface.setLabels(existingNicsMapping.get(nicId).getLabels());
                 }
             }
 
