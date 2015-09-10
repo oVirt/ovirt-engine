@@ -34,9 +34,11 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -49,6 +51,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     private VmTemplate oldTemplate;
     private List<GraphicsDevice> cachedGraphics;
+
+    protected final OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
     public UpdateVmTemplateCommand(T parameters) {
         super(parameters);
@@ -240,6 +244,15 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             return false;
         }
 
+        if (returnValue) {
+            boolean balloonEnabled = Boolean.TRUE.equals(getParameters().isBalloonEnabled());
+            if (balloonEnabled && !osRepository.isBalloonEnabled(getParameters().getVmTemplateData().getOsId(),
+                    getVdsGroup().getCompatibilityVersion())) {
+                addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+                return failCanDoAction(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
+            }
+        }
+
         return returnValue;
     }
 
@@ -341,7 +354,9 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         VmDeviceUtils.updateConsoleDevice(getVmTemplateId(), getParameters().isConsoleEnabled());
         VmDeviceUtils.updateVirtioScsiController(getVmTemplateId(), getParameters().isVirtioScsiEnabled());
-        VmDeviceUtils.updateMemoryBalloon(getVmTemplateId(), getParameters().isBalloonEnabled());
+        if (getParameters().isBalloonEnabled() != null) {
+            VmDeviceUtils.updateMemoryBalloon(getVmTemplateId(), getParameters().isBalloonEnabled());
+        }
     }
 
     @Override
