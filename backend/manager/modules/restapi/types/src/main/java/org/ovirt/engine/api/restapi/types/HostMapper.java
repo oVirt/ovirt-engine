@@ -39,7 +39,6 @@ import org.ovirt.engine.api.model.SPM;
 import org.ovirt.engine.api.model.SSH;
 import org.ovirt.engine.api.model.SpmState;
 import org.ovirt.engine.api.model.Status;
-import org.ovirt.engine.api.model.StorageManager;
 import org.ovirt.engine.api.model.TransparentHugePages;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Version;
@@ -96,11 +95,6 @@ public class HostMapper {
         }
         if (model.isSetPowerManagement()) {
             entity = map(model.getPowerManagement(), entity);
-        }
-        if (model.isSetStorageManager()) {
-            if (model.getStorageManager().getPriority() != null) {
-                entity.setVdsSpmPriority(model.getStorageManager().getPriority());
-            }
         }
         if (model.isSetSpm()) {
             if (model.getSpm().getPriority() != null) {
@@ -211,10 +205,6 @@ public class HostMapper {
         } else if (status == HostStatus.MAINTENANCE || status == HostStatus.PREPARING_FOR_MAINTENANCE) {
             model.getStatus().setDetail(entity.getMaintenanceReason());
         }
-        StorageManager sm = new StorageManager();
-        sm.setPriority(entity.getVdsSpmPriority());
-        sm.setValue(entity.getSpmStatus() == VdsSpmStatus.SPM);
-        model.setStorageManager(sm);
         SPM spm = new SPM();
         spm.setPriority(entity.getVdsSpmPriority());
         if (entity.getSpmStatus() != null) {

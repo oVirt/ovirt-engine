@@ -92,3 +92,9 @@ the `version` element long ago, but it has been kept into the
 `capabilities` element as well, just for backwards compatibility.
 
 In 4.0 it has been removed completely from `capabilities`.
+
+### Removed the `storage_manager` element
+
+The `storage_manager` element was replaced by the `spm` element some
+time ago. The old one was kept for backwards compatibility, but it has
+been completely removed now.
