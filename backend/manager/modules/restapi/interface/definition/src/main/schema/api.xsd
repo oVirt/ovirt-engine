@@ -3495,8 +3495,6 @@
           <xs:element ref="sso" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="rng_device" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="console" minOccurs="0" maxOccurs="1"/>
-          <!-- timzeone is deprecated and shall be removed in 4.x -->
-          <xs:element name="timezone" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="usb" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="soundcard_enabled" minOccurs="0" maxOccurs="1"/>

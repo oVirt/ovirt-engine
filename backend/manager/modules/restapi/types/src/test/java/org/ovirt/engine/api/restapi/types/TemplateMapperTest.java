@@ -40,7 +40,6 @@ public class TemplateMapperTest
         }
         from.setTimeZone(new TimeZone());
         from.getTimeZone().setName("Australia/Darwin");
-        from.setTimezone(from.getTimeZone().getName());
         from.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM.value());
         from.getMigration().setAutoConverge(InheritableBoolean.TRUE.value());
         from.getMigration().setCompressed(InheritableBoolean.TRUE.value());
@@ -82,7 +81,7 @@ public class TemplateMapperTest
         assertEquals(model.getDisplay().isSingleQxlPci(), transform.getDisplay().isSingleQxlPci());
         assertEquals(model.getDisplay().isAllowOverride(), transform.getDisplay().isAllowOverride());
         assertEquals(model.getDisplay().getKeyboardLayout(), transform.getDisplay().getKeyboardLayout());
-        assertEquals(model.getTimezone(), transform.getTimezone());
+        assertEquals(model.getTimeZone().getName(), transform.getTimeZone().getName());
         assertEquals(model.getDisplay().isSmartcardEnabled(), transform.getDisplay().isSmartcardEnabled());
         assertEquals(model.isDeleteProtected(), transform.isDeleteProtected());
         assertEquals(model.isTunnelMigration(), transform.isTunnelMigration());

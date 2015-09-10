@@ -107,3 +107,25 @@ there are only two types: with local storage and with shared storage. A
 new `local` element was introduced to indicate this, and the old
 `storage_type` was element was preserved for backwards compatibility.
 This old element has now been completely removed.
+
+### Remove the `timezone` element
+
+The VM resource used to contain a `timezone` element to represent the
+time zone. This element only allowed a string:
+
+    <vm>
+       <timezone>Europe/Madrid</timezone>
+    </vm>
+
+This doesn't allow extension, and as a it was necessary to add the UTC
+offset, it was replaced with a new structured `time_zone` element:
+
+    <vm>
+      <time_zone>
+        <name>Europe/Madrid</name>
+        <utc_offset>GMT+1</utc_offset>
+      </time_zone>
+    </vm>
+
+The old `timezone` element was preserved, but it has been completely
+removed now.

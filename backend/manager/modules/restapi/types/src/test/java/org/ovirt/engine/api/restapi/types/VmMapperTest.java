@@ -103,7 +103,6 @@ public class VmMapperTest extends
         from.getCpu().setCpuTune(cpuTune);
         from.setTimeZone(new TimeZone());
         from.getTimeZone().setName("Australia/Darwin");
-        from.setTimezone(from.getTimeZone().getName());
         // VmPlacement - multiple hosts
         from.setPlacementPolicy(createPlacementPolicy(Guid.EVERYONE, Guid.SYSTEM));
         // Guest Nics configurations
@@ -173,9 +172,7 @@ public class VmMapperTest extends
         List<Host> trnsfHostsList = transform.getPlacementPolicy().getHosts().getHosts();
         assertHostsListMatch(modelHostsList, trnsfHostsList);
         assertTrue(Math.abs(model.getMemoryPolicy().getGuaranteed() - transform.getMemoryPolicy().getGuaranteed()) <= (1024 * 1024));
-        assertEquals(model.getTimezone(), transform.getTimezone());
-        assertNotNull(model.getTimeZone());
-        assertEquals(model.getTimeZone().getName(), transform.getTimezone());
+        assertEquals(model.getTimeZone().getName(), transform.getTimeZone().getName());
         assertEquals(model.getDisplay().isSmartcardEnabled(), transform.getDisplay().isSmartcardEnabled());
         assertEquals(model.getDisplay().getKeyboardLayout(), transform.getDisplay().getKeyboardLayout());
         assertEquals(model.isDeleteProtected(), transform.isDeleteProtected());

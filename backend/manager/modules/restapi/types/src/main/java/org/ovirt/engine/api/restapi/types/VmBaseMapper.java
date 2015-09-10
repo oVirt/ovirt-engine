@@ -139,15 +139,6 @@ public class VmBaseMapper {
                 entity.setTimeZone(timezone);
             }
         }
-        // timezone is deprecated and should be removed in 4.x
-        // now only accepted for backwards compatibility
-        else if (model.isSetTimezone()) {
-            String timezone = model.getTimezone();
-            if (timezone.isEmpty()) {
-                timezone = null;  // normalize default timezone representation
-            }
-            entity.setTimeZone(timezone);
-        }
         if (model.isSetOrigin()) {
             entity.setOrigin(VmMapper.map(model.getOrigin(), (OriginType) null));
         }
@@ -237,8 +228,6 @@ public class VmBaseMapper {
             model.setTimeZone(new TimeZone());
             model.getTimeZone().setName(entity.getTimeZone());
         }
-        // Deprecated: Should be removed in 4.x, use the TimeZone complex type instead
-        model.setTimezone(entity.getTimeZone());
 
         if (entity.getCreationDate() != null) {
             model.setCreationTime(DateMapper.map(entity.getCreationDate(), null));

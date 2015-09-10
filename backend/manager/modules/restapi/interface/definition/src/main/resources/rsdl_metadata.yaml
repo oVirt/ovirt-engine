@@ -41,7 +41,6 @@ actions:
           vm.instance_type.id|name: xs:string
           vm.name: xs:string
           vm.cluster.id|name: xs:string
-          vm.timezone--DEPRECATED: xs:string
           vm.time_zone.name: xs:string
           vm.os.boot--COLLECTION: {boot.dev: 'xs:string'}
           vm.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}
@@ -128,7 +127,6 @@ actions:
         optionalArguments:
           vm.instance_type.id|name: xs:string
           vm.quota.id: xs:string
-          vm.timezone--DEPRECATED: xs:string
           vm.time_zone.name: xs:string
           vm.os.boot--COLLECTION: {boot.dev: 'xs:string'}
           vm.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}
@@ -204,7 +202,6 @@ actions:
           vm.snapshots.snapshot--COLLECTION: {snapshot.id: 'xs:string'}}
         optionalArguments:
           vm.quota.id: xs:string
-          vm.timezone--DEPRECATED: xs:string
           vm.time_zone.name: xs:string
           vm.os.boot--COLLECTION: {boot.dev: 'xs:string'}
           vm.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}
@@ -273,7 +270,6 @@ actions:
         optionalArguments:
                 vm.name: 'xs:string'
                 vm.quota.id: xs:string
-                vm.timezone--DEPRECATED: xs:string
                 vm.time_zone.name: xs:string
                 vm.os.boot--COLLECTION: {boot.dev: 'xs:string'}
                 vm.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}
@@ -2646,7 +2642,6 @@ actions:
           template.os.cmdline: xs:string
           template.origin: xs:string
           template.high_availability.priority: 'xs:int'
-          template.timezone--DEPRECATED: xs:string
           template.time_zone.name: xs:string
           template.domain.name: xs:string
           template.type: xs:string
@@ -2715,7 +2710,6 @@ actions:
           template.os.cmdline: xs:string
           template.origin: xs:string
           template.high_availability.priority: 'xs:int'
-          template.timezone--DEPRECATED: xs:string
           template.time_zone.name: xs:string
           template.storage_domain.id: 'xs:string'
           template.domain.name: xs:string
