@@ -452,27 +452,11 @@
   <xs:element name="cpu" type="CPU"/>
 
   <xs:complexType name="CpuTopology">
-    <xs:attribute name="sockets" type="xs:int" use="optional">
-            <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property generateIsSetMethod="false"/>
-          </xs:appinfo>
-        </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="cores" type="xs:int" use="optional">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property generateIsSetMethod="false"/>
-          </xs:appinfo>
-        </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="threads" type="xs:int" use="optional">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property generateIsSetMethod="false"/>
-          </xs:appinfo>
-        </xs:annotation>
-    </xs:attribute>
+    <xs:sequence>
+      <xs:element name="sockets" type="xs:int" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="cores" type="xs:int" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="threads" type="xs:int" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:element name="vcpu_pin" type="VCpuPin"/>

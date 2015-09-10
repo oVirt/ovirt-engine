@@ -198,5 +198,24 @@ model, where the `id` attribute is used for opaque identifiers. This
     <cpu>
       <type>Intel Conroe Family</type>
       <architecture>X86_64</architecture>
+
+### Use elements instead of attributes in CPU topology
+
+In the past the CPU topology element used attributes for its properties:
+
+    <cpu>
+      <topology sockets="1" cores="1" threads="1"/>
+      ...
+    </cpu>
+
+This is contrary to the common practice in the RESTAPI. They have been
+replaced by inner elements:
+
+    <cpu>
+      <topology>
+        <sockets>1<sockets>
+        <cores>1<cores>
+        <threads>1<threads>
+      </topology>
       ...
     </cpu>
