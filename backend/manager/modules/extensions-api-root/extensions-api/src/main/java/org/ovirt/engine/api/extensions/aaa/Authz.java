@@ -114,19 +114,19 @@ public class Authz {
          *
          * <p>
          * Input: Either one of AUTH_RECORD or PRINCIPAL must be present:
+         * </p>
          * <ul>
          * <li>{@link Authn.InvokeKeys#AUTH_RECORD}[O] - authentication record.</li>
          * <li>{@link Authz.InvokeKeys#PRINCIPAL}[O] - principal.</li>
          * <li>{@link InvokeKeys#QUERY_FLAGS}[O] - query flags.</li>
          * </ul>
-         * </p>
          *
          * <p>
          * Output:
+         * </p>
          * <ul>
          * <li>{@link InvokeKeys#PRINCIPAL_RECORD}</li>
          * </ul>
-         * </p>
          *
          * @see Authn.AuthRecord
          * @see PrincipalRecord
@@ -137,20 +137,20 @@ public class Authz {
          *
          * <p>
          * Input:
+         * </p>
          * <ul>
          * <li>{@link InvokeKeys#NAMESPACE}[M]</li>
          * <li>{@link InvokeKeys#QUERY_ENTITY}[M]</li>
          * <li>{@link InvokeKeys#QUERY_FILTER}[M]</li>
          * <li>{@link InvokeKeys#QUERY_FLAGS}[O] - query flags.</li>
          * </ul>
-         * </p>
          *
          * <p>
          * Output:
+         * </p>
          * <ul>
          * <li>{@link InvokeKeys#QUERY_OPAQUE}</li>
          * </ul>
-         * </p>
          *
          * <p>
          * Search execute output based on entity.
@@ -162,18 +162,18 @@ public class Authz {
          *
          * <p>
          * Input:
+         * </p>
          * <ul>
          * <li>{@link InvokeKeys#PAGE_SIZE}[O]</li>
          * <li>{@link InvokeKeys#QUERY_OPAQUE}[M]</li>
          * </ul>
-         * </p>
          *
          * <p>
          * Output:
+         * </p>
          * <ul>
          * <li>{@link InvokeKeys#QUERY_RESULT} - Actual content depends on the query.</li>
          * </ul>
-         * </p>
          */
         public static final ExtUUID QUERY_EXECUTE = new ExtUUID("AAA_AUTHZ_QUERY_EXECUTE", "b572eb07-11b6-4337-89e3-d1a4e0dafe41");
         /**
@@ -181,10 +181,10 @@ public class Authz {
          *
          * <p>
          * Input:
+         * </p>
          * <ul>
          * <li>{@link InvokeKeys#QUERY_OPAQUE}[M]</li>
          * </ul>
-         * </p>
          */
         public static final ExtUUID QUERY_CLOSE = new ExtUUID("AAA_AUTHZ_QUERY_CLOSE", "3e049bc0-055e-4789-a4e3-0ef51bfe6685");
     }
@@ -264,6 +264,7 @@ public class Authz {
      * Either nested filter list or field filter.
      * <p>
      * Example:
+     * </p>
      * <pre>{@code
      * Filter = {
      *     OPERATOR: QueryFilterOperator.AND,
@@ -286,7 +287,6 @@ public class Authz {
      *     ],
      * }
      * }</pre>
-     * </p>
      */
     public static class QueryFilterRecord {
         /**
