@@ -1533,13 +1533,9 @@
   <xs:element name="clusters" type="Clusters"/>
 
   <xs:complexType name="MemoryOverCommit">
-    <xs:attribute name="percent" type="xs:int">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property generateIsSetMethod="false"/>
-          </xs:appinfo>
-        </xs:annotation>
-    </xs:attribute>
+    <xs:sequence>
+      <xs:element name="percent" type="xs:int" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="WatchDogs">

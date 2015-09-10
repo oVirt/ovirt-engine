@@ -252,3 +252,22 @@ replaced by inner elements:
       <minor>5</minor>
       ...
     </version>
+
+### Use elements instead of attributes in memory overcommit
+
+In the past the `overcommit` element used attributes for its properties:
+
+    <memory_policy>
+      <overcommit percent="100"/>
+      ...
+    </memory_policy>
+
+This is contrary to the common practice in the RESTAPI. They have been
+replaced by inner elements:
+
+    <memory_policy>
+      <overcommit>
+        <percent>100</percent>
+      </overcommit>
+      ...
+    </memory_policy>
