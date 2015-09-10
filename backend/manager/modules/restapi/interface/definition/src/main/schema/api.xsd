@@ -523,41 +523,13 @@
   <xs:complexType name="Version">
     <xs:complexContent>
       <xs:extension base="BaseResource">
-	    <xs:attribute name="major" type="xs:unsignedShort">
-	        <xs:annotation>
-	          <xs:appinfo>
-	            <jaxb:property generateIsSetMethod="false"/>
-	          </xs:appinfo>
-	        </xs:annotation>
-	    </xs:attribute>
-	    <xs:attribute name="minor" type="xs:unsignedShort">
-	        <xs:annotation>
-	          <xs:appinfo>
-	            <jaxb:property generateIsSetMethod="false"/>
-	          </xs:appinfo>
-	        </xs:annotation>
-	    </xs:attribute>
-	    <xs:attribute name="build" type="xs:unsignedShort">
-	        <xs:annotation>
-	          <xs:appinfo>
-	            <jaxb:property generateIsSetMethod="false"/>
-	          </xs:appinfo>
-	        </xs:annotation>
-	    </xs:attribute>
-	    <xs:attribute name="revision" type="xs:unsignedShort">
-	        <xs:annotation>
-	          <xs:appinfo>
-	            <jaxb:property generateIsSetMethod="false"/>
-	          </xs:appinfo>
-	        </xs:annotation>
-	    </xs:attribute>
-	    <xs:attribute name="full_version" type="xs:string">
-	        <xs:annotation>
-	          <xs:appinfo>
-	            <jaxb:property generateIsSetMethod="false"/>
-	          </xs:appinfo>
-	        </xs:annotation>
-	    </xs:attribute>
+        <xs:sequence>
+          <xs:element name="major" type="xs:unsignedShort" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="minor" type="xs:unsignedShort" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="build" type="xs:unsignedShort" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="revision" type="xs:unsignedShort" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="full_version" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

@@ -237,3 +237,18 @@ replaced by inner elements:
         <cpu_set>0</cpu_set>
       </vcpu_pin>
     </cpu_tune>
+
+### Use elements instead of attributes in VCPU pin
+
+In the past the `version` element used attributes for its properties:
+
+    <version major="3" minor="5" ../>
+
+This is contrary to the common practice in the RESTAPI. They have been
+replaced by inner elements:
+
+    <version>
+      <major>3</minor>
+      <minor>5</minor>
+      ...
+    </version>
