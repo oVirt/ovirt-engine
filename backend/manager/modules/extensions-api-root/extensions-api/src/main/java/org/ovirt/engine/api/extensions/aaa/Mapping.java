@@ -26,17 +26,17 @@ public class Mapping {
          *
          * <p>
          * Input:
+         * </p>
          * <ul>
          * <li>{@link InvokeKeys#USER}[M] - user.</li>
          * </ul>
-         * </p>
          *
          * <p>
          * Output:
+         * </p>
          * <ul>
          * <li>{@link InvokeKeys#USER}[M] - user.</li>
          * </ul>
-         * </p>
          */
         public static final ExtUUID MAP_USER = new ExtUUID("AAA_MAPPING_MAP_USER", "02d37fee-b169-437a-8b8b-15643e481fba");
         /**
@@ -45,17 +45,17 @@ public class Mapping {
          *
          * <p>
          * Input:
+         * </p>
          * <ul>
          * <li>{@link Authn.InvokeKeys#AUTH_RECORD}[M] - authentication record.</li>
          * </ul>
-         * </p>
          *
          * <p>
          * Output:
+         * </p>
          * <ul>
          * <li>{@link Authn.InvokeKeys#AUTH_RECORD}[M] - authentication record.</li>
          * </ul>
-         * </p>
          *
          * @see Authn.AuthRecord
          */

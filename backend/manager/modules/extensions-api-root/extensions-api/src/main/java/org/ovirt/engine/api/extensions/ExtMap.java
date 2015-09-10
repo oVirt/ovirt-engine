@@ -323,6 +323,7 @@ public class ExtMap implements ConcurrentMap<ExtKey, Object>, Cloneable, Seriali
      * @param key key with which the specified value is to be associated.
      * @param type expected type.
      * @param defaultValue default value to return.
+     * @param <T> type of return and default value, inferred
      * @return Value.
      */
     public <T> T get(ExtKey key, Class<T> type, T defaultValue) {
@@ -358,6 +359,7 @@ public class ExtMap implements ConcurrentMap<ExtKey, Object>, Cloneable, Seriali
      * Safe version of get().
      * @param key key with which the specified value is to be associated.
      * @param type expected type.
+     * @param <T> type of return value, inferred
      * @return Value.
      * @see #get(ExtKey key, Class type, Object defaultValue)
      */
@@ -372,6 +374,7 @@ public class ExtMap implements ConcurrentMap<ExtKey, Object>, Cloneable, Seriali
      * Integer i = <Integer> map.get(key1);
      * }</pre>
      * @param key key.
+     * @param <T> type of return value
      * @return Value.
      */
     @SuppressWarnings("unchecked")
@@ -387,6 +390,7 @@ public class ExtMap implements ConcurrentMap<ExtKey, Object>, Cloneable, Seriali
      * }</pre>
      * @param key key.
      * @param defaultValue default value.
+     * @param <T> type of return and default value, inferred
      * @return Value.
      */
     public <T> T get(ExtKey key, T defaultValue) {

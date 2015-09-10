@@ -131,21 +131,22 @@ public class Authn {
          *
          * <p>
          * Input:
+         * </p>
          * <ul>
          * <li>{@link InvokeKeys#HTTP_SERVLET_REQUEST}[M]</li>
          * <li>{@link InvokeKeys#HTTP_SERVLET_RESPONSE}[M]</li>
          * </ul>
-         * </p>
          *
          * <p>
          * Output:
+         * </p>
          * <ul>
          * <li>{@link InvokeKeys#AUTH_RECORD}[O] - must be set on success.</li>
          * <li>{@link InvokeKeys#CREDENTIALS_CHANGE_URL}[O]</li>
          * <li>{@link InvokeKeys#PRINCIPAL}[O] - should be set if available even if login failed if principal is known.</li>
          * <li>{@link InvokeKeys#RESULT}[M]</li>
          * <li>{@link InvokeKeys#USER_MESSAGE}[O]</li>
-         * </p>
+         * </ul>
          *
          * @see AuthResult#NEGOTIATION_INCOMPLETE
          * @see AuthResult#NEGOTIATION_UNAUTHORIZED
@@ -156,15 +157,16 @@ public class Authn {
          *
          * <p>
          * Input:
+         * </p>
          * <ul>
          * <li>{@link InvokeKeys#CREDENTIALS_CHALLENGE_RESPONSE_RECORD}[O]</li>
          * <li>{@link InvokeKeys#CREDENTIALS}[M]</li>
          * <li>{@link InvokeKeys#USER}[M]</li>
          * </ul>
-         * </p>
          *
          * <p>
          * Output:
+         * </p>
          * <ul>
          * <li>{@link InvokeKeys#AUTH_RECORD}[O] - must be set on success.</li>
          * <li>{@link InvokeKeys#CREDENTIALS_CHALLENGE_RECORD}[O]</li>
@@ -173,7 +175,6 @@ public class Authn {
          * <li>{@link InvokeKeys#RESULT}[M]</li>
          * <li>{@link InvokeKeys#USER_MESSAGE}[O]</li>
          * </ul>
-         * </p>
          */
         public static final ExtUUID AUTHENTICATE_CREDENTIALS = new ExtUUID("AAA_AUTHN_AUTHENTICATE_CREDENTIALS", "d9605c75-6b43-4b00-b32c-06bdfa80244c");
         /**
@@ -181,10 +182,10 @@ public class Authn {
          *
          * <p>
          * Input:
+         * </p>
          * <ul>
          * <li>{@link InvokeKeys#AUTH_RECORD}[M]</li>
          * </ul>
-         * </p>
          */
         public static final ExtUUID LOGOUT = new ExtUUID("AAA_AUTHN_LOGOUT", "3acac9f1-e123-46f6-a6ee-94b89dd54f42");
         /**
@@ -192,21 +193,21 @@ public class Authn {
          *
          * <p>
          * Input:
+         * </p>
          * <ul>
          * <li>{@link InvokeKeys#CREDENTIALS_CHALLENGE_RESPONSE_RECORD}[O]</li>
          * <li>{@link InvokeKeys#CREDENTIALS_NEW}[M]</li>
          * <li>{@link InvokeKeys#CREDENTIALS}[M]</li>
          * <li>{@link InvokeKeys#USER} or {@link InvokeKeys#PRINCIPAL}[M]</li>
          * </ul>
-         * </p>
          *
          * <p>
          * Output:
+         * </p>
          * <ul>
          * <li>{@link InvokeKeys#RESULT}[M]</li>
          * <li>{@link InvokeKeys#CREDENTIALS_CHALLENGE_RECORD}[O]</li>
          * </ul>
-         * </p>
          */
         public static final ExtUUID CREDENTIALS_CHANGE = new ExtUUID("AAA_AUTHN_CREDENTIALS_CHANGE", "3392d839-890d-404e-a093-a13242e537c2");
         /**
@@ -214,18 +215,18 @@ public class Authn {
          *
          * <p>
          * Input:
+         * </p>
          * <ul>
          * <li>{@link InvokeKeys#USER} or {@link InvokeKeys#PRINCIPAL}[M]</li>
          * <li>{@link InvokeKeys#CREDENTIALS_CHALLENGE_RESPONSE_RECORD}[O]</li>
          * </ul>
-         * </p>
          *
          * <p>
          * Output:
+         * </p>
          * <ul>
          * <li>{@link InvokeKeys#CREDENTIALS_CHALLENGE_RECORD}[O]</li>
          * </ul>
-         * </p>
          */
         public static final ExtUUID CREDENTIALS_SELF_RESET = new ExtUUID("AAA_AUTHN_CREDENTIALS_SELF_RESET", "49094e34-f44a-4003-884e-e78bff9d1c84");
     }

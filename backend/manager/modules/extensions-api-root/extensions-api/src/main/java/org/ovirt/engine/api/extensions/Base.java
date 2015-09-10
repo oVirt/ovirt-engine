@@ -22,22 +22,22 @@ public class Base {
         /**
          * Extension instance name.
          * Variable like name, no special characters.
-         * <br/>
+         * <br>
          * Default: unique random.
          */
         public static final String NAME = "ovirt.engine.extension.name";
         /**
          * Extension services.
          * Value: Comma seperated strings.
-         * <br/>
+         * <br>
          * Default: none.
          */
         public static final String PROVIDES = "ovirt.engine.extension.provides";
         /**
          * Extension enabled.
-         * <br/>
+         * <br>
          * Value: true/false.
-         * <br/>
+         * <br>
          * Default: true.
          */
         public static final String ENABLED = "ovirt.engine.extension.enabled";
