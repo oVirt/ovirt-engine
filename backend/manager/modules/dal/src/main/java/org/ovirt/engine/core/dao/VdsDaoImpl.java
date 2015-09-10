@@ -9,7 +9,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -417,34 +416,31 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         }
     }
 
-    private VDS uniteAgentsSingleVds(List<VDS> vdsList) {
-        List<FenceAgent> agents = new ArrayList<>();
-        for (VDS vds : vdsList) { // collect agents from all rows
-            agents.addAll(vds.getFenceAgents());
-        }
-        VDS vds = vdsList.get(0);
-        vds.setFenceAgents(agents);
-        return vds;
-    }
-
-    private Map<Guid, List<VDS>> getVdsMap(List<VDS> vdsList) {
-        Map<Guid, List<VDS>> map = new HashMap<>();
-        for (VDS vds : vdsList) {
-            if (!map.containsKey(vds.getId())) {
-                map.put(vds.getId(), new ArrayList<VDS>());
-            }
-            map.get(vds.getId()).add(vds);
-        }
-        return map;
-    }
-
+    /**
+     * Unit the fence agents from potentially multiple VDS (they are the same VDS, they just have multiple rows
+     * in the result set), while maintaining the order in which the VDSs were returned by the query.
+     * @param vdsList The list of VDS (with potentially multiple VDS being the same with different fence agents).
+     * @return A list of VDS where each VDS is unique (according to the GUID) and each VDS can contain potentially
+     * multiple fence agents.
+     */
     private List<VDS> uniteAgents(List<VDS> vdsList) {
-        Map<Guid, List<VDS>> vdsMap = getVdsMap(vdsList);
+        Map<Guid, VDS> vdsMap = new HashMap<>();
         List<VDS> results = new ArrayList<>();
-        for (Entry<Guid, List<VDS>> entry : vdsMap.entrySet()) {
-            results.add(uniteAgentsSingleVds(entry.getValue()));
+        for (VDS vds: vdsList) {
+            Guid vdsId = vds.getId();
+            VDS usedVds = vdsMap.get(vdsId);
+            if (usedVds == null) {
+                results.add(vds);
+                vdsMap.put(vdsId, vds);
+            } else {
+                usedVds.getFenceAgents().addAll(vds.getFenceAgents());
+            }
         }
         return results;
+    }
+
+    private VDS uniteAgentsSingleVds(List<VDS> vdsList) {
+        return uniteAgents(vdsList).get(0);
     }
 
     private List<VDS> uniteAgentsPreserveSpmPrioritySorting(List<VDS> vdsList) {
