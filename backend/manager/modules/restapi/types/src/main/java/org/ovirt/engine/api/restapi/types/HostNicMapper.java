@@ -14,7 +14,6 @@ import org.ovirt.engine.api.model.NicStatus;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
 import org.ovirt.engine.api.model.VLAN;
-import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -87,9 +86,6 @@ public class HostNicMapper {
             if(networkBootProtocol != null){
                 entity.setBootProtocol(networkBootProtocol);
             }
-        }
-        if (model.isSetProperties()) {
-            entity.setCustomProperties(CustomPropertiesParser.toMap(model.getProperties()));
         }
 
         if (model.isSetQos()) {
@@ -224,10 +220,6 @@ public class HostNicMapper {
         model.setBridged(entity.isBridged());
         if (entity.getNetworkImplementationDetails() != null) {
             model.setCustomConfiguration(!entity.getNetworkImplementationDetails().isInSync());
-        }
-
-        if (entity.hasCustomProperties()) {
-            model.setProperties(CustomPropertiesParser.fromMap(entity.getCustomProperties()));
         }
 
         HostNetworkQos qos = entity.getQos();

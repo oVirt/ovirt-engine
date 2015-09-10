@@ -19,6 +19,8 @@ public class SetupNetworksParameters extends VdsActionParameters {
     @NoRepetitiveStaticIpInList(message = "VALIDATION_REPETITIVE_IP_IN_VDS")
     private List<VdsNetworkInterface> interfaces;
 
+    private CustomPropertiesForVdsNetworkInterface customProperties;
+
     private boolean force;
     private boolean checkConnectivity;
 
@@ -28,11 +30,9 @@ public class SetupNetworksParameters extends VdsActionParameters {
 
     private List<String> networksToSync;
 
-    /**
-     * @param interfaces Interfaces that are connected to a network or bond
-     */
     public SetupNetworksParameters() {
-        this.interfaces = new ArrayList<VdsNetworkInterface>();
+        this.interfaces = new ArrayList<>();
+        this.customProperties = new CustomPropertiesForVdsNetworkInterface();
     }
 
     public List<VdsNetworkInterface> getInterfaces() {
@@ -73,6 +73,14 @@ public class SetupNetworksParameters extends VdsActionParameters {
 
     public void setNetworksToSync(List<String> networksToSync) {
         this.networksToSync = networksToSync;
+    }
+
+    public CustomPropertiesForVdsNetworkInterface getCustomProperties() {
+        return customProperties;
+    }
+
+    public void setCustomProperties(CustomPropertiesForVdsNetworkInterface customProperties) {
+        this.customProperties = customProperties;
     }
 }
 
