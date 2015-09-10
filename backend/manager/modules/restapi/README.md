@@ -297,3 +297,21 @@ replaced by inner elements:
     <virtio_scsi>
       <enabled>true</enabled>
     </virtio_scsi>
+
+### Use element instead of attribute for power management agent `type`
+
+The power management `type` property was represented as an attribute:
+
+    <agent type="apc">
+      <username>myuser</username>
+      ...
+    </agent>
+
+This is contrary to the common practice in the RESTAPI. It has been
+replaced with an inner element:
+
+    <agent>
+      <type>apc</type>
+      <username>myuser</username>
+      ...
+    </agent>

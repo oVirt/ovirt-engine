@@ -1832,6 +1832,7 @@
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
+          <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="address" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="username" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="password" type="xs:string" minOccurs="0" maxOccurs="1"/>
@@ -1842,7 +1843,6 @@
           <xs:element name="port" type="xs:int" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="host" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
-        <xs:attribute name="type" type="xs:string"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
