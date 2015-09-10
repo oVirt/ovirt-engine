@@ -284,3 +284,16 @@ replaced by inner elements:
     <console>
       <enabled>true</enabled>
     </console>
+
+### Use elements instead of attributes in VIRTIO SCSI
+
+In the past the VIRTIO ISCSI element used attributes for its properties:
+
+    <virtio_scsi enabled="true"/>
+
+This is contrary to the common practice in the RESTAPI. They have been
+replaced by inner elements:
+
+    <virtio_scsi>
+      <enabled>true</enabled>
+    </virtio_scsi>

@@ -1593,7 +1593,9 @@
   <xs:element name="virtio_scsi" type="VirtIO_SCSI"/>
 
   <xs:complexType name="VirtIO_SCSI">
-    <xs:attribute name="enabled" type="xs:boolean"/>
+    <xs:sequence>
+      <xs:element name="enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="SchedulingPolicyThresholds">
