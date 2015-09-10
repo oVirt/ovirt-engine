@@ -4121,6 +4121,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Enforcing")
     String affinityGroupEnforceTypeLabel();
 
+    @DefaultStringValue("If set, all VMs in the group should run on the same host. Otherwise, no VMs should run on the same host.")
+    String affinityGroupPolarityInfo();
+
+    @DefaultStringValue("If set, a VM cannot start if it does not satisfy this rule.")
+    String affinityGroupEnforcInfo();
+
     @DefaultStringValue("Description")
     String affinityDescriptionLabel();
 

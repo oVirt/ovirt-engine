@@ -1,13 +1,15 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling;
 
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
-import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
+import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.VmsSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.model.AffinityGroupModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -44,20 +46,27 @@ public class AffinityGroupPopupView extends AbstractModelBoundPopupView<Affinity
     @WithElementId("description")
     StringEntityModelTextBoxEditor descriptionEditor;
 
-    @UiField(provided = true)
     @Path(value = "positive.entity")
     @WithElementId("positive")
-    EntityModelCheckBoxEditor positiveEditor;
+    EntityModelCheckBoxOnlyEditor positiveEditor;
 
     @UiField(provided = true)
+    @Ignore
+    EntityModelWidgetWithInfo positiveEditorWithInfo;
+
     @Path(value = "enforcing.entity")
     @WithElementId("enforcing")
-    EntityModelCheckBoxEditor enforcingEditor;
+    EntityModelCheckBoxOnlyEditor enforcingEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    EntityModelWidgetWithInfo enforcingEditorWithInfo;
 
     @UiField(provided = true)
     @Ignore
     protected KeyValueWidget<VmsSelectionModel> addRemoveVmWidget;
 
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
@@ -76,15 +85,26 @@ public class AffinityGroupPopupView extends AbstractModelBoundPopupView<Affinity
     }
 
     private void initCheckBoxEditors() {
-        positiveEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        enforcingEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        positiveEditor = new EntityModelCheckBoxOnlyEditor();
+
+        EnableableFormLabel posLabel = new EnableableFormLabel();
+        posLabel.setText(constants.affinityGroupPolarityLabel());
+
+        positiveEditorWithInfo = new EntityModelWidgetWithInfo(posLabel, positiveEditor);
+        positiveEditorWithInfo.setExplanation(templates.italicText(constants.affinityGroupPolarityInfo()));
+
+        enforcingEditor = new EntityModelCheckBoxOnlyEditor();
+
+        EnableableFormLabel enfLabel = new EnableableFormLabel();
+        enfLabel.setText(constants.affinityGroupEnforceTypeLabel());
+
+        enforcingEditorWithInfo = new EntityModelWidgetWithInfo(enfLabel, enforcingEditor);
+        enforcingEditorWithInfo.setExplanation(templates.italicText(constants.affinityGroupEnforcInfo()));
     }
 
     private void localize() {
         nameEditor.setLabel(constants.affinityGroupNameLabel());
         descriptionEditor.setLabel(constants.affinityDescriptionLabel());
-        positiveEditor.setLabel(constants.affinityGroupPolarityLabel());
-        enforcingEditor.setLabel(constants.affinityGroupEnforceTypeLabel());
     }
 
     public void edit(AffinityGroupModel model) {
