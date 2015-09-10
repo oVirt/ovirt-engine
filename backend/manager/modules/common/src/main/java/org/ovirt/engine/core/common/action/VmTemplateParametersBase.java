@@ -18,7 +18,7 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
     private boolean privateCheckDisksExists;
     private VmWatchdog watchdog;
     private Boolean virtioScsiEnabled;
-    private boolean balloonEnabled;
+    private Boolean balloonEnabled;
 
    /**
     * This attribute contains information about graphics devices.
@@ -108,11 +108,11 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
         this.virtioScsiEnabled = virtioScsiEnabled;
     }
 
-    public boolean isBalloonEnabled() {
+    public Boolean isBalloonEnabled() {
         return balloonEnabled;
     }
 
-    public void setBalloonEnabled(boolean balloonEnabled) {
+    public void setBalloonEnabled(Boolean balloonEnabled) {
         this.balloonEnabled = balloonEnabled;
     }
     public void setUpdateRngDevice(boolean updateRngDevice) {
