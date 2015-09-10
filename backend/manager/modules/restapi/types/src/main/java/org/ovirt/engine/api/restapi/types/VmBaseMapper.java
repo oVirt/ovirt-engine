@@ -16,6 +16,7 @@ import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.HighAvailability;
 import org.ovirt.engine.api.model.IO;
 import org.ovirt.engine.api.model.Icon;
+import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
@@ -199,6 +200,10 @@ public class VmBaseMapper {
         if (model.isSetSmallIcon() && model.getSmallIcon().isSetId()) {
             entity.setSmallIconId(GuidUtils.asGuid(model.getSmallIcon().getId()));
         }
+        if (model.isSetMemoryPolicy() && model.getMemoryPolicy().isSetGuaranteed()) {
+            Long memGuaranteed = model.getMemoryPolicy().getGuaranteed() / BYTES_PER_MB;
+            entity.setMinAllocatedMem(memGuaranteed.intValue());
+        }
     }
 
     protected static void mapVmBaseEntityToModel(VmBase model, org.ovirt.engine.core.common.businessentities.VmBase entity) {
@@ -314,6 +319,10 @@ public class VmBaseMapper {
             }
             model.getSmallIcon().setId(entity.getSmallIconId().toString());
         }
+
+        MemoryPolicy policy = new MemoryPolicy();
+        policy.setGuaranteed((long)entity.getMinAllocatedMem() * (long)BYTES_PER_MB);
+        model.setMemoryPolicy(policy);
     }
 
     @Mapping(from = DisplayDisconnectAction.class, to = ConsoleDisconnectAction.class)

@@ -42,7 +42,6 @@ import org.ovirt.engine.api.model.IPs;
 import org.ovirt.engine.api.model.Initialization;
 import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.Kernel;
-import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.NumaTuneMode;
 import org.ovirt.engine.api.model.OperatingSystem;
@@ -248,10 +247,6 @@ public class VmMapper extends VmBaseMapper {
             staticVm.setDedicatedVmForVdsList(new LinkedList<Guid>(hostGuidsSet));
         }
 
-        if (vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetGuaranteed()) {
-            Long memGuaranteed = vm.getMemoryPolicy().getGuaranteed() / BYTES_PER_MB;
-            staticVm.setMinAllocatedMem(memGuaranteed.intValue());
-        }
         if (vm.isSetQuota() && vm.getQuota().isSetId()) {
             staticVm.setQuotaId(GuidUtils.asGuid(vm.getQuota().getId()));
         }
@@ -534,9 +529,6 @@ public class VmMapper extends VmBaseMapper {
         if(vmAffinity !=null){
             model.getPlacementPolicy().setAffinity(vmAffinity.value());
         }
-        MemoryPolicy policy = new MemoryPolicy();
-        policy.setGuaranteed((long)entity.getMinAllocatedMem() * (long)BYTES_PER_MB);
-        model.setMemoryPolicy(policy);
         if (entity.getQuotaId()!=null) {
             Quota quota = new Quota();
             quota.setId(entity.getQuotaId().toString());

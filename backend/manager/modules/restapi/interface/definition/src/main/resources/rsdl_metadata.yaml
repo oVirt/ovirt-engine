@@ -2635,6 +2635,8 @@ actions:
           template.name: 'xs:string'
           template.memory: xs:long
           template.io.threads: xs:int
+          template.memory_policy.guaranteed: xs:long
+          template.memory_policy.ballooning: xs:boolean
           template.cpu.topology.cores: xs:int
           template.high_availability.enabled: 'xs:boolean'
           template.os.cmdline: xs:string
@@ -2702,6 +2704,8 @@ actions:
         optionalArguments:
           template.memory: xs:long
           template.io.threads: xs:int
+          template.memory_policy.guaranteed: xs:long
+          template.memory_policy.ballooning: xs:boolean
           template.cpu.topology.cores: xs:int
           template.high_availability.enabled: 'xs:boolean'
           template.os.cmdline: xs:string
@@ -3602,6 +3606,8 @@ actions:
         optionalArguments:
           instance_type.memory: xs:long
           instance_type.io.threads: xs:int
+          instance_type.memory_policy.guaranteed: xs:long
+          instance_type.memory_policy.ballooning: xs:boolean
           instance_type.cpu.topology.cores: xs:int
           instance_type.high_availability.enabled: xs:boolean
           instance_type.origin: xs:string

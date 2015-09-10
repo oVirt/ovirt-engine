@@ -39,14 +39,14 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
         Response response = doAdd(getRestModel(0));
         assertEquals(201, response.getStatus());
         verifyModel((R)response.getEntity(), 0);
-        assertNull(((R)response.getEntity()).getCreationStatus());
+        assertNull(((R) response.getEntity()).getCreationStatus());
     }
 
     protected void setUpCreationExpectations() {
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
                 AddVmTemplateParameters.class,
-                new String[] { "Name", "Description" },
-                new Object[] { NAMES[0], DESCRIPTIONS[0] },
+                new String[]{"Name", "Description"},
+                new Object[]{NAMES[0], DESCRIPTIONS[0]},
                 true,
                 true,
                 GUIDS[0],
@@ -54,8 +54,8 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
                 asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
                 VdcQueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[0] },
+                new String[]{"Id"},
+                new Object[]{GUIDS[0]},
                 getEntity(0));
     }
 
@@ -72,8 +72,8 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
     protected void doTestBadAdd(boolean canDo, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddVmTemplate,
                 AddVmTemplateParameters.class,
-                new String[] { "Name", "Description" },
-                new Object[] { NAMES[0], DESCRIPTIONS[0] },
+                new String[]{"Name", "Description"},
+                new Object[]{NAMES[0], DESCRIPTIONS[0]},
                 canDo,
                 success));
         try {
@@ -114,6 +114,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
             setUpGetVirtioScsiExpectations(new int[] {0, 1, 2});
             setUpGetSoundcardExpectations(new int[] {0, 1, 2});
             setUpGetRngDeviceExpectations(new int[] {0, 1, 2});
+            setUpGetBallooningExpectations(3);
         }
 
         setUpGetGraphicsExpectations(3);
@@ -175,4 +176,22 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
     protected abstract Response doAdd(R model);
 
     protected abstract R getRestModel(int index);
+
+    protected void setUpGetBallooningExpectations(Integer... idxs) throws Exception {
+        for (int i : idxs) {
+            setUpGetEntityExpectations(VdcQueryType.IsBalloonEnabled,
+                    IdQueryParameters.class,
+                    new String[]{"Id"},
+                    new Object[]{GUIDS[i]},
+                    true);
+        }
+    }
+
+    protected void setUpGetBallooningExpectations(int times) throws Exception {
+        List<Integer> idxs = new ArrayList<>();
+        for (int i = 0; i < times; i++) {
+            idxs.add(i);
+        }
+        setUpGetBallooningExpectations(idxs.toArray(new Integer[times]));
+    }
 }

@@ -25,6 +25,7 @@ public class BackendInstanceTypeResourceTest
     public void testRemove() throws Exception {
         setUpGetGraphicsExpectations(1);
         setUpGetEntityExpectations(1);
+        setUpGetBallooningExpectations();
         setUriInfo(setUpActionExpectations(
                 VdcActionType.RemoveVmTemplate,
                 VmTemplateParametersBase.class,
