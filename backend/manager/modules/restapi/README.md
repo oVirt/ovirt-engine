@@ -271,3 +271,16 @@ replaced by inner elements:
       </overcommit>
       ...
     </memory_policy>
+
+### Use elements instead of attributes in `console`
+
+In the past the `console` element used attributes for its properties:
+
+    <console enabled="true"/>
+
+This is contrary to the common practice in the RESTAPI. They have been
+replaced by inner elements:
+
+    <console>
+      <enabled>true</enabled>
+    </console>
