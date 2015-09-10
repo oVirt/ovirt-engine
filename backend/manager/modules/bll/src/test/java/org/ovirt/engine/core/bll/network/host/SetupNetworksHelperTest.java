@@ -39,6 +39,7 @@ import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
 import org.ovirt.engine.core.bll.validator.network.NetworkType;
+import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -100,6 +101,7 @@ public class SetupNetworksHelperTest {
                     Version.v3_5.toString(),
                     "bridge_opts=^[^\\s=]+=[^\\s=]+(\\s+[^\\s=]+=[^\\s=]+)*$"),
             mockConfig(ConfigValues.DefaultMTU, DEFAULT_MTU));
+    private final CustomPropertiesForVdsNetworkInterface customProperties = new CustomPropertiesForVdsNetworkInterface();
 
     @Rule
     public InjectorRule injectorRule = new InjectorRule();
@@ -574,7 +576,8 @@ public class SetupNetworksHelperTest {
         mockExistingNetworks(network);
         VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
         mockExistingIfaces(iface);
-        iface.setCustomProperties(createCustomProperties());
+        customProperties.add(iface, createCustomProperties());
+        customProperties.add(iface, createCustomProperties());
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(iface));
 
@@ -588,7 +591,7 @@ public class SetupNetworksHelperTest {
         mockExistingNetworks();
         VdsNetworkInterface iface = createNic("eth0", null);
         mockExistingIfaces(iface);
-        iface.setCustomProperties(createCustomProperties());
+        customProperties.add(iface, createCustomProperties());
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(iface), Version.v3_5);
 
@@ -599,7 +602,7 @@ public class SetupNetworksHelperTest {
     public void customPropertiesNetworkRemoved() {
         mockExistingNetworks();
         VdsNetworkInterface iface = createManagementNetworkNic("eth0");
-        iface.setCustomProperties(createCustomProperties());
+        customProperties.add(iface, createCustomProperties());
         mockExistingIfaces(iface);
         iface.setNetworkName(null);
 
@@ -616,7 +619,7 @@ public class SetupNetworksHelperTest {
         mockExistingIfaces(iface);
         Map<String, String> customProperties = new HashMap<>();
         customProperties.put("foo", "b@r");
-        iface.setCustomProperties(customProperties);
+        this.customProperties.add(iface, customProperties);
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(iface), Version.v3_5);
 
@@ -631,7 +634,7 @@ public class SetupNetworksHelperTest {
         mockExistingNetworks(network);
         VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
         mockExistingIfaces(iface);
-        iface.setCustomProperties(createCustomProperties());
+        customProperties.add(iface, createCustomProperties());
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(iface), Version.v3_5);
 
@@ -640,7 +643,7 @@ public class SetupNetworksHelperTest {
         assertNetworkModified(helper, network);
         assertNoNetworksRemoved(helper);
         assertNoBondsRemoved(helper);
-        assertInterfaceModified(helper, iface);
+        assertNoInterfacesModified(helper);
     }
 
     @Test
@@ -650,7 +653,7 @@ public class SetupNetworksHelperTest {
         mockExistingNetworks(network);
         VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
         mockExistingIfaces(iface);
-        iface.setCustomProperties(createCustomProperties());
+        customProperties.add(iface, createCustomProperties());
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(iface), Version.v3_5);
 
@@ -2052,6 +2055,7 @@ public class SetupNetworksHelperTest {
     private SetupNetworksParameters createParametersForNics(VdsNetworkInterface... nics) {
         SetupNetworksParameters parameters = new SetupNetworksParameters();
         parameters.setInterfaces(Arrays.asList(nics));
+        parameters.setCustomProperties(customProperties);
         return parameters;
     }
 

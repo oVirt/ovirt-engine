@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -222,11 +223,8 @@ public class SetupNetworksHelper {
                 Set<String> newLabels = NetworkUtils.isLabeled(nic) ? nic.getLabels() : Collections.<String> emptySet();
                 Set<String> existingLabels =
                         NetworkUtils.isLabeled(existingNic) ? existingNic.getLabels() : Collections.<String> emptySet();
-                if (!CollectionUtils.isEqualCollection(newLabels, existingLabels)
-                        || (StringUtils.isNotEmpty(nic.getNetworkName()) && customPropertiesChanged(nic, existingNic))) {
+                if (!CollectionUtils.isEqualCollection(newLabels, existingLabels)) {
                     existingNic.setLabels(newLabels);
-
-                    existingNic.setCustomProperties(nic.getCustomProperties());
                     modifiedInterfaces.add(existingNic);
                 }
             }
@@ -367,20 +365,24 @@ public class SetupNetworksHelper {
                 util.convertProperties(Config.<String> getValue(ConfigValues.PreDefinedNetworkCustomProperties,
                     version));
         validProperties.putAll(util.convertProperties(Config.<String> getValue(ConfigValues.UserDefinedNetworkCustomProperties,
-                version)));
+            version)));
         Map<String, String> validPropertiesNonVm = new HashMap<>(validProperties);
         validPropertiesNonVm.remove("bridge_opts");
         for (VdsNetworkInterface iface : params.getInterfaces()) {
             String networkName = iface.getNetworkName();
-            if (iface.hasCustomProperties() && StringUtils.isNotEmpty(networkName)) {
+            if (params.getCustomProperties().hasCustomPropertiesFor(iface) && StringUtils.isNotEmpty(networkName)) {
                 if (!networkCustomPropertiesSupported) {
                     addViolation(EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED, networkName);
                 }
 
                 Network network = existingClusterNetworks.get(networkName);
+                boolean isVmOrEmptyNetwork = network == null || network.isVmNetwork();
+                Map<String, String> regExMap = isVmOrEmptyNetwork
+                    ? validProperties
+                    : validPropertiesNonVm;
+
                 List<ValidationError> errors =
-                        util.validateProperties(network == null || network.isVmNetwork() ? validProperties
-                                : validPropertiesNonVm, iface.getCustomProperties());
+                    util.validateProperties(regExMap, params.getCustomProperties().getCustomPropertiesFor(iface));
                 if (!errors.isEmpty()) {
                     addViolation(EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT, networkName);
                     List<String> messages = new ArrayList<>();
@@ -770,9 +772,23 @@ public class SetupNetworksHelper {
      * @return <code>true</code> iff the custom properties have changed (null and empty map are considered equal).
      */
     private boolean customPropertiesChanged(VdsNetworkInterface iface, VdsNetworkInterface existingIface) {
-        return (iface.hasCustomProperties() != existingIface.hasCustomProperties())
-                || (iface.hasCustomProperties()
-                        && !iface.getCustomProperties().equals(existingIface.getCustomProperties()));
+        String networkName = iface.getNetworkName();
+        Network network = getExistingClusterNetworks().get(networkName);
+        VdsNetworkInterface baseNic = calculateBaseNic.getBaseNic(iface, getExistingIfaces());
+        NetworkAttachment networkAttachment = baseNic == null || network == null ? null :
+            networkAttachmentDao.getNetworkAttachmentByNicIdAndNetworkId(baseNic.getId(), network.getId());
+
+
+        Map<String, String> newCustomProperties = params.getCustomProperties().getCustomPropertiesFor(iface);
+        Map<String, String> existingCustomProperties = networkAttachment == null ? Collections.<String, String>emptyMap() : networkAttachment.getProperties();
+
+
+
+        return !Objects.equals(getEmptyMapIfNull(newCustomProperties), getEmptyMapIfNull(existingCustomProperties));
+    }
+
+    private Object getEmptyMapIfNull(Map<String, String> customProperties) {
+        return customProperties == null ? Collections.emptyMap() : customProperties;
     }
 
     /**

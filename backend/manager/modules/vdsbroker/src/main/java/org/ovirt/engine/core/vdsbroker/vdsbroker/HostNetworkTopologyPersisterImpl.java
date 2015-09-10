@@ -78,6 +78,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
     public NonOperationalReason persistAndEnforceNetworkCompliance(VDS host,
                                                                    boolean skipManagementNetwork,
                                                                    UserConfiguredNetworkData userConfiguredData) {
+
         List<VdsNetworkInterface> dbIfaces = interfaceDao.getAllInterfacesForVds(host.getId());
         List<Network> clusterNetworks = networkDao.getAllForCluster(host.getVdsGroupId());
 
@@ -272,6 +273,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
                 new HostNetworkAttachmentsPersister(networkAttachmentDao,
                         host.getId(),
                         host.getInterfaces(),
+                        userConfiguredData.getCustomProperties(),
                         userConfiguredData.getNetworkAttachments(),
                         clusterNetworks);
 

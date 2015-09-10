@@ -27,6 +27,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -99,13 +100,13 @@ public class SetupNetworksVDSCommandTest {
         VdsNetworkInterface nic = createNic("eth0", null, NetworkBootProtocol.DHCP, null);
         VdsNetworkInterface vlan = createVlan(nic, net);
 
-        SetupNetworksVdsCommandParameters parameters =
-                new SetupNetworksVdsCommandParameters(host,
-                        Collections.singletonList(net),
-                        Collections.<String> emptyList(),
-                        Collections.singletonList(nic),
-                        Collections.<String> emptySet(),
-                        Arrays.asList(nic, vlan));
+        SetupNetworksVdsCommandParameters parameters = new SetupNetworksVdsCommandParameters(host,
+            Collections.singletonList(net),
+            Collections.<String> emptyList(),
+            Collections.singletonList(nic),
+            Collections.<String> emptySet(),
+            Arrays.asList(nic, vlan),
+            new CustomPropertiesForVdsNetworkInterface());
 
         createCommand(parameters).execute();
         verifyMethodPassedToHost();
@@ -125,13 +126,13 @@ public class SetupNetworksVDSCommandTest {
         ifaces.add(bond);
         ifaces.add(vlan);
 
-        SetupNetworksVdsCommandParameters parameters =
-                new SetupNetworksVdsCommandParameters(host,
-                        Collections.singletonList(net),
-                        Collections.<String> emptyList(),
-                        Collections.singletonList(bond),
-                        Collections.<String> emptySet(),
-                        ifaces);
+        SetupNetworksVdsCommandParameters parameters = new SetupNetworksVdsCommandParameters(host,
+            Collections.singletonList(net),
+            Collections.<String> emptyList(),
+            Collections.singletonList(bond),
+            Collections.<String> emptySet(),
+            ifaces,
+            new CustomPropertiesForVdsNetworkInterface());
 
         createCommand(parameters).execute();
         verifyMethodPassedToHost();
@@ -146,13 +147,13 @@ public class SetupNetworksVDSCommandTest {
         Network net = createNetwork(null);
         VdsNetworkInterface nic = createNic("eth0", null, NetworkBootProtocol.DHCP, net.getName());
 
-        SetupNetworksVdsCommandParameters parameters =
-                new SetupNetworksVdsCommandParameters(host,
-                        Collections.singletonList(net),
-                        Collections.<String> emptyList(),
-                        Collections.<VdsNetworkInterface> emptyList(),
-                        Collections.<String> emptySet(),
-                        Collections.singletonList(nic));
+        SetupNetworksVdsCommandParameters parameters = new SetupNetworksVdsCommandParameters(host,
+            Collections.singletonList(net),
+            Collections.<String> emptyList(),
+            Collections.<VdsNetworkInterface> emptyList(),
+            Collections.<String> emptySet(),
+            Collections.singletonList(nic),
+            new CustomPropertiesForVdsNetworkInterface());
 
         createCommand(parameters).execute();
         verifyMethodPassedToHost();
@@ -170,13 +171,13 @@ public class SetupNetworksVDSCommandTest {
         List<VdsNetworkInterface> ifaces = new ArrayList<>(slaves);
         ifaces.add(bond);
 
-        SetupNetworksVdsCommandParameters parameters =
-                new SetupNetworksVdsCommandParameters(host,
-                        Collections.<Network> emptyList(),
-                        Collections.<String> emptyList(),
-                        Collections.singletonList(bond),
-                        Collections.<String> emptySet(),
-                        ifaces);
+        SetupNetworksVdsCommandParameters parameters = new SetupNetworksVdsCommandParameters(host,
+            Collections.<Network> emptyList(),
+            Collections.<String> emptyList(),
+            Collections.singletonList(bond),
+            Collections.<String> emptySet(),
+            ifaces,
+            new CustomPropertiesForVdsNetworkInterface());
 
         createCommand(parameters).execute();
         verifyMethodPassedToHost();
@@ -191,13 +192,13 @@ public class SetupNetworksVDSCommandTest {
             boolean hostNetworkQosSupported) {
         configRule.mockConfigValue(ConfigValues.HostNetworkQosSupported, version, hostNetworkQosSupported);
 
-        SetupNetworksVdsCommandParameters parameters =
-                new SetupNetworksVdsCommandParameters(host,
-                        Collections.singletonList(network),
-                        Collections.<String> emptyList(),
-                        Collections.<VdsNetworkInterface> emptyList(),
-                        Collections.<String> emptySet(),
-                        Collections.singletonList(iface));
+        SetupNetworksVdsCommandParameters parameters = new SetupNetworksVdsCommandParameters(host,
+            Collections.singletonList(network),
+            Collections.<String> emptyList(),
+            Collections.<VdsNetworkInterface> emptyList(),
+            Collections.<String> emptySet(),
+            Collections.singletonList(iface),
+            new CustomPropertiesForVdsNetworkInterface());
 
         createCommand(parameters).execute();
 

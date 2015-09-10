@@ -608,8 +608,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             @Override
             public Void runInTransaction() {
                 UserConfiguredNetworkData userConfiguredNetworkData =
-                    new UserConfiguredNetworkData(getParameters().getNetworkAttachments(),
-                        applyUserConfiguredNics());
+                    new UserConfiguredNetworkData(getParameters().getNetworkAttachments(), applyUserConfiguredNics());
 
                 // save the new network topology to DB
                 hostNetworkTopologyPersister.persistAndEnforceNetworkCompliance(updatedHost,
@@ -625,6 +624,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
                 return null;
             }
+
+
         });
     }
 

@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -81,6 +82,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                 supportedClusterVersionsAvailable
                         && FeatureSupported.defaultRoute(Collections.max(supportedClusterVersionsSet));
 
+        CustomPropertiesForVdsNetworkInterface customProperties = getParameters().getCustomProperties();
         for (Network network : getParameters().getNetworks()) {
             Map<String, Object> opts = new HashMap<String, Object>();
             VdsNetworkInterface iface =
@@ -125,8 +127,8 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                 opts.put(DEFAULT_ROUTE, Boolean.TRUE);
             }
 
-            if (iface.hasCustomProperties()) {
-                opts.put(VdsProperties.NETWORK_CUSTOM_PROPERTIES, iface.getCustomProperties());
+            if (customProperties.hasCustomPropertiesFor(iface)) {
+                opts.put(VdsProperties.NETWORK_CUSTOM_PROPERTIES, customProperties.getCustomPropertiesFor(iface));
             }
 
             networks.put(network.getName(), opts);

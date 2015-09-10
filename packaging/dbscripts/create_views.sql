@@ -1861,7 +1861,6 @@ SELECT
     1 AS is_vds,
     vds_interface.qos_overridden AS qos_overridden,
     vds_interface.labels AS labels,
-    vds_interface.custom_properties AS custom_properties,
     vds_static.vds_group_id AS vds_group_id
 FROM
     vds_interface_statistics

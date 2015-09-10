@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -19,6 +20,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
+import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -45,6 +47,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.AddGlusterServerVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
@@ -53,6 +56,7 @@ import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -79,9 +83,14 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     private List<VdsNetworkInterface> hostNics;
 
+    private Version sourceClusterCompatibilityVersion = getSourceCluster().getCompatibilityVersion();
+    private final Version targetClusterCompatibilityVersion = getTargetCluster().getCompatibilityVersion();
+    private List<Network> targetClusterNetworks;
+    private List<Network> sourceClusterNetworks;
+
     /**
      * Constructor for command creation when compensation is applied on startup
-     * @param commandId
+     * @param commandId id of command
      */
     public ChangeVDSClusterCommand(Guid commandId) {
         super(commandId);
@@ -132,7 +141,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         }
 
         vds.setCpuName(CpuFlagsManagerHandler.findMaxServerCpuByFlags(vds.getCpuFlags(),
-                getTargetCluster().getCompatibilityVersion()));
+                targetClusterCompatibilityVersion));
 
 
         // CPU flags are null if oVirt node cluster is changed during approve process.
@@ -151,8 +160,8 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_CHANGED);
         }
 
-        if (FeatureSupported.hostNetworkQos(getSourceCluster().getCompatibilityVersion())
-                && !FeatureSupported.hostNetworkQos(getTargetCluster().getCompatibilityVersion())) {
+        if (FeatureSupported.hostNetworkQos(sourceClusterCompatibilityVersion)
+                && !FeatureSupported.hostNetworkQos(targetClusterCompatibilityVersion)) {
             for (VdsNetworkInterface iface : getHostNics()) {
                 if (iface.getQos() != null) {
                     return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
@@ -162,13 +171,15 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             }
         }
 
-        if (FeatureSupported.networkCustomProperties(getSourceCluster().getCompatibilityVersion())
-                && !FeatureSupported.networkCustomProperties(getTargetCluster().getCompatibilityVersion())) {
-            for (VdsNetworkInterface iface : getHostNics()) {
-                if (iface.hasCustomProperties()) {
-                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED,
-                            String.format("$ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED_LIST %s",
-                                    iface.getNetworkName()));
+        if (movingWithinSameDataCenter() && customPropertiesFeatureBecomesUnsupportedInTargetCluster()) {
+            for (NetworkAttachment networkAttachment : networkAttachmentDao.getAllForHost(getVdsId())) {
+                if (networkAttachment.hasProperties() && networkExistInTargetCluster(networkAttachment.getNetworkId())) {
+                    EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED;
+                    Guid networkId = networkAttachment.getNetworkId();
+                    Network networkById = getNetworkById(getSourceClusterNetworks(), networkId);
+                    String networkName = networkById == null ? networkId.toString() : networkById.getName();
+                    return failCanDoAction(engineMessage,
+                        ReplacementUtils.getVariableAssignmentStringWithMultipleValues(engineMessage, networkName));
                 }
             }
         }
@@ -178,6 +189,28 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         }
 
         return true;
+    }
+
+    private boolean networkExistInTargetCluster(Guid networkId) {
+        return getNetworkById(targetClusterNetworks, networkId) != null;
+    }
+
+    private boolean movingWithinSameDataCenter() {
+        return Objects.equals(getSourceCluster().getStoragePoolId(), getTargetCluster().getStoragePoolId());
+    }
+
+    private Network getNetworkById(List<Network> networks, Guid networkId) {
+        for (Network network : networks) {
+            if (Objects.equals(network.getId(), networkId)) {
+                return network;
+            }
+        }
+        return null;
+    }
+
+    private boolean customPropertiesFeatureBecomesUnsupportedInTargetCluster() {
+        return FeatureSupported.networkCustomProperties(sourceClusterCompatibilityVersion)
+                && !FeatureSupported.networkCustomProperties(targetClusterCompatibilityVersion);
     }
 
     private boolean isDetachedSourceCluster() {
@@ -293,12 +326,12 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             getVdsSpmIdMapDao().removeByVdsAndStoragePool(getVds().getId(), getSourceCluster().getStoragePoolId());
         }
 
-        List<Network> clusterNetworks = networkDao.getAllForCluster(getTargetCluster().getId());
         HostNetworkAttachmentsPersister persister = new HostNetworkAttachmentsPersister(this.networkAttachmentDao,
                 getVdsId(),
                 interfaceDao.getAllInterfacesForVds(getVdsId()),
+                new CustomPropertiesForVdsNetworkInterface(),
                 Collections.<NetworkAttachment> emptyList(),
-                clusterNetworks);
+                getTargetClusterNetworks());
         persister.persistNetworkAttachments();
 
         if (targetClusterSupportsSetupNetworks()) {
@@ -306,6 +339,22 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         }
 
         setSucceeded(true);
+    }
+
+    private List<Network> getSourceClusterNetworks() {
+        if (sourceClusterNetworks == null) {
+            sourceClusterNetworks = networkDao.getAllForCluster(getSourceCluster().getId());
+        }
+
+        return sourceClusterNetworks;
+    }
+
+    private List<Network> getTargetClusterNetworks() {
+        if (targetClusterNetworks == null) {
+            targetClusterNetworks = networkDao.getAllForCluster(getTargetCluster().getId());
+        }
+
+        return targetClusterNetworks;
     }
 
     private boolean targetClusterSupportsSetupNetworks() {
