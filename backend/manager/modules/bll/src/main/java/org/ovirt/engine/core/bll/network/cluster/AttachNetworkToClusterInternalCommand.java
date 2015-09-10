@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.network.cluster.helper.DisplayNetworkClusterHel
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
+import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -145,6 +146,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
             HostNetworkAttachmentsPersister persister = new HostNetworkAttachmentsPersister(this.networkAttachmentDao,
                 host.getId(),
                 interfaceDao.getAllInterfacesForVds(host.getId()),
+                new CustomPropertiesForVdsNetworkInterface(),
                 Collections.<NetworkAttachment> emptyList(),
                 clusterNetworks);
             persister.persistNetworkAttachments();

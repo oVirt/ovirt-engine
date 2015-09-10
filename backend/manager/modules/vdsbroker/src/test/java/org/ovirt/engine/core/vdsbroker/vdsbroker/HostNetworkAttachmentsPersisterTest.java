@@ -28,6 +28,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -56,6 +57,7 @@ public class HostNetworkAttachmentsPersisterTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+    private CustomPropertiesForVdsNetworkInterface customPropertiesForNics = new CustomPropertiesForVdsNetworkInterface();
 
     @Before
     public void setUp() throws Exception {
@@ -71,7 +73,7 @@ public class HostNetworkAttachmentsPersisterTest {
         interfaceWithAttachedClusterNetworkA = createVdsNetworkInterfaceWithId("interfaceWithAttachedClusterNetworkA");
         interfaceWithAttachedClusterNetworkA.setNetworkName(clusterNetworkA.getName());
 
-        interfaceWithAttachedClusterNetworkA.setCustomProperties(createCustomProperties());
+        customPropertiesForNics.add(interfaceWithAttachedClusterNetworkA, createCustomProperties());
 
         interfaceWithAttachedClusterNetworkA.setBootProtocol(NetworkBootProtocol.STATIC_IP);
         interfaceWithAttachedClusterNetworkA.setAddress(IP_ADDRESS);
@@ -129,11 +131,12 @@ public class HostNetworkAttachmentsPersisterTest {
             VdsNetworkInterface ... hostInterfaces) {
 
         return new HostNetworkAttachmentsPersister(
-                networkAttachmentDao,
-                hostId,
-                new ArrayList<>(Arrays.asList(hostInterfaces)),
-                userNetworkAttachments,
-                clusterNetworks);
+            networkAttachmentDao,
+            hostId,
+            new ArrayList<>(Arrays.asList(hostInterfaces)),
+            customPropertiesForNics,
+            userNetworkAttachments,
+            clusterNetworks);
     }
 
     @Test
@@ -283,7 +286,7 @@ public class HostNetworkAttachmentsPersisterTest {
 
 
         Map<String, String> propertiesBeingPersisted = attachmentBeingPersisted.getProperties();
-        Map<String, String> interfaceCustomProperties = interfaceWithAttachedClusterNetworkA.getCustomProperties();
+//        Map<String, String> interfaceCustomProperties = interfaceWithAttachedClusterNetworkA.getCustomProperties();
 
         assertCustomProperties(propertiesBeingPersisted, createCustomProperties());
 
@@ -310,12 +313,10 @@ public class HostNetworkAttachmentsPersisterTest {
     @Test
     public void testPersistNetworkAttachmentsForInterfaceWithoutNetworkNothingIsPersisted() {
         when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(new ArrayList<NetworkAttachment>());
-        HostNetworkAttachmentsPersister persister = new HostNetworkAttachmentsPersister(
-                networkAttachmentDao,
-                hostId,
-                new ArrayList<>(Arrays.asList(interfaceWithoutAttachedNetwork)),
-                Collections.<NetworkAttachment> emptyList(),
-                clusterNetworks);
+        HostNetworkAttachmentsPersister persister = createPersister(
+            Collections.<NetworkAttachment> emptyList(),
+            interfaceWithoutAttachedNetwork);
+
         persister.persistNetworkAttachments();
 
         verify(networkAttachmentDao).getAllForHost(any(Guid.class));
@@ -331,12 +332,10 @@ public class HostNetworkAttachmentsPersisterTest {
         VdsNetworkInterface interfaceWithUnreportedNetwork = createVdsNetworkInterface("interfaceWithUnreportedNetwork");
         interfaceWithUnreportedNetwork.setNetworkName("unreportedNetwork");
 
-        HostNetworkAttachmentsPersister persister = new HostNetworkAttachmentsPersister(
-                networkAttachmentDao,
-                hostId,
-                new ArrayList<>(Arrays.asList(interfaceWithUnreportedNetwork)),
-                Collections.<NetworkAttachment> emptyList(),
-                clusterNetworks);
+        HostNetworkAttachmentsPersister persister = createPersister(
+            Collections.<NetworkAttachment> emptyList(),
+            interfaceWithUnreportedNetwork);
+
         persister.persistNetworkAttachments();
 
         verify(networkAttachmentDao).getAllForHost(any(Guid.class));
@@ -363,9 +362,9 @@ public class HostNetworkAttachmentsPersisterTest {
         assertThat(attachmentBeingPersisted.getId(), notNullValue());
 
         Map<String, String> propertiesBeingPersisted = attachmentBeingPersisted.getProperties();
-        Map<String, String> interfaceCustomProperties = interfaceWithAttachedClusterNetworkA.getCustomProperties();
+//        Map<String, String> interfaceCustomProperties = interfaceWithAttachedClusterNetworkA.getCustomProperties();
 
-        assertCustomProperties(propertiesBeingPersisted, interfaceCustomProperties);
+        assertCustomProperties(propertiesBeingPersisted, createCustomProperties());
         assertIpConfiguration(attachmentBeingPersisted.getIpConfiguration());
 
         // verify that nothing else happens, namely, interfaceWithoutAttachedNetwork will not trigger persisting any data.
@@ -379,11 +378,10 @@ public class HostNetworkAttachmentsPersisterTest {
         NetworkAttachment networkAttachment = createNetworkAttachment(clusterNetworkA);
         networkAttachment.setNicId(nic.getId());
 
-        HostNetworkAttachmentsPersister persister = new HostNetworkAttachmentsPersister(networkAttachmentDao,
-            hostId,
-            Arrays.asList(interfaceWithAttachedClusterNetworkA, nic),
+        HostNetworkAttachmentsPersister persister = createPersister(
             Collections.singletonList(networkAttachment),
-            clusterNetworks);
+            interfaceWithAttachedClusterNetworkA, nic);
+
         when(networkAttachmentDao.getAllForHost(hostId)).thenReturn(Collections.<NetworkAttachment> emptyList());
 
         expectedException.expect(IllegalStateException.class);

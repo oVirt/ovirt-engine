@@ -143,7 +143,8 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
                 getRemovedNetworks(),
                 getBonds(),
                 getRemovedBonds().keySet(),
-                getInterfaces());
+                getInterfaces(),
+                getParameters().getCustomProperties());
         vdsCmdParams.setForce(bckndCmdParams.isForce());
         vdsCmdParams.setCheckConnectivity(bckndCmdParams.isCheckConnectivity());
 
@@ -230,7 +231,6 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
      * parameters and stop both tasks when its done
      *
      * @param setupNetworksTask
-     * @param timeout
      */
     private void pollInterruptively(final FutureVDSCall<VDSReturnValue> setupNetworksTask) {
         HostSetupNetworkPoller poller = new HostSetupNetworkPoller();
@@ -247,7 +247,8 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
                 List<VdsNetworkInterface> ifaces = new ArrayList<>(getInterfaces());
                 ifaces.addAll(getRemovedBonds().values());
                 UserConfiguredNetworkData userConfiguredNetworkData =
-                        new UserConfiguredNetworkData(Collections.<NetworkAttachment> emptyList(), ifaces);
+                        new UserConfiguredNetworkData(Collections.<NetworkAttachment> emptyList(), ifaces,
+                            getParameters().getCustomProperties());
 
                 // save the new network topology to DB
                 hostNetworkTopologyPersister.persistAndEnforceNetworkCompliance(updatedHost,

@@ -10,6 +10,7 @@ import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
 import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -58,6 +59,7 @@ final class ManageLabeledNetworksParametersBuilderImpl extends NetworkParameters
                 Entities.entitiesByName(removeSetupNetworksParameters.getInterfaces());
         final List<VdsNetworkInterface> combinedInterfaces = new ArrayList<>();
         resultParam.setInterfaces(combinedInterfaces);
+        resultParam.setCustomProperties(new CustomPropertiesForVdsNetworkInterface());
         for (VdsNetworkInterface nic : addSetupNetworksParameters.getInterfaces()) {
             final String nicName = nic.getName();
             if (NetworkUtils.isVlan(nic)) {

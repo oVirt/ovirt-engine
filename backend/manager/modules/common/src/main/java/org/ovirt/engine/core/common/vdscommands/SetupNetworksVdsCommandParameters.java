@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -21,6 +22,7 @@ public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParameters
     private List<VdsNetworkInterface> bonds;
     private Set<String> removedBonds;
     private List<VdsNetworkInterface> interfaces;
+    private CustomPropertiesForVdsNetworkInterface customProperties;
 
     private boolean force;
     private boolean checkConnectivity;
@@ -41,18 +43,23 @@ public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParameters
      *            Interfaces that are connected to a network or bond
      */
     public SetupNetworksVdsCommandParameters(VDS vds,
-            List<Network> networks,
-            List<String> removedNetworks,
-            List<VdsNetworkInterface> bonds,
-            Set<String> removedBonds,
-            List<VdsNetworkInterface> interfaces) {
+        List<Network> networks,
+        List<String> removedNetworks,
+        List<VdsNetworkInterface> bonds,
+        Set<String> removedBonds,
+        List<VdsNetworkInterface> interfaces,
+        CustomPropertiesForVdsNetworkInterface customProperties) {
         super(vds.getId());
+
         this.vds = vds;
         this.networks = (networks == null) ? new ArrayList<Network>() : networks;
         this.removedNetworks = (removedNetworks == null) ? new ArrayList<String>() : removedNetworks;
         this.bonds = (bonds == null) ? new ArrayList<VdsNetworkInterface>() : bonds;
         this.removedBonds = (removedBonds == null) ? new HashSet<String>() : removedBonds;
         this.interfaces = (interfaces == null) ? new ArrayList<VdsNetworkInterface>() : interfaces;
+        this.customProperties = customProperties == null
+            ? new CustomPropertiesForVdsNetworkInterface()
+            : customProperties;
     }
 
     public SetupNetworksVdsCommandParameters() {
@@ -124,6 +131,14 @@ public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParameters
 
     public void setRemovedBonds(Set<String> removedBonds) {
         this.removedBonds = removedBonds;
+    }
+
+    public CustomPropertiesForVdsNetworkInterface getCustomProperties() {
+        return customProperties;
+    }
+
+    public void setCustomProperties(CustomPropertiesForVdsNetworkInterface customProperties) {
+        this.customProperties = customProperties;
     }
 
     @Override

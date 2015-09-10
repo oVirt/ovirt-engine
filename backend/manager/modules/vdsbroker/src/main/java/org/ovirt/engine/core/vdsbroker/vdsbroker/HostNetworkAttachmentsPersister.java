@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
@@ -24,6 +25,7 @@ public class HostNetworkAttachmentsPersister {
     static final String INCONSISTENCY_NETWORK_IS_REPORTED_ON_DIFFERENT_NIC_THAN_WAS_SPECIFIED = "Inconsistency in current state and reported data: given network is reported on different nic than was specified.";
     private final NetworkAttachmentDao networkAttachmentDao;
     private final Guid hostId;
+    private final CustomPropertiesForVdsNetworkInterface customPropertiesForNics;
     private final List<NetworkAttachment> userNetworkAttachments;
     private final Map<String, VdsNetworkInterface> nicsByName;
 
@@ -38,13 +40,15 @@ public class HostNetworkAttachmentsPersister {
     private final Map<Guid, Network> reportedNetworksById;
     private final BusinessEntityMap<Network> clusterNetworks;
 
-    public HostNetworkAttachmentsPersister(final NetworkAttachmentDao networkAttachmentDao,
-            final Guid hostId,
-            final List<VdsNetworkInterface> nics,
-            final List<NetworkAttachment> userNetworkAttachments,
-            final List<Network> clusterNetworks) {
+    public HostNetworkAttachmentsPersister(NetworkAttachmentDao networkAttachmentDao,
+            Guid hostId,
+            List<VdsNetworkInterface> nics,
+            CustomPropertiesForVdsNetworkInterface customPropertiesForNics,
+            List<NetworkAttachment> userNetworkAttachments,
+            List<Network> clusterNetworks) {
         this.networkAttachmentDao = networkAttachmentDao;
         this.hostId = hostId;
+        this.customPropertiesForNics = customPropertiesForNics;
         this.userNetworkAttachments = userNetworkAttachments;
         this.clusterNetworks = new BusinessEntityMap<>(clusterNetworks);
         nicsByName = Entities.entitiesByName(nics);
@@ -117,7 +121,9 @@ public class HostNetworkAttachmentsPersister {
         Guid nicId = getBaseInterfaceNicOrThis(nic).getId();
 
         networkAttachment.setNicId(nicId);
-        networkAttachment.setProperties(nic.getCustomProperties());
+        if (customPropertiesForNics != null) {
+            networkAttachment.setProperties(customPropertiesForNics.getCustomPropertiesFor(nic));
+        }
         networkAttachment.setIpConfiguration(createIpConfigurationFromVdsNetworkInterface(nic));
 
         networkAttachmentDao.save(networkAttachment);

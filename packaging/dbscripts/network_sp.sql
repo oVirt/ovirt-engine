@@ -336,13 +336,14 @@ Create or replace FUNCTION Insertvds_interface(v_addr VARCHAR(20) ,
  v_vlan_id INTEGER,
  v_mtu INTEGER,
  v_bridged BOOLEAN,
- v_labels TEXT,
- v_custom_properties TEXT)
+ v_labels TEXT)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vds_interface(addr, bond_name, bond_type, gateway, id, is_bond, bond_opts, mac_addr, name, network_name, speed, subnet, boot_protocol, type, VDS_ID, base_interface, vlan_id, mtu, bridged, labels, custom_properties)
-	VALUES(v_addr, v_bond_name, v_bond_type, v_gateway, v_id, v_is_bond, v_bond_opts, v_mac_addr, v_name, v_network_name, v_speed, v_subnet, v_boot_protocol, v_type, v_vds_id, v_base_interface, v_vlan_id, v_mtu, v_bridged, v_labels, v_custom_properties);
+INSERT INTO vds_interface(addr, bond_name, bond_type, gateway, id, is_bond, bond_opts, mac_addr, name, network_name,
+speed, subnet, boot_protocol, type, VDS_ID, base_interface, vlan_id, mtu, bridged, labels)
+	VALUES(v_addr, v_bond_name, v_bond_type, v_gateway, v_id, v_is_bond, v_bond_opts, v_mac_addr, v_name, v_network_name,
+	v_speed, v_subnet, v_boot_protocol, v_type, v_vds_id, v_base_interface, v_vlan_id, v_mtu, v_bridged, v_labels);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -369,8 +370,7 @@ Create or replace FUNCTION Updatevds_interface(v_addr VARCHAR(20) ,
  v_vlan_id INTEGER,
  v_mtu INTEGER,
  v_bridged BOOLEAN,
- v_labels TEXT,
- v_custom_properties TEXT)
+ v_labels TEXT)
 RETURNS VOID
 
 	--The [vds_interface] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -382,8 +382,7 @@ BEGIN
       name = v_name,network_name = v_network_name,speed = v_speed,
       subnet = v_subnet,boot_protocol = v_boot_protocol,
       type = v_type,VDS_ID = v_vds_id,base_interface = v_base_interface,vlan_id = v_vlan_id,_update_date = LOCALTIMESTAMP, mtu = v_mtu,
-      bridged = v_bridged, labels = v_labels,
-      custom_properties = v_custom_properties
+      bridged = v_bridged, labels = v_labels
       WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;

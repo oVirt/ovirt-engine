@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -150,9 +149,7 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                 .addValue("base_interface", nic.getBaseInterface())
                 .addValue("mtu", nic.getMtu())
                 .addValue("bridged", nic.isBridged())
-                .addValue("labels", SerializationFactory.getSerializer().serialize(nic.getLabels()))
-                .addValue("custom_properties", nic.hasCustomProperties() ?
-                        SerializationFactory.getSerializer().serialize(nic.getCustomProperties()) : null);
+                .addValue("labels", SerializationFactory.getSerializer().serialize(nic.getLabels()));
     }
 
     private void persistQosChanges(VdsNetworkInterface entity) {
@@ -344,9 +341,7 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                     entity.setBridged(rs.getBoolean("bridged"));
                     entity.setQos(hostNetworkQosDao.get(entity.getId()));
                     entity.setLabels(SerializationFactory.getDeserializer().deserialize(rs.getString("labels"),
-                            HashSet.class));
-                    entity.setCustomProperties(SerializationFactory.getDeserializer()
-                            .deserialize(rs.getString("custom_properties"), LinkedHashMap.class));
+                        HashSet.class));
                     return entity;
                 }
 

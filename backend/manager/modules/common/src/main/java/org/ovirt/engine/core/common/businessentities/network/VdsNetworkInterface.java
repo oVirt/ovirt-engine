@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
 import java.io.Serializable;
-import java.util.Map;
 import java.util.Set;
 
 import javax.validation.constraints.Pattern;
@@ -47,7 +46,6 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     private boolean bridged;
     private NetworkImplementationDetails networkImplementationDetails;
     private HostNetworkQos qos;
-    private Map<String, String> customProperties;
 
     @ValidNetworkLabelFormat(message = "NETWORK_LABEL_FORMAT_INVALID")
     private Set<String> labels;
@@ -394,18 +392,6 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         this.labels = labels;
     }
 
-    public boolean hasCustomProperties() {
-        return customProperties != null && !customProperties.isEmpty();
-    }
-
-    public Map<String, String> getCustomProperties() {
-        return customProperties;
-    }
-
-    public void setCustomProperties (Map<String, String> customProperties) {
-        this.customProperties = customProperties;
-    }
-
     /**
      * Preserves nic attributes which are managed by the engine
      *
@@ -414,7 +400,6 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
      */
     public void overrideEngineManagedAttributes(VdsNetworkInterface sourceNic) {
         setLabels(sourceNic.getLabels());
-        setCustomProperties(sourceNic.getCustomProperties());
     }
 
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
@@ -430,8 +415,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
                 .append("bridged", isBridged())
                 .append("type", getType())
                 .append("networkImplementationDetails", getNetworkImplementationDetails())
-                .append("qos", getQos())
-                .append("customProperties", getCustomProperties());
+                .append("qos", getQos());
     }
 
     @Override
@@ -459,7 +443,6 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         result = prime * result + ((vlanId == null) ? 0 : vlanId.hashCode());
         result = prime * result + ((qos == null) ? 0 : qos.hashCode());
         result = prime * result + ((labels == null) ? 0 : labels.hashCode());
-        result = prime * result + ((customProperties == null) ? 0 : customProperties.hashCode());
         return result;
     }
 
@@ -561,9 +544,6 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
             return false;
         }
         if (!ObjectUtils.objectsEqual(labels, other.labels)) {
-            return false;
-        }
-        if (!ObjectUtils.objectsEqual(customProperties, other.customProperties)) {
             return false;
         }
 

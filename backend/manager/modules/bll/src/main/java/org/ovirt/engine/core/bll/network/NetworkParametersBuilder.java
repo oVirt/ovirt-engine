@@ -7,6 +7,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
 import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -43,6 +44,7 @@ public abstract class NetworkParametersBuilder {
         PersistentSetupNetworksParameters parameters = new PersistentSetupNetworksParameters();
         parameters.setVdsId(host.getId());
         parameters.setInterfaces(nics);
+        parameters.setCustomProperties(new CustomPropertiesForVdsNetworkInterface());
         parameters.setCheckConnectivity(true);
         parameters.setShouldBeLogged(false);
         return parameters;
