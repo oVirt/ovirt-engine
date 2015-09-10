@@ -42,7 +42,7 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
         assertEquals(model.getDescription(), transform.getDescription());
         assertEquals(model.getComment(), transform.getComment());
         assertNotNull(transform.getCpu());
-        assertEquals(model.getCpu().getId(), transform.getCpu().getId());
+        assertEquals(model.getCpu().getType(), transform.getCpu().getType());
         assertNotNull(transform.getDataCenter());
         assertEquals(model.getDataCenter().getId(), transform.getDataCenter().getId());
         assertNotNull(transform.getSchedulingPolicy());

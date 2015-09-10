@@ -46,8 +46,8 @@ public class ClusterMapper {
         if (model.isSetComment()) {
             entity.setComment(model.getComment());
         }
-        if (model.isSetCpu() && model.getCpu().isSetId()) {
-            entity.setCpuName(model.getCpu().getId());
+        if (model.isSetCpu() && model.getCpu().isSetType()) {
+            entity.setCpuName(model.getCpu().getType());
         }
         if (model.isSetCpu() && model.getCpu().isSetArchitecture()) {
             Architecture archType = Architecture.fromValue(model.getCpu().getArchitecture());
@@ -139,7 +139,7 @@ public class ClusterMapper {
         model.setComment(entity.getComment());
         if (entity.getCpuName() != null) {
             CPU cpu = new CPU();
-            cpu.setId(entity.getCpuName());
+            cpu.setType(entity.getCpuName());
 
             cpu.setArchitecture(CPUMapper.map(entity.getArchitecture(), null));
 

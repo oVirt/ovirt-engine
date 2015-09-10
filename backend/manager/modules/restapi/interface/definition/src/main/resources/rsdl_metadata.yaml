@@ -1358,7 +1358,7 @@ actions:
           cluster.description: xs:string
           cluster.comment: xs:string
           cluster.data_center.id: xs:string
-          cluster.cpu.id: xs:string
+          cluster.cpu.type: xs:string
           cluster.version.major: xs:int
           cluster.version.minor: xs:int,
           cluster.memory_policy.overcommit.percent: xs:double
@@ -1395,7 +1395,7 @@ actions:
     body:
       parameterType: Cluster
       signatures:
-      - mandatoryArguments: {cluster.data_center.id|name: 'xs:string', cluster.name: 'xs:string', cluster.version.major: 'xs:int', cluster.version.minor: 'xs:int', cluster.cpu.id: 'xs:string'}
+      - mandatoryArguments: {cluster.data_center.id|name: 'xs:string', cluster.name: 'xs:string', cluster.version.major: 'xs:int', cluster.version.minor: 'xs:int', cluster.cpu.type: 'xs:string'}
         optionalArguments: {cluster.description: 'xs:string', cluster.comment: 'xs:string', cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean',
         cluster.scheduling_policy.policy--DEPRECATED: 'xs:string', cluster.scheduling_policy.thresholds.low--DEPRECATED: 'xs:int', cluster.scheduling_policy.thresholds.high--DEPRECATED: 'xs:int',
         cluster.scheduling_policy.thresholds.duration--DEPRECATED: 'xs:int', cluster.scheduling_policy.id: 'xs:string', cluster.scheduling_policy.properties.property--COLLECTION: {property.name: 'xs:string', property.value: 'xs:string'}, cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean',
@@ -1624,7 +1624,7 @@ actions:
       parameterType: Cluster
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {cluster.name: 'xs:string', cluster.description: 'xs:string', cluster.cpu.id: 'xs:string', cluster.version.major: 'xs:int', cluster.version.minor: 'xs:int',
+        optionalArguments: {cluster.name: 'xs:string', cluster.description: 'xs:string', cluster.cpu.type: 'xs:string', cluster.version.major: 'xs:int', cluster.version.minor: 'xs:int',
         cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean', cluster.scheduling_policy.policy--DEPRECATED: 'xs:string',
         cluster.scheduling_policy.thresholds.low--DEPRECATED: 'xs:int', cluster.scheduling_policy.thresholds.high--DEPRECATED: 'xs:int', cluster.scheduling_policy.thresholds.duration--DEPRECATED: 'xs:int',
         cluster.scheduling_policy.id: 'xs:string', cluster.scheduling_policy.properties.property--COLLECTION: {property.name: 'xs:string', property.value: 'xs:string'},
@@ -1637,7 +1637,7 @@ actions:
     body:
       parameterType: Cluster
       signatures:
-      - mandatoryArguments: {cluster.name: 'xs:string', cluster.version.major: 'xs:int', cluster.version.minor: 'xs:int', cluster.cpu.id: 'xs:string'}
+      - mandatoryArguments: {cluster.name: 'xs:string', cluster.version.major: 'xs:int', cluster.version.minor: 'xs:int', cluster.cpu.type: 'xs:string'}
         optionalArguments: {cluster.description: 'xs:string', cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean',
         cluster.scheduling_policy.policy--DEPRECATED: 'xs:string', cluster.scheduling_policy.thresholds.low--DEPRECATED: 'xs:int', cluster.scheduling_policy.thresholds.high--DEPRECATED: 'xs:int',
         cluster.scheduling_policy.thresholds.duration--DEPRECATED: 'xs:int', cluster.scheduling_policy.id: 'xs:string',

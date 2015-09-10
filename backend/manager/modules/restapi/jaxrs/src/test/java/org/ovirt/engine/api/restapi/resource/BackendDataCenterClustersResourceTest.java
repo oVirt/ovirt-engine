@@ -174,7 +174,7 @@ public class BackendDataCenterClustersResourceTest extends
         model.setDescription(DESCRIPTIONS[index]);
         model.setDataCenter(new DataCenter());
         model.setCpu(new CPU());
-        model.getCpu().setId("Intel Xeon");
+        model.getCpu().setType("Intel Xeon");
         return model;
     }
 

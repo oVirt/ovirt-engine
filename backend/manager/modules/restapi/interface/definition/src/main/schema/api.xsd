@@ -497,6 +497,7 @@
 
   <xs:complexType name="CPU">
     <xs:sequence>
+      <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="topology" type="CpuTopology" minOccurs="0" maxOccurs="1"/>
       <xs:element name="level" type="xs:int" minOccurs="0"/>
       <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
@@ -506,7 +507,6 @@
       <xs:element name="architecture" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="cores" type="Cores" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
-    <xs:attribute name="id" type="xs:string"/>
   </xs:complexType>
 
   <xs:element name="cpus" type="CPUs"/>

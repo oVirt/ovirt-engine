@@ -180,3 +180,23 @@ added to the VM resource:
 
 This will contain the same information that `guest_info.fqdn` used to
 contain.
+
+### Replaced CPU `id` attribute with `type` element
+
+The `cpu` element used to have an `id` attribute that indicates the type
+of CPU:
+
+    <cpu id="Intel Conroe Family">
+      <architecture>X86_64</architecture>
+      ...
+    </cpu>
+
+This is in contradiction with the rest of the elements of the RESTAPI
+model, where the `id` attribute is used for opaque identifiers. This
+`id` attribute has been replaced with a new `type` element:
+
+    <cpu>
+      <type>Intel Conroe Family</type>
+      <architecture>X86_64</architecture>
+      ...
+    </cpu>

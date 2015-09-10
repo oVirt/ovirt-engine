@@ -236,7 +236,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             version.setCpus(new CPUs());
             for (ServerCpu sc : getServerCpuList(v)) {
                 CPU cpu = new CPU();
-                cpu.setId(sc.getCpuName());
+                cpu.setType(sc.getCpuName());
                 cpu.setLevel(sc.getLevel());
                 cpu.setArchitecture(CPUMapper.map(sc.getArchitecture(), null));
                 version.getCpus().getCPUs().add(cpu);

@@ -213,7 +213,7 @@ public class BackendCapabilityResourceTest extends AbstractBackendResourceTest {
 
     private void verifyCPU(CPU cpu, String name, Integer level) {
         assertNotNull(cpu);
-        assertEquals(name, cpu.getId());
+        assertEquals(name, cpu.getType());
         assertEquals(level, cpu.getLevel());
     }
 
