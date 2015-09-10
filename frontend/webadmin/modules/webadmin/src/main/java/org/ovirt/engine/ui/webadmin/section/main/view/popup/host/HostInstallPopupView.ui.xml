@@ -9,7 +9,8 @@
         xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
         xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
         xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
-        xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider">
+        xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider"
+        xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
     <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInstallPopupView.Style">
@@ -48,41 +49,75 @@
             width: 100%;
         }
 
-        .overrideIpStyle {
-            width: 200px;
+        .container {
+            width: 100%;
         }
 
-        .activateHostAfterInstallStyle {
-            width: 200px;
+        .topElement {
+            padding-top: 15px;
+        }
+
+        .radioLabel {
+            float: left;
+            padding-left: 5px;
+        }
+
+        .floatLeft {
+            float: left;
         }
 
     </ui:style>
 
-    <d:SimpleDialogPanel width="700px" height="420px">
+    <d:SimpleDialogPanel width="750px" height="435px">
         <d:content>
             <t:DialogTabPanel ui:field="tabPanel" height="100%">
                 <t:tab>
                     <t:DialogTab ui:field="hostPopupGeneralTab" label="{constants.hostPopupGeneralTabLabel}">
                         <t:content>
-                            <g:VerticalPanel width="100%" addStyleNames="{style.content}">
-                                <g:Label ui:field="authLabel" addStyleNames="{style.headerAuthLabel}"/>
-                                <ge:StringEntityModelTextBoxEditor ui:field="userNameEditor"/>
-                                <g:HorizontalPanel width="100%" verticalAlignment="middle">
-                                    <g:RadioButton ui:field="rbPassword" />
-                                    <g:Label text="{constants.hostPasswordLabel}" />
-                                    <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" />
-                                </g:HorizontalPanel>
-                                <g:HorizontalPanel width="100%" verticalAlignment="middle">
-                                    <g:RadioButton ui:field="rbPublicKey" addStyleNames="{style.radioButton}" />
-                                    <g:Label text="{constants.hostPublicKeyLable}" />
-                                    <ge:EntityModelTextAreaLabelEditor ui:field="publicKeyEditor" />
-                                </g:HorizontalPanel>
-                                <ge:EntityModelCheckBoxEditor ui:field="overrideIpTablesEditor"/>
-                                <ge:StringEntityModelLabelEditor ui:field="hostVersionEditor"/>
-                                <e:ListModelListBoxEditor ui:field="isoEditor"/>
-                                <ge:EntityModelCheckBoxEditor ui:field="activateHostAfterInstallEditor"/>
-                                <g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}"/>
-                            </g:VerticalPanel>
+                            <b:Container addStyleNames="{style.container}">
+                                <b:Row addStyleNames="{style.topElement}">
+                                    <b:Column size="LG_12">
+                                        <g:Label ui:field="authLabel" addStyleNames="{style.headerAuthLabel}"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <ge:StringEntityModelTextBoxEditor ui:field="userNameEditor" usePatternFly="true" labelColSize="LG_4" widgetColSize="LG_8"/>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_4">
+                                        <g:RadioButton ui:field="rbPassword" addStyleNames="{style.floatLeft}" />
+                                        <g:Label ui:field="rbPasswordLabel" text="{constants.hostPasswordLabel}" addStyleNames="{style.radioLabel}" />
+                                    </b:Column>
+                                    <b:Column size="LG_8">
+                                        <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" usePatternFly="true" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_4">
+                                        <g:RadioButton ui:field="rbPublicKey" addStyleNames="{style.floatLeft}"/>
+                                        <g:Label ui:field="rbPublicKeyLabel" text="{constants.hostPublicKeyLable}" addStyleNames="{style.radioLabel}" />
+                                    </b:Column>
+                                    <b:Column size="LG_8">
+                                        <ge:StringEntityModelTextAreaLabelEditor ui:field="publicKeyEditor" usePatternFly="true" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_12">
+                                        <ge:EntityModelCheckBoxEditor ui:field="overrideIpTablesEditor" usePatternFly="true"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <ge:StringEntityModelLabelEditor ui:field="hostVersionEditor" usePatternFly="true" labelColSize="LG_4" widgetColSize="LG_8"/>
+                                </b:Row>
+                                <b:Row>
+                                    <e:ListModelListBoxEditor ui:field="isoEditor" usePatternFly="true" labelColSize="LG_4" widgetColSize="LG_8"/>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_12">
+                                        <ge:EntityModelCheckBoxEditor ui:field="activateHostAfterInstallEditor" usePatternFly="true"/>
+                                    </b:Column>
+                                </b:Row>
+                            </b:Container>
                         </t:content>
                     </t:DialogTab>
                 </t:tab>

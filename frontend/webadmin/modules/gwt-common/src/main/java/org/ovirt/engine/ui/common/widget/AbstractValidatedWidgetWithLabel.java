@@ -76,6 +76,9 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     //reset by the model.
     private boolean editorStateValid = true;
 
+    //Store if we are using patternfly styles.
+    private boolean usePatternfly = false;
+
     private final W contentWidget;
 
     @UiField
@@ -143,8 +146,8 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         label.setFor(elementId);
     }
 
-    public void setUsePatternFly(final boolean usePatternFly) {
-
+    public void setUsePatternFly(final boolean usePatternfly) {
+        this.usePatternfly = usePatternfly;
         // toggle styles -- remove both PatternFly and non-PatternFly styles
         removeLabelStyleName(style.label_legacy());
         removeContentWidgetStyleName(style.contentWidget_legacy());
@@ -156,7 +159,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         removeWrapperStyleName("avw_wrapper_pfly_fix"); //$NON-NLS-1$
 
         // add the proper styles
-        if (usePatternFly) {
+        if (usePatternfly) {
             addContentWidgetStyleName(Styles.FORM_CONTROL);
             addWrapperStyleName(Styles.FORM_GROUP);
         }
@@ -462,5 +465,9 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
                 }
             }
         }, EditorStateUpdateEvent.getType());
+    }
+
+    public boolean isUsePatternfly() {
+        return this.usePatternfly;
     }
 }
