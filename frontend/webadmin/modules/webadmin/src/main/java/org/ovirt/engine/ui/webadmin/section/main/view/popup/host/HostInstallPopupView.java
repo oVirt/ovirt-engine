@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
@@ -69,18 +70,15 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     @Path(value = "OVirtISO.selectedItem")
     ListModelListBoxEditor<RpmVersion> isoEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "overrideIpTables.entity")
     @WithElementId("overrideIpTables")
     EntityModelCheckBoxEditor overrideIpTablesEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "activateHostAfterInstall.entity")
     @WithElementId("activateHostAfterInstall")
     EntityModelCheckBoxEditor activateHostAfterInstallEditor;
-
-    @UiField
-    Label message;
 
     @UiField
     @Ignore
@@ -130,12 +128,20 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     @Inject
     public HostInstallPopupView(EventBus eventBus) {
         super(eventBus);
-        initListBoxEditors();
+        initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        hideLabels();
         localize();
         addStyles();
         driver.initialize(this);
         applyModeCustomizations();
+    }
+
+    private void hideLabels() {
+        passwordEditor.hideLabel();
+        publicKeyEditor.hideLabel();
+        overrideIpTablesEditor.hideLabel();
+        activateHostAfterInstallEditor.hideLabel();
     }
 
     private void applyModeCustomizations() {
@@ -144,7 +150,7 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         }
     }
 
-    void initListBoxEditors() {
+    void initEditors() {
         isoEditor = new ListModelListBoxEditor<RpmVersion>(new NullSafeRenderer<RpmVersion>() {
             @Override
             public String renderNullSafe(RpmVersion version) {
@@ -156,6 +162,8 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         rbPassword = new RadioButton("1"); //$NON-NLS-1$
         rbPublicKey = new RadioButton("1"); //$NON-NLS-1$
         publicKeyEditor = new StringEntityModelTextAreaLabelEditor();
+        activateHostAfterInstallEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        overrideIpTablesEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     void localize() {
@@ -243,16 +251,10 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     }
 
     interface Style extends CssResource {
-        String overrideIpStyle();
-
-        String activateHostAfterInstallStyle();
-
         String pkStyle();
     }
 
     private void addStyles() {
-        overrideIpTablesEditor.addContentWidgetContainerStyleName(style.overrideIpStyle());
-        activateHostAfterInstallEditor.addContentWidgetContainerStyleName(style.activateHostAfterInstallStyle());
         publicKeyEditor.setCustomStyle(style.pkStyle());
     }
 }

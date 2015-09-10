@@ -88,7 +88,9 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
     @Override
     protected void applyCommonValidationStyles() {
         super.applyCommonValidationStyles();
-        getValidatedWidgetStyle().setPadding(5, Unit.PX);
+        if (!isUsePatternfly()) {
+            getValidatedWidgetStyle().setPadding(5, Unit.PX);
+        }
     }
 
     @Override
