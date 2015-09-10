@@ -58,6 +58,7 @@ public abstract class BackendTemplateBasedResourceTest<
         setUriInfo(setUpBasicUriExpectations());
         setUpGetGraphicsExpectations(1);
         setUpGetEntityExpectations(1);
+        setUpGetBallooningExpectations();
         control.replay();
 
         verifyModel(resource.get(), 0);
@@ -90,6 +91,7 @@ public abstract class BackendTemplateBasedResourceTest<
     public void testGetConsoleAware(boolean allContent) throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
+        setUpGetBallooningExpectations();
 
         if (allContent) {
             List<String> populates = new ArrayList<String>();
@@ -148,11 +150,12 @@ public abstract class BackendTemplateBasedResourceTest<
     public void testUpdate() throws Exception {
         setUpGetGraphicsExpectations(1);
         setUpUpdateExpectations();
+        setUpGetBallooningExpectations();
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
                 UpdateVmTemplateParameters.class,
-                new String[] {},
-                new Object[] {},
+                new String[]{},
+                new Object[]{},
                 true,
                 true));
 
@@ -173,8 +176,8 @@ public abstract class BackendTemplateBasedResourceTest<
         setUpGetEntityExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
                 UpdateVmTemplateParameters.class,
-                new String[] {},
-                new Object[] {},
+                new String[]{},
+                new Object[]{},
                 canDo,
                 success));
 
@@ -220,5 +223,13 @@ public abstract class BackendTemplateBasedResourceTest<
                     new Object[]{GUIDS[i]},
                     Arrays.asList(new GraphicsDevice(VmDeviceType.SPICE)));
         }
+    }
+
+    protected void setUpGetBallooningExpectations() throws Exception {
+        setUpGetEntityExpectations(VdcQueryType.IsBalloonEnabled,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                true);
     }
 }

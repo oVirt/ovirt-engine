@@ -27,7 +27,8 @@ public class BackendInstanceTypesResourceTest
 
     public void testAdd() throws Exception {
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(new int[]{0, 0});
+        setUpGetBallooningExpectations(0, 0);
+        setUpGetConsoleExpectations(0, 0);
 
         super.testAdd();
     }

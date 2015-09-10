@@ -125,7 +125,7 @@ public class BackendInstanceTypesResource
         if (rngDevices != null && !rngDevices.isEmpty()) {
             model.setRngDevice(RngDeviceMapper.map(rngDevices.get(0), null));
         }
-
+        MemoryPolicyHelper.setupMemoryBalloon(model, this);
         return model;
     }
 

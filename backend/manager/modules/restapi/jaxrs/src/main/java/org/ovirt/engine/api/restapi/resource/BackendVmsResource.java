@@ -23,7 +23,6 @@ import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Initialization;
-import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.Payloads;
@@ -659,18 +658,6 @@ public class BackendVmsResource extends
         return getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupByName, new NameQueryParameters(name), "GetVdsGroupByName");
     }
 
-    protected void setBallooning(Vm vm) {
-        Boolean balloonEnabled = getEntity(Boolean.class,
-                VdcQueryType.IsBalloonEnabled,
-                new IdQueryParameters(new Guid(vm.getId())),
-                null,
-                true);
-        if (!vm.isSetMemoryPolicy()) {
-            vm.setMemoryPolicy(new MemoryPolicy());
-        }
-        vm.getMemoryPolicy().setBallooning(balloonEnabled);
-    }
-
     protected Vm setVmOvfConfiguration (Vm model, org.ovirt.engine.core.common.businessentities.VM entity) {
         VdcQueryReturnValue queryReturnValue =
                 runQuery(VdcQueryType.GetVmOvfByVmId,
@@ -731,7 +718,7 @@ public class BackendVmsResource extends
     @Override
     protected Vm doPopulate(Vm model, org.ovirt.engine.core.common.businessentities.VM entity) {
         setPayload(model);
-        setBallooning(model);
+        MemoryPolicyHelper.setupMemoryBalloon(model, this);
         setConsoleDevice(model);
         setVirtioScsiController(model);
         setSoundcard(model);

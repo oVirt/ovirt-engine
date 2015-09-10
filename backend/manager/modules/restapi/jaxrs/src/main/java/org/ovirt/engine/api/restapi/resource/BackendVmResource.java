@@ -600,8 +600,8 @@ public class BackendVmResource extends
             addStatistics(model, entity, uriInfo);
         }
         parent.setPayload(model);
-        parent.setBallooning(model);
         parent.setCertificateInfo(model);
+        MemoryPolicyHelper.setupMemoryBalloon(model, this);
         return model;
     }
 

@@ -51,6 +51,7 @@ public class BackendTemplateResourceTest
     public void testRemove() throws Exception {
         setUpGetEntityExpectations(1);
         setUpGetGraphicsExpectations(1);
+        setUpGetBallooningExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplate,
                 VmTemplateParametersBase.class,
                 new String[] { "VmTemplateId" },
@@ -90,6 +91,7 @@ public class BackendTemplateResourceTest
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(1);
         setUpGetGraphicsExpectations(1);
+        setUpGetBallooningExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplate,
                 VmTemplateParametersBase.class,
                 new String[] { "VmTemplateId" },
@@ -178,6 +180,7 @@ public class BackendTemplateResourceTest
     @Test
     public void testUpdateUploadIcon() throws Exception {
         setUpGetGraphicsExpectations(1);
+        setUpGetBallooningExpectations();
         setUpUpdateExpectations();
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
@@ -196,6 +199,7 @@ public class BackendTemplateResourceTest
     public void testUpdateUseExistingIcons() throws Exception {
         setUpGetGraphicsExpectations(1);
         setUpUpdateExpectations();
+        setUpGetBallooningExpectations();
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
                 UpdateVmTemplateParameters.class,

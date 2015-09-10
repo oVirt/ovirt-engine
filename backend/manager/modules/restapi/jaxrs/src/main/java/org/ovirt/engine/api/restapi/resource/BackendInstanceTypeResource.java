@@ -87,6 +87,11 @@ public class BackendInstanceTypeResource
         return inject(new BackendInstanceTypeNicsResource(guid));
     }
 
+    protected InstanceType deprecatedPopulate(InstanceType model, org.ovirt.engine.core.common.businessentities.InstanceType entity) {
+        MemoryPolicyHelper.setupMemoryBalloon(model, this);
+        return model;
+    }
+
     @Override
     public WatchdogsResource getWatchdogsResource() {
         return inject(new BackendTemplateWatchdogsResource(guid,
@@ -138,6 +143,10 @@ public class BackendInstanceTypeResource
             }
 
             DisplayHelper.setGraphicsToParams(incoming.getDisplay(), updateParams);
+
+            if (incoming.isSetMemoryPolicy() && incoming.getMemoryPolicy().isSetBallooning()) {
+                updateParams.setBalloonEnabled(incoming.getMemoryPolicy().isBallooning());
+            }
 
             return getMapper(modelType, UpdateVmTemplateParameters.class).map(incoming, updateParams);
         }
