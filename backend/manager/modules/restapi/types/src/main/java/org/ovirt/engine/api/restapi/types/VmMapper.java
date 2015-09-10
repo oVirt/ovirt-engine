@@ -28,13 +28,11 @@ import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Files;
 import org.ovirt.engine.api.model.GraphicsConsole;
 import org.ovirt.engine.api.model.GraphicsType;
-import org.ovirt.engine.api.model.GuestInfo;
 import org.ovirt.engine.api.model.GuestOperatingSystem;
 import org.ovirt.engine.api.model.HighAvailability;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Hosts;
 import org.ovirt.engine.api.model.IP;
-import org.ovirt.engine.api.model.IPs;
 import org.ovirt.engine.api.model.Initialization;
 import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.Kernel;
@@ -402,28 +400,9 @@ public class VmMapper extends VmBaseMapper {
                 model.setHost(new Host());
                 model.getHost().setId(entity.getRunOnVds().toString());
             }
-            final boolean hasIps = entity.getVmIp() != null && !entity.getVmIp().isEmpty();
             final boolean hasFqdn = entity.getVmFQDN() != null && !entity.getVmFQDN().isEmpty();
-            if (hasIps || hasFqdn) {
-                model.setGuestInfo(new GuestInfo());
-
-                if (hasFqdn) {
-                    model.getGuestInfo().setFqdn(entity.getVmFQDN());
-                }
-
-                if (hasIps){
-                    IPs ips = new IPs();
-                    for (String item : entity.getVmIp().split(" ")) {
-                        if (!item.equals("")) {
-                            IP ip = new IP();
-                            ip.setAddress(item.trim());
-                            ips.getIPs().add(ip);
-                        }
-                    }
-                    if (!ips.getIPs().isEmpty()) {
-                        model.getGuestInfo().setIps(ips);
-                    }
-                }
+            if (hasFqdn) {
+                model.setFqdn(entity.getVmFQDN());
             }
 
             final boolean hasGuestOsVersion = entity.getGuestOsVersion() != null && !entity.getGuestOsVersion().isEmpty();

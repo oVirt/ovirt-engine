@@ -129,3 +129,54 @@ offset, it was replaced with a new structured `time_zone` element:
 
 The old `timezone` element was preserved, but it has been completely
 removed now.
+
+### Removed the `guest_info` element
+
+The `guest_info` element was used to hold information gathered by the
+guest agent, like the IP addresses and the fully qualified host name.
+This information is also available in other places. For example, the IP
+addresses are available within VM resource:
+
+    GET /vms/{vm:id}
+    <vm>
+      <guest_info>
+        <ips>
+          <ip address="192.168.122.30"/>
+        </ips>
+        <fqdn>whatever.example.com</fqdn>
+      </guest_info>
+    </vm>
+
+And also within the NIC resource, using the newer `reported_devices`
+element:
+
+    GET /vms/{vm:id}/nics/{nic:id}
+    <nic>
+      <reported_devices>
+        <reported_device>
+          <name>eth0</name>
+          <mac address="00:1a:4a:b5:4c:94"/>
+          <ips>
+            <ip address="192.168.1.115" version="v4"/>
+            <ip address="fe80::21a:4aff:feb5:4c94" version="v6"/>
+            <ip address="::1:21a:4aff:feb5:4c94" version="v6"/>
+          </ips>
+        </reported_device>
+      </reported_devices>
+    </nic>
+
+In addition this newer `reported_devices` element provides more complete
+information, like multiple IP addresses, MAC addresses, etc.
+
+To remove this duplication the `guest_info` element has been removed.
+
+To support the fully qualified domain name a new `fqdn` element has been
+added to the VM resource:
+
+    GET /vms/{vm:id}
+    <vm>
+      <fqdn>whatever.example.com</fqdn>
+    </vms>
+
+This will contain the same information that `guest_info.fqdn` used to
+contain.

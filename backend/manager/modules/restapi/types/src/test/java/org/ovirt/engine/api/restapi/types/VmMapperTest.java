@@ -258,8 +258,6 @@ public class VmMapperTest extends
         vmDynamic.setVmIp("2.2.2.2");
         vm.setDynamicData(vmDynamic);
         VM map = VmMapper.map(vm, (VM) null);
-        assertNotNull(map.getGuestInfo().getIps().getIPs().get(0));
-        assertEquals(map.getGuestInfo().getIps().getIPs().get(0).getAddress(), "2.2.2.2");
     }
 
     @Test
@@ -270,8 +268,8 @@ public class VmMapperTest extends
         vmDynamic.setVmFQDN("localhost.localdomain");
         vm.setDynamicData(vmDynamic);
         VM map = VmMapper.map(vm, (VM) null);
-        assertNotNull(map.getGuestInfo().getFqdn());
-        assertEquals(map.getGuestInfo().getFqdn(), "localhost.localdomain");
+        assertNotNull(map.getFqdn());
+        assertEquals(map.getFqdn(), "localhost.localdomain");
     }
 
     @Test
@@ -363,8 +361,6 @@ public class VmMapperTest extends
 
         vm.setDynamicData(vmDynamic);
         VM map = VmMapper.map(vm, (VM) null);
-
-        assertNull(map.getGuestInfo());
     }
 
     @Test
@@ -375,10 +371,6 @@ public class VmMapperTest extends
         vmDynamic.setVmIp("2.2.2.2 2.2.2.3 2.2.2.4");
         vm.setDynamicData(vmDynamic);
         VM map = VmMapper.map(vm, (VM) null);
-        assertNotNull(map.getGuestInfo().getIps().getIPs().get(0));
-        assertEquals(map.getGuestInfo().getIps().getIPs().get(0).getAddress(), "2.2.2.2");
-        assertEquals(map.getGuestInfo().getIps().getIPs().get(1).getAddress(), "2.2.2.3");
-        assertEquals(map.getGuestInfo().getIps().getIPs().get(2).getAddress(), "2.2.2.4");
     }
 
     @Test

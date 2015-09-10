@@ -3435,13 +3435,6 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="GuestInfo">
-    <xs:sequence>
-      <xs:element ref="ips" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="fqdn" type="xs:string" minOccurs="0" maxOccurs="1"/>
-    </xs:sequence>
-  </xs:complexType>
-
   <xs:element name="serial_number" type="SerialNumber" />
 
   <xs:complexType name="SerialNumber">
@@ -3545,7 +3538,7 @@
           <xs:element name="snapshots" type="Snapshots" minOccurs="0" maxOccurs="1"/>
           <xs:element name="placement_policy" type="VmPlacementPolicy" minOccurs="0" maxOccurs="1"/>
           <xs:element name="memory_policy" type="MemoryPolicy" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="guest_info" type="GuestInfo" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="fqdn" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="quota" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="vmpool" minOccurs="0" maxOccurs="1">
             <xs:annotation>
