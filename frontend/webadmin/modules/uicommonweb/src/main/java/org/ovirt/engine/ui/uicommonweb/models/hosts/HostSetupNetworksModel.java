@@ -375,13 +375,16 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             networkDialogModel.getBondingOptions().setIsAvailable(false);
             networkDialogModel.setBootProtocol(nic.getBootProtocol());
 
+            NetworkAttachment networkAttachment =
+                getNetworkAttachmentForNetwork(network.getId());
+
             if ((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.HostNetworkQosSupported,
                     version)) {
                 networkDialogModel.getQosOverridden().setIsAvailable(true);
                 networkDialogModel.getQosModel().setIsAvailable(true);
-                NetworkAttachment networkAttachment =
-                        getNetworkAttachmentForNetwork(network.getId());
+
                 networkDialogModel.getQosOverridden().setEntity(networkAttachment != null && networkAttachment.isQosOverridden());
+
                 networkDialogModel.getQosModel().init(nic.getQos());
 
             }
@@ -401,7 +404,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 validProperties.putAll(KeyValueModel.convertProperties((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.UserDefinedNetworkCustomProperties,
                         version)));
                 customPropertiesModel.setKeyValueMap(validProperties);
-                customPropertiesModel.deserialize(KeyValueModel.convertProperties(nic.getCustomProperties()));
+                customPropertiesModel.deserialize(KeyValueModel.convertProperties(networkAttachment.getProperties()));
             }
 
             networkDialogModel.getIsToSync().setIsChangeable(!logicalNetworkModel.isInSync());
@@ -430,18 +433,20 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                         nic.setQos(displayedQos);
                     }
 
-                    if (networkDialogModel.getCustomPropertiesModel().getIsAvailable()) {
-                        nic.setCustomProperties(KeyValueModel.convertProperties(networkDialogModel.getCustomPropertiesModel()
-                            .serialize()));
-                    }
-
                     if (networkDialogModel.getIsToSync().getEntity()) {
                         networksToSync.add(logicalNetworkModelName);
                     } else {
                         networksToSync.remove(logicalNetworkModelName);
                     }
 
-                    removePreviousNetworkAttachmentInstanceFromRequestAndAddNewOne(logicalNetworkModel, nic, getOverridingHostNetworkQos(displayedQos));
+                    boolean customPropertiesAvailable = networkDialogModel.getCustomPropertiesModel().getIsAvailable();
+                    Map<String, String> customProperties = customPropertiesAvailable
+                        ? KeyValueModel.convertProperties(networkDialogModel.getCustomPropertiesModel().serialize())
+                        : null;
+
+                    removePreviousNetworkAttachmentInstanceFromRequestAndAddNewOne(logicalNetworkModel,
+                        getOverridingHostNetworkQos(displayedQos),
+                        customProperties);
 
                     sourceListModel.setConfirmWindow(null);
                 }
@@ -537,7 +542,9 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     }
 
     public void removePreviousNetworkAttachmentInstanceFromRequestAndAddNewOne(
-        LogicalNetworkModel logicalNetwork, VdsNetworkInterface entity, HostNetworkQos overridingQos) {
+        LogicalNetworkModel logicalNetwork,
+        HostNetworkQos overridingQos,
+        Map<String, String> customProperties) {
 
         Network updatedNetwork = logicalNetwork.getNetwork();
         Guid updatedNetworkId = updatedNetwork.getId();
@@ -563,7 +570,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 logicalNetwork.getVlanNicModel() == null ? null : logicalNetwork.getVlanNicModel().getIface(),
                 networkAttachmentId,
                 hostSetupNetworksParametersData.networksToSync,
-                overridingQos);
+                overridingQos,
+                customProperties);
         hostSetupNetworksParametersData.newOrModifiedNetworkAttachments.add(updatedNetworkAttachment);
     }
 
