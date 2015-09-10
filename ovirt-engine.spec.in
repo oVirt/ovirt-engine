@@ -432,6 +432,7 @@ Summary:	Setup and upgrade specific plugins for %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
 Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
 Requires:	%{name} >= 3.5.0
+Requires:	ovirt-engine-extension-aaa-jdbc
 Conflicts:	%{name} < 3.5.0
 
 %description setup-plugin-ovirt-engine
