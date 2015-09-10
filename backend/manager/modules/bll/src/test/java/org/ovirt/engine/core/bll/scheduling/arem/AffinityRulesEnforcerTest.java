@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.arem;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.eq;
@@ -107,14 +105,14 @@ public class AffinityRulesEnforcerTest {
         when(schedulingManager.canSchedule(eq(vdsGroup), any(VM.class), anyList(), anyList(),
                 anyList(), anyList())).thenReturn(false);
         affinityGroups.add(createAffinityGroup(vdsGroup, true, vm1, vm2, vm4));
-        assertNull(enforcer.chooseNextVmToMigrate(vdsGroup));
+        assertThat(enforcer.chooseNextVmToMigrate(vdsGroup)).isNull();
     }
 
     @Test
     public void shouldMigrateFromHostWithLessHosts() {
         AffinityGroup positiveGroup = createAffinityGroup(vdsGroup, true, vm1, vm2, vm4);
         affinityGroups.add(positiveGroup);
-        assertEquals(vm4, enforcer.chooseNextVmToMigrate(vdsGroup));
+        assertThat(enforcer.chooseNextVmToMigrate(vdsGroup)).isEqualTo(vm4);
     }
 
     @Test
@@ -124,12 +122,12 @@ public class AffinityRulesEnforcerTest {
         affinityGroups.add(negativeUnsatisfiedGroup);
         affinityGroups.add(positiveSatisfiedGroup);
         final VM candidate = enforcer.chooseNextVmToMigrate(vdsGroup);
-        assertTrue(Arrays.asList(vm2, vm3).contains(candidate));
+        assertThat(candidate).isIn(vm2, vm3);
     }
 
     @Test
     public void shouldDoNothingWithoutGroups() {
-        assertNull(enforcer.chooseNextVmToMigrate(vdsGroup));
+        assertThat(enforcer.chooseNextVmToMigrate(vdsGroup)).isNull();
     }
 
     @Test
@@ -138,15 +136,15 @@ public class AffinityRulesEnforcerTest {
         AffinityGroup negativeGroup = createAffinityGroup(vdsGroup, false, vm1, vm4);
         affinityGroups.add(positiveGroup);
         affinityGroups.add(negativeGroup);
-        assertNull(enforcer.chooseNextVmToMigrate(vdsGroup));
+        assertThat(enforcer.chooseNextVmToMigrate(vdsGroup)).isNull();
     }
 
     @Test
     public void shouldMigrateMoreThanOneHost() {
         affinityGroups.add(createAffinityGroup(vdsGroup, true, vm1, vm2, vm3, vm4, vm5, vm6));
-        assertEquals(vm4, enforcer.chooseNextVmToMigrate(vdsGroup));
+        assertThat(enforcer.chooseNextVmToMigrate(vdsGroup)).isEqualTo(vm4);
         vm4.setRunOnVds(host1.getId());
-        assertTrue(Arrays.asList(vm5, vm6).contains(enforcer.chooseNextVmToMigrate(vdsGroup)));
+        assertThat(enforcer.chooseNextVmToMigrate(vdsGroup)).isIn(vm5, vm6);
     }
 
     @Test
@@ -155,12 +153,12 @@ public class AffinityRulesEnforcerTest {
         AffinityGroup smallGroup = createAffinityGroup(vdsGroup, true, vm2, vm5);
         affinityGroups.add(bigGroup);
         affinityGroups.add(smallGroup);
-        assertTrue(Arrays.asList(vm1, vm4, vm6).contains(enforcer.chooseNextVmToMigrate(vdsGroup)));
+        assertThat(enforcer.chooseNextVmToMigrate(vdsGroup)).isIn(vm1, vm4, vm6);
 
         affinityGroups.clear();
         affinityGroups.add(smallGroup);
         affinityGroups.add(bigGroup);
-        assertTrue(Arrays.asList(vm1, vm4, vm6).contains(enforcer.chooseNextVmToMigrate(vdsGroup)));
+        assertThat(enforcer.chooseNextVmToMigrate(vdsGroup)).isIn(vm1, vm4, vm6);
     }
 
     @Test
@@ -176,19 +174,19 @@ public class AffinityRulesEnforcerTest {
         final AffinityGroup highIdGroup = createAffinityGroup(vdsGroup, true, vm2, vm5);
         affinityGroups.add(lowIdGroup);
         affinityGroups.add(highIdGroup);
-        assertTrue(Arrays.asList(vm2, vm5).contains(enforcer.chooseNextVmToMigrate(vdsGroup)));
+        assertThat(enforcer.chooseNextVmToMigrate(vdsGroup)).isIn(vm2, vm5);
 
         affinityGroups.clear();
         affinityGroups.add(highIdGroup);
         affinityGroups.add(lowIdGroup);
-        assertTrue(Arrays.asList(vm2, vm5).contains(enforcer.chooseNextVmToMigrate(vdsGroup)));
+        assertThat(enforcer.chooseNextVmToMigrate(vdsGroup)).isIn(vm2, vm5);
 
         // Bigger groups should always come first
         affinityGroups.clear();
         final AffinityGroup biggestIdGroup = createAffinityGroup(vdsGroup, true, vm1, vm4,  vm6);
         affinityGroups.add(highIdGroup);
         affinityGroups.add(biggestIdGroup);
-        assertTrue(Arrays.asList(vm1, vm4, vm6).contains(enforcer.chooseNextVmToMigrate(vdsGroup)));
+        assertThat(enforcer.chooseNextVmToMigrate(vdsGroup)).isIn(vm1, vm4, vm6);
     }
 
     @Test
@@ -203,7 +201,7 @@ public class AffinityRulesEnforcerTest {
                 anyList(), anyList())).thenReturn(false, true);
 
         // There is no fixed order so we only know that one of those VMs will be selected for migration
-        assertTrue(Arrays.asList(vm5, vm6).contains(enforcer.chooseNextVmToMigrate(vdsGroup)));
+        assertThat(enforcer.chooseNextVmToMigrate(vdsGroup)).isIn(vm5, vm6);
 
         // Verify that the enforcer tried to schedule both candidate VMs.
         verify(schedulingManager).canSchedule(eq(vdsGroup), eq(vm5), anyList(), anyList(),
