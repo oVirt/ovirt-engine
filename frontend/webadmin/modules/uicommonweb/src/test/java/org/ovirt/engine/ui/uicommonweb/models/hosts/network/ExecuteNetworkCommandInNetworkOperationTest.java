@@ -134,6 +134,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
                 null,
                 networkAttachmentId,
                 dataFromHostSetupNetworksModel.networksToSync,
+                null,
                 null);
         existingNetworkAttachments.add(networkAttachment);
         dataFromHostSetupNetworksModel.removedNetworkAttachments.add(networkAttachment);
@@ -167,6 +168,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
                 null,
                 networkAttachmentId,
                 dataFromHostSetupNetworksModel.networksToSync,
+                null,
                 null);
         existingNetworkAttachments.add(formerAttachment);
         dataFromHostSetupNetworksModel.removedNetworkAttachments.add(formerAttachment);
@@ -196,6 +198,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
                 null,
                 networkAttachmentId,
                 dataFromHostSetupNetworksModel.networksToSync,
+                null,
                 null);
         existingNetworkAttachments.add(networkAttachment);
         when(logicalNetworkModelOfNetworkA.hasVlan()).thenReturn(false);
@@ -332,6 +335,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
                 null,
                 networkAttachmentId,
                 dataFromHostSetupNetworksModel.networksToSync,
+                null,
                 null);
 
         existingNetworkAttachments.add(networkAttachment);
@@ -413,6 +417,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
                 null,
                 networkAttachmentId,
                 dataFromHostSetupNetworksModel.networksToSync,
+                null,
                 null);
 
         existingNetworkAttachments.add(networkAttachment);
@@ -463,6 +468,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
                 null,
                 networkAttachmentId,
                 dataFromHostSetupNetworksModel.networksToSync,
+                null,
                 null);
 
         existingNetworkAttachments.add(networkAttachment);
@@ -502,6 +508,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
                 existingBond,
                 null,
                 networkAttachmentId, dataFromHostSetupNetworksModel.networksToSync,
+                null,
                 null);
 
         Guid bondBId = Guid.newGuid();

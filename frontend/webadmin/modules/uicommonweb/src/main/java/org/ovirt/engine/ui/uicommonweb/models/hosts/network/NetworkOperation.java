@@ -198,14 +198,17 @@ public enum NetworkOperation {
                     if (networkUsedInPreexistingAttachment) {
                         NetworkAttachment oldNetworkAttachment = allNetworkAttachmentMap.get(networkToAttach.getId());
                         Guid oldNetworkAttachmentId = oldNetworkAttachment.getId();
+                        //custom properties are not set here, it's done below.
                         newNetworkAttachment = newNetworkAttachment(networkToAttach,
-                                targetNic,
-                                vlanBridge,
-                                oldNetworkAttachmentId,
-                                dataFromHostSetupNetworksModel.networksToSync,
-                                null);
+                            targetNic,
+                            vlanBridge,
+                            oldNetworkAttachmentId,
+                            dataFromHostSetupNetworksModel.networksToSync,
+                            null,
+                            null);
                         dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.add(newNetworkAttachment);
                     } else {
+                        //custom properties are not set here, it's done below.
                         newNetworkAttachment = newNetworkAttachment(networkToAttach,
                                 targetNic, vlanBridge, dataFromHostSetupNetworksModel.networksToSync);
                         dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.add(newNetworkAttachment);
@@ -944,7 +947,7 @@ public enum NetworkOperation {
     public abstract String getVerb(NetworkItemModel<?> op1);
 
     /**
-     * @return whether is this Operation Unary?
+     * @return true if operation is unary.
      */
     public boolean isUnary() {
         return false;
@@ -1009,14 +1012,16 @@ public enum NetworkOperation {
             VdsNetworkInterface baseNic,
             VdsNetworkInterface vlanDevice,
             Set<String> networksToSync) {
-        return newNetworkAttachment(network, baseNic, vlanDevice, null, networksToSync, null);
+        return newNetworkAttachment(network, baseNic, vlanDevice, null, networksToSync, null, null);
     }
 
     public static NetworkAttachment newNetworkAttachment(Network network,
-            VdsNetworkInterface baseNic,
-            VdsNetworkInterface vlanDevice,
-            Guid networkAttachmentId,
-            Set<String> networksToSync, HostNetworkQos overridingQos) {
+        VdsNetworkInterface baseNic,
+        VdsNetworkInterface vlanDevice,
+        Guid networkAttachmentId,
+        Set<String> networksToSync,
+        HostNetworkQos overridingQos,
+        Map<String, String> customProperties) {
         VdsNetworkInterface targetNic = vlanDevice == null ? baseNic : vlanDevice;
 
         NetworkAttachment networkAttachment = new NetworkAttachment();
@@ -1025,7 +1030,7 @@ public enum NetworkOperation {
         networkAttachment.setNicId(baseNic.getId());
         networkAttachment.setNicName(baseNic.getName());
         networkAttachment.setOverrideConfiguration(networksToSync.contains(network.getName()));
-        networkAttachment.setProperties(targetNic.getCustomProperties());
+        networkAttachment.setProperties(customProperties);
 
         networkAttachment.setHostNetworkQos(overridingQos);
 

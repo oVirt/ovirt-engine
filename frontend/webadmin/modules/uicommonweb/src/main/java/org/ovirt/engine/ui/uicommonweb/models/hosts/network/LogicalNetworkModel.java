@@ -87,7 +87,6 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             nic.setSubnet(netParams.getSubnet());
             nic.setGateway(netParams.getGateway());
             nic.setQos(netParams.getQos());
-            nic.setCustomProperties(netParams.getCustomProperties());
         } else if (nic.getBootProtocol() == null) {
             nic.setBootProtocol(isManagement() ? NetworkBootProtocol.DHCP : NetworkBootProtocol.NONE);
         }
@@ -130,7 +129,6 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             nicEntity.setSubnet(null);
             nicEntity.setGateway(null);
             nicEntity.setQos(null);
-            nicEntity.setCustomProperties(null);
             nicEntity.setNetworkImplementationDetails(null);
         }
         setVlanNicModel(null);
