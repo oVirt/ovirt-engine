@@ -20,6 +20,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -93,25 +94,24 @@ public class VMConsoleProxyServlet extends HttpServlet {
             if (retVms != null) {
                 List<VM> vmsList = retVms.getReturnValue();
 
-
                 for (VM vm : vmsList) {
                     Map<String, String> jsonVm = new HashMap<String, String>();
 
-                    IdQueryParameters vmParam = new IdQueryParameters(vm.getId());
+                    if (vm.getRunOnVds() != null) {
+                        // TODO: avoid one query per loop. Bulk query?
+                        VdcQueryReturnValue retValue = backend.runInternalQuery(VdcQueryType.GetVdsByVdsId, new IdQueryParameters(vm.getRunOnVds()));
 
-                    // TODO: avoid one query per loop. Bulk query?
-                    VdcQueryReturnValue retAddr = backend.runInternalQuery(VdcQueryType.GetManagementInterfaceAddressByVmId, vmParam);
+                        if (retValue != null && retValue.getReturnValue() != null) {
+                            VDS vds = (VDS) retValue.getReturnValue();
 
-                    if (retAddr != null && retAddr.getReturnValue() != null) {
-                        String vdsAddress = (String) retAddr.getReturnValue();
+                            jsonVm.put("vmid", vm.getId().toString());
+                            jsonVm.put("vmname", vm.getName());
+                            jsonVm.put("host", vds.getHostName());
+                            /* there is only one serial console, no need and no way to distinguish them */
+                            jsonVm.put("console", "default");
 
-                        jsonVm.put("vmid", vm.getId().toString());
-                        jsonVm.put("vmname", vm.getName());
-                        jsonVm.put("host", vdsAddress);
-                        /* there is only one serial console, no need and no way to distinguish them */
-                        jsonVm.put("console", "default");
-
-                        jsonVms.add(jsonVm);
+                            jsonVms.add(jsonVm);
+                        }
                     }
                 }
             }
