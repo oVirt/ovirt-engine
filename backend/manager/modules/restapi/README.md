@@ -368,3 +368,16 @@ replaced by inner elements:
     <mac>
       <address>66:f2:c5:5f:bb:8d</address>
     </mac>
+
+### Use elements instead of attributes in boot device:
+
+In the past the boot device element used attributes for its properties:
+
+    <boot dev="cdrom"/>
+
+This is contrary to the common practice in the RESTAPI. They have been
+replaced by inner elements:
+
+    <boot>
+      <dev>cdrom</dev>
+    </boot>
