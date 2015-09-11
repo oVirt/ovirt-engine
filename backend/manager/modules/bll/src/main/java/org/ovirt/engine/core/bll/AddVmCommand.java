@@ -1508,6 +1508,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             }
         }
 
+        VmHandler.autoSelectUsbPolicy(getParameters().getVmStaticData(), getVdsGroup());
         // Choose a proper default display type according to the cluster architecture
         VmHandler.autoSelectDefaultDisplayType(getVmTemplateId(),
             getParameters().getVmStaticData(),

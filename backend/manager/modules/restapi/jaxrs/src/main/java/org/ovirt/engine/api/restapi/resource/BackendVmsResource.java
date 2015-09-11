@@ -144,8 +144,7 @@ public class BackendVmsResource extends
                     staticVm.setOsId(OsRepository.AUTO_SELECT_OS);
                 }
 
-                staticVm.setUsbPolicy(VmMapper.getUsbPolicyOnCreate(vm.getUsb(),
-                        cluster.getCompatibilityVersion()));
+                staticVm.setUsbPolicy(VmMapper.getUsbPolicyOnCreate(vm.getUsb()));
 
                 if (!isFiltered() && vm.isSetPlacementPolicy()) {
                     Set<Guid> hostGuidsSet = validateAndUpdateHostsInPlacementPolicy(vm.getPlacementPolicy());

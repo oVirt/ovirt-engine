@@ -229,11 +229,6 @@ public class BackendVmResourceTest
     @Test
     public void testUpdate() throws Exception {
         setUpGetEntityExpectations(3);
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
 
         setUpGetPayloadExpectations(0, 2);
         setUpGetBallooningExpectations();
@@ -257,11 +252,6 @@ public class BackendVmResourceTest
     @Test
     public void testUpdateRemovingPayloads() throws Exception {
         setUpGetEntityExpectations(3);
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
 
         setUpGetPayloadExpectations(0, 1);
         setUpGetNoPayloadExpectations(0, 1);
@@ -289,11 +279,6 @@ public class BackendVmResourceTest
     @Test
     public void testUpdateUploadIcon() throws Exception {
         setUpGetEntityExpectations(3);
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
 
         setUpGetPayloadExpectations(0, 2);
         setUpGetBallooningExpectations();
@@ -318,11 +303,6 @@ public class BackendVmResourceTest
     @Test
     public void testUpdateUseExistingIcons() throws Exception {
         setUpGetEntityExpectations(3);
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
 
         setUpGetPayloadExpectations(0, 2);
         setUpGetBallooningExpectations();
@@ -460,11 +440,6 @@ public class BackendVmResourceTest
 
     private void setUpUdpateVm() throws Exception {
         setUpGetEntityExpectations(3);
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-            IdQueryParameters.class,
-            new String[]{"Id"},
-            new Object[]{GUIDS[2] },
-                getVdsGroupEntity());
 
         setUpGetPayloadExpectations(0, 2);
         setUpGetBallooningExpectations();
@@ -487,11 +462,6 @@ public class BackendVmResourceTest
     @Test
     public void testUpdateMovingCluster() throws Exception {
         setUpGetEntityExpectations(3);
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[1] },
-                getVdsGroupEntity());
 
         setUpGetPayloadExpectations(0, 2);
         setUpGetBallooningExpectations();
@@ -536,11 +506,6 @@ public class BackendVmResourceTest
 
     private void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(2);
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
 
         setUpGetPayloadExpectations(0, 1);
         setUpGetBallooningExpectations();
