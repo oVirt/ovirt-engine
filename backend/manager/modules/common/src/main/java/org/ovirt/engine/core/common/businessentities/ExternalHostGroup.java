@@ -10,16 +10,36 @@ public class ExternalHostGroup implements ExternalEntityBase {
     private int subnetId;
     private int domainId;
     private int environmentId;
+    private String environmentName;
     private int hostgroupId;
-    private int osId;
+    private int operatingsystemId;
     private int ptableId;
     private int mediumId;
     private int architectureId;
     private Map<String, String> parameters;
+    private String ancestry;
     private String subnetName;
     private String operatingsystemName;
     private String domainName;
     private String architectureName;
+    private String ptableName;
+    private String mediumName;
+
+    public String getEnvironmentName() {
+        return environmentName;
+    }
+
+    public void setEnvironmentName(String environmentName) {
+        this.environmentName = environmentName;
+    }
+
+    public String getAncestry() {
+        return ancestry;
+    }
+
+    public void setAncestry(String ancestry) {
+        this.ancestry = ancestry;
+    }
 
     public String getArchitectureName() {
         return architectureName;
@@ -61,12 +81,12 @@ public class ExternalHostGroup implements ExternalEntityBase {
         this.hostgroupId = id;
     }
 
-    public int getOsId() {
-        return osId;
+    public int getOperatingsystemId() {
+        return operatingsystemId;
     }
 
-    public void setOsId(int os_id) {
-        this.osId = os_id;
+    public void setOperatingsystemId(int os_id) {
+        this.operatingsystemId = os_id;
     }
 
     public int getSubnetId() {
@@ -140,5 +160,21 @@ public class ExternalHostGroup implements ExternalEntityBase {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPtableName() {
+        return ptableName;
+    }
+
+    public void setPtableName(String ptableName) {
+        this.ptableName = ptableName;
+    }
+
+    public String getMediumName() {
+        return mediumName;
+    }
+
+    public void setMediumName(String mediumName) {
+        this.mediumName = mediumName;
     }
 }
