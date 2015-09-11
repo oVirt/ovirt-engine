@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.api.model.Agent;
+import org.ovirt.engine.api.model.Agents;
 import org.ovirt.engine.api.model.ArchitectureCapabilities;
 import org.ovirt.engine.api.model.ArchitectureCapability;
 import org.ovirt.engine.api.model.BootDevice;
@@ -83,10 +85,8 @@ import org.ovirt.engine.api.model.Permits;
 import org.ovirt.engine.api.model.PmProxyType;
 import org.ovirt.engine.api.model.PmProxyTypes;
 import org.ovirt.engine.api.model.PolicyUnitType;
-import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.PowerManagementStates;
 import org.ovirt.engine.api.model.PowerManagementStatus;
-import org.ovirt.engine.api.model.PowerManagers;
 import org.ovirt.engine.api.model.QosType;
 import org.ovirt.engine.api.model.QosTypes;
 import org.ovirt.engine.api.model.QuotaModeType;
@@ -241,7 +241,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
                 cpu.setArchitecture(CPUMapper.map(sc.getArchitecture(), null));
                 version.getCpus().getCpus().add(cpu);
             }
-            addPowerManagers(version, getPowerManagers(v));
+            addPowerManagementAgents(version, getPowerManagementAgents(v));
         }
 
         addVmTypes(version, VmType.values());
@@ -546,9 +546,9 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         }
     }
 
-    private void addPowerManagers(VersionCaps version, List<PowerManagement> powerManagers) {
-        version.setPowerManagers(new PowerManagers());
-        version.getPowerManagers().getPowerManagers().addAll(powerManagers);
+    private void addPowerManagementAgents(VersionCaps version, List<Agent> agents) {
+        version.setPowerManagement(new Agents());
+        version.getPowerManagement().getAgents().addAll(agents);
     }
 
     private void addVmTypes(VersionCaps version, VmType... types) {
@@ -642,12 +642,12 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         version.getCustomProperties().getCustomProperty().addAll(envs);
     }
 
-    private List<PowerManagement> getPowerManagers(Version version) {
+    private List<Agent> getPowerManagementAgents(Version version) {
         return FenceOptionsParser.parse(
-                getFenceConfigurationValue(String.class, ConfigurationValues.VdsFenceOptionMapping, version),
-                getConfigurationValueDefault(String.class, ConfigurationValues.VdsFenceOptionTypes),
-                true
-                );
+            getFenceConfigurationValue(String.class, ConfigurationValues.VdsFenceOptionMapping, version),
+            getConfigurationValueDefault(String.class, ConfigurationValues.VdsFenceOptionTypes),
+            true
+        );
     }
 
     private List<StorageType> getStorageTypes(Version version) {

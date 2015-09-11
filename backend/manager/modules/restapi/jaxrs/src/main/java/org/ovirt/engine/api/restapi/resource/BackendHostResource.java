@@ -10,7 +10,6 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Fault;
@@ -40,7 +39,6 @@ import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource
 import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
 import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendHostKatelloErrataResource;
 import org.ovirt.engine.api.restapi.types.Mapper;
-import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -95,9 +93,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public Host get() {
-        Host host = getVdsByVdsId();
-        deprecatedAddLinksToAgents(host);
-        return host;
+        return getVdsByVdsId();
     }
 
     private Host getVdsByVdsId() {
@@ -128,21 +124,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
                 hostResolver,
                 VdcActionType.UpdateVds,
                 new UpdateParametersProvider());
-        deprecatedAddLinksToAgents(host);
         return host;
-    }
-
-    @Deprecated
-    private void deprecatedAddLinksToAgents(Host host) {
-        if (host.isSetPowerManagement() && host.getPowerManagement().isSetAgents()
-                && host.getPowerManagement().getAgents().isSetAgents()) {
-            for (Agent agent : host.getPowerManagement().getAgents().getAgents()) {
-                Host host2 = new Host();
-                host2.setId(host.getId());
-                agent.setHost(host2);
-                LinkHelper.addLinks(uriInfo, agent);
-            }
-        }
     }
 
     @Override

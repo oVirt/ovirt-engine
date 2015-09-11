@@ -1,13 +1,11 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
-import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Host;
@@ -17,7 +15,6 @@ import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.resource.HostResource;
 import org.ovirt.engine.api.resource.HostsResource;
-import org.ovirt.engine.api.restapi.types.FenceAgentMapper;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
@@ -25,7 +22,6 @@ import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -95,13 +91,6 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         AddVdsActionParameters addParams = new AddVdsActionParameters(staticHost, host.getRootPassword());
         if (host.isSetOverrideIptables()) {
             addParams.setOverrideFirewall(host.isOverrideIptables());
-        }
-        if (host.isSetPowerManagement() && host.getPowerManagement().isSetAgents()) {
-            List<FenceAgent> agents = new LinkedList<>();
-            for (Agent agent : host.getPowerManagement().getAgents().getAgents()) {
-                agents.add(FenceAgentMapper.map(agent, null));
-            }
-            addParams.setFenceAgents(agents);
         }
         addParams = (AddVdsActionParameters) getMapper
             (Host.class, VdsOperationActionParameters.class).map(host, addParams);

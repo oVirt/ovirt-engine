@@ -453,3 +453,30 @@ requests, first one to refresh the host:
 And then one to retrieve it, without the `force` parameter:
 
    GET /hosts/{host:id}
+
+### Removed deprecated host power management configuration
+
+The host power management configuration used to be part of the host
+resource, using embedded configuration elements:
+
+    <power_management type="apc">
+      <enabled>true</enabled>
+      <address>myaddress</address>
+      <username>myaddress</username>
+      <options>
+        <option name="port" value="22/>
+        </option name="slot" value="5/>
+      </options>
+      ...
+    </power_management>
+
+This has been changed some time ago, in order to support multiple power
+management agents, introducing a new
+`/hosts/{host:id}fenceagents`collection.
+
+The old `type` attribute, the old `address`, `username` and `password`
+elements, and the inner `agents` element directly inside
+`power_management` were preserved for backwards compatibility. All these
+elements have been completely removed, so the only way to query or
+modify the power management agents is now the
+`/hosts/{host:id}/fenceagents` sub-collection.

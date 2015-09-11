@@ -7,6 +7,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.Capabilities;
 import org.ovirt.engine.api.model.Cpu;
@@ -19,7 +20,6 @@ import org.ovirt.engine.api.model.FenceType;
 import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.OsType;
-import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.SchedulingPolicyType;
 import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageType;
@@ -146,9 +146,12 @@ public class BackendCapabilityResourceTest extends AbstractBackendResourceTest {
         assertNotNull(version.getCpus());
         assertTrue(version.getCpus().getCpus().size() == 1);
         verifyCPU(version.getCpus().getCpus().get(0), cpuName, cpuLevel);
-        assertNotNull(version.getPowerManagers());
-        assertEquals(1, version.getPowerManagers().getPowerManagers().size());
-        verifyPowerManagement(version.getPowerManagers().getPowerManagers().get(0));
+        assertNotNull(version.getPowerManagement());
+        assertEquals(1, version.getPowerManagement().getAgents().size());
+        verifyPowerManagement(version.getPowerManagement().getAgents().get(0));
+        assertTrue(version.getCpus().getCpus().size() == 1);
+        verifyCPU(version.getCpus().getCpus().get(0), cpuName, cpuLevel);
+        assertNotNull(version.getPowerManagement());
         verifyVmTypes(version.getVmTypes().getVmTypes());
         verifyStorageTypes(version.getStorageTypes().getStorageTypes(), localStorage);
         verifyStorageDomainTypes(version.getStorageDomainTypes().getStorageDomainTypes());
@@ -217,12 +220,12 @@ public class BackendCapabilityResourceTest extends AbstractBackendResourceTest {
         assertEquals(level, cpu.getLevel());
     }
 
-    private void verifyPowerManagement(PowerManagement pm) {
-        assertNotNull(pm);
-        assertEquals("foo", pm.getType());
-        assertEquals(2, pm.getOptions().getOptions().size());
-        verifyOption(pm.getOptions().getOptions().get(0), "one", "int");
-        verifyOption(pm.getOptions().getOptions().get(1), "two", "bool");
+    private void verifyPowerManagement(Agent agent) {
+        assertNotNull(agent);
+        assertEquals("foo", agent.getType());
+        assertEquals(2, agent.getOptions().getOptions().size());
+        verifyOption(agent.getOptions().getOptions().get(0), "one", "int");
+        verifyOption(agent.getOptions().getOptions().get(1), "two", "bool");
     }
 
     private void verifyOption(Option option, String name, String type) {

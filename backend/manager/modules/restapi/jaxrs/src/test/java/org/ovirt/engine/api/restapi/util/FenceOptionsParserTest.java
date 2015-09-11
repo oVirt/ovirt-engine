@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Option;
-import org.ovirt.engine.api.model.PowerManagement;
 
 public class FenceOptionsParserTest extends Assert {
     private static final String FENCE_OPTION = "apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port,"
@@ -19,14 +19,14 @@ public class FenceOptionsParserTest extends Assert {
 
     @Test
     public void testParseEmpty() {
-        List<PowerManagement> ret = parse("", "");
+        List<Agent> ret = parse("", "");
         assertNotNull(ret);
         assertEquals(0, ret.size());
     }
 
     @Test
     public void testParseSingle() {
-        List<PowerManagement> ret = parse("foo:one=1,two=2,three=3", "one=bool,two=int,three=bool");
+        List<Agent> ret = parse("foo:one=1,two=2,three=3", "one=bool,two=int,three=bool");
         assertNotNull(ret);
         assertEquals(1, ret.size());
         verifyResult(ret.get(0),
@@ -38,7 +38,7 @@ public class FenceOptionsParserTest extends Assert {
 
     @Test
     public void testParseMultiple() {
-        List<PowerManagement> ret = parse("foo:one=1,two=2,three=3;bar:ninetynine=99",
+        List<Agent> ret = parse("foo:one=1,two=2,three=3;bar:ninetynine=99",
                                           "one=bool,two=int,three=bool,ninetynine=int");
         assertNotNull(ret);
         assertEquals(2, ret.size());
@@ -54,7 +54,7 @@ public class FenceOptionsParserTest extends Assert {
 
     @Test
     public void testParseIngoreValues() {
-        List<PowerManagement> ret = parse("foo:one=1,two=2,three=3", "one=bool,two=int,three=bool", true);
+        List<Agent> ret = parse("foo:one=1,two=2,three=3", "one=bool,two=int,three=bool", true);
         assertNotNull(ret);
         assertEquals(1, ret.size());
         verifyResult(ret.get(0),
@@ -66,7 +66,7 @@ public class FenceOptionsParserTest extends Assert {
 
     @Test
     public void testParseStraySemiColons() {
-        List<PowerManagement> ret = parse(";;foo:one=1,two=2,three=3;;", "one=bool,two=int,three=bool");
+        List<Agent> ret = parse(";;foo:one=1,two=2,three=3;;", "one=bool,two=int,three=bool");
         assertNotNull(ret);
         assertEquals(1, ret.size());
         verifyResult(ret.get(0),
@@ -78,7 +78,7 @@ public class FenceOptionsParserTest extends Assert {
 
     @Test
     public void testParseStrayCommas() {
-        List<PowerManagement> ret = parse("foo:,,one=1,,,two=2,,three=3,,", "one=bool,two=int,three=bool");
+        List<Agent> ret = parse("foo:,,one=1,,,two=2,,three=3,,", "one=bool,two=int,three=bool");
         assertNotNull(ret);
         assertEquals(1, ret.size());
         verifyResult(ret.get(0),
@@ -90,7 +90,7 @@ public class FenceOptionsParserTest extends Assert {
 
     @Test
     public void testParseNoOptions() {
-        List<PowerManagement> ret = parse("foo:", "");
+        List<Agent> ret = parse("foo:", "");
         assertNotNull(ret);
         assertEquals(1, ret.size());
         verifyResult(ret.get(0), "foo");
@@ -98,7 +98,7 @@ public class FenceOptionsParserTest extends Assert {
 
     @Test
     public void testParseSecureOptions() {
-        List<PowerManagement> ret = parse(FENCE_OPTION, FENCE_OPTION_TYPES);
+        List<Agent> ret = parse(FENCE_OPTION, FENCE_OPTION_TYPES);
         assertNotNull(ret);
         assertEquals(16, ret.size());
         verifyResult(ret.get(1), "apc_snmp", "port", "int", "port", "encrypt_options", "bool", "encrypt_options");
@@ -119,7 +119,7 @@ public class FenceOptionsParserTest extends Assert {
         parse("foo:one=1,two=2,three", "one=bool,two=int,three=bool");
     }
 
-    private void verifyResult(PowerManagement result, String type, String... options) {
+    private void verifyResult(Agent result, String type, String... options) {
         assertEquals(type, result.getType());
         assertNotNull(result.getOptions());
         assertEquals(options.length, result.getOptions().getOptions().size() * 3);

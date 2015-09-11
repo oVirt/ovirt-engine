@@ -234,9 +234,8 @@ public class HostMapper {
             model.setIscsi(new IscsiDetails());
             model.getIscsi().setInitiator(entity.getIScsiInitiatorName());
         }
-        PowerManagement pm = map(entity, (PowerManagement) null);
-        model.setPowerManagement(DeprecatedPowerManagementMapper.map(entity, pm));
-        model.setHardwareInformation(map(entity, (HardwareInformation) null));
+        model.setPowerManagement(map(entity, (PowerManagement) null));
+        model.setHardwareInformation(map(entity, (HardwareInformation)null));
         model.setSsh(map(entity.getStaticData(), (Ssh) null));
         Cpu cpu = new Cpu();
         CpuTopology cpuTopology = new CpuTopology();
@@ -397,9 +396,6 @@ public class HostMapper {
         model.setKdumpDetection(entity.isPmKdumpDetection());
         model.setEnabled(entity.isPmEnabled());
         model.setAutomaticPmEnabled(!entity.isDisablePowerManagementPolicy());
-        if (entity.isPmEnabled()) {
-            DeprecatedPowerManagementMapper.map(entity, model);
-        }
         return model;
     }
 

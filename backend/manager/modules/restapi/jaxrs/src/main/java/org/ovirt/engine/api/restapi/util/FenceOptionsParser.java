@@ -5,17 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
-import org.ovirt.engine.api.model.PowerManagement;
 
 public class FenceOptionsParser {
 
     /* Format of @str is <agent>;<agent>;...
      * Format of @typeStr is <name>=<type>,<name=type>,...
      */
-    public static List<PowerManagement> parse(String str, String typeStr, boolean ignoreValues) {
-        List<PowerManagement> ret = new ArrayList<PowerManagement>();
+    public static List<Agent> parse(String str, String typeStr, boolean ignoreValues) {
+        List<Agent> ret = new ArrayList<>();
 
         Map<String, String> types = parseTypes(typeStr);
 
@@ -28,7 +28,7 @@ public class FenceOptionsParser {
         return ret;
     }
 
-    public static List<PowerManagement> parse(String str, String typeStr) {
+    public static List<Agent> parse(String str, String typeStr) {
         return parse(str, typeStr, false);
     }
 
@@ -56,14 +56,14 @@ public class FenceOptionsParser {
      *
      * e.g. alom:secure=secure,port=ipport
      */
-    private static PowerManagement parseAgent(String str, Map<String, String> types, boolean ignoreValues) {
+    private static Agent parseAgent(String str, Map<String, String> types, boolean ignoreValues) {
         String[] parts = str.split(":", -1);
 
         if (parts.length != 2) {
             throw new IllegalArgumentException("Invalid fencing agent description: '" + str + "'");
         }
 
-        PowerManagement ret = new PowerManagement();
+        Agent ret = new Agent();
         ret.setType(parts[0]);
         ret.setOptions(parseOptions(parts[1], types, ignoreValues));
         return ret;

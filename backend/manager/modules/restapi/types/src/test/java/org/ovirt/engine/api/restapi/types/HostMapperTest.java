@@ -4,18 +4,14 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.Agent;
-import org.ovirt.engine.api.model.Agents;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostProtocol;
 import org.ovirt.engine.api.model.HostedEngine;
 import org.ovirt.engine.api.model.PmProxies;
-import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.Ssh;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
@@ -184,40 +180,6 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         assertEquals(mappedVdsStatic.getSshPort(), 22);
         assertEquals(mappedVdsStatic.getSshKeyFingerprint(), "1234");
         assertEquals(mappedVdsStatic.getSshUsername(), "root");
-    }
-
-    @Test
-    public void testUpdatePowerManagementHostFromAgents() {
-        String[] ip = { "1.1.1.111", "1.1.1.112"};
-        PowerManagement powerMgmt = new PowerManagement();
-        powerMgmt.setAddress(ip[0]);
-        powerMgmt.setEnabled(true);
-        powerMgmt.setPassword("passwd");
-        powerMgmt.setType("apc");
-        powerMgmt.setUsername("user");
-        powerMgmt.setKdumpDetection(true);
-
-        Agent agent = new Agent();
-        agent.setOrder(1);
-        agent.setAddress(ip[1]);
-        Agents agents = new Agents();
-        agents.getAgents().add(agent);
-        powerMgmt.setAgents(agents);
-
-        VdsStatic vdsStatic = new VdsStatic();
-        vdsStatic.setPmEnabled(true);
-        vdsStatic.setPmKdumpDetection(false);
-        FenceAgent primaryAgent = new FenceAgent();
-        primaryAgent.setIp(ip[0]);
-        primaryAgent.setType("apc");
-        primaryAgent.setUser("user");
-        primaryAgent.setPassword("passwd");
-        primaryAgent.setPort(123);
-        primaryAgent.setOrder(1);
-
-        VdsStatic mappedVdsStatic = HostMapper.map(powerMgmt, vdsStatic);
-        assertEquals(mappedVdsStatic.isPmEnabled(), true);
-        assertTrue(mappedVdsStatic.isPmKdumpDetection());
     }
 
     @Test

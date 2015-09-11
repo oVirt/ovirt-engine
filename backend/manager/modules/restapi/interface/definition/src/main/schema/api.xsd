@@ -585,7 +585,7 @@
           <xs:element name="current" type="xs:boolean" minOccurs="0"/>
           <xs:element name="features" type="Features" minOccurs="0"/>
           <xs:element ref="cpus" minOccurs="0"/>
-          <xs:element ref="power_managers" minOccurs="0"/>
+          <xs:element name="power_management" type="Agents" minOccurs="0"/>
           <xs:element ref="fence_types" minOccurs="0"/>
           <xs:element ref="storage_types" minOccurs="0"/>
           <xs:element ref="configuration_types" minOccurs="0"/>
@@ -1873,18 +1873,11 @@
   <xs:complexType name="PowerManagement">
     <xs:sequence>
       <xs:element name="enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="address" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="username" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="password" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="options" type="Options" minOccurs="0"/>
       <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
       <xs:element ref="pm_proxies" minOccurs="0" maxOccurs="1"/>
-      <xs:element ref="agents" minOccurs="0" maxOccurs="1"/>
       <xs:element name="automatic_pm_enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
       <xs:element name="kdump_detection" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
-    <!-- TODO: (deprecated) remove 'type' post 4.0 -->
-    <xs:attribute name="type" type="xs:string"/>
   </xs:complexType>
 
   <xs:element name="power_management_states" type="PowerManagementStates"/>
@@ -1912,20 +1905,6 @@
       <xs:element name="uuid" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="family" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="supported_rng_sources" type="RngSources" minOccurs="0" maxOccurs="1" />
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:element name="power_managers" type="PowerManagers"/>
-
-  <xs:complexType name="PowerManagers">
-    <xs:sequence>
-      <xs:element ref="power_management" minOccurs="0" maxOccurs="unbounded">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property name="PowerManagers"/>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
