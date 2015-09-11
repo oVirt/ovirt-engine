@@ -17,10 +17,22 @@ public class ForemanHostGroup implements Serializable {
     private int architecture_id;
     private int[] puppetclass_ids;
     private Map<String, String> parameters;
+    private String ancestry;
     private String subnet_name;
     private String operatingsystem_name;
     private String domain_name;
     private String architecture_name;
+    private String environment_name;
+    private String ptable_name;
+    private String medium_name;
+
+    public String getAncestry() {
+        return ancestry;
+    }
+
+    public void setAncestry(String ancestry) {
+        this.ancestry = ancestry;
+    }
 
     public String getSubnet_name() {
         return subnet_name;
@@ -140,5 +152,29 @@ public class ForemanHostGroup implements Serializable {
 
     public void setEnvironment_id(int environment_id) {
         this.environment_id = environment_id;
+    }
+
+    public String getEnvironment_name() {
+        return environment_name;
+    }
+
+    public void setEnvironment_name(String environment_name) {
+        this.environment_name = environment_name;
+    }
+
+    public String getPtable_name() {
+        return ptable_name;
+    }
+
+    public void setPtable_name(String ptable_name) {
+        this.ptable_name = ptable_name;
+    }
+
+    public String getMedium_name() {
+        return medium_name;
+    }
+
+    public void setMedium_name(String medium_name) {
+        this.medium_name = medium_name;
     }
 }

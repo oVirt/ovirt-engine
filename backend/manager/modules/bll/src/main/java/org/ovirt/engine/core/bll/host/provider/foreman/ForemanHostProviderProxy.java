@@ -7,7 +7,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
@@ -119,7 +121,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
 
     // Mapping
     private List<ExternalComputeResource> mapComputeResource(List<ForemanComputerResource> foremanCrs) {
-        ArrayList<ExternalComputeResource> crs = new ArrayList<>(foremanCrs.size());
+        List<ExternalComputeResource> crs = new ArrayList<>(foremanCrs.size());
         for (ForemanComputerResource cr : foremanCrs) {
             ExternalComputeResource computeResource = new ExternalComputeResource();
             computeResource.setName(cr.getName());
@@ -133,7 +135,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     private List<ExternalOperatingSystem> mapOperationSystem(List<ForemanOperatingSystem> foremanOss) {
-        ArrayList<ExternalOperatingSystem> oss = new ArrayList<>(foremanOss.size());
+        List<ExternalOperatingSystem> oss = new ArrayList<>(foremanOss.size());
         for (ForemanOperatingSystem os : foremanOss) {
             ExternalOperatingSystem eos = new ExternalOperatingSystem();
             eos.setName(os.getName());
@@ -144,7 +146,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     private List<ExternalDiscoveredHost> mapDiscoveredHosts(List<ForemanDiscoveredHost> foremanHosts) {
-        ArrayList<ExternalDiscoveredHost> hosts = new ArrayList<>(foremanHosts.size());
+        List<ExternalDiscoveredHost> hosts = new ArrayList<>(foremanHosts.size());
         for (ForemanDiscoveredHost host : foremanHosts) {
             ExternalDiscoveredHost dhost = new ExternalDiscoveredHost();
             dhost.setName(host.getName());
@@ -158,7 +160,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     private List<VDS> mapHosts(List<ForemanHost> foremanHosts) {
-        ArrayList<VDS> hosts = new ArrayList<>(foremanHosts.size());
+        List<VDS> hosts = new ArrayList<>(foremanHosts.size());
         for (ForemanHost host : foremanHosts) {
             VDS vds = new VDS();
             vds.setVdsName(host.getName());
@@ -169,13 +171,12 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     private List<ExternalHostGroup> mapHostGroups(List<ForemanHostGroup> foremanHostGroups) {
-        ArrayList<ExternalHostGroup> hostGroups = new ArrayList<>(foremanHostGroups.size());
-
+        Map<Integer, ExternalHostGroup> hostGroups = new HashMap<>();
         for (ForemanHostGroup hostGroup : foremanHostGroups) {
             ExternalHostGroup hostgroup = new ExternalHostGroup();
             hostgroup.setHostgroupId(hostGroup.getId());
             hostgroup.setName(hostGroup.getName());
-            hostgroup.setOsId(hostGroup.getOperatingsystem_id());
+            hostgroup.setOperatingsystemId(hostGroup.getOperatingsystem_id());
             hostgroup.setEnvironmentId(hostGroup.getEnvironment_id());
             hostgroup.setDomainId(hostGroup.getDomain_id());
             hostgroup.setSubnetId(hostGroup.getSubnet_id());
@@ -187,9 +188,114 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             hostgroup.setDomainName(hostGroup.getDomain_name());
             hostgroup.setSubnetName(hostGroup.getSubnet_name());
             hostgroup.setArchitectureName(hostGroup.getArchitecture_name());
-            hostGroups.add(hostgroup);
+            hostgroup.setAncestry(hostGroup.getAncestry());
+            hostgroup.setEnvironmentName(hostGroup.getEnvironment_name());
+            hostgroup.setPtableName(hostGroup.getPtable_name());
+            hostgroup.setMediumName(hostGroup.getMedium_name());
+            hostGroups.put(hostGroup.getId(), hostgroup);
         }
-        return hostGroups;
+        List<ExternalHostGroup> ret = new ArrayList<>(foremanHostGroups.size());
+        for (ForemanHostGroup hostGroup : foremanHostGroups) {
+            if (hostGroup.getAncestry() != null) {
+                String[] ancestries = hostGroup.getAncestry().split("/");
+                if (hostGroup.getMedium_name() == null) {
+                    for (int i = ancestries.length - 1; i >= 0; i--) {
+                        ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
+                        String medName = hg.getMediumName();
+                        if (medName != null) {
+                            int medId = hg.getMediumId();
+                            hostGroups.get(hostGroup.getId()).setMediumName(medName);
+                            hostGroups.get(hostGroup.getId()).setMediumId(medId);
+                            break;
+                        }
+                    }
+                }
+                if (hostGroup.getEnvironment_name() == null) {
+                    for (int i = ancestries.length - 1; i >= 0; i--) {
+                        ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
+                        String envName = hg.getEnvironmentName();
+                        if (envName != null) {
+                            int envId = hg.getEnvironmentId();
+                            hostGroups.get(hostGroup.getId()).setEnvironmentName(envName);
+                            hostGroups.get(hostGroup.getId()).setEnvironmentId(envId);
+                            break;
+                        }
+                    }
+                }
+                if (hostGroup.getPtable_name() == null) {
+                    for (int i = ancestries.length - 1; i >= 0; i--) {
+                        ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
+                        String ptableName = hg.getPtableName();
+                        if (ptableName != null) {
+                            int ptableId = hg.getPtableId();
+                            hostGroups.get(hostGroup.getId()).setPtableName(ptableName);
+                            hostGroups.get(hostGroup.getId()).setPtableId(ptableId);
+                            break;
+                        }
+                    }
+                }
+                if (hostGroup.getArchitecture_name() == null) {
+                    for (int i = ancestries.length - 1; i >= 0; i--) {
+                        ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
+                        String archName = hg.getArchitectureName();
+                        if (archName != null) {
+                            int archId = hg.getArchitectureId();
+                            hostGroups.get(hostGroup.getId()).setArchitectureName(archName);
+                            hostGroups.get(hostGroup.getId()).setArchitectureId(archId);
+                            break;
+                        }
+                    }
+                }
+                if (hostGroup.getOperatingsystem_name() == null) {
+                    for (int i = ancestries.length - 1; i >= 0; i--) {
+                        ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
+                        String osName = hg.getOperatingsystemName();
+                        if (osName != null) {
+                            int osId = hg.getOperatingsystemId();
+                            hostGroups.get(hostGroup.getId()).setOperatingsystemName(osName);
+                            hostGroups.get(hostGroup.getId()).setOperatingsystemId(osId);
+                            break;
+                        }
+                    }
+                }
+                if (hostGroup.getDomain_name() == null) {
+                    for (int i = ancestries.length - 1; i >= 0; i--) {
+                        ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
+                        String domainName = hg.getDomainName();
+                        if (domainName != null) {
+                            int domainId = hg.getDomainId();
+                            hostGroups.get(hostGroup.getId()).setDomainName(domainName);
+                            hostGroups.get(hostGroup.getId()).setDomainId(domainId);
+                            break;
+                        }
+                    }
+                }
+                if (hostGroup.getSubnet_name() == null) {
+                    for (int i = ancestries.length - 1; i >= 0; i--) {
+                        ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
+                        String subnetName = hg.getSubnetName();
+                        if (subnetName != null) {
+                            int subnetId = hg.getSubnetId();
+                            hostGroups.get(hostGroup.getId()).setSubnetName(subnetName);
+                            hostGroups.get(hostGroup.getId()).setSubnetId(subnetId);
+                            break;
+                        }
+                    }
+                }
+                if (hostGroup.getParameters() == null) {
+                    for (int i = ancestries.length - 1; i >= 0; i--) {
+                        ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
+                        Map<String, String> parameters = hg.getParameters();
+                        if (parameters != null) {
+                            hostGroups.get(hostGroup.getId()).setParameters(parameters);
+                            break;
+                        }
+                    }
+                }
+            }
+            ret.add(hostGroups.get(hostGroup.getId()));
+        }
+        return ret;
     }
 
     @Override
@@ -239,7 +345,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                 "        \"subnet_id\": \"" + hg.getSubnetId() + "\",\n" +
                 "        \"ip\": \"" + ip + "\",\n" +
                 "        \"architecture_id\": \"" + hg.getArchitectureId() + "\",\n" +
-                "        \"operatingsystem_id\": \"" + hg.getOsId() + "\",\n" +
+                "        \"operatingsystem_id\": \"" + hg.getOperatingsystemId() + "\",\n" +
                 "        \"medium_id\": \"" + hg.getMediumId() + "\",\n" +
                 "        \"ptable_id\": \"" + hg.getPtableId() + "\",\n" +
                 "        \"root_pass\": \"" + rootPassword + "\",\n" +
