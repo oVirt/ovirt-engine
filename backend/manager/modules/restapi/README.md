@@ -39,3 +39,8 @@ compatibility, but they have now been completely removed.
 Note that the `network` element hasn't been removed from the XML schema
 because it is still used by the `initialization` element, but it will be
 completely ignored if provided when creating or updating a NIC.
+
+### Remove the NIC `active` property
+
+The NIC `active` property was replaced by `plugged` some time ago. It
+has been completely removed now.

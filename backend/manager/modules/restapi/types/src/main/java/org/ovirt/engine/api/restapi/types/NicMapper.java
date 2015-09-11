@@ -33,9 +33,6 @@ public class NicMapper {
                 entity.setType(map(nicType));
             }
         }
-        if (model.isSetActive()) {
-            entity.setPlugged(model.isActive());
-        }
         if (model.isSetPlugged()) {
             entity.setPlugged(model.isPlugged());
         }
@@ -72,7 +69,6 @@ public class NicMapper {
 
         model.setLinked(entity.isLinked());
         model.setInterface(map(entity.getType()));
-        model.setActive(entity.isPlugged());
         model.setPlugged(entity.isPlugged());
 
         if (entity.getVnicProfileId() != null) {
