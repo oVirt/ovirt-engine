@@ -355,3 +355,16 @@ replaced with inner elements:
       <address>192.168.122.1</address>
       <netmask>255.255.255.0</netmask>
     </ip>
+
+### Use elements instead of attributes in MAC address:
+
+In the past the MAC address element used attributes for its properties:
+
+    <mac address="66:f2:c5:5f:bb:8d"/>
+
+This is contrary to the common practice in the RESTAPI. They have been
+replaced by inner elements:
+
+    <mac>
+      <address>66:f2:c5:5f:bb:8d</address>
+    </mac>

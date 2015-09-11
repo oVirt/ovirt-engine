@@ -2577,7 +2577,9 @@
   <xs:element name="mac" type="MAC"/>
 
   <xs:complexType name="MAC">
-    <xs:attribute name="address" type="xs:string"/>
+    <xs:sequence>
+      <xs:element name="address" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:element name="vlan" type="VLAN"/>
