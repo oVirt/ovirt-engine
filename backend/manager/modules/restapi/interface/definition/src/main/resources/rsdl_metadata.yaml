@@ -1510,7 +1510,6 @@ actions:
           datacenter.name: xs:string
           datacenter.description: xs:string
           datacenter.comment: xs:string
-          datacenter.storage_type--DEPRECATED: xs:string
           datacenter.local: xs:boolean
           datacenter.version.major: xs:int
           datacenter.version.minor: xs:int
@@ -1555,7 +1554,6 @@ actions:
           datacenter.comment: xs:string
           datacenter.description: xs:string
           datacenter.storage_format: xs:string
-          datacenter.storage_type--DEPRECATED: xs:string
           datacenter.version.major: xs:int
           datacenter.version.minor: xs:int
           datacenter.mac_pool.id: xs:string

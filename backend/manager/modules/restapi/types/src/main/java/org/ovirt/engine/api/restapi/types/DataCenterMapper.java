@@ -6,7 +6,6 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DataCenterStatus;
 import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.api.model.QuotaModeType;
-import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
@@ -30,12 +29,6 @@ public class DataCenterMapper {
         }
         if (model.isSetComment()) {
             entity.setComment(model.getComment());
-        }
-        if (model.isSetStorageType()) {
-            StorageType storageType = StorageType.fromValue(model.getStorageType());
-            if (storageType != null) {
-                entity.setIsLocal(StorageDomainMapper.map(storageType, null) == org.ovirt.engine.core.common.businessentities.storage.StorageType.LOCALFS);
-            }
         }
         if (model.isSetLocal()) {
             entity.setIsLocal(model.isLocal());

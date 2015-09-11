@@ -98,3 +98,12 @@ In 4.0 it has been removed completely from `capabilities`.
 The `storage_manager` element was replaced by the `spm` element some
 time ago. The old one was kept for backwards compatibility, but it has
 been completely removed now.
+
+### Removed the data center `storage_type` element
+
+Data centers used to be associated to a specific storage type (NFS,
+Fiber Channel, iSCSI, etc) but they have been changed some time so that
+there are only two types: with local storage and with shared storage. A
+new `local` element was introduced to indicate this, and the old
+`storage_type` was element was preserved for backwards compatibility.
+This old element has now been completely removed.

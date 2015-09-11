@@ -6,7 +6,6 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DataCenters;
-import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.SupportedVersions;
 import org.ovirt.engine.api.resource.DataCenterResource;
 import org.ovirt.engine.api.resource.DataCentersResource;
@@ -47,10 +46,7 @@ public class BackendDataCentersResource extends
     public Response add(DataCenter dataCenter) {
         validateParameters(dataCenter, "name");
         validateEnums(DataCenter.class, dataCenter);
-        if (dataCenter.isSetStorageType()) {
-            validateEnum(StorageType.class, dataCenter.getStorageType().toUpperCase());
-        }
-        else if(!dataCenter.isSetLocal()) {
+        if(!dataCenter.isSetLocal()) {
             validateParameters(dataCenter, "local");
         }
         StoragePool entity = map(dataCenter);
