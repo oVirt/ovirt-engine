@@ -341,3 +341,17 @@ replaced with inner elements:
       </option>
       ...
     </options>
+
+### Use elements instead of attributes in IP address:
+
+In the past the IP address element used attributes for its properties:
+
+    <ip address="192.168.122.1" netmask="255.255.255.0"/>
+
+This is contrary to the common practice in the RESTAPI. They have been
+replaced with inner elements:
+
+    <ip>
+      <address>192.168.122.1</address>
+      <netmask>255.255.255.0</netmask>
+    </ip>

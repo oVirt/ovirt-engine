@@ -2549,10 +2549,12 @@
   <xs:element name="ip" type="IP"/>
 
   <xs:complexType name="IP">
-    <xs:attribute name="address" type="xs:string"/>
-    <xs:attribute name="netmask" type="xs:string"/>
-    <xs:attribute name="gateway" type="xs:string"/>
-    <xs:attribute name="version" type="xs:string"/>
+    <xs:sequence>
+      <xs:element name="address" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="netmask" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="gateway" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:element name="ips" type="IPs"/>
