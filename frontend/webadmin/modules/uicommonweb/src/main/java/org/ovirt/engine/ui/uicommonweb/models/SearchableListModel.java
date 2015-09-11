@@ -540,6 +540,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     @Override
     public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
+        entityModel.eventRaised(ev, sender, args);
 
         if (ev.matchesDefinition(RegistrationResult.RetrievedEventDefinition)) {
             asyncResult_Retrieved();

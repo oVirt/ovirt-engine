@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-@SuppressWarnings("unused")
 public class SelectionTreeNodeModel extends EntityModel {
 
     private String description;

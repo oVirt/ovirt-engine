@@ -30,7 +30,6 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-@SuppressWarnings("unused")
 public class TagListModel extends SearchableListModel<Void, TagModel> {
 
     public static final EventDefinition resetRequestedEventDefinition;
@@ -263,12 +262,12 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
     }
 
     public TagModel tagToModel(Tags tag) {
-        EntityModel tempVar = new EntityModel();
+        EntityModel<String> tempVar = new EntityModel<>();
         tempVar.setEntity(tag.gettag_name());
-        EntityModel name = tempVar;
-        EntityModel tempVar2 = new EntityModel();
+        EntityModel<String> name = tempVar;
+        EntityModel<String> tempVar2 = new EntityModel<>();
         tempVar2.setEntity(tag.getdescription());
-        EntityModel description = tempVar2;
+        EntityModel<String> description = tempVar2;
 
         ArrayList<TagModel> children = new ArrayList<TagModel>();
         for (Tags a : tag.getChildren()) {
