@@ -3960,7 +3960,6 @@
           <!-- storage_domain element requiered for back-linking -->
           <xs:element ref="storage_domain" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="storage_domains" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="size" type="xs:long" minOccurs="0"/> <!-- Deprecated, replaced by 'provisioned_size' -->
           <xs:element name="provisioned_size" type="xs:long" minOccurs="0"/>
           <xs:element name="actual_size" type="xs:long" minOccurs="0"/>
           <xs:element ref="status" minOccurs="0" maxOccurs="1"/>

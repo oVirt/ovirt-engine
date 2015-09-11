@@ -49,3 +49,8 @@ has been completely removed now.
 
 The `type` property of disks has been removed, but kept in the XML
 schema and ignored. It has been completely removed now.
+
+### Remove the disk `size` property
+
+The disk `size` property has been replaced by `provisioned_size` long
+ago. It has been completely removed now.

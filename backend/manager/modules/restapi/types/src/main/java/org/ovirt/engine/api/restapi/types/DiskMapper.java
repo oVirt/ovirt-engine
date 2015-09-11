@@ -117,20 +117,6 @@ public class DiskMapper {
         if (disk.isSetImageId()) {
             diskImage.setImageId(GuidUtils.asGuid(disk.getImageId()));
         }
-        //Notice below:
-        //Both <size> and <provisioned_size> are mapped to the same field: 'size' in the
-        //Backend entity. This is not by mistake. Provisioned_size was added recently because
-        //it's a more correct term, but 'size' was there initially and must be supported for
-        //backwards compatibility.
-        //
-        //So what we do is:
-        //if user gives <size> XOR <provisioned_size>, then the value the user gave will
-        //simply be mapped to BE-->'size'. If user passed <size> AND <provisioned_size>,
-        //then the value in <provision_size> will be dominant, since it is mapped second
-        //and overrides the value in <size>
-        if (disk.isSetSize()) {
-            diskImage.setSize(disk.getSize());
-        }
         if (disk.isSetProvisionedSize()) {
             diskImage.setSize(disk.getProvisionedSize());
         }
@@ -204,7 +190,6 @@ public class DiskMapper {
         if (entity.getImageId() != null) {
             model.setImageId(entity.getImageId().toString());
         }
-        model.setSize(entity.getSize());
         model.setProvisionedSize(entity.getSize());
         model.setActualSize(entity.getActualSizeInBytes());
 

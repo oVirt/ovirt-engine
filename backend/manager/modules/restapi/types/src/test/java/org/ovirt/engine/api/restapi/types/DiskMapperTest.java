@@ -67,23 +67,6 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
     }
 
     @Test
-    public void testSizeMapping() throws Exception {
-        Disk model = new Disk();
-        //only <size>
-        model.setSize((long) 576576);
-        org.ovirt.engine.core.common.businessentities.storage.Disk entity = DiskMapper.map(model, null);
-        assertEquals(entity.getSize(), 576576);
-        //<size> and <provisioned_size> - the latter should be dominant
-        model.setProvisionedSize((long) 888888);
-        entity = DiskMapper.map(model, null);
-        assertEquals(entity.getSize(), 888888);
-        //only <provisioned_size>
-        model.setSize(null);
-        entity = DiskMapper.map(model, null);
-        assertEquals(entity.getSize(), 888888);
-    }
-
-    @Test
     public void testReadOnlyMapping() {
         Disk model = new Disk();
         model.setReadOnly(true);

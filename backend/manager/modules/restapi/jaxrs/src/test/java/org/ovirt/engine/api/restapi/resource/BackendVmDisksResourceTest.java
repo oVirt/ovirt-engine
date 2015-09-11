@@ -98,7 +98,7 @@ public class BackendVmDisksResourceTest
                 true);
         Disk model = getModel(0);
         model.setId(DISK_ID.toString()); //means this is an existing disk --> attach
-        model.setSize(1024 * 1024L);
+        model.setProvisionedSize(1024 * 1024L);
         Response response = collection.add(model);
         assertEquals(200, response.getStatus());
     }
@@ -148,7 +148,7 @@ public class BackendVmDisksResourceTest
                                   new Object[] { PARENT_ID },
                                   asList(getEntity(0)));
         Disk model = getModel(0);
-        model.setSize(1024 * 1024L);
+        model.setProvisionedSize(1024 * 1024L);
 
         Response response = collection.add(model);
         assertEquals(202, response.getStatus());
@@ -229,7 +229,7 @@ public class BackendVmDisksResourceTest
                                   new String[] { "Id" },
                                   new Object[] { PARENT_ID },
                 asList(getEntity(0)));
-        model.setSize(1024 * 1024L);
+        model.setProvisionedSize(1024 * 1024L);
     }
 
     @Test
@@ -287,7 +287,7 @@ public class BackendVmDisksResourceTest
         Disk model = getModel(0);
         model.getStorageDomains().getStorageDomains().get(0).setId(null);
         model.getStorageDomains().getStorageDomains().get(0).setName("Storage_Domain_1");
-        model.setSize(1024 * 1024L);
+        model.setProvisionedSize(1024 * 1024L);
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
@@ -342,7 +342,7 @@ public class BackendVmDisksResourceTest
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(GUIDS[3].toString());
         model.getStorageDomains().getStorageDomains().add(storageDomain);
-        model.setSize(1024 * 1024L);
+        model.setProvisionedSize(1024 * 1024L);
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
@@ -374,7 +374,7 @@ public class BackendVmDisksResourceTest
                                            canDo,
                                            success));
         Disk model = getModel(0);
-        model.setSize(1024 * 1024L);
+        model.setProvisionedSize(1024 * 1024L);
 
         try {
             collection.add(model);
@@ -401,7 +401,7 @@ public class BackendVmDisksResourceTest
     @Test
     public void testAddIncompleteParameters_2() throws Exception {
         Disk model = getModel(0);
-        model.setSize(null);
+        model.setProvisionedSize(null);
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
         try {
@@ -497,7 +497,6 @@ public class BackendVmDisksResourceTest
         model.getLunStorage().getLogicalUnits().get(0).setAddress(ISCSI_SERVER_ADDRESS);
         model.getLunStorage().getLogicalUnits().get(0).setTarget(ISCSI_SERVER_TARGET);
         model.getLunStorage().getLogicalUnits().get(0).setPort(ISCSI_SERVER_CONNECTION_PORT);
-        model.setSize(null);
         model.setProvisionedSize(null);
         return model;
     }

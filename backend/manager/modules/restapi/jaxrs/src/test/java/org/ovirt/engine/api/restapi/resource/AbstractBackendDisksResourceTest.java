@@ -135,7 +135,7 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
         model.setStorageDomains(new StorageDomains());
         model.getStorageDomains().getStorageDomains().add(new StorageDomain());
         model.getStorageDomains().getStorageDomains().get(0).setId(GUIDS[2].toString());
-        model.setSize(1000000000L);
+        model.setProvisionedSize(1000000000L);
         return model;
     }
 

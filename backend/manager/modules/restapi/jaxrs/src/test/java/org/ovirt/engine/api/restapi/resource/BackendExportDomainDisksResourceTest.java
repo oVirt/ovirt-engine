@@ -114,7 +114,7 @@ public class BackendExportDomainDisksResourceTest
 
     static Disk getModel(int index) {
         Disk model = new Disk();
-        model.setSize(1024 * 1024L);
+        model.setProvisionedSize(1024 * 1024L);
         model.setFormat(DiskFormat.COW.value());
         model.setInterface(org.ovirt.engine.api.model.DiskInterface.IDE.value());
         model.setSparse(true);
