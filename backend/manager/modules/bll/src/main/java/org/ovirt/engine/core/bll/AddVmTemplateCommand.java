@@ -143,6 +143,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 parameters.setConsoleEnabled(false);
             }
             VmHandler.updateDefaultTimeZone(parameterMasterVm);
+            VmHandler.autoSelectUsbPolicy(getParameters().getMasterVm(), getVdsGroup());
             VmHandler.autoSelectDefaultDisplayType(getVmId(),
                     getParameters().getMasterVm(),
                     getVdsGroup(),

@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmIcon;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -40,27 +39,12 @@ public class BackendTemplateResourceTest
 
     public void testUpdate() throws Exception {
         setUpGetGraphicsExpectations(0);
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-            IdQueryParameters.class,
-            new String[]{"Id"},
-            new Object[]{GUIDS[2] },
-                getVdsGroupEntity());
 
         super.testUpdate();
     }
 
     protected org.ovirt.engine.core.common.businessentities.VDSGroup getVdsGroupEntity() {
         return new VDSGroup();
-    }
-
-    protected void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
-
-        super.doTestBadUpdate(canDo, success, detail);
     }
 
     @Test
@@ -194,11 +178,6 @@ public class BackendTemplateResourceTest
     @Test
     public void testUpdateUploadIcon() throws Exception {
         setUpGetGraphicsExpectations(1);
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[]{"Id"},
-                new Object[]{GUIDS[2] },
-                getVdsGroupEntity());
         setUpUpdateExpectations();
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
@@ -216,11 +195,6 @@ public class BackendTemplateResourceTest
     @Test
     public void testUpdateUseExistingIcons() throws Exception {
         setUpGetGraphicsExpectations(1);
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[]{"Id"},
-                new Object[]{GUIDS[2] },
-                getVdsGroupEntity());
         setUpUpdateExpectations();
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,

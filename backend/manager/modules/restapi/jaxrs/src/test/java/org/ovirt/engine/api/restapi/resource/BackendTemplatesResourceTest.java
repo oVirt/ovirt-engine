@@ -72,11 +72,6 @@ public class BackendTemplatesResourceTest
         setUpGetVirtioScsiExpectations(new int[]{0, 0});
         setUpGetSoundcardExpectations(new int[]{0, 0, 0});
         setUpGetRngDeviceExpectations(new int[]{0, 0});
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
 
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
                 AddVmTemplateParameters.class,
@@ -121,11 +116,6 @@ public class BackendTemplatesResourceTest
 
     private void doTestAddAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus creationStatus) throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
 
         setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(new int[]{0, 0});
@@ -172,12 +162,6 @@ public class BackendTemplatesResourceTest
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
                                    setUpVm(GUIDS[1]));
-
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
 
         super.testAdd();
     }
@@ -238,11 +222,6 @@ public class BackendTemplatesResourceTest
                                        new Object[] { GUIDS[1] },
                                        setUpVm(GUIDS[1]));
             setUpGetEntityExpectations(2);
-            setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                    IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { GUIDS[2] },
-                    getVdsGroupEntity());
 
             setUpCreationExpectations(VdcActionType.AddVmTemplate,
                                       AddVmTemplateParameters.class,
@@ -270,11 +249,6 @@ public class BackendTemplatesResourceTest
     @Test
     public void testAddNamedVm() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
 
         setUpHttpHeaderExpectations("Expect", "201-created");
 
@@ -321,11 +295,6 @@ public class BackendTemplatesResourceTest
     public void testAddNamedVmFiltered() throws Exception {
         setUpFilteredQueryExpectations();
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
 
         setUpHttpHeaderExpectations("Expect", "201-created");
 
@@ -372,11 +341,6 @@ public class BackendTemplatesResourceTest
     public void testAddWithCluster() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                                    IdQueryParameters.class,
@@ -490,11 +454,6 @@ public class BackendTemplatesResourceTest
     }
 
     protected void doTestBadAdd(boolean canDo, boolean success, String detail) throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                                    IdQueryParameters.class,
@@ -534,12 +493,6 @@ public class BackendTemplatesResourceTest
                 new Object[] { GUIDS[1] },
                 setUpVm(GUIDS[1]));
 
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
-
         setUpAddExpectations();
 
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
@@ -577,12 +530,6 @@ public class BackendTemplatesResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
                 setUpVm(GUIDS[1]));
-
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
 
         setUpAddExpectations();
 

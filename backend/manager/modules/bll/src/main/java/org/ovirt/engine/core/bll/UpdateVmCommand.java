@@ -120,6 +120,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
         VmHandler.updateDefaultTimeZone(parameters.getVmStaticData());
 
+        VmHandler.autoSelectUsbPolicy(getParameters().getVmStaticData(), getVdsGroup());
         VmHandler.autoSelectDefaultDisplayType(getVmId(),
             getParameters().getVmStaticData(),
             getVdsGroup(),

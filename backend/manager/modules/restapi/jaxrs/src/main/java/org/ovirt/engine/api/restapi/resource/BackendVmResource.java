@@ -623,8 +623,7 @@ public class BackendVmResource extends
             VmStatic updated = getMapper(modelType, VmStatic.class).map(incoming,
                     entity.getStaticData());
 
-            updated.setUsbPolicy(VmMapper.getUsbPolicyOnUpdate(incoming.getUsb(), entity.getUsbPolicy(),
-                    lookupCluster(updated.getVdsGroupId()).getCompatibilityVersion()));
+            updated.setUsbPolicy(VmMapper.getUsbPolicyOnUpdate(incoming.getUsb(), entity.getUsbPolicy()));
 
             VmManagementParametersBase params = new VmManagementParametersBase(updated);
 
