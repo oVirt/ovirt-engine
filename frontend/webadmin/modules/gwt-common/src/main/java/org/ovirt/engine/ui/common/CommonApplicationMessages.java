@@ -198,4 +198,13 @@ public interface CommonApplicationMessages extends Messages {
 
     @DefaultMessage("Data Center: {0}")
     String hostDataCenter(String name);
+
+    // Alerts
+
+    @DefaultMessage("Uncaught exception occurred. Please try <a href=\"{0}\">reloading</a> the page.")
+    String uncaughtExceptionAlertMessage(String reloadLink);
+
+    @DefaultMessage("Details: {0}")
+    String uncaughtExceptionAlertMessageDetails(String details);
+
 }

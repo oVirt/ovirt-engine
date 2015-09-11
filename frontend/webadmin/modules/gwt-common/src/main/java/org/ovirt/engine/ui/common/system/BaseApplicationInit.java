@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.common.restapi.RestApiSessionManager;
 import org.ovirt.engine.ui.common.system.ApplicationFocusChangeEvent.ApplicationFocusChangeHandler;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
+import org.ovirt.engine.ui.common.widget.AlertManager;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.FrontendLoginHandler;
@@ -29,12 +30,14 @@ import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.Bootstrapper;
 
@@ -62,6 +65,8 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
     private final LockInteractionManager lockInteractionManager;
     private final LocalStorageLogHandler localStorageLogHandler;
 
+    private AlertManager alertManager;
+
     public BaseApplicationInit(ITypeResolver typeResolver,
             FrontendEventsHandlerImpl frontendEventsHandler,
             FrontendFailureEventListener frontendFailureEventListener,
@@ -82,6 +87,11 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         this.frontend = frontend;
         this.currentUserRole = currentUserRole;
         this.restApiSessionManager = restApiSessionManager;
+    }
+
+    @Inject
+    public void setAlertManager(AlertManager alertManager) {
+        this.alertManager = alertManager;
     }
 
     @Override
@@ -120,6 +130,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
             @Override
             public void onUncaughtException(Throwable t) {
                 rootLogger.log(Level.SEVERE, "Uncaught exception: ", t); //$NON-NLS-1$
+                alertManager.showUncaughtExceptionAlert(t);
             }
         });
     }

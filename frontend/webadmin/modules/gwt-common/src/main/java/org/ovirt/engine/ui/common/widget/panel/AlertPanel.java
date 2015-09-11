@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.gwtbootstrap3.client.ui.Alert;
 import org.gwtbootstrap3.client.ui.constants.AlertType;
+import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.gwtbootstrap3.client.ui.html.Div;
 import org.gwtbootstrap3.client.ui.html.Span;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
@@ -34,7 +35,8 @@ public class AlertPanel extends Composite {
     @UiField
     Div messagePanel;
 
-    Type type;
+    private Type type;
+    private ColumnSize widgetColumnSize;
 
     /**
      * The types of PatternFly alerts (currently 4).
@@ -62,6 +64,7 @@ public class AlertPanel extends Composite {
     public AlertPanel() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         setType(Type.INFO);
+        setWidgetColumnSize(ColumnSize.SM_11);
     }
 
     /**
@@ -138,7 +141,32 @@ public class AlertPanel extends Composite {
         icon.addStyleName(type.iconStyleName);
     }
 
+    /**
+     * Apply the given {@linkplain ColumnSize Bootstrap column size}
+     * style to the alert widget, replacing one that was set previously.
+     * <p>
+     * Pass {@code null} to effectively remove the column size style.
+     */
+    public void setWidgetColumnSize(ColumnSize newColumnSize) {
+        // clear existing style
+        if (widgetColumnSize != null) {
+            getWidget().removeStyleName(widgetColumnSize.getCssName());
+        }
+
+        widgetColumnSize = newColumnSize;
+
+        // apply new style
+        if (widgetColumnSize != null) {
+            getWidget().addStyleName(widgetColumnSize.getCssName());
+        }
+    }
+
     public Alert getWidget() {
         return (Alert) super.getWidget();
     }
+
+    public HTMLPanel getMessageAt(int index) {
+        return (HTMLPanel) messagePanel.getWidget(index);
+    }
+
 }

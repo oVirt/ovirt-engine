@@ -56,3 +56,39 @@ TODO: use SASS, break into columns.scss
 .hasTooltip {
     border-bottom: 1px dotted #000;
 }
+
+/***************************************
+Alerts
+TODO: use SASS, break into alerts.scss
+****************************************/
+
+.ovirt-alert-main {
+  width: 768px;
+  margin-bottom: 0;
+}
+
+.ovirt-alert-main-message {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ovirt-alert-main-danger {
+  color: #A94442;
+  background-color: #F2DEDE;
+}
+
+.ovirt-alert-main-warning {
+  color: #8A6D3B;
+  background-color: #FCF8E3;
+}
+
+.ovirt-alert-main-success {
+  color: #3C763D;
+  background-color: #DFF0D8;
+}
+
+.ovirt-alert-main-info {
+  color: #555555;
+  background-color: #F0F0F0;
+}

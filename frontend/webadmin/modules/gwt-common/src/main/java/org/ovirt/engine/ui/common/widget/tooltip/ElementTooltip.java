@@ -599,7 +599,7 @@ public class ElementTooltip implements HasId, HasHover {
 
     private native void tooltip(Element e, boolean animation, boolean html, String placement,
                                 String content, String trigger, int showDelay, int hideDelay) /*-{
-        console.log($wnd.jQuery(e).tooltip({
+        $wnd.jQuery(e).tooltip({
             animation: animation,
             html: html,
             placement: placement,
@@ -609,7 +609,7 @@ public class ElementTooltip implements HasId, HasHover {
                 show: showDelay,
                 hide: hideDelay
             }
-        }));
+        });
     }-*/;
 
 }
