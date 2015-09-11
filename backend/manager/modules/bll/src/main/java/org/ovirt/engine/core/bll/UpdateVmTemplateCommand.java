@@ -76,7 +76,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             }
         }
 
-
+        VmHandler.autoSelectUsbPolicy(getParameters().getVmTemplateData(), getVdsGroup());
         VmHandler.updateDefaultTimeZone(parameters.getVmTemplateData());
         VmHandler.autoSelectDefaultDisplayType(getVmTemplateId(),
                 getParameters().getVmTemplateData(),

@@ -1148,6 +1148,17 @@ public class VmHandler {
         return true;
     }
 
+    public static void autoSelectUsbPolicy(VmBase fromParams, VDSGroup cluster) {
+        if (fromParams.getUsbPolicy() == null) {
+            Version compatibilityVersion = cluster != null ? cluster.getCompatibilityVersion() : Version.getLast();
+
+            UsbPolicy usbPolicy = compatibilityVersion.compareTo(Version.v3_1) >= 0 ?
+                    UsbPolicy.ENABLED_NATIVE : UsbPolicy.ENABLED_LEGACY;
+            fromParams.setUsbPolicy(usbPolicy);
+        }
+    }
+
+
     /**
      * Automatic selection of display type based on its graphics types in parameters.
      * This method preserves backward compatibility for REST API - legacy REST API doesn't allow to set display and

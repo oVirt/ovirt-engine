@@ -1217,21 +1217,21 @@ public class VmMapper extends VmBaseMapper {
         return pin;
     }
 
-    public static UsbPolicy getUsbPolicyOnCreate(Usb usb, Version vdsGroupVersion) {
+    public static UsbPolicy getUsbPolicyOnCreate(Usb usb) {
         if (usb == null || !usb.isSetEnabled() || !usb.isEnabled()) {
             return UsbPolicy.DISABLED;
         }
         else {
             UsbType usbType = getUsbType(usb);
             if (usbType == null) {
-                return getUsbPolicyAccordingToClusterVersion(vdsGroupVersion);
+                return null;
             } else {
                 return getUsbPolicyAccordingToUsbType(usbType);
             }
         }
     }
 
-    public static UsbPolicy getUsbPolicyOnUpdate(Usb usb, UsbPolicy currentPolicy, Version vdsGroupVersion) {
+    public static UsbPolicy getUsbPolicyOnUpdate(Usb usb, UsbPolicy currentPolicy) {
         if (usb == null)
             return currentPolicy;
 
@@ -1244,9 +1244,7 @@ public class VmMapper extends VmBaseMapper {
                     return getUsbPolicyAccordingToUsbType(usbType);
                 }
                 else {
-                    return currentPolicy == UsbPolicy.DISABLED ?
-                            getUsbPolicyAccordingToClusterVersion(vdsGroupVersion)
-                            : currentPolicy;
+                    return null;
                 }
             }
         }
@@ -1266,11 +1264,6 @@ public class VmMapper extends VmBaseMapper {
 
     private static UsbType getUsbType(Usb usb) {
         return usb.isSetType() ? UsbType.fromValue(usb.getType()) : null;
-    }
-
-    private static UsbPolicy getUsbPolicyAccordingToClusterVersion(Version vdsGroupVersion) {
-        return vdsGroupVersion.compareTo(Version.v3_1) >= 0 ?
-                UsbPolicy.ENABLED_NATIVE : UsbPolicy.ENABLED_LEGACY;
     }
 
     private static UsbPolicy getUsbPolicyAccordingToUsbType(UsbType usbType) {
