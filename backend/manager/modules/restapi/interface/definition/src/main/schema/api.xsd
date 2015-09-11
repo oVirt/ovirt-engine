@@ -4059,14 +4059,18 @@
     <xs:complexContent>
       <xs:extension base="BaseDevice">
         <xs:sequence>
-          <xs:element ref="network" minOccurs="0" maxOccurs="1"/> <!-- Deprecated, replaced by 'vnic_profile' -->
+          <!-- Usage of this element for creating or updating a NIC is
+               deprecated, use "vnic_profile" instead. It is preserved
+               in the XML schema because it is still in use by the
+               "initialization" element, as a holder for IP addresses
+               and other network details. -->
+          <xs:element ref="network" minOccurs="0" maxOccurs="1"/>
           <xs:element name="linked" type="xs:boolean" minOccurs="0"/>
           <xs:element name="interface" type="xs:string" minOccurs="0"/>
           <xs:element ref="mac" minOccurs="0"/>
           <xs:element name="statistics" type="Statistics" minOccurs="0" maxOccurs="1"/>
           <xs:element name="active" type="xs:boolean" minOccurs="0"/> <!-- Deprecated, replaced by 'plugged' -->
           <xs:element name="plugged" type="xs:boolean" minOccurs="0"/>
-          <xs:element ref="port_mirroring" minOccurs="0" maxOccurs="1"/> <!-- Deprecated, replaced by 'vnic_profile' -->
           <xs:element ref="reported_devices" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="vnic_profile" minOccurs="0" maxOccurs="1"/>
           <xs:element name="boot_protocol" type="xs:string" minOccurs="0"/>

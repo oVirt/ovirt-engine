@@ -5,10 +5,7 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.NIC;
-import org.ovirt.engine.api.model.Network;
-import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.api.model.Nics;
-import org.ovirt.engine.api.model.PortMirroring;
 import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -43,39 +40,14 @@ public abstract class BackendNicsResource
     public Nics list() {
         Nics nics = new Nics();
         List<VmNetworkInterface> entities = getBackendCollection(queryType, queryParams);
-        Guid clusterId = getClusterId();
-        List<org.ovirt.engine.core.common.businessentities.network.Network> networks = getBackendCollection(org.ovirt.engine.core.common.businessentities.network.Network.class,
-             VdcQueryType.GetAllNetworksByClusterId,
-             new IdQueryParameters(clusterId));
         for (VmNetworkInterface entity : entities) {
-            org.ovirt.engine.core.common.businessentities.network.Network network = null;
-            if (entity.getNetworkName() != null) {
-                network = lookupClusterNetwork(clusterId, null, entity.getNetworkName(), networks);
-            }
-
             NIC nic = populate(map(entity), entity);
-            if (network != null && network.getId() != null) {
-                if (entity.isPortMirroring()) {
-                    PortMirroring portMirroring = new PortMirroring();
-                    Networks nets = new Networks();
-
-                    Network net = new Network();
-                    net.setId(network.getId().toString());
-                    portMirroring.setNetworks(nets);
-                    portMirroring.getNetworks().getNetworks().add(net);
-                    nic.setPortMirroring(portMirroring);
-                }
-                nic.getNetwork().setId(network.getId().toString());
-                nic.getNetwork().setName(null);
-            }
             if (validate(nic)) {
                 nics.getNics().add(addLinks(nic));
             }
         }
         return nics;
     }
-
-    protected abstract Guid getClusterId();
 
     @Override
     protected <T> boolean matchEntity(VmNetworkInterface entity, T id) {
@@ -130,29 +102,10 @@ public abstract class BackendNicsResource
     @Override
     public Response add(NIC device) {
         validateParameters(device, getRequiredAddFields());
-        Response response = performCreate(addAction,
-                                            getAddParameters(map(device), device),
-                                            getEntityIdResolver(device.getName()));
-        if (response!=null) {
-            Object entity = response.getEntity();
-            if (entity!=null) {
-                NIC nic = (NIC)entity;
-                setNetworkId(nic);
-            }
-        }
-        return response;
+        return performCreate(
+            addAction,
+            getAddParameters(map(device), device),
+            getEntityIdResolver(device.getName())
+        );
     }
-
-    protected void setNetworkId(NIC nic) {
-        if (nic.isSetNetwork() && !nic.getNetwork().isSetId() && nic.getNetwork().isSetName()) {
-            Guid clusterId = getClusterId();
-            org.ovirt.engine.core.common.businessentities.network.Network network = lookupClusterNetwork(clusterId, nic.getNetwork().getId()==null ? null : asGuid(nic.getNetwork().getId()), nic.getNetwork().getName());
-            if (network!=null) {
-                nic.getNetwork().setName(null);
-                nic.getNetwork().setId(network.getId().toString());
-            }
-        }
-    }
-
-    protected abstract VmNetworkInterface setNetwork(NIC device, VmNetworkInterface ni);
 }

@@ -8,7 +8,6 @@ import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -20,11 +19,8 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.MAC;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
-import org.ovirt.engine.api.model.Networks;
-import org.ovirt.engine.api.model.PortMirroring;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.resource.NicResource;
-import org.ovirt.engine.api.restapi.resource.BaseBackendResource.WebFaultException;
 import org.ovirt.engine.api.restapi.util.RxTxCalculator;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
@@ -82,30 +78,11 @@ public class BackendVmNicResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setAllContentHeaderExpectation();
         setUpEntityQueryExpectations(1);
-        setGetVmQueryExpectations(1);
-        setGetNetworksQueryExpectations(1);
         setGetGuestAgentQueryExpectations(1);
         control.replay();
 
         NIC nic = resource.get();
         verifyModelSpecific(nic, 1);
-        verifyLinks(nic);
-    }
-
-    @Test
-    public void testGetNoNetwork() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        setAllContentHeaderExpectation();
-        setUpEntityQueryExpectations(1);
-        setGetVmQueryExpectations(1);
-        setGetNetworksQueryExpectations(1, Collections.<org.ovirt.engine.core.common.businessentities.network.Network> emptyList());
-        setGetGuestAgentQueryExpectations(1);
-        control.replay();
-
-        NIC nic = resource.get();
-        assertNotNull(nic);
-        assertNull(nic.getNetwork().getName());
-        assertNull(nic.getNetwork().getId());
         verifyLinks(nic);
     }
 
@@ -116,8 +93,6 @@ public class BackendVmNicResourceTest
             setUriInfo(setUpBasicUriExpectations());
             setAllContentHeaderExpectation();
             setUpEntityQueryExpectations(1);
-            setGetVmQueryExpectations(1);
-            setGetNetworksQueryExpectations(1);
             setGetGuestAgentQueryExpectations(1);
             control.replay();
 
@@ -149,11 +124,8 @@ public class BackendVmNicResourceTest
 
     @Test
     public void testUpdate() throws Exception {
-        setUpGetEntityExpectations(3);
+        setUpGetEntityExpectations(2);
         setAllContentHeaderExpectation();
-        setGetVmQueryExpectations(2);
-        setGetNetworksQueryExpectations(2);
-        setGetGuestAgentQueryExpectations(2);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
             AddVmInterfaceParameters.class,
             new String[]{"VmId", "Interface.Id"},
@@ -162,87 +134,6 @@ public class BackendVmNicResourceTest
             true));
 
         NIC nic = resource.update(getNic(false));
-        assertNotNull(nic);
-    }
-
-    @Test(expected = WebApplicationException.class)
-    public void testUpdateWrongPortMirroringNetwork() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(1);
-        setGetVmQueryExpectations(1);
-        setGetNetworksQueryExpectations(1);
-        control.replay();
-        NIC nic = getNic(false);
-        nic.getPortMirroring().getNetworks().getNetworks().get(0).setId(GUIDS[1].toString());
-        nic = resource.update(nic);
-        assertNotNull(nic);
-    }
-
-    @Test
-    public void testUpdateNoNetworkWithPortMirroringNetworkFail() throws Exception {
-        try {
-            VmNetworkInterface entity = getEntity(1, null);
-            setUpGetEntityExpectations(1, entity);
-            setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
-                    AddVmInterfaceParameters.class,
-                    new String[] { "VmId", "Interface.Id" },
-                    new Object[] { PARENT_ID, GUIDS[1] },
-                    false,
-                    true));
-            NIC nic = getNic(false);
-            nic.setNetwork(new Network());
-            resource.update(nic);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, CANT_DO);
-        }
-    }
-
-    @Test(expected=WebFaultException.class)
-    public void testUpdateWithNonExistingNetwork() throws Exception {
-        control.replay();
-        NIC nic = resource.update(getNic(true));
-        nic.getNetwork().setId(GUIDS[2].toString());
-        assertNotNull(nic);
-    }
-
-    @Test
-    public void testUpdateWithExistingNetwork() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        setAllContentHeaderExpectation();
-        setUpEntityQueryExpectations(2);
-        setGetVmQueryExpectations(2);
-        setGetNetworksQueryExpectations(2);
-        setGetGuestAgentQueryExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
-                                           AddVmInterfaceParameters.class,
-                                           new String[] { "VmId", "Interface.Id" },
-                                           new Object[] { PARENT_ID, GUIDS[1] },
-                                           true,
-                                           true));
-
-        NIC nic = resource.update(getNic(true));
-        assertNotNull(nic);
-    }
-
-    @Test
-    public void testUpdateWithNoNetwork() throws Exception {
-        VmNetworkInterface entity = getEntity(1, null);
-        setAllContentHeaderExpectation();
-        setUpGetEntityExpectations(3, entity);
-        setGetGuestAgentQueryExpectations(2);
-
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
-            AddVmInterfaceParameters.class,
-            new String[]{"VmId", "Interface.Id"},
-            new Object[]{PARENT_ID, GUIDS[1]},
-            true,
-            true));
-
-        NIC nic = getNic(false);
-        nic.setNetwork(new Network());
-        nic.setPortMirroring(null);
-        nic = resource.update(nic);
         assertNotNull(nic);
     }
 
@@ -263,8 +154,6 @@ public class BackendVmNicResourceTest
     public void testRemove() throws Exception {
         setUpEntityQueryExpectations(1);
         setAllContentHeaderExpectation();
-        setGetVmQueryExpectations(1);
-        setGetNetworksQueryExpectations(1);
         setGetGuestAgentQueryExpectations(1);
         setUriInfo(
             setUpActionExpectations(
@@ -292,8 +181,6 @@ public class BackendVmNicResourceTest
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(1);
         setAllContentHeaderExpectation();
-        setGetVmQueryExpectations(1);
-        setGetNetworksQueryExpectations(1);
         setGetGuestAgentQueryExpectations(1);
         setUriInfo(
             setUpActionExpectations(
@@ -391,14 +278,10 @@ public class BackendVmNicResourceTest
         if (withNetwork) {
             Network network = new Network();
             network.setId(GUIDS[0].toString());
-            nic.setNetwork(network);
         }
 
         Network network = new Network();
         network.setId(GUIDS[0].toString());
-         nic.setPortMirroring(new PortMirroring());
-         nic.getPortMirroring().setNetworks(new Networks());
-         nic.getPortMirroring().getNetworks().getNetworks().add(network);
 
         return nic;
     }
@@ -452,10 +335,7 @@ public class BackendVmNicResourceTest
     @Test
     public void testActivateNic() throws Exception {
         BackendVmNicResource backendVmNicResource = (BackendVmNicResource) resource;
-        setUpGetEntityExpectations(4);
-        setGetVmQueryExpectations(4);
-        setGetNetworksQueryExpectations(4);
-        setGetGuestAgentQueryExpectations(3);
+        setUpGetEntityExpectations(3);
         setAllContentHeaderExpectation();
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
                 AddVmInterfaceParameters.class,
@@ -475,10 +355,7 @@ public class BackendVmNicResourceTest
     public void testDeactivateNic() throws Exception {
         BackendVmNicResource backendVmNicResource = (BackendVmNicResource) resource;
         setAllContentHeaderExpectation();
-        setUpGetEntityExpectations(4);
-        setGetVmQueryExpectations(4);
-        setGetNetworksQueryExpectations(4);
-        setGetGuestAgentQueryExpectations(3);
+        setUpGetEntityExpectations(3);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
                 AddVmInterfaceParameters.class,
                 new String[] { "VmId", "Interface.Id" },

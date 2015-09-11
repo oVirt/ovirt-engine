@@ -8,7 +8,6 @@ import java.util.List;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.NIC;
-import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
@@ -130,8 +129,6 @@ public class AbstractBackendNicsResourceTest<T extends AbstractBackendReadOnlyDe
         NIC model = new NIC();
         model.setName(NAMES[index]);
         model.setInterface(NicInterface.RTL8139_VIRTIO.value());
-        model.setNetwork(new Network());
-        model.getNetwork().setId(GUIDS[0].toString());
         return model;
     }
 
@@ -146,8 +143,6 @@ public class AbstractBackendNicsResourceTest<T extends AbstractBackendReadOnlyDe
         assertEquals(NAMES[index].toString(), model.getName());
         assertTrue(model.isSetVm());
         assertEquals(PARENT_ID.toString(), model.getVm().getId());
-        assertTrue(model.isSetNetwork());
-        assertEquals(GUIDS[0].toString(), model.getNetwork().getId());
         assertTrue(model.isSetMac());
         assertEquals(ADDRESSES[2].toString(), model.getMac().getAddress());
     }

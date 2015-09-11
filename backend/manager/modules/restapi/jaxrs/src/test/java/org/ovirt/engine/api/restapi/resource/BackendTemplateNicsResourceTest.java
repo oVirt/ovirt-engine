@@ -6,13 +6,9 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.NIC;
-import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -26,18 +22,9 @@ public class BackendTemplateNicsResourceTest
               "Id");
     }
 
-    private VmNetworkInterface getInterface(int id, String name){
-        VmNetworkInterface inter = new VmNetworkInterface();
-        inter.setId(GUIDS[id]);
-        inter.setName(name);
-        return inter;
-    }
-
     @Test
     public void testAddNic() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setGetTemplateQueryExpectations(2);
-        setGetNetworksQueryExpectations(2);
         setUpCreationExpectations(VdcActionType.AddVmTemplateInterface,
                                   AddVmTemplateInterfaceParameters.class,
                                   new String[] {},
@@ -69,8 +56,6 @@ public class BackendTemplateNicsResourceTest
     }
 
     private void doTestBadAddNic(boolean canDo, boolean success, String detail) throws Exception {
-        setGetTemplateQueryExpectations(1);
-        setGetNetworksQueryExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.AddVmTemplateInterface,
                                            AddVmTemplateInterfaceParameters.class,
                                            new String[] { "VmTemplateId" },
@@ -91,7 +76,6 @@ public class BackendTemplateNicsResourceTest
     public void testAddIncompleteParameters() throws Exception {
         NIC model = new NIC();
         model.setName(null);
-        model.setNetwork(new Network());
 
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
@@ -124,22 +108,8 @@ public class BackendTemplateNicsResourceTest
     @Override
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
-        setGetTemplateQueryExpectations(1);
-        setGetNetworksQueryExpectations(1);
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
-    }
-
-    protected void setGetTemplateQueryExpectations(int times) throws Exception {
-        while (times-- > 0) {
-            VmTemplate template = new VmTemplate();
-            template.setVdsGroupId(GUIDS[0]);
-            setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
-                                        GetVmTemplateParameters.class,
-                                         new String[] { "Id" },
-                                         new Object[] { PARENT_ID },
-                                         template);
-        }
     }
 }

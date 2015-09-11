@@ -11,10 +11,8 @@ import org.ovirt.engine.api.model.GlusterVolumes;
 import org.ovirt.engine.api.model.Header;
 import org.ovirt.engine.api.model.Headers;
 import org.ovirt.engine.api.model.Host;
-import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Parameter;
 import org.ovirt.engine.api.model.ParametersSet;
-import org.ovirt.engine.api.model.PortMirroring;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.StorageTypes;
 import org.ovirt.engine.api.model.TransparentHugePages;
@@ -335,8 +333,6 @@ public class FeaturesHelper {
     private void addFeaturePortMirroring(Features features) {
         Feature feature = new Feature();
         feature.setName("Port Mirroring");
-        feature.setNic(new NIC());
-        feature.getNic().setPortMirroring(new PortMirroring());
         features.getFeature().add(feature);
     }
 

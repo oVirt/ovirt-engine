@@ -8,11 +8,9 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.NIC;
-import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -31,8 +29,6 @@ public class BackendVmNicsResourceTest
         try {
             accepts.add("application/xml; detail=statistics");
             setUriInfo(setUpUriExpectations(null));
-            setGetVmQueryExpectations(1);
-            setGetNetworksQueryExpectations(1);
             setGetGuestAgentQueryExpectations(3);
             setUpQueryExpectations("");
 
@@ -47,8 +43,6 @@ public class BackendVmNicsResourceTest
     @Test
     public void testAddNic() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setGetVmQueryExpectations(2);
-        setGetNetworksQueryExpectations(2);
         setGetGuestAgentQueryExpectations(1);
         setUpCreationExpectations(VdcActionType.AddVmInterface,
                                   AddVmInterfaceParameters.class,
@@ -81,8 +75,6 @@ public class BackendVmNicsResourceTest
     }
 
     private void doTestBadAddNic(boolean canDo, boolean success, String detail) throws Exception {
-        setGetVmQueryExpectations(1);
-        setGetNetworksQueryExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.AddVmInterface,
                                            AddVmInterfaceParameters.class,
                                            new String[] { "VmId" },
@@ -103,7 +95,6 @@ public class BackendVmNicsResourceTest
     public void testAddIncompleteParameters() throws Exception {
         NIC model = new NIC();
         model.setName(null);
-        model.setNetwork(new Network());
 
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
@@ -136,23 +127,9 @@ public class BackendVmNicsResourceTest
     @Override
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
-        setGetVmQueryExpectations(1);
-        setGetNetworksQueryExpectations(1);
         setGetGuestAgentQueryExpectations(3);
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
-    }
-
-    protected void setGetVmQueryExpectations(int times) throws Exception {
-        while (times-- > 0) {
-            VM vm = new VM();
-            vm.setVdsGroupId(GUIDS[0]);
-            setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
-                    IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { PARENT_ID },
-                    vm);
-        }
     }
 }

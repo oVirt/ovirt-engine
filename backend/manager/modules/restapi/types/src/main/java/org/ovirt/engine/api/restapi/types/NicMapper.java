@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.MAC;
 import org.ovirt.engine.api.model.NIC;
-import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VnicProfile;
@@ -25,9 +24,6 @@ public class NicMapper {
         if (model.isSetMac() && model.getMac().isSetAddress()) {
             entity.setMacAddress(model.getMac().getAddress());
         }
-        if (model.isSetNetwork()) {
-            entity.setNetworkName(model.getNetwork().getName());
-        }
         if (model.isSetLinked()) {
             entity.setLinked(model.isLinked());
         }
@@ -42,15 +38,6 @@ public class NicMapper {
         }
         if (model.isSetPlugged()) {
             entity.setPlugged(model.isPlugged());
-        }
-
-        if (model.isSetPortMirroring()) {
-            if (model.getPortMirroring().isSetNetworks() &&
-                    model.getPortMirroring().getNetworks().isSetNetworks()) {
-                entity.setPortMirroring(model.getPortMirroring().getNetworks().getNetworks().size() == 1);
-            } else {
-                entity.setPortMirroring(false);
-            }
         }
 
         if (model.isSetVnicProfile()) {
@@ -81,10 +68,6 @@ public class NicMapper {
         if (entity.getMacAddress() != null) {
             model.setMac(new MAC());
             model.getMac().setAddress(entity.getMacAddress());
-        }
-        if (entity.getNetworkName() != null) {
-            model.setNetwork(new Network());
-            model.getNetwork().setName(entity.getNetworkName());
         }
 
         model.setLinked(entity.isLinked());

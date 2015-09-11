@@ -7,7 +7,6 @@ import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -32,16 +31,6 @@ public class BackendTemplateNicResource extends AbstractBackendNicResource imple
             subCollections
         );
         this.templateId = templateId;
-    }
-
-    @Override
-    protected NIC deprecatedPopulate(NIC model, VmNetworkInterface entity) {
-        Network network = findNetwork(model);
-        if (network != null) {
-            model.getNetwork().setId(network.getId().toString());
-            model.getNetwork().setName(null);
-        }
-        return model;
     }
 
     @Override

@@ -751,13 +751,14 @@ actions:
     body:
       parameterType: NIC
       signatures:
-      - mandatoryArguments: {}
-        optionalArguments: {nic.vnic_profile.id: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.plugged: 'xs:boolean'}
+      - optionalArguments:
+          nic.vnic_profile.id: xs:string
+          nic.linked: xs:boolean
+          nic.name: xs:string
+          nic.mac.address: xs:string
+          nic.interface: xs:string
+          nic.plugged: xs:boolean
         description: update the network interface for the given virtual machine
-      - mandatoryArguments: {}
-        optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}, nic.plugged: 'xs:boolean'}
-        deprecated: true
-        description: update the network interface for the given virtual machine with port mirroring options
 - name: /vms/{vm:id}/nics/{nic:id}/activate|rel=activate #deprecated, replaced by 'add/edit'
   description: Deprecated, replaced by add/edit
   request:
@@ -776,13 +777,15 @@ actions:
     body:
       parameterType: NIC
       signatures:
-      - mandatoryArguments: {nic.name: 'xs:string'}
-        optionalArguments: {nic.vnic_profile.id: 'xs:string', nic.linked: 'xs:boolean', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.plugged: 'xs:boolean'}
+      - mandatoryArguments:
+          nic.name: xs:string
+        optionalArguments:
+          nic.vnic_profile.id: xs:string
+          nic.linked: xs:boolean
+          nic.mac.address: xs:string
+          nic.interface: xs:string
+          nic.plugged: xs:boolean
         description: add a new network interface to the given virtual machine with vnic profile id
-      - mandatoryArguments: {nic.name: 'xs:string'}
-        optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}, nic.plugged: 'xs:boolean'}
-        deprecated: true
-        description: add a new network interface to the given virtual machine with port mirroring options
 - name: /vms/{vm:id}/permissions|rel=get
   description: get all the permissions for a given virtual machine
 - name: /vms/{vm:id}/permissions/{permission:id}|rel=get
@@ -2849,13 +2852,15 @@ actions:
     body:
       parameterType: NIC
       signatures:
-      - mandatoryArguments: {nic.name: 'xs:string'}
-        optionalArguments: {nic.vnic_profile.id: 'xs:string', nic.linked: 'xs:boolean', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.plugged: 'xs:boolean'}
+      - mandatoryArguments:
+          nic.name: xs:string
+        optionalArguments:
+          nic.vnic_profile.id: xs:string
+          nic.linked: xs:boolean
+          nic.mac.address: xs:string
+          nic.interface: xs:string
+          nic.plugged: xs:boolean
         description: add a new network interface card to the template using a virtual network interface card profile
-      - mandatoryArguments: {nic.name: 'xs:string'}
-        optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}}
-        deprecated: true
-        description: add a new network interface card to the template using a network with optional port mirroring options. This has been deprecated
 - name: /templates/{template:id}/nics/{nic:id}|rel=get
   description: get the details of the specified network interface card attached to the template
 - name: /templates/{template:id}/nics/{nic:id}|rel=delete
@@ -2866,11 +2871,13 @@ actions:
     body:
       parameterType: NIC
       signatures:
-      - mandatoryArguments: {}
-        optionalArguments: {nic.vnic_profile.id: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.plugged: 'xs:boolean'}
-      - mandatoryArguments: {}
-        optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}}
-        deprecated: true
+      - optionalArguments:
+          nic.vnic_profile.id: xs:string
+          nic.linked: xs:boolean
+          nic.name: xs:string
+          nic.mac.address: xs:string
+          nic.interface: xs:string
+          nic.plugged: xs:boolean
 - name: /templates/{template:id}/permissions|rel=get
   description: get the list of all permissions for the specified template
 - name: /templates/{template:id}/permissions/{permission:id}|rel=get
