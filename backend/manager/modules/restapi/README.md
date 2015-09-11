@@ -315,3 +315,29 @@ replaced with an inner element:
       <username>myuser</username>
       ...
     </agent>
+
+### Use elements instead of attributes in power management agent options
+
+In the past the power management agent options element used attributes
+for its properties:
+
+    <options>
+      <option name="port" value="22"/>
+      <option name="slot" value="5"/>
+      ...
+    </options>
+
+This is contrary to the common practice in the RESTAPI. They have been
+replaced with inner elements:
+
+    <options>
+      <option>
+        <name>port</name>
+        <value>22</value>
+      </option>
+      <option>
+        <name>slot</name>
+        <value>5</value>
+      </option>
+      ...
+    </options>

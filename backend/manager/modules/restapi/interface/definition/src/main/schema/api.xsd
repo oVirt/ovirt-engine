@@ -1359,9 +1359,11 @@
   </xs:complexType>
 
   <xs:complexType name="Option">
-    <xs:attribute name="name" type="xs:string"/>
-    <xs:attribute name="value" type="xs:string"/>
-    <xs:attribute name="type" type="xs:string"/>
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:element name="options" type="Options"/>
