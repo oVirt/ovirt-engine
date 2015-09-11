@@ -44,3 +44,8 @@ completely ignored if provided when creating or updating a NIC.
 
 The NIC `active` property was replaced by `plugged` some time ago. It
 has been completely removed now.
+
+### Remove the disk `type` property
+
+The `type` property of disks has been removed, but kept in the XML
+schema and ignored. It has been completely removed now.
