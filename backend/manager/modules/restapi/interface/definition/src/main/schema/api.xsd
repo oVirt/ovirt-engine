@@ -3066,13 +3066,13 @@
 
   <xs:complexType name="OperatingSystem">
     <xs:sequence>
+      <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="boot" type="Boot" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="kernel" type="xs:string" minOccurs="0"/>
       <xs:element name="initrd" type="xs:string" minOccurs="0"/>
       <xs:element name="cmdline" type="xs:string" minOccurs="0"/>
       <xs:element name="version" type="Version" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
-    <xs:attribute name="type" type="xs:string"/>
   </xs:complexType>
 
   <!-- Single Sign-On Section -->

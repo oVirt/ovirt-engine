@@ -381,3 +381,19 @@ replaced by inner elements:
     <boot>
       <dev>cdrom</dev>
     </boot>
+
+### Use element instead of attribute for operating system `type`
+
+The operating system `type` property was represented as an attribute:
+
+    <os type="other">
+      ...
+    </os>
+
+This is contrary to the common practice in the RESTAPI. It has been
+replaced with an inner element:
+
+    <os>
+      <type>other</type>
+      ...
+    </os>
