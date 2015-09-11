@@ -54,17 +54,20 @@ public class VMConsoleProxyServlet extends HttpServlet {
 
         if (v != null) {
             List<UserProfile> profiles = v.getReturnValue();
-
             for (UserProfile profile : profiles) {
                 if (StringUtils.isNotEmpty(profile.getSshPublicKey())) {
-                    Map<String, String> jsonUser = new HashMap<String, String>();
+                    for (String publicKey : StringUtils.split(profile.getSshPublicKey(), "\n")) {
+                        if (StringUtils.isNotEmpty(publicKey)) {
+                            Map<String, String> jsonUser = new HashMap<String, String>();
 
-                    jsonUser.put("entityid", profile.getUserId().toString());
-                    jsonUser.put("entity", "user-id");
-                    jsonUser.put("username", profile.getLoginName());
-                    jsonUser.put("key", profile.getSshPublicKey());
+                            jsonUser.put("entityid", profile.getUserId().toString());
+                            jsonUser.put("entity", "user-id");
+                            jsonUser.put("username", profile.getLoginName());
+                            jsonUser.put("key", publicKey.trim());
 
-                    jsonUsers.add(jsonUser);
+                            jsonUsers.add(jsonUser);
+                        }
+                    }
                 }
             }
         }
