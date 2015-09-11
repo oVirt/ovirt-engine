@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
+import org.ovirt.engine.ui.common.widget.AlertManager;
 import org.ovirt.engine.ui.webadmin.plugin.PluginManager;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -29,13 +30,15 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
 
     private final HeaderPresenterWidget header;
     private final PluginManager pluginManager;
+    private final AlertManager alertManager;
 
     @Inject
     public MainSectionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            HeaderPresenterWidget header, PluginManager pluginManager) {
+            HeaderPresenterWidget header, PluginManager pluginManager, AlertManager alertManager) {
         super(eventBus, view, proxy, RevealType.RootLayout);
         this.header = header;
         this.pluginManager = pluginManager;
+        this.alertManager = alertManager;
         getView().setUiHandlers(header);
     }
 
@@ -47,6 +50,9 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
 
         // Enable plugin invocation within the scope of main section
         pluginManager.enablePluginInvocation();
+
+        // Enable alerts within the scope of main section
+        alertManager.setCanShowAlerts(true);
     }
 
     @Override
@@ -55,6 +61,9 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
 
         // Disable plugin invocation outside the scope of main section
         pluginManager.disablePluginInvocation();
+
+        // Disable alerts outside the scope of main section
+        alertManager.setCanShowAlerts(false);
     }
 
 }
