@@ -1,11 +1,15 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
 
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.storage.ConnectAllHostsToLunCommand.ConnectAllHostsToLunCommandReturnValue;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -13,6 +17,8 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ExtendStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -108,5 +114,17 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.USER_EXTENDED_STORAGE_DOMAIN
                 : AuditLogType.USER_EXTENDED_STORAGE_DOMAIN_FAILED;
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getStorageDomainId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
+                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(LockProperties.Scope.Execution);
     }
 }
