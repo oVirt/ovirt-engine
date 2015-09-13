@@ -34,9 +34,9 @@ Manage user roles.
     --command=command        Command.
         add                      Add role.
     --user-name=name         User name.
-    --provider=name          Name of authorization provider instace.
-    --provider-namespace=ns  Namespace within provider.
-    --provider-id=id         Unique user id within provider.
+    --authz-name=name        Name of authorization provider instace.
+    --principal-namespace=ns Namespace within provider.
+    --principal-id=id        Unique user id within provider.
     --role=role              Role name.
 
 Interesting roles:
@@ -53,9 +53,9 @@ trap cleanup 0
 
 COMMAND=
 USER_NAME=
-PROVIDER=
-PROVIDER_NAMESPACE=
-PROVIDER_ID=
+AUTHZ_NAME=
+PRINCIPAL_NAMESPACE=
+PRINCIPAL_ID=
 ROLE=
 
 while [ -n "$1" ]; do
@@ -73,14 +73,14 @@ while [ -n "$1" ]; do
 		--user-name=*)
 			USER_NAME="${v}"
 		;;
-		--provider=*)
-			PROVIDER="${v}"
+		--authz-name=*)
+			AUTHZ_NAME="${v}"
 		;;
-		--provider-namespace=*)
-			PROVIDER_NAMESPACE="${v}"
+		--principal-namespace=*)
+			PRINCIPAL_NAMESPACE="${v}"
 		;;
-		--provider-id=*)
-			PROVIDER_ID="${v}"
+		--principal-id=*)
+			PRINCIPAL_ID="${v}"
 		;;
 		--role=*)
 			ROLE="${v}"
@@ -98,9 +98,9 @@ done
 
 [ -n "${COMMAND}" ] || die "Please specify command"
 [ -n "${USER_NAME}" ] || die "Please specify user name"
-[ -n "${PROVIDER}" ] || die "Please specify provider"
-[ -n "${PROVIDER_NAMESPACE}" ] || die "Please specify provider namespace"
-[ -n "${PROVIDER_ID}" ] || die "Please specify provider id"
+[ -n "${AUTHZ_NAME}" ] || die "Please specify provider"
+[ -n "${PRINCIPAL_NAMESPACE}" ] || die "Please specify provider namespace"
+[ -n "${PRINCIPAL_ID}" ] || die "Please specify provider id"
 [ -n "${ROLE}" ] || die "Please specify role"
 
 MYTEMP="$(mktemp -d)"
@@ -108,9 +108,9 @@ generatePgPass
 psql -h "${ENGINE_DB_HOST}" -p "${ENGINE_DB_PORT}" -U "${ENGINE_DB_USER}" -c "
 	select attach_user_to_role(
 		'${USER_NAME}',
-		'${PROVIDER}',
-		'${PROVIDER_NAMESPACE}',
-		'${PROVIDER_ID}',
+		'${AUTHZ_NAME}',
+		'${PRINCIPAL_NAMESPACE}',
+		'${PRINCIPAL_ID}',
 		'${ROLE}'
 	);
 " > /dev/null
