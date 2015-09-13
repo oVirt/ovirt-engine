@@ -738,6 +738,12 @@ class ConfigEnv(object):
     @osetupattrs(
         postinstallfile=True,
     )
+    def ADMIN_USER_NAMESPACE(self):
+        return 'OVESETUP_CONFIG/adminUserNamespace'
+
+    @osetupattrs(
+        postinstallfile=True,
+    )
     def ADMIN_USER_ID(self):
         return 'OVESETUP_CONFIG/adminUserId'
 

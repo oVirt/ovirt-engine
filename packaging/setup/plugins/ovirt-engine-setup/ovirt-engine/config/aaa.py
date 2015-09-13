@@ -85,6 +85,10 @@ class Plugin(plugin.PluginBase):
             'admin@internal'
         )
         self.environment.setdefault(
+            oenginecons.ConfigEnv.ADMIN_USER_NAMESPACE,
+            '*'
+        )
+        self.environment.setdefault(
             oenginecons.ConfigEnv.ADMIN_USER_ID,
             None
         )
@@ -280,21 +284,25 @@ class Plugin(plugin.PluginBase):
         self.environment[oenginecons.EngineDBEnv.STATEMENT].execute(
             statement="""
                 select attach_user_to_role(
-                    %(admin_user_id)s,
                     %(admin_user)s,
                     %(authz_name)s,
+                    %(namespace)s,
+                    %(admin_user_id)s,
                     'SuperUser'
                 )
             """,
             args=dict(
-                admin_user_id=self.environment[
-                    oenginecons.ConfigEnv.ADMIN_USER_ID
-                ],
                 admin_user=self.environment[
                     oenginecons.ConfigEnv.ADMIN_USER
                 ],
                 authz_name=self.environment[
                     oenginecons.ConfigEnv.ADMIN_USER_AUTHZ_NAME
+                ],
+                namespace=self.environment[
+                    oenginecons.ConfigEnv.ADMIN_USER_NAMESPACE
+                ],
+                admin_user_id=self.environment[
+                    oenginecons.ConfigEnv.ADMIN_USER_ID
                 ],
             ),
         )
