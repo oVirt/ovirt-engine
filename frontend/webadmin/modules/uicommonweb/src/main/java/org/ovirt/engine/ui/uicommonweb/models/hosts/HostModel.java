@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
@@ -575,7 +576,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         setOverrideIpTables(new EntityModel<Boolean>());
         getOverrideIpTables().setEntity(false);
         setProtocol(new EntityModel<Boolean>());
-        getProtocol().setEntity(false);
+        getProtocol().setEntity(true);
         setFenceAgents(new FenceAgentListModel());
 
         IEventListener<EventArgs> pmListener = new IEventListener<EventArgs>() {
@@ -903,6 +904,11 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                     updatePmTypeList(pmTypes);
                 }
             }), cluster.getCompatibilityVersion());
+            if (Version.v3_6.compareTo(cluster.getCompatibilityVersion()) <= 0) {
+                getProtocol().setIsAvailable(false);
+            } else {
+                getProtocol().setIsAvailable(true);
+            }
             Boolean jsonSupported =
                     (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.JsonProtocolSupported,
                             cluster.getCompatibilityVersion().toString());

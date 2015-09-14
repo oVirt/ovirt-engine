@@ -7,11 +7,14 @@ import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -107,6 +110,12 @@ public class HostValidator {
     public ValidationResult provisioningHostGroupValid(boolean provisioned, ExternalHostGroup hostGroup) {
         return ValidationResult.failWith(EngineMessage.VDS_PROVIDER_PROVISION_MISSING_HOSTGROUP)
                 .when(provisioned && hostGroup == null);
+    }
+
+    public ValidationResult protocolIsNotXmlrpc(VDSGroup cluster) {
+        return ValidationResult.failWith(EngineMessage.NOT_SUPPORTED_PROTOCOL_FOR_CLUSTER_VERSION)
+                .when(VdsProtocol.XML.equals(host.getProtocol())
+                        && Version.v3_6.compareTo(cluster.getCompatibilityVersion()) <= 0);
     }
 
     protected boolean haveSecurityKey() {

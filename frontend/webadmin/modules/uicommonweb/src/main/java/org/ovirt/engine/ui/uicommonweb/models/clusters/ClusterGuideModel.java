@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -551,6 +552,11 @@ public class ClusterGuideModel extends GuideModel {
         ListModel<VDSGroup> clusterModel = model.getCluster();
         if (clusterModel.getSelectedItem() != null) {
             VDSGroup cluster = clusterModel.getSelectedItem();
+            if (Version.v3_6.compareTo(cluster.getCompatibilityVersion()) <= 0) {
+                model.getProtocol().setIsAvailable(false);
+            } else {
+                model.getProtocol().setIsAvailable(true);
+            }
             Boolean jsonSupported =
                     (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.JsonProtocolSupported,
                             cluster.getCompatibilityVersion().toString());
