@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.resource.utils;
 import java.util.Date;
 
 import org.ovirt.engine.api.model.Api;
-import org.ovirt.engine.api.model.CPU;
+import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.Feature;
 import org.ovirt.engine.api.model.Features;
@@ -305,7 +305,7 @@ public class FeaturesHelper {
         feature.setHost(new Host());
         feature.setName("Display Host Sockets");
         feature.setDescription("Number of host sockets displayed. 'cores' now show num of cores per socket --> total cores in host is: cores*sockets");
-        feature.getHost().setCpu(new CPU());
+        feature.getHost().setCpu(new Cpu());
         feature.getHost().getCpu().setTopology(new CpuTopology());
         feature.getHost().getCpu().getTopology().setSockets(4);
         if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_2)) {

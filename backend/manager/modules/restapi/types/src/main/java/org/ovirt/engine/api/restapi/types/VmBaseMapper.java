@@ -6,8 +6,8 @@ import static org.ovirt.engine.api.restapi.types.IntegerMapper.mapNullToMinusOne
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Bios;
 import org.ovirt.engine.api.model.BootMenu;
-import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.CustomProperties;
@@ -252,7 +252,7 @@ public class VmBaseMapper {
         CpuTopology topology = new CpuTopology();
         topology.setSockets(entity.getNumOfSockets());
         topology.setCores(entity.getNumOfCpus() / entity.getNumOfSockets());
-        model.setCpu(new CPU());
+        model.setCpu(new Cpu());
         model.getCpu().setTopology(topology);
         model.setCpuShares(entity.getCpuShares());
 

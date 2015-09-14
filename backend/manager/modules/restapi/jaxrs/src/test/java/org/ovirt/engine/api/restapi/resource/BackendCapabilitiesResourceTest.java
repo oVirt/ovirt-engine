@@ -8,8 +8,8 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.BootDevice;
-import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Capabilities;
+import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.api.model.CustomProperty;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
@@ -147,8 +147,8 @@ public class BackendCapabilitiesResourceTest extends AbstractBackendResourceTest
         assertEquals(minor, version.getMinor().intValue());
         assertEquals(current, version.isCurrent());
         assertNotNull(version.getCpus());
-        assertTrue(version.getCpus().getCPUs().size() == 1);
-        verifyCPU(version.getCpus().getCPUs().get(0), cpuName, cpuLevel);
+        assertTrue(version.getCpus().getCpus().size() == 1);
+        verifyCPU(version.getCpus().getCpus().get(0), cpuName, cpuLevel);
         assertNotNull(version.getPowerManagers());
         assertEquals(1, version.getPowerManagers().getPowerManagers().size());
         verifyPowerManagement(version.getPowerManagers().getPowerManagers().get(0));
@@ -214,7 +214,7 @@ public class BackendCapabilitiesResourceTest extends AbstractBackendResourceTest
         }
     }
 
-    private void verifyCPU(CPU cpu, String name, Integer level) {
+    private void verifyCPU(Cpu cpu, String name, Integer level) {
         assertNotNull(cpu);
         assertEquals(name, cpu.getType());
         assertEquals(level, cpu.getLevel());

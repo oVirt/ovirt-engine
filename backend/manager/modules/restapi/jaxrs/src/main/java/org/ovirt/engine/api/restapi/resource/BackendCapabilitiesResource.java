@@ -10,14 +10,14 @@ import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.BootDevices;
 import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.BootProtocols;
-import org.ovirt.engine.api.model.CPU;
-import org.ovirt.engine.api.model.CPUs;
 import org.ovirt.engine.api.model.Capabilities;
 import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.ConfigurationTypes;
 import org.ovirt.engine.api.model.ContentTypes;
+import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.api.model.CpuMode;
 import org.ovirt.engine.api.model.CpuModes;
+import org.ovirt.engine.api.model.Cpus;
 import org.ovirt.engine.api.model.CreationStates;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.CustomProperties;
@@ -233,13 +233,13 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
         // Not exposing CPU list and power managers on filtered queries
         if (!isFiltered()) {
-            version.setCpus(new CPUs());
+            version.setCpus(new Cpus());
             for (ServerCpu sc : getServerCpuList(v)) {
-                CPU cpu = new CPU();
+                Cpu cpu = new Cpu();
                 cpu.setType(sc.getCpuName());
                 cpu.setLevel(sc.getLevel());
                 cpu.setArchitecture(CPUMapper.map(sc.getArchitecture(), null));
-                version.getCpus().getCPUs().add(cpu);
+                version.getCpus().getCpus().add(cpu);
             }
             addPowerManagers(version, getPowerManagers(v));
         }

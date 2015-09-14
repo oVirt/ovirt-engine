@@ -1,16 +1,16 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.Architecture;
-import org.ovirt.engine.api.model.CPU;
+import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 
 public class CPUMapper {
 
-    @Mapping(from = ServerCpu.class, to = CPU.class)
-    public static CPU map(ServerCpu entity,
-            CPU template) {
-        CPU model = template != null ? template : new CPU();
+    @Mapping(from = ServerCpu.class, to = Cpu.class)
+    public static Cpu map(ServerCpu entity,
+            Cpu template) {
+        Cpu model = template != null ? template : new Cpu();
 
         model.setName(entity.getCpuName());
         model.setLevel(entity.getLevel());

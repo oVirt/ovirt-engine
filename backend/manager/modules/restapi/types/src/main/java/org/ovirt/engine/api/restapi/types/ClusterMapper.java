@@ -6,8 +6,8 @@ import java.util.LinkedHashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Architecture;
-import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.ErrorHandling;
@@ -138,7 +138,7 @@ public class ClusterMapper {
         model.setDescription(entity.getDescription());
         model.setComment(entity.getComment());
         if (entity.getCpuName() != null) {
-            CPU cpu = new CPU();
+            Cpu cpu = new Cpu();
             cpu.setType(entity.getCpuName());
 
             cpu.setArchitecture(CPUMapper.map(entity.getArchitecture(), null));

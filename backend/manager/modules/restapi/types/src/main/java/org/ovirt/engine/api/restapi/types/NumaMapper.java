@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Core;
 import org.ovirt.engine.api.model.Cores;
+import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.api.model.NumaNode;
 import org.ovirt.engine.api.model.NumaNodePin;
 import org.ovirt.engine.api.model.NumaNodePins;
@@ -28,7 +28,7 @@ public class NumaMapper {
         model.setIndex(entity.getIndex());
         model.setMemory(entity.getMemTotal());
         if (entity.getCpuIds() != null && entity.getCpuIds().size() > 0) {
-            CPU cpu = new CPU();
+            Cpu cpu = new Cpu();
             Cores cores = new Cores();
             for (int id : entity.getCpuIds()) {
                 Core core = new Core();
@@ -53,7 +53,7 @@ public class NumaMapper {
         model.setIndex(entity.getIndex());
         model.setMemory(entity.getMemTotal());
         if (entity.getCpuIds() != null && entity.getCpuIds().size() > 0) {
-            CPU cpu = new CPU();
+            Cpu cpu = new Cpu();
             Cores cores = new Cores();
             for (int id : entity.getCpuIds()) {
                 Core core = new Core();
@@ -92,7 +92,7 @@ public class NumaMapper {
         if (model.isSetIndex()) {
             entity.setIndex(model.getIndex());
         }
-        CPU cpu = model.getCpu();
+        Cpu cpu = model.getCpu();
         if (cpu != null) {
             List<Integer> ids = new ArrayList<>();
             Cores cores = cpu.getCores();

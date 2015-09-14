@@ -16,7 +16,9 @@ The support for YAML has been completely removed.
 
 The following XML schema complex types have been renamed:
 
-- API - Api
+- `API` - `Api`
+- `CPU` - `Cpu`
+- `CPUs` - `Cpus`
 
 First column is the old name, and second column is the new name.
 

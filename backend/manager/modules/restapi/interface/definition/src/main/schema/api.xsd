@@ -449,7 +449,7 @@
 
   <!-- CPUs -->
 
-  <xs:element name="cpu" type="CPU"/>
+  <xs:element name="cpu" type="Cpu"/>
 
   <xs:complexType name="CpuTopology">
     <xs:sequence>
@@ -481,7 +481,7 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="CPU">
+  <xs:complexType name="Cpu">
     <xs:sequence>
       <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="topology" type="CpuTopology" minOccurs="0" maxOccurs="1"/>
@@ -495,13 +495,13 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:element name="cpus" type="CPUs"/>
+  <xs:element name="cpus" type="Cpus"/>
 
-  <xs:complexType name="CPUs">
+  <xs:complexType name="Cpus">
     <xs:sequence>
       <xs:annotation>
         <xs:appinfo>
-            <jaxb:property name="CPUs"/>
+            <jaxb:property name="Cpus"/>
         </xs:appinfo>
       </xs:annotation>
       <xs:element ref="cpu" maxOccurs="unbounded"/>
@@ -3454,7 +3454,7 @@
           <xs:element name="type" type="xs:string" minOccurs="0"/>
           <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
           <xs:element name="memory" type="xs:long" minOccurs="0"/>
-          <xs:element name="cpu" type="CPU" minOccurs="0"/>
+          <xs:element name="cpu" type="Cpu" minOccurs="0"/>
           <xs:element name="cpu_shares" type="xs:int" minOccurs="0" maxOccurs="1"/>
           <xs:element name="bios" type="Bios" minOccurs="0" maxOccurs="1" />
           <xs:element name="os" type="OperatingSystem" minOccurs="0"/>
@@ -5308,7 +5308,7 @@
           <xs:element ref="host" minOccurs="0" maxOccurs="1"/>
           <xs:element name="index" type="xs:int" minOccurs="0" maxOccurs="1"/>
           <xs:element name="memory" type="xs:long" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="cpu" type="CPU" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="cpu" type="Cpu" minOccurs="0" maxOccurs="1"/>
           <xs:element name="statistics" type="Statistics" minOccurs="0" maxOccurs="1"/>
           <xs:element name="node_distance" type="xs:string" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>

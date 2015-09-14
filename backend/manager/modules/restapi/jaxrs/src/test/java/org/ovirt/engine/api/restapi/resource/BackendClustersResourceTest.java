@@ -8,8 +8,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
@@ -265,7 +265,7 @@ public class BackendClustersResourceTest extends
         model.setName(NAMES[index]);
         model.setDescription(DESCRIPTIONS[index]);
         model.setDataCenter(new DataCenter());
-        model.setCpu(new CPU());
+        model.setCpu(new Cpu());
         model.getCpu().setType("Intel Xeon");
         return model;
     }

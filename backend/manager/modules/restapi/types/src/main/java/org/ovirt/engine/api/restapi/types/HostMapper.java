@@ -9,8 +9,8 @@ import java.util.Map;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.AutoNumaStatus;
-import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.EntityExternalStatus;
@@ -236,9 +236,9 @@ public class HostMapper {
         }
         PowerManagement pm = map(entity, (PowerManagement) null);
         model.setPowerManagement(DeprecatedPowerManagementMapper.map(entity, pm));
-        model.setHardwareInformation(map(entity, (HardwareInformation)null));
+        model.setHardwareInformation(map(entity, (HardwareInformation) null));
         model.setSsh(map(entity.getStaticData(), (SSH) null));
-        CPU cpu = new CPU();
+        Cpu cpu = new Cpu();
         CpuTopology cpuTopology = new CpuTopology();
         if (entity.getCpuSockets() != null) {
             cpuTopology.setSockets(entity.getCpuSockets());
