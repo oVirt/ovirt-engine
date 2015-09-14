@@ -35,6 +35,7 @@ The following XML schema complex types have been renamed:
 - `SSHPublicKey` - `SshPublicKey`
 - `SSHPublicKeys` - `SshPublicKeys`
 - `SSH` - `Ssh`
+- `VCpuPin` - `VcpuPin`
 
 First column is the old name, and second column is the new name.
 

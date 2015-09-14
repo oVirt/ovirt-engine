@@ -50,8 +50,8 @@ import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.api.model.VCpuPin;
 import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.VcpuPin;
 import org.ovirt.engine.api.model.VmAffinity;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.model.VmPool;
@@ -1169,7 +1169,7 @@ public class VmMapper extends VmBaseMapper {
     static String cpuTuneToString(final CpuTune tune) {
         final StringBuilder builder = new StringBuilder();
         boolean first = true;
-        for(final VCpuPin pin : tune.getVCpuPin()) {
+        for(final VcpuPin pin : tune.getVcpuPin()) {
             if(first) {
                 first = false;
             } else {
@@ -1191,19 +1191,19 @@ public class VmMapper extends VmBaseMapper {
         }
         final CpuTune cpuTune = new CpuTune();
         for(String strCpu : cpuPinning.split("_")) {
-            VCpuPin pin = stringToVCpupin(strCpu);
-            cpuTune.getVCpuPin().add(pin);
+            VcpuPin pin = stringToVCpupin(strCpu);
+            cpuTune.getVcpuPin().add(pin);
         }
 
         return cpuTune;
     }
 
-    static VCpuPin stringToVCpupin(final String strCpu) {
+    static VcpuPin stringToVCpupin(final String strCpu) {
         final String[] strPin = strCpu.split("#");
         if (strPin.length != 2) {
             throw new IllegalArgumentException("Bad format: " + strCpu);
         }
-        final VCpuPin pin = new VCpuPin();
+        final VcpuPin pin = new VcpuPin();
         try {
             pin.setVcpu(Integer.parseInt(strPin[0]));
         } catch (NumberFormatException e) {

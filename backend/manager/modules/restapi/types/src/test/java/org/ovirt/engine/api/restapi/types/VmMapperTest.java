@@ -24,8 +24,8 @@ import org.ovirt.engine.api.model.Session;
 import org.ovirt.engine.api.model.Sessions;
 import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Usb;
-import org.ovirt.engine.api.model.VCpuPin;
 import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.VcpuPin;
 import org.ovirt.engine.api.model.VmDeviceType;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.model.VmType;
@@ -96,10 +96,10 @@ public class VmMapperTest extends
             from.getCpu().getTopology().setCores(MappingTestHelper.rand(100));
         }
         CpuTune cpuTune = new CpuTune();
-        VCpuPin pin = new VCpuPin();
+        VcpuPin pin = new VcpuPin();
         pin.setVcpu(33);
         pin.setCpuSet("1-4,6");
-        cpuTune.getVCpuPin().add(pin);
+        cpuTune.getVcpuPin().add(pin);
         from.getCpu().setCpuTune(cpuTune);
         from.setTimeZone(new TimeZone());
         from.getTimeZone().setName("Australia/Darwin");
@@ -444,10 +444,10 @@ public class VmMapperTest extends
     public void stringToCpuTune() {
         CpuTune cpuTune = VmMapper.stringToCpuTune("0#0");
         assertNotNull(cpuTune);
-        assertNotNull(cpuTune.getVCpuPin());
-        assertEquals(1, cpuTune.getVCpuPin().size());
-        assertEquals(0, (int) cpuTune.getVCpuPin().get(0).getVcpu());
-        assertEquals("0", cpuTune.getVCpuPin().get(0).getCpuSet());
+        assertNotNull(cpuTune.getVcpuPin());
+        assertEquals(1, cpuTune.getVcpuPin().size());
+        assertEquals(0, (int) cpuTune.getVcpuPin().get(0).getVcpu());
+        assertEquals("0", cpuTune.getVcpuPin().get(0).getCpuSet());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -462,14 +462,14 @@ public class VmMapperTest extends
 
     @Test()
     public void stringToVCpupinIntervalsList() {
-        VCpuPin pin = VmMapper.stringToVCpupin("1#1-4,6");
+        VcpuPin pin = VmMapper.stringToVCpupin("1#1-4,6");
         assertEquals(1, (int) pin.getVcpu());
         assertEquals("1-4,6", pin.getCpuSet());
     }
 
     @Test()
     public void stringToVCpupinSimple() {
-        VCpuPin pin = VmMapper.stringToVCpupin("1#1");
+        VcpuPin pin = VmMapper.stringToVCpupin("1#1");
         assertEquals(1, (int) pin.getVcpu());
         assertEquals("1", pin.getCpuSet());
 
