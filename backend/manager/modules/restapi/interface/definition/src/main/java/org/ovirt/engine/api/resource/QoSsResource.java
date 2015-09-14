@@ -8,18 +8,18 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.QoS;
-import org.ovirt.engine.api.model.QoSs;
+import org.ovirt.engine.api.model.Qos;
+import org.ovirt.engine.api.model.Qoss;
 
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface QoSsResource {
 
     @GET
-    public QoSs list();
+    public Qoss list();
 
     @POST
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
-    public Response add(QoS qos);
+    public Response add(Qos qos);
 
     @Path("{id}")
     public QosResource getQosSubResource(@PathParam("id") String id);

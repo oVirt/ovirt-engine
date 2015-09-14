@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.QoS;
+import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.resource.QosResource;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.QosParametersBase;
@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendQosResource extends AbstractBackendSubResource<QoS, QosBase> implements QosResource {
+public class BackendQosResource extends AbstractBackendSubResource<Qos, QosBase> implements QosResource {
 
     protected BackendQossResource parent;
 
@@ -23,19 +23,19 @@ public class BackendQosResource extends AbstractBackendSubResource<QoS, QosBase>
     }
 
     public BackendQosResource(String id, BackendQossResource parent) {
-        super(id, QoS.class, QosBase.class);
+        super(id, Qos.class, QosBase.class);
         this.parent = parent;
     }
 
     @Override
-    public QoS get() {
+    public Qos get() {
         IdQueryParameters params = new IdQueryParameters(guid);
-        QoS qos = performGet(VdcQueryType.GetQosById, params);
+        Qos qos = performGet(VdcQueryType.GetQosById, params);
         return qos;
     }
 
     @Override
-    public QoS update(final QoS incoming) {
+    public Qos update(final Qos incoming) {
         QueryIdResolver<Guid> entityResolver =
                 new QueryIdResolver<Guid>(VdcQueryType.GetQosById, IdQueryParameters.class);
         final QosBase qosBase =
@@ -43,9 +43,9 @@ public class BackendQosResource extends AbstractBackendSubResource<QoS, QosBase>
         return performUpdate(incoming,
                 entityResolver,
                 updateActionTypeForQosType(qosBase.getQosType()),
-                new ParametersProvider<QoS, QosBase>() {
+                new ParametersProvider<Qos, QosBase>() {
                     @Override
-                    public VdcActionParametersBase getParameters(QoS model,
+                    public VdcActionParametersBase getParameters(Qos model,
                             QosBase entity) {
                         QosParametersBase<QosBase> parameters = new QosParametersBase<QosBase>();
                         parameters.setQosId(guid);
@@ -70,9 +70,9 @@ public class BackendQosResource extends AbstractBackendSubResource<QoS, QosBase>
         }
     }
 
-    protected class UpdateParametersProvider implements ParametersProvider<QoS, QosBase> {
+    protected class UpdateParametersProvider implements ParametersProvider<Qos, QosBase> {
         @Override
-        public VdcActionParametersBase getParameters(QoS incoming,
+        public VdcActionParametersBase getParameters(Qos incoming,
                 QosBase entity) {
             QosParametersBase<QosBase> parameters = new QosParametersBase<QosBase>();
             parameters.setQosId(guid);

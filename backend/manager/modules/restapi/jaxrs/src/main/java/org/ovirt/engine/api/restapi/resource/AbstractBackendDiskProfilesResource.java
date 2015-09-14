@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.api.model.DiskProfiles;
-import org.ovirt.engine.api.model.QoS;
+import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
@@ -30,7 +30,7 @@ public abstract class AbstractBackendDiskProfilesResource
 
     protected DiskProfiles mapCollection(List<org.ovirt.engine.core.common.businessentities.profiles.DiskProfile> entities) {
         DiskProfiles collection = new DiskProfiles();
-        Map<Guid, QoS> qosMap = new HashMap<>();
+        Map<Guid, Qos> qosMap = new HashMap<>();
         for (org.ovirt.engine.core.common.businessentities.profiles.DiskProfile entity : entities) {
             DiskProfile profile = populate(map(entity), entity);
             collection.getDiskProfiles().add(profile);
@@ -49,14 +49,14 @@ public abstract class AbstractBackendDiskProfilesResource
     /**
      * used to set qos's href (requires dc id).
      */
-    private void handleQosDataCenterLinks(Map<Guid, QoS> qosMap) {
+    private void handleQosDataCenterLinks(Map<Guid, Qos> qosMap) {
         if (!qosMap.isEmpty()) {
             List<StorageQos> list = getBackendCollection(
                     StorageQos.class,
                     VdcQueryType.GetAllQosByType,
                     new QosQueryParameterBase(null, QosType.STORAGE));
             for (StorageQos storageQos : list) {
-                QoS qos = qosMap.get(storageQos.getId());
+                Qos qos = qosMap.get(storageQos.getId());
                 if (qos != null) {
                     qos.setDataCenter(new DataCenter());
                     qos.getDataCenter().setId(storageQos.getStoragePoolId().toString());

@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.DataCenter;
-import org.ovirt.engine.api.model.QoS;
+import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.api.model.VnicProfiles;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -32,7 +32,7 @@ public abstract class AbstractBackendVnicProfilesResource
 
     protected VnicProfiles mapCollection(List<org.ovirt.engine.core.common.businessentities.network.VnicProfile> entities) {
         VnicProfiles collection = new VnicProfiles();
-        Map<Guid, QoS> qosMap = new HashMap<>();
+        Map<Guid, Qos> qosMap = new HashMap<>();
         for (org.ovirt.engine.core.common.businessentities.network.VnicProfile entity : entities) {
             VnicProfile profile = populate(map(entity), entity);
             collection.getVnicProfiles().add(profile);
@@ -51,14 +51,14 @@ public abstract class AbstractBackendVnicProfilesResource
     /**
      * used to set qos's href (requires dc id).
      */
-    private void handleQosDataCenterLinks(Map<Guid, QoS> qosMap) {
+    private void handleQosDataCenterLinks(Map<Guid, Qos> qosMap) {
         if (!qosMap.isEmpty()) {
             List<NetworkQoS> list = getBackendCollection(
                     NetworkQoS.class,
                     VdcQueryType.GetAllQosByType,
                     new QosQueryParameterBase(null, QosType.NETWORK));
             for (NetworkQoS networkQoS : list) {
-                QoS qos = qosMap.get(networkQoS.getId());
+                Qos qos = qosMap.get(networkQoS.getId());
                 if (qos != null) {
                     qos.setDataCenter(new DataCenter());
                     qos.getDataCenter().setId(networkQoS.getStoragePoolId().toString());

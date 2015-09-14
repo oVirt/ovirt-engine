@@ -93,7 +93,7 @@ import org.ovirt.engine.api.model.Parameter;
 import org.ovirt.engine.api.model.ParametersSet;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.Permit;
-import org.ovirt.engine.api.model.QoS;
+import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.QuotaClusterLimit;
 import org.ovirt.engine.api.model.QuotaStorageLimit;
@@ -584,7 +584,7 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(QosResource.class, QoSsResource.class, DataCenter.class);
         map.add(QosResource.class, QoSsResource.class, Network.class);
-        TYPES.put(QoS.class, map);
+        TYPES.put(Qos.class, map);
 
         map = new ParentToCollectionMap(IscsiBondResource.class, IscsiBondsResource.class, DataCenter.class);
         TYPES.put(IscsiBond.class, map);

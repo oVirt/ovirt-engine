@@ -1055,7 +1055,7 @@ actions:
   description: update the specified QoS in the datacenter
   request:
     body:
-      parameterType: QoS
+      parameterType: Qos
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {qos.name: 'xs:string',
@@ -1080,7 +1080,7 @@ actions:
   description: add a new QoS to the datacenter
   request:
     body:
-      parameterType: QoS
+      parameterType: Qos
       signatures:
       - mandatoryArguments: {qos.name: 'xs:string', qos.type: 'xs:string'}
         optionalArguments: {qos.description: 'xs:string',

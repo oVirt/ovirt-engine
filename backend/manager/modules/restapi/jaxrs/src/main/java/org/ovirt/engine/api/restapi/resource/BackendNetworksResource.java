@@ -4,7 +4,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
-import org.ovirt.engine.api.model.QoS;
+import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.api.resource.NetworksResource;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
@@ -58,7 +58,7 @@ public class BackendNetworksResource extends AbstractBackendNetworksResource imp
 
     @Override
     protected Network addParents(Network model) {
-        QoS qos = model.getQos();
+        Qos qos = model.getQos();
         if (qos != null) {
             qos.setDataCenter(model.getDataCenter());
         }

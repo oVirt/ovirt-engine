@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.CustomProperties;
 import org.ovirt.engine.api.model.Network;
-import org.ovirt.engine.api.model.QoS;
+import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
@@ -64,7 +64,7 @@ public class VnicProfileMapper {
             model.setCustomProperties(hooks);
         }
         if (entity.getNetworkQosId() != null) {
-            model.setQos(new QoS());
+            model.setQos(new Qos());
             model.getQos().setId(entity.getNetworkQosId().toString());
         }
         return model;

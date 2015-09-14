@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.DataCenter;
-import org.ovirt.engine.api.model.QoS;
+import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.model.QosType;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -13,9 +13,9 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class QosMapper {
 
-    @Mapping(from = QosBase.class, to = QoS.class)
-    public static QoS map(QosBase entity, QoS template) {
-        QoS model = template != null ? template : new QoS();
+    @Mapping(from = QosBase.class, to = Qos.class)
+    public static Qos map(QosBase entity, Qos template) {
+        Qos model = template != null ? template : new Qos();
         model.setId(entity.getId().toString());
         model.setName(entity.getName());
 
@@ -34,7 +34,7 @@ public class QosMapper {
         return model;
     }
 
-    private static void mapQosTypeToModel(QosBase entity, QoS model) {
+    private static void mapQosTypeToModel(QosBase entity, Qos model) {
         switch (entity.getQosType()) {
         case STORAGE:
             mapStorageQosToModel(entity, model);
@@ -53,7 +53,7 @@ public class QosMapper {
         }
     }
 
-    private static void mapHostNetworkQosToModel(QosBase entity, QoS model) {
+    private static void mapHostNetworkQosToModel(QosBase entity, Qos model) {
         HostNetworkQos hostNetworkQos = verifyAndCast(entity, HostNetworkQos.class);
         if (hostNetworkQos != null) {
             model.setOutboundAverageLinkshare(hostNetworkQos.getOutAverageLinkshare());
@@ -62,7 +62,7 @@ public class QosMapper {
         }
     }
 
-    private static void mapNetworkQosToModel(QosBase entity, QoS model) {
+    private static void mapNetworkQosToModel(QosBase entity, Qos model) {
         NetworkQoS networkQos = verifyAndCast(entity, NetworkQoS.class);
 
         if (networkQos != null) {
@@ -75,14 +75,14 @@ public class QosMapper {
         }
     }
 
-    private static void mapCpuQosToModel(QosBase entity, QoS model) {
+    private static void mapCpuQosToModel(QosBase entity, Qos model) {
         CpuQos cpuQos = verifyAndCast(entity, CpuQos.class);
         if (cpuQos != null) {
             model.setCpuLimit(cpuQos.getCpuLimit());
         }
     }
 
-    private static void mapStorageQosToModel(QosBase entity, QoS model) {
+    private static void mapStorageQosToModel(QosBase entity, Qos model) {
         StorageQos storageQos = verifyAndCast(entity, StorageQos.class);
 
         if (storageQos != null) {
@@ -126,8 +126,8 @@ public class QosMapper {
         }
     }
 
-    @Mapping(from = QoS.class, to = QosBase.class)
-    public static QosBase map(QoS model, QosBase template) {
+    @Mapping(from = Qos.class, to = QosBase.class)
+    public static QosBase map(Qos model, QosBase template) {
         QosBase entity = template == null ? null : template;
         QosType qosType = QosTypeMapper.map (model.getType().toLowerCase(), entity == null ? null : entity.getQosType());
 
@@ -155,7 +155,7 @@ public class QosMapper {
         return entity;
     }
 
-    private static void mapQosToEntity(QoS model, QosBase entity, QosType qosType) {
+    private static void mapQosToEntity(Qos model, QosBase entity, QosType qosType) {
         switch (qosType) {
         case STORAGE:
             mapStorageQosToEntity(model, (StorageQos) entity);
@@ -174,7 +174,7 @@ public class QosMapper {
         }
     }
 
-    private static void mapHostNetworkQosToEntity(QoS model, HostNetworkQos entity) {
+    private static void mapHostNetworkQosToEntity(Qos model, HostNetworkQos entity) {
         if (model.isSetOutboundAverageLinkshare()) {
             entity.setOutAverageLinkshare(model.getOutboundAverageLinkshare());
         }
@@ -188,7 +188,7 @@ public class QosMapper {
         }
     }
 
-    private static QosBase mapNetworkQosToEntity(QoS model, NetworkQoS entity) {
+    private static QosBase mapNetworkQosToEntity(Qos model, NetworkQoS entity) {
         if (model.isSetInboundAverage()) {
             entity.setInboundAverage(IntegerMapper.mapMinusOneToNull(model.getInboundAverage()));
         }
@@ -211,14 +211,14 @@ public class QosMapper {
         return entity;
     }
 
-    private static QosBase mapCpuQosToEntity(QoS model, CpuQos entity) {
+    private static QosBase mapCpuQosToEntity(Qos model, CpuQos entity) {
         if (model.isSetCpuLimit()) {
             entity.setCpuLimit(IntegerMapper.mapMinusOneToNull(model.getCpuLimit()));
         }
         return entity;
     }
 
-    private static void mapStorageQosToEntity(QoS model, StorageQos entity) {
+    private static void mapStorageQosToEntity(Qos model, StorageQos entity) {
         if (model.isSetMaxThroughput()) {
             entity.setMaxThroughput(IntegerMapper.mapMinusOneToNull(model.getMaxThroughput()));
         }

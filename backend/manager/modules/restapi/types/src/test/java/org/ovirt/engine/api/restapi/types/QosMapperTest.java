@@ -1,18 +1,18 @@
 package org.ovirt.engine.api.restapi.types;
 
-import org.ovirt.engine.api.model.QoS;
+import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 
-public abstract class QosMapperTest extends AbstractInvertibleMappingTest<QoS, QosBase, QosBase> {
+public abstract class QosMapperTest extends AbstractInvertibleMappingTest<Qos, QosBase, QosBase> {
 
     public QosMapperTest() {
-        super(QoS.class,
+        super(Qos.class,
                 QosBase.class,
                 QosBase.class);
     }
 
     @Override
-    protected void verify(QoS model, QoS transform) {
+    protected void verify(Qos model, Qos transform) {
         assertNotNull(transform);
         assertEquals(model.getName(), transform.getName());
         assertEquals(model.getId(), transform.getId());

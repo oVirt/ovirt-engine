@@ -29,6 +29,8 @@ The following XML schema complex types have been renamed:
 - `MAC` - `Mac`
 - `NIC` - `Nic`
 - `PreviewVMs` - `PreviewVms`
+- `QoS` - `Qos`
+- `QoSs` - `Qoss`
 
 First column is the old name, and second column is the new name.
 

@@ -8,7 +8,7 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkStatus;
-import org.ovirt.engine.api.model.QoS;
+import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.model.Usages;
 import org.ovirt.engine.api.model.VLAN;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
@@ -130,7 +130,7 @@ public class NetworkMapper {
 
         Guid entityQosId = entity.getQosId();
         if (entityQosId != null) {
-            QoS qos = new QoS();
+            Qos qos = new Qos();
             qos.setId(entityQosId.toString());
             model.setQos(qos);
         }

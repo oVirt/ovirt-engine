@@ -5316,9 +5316,9 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="qos" type="QoS" />
+  <xs:element name="qos" type="Qos" />
 
-  <xs:complexType name="QoS">
+  <xs:complexType name="Qos">
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
@@ -5388,15 +5388,15 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="qoss" type="QoSs" />
+  <xs:element name="qoss" type="Qoss" />
 
-  <xs:complexType name="QoSs">
+  <xs:complexType name="Qoss">
     <xs:complexContent>
       <xs:extension base="BaseResources">
         <xs:sequence>
           <xs:annotation>
             <xs:appinfo>
-              <jaxb:property name="QoSs" />
+              <jaxb:property name="Qoss" />
             </xs:appinfo>
           </xs:annotation>
           <xs:element ref="qos" minOccurs="0"

@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Bonding;
 import org.ovirt.engine.api.model.HostNic;
-import org.ovirt.engine.api.model.QoS;
+import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.model.QosType;
 import org.ovirt.engine.api.model.Slaves;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
@@ -89,7 +89,7 @@ public class HostNicMapperTest extends AbstractInvertibleMappingTest<HostNic, Vd
     @Override
     protected HostNic postPopulate(HostNic model) {
         HostNic hostNIC = super.postPopulate(model);
-        QoS qos = hostNIC.getQos();
+        Qos qos = hostNIC.getQos();
         qos.setType(QosType.HOSTNETWORK.name());
         qos.setName(null);
         qos.setDataCenter(null);

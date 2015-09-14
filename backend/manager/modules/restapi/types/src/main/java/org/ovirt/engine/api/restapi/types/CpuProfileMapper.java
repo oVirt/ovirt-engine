@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CpuProfile;
-import org.ovirt.engine.api.model.QoS;
+import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 
 public class CpuProfileMapper {
@@ -47,7 +47,7 @@ public class CpuProfileMapper {
             model.getCluster().setId(entity.getClusterId().toString());
         }
         if (entity.getQosId() != null) {
-            model.setQos(new QoS());
+            model.setQos(new Qos());
             model.getQos().setId(entity.getQosId().toString());
         }
 

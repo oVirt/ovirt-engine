@@ -1,12 +1,12 @@
 package org.ovirt.engine.api.restapi.types;
 
-import org.ovirt.engine.api.model.QoS;
+import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.model.QosType;
 
 public class CpuQosMapperTest extends QosMapperTest {
 
     @Override
-    protected void verify(QoS model, QoS transform) {
+    protected void verify(Qos model, Qos transform) {
         super.verify(model, transform);
 
         // cpu limits:
@@ -14,7 +14,7 @@ public class CpuQosMapperTest extends QosMapperTest {
     }
 
     @Override
-    protected QoS postPopulate(QoS model) {
+    protected Qos postPopulate(Qos model) {
         model = super.postPopulate(model);
         model.setType(QosType.CPU.name().toLowerCase());
         return model;
