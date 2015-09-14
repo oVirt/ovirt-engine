@@ -8,7 +8,7 @@ import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.InstanceTypes;
 import org.ovirt.engine.api.model.Template;
-import org.ovirt.engine.api.model.VirtIOSCSI;
+import org.ovirt.engine.api.model.VirtioScsi;
 import org.ovirt.engine.api.resource.InstanceTypeResource;
 import org.ovirt.engine.api.resource.InstanceTypesResource;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
@@ -117,7 +117,7 @@ public class BackendInstanceTypesResource
         }
         model.getConsole().setEnabled(!getConsoleDevicesForEntity(entity.getId()).isEmpty());
         if (!model.isSetVirtioScsi()) {
-            model.setVirtioScsi(new VirtIOSCSI());
+            model.setVirtioScsi(new VirtioScsi());
         }
         model.getVirtioScsi().setEnabled(!VmHelper.getVirtioScsiControllersForEntity(this, entity.getId()).isEmpty());
         model.setSoundcardEnabled(!VmHelper.getSoundDevicesForEntity(this, entity.getId()).isEmpty());

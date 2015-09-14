@@ -15,7 +15,7 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
 import org.ovirt.engine.api.model.VM;
-import org.ovirt.engine.api.model.VirtIOSCSI;
+import org.ovirt.engine.api.model.VirtioScsi;
 import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.TemplatesResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
@@ -282,7 +282,7 @@ public class BackendTemplatesResource
         }
         model.getConsole().setEnabled(!getConsoleDevicesForEntity(entity.getId()).isEmpty());
         if (!model.isSetVirtioScsi()) {
-            model.setVirtioScsi(new VirtIOSCSI());
+            model.setVirtioScsi(new VirtioScsi());
         }
         model.getVirtioScsi().setEnabled(!VmHelper.getVirtioScsiControllersForEntity(this, entity.getId()).isEmpty());
         model.setSoundcardEnabled(!VmHelper.getSoundDevicesForEntity(this, entity.getId()).isEmpty());

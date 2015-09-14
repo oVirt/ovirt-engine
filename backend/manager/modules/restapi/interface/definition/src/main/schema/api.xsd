@@ -1592,9 +1592,9 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:element name="virtio_scsi" type="VirtIO_SCSI"/>
+  <xs:element name="virtio_scsi" type="VirtioScsi"/>
 
-  <xs:complexType name="VirtIO_SCSI">
+  <xs:complexType name="VirtioScsi">
     <xs:sequence>
       <xs:element name="enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>

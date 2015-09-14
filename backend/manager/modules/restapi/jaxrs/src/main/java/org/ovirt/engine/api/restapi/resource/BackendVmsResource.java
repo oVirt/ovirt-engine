@@ -34,7 +34,7 @@ import org.ovirt.engine.api.model.Tags;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
-import org.ovirt.engine.api.model.VirtIOSCSI;
+import org.ovirt.engine.api.model.VirtioScsi;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmsResource;
@@ -696,7 +696,7 @@ public class BackendVmsResource extends
 
     protected void setVirtioScsiController(VM model) {
         if (!model.isSetVirtioScsi()) {
-            model.setVirtioScsi(new VirtIOSCSI());
+            model.setVirtioScsi(new VirtioScsi());
         }
         model.getVirtioScsi().setEnabled(!VmHelper.getVirtioScsiControllersForEntity(this, new Guid(model.getId())).isEmpty());
     }
