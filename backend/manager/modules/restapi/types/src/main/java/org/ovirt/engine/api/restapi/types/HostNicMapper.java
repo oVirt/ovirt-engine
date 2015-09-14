@@ -8,7 +8,7 @@ import org.ovirt.engine.api.model.Bonding;
 import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.Ip;
-import org.ovirt.engine.api.model.MAC;
+import org.ovirt.engine.api.model.Mac;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NicStatus;
 import org.ovirt.engine.api.model.Option;
@@ -185,7 +185,7 @@ public class HostNicMapper {
             }
         }
         if (entity.getMacAddress() != null) {
-            model.setMac(new MAC());
+            model.setMac(new Mac());
             model.getMac().setAddress(entity.getMacAddress());
         }
         if(entity.getStatistics().getStatus()!=InterfaceStatus.NONE){

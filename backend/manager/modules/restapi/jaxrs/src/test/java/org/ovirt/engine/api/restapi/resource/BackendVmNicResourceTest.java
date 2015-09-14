@@ -16,7 +16,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.MAC;
+import org.ovirt.engine.api.model.Mac;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Statistic;
@@ -273,7 +273,7 @@ public class BackendVmNicResourceTest
 
     protected NIC getNic(boolean withNetwork) {
         NIC nic = new NIC();
-        nic.setMac(new MAC());
+        nic.setMac(new Mac());
         nic.getMac().setAddress("00:1a:4a:16:85:18");
         if (withNetwork) {
             Network network = new Network();

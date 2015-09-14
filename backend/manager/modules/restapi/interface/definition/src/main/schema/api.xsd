@@ -2574,9 +2574,9 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="mac" type="MAC"/>
+  <xs:element name="mac" type="Mac"/>
 
-  <xs:complexType name="MAC">
+  <xs:complexType name="Mac">
     <xs:sequence>
       <xs:element name="address" type="xs:string" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>

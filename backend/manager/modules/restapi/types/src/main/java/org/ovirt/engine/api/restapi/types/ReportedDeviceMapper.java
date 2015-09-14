@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.Ips;
-import org.ovirt.engine.api.model.MAC;
+import org.ovirt.engine.api.model.Mac;
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.ReportedDeviceType;
 import org.ovirt.engine.api.model.VM;
@@ -24,7 +24,7 @@ public class ReportedDeviceMapper {
             model.getVm().setId(entity.getVmId().toString());
         }
         if (entity.getMacAddress() != null) {
-            MAC mac = new MAC();
+            Mac mac = new Mac();
             mac.setAddress(entity.getMacAddress());
             model.setMac(mac);
         }

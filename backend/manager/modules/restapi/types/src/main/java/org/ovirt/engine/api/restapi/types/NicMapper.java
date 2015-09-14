@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
-import org.ovirt.engine.api.model.MAC;
+import org.ovirt.engine.api.model.Mac;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.api.model.VM;
@@ -63,7 +63,7 @@ public class NicMapper {
             model.setName(entity.getName());
         }
         if (entity.getMacAddress() != null) {
-            model.setMac(new MAC());
+            model.setMac(new Mac());
             model.getMac().setAddress(entity.getMacAddress());
         }
 
