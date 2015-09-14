@@ -3318,9 +3318,9 @@
       </xs:sequence>
   </xs:complexType>
 
-  <xs:element name="dns" type="DNS"/>
+  <xs:element name="dns" type="Dns"/>
 
-  <xs:complexType name="DNS">
+  <xs:complexType name="Dns">
     <xs:sequence>
       <xs:element name="servers" type="Hosts" minOccurs="0" maxOccurs="1"/>
       <xs:element name="search_domains" type="Hosts" minOccurs="0" maxOccurs="1"/>

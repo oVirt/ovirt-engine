@@ -19,6 +19,7 @@ The following XML schema complex types have been renamed:
 - `API` - `Api`
 - `CPU` - `Cpu`
 - `CPUs` - `Cpus`
+- `DNS` - `Dns`
 
 First column is the old name, and second column is the new name.
 
