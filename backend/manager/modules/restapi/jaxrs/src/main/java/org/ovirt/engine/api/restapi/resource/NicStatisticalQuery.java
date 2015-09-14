@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.restapi.util.RxTxCalculator;
@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
 
-public class NicStatisticalQuery extends AbstractStatisticalQuery<NIC, VmNetworkInterface> {
+public class NicStatisticalQuery extends AbstractStatisticalQuery<Nic, VmNetworkInterface> {
 
     private static final Statistic DATA_RX = create("data.current.rx", "Receive data rate",  GAUGE,   BYTES_PER_SECOND, DECIMAL);
     private static final Statistic DATA_TX = create("data.current.tx", "Transmit data rate", GAUGE,   BYTES_PER_SECOND, DECIMAL);
@@ -20,12 +20,12 @@ public class NicStatisticalQuery extends AbstractStatisticalQuery<NIC, VmNetwork
     private static final Statistic TOTAL_RX = create("data.total.rx", "Total received data", COUNTER, BYTES, INTEGER);
     private static final Statistic TOTAL_TX = create("data.total.tx", "Total transmitted data", COUNTER, BYTES, INTEGER);
 
-    protected NicStatisticalQuery(NIC parent) {
+    protected NicStatisticalQuery(Nic parent) {
         this(null, parent);
     }
 
-    protected NicStatisticalQuery(AbstractBackendResource<NIC, VmNetworkInterface>.EntityIdResolver<Guid> resolver, NIC parent) {
-        super(NIC.class, parent, resolver);
+    protected NicStatisticalQuery(AbstractBackendResource<Nic, VmNetworkInterface>.EntityIdResolver<Guid> resolver, Nic parent) {
+        super(Nic.class, parent, resolver);
     }
 
     @Override
@@ -46,8 +46,8 @@ public class NicStatisticalQuery extends AbstractStatisticalQuery<NIC, VmNetwork
         return statistic;
     }
 
-    private NIC clone(NIC parent) {
-        NIC nic = new NIC();
+    private Nic clone(Nic parent) {
+        Nic nic = new Nic();
         nic.setId(parent.getId());
         nic.setVm(new VM());
         nic.getVm().setId(parent.getVm().getId());

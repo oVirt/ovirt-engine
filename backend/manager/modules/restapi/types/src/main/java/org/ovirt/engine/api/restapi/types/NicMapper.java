@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.Mac;
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VnicProfile;
@@ -9,8 +9,8 @@ import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 
 public class NicMapper {
-    @Mapping(from = NIC.class, to = VmNetworkInterface.class)
-    public static VmNetworkInterface map(NIC model, VmNetworkInterface template) {
+    @Mapping(from = Nic.class, to = VmNetworkInterface.class)
+    public static VmNetworkInterface map(Nic model, VmNetworkInterface template) {
         VmNetworkInterface entity = template != null ? template : new VmNetworkInterface();
         if (model.isSetVm() && model.getVm().isSetId()) {
             entity.setVmId(GuidUtils.asGuid(model.getVm().getId()));
@@ -48,9 +48,9 @@ public class NicMapper {
         return entity;
     }
 
-    @Mapping(from = VmNetworkInterface.class, to = NIC.class)
-    public static NIC map(VmNetworkInterface entity, NIC template) {
-        NIC model = template != null ? template : new NIC();
+    @Mapping(from = VmNetworkInterface.class, to = Nic.class)
+    public static Nic map(VmNetworkInterface entity, Nic template) {
+        Nic model = template != null ? template : new Nic();
 
         if (entity.getVmId() != null) {
             model.setVm(new VM());

@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import org.ovirt.engine.api.model.InstanceType;
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendInstanceTypeNicsResource extends BackendTemplateNicsResource {
@@ -10,7 +10,7 @@ public class BackendInstanceTypeNicsResource extends BackendTemplateNicsResource
     }
 
     @Override
-    public NIC addParents(NIC nic) {
+    public Nic addParents(Nic nic) {
         InstanceType parent = new InstanceType();
         parent.setId(parentId.toString());
         nic.setInstanceType(parent);

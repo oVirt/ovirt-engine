@@ -27,6 +27,7 @@ The following XML schema complex types have been renamed:
 - `IPs` - `Ips`
 - `KSM` - `Ksm`
 - `MAC` - `Mac`
+- `NIC` - `Nic`
 
 First column is the old name, and second column is the new name.
 

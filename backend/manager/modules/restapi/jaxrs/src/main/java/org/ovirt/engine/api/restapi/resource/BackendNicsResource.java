@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class BackendNicsResource
-        extends AbstractBackendDevicesResource<NIC, Nics, VmNetworkInterface>
-        implements DevicesResource<NIC, Nics> {
+        extends AbstractBackendDevicesResource<Nic, Nics, VmNetworkInterface>
+        implements DevicesResource<Nic, Nics> {
 
     static final String SUB_COLLECTIONS = "statistics";
 
@@ -25,7 +25,7 @@ public abstract class BackendNicsResource
                                VdcQueryParametersBase queryParams,
                                VdcActionType addAction,
                                VdcActionType updateAction) {
-        super(NIC.class,
+        super(Nic.class,
               Nics.class,
               VmNetworkInterface.class,
               parentId,
@@ -41,7 +41,7 @@ public abstract class BackendNicsResource
         Nics nics = new Nics();
         List<VmNetworkInterface> entities = getBackendCollection(queryType, queryParams);
         for (VmNetworkInterface entity : entities) {
-            NIC nic = populate(map(entity), entity);
+            Nic nic = populate(map(entity), entity);
             if (validate(nic)) {
                 nics.getNics().add(addLinks(nic));
             }
@@ -100,7 +100,7 @@ public abstract class BackendNicsResource
     }
 
     @Override
-    public Response add(NIC device) {
+    public Response add(Nic device) {
         validateParameters(device, getRequiredAddFields());
         return performCreate(
             addAction,

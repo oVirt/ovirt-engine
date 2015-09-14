@@ -34,8 +34,8 @@ import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Host;
-import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -347,7 +347,7 @@ public class LinkHelperTest extends Assert {
 
     @Test
     public void testNicLinks() throws Exception {
-        NIC nic = new NIC();
+        Nic nic = new Nic();
         nic.setId(NIC_ID);
 
         nic.setVm(new VM());

@@ -11,7 +11,7 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
@@ -19,10 +19,10 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendReadOnlyNicResourceTest
-        extends AbstractBackendSubResourceTest<NIC, VmNetworkInterface, BackendReadOnlyDeviceResource<NIC, Nics, VmNetworkInterface>> {
+        extends AbstractBackendSubResourceTest<Nic, VmNetworkInterface, BackendReadOnlyDeviceResource<Nic, Nics, VmNetworkInterface>> {
 
     public BackendReadOnlyNicResourceTest() {
-        super(new BackendReadOnlyDeviceResource<NIC, Nics, VmNetworkInterface>(NIC.class,
+        super(new BackendReadOnlyDeviceResource<Nic, Nics, VmNetworkInterface>(Nic.class,
                                                                                VmNetworkInterface.class,
                                                                                GUIDS[1],
                                                                                getCollection()));
@@ -64,7 +64,7 @@ public class BackendReadOnlyNicResourceTest
         setUpEntityQueryExpectations(1);
         control.replay();
 
-        NIC nic = resource.get();
+        Nic nic = resource.get();
         verifyModelSpecific(nic, 1);
         verifyLinks(nic);
     }

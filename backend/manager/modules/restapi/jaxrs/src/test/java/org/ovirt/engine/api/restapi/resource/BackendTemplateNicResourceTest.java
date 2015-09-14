@@ -8,7 +8,7 @@ import java.util.List;
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplateNicResourceTest
-        extends AbstractBackendSubResourceTest<NIC, VmNetworkInterface, BackendTemplateNicResource> {
+        extends AbstractBackendSubResourceTest<Nic, VmNetworkInterface, BackendTemplateNicResource> {
 
     private static final Guid TEMPLATE_ID = GUIDS[0];
     private static final Guid NIC_ID = GUIDS[1];

@@ -17,8 +17,8 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Mac;
-import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.api.restapi.util.RxTxCalculator;
@@ -35,7 +35,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmNicResourceTest
-        extends AbstractBackendSubResourceTest<NIC, VmNetworkInterface, BackendVmNicResource> {
+        extends AbstractBackendSubResourceTest<Nic, VmNetworkInterface, BackendVmNicResource> {
 
     protected static final Guid NIC_ID = GUIDS[1];
     protected static final String ADDRESS = "10.11.12.13";
@@ -81,7 +81,7 @@ public class BackendVmNicResourceTest
         setGetGuestAgentQueryExpectations(1);
         control.replay();
 
-        NIC nic = resource.get();
+        Nic nic = resource.get();
         verifyModelSpecific(nic, 1);
         verifyLinks(nic);
     }
@@ -96,7 +96,7 @@ public class BackendVmNicResourceTest
             setGetGuestAgentQueryExpectations(1);
             control.replay();
 
-            NIC nic = resource.get();
+            Nic nic = resource.get();
             assertTrue(nic.isSetStatistics());
             verifyModelSpecific(nic, 1);
             verifyLinks(nic);
@@ -133,7 +133,7 @@ public class BackendVmNicResourceTest
             true,
             true));
 
-        NIC nic = resource.update(getNic(false));
+        Nic nic = resource.update(getNic(false));
         assertNotNull(nic);
     }
 
@@ -142,8 +142,8 @@ public class BackendVmNicResourceTest
         VmNetworkInterface entity = setUpStatisticalExpectations();
 
         @SuppressWarnings("unchecked")
-        BackendStatisticsResource<NIC, VmNetworkInterface> statisticsResource =
-            (BackendStatisticsResource<NIC, VmNetworkInterface>)((NicResource) resource).getStatisticsResource();
+        BackendStatisticsResource<Nic, VmNetworkInterface> statisticsResource =
+            (BackendStatisticsResource<Nic, VmNetworkInterface>)((NicResource) resource).getStatisticsResource();
         assertNotNull(statisticsResource);
 
         verifyQuery(statisticsResource.getQuery(), entity);
@@ -255,8 +255,8 @@ public class BackendVmNicResourceTest
         return entity;
     }
 
-    protected void verifyQuery(AbstractStatisticalQuery<NIC, VmNetworkInterface> query, VmNetworkInterface entity) throws Exception {
-        assertEquals(NIC.class, query.getParentType());
+    protected void verifyQuery(AbstractStatisticalQuery<Nic, VmNetworkInterface> query, VmNetworkInterface entity) throws Exception {
+        assertEquals(Nic.class, query.getParentType());
         assertSame(entity, query.resolve(NIC_ID));
         List<Statistic> statistics = query.getStatistics(entity);
         verifyStatistics(statistics,
@@ -271,8 +271,8 @@ public class BackendVmNicResourceTest
         assertEquals(PARENT_ID.toString(), adopted.getNic().getVm().getId());
     }
 
-    protected NIC getNic(boolean withNetwork) {
-        NIC nic = new NIC();
+    protected Nic getNic(boolean withNetwork) {
+        Nic nic = new Nic();
         nic.setMac(new Mac());
         nic.getMac().setAddress("00:1a:4a:16:85:18");
         if (withNetwork) {

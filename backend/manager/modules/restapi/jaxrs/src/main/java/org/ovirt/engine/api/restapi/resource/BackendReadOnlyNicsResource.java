@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -9,11 +9,11 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendReadOnlyNicsResource
-        extends AbstractBackendReadOnlyDevicesResource<NIC, Nics, VmNetworkInterface>
-        implements ReadOnlyDevicesResource<NIC, Nics> {
+        extends AbstractBackendReadOnlyDevicesResource<Nic, Nics, VmNetworkInterface>
+        implements ReadOnlyDevicesResource<Nic, Nics> {
 
     public BackendReadOnlyNicsResource(Guid parentId, VdcQueryType queryType, VdcQueryParametersBase queryParams) {
-        super(NIC.class, Nics.class, VmNetworkInterface.class, parentId, queryType, queryParams);
+        super(Nic.class, Nics.class, VmNetworkInterface.class, parentId, queryType, queryParams);
     }
 
     @Override

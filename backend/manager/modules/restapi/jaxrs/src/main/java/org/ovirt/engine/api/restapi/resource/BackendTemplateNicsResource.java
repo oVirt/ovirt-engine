@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.resource.DeviceResource;
@@ -16,7 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplateNicsResource
             extends BackendNicsResource
-            implements DevicesResource<NIC, Nics>{
+            implements DevicesResource<Nic, Nics>{
 
     public BackendTemplateNicsResource(Guid parentId) {
         super(parentId,
@@ -27,25 +27,25 @@ public class BackendTemplateNicsResource
     }
 
     @Override
-    protected ParametersProvider<NIC, VmNetworkInterface> getUpdateParametersProvider() {
+    protected ParametersProvider<Nic, VmNetworkInterface> getUpdateParametersProvider() {
         return new UpdateParametersProvider();
     }
 
-    protected class UpdateParametersProvider implements ParametersProvider<NIC, VmNetworkInterface> {
+    protected class UpdateParametersProvider implements ParametersProvider<Nic, VmNetworkInterface> {
         @Override
-        public VdcActionParametersBase getParameters(NIC incoming, VmNetworkInterface entity) {
+        public VdcActionParametersBase getParameters(Nic incoming, VmNetworkInterface entity) {
             VmNetworkInterface nic = map(incoming, entity);
             return new AddVmTemplateInterfaceParameters(parentId, nic);
         }
     }
 
     @Override
-    protected VdcActionParametersBase getAddParameters(VmNetworkInterface entity, NIC nic) {
+    protected VdcActionParametersBase getAddParameters(VmNetworkInterface entity, Nic nic) {
         return new AddVmTemplateInterfaceParameters(parentId, entity);
     }
 
     @Override
-    public DeviceResource<NIC> getDeviceSubResource(String id) {
+    public DeviceResource<Nic> getDeviceSubResource(String id) {
         return inject(
             new BackendTemplateNicResource(
                 parentId,
@@ -60,7 +60,7 @@ public class BackendTemplateNicsResource
     }
 
     @Override
-    public NIC addParents(NIC device) {
+    public Nic addParents(Nic device) {
         device.setTemplate(new Template());
         device.getTemplate().setId(parentId.toString());
         return device;

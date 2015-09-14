@@ -20,10 +20,10 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface NicResource extends DeviceResource<NIC>, MeasurableResource {
+public interface NicResource extends DeviceResource<Nic>, MeasurableResource {
     @DELETE
     Response remove();
 }

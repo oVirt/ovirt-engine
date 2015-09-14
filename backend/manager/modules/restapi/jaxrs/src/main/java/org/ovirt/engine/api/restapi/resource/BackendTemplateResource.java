@@ -8,7 +8,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
 import org.ovirt.engine.api.model.Console;
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.VirtIOSCSI;
@@ -122,7 +122,7 @@ public class BackendTemplateResource
     }
 
     @Override
-    public DevicesResource<NIC, Nics> getNicsResource() {
+    public DevicesResource<Nic, Nics> getNicsResource() {
         return inject(new BackendTemplateNicsResource(guid));
     }
 

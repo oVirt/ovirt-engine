@@ -37,7 +37,7 @@ import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.Kernel;
 import org.ovirt.engine.api.model.MemoryPolicy;
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.NumaTuneMode;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.OsType;
@@ -1081,7 +1081,7 @@ public class VmMapper extends VmBaseMapper {
         if (model.isSetNetworkConfiguration()) {
             if (model.getNetworkConfiguration().isSetNics()) {
                 List<VmInitNetwork> interfaces = new ArrayList<VmInitNetwork>();
-                for (NIC iface : model.getNetworkConfiguration().getNics().getNics()) {
+                for (Nic iface : model.getNetworkConfiguration().getNics().getNics()) {
                     VmInitNetwork vmInitInterface = new VmInitNetwork();
                     if (iface.isSetName()) {
                         vmInitInterface.setName(iface.getName());

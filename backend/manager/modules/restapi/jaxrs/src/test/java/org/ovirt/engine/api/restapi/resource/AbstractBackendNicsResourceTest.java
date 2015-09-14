@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 @Ignore
-public class AbstractBackendNicsResourceTest<T extends AbstractBackendReadOnlyDevicesResource<NIC, Nics, VmNetworkInterface>>
-        extends AbstractBackendCollectionResourceTest<NIC, VmNetworkInterface, T> {
+public class AbstractBackendNicsResourceTest<T extends AbstractBackendReadOnlyDevicesResource<Nic, Nics, VmNetworkInterface>>
+        extends AbstractBackendCollectionResourceTest<Nic, VmNetworkInterface, T> {
 
     protected final static Guid PARENT_ID = GUIDS[1];
     protected static final String[] ADDRESSES = { "10.11.12.13", "13.12.11.10", "10.01.10.01" };
@@ -121,24 +121,24 @@ public class AbstractBackendNicsResourceTest<T extends AbstractBackendReadOnlyDe
     }
 
     @Override
-    protected List<NIC> getCollection() {
+    protected List<Nic> getCollection() {
         return collection.list().getNics();
     }
 
-    static NIC getModel(int index) {
-        NIC model = new NIC();
+    static Nic getModel(int index) {
+        Nic model = new Nic();
         model.setName(NAMES[index]);
         model.setInterface(NicInterface.RTL8139_VIRTIO.value());
         return model;
     }
 
     @Override
-    protected void verifyModel(NIC model, int index) {
+    protected void verifyModel(Nic model, int index) {
         verifyModelSpecific(model, index);
         verifyLinks(model);
     }
 
-    static void verifyModelSpecific(NIC model, int index) {
+    static void verifyModelSpecific(Nic model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
         assertEquals(NAMES[index].toString(), model.getName());
         assertTrue(model.isSetVm());

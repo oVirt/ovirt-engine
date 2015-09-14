@@ -750,7 +750,7 @@ actions:
   description: update the network interface for the given virtual machine
   request:
     body:
-      parameterType: NIC
+      parameterType: Nic
       signatures:
       - optionalArguments:
           nic.vnic_profile.id: xs:string
@@ -776,7 +776,7 @@ actions:
   description: add a new network interface to the given virtual machine
   request:
     body:
-      parameterType: NIC
+      parameterType: Nic
       signatures:
       - mandatoryArguments:
           nic.name: xs:string
@@ -2840,7 +2840,7 @@ actions:
   description: add a new network interface card to the template
   request:
     body:
-      parameterType: NIC
+      parameterType: Nic
       signatures:
       - mandatoryArguments:
           nic.name: xs:string
@@ -2859,7 +2859,7 @@ actions:
   description: update the specified network interface card attached to the template
   request:
     body:
-      parameterType: NIC
+      parameterType: Nic
       signatures:
       - optionalArguments:
           nic.vnic_profile.id: xs:string

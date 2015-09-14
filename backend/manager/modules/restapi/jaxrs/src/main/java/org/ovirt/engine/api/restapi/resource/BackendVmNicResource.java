@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.VmNicResource;
@@ -20,9 +20,9 @@ public class BackendVmNicResource extends AbstractBackendNicResource implements 
     protected BackendVmNicResource(
             Guid vmId,
             String nicId,
-            AbstractBackendReadOnlyDevicesResource<NIC, Nics, VmNetworkInterface> collection,
+            AbstractBackendReadOnlyDevicesResource<Nic, Nics, VmNetworkInterface> collection,
             VdcActionType updateType,
-            ParametersProvider<NIC, VmNetworkInterface> updateParametersProvider,
+            ParametersProvider<Nic, VmNetworkInterface> updateParametersProvider,
             String[] requiredUpdateFields,
             String[] subCollections) {
         super(
@@ -37,22 +37,22 @@ public class BackendVmNicResource extends AbstractBackendNicResource implements 
     }
 
     @Override
-    protected NIC doPopulate(NIC model, VmNetworkInterface entity) {
+    protected Nic doPopulate(Nic model, VmNetworkInterface entity) {
         BackendVmNicsResource parent = (BackendVmNicsResource) collection;
         parent.addReportedDevices(model, entity);
         return model;
     }
 
     @Override
-    protected NIC deprecatedPopulate(NIC model, VmNetworkInterface entity) {
+    protected Nic deprecatedPopulate(Nic model, VmNetworkInterface entity) {
         BackendVmNicsResource parent = (BackendVmNicsResource) collection;
         parent.addStatistics(model, entity);
         return model;
     }
 
     @Override
-    public NIC update(NIC device) {
-        validateEnums(NIC.class, device);
+    public Nic update(Nic device) {
+        validateEnums(Nic.class, device);
         return super.update(device);
     }
 
@@ -63,7 +63,7 @@ public class BackendVmNicResource extends AbstractBackendNicResource implements 
 
     @Override
     public Response activate(Action action) {
-        NIC nic = get();
+        Nic nic = get();
         nic.setPlugged(true);
         update(nic);
         return actionSuccess(action);
@@ -71,14 +71,14 @@ public class BackendVmNicResource extends AbstractBackendNicResource implements 
 
     @Override
     public Response deactivate(Action action) {
-        NIC nic = get();
+        Nic nic = get();
         nic.setPlugged(false);
         update(nic);
         return actionSuccess(action);
     }
 
     @Override
-    public NIC get() {
+    public Nic get() {
         return super.get();//explicit call solves REST-Easy confusion
     }
 

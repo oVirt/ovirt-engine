@@ -1,23 +1,23 @@
 package org.ovirt.engine.api.restapi.types;
 
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 
-public class NicMapperTest extends AbstractInvertibleMappingTest<NIC, VmNetworkInterface, VmNetworkInterface> {
+public class NicMapperTest extends AbstractInvertibleMappingTest<Nic, VmNetworkInterface, VmNetworkInterface> {
 
     public NicMapperTest() {
-        super(NIC.class, VmNetworkInterface.class, VmNetworkInterface.class);
+        super(Nic.class, VmNetworkInterface.class, VmNetworkInterface.class);
     }
 
     @Override
-    protected NIC postPopulate(NIC model) {
+    protected Nic postPopulate(Nic model) {
         model.setInterface(MappingTestHelper.shuffle(NicInterface.class).value());
         return model;
     }
 
     @Override
-    protected void verify(NIC model, NIC transform) {
+    protected void verify(Nic model, Nic transform) {
         assertNotNull(transform);
         assertEquals(model.getName(), transform.getName());
         assertEquals(model.getId(), transform.getId());

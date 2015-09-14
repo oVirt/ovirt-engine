@@ -7,7 +7,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.InstanceType;
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.VirtIOSCSI;
 import org.ovirt.engine.api.resource.CreationResource;
@@ -84,7 +84,7 @@ public class BackendInstanceTypeResource
     }
 
     @Override
-    public DevicesResource<NIC, Nics> getNicsResource() {
+    public DevicesResource<Nic, Nics> getNicsResource() {
         return inject(new BackendInstanceTypeNicsResource(guid));
     }
 

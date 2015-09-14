@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface VmNicResource extends NicResource {
@@ -39,11 +39,11 @@ public interface VmNicResource extends NicResource {
     @PUT
     @Override
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-    public NIC update(NIC device);
+    public Nic update(Nic device);
 
     @GET
     @Override
-    public NIC get();
+    public Nic get();
 
     @DELETE
     Response remove();

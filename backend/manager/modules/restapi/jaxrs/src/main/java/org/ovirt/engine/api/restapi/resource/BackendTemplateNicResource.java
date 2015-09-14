@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
@@ -17,9 +17,9 @@ public class BackendTemplateNicResource extends AbstractBackendNicResource imple
     protected BackendTemplateNicResource(
             Guid templateId,
             String nicId,
-            AbstractBackendReadOnlyDevicesResource<NIC, Nics, VmNetworkInterface> collection,
+            AbstractBackendReadOnlyDevicesResource<Nic, Nics, VmNetworkInterface> collection,
             VdcActionType updateType,
-            ParametersProvider<NIC, VmNetworkInterface> updateParametersProvider,
+            ParametersProvider<Nic, VmNetworkInterface> updateParametersProvider,
             String[] requiredUpdateFields,
             String... subCollections) {
         super(

@@ -3812,7 +3812,7 @@
 
   <xs:element name="disk_snapshots" type="DiskSnapshots"/>
 
-  <xs:element name="nic" type="NIC"/>
+  <xs:element name="nic" type="Nic"/>
 
   <xs:element name="nics" type="Nics"/>
 
@@ -4001,7 +4001,7 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="NIC">
+  <xs:complexType name="Nic">
     <xs:complexContent>
       <xs:extension base="BaseDevice">
         <xs:sequence>

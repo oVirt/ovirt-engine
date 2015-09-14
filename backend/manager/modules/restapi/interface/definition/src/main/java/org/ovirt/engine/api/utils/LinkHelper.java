@@ -76,9 +76,9 @@ import org.ovirt.engine.api.model.Label;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.LinkCapabilities;
 import org.ovirt.engine.api.model.MacPool;
-import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkAttachment;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.NumaNode;
 import org.ovirt.engine.api.model.OpenStackImage;
 import org.ovirt.engine.api.model.OpenStackImageProvider;
@@ -434,7 +434,7 @@ public class LinkHelper {
         map.add(DeviceResource.class, DevicesResource.class, Template.class);
         map.add(ReadOnlyDeviceResource.class, ReadOnlyDevicesResource.class, Template.class);
         map.add(VmNicResource.class, DevicesResource.class, VM.class);
-        TYPES.put(NIC.class, map);
+        TYPES.put(Nic.class, map);
 
         map = new ParentToCollectionMap(VmNumaNodeResource.class, VmNumaNodesResource.class, VM.class);
         TYPES.put(VirtualNumaNode.class, map);
@@ -502,7 +502,7 @@ public class LinkHelper {
         map.add(StatisticResource.class, StatisticsResource.class, Host.class);
         map.add(StatisticResource.class, StatisticsResource.class, HostNic.class);
         map.add(StatisticResource.class, StatisticsResource.class, NumaNode.class);
-        map.add(StatisticResource.class, StatisticsResource.class, NIC.class);
+        map.add(StatisticResource.class, StatisticsResource.class, Nic.class);
         map.add(StatisticResource.class, StatisticsResource.class, VM.class);
         map.add(StatisticResource.class, StatisticsResource.class, GlusterBrick.class);
         TYPES.put(Statistic.class, map);

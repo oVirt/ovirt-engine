@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.ovirt.engine.api.restapi.resource.BackendNicsResource.SUB_COLLECTIONS;
 
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
@@ -10,17 +10,17 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class AbstractBackendNicResource extends BackendDeviceResource<NIC, Nics, VmNetworkInterface> implements NicResource {
+public abstract class AbstractBackendNicResource extends BackendDeviceResource<Nic, Nics, VmNetworkInterface> implements NicResource {
 
     protected AbstractBackendNicResource(
             String id,
-            AbstractBackendReadOnlyDevicesResource<NIC, Nics, VmNetworkInterface> collection,
+            AbstractBackendReadOnlyDevicesResource<Nic, Nics, VmNetworkInterface> collection,
             VdcActionType updateType,
-            ParametersProvider<NIC, VmNetworkInterface> updateParametersProvider,
+            ParametersProvider<Nic, VmNetworkInterface> updateParametersProvider,
             String[] requiredUpdateFields,
             String... subCollections) {
         super(
-            NIC.class,
+            Nic.class,
             VmNetworkInterface.class,
             collection.asGuidOr404(id),
             collection,
@@ -41,11 +41,11 @@ public abstract class AbstractBackendNicResource extends BackendDeviceResource<N
             }
         };
         NicStatisticalQuery query = new NicStatisticalQuery(resolver, newModel(id));
-        return inject(new BackendStatisticsResource<NIC, VmNetworkInterface>(entityType, guid, query));
+        return inject(new BackendStatisticsResource<Nic, VmNetworkInterface>(entityType, guid, query));
     }
 
     @Override
-    public NIC update(NIC resource) {
+    public Nic update(Nic resource) {
         validateParameters(resource, requiredUpdateFields);
         return performUpdate(resource, entityResolver, updateType, updateParametersProvider);
     }

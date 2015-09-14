@@ -22,7 +22,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.InstanceType;
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
@@ -32,7 +32,7 @@ public interface InstanceTypeResource extends UpdatableResource<InstanceType>, A
     public Response remove();
 
     @Path("nics")
-    public DevicesResource<NIC, Nics> getNicsResource();
+    public DevicesResource<Nic, Nics> getNicsResource();
 
     @Path("watchdogs")
     public WatchdogsResource getWatchdogsResource();

@@ -7,7 +7,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -32,7 +32,7 @@ public class BackendVmNicsResourceTest
             setGetGuestAgentQueryExpectations(3);
             setUpQueryExpectations("");
 
-            List<NIC> nics = getCollection();
+            List<Nic> nics = getCollection();
             assertTrue(nics.get(0).isSetStatistics());
             verifyCollection(nics);
         } finally {
@@ -56,12 +56,12 @@ public class BackendVmNicsResourceTest
                                   new String[] { "Id" },
                                   new Object[] { PARENT_ID },
                                   asList(getEntity(0)));
-        NIC model = getModel(0);
+        Nic model = getModel(0);
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof NIC);
-        verifyModel((NIC) response.getEntity(), 0);
+        assertTrue(response.getEntity() instanceof Nic);
+        verifyModel((Nic) response.getEntity(), 0);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class BackendVmNicsResourceTest
                                            new Object[] { PARENT_ID },
                                            canDo,
                                            success));
-        NIC model = getModel(0);
+        Nic model = getModel(0);
 
         try {
             collection.add(model);
@@ -93,7 +93,7 @@ public class BackendVmNicsResourceTest
 
     @Test
     public void testAddIncompleteParameters() throws Exception {
-        NIC model = new NIC();
+        Nic model = new Nic();
         model.setName(null);
 
         setUriInfo(setUpBasicUriExpectations());
@@ -102,7 +102,7 @@ public class BackendVmNicsResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "NIC", "add", "name");
+            verifyIncompleteException(wae, "Nic", "add", "name");
         }
     }
 

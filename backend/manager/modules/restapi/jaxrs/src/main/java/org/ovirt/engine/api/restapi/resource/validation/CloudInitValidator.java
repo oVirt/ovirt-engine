@@ -6,7 +6,7 @@ import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.CloudInit;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Files;
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.PayloadEncoding;
 
@@ -19,7 +19,7 @@ public class CloudInitValidator implements Validator<CloudInit> {
             if (model.isSetNetworkConfiguration()) {
                 Nics nics = model.getNetworkConfiguration().getNics();
                 if (nics != null && !nics.getNics().isEmpty()) {
-                    for (NIC nic : nics.getNics()) {
+                    for (Nic nic : nics.getNics()) {
                         if (nic.isSetBootProtocol()) {
                             validateEnum(BootProtocol.class, nic.getBootProtocol(), true);
                         }

@@ -8,7 +8,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.DetailHelper;
-import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.ReportedDevices;
 import org.ovirt.engine.api.model.Statistic;
@@ -38,26 +38,26 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
     }
 
     @Override
-    protected ParametersProvider<NIC, VmNetworkInterface> getUpdateParametersProvider() {
+    protected ParametersProvider<Nic, VmNetworkInterface> getUpdateParametersProvider() {
         return new UpdateParametersProvider();
     }
 
-    protected class UpdateParametersProvider implements ParametersProvider<NIC, VmNetworkInterface> {
+    protected class UpdateParametersProvider implements ParametersProvider<Nic, VmNetworkInterface> {
         @Override
-        public VdcActionParametersBase getParameters(NIC incoming, VmNetworkInterface entity) {
+        public VdcActionParametersBase getParameters(Nic incoming, VmNetworkInterface entity) {
             VmNetworkInterface nic = map(incoming, entity);
             return new AddVmInterfaceParameters(parentId, nic);
         }
     }
 
     @Override
-    public Response add(NIC device) {
-        validateEnums(NIC.class, device);
+    public Response add(Nic device) {
+        validateEnums(Nic.class, device);
         return super.add(device);
     }
 
     @Override
-    protected NIC deprecatedPopulate(NIC model, VmNetworkInterface entity) {
+    protected Nic deprecatedPopulate(Nic model, VmNetworkInterface entity) {
         Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
         addReportedDevices(model, entity);
         if (details.contains("statistics")) {
@@ -66,7 +66,7 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
         return model;
     }
 
-    public void addStatistics(NIC model, VmNetworkInterface entity) {
+    public void addStatistics(Nic model, VmNetworkInterface entity) {
         model.setStatistics(new Statistics());
         NicStatisticalQuery query = new NicStatisticalQuery(newModel(model.getId()));
         List<Statistic> statistics = query.getStatistics(entity);
@@ -76,7 +76,7 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
         model.getStatistics().getStatistics().addAll(statistics);
     }
 
-    void addReportedDevices(NIC model, VmNetworkInterface entity) {
+    void addReportedDevices(Nic model, VmNetworkInterface entity) {
         List<ReportedDevice> devices = getDevices(entity.getVmId(), entity.getMacAddress());
         if (!devices.isEmpty()) {
             ReportedDevices reportedDevices = new ReportedDevices();
@@ -102,7 +102,7 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
     }
 
     @Override
-    protected VdcActionParametersBase getAddParameters(VmNetworkInterface entity, NIC nic) {
+    protected VdcActionParametersBase getAddParameters(VmNetworkInterface entity, Nic nic) {
         return new AddVmInterfaceParameters(parentId, entity);
     }
 
