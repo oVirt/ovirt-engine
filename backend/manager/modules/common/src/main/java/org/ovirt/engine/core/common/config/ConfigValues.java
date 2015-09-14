@@ -2205,6 +2205,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     NetworkExclusivenessPermissiveValidation,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1048576")
+    VMPpc64BitMaxMemorySizeInMB,
+
     Invalid
 
 }

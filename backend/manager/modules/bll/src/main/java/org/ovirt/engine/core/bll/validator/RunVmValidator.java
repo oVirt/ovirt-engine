@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -162,8 +163,10 @@ public class RunVmValidator {
     protected ValidationResult validateMemorySize(VM vm) {
         int maxSize;
         if (getOsRepository().get64bitOss().contains(vm.getOs())) {
-            maxSize = Config.getValue(ConfigValues.VM64BitMaxMemorySizeInMB,
-                    vm.getVdsGroupCompatibilityVersion().getValue());
+            ConfigValues config = vm.getClusterArch() == ArchitectureType.ppc64 ?
+                    ConfigValues.VMPpc64BitMaxMemorySizeInMB :
+                    ConfigValues.VM64BitMaxMemorySizeInMB;
+            maxSize = Config.getValue(config, vm.getVdsGroupCompatibilityVersion().getValue());
         } else {
             maxSize = Config.getValue(ConfigValues.VM32BitMaxMemorySizeInMB);
         }

@@ -13,6 +13,7 @@ import java.util.TimeZone;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -72,8 +73,10 @@ public abstract class VmInfoBuilderBase {
 
         if (FeatureSupported.hotPlugMemory(vm.getVdsGroupCompatibilityVersion(), vm.getClusterArch())) {
             if (osRepository.get64bitOss().contains(vm.getOs())) {
-                createInfo.put(VdsProperties.maxMemSize, Config.getValue(ConfigValues.VM64BitMaxMemorySizeInMB,
-                        vm.getVdsGroupCompatibilityVersion().getValue()));
+                ConfigValues config = vm.getClusterArch() == ArchitectureType.ppc64 ?
+                        ConfigValues.VMPpc64BitMaxMemorySizeInMB :
+                        ConfigValues.VM64BitMaxMemorySizeInMB;
+                createInfo.put(VdsProperties.maxMemSize, Config.getValue(config, vm.getVdsGroupCompatibilityVersion().getValue()));
             } else {
                 createInfo.put(VdsProperties.maxMemSize, Config.getValue(ConfigValues.VM32BitMaxMemorySizeInMB));
             }
