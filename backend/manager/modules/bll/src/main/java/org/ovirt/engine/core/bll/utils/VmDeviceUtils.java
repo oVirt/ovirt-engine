@@ -335,6 +335,7 @@ public class VmDeviceUtils {
     private static Map<String, Object> getConsoleDeviceSpecParams() {
         Map<String, Object> specParams = new HashMap<>();
         specParams.put("enableSocket", "true");
+        specParams.put("consoleType", "serial");
         return specParams;
     }
 
