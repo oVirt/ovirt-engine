@@ -65,6 +65,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
@@ -266,7 +267,9 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
         BusinessEntityMap<Bond> bonds = getBackendHostBonds();
         if (action.isSetModifiedBonds()) {
+            BusinessEntityMap<VdsNetworkInterface> nicsFromBackend = getBackendNics();
             for (HostNic bond : action.getModifiedBonds().getHostNics()) {
+                completeSlaveNames(nicsFromBackend, bond);
                 parameters.getBonds().add(mapBonds(bonds, bond));
             }
         }
@@ -288,6 +291,18 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         return parameters;
     }
 
+    private void completeSlaveNames(BusinessEntityMap<VdsNetworkInterface> nicsFromBackend, HostNic bond) {
+        if (bond.isSetBonding() && bond.getBonding().isSetSlaves()) {
+            for (HostNic slave : bond.getBonding().getSlaves().getHostNics()) {
+                if (!slave.isSetName() && slave.isSetId()){
+                    Guid slaveId = new Guid(slave.getId());
+                    String slaveNameFromBackend = nicsFromBackend.get(slaveId).getName();
+                    slave.setName(slaveNameFromBackend);
+                }
+            }
+        }
+    }
+
     public Map<Guid, NetworkAttachment> getBackendNetworkAttachments() {
         List<NetworkAttachment> backendAttachments =
                 getBackendCollection(NetworkAttachment.class,
@@ -300,6 +315,12 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         List<Bond> backendBonds =
                 getBackendCollection(Bond.class, VdcQueryType.GetHostBondsByHostId, new IdQueryParameters(guid));
         return new BusinessEntityMap<Bond>(backendBonds);
+    }
+
+    public BusinessEntityMap<VdsNetworkInterface> getBackendNics() {
+        List<VdsNetworkInterface> backendNics =
+                getBackendCollection(VdsNetworkInterface.class, VdcQueryType.GetVdsInterfacesByVdsId, new IdQueryParameters(guid));
+        return new BusinessEntityMap<VdsNetworkInterface>(backendNics);
     }
 
     public NetworkAttachment mapNetworkAttachment(Map<Guid, NetworkAttachment> attachmentsById,
