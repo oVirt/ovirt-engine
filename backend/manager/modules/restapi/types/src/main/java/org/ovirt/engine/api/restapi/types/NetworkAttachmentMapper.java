@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.HostNic;
-import org.ovirt.engine.api.model.IP;
+import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.IpAddressAssignment;
 import org.ovirt.engine.api.model.IpAddressAssignments;
 import org.ovirt.engine.api.model.Network;
@@ -154,7 +154,7 @@ public class NetworkAttachmentMapper {
 
     private static IpAddressAssignment mapIpAddressAssignment(IPv4Address iPv4Address) {
         IpAddressAssignment ipAddressAssignment = new IpAddressAssignment();
-        IP ip = new IP();
+        Ip ip = new Ip();
         if (iPv4Address.getAddress() != null) {
             ip.setAddress(iPv4Address.getAddress());
         }

@@ -32,9 +32,9 @@ import org.ovirt.engine.api.model.GuestOperatingSystem;
 import org.ovirt.engine.api.model.HighAvailability;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Hosts;
-import org.ovirt.engine.api.model.IP;
 import org.ovirt.engine.api.model.Initialization;
 import org.ovirt.engine.api.model.InstanceType;
+import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.Kernel;
 import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.NIC;
@@ -404,7 +404,6 @@ public class VmMapper extends VmBaseMapper {
             if (hasFqdn) {
                 model.setFqdn(entity.getVmFQDN());
             }
-
             final boolean hasGuestOsVersion = entity.getGuestOsVersion() != null && !entity.getGuestOsVersion().isEmpty();
             if (hasGuestOsVersion) {
                 GuestOperatingSystem os = model.getGuestOperatingSystem();
@@ -1323,7 +1322,7 @@ public class VmMapper extends VmBaseMapper {
             Session consoleSession = new Session();
             consoleSession.setUser(consoleUser);
             if (vm.getClientIp()!=null && !vm.getClientIp().isEmpty()) {
-                IP ip = new IP();
+                Ip ip = new Ip();
                 ip.setAddress(vm.getClientIp());
                 consoleSession.setIp(ip);
             }

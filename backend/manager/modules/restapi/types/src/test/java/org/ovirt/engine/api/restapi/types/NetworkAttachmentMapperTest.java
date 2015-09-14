@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.types;
 
 import java.util.List;
 
-import org.ovirt.engine.api.model.IP;
+import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.IpAddressAssignment;
 import org.ovirt.engine.api.model.QosType;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
@@ -36,8 +36,8 @@ public class NetworkAttachmentMapperTest extends AbstractInvertibleMappingTest<o
 
         for (int i = 0; i < modelAddresses.size(); i++) {
             assertEquals(modelAddresses.get(i).getAssignmentMethod(), transformAddresses.get(i).getAssignmentMethod());
-            IP modelAddress = modelAddresses.get(i).getIp();
-            IP transformAddress = transformAddresses.get(i).getIp();
+            Ip modelAddress = modelAddresses.get(i).getIp();
+            Ip transformAddress = transformAddresses.get(i).getIp();
             assertEquals(modelAddress.getAddress(), transformAddress.getAddress());
             assertEquals(modelAddress.getNetmask(), transformAddress.getNetmask());
             assertEquals(modelAddress.getGateway(), transformAddress.getGateway());

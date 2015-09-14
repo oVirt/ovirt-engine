@@ -7,7 +7,7 @@ import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Bonding;
 import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.HostNic;
-import org.ovirt.engine.api.model.IP;
+import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.MAC;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NicStatus;
@@ -173,7 +173,7 @@ public class HostNicMapper {
             model.getVlan().setId(entity.getVlanId());
         }
         if (entity.getAddress() != null || entity.getGateway() != null || entity.getSubnet() != null) {
-            model.setIp(new IP());
+            model.setIp(new Ip());
             if (entity.getAddress() != null) {
                 model.getIp().setAddress(entity.getAddress());
             }

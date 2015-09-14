@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
-import org.ovirt.engine.api.model.IP;
+import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.ReportedDeviceType;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
@@ -14,7 +14,7 @@ public class ReportedDeviceMapperTest extends AbstractInvertibleMappingTest<Repo
     @Override
     protected ReportedDevice postPopulate(ReportedDevice model) {
         model.setType(MappingTestHelper.shuffle(ReportedDeviceType.class).value());
-        for (IP ip : model.getIps().getIPs()) {
+        for (Ip ip : model.getIps().getIps()) {
             ip.setVersion(MappingTestHelper.shuffle(IpVersion.class).value());
             ip.setGateway(null);
             ip.setNetmask(null);
@@ -33,11 +33,11 @@ public class ReportedDeviceMapperTest extends AbstractInvertibleMappingTest<Repo
         assertNotNull(transform.getType());
         assertEquals(model.getType(), transform.getType());
         assertNotNull(transform.getIps());
-        assertTrue(transform.getIps().isSetIPs());
-        assertEquals(transform.getIps().getIPs().size(), model.getIps().getIPs().size());
-        for (int i = 0; i < transform.getIps().getIPs().size(); i++) {
-            assertEquals(transform.getIps().getIPs().get(i).getAddress(), model.getIps().getIPs().get(i).getAddress());
-            assertEquals(transform.getIps().getIPs().get(i).getVersion(), model.getIps().getIPs().get(i).getVersion());
+        assertTrue(transform.getIps().isSetIps());
+        assertEquals(transform.getIps().getIps().size(), model.getIps().getIps().size());
+        for (int i = 0; i < transform.getIps().getIps().size(); i++) {
+            assertEquals(transform.getIps().getIps().get(i).getAddress(), model.getIps().getIps().get(i).getAddress());
+            assertEquals(transform.getIps().getIps().get(i).getVersion(), model.getIps().getIps().get(i).getVersion());
         }
     }
 }

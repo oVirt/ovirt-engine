@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.DataCenter;
-import org.ovirt.engine.api.model.IP;
+import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkStatus;
 import org.ovirt.engine.api.model.QoS;
@@ -95,7 +95,7 @@ public class NetworkMapper {
         if (entity.getAddr() != null ||
             entity.getSubnet() != null ||
             entity.getGateway() != null) {
-            model.setIp(new IP());
+            model.setIp(new Ip());
             model.getIp().setAddress(entity.getAddr());
             model.getIp().setNetmask(entity.getSubnet());
             model.getIp().setGateway(entity.getGateway());

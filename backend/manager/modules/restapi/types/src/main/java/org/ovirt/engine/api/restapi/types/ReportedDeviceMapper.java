@@ -3,8 +3,8 @@ package org.ovirt.engine.api.restapi.types;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.api.model.IP;
-import org.ovirt.engine.api.model.IPs;
+import org.ovirt.engine.api.model.Ip;
+import org.ovirt.engine.api.model.Ips;
 import org.ovirt.engine.api.model.MAC;
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.ReportedDeviceType;
@@ -48,10 +48,10 @@ public class ReportedDeviceMapper {
         if (model.isSetMac() && model.getMac().isSetAddress()) {
             entity.setMacAddress(model.getMac().getAddress());
         }
-        if (model.isSetIps() && model.getIps().isSetIPs()) {
+        if (model.isSetIps() && model.getIps().isSetIps()) {
             List<String> ipv4 = new ArrayList<String>();
             List<String> ipv6 = new ArrayList<String>();
-            for (IP ip : model.getIps().getIPs()) {
+            for (Ip ip : model.getIps().getIps()) {
                 if (ip.isSetVersion() && ip.isSetAddress()) {
                     IpVersion ipVersion = IpVersion.fromValue(ip.getVersion());
                     switch (ipVersion) {
@@ -85,20 +85,20 @@ public class ReportedDeviceMapper {
         List<String> ipv6 = vmGuestAgentInterface.getIpv6Addresses();
 
         if (ipv4 != null && !ipv4.isEmpty() || ipv6 != null && !ipv6.isEmpty()) {
-            IPs ips = new IPs();
+            Ips ips = new Ips();
             model.setIps(ips);
             addIpsByVersion(ips, ipv4, IpVersion.V4);
             addIpsByVersion(ips, ipv6, IpVersion.V6);
         }
     }
 
-    private static void addIpsByVersion(IPs ips, List<String> entityIps, IpVersion ipVersion) {
+    private static void addIpsByVersion(Ips ips, List<String> entityIps, IpVersion ipVersion) {
         if (entityIps != null) {
             for (String entityIp : entityIps) {
-                IP ip = new IP();
+                Ip ip = new Ip();
                 ip.setAddress(entityIp);
                 ip.setVersion(ipVersion.value());
-                ips.getIPs().add(ip);
+                ips.getIps().add(ip);
             }
         }
     }

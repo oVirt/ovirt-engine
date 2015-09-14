@@ -7,8 +7,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.GuestNicConfiguration;
 import org.ovirt.engine.api.model.GuestNicsConfiguration;
-import org.ovirt.engine.api.model.IP;
 import org.ovirt.engine.api.model.Initialization;
+import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
@@ -56,7 +56,7 @@ public class InitializationMapper {
         if (entity.getBootProtocol() != null) {
             model.setBootProtocol(BootProtocolMapper.map(entity.getBootProtocol(), null).value());
         }
-        IP ip = new IP();
+        Ip ip = new Ip();
         model.setIp(ip);
         ip.setAddress(entity.getIp());
         ip.setNetmask(entity.getNetmask());

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.ovirt.engine.api.model.IP;
+import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -35,7 +35,7 @@ public class BackendVmReportedDevicesResourceTest extends AbstractBackendCollect
     }
 
     private void verifyIps(ReportedDevice device) {
-        List<IP> ips = device.getIps().getIPs();
+        List<Ip> ips = device.getIps().getIps();
         assertEquals(ADDRESSES.length, ips.size());
         for (int i = 0; i < ADDRESSES.length; i++) {
             assertEquals(ADDRESSES[i], ips.get(i).getAddress());

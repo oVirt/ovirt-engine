@@ -2546,9 +2546,9 @@
 
   <!-- Networks -->
 
-  <xs:element name="ip" type="IP"/>
+  <xs:element name="ip" type="Ip"/>
 
-  <xs:complexType name="IP">
+  <xs:complexType name="Ip">
     <xs:sequence>
       <xs:element name="address" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="netmask" type="xs:string" minOccurs="0" maxOccurs="1"/>
@@ -2557,15 +2557,15 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:element name="ips" type="IPs"/>
+  <xs:element name="ips" type="Ips"/>
 
-  <xs:complexType name="IPs">
+  <xs:complexType name="Ips">
     <xs:complexContent>
       <xs:extension base="BaseResources">
         <xs:sequence>
           <xs:annotation>
             <xs:appinfo>
-                <jaxb:property name="IPs"/>
+                <jaxb:property name="Ips"/>
             </xs:appinfo>
           </xs:annotation>
           <xs:element ref="ip" minOccurs="0" maxOccurs="unbounded"/>

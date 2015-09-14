@@ -23,6 +23,8 @@ The following XML schema complex types have been renamed:
 - `HostNICStates` - `HostNicStates`
 - `HostNIC` - `HostNic`
 - `IO` - `Io`
+- `IP` - `Ip`
+- `IPs` - `Ips`
 
 First column is the old name, and second column is the new name.
 
