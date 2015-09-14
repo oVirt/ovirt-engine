@@ -44,6 +44,13 @@ public class VmDaoImpl extends BaseDao implements VmDao {
     }
 
     @Override
+    public VM getHostedEngineVm() {
+        return getCallsHandler().executeRead("GetHostedEngineVm",
+                VMRowMapper.instance,
+                getCustomMapSqlParameterSource());
+    }
+
+    @Override
     public VM getByNameForDataCenter(Guid dataCenterId, String name, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeRead("GetVmByVmNameForDataCenter", VMRowMapper.instance, getCustomMapSqlParameterSource()
                 .addValue("data_center_id", dataCenterId).addValue("vm_name", name).addValue("user_id", userID).addValue("is_filtered", isFiltered));

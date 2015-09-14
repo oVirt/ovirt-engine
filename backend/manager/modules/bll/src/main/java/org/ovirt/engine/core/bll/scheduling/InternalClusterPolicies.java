@@ -19,6 +19,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationWeightPolic
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostDeviceFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineMemoryReservationFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.LabelFilterPolicyUnit;
@@ -59,6 +60,7 @@ public class InternalClusterPolicies {
                 .addFilters(NetworkPolicyUnit.class)
                 .addFilters(CpuPinningPolicyUnit.class)
                 .addFilters(CompatibilityVersionFilterPolicyUnit.class)
+                .addFilters(HostedEngineMemoryReservationFilterPolicyUnit.class)
 
                 .addFunction(1, EvenDistributionCPUWeightPolicyUnit.class)
                 .addFunction(1, EvenDistributionMemoryWeightPolicyUnit.class)
@@ -84,6 +86,7 @@ public class InternalClusterPolicies {
                 .addFilters(NetworkPolicyUnit.class)
                 .addFilters(CpuPinningPolicyUnit.class)
                 .addFilters(CompatibilityVersionFilterPolicyUnit.class)
+                .addFilters(HostedEngineMemoryReservationFilterPolicyUnit.class)
 
                 .addFunction(1, EvenDistributionCPUWeightPolicyUnit.class)
                 .addFunction(1, EvenDistributionMemoryWeightPolicyUnit.class)
@@ -91,6 +94,7 @@ public class InternalClusterPolicies {
                 .addFunction(1, HaReservationWeightPolicyUnit.class)
                 .addFunction(1, VmAffinityWeightPolicyUnit.class)
 
+                .set(PolicyUnitParameter.HE_SPARES_COUNT, "0")
                 .set(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES, "2")
                 .set(PolicyUnitParameter.HIGH_UTILIZATION, "80")
                 .register();
@@ -112,6 +116,7 @@ public class InternalClusterPolicies {
                 .addFilters(NetworkPolicyUnit.class)
                 .addFilters(CpuPinningPolicyUnit.class)
                 .addFilters(CompatibilityVersionFilterPolicyUnit.class)
+                .addFilters(HostedEngineMemoryReservationFilterPolicyUnit.class)
 
                 .addFunction(1, PowerSavingCPUWeightPolicyUnit.class)
                 .addFunction(1, PowerSavingMemoryWeightPolicyUnit.class)
@@ -119,6 +124,7 @@ public class InternalClusterPolicies {
                 .addFunction(1, HaReservationWeightPolicyUnit.class)
                 .addFunction(1, VmAffinityWeightPolicyUnit.class)
 
+                .set(PolicyUnitParameter.HE_SPARES_COUNT, "0")
                 .set(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES, "2")
                 .set(PolicyUnitParameter.HIGH_UTILIZATION, "80")
                 .set(PolicyUnitParameter.LOW_UTILIZATION, "20")
@@ -141,12 +147,16 @@ public class InternalClusterPolicies {
                 .addFilters(NetworkPolicyUnit.class)
                 .addFilters(CpuPinningPolicyUnit.class)
                 .addFilters(CompatibilityVersionFilterPolicyUnit.class)
+                .addFilters(HostedEngineMemoryReservationFilterPolicyUnit.class)
 
                 .addFunction(1, EvenGuestDistributionWeightPolicyUnit.class)
                 .addFunction(1, HostedEngineHAClusterWeightPolicyUnit.class)
                 .addFunction(1, HaReservationWeightPolicyUnit.class)
                 .addFunction(1, VmAffinityWeightPolicyUnit.class)
 
+                .set(PolicyUnitParameter.HE_SPARES_COUNT, "0")
+                .set(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES, "2")
+                .set(PolicyUnitParameter.HIGH_UTILIZATION, "80")
                 .set(PolicyUnitParameter.HIGH_VM_COUNT, "10")
                 .set(PolicyUnitParameter.MIGRATION_THRESHOLD, "5")
                 .set(PolicyUnitParameter.SPM_VM_GRACE, "5")

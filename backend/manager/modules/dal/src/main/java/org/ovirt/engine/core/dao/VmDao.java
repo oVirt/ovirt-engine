@@ -40,6 +40,13 @@ public interface VmDao extends Dao {
     VM get(Guid id, Guid userID, boolean isFiltered);
 
     /**
+     * Gets the running hosted engine VM.
+     *
+     * @return the hosted engine VM (self)
+     */
+    VM getHostedEngineVm();
+
+    /**
      * Returns the VM with the specified name, with optional filtering.
      *
      * @param dataCenterId

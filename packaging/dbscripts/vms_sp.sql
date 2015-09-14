@@ -1403,6 +1403,18 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetHostedEngineVm() RETURNS SETOF vms STABLE
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT DISTINCT vms.*
+   FROM vms
+   WHERE origin = 5 OR origin = 6;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
 
 Create or replace FUNCTION GetVmByVmNameForDataCenter(v_data_center_id UUID, v_vm_name VARCHAR(255), v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vms STABLE
    AS $procedure$

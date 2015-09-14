@@ -44,7 +44,13 @@ public enum PolicyUnitParameter {
      * The minimum amount of free memory that will start triggering the under utilization routines
      * (the host is under utilized when the available free memory amount is greater than the minimal limit)
      */
-    HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED("MinFreeMemoryForUnderUtilized", "^([1-9][0-9]*)$");
+    HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED("MinFreeMemoryForUnderUtilized", "^([1-9][0-9]*)$"),
+
+    /**
+     * The minimum amount of hosted engine capable hosts that have to be able to receive
+     * the engine VM in terms of free memory.
+     */
+    HE_SPARES_COUNT("HeSparesCount", "^([0-9][0-9]*)$");
 
     final String dbName;
     final String regex;
