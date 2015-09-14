@@ -3629,15 +3629,15 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="preview_vms" type="PreviewVMs"/>
+  <xs:element name="preview_vms" type="PreviewVms"/>
 
-  <xs:complexType name="PreviewVMs">
+  <xs:complexType name="PreviewVms">
     <xs:complexContent>
       <xs:extension base="BaseResources">
         <xs:sequence>
           <xs:annotation>
             <xs:appinfo>
-                <jaxb:property name="PreviewVMs"/>
+                <jaxb:property name="PreviewVms"/>
             </xs:appinfo>
           </xs:annotation>
           <xs:element type="VM" name="preview_vm" minOccurs="0" maxOccurs="unbounded"/>

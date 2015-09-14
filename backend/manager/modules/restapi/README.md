@@ -28,6 +28,7 @@ The following XML schema complex types have been renamed:
 - `KSM` - `Ksm`
 - `MAC` - `Mac`
 - `NIC` - `Nic`
+- `PreviewVMs` - `PreviewVms`
 
 First column is the old name, and second column is the new name.
 
