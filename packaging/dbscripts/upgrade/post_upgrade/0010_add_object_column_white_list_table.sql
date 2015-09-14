@@ -36,7 +36,8 @@ BEGIN
       insert into object_column_white_list(object_name,column_name)
       (select 'vds', column_name
        from information_schema.columns
-       where table_name = 'vds' and
+       where table_schema = 'public' and
+       table_name = 'vds' and
        column_name in (
           'vds_group_id', 'vds_group_name', 'vds_group_description',
           'vds_id', 'vds_name', 'ip', 'vds_unique_id', 'host_name', 'port', 'vds_strength',

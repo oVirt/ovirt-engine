@@ -10,7 +10,7 @@ declare
 v_sql text;
 
 begin
-	if (not exists (select 1 from information_schema.columns where table_name ilike v_table and column_name ilike v_column)) then
+	if (not exists (select 1 from information_schema.columns where table_schema = 'public' and table_name ilike v_table and column_name ilike v_column)) then
 	    begin
 		v_sql := 'ALTER TABLE ' || v_table || ' ADD COLUMN ' || v_column || ' ' || v_column_def;
 		EXECUTE v_sql;
@@ -26,7 +26,7 @@ AS $procedure$
 declare
 v_sql text;
 begin
-        if (exists (select 1 from information_schema.columns where table_name ilike v_table and column_name ilike v_column)) then
+        if (exists (select 1 from information_schema.columns where table_schema = 'public' and table_name ilike v_table and column_name ilike v_column)) then
             begin
                 v_sql := 'ALTER TABLE ' || v_table || ' DROP COLUMN ' || v_column;
                 EXECUTE v_sql;
@@ -46,13 +46,13 @@ declare
 v_sql text;
 
 begin
-	if (exists (select 1 from information_schema.columns where table_name ilike v_table and column_name ilike v_column and (udt_name ilike v_type or data_type ilike v_type))) then
+	if (exists (select 1 from information_schema.columns where table_schema = 'public' and table_name ilike v_table and column_name ilike v_column and (udt_name ilike v_type or data_type ilike v_type))) then
 	    begin
 		v_sql := 'ALTER TABLE ' || v_table || ' ALTER COLUMN ' || v_column || ' TYPE ' || v_new_type;
 		EXECUTE v_sql;
             end;
             --- ignore operation if requested type is already there
-        elsif (not exists (select 1 from information_schema.columns where table_name ilike v_table and column_name ilike v_column and
+        elsif (not exists (select 1 from information_schema.columns where table_schema = 'public' and table_name ilike v_table and column_name ilike v_column and
                 (udt_name ilike v_new_type or data_type ilike v_new_type))) then
             RAISE EXCEPTION 'Table % or Column % does not exist.', v_table, v_column;
 	end if;
@@ -67,7 +67,7 @@ declare
 v_sql text;
 
 begin
-	if (exists (select 1 from information_schema.columns where table_name ilike v_table and column_name ilike v_column)) then
+	if (exists (select 1 from information_schema.columns where table_schema = 'public' and table_name ilike v_table and column_name ilike v_column)) then
 	    begin
 		v_sql := 'ALTER TABLE ' || v_table || ' RENAME COLUMN ' || v_column || ' TO ' || v_new_name;
 		EXECUTE v_sql;
@@ -259,6 +259,7 @@ Create or replace FUNCTION fn_get_column_size( v_table varchar(64), v_column var
 BEGIN
    retvalue := character_maximum_length from information_schema.columns
     where
+    table_schema = 'public' and
     table_name ilike v_table and column_name ilike v_column and
     table_schema = 'public' and udt_name in ('char','varchar');
    return retvalue;
@@ -416,7 +417,7 @@ begin
         begin
             -- verify that there is such object in db
             if exists (select 1 from information_schema.columns
-                       where table_name = v_object_name and column_name = v_column_name) then
+                       where table_schema = 'public' and table_name = v_object_name and column_name = v_column_name) then
                 insert into object_column_white_list (object_name, column_name) values (v_object_name, v_column_name);
             end if;
         end;

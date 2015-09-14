@@ -1,7 +1,7 @@
 CREATE OR REPLACE FUNCTION __temp_move_quota_id() RETURNS void
 AS $FUNCTION$
 BEGIN
-  IF (NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name ILIKE 'image_storage_domain_map' AND column_name ILIKE 'quota_id')) THEN
+  IF (NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name ILIKE 'image_storage_domain_map' AND column_name ILIKE 'quota_id')) THEN
     -- add quota id column to the image-storage map table
     PERFORM fn_db_add_column('image_storage_domain_map','quota_id', 'UUID NULL');
     -- copy old quota from images table

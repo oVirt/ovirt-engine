@@ -851,7 +851,7 @@ LANGUAGE plpgsql;
 create or replace function create_uuid_sequence() returns void
 as $procedure$
 begin
-  if not exists (select 1 from information_schema.sequences where sequence_name = 'uuid_sequence') then
+  if not exists (select 1 from information_schema.sequences where sequence_schema = 'public' and sequence_name = 'uuid_sequence') then
     create sequence uuid_sequence increment by 1 start with 1;
   end if;
 end; $procedure$
