@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -489,6 +490,18 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
                     result = false;
                     break;
                 }
+            }
+        }
+
+        if (result && Version.v3_6.compareTo(getVdsGroup().getCompatibilityVersion()) >= 0) {
+            List<String> names = new ArrayList<>();
+            for (VDS host : allForVdsGroup) {
+                if (VdsProtocol.XML == host.getProtocol()) {
+                    names.add(host.getName());
+                }
+            }
+            if (!names.isEmpty()) {
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_WRONG_PROTOCOL_FOR_CLUSTER_VERSION);
             }
         }
         return result;

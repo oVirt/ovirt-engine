@@ -3757,4 +3757,10 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Host ${VdsName} cannot connect to Glusterfs. Verify that glusterfs-cli package is installed on the host.")
     String ACTION_TYPE_FAIL_VDS_CANNOT_CONNECT_TO_GLUSTERFS();
+
+    @DefaultStringValue("XML protocol not supported by cluster 3.6 or higher")
+    String NOT_SUPPORTED_PROTOCOL_FOR_CLUSTER_VERSION();
+
+    @DefaultStringValue("Some of the host still use xmlrpc protocol which is not supported by cluster 3.6 or higher")
+    String ACTION_TYPE_FAILED_WRONG_PROTOCOL_FOR_CLUSTER_VERSION();
 }

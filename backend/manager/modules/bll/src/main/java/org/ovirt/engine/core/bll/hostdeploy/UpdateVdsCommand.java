@@ -89,7 +89,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                 && validateNetworkProviderConfiguration()
                 && isPowerManagementLegal(getParameters().getVdsStaticData().isPmEnabled(),
                         getParameters().getFenceAgents(),
-                        oldHost.getVdsGroupCompatibilityVersion().toString());
+                        oldHost.getVdsGroupCompatibilityVersion().toString())
+                && validate(validator.protocolIsNotXmlrpc(getVdsGroup()));
     }
 
     private boolean validateNetworkProviderConfiguration() {

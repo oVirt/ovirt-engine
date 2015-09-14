@@ -675,6 +675,13 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 ListModel<VDSGroup> clusterModel = hostModel.getCluster();
                 if (clusterModel.getSelectedItem() != null) {
                     VDSGroup cluster = clusterModel.getSelectedItem();
+                    if (Version.v3_6.compareTo(cluster.getCompatibilityVersion()) <= 0) {
+                        hostModel.getProtocol().setIsAvailable(false);
+                        hostModel.getProtocol().setIsChangeable(false);
+                    } else {
+                        hostModel.getProtocol().setIsAvailable(true);
+                        hostModel.getProtocol().setIsChangeable(true);
+                    }
                     Boolean jsonSupported =
                             (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.JsonProtocolSupported,
                                     cluster.getCompatibilityVersion().toString());

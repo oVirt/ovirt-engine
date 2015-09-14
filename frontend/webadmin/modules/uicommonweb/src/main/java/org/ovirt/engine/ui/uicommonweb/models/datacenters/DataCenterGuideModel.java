@@ -1470,6 +1470,13 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                 ListModel<VDSGroup> clusterModel = model.getCluster();
                 if (clusterModel.getSelectedItem() != null) {
                     VDSGroup cluster = clusterModel.getSelectedItem();
+                    if (clusterModel.getSelectedItem() != null) {
+                        if (Version.v3_6.compareTo(cluster.getCompatibilityVersion()) <= 0) {
+                            model.getProtocol().setIsAvailable(false);
+                        } else {
+                            model.getProtocol().setIsAvailable(true);
+                        }
+                    }
                     Boolean jsonSupported =
                             (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.JsonProtocolSupported,
                                     cluster.getCompatibilityVersion().toString());

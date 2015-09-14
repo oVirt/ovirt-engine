@@ -9,8 +9,7 @@ import java.util.Map;
  */
 public enum VdsProtocol {
     XML(0),
-    STOMP(1),
-    AMQP(2);
+    STOMP(1);
 
     private static final Map<Integer, VdsProtocol> MAPPING = new HashMap<Integer, VdsProtocol>();
     static {
