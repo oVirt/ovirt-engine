@@ -20,6 +20,8 @@ The following XML schema complex types have been renamed:
 - `CPU` - `Cpu`
 - `CPUs` - `Cpus`
 - `DNS` - `Dns`
+- `HostNICStates` - `HostNicStates`
+- `HostNIC` - `HostNic`
 
 First column is the old name, and second column is the new name.
 

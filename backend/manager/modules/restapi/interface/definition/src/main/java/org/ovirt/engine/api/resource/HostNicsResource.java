@@ -26,7 +26,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
-import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.HostNics;
 
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
@@ -39,7 +39,7 @@ public interface HostNicsResource {
 
     @POST
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
-    Response add(HostNIC nic);
+    Response add(HostNic nic);
 
     /**
      * Sub-resource locator method, returns individual HostNicResource on which the

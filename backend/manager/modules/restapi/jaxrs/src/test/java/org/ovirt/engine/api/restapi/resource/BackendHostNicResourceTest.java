@@ -21,7 +21,7 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
-import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.restapi.util.RxTxCalculator;
@@ -38,7 +38,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostNicResourceTest
-        extends AbstractBackendSubResourceTest<HostNIC, VdsNetworkInterface, BackendHostNicResource> {
+        extends AbstractBackendSubResourceTest<HostNic, VdsNetworkInterface, BackendHostNicResource> {
 
     private static final int NIC_IDX = 1;
     private static final Guid NIC_ID = GUIDS[NIC_IDX];
@@ -125,7 +125,7 @@ public class BackendHostNicResourceTest
             setUpEntityQueryExpectations();
             control.replay();
 
-            HostNIC nic = resource.get();
+            HostNic nic = resource.get();
             assertTrue(nic.isSetStatistics());
             hostNicsResource.verifyModelSpecific(nic, NIC_IDX);
         } finally {
@@ -226,13 +226,13 @@ public class BackendHostNicResourceTest
                 new String[] { "Id" },
                 new Object[] { PARENT_GUID },
                 asList(model2));
-        HostNIC hostNicModel = getHostNicModel(1);
+        HostNic hostNicModel = getHostNicModel(1);
         hostNicModel.setNetwork(null);
         setUpVlanQueryExpectations(model1);
         setupGetHostExpectations(1);
         setupGetNetworkExpectations(1);
         setupUpdateExpectations();
-        HostNIC result = resource.update(hostNicModel);
+        HostNic result = resource.update(hostNicModel);
         assertNotNull(result);
         assertNotNull(result.getIp());
 
@@ -358,8 +358,8 @@ public class BackendHostNicResourceTest
         return vds;
     }
 
-    private HostNIC getHostNicModel(int i) {
-        HostNIC nic = new HostNIC();
+    private HostNic getHostNicModel(int i) {
+        HostNic nic = new HostNic();
         nic.setId(GUIDS[1].toString());
         nic.setNetwork(new Network());
         nic.getNetwork().setId(GUIDS[i].toString());
@@ -381,7 +381,7 @@ public class BackendHostNicResourceTest
 
     }
 
-    private void verifyUpdate(HostNIC nic, Integer i) {
+    private void verifyUpdate(HostNic nic, Integer i) {
         assertNotNull(nic);
         assertNotNull(nic.getNetwork());
         assertNotNull(nic.getIp());
@@ -521,8 +521,8 @@ public class BackendHostNicResourceTest
         VdsNetworkInterface entity = setUpStatisticalExpectations();
 
         @SuppressWarnings("unchecked")
-        BackendStatisticsResource<HostNIC, VdsNetworkInterface> statisticsResource =
-            (BackendStatisticsResource<HostNIC, VdsNetworkInterface>)resource.getStatisticsResource();
+        BackendStatisticsResource<HostNic, VdsNetworkInterface> statisticsResource =
+            (BackendStatisticsResource<HostNic, VdsNetworkInterface>)resource.getStatisticsResource();
         assertNotNull(statisticsResource);
 
         verifyQuery(statisticsResource.getQuery(), entity);
@@ -551,8 +551,8 @@ public class BackendHostNicResourceTest
         return entity;
     }
 
-    protected void verifyQuery(AbstractStatisticalQuery<HostNIC, VdsNetworkInterface> query, VdsNetworkInterface entity) throws Exception {
-        assertEquals(HostNIC.class, query.getParentType());
+    protected void verifyQuery(AbstractStatisticalQuery<HostNic, VdsNetworkInterface> query, VdsNetworkInterface entity) throws Exception {
+        assertEquals(HostNic.class, query.getParentType());
         assertSame(entity, query.resolve(NIC_ID));
         List<Statistic> statistics = query.getStatistics(entity);
         verifyStatistics(statistics,

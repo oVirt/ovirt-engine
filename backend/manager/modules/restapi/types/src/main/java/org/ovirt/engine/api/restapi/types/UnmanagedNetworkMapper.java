@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
-import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.UnmanagedNetwork;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
@@ -24,7 +24,7 @@ public class UnmanagedNetworkMapper {
         }
 
         if (model.isSetHostNic()) {
-            HostNIC hostNic = model.getHostNic();
+            HostNic hostNic = model.getHostNic();
             if (hostNic.isSetId()) {
                 entity.setNicId(GuidUtils.asGuid(hostNic.getId()));
             }
@@ -48,7 +48,7 @@ public class UnmanagedNetworkMapper {
         model.setId(HexUtils.string2hex(entity.getId()));
 
         if (entity.getNicId() != null) {
-            HostNIC hostNic = new HostNIC();
+            HostNic hostNic = new HostNic();
             hostNic.setId(entity.getNicId().toString());
             model.setHostNic(hostNic);
         }

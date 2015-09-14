@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.BootProtocol;
-import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.resource.HostNicResource;
@@ -28,13 +28,13 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostNicResource
-    extends AbstractBackendActionableResource<HostNIC, VdsNetworkInterface>
+    extends AbstractBackendActionableResource<HostNic, VdsNetworkInterface>
     implements HostNicResource {
 
     private BackendHostNicsResource parent;
 
     public BackendHostNicResource(String id, BackendHostNicsResource parent) {
-        super(id, HostNIC.class, VdsNetworkInterface.class, SUB_COLLECTIONS);
+        super(id, HostNic.class, VdsNetworkInterface.class, SUB_COLLECTIONS);
         this.parent = parent;
     }
 
@@ -43,12 +43,12 @@ public class BackendHostNicResource
     }
 
     @Override
-    public HostNIC get() {
+    public HostNic get() {
         return parent.lookupNic(id, false);
     }
 
     @Override
-    protected HostNIC addParents(HostNIC nic) {
+    protected HostNic addParents(HostNic nic) {
         return parent.addParents(nic);
     }
 
@@ -91,23 +91,23 @@ public class BackendHostNicResource
             }
         };
         HostNicStatisticalQuery query = new HostNicStatisticalQuery(resolver, newModel(id));
-        return inject(new BackendStatisticsResource<HostNIC, VdsNetworkInterface>(entityType, guid, query));
+        return inject(new BackendStatisticsResource<HostNic, VdsNetworkInterface>(entityType, guid, query));
     }
 
     @Override
-    protected HostNIC doPopulate(HostNIC model, VdsNetworkInterface entity) {
+    protected HostNic doPopulate(HostNic model, VdsNetworkInterface entity) {
         return parent.doPopulate(model, entity);
     }
 
     @Override
-    protected HostNIC deprecatedPopulate(HostNIC model, VdsNetworkInterface entity) {
+    protected HostNic deprecatedPopulate(HostNic model, VdsNetworkInterface entity) {
         return parent.deprecatedPopulate(model, entity);
     }
 
     @SuppressWarnings("serial")
     @Override
-    public HostNIC update(HostNIC nic) {
-        validateEnums(HostNIC.class, nic);
+    public HostNic update(HostNic nic) {
+        validateEnums(HostNic.class, nic);
         VdsNetworkInterface originalInter = parent.lookupInterface(id);
         final VdsNetworkInterface inter = map(nic, originalInter);
         org.ovirt.engine.core.common.businessentities.network.Network oldNetwork = getOldNetwork(originalInter);
@@ -151,7 +151,7 @@ public class BackendHostNicResource
         return parent.lookupNic(id, true);
     }
 
-    private org.ovirt.engine.core.common.businessentities.network.Network getNewNetwork(HostNIC nic) {
+    private org.ovirt.engine.core.common.businessentities.network.Network getNewNetwork(HostNic nic) {
         org.ovirt.engine.core.common.businessentities.network.Network newNetwork = null;
         if(nic.isSetNetwork()){
             newNetwork = map(nic.getNetwork(), parent.lookupClusterNetwork(nic.getNetwork()));

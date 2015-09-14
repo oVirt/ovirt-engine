@@ -4081,11 +4081,11 @@
 
   <!-- Host NICs -->
 
-  <xs:element name="host_nic" type="HostNIC"/>
+  <xs:element name="host_nic" type="HostNic"/>
 
   <xs:element name="host_nics" type="HostNics"/>
 
-  <xs:complexType name="HostNIC">
+  <xs:complexType name="HostNic">
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
@@ -4241,14 +4241,14 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:element name="host_nic_states" type="HostNICStates"/>
+  <xs:element name="host_nic_states" type="HostNicStates"/>
 
-  <xs:complexType name="HostNICStates">
+  <xs:complexType name="HostNicStates">
     <xs:sequence>
       <xs:element name="host_nic_state" type="xs:string" minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>
           <xs:appinfo>
-            <jaxb:property name="HostNICStates"/>
+            <jaxb:property name="HostNicStates"/>
           </xs:appinfo>
         </xs:annotation>
       </xs:element>

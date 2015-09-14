@@ -15,7 +15,7 @@ import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Bonding;
 import org.ovirt.engine.api.model.Host;
-import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.HostNics;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.Network;
@@ -39,7 +39,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostNicsResource
-    extends AbstractBackendCollectionResource<HostNIC, VdsNetworkInterface>
+    extends AbstractBackendCollectionResource<HostNic, VdsNetworkInterface>
         implements HostNicsResource {
 
     static final String[] SUB_COLLECTIONS = { "statistics", "labels", "networkattachments" };
@@ -47,7 +47,7 @@ public class BackendHostNicsResource
     private String hostId;
 
     public BackendHostNicsResource(String hostId) {
-        super(HostNIC.class, VdsNetworkInterface.class, SUB_COLLECTIONS);
+        super(HostNic.class, VdsNetworkInterface.class, SUB_COLLECTIONS);
         this.hostId = hostId;
     }
 
@@ -65,7 +65,7 @@ public class BackendHostNicsResource
             networkIds.put(nwk.getName(), nwk.getId().toString());
         }
         for (VdsNetworkInterface iface : ifaces) {
-            HostNIC hostNic = populate(map(iface, ifaces), iface);
+            HostNic hostNic = populate(map(iface, ifaces), iface);
             if (networkIds.containsKey(iface.getNetworkName())) {
                 hostNic.getNetwork().setId(networkIds.get(iface.getNetworkName()));
                 hostNic.getNetwork().setName(null);
@@ -77,9 +77,9 @@ public class BackendHostNicsResource
 
     @SuppressWarnings("serial")
     @Override
-    public Response add(final HostNIC nic) {
+    public Response add(final HostNic nic) {
         validateParameters(nic, "name", "network.id|name", "bonding.slaves.id|name");
-        validateEnums(HostNIC.class, nic);
+        validateEnums(HostNic.class, nic);
         return performCreate(VdcActionType.AddBond,
                                new AddBondParameters(asGuid(hostId),
                                                      nic.getName(),
@@ -93,11 +93,11 @@ public class BackendHostNicsResource
         return inject(new BackendHostNicResource(id, this));
     }
 
-    public HostNIC lookupNic(String id, boolean forcePopulate) {
+    public HostNic lookupNic(String id, boolean forcePopulate) {
         List<VdsNetworkInterface> ifaces = getCollection();
         for (VdsNetworkInterface iface : ifaces) {
             if (iface.getId().toString().equals(id)) {
-                HostNIC hostNic = map(iface, ifaces);
+                HostNic hostNic = map(iface, ifaces);
                 if (forcePopulate) {
                     deprecatedPopulate(hostNic, iface);
                     doPopulate(hostNic, iface);
@@ -161,18 +161,18 @@ public class BackendHostNicsResource
     }
 
     @Override
-    public HostNIC addParents(HostNIC nic) {
+    public HostNic addParents(HostNic nic) {
         nic.setHost(new Host());
         nic.getHost().setId(hostId);
         return nic;
     }
 
-    protected HostNIC map(VdsNetworkInterface iface, List<VdsNetworkInterface> ifaces) {
+    protected HostNic map(VdsNetworkInterface iface, List<VdsNetworkInterface> ifaces) {
         return map(iface, null, ifaces);
     }
 
-    protected HostNIC map(VdsNetworkInterface iface, HostNIC template, List<VdsNetworkInterface> ifaces) {
-        HostNIC nic = super.map(iface, template);
+    protected HostNic map(VdsNetworkInterface iface, HostNic template, List<VdsNetworkInterface> ifaces) {
+        HostNic nic = super.map(iface, template);
         if (iface.getBonded() != null && iface.getBonded()) {
             nic = addSlaveLinks(nic, getCollection(ifaces));
         } else if (iface.getBondName() != null) {
@@ -182,12 +182,12 @@ public class BackendHostNicsResource
     }
 
     @Override
-    protected HostNIC map(VdsNetworkInterface entity, HostNIC template) {
+    protected HostNic map(VdsNetworkInterface entity, HostNic template) {
         return map(entity, template, null);
     }
 
     @Override
-    protected VdsNetworkInterface map(HostNIC entity, VdsNetworkInterface template) {
+    protected VdsNetworkInterface map(HostNic entity, VdsNetworkInterface template) {
         VdsNetworkInterface iface = super.map(entity, template);
         if (entity.isSetNetwork()) {
             if (entity.getNetwork().isSetId() || entity.getNetwork().isSetName()) {
@@ -200,7 +200,7 @@ public class BackendHostNicsResource
         return iface;
     }
 
-    protected HostNIC addSlaveLinks(HostNIC nic, List<VdsNetworkInterface> ifaces) {
+    protected HostNic addSlaveLinks(HostNic nic, List<VdsNetworkInterface> ifaces) {
         if(nic.getBonding() == null) nic.setBonding(new Bonding());
         nic.getBonding().setSlaves(new Slaves());
         for (VdsNetworkInterface i : ifaces) {
@@ -215,8 +215,8 @@ public class BackendHostNicsResource
         return iface.getBondName() != null && iface.getBondName().equals(masterName);
     }
 
-    protected HostNIC slave(String id) {
-        HostNIC slave = new HostNIC();
+    protected HostNic slave(String id) {
+        HostNic slave = new HostNic();
         slave.setId(id);
 
         slave.setHost(new Host());
@@ -227,7 +227,7 @@ public class BackendHostNicsResource
         return slave;
     }
 
-    protected HostNIC addMasterLink(HostNIC nic, String bondName, List<VdsNetworkInterface> ifaces) {
+    protected HostNic addMasterLink(HostNic nic, String bondName, List<VdsNetworkInterface> ifaces) {
         for (VdsNetworkInterface i : ifaces) {
             if (i.getName().equals(bondName)) {
                 nic.getLinks().add(masterLink(i.getId().toString()));
@@ -245,7 +245,7 @@ public class BackendHostNicsResource
     }
 
     protected String idToHref(String id) {
-        HostNIC master = new HostNIC();
+        HostNic master = new HostNic();
         master.setId(id);
         master.setHost(new Host());
         master.getHost().setId(hostId);
@@ -268,10 +268,10 @@ public class BackendHostNicsResource
         return handleError(new EntityNotFoundException(id != null ? id : name), false);
     }
 
-    protected String[] lookupSlaves(HostNIC nic) {
+    protected String[] lookupSlaves(HostNic nic) {
         List<String> slaves = new ArrayList<>();
 
-        for (HostNIC slave : nic.getBonding().getSlaves().getSlaves()) {
+        for (HostNic slave : nic.getBonding().getSlaves().getSlaves()) {
             if (slave.isSetId()) {
                 for (VdsNetworkInterface iface : getCollection()) {
                     if (iface.getId().toString().equals(slave.getId())) {
@@ -287,7 +287,7 @@ public class BackendHostNicsResource
     }
 
     @Override
-    protected HostNIC deprecatedPopulate(HostNIC model, VdsNetworkInterface entity) {
+    protected HostNic deprecatedPopulate(HostNic model, VdsNetworkInterface entity) {
         Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
         if (details.contains("statistics")) {
             addStatistics(model, entity);
@@ -295,7 +295,7 @@ public class BackendHostNicsResource
         return model;
     }
 
-    private void addStatistics(HostNIC model, VdsNetworkInterface entity) {
+    private void addStatistics(HostNic model, VdsNetworkInterface entity) {
         model.setStatistics(new Statistics());
         HostNicStatisticalQuery query = new HostNicStatisticalQuery(newModel(model.getId()));
         List<Statistic> statistics = query.getStatistics(entity);
@@ -350,7 +350,7 @@ public class BackendHostNicsResource
     }
 
     private SetupNetworksParameters toParameters(Action action) {
-        List<HostNIC> hostNics = action.getHostNics().getHostNics();
+        List<HostNic> hostNics = action.getHostNics().getHostNics();
         List<VdsNetworkInterface> existingNics = getCollection();
         BusinessEntityMap<VdsNetworkInterface> existingNicsMapping = new BusinessEntityMap<>(existingNics);
 
@@ -367,10 +367,10 @@ public class BackendHostNicsResource
         return parameters;
     }
 
-    private CustomPropertiesForVdsNetworkInterface nicsToCustomProperties(List<HostNIC> hostNics,
+    private CustomPropertiesForVdsNetworkInterface nicsToCustomProperties(List<HostNic> hostNics,
         BusinessEntityMap<VdsNetworkInterface> existingNicsMapping) {
         CustomPropertiesForVdsNetworkInterface result = new CustomPropertiesForVdsNetworkInterface();
-        for (HostNIC hostNic : hostNics) {
+        for (HostNic hostNic : hostNics) {
             if (hostNic.isSetProperties()) {
                 String hostNicName = hostNic.getName();
                 String nicName = StringUtils.isEmpty(hostNicName)
@@ -383,15 +383,15 @@ public class BackendHostNicsResource
         return result;
     }
 
-    private List<VdsNetworkInterface> nicsToInterfaces(List<HostNIC> hostNics,
+    private List<VdsNetworkInterface> nicsToInterfaces(List<HostNic> hostNics,
         BusinessEntityMap<VdsNetworkInterface> existingNicsMapping) {
         List<VdsNetworkInterface> ifaces = new ArrayList<>(hostNics.size());
 
-        for (HostNIC nic : hostNics) {
+        for (HostNic nic : hostNics) {
             VdsNetworkInterface iface = map(nic, null);
             ifaces.add(iface);
             if (nic.isSetBonding() && nic.getBonding().isSetSlaves()) {
-                for (HostNIC slave : nic.getBonding().getSlaves().getSlaves()) {
+                for (HostNic slave : nic.getBonding().getSlaves().getSlaves()) {
                     VdsNetworkInterface slaveIface = map(slave, slave.getId() == null
                             ? lookupInterfaceByName(slave.getName()) : lookupInterfaceById(slave.getId()));
                     slaveIface.setBondName(nic.getName());
@@ -412,9 +412,9 @@ public class BackendHostNicsResource
         return ifaces;
     }
 
-    private List<String> nicsToNetworksToSync(List<HostNIC> hostNics) {
+    private List<String> nicsToNetworksToSync(List<HostNic> hostNics) {
         List<String> networks = new ArrayList<>();
-        for (HostNIC nic : hostNics) {
+        for (HostNic nic : hostNics) {
             if (nic.isSetOverrideConfiguration() && nic.isOverrideConfiguration() && nic.isSetNetwork()) {
                 org.ovirt.engine.core.common.businessentities.network.Network net = lookupNetwork(nic.getNetwork());
                 networks.add(net.getName());

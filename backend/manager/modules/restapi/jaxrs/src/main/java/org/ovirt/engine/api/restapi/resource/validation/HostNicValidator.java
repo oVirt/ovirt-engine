@@ -3,13 +3,13 @@ package org.ovirt.engine.api.restapi.resource.validation;
 import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
 
 import org.ovirt.engine.api.model.BootProtocol;
-import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.HostNic;
 
-@ValidatedClass(clazz = HostNIC.class)
-public class HostNicValidator implements Validator<HostNIC> {
+@ValidatedClass(clazz = HostNic.class)
+public class HostNicValidator implements Validator<HostNic> {
 
     @Override
-    public void validateEnums(HostNIC hostNic) {
+    public void validateEnums(HostNic hostNic) {
         if (hostNic.isSetBootProtocol()) {
             validateEnum(BootProtocol.class, hostNic.getBootProtocol(), true);
         }

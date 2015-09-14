@@ -65,7 +65,7 @@ import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostDevice;
 import org.ovirt.engine.api.model.HostDevices;
-import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.Icon;
 import org.ovirt.engine.api.model.Image;
 import org.ovirt.engine.api.model.InstanceType;
@@ -397,7 +397,7 @@ public class LinkHelper {
         TYPES.put(Host.class, map);
 
         map = new ParentToCollectionMap(HostNicResource.class, HostNicsResource.class, Host.class);
-        TYPES.put(HostNIC.class, map);
+        TYPES.put(HostNic.class, map);
 
         map = new ParentToCollectionMap(HostNumaNodeResource.class, HostNumaNodesResource.class, Host.class);
         TYPES.put(NumaNode.class, map);
@@ -500,7 +500,7 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(StatisticResource.class, StatisticsResource.class, Disk.class);
         map.add(StatisticResource.class, StatisticsResource.class, Host.class);
-        map.add(StatisticResource.class, StatisticsResource.class, HostNIC.class);
+        map.add(StatisticResource.class, StatisticsResource.class, HostNic.class);
         map.add(StatisticResource.class, StatisticsResource.class, NumaNode.class);
         map.add(StatisticResource.class, StatisticsResource.class, NIC.class);
         map.add(StatisticResource.class, StatisticsResource.class, VM.class);
@@ -546,11 +546,11 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(LabelResource.class, LabelsResource.class);
         map.add(LabelResource.class, LabelsResource.class, Network.class);
-        map.add(LabelResource.class, LabelsResource.class, HostNIC.class);
+        map.add(LabelResource.class, LabelsResource.class, HostNic.class);
         TYPES.put(Label.class, map);
 
         map = new ParentToCollectionMap(NetworkAttachmentResource.class, NetworkAttachmentsResource.class, Host.class);
-        map.add(NetworkAttachmentResource.class, NetworkAttachmentsResource.class, HostNIC.class);
+        map.add(NetworkAttachmentResource.class, NetworkAttachmentsResource.class, HostNic.class);
         TYPES.put(NetworkAttachment.class, map);
 
         map = new ParentToCollectionMap(UnmanagedNetworkResource.class, UnmanagedNetworksResource.class, Host.class);

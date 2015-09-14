@@ -3,14 +3,14 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.List;
 
 import org.ovirt.engine.api.model.Host;
-import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.restapi.util.RxTxCalculator;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
-public class HostNicStatisticalQuery extends AbstractStatisticalQuery<HostNIC, VdsNetworkInterface> {
+public class HostNicStatisticalQuery extends AbstractStatisticalQuery<HostNic, VdsNetworkInterface> {
 
     private final static Statistic DATA_RX = create("data.current.rx", "Receive data rate",  GAUGE, BYTES_PER_SECOND, DECIMAL);
     private final static Statistic DATA_TX = create("data.current.tx", "Transmit data rate", GAUGE, BYTES_PER_SECOND, DECIMAL);
@@ -19,13 +19,13 @@ public class HostNicStatisticalQuery extends AbstractStatisticalQuery<HostNIC, V
     private final static Statistic ERRS_RX = create("errors.total.rx", "Total receive errors", COUNTER, NONE, INTEGER);
     private final static Statistic ERRS_TX = create("errors.total.tx", "Total transmit errors", COUNTER, NONE, INTEGER);
 
-    protected HostNicStatisticalQuery(HostNIC parent) {
+    protected HostNicStatisticalQuery(HostNic parent) {
         this(null, parent);
     }
 
-    protected HostNicStatisticalQuery(AbstractBackendResource<HostNIC, VdsNetworkInterface>.EntityIdResolver<Guid> entityResolver,
-            HostNIC parent) {
-        super(HostNIC.class, parent, entityResolver);
+    protected HostNicStatisticalQuery(AbstractBackendResource<HostNic, VdsNetworkInterface>.EntityIdResolver<Guid> entityResolver,
+            HostNic parent) {
+        super(HostNic.class, parent, entityResolver);
     }
 
     @Override
@@ -47,8 +47,8 @@ public class HostNicStatisticalQuery extends AbstractStatisticalQuery<HostNIC, V
         return statistic;
     }
 
-    private HostNIC clone(HostNIC parent) {
-        HostNIC nic = new HostNIC();
+    private HostNic clone(HostNic parent) {
+        HostNic nic = new HostNic();
         nic.setId(parent.getId());
         nic.setHost(new Host());
         nic.getHost().setId(parent.getHost().getId());

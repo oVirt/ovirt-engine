@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.easymock.EasyMock.expect;
 
-import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -35,7 +35,7 @@ public class BackendHostNicNetworkAttachmentResourceTest
     @Override
     protected org.ovirt.engine.api.model.NetworkAttachment getModel(int index) {
         org.ovirt.engine.api.model.NetworkAttachment model = super.getModel(index);
-        model.setHostNic(new HostNIC());
+        model.setHostNic(new HostNic());
         model.getHostNic().setId(HOST_NIC_ID.toString());
         return model;
     }

@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Bonding;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Host;
-import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.Role;
@@ -233,18 +233,18 @@ public class CompletenessAssertorTest extends Assert {
 
     @Test
     public void testCompleteListSubFields() throws Exception {
-        HostNIC bond = new HostNIC();
+        HostNic bond = new HostNic();
         bond.setName("joe");
         bond.setNetwork(new Network());
         bond.getNetwork().setId("0");
         bond.setBonding(new Bonding());
         bond.getBonding().setSlaves(new Slaves());
 
-        HostNIC slave = new HostNIC();
+        HostNic slave = new HostNic();
         slave.setId("0");
         bond.getBonding().getSlaves().getSlaves().add(slave);
 
-        slave = new HostNIC();
+        slave = new HostNic();
         slave.setId("0");
         bond.getBonding().getSlaves().getSlaves().add(slave);
 
@@ -281,13 +281,13 @@ public class CompletenessAssertorTest extends Assert {
 
     @Test
     public void testMissingListSubFields() throws Exception {
-        HostNIC bond = new HostNIC();
+        HostNic bond = new HostNic();
 
         try {
             CompletenessAssertor.validateParameters(bond, "name", "network.id|name", "bonding.slaves.id|name");
             fail("expected WebApplicationException on incomplete model");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "HostNIC", "name, network.id|name, bonding.slaves.id|name");
+            verifyIncompleteException(wae, "HostNic", "name, network.id|name, bonding.slaves.id|name");
         }
     }
 

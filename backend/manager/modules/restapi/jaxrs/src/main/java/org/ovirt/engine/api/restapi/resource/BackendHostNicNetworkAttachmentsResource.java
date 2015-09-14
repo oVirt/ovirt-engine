@@ -6,7 +6,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Host;
-import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.resource.NetworkAttachmentResource;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -65,12 +65,12 @@ public class BackendHostNicNetworkAttachmentsResource extends AbstractBackendNet
 
     @Override
     protected Class<? extends BaseResource> getParentClass() {
-        return HostNIC.class;
+        return HostNic.class;
     }
 
     @Override
     protected org.ovirt.engine.api.model.NetworkAttachment addParents(org.ovirt.engine.api.model.NetworkAttachment model) {
-        model.setHostNic(new HostNIC());
+        model.setHostNic(new HostNic());
         model.getHostNic().setId(nicId.toString());
         model.getHostNic().setHost(new Host());
         model.getHostNic().getHost().setId(getHostId().toString());
@@ -89,7 +89,7 @@ public class BackendHostNicNetworkAttachmentsResource extends AbstractBackendNet
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
         } else {
-            HostNIC hostNIC = new HostNIC();
+            HostNic hostNIC = new HostNic();
             hostNIC.setId(nicId.toString());
             attachment.setHostNic(hostNIC);
         }

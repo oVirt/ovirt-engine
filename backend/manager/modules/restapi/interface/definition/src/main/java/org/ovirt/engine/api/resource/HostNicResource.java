@@ -27,12 +27,12 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
-import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.HostNic;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface HostNicResource extends UpdatableResource<HostNIC>, MeasurableResource {
+public interface HostNicResource extends UpdatableResource<HostNic>, MeasurableResource {
     @GET
-    HostNIC get();
+    HostNic get();
 
     @DELETE
     Response remove();

@@ -49,7 +49,7 @@ import org.ovirt.engine.api.model.HookContentType;
 import org.ovirt.engine.api.model.HookStage;
 import org.ovirt.engine.api.model.HookStates;
 import org.ovirt.engine.api.model.HookStatus;
-import org.ovirt.engine.api.model.HostNICStates;
+import org.ovirt.engine.api.model.HostNicStates;
 import org.ovirt.engine.api.model.HostNonOperationalDetails;
 import org.ovirt.engine.api.model.HostProtocol;
 import org.ovirt.engine.api.model.HostProtocols;
@@ -746,9 +746,9 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     private void addHostNICStates(VersionCaps version, NicStatus[] values) {
-        version.setHostNicStates(new HostNICStates());
+        version.setHostNicStates(new HostNicStates());
         for (NicStatus status : values) {
-            version.getHostNicStates().getHostNICStates().add(status.value());
+            version.getHostNicStates().getHostNicStates().add(status.value());
         }
     }
 

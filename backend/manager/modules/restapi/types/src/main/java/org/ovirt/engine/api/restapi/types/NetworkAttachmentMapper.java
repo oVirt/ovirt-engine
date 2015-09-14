@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import java.util.ArrayList;
 
 import org.ovirt.engine.api.model.BootProtocol;
-import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.IP;
 import org.ovirt.engine.api.model.IpAddressAssignment;
 import org.ovirt.engine.api.model.IpAddressAssignments;
@@ -41,7 +41,7 @@ public class NetworkAttachmentMapper {
         }
 
         if (model.isSetHostNic()) {
-            HostNIC hostNic = model.getHostNic();
+            HostNic hostNic = model.getHostNic();
             if (hostNic.isSetId()) {
                 entity.setNicId(GuidUtils.asGuid(hostNic.getId()));
             } else {
@@ -173,10 +173,10 @@ public class NetworkAttachmentMapper {
         return ipAddressAssignment;
     }
 
-    private static HostNIC getModelHostNic(NetworkAttachment model) {
-        HostNIC hostNic = model.getHostNic();
+    private static HostNic getModelHostNic(NetworkAttachment model) {
+        HostNic hostNic = model.getHostNic();
         if (hostNic == null) {
-            hostNic = new HostNIC();
+            hostNic = new HostNic();
             model.setHostNic(hostNic);
         }
         return hostNic;

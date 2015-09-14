@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Bonding;
 import org.ovirt.engine.api.model.BootProtocol;
-import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.HostNics;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NicStatus;
@@ -34,7 +34,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostNicsResourceTest
-    extends AbstractBackendCollectionResourceTest<HostNIC, VdsNetworkInterface, BackendHostNicsResource> {
+    extends AbstractBackendCollectionResourceTest<HostNic, VdsNetworkInterface, BackendHostNicsResource> {
 
     public static final Guid PARENT_GUID = GUIDS[0];
     public static final Guid NETWORK_GUID = new Guid("33333333-3333-3333-3333-333333333333");
@@ -83,7 +83,7 @@ public class BackendHostNicsResourceTest
             setUpQueryExpectations("");
             collection.setUriInfo(uriInfo);
 
-            List<HostNIC> nics = getCollection();
+            List<HostNic> nics = getCollection();
             assertTrue(nics.get(0).isSetStatistics());
 
             verifyCollection(nics);
@@ -111,12 +111,12 @@ public class BackendHostNicsResourceTest
                                   new Object[] { PARENT_GUID },
                                   setUpInterfaces());
 
-        HostNIC nic = getBondEntity();
+        HostNic nic = getBondEntity();
 
         Response response = collection.add(nic);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof HostNIC);
-        verifyMaster((HostNIC) response.getEntity());
+        assertTrue(response.getEntity() instanceof HostNic);
+        verifyMaster((HostNic) response.getEntity());
     }
 
     @Test
@@ -139,7 +139,7 @@ public class BackendHostNicsResourceTest
                                            canDo,
                                            success));
 
-        HostNIC model = getBondEntity();
+        HostNic model = getBondEntity();
 
         try {
             collection.add(model);
@@ -152,13 +152,13 @@ public class BackendHostNicsResourceTest
 
     @Test
     public void testAddIncompleteParameters() throws Exception {
-        HostNIC nic = new HostNIC();
+        HostNic nic = new HostNic();
         nic.setName(MASTER_NAME);
         nic.setNetwork(new Network());
         nic.getNetwork().setDescription(DESCRIPTIONS[0]);
         nic.setBonding(new Bonding());
         nic.getBonding().setSlaves(new Slaves());
-        nic.getBonding().getSlaves().getSlaves().add(new HostNIC());
+        nic.getBonding().getSlaves().getSlaves().add(new HostNic());
         nic.getBonding().getSlaves().getSlaves().get(0).setId(SLAVE_GUID.toString());
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
@@ -166,7 +166,7 @@ public class BackendHostNicsResourceTest
             collection.add(nic);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "HostNIC", "add", "network.id|name");
+             verifyIncompleteException(wae, "HostNic", "add", "network.id|name");
         }
     }
 
@@ -187,7 +187,7 @@ public class BackendHostNicsResourceTest
     }
 
     private void doTestSetupNetworksSyncsNetwork(boolean overrideConfiguration, List<String> expectedNetworksToSync) {
-        HostNIC hostNic = new HostNIC();
+        HostNic hostNic = new HostNic();
         Network network = new Network();
         network.setName(NETWORK_NAME);
         hostNic.setNetwork(network);
@@ -353,25 +353,25 @@ public class BackendHostNicsResourceTest
         return entity;
     }
 
-    protected HostNIC getBondEntity() {
-        HostNIC nic = new HostNIC();
+    protected HostNic getBondEntity() {
+        HostNic nic = new HostNic();
         nic.setName(MASTER_NAME);
         nic.setNetwork(new Network());
         nic.getNetwork().setName(NETWORK_NAME);
         nic.setBonding(new Bonding());
         nic.getBonding().setSlaves(new Slaves());
-        nic.getBonding().getSlaves().getSlaves().add(new HostNIC());
+        nic.getBonding().getSlaves().getSlaves().add(new HostNic());
         nic.getBonding().getSlaves().getSlaves().get(0).setName(SLAVE_NAME);
         return nic;
     }
 
     @Override
-    protected void verifyModel(HostNIC model, int index) {
+    protected void verifyModel(HostNic model, int index) {
         verifyModelSpecific(model, index);
         verifyLinks(model);
     }
 
-    public void verifyModelSpecific(HostNIC model, int index) {
+    public void verifyModelSpecific(HostNic model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
         assertEquals(NAMES[index], model.getName());
         assertNotNull(model.getNetwork());
@@ -397,7 +397,7 @@ public class BackendHostNicsResourceTest
         return getMapper(NetworkBootProtocol.class, BootProtocol.class).map(networkBootProtocol, params);
     }
 
-    protected void verifyMaster(HostNIC model) {
+    protected void verifyMaster(HostNic model) {
         assertEquals(MASTER_GUID.toString(), model.getId());
         assertEquals(MASTER_NAME, model.getName());
         assertNotNull(model.getNetwork());
@@ -409,7 +409,7 @@ public class BackendHostNicsResourceTest
         assertNotNull(model.getBonding().getSlaves().getSlaves().get(0).getHref());
     }
 
-    protected void verifySlave(HostNIC model) {
+    protected void verifySlave(HostNic model) {
         assertEquals(SLAVE_GUID.toString(), model.getId());
         assertEquals(SLAVE_NAME, model.getName());
         assertNotNull(model.getNetwork());
@@ -421,7 +421,7 @@ public class BackendHostNicsResourceTest
     }
 
     @Override
-    protected void verifyCollection(List<HostNIC> collection) throws Exception {
+    protected void verifyCollection(List<HostNic> collection) throws Exception {
         assertNotNull(collection);
         assertEquals(NAMES.length + 2, collection.size());
         for (int i = 0; i < NAMES.length; i++) {
@@ -432,7 +432,7 @@ public class BackendHostNicsResourceTest
     }
 
     @Override
-    protected List<HostNIC> getCollection() {
+    protected List<HostNic> getCollection() {
         return collection.list().getHostNics();
     }
 

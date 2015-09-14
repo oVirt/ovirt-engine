@@ -2059,7 +2059,7 @@ actions:
   description: update the specified network interface for the host
   request:
     body:
-      parameterType: HostNIC
+      parameterType: HostNic
       signatures:
       - mandatoryArguments: {}
         optionalArguments:
@@ -2078,7 +2078,7 @@ actions:
   description: add a new network interface for the host
   request:
     body:
-      parameterType: HostNIC
+      parameterType: HostNic
       signatures:
       - mandatoryArguments: {hostnic.network.id|name: 'xs:string', hostnic.name: 'xs:string', hostnic.bonding.slaves.host_nic--COLLECTION: {host_nic.id|name: 'xs:string'}}
         optionalArguments:

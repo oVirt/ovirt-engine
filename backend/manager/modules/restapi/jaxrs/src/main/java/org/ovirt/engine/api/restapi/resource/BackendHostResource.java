@@ -16,7 +16,7 @@ import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.FenceType;
 import org.ovirt.engine.api.model.Host;
-import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.IscsiDetails;
 import org.ovirt.engine.api.model.Label;
 import org.ovirt.engine.api.model.LogicalUnit;
@@ -283,13 +283,13 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
         BusinessEntityMap<Bond> bonds = getBackendHostBonds();
         if (action.isSetModifiedBonds()) {
-            for (HostNIC bond : action.getModifiedBonds().getHostNics()) {
+            for (HostNic bond : action.getModifiedBonds().getHostNics()) {
                 parameters.getBonds().add(mapBonds(bonds, bond));
             }
         }
 
         if (action.isSetRemovedBonds()) {
-            for (HostNIC bond : action.getRemovedBonds().getHostNics()) {
+            for (HostNic bond : action.getRemovedBonds().getHostNics()) {
                 parameters.getRemovedBonds().add(mapBonds(bonds, bond).getId());
             }
         }
@@ -334,8 +334,8 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         return attachment;
     }
 
-    public Bond mapBonds(BusinessEntityMap<Bond> bonds, HostNIC model) {
-        Mapper<HostNIC, Bond> hostNicMapper = getMapper(HostNIC.class, Bond.class);
+    public Bond mapBonds(BusinessEntityMap<Bond> bonds, HostNic model) {
+        Mapper<HostNic, Bond> hostNicMapper = getMapper(HostNic.class, Bond.class);
         Bond bond;
         if (model.isSetId()) {
             Guid nicId = asGuid(model.getId());

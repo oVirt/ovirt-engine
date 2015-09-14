@@ -7,7 +7,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Host;
-import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.Label;
 import org.ovirt.engine.api.model.Labels;
 import org.ovirt.engine.api.resource.LabelResource;
@@ -45,7 +45,7 @@ public class BackendHostNicLabelsResource extends AbstractBackendCollectionResou
             Label label = new Label();
             label.setId(networkLabel.getId());
             labels.getLabels().add(label);
-            addLinks(label, HostNIC.class);
+            addLinks(label, HostNic.class);
         }
 
         return labels;
@@ -66,7 +66,7 @@ public class BackendHostNicLabelsResource extends AbstractBackendCollectionResou
 
     @Override
     protected Label addParents(Label model) {
-        model.setHostNic(new HostNIC());
+        model.setHostNic(new HostNic());
         model.getHostNic().setId(nicId.toString());
         model.getHostNic().setHost(new Host());
         model.getHostNic().getHost().setId(hostId);
@@ -77,7 +77,7 @@ public class BackendHostNicLabelsResource extends AbstractBackendCollectionResou
     protected Label addLinks(Label model,
             Class<? extends BaseResource> suggestedParent,
             String... excludeSubCollectionMembers) {
-        return super.addLinks(model, HostNIC.class);
+        return super.addLinks(model, HostNic.class);
     }
 
     public Guid getHostNicId() {

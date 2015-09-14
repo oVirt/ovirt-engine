@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Bonding;
 import org.ovirt.engine.api.model.BootProtocol;
-import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.IP;
 import org.ovirt.engine.api.model.MAC;
 import org.ovirt.engine.api.model.Network;
@@ -32,8 +32,8 @@ public class HostNicMapper {
                                                               "Dynamic link aggregation (802.3ad)",
                                                               "Adaptive transmit load balancing (balance-tlb)"};
 
-    @Mapping(from = HostNIC.class, to = VdsNetworkInterface.class)
-    public static VdsNetworkInterface map(HostNIC model, VdsNetworkInterface template) {
+    @Mapping(from = HostNic.class, to = VdsNetworkInterface.class)
+    public static VdsNetworkInterface map(HostNic model, VdsNetworkInterface template) {
         VdsNetworkInterface entity;
         if (template != null) {
             entity = template;
@@ -94,8 +94,8 @@ public class HostNicMapper {
         return entity;
     }
 
-    @Mapping(from = HostNIC.class, to = Bond.class)
-    public static Bond map(HostNIC model, Bond template) {
+    @Mapping(from = HostNic.class, to = Bond.class)
+    public static Bond map(HostNic model, Bond template) {
         Bond entity = template == null ? new Bond() : template;
 
         if (model.isSetId()) {
@@ -109,7 +109,7 @@ public class HostNicMapper {
         if (model.isSetBonding()) {
             entity.setBonded(true);
             if (model.getBonding().isSetSlaves()) {
-                for (HostNIC slave : model.getBonding().getSlaves().getSlaves()) {
+                for (HostNic slave : model.getBonding().getSlaves().getSlaves()) {
                     if (slave.isSetName()) {
                         entity.getSlaves().add(slave.getName());
                     }
@@ -128,7 +128,7 @@ public class HostNicMapper {
         return entity;
     }
 
-    private static String calculateBondingOptionsString(HostNIC model) {
+    private static String calculateBondingOptionsString(HostNic model) {
         List<Option> bondingOptions = model.getBonding().getOptions().getOptions();
 
         if (bondingOptions.isEmpty()) {
@@ -152,9 +152,9 @@ public class HostNicMapper {
                 .append(opt.getValue());
     }
 
-    @Mapping(from = VdsNetworkInterface.class, to = HostNIC.class)
-    public static HostNIC map(VdsNetworkInterface entity, HostNIC template) {
-        HostNIC model = template != null ? template : new HostNIC();
+    @Mapping(from = VdsNetworkInterface.class, to = HostNic.class)
+    public static HostNic map(VdsNetworkInterface entity, HostNic template) {
+        HostNic model = template != null ? template : new HostNic();
         if (entity.getId() != null) {
             model.setId(entity.getId().toString());
         }
