@@ -25,6 +25,7 @@ The following XML schema complex types have been renamed:
 - `IO` - `Io`
 - `IP` - `Ip`
 - `IPs` - `Ips`
+- `KSM` - `Ksm`
 
 First column is the old name, and second column is the new name.
 

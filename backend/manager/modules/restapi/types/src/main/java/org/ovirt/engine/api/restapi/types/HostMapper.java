@@ -25,8 +25,8 @@ import org.ovirt.engine.api.model.HostStatus;
 import org.ovirt.engine.api.model.HostType;
 import org.ovirt.engine.api.model.HostedEngine;
 import org.ovirt.engine.api.model.IscsiDetails;
-import org.ovirt.engine.api.model.KSM;
 import org.ovirt.engine.api.model.KdumpStatus;
+import org.ovirt.engine.api.model.Ksm;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
@@ -225,7 +225,7 @@ public class HostMapper {
             model.setVersion(version);
         }
         model.setOs(getHostOs(entity.getHostOs()));
-        model.setKsm(new KSM());
+        model.setKsm(new Ksm());
         model.getKsm().setEnabled(Boolean.TRUE.equals(entity.getKsmState()));
         model.setTransparentHugepages(new TransparentHugePages());
         model.getTransparentHugepages().setEnabled(!(entity.getTransparentHugePagesState() == null ||

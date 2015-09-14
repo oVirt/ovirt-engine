@@ -1929,9 +1929,9 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:element name="ksm" type="KSM"/>
+  <xs:element name="ksm" type="Ksm"/>
 
-  <xs:complexType name="KSM">
+  <xs:complexType name="Ksm">
     <xs:sequence>
       <xs:element name="enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
       <xs:element name="merge_across_nodes" type="xs:boolean" minOccurs="0" maxOccurs="1"/>

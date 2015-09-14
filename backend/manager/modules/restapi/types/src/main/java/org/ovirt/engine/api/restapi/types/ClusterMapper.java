@@ -11,7 +11,7 @@ import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.ErrorHandling;
-import org.ovirt.engine.api.model.KSM;
+import org.ovirt.engine.api.model.Ksm;
 import org.ovirt.engine.api.model.MemoryOverCommit;
 import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.MigrateOnError;
@@ -155,9 +155,9 @@ public class ClusterMapper {
             model.getVersion().setMajor(entity.getCompatibilityVersion().getMajor());
             model.getVersion().setMinor(entity.getCompatibilityVersion().getMinor());
         }
-        model.setMemoryPolicy(map(entity, (MemoryPolicy)null));
+        model.setMemoryPolicy(map(entity, (MemoryPolicy) null));
         model.setSchedulingPolicy(map(entity, (SchedulingPolicy) null));
-        model.setErrorHandling(map(entity.getMigrateOnError(), (ErrorHandling)null));
+        model.setErrorHandling(map(entity.getMigrateOnError(), (ErrorHandling) null));
         model.setVirtService(entity.supportsVirtService());
         model.setGlusterService(entity.supportsGlusterService());
         model.setThreadsAsCores(entity.getCountThreadsAsCores());
@@ -167,9 +167,9 @@ public class ClusterMapper {
         model.setOptionalReason(entity.isOptionalReasonRequired());
         model.setMaintenanceReasonRequired(entity.isMaintenanceReasonRequired());
         model.setBallooningEnabled(entity.isEnableBallooning());
-        KSM ksm = model.getKsm();
+        Ksm ksm = model.getKsm();
         if (ksm == null) {
-          ksm = new KSM();
+          ksm = new Ksm();
           model.setKsm(ksm);
         }
         ksm.setEnabled(entity.isEnableKsm());
