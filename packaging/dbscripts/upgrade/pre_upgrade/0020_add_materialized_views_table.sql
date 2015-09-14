@@ -3,7 +3,7 @@ CREATE FUNCTION __temp__0030_add_materialized_views_table()
 RETURNS VOID
 AS $procedure$
 BEGIN
-    IF not exists (select 1 from information_schema.tables where table_name ='materialized_views') then
+    IF not exists (select 1 from information_schema.tables where table_schema = 'public' and table_name ='materialized_views') then
         CREATE TABLE materialized_views (
           mv_name NAME NOT NULL PRIMARY KEY,
           v_name NAME NOT NULL,

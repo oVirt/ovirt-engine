@@ -1,6 +1,6 @@
 CREATE OR REPLACE FUNCTION __temp_create_storage_server_connection_extension_table() RETURNS void AS $FUNCTION$
 BEGIN
-IF (NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name ILIKE 'storage_server_connection_extension')) THEN
+IF (NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name ILIKE 'storage_server_connection_extension')) THEN
   CREATE TABLE storage_server_connection_extension (
       id uuid NOT NULL,
       vds_id uuid NOT NULL,
