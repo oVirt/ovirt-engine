@@ -9,7 +9,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.BootDevice;
-import org.ovirt.engine.api.model.Capabilities;
 import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.api.model.CustomProperty;
 import org.ovirt.engine.api.model.DiskFormat;
@@ -20,7 +19,6 @@ import org.ovirt.engine.api.model.FenceType;
 import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.OsType;
-import org.ovirt.engine.api.model.SchedulingPolicyType;
 import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.Version;
@@ -309,16 +307,6 @@ public class BackendCapabilityResourceTest extends AbstractBackendResourceTest {
         assertNotNull(env);
         assertEquals(name, env.getName());
         assertEquals(regexp, env.getRegexp());
-    }
-
-    private void verifySchedulingPolicies(Capabilities capabilities) {
-        assertTrue(capabilities.isSetSchedulingPolicies());
-        assertTrue(capabilities.getSchedulingPolicies().isSetPolicy());
-        assertFalse(capabilities.getSchedulingPolicies().getPolicy().isEmpty());
-        assertEquals(SchedulingPolicyType.values().length, capabilities.getSchedulingPolicies().getPolicy().size());
-        for (SchedulingPolicyType policy : SchedulingPolicyType.values()) {
-            assertTrue(capabilities.getSchedulingPolicies().getPolicy().contains(policy.value()));
-        }
     }
 
     private boolean greaterOrEqual(Version a, Version b) {

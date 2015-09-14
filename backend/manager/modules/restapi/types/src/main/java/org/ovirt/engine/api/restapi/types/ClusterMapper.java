@@ -2,8 +2,6 @@ package org.ovirt.engine.api.restapi.types;
 
 import static org.ovirt.engine.api.restapi.utils.VersionUtils.greaterOrEqual;
 
-import java.util.LinkedHashMap;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Architecture;
 import org.ovirt.engine.api.model.Cluster;
@@ -16,19 +14,15 @@ import org.ovirt.engine.api.model.MemoryOverCommit;
 import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.MigrateOnError;
 import org.ovirt.engine.api.model.SchedulingPolicy;
-import org.ovirt.engine.api.model.SchedulingPolicyThresholds;
 import org.ovirt.engine.api.model.TransparentHugePages;
 import org.ovirt.engine.api.model.Version;
-import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.compat.Guid;
 
 public class ClusterMapper {
-    private static final String CPU_OVER_COMMIT_DURATION_MINUTES = "CpuOverCommitDurationMinutes";
-    private static final String HIGH_UTILIZATION = "HighUtilization";
-    private static final String LOW_UTILIZATION = "LowUtilization";
     static final org.ovirt.engine.core.compat.Version min_thp_version = new org.ovirt.engine.core.compat.Version(3, 0);
 
     @Mapping(from = Cluster.class, to = VDSGroup.class)
@@ -69,8 +63,14 @@ public class ClusterMapper {
                 && model.getVersion().getMinor() != null && greaterOrEqual(model.getVersion(), min_thp_version)) {
             entity.setTransparentHugepages(true);
         }
-        if (model.isSetSchedulingPolicy()) {
-            entity = map(model.getSchedulingPolicy(), entity);
+        SchedulingPolicy schedulingPolicy = model.getSchedulingPolicy();
+        if (schedulingPolicy != null) {
+            if (schedulingPolicy.isSetName()) {
+                entity.setClusterPolicyName(schedulingPolicy.getName());
+            }
+            if (schedulingPolicy.isSetId()) {
+                entity.setClusterPolicyId(GuidUtils.asGuid(schedulingPolicy.getId()));
+            }
         }
         if (model.isSetErrorHandling() && model.getErrorHandling().isSetOnError()) {
             entity.setMigrateOnError(map(model.getErrorHandling().getOnError(), null));
@@ -155,9 +155,17 @@ public class ClusterMapper {
             model.getVersion().setMajor(entity.getCompatibilityVersion().getMajor());
             model.getVersion().setMinor(entity.getCompatibilityVersion().getMinor());
         }
-        model.setMemoryPolicy(map(entity, (MemoryPolicy) null));
-        model.setSchedulingPolicy(map(entity, (SchedulingPolicy) null));
-        model.setErrorHandling(map(entity.getMigrateOnError(), (ErrorHandling) null));
+        model.setMemoryPolicy(map(entity, (MemoryPolicy)null));
+        Guid clusterPolicyId = entity.getClusterPolicyId();
+        if (clusterPolicyId != null) {
+            SchedulingPolicy schedulingPolicy = model.getSchedulingPolicy();
+            if (schedulingPolicy == null) {
+                schedulingPolicy = new SchedulingPolicy();
+                model.setSchedulingPolicy(schedulingPolicy);
+            }
+            schedulingPolicy.setId(clusterPolicyId.toString());
+        }
+        model.setErrorHandling(map(entity.getMigrateOnError(), (ErrorHandling)null));
         model.setVirtService(entity.supportsVirtService());
         model.setGlusterService(entity.supportsGlusterService());
         model.setThreadsAsCores(entity.getCountThreadsAsCores());
@@ -217,71 +225,6 @@ public class ClusterMapper {
         model.getOverCommit().setPercent(entity.getMaxVdsMemoryOverCommit());
         model.setTransparentHugepages(new TransparentHugePages());
         model.getTransparentHugepages().setEnabled(entity.getTransparentHugepages());
-        return model;
-    }
-
-    @Mapping(from = SchedulingPolicy.class, to = VDSGroup.class)
-    public static VDSGroup map(SchedulingPolicy model, VDSGroup template) {
-        VDSGroup entity = template != null ? template : new VDSGroup();
-        if (model.isSetPolicy() || model.isSetName()) {
-            entity.setClusterPolicyName(model.isSetName() ? model.getName() : model.getPolicy());
-            entity.setClusterPolicyId(null);
-        }
-        // id will override name
-        if (model.isSetId()) {
-            entity.setClusterPolicyId(GuidUtils.asGuid(model.getId()));
-        }
-        if (model.isSetThresholds()) {
-            SchedulingPolicyThresholds thresholds = model.getThresholds();
-            if (entity.getClusterPolicyProperties() == null) {
-                entity.setClusterPolicyProperties(new LinkedHashMap<String, String>());
-            }
-            if (thresholds.getLow() != null) {
-                entity.getClusterPolicyProperties().put(LOW_UTILIZATION, thresholds.getLow().toString());
-            }
-            if (thresholds.getHigh() != null) {
-                entity.getClusterPolicyProperties().put(HIGH_UTILIZATION, thresholds.getHigh().toString());
-            }
-            if (thresholds.getDuration() != null) {
-                int round = Math.round(thresholds.getDuration() / 60.0f);
-                entity.getClusterPolicyProperties().put(CPU_OVER_COMMIT_DURATION_MINUTES, Integer.toString(round));
-            }
-        }
-        // properties will override thresholds
-        if (model.isSetProperties()) {
-            entity.setClusterPolicyProperties(CustomPropertiesParser.toMap(model.getProperties()));
-        }
-        return entity;
-    }
-
-    @Mapping(from = VDSGroup.class, to = SchedulingPolicy.class)
-    public static SchedulingPolicy map(VDSGroup entity, SchedulingPolicy template) {
-        SchedulingPolicy model = template != null ? template : new SchedulingPolicy();
-        if (entity.getClusterPolicyName() != null) {
-            model.setId(entity.getClusterPolicyId() != null ? entity.getClusterPolicyId().toString() : null);
-            model.setPolicy(entity.getClusterPolicyName().toLowerCase());
-            model.setName(entity.getClusterPolicyName().toLowerCase());
-            if (entity.getClusterPolicyProperties() != null && !entity.getClusterPolicyProperties().isEmpty()) {
-                model.setThresholds(new SchedulingPolicyThresholds());
-                String lowUtilization = entity.getClusterPolicyProperties().get(LOW_UTILIZATION);
-                String highUtilization = entity.getClusterPolicyProperties().get(HIGH_UTILIZATION);
-                String cpuOverCommitDurationMinutes =
-                        entity.getClusterPolicyProperties().get(CPU_OVER_COMMIT_DURATION_MINUTES);
-                if (lowUtilization != null) {
-                    model.getThresholds().setLow(Integer.parseInt(lowUtilization));
-                }
-                if (highUtilization != null) {
-                    model.getThresholds().setHigh(Integer.parseInt(highUtilization));
-                }
-                if (cpuOverCommitDurationMinutes != null) {
-                    int duration = Integer.parseInt(cpuOverCommitDurationMinutes) * 60;
-                    model.getThresholds().setDuration(duration);
-                }
-            }
-        }
-        if (entity.getClusterPolicyProperties() != null && !entity.getClusterPolicyProperties().isEmpty()) {
-            model.setProperties(CustomPropertiesParser.fromMap(entity.getClusterPolicyProperties()));
-        }
         return model;
     }
 

@@ -748,7 +748,6 @@ will now be reported as follows:
 
     GET /clusters/{cluster:id}
     <cluster>
-      ...
       <required_rng_sources>
         <required_rng_sourcesRANDOM</required_rng_source>
       </required_rng_sources>
@@ -793,3 +792,63 @@ used now:
       <name>mytag</name>
       <parent id="..." href="..."/>
     </tag>
+
+### Remove scheduling built-in names and thresholds
+
+In the past the specification of scheduling policies for clusters was
+based in built-in names and thresholds. For example a cluster that used
+the *evenly distributed* scheduling policy was represented as follows:
+
+    <cluster>
+      <name>mycluster</name>
+      <scheduling_policy>
+        <policy>evenly_distributed</policy>
+        <thresholds high="80" duration="120"/>
+      </scheduling_policy>
+      ...
+    </cluster>
+
+This mechanism was replaced with a top level `/schedulingpolicies`
+collection where scheduling policies can be defined with arbitrary names
+and properties. For example, the same scheduling policy is represented
+as follows in that top level collection:
+
+    <scheduling_policy>
+      <name>evenly_distributed</name>
+      <properties>
+        <property>
+          <name>CpuOverCommitDurationMinutes</name>
+          <value>2</value>
+        </property>
+        <property>
+          <name>HighUtilization</name>
+          <value>80</value>
+        </property>
+      </properties>
+    </scheduling_policy>
+
+The representation of the cluster references the scheduling policy with
+its identifier:
+
+    <cluster>
+      <name>mycluster</name>
+      <scheduling_policy id="..."/>
+      ...
+    </cluster>
+
+To preserve backwards compatibility the old `policy` and `thresholds`
+elements were preserved. The scheduling policy representation embedded
+within the cluster was also preserved. All these things have been
+completely removed now, so the only way to reference a scheduling policy
+when retrieving, creating or updating a cluster is to reference an
+existing one using its identifier. For example, when retrieving a
+cluster only the `id` (and `href`) will be populated:
+
+    GET /clusters/{cluster:id}
+    <cluster>
+      ...
+      <scheduling_policy id="..." href="..."/>
+      ...
+    </cluster>
+
+When creating or updating a cluster only the `id` will be accepted.

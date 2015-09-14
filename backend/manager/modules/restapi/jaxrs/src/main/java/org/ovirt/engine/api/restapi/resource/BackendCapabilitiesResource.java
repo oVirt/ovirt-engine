@@ -97,8 +97,6 @@ import org.ovirt.engine.api.model.RngSource;
 import org.ovirt.engine.api.model.RngSources;
 import org.ovirt.engine.api.model.SELinuxMode;
 import org.ovirt.engine.api.model.SELinuxModes;
-import org.ovirt.engine.api.model.SchedulingPolicies;
-import org.ovirt.engine.api.model.SchedulingPolicyType;
 import org.ovirt.engine.api.model.SchedulingPolicyUnitTypes;
 import org.ovirt.engine.api.model.ScsiGenericIO;
 import org.ovirt.engine.api.model.ScsiGenericIoOptions;
@@ -218,8 +216,6 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         for (Version v : getSupportedClusterLevels()) {
             caps.getVersions().add(generateVersionCaps(v));
         }
-
-        caps.setSchedulingPolicies(getSchedulingPolicies());
         return caps;
     }
 
@@ -285,7 +281,6 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addHostNICStates(version, NicStatus.values());
         addDataCenterStates(version, DataCenterStatus.values());
         addPermits(version, PermitType.values());
-        addSchedulingPolicies(version, SchedulingPolicyType.values());
         addNetworkUsages(version, NetworkUsage.values());
         addPmProxyTypes(version, PmProxyType.values());
         addReportedDeviceTypes(version, ReportedDeviceType.values());
@@ -462,13 +457,6 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             for (NetworkUsage usage : values) {
                 version.getUsages().getUsages().add(usage.value());
             }
-        }
-    }
-
-    private void addSchedulingPolicies(VersionCaps version, SchedulingPolicyType[] values) {
-        version.setSchedulingPolicies(new SchedulingPolicies());
-        for (SchedulingPolicyType policy : values) {
-            version.getSchedulingPolicies().getPolicy().add(policy.value());
         }
     }
 
@@ -703,14 +691,6 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
     private Permit map(PermitType entity) {
         return mappingLocator.getMapper(PermitType.class, Permit.class).map(entity, null);
-    }
-
-    private SchedulingPolicies getSchedulingPolicies() {
-        SchedulingPolicies policies = new SchedulingPolicies();
-        for (SchedulingPolicyType policy : SchedulingPolicyType.values()) {
-            policies.getPolicy().add(policy.value());
-        }
-        return policies;
     }
 
     private void addMigrateOnErrorOptions(VersionCaps version, MigrateOnError[] values) {

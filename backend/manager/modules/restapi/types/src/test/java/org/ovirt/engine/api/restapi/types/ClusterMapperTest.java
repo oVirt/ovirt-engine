@@ -5,15 +5,10 @@ import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.ErrorHandling;
 import org.ovirt.engine.api.model.MigrateOnError;
 import org.ovirt.engine.api.model.RngSource;
-import org.ovirt.engine.api.model.SchedulingPolicy;
 import org.ovirt.engine.api.model.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.compat.Guid;
 
 public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VDSGroup, VDSGroup> {
-
-    private static final String NONE = "none";
-
     public ClusterMapperTest() {
         super(Cluster.class, VDSGroup.class, VDSGroup.class);
     }
@@ -23,14 +18,9 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
         ErrorHandling errorHandling = new ErrorHandling();
         errorHandling.setOnError(MappingTestHelper.shuffle(MigrateOnError.class).value());
         model.setErrorHandling(errorHandling);
-        SchedulingPolicy policy = new SchedulingPolicy();
-        policy.setPolicy(NONE);
-        model.setSchedulingPolicy(policy);
         model.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM.value());
         model.getRequiredRngSources().getRequiredRngSources().clear();
         model.getRequiredRngSources().getRequiredRngSources().add(RngSource.RANDOM.name());
-        model.getSchedulingPolicy().setPolicy(NONE);
-        model.getSchedulingPolicy().setName(NONE);
         return model;
     }
 
@@ -98,21 +88,5 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
         });
         VDSGroup transform = getMapper().map(cluster, null);
         assertEquals(transform.getTransparentHugepages(), true);
-    }
-
-    @Test
-    public void testSchedulingPolicyNone() {
-        Cluster cluster = new Cluster();
-        SchedulingPolicy policy = new SchedulingPolicy();
-        policy.setId(Guid.Empty.toString());
-        policy.setPolicy(NONE);
-        policy.setName(NONE);
-        cluster.setSchedulingPolicy(policy);
-        VDSGroup transform = getMapper().map(cluster, null);
-        assertNotNull(transform.getClusterPolicyName());
-        assertEquals(transform.getClusterPolicyName(), NONE);
-        transform.setId(Guid.Empty);
-        cluster = ClusterMapper.map(transform, cluster);
-        assertEquals(cluster.getSchedulingPolicy().getPolicy(), NONE);
     }
 }

@@ -620,7 +620,6 @@
           <xs:element ref="data_center_states" minOccurs="0"/>
           <xs:element ref="vm_device_types" minOccurs="0"/>
           <xs:element ref="permits" minOccurs="0"/>
-          <xs:element ref="scheduling_policies" minOccurs="0"/>
           <xs:element ref="usages" minOccurs="0"/>
           <xs:element ref="nfs_versions" minOccurs="0"/>
           <xs:element ref="pm_proxy_types" minOccurs="0"/>
@@ -675,22 +674,6 @@
             </xs:annotation>
           </xs:element>
           <!-- TODO: (deprecated) remove these elements post 4.0 -->
-          <xs:element name="scheduling_policies" type="SchedulingPolicies" minOccurs="0"/>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="scheduling_policies" type="SchedulingPolicies"/>
-
-  <xs:complexType name="SchedulingPolicies">
-    <xs:complexContent>
-      <xs:extension base="BaseResources">
-        <xs:sequence>
-          <xs:element name="scheduling_policy" type="SchedulingPolicy" minOccurs="0" maxOccurs="unbounded"/>
-          <!-- deprecated - start -->
-          <xs:element name="policy" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-          <!-- deprecated - end -->
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -1600,30 +1583,6 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="SchedulingPolicyThresholds">
-    <xs:attribute name="low" type="xs:int">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property generateIsSetMethod="false"/>
-          </xs:appinfo>
-        </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="high" type="xs:int">
-         <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property generateIsSetMethod="false"/>
-          </xs:appinfo>
-        </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="duration" type="xs:int">
-            <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property generateIsSetMethod="false"/>
-          </xs:appinfo>
-        </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-
   <xs:element name="scheduling_policy_unit" type="SchedulingPolicyUnit"/>
 
   <xs:complexType name="SchedulingPolicyUnit">
@@ -1768,13 +1727,21 @@
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
-          <!-- deprecated - start -->
-          <xs:element name="policy" type="xs:string" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="thresholds" type="SchedulingPolicyThresholds" minOccurs="0" maxOccurs="1"/>
-          <!-- deprecated - end-->
           <xs:element name="locked" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="default_policy" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="properties" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="scheduling_policies" type="SchedulingPolicies"/>
+
+  <xs:complexType name="SchedulingPolicies">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element name="scheduling_policy" type="SchedulingPolicy" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

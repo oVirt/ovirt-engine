@@ -9,16 +9,12 @@ import org.ovirt.engine.api.model.RngSource;
 @ValidatedClass(clazz = Cluster.class)
 public class ClusterValidator implements Validator<Cluster> {
 
-    private SchedulingPolicyValidator schedulingPolicyValidator = new SchedulingPolicyValidator();
     private CPUValidator cpuValidator = new CPUValidator();
     private MigrationOptionsValidator migrationOptionsValidator = new MigrationOptionsValidator();
 
     @Override
     public void validateEnums(Cluster cluster) {
         if (cluster != null) {
-            if (cluster.isSetSchedulingPolicy()) {
-                schedulingPolicyValidator.validateEnums(cluster.getSchedulingPolicy());
-            }
             if (cluster.isSetCpu()) {
                 cpuValidator.validateEnums(cluster.getCpu());
             }
