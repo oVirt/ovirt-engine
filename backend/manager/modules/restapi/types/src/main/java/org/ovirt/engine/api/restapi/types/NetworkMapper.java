@@ -10,7 +10,7 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkStatus;
 import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.model.Usages;
-import org.ovirt.engine.api.model.VLAN;
+import org.ovirt.engine.api.model.Vlan;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
@@ -101,7 +101,7 @@ public class NetworkMapper {
             model.getIp().setGateway(entity.getGateway());
         }
         if (entity.getVlanId() != null) {
-            model.setVlan(new VLAN());
+            model.setVlan(new Vlan());
             model.getVlan().setId(entity.getVlanId());
         }
         model.setStp(entity.getStp());

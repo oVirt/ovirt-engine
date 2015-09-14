@@ -13,7 +13,6 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NicStatus;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
-import org.ovirt.engine.api.model.VLAN;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -169,7 +168,7 @@ public class HostNicMapper {
             model.setBaseInterface(entity.getBaseInterface());
         }
         if (entity.getVlanId() != null) {
-            model.setVlan(new VLAN());
+            model.setVlan(new org.ovirt.engine.api.model.Vlan());
             model.getVlan().setId(entity.getVlanId());
         }
         if (entity.getAddress() != null || entity.getGateway() != null || entity.getSubnet() != null) {

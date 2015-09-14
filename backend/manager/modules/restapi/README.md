@@ -37,6 +37,7 @@ The following XML schema complex types have been renamed:
 - `SSH` - `Ssh`
 - `VCpuPin` - `VcpuPin`
 - `VirtIO_SCSI` - `VirtioScsi`
+- `VLAN` - `Vlan`
 
 First column is the old name, and second column is the new name.
 

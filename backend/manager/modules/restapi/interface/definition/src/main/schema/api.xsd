@@ -2582,9 +2582,9 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:element name="vlan" type="VLAN"/>
+  <xs:element name="vlan" type="Vlan"/>
 
-  <xs:complexType name="VLAN">
+  <xs:complexType name="Vlan">
     <xs:attribute name="id" type="xs:unsignedShort">
         <xs:annotation>
           <xs:appinfo>
