@@ -109,6 +109,7 @@ public class HostNicMapper {
         if (model.isSetBonding()) {
             entity.setBonded(true);
             if (model.getBonding().isSetSlaves()) {
+                entity.getSlaves().clear();
                 for (HostNIC slave : model.getBonding().getSlaves().getSlaves()) {
                     if (slave.isSetName()) {
                         entity.getSlaves().add(slave.getName());
