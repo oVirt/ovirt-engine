@@ -18,7 +18,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.ObjectFactory;
-import org.ovirt.engine.api.model.RSDL;
+import org.ovirt.engine.api.model.Rsdl;
 import org.ovirt.engine.api.utils.ApiRootLinksCreator;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.uutils.xml.SecureDocumentBuilderFactory;
@@ -78,11 +78,11 @@ public class RsdlManager {
 
     private static void generateRsdlFile(MetaData metadata, String outputFileName, List<String> rels)
             throws IOException, ClassNotFoundException {
-        RSDL rsdl = buildRsdl(metadata, rels);
+        Rsdl rsdl = buildRsdl(metadata, rels);
         serializeRsdl(rsdl, outputFileName);
     }
 
-    public static RSDL loadRsdl(ApplicationMode applicationMode, String prefix) throws IOException {
+    public static Rsdl loadRsdl(ApplicationMode applicationMode, String prefix) throws IOException {
         // Decide what version of the RSDL document to load:
         String fileName =
                 applicationMode == ApplicationMode.GlusterOnly ? ("/" + RsdlIOManager.GLUSTER_RSDL_RESOURCE_NAME)
@@ -120,16 +120,16 @@ public class RsdlManager {
         }
 
         // Convert the modified DOM tree to the RSDL object:
-        return JAXB.unmarshal(new DOMSource(document), RSDL.class);
+        return JAXB.unmarshal(new DOMSource(document), Rsdl.class);
     }
 
-    private static void serializeRsdl(RSDL rsdl, String rsdlLocation) {
+    private static void serializeRsdl(Rsdl rsdl, String rsdlLocation) {
         ObjectFactory factory = new ObjectFactory();
-        JAXBElement<RSDL> element = factory.createRsdl(rsdl);
+        JAXBElement<Rsdl> element = factory.createRsdl(rsdl);
         JAXB.marshal(element, new File(rsdlLocation));
     }
 
-    private static RSDL buildRsdl(MetaData metadata, List<String> rels) throws IOException,
+    private static Rsdl buildRsdl(MetaData metadata, List<String> rels) throws IOException,
             ClassNotFoundException {
         RsdlBuilder builder = new RsdlBuilder(rels, metadata)
         .description(RSDL_DESCRIPTION)
@@ -147,7 +147,7 @@ public class RsdlManager {
             .name(GENERAL_METADATA_NAME)
             .description(GENERAL_METADATA_DESCRIPTION)
             .build());
-        RSDL rsdl = builder.build();
+        Rsdl rsdl = builder.build();
         return rsdl;
     }
 

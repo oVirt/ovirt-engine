@@ -4732,9 +4732,9 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="rsdl" type="RSDL"/>
+  <xs:element name="rsdl" type="Rsdl"/>
 
-  <xs:complexType name="RSDL">
+  <xs:complexType name="Rsdl">
      <xs:sequence>
        <xs:element name="description" type="xs:string" minOccurs="0"/>
        <xs:element type="Version" name="version" minOccurs="0" maxOccurs="1" />

@@ -41,7 +41,7 @@ import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.LinkHeader;
 import org.ovirt.engine.api.model.ObjectFactory;
 import org.ovirt.engine.api.model.ProductInfo;
-import org.ovirt.engine.api.model.RSDL;
+import org.ovirt.engine.api.model.Rsdl;
 import org.ovirt.engine.api.model.SpecialObjects;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.model.Users;
@@ -79,7 +79,7 @@ public class BackendApiResource
     private static final String SCHEMA_CONSTRAINT_PARAMETER = "schema";
     private static final String SCHEMA_NAME = "ovirt-engine-api-schema.xsd";
 
-    private RSDL rsdl = null;
+    private Rsdl rsdl = null;
 
     protected final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
     ApplicationMode appMode = ApplicationMode.AllModes;
@@ -225,7 +225,7 @@ public class BackendApiResource
         appMode = getCurrent().getApplicationMode();
         if (QueryHelper.hasConstraint(getUriInfo(), RSDL_CONSTRAINT_PARAMETER)) {
             try {
-                RSDL rsdl = addSystemVersion(getRSDL());
+                Rsdl rsdl = addSystemVersion(getRSDL());
                 return Response.ok().entity(rsdl).build();
             } catch (Exception e) {
                 throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR).build());
@@ -272,7 +272,7 @@ public class BackendApiResource
         }
     }
 
-    private RSDL addSystemVersion(RSDL rsdl) {
+    private Rsdl addSystemVersion(Rsdl rsdl) {
         rsdl.setVersion(getVersion());
         return rsdl;
     }
@@ -282,7 +282,7 @@ public class BackendApiResource
         return VersionMapper.map((org.ovirt.engine.core.compat.Version) result.getReturnValue(), null);
     }
 
-    public synchronized RSDL getRSDL() throws ClassNotFoundException, IOException {
+    public synchronized Rsdl getRSDL() throws ClassNotFoundException, IOException {
         if (rsdl == null) {
             rsdl = RsdlManager.loadRsdl(
                 getCurrent().getApplicationMode(),

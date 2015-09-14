@@ -10,7 +10,7 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.model.DetailedLink;
-import org.ovirt.engine.api.model.RSDL;
+import org.ovirt.engine.api.model.Rsdl;
 import org.ovirt.engine.api.model.UsageMessage;
 import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 
@@ -29,7 +29,7 @@ public class UsageFinder {
         return usage;
     }
 
-    private DetailedLink findUsage(RSDL rsdl, UriInfo uriInfo, String httpMethod) {
+    private DetailedLink findUsage(Rsdl rsdl, UriInfo uriInfo, String httpMethod) {
         DetailedLink link = null;
         for (DetailedLink currentLink : rsdl.getLinks().getLinks()) {
             if (isMatch(currentLink, uriInfo, httpMethod)) {
@@ -41,8 +41,8 @@ public class UsageFinder {
         return link;
     }
 
-    private RSDL getRSDL(Application application) throws ClassNotFoundException, IOException {
-        RSDL rsdl = null;
+    private Rsdl getRSDL(Application application) throws ClassNotFoundException, IOException {
+        Rsdl rsdl = null;
         for (Object obj : application.getSingletons()) {
             if (obj instanceof BackendApiResource) {
                 BackendApiResource resource = (BackendApiResource) obj;

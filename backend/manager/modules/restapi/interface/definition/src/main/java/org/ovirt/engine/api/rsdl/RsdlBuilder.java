@@ -47,9 +47,9 @@ import org.ovirt.engine.api.model.Headers;
 import org.ovirt.engine.api.model.HttpMethod;
 import org.ovirt.engine.api.model.Parameter;
 import org.ovirt.engine.api.model.ParametersSet;
-import org.ovirt.engine.api.model.RSDL;
 import org.ovirt.engine.api.model.Request;
 import org.ovirt.engine.api.model.Response;
+import org.ovirt.engine.api.model.Rsdl;
 import org.ovirt.engine.api.model.Schema;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Url;
@@ -62,7 +62,7 @@ public class RsdlBuilder {
     private static final String COLLECTION_PARAMETER_RSDL = "collection";
     private static final String COLLECTION_PARAMETER_YAML = "--COLLECTION";
     private static final String DEPRECATED_PARAMETER_YAML = "--DEPRECATED";
-    private RSDL rsdl;
+    private Rsdl rsdl;
     private Map<String, Action> parametersMetaData;
     private String rel;
     private String href;
@@ -94,8 +94,8 @@ public class RsdlBuilder {
         return parametersMetaData;
     }
 
-    private RSDL construct() throws ClassNotFoundException, IOException {
-        RSDL rsdl = new RSDL();
+    private Rsdl construct() throws ClassNotFoundException, IOException {
+        Rsdl rsdl = new Rsdl();
         rsdl.setLinks(new DetailedLinks());
         for (DetailedLink link : getLinks()) {
             rsdl.getLinks().getLinks().add(link);
@@ -114,7 +114,7 @@ public class RsdlBuilder {
         return rsdl;
     }
 
-    public RSDL build() throws ClassNotFoundException, IOException {
+    public Rsdl build() throws ClassNotFoundException, IOException {
         rsdl = construct();
         rsdl.setRel(getRel());
         rsdl.setHref(getHref());
@@ -813,7 +813,7 @@ public class RsdlBuilder {
      * It will unite these pairs into a single link with required=false in the <body>.
      * @param rsdl
      */
-    private void uniteDuplicateLinks(RSDL rsdl) {
+    private void uniteDuplicateLinks(Rsdl rsdl) {
         Map<String, DetailedLink> linksMap = new HashMap<String, DetailedLink>();
         Collection<DetailedLink> linksToDelete = new LinkedList<DetailedLink>();
         for (DetailedLink link : rsdl.getLinks().getLinks()) {

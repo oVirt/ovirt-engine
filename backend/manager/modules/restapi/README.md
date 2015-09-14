@@ -31,6 +31,7 @@ The following XML schema complex types have been renamed:
 - `PreviewVMs` - `PreviewVms`
 - `QoS` - `Qos`
 - `QoSs` - `Qoss`
+- `RSDL` - `Rsdl`
 
 First column is the old name, and second column is the new name.
 
