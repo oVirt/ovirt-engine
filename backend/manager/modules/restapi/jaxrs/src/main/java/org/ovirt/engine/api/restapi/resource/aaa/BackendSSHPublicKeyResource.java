@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.resource.aaa;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.SSHPublicKey;
+import org.ovirt.engine.api.model.SshPublicKey;
 import org.ovirt.engine.api.resource.aaa.SSHPublicKeyResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 import org.ovirt.engine.core.common.action.UserProfileParameters;
@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendSSHPublicKeyResource
-    extends AbstractBackendSubResource<SSHPublicKey, UserProfile>
+    extends AbstractBackendSubResource<SshPublicKey, UserProfile>
     implements SSHPublicKeyResource {
 
     private Guid userId;
@@ -22,32 +22,32 @@ public class BackendSSHPublicKeyResource
     private BackendSSHPublicKeysResource parent;
 
     public BackendSSHPublicKeyResource(String id, Guid userId, BackendSSHPublicKeysResource parent) {
-        super(id, SSHPublicKey.class, UserProfile.class);
+        super(id, SshPublicKey.class, UserProfile.class);
         this.userId = userId;
         this.parent = parent;
     }
 
     @Override
-    public SSHPublicKey get() {
+    public SshPublicKey get() {
         return performGet(VdcQueryType.GetUserProfile, new IdQueryParameters(userId));
     }
 
     @Override
-    protected SSHPublicKey addParents(SSHPublicKey pubkey) {
+    protected SshPublicKey addParents(SshPublicKey pubkey) {
         return parent.addParents(pubkey);
     }
 
     @Override
-    public SSHPublicKey update(SSHPublicKey pubkey) {
+    public SshPublicKey update(SshPublicKey pubkey) {
         return performUpdate(pubkey,
                 new QueryIdResolver<Guid>(VdcQueryType.GetUserProfile, IdQueryParameters.class),
                 VdcActionType.UpdateUserProfile,
                 new UpdateParametersProvider());
     }
 
-    public class UpdateParametersProvider implements ParametersProvider<SSHPublicKey, UserProfile> {
+    public class UpdateParametersProvider implements ParametersProvider<SshPublicKey, UserProfile> {
         @Override
-        public VdcActionParametersBase getParameters(SSHPublicKey model, UserProfile entity) {
+        public VdcActionParametersBase getParameters(SshPublicKey model, UserProfile entity) {
             UserProfileParameters params = new UserProfileParameters();
             UserProfile profile = map(model, entity);
 

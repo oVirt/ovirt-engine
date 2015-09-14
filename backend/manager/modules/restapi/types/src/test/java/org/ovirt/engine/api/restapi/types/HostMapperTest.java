@@ -11,7 +11,7 @@ import org.ovirt.engine.api.model.HostProtocol;
 import org.ovirt.engine.api.model.HostedEngine;
 import org.ovirt.engine.api.model.PmProxies;
 import org.ovirt.engine.api.model.PowerManagement;
-import org.ovirt.engine.api.model.SSH;
+import org.ovirt.engine.api.model.Ssh;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -169,7 +169,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
 
     @Test
     public void testUpdateSshHost() {
-        SSH sshConf = new SSH();
+        Ssh sshConf = new Ssh();
         sshConf.setPort(22);
         sshConf.setUser(new User());
         sshConf.getUser().setUserName("root");

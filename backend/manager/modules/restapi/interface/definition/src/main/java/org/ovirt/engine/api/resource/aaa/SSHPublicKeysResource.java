@@ -24,19 +24,19 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.SSHPublicKey;
-import org.ovirt.engine.api.model.SSHPublicKeys;
+import org.ovirt.engine.api.model.SshPublicKey;
+import org.ovirt.engine.api.model.SshPublicKeys;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface SSHPublicKeysResource {
 
     @GET
-    public SSHPublicKeys list();
+    public SshPublicKeys list();
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-    public Response add(SSHPublicKey pubkey);
+    public Response add(SshPublicKey pubkey);
 
     @Path("{id}")
     public SSHPublicKeyResource getSSHPublicKeySubResource(@PathParam("id") String id);

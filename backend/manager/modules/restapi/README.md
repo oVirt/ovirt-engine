@@ -32,6 +32,9 @@ The following XML schema complex types have been renamed:
 - `QoS` - `Qos`
 - `QoSs` - `Qoss`
 - `RSDL` - `Rsdl`
+- `SSHPublicKey` - `SshPublicKey`
+- `SSHPublicKeys` - `SshPublicKeys`
+- `SSH` - `Ssh`
 
 First column is the old name, and second column is the new name.
 

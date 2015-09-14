@@ -36,8 +36,8 @@ import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.SELinux;
 import org.ovirt.engine.api.model.SELinuxMode;
 import org.ovirt.engine.api.model.SPM;
-import org.ovirt.engine.api.model.SSH;
 import org.ovirt.engine.api.model.SpmState;
+import org.ovirt.engine.api.model.Ssh;
 import org.ovirt.engine.api.model.Status;
 import org.ovirt.engine.api.model.TransparentHugePages;
 import org.ovirt.engine.api.model.User;
@@ -114,8 +114,8 @@ public class HostMapper {
         return entity;
     }
 
-    @Mapping(from = SSH.class, to = VdsStatic.class)
-    public static VdsStatic map(SSH model, VdsStatic template) {
+    @Mapping(from = Ssh.class, to = VdsStatic.class)
+    public static VdsStatic map(Ssh model, VdsStatic template) {
         VdsStatic entity = template != null ? template : new VdsStatic();
         if (model.isSetUser() && model.getUser().isSetUserName()) {
             entity.setSshUsername(model.getUser().getUserName());
@@ -237,7 +237,7 @@ public class HostMapper {
         PowerManagement pm = map(entity, (PowerManagement) null);
         model.setPowerManagement(DeprecatedPowerManagementMapper.map(entity, pm));
         model.setHardwareInformation(map(entity, (HardwareInformation) null));
-        model.setSsh(map(entity.getStaticData(), (SSH) null));
+        model.setSsh(map(entity.getStaticData(), (Ssh) null));
         Cpu cpu = new Cpu();
         CpuTopology cpuTopology = new CpuTopology();
         if (entity.getCpuSockets() != null) {
@@ -372,9 +372,9 @@ public class HostMapper {
         return model;
     }
 
-    @Mapping(from = VdsStatic.class, to = SSH.class)
-    public static SSH map(VdsStatic entity, SSH template) {
-        SSH model = template != null ? template : new SSH();
+    @Mapping(from = VdsStatic.class, to = Ssh.class)
+    public static Ssh map(VdsStatic entity, Ssh template) {
+        Ssh model = template != null ? template : new Ssh();
         model.setPort(entity.getSshPort());
         model.setUser(new User());
         model.getUser().setUserName(entity.getSshUsername());
