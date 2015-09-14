@@ -14,8 +14,8 @@ import org.ovirt.engine.api.model.CustomProperties;
 import org.ovirt.engine.api.model.DisplayDisconnectAction;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.HighAvailability;
-import org.ovirt.engine.api.model.IO;
 import org.ovirt.engine.api.model.Icon;
+import org.ovirt.engine.api.model.Io;
 import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
@@ -199,9 +199,9 @@ public class VmBaseMapper {
         model.setComment(entity.getComment());
         model.setMemory((long) entity.getMemSizeMb() * BYTES_PER_MB);
 
-        IO io = model.getIo();
+        Io io = model.getIo();
         if (io == null) {
-            io = new IO();
+            io = new Io();
             model.setIo(io);
         }
         io.setThreads(entity.getNumOfIoThreads());

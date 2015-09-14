@@ -3434,9 +3434,9 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:element name="io" type="IO" />
+  <xs:element name="io" type="Io" />
 
-  <xs:complexType name="IO">
+  <xs:complexType name="Io">
     <xs:sequence>
       <xs:element name="threads" type="xs:int" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
