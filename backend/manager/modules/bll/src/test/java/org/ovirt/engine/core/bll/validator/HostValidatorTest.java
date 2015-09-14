@@ -26,11 +26,14 @@ import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -72,6 +75,12 @@ public class HostValidatorTest {
         mockConfigRule.mockConfigValue(ConfigValues.InstallVds, Boolean.TRUE);
         VDS host = mock(VDS.class);
         when(host.getUniqueId()).thenReturn(value);
+        return new HostValidator(dbFacade, host);
+    }
+
+    private HostValidator mockHostForProtocol(VdsProtocol protocol) {
+        VDS host = mock(VDS.class);
+        when(host.getProtocol()).thenReturn(protocol);
         return new HostValidator(dbFacade, host);
     }
 
@@ -327,5 +336,22 @@ public class HostValidatorTest {
         validator = mockHostForActivation(VDSStatus.Up);
         assertThat(validator.validateStatusForEnrollCertificate(),
                 failsWith(EngineMessage.CANNOT_ENROLL_CERTIFICATE_HOST_STATUS_ILLEGAL));
+    }
+
+    @Test
+    public void testValidateXmlProtocolForCluster() {
+        VDSGroup cluster = mock(VDSGroup.class);
+        when(cluster.getCompatibilityVersion()).thenReturn(Version.v3_6);
+        validator = mockHostForProtocol(VdsProtocol.XML);
+        assertThat(validator.protocolIsNotXmlrpc(cluster),
+                failsWith(EngineMessage.NOT_SUPPORTED_PROTOCOL_FOR_CLUSTER_VERSION));
+    }
+
+    @Test
+    public void testValidateJsonProtocolForCluster() {
+        VDSGroup cluster = mock(VDSGroup.class);
+        when(cluster.getCompatibilityVersion()).thenReturn(Version.v3_6);
+        validator = mockHostForProtocol(VdsProtocol.STOMP);
+        assertThat(validator.protocolIsNotXmlrpc(cluster), isValid());
     }
 }

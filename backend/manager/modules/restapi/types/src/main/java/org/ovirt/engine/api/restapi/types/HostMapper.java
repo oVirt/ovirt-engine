@@ -664,9 +664,6 @@ public class HostMapper {
                 case STOMP:
                     result =  HostProtocol.STOMP;
                     break;
-                case AMQP:
-                    result = HostProtocol.AMQP;
-                    break;
                 case XML:
                 default:
                     result = HostProtocol.XML;
@@ -684,9 +681,6 @@ public class HostMapper {
         switch (hostProtocol) {
             case STOMP:
                 result =  VdsProtocol.STOMP;
-                break;
-            case AMQP:
-                result = VdsProtocol.AMQP;
                 break;
             case XML:
             default:

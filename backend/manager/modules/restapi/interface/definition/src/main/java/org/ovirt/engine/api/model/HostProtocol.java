@@ -2,8 +2,7 @@ package org.ovirt.engine.api.model;
 
 public enum HostProtocol {
     XML,
-    STOMP,
-    AMQP;
+    STOMP;
 
     public String value() {
         return name().toLowerCase();
