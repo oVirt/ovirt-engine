@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.StatisticUnit;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.compat.Guid;
@@ -50,7 +50,7 @@ public class DiskStatisticalQuery extends AbstractStatisticalQuery<Disk, org.ovi
         Disk disk = new Disk();
         disk.setId(parent.getId());
         if (parent.isSetVm()) {
-            disk.setVm(new VM());
+            disk.setVm(new Vm());
             disk.getVm().setId(parent.getVm().getId());
         }
         return disk;

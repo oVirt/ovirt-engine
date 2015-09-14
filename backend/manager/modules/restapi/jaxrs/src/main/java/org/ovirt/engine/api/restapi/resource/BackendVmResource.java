@@ -25,7 +25,7 @@ import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Ticket;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
@@ -89,7 +89,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmResource extends
-        AbstractBackendActionableResource<VM, org.ovirt.engine.core.common.businessentities.VM> implements
+        AbstractBackendActionableResource<Vm, org.ovirt.engine.core.common.businessentities.VM> implements
         VmResource {
 
     private static final long DEFAULT_TICKET_EXPIRY = 120 * 60; // 2 hours
@@ -98,7 +98,7 @@ public class BackendVmResource extends
     public static final String NEXT_RUN = "next_run";
 
     public BackendVmResource(String id, BackendVmsResource parent) {
-        super(id, VM.class, org.ovirt.engine.core.common.businessentities.VM.class, SUB_COLLECTIONS);
+        super(id, Vm.class, org.ovirt.engine.core.common.businessentities.VM.class, SUB_COLLECTIONS);
         this.parent = parent;
     }
 
@@ -107,8 +107,8 @@ public class BackendVmResource extends
     }
 
     @Override
-    public VM get() {
-        VM vm;
+    public Vm get() {
+        Vm vm;
         if (isNextRunRequested()) {
             org.ovirt.engine.core.common.businessentities.VM entity =
                     getEntity(org.ovirt.engine.core.common.businessentities.VM.class, VdcQueryType.GetVmNextRunConfiguration,
@@ -127,7 +127,7 @@ public class BackendVmResource extends
         return vm;
     }
 
-    private void removeRestrictedInfo(VM vm) {
+    private void removeRestrictedInfo(Vm vm) {
         // Filtered users are not allowed to view host related information
         if (isFiltered()) {
             vm.setHost(null);
@@ -136,8 +136,8 @@ public class BackendVmResource extends
     }
 
     @Override
-    public VM update(VM incoming) {
-        validateEnums(VM.class, incoming);
+    public Vm update(Vm incoming) {
+        validateEnums(Vm.class, incoming);
         validateParameters(incoming);
         if (incoming.isSetCluster() && (incoming.getCluster().isSetId() || incoming.getCluster().isSetName())) {
             Guid clusterId = lookupClusterId(incoming);
@@ -154,7 +154,7 @@ public class BackendVmResource extends
             incoming.setPlacementPolicy(null);
         }
 
-        VM vm = performUpdate(
+        Vm vm = performUpdate(
             incoming,
             new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class),
             VdcActionType.UpdateVm,
@@ -188,7 +188,7 @@ public class BackendVmResource extends
         return performAction(VdcActionType.RemoveVm, params);
     }
 
-    private void validateParameters(VM incoming) {
+    private void validateParameters(Vm incoming) {
         if (incoming.isSetDomain() && !incoming.getDomain().isSetName()) {
             throw new WebFaultException(null,
                     localize(Messages.INCOMPLETE_PARAMS_REASON),
@@ -202,7 +202,7 @@ public class BackendVmResource extends
         }
     }
 
-    protected Guid lookupClusterId(VM vm) {
+    protected Guid lookupClusterId(Vm vm) {
         return vm.getCluster().isSetId() ? asGuid(vm.getCluster().getId())
                 : getEntity(VDSGroup.class,
                         VdcQueryType.GetVdsGroupByName,
@@ -261,7 +261,7 @@ public class BackendVmResource extends
         return inject(new BackendAssignedPermissionsResource(guid,
                                                              VdcQueryType.GetPermissionsForObject,
                                                              new GetPermissionsForObjectParameters(guid),
-                                                             VM.class,
+                                                             Vm.class,
                                                              VdcObjectType.VM));
     }
 
@@ -279,7 +279,7 @@ public class BackendVmResource extends
     public StatisticsResource getStatisticsResource() {
         EntityIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class);
         VmStatisticalQuery query = new VmStatisticalQuery(resolver, newModel(id));
-        return inject(new BackendStatisticsResource<VM, org.ovirt.engine.core.common.businessentities.VM>(entityType, guid, query));
+        return inject(new BackendStatisticsResource<Vm, org.ovirt.engine.core.common.businessentities.VM>(entityType, guid, query));
     }
 
     @Override
@@ -396,8 +396,8 @@ public class BackendVmResource extends
         RunVmParams params;
         VdcActionType actionType;
         if (action.isSetVm()) {
-            VM vm = action.getVm();
-            validateEnums(VM.class, vm);
+            Vm vm = action.getVm();
+            validateEnums(Vm.class, vm);
             actionType = VdcActionType.RunVmOnce;
             params = createRunVmOnceParams(vm);
         } else {
@@ -427,8 +427,8 @@ public class BackendVmResource extends
         return doAction(actionType, params, action);
     }
 
-    private RunVmOnceParams createRunVmOnceParams(VM vm) {
-        RunVmOnceParams params = map(vm, map(map(getEntity(entityType, VdcQueryType.GetVmByVmId, new IdQueryParameters(guid), id, true), new VM()),
+    private RunVmOnceParams createRunVmOnceParams(Vm vm) {
+        RunVmOnceParams params = map(vm, map(map(getEntity(entityType, VdcQueryType.GetVmByVmId, new IdQueryParameters(guid), id, true), new Vm()),
                 new RunVmOnceParams(guid)));
         if (vm.isSetPlacementPolicy()) {
             Set<Guid> hostsGuidsSet = parent.validateAndUpdateHostsInPlacementPolicy(vm.getPlacementPolicy());
@@ -578,12 +578,12 @@ public class BackendVmResource extends
         return response;
     }
 
-    protected RunVmOnceParams map(VM vm, RunVmOnceParams params) {
-        return getMapper(VM.class, RunVmOnceParams.class).map(vm, params);
+    protected RunVmOnceParams map(Vm vm, RunVmOnceParams params) {
+        return getMapper(Vm.class, RunVmOnceParams.class).map(vm, params);
     }
 
     @Override
-    protected VM doPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
+    protected Vm doPopulate(Vm model, org.ovirt.engine.core.common.businessentities.VM entity) {
         parent.setConsoleDevice(model);
         parent.setVirtioScsiController(model);
         parent.setSoundcard(model);
@@ -593,7 +593,7 @@ public class BackendVmResource extends
     }
 
     @Override
-    protected VM deprecatedPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
+    protected Vm deprecatedPopulate(Vm model, org.ovirt.engine.core.common.businessentities.VM entity) {
         Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
         parent.addInlineDetails(details, model);
         if (details.contains("statistics")) {
@@ -605,7 +605,7 @@ public class BackendVmResource extends
         return model;
     }
 
-    private void addStatistics(VM model, org.ovirt.engine.core.common.businessentities.VM entity, UriInfo ui) {
+    private void addStatistics(Vm model, org.ovirt.engine.core.common.businessentities.VM entity, UriInfo ui) {
         model.setStatistics(new Statistics());
         VmStatisticalQuery query = new VmStatisticalQuery(newModel(model.getId()));
         List<Statistic> statistics = query.getStatistics(entity);
@@ -616,9 +616,9 @@ public class BackendVmResource extends
     }
 
     protected class UpdateParametersProvider implements
-            ParametersProvider<VM, org.ovirt.engine.core.common.businessentities.VM> {
+            ParametersProvider<Vm, org.ovirt.engine.core.common.businessentities.VM> {
         @Override
-        public VdcActionParametersBase getParameters(VM incoming,
+        public VdcActionParametersBase getParameters(Vm incoming,
                 org.ovirt.engine.core.common.businessentities.VM entity) {
             VmStatic updated = getMapper(modelType, VmStatic.class).map(incoming,
                     entity.getStaticData());
@@ -692,7 +692,7 @@ public class BackendVmResource extends
         return parent;
     }
 
-    public void setCertificateInfo(VM model) {
+    public void setCertificateInfo(Vm model) {
         VdcQueryReturnValue result =
             runQuery(VdcQueryType.GetVdsCertificateSubjectByVmId,
                     new IdQueryParameters(asGuid(model.getId())));

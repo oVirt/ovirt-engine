@@ -357,8 +357,8 @@ public class BackendApiResourceTest extends EasyMockSupport {
         assertEquals(REVISION, api.getProductInfo().getVersion().getRevision().intValue());
 
         assertNotNull(api.getSummary());
-        assertEquals(TOTAL_VMS,              api.getSummary().getVMs().getTotal().intValue());
-        assertEquals(ACTIVE_VMS,             api.getSummary().getVMs().getActive().intValue());
+        assertEquals(TOTAL_VMS,              api.getSummary().getVms().getTotal().intValue());
+        assertEquals(ACTIVE_VMS,             api.getSummary().getVms().getActive().intValue());
         assertEquals(TOTAL_HOSTS,            api.getSummary().getHosts().getTotal().intValue());
         assertEquals(ACTIVE_HOSTS,           api.getSummary().getHosts().getActive().intValue());
         assertEquals(TOTAL_USERS,            api.getSummary().getUsers().getTotal().intValue());

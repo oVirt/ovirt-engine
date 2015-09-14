@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Statistic;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.restapi.util.RxTxCalculator;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -49,7 +49,7 @@ public class NicStatisticalQuery extends AbstractStatisticalQuery<Nic, VmNetwork
     private Nic clone(Nic parent) {
         Nic nic = new Nic();
         nic.setId(parent.getId());
-        nic.setVm(new VM());
+        nic.setVm(new Vm());
         nic.getVm().setId(parent.getVm().getId());
         return nic;
     }

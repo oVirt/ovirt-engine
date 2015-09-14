@@ -42,7 +42,7 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.utils.LinkHelper;
 
@@ -117,7 +117,7 @@ public class LinkHelperTest extends Assert {
     }
 
     private void doTestVmLinks(boolean suggestParent) throws Exception {
-        VM vm = new VM();
+        Vm vm = new Vm();
         vm.setId(VM_ID);
         vm.setCluster(new Cluster());
         vm.getCluster().setId(CLUSTER_ID);
@@ -127,7 +127,7 @@ public class LinkHelperTest extends Assert {
         vm.getVmPool().setId(VM_POOL_ID);
 
         if (suggestParent) {
-            LinkHelper.addLinks(setUpUriExpectations(), vm, VM.class);
+            LinkHelper.addLinks(setUpUriExpectations(), vm, Vm.class);
         } else {
             LinkHelper.addLinks(setUpUriExpectations(), vm);
         }
@@ -190,7 +190,7 @@ public class LinkHelperTest extends Assert {
 
     @Test
     public void testStorageDomainVmLinks() throws Exception {
-        VM vm = new VM();
+        Vm vm = new Vm();
         vm.setId(VM_ID);
 
         vm.setStorageDomain(new StorageDomain());
@@ -262,7 +262,7 @@ public class LinkHelperTest extends Assert {
     public void testVmTagLinks() throws Exception {
         Tag tag = new Tag();
         tag.setId(TAG_ID);
-        tag.setVm(new VM());
+        tag.setVm(new Vm());
         tag.getVm().setId(VM_ID);
 
         LinkHelper.addLinks(setUpUriExpectations(), tag);
@@ -324,7 +324,7 @@ public class LinkHelperTest extends Assert {
         CdRom cdrom = new CdRom();
         cdrom.setId(CDROM_ID);
 
-        cdrom.setVm(new VM());
+        cdrom.setVm(new Vm());
         cdrom.getVm().setId(VM_ID);
 
         LinkHelper.addLinks(setUpUriExpectations(), cdrom);
@@ -337,7 +337,7 @@ public class LinkHelperTest extends Assert {
         Disk disk = new Disk();
         disk.setId(DISK_ID);
 
-        disk.setVm(new VM());
+        disk.setVm(new Vm());
         disk.getVm().setId(VM_ID);
 
         LinkHelper.addLinks(setUpUriExpectations(), disk);
@@ -350,7 +350,7 @@ public class LinkHelperTest extends Assert {
         Nic nic = new Nic();
         nic.setId(NIC_ID);
 
-        nic.setVm(new VM());
+        nic.setVm(new Vm());
         nic.getVm().setId(VM_ID);
 
         LinkHelper.addLinks(setUpUriExpectations(), nic);
@@ -387,7 +387,7 @@ public class LinkHelperTest extends Assert {
         Statistic statistic = new Statistic();
         statistic.setId(STATISTIC_ID);
 
-        statistic.setVm(new VM());
+        statistic.setVm(new Vm());
         statistic.getVm().setId(VM_ID);
 
         LinkHelper.addLinks(setUpUriExpectations(), statistic);

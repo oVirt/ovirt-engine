@@ -40,7 +40,7 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 
 
 public class QueryHelperTest extends Assert {
@@ -58,7 +58,7 @@ public class QueryHelperTest extends Assert {
 
     @Test
     public void testGetVMConstraint() throws Exception {
-        doTestGetConstraint(VM.class, "VMs : ");
+        doTestGetConstraint(Vm.class, "VMs : ");
     }
 
     @Test
@@ -113,7 +113,7 @@ public class QueryHelperTest extends Assert {
 
     @Test
     public void testGetVMConstraintNoPrefix() throws Exception {
-        doTestGetConstraint(VM.class, "VMs : ");
+        doTestGetConstraint(Vm.class, "VMs : ");
     }
 
     @Test
@@ -143,7 +143,7 @@ public class QueryHelperTest extends Assert {
 
     @Test
     public void testGetVMDefaultConstraint() throws Exception {
-        doTestGetDefaultConstraint(VM.class, "VMs : ");
+        doTestGetDefaultConstraint(Vm.class, "VMs : ");
     }
 
     @Test

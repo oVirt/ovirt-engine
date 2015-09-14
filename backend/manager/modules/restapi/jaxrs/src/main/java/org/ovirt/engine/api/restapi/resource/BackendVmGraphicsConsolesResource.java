@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.Map;
 
 import org.ovirt.engine.api.model.GraphicsConsole;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.GraphicsConsoleResource;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -36,7 +36,7 @@ public class BackendVmGraphicsConsolesResource
 
     @Override
     protected GraphicsConsole addParents(GraphicsConsole model) {
-        model.setVm(new VM());
+        model.setVm(new Vm());
         model.getVm().setId(getGuid().toString());
         return model;
     }

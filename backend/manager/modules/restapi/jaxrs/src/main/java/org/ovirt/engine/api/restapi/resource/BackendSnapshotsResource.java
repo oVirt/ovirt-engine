@@ -10,7 +10,7 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Snapshots;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.SnapshotResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
@@ -93,8 +93,8 @@ public class BackendSnapshotsResource
 
     protected Snapshot addVmConfiguration(org.ovirt.engine.core.common.businessentities.Snapshot entity, Snapshot snapshot) {
         if (entity.isVmConfigurationAvailable()) {
-            snapshot.setVm(new VM());
-            getMapper(org.ovirt.engine.core.common.businessentities.VM.class, VM.class).map(getVmPreview(snapshot), snapshot.getVm());
+            snapshot.setVm(new Vm());
+            getMapper(org.ovirt.engine.core.common.businessentities.VM.class, Vm.class).map(getVmPreview(snapshot), snapshot.getVm());
         }
         else {
             snapshot.setVm(null);
@@ -121,7 +121,7 @@ public class BackendSnapshotsResource
 
     @Override
     protected Snapshot addParents(Snapshot snapshot) {
-        snapshot.setVm(new VM());
+        snapshot.setVm(new Vm());
         snapshot.getVm().setId(parentId.toString());
         return snapshot;
     }

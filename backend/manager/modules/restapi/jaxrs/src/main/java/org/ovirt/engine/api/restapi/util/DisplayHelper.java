@@ -7,7 +7,7 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.Template;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.restapi.resource.BackendResource;
 import org.ovirt.engine.api.restapi.types.DisplayMapper;
 import org.ovirt.engine.core.common.action.HasGraphicsDevices;
@@ -85,7 +85,7 @@ public class DisplayHelper {
      * If there are multiple graphics, SPICE is preferred.
      * @param vm
      */
-    public static void adjustDisplayData(BackendResource res, VM vm) {
+    public static void adjustDisplayData(BackendResource res, Vm vm) {
         adjustDisplayDataInternal(res, vm);
     }
 
@@ -106,8 +106,8 @@ public class DisplayHelper {
     }
 
     private static Display extractDisplayFromResource(BaseResource res) {
-        if (res instanceof VM) {
-            return ((VM) res).getDisplay();
+        if (res instanceof Vm) {
+            return ((Vm) res).getDisplay();
         }
         if (res instanceof Template) {
             return ((Template) res).getDisplay();
@@ -116,8 +116,8 @@ public class DisplayHelper {
     }
 
     private static void resetDisplay(BaseResource res) {
-        if (res instanceof VM) {
-            ((VM) res).setDisplay(null);
+        if (res instanceof Vm) {
+            ((Vm) res).setDisplay(null);
         }
         if (res instanceof Template) {
             ((Template) res).setDisplay(null);

@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.api.common.util.QueryHelper;
-import org.ovirt.engine.api.model.VM;
-import org.ovirt.engine.api.model.VMs;
+import org.ovirt.engine.api.model.Vm;
+import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.StorageDomainContentResource;
 import org.ovirt.engine.api.resource.StorageDomainContentsResource;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
@@ -15,36 +15,36 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainVmsResource
-    extends AbstractBackendStorageDomainContentsResource<VMs, VM, org.ovirt.engine.core.common.businessentities.VM>
-        implements StorageDomainContentsResource<VMs, VM> {
+    extends AbstractBackendStorageDomainContentsResource<Vms, Vm, org.ovirt.engine.core.common.businessentities.VM>
+        implements StorageDomainContentsResource<Vms, Vm> {
 
     static final String[] SUB_COLLECTIONS = { "disks" };
 
     public BackendStorageDomainVmsResource(Guid storageDomainId) {
-        super(storageDomainId, VM.class, org.ovirt.engine.core.common.businessentities.VM.class, SUB_COLLECTIONS);
+        super(storageDomainId, Vm.class, org.ovirt.engine.core.common.businessentities.VM.class, SUB_COLLECTIONS);
     }
 
     @Override
-    public VMs list() {
-        VMs vms = new VMs();
+    public Vms list() {
+        Vms vms = new Vms();
         if (QueryHelper.hasMatrixParam(getUriInfo(), UNREGISTERED_CONSTRAINT_PARAMETER)) {
             List<org.ovirt.engine.core.common.businessentities.VM> unregisteredVms =
                     getBackendCollection(VdcQueryType.GetUnregisteredVms,
                             new IdQueryParameters(storageDomainId));
-            List<VM> collection = new ArrayList<VM>();
+            List<Vm> collection = new ArrayList<Vm>();
             for (org.ovirt.engine.core.common.businessentities.VM entity : unregisteredVms) {
-                VM vm = map(entity);
+                Vm vm = map(entity);
                 collection.add(addLinks(populate(vm, entity)));
             }
-            vms.getVMs().addAll(collection);
+            vms.getVms().addAll(collection);
         } else {
-            vms.getVMs().addAll(getCollection());
+            vms.getVms().addAll(getCollection());
         }
         return vms;
     }
 
     @Override
-    protected VM addParents(VM vm) {
+    protected Vm addParents(Vm vm) {
         vm.setStorageDomain(getStorageDomainModel());
         return vm;
     }
@@ -58,7 +58,7 @@ public class BackendStorageDomainVmsResource
     }
 
     @Override
-    public StorageDomainContentResource<VM> getStorageDomainContentSubResource(String id) {
+    public StorageDomainContentResource<Vm> getStorageDomainContentSubResource(String id) {
         return inject(new BackendStorageDomainVmResource(this, id));
     }
 }

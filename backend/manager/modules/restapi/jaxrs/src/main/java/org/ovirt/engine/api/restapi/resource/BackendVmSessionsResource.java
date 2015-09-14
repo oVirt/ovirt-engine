@@ -31,7 +31,7 @@ public class BackendVmSessionsResource extends AbstractBackendCollectionResource
         Object obj = getEntity(entityType, VdcQueryType.GetVmByVmId, new IdQueryParameters(vmId), vmId.toString(), true);
         VM vm = (VM)obj;
         Sessions sessions = VmMapper.map(vm, new Sessions());
-        org.ovirt.engine.api.model.VM vmModel = new org.ovirt.engine.api.model.VM();
+        org.ovirt.engine.api.model.Vm vmModel = new org.ovirt.engine.api.model.Vm();
         vmModel.setId(vm.getId().toString());
         if (sessions.isSetSessions()) {
             for (Session session : sessions.getSessions()) {
@@ -41,7 +41,7 @@ public class BackendVmSessionsResource extends AbstractBackendCollectionResource
                 if (session.isSetConsoleUser() && session.isConsoleUser()) {
                     addLinksIncludingUser(session);
                 } else {
-                    addLinks(session, org.ovirt.engine.api.model.VM.class);
+                    addLinks(session, org.ovirt.engine.api.model.Vm.class);
                 }
             }
         }
@@ -53,13 +53,13 @@ public class BackendVmSessionsResource extends AbstractBackendCollectionResource
      */
     private void addLinksIncludingUser(Session session) {
         String domainName = session.getUser().getDomain().getName();
-        addLinks(session, org.ovirt.engine.api.model.VM.class);
+        addLinks(session, org.ovirt.engine.api.model.Vm.class);
         session.getUser().setDomain(new Domain());
         session.getUser().getDomain().setName(domainName);
         setSessionUser(session);
     }
 
-    private void setSessionVmId(org.ovirt.engine.api.model.VM vmModel, Session session) {
+    private void setSessionVmId(org.ovirt.engine.api.model.Vm vmModel, Session session) {
         session.setVm(vmModel);
     }
 

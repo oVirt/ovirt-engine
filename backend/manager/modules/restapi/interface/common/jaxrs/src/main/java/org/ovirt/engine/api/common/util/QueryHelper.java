@@ -37,7 +37,7 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.core.common.utils.CommonConstants;
 
@@ -64,7 +64,7 @@ public class QueryHelper {
     private static Map<Class<?>, String> createReturnTypes() {
         final Map<Class<?>, String> map = new HashMap<>();
 
-        map.put(VM.class, getName("VMs"));
+        map.put(Vm.class, getName("VMs"));
         map.put(Host.class, getName("Hosts"));
         map.put(Cluster.class, getName("Clusters"));
         map.put(DataCenter.class, getName("Datacenter"));

@@ -115,9 +115,9 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.UnmanagedNetwork;
 import org.ovirt.engine.api.model.Url;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VersionCaps;
 import org.ovirt.engine.api.model.VirtualNumaNode;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.api.model.WatchDog;
@@ -354,10 +354,10 @@ public class LinkHelper {
         ParentToCollectionMap map;
 
         map = new ParentToCollectionMap(ReadOnlyDeviceResource.class, ReadOnlyDevicesResource.class, Template.class);
-        map.add(DeviceResource.class, DevicesResource.class, VM.class);
+        map.add(DeviceResource.class, DevicesResource.class, Vm.class);
         TYPES.put(CdRom.class, map);
 
-        map = new ParentToCollectionMap(VmGraphicsConsoleResource.class, GraphicsConsolesResource.class, VM.class);
+        map = new ParentToCollectionMap(VmGraphicsConsoleResource.class, GraphicsConsolesResource.class, Vm.class);
         TYPES.put(GraphicsConsole.class, map);
 
         map = new ParentToCollectionMap(GraphicsConsoleResource.class, GraphicsConsolesResource.class, Template.class);
@@ -366,10 +366,10 @@ public class LinkHelper {
         map = new ParentToCollectionMap(GraphicsConsoleResource.class, GraphicsConsolesResource.class, InstanceType.class);
         TYPES.put(GraphicsConsole.class, map);
 
-        map = new ParentToCollectionMap(VmApplicationResource.class, VmApplicationsResource.class, VM.class);
+        map = new ParentToCollectionMap(VmApplicationResource.class, VmApplicationsResource.class, Vm.class);
         TYPES.put(Application.class, map);
 
-        map = new ParentToCollectionMap(VmReportedDeviceResource.class, VmReportedDevicesResource.class, VM.class);
+        map = new ParentToCollectionMap(VmReportedDeviceResource.class, VmReportedDevicesResource.class, Vm.class);
         TYPES.put(ReportedDevice.class, map);
 
         map = new ParentToCollectionMap(ClusterResource.class, ClustersResource.class);
@@ -382,7 +382,7 @@ public class LinkHelper {
         TYPES.put(MacPool.class, map);
 
         map = new ParentToCollectionMap(MovableCopyableDiskResource.class, DisksResource.class);
-        map.add(VmDiskResource.class, VmDisksResource.class, VM.class);
+        map.add(VmDiskResource.class, VmDisksResource.class, Vm.class);
         map.add(TemplateDiskResource.class, TemplateDisksResource.class, Template.class);
         map.add(DiskResource.class, DisksResource.class, StorageDomain.class);
         TYPES.put(Disk.class, map);
@@ -419,7 +419,7 @@ public class LinkHelper {
         map = new ParentToCollectionMap(PermissionResource.class, AssignedPermissionsResource.class, User.class);
         map.add(PermissionResource.class, AssignedPermissionsResource.class, Group.class);
         map.add(PermissionResource.class, AssignedPermissionsResource.class, Role.class);
-        map.add(PermissionResource.class, AssignedPermissionsResource.class, VM.class);
+        map.add(PermissionResource.class, AssignedPermissionsResource.class, Vm.class);
         map.add(PermissionResource.class, AssignedPermissionsResource.class, Disk.class);
         map.add(PermissionResource.class, SystemPermissionsResource.class, NO_PARENT);
         TYPES.put(Permission.class, map);
@@ -430,13 +430,13 @@ public class LinkHelper {
         TYPES.put(Network.class, map);
 
         map = new ParentToCollectionMap(DeviceResource.class, DevicesResource.class);
-        map.add(DeviceResource.class, DevicesResource.class, VM.class);
+        map.add(DeviceResource.class, DevicesResource.class, Vm.class);
         map.add(DeviceResource.class, DevicesResource.class, Template.class);
         map.add(ReadOnlyDeviceResource.class, ReadOnlyDevicesResource.class, Template.class);
-        map.add(VmNicResource.class, DevicesResource.class, VM.class);
+        map.add(VmNicResource.class, DevicesResource.class, Vm.class);
         TYPES.put(Nic.class, map);
 
-        map = new ParentToCollectionMap(VmNumaNodeResource.class, VmNumaNodesResource.class, VM.class);
+        map = new ParentToCollectionMap(VmNumaNodeResource.class, VmNumaNodesResource.class, Vm.class);
         TYPES.put(VirtualNumaNode.class, map);
 
         map = new ParentToCollectionMap(PermitResource.class, PermitsResource.class, Role.class);
@@ -446,7 +446,7 @@ public class LinkHelper {
         map.add(UpdatableRoleResource.class, AssignedRolesResource.class, User.class);
         TYPES.put(Role.class, map);
 
-        map = new ParentToCollectionMap(SnapshotResource.class, SnapshotsResource.class, VM.class);
+        map = new ParentToCollectionMap(SnapshotResource.class, SnapshotsResource.class, Vm.class);
         TYPES.put(Snapshot.class, map);
 
         map = new ParentToCollectionMap(StorageResource.class, HostStorageResource.class, Host.class);
@@ -462,7 +462,7 @@ public class LinkHelper {
         map = new ParentToCollectionMap(TagResource.class, TagsResource.class);
         map.add(AssignedTagResource.class, AssignedTagsResource.class, Host.class);
         map.add(AssignedTagResource.class, AssignedTagsResource.class, User.class);
-        map.add(AssignedTagResource.class, AssignedTagsResource.class, VM.class);
+        map.add(AssignedTagResource.class, AssignedTagsResource.class, Vm.class);
         map.add(AssignedTagResource.class, AssignedTagsResource.class, Template.class);
         map.add(AssignedTagResource.class, AssignedTagsResource.class, Group.class);
         TYPES.put(Tag.class, map);
@@ -487,7 +487,7 @@ public class LinkHelper {
         map = new ParentToCollectionMap(VmResource.class, VmsResource.class);
         map.add(StorageDomainContentResource.class, StorageDomainContentsResource.class, StorageDomain.class);
 //        map.add(SnapshotResource.class, SnapshotsResource.class, Snapshot.class);
-        TYPES.put(VM.class, map);
+        TYPES.put(Vm.class, map);
 
         map = new ParentToCollectionMap(VmPoolResource.class, VmPoolsResource.class);
         TYPES.put(VmPool.class, map);
@@ -503,7 +503,7 @@ public class LinkHelper {
         map.add(StatisticResource.class, StatisticsResource.class, HostNic.class);
         map.add(StatisticResource.class, StatisticsResource.class, NumaNode.class);
         map.add(StatisticResource.class, StatisticsResource.class, Nic.class);
-        map.add(StatisticResource.class, StatisticsResource.class, VM.class);
+        map.add(StatisticResource.class, StatisticsResource.class, Vm.class);
         map.add(StatisticResource.class, StatisticsResource.class, GlusterBrick.class);
         TYPES.put(Statistic.class, map);
 
@@ -530,8 +530,8 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(DeviceResource.class, DevicesResource.class);
         map.add(DeviceResource.class, DevicesResource.class, Template.class);
-        map.add(DeviceResource.class, DevicesResource.class, VM.class);
-        map.add(WatchdogResource.class, DevicesResource.class, VM.class);
+        map.add(DeviceResource.class, DevicesResource.class, Vm.class);
+        map.add(WatchdogResource.class, DevicesResource.class, Vm.class);
         map.add(WatchdogResource.class, DevicesResource.class, Template.class);
         TYPES.put(WatchDog.class, map);
 
@@ -559,12 +559,12 @@ public class LinkHelper {
         map = new ParentToCollectionMap(AffinityGroupResource.class, AffinityGroupsResource.class, Cluster.class);
         TYPES.put(AffinityGroup.class, map);
 
-        map = new ParentToCollectionMap(VmSessionResource.class, VmSessionsResource.class, VM.class);
+        map = new ParentToCollectionMap(VmSessionResource.class, VmSessionsResource.class, Vm.class);
         TYPES.put(Session.class, map);
 
         map = new ParentToCollectionMap(HostDevice.class, HostDevices.class);
         map.add(HostDeviceResource.class, HostDevicesResource.class, Host.class);
-        map.add(VmHostDeviceResource.class, VmHostDevicesResource.class, VM.class);
+        map.add(VmHostDeviceResource.class, VmHostDevicesResource.class, Vm.class);
         TYPES.put(HostDevice.class, map);
 
         map = new ParentToCollectionMap(SchedulingPolicyUnitResource.class, SchedulingPolicyUnitsResource.class);
@@ -655,7 +655,7 @@ public class LinkHelper {
         TYPES.put(Agent.class, map);
 
         map = new ParentToCollectionMap(KatelloErratumResource.class, KatelloErrataResource.class, Host.class);
-        map.add(KatelloErratumResource.class, KatelloErrataResource.class, VM.class);
+        map.add(KatelloErratumResource.class, KatelloErrataResource.class, Vm.class);
         map.add(KatelloErratumResource.class, SystemKatelloErrataResource.class, NO_PARENT);
         TYPES.put(KatelloErratum.class, map);
     }

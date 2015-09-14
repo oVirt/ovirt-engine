@@ -29,7 +29,7 @@ import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
@@ -72,7 +72,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 public class BackendVmsResourceTest
-        extends AbstractBackendCollectionResourceTest<VM, org.ovirt.engine.core.common.businessentities.VM, BackendVmsResource> {
+        extends AbstractBackendCollectionResourceTest<Vm, org.ovirt.engine.core.common.businessentities.VM, BackendVmsResource> {
 
     private static final String DEFAULT_TEMPLATE_ID = Guid.Empty.toString();
     private static final String PAYLOAD_COMTENT = "payload";
@@ -121,7 +121,7 @@ public class BackendVmsResourceTest
             setUpGetGraphicsExpectations(3);
             setUpQueryExpectations("");
             collection.setUriInfo(uriInfo);
-            List<VM> vms = getCollection();
+            List<Vm> vms = getCollection();
             assertTrue(vms.get(0).isSetStatistics());
             verifyCollection(vms);
         } finally {
@@ -180,7 +180,7 @@ public class BackendVmsResourceTest
                 new String[]{"Id"},
                 new Object[]{GUIDS[0]},
                 getEntity(0));
-        VM model = getModel(0);
+        Vm model = getModel(0);
         model.setCluster(new Cluster());
         model.getCluster().setId(GUIDS[1].toString());
         model.setTemplate(new Template());
@@ -188,9 +188,9 @@ public class BackendVmsResourceTest
 
         Response response = collection.add(model);
         assertEquals(202, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 0);
-        VM created = (VM)response.getEntity();
+        assertTrue(response.getEntity() instanceof Vm);
+        verifyModel((Vm) response.getEntity(), 0);
+        Vm created = (Vm)response.getEntity();
         assertNotNull(created.getCreationStatus());
         assertEquals(creationStatus.value(), created.getCreationStatus().getState());
     }
@@ -238,7 +238,7 @@ public class BackendVmsResourceTest
                 new String[]{"Id"},
                 new Object[]{GUIDS[0]},
                 getEntity(0));
-        VM model = getModel(0);
+        Vm model = getModel(0);
         model.setCluster(new Cluster());
         model.getCluster().setId(GUIDS[1].toString());
         model.setTemplate(new Template());
@@ -246,9 +246,9 @@ public class BackendVmsResourceTest
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 0);
-        assertNull(((VM) response.getEntity()).getCreationStatus());
+        assertTrue(response.getEntity() instanceof Vm);
+        verifyModel((Vm) response.getEntity(), 0);
+        assertNull(((Vm) response.getEntity()).getCreationStatus());
     }
 
     @Test
@@ -295,7 +295,7 @@ public class BackendVmsResourceTest
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
-        VM model = getModel(0);
+        Vm model = getModel(0);
         model.setCluster(new Cluster());
         model.getCluster().setName(NAMES[1]);
         model.setTemplate(new Template());
@@ -303,8 +303,8 @@ public class BackendVmsResourceTest
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 0);
+        assertTrue(response.getEntity() instanceof Vm);
+        verifyModel((Vm) response.getEntity(), 0);
     }
 
     @Test
@@ -339,7 +339,7 @@ public class BackendVmsResourceTest
                                            new Object[] { Guid.Empty },
                                            canDo,
                                            success));
-        VM model = getModel(0);
+        Vm model = getModel(0);
         model.setCluster(new Cluster());
         model.getCluster().setId(GUIDS[1].toString());
         model.setTemplate(new Template());
@@ -392,8 +392,8 @@ public class BackendVmsResourceTest
 
         Response response = collection.add(createModel(createDisksCollection()));
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 2);
+        assertTrue(response.getEntity() instanceof Vm);
+        verifyModel((Vm) response.getEntity(), 2);
     }
 
     @Test
@@ -432,12 +432,12 @@ public class BackendVmsResourceTest
                 new Object[]{GUIDS[2]},
                 getEntity(2));
 
-        VM model = createModel(createDisksCollection(), createSnapshotsCollection(1));
+        Vm model = createModel(createDisksCollection(), createSnapshotsCollection(1));
         model.setTemplate(null);
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 2);
+        assertTrue(response.getEntity() instanceof Vm);
+        verifyModel((Vm) response.getEntity(), 2);
     }
 
     @Test
@@ -477,8 +477,8 @@ public class BackendVmsResourceTest
 
         Response response = collection.add(createModel(new Disks(){{setClone(true);}}));
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 2);
+        assertTrue(response.getEntity() instanceof Vm);
+        verifyModel((Vm) response.getEntity(), 2);
     }
 
     @Test
@@ -524,8 +524,8 @@ public class BackendVmsResourceTest
 
         Response response = collection.add(createModel(null));
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        VM returnValueVM = (VM) response.getEntity();
+        assertTrue(response.getEntity() instanceof Vm);
+        Vm returnValueVM = (Vm) response.getEntity();
         verifyModel(returnValueVM, 2);
         assertTrue(returnValueVM.isStateless());
         assertTrue(returnValueVM.isUseLatestTemplateVersion());
@@ -553,8 +553,8 @@ public class BackendVmsResourceTest
                 getEntity(2));
         Response response = collection.add(createModel(null));
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 2);
+        assertTrue(response.getEntity() instanceof Vm);
+        verifyModel((Vm) response.getEntity(), 2);
     }
 
     @Test
@@ -577,13 +577,13 @@ public class BackendVmsResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getEntity(2));
-        VM model = getModel(2);
+        Vm model = getModel(2);
         model.setTemplate(new Template());
         model.getTemplate().setName(NAMES[1].toString());
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 2);
+        assertTrue(response.getEntity() instanceof Vm);
+        verifyModel((Vm) response.getEntity(), 2);
     }
 
     private void setupAddExpectations() throws Exception {
@@ -617,7 +617,7 @@ public class BackendVmsResourceTest
         setUpGetVirtioScsiExpectations(new int[] { 3 });
         setUpGetSoundcardExpectations(new int[]{3});
         setUpGetRngDeviceExpectations(new int[]{3});
-        VM model = createModel(null);
+        Vm model = createModel(null);
         org.ovirt.engine.core.common.businessentities.VM returnedVM = getEntity(2);
         model.setInitialization(new Initialization());
         model.getInitialization().setRegenerateIds(Boolean.TRUE);
@@ -644,11 +644,11 @@ public class BackendVmsResourceTest
                 getEntityWithProvidedId(2, newId));
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        VM queriedVm = (VM) response.getEntity();
+        assertTrue(response.getEntity() instanceof Vm);
+        Vm queriedVm = (Vm) response.getEntity();
         assertEquals(newId.toString(), queriedVm.getId());
         queriedVm.setId(GUIDS[2].toString());
-        verifyModel((VM) response.getEntity(), 2);
+        verifyModel((Vm) response.getEntity(), 2);
     }
 
     @Test
@@ -663,7 +663,7 @@ public class BackendVmsResourceTest
         setUpGetVirtioScsiExpectations(new int[]{2});
         setUpGetSoundcardExpectations(new int[]{2});
         setUpGetRngDeviceExpectations(new int[]{2});
-        VM model = createModel(null);
+        Vm model = createModel(null);
         org.ovirt.engine.core.common.businessentities.VM returnedVM = getEntity(2);
         model.setInitialization(new Initialization());
         model.getInitialization().setConfiguration(new Configuration());
@@ -688,8 +688,8 @@ public class BackendVmsResourceTest
                 returnedVM);
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 2);
+        assertTrue(response.getEntity() instanceof Vm);
+        verifyModel((Vm) response.getEntity(), 2);
     }
 
     @Test
@@ -704,7 +704,7 @@ public class BackendVmsResourceTest
         setUpGetVirtioScsiExpectations(new int[]{2});
         setUpGetSoundcardExpectations(new int[]{2});
         setUpGetRngDeviceExpectations(new int[]{2});
-        VM model = createModel(null);
+        Vm model = createModel(null);
         org.ovirt.engine.core.common.businessentities.VM returnedVM = getEntity(2);
         model.setInitialization(new Initialization());
         model.getInitialization().setConfiguration(new Configuration());
@@ -736,8 +736,8 @@ public class BackendVmsResourceTest
                 returnedVM);
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 2);
+        assertTrue(response.getEntity() instanceof Vm);
+        verifyModel((Vm) response.getEntity(), 2);
     }
 
     @Test
@@ -752,7 +752,7 @@ public class BackendVmsResourceTest
 
     private void testBadAddFromConfiguration(boolean canDo, boolean success, String detail)
             throws Exception {
-        VM model = createModel(null);
+        Vm model = createModel(null);
         org.ovirt.engine.core.common.businessentities.VM returnedVM = getEntity(2);
         model.setInitialization(new Initialization());
         model.getInitialization().setConfiguration(new Configuration());
@@ -780,7 +780,7 @@ public class BackendVmsResourceTest
     @Test
     public void doTestBadAddFromConfigurationMissingParameters() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        VM model = createModel(null);
+        Vm model = createModel(null);
         model.setInitialization(new Initialization());
         model.getInitialization().setConfiguration(new Configuration());
         control.replay();
@@ -788,7 +788,7 @@ public class BackendVmsResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "VM", "add", "initialization.configuration.type", "initialization.configuration.data");
+            verifyIncompleteException(wae, "Vm", "add", "initialization.configuration.type", "initialization.configuration.data");
         }
     }
 
@@ -809,15 +809,15 @@ public class BackendVmsResourceTest
                 new Object[]{GUIDS[2]},
                 getEntity(2));
 
-        VM model = createModel(null);
+        Vm model = createModel(null);
         model.setPlacementPolicy(new VmPlacementPolicy());
         model.getPlacementPolicy().setHosts(new Hosts());
         model.getPlacementPolicy().getHosts().getHosts().add(new Host());
         model.getPlacementPolicy().getHosts().getHosts().get(0).setName(NAMES[1]);
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 2);
+        assertTrue(response.getEntity() instanceof Vm);
+        verifyModel((Vm) response.getEntity(), 2);
     }
 
     @Test
@@ -836,15 +836,15 @@ public class BackendVmsResourceTest
                 new Object[]{GUIDS[2]},
                 getEntity(2));
 
-        VM model = createModel(null);
+        Vm model = createModel(null);
         model.setPlacementPolicy(new VmPlacementPolicy());
         model.getPlacementPolicy().setHosts(new Hosts());
         model.getPlacementPolicy().getHosts().getHosts().add(new Host());
         model.getPlacementPolicy().getHosts().getHosts().get(0).setId(GUIDS[1].toString());
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 2);
+        assertTrue(response.getEntity() instanceof Vm);
+        verifyModel((Vm) response.getEntity(), 2);
     }
 
     @Test
@@ -863,7 +863,7 @@ public class BackendVmsResourceTest
                 new Object[]{GUIDS[2]},
                 getEntity(2));
 
-        VM model = createModel(null);
+        Vm model = createModel(null);
         model.setPlacementPolicy(new VmPlacementPolicy());
         Hosts hosts = new Hosts();
         for (int i =0; i < GUIDS.length; i++){
@@ -874,8 +874,8 @@ public class BackendVmsResourceTest
         model.getPlacementPolicy().setHosts(hosts);
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 2);
+        assertTrue(response.getEntity() instanceof Vm);
+        verifyModel((Vm) response.getEntity(), 2);
     }
 
     @Test
@@ -897,7 +897,7 @@ public class BackendVmsResourceTest
                 new Object[]{GUIDS[2]},
                 getEntity(2));
 
-        VM model = createModel(null);
+        Vm model = createModel(null);
         model.setPlacementPolicy(new VmPlacementPolicy());
         Hosts hosts = new Hosts();
         for (int i =0; i < NAMES.length; i++){
@@ -908,8 +908,8 @@ public class BackendVmsResourceTest
         model.getPlacementPolicy().setHosts(hosts);
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 2);
+        assertTrue(response.getEntity() instanceof Vm);
+        verifyModel((Vm) response.getEntity(), 2);
     }
 
     private void setUpAddVm() throws Exception {
@@ -958,12 +958,12 @@ public class BackendVmsResourceTest
                                   new Object[] { GUIDS[2] },
                                   getEntity(2));
 
-        VM model = createModel(null);
+        Vm model = createModel(null);
         addStorageDomainToModel(model);
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 2);
+        assertTrue(response.getEntity() instanceof Vm);
+        verifyModel((Vm) response.getEntity(), 2);
     }
 
     @Test
@@ -1003,7 +1003,7 @@ public class BackendVmsResourceTest
                                   new Object[] { GUIDS[2] },
                                   getEntity(2));
 
-        VM model = getModel(2);
+        Vm model = getModel(2);
         model.setTemplate(new Template());
         model.getTemplate().setId(GUIDS[1].toString());
         model.setCluster(new Cluster());
@@ -1011,8 +1011,8 @@ public class BackendVmsResourceTest
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 2);
+        assertTrue(response.getEntity() instanceof Vm);
+        verifyModel((Vm) response.getEntity(), 2);
     }
 
     @Test
@@ -1022,14 +1022,14 @@ public class BackendVmsResourceTest
 
     @Test
     public void testAddWithClonePermissionsClone() throws Exception {
-        VM model = createModel(null);
+        Vm model = createModel(null);
         model.setPermissions(new Permissions());
         model.getPermissions().setClone(true);
 
         doTestAddWithClonePermissions(model, true);
     }
 
-    private void doTestAddWithClonePermissions(VM model, boolean copy) throws Exception {
+    private void doTestAddWithClonePermissions(Vm model, boolean copy) throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
@@ -1064,8 +1064,8 @@ public class BackendVmsResourceTest
                                   getEntity(2));
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 2);
+        assertTrue(response.getEntity() instanceof Vm);
+        verifyModel((Vm) response.getEntity(), 2);
     }
 
     @Test
@@ -1075,13 +1075,13 @@ public class BackendVmsResourceTest
 
     @Test
     public void testCloneFromTemplateWithClonePermissionsClone() throws Exception {
-        VM model = createModel(createDisksCollection());
+        Vm model = createModel(createDisksCollection());
         model.setPermissions(new Permissions());
         model.getPermissions().setClone(true);
         doTestCloneFromTemplateWithClonePermissions(model, true);
     }
 
-    private void doTestCloneFromTemplateWithClonePermissions(VM model, boolean copy) throws Exception {
+    private void doTestCloneFromTemplateWithClonePermissions(Vm model, boolean copy) throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpTemplateDisksExpectations(GUIDS[1]);
         setUriInfo(setUpBasicUriExpectations());
@@ -1121,8 +1121,8 @@ public class BackendVmsResourceTest
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 2);
+        assertTrue(response.getEntity() instanceof Vm);
+        verifyModel((Vm) response.getEntity(), 2);
     }
 
     @Test
@@ -1273,7 +1273,7 @@ public class BackendVmsResourceTest
 
     @Test
     public void testAddIncompleteParameters() throws Exception {
-        VM model = new VM();
+        Vm model = new Vm();
         model.setName(NAMES[0]);
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
@@ -1281,13 +1281,13 @@ public class BackendVmsResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "VM", "add", "cluster.id|name");
+            verifyIncompleteException(wae, "Vm", "add", "cluster.id|name");
         }
     }
 
     @Test
     public void testAddIncompleteParameters2() throws Exception {
-        VM model = createModel(null);
+        Vm model = createModel(null);
         model.setTemplate(null);
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
@@ -1295,7 +1295,7 @@ public class BackendVmsResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "VM", "add", "template.id|name");
+            verifyIncompleteException(wae, "Vm", "add", "template.id|name");
         }
     }
 
@@ -1321,12 +1321,12 @@ public class BackendVmsResourceTest
                 new Object[] { GUIDS[2] },
                 getEntity(2));
 
-        final VM model = createModel(null);
+        final Vm model = createModel(null);
         model.setLargeIcon(IconTestHelpler.createIconWithData());
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 2);
+        assertTrue(response.getEntity() instanceof Vm);
+        verifyModel((Vm) response.getEntity(), 2);
     }
 
     @Test
@@ -1349,19 +1349,19 @@ public class BackendVmsResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getEntity(2));
-        final VM model = createModel(null);
+        final Vm model = createModel(null);
         model.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
         model.setLargeIcon(IconTestHelpler.createIcon(GUIDS[3]));
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 2);
+        assertTrue(response.getEntity() instanceof Vm);
+        verifyModel((Vm) response.getEntity(), 2);
     }
 
     @Test
     public void testAddSetAndUploadIconFailure() throws Exception {
         control.replay();
-        final VM model = createModel(null);
+        final Vm model = createModel(null);
         model.setLargeIcon(IconTestHelpler.createIconWithData());
         model.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
         try {
@@ -1442,8 +1442,8 @@ public class BackendVmsResourceTest
         return entity;
     }
 
-    static VM getModel(int index) {
-        VM model = new VM();
+    static Vm getModel(int index) {
+        Vm model = new Vm();
         model.setName(NAMES[index]);
         model.setDescription(DESCRIPTIONS[index]);
         model.setId(GUIDS[index].toString());
@@ -1453,29 +1453,29 @@ public class BackendVmsResourceTest
     }
 
     @Override
-    protected List<VM> getCollection() {
-        return collection.list().getVMs();
+    protected List<Vm> getCollection() {
+        return collection.list().getVms();
     }
 
     @Override
-    protected void verifyCollection(List<VM> collection) throws Exception {
+    protected void verifyCollection(List<Vm> collection) throws Exception {
         super.verifyCollection(collection);
 
         List<String> populateHeader = httpHeaders.getRequestHeader(BackendResource.POPULATE);
         boolean populated = populateHeader != null ? populateHeader.contains("true") : false;
 
-        for (VM vm : collection) {
+        for (Vm vm : collection) {
             assertTrue(populated ? vm.isSetConsole() : !vm.isSetConsole());
         }
     }
 
     @Override
-    protected void verifyModel(VM model, int index) {
+    protected void verifyModel(Vm model, int index) {
         super.verifyModel(model, index);
         verifyModelSpecific(model, index);
     }
 
-    static void verifyModelSpecific(VM model, int index) {
+    static void verifyModelSpecific(Vm model, int index) {
         assertNotNull(model.getCluster());
         assertNotNull(model.getCluster().getId());
         assertNotNull(model.getCpu());
@@ -1487,8 +1487,8 @@ public class BackendVmsResourceTest
 
     }
 
-    private VM createModel(Disks disks) {
-        VM model = getModel(2);
+    private Vm createModel(Disks disks) {
+        Vm model = getModel(2);
 
         model.setTemplate(new Template());
         model.getTemplate().setId(GUIDS[1].toString());
@@ -1501,15 +1501,15 @@ public class BackendVmsResourceTest
         return model;
     }
 
-    private VM createModel(Disks disks, Snapshots snapshots) {
-        VM model = createModel(disks);
+    private Vm createModel(Disks disks, Snapshots snapshots) {
+        Vm model = createModel(disks);
         if (snapshots != null) {
             model.setSnapshots(snapshots);
         }
         return model;
     }
 
-    private void addStorageDomainToModel(VM model) {
+    private void addStorageDomainToModel(Vm model) {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(GUIDS[1].toString());
         model.setStorageDomain(storageDomain);

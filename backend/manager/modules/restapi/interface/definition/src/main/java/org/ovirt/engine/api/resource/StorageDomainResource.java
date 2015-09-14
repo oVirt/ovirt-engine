@@ -29,8 +29,8 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
-import org.ovirt.engine.api.model.VM;
-import org.ovirt.engine.api.model.VMs;
+import org.ovirt.engine.api.model.Vm;
+import org.ovirt.engine.api.model.Vms;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface StorageDomainResource extends UpdatableResource<StorageDomain> {
@@ -42,7 +42,7 @@ public interface StorageDomainResource extends UpdatableResource<StorageDomain> 
     public AssignedPermissionsResource getPermissionsResource();
 
     @Path("vms")
-    public StorageDomainContentsResource<VMs, VM> getStorageDomainVmsResource();
+    public StorageDomainContentsResource<Vms, Vm> getStorageDomainVmsResource();
 
     @Path("templates")
     public StorageDomainContentsResource<Templates, Template> getStorageDomainTemplatesResource();

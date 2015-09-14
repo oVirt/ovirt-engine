@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.AffinityGroupVmResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -13,13 +13,13 @@ import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParam
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAffinityGroupVmResource
-        extends AbstractBackendActionableResource<VM, org.ovirt.engine.core.common.businessentities.VM>
+        extends AbstractBackendActionableResource<Vm, org.ovirt.engine.core.common.businessentities.VM>
         implements AffinityGroupVmResource {
 
     private Guid groupId;
 
     public BackendAffinityGroupVmResource(Guid groupId, String vmId) {
-        super(vmId, VM.class, org.ovirt.engine.core.common.businessentities.VM.class);
+        super(vmId, Vm.class, org.ovirt.engine.core.common.businessentities.VM.class);
         this.groupId = groupId;
     }
 

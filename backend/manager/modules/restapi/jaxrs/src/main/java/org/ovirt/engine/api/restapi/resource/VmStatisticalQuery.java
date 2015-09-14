@@ -3,12 +3,12 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.List;
 
 import org.ovirt.engine.api.model.Statistic;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.compat.Guid;
 
 
-public class VmStatisticalQuery extends AbstractStatisticalQuery<VM, org.ovirt.engine.core.common.businessentities.VM> {
+public class VmStatisticalQuery extends AbstractStatisticalQuery<Vm, org.ovirt.engine.core.common.businessentities.VM> {
 
     private static final Statistic MEM_CONFIG   = create("memory.installed",       "Total memory configured", GAUGE, BYTES,   INTEGER);
     private static final Statistic MEM_USED     = create("memory.used",            "Memory used (agent)",  GAUGE, BYTES,   INTEGER);
@@ -20,12 +20,12 @@ public class VmStatisticalQuery extends AbstractStatisticalQuery<VM, org.ovirt.e
     private static final Statistic CPU_TOTAL    = create("cpu.current.total",      "Total CPU used",       GAUGE, PERCENT, DECIMAL);
     private static final Statistic MIGRATION_PROGRESS = create("migration.progress",      "Migration Progress",       GAUGE, PERCENT, DECIMAL);
 
-    protected VmStatisticalQuery(VM parent) {
+    protected VmStatisticalQuery(Vm parent) {
         this(null, parent);
     }
 
-    protected VmStatisticalQuery(AbstractBackendResource<VM, org.ovirt.engine.core.common.businessentities.VM>.EntityIdResolver<Guid> entityResolver, VM parent) {
-        super(VM.class, parent, entityResolver);
+    protected VmStatisticalQuery(AbstractBackendResource<Vm, org.ovirt.engine.core.common.businessentities.VM>.EntityIdResolver<Guid> entityResolver, Vm parent) {
+        super(Vm.class, parent, entityResolver);
     }
 
     public List<Statistic> getStatistics(org.ovirt.engine.core.common.businessentities.VM entity) {

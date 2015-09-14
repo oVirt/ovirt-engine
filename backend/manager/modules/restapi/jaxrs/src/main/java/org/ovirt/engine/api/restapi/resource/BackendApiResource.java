@@ -45,8 +45,8 @@ import org.ovirt.engine.api.model.Rsdl;
 import org.ovirt.engine.api.model.SpecialObjects;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.model.Users;
-import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.model.Version;
+import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.ApiResource;
 import org.ovirt.engine.api.restapi.types.DateMapper;
 import org.ovirt.engine.api.restapi.types.VersionMapper;
@@ -339,9 +339,9 @@ public class BackendApiResource
 
             ApiSummary summary = new ApiSummary();
 
-            summary.setVMs(new VMs());
-            summary.getVMs().setTotal(get(stats, QueryConstants.SYSTEM_STATS_TOTAL_VMS_FIELD));
-            summary.getVMs().setActive(get(stats, QueryConstants.SYSTEM_STATS_ACTIVE_VMS_FIELD));
+            summary.setVms(new Vms());
+            summary.getVms().setTotal(get(stats, QueryConstants.SYSTEM_STATS_TOTAL_VMS_FIELD));
+            summary.getVms().setActive(get(stats, QueryConstants.SYSTEM_STATS_ACTIVE_VMS_FIELD));
 
             summary.setHosts(new Hosts());
             summary.getHosts().setTotal(get(stats, QueryConstants.SYSTEM_STATS_TOTAL_HOSTS_FIELD));

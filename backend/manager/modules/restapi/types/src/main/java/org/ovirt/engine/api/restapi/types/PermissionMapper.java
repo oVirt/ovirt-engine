@@ -9,7 +9,7 @@ import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -129,7 +129,7 @@ public class PermissionMapper {
             model.getStorageDomain().setId(id);
             break;
         case VM :
-            model.setVm(new VM());
+            model.setVm(new Vm());
             model.getVm().setId(id);
             break;
         case VmPool :

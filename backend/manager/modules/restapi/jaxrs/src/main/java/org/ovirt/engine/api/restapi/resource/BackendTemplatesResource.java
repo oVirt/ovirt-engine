@@ -14,8 +14,8 @@ import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
-import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VirtioScsi;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.TemplatesResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
@@ -161,7 +161,7 @@ public class BackendTemplatesResource
         return getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupByVdsGroupId, new IdQueryParameters(id), "GetVdsGroupByVdsGroupId");
     }
 
-    protected HashMap<Guid, DiskImage> getDestinationTemplateDiskMap(VM vm, Guid storageDomainId, boolean isTemplateGeneralStorageDomainSet) {
+    protected HashMap<Guid, DiskImage> getDestinationTemplateDiskMap(Vm vm, Guid storageDomainId, boolean isTemplateGeneralStorageDomainSet) {
         HashMap<Guid, DiskImage> destinationTemplateDiskMap = null;
         if (vm.isSetDisks() && vm.getDisks().isSetDisks()) {
             destinationTemplateDiskMap = new HashMap<Guid, DiskImage>();
@@ -199,7 +199,7 @@ public class BackendTemplatesResource
         return disk.getDiskStorageType() == DiskStorageType.IMAGE;
     }
 
-    private Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> queryVmDisksMap(VM vm) {
+    private Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> queryVmDisksMap(Vm vm) {
         List<org.ovirt.engine.core.common.businessentities.storage.Disk> vmDisks =
                 getBackendCollection(org.ovirt.engine.core.common.businessentities.storage.Disk.class,
                         VdcQueryType.GetAllDisksByVmId,

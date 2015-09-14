@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import org.ovirt.engine.api.model.Mac;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.NicInterface;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -53,7 +53,7 @@ public class NicMapper {
         Nic model = template != null ? template : new Nic();
 
         if (entity.getVmId() != null) {
-            model.setVm(new VM());
+            model.setVm(new Vm());
             model.getVm().setId(entity.getVmId().toString());
         }
         if (entity.getId() != null) {

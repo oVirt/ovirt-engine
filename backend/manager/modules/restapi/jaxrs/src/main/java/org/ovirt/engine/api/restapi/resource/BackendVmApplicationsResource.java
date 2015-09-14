@@ -39,7 +39,7 @@ public class BackendVmApplicationsResource extends AbstractBackendResource<Appli
 
     @Override
     protected Application addParents(Application model) {
-        model.setVm(new org.ovirt.engine.api.model.VM());
+        model.setVm(new org.ovirt.engine.api.model.Vm());
         model.getVm().setId(vmId.toString());
         return model;
     }

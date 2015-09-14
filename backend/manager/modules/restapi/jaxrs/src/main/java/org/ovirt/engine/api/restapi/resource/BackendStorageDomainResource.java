@@ -22,8 +22,8 @@ import org.ovirt.engine.api.model.StorageDomainStatus;
 import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
-import org.ovirt.engine.api.model.VM;
-import org.ovirt.engine.api.model.VMs;
+import org.ovirt.engine.api.model.Vm;
+import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.AssignedDiskProfilesResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.DiskSnapshotsResource;
@@ -347,7 +347,7 @@ public class BackendStorageDomainResource extends
     }
 
     @Override
-    public StorageDomainContentsResource<VMs, VM> getStorageDomainVmsResource() {
+    public StorageDomainContentsResource<Vms, Vm> getStorageDomainVmsResource() {
         return inject(new BackendStorageDomainVmsResource(guid));
     }
 

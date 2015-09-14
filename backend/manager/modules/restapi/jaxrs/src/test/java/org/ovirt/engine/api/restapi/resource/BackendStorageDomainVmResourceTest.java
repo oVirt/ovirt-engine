@@ -18,7 +18,7 @@ import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.StorageDomain;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -34,7 +34,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainVmResourceTest
-    extends AbstractBackendSubResourceTest<VM,
+    extends AbstractBackendSubResourceTest<Vm,
                                            org.ovirt.engine.core.common.businessentities.VM,
                                            BackendStorageDomainVmResource> {
 
@@ -260,7 +260,7 @@ public class BackendStorageDomainVmResourceTest
         action.setCluster(cluster);
 
         if(collapseSnapshots){
-            VM vm = new VM();
+            Vm vm = new Vm();
             vm.setSnapshots(new Snapshots());
             vm.getSnapshots().setCollapseSnapshots(collapseSnapshots);
             action.setVm(vm);
@@ -439,7 +439,7 @@ public class BackendStorageDomainVmResourceTest
     }
 
     @Override
-    protected void verifyModel(VM model, int index) {
+    protected void verifyModel(Vm model, int index) {
         super.verifyModel(model, index);
         verifyModelSpecific(model, index);
     }

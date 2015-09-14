@@ -32,78 +32,78 @@ import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.Roles;
 import org.ovirt.engine.api.model.Slaves;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmStatus;
 
 public class CompletenessAssertorTest extends Assert {
 
     @Test
     public void testMissingParameter() throws Exception {
-        VM vm = new VM();
+        Vm vm = new Vm();
         vm.setDescription("incomplete");
         try {
             CompletenessAssertor.validateParameters(vm, "status");
             fail("expected WebApplicationException on incomplete model");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "VM", "status");
+            verifyIncompleteException(wae, "Vm", "status");
         }
     }
 
     @Test
     public void testMissingParameterSpecificReason() throws Exception {
-        VM vm = new VM();
+        Vm vm = new Vm();
         vm.setDescription("incomplete");
         try {
             CompletenessAssertor.validateParameters("Missing stuff", "{0} {1} required for {2}", vm, "status");
             fail("expected WebApplicationException on incomplete model");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException("Missing stuff", wae, "VM", "status");
+            verifyIncompleteException("Missing stuff", wae, "Vm", "status");
         }
     }
 
     @Test
     public void testOffsetMissingParameter() throws Exception {
-        VM vm = new VM();
+        Vm vm = new Vm();
         vm.setDescription("incomplete");
         try {
             offsetValidateParameters(vm);
             fail("expected WebApplicationException on incomplete model");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "VM", "status");
+            verifyIncompleteException(wae, "Vm", "status");
         }
     }
 
-    private void offsetValidateParameters(VM vm) throws Exception {
+    private void offsetValidateParameters(Vm vm) throws Exception {
         CompletenessAssertor.validateParameters(vm, 2, "status");
     }
 
     @Test
     public void testMissingParameters() throws Exception {
-        VM vm = new VM();
+        Vm vm = new Vm();
         vm.setDescription("incomplete");
         try {
             CompletenessAssertor.validateParameters(vm, "name", "host", "status");
             fail("expected WebApplicationException on incomplete model");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "VM", "name", "host", "status");
+            verifyIncompleteException(wae, "Vm", "name", "host", "status");
         }
     }
 
     @Test
     public void testMissingParameterAlteratives() throws Exception {
-        VM vm = new VM();
+        Vm vm = new Vm();
         vm.setDescription("incomplete");
         try {
             CompletenessAssertor.validateParameters(vm, "status|host|name");
             fail("expected WebApplicationException on incomplete model");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "VM", "status|host|name");
+            verifyIncompleteException(wae, "Vm", "status|host|name");
         }
     }
 
     @Test
     public void testCompleteParameters() throws Exception {
-        VM vm = new VM();
+        Vm vm = new Vm();
         vm.setName("foo");
         vm.setStatus(StatusUtils.create(VmStatus.UP));
         vm.setHost(new Host());
@@ -112,7 +112,7 @@ public class CompletenessAssertorTest extends Assert {
 
     @Test
     public void testCompleteParametersAlternativesFirst() throws Exception {
-        VM vm = new VM();
+        Vm vm = new Vm();
         vm.setName("foo");
         vm.setHost(new Host());
         CompletenessAssertor.validateParameters(vm, "name", "host|status");
@@ -120,7 +120,7 @@ public class CompletenessAssertorTest extends Assert {
 
     @Test
     public void testCompleteParametersAlternativesSecond() throws Exception {
-        VM vm = new VM();
+        Vm vm = new Vm();
         vm.setName("foo");
         vm.setStatus(StatusUtils.create(VmStatus.UP));
         CompletenessAssertor.validateParameters(vm, "name", "host|status");
@@ -128,46 +128,46 @@ public class CompletenessAssertorTest extends Assert {
 
     @Test
     public void testMissingSuperField() throws Exception {
-        VM vm = new VM();
+        Vm vm = new Vm();
         vm.setDescription("incomplete");
         try {
             CompletenessAssertor.validateParameters(vm, "host.id");
             fail("expected WebApplicationException on incomplete model");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "VM", "host.id");
+            verifyIncompleteException(wae, "Vm", "host.id");
         }
     }
 
     @Test
     public void testMissingSubField() throws Exception {
-        VM vm = new VM();
+        Vm vm = new Vm();
         vm.setDescription("incomplete");
         vm.setHost(new Host());
         try {
             CompletenessAssertor.validateParameters(vm, "host.id");
             fail("expected WebApplicationException on incomplete model");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "VM", "host.id");
+            verifyIncompleteException(wae, "Vm", "host.id");
         }
     }
 
     @Test
     public void testMissingSubFieldAlternatives() throws Exception {
-        VM vm = new VM();
+        Vm vm = new Vm();
         vm.setDescription("incomplete");
         vm.setHost(new Host());
         try {
             CompletenessAssertor.validateParameters(vm, "host.id|name");
             fail("expected WebApplicationException on incomplete model");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "VM", "host.id|name");
+            verifyIncompleteException(wae, "Vm", "host.id|name");
         }
     }
 
     @Test
     public void testMissingSuperFieldAlternatives() throws Exception {
         Permission permission = new Permission();
-        permission.setVm(new VM());
+        permission.setVm(new Vm());
         try {
             CompletenessAssertor.validateParameters(permission, "user|vm.name");
             fail("expected WebApplicationException on incomplete model");
@@ -179,7 +179,7 @@ public class CompletenessAssertorTest extends Assert {
     @Test
     public void testMissingBothAlternatives() throws Exception {
         Permission permission = new Permission();
-        permission.setVm(new VM());
+        permission.setVm(new Vm());
         try {
             CompletenessAssertor.validateParameters(permission, "user|vm.name|id");
             fail("expected WebApplicationException on incomplete model");
@@ -190,7 +190,7 @@ public class CompletenessAssertorTest extends Assert {
 
     @Test
     public void testCompleteSubField() throws Exception {
-        VM vm = new VM();
+        Vm vm = new Vm();
         vm.setHost(new Host());
         vm.getHost().setId("0");
         CompletenessAssertor.validateParameters(vm, "host.id");
@@ -198,7 +198,7 @@ public class CompletenessAssertorTest extends Assert {
 
     @Test
     public void testCompleteSubFieldAlternatives() throws Exception {
-        VM vm = new VM();
+        Vm vm = new Vm();
         vm.setHost(new Host());
         vm.getHost().setName("zog");
         CompletenessAssertor.validateParameters(vm, "host.id|name");

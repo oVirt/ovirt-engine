@@ -24,8 +24,8 @@ import org.ovirt.engine.api.model.Session;
 import org.ovirt.engine.api.model.Sessions;
 import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Usb;
-import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VcpuPin;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmDeviceType;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.model.VmType;
@@ -47,10 +47,10 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 public class VmMapperTest extends
-        AbstractInvertibleMappingTest<VM, VmStatic, org.ovirt.engine.core.common.businessentities.VM> {
+        AbstractInvertibleMappingTest<Vm, VmStatic, org.ovirt.engine.core.common.businessentities.VM> {
 
     public VmMapperTest() {
-        super(VM.class, VmStatic.class, org.ovirt.engine.core.common.businessentities.VM.class);
+        super(Vm.class, VmStatic.class, org.ovirt.engine.core.common.businessentities.VM.class);
     }
 
     @BeforeClass
@@ -81,7 +81,7 @@ public class VmMapperTest extends
     }
 
     @Override
-    protected VM postPopulate(VM from) {
+    protected Vm postPopulate(Vm from) {
         from.setType(MappingTestHelper.shuffle(VmType.class).value());
         from.setOrigin(OriginType.VMWARE.name().toLowerCase());
         from.getDisplay().setType(MappingTestHelper.shuffle(DisplayType.class).value());
@@ -132,7 +132,7 @@ public class VmMapperTest extends
     }
 
     @Override
-    protected void verify(VM model, VM transform) {
+    protected void verify(Vm model, Vm transform) {
         assertNotNull(transform);
         assertEquals(model.getName(), transform.getName());
         assertEquals(model.getId(), transform.getId());
@@ -225,7 +225,7 @@ public class VmMapperTest extends
     public void testUpdateHostPinningPolicy() {
         final VmStatic vmTemplate = new VmStatic();
         vmTemplate.setDedicatedVmForVdsList(Guid.newGuid());
-        final VM vm = new VM();
+        final Vm vm = new Vm();
         vm.setPlacementPolicy(createPlacementPolicy(Guid.newGuid(), Guid.newGuid()));
         final VmStatic mappedVm = VmMapper.map(vm, vmTemplate);
 
@@ -241,7 +241,7 @@ public class VmMapperTest extends
     public void ovfConfigurationMap() {
         String ovfConfig = "config";
         ConfigurationType configurationType = ConfigurationType.OVF;
-        VM model = new VM();
+        Vm model = new Vm();
         VmMapper.map(ovfConfig, ConfigurationType.OVF, model);
         assertNotNull(model.getInitialization());
         assertNotNull(model.getInitialization().getConfiguration());
@@ -251,23 +251,13 @@ public class VmMapperTest extends
     }
 
     @Test
-    public void testGustIp() {
-        org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
-        VmDynamic vmDynamic = new VmDynamic();
-        vmDynamic.setStatus(VMStatus.Up);
-        vmDynamic.setVmIp("2.2.2.2");
-        vm.setDynamicData(vmDynamic);
-        VM map = VmMapper.map(vm, (VM) null);
-    }
-
-    @Test
     public void testGuestFQDN() {
         org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
         VmDynamic vmDynamic = new VmDynamic();
         vmDynamic.setStatus(VMStatus.Up);
         vmDynamic.setVmFQDN("localhost.localdomain");
         vm.setDynamicData(vmDynamic);
-        VM map = VmMapper.map(vm, (VM) null);
+        Vm map = VmMapper.map(vm, (Vm) null);
         assertNotNull(map.getFqdn());
         assertEquals(map.getFqdn(), "localhost.localdomain");
     }
@@ -280,7 +270,7 @@ public class VmMapperTest extends
         vmDynamic.setGuestOsTimezoneName("This is not a timezone");
         vmDynamic.setGuestOsTimezoneOffset(-60);
         vm.setDynamicData(vmDynamic);
-        VM map = VmMapper.map(vm, (VM) null);
+        Vm map = VmMapper.map(vm, (Vm) null);
         assertNotNull(map.getGuestTimeZone());
         assertEquals(map.getGuestTimeZone().getUtcOffset(), "-01:00");
         assertEquals(map.getGuestTimeZone().getName(), "This is not a timezone");
@@ -300,7 +290,7 @@ public class VmMapperTest extends
         vmDynamic.setGuestOsKernelVersion("2.6.32-431.el6.x86_64");
 
         vm.setDynamicData(vmDynamic);
-        VM map = VmMapper.map(vm, (VM) null);
+        Vm map = VmMapper.map(vm, (Vm) null);
 
         assertNotNull(map.getGuestOperatingSystem());
         assertEquals(map.getGuestOperatingSystem().getFamily(), "Linux");
@@ -335,7 +325,7 @@ public class VmMapperTest extends
         vmDynamic.setGuestOsKernelVersion("");
 
         vm.setDynamicData(vmDynamic);
-        VM map = VmMapper.map(vm, (VM) null);
+        Vm map = VmMapper.map(vm, (Vm) null);
 
         assertNotNull(map.getGuestOperatingSystem());
         assertEquals(map.getGuestOperatingSystem().getFamily(), "Windows");
@@ -354,26 +344,6 @@ public class VmMapperTest extends
     }
 
     @Test
-    public void testGuestOs3() {
-        org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
-        VmDynamic vmDynamic = new VmDynamic();
-        vmDynamic.setStatus(VMStatus.Up);
-
-        vm.setDynamicData(vmDynamic);
-        VM map = VmMapper.map(vm, (VM) null);
-    }
-
-    @Test
-    public void testGustIps() {
-        org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
-        VmDynamic vmDynamic = new VmDynamic();
-        vmDynamic.setStatus(VMStatus.Up);
-        vmDynamic.setVmIp("2.2.2.2 2.2.2.3 2.2.2.4");
-        vm.setDynamicData(vmDynamic);
-        VM map = VmMapper.map(vm, (VM) null);
-    }
-
-    @Test
     public void testDisplayPort() {
         org.ovirt.engine.core.common.businessentities.VM entity =
                 new org.ovirt.engine.core.common.businessentities.VM();
@@ -382,12 +352,12 @@ public class VmMapperTest extends
         entity.getGraphicsInfos().get(GraphicsType.SPICE)
                 .setPort(5900)
                 .setTlsPort(9999);
-        VM model = VmMapper.map(entity, (VM) null);
+        Vm model = VmMapper.map(entity, (Vm) null);
         entity.getGraphicsInfos().put(GraphicsType.SPICE, new GraphicsInfo());
         entity.getGraphicsInfos().get(GraphicsType.SPICE)
                 .setPort(null)
                 .setTlsPort(null);
-        model = VmMapper.map(entity, (VM) null);
+        model = VmMapper.map(entity, (Vm) null);
         assertNull(model.getDisplay().getPort());
         assertNull(model.getDisplay().getSecurePort());
     }
@@ -400,7 +370,7 @@ public class VmMapperTest extends
     public void testGlobalSpiceProxy() {
         org.ovirt.engine.core.common.businessentities.VM entity = new org.ovirt.engine.core.common.businessentities.VM();
         mcr.mockConfigValue(ConfigValues.SpiceProxyDefault, GLOBAL_SPICE_PROXY);
-        VM model = VmMapper.map(entity, (VM) null);
+        Vm model = VmMapper.map(entity, (Vm) null);
         assertEquals(GLOBAL_SPICE_PROXY, model.getDisplay().getProxy());
     }
 
@@ -408,7 +378,7 @@ public class VmMapperTest extends
     public void testClusterSpiceProxy() {
         org.ovirt.engine.core.common.businessentities.VM entity = new org.ovirt.engine.core.common.businessentities.VM();
         entity.setVdsGroupSpiceProxy(CLUSTER_SPICE_PROXY);
-        VM model = VmMapper.map(entity, (VM) null);
+        Vm model = VmMapper.map(entity, (Vm) null);
         assertEquals(CLUSTER_SPICE_PROXY, model.getDisplay().getProxy());
     }
 
@@ -416,7 +386,7 @@ public class VmMapperTest extends
     public void testPoolSpiceProxy() {
         org.ovirt.engine.core.common.businessentities.VM entity = new org.ovirt.engine.core.common.businessentities.VM();
         entity.setVmPoolSpiceProxy(POOL_SPICE_PROXY);
-        VM model = VmMapper.map(entity, (VM) null);
+        Vm model = VmMapper.map(entity, (Vm) null);
         assertEquals(POOL_SPICE_PROXY, model.getDisplay().getProxy());
     }
 
@@ -427,7 +397,7 @@ public class VmMapperTest extends
         entity.setStatus(VMStatus.Up);
         Guid guid = Guid.newGuid();
         entity.setRunOnVds(guid);
-        VM model = VmMapper.map(entity, (VM) null);
+        Vm model = VmMapper.map(entity, (Vm) null);
         assertEquals(guid.toString(), model.getHost().getId());
     }
 

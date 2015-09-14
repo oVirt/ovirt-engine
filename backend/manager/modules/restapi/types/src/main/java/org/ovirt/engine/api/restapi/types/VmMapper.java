@@ -50,8 +50,8 @@ import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VcpuPin;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmAffinity;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.model.VmPool;
@@ -179,8 +179,8 @@ public class VmMapper extends VmBaseMapper {
         return staticVm;
     }
 
-    @Mapping(from = VM.class, to = VmStatic.class)
-    public static VmStatic map(VM vm, VmStatic template) {
+    @Mapping(from = Vm.class, to = VmStatic.class)
+    public static VmStatic map(Vm vm, VmStatic template) {
         VmStatic staticVm = template != null ? template : new VmStatic();
 
         mapVmBaseModelToEntity(staticVm, vm);
@@ -318,13 +318,13 @@ public class VmMapper extends VmBaseMapper {
         return null;
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.VM.class, to = VM.class)
-    public static VM map(org.ovirt.engine.core.common.businessentities.VM entity, VM template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.VM.class, to = Vm.class)
+    public static Vm map(org.ovirt.engine.core.common.businessentities.VM entity, Vm template) {
         return map(entity, template, true);
     }
 
-    public static VM map(org.ovirt.engine.core.common.businessentities.VM entity, VM template, boolean showDynamicInfo) {
-        VM model = template != null ? template : new VM();
+    public static Vm map(org.ovirt.engine.core.common.businessentities.VM entity, Vm template, boolean showDynamicInfo) {
+        Vm model = template != null ? template : new Vm();
 
         mapVmBaseEntityToModel(model, entity.getStaticData());
 
@@ -554,8 +554,8 @@ public class VmMapper extends VmBaseMapper {
         return null;
     }
 
-    @Mapping(from = VM.class, to = RunVmOnceParams.class)
-    public static RunVmOnceParams map(VM vm, RunVmOnceParams template) {
+    @Mapping(from = Vm.class, to = RunVmOnceParams.class)
+    public static RunVmOnceParams map(Vm vm, RunVmOnceParams template) {
         RunVmOnceParams params = template != null ? template : new RunVmOnceParams();
         if (vm.isSetStateless() && vm.isStateless()) {
             params.setRunAsStateless(true);
@@ -792,7 +792,7 @@ public class VmMapper extends VmBaseMapper {
         }
     }
 
-    public static VM map(String data, ConfigurationType type, VM vm) {
+    public static Vm map(String data, ConfigurationType type, Vm vm) {
         Initialization initialization = vm.getInitialization();
         if (initialization == null) {
             initialization = new Initialization();

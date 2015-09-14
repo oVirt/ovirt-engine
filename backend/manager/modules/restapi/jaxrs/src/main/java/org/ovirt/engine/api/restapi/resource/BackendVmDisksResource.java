@@ -14,7 +14,7 @@ import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageType;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
@@ -125,7 +125,7 @@ public class BackendVmDisksResource
                             VdcQueryType.GetSnapshotBySnapshotId,
                             new IdQueryParameters(asGuid(snapshotInfo.getId())),
                             snapshotInfo.getId());
-            VM vm = new VM();
+            Vm vm = new Vm();
             vm.setId(snapshot.getVmId().toString());
             snapshotInfo.setVm(vm);
             model.setSnapshot(snapshotInfo);

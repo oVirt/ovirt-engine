@@ -3,8 +3,8 @@ package org.ovirt.engine.api.restapi.types;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostDevice;
 import org.ovirt.engine.api.model.Product;
-import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.Vendor;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.compat.Guid;
@@ -49,7 +49,7 @@ public class HostDeviceMapper {
 
         model.setVirtualFunctions(entity.getTotalVirtualFunctions());
         if (entity.getVmId() != null) {
-            model.setVm(new VM());
+            model.setVm(new Vm());
             model.getVm().setId(entity.getVmId().toString());
         }
         return model;

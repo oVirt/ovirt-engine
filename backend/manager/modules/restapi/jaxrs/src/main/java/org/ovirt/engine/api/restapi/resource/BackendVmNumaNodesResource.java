@@ -4,9 +4,9 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VirtualNumaNode;
 import org.ovirt.engine.api.model.VirtualNumaNodes;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.VmNumaNodeResource;
 import org.ovirt.engine.api.resource.VmNumaNodesResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
@@ -79,7 +79,7 @@ public class BackendVmNumaNodesResource
 
     @Override
     public VirtualNumaNode addParents(VirtualNumaNode node) {
-        node.setVm(new VM());
+        node.setVm(new Vm());
         node.getVm().setId(parentId.toString());
         return node;
     }

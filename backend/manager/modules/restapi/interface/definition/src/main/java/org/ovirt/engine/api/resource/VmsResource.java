@@ -24,15 +24,15 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.VM;
-import org.ovirt.engine.api.model.VMs;
+import org.ovirt.engine.api.model.Vm;
+import org.ovirt.engine.api.model.Vms;
 
 @Path("/vms")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface VmsResource {
 
     @GET
-    public VMs list();
+    public Vms list();
 
     /**
      * Creates a new VM and adds it to the database. The VM is created
@@ -45,7 +45,7 @@ public interface VmsResource {
      */
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-    public Response add(VM vm);
+    public Response add(Vm vm);
 
     /**
      * Sub-resource locator method, returns individual VmResource on which the

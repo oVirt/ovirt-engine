@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParam
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAffinityGroupVmResourceTest
-        extends AbstractBackendSubResourceTest<VM, org.ovirt.engine.core.common.businessentities.VM, BackendAffinityGroupVmResource> {
+        extends AbstractBackendSubResourceTest<Vm, org.ovirt.engine.core.common.businessentities.VM, BackendAffinityGroupVmResource> {
 
     public BackendAffinityGroupVmResourceTest() {
         super(new BackendAffinityGroupVmResource(GUIDS[0], GUIDS[1].toString()));

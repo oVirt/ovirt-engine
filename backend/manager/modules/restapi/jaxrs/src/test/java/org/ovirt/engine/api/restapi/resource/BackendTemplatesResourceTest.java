@@ -15,7 +15,7 @@ import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Permissions;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.TemplateVersion;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -664,7 +664,7 @@ public class BackendTemplatesResourceTest
         Template model = new Template();
         model.setName(NAMES[index]);
         model.setDescription(DESCRIPTIONS[index]);
-        model.setVm(new VM());
+        model.setVm(new Vm());
         model.getVm().setId(GUIDS[1].toString());
         model.setCluster(new Cluster());
         model.getCluster().setId(GUIDS[2].toString());

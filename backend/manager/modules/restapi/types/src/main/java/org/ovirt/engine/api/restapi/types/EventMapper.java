@@ -12,7 +12,7 @@ import org.ovirt.engine.api.model.LogSeverity;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.TypeConversionHelper;
 import org.ovirt.engine.core.common.AuditLogSeverity;
@@ -38,7 +38,7 @@ public class EventMapper {
             model.setUser(user);
         }
         if (entity.getVmId() != null && !entity.getVmId().equals(Guid.Empty)) {
-            VM vm = new VM();
+            Vm vm = new Vm();
             vm.setId(entity.getVmId().toString());
             model.setVm(vm);
         }

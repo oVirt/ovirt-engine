@@ -2,8 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.VM;
-import org.ovirt.engine.api.model.VMs;
+import org.ovirt.engine.api.model.Vm;
+import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.AffinityGroupVmResource;
 import org.ovirt.engine.api.resource.AffinityGroupVmsResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -14,29 +14,29 @@ import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParam
 import org.ovirt.engine.core.compat.Guid;
 
 
-public class BackendAffinityGroupVmsResource extends AbstractBackendCollectionResource<VM, org.ovirt.engine.core.common.businessentities.VM>
+public class BackendAffinityGroupVmsResource extends AbstractBackendCollectionResource<Vm, org.ovirt.engine.core.common.businessentities.VM>
         implements AffinityGroupVmsResource {
     private final Guid affinityGroupId;
 
     public BackendAffinityGroupVmsResource(Guid affinityGroupId) {
-        super(VM.class, org.ovirt.engine.core.common.businessentities.VM.class);
+        super(Vm.class, org.ovirt.engine.core.common.businessentities.VM.class);
         this.affinityGroupId = affinityGroupId;
     }
 
     @Override
-    public VMs list() {
-        VMs vms = new VMs();
+    public Vms list() {
+        Vms vms = new Vms();
         AffinityGroup affinityGroup = getEntity();
 
         if (affinityGroup.getEntityIds() != null) {
             for (int i = 0; i < affinityGroup.getEntityIds().size(); i++) {
-                VM vm = new VM();
+                Vm vm = new Vm();
                 vm.setId(affinityGroup.getEntityIds().get(i).toString());
                 vm.setName(affinityGroup.getEntityNames().get(i));
                 vm = addLinks(populate(vm, null));
                 // remove vm actions, not relevant to this context
                 vm.setActions(null);
-                vms.getVMs().add(vm);
+                vms.getVms().add(vm);
             }
         }
 
@@ -44,7 +44,7 @@ public class BackendAffinityGroupVmsResource extends AbstractBackendCollectionRe
     }
 
     @Override
-    public Response add(VM vm) {
+    public Response add(Vm vm) {
         AffinityGroup affinityGroup = getEntity();
 
         affinityGroup.getEntityIds().add(asGuid(vm.getId()));

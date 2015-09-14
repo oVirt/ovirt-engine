@@ -41,7 +41,7 @@ import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Ticket;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
@@ -84,7 +84,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmResourceTest
-        extends AbstractBackendSubResourceTest<VM, org.ovirt.engine.core.common.businessentities.VM, BackendVmResource> {
+        extends AbstractBackendSubResourceTest<Vm, org.ovirt.engine.core.common.businessentities.VM, BackendVmResource> {
 
     private static final String ISO_ID = "foo.iso";
     private static final String FLOPPY_ID = "bar.vfd";
@@ -138,7 +138,7 @@ public class BackendVmResourceTest
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations();
         control.replay();
-        VM response = resource.get();
+        Vm response = resource.get();
         verifyModel(response, 0);
         verifyCertificate(response);
     }
@@ -152,7 +152,7 @@ public class BackendVmResourceTest
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations();
         control.replay();
-        VM response = resource.get();
+        Vm response = resource.get();
         verifyModel(response, 0);
         verifyCertificate(response);
     }
@@ -168,7 +168,7 @@ public class BackendVmResourceTest
             setUpGetGraphicsExpectations(1);
             control.replay();
 
-            VM vm = resource.get();
+            Vm vm = resource.get();
             assertTrue(vm.isSetStatistics());
             verifyModel(vm, 0);
         } finally {
@@ -204,7 +204,7 @@ public class BackendVmResourceTest
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations();
         control.replay();
-        VM response = resource.get();
+        Vm response = resource.get();
         verifyModel(response, 0);
         verifyCertificate(response);
 
@@ -310,7 +310,7 @@ public class BackendVmResourceTest
                 new Object[] {},
                 true,
                 true));
-        final VM model = getModel(0);
+        final Vm model = getModel(0);
         model.setLargeIcon(IconTestHelpler.createIconWithData());
         verifyModel(resource.update(model), 0);
     }
@@ -339,7 +339,7 @@ public class BackendVmResourceTest
                 new Object[]{},
                 true,
                 true));
-        final VM model = getModel(0);
+        final Vm model = getModel(0);
         model.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
         model.setLargeIcon(IconTestHelpler.createIcon(GUIDS[3]));
         verifyModel(resource.update(model), 0);
@@ -348,7 +348,7 @@ public class BackendVmResourceTest
     @Test
     public void testUpdateSetAndUploadIconFailure() throws Exception {
         control.replay();
-        final VM model = getModel(0);
+        final Vm model = getModel(0);
         model.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
         model.setLargeIcon(IconTestHelpler.createIconWithData());
         try {
@@ -359,13 +359,13 @@ public class BackendVmResourceTest
         }
     }
 
-    protected void verifyModelClearingPayloads(VM model, int index) {
+    protected void verifyModelClearingPayloads(Vm model, int index) {
         verifyModel(model, index);
         assertNull(model.getPayloads());
     }
 
-    static VM getModelClearingPayloads(int index) {
-        VM model = getModel(0);
+    static Vm getModelClearingPayloads(int index) {
+        Vm model = getModel(0);
         model.setPayloads(new Payloads());
 
         return model;
@@ -387,7 +387,7 @@ public class BackendVmResourceTest
                 true));
 
 
-        VM model = getModel(0);
+        Vm model = getModel(0);
         model.setPlacementPolicy(new VmPlacementPolicy());
         model.getPlacementPolicy().setHosts(new Hosts());
         model.getPlacementPolicy().getHosts().getHosts().add(new Host());
@@ -405,7 +405,7 @@ public class BackendVmResourceTest
                 true,
                 true));
 
-        VM model = getModel(0);
+        Vm model = getModel(0);
         model.setPlacementPolicy(new VmPlacementPolicy());
         model.getPlacementPolicy().setHosts(new Hosts());
         model.getPlacementPolicy().getHosts().getHosts().add(new Host());
@@ -423,7 +423,7 @@ public class BackendVmResourceTest
                 true,
                 true));
 
-        VM model = getModel(0);
+        Vm model = getModel(0);
         model.setPlacementPolicy(new VmPlacementPolicy());
         Hosts hosts = new Hosts();
         for (int i =0; i < GUIDS.length; i++){
@@ -448,7 +448,7 @@ public class BackendVmResourceTest
                 true,
                 true));
 
-        VM model = getModel(0);
+        Vm model = getModel(0);
         model.setPlacementPolicy(new VmPlacementPolicy());
         Hosts hosts = new Hosts();
         for (int i =0; i < NAMES.length; i++){
@@ -519,7 +519,7 @@ public class BackendVmResourceTest
                 true,
                 true);
 
-        VM model = getModel(0);
+        Vm model = getModel(0);
         model.setId(GUIDS[0].toString());
         model.setCluster(new Cluster());
         model.getCluster().setId(GUIDS[1].toString());
@@ -573,7 +573,7 @@ public class BackendVmResourceTest
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
 
-        VM model = getModel(1);
+        Vm model = getModel(1);
         model.setId(GUIDS[1].toString());
         try {
             resource.update(model);
@@ -605,7 +605,7 @@ public class BackendVmResourceTest
                 new Object[]{GUIDS[0]}));
 
         Action action = new Action();
-        action.setVm(new VM());
+        action.setVm(new Vm());
         Response response = resource.start(action);
         verifyActionResponse(response);
         verifyActionModel(((Action) response.getEntity()).getVm(), 0);
@@ -621,7 +621,7 @@ public class BackendVmResourceTest
 
         Action action = new Action();
         action.setPause(true);
-        action.setVm(new VM());
+        action.setVm(new Vm());
         action.getVm().setStateless(true);
 
         verifyActionResponse(resource.start(action));
@@ -645,7 +645,7 @@ public class BackendVmResourceTest
                                            new Object[] { GUIDS[0], Collections.singleton(graphicsType) }));
 
         Action action = new Action();
-        action.setVm(new VM());
+        action.setVm(new Vm());
         action.getVm().setDisplay(new Display());
         DisplayType display = (graphicsType == GraphicsType.VNC)
                 ? DisplayType.VNC
@@ -664,7 +664,7 @@ public class BackendVmResourceTest
                                            new Object[] { GUIDS[0], BootSequence.N }));
 
         Action action = new Action();
-        action.setVm(new VM());
+        action.setVm(new Vm());
         action.getVm().setOs(new OperatingSystem());
         action.getVm().getOs().getBoot().add(new Boot());
         action.getVm().getOs().getBoot().get(0).setDev(BootDevice.NETWORK.value());
@@ -680,7 +680,7 @@ public class BackendVmResourceTest
                                            new String[] { "VmId", "BootMenuEnabled" },
                                            new Object[] { GUIDS[0], true }));
         Action action = new Action();
-        action.setVm(new VM());
+        action.setVm(new Vm());
         action.getVm().setBios(new Bios());
         action.getVm().getBios().setBootMenu(new BootMenu());
         action.getVm().getBios().getBootMenu().setEnabled(true);
@@ -697,7 +697,7 @@ public class BackendVmResourceTest
                                            new Object[] { GUIDS[0], ISO_ID, FLOPPY_ID }));
 
         Action action = new Action();
-        action.setVm(new VM());
+        action.setVm(new Vm());
         action.getVm().setCdroms(new CdRoms());
         action.getVm().getCdroms().getCdRoms().add(new CdRom());
         action.getVm().getCdroms().getCdRoms().get(0).setFile(new File());
@@ -736,7 +736,7 @@ public class BackendVmResourceTest
                                            new Object[] { GUIDS[0], hostId }));
 
         Action action = new Action();
-        action.setVm(new VM());
+        action.setVm(new Vm());
         VmPlacementPolicy placementPolicy = new VmPlacementPolicy();
         placementPolicy.setHosts(new Hosts());
         placementPolicy.getHosts().getHosts().add(host);
@@ -970,7 +970,7 @@ public class BackendVmResourceTest
                 new Object[] { vmStatic, "someNewName" }));
 
         Action action = new Action();
-        VM vm = new VM();
+        Vm vm = new Vm();
         vm.setName("someNewName");
         action.setVm(vm);
 
@@ -1130,8 +1130,8 @@ public class BackendVmResourceTest
         org.ovirt.engine.core.common.businessentities.VM entity = setUpStatisticalExpectations();
 
         @SuppressWarnings("unchecked")
-        BackendStatisticsResource<VM, org.ovirt.engine.core.common.businessentities.VM> statisticsResource =
-            (BackendStatisticsResource<VM, org.ovirt.engine.core.common.businessentities.VM>)resource.getStatisticsResource();
+        BackendStatisticsResource<Vm, org.ovirt.engine.core.common.businessentities.VM> statisticsResource =
+            (BackendStatisticsResource<Vm, org.ovirt.engine.core.common.businessentities.VM>)resource.getStatisticsResource();
         assertNotNull(statisticsResource);
 
         verifyQuery(statisticsResource.getQuery(), entity);
@@ -1189,7 +1189,7 @@ public class BackendVmResourceTest
                 "VmId", "RemoveDisks" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
 
         Action action = new Action();
-        action.setVm(new VM());
+        action.setVm(new Vm());
         action.getVm().setDisks(new Disks());
         action.getVm().getDisks().setDetachOnly(true);
         verifyRemove(resource.remove(action));
@@ -1273,10 +1273,10 @@ public class BackendVmResourceTest
         return entity;
     }
 
-    protected void verifyQuery(AbstractStatisticalQuery<VM, org.ovirt.engine.core.common.businessentities.VM> query,
+    protected void verifyQuery(AbstractStatisticalQuery<Vm, org.ovirt.engine.core.common.businessentities.VM> query,
                                org.ovirt.engine.core.common.businessentities.VM entity)
         throws Exception {
-        assertEquals(VM.class, query.getParentType());
+        assertEquals(Vm.class, query.getParentType());
         assertSame(entity, query.resolve(GUIDS[0]));
         List<Statistic> statistics = query.getStatistics(entity);
         verifyStatistics(statistics,
@@ -1352,25 +1352,25 @@ public class BackendVmResourceTest
         return setUpEntityExpectations(vm, vm.getStatisticsData(), index);
     }
 
-    protected void verifyModelOnNewCluster(VM model, int index) {
+    protected void verifyModelOnNewCluster(Vm model, int index) {
         assertNotNull(model.getCluster().getId());
         assertEquals(GUIDS[1].toString(), model.getCluster().getId());
         verifyModel(model, index);
     }
 
     @Override
-    protected void verifyModel(VM model, int index) {
+    protected void verifyModel(Vm model, int index) {
         super.verifyModel(model, index);
         verifyModelSpecific(model, index);
     }
 
-    protected void verifyActionModel(VM model, int index) {
+    protected void verifyActionModel(Vm model, int index) {
         assertNotNull(model);
         assertEquals(GUIDS[index].toString(), model.getId());
         verifyLinks(model);
     }
 
-    private void verifyCertificate(VM model) {
+    private void verifyCertificate(Vm model) {
         assertNotNull(model.getDisplay());
         assertNotNull(model.getDisplay().getCertificate());
         assertEquals(model.getDisplay().getCertificate().getSubject(), CERTIFICATE);

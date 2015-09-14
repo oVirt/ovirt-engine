@@ -109,7 +109,7 @@ public class VmPoolMapper {
     @Mapping(from = VM.class, to = VmPool.class)
     public static VmPool map(VM vm, VmPool template) {
         VmPool model = template != null ? template : new VmPool();
-        org.ovirt.engine.api.model.VM vmModel = VmMapper.map(vm, (org.ovirt.engine.api.model.VM) null);
+        org.ovirt.engine.api.model.Vm vmModel = VmMapper.map(vm, (org.ovirt.engine.api.model.Vm) null);
         vmModel.setCluster(null);
         vmModel.setTemplate(null);
         vmModel.setVmPool(null);

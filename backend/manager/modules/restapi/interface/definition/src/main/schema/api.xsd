@@ -90,7 +90,7 @@
       <xs:element ref="vms" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:appinfo>
-            <jaxb:property name="VMs"/>
+            <jaxb:property name="Vms"/>
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
@@ -3492,13 +3492,13 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="vms" type="VMs"/>
-  <xs:element name="vm" type="VM"/>
+  <xs:element name="vms" type="Vms"/>
+  <xs:element name="vm" type="Vm"/>
 
-  <xs:complexType name="VM">
+  <xs:complexType name="Vm">
     <xs:annotation>
       <xs:appinfo>
-         <jaxb:class name="VM"/>
+         <jaxb:class name="Vm"/>
       </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>
@@ -3552,13 +3552,13 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="VMs">
+  <xs:complexType name="Vms">
     <xs:complexContent>
       <xs:extension base="BaseResources">
         <xs:sequence>
           <xs:annotation>
             <xs:appinfo>
-                <jaxb:property name="VMs"/>
+                <jaxb:property name="Vms"/>
             </xs:appinfo>
           </xs:annotation>
           <xs:element ref="vm" minOccurs="0" maxOccurs="unbounded"/>
@@ -3640,7 +3640,7 @@
                 <jaxb:property name="PreviewVms"/>
             </xs:appinfo>
           </xs:annotation>
-          <xs:element type="VM" name="preview_vm" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element type="Vm" name="preview_vm" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -4049,7 +4049,7 @@
 
   <xs:complexType name="Snapshot">
     <xs:complexContent>
-      <xs:extension base="VM">
+      <xs:extension base="Vm">
         <xs:sequence>
           <xs:element ref="vm" minOccurs="0"/>
           <xs:element name="date" type="xs:dateTime" minOccurs="0"/>

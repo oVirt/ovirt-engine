@@ -32,10 +32,10 @@ import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Tags;
 import org.ovirt.engine.api.model.Template;
-import org.ovirt.engine.api.model.VM;
-import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.model.VirtioScsi;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
+import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmsResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
@@ -77,18 +77,18 @@ import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmsResource extends
-        AbstractBackendCollectionResource<VM, org.ovirt.engine.core.common.businessentities.VM>
+        AbstractBackendCollectionResource<Vm, org.ovirt.engine.core.common.businessentities.VM>
         implements VmsResource {
 
     static final String[] SUB_COLLECTIONS = { "applications", "disks", "nics", "numanodes", "cdroms", "snapshots", "tags", "permissions",
             "statistics", "reporteddevices", "watchdogs", "sessions", "katelloerrata", "graphicsconsoles", "hostdevices" };
 
     public BackendVmsResource() {
-        super(VM.class, org.ovirt.engine.core.common.businessentities.VM.class, SUB_COLLECTIONS);
+        super(Vm.class, org.ovirt.engine.core.common.businessentities.VM.class, SUB_COLLECTIONS);
     }
 
     @Override
-    public VMs list() {
+    public Vms list() {
         if (isFiltered())
             return mapCollection(getBackendCollection(VdcQueryType.GetAllVms, new VdcQueryParametersBase(), SearchType.VM), true);
         else
@@ -101,9 +101,9 @@ public class BackendVmsResource extends
     }
 
     @Override
-    public Response add(VM vm) {
+    public Response add(Vm vm) {
         validateParameters(vm, "cluster.id|name");
-        validateEnums(VM.class, vm);
+        validateEnums(Vm.class, vm);
         validateIconParameters(vm);
         Response response = null;
         if (vm.isSetInitialization() && vm.getInitialization().isSetConfiguration()) {
@@ -135,7 +135,7 @@ public class BackendVmsResource extends
                     builtFromInstanceType.setInstanceTypeId(instanceTypeEntity.getId());
                 }
 
-                VmStatic staticVm = getMapper(VM.class, VmStatic.class).map(vm, builtFromInstanceType != null ? builtFromInstanceType : builtFromTemplate);
+                VmStatic staticVm = getMapper(Vm.class, VmStatic.class).map(vm, builtFromInstanceType != null ? builtFromInstanceType : builtFromTemplate);
                 if (namedCluster(vm)) {
                     staticVm.setVdsGroupId(cluster.getId());
                 }
@@ -176,7 +176,7 @@ public class BackendVmsResource extends
             }
         }
 
-        VM result = (VM) response.getEntity();
+        Vm result = (Vm) response.getEntity();
         if (result != null) {
             DisplayHelper.adjustDisplayData(this, result);
             removeRestrictedInfo(result);
@@ -185,7 +185,7 @@ public class BackendVmsResource extends
         return response;
     }
 
-    private void validateIconParameters(VM vm) {
+    private void validateIconParameters(Vm vm) {
         if (!IconHelper.validateIconParameters(vm)) {
             throw new BaseBackendResource.WebFaultException(null,
                     localize(Messages.INVALID_ICON_PARAMETERS),
@@ -198,22 +198,22 @@ public class BackendVmsResource extends
         return isFiltered();
     }
 
-    private boolean isCreateFromSnapshot(VM vm) {
+    private boolean isCreateFromSnapshot(Vm vm) {
         return vm.isSetSnapshots() && vm.getSnapshots().getSnapshots() != null
                 && !vm.getSnapshots().getSnapshots().isEmpty();
     }
 
-    private void validateSnapshotExistence(VM vm) {
+    private void validateSnapshotExistence(Vm vm) {
         // null and emptiness were previously tested
         Snapshot snapshot = vm.getSnapshots().getSnapshots().get(0);
         validateParameters(snapshot, "id");
     }
 
-    private Response createVmFromSnapshot(VM vm) {
+    private Response createVmFromSnapshot(Vm vm) {
         // If Vm has snapshots collection - this is a clone vm from snapshot operation
         String snapshotId = getSnapshotId(vm.getSnapshots());
         org.ovirt.engine.core.common.businessentities.VM vmConfiguration = getVmConfiguration(snapshotId);
-        getMapper(VM.class, VmStatic.class).map(vm, vmConfiguration.getStaticData());
+        getMapper(Vm.class, VmStatic.class).map(vm, vmConfiguration.getStaticData());
         // If vm passed in the call has disks attached on them,
         // merge their data with the data of the disks on the configuration
         // The parameters to AddVmFromSnapshot hold an array list of Disks
@@ -229,7 +229,7 @@ public class BackendVmsResource extends
                 diskImagesByImageId);
     }
 
-    private VM removeRestrictedInfo(VM vm) {
+    private Vm removeRestrictedInfo(Vm vm) {
         if (isFiltered()) {
             vm.setHost(null);
             vm.setPlacementPolicy(null);
@@ -237,7 +237,7 @@ public class BackendVmsResource extends
         return vm;
     }
 
-    protected VmPayload getPayload(VM vm) {
+    protected VmPayload getPayload(Vm vm) {
         VmPayload payload = null;
         if (vm.isSetPayloads() && vm.getPayloads().isSetPayload()) {
             payload = getMapper(Payload.class, VmPayload.class).map(vm.getPayloads().getPayload().get(0), new VmPayload());
@@ -245,7 +245,7 @@ public class BackendVmsResource extends
         return payload;
     }
 
-    public Response importVmFromConfiguration(VM vm) {
+    public Response importVmFromConfiguration(Vm vm) {
         Initialization initialization = vm.getInitialization();
         Configuration config = initialization.getConfiguration();
         org.ovirt.engine.core.common.businessentities.VM vmConfiguration =
@@ -303,7 +303,7 @@ public class BackendVmsResource extends
     }
 
     private Response cloneVmFromSnapshot(org.ovirt.engine.core.common.businessentities.VM configVm,
-            VM vm,
+            Vm vm,
             String snapshotId,
             HashMap<Guid, DiskImage> images) {
         VmStatic staticVm = configVm.getStaticData();
@@ -336,7 +336,7 @@ public class BackendVmsResource extends
                                 new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
     }
 
-    private Response cloneVmFromTemplate(VmStatic staticVm, VM vm, VmTemplate template, InstanceType instanceType, VDSGroup cluster) {
+    private Response cloneVmFromTemplate(VmStatic staticVm, Vm vm, VmTemplate template, InstanceType instanceType, VDSGroup cluster) {
         AddVmParameters params = new AddVmParameters(staticVm);
         params.setDiskInfoDestinationMap(getDisksToClone(vm.getDisks(), template.getId()));
         params.setVmPayload(getPayload(vm));
@@ -353,7 +353,7 @@ public class BackendVmsResource extends
                 new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
     }
 
-    private void addDevicesToParams(AddVmParameters params, VM vm, VmTemplate template, InstanceType instanceType, int osId, VDSGroup cluster) {
+    private void addDevicesToParams(AddVmParameters params, Vm vm, VmTemplate template, InstanceType instanceType, int osId, VDSGroup cluster) {
         Guid templateId = template != null ? template.getId() : null;
         Guid instanceTypeId = instanceType != null ? instanceType.getId() : null;
 
@@ -458,7 +458,7 @@ public class BackendVmsResource extends
         return (DiskImage)getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class).map(entity, template);
     }
 
-    protected Response addVm(VmStatic staticVm, VM vm, Guid storageDomainId, VmTemplate template, InstanceType instanceType, VDSGroup cluster) {
+    protected Response addVm(VmStatic staticVm, Vm vm, Guid storageDomainId, VmTemplate template, InstanceType instanceType, VDSGroup cluster) {
         AddVmParameters params = new AddVmParameters(staticVm);
         params.setVmPayload(getPayload(vm));
         params.setStorageDomainId(storageDomainId);
@@ -474,13 +474,13 @@ public class BackendVmsResource extends
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
     }
 
-    void setupCloneTemplatePermissions(VM vm, VmManagementParametersBase params) {
+    void setupCloneTemplatePermissions(Vm vm, VmManagementParametersBase params) {
         if (vm.isSetPermissions() && vm.getPermissions().isSetClone()) {
             params.setCopyTemplatePermissions(vm.getPermissions().isClone());
         }
     }
 
-    protected Response addVmFromScratch(VmStatic staticVm, VM vm, InstanceType instanceType, VDSGroup cluster) {
+    protected Response addVmFromScratch(VmStatic staticVm, Vm vm, InstanceType instanceType, VDSGroup cluster) {
         AddVmParameters params = new AddVmParameters(staticVm);
         params.setVmPayload(getPayload(vm));
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
@@ -505,7 +505,7 @@ public class BackendVmsResource extends
         return diskImages;
     }
 
-    protected VM addInlineDetails(Set<String> details, VM vm) {
+    protected Vm addInlineDetails(Set<String> details, Vm vm) {
         if (details.contains("disks")) {
             addInlineDisks(vm);
         }
@@ -518,27 +518,27 @@ public class BackendVmsResource extends
         return vm;
     }
 
-    private void addInlineStatistics(VM vm) {
+    private void addInlineStatistics(Vm vm) {
         EntityIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class);
         VmStatisticalQuery query = new VmStatisticalQuery(resolver, newModel(vm.getId()));
-        BackendStatisticsResource<VM, org.ovirt.engine.core.common.businessentities.VM> statisticsResource = inject(new BackendStatisticsResource<VM, org.ovirt.engine.core.common.businessentities.VM>(entityType, Guid.createGuidFromStringDefaultEmpty(vm.getId()), query));
+        BackendStatisticsResource<Vm, org.ovirt.engine.core.common.businessentities.VM> statisticsResource = inject(new BackendStatisticsResource<Vm, org.ovirt.engine.core.common.businessentities.VM>(entityType, Guid.createGuidFromStringDefaultEmpty(vm.getId()), query));
         Statistics statistics = statisticsResource.list();
         vm.setStatistics(statistics);
     }
 
-    private void addInlineTags(VM vm) {
+    private void addInlineTags(Vm vm) {
         BackendVmTagsResource tagsResource = inject(new BackendVmTagsResource(vm.getId()));
         Tags tags = tagsResource.list();
         vm.setTags(tags);
     }
 
-    private void addInlineNics(VM vm) {
+    private void addInlineNics(Vm vm) {
         BackendVmNicsResource nicsResource = inject(new BackendVmNicsResource(asGuid(vm.getId())));
         Nics nics = nicsResource.list();
         vm.setNics(nics);
     }
 
-    private void addInlineDisks(VM vm) {
+    private void addInlineDisks(Vm vm) {
         BackendVmDisksResource disksResource = inject(new BackendVmDisksResource(Guid.createGuidFromStringDefaultEmpty(vm.getId()),
                 VdcQueryType.GetAllDisksByVmId,
                 new IdQueryParameters(Guid.createGuidFromStringDefaultEmpty(vm.getId()))));
@@ -546,7 +546,7 @@ public class BackendVmsResource extends
         vm.setDisks(disks);
     }
 
-    protected VMs mapCollection(List<org.ovirt.engine.core.common.businessentities.VM> entities, boolean isFiltered) {
+    protected Vms mapCollection(List<org.ovirt.engine.core.common.businessentities.VM> entities, boolean isFiltered) {
         Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
         boolean includeData = details.contains(DetailHelper.MAIN);
         boolean includeSize = details.contains("size");
@@ -566,13 +566,13 @@ public class BackendVmsResource extends
             }
         }
 
-        VMs collection = new VMs();
+        Vms collection = new Vms();
         if (includeData) {
             for (org.ovirt.engine.core.common.businessentities.VM entity : entities) {
-                VM vm = map(entity);
+                Vm vm = map(entity);
                 DisplayHelper.adjustDisplayData(this, vm);
                 removeRestrictedInfo(vm);
-                collection.getVMs().add(addLinks(populate(vm, entity)));
+                collection.getVms().add(addLinks(populate(vm, entity)));
             }
         }
         if (includeSize) {
@@ -581,7 +581,7 @@ public class BackendVmsResource extends
         return collection;
     }
 
-    protected void setPayload(VM vm) {
+    protected void setPayload(Vm vm) {
         try {
             VmPayload payload = getEntity(VmPayload.class,
                     VdcQueryType.GetVmPayload,
@@ -608,7 +608,7 @@ public class BackendVmsResource extends
         }
     }
 
-    protected boolean templated(VM vm) {
+    protected boolean templated(Vm vm) {
         return vm.isSetTemplate() && (vm.getTemplate().isSetId() || vm.getTemplate().isSetName());
     }
 
@@ -641,11 +641,11 @@ public class BackendVmsResource extends
         return getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupByVdsGroupId, new IdQueryParameters(id), "GetVdsGroupByVdsGroupId");
     }
 
-    protected boolean namedCluster(VM vm) {
+    protected boolean namedCluster(Vm vm) {
         return vm.isSetCluster() && vm.getCluster().isSetName() && !vm.getCluster().isSetId();
     }
 
-    protected VDSGroup getCluster(VM vm) {
+    protected VDSGroup getCluster(Vm vm) {
         if (namedCluster(vm)) {
             return isFiltered() ? lookupClusterByName(vm.getCluster().getName()) : getEntity(VDSGroup.class,
                     VdcQueryType.GetVdsGroupByName,
@@ -660,7 +660,7 @@ public class BackendVmsResource extends
         return getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupByName, new NameQueryParameters(name), "GetVdsGroupByName");
     }
 
-    protected void setBallooning(VM vm) {
+    protected void setBallooning(Vm vm) {
         Boolean balloonEnabled = getEntity(Boolean.class,
                 VdcQueryType.IsBalloonEnabled,
                 new IdQueryParameters(new Guid(vm.getId())),
@@ -672,7 +672,7 @@ public class BackendVmsResource extends
         vm.getMemoryPolicy().setBallooning(balloonEnabled);
     }
 
-    protected VM setVmOvfConfiguration (VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
+    protected Vm setVmOvfConfiguration (Vm model, org.ovirt.engine.core.common.businessentities.VM entity) {
         VdcQueryReturnValue queryReturnValue =
                 runQuery(VdcQueryType.GetVmOvfByVmId,
                         new GetVmOvfByVmIdParameters(entity.getId(), entity.getDbGeneration()));
@@ -687,25 +687,25 @@ public class BackendVmsResource extends
         return model;
     }
 
-    protected void setConsoleDevice(VM model) {
+    protected void setConsoleDevice(Vm model) {
         if (!model.isSetConsole()) {
             model.setConsole(new Console());
         }
         model.getConsole().setEnabled(!getConsoleDevicesForEntity(new Guid(model.getId())).isEmpty());
     }
 
-    protected void setVirtioScsiController(VM model) {
+    protected void setVirtioScsiController(Vm model) {
         if (!model.isSetVirtioScsi()) {
             model.setVirtioScsi(new VirtioScsi());
         }
         model.getVirtioScsi().setEnabled(!VmHelper.getVirtioScsiControllersForEntity(this, new Guid(model.getId())).isEmpty());
     }
 
-    protected void setSoundcard(VM model) {
+    protected void setSoundcard(Vm model) {
         model.setSoundcardEnabled(!VmHelper.getSoundDevicesForEntity(this, new Guid(model.getId())).isEmpty());
     }
 
-    public void setCertificateInfo(VM model) {
+    public void setCertificateInfo(Vm model) {
         VdcQueryReturnValue result =
                 runQuery(VdcQueryType.GetVdsCertificateSubjectByVmId,
                         new IdQueryParameters(asGuid(model.getId())));
@@ -720,7 +720,7 @@ public class BackendVmsResource extends
     }
 
     @Override
-    protected VM deprecatedPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
+    protected Vm deprecatedPopulate(Vm model, org.ovirt.engine.core.common.businessentities.VM entity) {
         Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
         model = addInlineDetails(details, model);
         if (details.contains("statistics")) {
@@ -730,7 +730,7 @@ public class BackendVmsResource extends
     }
 
     @Override
-    protected VM doPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
+    protected Vm doPopulate(Vm model, org.ovirt.engine.core.common.businessentities.VM entity) {
         setPayload(model);
         setBallooning(model);
         setConsoleDevice(model);
@@ -742,7 +742,7 @@ public class BackendVmsResource extends
         return model;
     }
 
-    protected void setRngDevice(VM model) {
+    protected void setRngDevice(Vm model) {
         List<VmRngDevice> rngDevices = getEntity(List.class,
                 VdcQueryType.GetRngDevice,
                 new IdQueryParameters(Guid.createGuidFromString(model.getId())),

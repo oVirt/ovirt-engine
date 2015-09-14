@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.ReportedDevices;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.VmReportedDeviceResource;
 import org.ovirt.engine.api.resource.VmReportedDevicesResource;
 import org.ovirt.engine.api.restapi.types.ReportedDeviceMapper;
@@ -28,7 +28,7 @@ public class BackendVmReportedDevicesResource extends AbstractBackendCollectionR
 
     @Override
     protected ReportedDevice addParents(ReportedDevice model) {
-        model.setVm(new VM());
+        model.setVm(new Vm());
         model.getVm().setId(vmId.toString());
         return model;
     }

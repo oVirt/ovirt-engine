@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.DisplayType;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -57,7 +57,7 @@ public class DisplayMapper {
      * @param vm
      * @param params
      */
-    public static void fillDisplayInParams(VM vm, RunVmOnceParams params) {
+    public static void fillDisplayInParams(Vm vm, RunVmOnceParams params) {
         if (params == null) {
             return;
         }

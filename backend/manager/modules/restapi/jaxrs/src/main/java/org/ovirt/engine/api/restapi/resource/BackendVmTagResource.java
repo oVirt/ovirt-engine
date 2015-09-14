@@ -5,7 +5,7 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Tag;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.AssignedTagResource;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -39,7 +39,7 @@ public class BackendVmTagResource extends AbstractBackendSubResource<Tag, Tags> 
 
     @Override
     protected Tag addParents(Tag tag) {
-        VM vm = new VM();
+        Vm vm = new Vm();
         vm.setId(vmId.toString());
         tag.setVm(vm);
         return tag;

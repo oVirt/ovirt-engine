@@ -182,7 +182,7 @@ public class BackendVmPoolResource
         public Object lookupEntity(Object id) throws BackendFailureException {
             VM vm = doGetEntity(VM.class,
                     query, getQueryParams(queryParamsClass, id), id.toString());
-            org.ovirt.engine.api.model.VM model = new org.ovirt.engine.api.model.VM();
+            org.ovirt.engine.api.model.Vm model = new org.ovirt.engine.api.model.Vm();
             model.setId(vm.getId().toString());
             return LinkHelper.addLinks(getUriInfo(), model);
         }

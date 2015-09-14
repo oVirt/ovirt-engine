@@ -13,8 +13,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.StorageDomain;
-import org.ovirt.engine.api.model.VM;
-import org.ovirt.engine.api.model.VMs;
+import org.ovirt.engine.api.model.Vm;
+import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.CreationResource;
@@ -156,11 +156,11 @@ public class BackendDiskResource extends AbstractBackendActionableResource<Disk,
             }
         }
         if (CollectionUtils.isNotEmpty(vms)) {
-            VMs modelVms = new VMs();
+            Vms modelVms = new Vms();
             for (org.ovirt.engine.core.common.businessentities.VM vm : vms) {
-                VM modelVm = new VM();
+                Vm modelVm = new Vm();
                 modelVm.setId(vm.getId().toString());
-                modelVms.getVMs().add(modelVm);
+                modelVms.getVms().add(modelVm);
             }
             model.setVms(modelVms);
         }

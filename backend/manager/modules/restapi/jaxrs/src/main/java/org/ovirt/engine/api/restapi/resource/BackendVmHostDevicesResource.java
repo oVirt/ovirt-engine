@@ -6,7 +6,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.HostDevice;
 import org.ovirt.engine.api.model.HostDevices;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.VmHostDeviceResource;
 import org.ovirt.engine.api.resource.VmHostDevicesResource;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
@@ -30,7 +30,7 @@ public class BackendVmHostDevicesResource
 
     @Override
     protected HostDevice addParents(HostDevice model) {
-        model.setVm(new VM());
+        model.setVm(new Vm());
         model.getVm().setId(vmId.toString());
         return super.addParents(model);
     }

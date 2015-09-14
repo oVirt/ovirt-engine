@@ -3,8 +3,8 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.VM;
-import org.ovirt.engine.api.model.VMs;
+import org.ovirt.engine.api.model.Vm;
+import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.StorageDomainContentDisksResource;
 import org.ovirt.engine.api.resource.StorageDomainContentResource;
@@ -17,22 +17,22 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainVmResource
-    extends AbstractBackendStorageDomainContentResource<VMs, VM, org.ovirt.engine.core.common.businessentities.VM>
-    implements StorageDomainContentResource<VM> {
+    extends AbstractBackendStorageDomainContentResource<Vms, Vm, org.ovirt.engine.core.common.businessentities.VM>
+    implements StorageDomainContentResource<Vm> {
 
     org.ovirt.engine.core.common.businessentities.VM vm;
 
     public BackendStorageDomainVmResource(BackendStorageDomainVmsResource parent, String vmId) {
-        super(vmId, parent, VM.class, org.ovirt.engine.core.common.businessentities.VM.class, "disks");
+        super(vmId, parent, Vm.class, org.ovirt.engine.core.common.businessentities.VM.class, "disks");
     }
 
     @Override
-    protected VM getFromDataDomain() {
+    protected Vm getFromDataDomain() {
         return performGet(VdcQueryType.GetVmByVmId, new IdQueryParameters(guid));
     }
 
     @Override
-    protected VM getFromExportDomain() {
+    protected Vm getFromExportDomain() {
         org.ovirt.engine.core.common.businessentities.VM entity = getEntity();
         return addLinks(populate(map(entity, null), entity), null, new String[0]);
     }
@@ -95,7 +95,7 @@ public class BackendStorageDomainVmResource
     }
 
     @Override
-    protected VM addParents(VM vm) {
+    protected Vm addParents(Vm vm) {
         vm.setStorageDomain(parent.getStorageDomainModel());
         return vm;
     }

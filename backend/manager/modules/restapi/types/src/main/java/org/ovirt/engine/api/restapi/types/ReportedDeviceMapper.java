@@ -8,7 +8,7 @@ import org.ovirt.engine.api.model.Ips;
 import org.ovirt.engine.api.model.Mac;
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.ReportedDeviceType;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -20,7 +20,7 @@ public class ReportedDeviceMapper {
         model = model == null ? new ReportedDevice() : model;
 
         if (entity.getVmId() != null) {
-            model.setVm(new VM());
+            model.setVm(new Vm());
             model.getVm().setId(entity.getVmId().toString());
         }
         if (entity.getMacAddress() != null) {

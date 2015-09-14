@@ -28,11 +28,11 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreatedResource, MeasurableResource {
+public interface VmResource extends UpdatableResource<Vm>, AsynchronouslyCreatedResource, MeasurableResource {
 
     @Path("{action: (start|stop|shutdown|reboot|suspend|detach|migrate|export|move|ticket|cancelmigration|"
             + "preview_snapshot|commit_snapshot|undo_snapshot|clone|maintenance|reordermacaddresses)}/{oid}")

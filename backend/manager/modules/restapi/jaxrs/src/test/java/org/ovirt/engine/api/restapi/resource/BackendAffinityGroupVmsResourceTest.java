@@ -6,7 +6,7 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParam
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAffinityGroupVmsResourceTest
-        extends AbstractBackendCollectionResourceTest<VM, org.ovirt.engine.core.common.businessentities.VM, BackendAffinityGroupVmsResource> {
+        extends AbstractBackendCollectionResourceTest<Vm, org.ovirt.engine.core.common.businessentities.VM, BackendAffinityGroupVmsResource> {
 
     private static final Guid AFFINITY_GROUP_ID = Guid.newGuid();
 
@@ -51,7 +51,7 @@ public class BackendAffinityGroupVmsResourceTest
                 true,
                 true));
 
-        VM vm = new VM();
+        Vm vm = new Vm();
         vm.setId(GUIDS[0].toString());
         Response response = collection.add(vm);
         assertEquals(200, response.getStatus());
@@ -82,8 +82,8 @@ public class BackendAffinityGroupVmsResourceTest
     }
 
     @Override
-    protected List<VM> getCollection() {
-        return collection.list().getVMs();
+    protected List<Vm> getCollection() {
+        return collection.list().getVms();
     }
 
     @Override
@@ -99,7 +99,7 @@ public class BackendAffinityGroupVmsResourceTest
     }
 
     @Override
-    protected void verifyModel(VM model, int index) {
+    protected void verifyModel(Vm model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
         assertEquals(NAMES[index], model.getName());
         // overriding since vm doesn't has description

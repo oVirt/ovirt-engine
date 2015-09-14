@@ -4,11 +4,11 @@ import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
 
 import org.ovirt.engine.api.model.GuestNicConfiguration;
 import org.ovirt.engine.api.model.Payload;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmType;
 
-@ValidatedClass(clazz = VM.class)
-public class VmValidator implements Validator<VM> {
+@ValidatedClass(clazz = Vm.class)
+public class VmValidator implements Validator<Vm> {
 
     private UsbValidator usbValidator = new UsbValidator();
     private OsValidator osValidator = new OsValidator();
@@ -23,7 +23,7 @@ public class VmValidator implements Validator<VM> {
     private MigrationOptionsValidator migrationOptionsValidator = new MigrationOptionsValidator();
 
     @Override
-    public void validateEnums(VM vm) {
+    public void validateEnums(Vm vm) {
         if (vm.isSetType()) {
             validateEnum(VmType.class, vm.getType(), true);
         }

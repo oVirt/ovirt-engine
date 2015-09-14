@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.KatelloErrata;
 import org.ovirt.engine.api.model.KatelloErratum;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErratumResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
@@ -29,7 +29,7 @@ public class BackendVmKatelloErrataResource extends AbstractBackendCollectionRes
     private KatelloErrata mapCollection(List<Erratum> entities) {
         KatelloErrata collection = new KatelloErrata();
         for (org.ovirt.engine.core.common.businessentities.Erratum entity : entities) {
-            collection.getKatelloErrata().add(addLinks(populate(map(entity), entity), VM.class));
+            collection.getKatelloErrata().add(addLinks(populate(map(entity), entity), Vm.class));
         }
 
         return collection;
@@ -42,7 +42,7 @@ public class BackendVmKatelloErrataResource extends AbstractBackendCollectionRes
 
     @Override
     protected KatelloErratum addParents(KatelloErratum erratum) {
-        VM vm = new VM();
+        Vm vm = new Vm();
         vm.setId(vmId);
         erratum.setVm(vm);
         return super.addParents(erratum);

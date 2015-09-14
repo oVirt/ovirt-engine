@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.BaseDevice;
 import org.ovirt.engine.api.model.BaseDevices;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
 import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -49,7 +49,7 @@ public abstract class AbstractBackendReadOnlyDevicesResource<D extends BaseDevic
     @Override
     public D addParents(D device) {
         // REVISIT: this can also be a template
-        device.setVm(new VM());
+        device.setVm(new Vm());
         device.getVm().setId(parentId.toString());
         return device;
     }

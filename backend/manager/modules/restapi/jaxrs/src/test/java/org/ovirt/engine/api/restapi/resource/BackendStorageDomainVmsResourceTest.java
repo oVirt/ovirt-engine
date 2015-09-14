@@ -11,7 +11,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainVmsResourceTest
-    extends AbstractBackendCollectionResourceTest<VM,
+    extends AbstractBackendCollectionResourceTest<Vm,
                                                   org.ovirt.engine.core.common.businessentities.VM,
                                                   BackendStorageDomainVmsResource> {
 
@@ -127,11 +127,11 @@ public class BackendStorageDomainVmsResourceTest
         return entity;
     }
 
-    protected List<VM> getCollection() {
-        return collection.list().getVMs();
+    protected List<Vm> getCollection() {
+        return collection.list().getVms();
     }
 
-    protected void verifyModel(VM model, int index) {
+    protected void verifyModel(Vm model, int index) {
         super.verifyModel(model, index);
         verifyModelSpecific(model, index);
     }
