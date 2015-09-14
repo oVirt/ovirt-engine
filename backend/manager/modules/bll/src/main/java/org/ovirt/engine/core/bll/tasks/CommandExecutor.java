@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.tasks;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -130,6 +131,40 @@ public class CommandExecutor {
                     entry.getValue().initialDelay = Math.min(maxDelay, entry.getValue().initialDelay * 2);
                     entry.getValue().remainingDelay = entry.getValue().initialDelay;
                 }
+            }
+        }
+        if (!cmdCallbackMap.isEmpty()) {
+            markExpiredCommandsAsFailure();
+        }
+    }
+
+    private void markExpiredCommandsAsFailure() {
+        for (Entry<Guid, CommandContainer> entry : cmdCallbackMap.entrySet()) {
+            List<Guid> childCmdIds = coco.getChildCommandIds(entry.getKey());
+            if (childCmdIds.isEmpty()) {
+                markExpiredCommandAsFailure(entry.getKey());
+            } else {
+                for (Guid childId : childCmdIds) {
+                    markExpiredCommandAsFailure(childId);
+                }
+            }
+        }
+    }
+
+    private void markExpiredCommandAsFailure(Guid cmdId) {
+        CommandEntity cmdEntity = coco.getCommandEntity(cmdId);
+        if (cmdEntity != null && cmdEntity.getCommandStatus() == CommandStatus.ACTIVE) {
+            Calendar cal = Calendar.getInstance();
+            Integer cmdLifeTimeInMin = cmdEntity.getCommandParameters().getLifeInMinutes();
+            cal.add(Calendar.MINUTE, (-1) * (cmdLifeTimeInMin == null ?
+                    Config.<Integer>getValue(ConfigValues.CoCoLifeInMinutes) :
+                    cmdLifeTimeInMin));
+            if (cmdEntity.getCreatedAt().getTime() < cal.getTime().getTime()) {
+                log.warn("Marking expired command as Failed: command '{} ({})' that started at '{}' has been marked as Failed.",
+                        cmdEntity.getCommandType(),
+                        cmdEntity.getId(),
+                        cmdEntity.getCreatedAt());
+                coco.updateCommandStatus(cmdId, CommandStatus.FAILED);
             }
         }
     }

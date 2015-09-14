@@ -124,6 +124,10 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
     AuditLogAgingThreshold,
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("3000")
+    CoCoLifeInMinutes,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     CommandCoordinatorThreadPoolSize,

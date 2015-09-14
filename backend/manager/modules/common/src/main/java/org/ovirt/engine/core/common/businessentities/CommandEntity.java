@@ -28,6 +28,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
 
     public CommandEntity() {
         commandStatus = CommandStatus.UNKNOWN;
+        createdAt = new Date();
     }
 
     @Override
