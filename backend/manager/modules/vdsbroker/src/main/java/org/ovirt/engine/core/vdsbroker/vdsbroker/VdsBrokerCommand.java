@@ -167,11 +167,18 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
 
     @Override
     protected void logToAudit(){
+        if (isPolicyResetMessage(getReturnStatus().message)) {
+            return;
+        }
         AuditLogableBase auditLogableBase = new AuditLogableBase(vds.getId());
         auditLogableBase.setVds(vds);
         auditLogableBase.addCustomValue("message", getReturnStatus().message);
 
         auditLogDirector.log(auditLogableBase, AuditLogType.VDS_BROKER_COMMAND_FAILURE);
+    }
+
+    protected boolean isPolicyResetMessage(String message) {
+        return "Policy reset".equals(message);
     }
 
     protected abstract void executeVdsBrokerCommand();

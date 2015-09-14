@@ -88,8 +88,10 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
     }
 
     private void logException(RuntimeException ex) {
-        log.error("Command '{}' execution failed: {}", this, ex.getMessage());
-        log.debug("Exception", ex);
+        if (ex.getMessage() == null || !ex.getMessage().contains("Policy reset")) {
+            log.error("Command '{}' execution failed: {}", this, ex.getMessage());
+            log.debug("Exception", ex);
+        }
     }
 
     protected String getAdditionalInformation() {
