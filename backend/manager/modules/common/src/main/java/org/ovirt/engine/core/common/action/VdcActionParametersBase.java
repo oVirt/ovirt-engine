@@ -70,6 +70,7 @@ public class VdcActionParametersBase implements Serializable {
     private Guid stepId;
 
     private LockProperties lockProperties;
+    private Integer lifeInMinutes;
 
     public VdcActionParametersBase() {
         shouldbelogged = true;
@@ -276,6 +277,14 @@ public class VdcActionParametersBase implements Serializable {
 
     public void setVdsRunningOn(Guid vdsRunningOn) {
         this.vdsRunningOn = vdsRunningOn;
+    }
+
+    public Integer getLifeInMinutes() {
+        return lifeInMinutes;
+    }
+
+    public void setLifeInMinutes(Integer lifeInMinutes) {
+        this.lifeInMinutes = lifeInMinutes;
     }
 
     /**

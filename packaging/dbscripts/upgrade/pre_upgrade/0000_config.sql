@@ -77,6 +77,7 @@ select fn_db_add_config_value('AsyncTaskStatusCachingTimeInMinutes','1','general
 select fn_db_add_config_value('AsyncTaskZombieTaskLifeInMinutes','300','general');
 select fn_db_add_config_value('AuditLogAgingThreshold','30','general');
 select fn_db_add_config_value('AuditLogCleanupTime','03:35:35','general');
+select fn_db_add_config_value('CoCoLifeInMinutes','3000','general');
 select fn_db_add_config_value('CommandCoordinatorThreadPoolSize','10','general');
 select fn_db_add_config_value('CommandEntityAgingThreshold','30','general');
 select fn_db_add_config_value('CommandEntityCleanupTime','03:35:35','general');

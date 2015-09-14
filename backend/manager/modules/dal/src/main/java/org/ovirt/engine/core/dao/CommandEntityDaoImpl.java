@@ -113,6 +113,7 @@ public class CommandEntityDaoImpl extends DefaultGenericDao<CommandEntity, Guid>
                 .addValue("step_id", Guid.isNullOrEmpty(entity.getStepId()) ? Guid.Empty : entity.getStepId())
                 .addValue("command_parameters", serializeParameters(entity.getCommandParameters()))
                 .addValue("command_params_class", entity.getCommandParameters() == null ? null : entity.getCommandParameters().getClass().getName())
+                .addValue("created_at", entity.getCreatedAt())
                 .addValue("status", entity.getCommandStatus().toString())
                 .addValue("executed", entity.isExecuted())
                 .addValue("callback_enabled", entity.isCallbackEnabled())

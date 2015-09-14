@@ -6,6 +6,7 @@ CREATE OR REPLACE FUNCTION InsertCommandEntity (v_user_id uuid,
        v_step_id uuid,
        v_command_parameters text,
        v_command_params_class varchar(256),
+       v_created_at timestamp WITH TIME ZONE,
        v_status varchar(20),
        v_executed boolean,
        v_callback_enabled boolean,
@@ -15,7 +16,7 @@ RETURNS VOID
    AS $procedure$
 BEGIN
        INSERT INTO command_entities(user_id, command_id, command_type, root_command_id, job_id, step_id, command_parameters, command_params_class, created_at, status, executed, callback_enabled, return_value, return_value_class)
-              VALUES(v_user_id, v_command_id, v_command_type, v_root_command_id, v_job_id, v_step_id, v_command_parameters, v_command_params_class, NOW(), v_status, v_executed, v_callback_enabled, v_return_value, v_return_value_class);
+              VALUES(v_user_id, v_command_id, v_command_type, v_root_command_id, v_job_id, v_step_id, v_command_parameters, v_command_params_class, v_created_at, v_status, v_executed, v_callback_enabled, v_return_value, v_return_value_class);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -98,6 +99,7 @@ CREATE OR REPLACE FUNCTION InsertOrUpdateCommandEntity (v_user_id uuid,
        v_step_id uuid,
        v_command_parameters text,
        v_command_params_class varchar(256),
+       v_created_at timestamp WITH TIME ZONE,
        v_status varchar(20),
        v_executed boolean,
        v_callback_enabled boolean,
@@ -107,7 +109,7 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       IF NOT EXISTS (SELECT 1 from command_entities where command_id = v_command_id) THEN
-            PERFORM InsertCommandEntity (v_user_id, v_command_id, v_command_type, v_root_command_id, v_job_id, v_step_id, v_command_parameters, v_command_params_class, v_status, v_executed, v_callback_enabled, v_return_value, v_return_value_class);
+            PERFORM InsertCommandEntity (v_user_id, v_command_id, v_command_type, v_root_command_id, v_job_id, v_step_id, v_command_parameters, v_command_params_class, v_created_at, v_status, v_executed, v_callback_enabled, v_return_value, v_return_value_class);
       ELSE
             PERFORM UpdateCommandEntity (v_user_id, v_command_id, v_command_type, v_root_command_id, v_job_id, v_step_id, v_command_parameters, v_command_params_class, v_status, v_executed, v_callback_enabled, v_return_value, v_return_value_class);
       END IF;
