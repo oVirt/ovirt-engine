@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.resource.utils;
 
 import java.util.Date;
 
-import org.ovirt.engine.api.model.API;
+import org.ovirt.engine.api.model.Api;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.Feature;
@@ -325,7 +325,7 @@ public class FeaturesHelper {
     private void addFeatureServerTime(Features features) {
         Feature feature = new Feature();
         feature.setName("Display Server Time");
-        feature.setApi(new API());
+        feature.setApi(new Api());
         feature.getApi().setTime(DateMapper.map(new Date(), null));
         features.getFeature().add(feature);
     }

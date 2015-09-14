@@ -59,9 +59,9 @@
 
   <!-- API -->
 
-  <xs:element name="api" type="API"/>
+  <xs:element name="api" type="Api"/>
 
-  <xs:complexType name="API">
+  <xs:complexType name="Api">
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>

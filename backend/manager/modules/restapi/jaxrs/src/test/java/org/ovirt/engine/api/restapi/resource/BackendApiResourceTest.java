@@ -23,7 +23,7 @@ import org.easymock.EasyMockSupport;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.api.model.API;
+import org.ovirt.engine.api.model.Api;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.SpecialObjects;
 import org.ovirt.engine.api.restapi.invocation.Current;
@@ -322,17 +322,17 @@ public class BackendApiResourceTest extends EasyMockSupport {
 
     protected void verifyResponse(Response response) {
         assertEquals(200, response.getStatus());
-        assertTrue(response.getEntity() instanceof API);
-        verifyApi((API) response.getEntity());
+        assertTrue(response.getEntity() instanceof Api);
+        verifyApi((Api) response.getEntity());
     }
 
     protected void verifyResponseGlusterOnly(Response response) {
         assertEquals(200, response.getStatus());
-        assertTrue(response.getEntity() instanceof API);
-        verifyApiGlusterOnly((API) response.getEntity());
+        assertTrue(response.getEntity() instanceof Api);
+        verifyApiGlusterOnly((Api) response.getEntity());
     }
 
-    protected void verifyApi(API api) {
+    protected void verifyApi(Api api) {
         assertNotNull(api);
         assertNotNull(api.getTime());
         assertNotNull(api.getLinks());
@@ -367,7 +367,7 @@ public class BackendApiResourceTest extends EasyMockSupport {
         assertEquals(ACTIVE_STORAGE_DOMAINS, api.getSummary().getStorageDomains().getActive().intValue());
     }
 
-    protected void verifyApiGlusterOnly(API api) {
+    protected void verifyApiGlusterOnly(Api api) {
         assertNotNull(api);
         assertNotNull(api.getTime());
         assertNotNull(api.getLinks());

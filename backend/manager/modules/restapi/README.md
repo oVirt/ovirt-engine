@@ -12,6 +12,18 @@ that have been done to the RESTAPI in version 4.0 of the engine.
 
 The support for YAML has been completely removed.
 
+### Renamed complex types
+
+The following XML schema complex types have been renamed:
+
+- API - Api
+
+First column is the old name, and second column is the new name.
+
+These renamings don't affect users of the RESTAPI, unless they are using
+the XML schema, either directly or indirectly via the Python or Java
+SDKs.
+
 ### Remove the NIC `network` and `port_mirroring` properties
 
 The NIC `network` and `port_mirroring` elements have been replaced by

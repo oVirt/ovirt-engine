@@ -31,8 +31,8 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.ovirt.engine.api.common.util.JAXBHelper;
 import org.ovirt.engine.api.common.util.QueryHelper;
-import org.ovirt.engine.api.model.API;
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.Api;
 import org.ovirt.engine.api.model.ApiSummary;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.DetailedLink;
@@ -69,7 +69,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BackendApiResource
-    extends AbstractBackendActionableResource<API, Object>
+    extends AbstractBackendActionableResource<Api, Object>
     implements ApiResource {
 
     private static final Logger log = LoggerFactory.getLogger(BackendApiResource.class);
@@ -85,7 +85,7 @@ public class BackendApiResource
     ApplicationMode appMode = ApplicationMode.AllModes;
 
     public BackendApiResource() {
-        super(Guid.Empty.toString(), API.class, Object.class);
+        super(Guid.Empty.toString(), Api.class, Object.class);
     }
 
     private Collection<DetailedLink> getLinks() {
@@ -110,8 +110,8 @@ public class BackendApiResource
         return link;
     }
 
-    private API getApi() {
-        API api = new API();
+    private Api getApi() {
+        Api api = new Api();
         api.setTime(DateMapper.map(new Date(), null));
         for (DetailedLink detailedLink : getLinks()) {
             //add thin link
@@ -128,8 +128,8 @@ public class BackendApiResource
         return api;
     }
 
-    private API getGlusterApi() {
-        API api = new API();
+    private Api getGlusterApi() {
+        Api api = new Api();
         api.setTime(DateMapper.map(new Date(), null));
         for (DetailedLink detailedLink : getGlusterLinks()) {
             // add thin link
@@ -200,7 +200,7 @@ public class BackendApiResource
 
         Response.ResponseBuilder responseBuilder = Response.ok();
 
-        if(response instanceof API) {
+        if(response instanceof Api) {
             addHeader(response, responseBuilder, uriBuilder);
         }
 
@@ -210,7 +210,7 @@ public class BackendApiResource
     @Override
     public Response head() {
         appMode = getCurrent().getApplicationMode();
-        API api = null;
+        Api api = null;
         if(appMode == ApplicationMode.GlusterOnly) {
             api = getGlusterApi();
         }
@@ -292,7 +292,7 @@ public class BackendApiResource
         return rsdl;
     }
 
-    private API addSystemVersion(API api) {
+    private Api addSystemVersion(Api api) {
         String productVersion = getConfigurationValueDefault(String.class,
                 ConfigurationValues.ProductRPMVersion);
         BrandingManager obrand = BrandingManager.getInstance();
@@ -333,7 +333,7 @@ public class BackendApiResource
         return (HashMap<String, Integer>)result;
     }
 
-    private API addSummary(API api) {
+    private Api addSummary(Api api) {
         if (!isFiltered()) {
             HashMap<String, Integer> stats = getSystemStatistics();
 
@@ -360,7 +360,7 @@ public class BackendApiResource
         return api;
     }
 
-    private API addGlusterSummary(API api) {
+    private Api addGlusterSummary(Api api) {
         HashMap<String, Integer> stats = getSystemStatistics();
 
         ApiSummary summary = new ApiSummary();

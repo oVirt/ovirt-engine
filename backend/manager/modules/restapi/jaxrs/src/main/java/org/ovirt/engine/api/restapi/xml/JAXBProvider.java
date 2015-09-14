@@ -44,7 +44,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.ovirt.engine.api.model.API;
+import org.ovirt.engine.api.model.Api;
 import org.ovirt.engine.api.model.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,7 +106,7 @@ public class JAXBProvider implements MessageBodyReader<Object>, MessageBodyWrite
         parserFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
 
         // Create a JAXB context for the model package:
-        String modelPackage = API.class.getPackage().getName();
+        String modelPackage = Api.class.getPackage().getName();
         try {
             jaxbContext = JAXBContext.newInstance(modelPackage);
         }

@@ -50,7 +50,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
-import org.ovirt.engine.api.model.API;
+import org.ovirt.engine.api.model.Api;
 import org.ovirt.engine.api.model.ObjectFactory;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
@@ -103,7 +103,7 @@ public class FOPMessageBodyWriter implements MessageBodyWriter<Object> {
         }
 
         // Create a JAXB context for the model package:
-        String modelPackage = API.class.getPackage().getName();
+        String modelPackage = Api.class.getPackage().getName();
         try {
             jaxbContext = JAXBContext.newInstance(modelPackage);
         }
