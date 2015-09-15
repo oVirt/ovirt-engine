@@ -640,7 +640,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Smartcard Enabled")
     String smartcardVmPopup();
 
-    @DefaultStringValue("VirtIO Console Device Enabled")
+    @DefaultStringValue("Enable VirtIO serial console")
     String consoleDeviceEnabled();
 
     @DefaultStringValue("User's Public Key")
