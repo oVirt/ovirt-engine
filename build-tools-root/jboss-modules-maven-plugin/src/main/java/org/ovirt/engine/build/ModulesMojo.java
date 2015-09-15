@@ -42,7 +42,7 @@ public class ModulesMojo extends AbstractMojo {
     /**
      * The maven project.
      */
-    @Component
+    @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
     /**
