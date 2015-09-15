@@ -195,7 +195,7 @@ public class SchedulingManager implements BackendService {
         List<PolicyUnit> allPolicyUnits = getPolicyUnitDao().getAll();
         for (PolicyUnit policyUnit : allPolicyUnits) {
             if (policyUnit.isInternal()) {
-                policyUnits.put(policyUnit.getId(), PolicyUnitImpl.getPolicyUnitImpl(policyUnit, getPendingResourceManager()));
+                policyUnits.put(policyUnit.getId(), Injector.injectMembers(PolicyUnitImpl.getPolicyUnitImpl(policyUnit, getPendingResourceManager())));
             } else {
                 policyUnits.put(policyUnit.getId(), new PolicyUnitImpl(policyUnit, getPendingResourceManager()));
             }
