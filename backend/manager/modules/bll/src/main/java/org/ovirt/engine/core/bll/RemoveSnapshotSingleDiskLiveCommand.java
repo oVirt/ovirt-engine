@@ -106,6 +106,13 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
             case FAILED:
             case FAILED_RESTARTED:
+                if (getParameters().getCommandStep() == RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE) {
+                    // It's possible that the image was destroyed already if this is retry of Live
+                    // Merge for the given volume.  Proceed to check if the image is present.
+                    log.warn("Child command '{}' failed, proceeding to verify", getParameters().getCommandStep());
+                    getParameters().setCommandStep(getParameters().getNextCommandStep());
+                    break;
+                }
                 log.error("Failed child command status for step '{}'",
                         getParameters().getCommandStep());
                 setCommandStatus(CommandStatus.FAILED);
@@ -144,6 +151,10 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                 getParameters().setMergeStatusReturnValue(synthesizeMergeStatusReturnValue());
             }
             nextCommand = new Pair<>(VdcActionType.DestroyImage, buildDestroyImageParameters());
+            getParameters().setNextCommandStep(RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE_CHECK);
+            break;
+        case DESTROY_IMAGE_CHECK:
+            nextCommand = new Pair<>(VdcActionType.DestroyImageCheck, buildDestroyImageParameters());
             getParameters().setNextCommandStep(RemoveSnapshotSingleDiskLiveStep.COMPLETE);
             break;
         case COMPLETE:
