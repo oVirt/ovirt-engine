@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.ui.common.gin.BaseUiCommonModule;
-import org.ovirt.engine.ui.uicommonweb.models.OptionsModel;
+import org.ovirt.engine.ui.common.uicommon.model.OptionsProvider;
 import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
@@ -36,7 +36,6 @@ import org.ovirt.engine.ui.userportal.uicommon.UserPortalConfigurator;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDetailModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
-import org.ovirt.engine.ui.userportal.uicommon.model.basic.OptionsProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateInterfaceListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplatePermissionListModelProvider;
@@ -94,9 +93,6 @@ public class UiCommonModule extends BaseUiCommonModule {
 
         // Extended tab: Resources
         bind(ResourcesModel.class).in(Singleton.class);
-
-        // User Options
-        bind(OptionsModel.class).in(Singleton.class);
     }
 
     void bindModelProviders() {

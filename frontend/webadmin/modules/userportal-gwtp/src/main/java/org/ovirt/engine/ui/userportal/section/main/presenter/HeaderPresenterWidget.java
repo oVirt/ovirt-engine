@@ -2,12 +2,11 @@ package org.ovirt.engine.ui.userportal.section.main.presenter;
 
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractHeaderPresenterWidget;
+import org.ovirt.engine.ui.common.uicommon.model.OptionsProvider;
 import org.ovirt.engine.ui.common.widget.tab.TabWidgetHandler;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
-import org.ovirt.engine.ui.uicommonweb.models.OptionsModel;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.userportal.auth.UserPortalCurrentUserRole;
-import org.ovirt.engine.ui.userportal.uicommon.model.basic.OptionsProvider;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -22,24 +21,20 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
 
         HasClickHandlers getAboutLink();
 
-        HasClickHandlers getOptionsLink();
-
         void setMainTabPanelVisible(boolean visible);
 
     }
 
     private final UserPortalCurrentUserRole userRole;
     private final AboutPopupPresenterWidget aboutPopup;
-    private final OptionsProvider optionsProvider;
 
     @Inject
     public HeaderPresenterWidget(EventBus eventBus, ViewDef view, CurrentUser user,
             CurrentUserRole userRole, AboutPopupPresenterWidget aboutPopup,
             OptionsProvider optionsProvider, ApplicationDynamicMessages dynamicMessages) {
-        super(eventBus, view, user, dynamicMessages.applicationDocTitle(), dynamicMessages.guideUrl());
+        super(eventBus, view, user, optionsProvider, dynamicMessages.applicationDocTitle(), dynamicMessages.guideUrl());
         this.userRole = (UserPortalCurrentUserRole) userRole;
         this.aboutPopup = aboutPopup;
-        this.optionsProvider = optionsProvider;
     }
 
     @Override
@@ -60,14 +55,6 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
             @Override
             public void onClick(ClickEvent event) {
                 RevealRootPopupContentEvent.fire(HeaderPresenterWidget.this, aboutPopup);
-            }
-        }));
-
-        registerHandler(getView().getOptionsLink().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                OptionsModel model = optionsProvider.getModel();
-                model.executeCommand(model.getEditCommand());
             }
         }));
     }

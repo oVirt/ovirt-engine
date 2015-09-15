@@ -1,13 +1,12 @@
-package org.ovirt.engine.ui.userportal.uicommon.model.basic;
+package org.ovirt.engine.ui.common.uicommon.model;
 
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
-import org.ovirt.engine.ui.common.uicommon.model.TabModelProvider;
+import org.ovirt.engine.ui.common.section.main.presenter.OptionsPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EditOptionsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.OptionsModel;
-import org.ovirt.engine.ui.userportal.section.main.presenter.OptionsPopupPresenterWidget;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;

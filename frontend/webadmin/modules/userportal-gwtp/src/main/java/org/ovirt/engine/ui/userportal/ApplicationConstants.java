@@ -30,13 +30,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Login")
     String loginButtonLabel();
 
-    @DefaultStringValue("Connect Automatically")
-    String connectAutomaticallyLabel();
-
-    @DefaultStringValue("If ovirt-engine has the user's password connect automatically\n" +
-            " to the first running VM if there is one on User Portal login.")
-    String connectAutomaticallyMessage();
-
     @DefaultStringValue("Message of the Day")
     String motdHeaderLabel();
 

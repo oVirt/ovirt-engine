@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.userportal.section.main.presenter;
+package org.ovirt.engine.ui.common.section.main.presenter;
 
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.EditOptionsModel;

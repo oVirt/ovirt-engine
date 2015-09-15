@@ -54,7 +54,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ConsolesFactory;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.PublicKeyModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolDiskListModel;
@@ -210,16 +209,6 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         privateNewTemplateCommand = value;
     }
 
-    private UICommand setConsoleKeyCommand;
-
-    public UICommand getSetConsoleKeyCommand() {
-        return setConsoleKeyCommand;
-    }
-
-    public void setSetConsoleKeyCommand(UICommand setConsoleKeyCommand) {
-        this.setConsoleKeyCommand = setConsoleKeyCommand;
-    }
-
     private final VmGeneralModel vmGeneralModel;
     private final VmGuestInfoModel vmGuestInfoModel;
     private final UserPortalVmSnapshotListModel vmSnapshotListModel;
@@ -290,7 +279,6 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         setRunOnceCommand(new UICommand("RunOnce", this)); //$NON-NLS-1$
         setChangeCdCommand(new UICommand("ChangeCD", this)); //$NON-NLS-1$
         setNewTemplateCommand(new UICommand("NewTemplate", this)); //$NON-NLS-1$
-        setSetConsoleKeyCommand(new UICommand("SetConsoleKey", this)); //$NON-NLS-1$
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
 
         updateActionAvailability();
@@ -429,9 +417,6 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         else if (command == getNewTemplateCommand()) {
             newTemplate();
         }
-        else if (command == getSetConsoleKeyCommand()) {
-            editConsoleKey();
-        }
         else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
@@ -440,9 +425,6 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         }
         else if ("OnChangeCD".equals(command.getName())) { //$NON-NLS-1$
             onChangeCD();
-        }
-        else if ("OnSetConsoleKey".equals(command.getName())) { //$NON-NLS-1$
-            onSetConsoleKey();
         }
         else if ("OnNewTemplate".equals(command.getName())) { //$NON-NLS-1$
             onNewTemplate();
@@ -469,18 +451,6 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             postVmNameUniqueCheck();
             setConfirmWindow(null);
         }
-    }
-
-    private void editConsoleKey() {
-        PublicKeyModel model = new PublicKeyModel();
-        setWindow(model);
-        model.editConsoleKey(this);
-
-    }
-
-    private void onSetConsoleKey() {
-        PublicKeyModel model = (PublicKeyModel) getWindow();
-        model.onSetConsoleKey(this, this);
     }
 
     private void cloneVm() {

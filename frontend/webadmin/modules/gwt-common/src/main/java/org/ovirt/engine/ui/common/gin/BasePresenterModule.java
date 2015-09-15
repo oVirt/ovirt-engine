@@ -9,11 +9,13 @@ import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresent
 import org.ovirt.engine.ui.common.presenter.popup.RolePermissionsRemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.numa.NumaSupportPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.numa.UnassignedVNumaNodesPanelPresenterWidget;
+import org.ovirt.engine.ui.common.section.main.presenter.OptionsPopupPresenterWidget;
 import org.ovirt.engine.ui.common.view.CollapsiblePanelView;
 import org.ovirt.engine.ui.common.view.ScrollableTabBarView;
 import org.ovirt.engine.ui.common.view.popup.ConsolePopupView;
 import org.ovirt.engine.ui.common.view.popup.DefaultConfirmationPopupView;
 import org.ovirt.engine.ui.common.view.popup.ErrorPopupView;
+import org.ovirt.engine.ui.common.view.popup.OptionsPopupView;
 import org.ovirt.engine.ui.common.view.popup.RemoveConfirmationPopupView;
 import org.ovirt.engine.ui.common.view.popup.RolePermissionsRemoveConfirmationPopupView;
 import org.ovirt.engine.ui.common.view.popup.numa.NumaSupportPopupView;
@@ -62,6 +64,11 @@ public abstract class BasePresenterModule extends AbstractPresenterModule {
         bindPresenterWidget(NumaSupportPopupPresenterWidget.class,
                 NumaSupportPopupPresenterWidget.ViewDef.class,
                 NumaSupportPopupView.class);
+
+        // Options popups
+        bindPresenterWidget(OptionsPopupPresenterWidget.class,
+                OptionsPopupPresenterWidget.ViewDef.class,
+                OptionsPopupView.class);
     }
 
 }

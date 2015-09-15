@@ -28,6 +28,10 @@ public abstract class AbstractHeaderView extends AbstractView {
     @WithElementId
     public Anchor aboutLink = null;
 
+    @UiField(provided = true)
+    @WithElementId
+    public Anchor optionsLink = null;
+
     public void setUserName(String userName) {
         userNameLabel.setText(userName);
     }
@@ -42,6 +46,10 @@ public abstract class AbstractHeaderView extends AbstractView {
 
     public HasClickHandlers getGuideLink() {
         return guideLink;
+    }
+
+    public HasClickHandlers getOptionsLink() {
+        return optionsLink;
     }
 
 }

@@ -52,6 +52,9 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li>
+                                <g:Anchor ui:field="optionsLink" addStyleNames="{style.topLinks}"/>
+                            </li>
+                            <li>
                                 <g:Anchor ui:field="logoutLink" addStyleNames="{style.topLinks}"/>
                             </li>
                         </ul>

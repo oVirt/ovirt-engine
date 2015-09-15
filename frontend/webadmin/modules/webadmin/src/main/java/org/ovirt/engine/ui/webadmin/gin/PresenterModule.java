@@ -119,7 +119,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.Templa
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.user.ManageEventsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.ImportVmFromExternalProviderPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.PublicKeyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
@@ -397,7 +396,6 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.user.ManageEventsPop
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.AddVmHostDevicePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.CloneVmPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.ImportVmFromExternalProviderPopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.PublicKeyPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.SingleSelectionVmDiskAttachPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmChangeCDPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmClonePopupView;
@@ -1491,11 +1489,6 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmChangeCDPopupPresenterWidget.class,
                 VmChangeCDPopupPresenterWidget.ViewDef.class,
                 VmChangeCDPopupView.class);
-
-        // Console Public Key
-        bindPresenterWidget(PublicKeyPopupPresenterWidget.class,
-                PublicKeyPopupPresenterWidget.ViewDef.class,
-                PublicKeyPopupView.class);
 
         // Clone VM
         bindPresenterWidget(CloneVmPopupPresenterWidget.class,

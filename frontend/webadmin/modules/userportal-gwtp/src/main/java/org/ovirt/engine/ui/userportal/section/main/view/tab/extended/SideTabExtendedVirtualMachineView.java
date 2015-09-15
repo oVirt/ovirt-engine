@@ -261,12 +261,6 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                 return getModel().getNewTemplateCommand();
             }
         });
-        getTable().addActionButton(new UserPortalButtonDefinition<UserPortalItemModel>(constants.setConsoleKey()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getSetConsoleKeyCommand();
-            }
-        });
 
         getTable().setExtraRowStyles(new RowStyles<UserPortalItemModel>() {
 

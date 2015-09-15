@@ -1,18 +1,19 @@
-package org.ovirt.engine.ui.userportal.section.main.view;
+package org.ovirt.engine.ui.common.view.popup;
 
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.section.main.presenter.OptionsPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaEditor;
 import org.ovirt.engine.ui.uicommonweb.models.EditOptionsModel;
-import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.gin.AssetProvider;
-import org.ovirt.engine.ui.userportal.section.main.presenter.OptionsPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
@@ -33,7 +34,7 @@ public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsMod
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField(provided = true)
     @Path(value = "enableConnectAutomatically.entity")
@@ -44,6 +45,24 @@ public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsMod
     @Ignore
     public Label connectAutomaticallyMessage;
 
+    @UiField
+    @Ignore
+    public Label publicKeyLabel;
+
+    @UiField
+    @Path(value = "publicKey.entity")
+    StringEntityModelTextAreaEditor publicKeyEditor;
+
+    interface Style extends CssResource {
+        String publickKeyEditorTextArea();
+    }
+
+    /**
+     * The style object using the UI-binder.
+     */
+    @UiField
+    Style style;
+
     @Inject
     public OptionsPopupView(EventBus eventBus) {
         super(eventBus);
@@ -52,7 +71,10 @@ public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsMod
 
         connectAutomaticallyEditor.setLabel(constants.connectAutomaticallyLabel());
         connectAutomaticallyMessage.setText(constants.connectAutomaticallyMessage());
-
+        publicKeyLabel.setText(constants.consolePublicKeyLabel());
+        publicKeyEditor.setLabel(constants.consolePublicKeyMessage());
+        publicKeyEditor.addContentWidgetContainerStyleName(style.publickKeyEditorTextArea());
+        publicKeyEditor.addContentWidgetStyleName(style.publickKeyEditorTextArea());
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
     }

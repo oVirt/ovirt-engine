@@ -63,6 +63,7 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
                 if (profile != null) {
                     setUserProfile(profile);
                     connectAutomatically = profile.isUserPortalVmLoginAutomatically();
+                    ((EditOptionsModel) model).getPublicKey().setEntity(profile.getSshPublicKey());
                 }
                 ((EditOptionsModel) model).getEnableConnectAutomatically().setEntity(connectAutomatically);
             }
@@ -78,6 +79,7 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
             params.setUserProfile(getUserProfile());
         }
         params.getUserProfile().setUserPortalVmLoginAutomatically(model.getEnableConnectAutomatically().getEntity().booleanValue());
+        params.getUserProfile().setSshPublicKey(model.getPublicKey().getEntity());
         model.startProgress(null);
         Frontend.getInstance().runAction(action, params, new IFrontendActionAsyncCallback() {
             @Override
