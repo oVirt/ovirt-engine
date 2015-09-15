@@ -449,5 +449,7 @@ public interface VdsServerConnector {
 
     public Map<String, Object> refreshVolume(String sdUUID, String spUUID, String imgUUID, String volUUID);
 
+    public Map<String, Object> getVolumeInfo(String sdUUID, String spUUID, String imgUUID, String volUUID);
+
     public Map<String, Object> glusterProcessesStop();
 }

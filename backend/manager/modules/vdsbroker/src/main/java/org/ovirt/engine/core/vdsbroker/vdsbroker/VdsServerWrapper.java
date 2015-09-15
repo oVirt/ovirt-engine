@@ -2056,6 +2056,16 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public VolumeInfoReturnForXmlRpc getVolumeInfo(String sdUUID, String spUUID, String imgUUID, String volUUID) {
+        try {
+            Map<String, Object> xmpRpcReturnValue = vdsServer.getVolumeInfo(sdUUID, spUUID, imgUUID, volUUID);
+            return new VolumeInfoReturnForXmlRpc(xmpRpcReturnValue);
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public StatusOnlyReturnForXmlRpc glusterStopProcesses() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.glusterProcessesStop();

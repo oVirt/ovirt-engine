@@ -479,5 +479,7 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc refreshVolume(String sdUUID, String spUUID, String imgUUID, String volUUID);
 
+    VolumeInfoReturnForXmlRpc getVolumeInfo(String sdUUID, String spUUID, String imgUUID, String volUUID);
+
     StatusOnlyReturnForXmlRpc glusterStopProcesses();
 }

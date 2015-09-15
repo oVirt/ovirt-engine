@@ -63,6 +63,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VMInfoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VMListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VolumeInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
 import org.ovirt.vdsm.jsonrpc.client.ClientConnectionException;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
@@ -2124,6 +2125,19 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
+    public VolumeInfoReturnForXmlRpc getVolumeInfo(String sdUUID, String spUUID, String imgUUID, String volUUID) {
+        JsonRpcRequest request =
+                new RequestBuilder("Volume.getInfo")
+                        .withParameter("storagepoolID", spUUID)
+                        .withParameter("storagedomainID", sdUUID)
+                        .withParameter("imageID", imgUUID)
+                        .withParameter("volumeID", volUUID)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new VolumeInfoReturnForXmlRpc(response);
     }
 
     @Override

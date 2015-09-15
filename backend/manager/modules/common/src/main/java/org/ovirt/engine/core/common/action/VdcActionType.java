@@ -179,6 +179,7 @@ public enum VdcActionType {
     MergeStatus(238, QuotaDependency.NONE),
     DestroyImage(239, QuotaDependency.STORAGE),
     MergeExtend(241, QuotaDependency.STORAGE),
+    DestroyImageCheck(242, QuotaDependency.NONE),
     // VmPoolCommands
     AddVmPoolWithVms(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.BOTH),
     UpdateVmPoolWithVms(305, ActionGroup.EDIT_VM_POOL_CONFIGURATION, QuotaDependency.STORAGE),
