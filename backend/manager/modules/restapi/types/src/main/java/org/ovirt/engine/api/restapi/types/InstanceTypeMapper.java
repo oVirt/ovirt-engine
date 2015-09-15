@@ -1,29 +1,51 @@
 package org.ovirt.engine.api.restapi.types;
 
+import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.InstanceType;
+import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 
-public class InstanceTypeMapper extends TemplateMapper {
+public class InstanceTypeMapper extends VmBaseMapper {
 
     @Mapping(from = InstanceType.class, to = org.ovirt.engine.core.common.businessentities.InstanceType.class)
     public static org.ovirt.engine.core.common.businessentities.InstanceType map(
             InstanceType model,
             org.ovirt.engine.core.common.businessentities.InstanceType incoming) {
-        return TemplateMapper.map(model, (VmTemplate) incoming);
+
+        VmTemplate entity = incoming != null ? (VmTemplate) incoming : new VmTemplate();
+        mapCommonModelToEntity((VmTemplate) incoming, model);
+        return entity;
     }
 
     @Mapping(from = InstanceType.class, to = VmStatic.class)
     public static VmStatic map(InstanceType model, VmStatic incoming) {
-        return TemplateMapper.map(model, incoming);
+        VmStatic staticVm = incoming != null ? incoming : new VmStatic();
+        mapCommonModelToEntity(staticVm, model);
+        return staticVm;
     }
 
     @Mapping(from = org.ovirt.engine.core.common.businessentities.InstanceType.class, to = InstanceType.class)
     public static InstanceType map(org.ovirt.engine.core.common.businessentities.InstanceType entity, InstanceType incoming) {
-        InstanceType res = incoming != null ? incoming : new InstanceType();
-        TemplateMapper.map((VmTemplate) entity, res);
-        return res;
+        InstanceType model = incoming != null ? incoming : new InstanceType();
+        mapCommonEntityToModel(model, (VmTemplate) entity);
+        model.setDisplay(DisplayMapper.map(entity, null));
+
+        if (entity.getDefaultBootSequence() != null) {
+            OperatingSystem os = model.getOs();
+            if (os == null) {
+                os = new OperatingSystem();
+            }
+
+            if (entity.getDefaultBootSequence() != null) {
+                for (Boot boot : VmMapper.map(entity.getDefaultBootSequence(), null)) {
+                    os.getBoot().add(boot);
+                }
+            }
+            model.setOs(os);
+        }
+        return model;
     }
 
     @Mapping(from = InstanceType.class, to = UpdateVmTemplateParameters.class)

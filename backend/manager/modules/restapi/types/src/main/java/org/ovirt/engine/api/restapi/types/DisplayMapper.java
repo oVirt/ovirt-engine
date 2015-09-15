@@ -8,6 +8,7 @@ import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 
 public class DisplayMapper {
@@ -51,6 +52,18 @@ public class DisplayMapper {
         return result;
     }
 
+    @Mapping(from = InstanceType.class, to = Display.class)
+    public static Display map(InstanceType instanceType, Display display) {
+        Display result = (display == null)
+                ? new Display()
+                : display;
+
+        result.setMonitors(instanceType.getNumOfMonitors());
+        result.setSingleQxlPci(instanceType.getSingleQxlPci());
+        result.setSmartcardEnabled(instanceType.isSmartcardEnabled());
+
+        return result;
+    }
 
     /**
      * For backwards compatibility. Derives graphics type (backend) from display (rest).

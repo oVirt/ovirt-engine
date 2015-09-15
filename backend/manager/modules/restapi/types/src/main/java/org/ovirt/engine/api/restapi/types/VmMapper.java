@@ -480,7 +480,9 @@ public class VmMapper extends VmBaseMapper {
         if (entity.getOrigin() != null) {
             model.setOrigin(map(entity.getOrigin(), null));
         }
-        model.setPlacementPolicy(new VmPlacementPolicy());
+        if (model.getPlacementPolicy() == null) {
+            model.setPlacementPolicy(new VmPlacementPolicy());
+        }
         if (entity.getDedicatedVmForVdsList().size() > 1) {
             Hosts hostsList = new Hosts();
             for (Guid hostGuid : entity.getDedicatedVmForVdsList()) {
@@ -489,10 +491,6 @@ public class VmMapper extends VmBaseMapper {
                 hostsList.getHosts().add(newHost);
             }
             model.getPlacementPolicy().setHosts(hostsList);
-        }
-        VmAffinity vmAffinity = map(entity.getMigrationSupport(), null);
-        if(vmAffinity !=null){
-            model.getPlacementPolicy().setAffinity(vmAffinity.value());
         }
         if (entity.getQuotaId()!=null) {
             Quota quota = new Quota();

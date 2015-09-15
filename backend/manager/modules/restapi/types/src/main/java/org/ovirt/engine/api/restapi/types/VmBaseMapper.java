@@ -31,7 +31,10 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 public class VmBaseMapper {
     protected static final int BYTES_PER_MB = 1024 * 1024;
 
-    protected static void mapVmBaseModelToEntity(org.ovirt.engine.core.common.businessentities.VmBase entity, VmBase model) {
+    /**
+     * Common for VM, template and instance type
+     */
+    protected static void mapCommonModelToEntity(org.ovirt.engine.core.common.businessentities.VmBase entity, VmBase model) {
         if (model.isSetName()) {
             entity.setName(model.getName());
         }
@@ -42,18 +45,8 @@ public class VmBaseMapper {
         if (model.isSetIo() && model.getIo().isSetThreads()) {
             entity.setNumOfIoThreads(model.getIo().getThreads());
         }
-
-        if (model.isSetId()) {
-            entity.setId(GuidUtils.asGuid(model.getId()));
-        }
         if (model.isSetDescription()) {
             entity.setDescription(model.getDescription());
-        }
-        if (model.isSetComment()) {
-            entity.setComment(model.getComment());
-        }
-        if (model.isSetCluster() && model.getCluster().getId() != null) {
-            entity.setVdsGroupId(GuidUtils.asGuid(model.getCluster().getId()));
         }
         if (model.isSetCpu() && model.getCpu().isSetTopology()) {
             if (model.getCpu().getTopology().getCores() != null) {
@@ -71,12 +64,61 @@ public class VmBaseMapper {
                 entity.setPriority(model.getHighAvailability().getPriority());
             }
         }
+        if (model.isSetDisplay()) {
+            if (model.getDisplay().isSetType()) {
+                entity.setDefaultDisplayType(null); // let backend decide which video device to use
+            }
+            if (model.getDisplay().isSetMonitors()) {
+                entity.setNumOfMonitors(model.getDisplay().getMonitors());
+            }
+            if (model.getDisplay().isSetSingleQxlPci()) {
+                entity.setSingleQxlPci(model.getDisplay().isSingleQxlPci());
+            }
+            if (model.getDisplay().isSetSmartcardEnabled()) {
+                entity.setSmartcardEnabled(model.getDisplay().isSmartcardEnabled());
+            }
+        }
+        if (model.isSetMigrationDowntime()) {
+            entity.setMigrationDowntime(mapMinusOneToNull(model.getMigrationDowntime()));
+        }
+        if (model.isSetMigration()) {
+            MigrationOptionsMapper.copyMigrationOptions(model.getMigration(), entity);
+        }
+        if (model.isSetCustomCpuModel()) {
+            entity.setCustomCpuName(model.getCustomCpuModel());
+        }
+        if (model.isSetCustomEmulatedMachine()) {
+            entity.setCustomEmulatedMachine(model.getCustomEmulatedMachine());
+        }
+        if (model.isSetMemoryPolicy() && model.getMemoryPolicy().isSetGuaranteed()) {
+            Long memGuaranteed = model.getMemoryPolicy().getGuaranteed() / BYTES_PER_MB;
+            entity.setMinAllocatedMem(memGuaranteed.intValue());
+        }
+        if (model.isSetOs()) {
+            if (model.getOs().isSetBoot() && model.getOs().getBoot().size() > 0) {
+                entity.setDefaultBootSequence(VmMapper.map(model.getOs().getBoot(), null));
+            }
+        }
+    }
+
+    /**
+     * Common for VM and template
+     */
+    protected static void mapVmBaseModelToEntity(org.ovirt.engine.core.common.businessentities.VmBase entity, VmBase model) {
+        mapCommonModelToEntity(entity, model);
+
+        if (model.isSetId()) {
+            entity.setId(GuidUtils.asGuid(model.getId()));
+        }
+        if (model.isSetComment()) {
+            entity.setComment(model.getComment());
+        }
+        if (model.isSetCluster() && model.getCluster().getId() != null) {
+            entity.setVdsGroupId(GuidUtils.asGuid(model.getCluster().getId()));
+        }
         if (model.isSetOs()) {
             if (model.getOs().isSetType()) {
                 entity.setOsId(VmMapper.mapOsType(model.getOs().getType()));
-            }
-            if (model.getOs().isSetBoot() && model.getOs().getBoot().size() > 0) {
-                entity.setDefaultBootSequence(VmMapper.map(model.getOs().getBoot(), null));
             }
             if (model.getOs().isSetKernel()) {
                 entity.setKernelUrl(model.getOs().getKernel());
@@ -96,22 +138,12 @@ public class VmBaseMapper {
         if (model.isSetCpuShares()) {
             entity.setCpuShares(model.getCpuShares());
         }
+
         if (model.isSetDisplay()) {
-            if (model.getDisplay().isSetType()) {
-                entity.setDefaultDisplayType(null); // let backend decide which video device to use
-            }
-            if (model.getDisplay().isSetMonitors()) {
-                entity.setNumOfMonitors(model.getDisplay().getMonitors());
-            }
-            if (model.getDisplay().isSetSingleQxlPci()) {
-                entity.setSingleQxlPci(model.getDisplay().isSingleQxlPci());
-            }
             if (model.getDisplay().isSetAllowOverride()) {
                 entity.setAllowConsoleReconnect(model.getDisplay().isAllowOverride());
             }
-            if (model.getDisplay().isSetSmartcardEnabled()) {
-                entity.setSmartcardEnabled(model.getDisplay().isSmartcardEnabled());
-            }
+
             if (model.getDisplay().isSetKeyboardLayout()) {
                 String layout = model.getDisplay().getKeyboardLayout();
                 if (layout.isEmpty()) {
@@ -119,6 +151,7 @@ public class VmBaseMapper {
                 }
                 entity.setVncKeyboardLayout(layout);
             }
+
             if (model.getDisplay().isSetFileTransferEnabled()) {
                 entity.setSpiceFileTransferEnabled(model.getDisplay().isFileTransferEnabled());
             }
@@ -161,9 +194,6 @@ public class VmBaseMapper {
         if (model.isSetTunnelMigration()) {
             entity.setTunnelMigration(model.isTunnelMigration());
         }
-        if (model.isSetMigrationDowntime()) {
-            entity.setMigrationDowntime(mapMinusOneToNull(model.getMigrationDowntime()));
-        }
         if (model.isSetSerialNumber()) {
             SerialNumberMapper.copySerialNumber(model.getSerialNumber(), entity);
         }
@@ -173,17 +203,8 @@ public class VmBaseMapper {
         if (model.isSetCpuProfile() && model.getCpuProfile().isSetId()) {
             entity.setCpuProfileId(GuidUtils.asGuid(model.getCpuProfile().getId()));
         }
-        if (model.isSetMigration()) {
-            MigrationOptionsMapper.copyMigrationOptions(model.getMigration(), entity);
-        }
         if (model.isSetCustomProperties()) {
             entity.setCustomProperties(CustomPropertiesParser.parse(model.getCustomProperties().getCustomProperty()));
-        }
-        if (model.isSetCustomEmulatedMachine()) {
-            entity.setCustomEmulatedMachine(model.getCustomEmulatedMachine());
-        }
-        if (model.isSetCustomCpuModel()) {
-            entity.setCustomCpuName(model.getCustomCpuModel());
         }
         if (model.isSetLargeIcon() && model.getLargeIcon().isSetId()) {
             entity.setLargeIconId(GuidUtils.asGuid(model.getLargeIcon().getId()));
@@ -191,17 +212,15 @@ public class VmBaseMapper {
         if (model.isSetSmallIcon() && model.getSmallIcon().isSetId()) {
             entity.setSmallIconId(GuidUtils.asGuid(model.getSmallIcon().getId()));
         }
-        if (model.isSetMemoryPolicy() && model.getMemoryPolicy().isSetGuaranteed()) {
-            Long memGuaranteed = model.getMemoryPolicy().getGuaranteed() / BYTES_PER_MB;
-            entity.setMinAllocatedMem(memGuaranteed.intValue());
-        }
     }
 
-    protected static void mapVmBaseEntityToModel(VmBase model, org.ovirt.engine.core.common.businessentities.VmBase entity) {
+    /**
+     * Common for VM, template and instance type
+     */
+    protected static void mapCommonEntityToModel(VmBase model, org.ovirt.engine.core.common.businessentities.VmBase entity) {
         model.setId(entity.getId().toString());
         model.setName(entity.getName());
         model.setDescription(entity.getDescription());
-        model.setComment(entity.getComment());
         model.setMemory((long) entity.getMemSizeMb() * BYTES_PER_MB);
 
         Io io = model.getIo();
@@ -210,6 +229,53 @@ public class VmBaseMapper {
             model.setIo(io);
         }
         io.setThreads(entity.getNumOfIoThreads());
+
+        if (entity.getCreationDate() != null) {
+            model.setCreationTime(DateMapper.map(entity.getCreationDate(), null));
+        }
+
+        if (entity.getUsbPolicy() != null) {
+            Usb usb = new Usb();
+            usb.setEnabled(UsbMapperUtils.getIsUsbEnabled(entity.getUsbPolicy()));
+            UsbType usbType = UsbMapperUtils.getUsbType(entity.getUsbPolicy());
+            if (usbType != null) {
+                usb.setType(usbType.value());
+            }
+            model.setUsb(usb);
+        }
+
+        CpuTopology topology = new CpuTopology();
+        topology.setSockets(entity.getNumOfSockets());
+        topology.setCores(entity.getNumOfCpus() / entity.getNumOfSockets());
+        model.setCpu(new Cpu());
+        model.getCpu().setTopology(topology);
+
+        model.setHighAvailability(new HighAvailability());
+        model.getHighAvailability().setEnabled(entity.isAutoStartup());
+        model.getHighAvailability().setPriority(entity.getPriority());
+
+        model.setMigrationDowntime(mapNullToMinusOne(entity.getMigrationDowntime()));
+        model.setMigration(MigrationOptionsMapper.map(entity, null));
+
+        if (entity.getCustomEmulatedMachine() != null) {
+            model.setCustomEmulatedMachine(entity.getCustomEmulatedMachine());
+        }
+
+        if (entity.getCustomCpuName() != null) {
+            model.setCustomCpuModel(entity.getCustomCpuName());
+        }
+
+        MemoryPolicy policy = new MemoryPolicy();
+        policy.setGuaranteed((long)entity.getMinAllocatedMem() * (long)BYTES_PER_MB);
+        model.setMemoryPolicy(policy);
+    }
+
+    /**
+     * Common for VM and template
+     */
+    protected static void mapVmBaseEntityToModel(VmBase model, org.ovirt.engine.core.common.businessentities.VmBase entity) {
+        mapCommonEntityToModel(model, entity);
+        model.setComment(entity.getComment());
 
         if (entity.getVdsGroupId() != null) {
             Cluster cluster = new Cluster();
@@ -234,42 +300,17 @@ public class VmBaseMapper {
             model.getTimeZone().setName(entity.getTimeZone());
         }
 
-        if (entity.getCreationDate() != null) {
-            model.setCreationTime(DateMapper.map(entity.getCreationDate(), null));
-        }
-
-        if (entity.getUsbPolicy() != null) {
-            Usb usb = new Usb();
-            usb.setEnabled(UsbMapperUtils.getIsUsbEnabled(entity.getUsbPolicy()));
-            UsbType usbType = UsbMapperUtils.getUsbType(entity.getUsbPolicy());
-            if (usbType != null) {
-                usb.setType(usbType.value());
-            }
-            model.setUsb(usb);
-        }
-
         if (entity.getVmInit() != null && entity.getVmInit().getDomain() != null && StringUtils.isNotBlank(entity.getVmInit().getDomain())) {
             Domain domain = new Domain();
             domain.setName(entity.getVmInit().getDomain());
             model.setDomain(domain);
         }
 
-        CpuTopology topology = new CpuTopology();
-        topology.setSockets(entity.getNumOfSockets());
-        topology.setCores(entity.getNumOfCpus() / entity.getNumOfSockets());
-        model.setCpu(new Cpu());
-        model.getCpu().setTopology(topology);
-        model.setCpuShares(entity.getCpuShares());
-
-        model.setHighAvailability(new HighAvailability());
-        model.getHighAvailability().setEnabled(entity.isAutoStartup());
-        model.getHighAvailability().setPriority(entity.getPriority());
         model.setStateless(entity.isStateless());
         model.setDeleteProtected(entity.isDeleteProtected());
         model.setSso(SsoMapper.map(entity.getSsoMethod(), null));
 
         model.setTunnelMigration(entity.getTunnelMigration());
-        model.setMigrationDowntime(mapNullToMinusOne(entity.getMigrationDowntime()));
 
         if (entity.getSerialNumberPolicy() != null) {
             model.setSerialNumber(SerialNumberMapper.map(entity, null));
@@ -282,20 +323,14 @@ public class VmBaseMapper {
             model.setCpuProfile(cpuProfile);
         }
 
-        model.setMigration(MigrationOptionsMapper.map(entity, null));
         if (!StringUtils.isEmpty(entity.getCustomProperties())) {
             CustomProperties hooks = new CustomProperties();
             hooks.getCustomProperty().addAll(CustomPropertiesParser.parse(entity.getCustomProperties(), false));
             model.setCustomProperties(hooks);
         }
 
-        if (entity.getCustomEmulatedMachine() != null) {
-            model.setCustomEmulatedMachine(entity.getCustomEmulatedMachine());
-        }
+        model.setCpuShares(entity.getCpuShares());
 
-        if (entity.getCustomCpuName() != null) {
-            model.setCustomCpuModel(entity.getCustomCpuName());
-        }
         if (entity.getLargeIconId() != null) {
             if (!model.isSetLargeIcon()) {
                 model.setLargeIcon(new Icon());
@@ -308,10 +343,6 @@ public class VmBaseMapper {
             }
             model.getSmallIcon().setId(entity.getSmallIconId().toString());
         }
-
-        MemoryPolicy policy = new MemoryPolicy();
-        policy.setGuaranteed((long)entity.getMinAllocatedMem() * (long)BYTES_PER_MB);
-        model.setMemoryPolicy(policy);
     }
 
     @Mapping(from = DisplayDisconnectAction.class, to = ConsoleDisconnectAction.class)
