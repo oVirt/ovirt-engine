@@ -1782,6 +1782,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Edit")
     String editVolume();
 
+    @DefaultStringValue("Edit")
+    String edit();
+
+    @DefaultStringValue("Edit Options")
+    String editOptionsTitle();
+
     @DefaultStringValue("Reset")
     String resetVolume();
 

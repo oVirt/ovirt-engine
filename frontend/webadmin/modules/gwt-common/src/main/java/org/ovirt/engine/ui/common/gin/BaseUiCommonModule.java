@@ -11,9 +11,11 @@ import org.ovirt.engine.ui.common.uicommon.SpiceNativeImpl;
 import org.ovirt.engine.ui.common.uicommon.SpicePluginImpl;
 import org.ovirt.engine.ui.common.uicommon.UiCommonDefaultTypeResolver;
 import org.ovirt.engine.ui.common.uicommon.VncNativeImpl;
+import org.ovirt.engine.ui.common.uicommon.model.OptionsProvider;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
+import org.ovirt.engine.ui.uicommonweb.models.OptionsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.INoVnc;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpNative;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpPlugin;
@@ -35,9 +37,17 @@ public abstract class BaseUiCommonModule extends AbstractGinModule {
         bind(FrontendFailureEventListener.class).in(Singleton.class);
         bind(ILogger.class).to(LoggerImpl.class).in(Singleton.class);
 
+        // User Options
+        bind(OptionsModel.class).in(Singleton.class);
+
+        bindCommonModelProviders();
         bindConsoles();
     }
 
+    void bindCommonModelProviders() {
+        // Options
+        bind(OptionsProvider.class).in(Singleton.class);
+    }
     protected void bindConfiguratorIntegration(Class<? extends Configurator> configurator) {
         bind(Configurator.class).to(configurator).in(Singleton.class);
     }

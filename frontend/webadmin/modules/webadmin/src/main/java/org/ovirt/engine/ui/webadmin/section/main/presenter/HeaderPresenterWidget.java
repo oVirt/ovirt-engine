@@ -4,6 +4,7 @@ import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractHeaderPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ScrollableTabBarPresenterWidget;
 import org.ovirt.engine.ui.common.system.HeaderOffsetChangeEvent;
+import org.ovirt.engine.ui.common.uicommon.model.OptionsProvider;
 import org.ovirt.engine.ui.common.utils.WebUtils;
 import org.ovirt.engine.ui.common.widget.tab.TabWidgetHandler;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -56,10 +57,11 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     public HeaderPresenterWidget(EventBus eventBus, ViewDef view, CurrentUser user,
             SearchPanelPresenterWidget searchPanel,
             ScrollableTabBarPresenterWidget tabBar,
+            OptionsProvider optionsProvider,
             AboutPopupPresenterWidget aboutPopup,
             ConfigurePopupPresenterWidget configurePopup,
             ApplicationDynamicMessages dynamicMessages) {
-        super(eventBus, view, user, dynamicMessages.applicationDocTitle(), dynamicMessages.guideUrl());
+        super(eventBus, view, user, optionsProvider, dynamicMessages.applicationDocTitle(), dynamicMessages.guideUrl());
         this.searchPanel = searchPanel;
         this.tabBar = tabBar;
         this.aboutPopup = aboutPopup;

@@ -41,6 +41,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Sign Out")
     String logoutLinkLabel();
 
+    @DefaultStringValue("Options")
+    String optionsLinkLabel();
+
     @DefaultStringValue("About")
     String aboutLinkLabel();
 

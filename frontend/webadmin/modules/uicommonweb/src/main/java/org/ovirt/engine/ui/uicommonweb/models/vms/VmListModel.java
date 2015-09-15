@@ -74,7 +74,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ConsolesFactory;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.PublicKeyModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
@@ -369,16 +368,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         this.consoleConnectCommand = consoleConnectCommand;
     }
 
-    private UICommand setConsoleKeyCommand;
-
-    public UICommand getSetConsoleKeyCommand() {
-        return setConsoleKeyCommand;
-    }
-
-    public void setSetConsoleKeyCommand(UICommand setConsoleKeyCommand) {
-        this.setConsoleKeyCommand = setConsoleKeyCommand;
-    }
-
     public ObservableCollection<ChangeCDModel> isoImages;
 
     public ObservableCollection<ChangeCDModel> getIsoImages() {
@@ -459,7 +448,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         setAssignTagsCommand(new UICommand("AssignTags", this)); //$NON-NLS-1$
         setEnableGlobalHaMaintenanceCommand(new UICommand("EnableGlobalHaMaintenance", this)); //$NON-NLS-1$
         setDisableGlobalHaMaintenanceCommand(new UICommand("DisableGlobalHaMaintenance", this)); //$NON-NLS-1$
-        setSetConsoleKeyCommand(new UICommand("SetConsoleKey", this)); //$NON-NLS-1$
 
         setIsoImages(new ObservableCollection<ChangeCDModel>());
         ChangeCDModel tempVar = new ChangeCDModel();
@@ -1623,17 +1611,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 }, model);
     }
 
-    private void editConsoleKey() {
-        PublicKeyModel model = new PublicKeyModel();
-        setWindow(model);
-        model.editConsoleKey(this);
-    }
-
-    private void onSetConsoleKey() {
-        PublicKeyModel model = (PublicKeyModel) getWindow();
-        model.onSetConsoleKey(this, this);
-    }
-
     private void changeCD() {
         final VM vm = getSelectedItem();
         if (vm == null) {
@@ -2159,9 +2136,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         else if (command == getAssignTagsCommand()) {
             assignTags();
         }
-        else if (command == getSetConsoleKeyCommand()) {
-            editConsoleKey();
-        }
         else if ("OnAssignTags".equals(command.getName())) { //$NON-NLS-1$
             onAssignTags();
         }
@@ -2217,9 +2191,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         }
         else if ("OnChangeCD".equals(command.getName())) { //$NON-NLS-1$
             onChangeCD();
-        }
-        else if ("OnSetConsoleKey".equals(command.getName())) { //$NON-NLS-1$
-            onSetConsoleKey();
         }
         else if (command.getName().equals("closeVncInfo") || // $NON-NLS-1$
                 "OnEditConsoleSave".equals(command.getName())) { //$NON-NLS-1$

@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.popup.permissions.P
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.template.TemplateEditPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
-import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.PublicKeyPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
@@ -64,7 +63,6 @@ import org.ovirt.engine.ui.userportal.section.main.view.popup.permissions.Permis
 import org.ovirt.engine.ui.userportal.section.main.view.popup.template.TemplateEditPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.template.TemplateInterfacePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.CloneVmPopupView;
-import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.PublicKeyPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.SingleSelectionVmDiskAttachPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmChangeCDPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmClonePopupView;
@@ -274,9 +272,6 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmRunOncePopupPresenterWidget.class,
                 VmRunOncePopupPresenterWidget.ViewDef.class,
                 VmRunOncePopupView.class);
-        bindPresenterWidget(PublicKeyPopupPresenterWidget.class,
-                PublicKeyPopupPresenterWidget.ViewDef.class,
-                PublicKeyPopupView.class);
         bindPresenterWidget(VmChangeCDPopupPresenterWidget.class,
                 VmChangeCDPopupPresenterWidget.ViewDef.class,
                 VmChangeCDPopupView.class);

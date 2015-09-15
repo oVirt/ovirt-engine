@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.userportal.section.main.presenter;
 
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractHeaderPresenterWidget;
+import org.ovirt.engine.ui.common.uicommon.model.OptionsProvider;
 import org.ovirt.engine.ui.common.widget.tab.TabWidgetHandler;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
@@ -30,8 +31,8 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     @Inject
     public HeaderPresenterWidget(EventBus eventBus, ViewDef view, CurrentUser user,
             CurrentUserRole userRole, AboutPopupPresenterWidget aboutPopup,
-            ApplicationDynamicMessages dynamicMessages) {
-        super(eventBus, view, user, dynamicMessages.applicationDocTitle(), dynamicMessages.guideUrl());
+            OptionsProvider optionsProvider, ApplicationDynamicMessages dynamicMessages) {
+        super(eventBus, view, user, optionsProvider, dynamicMessages.applicationDocTitle(), dynamicMessages.guideUrl());
         this.userRole = (UserPortalCurrentUserRole) userRole;
         this.aboutPopup = aboutPopup;
     }

@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.common.presenter;
 
 import org.ovirt.engine.ui.common.auth.CurrentUser;
+import org.ovirt.engine.ui.common.uicommon.model.OptionsProvider;
 import org.ovirt.engine.ui.common.utils.WebUtils;
+import org.ovirt.engine.ui.uicommonweb.models.OptionsModel;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -16,6 +18,8 @@ public abstract class AbstractHeaderPresenterWidget<V extends AbstractHeaderPres
 
         void setUserName(String userName);
 
+        HasClickHandlers getOptionsLink();
+
         HasClickHandlers getLogoutLink();
 
         HasClickHandlers getGuideLink();
@@ -25,12 +29,14 @@ public abstract class AbstractHeaderPresenterWidget<V extends AbstractHeaderPres
     private final CurrentUser user;
     private final String windowName;
     private String guideUrl;
+    private final OptionsProvider optionsProvider;
 
     public AbstractHeaderPresenterWidget(EventBus eventBus, V view, CurrentUser user,
-            String windowName, String guideUrl) {
+            OptionsProvider optionsProvider, String windowName, String guideUrl) {
         super(eventBus, view);
         this.user = user;
         this.windowName = windowName;
+        this.optionsProvider = optionsProvider;
         setGuideUrl(guideUrl);
     }
 
@@ -49,6 +55,15 @@ public abstract class AbstractHeaderPresenterWidget<V extends AbstractHeaderPres
             @Override
             public void onClick(ClickEvent event) {
                 WebUtils.openUrlInNewWindow(windowName, guideUrl);
+            }
+        }));
+
+
+        registerHandler(getView().getOptionsLink().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                OptionsModel model = optionsProvider.getModel();
+                model.executeCommand(model.getEditCommand());
             }
         }));
     }
