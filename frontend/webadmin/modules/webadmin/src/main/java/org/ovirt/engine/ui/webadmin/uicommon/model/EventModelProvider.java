@@ -22,7 +22,7 @@ public class EventModelProvider extends SearchableTabModelProvider<AuditLog, Eve
     @Override
     protected void initializeModelHandlers(final EventListModel<Void> model) {
         super.initializeModelHandlers(model);
-
+        model.setDisplayEventsOnly(true);
         // Add necessary property change handlers
         model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override

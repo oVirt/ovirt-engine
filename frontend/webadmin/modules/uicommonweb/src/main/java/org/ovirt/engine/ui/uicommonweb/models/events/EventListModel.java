@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.events;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -93,6 +95,16 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
         }
     }
 
+    private boolean displayEventsOnly;
+
+    public boolean isDisplayEventsOnly() {
+        return displayEventsOnly;
+    }
+
+    public void setDisplayEventsOnly(boolean displayEventsOnly) {
+        this.displayEventsOnly = displayEventsOnly;
+    }
+
     public EventListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().eventsTitle());
         setHelpTag(HelpTag.events);
@@ -148,7 +160,9 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
             public void onSuccess(Object outerObject, Object returnValue) {
                 List<AuditLog> newEvents = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 List<AuditLog> currentEvents = (List<AuditLog>) getItems();
-
+                if (isDisplayEventsOnly()) {
+                    newEvents = new ArrayList<>(Linq.filterAudidLogsByExcludingSeverity(newEvents, AuditLogSeverity.ALERT));
+                }
                 if (!newEvents.isEmpty() &&
                         currentEvents != null &&
                         (currentEvents.isEmpty() || !currentEvents.get(0).equals(newEvents.get(0)))) {

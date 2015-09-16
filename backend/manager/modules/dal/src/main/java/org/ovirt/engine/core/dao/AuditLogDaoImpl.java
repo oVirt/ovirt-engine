@@ -244,7 +244,8 @@ public class AuditLogDaoImpl extends BaseDao implements AuditLogDao {
 
     @Override
     public void clearAllEvents() {
-        getCallsHandler().executeModification("ClearAllAuditLogs", getCustomMapSqlParameterSource());
+        getCallsHandler().executeModification("ClearAllAuditLogEvents",
+                getCustomMapSqlParameterSource().addValue("severity", AuditLogSeverity.ALERT));
     }
 
     @Override

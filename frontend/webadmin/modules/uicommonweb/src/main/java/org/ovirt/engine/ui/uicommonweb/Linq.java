@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
@@ -1354,6 +1355,16 @@ public final class Linq {
             @Override
             public boolean match(Disk source) {
                 return source.isAllowSnapshot();
+            }
+        });
+    }
+
+    public final static <T extends AuditLog> Collection<T> filterAudidLogsByExcludingSeverity(
+            Collection<AuditLog> source, final AuditLogSeverity severity) {
+        return (Collection<T>) where(source, new IPredicate<AuditLog>() {
+            @Override
+            public boolean match(AuditLog source) {
+                return source.getSeverity() != severity;
             }
         });
     }
