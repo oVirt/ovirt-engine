@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * Defines the lock properties for the command, the value is used
- * to determine if the lock is released at the end of the command
+ * to determine if the lock is released at the end of the command's
  * execution or not.
  */
 public class LockProperties implements Serializable {
@@ -14,18 +14,17 @@ public class LockProperties implements Serializable {
 
     public static enum Scope {
         /**
-         * Lock is release at the end of the command execution
+         * Lock is released at the end of the command's execution
          */
         Execution,
         /**
-         * Lock is not release at the of command execution, used when
-         * child command uses the lock of the parent. Child should
-         * not release the lock, the parent will take care of releasing
-         * the lock
+         * Lock is not released at the the of the command's execution, used when
+         * a child command is using the lock of the parent. The child command should
+         * not release the lock, the parent will take care of releasing it
          */
         Command,
         /**
-         * No lock is required for the command execution
+         * No lock is required for the command's execution
          */
         None
     }
