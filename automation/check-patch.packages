@@ -1,0 +1,8 @@
+yum-utils
+autoconf
+make
+pyflakes
+python-pep8
+python-devel
+git
+maven
