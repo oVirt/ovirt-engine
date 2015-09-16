@@ -56,7 +56,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
 
         setSucceeded(false);
 
-        if (isLocalFs(dom) && isDomainAttached(dom) && !detachStorage(dom)) {
+        if (detachLocalStorageDomain(dom)) {
             return;
         }
 
@@ -86,6 +86,10 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         });
 
         setSucceeded(true);
+    }
+
+    private boolean detachLocalStorageDomain(StorageDomain dom) {
+        return isLocalFs(dom) && isDomainAttached(dom) && !detachStorage(dom);
     }
 
     @Override
