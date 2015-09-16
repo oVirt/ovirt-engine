@@ -201,6 +201,11 @@ public class OpenSSHUtils {
     }
 
     public static boolean isPublicKeyValid(String publicKey) {
+        int i = publicKey.indexOf("\n");
+        if (i != -1 && i != publicKey.length()-1) {
+            return false;
+        }
+
         /*
          * An OpenSSH public key consists of:
          * [mandatory] The key type
@@ -225,6 +230,15 @@ public class OpenSSHUtils {
             return false;
         }
 
+        return true;
+    }
+
+    public static boolean arePublicKeysValid(String publicKeys) {
+        for (String publicKey : publicKeys.split("\n")) {
+            if (!isPublicKeyValid(publicKey)) {
+                return false;
+            }
+        }
         return true;
     }
 }

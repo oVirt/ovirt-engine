@@ -51,7 +51,7 @@ public abstract class UserProfilesOperationCommandBase<T extends UserProfilePara
         }
 
         // else it is either a new or replacement key. In both cases, must be a valid key.
-        if (!OpenSSHUtils.isPublicKeyValid(sshPublicKey)) {
+        if (!OpenSSHUtils.arePublicKeysValid(sshPublicKey)) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_INVALID_PUBLIC_SSH_KEY);
         }
 

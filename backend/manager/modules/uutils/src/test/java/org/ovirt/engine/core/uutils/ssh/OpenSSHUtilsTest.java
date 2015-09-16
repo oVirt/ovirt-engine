@@ -77,6 +77,13 @@ public class OpenSSHUtilsTest {
         }
     }
 
+    @Test
+    public void testMutliKeys() throws Exception {
+        assertTrue(OpenSSHUtils.arePublicKeysValid(EXTRA_SSH_KEYS[0] + "\n" + EXTRA_SSH_KEYS[1] + "\n"));
+        assertTrue(OpenSSHUtils.arePublicKeysValid(EXTRA_SSH_KEYS[0] + "\n" + EXTRA_SSH_KEYS[1]));
+        assertTrue(OpenSSHUtils.arePublicKeysValid(EXTRA_SSH_KEYS[0] + "\n"));
+        assertTrue(OpenSSHUtils.arePublicKeysValid(EXTRA_SSH_KEYS[0]));
+    }
 
     /**
      * This test data has been generated as follows:
@@ -285,6 +292,7 @@ public class OpenSSHUtilsTest {
         "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHUkn6B7HOUceagWGLynYOHZ4QtH/OhHc5URksntfUrSbxMQNKfws1aVgzymFqFrninzcyBgaHOcG/LK+U2EwXU= ",
         // ECDSA with third field
         "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHUkn6B7HOUceagWGLynYOHZ4QtH/OhHc5URksntfUrSbxMQNKfws1aVgzymFqFrninzcyBgaHOcG/LK+U2EwXU= test@ovirt.org",
+        "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHUkn6B7HOUceagWGLynYOHZ4QtH/OhHc5URksntfUrSbxMQNKfws1aVgzymFqFrninzcyBgaHOcG/LK+U2EwXU= test@ovirt.org\n",
     };
 
     private static final String[] BAD_SSH_KEYS = {
@@ -293,5 +301,7 @@ public class OpenSSHUtilsTest {
         "ssh%rsa%corrupted AAAAB3NzaC1yc2EAAAADAQABAAAAgQC3Cz4oruqQv9fz+NOZnhvGugWvPpuwh44aGVdYm0iXJZCq76bgw0ajDF6XhVs5xYagWEO31vVKVu7lTMIv7OcoAw3VC3giBDJotkkXO7uR3iAQAGZrARxRrOOhUNqVKIuslw/+YcvgsQl5TdgflvrdH2zQyVm2/0qLjdCN8lYahw==\n",
         // RSA with not-base64 data
         "ssh-rsa \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
+        "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHUkn6B7HOUceagWGLynYOHZ4QtH/OhHc5URksntfUrSbxMQNKfws1aVgzymFqFrninzcyBgaHOcG/LK+U2EwXU= test@ovirt.org\nadasd",
+        "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHUkn6B7HOUceagWGLynYOHZ4QtH/OhHc5URksntfUrSbxMQNKfws1aVgzymFqFrninzcyBgaHOcG/LK+U2EwXU= test@ovirt.org\nadasd\n",
     };
 }
