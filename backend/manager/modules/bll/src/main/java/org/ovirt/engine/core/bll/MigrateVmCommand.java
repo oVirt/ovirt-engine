@@ -362,7 +362,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
 
         if (getDestinationVds() == null) {
-            return AuditLogType.VM_MIGRATION_FAILED_NO_VDS_TO_RUN_ON;
+            auditLogDirector.log(this, AuditLogType.VM_MIGRATION_NO_VDS_TO_MIGRATE_TO);
         }
 
         return AuditLogType.VM_MIGRATION_FAILED;
