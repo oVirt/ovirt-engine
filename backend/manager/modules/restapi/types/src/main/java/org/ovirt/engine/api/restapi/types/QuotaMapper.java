@@ -192,9 +192,12 @@ public class QuotaMapper {
         if (model.isSetVcpuLimit()) {
             quotaCluster.setVirtualCpu(model.getVcpuLimit());
         }
-        if (model.isSetMemoryLimit() && model.getMemoryLimit() != -1) {
-            quotaCluster.setMemSizeMB((long) (model.getMemoryLimit() * 1024));
+
+        if (model.isSetMemoryLimit()) {
+            double limit = model.getMemoryLimit();
+            quotaCluster.setMemSizeMB( (limit < 0) ? -1 : (long) (limit * 1024) );
         }
+
         // specific cluster
         if (model.isSetCluster() && model.getCluster().isSetId()) {
             quotaCluster.setVdsGroupId(GuidUtils.asGuid(model.getCluster().getId()));
