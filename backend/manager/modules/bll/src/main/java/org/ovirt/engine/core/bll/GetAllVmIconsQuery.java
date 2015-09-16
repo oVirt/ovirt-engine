@@ -16,6 +16,6 @@ public class GetAllVmIconsQuery extends QueriesCommandBase<VdcQueryParametersBas
 
     @Override
     protected void executeQueryCommand() {
-        setReturnValue(vmIconDao.getAll());
+        setReturnValue(vmIconDao.getAll(getUserID(), getParameters().isFiltered()));
     }
 }
