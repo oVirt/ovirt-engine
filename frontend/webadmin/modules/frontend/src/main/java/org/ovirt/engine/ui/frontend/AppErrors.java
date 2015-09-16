@@ -28,6 +28,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. ${type} must contain at least one MAC address range.")
     String ACTION_TYPE_FAILED_MAC_POOL_MUST_HAVE_RANGE();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The given SSH public key is invalid.")
+    String ACTION_TYPE_FAILED_INVALID_PUBLIC_SSH_KEY();
+
     @DefaultStringValue("Cannot delete Template. Template is being used by the following VMs: ${vmsList}.")
     String VMT_CANNOT_REMOVE_DETECTED_DERIVED_VM();
 
@@ -834,6 +837,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("$type Host devices")
     String VAR__TYPE__HOST_DEVICES();
+
+    @DefaultStringValue("$type User Profile")
+    String VAR__TYPE__USER_PROFILE();
 
     @DefaultStringValue("$action run")
     String VAR__ACTION__RUN();
