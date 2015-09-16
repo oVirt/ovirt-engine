@@ -111,6 +111,7 @@ public class AuditLogDirector {
         auditLog.setCallStack(auditLogable.getCallStack());
         auditLog.setBrickId(auditLogable.getBrickId());
         auditLog.setBrickPath(auditLogable.getBrickPath());
+        auditLog.setRepeatable(auditLogable.isRepeatable());
     }
 
     private void logMessage(AuditLogSeverity severity, String logMessage) {
