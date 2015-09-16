@@ -122,9 +122,9 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
                 @Override
                 public Void runInTransaction() {
 
-                    hostDeviceDao.removeAllInBatch(removedDevices);
                     hostDeviceDao.saveAllInBatch(newDevices);
                     hostDeviceDao.updateAllInBatch(changedDevices);
+                    hostDeviceDao.removeAllInBatch(removedDevices);
 
                     handleHostNicVfsConfigUpdate(newDevices, changedDevices, removedDevices);
 
