@@ -5,8 +5,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -104,6 +104,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
+
 import com.woorea.openstack.base.client.OpenStackResponseException;
 
 public abstract class CommandBase<T extends VdcActionParametersBase> extends AuditLogableBase implements
@@ -524,6 +525,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         ExecutionHandler.startFinalizingStep(getExecutionContext());
     }
 
+    @Override
     public VdcReturnValueBase endAction() {
         if (!hasTaskHandlers() || getExecutionIndex() == getTaskHandlers().size() - 1) {
             startFinalizingStep();
@@ -862,17 +864,15 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected boolean isQuotaDependant() {
-        boolean result;
-        if (getActionType().getQuotaDependency() == VdcActionType.QuotaDependency.NONE)
-            result = false;
-        else if (!isInternalExecution())
-            result = true;
-        else if (getActionType().isQuotaDependentAsInternalCommand())
-            result = true;
-        else
-            result = false;
+        if (getActionType().getQuotaDependency() == VdcActionType.QuotaDependency.NONE) {
+            return false;
+        }
 
-        return result;
+        if (!isInternalExecution()) {
+            return true;
+        }
+
+        return getActionType().isQuotaDependentAsInternalCommand();
     }
 
     /**
@@ -1354,7 +1354,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 builder.append(" ID: ").append(permSubject.getObjectId())
                         .append(" Type: ").append(permSubject.getObjectType());
                 if (permSubject.getActionGroup() != null) {
-                    builder.append("Action group " + permSubject.getActionGroup().name() + " with role type " + permSubject.getActionGroup().getRoleType().name());
+                    builder.append("Action group ")
+                        .append(permSubject.getActionGroup().name())
+                        .append(" with role type ")
+                        .append(permSubject.getActionGroup().getRoleType().name());
                 }
             }
         }
@@ -1475,6 +1478,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return annotation == null;
     }
 
+    @Override
     public T getParameters() {
         return _parameters;
     }
@@ -1732,7 +1736,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /**
-     * Create the {@link SPMATask} object to be run
+     * Create the {@link SPMTask} object to be run
      * @param taskId the id of the async task place holder in the database
      * @param asyncTaskCreationInfo Info on how to create the task
      * @param parentCommand The type of command issuing the task
@@ -1910,9 +1914,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     protected List<String> extractVariableDeclarations(Iterable<String> appendedCanDoMsgs) {
         final List<String> result = new ArrayList<>();
-        Iterator<String> iter = appendedCanDoMsgs.iterator();
-        while(iter.hasNext()) {
-            result.addAll(Arrays.asList(iter.next().split("(?=\\$)")));
+        for (String appendedCanDoMsg : appendedCanDoMsgs) {
+            result.addAll(Arrays.asList(appendedCanDoMsg.split("(?=\\$)")));
         }
         return result;
     }
@@ -2252,11 +2255,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setSucceeded(false);
         returnValue.setActionReturnValue(vdsReturnValue.getReturnValue());
-        returnValue.setExecuteFailedMessages(new ArrayList<String>() {
-            {
-                add(vdsReturnValue.getVdsError().getMessage());
-            }
-        });
+        String message = vdsReturnValue.getVdsError().getMessage();
+        returnValue.setExecuteFailedMessages(new ArrayList<>(Collections.singleton(message)));
         return returnValue;
     }
 
