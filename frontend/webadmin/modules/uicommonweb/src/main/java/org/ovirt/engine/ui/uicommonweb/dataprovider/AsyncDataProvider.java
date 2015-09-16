@@ -3640,13 +3640,24 @@ public class AsyncDataProvider {
     }
 
     public ArrayList<Map.Entry<String, EntityModel<String>>> getBondingOptionList(RefObject<Map.Entry<String, EntityModel<String>>> defaultItem) {
+        return getBondingOptionListDependingOnNetwork(defaultItem, false);
+    }
+
+    public ArrayList<Map.Entry<String, EntityModel<String>>> getBondingOptionListDependingOnNetwork(
+            RefObject<Map.Entry<String, EntityModel<String>>> defaultItem, boolean hasVmNetworkAttached) {
         ArrayList<Map.Entry<String, EntityModel<String>>> list =
                 new ArrayList<Map.Entry<String, EntityModel<String>>>();
 
-        list.add(getBondOption(BondMode.BOND1));
-        list.add(getBondOption(BondMode.BOND2));
-        list.add(getBondOption(BondMode.BOND4));
-        list.add(getBondOption(BondMode.BOND5));
+        for(BondMode mode : BondMode.values()){
+            if (!BondMode.BOND_MODES_VALID_FOR_VM_NETWORK.contains(mode.getValue()) && hasVmNetworkAttached){
+                continue;
+            }
+            KeyValuePairCompat<String, EntityModel<String>> bondOption = getBondOption(mode);
+            list.add(bondOption);
+            if (mode.equals(BondMode.BOND4)){
+                defaultItem.argvalue = bondOption;
+            }
+        }
 
         EntityModel<String> entityModel = new EntityModel<String>();
         entityModel.setEntity(""); //$NON-NLS-1$

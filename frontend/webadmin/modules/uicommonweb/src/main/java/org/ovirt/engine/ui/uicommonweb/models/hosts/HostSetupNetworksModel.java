@@ -293,8 +293,9 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             /*****************
              * Bond Dialog
              *****************/
+            boolean doesBondHaveVmNetworkAttached = doesBondHaveVmNetworkAttached((NetworkInterfaceModel) item);
             final VdsNetworkInterface entity = ((NetworkInterfaceModel) item).getIface();
-            editPopup = new SetupNetworksEditBondModel(entity);
+            editPopup = new SetupNetworksEditBondModel(entity, doesBondHaveVmNetworkAttached);
             final SetupNetworksBondModel bondDialogModel = (SetupNetworksBondModel) editPopup;
 
             // OK Target
@@ -594,14 +595,17 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             final List<VdsNetworkInterface> srcIfaces = new ArrayList<>();
             srcIfaces.add(((NetworkInterfaceModel) networkCommand.getOp1()).getIface());
             srcIfaces.add(((NetworkInterfaceModel) networkCommand.getOp2()).getIface());
+            boolean doesBondHaveVmNetworkAttached = doesBondHaveVmNetworkAttached((NetworkInterfaceModel) networkCommand.getOp1(),
+                    (NetworkInterfaceModel) networkCommand.getOp2());
             if (operation == NetworkOperation.BOND_WITH) {
                 bondPopup =
-                        new SetupNetworksAddBondModel(getFreeBonds(), nextBondName);
+                        new SetupNetworksAddBondModel(getFreeBonds(), nextBondName, doesBondHaveVmNetworkAttached);
             } else {
                 bondPopup =
                         new SetupNetworksJoinBondsModel(getFreeBonds(),
                                 (BondNetworkInterfaceModel) networkCommand.getOp1(),
-                                (BondNetworkInterfaceModel) networkCommand.getOp2());
+                                (BondNetworkInterfaceModel) networkCommand.getOp2(),
+                                doesBondHaveVmNetworkAttached);
             }
             bondPopup.getCommands().add(new UICommand("OK", new BaseCommandTarget() { //$NON-NLS-1$
 
@@ -1225,5 +1229,16 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     private void cancel() {
         sourceListModel.setWindow(null);
 
+    }
+
+    private boolean doesBondHaveVmNetworkAttached(NetworkInterfaceModel... networkInterfaceModels){
+        for (NetworkInterfaceModel networkInterfaceModel : networkInterfaceModels){
+            for (LogicalNetworkModel logicalNetwork : networkInterfaceModel.getItems()) {
+                if (logicalNetwork.getNetwork().isVmNetwork()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
