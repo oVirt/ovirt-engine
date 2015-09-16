@@ -51,6 +51,15 @@ public class VmIconDaoImpl extends DefaultGenericDao<VmIcon, Guid> implements Vm
     }
 
     @Override
+    public List<VmIcon> getAll(Guid userId, boolean isFiltered) {
+        return getCallsHandler().executeReadList("GetAllFromVmIconsFiltered",
+                createEntityRowMapper(),
+                getCustomMapSqlParameterSource()
+                        .addValue("user_id", userId)
+                        .addValue("is_filtered", isFiltered));
+    }
+
+    @Override
     public List<VmIcon> getByDataUrl(String dataUrl) {
         return getCallsHandler().executeReadList("GetVmIconByVmIconDataUrl", createEntityRowMapper(),
                 getCustomMapSqlParameterSource().addValue(DATA_URL_COLUMN, dataUrl));

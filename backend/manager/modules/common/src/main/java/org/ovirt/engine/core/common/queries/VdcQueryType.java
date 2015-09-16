@@ -35,7 +35,7 @@ public enum VdcQueryType implements Serializable {
     GetVmFromOva,
     GetVmIcon(VdcQueryAuthType.User),
     GetVmIcons(VdcQueryAuthType.User),
-    GetAllVmIcons,
+    GetAllVmIcons(VdcQueryAuthType.User),
     GetVmIconDefaults(VdcQueryAuthType.User),
     GetVmIconDefault(VdcQueryAuthType.User),
     GetVmDevicesForVm(VdcQueryAuthType.User),
