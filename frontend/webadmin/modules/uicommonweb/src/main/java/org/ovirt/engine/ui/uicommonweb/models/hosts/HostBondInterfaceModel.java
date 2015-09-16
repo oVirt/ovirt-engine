@@ -151,6 +151,10 @@ public class HostBondInterfaceModel extends Model {
     }
 
     public HostBondInterfaceModel() {
+        this(false);
+    }
+
+    public HostBondInterfaceModel(boolean doesBondHaveVmNetworkAttached) {
         setAddress(new EntityModel<String>());
         setSubnet(new EntityModel<String>());
         setGateway(new EntityModel<String>());
@@ -162,7 +166,7 @@ public class HostBondInterfaceModel extends Model {
         RefObject<Map.Entry<String, EntityModel<String>>> tempRef_defaultItem =
                 new RefObject<>(defaultItem);
         ArrayList<Map.Entry<String, EntityModel<String>>> list =
-                AsyncDataProvider.getInstance().getBondingOptionList(tempRef_defaultItem);
+                AsyncDataProvider.getInstance().getBondingOptionListDependingOnNetwork(tempRef_defaultItem, doesBondHaveVmNetworkAttached);
         defaultItem = tempRef_defaultItem.argvalue;
         getBondingOptions().setItems(list);
         getBondingOptions().setSelectedItem(defaultItem);

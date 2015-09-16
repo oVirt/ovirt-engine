@@ -790,6 +790,23 @@ public enum NetworkOperation {
             return true;
         }
 
+    },
+    NULL_OPERATION_INVALID_BOND_MODE {
+
+        @Override
+        public String getVerb(NetworkItemModel<?> op1) {
+            return ConstantsManager.getInstance().getConstants().nullOperationInvalidBondMode();
+        }
+
+        @Override
+        public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+            return getVerb(op1);
+        }
+
+        @Override
+        public boolean isNullOperation() {
+            return true;
+        }
     };
 
     public static void clearNetworks(NetworkInterfaceModel nic,

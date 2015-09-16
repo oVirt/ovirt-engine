@@ -10,7 +10,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class SetupNetworksEditBondModel extends SetupNetworksBondModel {
 
-    public SetupNetworksEditBondModel(final VdsNetworkInterface bond) {
+    public SetupNetworksEditBondModel(final VdsNetworkInterface bond, boolean doesBondHaveVmNetworkAttached) {
+        super(doesBondHaveVmNetworkAttached);
         setTitle(ConstantsManager.getInstance()
                 .getMessages()
                 .editBondInterfaceTitle(bond.getName()));

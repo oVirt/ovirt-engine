@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.BondMode;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 
@@ -190,6 +192,15 @@ public class NetworkOperationFactory {
                     if (op1.aggregatesNetworks()) {
                         dst.setCulpritNetwork(nonVlanVmNetwork);
                         return NetworkOperation.NULL_OPERATION_BATCH_VM_WITH_VLANS;
+                    }
+                }
+            }
+
+            if (network.getNetwork().isVmNetwork()) {
+                if (dst instanceof BondNetworkInterfaceModel){
+                    String bondMode = BondMode.getBondMode((Bond) dst.getIface());
+                    if (!BondMode.isBondModeValidForVmNetwork(bondMode)){
+                        return NetworkOperation.NULL_OPERATION_INVALID_BOND_MODE;
                     }
                 }
             }

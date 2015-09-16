@@ -5,7 +5,8 @@ import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 
 public class SetupNetworksBondModel extends HostBondInterfaceModel {
 
-    public SetupNetworksBondModel() {
+    public SetupNetworksBondModel(boolean doesBondHaveVmNetworkAttached) {
+        super(doesBondHaveVmNetworkAttached);
         getNetwork().setIsAvailable(false);
         getCheckConnectivity().setIsAvailable(false);
         getCommitChanges().setIsAvailable(false);
@@ -16,5 +17,4 @@ public class SetupNetworksBondModel extends HostBondInterfaceModel {
 
         setBond(new SortedListModel<>(new LexoNumericComparator()));
     }
-
 }

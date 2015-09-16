@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.network.BondMode;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.BondNetworkInterfaceModel;
@@ -20,7 +21,9 @@ public class SetupNetworksJoinBondsModel extends SetupNetworksBondModel {
 
     public SetupNetworksJoinBondsModel(List<String> freeBonds,
             BondNetworkInterfaceModel source,
-            BondNetworkInterfaceModel target) {
+            BondNetworkInterfaceModel target,
+            boolean doesBondHaveVmNetworkAttached) {
+        super(doesBondHaveVmNetworkAttached);
 
         setTitle(ConstantsManager.getInstance().getConstants().joinBondsTitle());
 
@@ -35,13 +38,18 @@ public class SetupNetworksJoinBondsModel extends SetupNetworksBondModel {
         for (Entry<String, EntityModel<String>> pair : bondOptions) {
             pairForBondOption.put(getBondOptionForPair(pair), pair);
         }
-        addBondOptionIfMissing(source.getBondOptions());
-        addBondOptionIfMissing(target.getBondOptions());
+
+        addBondOptionIfMissing(source.getBondOptions(), doesBondHaveVmNetworkAttached);
+        addBondOptionIfMissing(target.getBondOptions(), doesBondHaveVmNetworkAttached);
         getBondingOptions().setItems(bondOptions);
         getBondingOptions().setSelectedItem(pairForBondOption.get(target.getBondOptions()));
     }
 
-    private void addBondOptionIfMissing(String candidateOption) {
+    private void addBondOptionIfMissing(String candidateOption, boolean doesBondHaveVmNetworkAttached) {
+        String bondMode = BondMode.getBondMode(candidateOption);
+        if (doesBondHaveVmNetworkAttached && !BondMode.isBondModeValidForVmNetwork(bondMode)){
+            return;
+        }
         if (!pairForBondOption.containsKey(candidateOption)) {
             EntityModel<String> entityModel = new EntityModel<String>();
             entityModel.setEntity(candidateOption);
