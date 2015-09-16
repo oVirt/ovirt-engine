@@ -11,6 +11,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
@@ -78,11 +80,27 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Storage
         List<StorageDomainStatic> storageDomainsWithAttachedStoragePoolId =
                 getAttachedStorageDomains(connectedStorageDomainsToVds);
         for (StorageDomain storageDomain : connectedStorageDomainsToVds) {
+            if (containsRunningHostedEngine(storageDomain)) {
+                log.info(
+                        "Skipping disconnect Storage Domain {} from VDS '{}' because Hosted Engine VM is running on it.",
+                        storageDomain.getName(),
+                        getVdsId()
+                );
+                continue;
+            }
             if (!disconnectStorageDomain(storageDomain)) {
                 log.warn("Could not disconnect Storage Domain {} from VDS '{}'. ", storageDomain.getName(), getVdsId());
             }
         }
         return storageDomainsWithAttachedStoragePoolId;
+    }
+
+    /**
+     * Some domains may have Hosted Engine VM running while importing them.
+     * We want to avoid disconnecting before the import in that case, otherwise they'll crash
+     */
+    private boolean containsRunningHostedEngine(StorageDomain storageDomain) {
+        return storageDomain.getName().equals(Config.<String>getValue(ConfigValues.HostedEngineStorageDomainName));
     }
 
     public Guid getVdsId() {
