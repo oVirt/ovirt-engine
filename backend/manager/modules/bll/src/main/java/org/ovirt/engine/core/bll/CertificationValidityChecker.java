@@ -68,10 +68,12 @@ public class CertificationValidityChecker implements BackendService {
         try {
             if (!checkCertificate(EngineEncryptionUtils.getCertificate(EngineLocalConfig.getInstance().getPKICACert()),
                     AuditLogType.ENGINE_CA_CERTIFICATION_HAS_EXPIRED,
+                    AuditLogType.ENGINE_CA_CERTIFICATION_IS_ABOUT_TO_EXPIRE_ALERT,
                     AuditLogType.ENGINE_CA_CERTIFICATION_IS_ABOUT_TO_EXPIRE,
                     null)
                     || !checkCertificate((X509Certificate) EngineEncryptionUtils.getCertificate(),
                     AuditLogType.ENGINE_CERTIFICATION_HAS_EXPIRED,
+                    AuditLogType.ENGINE_CERTIFICATION_IS_ABOUT_TO_EXPIRE_ALERT,
                     AuditLogType.ENGINE_CERTIFICATION_IS_ABOUT_TO_EXPIRE,
                     null)) {
                 return;
@@ -91,6 +93,7 @@ public class CertificationValidityChecker implements BackendService {
                     } else {
                         checkCertificate((X509Certificate) peerCertificates.get(0),
                                 AuditLogType.HOST_CERTIFICATION_HAS_EXPIRED,
+                                AuditLogType.HOST_CERTIFICATION_IS_ABOUT_TO_EXPIRE_ALERT,
                                 AuditLogType.HOST_CERTIFICATION_IS_ABOUT_TO_EXPIRE,
                                 host);
                     }
@@ -103,9 +106,10 @@ public class CertificationValidityChecker implements BackendService {
     }
 
     private boolean checkCertificate(X509Certificate cert,
-            AuditLogType alertEventType,
-            AuditLogType warnEventType,
-            VDS host) {
+            AuditLogType alertExpirationEventType,
+            AuditLogType alertAboutToExpireEventType,
+            AuditLogType warnAboutToExpireEventType,
+        VDS host) {
         Date expirationDate = cert.getNotAfter();
         Date certWarnTime = getExpirationDate(expirationDate, ConfigValues.CertExpirationWarnPeriodInDays);
         Date certAlertTime = getExpirationDate(expirationDate, ConfigValues.CertExpirationAlertPeriodInDays);
@@ -113,10 +117,12 @@ public class CertificationValidityChecker implements BackendService {
 
         AuditLogType eventType = null;
 
-        if (now.compareTo(certAlertTime) > 0) {
-            eventType = alertEventType;
+        if (now.compareTo(expirationDate) > 0) {
+            eventType = alertExpirationEventType;
+        } else if (now.compareTo(certAlertTime) > 0) {
+            eventType = alertAboutToExpireEventType;
         } else if (now.compareTo(certWarnTime) > 0) {
-            eventType = warnEventType;
+            eventType = warnAboutToExpireEventType;
         }
 
         if (eventType != null) {
