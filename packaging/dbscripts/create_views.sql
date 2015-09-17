@@ -1241,7 +1241,7 @@ SELECT
     vms.exit_reason AS exit_reason,
     vms.is_boot_menu_enabled AS is_boot_menu_enabled,
     vms.guest_cpu_count AS guest_cpu_count,
-    ( snapshots.snapshot_id IS NOT NULL ) AS next_run_config_exists,
+    vms.next_run_config_exists,
     vms.numatune_mode,
     vms.is_spice_file_transfer_enabled,
     vms.is_spice_copy_paste_enabled,
@@ -1280,10 +1280,6 @@ LEFT
 OUTER JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
 LEFT
 OUTER JOIN storage_domain_static ON storage_domain_static.id = image_storage_domain_map.storage_domain_id
-LEFT
-OUTER
-    JOIN snapshots ON vms.vm_guid = snapshots.vm_id
-    AND snapshot_type = 'NEXT_RUN'
 WHERE
     images.active IS NULL
     OR images.active = TRUE;
