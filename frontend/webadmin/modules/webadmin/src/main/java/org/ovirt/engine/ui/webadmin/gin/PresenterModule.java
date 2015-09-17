@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ImportVmsPopupP
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.NetworkQoSPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.StorageQosPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.StorageQosRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.SystemPermissionsRemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.VmErrataListWithDetailsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.BookmarkPopupPresenterWidget;
@@ -287,6 +288,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.HostErrataListWithDe
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.ImportVmsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.NewNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.PermissionsPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.StorageQosRemovePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.SystemPermissionsRemoveConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.VmErrataListWithDetailsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.bookmark.BookmarkPopupView;
@@ -1554,6 +1556,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(StorageQosPopupPresenterWidget.class,
                 StorageQosPopupPresenterWidget.ViewDef.class,
                 StorageQosPopupView.class);
+
+        bindPresenterWidget(StorageQosRemovePopupPresenterWidget.class,
+                StorageQosRemovePopupPresenterWidget.ViewDef.class,
+                StorageQosRemovePopupView.class);
 
         // Cpu QoS
         bindPresenterWidget(CpuQosPopupPresenterWidget.class,

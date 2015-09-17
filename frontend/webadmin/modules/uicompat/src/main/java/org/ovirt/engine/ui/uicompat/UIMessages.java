@@ -345,8 +345,11 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("This Network QoS is used by {0} vNIC Profiles.\nAre you sure you want to remove this Network QoS?\n\n Profiles using this QoS:\n")
     String removeNetworkQoSMessage(int numOfProfiles);
 
-    @DefaultMessage("This Storage QoS is used by {0} Disk Profiles.\nAre you sure you want to remove this Storage QoS?\n\n Profiles using this QoS:\n")
+    @DefaultMessage("List of QoSes to be removed (Attached disk profiles are shown in brackets): {0}")
     String removeStorageQoSMessage(int numOfProfiles);
+
+    @DefaultMessage("{0} (<i>{1}</i>)")
+    String removeStorageQoSItem(String qosName, String diskProfileNames);
 
     @DefaultMessage("This CPU QoS is used by {0} CPU Profiles.\nAre you sure you want to remove this CPU QoS?\n\n Profiles using this QoS:\n")
     String removeCpuQoSMessage(int numOfProfiles);

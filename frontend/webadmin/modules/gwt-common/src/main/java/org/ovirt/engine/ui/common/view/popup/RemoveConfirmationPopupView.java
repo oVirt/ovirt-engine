@@ -72,7 +72,6 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
     FlowPanel reasonPanel;
 
     @Inject
-
     public RemoveConfirmationPopupView(EventBus eventBus) {
         super(eventBus);
         latch = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -115,7 +114,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         addItemLabel(getItemTextFormatted(String.valueOf(item)));
     }
 
-    void addItemLabel(String text) {
+    protected void addItemLabel(String text) {
         itemPanel.add(new Label(text));
     }
 
@@ -123,7 +122,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         itemPanel.add(new HTML(html));
     }
 
-    String getItemTextFormatted(String itemText) {
+    protected String getItemTextFormatted(String itemText) {
         return "- " + itemText; //$NON-NLS-1$
     }
 
