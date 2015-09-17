@@ -71,7 +71,7 @@ public class CertificationValidityChecker implements BackendService {
                     AuditLogType.ENGINE_CA_CERTIFICATION_IS_ABOUT_TO_EXPIRE_ALERT,
                     AuditLogType.ENGINE_CA_CERTIFICATION_IS_ABOUT_TO_EXPIRE,
                     null)
-                    || !checkCertificate((X509Certificate) EngineEncryptionUtils.getCertificate(),
+                    ^ !checkCertificate((X509Certificate) EngineEncryptionUtils.getCertificate(),
                     AuditLogType.ENGINE_CERTIFICATION_HAS_EXPIRED,
                     AuditLogType.ENGINE_CERTIFICATION_IS_ABOUT_TO_EXPIRE_ALERT,
                     AuditLogType.ENGINE_CERTIFICATION_IS_ABOUT_TO_EXPIRE,
