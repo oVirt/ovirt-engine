@@ -2260,7 +2260,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         watchDogModels.add(0, null);
         VmWatchdogType oldWatchdogSelected = getWatchdogModel().getSelectedItem();
-        getWatchdogModel().setItems(watchDogModels);
+        if (watchDogModels.contains(getWatchdogModel().getSelectedItem())) {
+            getWatchdogModel().setItems(watchDogModels, getWatchdogModel().getSelectedItem());
+        } else {
+            getWatchdogModel().setItems(watchDogModels);
+        }
 
         if (watchDogModels.contains(oldWatchdogSelected)) {
             getWatchdogModel().setSelectedItem(oldWatchdogSelected);
