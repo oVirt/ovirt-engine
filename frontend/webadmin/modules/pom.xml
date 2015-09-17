@@ -45,7 +45,7 @@
     <!-- Regular expression that matches types that GWT compiler shouldn't prune (avoid dead code optimization) -->
     <gwt.dontPrune>-Dgwt.dontPrune=org\.ovirt\.engine\.core\.(common|compat)\..*</gwt.dontPrune>
     <!-- Custom JVM arguments for GWT compiler and Dev Mode -->
-    <gwt.jvmArgs>-Xms1024M -Xmx8192M -XX:PermSize=512M -XX:MaxPermSize=1024M</gwt.jvmArgs>
+    <gwt.jvmArgs>-Xms1024M -Xmx8192M</gwt.jvmArgs>
     <!-- GWT compiler and Dev Mode JVM arguments, these override any Maven JVM arguments -->
     <!-- * use thread-based workers with maximum of 4 simultaneous threads, this value be lowered via gwt.compiler.localWorkers -->
     <!-- * scope Java temp directory and Java Preference subsystem files into project's build directory -->

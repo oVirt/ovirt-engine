@@ -357,10 +357,6 @@ class Daemon(service.Daemon):
             '-XX:+TieredCompilation',
             '-Xms%s' % self._config.get('ENGINE_HEAP_MIN'),
             '-Xmx%s' % self._config.get('ENGINE_HEAP_MAX'),
-            '-XX:PermSize=%s' % self._config.get('ENGINE_PERM_MIN'),
-            '-XX:MaxPermSize=%s' % self._config.get(
-                'ENGINE_PERM_MAX'
-            ),
         ])
 
         # Add extra system properties provided in the configuration:

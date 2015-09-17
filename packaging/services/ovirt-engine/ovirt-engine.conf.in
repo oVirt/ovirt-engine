@@ -62,8 +62,6 @@ ENGINE_GROUP=@ENGINE_GROUP@
 #
 ENGINE_HEAP_MIN=2g
 ENGINE_HEAP_MAX=4g
-ENGINE_PERM_MIN=256m
-ENGINE_PERM_MAX=256m
 
 #
 # Use this if you want to enable remote debugging of the engine java virtual

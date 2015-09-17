@@ -163,7 +163,7 @@ BUILD_DEV [0]
 BUILD_UT [0]
     Perform unit tests during build.
 
-BUILD_JAVA_OPTS_MAVEN [-XX:MaxPermSize=512M]
+BUILD_JAVA_OPTS_MAVEN []
     Maven JVM options.
     Can be defined as environment variable.
 

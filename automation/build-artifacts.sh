@@ -4,13 +4,10 @@ BUILD_UT=0
 SUFFIX=".git$(git rev-parse --short HEAD)"
 MAVEN_SETTINGS="/etc/maven/settings.xml"
 export BUILD_JAVA_OPTS_MAVEN="\
-    -XX:MaxPermSize=1G \
     -Dgwt.compiler.localWorkers=2 \
 "
 export EXTRA_BUILD_FLAGS="-gs $MAVEN_SETTINGS"
 export BUILD_JAVA_OPTS_GWT="\
-    -XX:PermSize=512M \
-    -XX:MaxPermSize=1G \
     -Xms1G \
     -Xmx6G \
 "
