@@ -848,6 +848,7 @@ public abstract class AbstractDiskModel extends DiskModel {
             return;
         }
 
+        setMessage(null);
         updateShareableDiskEnabled(datacenter);
         updateDirectLunDiskEnabled(datacenter);
         updateInterface(isInVm ? getVm().getVdsGroupCompatibilityVersion() : null);

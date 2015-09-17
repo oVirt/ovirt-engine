@@ -340,6 +340,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                     if (!StringHelper.isNullOrEmpty(disk.getMessage())) {
                         disableWidget(getWidget());
                         enableWidget(diskTypePanel);
+                        enableWidget(datacenterEditor);
                         disk.getDefaultCommand().setIsExecutionAllowed(false);
                         disk.setIsChangeable(false);
                     } else {
