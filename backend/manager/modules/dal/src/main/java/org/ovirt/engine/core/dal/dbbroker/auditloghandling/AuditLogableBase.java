@@ -117,11 +117,9 @@ public class AuditLogableBase extends TimeoutBase {
     private boolean repeatable;
 
     public AuditLogableBase() {
-        repeatable = false;
     }
 
     public AuditLogableBase(final Guid vdsId) {
-        this();
         this.vdsId = vdsId;
     }
 
