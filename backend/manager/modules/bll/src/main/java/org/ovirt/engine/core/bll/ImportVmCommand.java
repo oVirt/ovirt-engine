@@ -176,12 +176,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return canDoActionAfterCloneVm(domainsMap);
     }
 
-    @Override
-    protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__IMPORT);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
-    }
-
     private void initImportClonedVm() {
         Guid guid = getParameters().getVm().getId();
         getVm().setId(guid);

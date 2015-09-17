@@ -74,6 +74,12 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     }
 
     @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__IMPORT);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
+    }
+
+    @Override
     protected boolean canDoAction() {
         if (getVdsGroup() == null) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
