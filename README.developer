@@ -9,7 +9,7 @@ PREREQUISITES
 
 Install the following system components:
 
- - jdk-7 / openjdk-7-jdk / icedtea-7 or jdk-8 / openjdk-8-jdk / icedtea-8
+ - jdk-8 / openjdk-8-jdk / icedtea-8
  - mime-types or mailcap
  - unzip
  - openssl

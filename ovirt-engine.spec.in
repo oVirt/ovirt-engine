@@ -157,7 +157,7 @@ Source0:	http://resources.ovirt.org/pub/ovirt-master-snapshot/src/@PACKAGE_NAME@
 BuildArch:	noarch
 
 BuildRequires:	assertj-core >= 2.2.0
-BuildRequires:	java-devel >= 1.7.0
+BuildRequires:	java-devel >= 1.8.0
 BuildRequires:	jpackage-utils
 BuildRequires:	make
 BuildRequires:	python
@@ -183,9 +183,7 @@ Requires:	apache-commons-configuration
 Requires:	apache-commons-jxpath
 Requires:	fop
 Requires:	jakarta-commons-httpclient
-Requires:	java
-# rhbz#1028966
-Requires:	java-openjdk > 1:1.7.0.45-2.4.3.3.el6
+Requires:	java-openjdk >= 1.8.0
 Requires:	jpackage-utils
 Requires:	objectweb-asm
 Requires:	ovirt-image-uploader >= 3.6.0
