@@ -165,7 +165,7 @@ public enum ConfigurationValues {
     CORSSupport,
     CORSAllowedOrigins,
     CinderProviderSupported,
-    NetworkSriovSupported,
+    NetworkSriovSupported(ConfigAuthType.User),
     NetworkExclusivenessPermissiveValidation,
     HostDevicePassthroughCapabilities,
     LiveStorageMigrationBetweenDifferentStorageTypes,
