@@ -43,6 +43,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.CpuQosPopupPres
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.HostNetworkQosPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.NetworkQoSPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.StorageQosPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.StorageQosRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterForceRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.EditDataCenterNetworkPopupPresenterWidget;
@@ -342,7 +343,7 @@ public class DataCenterModule extends AbstractGinModule {
     public SearchableDetailModelProvider<StorageQos, DataCenterListModel, DataCenterStorageQosListModel> getDataCenterStorageQosListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<StorageQosPopupPresenterWidget> storageQosPopupProvider,
-            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<StorageQosRemovePopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<DataCenterListModel> mainModelProvider,
             final Provider<DataCenterStorageQosListModel> modelProvider) {
 

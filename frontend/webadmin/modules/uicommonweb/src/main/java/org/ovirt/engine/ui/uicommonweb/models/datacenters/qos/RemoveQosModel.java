@@ -25,7 +25,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
 public abstract class RemoveQosModel<T extends QosBase> extends ConfirmationModel {
 
-    private final ListModel<T> sourceListModel;
+    protected final ListModel<T> sourceListModel;
 
     public RemoveQosModel(ListModel<T> sourceListModel) {
         this.sourceListModel = sourceListModel;
@@ -66,44 +66,48 @@ public abstract class RemoveQosModel<T extends QosBase> extends ConfirmationMode
 
             @Override
             public void executed(FrontendMultipleQueryAsyncResult result) {
-                Map<String, String> entitiesAndQos = new HashMap<String, String>();
-
-                setHelpTag(getRemoveQosHelpTag());
-                setHashName(getRemoveQosHashName());
-
-                int index = 0;
-                for (VdcQueryReturnValue returnValue : result.getReturnValues()) {
-                    for (Nameable entity : (List<Nameable>) returnValue.getReturnValue()) {
-                        entitiesAndQos.put(entity.getName(), sourceListModel.getSelectedItems()
-                                .get(index)
-                                .getName());
-                    }
-                    index++;
-                }
-                if (entitiesAndQos.isEmpty()) {
-                    ArrayList<String> list = new ArrayList<String>();
-                    for (T item : sourceListModel.getSelectedItems()) {
-                        list.add(item.getName());
-                    }
-                    setItems(list);
-                } else {
-                    setMessage(getRemoveQosMessage(entitiesAndQos.size()));
-
-                    ArrayList<String> list = new ArrayList<String>();
-                    for (Entry<String, String> item : entitiesAndQos.entrySet()) {
-                        list.add(item.getKey() + " (" + item.getValue() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
-                    }
-                    setItems(list);
-                }
+                handleSetMessageQueryResult(result);
             }
         });
+    }
+
+    protected void handleSetMessageQueryResult(FrontendMultipleQueryAsyncResult result) {
+        Map<String, String> entitiesAndQos = new HashMap<>();
+
+        setHelpTag(getRemoveQosHelpTag());
+        setHashName(getRemoveQosHashName());
+
+        int index = 0;
+        for (VdcQueryReturnValue returnValue : result.getReturnValues()) {
+            for (Nameable entity : (List<Nameable>) returnValue.getReturnValue()) {
+                entitiesAndQos.put(entity.getName(), sourceListModel.getSelectedItems()
+                        .get(index)
+                        .getName());
+            }
+            index++;
+        }
+        if (entitiesAndQos.isEmpty()) {
+            ArrayList<String> list = new ArrayList<>();
+            for (T item : sourceListModel.getSelectedItems()) {
+                list.add(item.getName());
+            }
+            setItems(list);
+        } else {
+            setMessage(getRemoveQosMessage(entitiesAndQos.size()));
+
+            ArrayList<String> list = new ArrayList<>();
+            for (Entry<String, String> item : entitiesAndQos.entrySet()) {
+                list.add(item.getKey() + " (" + item.getValue() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+            setItems(list);
+        }
     }
 
     public void onRemove() {
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
 
         for (T qos : sourceListModel.getSelectedItems()) {
-            QosParametersBase<T> parameter = new QosParametersBase<T>();
+            QosParametersBase<T> parameter = new QosParametersBase<>();
             parameter.setQosId(qos.getId());
             parameters.add(parameter);
         }
