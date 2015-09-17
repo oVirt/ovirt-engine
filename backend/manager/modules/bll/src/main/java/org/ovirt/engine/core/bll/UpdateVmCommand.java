@@ -720,7 +720,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (getParameters().getWatchdog() != null) {
             if (!validate((new VmWatchdogValidator(vmFromParams.getOs(),
                     getParameters().getWatchdog(),
-                    getVdsGroup().getCompatibilityVersion())).isModelCompatibleWithOs())) {
+                    getVdsGroup().getCompatibilityVersion())).isValid())) {
                 return false;
             }
         }

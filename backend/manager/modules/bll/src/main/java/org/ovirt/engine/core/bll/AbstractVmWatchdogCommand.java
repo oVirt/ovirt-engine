@@ -74,12 +74,9 @@ public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> ex
         }
     }
 
-    private VmWatchdogValidator getVmWatchdogValidator() {
+    protected VmWatchdogValidator getVmWatchdogValidator() {
         VmWatchdogValidator vmWatchdogValidator = null;
-        VmWatchdog watchdog = new VmWatchdog();
-        watchdog.setAction(getParameters().getAction());
-        watchdog.setModel(getParameters().getModel());
-        watchdog.setVmId(getParameters().getId());
+        VmWatchdog watchdog = createWatchdogFromParams();
 
         if (getParameters().isVm()) {
             vmWatchdogValidator = new VmWatchdogValidator(getVm().getOs(), watchdog,
@@ -94,13 +91,26 @@ public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> ex
         return vmWatchdogValidator;
     }
 
-    protected ValidationResult validateModelCompatibleWithOs() {
-        VmWatchdogValidator validator = getVmWatchdogValidator();
-        if (validator != null) {
-            return validator.isModelCompatibleWithOs();
+    private VmWatchdog createWatchdogFromParams() {
+        VmWatchdog watchdog = new VmWatchdog();
+        watchdog.setAction(getParameters().getAction());
+        watchdog.setModel(getParameters().getModel());
+        watchdog.setVmId(getParameters().getId());
+        return watchdog;
+    }
+
+    protected ValidationResult validateWatchdog() {
+        if (!getParameters().isClusterIndependent()) {
+            VmWatchdogValidator validator = getVmWatchdogValidator();
+            if (validator != null) {
+                return validator.isValid();
+            } else {
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+            }
         } else {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+            return new VmWatchdogValidator.VmWatchdogClusterIndependentValidator(createWatchdogFromParams()).isValid();
         }
+
     }
 
 }

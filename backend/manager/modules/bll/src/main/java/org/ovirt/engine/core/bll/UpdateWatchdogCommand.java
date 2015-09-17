@@ -17,7 +17,6 @@ public class UpdateWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogPar
         super(parameters, commandContext);
     }
 
-
     @Override
     protected void executeCommand() {
         List<VmDevice> watchdogs =
@@ -38,7 +37,7 @@ public class UpdateWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogPar
             return failCanDoAction(EngineMessage.WATCHDOG_NOT_FOUND);
         }
 
-        if (!getParameters().isClusterIndependent() && !validate(validateModelCompatibleWithOs())) {
+        if (!validate(validateWatchdog())) {
             return false;
         }
 

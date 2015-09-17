@@ -417,9 +417,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         // Check if the watchdog model is supported
         if (getParameters().getWatchdog() != null) {
-            if (!validate((new VmWatchdogValidator(getParameters().getMasterVm().getOsId(),
+            if (!validate((new VmWatchdogValidator.VmWatchdogClusterDependentValidator(getParameters().getMasterVm().getOsId(),
                     getParameters().getWatchdog(),
-                    getVdsGroup().getCompatibilityVersion())).isModelCompatibleWithOs())) {
+                    getVdsGroup().getCompatibilityVersion())).isValid())) {
                 return false;
             }
         }
@@ -513,6 +513,13 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (getParameters().getMasterVm().getLargeIconId() != null
                 && !validate(IconValidator.validateIconId(getParameters().getMasterVm().getLargeIconId(), "Large"))) {
             return false;
+        }
+
+        if (getParameters().getWatchdog() != null) {
+            if (!validate(new VmWatchdogValidator.VmWatchdogClusterIndependentValidator(
+                            getParameters().getWatchdog()).isValid())) {
+                return false;
+            }
         }
 
         if (isInstanceType) {
