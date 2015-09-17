@@ -123,6 +123,7 @@ public class ResizableHeader<T> extends SafeHtmlHeader {
                 Set<String> set = new HashSet<>(super.getConsumedEvents());
                 set.add(BrowserEvents.CLICK); // for sorting
                 set.add(BrowserEvents.MOUSEMOVE); // for changing mouse cursor
+                set.add(BrowserEvents.CHANGE); // for checkbox toggle
                 return set;
             }
         };
