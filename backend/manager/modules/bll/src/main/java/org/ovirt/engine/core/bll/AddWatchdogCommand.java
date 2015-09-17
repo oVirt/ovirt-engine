@@ -44,12 +44,6 @@ public class AddWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParame
         if (!super.canDoAction()) {
             return false;
         }
-        if (getParameters().getAction() == null) {
-            return failCanDoAction(EngineMessage.WATCHDOG_ACTION_REQUIRED);
-        }
-        if (getParameters().getModel() == null) {
-            return failCanDoAction(EngineMessage.WATCHDOG_MODEL_REQUIRED);
-        }
         VdcQueryReturnValue returnValue =
                 runInternalQuery(VdcQueryType.GetWatchdog,
                         new IdQueryParameters(getParameters().getId()));
@@ -58,7 +52,7 @@ public class AddWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParame
             return failCanDoAction(EngineMessage.WATCHDOG_ALREADY_EXISTS);
         }
 
-        if (!getParameters().isClusterIndependent() && !validate(validateModelCompatibleWithOs())) {
+        if (!validate(validateWatchdog())) {
             return false;
         }
 

@@ -35,13 +35,13 @@ public class VmWatchdogValidatorTest {
         Version version = new Version();
         VmWatchdog vmWatchdog = new VmWatchdog();
         vmWatchdog.setModel(watchDogModel);
-        VmWatchdogValidator validator = spy(new VmWatchdogValidator(0, vmWatchdog, version));
+        VmWatchdogValidator.VmWatchdogClusterDependentValidator validator = spy(new VmWatchdogValidator.VmWatchdogClusterDependentValidator(0, vmWatchdog, version));
         OsRepository osRepository = mock(OsRepository.class);
 
         when(validator.getOsRepository()).thenReturn(osRepository);
         when(osRepository.getVmWatchdogTypes(any(Integer.class), any(Version.class))).thenReturn(WATCHDOG_MODELS);
 
-        assertThat(validator.isModelCompatibleWithOs(), matcher);
+        assertThat(validator.isValid(), matcher);
     }
 
 }

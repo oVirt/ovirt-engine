@@ -155,6 +155,12 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             return false;
         }
 
+        if (returnValue && getParameters().getWatchdog() != null) {
+            returnValue = validate(new VmWatchdogValidator.VmWatchdogClusterIndependentValidator(
+                    getParameters().getWatchdog()).isValid()
+            );
+        }
+
         if (!isInstanceType && !isBlankTemplate && returnValue) {
             return doClusterRelatedChecks();
         } else {
@@ -163,7 +169,6 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     }
 
     private boolean doClusterRelatedChecks() {
-
         if (oldTemplate.getStatus() == VmTemplateStatus.Locked) {
             return failCanDoAction(EngineMessage.VM_TEMPLATE_IS_LOCKED);
         }
@@ -181,9 +186,9 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         // Check if the watchdog model is supported
         if (returnValue && getParameters().getWatchdog() != null) {
-            returnValue = validate((new VmWatchdogValidator(getParameters().getVmTemplateData().getOsId(),
+            returnValue = validate((new VmWatchdogValidator.VmWatchdogClusterDependentValidator(getParameters().getVmTemplateData().getOsId(),
                     getParameters().getWatchdog(),
-                    getVdsGroup().getCompatibilityVersion())).isModelCompatibleWithOs());
+                    getVdsGroup().getCompatibilityVersion())).isValid());
         }
 
         // Check if the display type is supported
