@@ -16,13 +16,25 @@
 
 import argparse
 import contextlib
+import gettext
 import json
 import logging
 import os
 import os.path
+import socket
+import ssl
 import sys
 import urllib2
 import urlparse
+
+if sys.version_info[0] < 3:
+    from httplib import HTTPSConnection
+    from urllib2 import HTTPSHandler
+    from urllib2 import build_opener
+else:
+    from http.client import HTTPSConnection
+    from urllib.request import HTTPSHandler
+    from urllib.request import build_opener
 
 import ovirt_vmconsole_conf as config
 
@@ -31,6 +43,88 @@ from ovirt_engine import configfile, service, ticket
 
 _HTTP_STATUS_CODE_SUCCESS = 200
 _LOGGER_NAME = 'ovirt.engine.vmconsole.helper'
+
+
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine-vmconsole-helper')
+
+
+def urlopen(url, ca_certs=None, verify_host=True):
+
+    if getattr(ssl, 'create_default_context', None):
+        context = ssl.create_default_context()
+
+        if verify_host:
+            context.check_hostname = ssl.match_hostname
+        else:
+            context.check_hostname = None
+
+        if ca_certs:
+            context.load_verify_locations(cafile=ca_certs)
+            context.verify_mode = ssl.CERT_REQUIRED
+        else:
+            context.verify_mode = ssl.CERT_NONE
+
+        return contextlib.closing(
+            build_opener(HTTPSHandler(context=context)).open(url)
+        )
+
+    else:
+        class MyHTTPSConnection(HTTPSConnection):
+            def __init__(self, host, **kwargs):
+                self._ca_certs = kwargs.pop('ca_certs', None)
+                HTTPSConnection.__init__(self, host, **kwargs)
+
+            def connect(self):
+                self.sock = ssl.wrap_socket(
+                    socket.create_connection((self.host, self.port)),
+                    cert_reqs=(
+                        ssl.CERT_REQUIRED if self._ca_certs
+                        else ssl.CERT_NONE
+                    ),
+                    ca_certs=self._ca_certs,
+                )
+                if verify_host:
+                    cert = self.sock.getpeercert()
+                    for field in cert.get('subject', []):
+                        if field[0][0] == 'commonName':
+                            expected = field[0][1]
+                            break
+                    else:
+                        raise RuntimeError(
+                            _('No CN in peer certificate')
+                        )
+
+                    if expected != self.host:
+                        raise RuntimeError(
+                            _(
+                                "Invalid host '{host}' "
+                                "expected '{expected}'"
+                            ).format(
+                                expected=expected,
+                                host=self.host,
+                            )
+                        )
+
+        class MyHTTPSHandler(HTTPSHandler):
+
+            def __init__(self, ca_certs=None):
+                HTTPSHandler.__init__(self)
+                self._ca_certs = ca_certs
+
+            def https_open(self, req):
+                return self.do_open(self._get_connection, req)
+
+            def _get_connection(self, host, timeout):
+                return MyHTTPSConnection(
+                    host=host,
+                    timeout=timeout,
+                    ca_certs=self._ca_certs,
+                )
+
+        return contextlib.closing(
+            build_opener(MyHTTPSHandler(ca_certs=ca_certs)).open(url)
+        )
 
 
 def make_ticket_encoder(cfg_file):
@@ -159,7 +253,17 @@ def main():
             },
         )
 
-        with contextlib.closing(urllib2.urlopen(req)) as res:
+        ca_certs = cfg_file.get('ENGINE_CA')
+        if not ca_certs:
+            logger.warn('Engine CA not configured, '
+                        'connecting in insecure mode')
+            ca_certs = None
+
+        with urlopen(
+            url=req,
+            ca_certs=ca_certs,
+            verify_host=cfg_file.getboolean('ENGINE_VERIFY_HOST')
+        ) as res:
             if res.getcode() != _HTTP_STATUS_CODE_SUCCESS:
                 raise RuntimeError(
                     'Engine call failed: code=%d' % res.getcode()

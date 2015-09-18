@@ -163,10 +163,19 @@ class Plugin(plugin.PluginBase):
     )
     def _miscConfigVMConsoleHelper(self):
         content = (
+            'ENGINE_CA={engine_apache_ca_cert}\n'
+            'ENGINE_VERIFY_HOST={engine_verify_host}\n'
             'ENGINE_BASE_URL={engine_base_url}\n'
             'TOKEN_CERTIFICATE={certificate}\n'
             'TOKEN_KEY={key}\n'
         ).format(
+            engine_apache_ca_cert=(
+                oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
+            ),
+            # we skip host verification only if it is localhost
+            engine_verify_host=self.environment[
+                osetupcons.ConfigEnv.FQDN_NON_LOOPBACK_VALIDATION
+            ],
             engine_base_url=_base_url_from_env(self.environment),
             certificate=(
                 ovmpcons.FileLocations.
