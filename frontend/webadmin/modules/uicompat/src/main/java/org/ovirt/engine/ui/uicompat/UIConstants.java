@@ -2918,4 +2918,10 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Confirm Cluster Edit")
     String confirmClusterWarnings();
+
+    @DefaultStringValue("Configured")
+    String configured();
+
+    @DefaultStringValue("Not Configured")
+    String notConfigured();
 }

@@ -24,10 +24,12 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
     private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
     private static EnumTranslator translator = EnumTranslator.getInstance();
+    final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private EntityModel<String> name;
     private ListModel<Integer> operatingSystems;
@@ -123,7 +125,7 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
         setDescription(vm.getVmDescription());
         setQuotaName(vm.getQuotaName() != null ? vm.getQuotaName() : ""); //$NON-NLS-1$
         setQuotaAvailable(vm.getQuotaEnforcementType() != null
-        && !vm.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
+                && !vm.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
 
         setTemplate(vmTemplateNameRenderer.render(vm));
 
@@ -167,10 +169,10 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
         setTimeZone(vm.getTimeZone());
 
         setHasCustomProperties(!StringHelper.isNullOrEmpty(vm.getCustomProperties()));
-        setCustomProperties(getHasCustomProperties() ? "Configured" : "Not-Configured"); //$NON-NLS-1$ //$NON-NLS-2$
+        setCustomProperties(getHasCustomProperties() ? constants.configured() : constants.notConfigured());
 
         setCompatibilityVersion(vm.getVdsGroupCompatibilityVersion() != null ?
-                vm.getVdsGroupCompatibilityVersion().toString() : ""); //$NON-NLS-1$
+                                vm.getVdsGroupCompatibilityVersion().toString() : ""); //$NON-NLS-1$
 
         setVmId(vm.getId().toString());
         setFqdn(vm.getVmFQDN());
