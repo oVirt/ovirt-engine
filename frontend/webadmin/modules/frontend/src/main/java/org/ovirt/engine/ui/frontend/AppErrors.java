@@ -160,7 +160,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. One or more VMs are still running on this Host. ")
     String VDS_CANNOT_REMOVE_VDS_DETECTED_RUNNING_VM();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Host Cluster contains one or more Hosts.")
+    @DefaultStringValue("Cannot ${action} ${type}. Host Cluster contains one or more Hosts")
     String VDS_CANNOT_REMOVE_VDS_GROUP_VDS_DETECTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. Host is operational. Please switch Host to Maintenance mode first.")
@@ -271,7 +271,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. One or more VMs are still assigned to the Cluster")
     String VM_CANNOT_REMOVE_VDS_GROUP_VMS_DETECTED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. One or more Template(s) are still associated with it")
+    @DefaultStringValue("Cannot ${action} ${type}. One or more Template(s) are still associated with the ${type}")
     String VMT_CANNOT_REMOVE_VDS_GROUP_VMTS_DETECTED();
 
     @DefaultStringValue("Cannot ${action} ${type}.One or more VM-Pools are still associated with it")
