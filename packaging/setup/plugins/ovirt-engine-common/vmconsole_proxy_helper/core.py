@@ -16,14 +16,35 @@
 #
 
 
-"""VMConsole Proxy Helper Config."""
+"""vmconsole proxy plugin."""
 
-VMCONSOLE_PROXY_HELPER_VARS = '@VMCONSOLE_PROXY_HELPER_VARS@'
-ENGINE_PKIDIR = '@ENGINE_PKI@'
-SETUP_DATADIR = '@SETUP_USR@'
-VMCONSOLE_PROXY_HELPER_PATH = '@VMCONSOLE_PROXY_HELPER_PATH@'
-VMCONSOLE_SYSCONF_DIR = '@VMCONSOLE_SYSCONF_DIR@'
-VMCONSOLE_PKI_DIR = '@VMCONSOLE_PKI_DIR@'
+
+import gettext
+
+from otopi import plugin, util
+
+from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.vmconsole_proxy_helper import constants as ovmpcons
+
+
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine-setup')
+
+
+@util.export
+class Plugin(plugin.PluginBase):
+    """vmconsole proxy configuration plugin."""
+
+    def __init__(self, context):
+        super(Plugin, self).__init__(context=context)
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_SETUP,
+    )
+    def _setup(self):
+        self.environment[
+            osetupcons.CoreEnv.SETUP_ATTRS_MODULES
+        ].append(ovmpcons)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

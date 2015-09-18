@@ -35,8 +35,6 @@ def _(m):
 
 @util.export
 class Const(object):
-    # TODO: if we add package management, add package names here
-
     VMCONSOLE_PROXY_SERVICE_NAME = 'ovirt-vmconsole-proxy-sshd'
 
     VMCONSOLE_PROXY_PKI_NAME = 'vmconsole-proxy'
@@ -45,36 +43,27 @@ class Const(object):
 
     OVIRT_VMCONSOLE_PROXY_EKU = '1.3.6.1.4.1.2312.13.1.2.1.1'
 
-    OVIRT_VMCONSOLE_USER = 'ovirt-vmconsole'
-
-    OVIRT_VMCONSOLE_GROUP = 'ovirt-vmconsole'
-
-    # this is also used for SSH keys enrollment
-    OVIRT_VMCONSOLE_PROXY_SERVICE_NAME = 'ovirt-vmconsole-proxy'
-
-    MANUAL_INTERVENTION_TEXT = _(
-        'Manual intervention is required, because '
-        'setup was run in developer mode. '
-        'Please run with root privileges:\n'
-    )
+    OVIRT_VMCONSOLE_PROXY_SERVICE_NAME = 'ovirt-vmconsole-proxy-sshd'
+    OVIRT_VMCONSOLE_PROXY_PRINCIPAL = 'ovirt-vmconsole-proxy'
+    OVIRT_VMCONSOLE_PROXY_PACKAGE = 'ovirt-vmconsole-proxy'
 
 
 @util.export
 class FileLocations(object):
 
-    ENGINE_VMCONSOLE_PROXY_DIR = \
-        vmpconfig.ENGINE_VMCONSOLE_PROXY_DIR
+    VMCONSOLE_SYSCONF_DIR = vmpconfig.VMCONSOLE_SYSCONF_DIR
+    VMCONSOLE_PKI_DIR = vmpconfig.VMCONSOLE_PKI_DIR
 
-    OVIRT_ENGINE_VMCONSOLE_PROXY_CONFIG = \
-        vmpconfig.ENGINE_VMCONSOLE_PROXY_CONFIG
+    VMCONSOLE_PROXY_HELPER_VARS = \
+        vmpconfig.VMCONSOLE_PROXY_HELPER_VARS
 
     OVIRT_SETUP_DATADIR = vmpconfig.SETUP_DATADIR
 
-    OVIRT_ENGINE_VMCONSOLE_PROXY_CONFIGD = (
-        '%s.d' % OVIRT_ENGINE_VMCONSOLE_PROXY_CONFIG
+    VMCONSOLE_PROXY_HELPER_VARSD = (
+        '%s.d' % VMCONSOLE_PROXY_HELPER_VARS
     )
-    OVIRT_ENGINE_VMCONSOLE_PROXY_CONFIG_SETUP = os.path.join(
-        OVIRT_ENGINE_VMCONSOLE_PROXY_CONFIGD,
+    VMCONSOLE_PROXY_HELPER_VARS_SETUP = os.path.join(
+        VMCONSOLE_PROXY_HELPER_VARSD,
         '10-setup.conf',
     )
 
@@ -116,38 +105,14 @@ class FileLocations(object):
         '%s.cer' % Const.VMCONSOLE_PROXY_HELPER_PKI_NAME,
     )
 
-    # integration with external package ovirt-vmconsole-proxy
-    # we default to absolute path because this is an
-    # external package.
-    # sync with ovirt-vmconsole-proxy
-    OVIRT_VMCONSOLE_PROXY_CONFIG_ENGINE_SETUP_FILE = os.path.join(
-        '/',
-        'etc',
-        'ovirt-vmconsole',
-        'ovirt-vmconsole-proxy',
-        'conf.d',
-        '50-ovirt-vmconsole-proxy.conf',
-    )
-
     OVIRT_VMCONSOLE_PROXY_ENGINE_HELPER = \
         vmpconfig.VMCONSOLE_PROXY_HELPER_PATH
 
-    OVIRT_VMCONSOLE_PROXY_PKIDIR = \
-        '/etc/pki/ovirt-vmconsole/'
-
-    OVIRT_VMCONSOLE_PKI_CA_PUB = os.path.join(
-        OVIRT_VMCONSOLE_PROXY_PKIDIR,
-        'ca.pub'
-    )
-
-    OVIRT_VMCONSOLE_PKI_PROXY_HOST_CERT = os.path.join(
-        OVIRT_VMCONSOLE_PROXY_PKIDIR,
-        'proxy-ssh_host_rsa-cert.pub'
-    )
-
-    OVIRT_VMCONSOLE_PKI_PROXY_HOST_KEY = os.path.join(
-        OVIRT_VMCONSOLE_PROXY_PKIDIR,
-        'proxy-ssh_host_rsa'
+    VMCONSOLE_CONFIG = os.path.join(
+        VMCONSOLE_SYSCONF_DIR,
+        'ovirt-vmconsole-proxy',
+        'conf.d',
+        '20-ovirt-vmconsole-proxy-helper.conf',
     )
 
 
@@ -156,19 +121,6 @@ class Stages(object):
 
     # sync with engine
     CA_AVAILABLE = 'osetup.pki.ca.available'
-
-    CONFIG_VMCONSOLE_ENGINE_CUSTOMIZATION = \
-        'setup.config.vmconsole-engine.customization'
-
-    CONFIG_VMCONSOLE_PKI_ENGINE = \
-        'setup.config.vmconsole-engine.pki'
-
-    CONFIG_VMCONSOLE_PROXY_CUSTOMIZATION = \
-        'setup.config.vmconsole-proxy.customization'
-
-    CONFIG_VMCONSOLE_PKI_PROXY = \
-        'setup.config.vmconsole-proxy.pki'
-
     # sync with engine
     ENGINE_CORE_ENABLE = 'osetup.engine.core.enable'
 
@@ -176,6 +128,8 @@ class Stages(object):
 @util.export
 class Defaults(object):
     DEFAULT_VMCONSOLE_PROXY_PORT = 2222
+    DEFAULT_SYSTEM_USER_VMCONSOLE = 'ovirt-vmconsole'
+    DEFAULT_SYSTEM_GROUP_VMCONSOLE = 'ovirt-vmconsole'
 
 
 @util.export
@@ -196,7 +150,15 @@ class ConfigEnv(object):
         postinstallfile=True,
     )
     def VMCONSOLE_PROXY_CONFIG(self):
-        return 'OVESETUP_CONFIG/vmconsoleProxyConfig'
+        return 'OVESETUP_VMCONSOLE_PROXY_CONFIG/vmconsoleProxyConfig'
+
+
+@util.export
+@util.codegen
+@osetupattrsclass
+class SystemEnv(object):
+    USER_VMCONSOLE = 'OVESETUP_SYSTEM/userVmConsole'
+    GROUP_VMCONSOLE = 'OVESETUP_SYSTEM/groupVmConsole'
 
 
 @util.export

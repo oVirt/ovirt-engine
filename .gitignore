@@ -50,6 +50,7 @@ ovirt-engine.spec
 packaging/bin/engine-prolog.sh
 packaging/bin/pki-common.sh
 packaging/conf/notifier-logging.properties
+packaging/conf/ovirt-vmconsole-proxy-helper.conf
 packaging/conf/ovirt-vmconsole-proxy.conf
 packaging/etc/engine-manage-domains/engine-manage-domains.conf
 packaging/etc/engine.conf.d/README
@@ -57,7 +58,6 @@ packaging/etc/notifier/notifier.conf.d/README
 packaging/etc/ovirt-fence-kdump-listener.conf.d/README
 packaging/etc/ovirt-vmconsole-proxy-helper.conf.d/README
 packaging/etc/ovirt-websocket-proxy.conf.d/README
-packaging/libexec/ovirt-vmconsole-proxy-helper/ovirt-vmconsole-proxy-helper.conf
 packaging/libexec/ovirt-vmconsole-proxy-helper/ovirt_vmconsole_conf.py
 packaging/pythonlib/ovirt_engine/config.py
 packaging/services/*/*.conf

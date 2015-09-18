@@ -1,3 +1,3 @@
 [proxy]
-key_list = exec "@VMCONSOLE_PROXY_HELPER_PATH@" --version {version} keys
-console_list = exec "@VMCONSOLE_PROXY_HELPER_PATH@" --version {version} consoles --entityid {entityid}
+key_list = exec "@VMCONSOLE_PROXY_HELPER_PATH@" --version "{version}" keys
+console_list = exec "@VMCONSOLE_PROXY_HELPER_PATH@" --version "{version}" consoles --entityid "{entityid}"

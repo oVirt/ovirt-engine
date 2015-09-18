@@ -132,7 +132,10 @@ def main():
     try:
         args = parse_args()
 
-        cfg_file = configfile.ConfigFile([config.ENGINE_VMPROXY_VARS])
+        cfg_file = configfile.ConfigFile([
+            config.VMCONSOLE_PROXY_HELPER_DEFAULTS,
+            config.VMCONSOLE_PROXY_HELPER_VARS,
+        ])
 
         if cfg_file.getboolean('DEBUG') or args.debug:
             logger.setLevel(logging.DEBUG)
