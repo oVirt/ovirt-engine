@@ -1892,7 +1892,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     private void watchdogModelSelectedItemChanged(Object sender, EventArgs args) {
         if (getWatchdogModel().getSelectedItem() == null) {
             getWatchdogAction().setIsChangeable(false);
-            getWatchdogAction().setSelectedItem(null);
         } else {
             getWatchdogAction().setIsChangeable(true);
         }
