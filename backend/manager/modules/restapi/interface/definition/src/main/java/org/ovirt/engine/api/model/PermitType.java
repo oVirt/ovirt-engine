@@ -35,6 +35,7 @@ public enum PermitType {
     RUN_VM,
     CHANGE_VM_CD,
     MIGRATE_VM,
+    CONNECT_TO_SERIAL_CONSOLE,
     CONNECT_TO_VM,
     IMPORT_EXPORT_VM,
     CONFIGURE_VM_NETWORK,

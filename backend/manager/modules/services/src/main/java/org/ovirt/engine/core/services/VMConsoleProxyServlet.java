@@ -18,12 +18,19 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.action.LoginOnBehalfParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -89,33 +96,38 @@ public class VMConsoleProxyServlet extends HttpServlet {
         }
 
         if (userGuid != null) {
-            IdQueryParameters userParam = new IdQueryParameters(userGuid);
-
-            VdcQueryReturnValue retVms = backend.runInternalQuery(VdcQueryType.GetAllVmsForAnotherUser, userParam);
-
-            if (retVms != null) {
-                List<VM> vmsList = retVms.getReturnValue();
-
-                for (VM vm : vmsList) {
-                    Map<String, String> jsonVm = new HashMap<String, String>();
-
-                    if (vm.getRunOnVds() != null) {
-                        // TODO: avoid one query per loop. Bulk query?
-                        VdcQueryReturnValue retValue = backend.runInternalQuery(VdcQueryType.GetVdsByVdsId, new IdQueryParameters(vm.getRunOnVds()));
-
-                        if (retValue != null && retValue.getReturnValue() != null) {
-                            VDS vds = (VDS) retValue.getReturnValue();
-
-                            jsonVm.put("vmid", vm.getId().toString());
-                            jsonVm.put("vmname", vm.getName());
-                            jsonVm.put("host", vds.getHostName());
-                            /* there is only one serial console, no need and no way to distinguish them */
-                            jsonVm.put("console", "default");
-
-                            jsonVms.add(jsonVm);
+            VdcReturnValueBase loginResult = backend.runInternalAction(VdcActionType.LoginOnBehalf,
+                    new LoginOnBehalfParameters(userGuid));
+            if (!loginResult.getSucceeded()) {
+                throw new RuntimeException("Unable to create session using LoginOnBehalf");
+            }
+            String engineSessionId = loginResult.getActionReturnValue();
+            try {
+                VdcQueryReturnValue retVms = backend.runInternalQuery(VdcQueryType.GetAllVmsForUserAndActionGroup,
+                        new GetEntitiesWithPermittedActionParameters(ActionGroup.CONNECT_TO_SERIAL_CONSOLE),
+                        new EngineContext().withSessionId(engineSessionId));
+                if (retVms != null) {
+                    List<VM> vmsList = retVms.getReturnValue();
+                    for (VM vm : vmsList) {
+                        Map<String, String> jsonVm = new HashMap<String, String>();
+                        if (vm.getRunOnVds() != null) {
+                            // TODO: avoid one query per loop. Bulk query?
+                            VdcQueryReturnValue retValue = backend.runInternalQuery(VdcQueryType.GetVdsByVdsId,
+                                    new IdQueryParameters(vm.getRunOnVds()));
+                            if (retValue != null && retValue.getReturnValue() != null) {
+                                VDS vds = (VDS) retValue.getReturnValue();
+                                jsonVm.put("vmid", vm.getId().toString());
+                                jsonVm.put("vmname", vm.getName());
+                                jsonVm.put("host", vds.getHostName());
+                        /* there is only one serial console, no need and no way to distinguish them */
+                                jsonVm.put("console", "default");
+                                jsonVms.add(jsonVm);
+                            }
                         }
                     }
                 }
+            } finally {
+                backend.runInternalAction(VdcActionType.LogoutSession, new VdcActionParametersBase(engineSessionId));
             }
         }
 

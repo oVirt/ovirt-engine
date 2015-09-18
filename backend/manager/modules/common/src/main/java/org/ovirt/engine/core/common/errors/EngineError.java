@@ -519,6 +519,9 @@ public enum EngineError {
     // migration cancel failed, VM doesn't exist
     MIGRATION_CANCEL_ERROR_NO_VM(5100),
 
+    // Login Errors
+    PRINCIPAL_NOT_FOUND(5200),
+
     SESSION_ERROR(9999),
 
     HOST_DEVICES_TAKEN_BY_OTHER_VM(6000);

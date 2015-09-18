@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -82,6 +83,17 @@ public interface VmDao extends Dao {
      * @return A {@link List} of the VMs associated with the disk.
      */
     List<Pair<VM, VmDevice>> getVmsWithPlugInfo(Guid id);
+
+    /**
+     * Retrieve all VMs for which the user with the specified role has direct or indirect
+     * permissions on
+     * @param userID
+     *             the user id
+     * @param actionGroup
+     *             the actionGroup
+     * @return the list of VMs
+     */
+    List<VM> getAllForUserAndActionGroup(Guid userID, ActionGroup actionGroup);
 
     /**
      * Finds all VMs for the specified user.

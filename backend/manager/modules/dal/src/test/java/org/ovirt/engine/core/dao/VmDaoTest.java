@@ -14,6 +14,7 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -162,6 +163,29 @@ public class VmDaoTest extends BaseDaoTestCase {
         List<VM> result = dao.getAll();
 
         VmDaoTest.assertCorrectGetAllResult(result);
+    }
+
+    /**
+     * Ensures that getting all VMs for specific action group works as expected.
+     */
+    @Test
+    public void testGetAllForUserAndActionGroup() {
+        List<VM> result = dao.getAllForUserAndActionGroup(PRIVILEGED_USER_ID, ActionGroup.CONNECT_TO_SERIAL_CONSOLE);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(6, result.size());
+    }
+
+    /**
+     * Ensures that getting all VMs for unprivileged specific action group works as expected.
+     */
+    @Test
+    public void testGetAllForUnPrivilegedUserAndActionGroup() {
+        List<VM> result = dao.getAllForUserAndActionGroup(UNPRIVILEGED_USER_ID, ActionGroup.CONNECT_TO_SERIAL_CONSOLE);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     @SuppressWarnings("unchecked")

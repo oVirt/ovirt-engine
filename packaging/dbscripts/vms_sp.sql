@@ -1154,6 +1154,28 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetAllFromVmsForUserAndActionGroup(v_user_id UUID, v_action_group_id INTEGER) RETURNS SETOF vms STABLE
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT DISTINCT vms.*
+      FROM vms, user_vm_permissions_view, permissions_view, engine_session_user_flat_groups
+      WHERE vms.vm_guid = user_vm_permissions_view.entity_id
+      AND   user_vm_permissions_view.user_id = v_user_id
+      AND   engine_session_user_flat_groups.user_id = user_vm_permissions_view.user_id
+      -- check the user has permission on any parent for this vm id and Object type 2 (vm)
+      AND   permissions_view.object_id IN (SELECT id FROM fn_get_entity_parents(vms.vm_guid, 2))
+      AND   permissions_view.ad_element_id = engine_session_user_flat_groups.granted_id
+      AND   permissions_view.role_id IN (SELECT role_id FROM roles_groups WHERE action_group_id = v_action_group_id)
+      ORDER BY vm_guid;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+
+
 
 Create or replace FUNCTION GetVmsByIds(v_vms_ids VARCHAR(5000)) RETURNS SETOF vms STABLE
    AS $procedure$

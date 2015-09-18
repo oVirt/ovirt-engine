@@ -1433,8 +1433,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Allow to attach CD to the VM")
     String allowToAttachCdToTheVmRoleTreeTooltip();
 
-    @DefaultStringValue("Allow viewing the VM Console Screen")
+    @DefaultStringValue("Allow connecting to the VM graphical console screen")
     String allowViewingTheVmConsoleScreenRoleTreeTooltip();
+
+    @DefaultStringValue("Allow connecting to VM serial console")
+    String allowConnectingToVmSerialConsoleRoleTreeTooltip();
 
     @DefaultStringValue("Allow setting port mirroring to VMs networks")
     String allowVmNetworkPortMirroringRoleTreeTooltip();

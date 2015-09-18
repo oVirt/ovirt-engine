@@ -132,7 +132,7 @@ public class SearchQueryParsingUtils {
     public static Collection<? extends Collection<String>> getIdsBatches(final ExtMap context, final Collection<String> ids) {
 
         List<String> idsList = new ArrayList<String>(ids);
-        int chunk = context.<Integer> get(Authz.ContextKeys.QUERY_MAX_FILTER_SIZE, 100) - 10;
+        int chunk = context.<Integer> get(Authz.ContextKeys.QUERY_MAX_FILTER_SIZE, 100);
         List<List<String>> batchOfIdsList = new ArrayList<>();
         for (int counter = 0; counter < ids.size(); counter = counter + chunk) {
             batchOfIdsList.add(idsList.subList(counter, counter + chunk > idsList.size() ? idsList.size() : counter + chunk));
