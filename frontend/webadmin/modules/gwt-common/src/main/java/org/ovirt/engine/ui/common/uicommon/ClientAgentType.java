@@ -116,7 +116,7 @@ public class ClientAgentType {
             subString : "Mozilla",
             identity : "Netscape",
             versionSearch : "Mozilla"
-        } ]
+        } ];
 
         return dataBrowser;
     }-*/;
@@ -138,7 +138,7 @@ public class ClientAgentType {
             string : navigator.platform,
             subString : "Linux",
             identity : "Linux"
-        } ]
+        } ];
 
         return dataOS;
     }-*/;
