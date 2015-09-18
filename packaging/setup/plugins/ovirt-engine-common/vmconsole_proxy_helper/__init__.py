@@ -16,14 +16,18 @@
 #
 
 
-"""VMConsole Proxy Helper Config."""
+"""ovirt-host-setup vmconsole_proxy plugin."""
 
-VMCONSOLE_PROXY_HELPER_VARS = '@VMCONSOLE_PROXY_HELPER_VARS@'
-ENGINE_PKIDIR = '@ENGINE_PKI@'
-SETUP_DATADIR = '@SETUP_USR@'
-VMCONSOLE_PROXY_HELPER_PATH = '@VMCONSOLE_PROXY_HELPER_PATH@'
-VMCONSOLE_SYSCONF_DIR = '@VMCONSOLE_SYSCONF_DIR@'
-VMCONSOLE_PKI_DIR = '@VMCONSOLE_PKI_DIR@'
+
+from otopi import util
+
+
+from . import core
+
+
+@util.export
+def createPlugins(context):
+    core.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

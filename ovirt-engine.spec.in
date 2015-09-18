@@ -487,6 +487,7 @@ Summary:	%{ovirt_product_name_short} VMconsole Proxy Helper
 Group:		%{ovirt_product_group}
 Requires:	%{name}-lib >= %{version}-%{release}
 Requires:	%{name}-setup-plugin-vmconsole-proxy-helper >= %{version}-%{release}
+Requires:	ovirt-vmconsole-proxy
 
 %description vmconsole-proxy-helper
 %{ovirt_product_name_short} VMconsole Proxy helper, to integrate
@@ -1050,6 +1051,7 @@ fi
 %files vmconsole-proxy-helper
 
 %{_libexecdir}/ovirt-vmconsole-proxy-helper/
+%{engine_data}/conf/ovirt-vmconsole-proxy-helper.conf
 %{engine_etc}/ovirt-vmconsole-proxy-helper.conf.d/
 
 %files tools -f .mfiles-tools

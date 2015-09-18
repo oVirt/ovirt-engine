@@ -6,4 +6,4 @@ Files are sorted by name, last wins.
 
 Variables available at:
 
-  @ENGINE_LIBEXEC@/ovirt-websocket-proxy-helper/ovirt-websocket-proxy-helper.conf
+  @VMCONSOLE_PROXY_HELPER_DEFAULTS@

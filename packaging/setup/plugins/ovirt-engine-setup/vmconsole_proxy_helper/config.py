@@ -26,7 +26,6 @@ from otopi import filetransaction, plugin, util
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import hostname as osetuphostname
 from ovirt_engine_setup import dialog
-from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.vmconsole_proxy_helper import constants as ovmpcons
 
@@ -71,22 +70,6 @@ def _base_url_from_env(env):
     )
 
 
-def _existsUserGroup(log, user, group):
-    try:
-        osetuputil.getUid(user)
-    except (KeyError, IndexError):
-        log.warn(_('User {user} does not exist.'.format(user=user)))
-        return False
-
-    try:
-        osetuputil.getGid(group)
-    except (KeyError, IndexError):
-        log.warn(_('Group {group} does not exist.'.format(group=group)))
-        return False
-
-    return True
-
-
 @util.export
 class Plugin(plugin.PluginBase):
     """vmconsole proxy configuration plugin."""
@@ -103,17 +86,16 @@ class Plugin(plugin.PluginBase):
             None
         )
         self.environment.setdefault(
-            ovmpcons.ConfigEnv.VMCONSOLE_PROXY_PORT,
+            ovmpcons.EngineConfigEnv.ENGINE_FQDN,
             None
         )
         self.environment.setdefault(
-            ovmpcons.EngineConfigEnv.ENGINE_FQDN,
-            None
+            ovmpcons.ConfigEnv.VMCONSOLE_PROXY_PORT,
+            ovmpcons.Defaults.DEFAULT_VMCONSOLE_PROXY_PORT
         )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=ovmpcons.Stages.CONFIG_VMCONSOLE_ENGINE_CUSTOMIZATION,
         before=(
             osetupcons.Stages.DIALOG_TITLES_E_PRODUCT_OPTIONS,
         ),
@@ -122,36 +104,12 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _customization(self):
-        # TODO:
-        # Currently engine-setup does the configuration when
-        # ovirt-vmconsole-proxy is installed, and it is installed in the
-        # same host as Engine. This is ensured checking for ovirt-vmconsole
-        # user/group above.
-        #
-        # We should not depend (and we don't yet) on ovirt-vmconsole-proxy in
-        # rpm spec because the serial console support is optional:
-        # if it is there and it isenabled, then will be configured,
-        # and skipped in any other case.
-        #
-        # Manual setup instructions will be provided on the feature page:
-        # http://www.ovirt.org/Features/Serial_Console
-        if not _existsUserGroup(
-            self.logger,
-            ovmpcons.Const.OVIRT_VMCONSOLE_USER,
-            ovmpcons.Const.OVIRT_VMCONSOLE_GROUP
-        ):
-            self.logger.warning(
-                _(
-                    'VM Console Proxy seems not installed on this host. '
-                    'Disabled configuration.'
-                )
-            )
-            enabled = False
-
-        elif self.environment[
+        if self.environment[
             ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
         ] is None:
-            enabled = dialog.queryBoolean(
+            self.environment[
+                ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
+            ] = dialog.queryBoolean(
                 dialog=self.dialog,
                 name='OVESETUP_CONFIG_VMCONSOLE_PROXY',
                 note=_(
@@ -161,10 +119,6 @@ class Plugin(plugin.PluginBase):
                 prompt=True,
                 default=True,
             )
-
-            self.environment[
-                ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
-            ] = enabled
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -187,48 +141,6 @@ class Plugin(plugin.PluginBase):
             whichhost=_('the engine'),
             supply_default=True,
         )
-
-        while self.environment[
-            ovmpcons.ConfigEnv.VMCONSOLE_PROXY_PORT
-        ] is None:
-            try:
-                port = osetuputil.parsePort(
-                    self.dialog.queryString(
-                        name='VMCONSOLE_PROXY_HOST',
-                        note=_(
-                            'Engine vmconsole port [@DEFAULT@]: '
-                        ),
-                        prompt=True,
-                        default=(
-                            ovmpcons.Defaults.
-                            DEFAULT_VMCONSOLE_PROXY_PORT
-                        ),
-                    )
-                )
-                self.environment[
-                    ovmpcons.ConfigEnv.VMCONSOLE_PROXY_PORT
-                ] = port
-            except ValueError:
-                self.logger.warning(
-                    _(
-                        'Unable to parse the given port.'
-                    )
-                )
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        condition=lambda self: self.environment[
-            ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
-        ],
-        before=(
-            osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
-        ),
-        after=(
-            osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
-            ovmpcons.Stages.CONFIG_VMCONSOLE_ENGINE_CUSTOMIZATION,
-        ),
-    )
-    def _customizationFirewall(self):
         self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend([
             {
                 'name': 'ovirt-vmconsole-proxy',
@@ -270,7 +182,7 @@ class Plugin(plugin.PluginBase):
             filetransaction.FileTransaction(
                 name=(
                     ovmpcons.FileLocations.
-                    OVIRT_ENGINE_VMCONSOLE_PROXY_CONFIG_SETUP
+                    VMCONSOLE_PROXY_HELPER_VARS_SETUP
                 ),
                 content=content,
                 modifiedList=self.environment[
@@ -284,9 +196,6 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: (
             self.environment[
                 ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
-            ] and
-            not self.environment[
-                osetupcons.CoreEnv.DEVELOPER_MODE
             ]
         ),
     )
@@ -294,10 +203,7 @@ class Plugin(plugin.PluginBase):
         with open(ovmpcons.FileLocations.OVIRT_VMCONSOLE_PROXY_CONFIG) as f:
             self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
                 filetransaction.FileTransaction(
-                    name=(
-                        ovmpcons.FileLocations.
-                        OVIRT_VMCONSOLE_PROXY_CONFIG_ENGINE_SETUP_FILE
-                    ),
+                    name=ovmpcons.FileLocations.VMCONSOLE_CONFIG,
                     content=f.read(),
                     modifiedList=self.environment[
                         otopicons.CoreEnv.MODIFIED_FILES
@@ -305,26 +211,5 @@ class Plugin(plugin.PluginBase):
                 )
             )
 
-    @plugin.event(
-        stage=plugin.Stages.STAGE_CLOSEUP,
-        condition=lambda self: (
-            not self.environment[
-                osetupcons.CoreEnv.DEVELOPER_MODE
-            ] and self.environment[
-                ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
-            ]
-        ),
-    )
-    def _closeup(self):
-        self.logger.info(_('Restarting ovirt-vmconsole proxy service'))
-        for state in (False, True):
-            self.services.state(
-                name=ovmpcons.Const.VMCONSOLE_PROXY_SERVICE_NAME,
-                state=state,
-            )
-        self.services.startup(
-            name=ovmpcons.Const.VMCONSOLE_PROXY_SERVICE_NAME,
-            state=True,
-        )
 
 # vim: expandtab tabstop=4 shiftwidth=4

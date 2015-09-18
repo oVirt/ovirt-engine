@@ -34,6 +34,8 @@ DEV_BUILD_GWT_DRAFT=0
 DEV_EXTRA_BUILD_FLAGS=
 DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS=
 PATTERNFLY_DIR=/usr/share/patternfly1/resources
+VMCONSOLE_SYSCONF_DIR=/etc/ovirt-vmconsole
+VMCONSOLE_PKI_DIR=/etc/pki/ovirt-vmconsole
 
 PACKAGE_NAME=ovirt-engine
 ENGINE_NAME=$(PACKAGE_NAME)
@@ -137,8 +139,6 @@ BUILD_TARGET=install
 	-e "s|@ENGINE_NOTIFIER_VARS@|$(PKG_SYSCONF_DIR)/notifier/notifier.conf|g" \
 	-e "s|@ENGINE_FKLSNR_VARS@|$(PKG_SYSCONF_DIR)/ovirt-fence-kdump-listener.conf|g" \
 	-e "s|@ENGINE_WSPROXY_VARS@|$(PKG_SYSCONF_DIR)/ovirt-websocket-proxy.conf|g" \
-	-e "s|@ENGINE_VMPROXY_VARS@|$(PKG_SYSCONF_DIR)/ovirt-vmconsole-proxy-helper.conf|g" \
-	-e "s|@ENGINE_VMPROXY_DIR@|$(PKG_SYSCONF_DIR)/ovirt-vmconsole|g" \
 	-e "s|@ENGINE_USER@|$(PKG_USER)|g" \
 	-e "s|@ENGINE_GROUP@|$(PKG_GROUP)|g" \
 	-e "s|@ENGINE_ETC@|$(PKG_SYSCONF_DIR)|g" \
@@ -167,7 +167,11 @@ BUILD_TARGET=install
 	-e "s|@PEP8@|$(PEP8)|g" \
 	-e "s|@PYFLAKES@|$(PYFLAKES)|g" \
 	-e "s|@DEVMODE@|$(BUILD_DEV)|g" \
+	-e "s|@VMCONSOLE_SYSCONF_DIR@|$(VMCONSOLE_SYSCONF_DIR)|g" \
+	-e "s|@VMCONSOLE_PKI_DIR@|$(VMCONSOLE_PKI_DIR)|g" \
 	-e "s|@VMCONSOLE_PROXY_HELPER_PATH@|$(LIBEXEC_DIR)/ovirt-vmconsole-proxy-helper/ovirt-vmconsole-list.py|g" \
+	-e "s|@VMCONSOLE_PROXY_HELPER_VARS@|$(PKG_SYSCONF_DIR)/ovirt-vmconsole-proxy-helper.conf|g" \
+	-e "s|@VMCONSOLE_PROXY_HELPER_DEFAULTS@|$(DATA_DIR)/conf/ovirt-vmconsole-proxy-helper.conf|g" \
 	-e "s|@BIN_DIR@|$(BIN_DIR)|g" \
 	-e "s|@AAA_JDBC_USR@|$(DATAROOT_DIR)/ovirt-engine-extension-aaa-jdbc|g" \
 	$< > $@
@@ -179,13 +183,13 @@ GENERATED = \
 	packaging/bin/engine-prolog.sh \
 	packaging/bin/pki-common.sh \
 	packaging/conf/notifier-logging.properties \
+	packaging/conf/ovirt-vmconsole-proxy-helper.conf \
 	packaging/conf/ovirt-vmconsole-proxy.conf \
 	packaging/etc/engine.conf.d/README \
 	packaging/etc/notifier/notifier.conf.d/README \
 	packaging/etc/ovirt-fence-kdump-listener.conf.d/README \
 	packaging/etc/ovirt-vmconsole-proxy-helper.conf.d/README \
 	packaging/etc/ovirt-websocket-proxy.conf.d/README \
-	packaging/libexec/ovirt-vmconsole-proxy-helper/ovirt-vmconsole-proxy-helper.conf \
 	packaging/libexec/ovirt-vmconsole-proxy-helper/ovirt_vmconsole_conf.py \
 	packaging/pythonlib/ovirt_engine/config.py \
 	packaging/services/ovirt-engine-notifier/config.py \
@@ -460,6 +464,8 @@ all-dev:
 		all \
 		BUILD_DEV=1 \
 		DEV_PYTHON_DIR="$(PREFIX)$(PYTHON_SYS_DIR)" \
+		VMCONSOLE_SYSCONF_DIR="$(PREFIX)/etc/ovirt-vmconsole" \
+		VMCONSOLE_PKI_DIR="$(PREFIX)/etc/pki/ovirt-vmconsole" \
 		$(NULL)
 
 install-dev:	\
