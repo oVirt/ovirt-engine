@@ -23,12 +23,14 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 @SuppressWarnings("unused")
 public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
+
+    final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     public static final EventDefinition updateCompleteEventDefinition;
     private Event<EventArgs> privateUpdateCompleteEvent;
@@ -524,7 +526,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         setTimeZone(vm.getTimeZone());
 
         setHasCustomProperties(!StringHelper.isNullOrEmpty(vm.getCustomProperties()));
-        setCustomProperties(getHasCustomProperties() ? "Configured" : "Not-Configured"); //$NON-NLS-1$ //$NON-NLS-2$
+        setCustomProperties(getHasCustomProperties() ? constants.configured() : constants.notConfigured());
 
         setCompatibilityVersion(vm.getVdsGroupCompatibilityVersion() != null ?
                 vm.getVdsGroupCompatibilityVersion().toString() : ""); //$NON-NLS-1$
