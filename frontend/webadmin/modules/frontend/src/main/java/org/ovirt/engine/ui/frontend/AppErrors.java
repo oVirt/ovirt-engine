@@ -2567,6 +2567,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Permission denied. Query you try to run not public.")
     String USER_CANNOT_RUN_QUERY_NOT_PUBLIC();
 
+    @DefaultStringValue("Permission denied. Action you try to run is internal only.")
+    String USER_CANNOT_RUN_ACTION_INTERNAL_COMMAND();
+
     @DefaultStringValue("Cannot attach action group to Role. This action group is already attached to Role.")
     String ERROR_CANNOT_ATTACH_ACTION_GROUP_TO_ROLE_ATTACHED();
 

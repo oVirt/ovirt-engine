@@ -16,6 +16,7 @@ import org.ovirt.engine.api.extensions.aaa.Acct;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.aaa.AcctUtils;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
+import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.Config;
@@ -209,7 +210,24 @@ public class SessionDataContainer {
     }
 
     public AuthenticationProfile getProfile(String sessionId) {
-        return (AuthenticationProfile) getData(sessionId, PROFILE_PARAMETER_NAME, false);
+        AuthenticationProfile profile = (AuthenticationProfile) getData(sessionId, PROFILE_PARAMETER_NAME, false);
+        if (profile == null) {
+            profile = getProfileFromUser(getUser(sessionId, false));
+        }
+        return profile;
+    }
+
+    private AuthenticationProfile getProfileFromUser(DbUser user) {
+        AuthenticationProfile retVal = null;
+        if (user != null) {
+            for (AuthenticationProfile profile : AuthenticationProfileRepository.getInstance().getProfiles()) {
+                if (profile.getAuthzName().equals(user.getDomain())) {
+                    retVal = profile;
+                    break;
+                }
+            }
+        }
+        return retVal;
     }
 
     public String getPrincipalName(String sessionId) {

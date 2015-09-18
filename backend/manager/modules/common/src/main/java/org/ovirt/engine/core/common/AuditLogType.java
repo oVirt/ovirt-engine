@@ -153,6 +153,8 @@ public enum AuditLogType {
     USER_VDC_LOGIN_FAILED(114, AuditLogSeverity.ERROR), // user logged in to VDC
     USER_VDC_LOGOUT(31), // User logged out from VDC
     USER_VDC_LOGOUT_FAILED(815, AuditLogSeverity.ERROR), // User logged out failed
+    USER_LOGIN_ON_BEHALF(1401, AuditLogTimeInterval.SECOND.getValue() * 5), // user logged in for vmconsole
+    USER_LOGIN_ON_BEHALF_FAILED(1402, AuditLogSeverity.ERROR), // user login failed
     USER_VDC_SESSION_TERMINATED(831),
     USER_VDC_SESSION_TERMINATION_FAILED(832, AuditLogSeverity.ERROR),
 

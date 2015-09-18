@@ -10,6 +10,10 @@ public class GetEntitiesWithPermittedActionParameters extends VdcQueryParameters
     public GetEntitiesWithPermittedActionParameters() {
     }
 
+    public GetEntitiesWithPermittedActionParameters(ActionGroup actionGroup) {
+        this.actionGroup = actionGroup;
+    }
+
     public void setActionGroup(ActionGroup actionGroup) {
         this.actionGroup = actionGroup;
     }

@@ -16,7 +16,7 @@ public enum ActionGroup {
     RUN_VM(22, RoleType.USER, true, ApplicationMode.VirtOnly),
     CHANGE_VM_CD(5, RoleType.USER, true, ApplicationMode.VirtOnly),
     MIGRATE_VM(6, RoleType.USER, true, ApplicationMode.VirtOnly),
-
+    CONNECT_TO_SERIAL_CONSOLE(1664, RoleType.USER, true, ApplicationMode.VirtOnly),
     /**
      * Connect to the console of a virtual machine, but only if no user
      * has connected before:

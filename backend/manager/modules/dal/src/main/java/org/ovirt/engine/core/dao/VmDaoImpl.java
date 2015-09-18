@@ -11,6 +11,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -198,6 +199,13 @@ public class VmDaoImpl extends BaseDao implements VmDao {
         return getCallsHandler().executeReadList("GetAllFromVms",
                 VMRowMapper.instance,
                 getCustomMapSqlParameterSource().addValue("user_id", userID).addValue("is_filtered", isFiltered));
+    }
+
+    @Override
+    public List<VM> getAllForUserAndActionGroup(Guid userID, ActionGroup actionGroup) {
+        return getCallsHandler().executeReadList("GetAllFromVmsForUserAndActionGroup",
+                VMRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("user_id", userID).addValue("action_group_id", actionGroup.getId()));
     }
 
     @Override

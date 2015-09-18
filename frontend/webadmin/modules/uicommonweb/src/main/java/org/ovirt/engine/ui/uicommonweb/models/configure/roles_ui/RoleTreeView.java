@@ -172,6 +172,7 @@ public class RoleTreeView {
                         roleNode(ActionGroup.MIGRATE_VM, getConstants().allowMigratingVmBetweenHostsInClusterRoleTreeTooltip()),
                         roleNode(ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES, getConstants().allowToChangeVmCustomPropertiesRoleTreeTooltip()),
                         roleNode(ActionGroup.EDIT_ADMIN_VM_PROPERTIES, getConstants().allowChangingVmAdminPropertiesRoleTreeTooltip()),
+                        roleNode(ActionGroup.CONNECT_TO_SERIAL_CONSOLE, getConstants().allowConnectingToVmSerialConsoleRoleTreeTooltip()),
                         roleNode(ActionGroup.RECONNECT_TO_VM, getConstants().allowReconnectToVmRoleTreeTooltip())));
     }
 
