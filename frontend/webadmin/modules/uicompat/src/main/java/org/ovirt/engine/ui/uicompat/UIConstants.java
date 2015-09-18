@@ -1006,7 +1006,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Virtual Machines reside on several Data Centers. Make sure the exported Virtual Machines reside on the same Data Center.")
     String vmsResideOnSeveralDCsMakeSureTheExportedVMResideOnSameDcMsg();
 
-    @DefaultStringValue("There is no Export Domain to Backup the Virtual Machine into. Attach an Export Domain to the Virtual Machine(s) Data Center.")
+    @DefaultStringValue("There is no Export Domain to Backup the Virtual Machine into. Attach an Export Domain to the Virtual Machine's Data Center.")
     String thereIsNoExportDomainBackupVmAttachExportDomainToVmsDcMsg();
 
     @DefaultStringValue("The relevant Export Domain is not active. Please activate it.")
