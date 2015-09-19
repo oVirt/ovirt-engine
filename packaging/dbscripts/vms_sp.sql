@@ -104,7 +104,9 @@ RETURN QUERY SELECT vm.vm_guid as vm_guid
    FROM vms vm, vm_ovf_generations ovf_gen
    WHERE vm.vm_guid = ovf_gen.vm_guid
          AND vm.db_generation >  ovf_gen.ovf_generation
-         AND vm.storage_pool_id = v_storage_pool_id;
+         AND vm.storage_pool_id = v_storage_pool_id
+         -- filter out external VMs if needed.
+         AND vm.origin  != 4;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -738,8 +740,8 @@ INSERT INTO vm_static(description,
            v_console_disconnect_action);
 
     -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
-    DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vm_guid;
-    INSERT INTO vm_ovf_generations(vm_guid, storage_pool_id) VALUES (v_vm_guid, (SELECT storage_pool_id FROM vds_groups vg WHERE vg.vds_group_id = v_vds_group_id));
+    DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vm_guid AND v_origin != 4;
+    INSERT INTO vm_ovf_generations(vm_guid, storage_pool_id) SELECT v_vm_guid, storage_pool_id FROM vds_groups vg WHERE vg.vds_group_id = v_vds_group_id AND v_origin != 4;
 
     -- add connections to dedicated hosts
     PERFORM InsertDedicatedHostsToVm(v_vm_guid, v_dedicated_vm_for_vds);
