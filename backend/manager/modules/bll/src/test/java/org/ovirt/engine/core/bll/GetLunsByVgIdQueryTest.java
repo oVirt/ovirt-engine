@@ -86,7 +86,7 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
         getQuery().executeCommand();
 
         checkSucceeded(getQuery(), true);
-        checkReturnValue(getQuery());
+        checkReturnValue();
     }
 
     private void prepareMocks() {
@@ -162,10 +162,10 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
     }
 
     @SuppressWarnings("unchecked")
-    private static void checkReturnValue(QueriesCommandBase<?> query) {
-        assertNotNull(query.getQueryReturnValue().getReturnValue());
-        assertTrue(List.class.isInstance(query.getQueryReturnValue().getReturnValue()));
-        List<LUNs> luns = query.getQueryReturnValue().getReturnValue();
+    private void checkReturnValue() {
+        assertNotNull(getQuery().getQueryReturnValue().getReturnValue());
+        assertTrue(List.class.isInstance(getQuery().getQueryReturnValue().getReturnValue()));
+        List<LUNs> luns = getQuery().getQueryReturnValue().getReturnValue();
         assertEquals(GUIDS.length, luns.size());
         for (int i = 0; i < GUIDS.length; i++) {
             LUNs lun = luns.get(i);
