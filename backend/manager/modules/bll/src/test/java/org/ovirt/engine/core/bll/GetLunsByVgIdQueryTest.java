@@ -33,7 +33,7 @@ import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 
 public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParameters, GetLunsByVgIdQuery<? extends GetLunsByVgIdParameters>> {
-    private static final Guid[] GUIDS = new Guid[] {
+    private static final Guid[] GUIDS = {
             new Guid("11111111-1111-1111-1111-111111111111"),
             new Guid("22222222-2222-2222-2222-222222222222"),
             new Guid("33333333-3333-3333-3333-333333333333"),
@@ -44,7 +44,7 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
 
     private static final String ADDRESS = "foo.bar.com";
     private static final String PORT = "123456";
-    private static final String[] IQNS = new String[] { ADDRESS + ":1", ADDRESS + ":2", ADDRESS + ":3" };
+    private static final String[] IQNS = { ADDRESS + ":1", ADDRESS + ":2", ADDRESS + ":3" };
     private static final String PHYSICAL_DEVICE_FIELD = "sda";
     private static final String DUMMY_LUN_ID = BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX+"89871115-e64d-4754-bacd-556cc249761b";
     private VDSBrokerFrontend vdsBrokerFrontendMock;
