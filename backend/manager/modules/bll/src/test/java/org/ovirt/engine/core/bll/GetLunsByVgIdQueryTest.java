@@ -117,7 +117,7 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
     }
 
     private void expectGetLunsMap(String lunId, String cnxId) {
-        List<LUNStorageServerConnectionMap> ret = new ArrayList<LUNStorageServerConnectionMap>();
+        List<LUNStorageServerConnectionMap> ret = new ArrayList<>();
         LUNStorageServerConnectionMap map = new LUNStorageServerConnectionMap();
         map.setLunId(lunId);
         map.setstorage_server_connection(cnxId);
@@ -132,7 +132,7 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
     }
 
     private static List<LUNs> setUpLuns(boolean withDummyLun) {
-        List<LUNs> luns = new ArrayList<LUNs>();
+        List<LUNs> luns = new ArrayList<>();
         for (Guid GUID : GUIDS) {
             LUNs lun = new LUNs();
             lun.setLUN_id(GUID.toString());
@@ -149,7 +149,7 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
     private static List<LUNs> setUpLunsFromDeviceList() {
         List<LUNs> luns = setUpLuns(false);
         for (LUNs lun : luns) {
-            HashMap<String, Boolean> pathsDictionary = new HashMap<String, Boolean>();
+            HashMap<String, Boolean> pathsDictionary = new HashMap<>();
             pathsDictionary.put(PHYSICAL_DEVICE_FIELD, true);
             lun.setPathsDictionary(pathsDictionary);
         }
@@ -165,7 +165,7 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
     private static void checkReturnValue(QueriesCommandBase<?> query) {
         assertNotNull(query.getQueryReturnValue().getReturnValue());
         assertTrue(List.class.isInstance(query.getQueryReturnValue().getReturnValue()));
-        List<LUNs> luns = (List<LUNs>) query.getQueryReturnValue().getReturnValue();
+        List<LUNs> luns = query.getQueryReturnValue().getReturnValue();
         assertEquals(GUIDS.length, luns.size());
         for (int i = 0; i < GUIDS.length; i++) {
             LUNs lun = luns.get(i);
