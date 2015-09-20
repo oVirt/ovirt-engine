@@ -32,10 +32,10 @@ import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 
 public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParameters, GetLunsByVgIdQuery<? extends GetLunsByVgIdParameters>> {
-    private static final Guid[] GUIDS = {
-            new Guid("11111111-1111-1111-1111-111111111111"),
-            new Guid("22222222-2222-2222-2222-222222222222"),
-            new Guid("33333333-3333-3333-3333-333333333333"),
+    private static final String[] GUIDS = {
+            "11111111-1111-1111-1111-111111111111",
+            "22222222-2222-2222-2222-222222222222",
+            "33333333-3333-3333-3333-333333333333"
     };
 
     private static final String VG_ID = Guid.newGuid().toString();
@@ -110,8 +110,8 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
     }
 
     private void expectGetLunsMap() {
-        for (Guid GUID : GUIDS) {
-            expectGetLunsMap(GUID.toString(), GUID.toString());
+        for (String GUID : GUIDS) {
+            expectGetLunsMap(GUID, GUID);
         }
     }
 
@@ -126,15 +126,15 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
 
     private void expectGetConnections() {
         for (int i = 0; i < GUIDS.length; i++) {
-            when(storageServerConnectionDao.get(GUIDS[i].toString())).thenReturn(setUpConnection(i));
+            when(storageServerConnectionDao.get(GUIDS[i])).thenReturn(setUpConnection(i));
         }
     }
 
     private static List<LUNs> setUpLuns(boolean withDummyLun) {
         List<LUNs> luns = new ArrayList<>();
-        for (Guid GUID : GUIDS) {
+        for (String GUID : GUIDS) {
             LUNs lun = new LUNs();
-            lun.setLUN_id(GUID.toString());
+            lun.setLUN_id(GUID);
             luns.add(lun);
         }
         if (withDummyLun) {
@@ -156,7 +156,7 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
     }
 
     private static StorageServerConnections setUpConnection(int idx) {
-        return new StorageServerConnections(ADDRESS, GUIDS[idx].toString(), IQNS[idx], null,
+        return new StorageServerConnections(ADDRESS, GUIDS[idx], IQNS[idx], null,
                 StorageType.ISCSI, null, PORT, null);
     }
 
@@ -168,13 +168,13 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
         for (int i = 0; i < GUIDS.length; i++) {
             LUNs lun = luns.get(i);
             assertNotNull(lun);
-            assertEquals(GUIDS[i].toString(), lun.getLUN_id());
+            assertEquals(GUIDS[i], lun.getLUN_id());
             assertNotNull(lun.getLunConnections());
             assertEquals(1, lun.getLunConnections().size());
             StorageServerConnections cnx = lun.getLunConnections().get(0);
             assertEquals(ADDRESS, cnx.getconnection());
             assertEquals(PORT, cnx.getport());
-            assertEquals(GUIDS[i].toString(), cnx.getid());
+            assertEquals(GUIDS[i], cnx.getid());
             assertEquals(IQNS[i], cnx.getiqn());
             assertEquals(StorageType.ISCSI, cnx.getstorage_type());
             assertNotNull(lun.getPathsDictionary());
