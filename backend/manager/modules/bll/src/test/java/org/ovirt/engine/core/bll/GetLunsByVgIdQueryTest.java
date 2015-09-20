@@ -49,17 +49,17 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
     private static final String DUMMY_LUN_ID = BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX+"89871115-e64d-4754-bacd-556cc249761b";
     private VDSBrokerFrontend vdsBrokerFrontendMock;
     @Mock
-    StorageServerConnectionLunMapDao storageServerConnectionLunMapDao;
+    private StorageServerConnectionLunMapDao storageServerConnectionLunMapDao;
     @Mock
-    StorageServerConnectionDao storageServerConnectionDao;
+    private StorageServerConnectionDao storageServerConnectionDao;
+    @Mock
+    private LunDao lunDao;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
         prepareMocks();
-        setUpStorageServerConnectionLunMapDao();
-        setUpStorageServerConnectionDao();
     }
 
     @Test
@@ -79,8 +79,8 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
         expectGetLunsForVg(VG_ID, withDummyLun);
         expectGetDeviceList();
 
-        expectGetLunsMap(storageServerConnectionLunMapDao);
-        expectGetConnections(storageServerConnectionDao);
+        expectGetLunsMap();
+        expectGetConnections();
 
         getQuery().setInternalExecution(true);
         getQuery().executeCommand();
@@ -92,24 +92,14 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
     private void prepareMocks() {
         vdsBrokerFrontendMock = mock(VDSBrokerFrontend.class);
         doReturn(vdsBrokerFrontendMock).when(getQuery()).getVdsBroker();
-    }
 
-    protected StorageServerConnectionDao setUpStorageServerConnectionDao() {
-        storageServerConnectionDao = mock(StorageServerConnectionDao.class);
         when(getDbFacadeMockInstance().getStorageServerConnectionDao()).thenReturn(storageServerConnectionDao);
-        return storageServerConnectionDao;
-    }
-
-    protected StorageServerConnectionLunMapDao setUpStorageServerConnectionLunMapDao() {
-        storageServerConnectionLunMapDao = mock(StorageServerConnectionLunMapDao.class);
         when(getDbFacadeMockInstance().getStorageServerConnectionLunMapDao()).thenReturn(storageServerConnectionLunMapDao);
-        return storageServerConnectionLunMapDao;
+        when(getDbFacadeMockInstance().getLunDao()).thenReturn(lunDao);
     }
 
     protected void expectGetLunsForVg(String vgId, boolean withDummyLun) {
-        LunDao dao = mock(LunDao.class);
-        when(getDbFacadeMockInstance().getLunDao()).thenReturn(dao);
-        when(dao.getAllForVolumeGroup(vgId)).thenReturn(setUpLuns(withDummyLun));
+        when(lunDao.getAllForVolumeGroup(vgId)).thenReturn(setUpLuns(withDummyLun));
     }
 
     protected void expectGetDeviceList() {
@@ -120,24 +110,24 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
                 any(GetDeviceListVDSCommandParameters.class))).thenReturn(returnValue);
     }
 
-    protected void expectGetLunsMap(StorageServerConnectionLunMapDao dao) {
+    protected void expectGetLunsMap() {
         for (int i = 0; i < GUIDS.length; i++) {
-            expectGetLunsMap(dao, GUIDS[i].toString(), GUIDS[i].toString());
+            expectGetLunsMap(GUIDS[i].toString(), GUIDS[i].toString());
         }
     }
 
-    protected void expectGetLunsMap(StorageServerConnectionLunMapDao dao, String lunId, String cnxId) {
+    protected void expectGetLunsMap(String lunId, String cnxId) {
         List<LUNStorageServerConnectionMap> ret = new ArrayList<LUNStorageServerConnectionMap>();
         LUNStorageServerConnectionMap map = new LUNStorageServerConnectionMap();
         map.setLunId(lunId);
         map.setstorage_server_connection(cnxId);
         ret.add(map);
-        when(dao.getAll(lunId)).thenReturn(ret);
+        when(storageServerConnectionLunMapDao.getAll(lunId)).thenReturn(ret);
     }
 
-    protected void expectGetConnections(StorageServerConnectionDao dao) {
+    protected void expectGetConnections() {
         for (int i = 0; i < GUIDS.length; i++) {
-            when(dao.get(GUIDS[i].toString())).thenReturn(setUpConnection(i));
+            when(storageServerConnectionDao.get(GUIDS[i].toString())).thenReturn(setUpConnection(i));
         }
     }
 
