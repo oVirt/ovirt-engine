@@ -98,11 +98,11 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
         when(getDbFacadeMockInstance().getLunDao()).thenReturn(lunDao);
     }
 
-    protected void expectGetLunsForVg(String vgId, boolean withDummyLun) {
+    private void expectGetLunsForVg(String vgId, boolean withDummyLun) {
         when(lunDao.getAllForVolumeGroup(vgId)).thenReturn(setUpLuns(withDummyLun));
     }
 
-    protected void expectGetDeviceList() {
+    private void expectGetDeviceList() {
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
         returnValue.setReturnValue(setUpLunsFromDeviceList());
@@ -110,13 +110,13 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
                 any(GetDeviceListVDSCommandParameters.class))).thenReturn(returnValue);
     }
 
-    protected void expectGetLunsMap() {
+    private void expectGetLunsMap() {
         for (Guid GUID : GUIDS) {
             expectGetLunsMap(GUID.toString(), GUID.toString());
         }
     }
 
-    protected void expectGetLunsMap(String lunId, String cnxId) {
+    private void expectGetLunsMap(String lunId, String cnxId) {
         List<LUNStorageServerConnectionMap> ret = new ArrayList<LUNStorageServerConnectionMap>();
         LUNStorageServerConnectionMap map = new LUNStorageServerConnectionMap();
         map.setLunId(lunId);
@@ -125,13 +125,13 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
         when(storageServerConnectionLunMapDao.getAll(lunId)).thenReturn(ret);
     }
 
-    protected void expectGetConnections() {
+    private void expectGetConnections() {
         for (int i = 0; i < GUIDS.length; i++) {
             when(storageServerConnectionDao.get(GUIDS[i].toString())).thenReturn(setUpConnection(i));
         }
     }
 
-    protected List<LUNs> setUpLuns(boolean withDummyLun) {
+    private static List<LUNs> setUpLuns(boolean withDummyLun) {
         List<LUNs> luns = new ArrayList<LUNs>();
         for (Guid GUID : GUIDS) {
             LUNs lun = new LUNs();
@@ -146,7 +146,7 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
         return luns;
     }
 
-    protected List<LUNs> setUpLunsFromDeviceList() {
+    private static List<LUNs> setUpLunsFromDeviceList() {
         List<LUNs> luns = setUpLuns(false);
         for (LUNs lun : luns) {
             HashMap<String, Boolean> pathsDictionary = new HashMap<String, Boolean>();
@@ -156,13 +156,13 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
         return luns;
     }
 
-    protected StorageServerConnections setUpConnection(int idx) {
+    private static StorageServerConnections setUpConnection(int idx) {
         return new StorageServerConnections(ADDRESS, GUIDS[idx].toString(), IQNS[idx], null,
                 StorageType.ISCSI, null, PORT, null);
     }
 
     @SuppressWarnings("unchecked")
-    protected void checkReturnValue(QueriesCommandBase<?> query) {
+    private static void checkReturnValue(QueriesCommandBase<?> query) {
         assertNotNull(query.getQueryReturnValue().getReturnValue());
         assertTrue(List.class.isInstance(query.getQueryReturnValue().getReturnValue()));
         List<LUNs> luns = (List<LUNs>) query.getQueryReturnValue().getReturnValue();
