@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -164,7 +163,6 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
     @SuppressWarnings("unchecked")
     private void checkReturnValue() {
         assertNotNull(getQuery().getQueryReturnValue().getReturnValue());
-        assertTrue(List.class.isInstance(getQuery().getQueryReturnValue().getReturnValue()));
         List<LUNs> luns = getQuery().getQueryReturnValue().getReturnValue();
         assertEquals(GUIDS.length, luns.size());
         for (int i = 0; i < GUIDS.length; i++) {
