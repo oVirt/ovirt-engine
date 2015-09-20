@@ -59,6 +59,7 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
@@ -211,6 +212,7 @@ public class DbFacade {
             put(VmStatistics.class, VmStatisticsDao.class);
             put(BaseDisk.class, BaseDiskDao.class);
             put(DiskImage.class, BaseDiskDao.class);
+            put(CinderDisk.class, BaseDiskDao.class);
             put(DiskImageDynamic.class, DiskImageDynamicDao.class);
             put(VmNic.class, VmNicDao.class);
             put(VmNetworkInterface.class, VmNicDao.class);

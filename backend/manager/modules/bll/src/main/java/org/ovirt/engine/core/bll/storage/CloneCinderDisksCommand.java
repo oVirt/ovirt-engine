@@ -41,7 +41,7 @@ public class CloneCinderDisksCommand<T extends CloneCinderDisksParameters> exten
             Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                     VdcActionType.CloneSingleCinderDisk,
                     params,
-                    cloneContextAndDetachFromParent());
+                    cloneContext().withoutExecutionContext().withoutLock());
             try {
                 VdcReturnValueBase vdcReturnValueBase = future.get();
                 if (!vdcReturnValueBase.getSucceeded()) {
