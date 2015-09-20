@@ -36,7 +36,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 
 public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<SnapshotModel> {
 
@@ -78,7 +77,7 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
     FlowPanel messagePanel;
 
     @UiField
-    SimplePanel warningPanel;
+    FlowPanel warningPanel;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -192,11 +191,23 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
 
         SafeHtml warningImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(
                 resources.logWarningImage()).getHTML());
-        HTML warningWidget = new HTML(templates.iconWithText(
+
+        HTML partialSnapshotWithMemoryWarningWidget = new HTML(templates.iconWithText(
                 warningImage, constants.snapshotCreationWithMemoryAndPartialDisksWarning()));
+        HTML memoryWarningWidget = new HTML(templates.iconWithText(
+                warningImage, constants.snapshotCreationWithMemoryNotLiveWarning()));
+
+        warningPanel.clear();
 
         // Show warning in case of saving memory to snapshot and excluding some disks.
-        warningPanel.setWidget(includeMemory && partialDisksSelection ? warningWidget : null);
+        if (includeMemory && partialDisksSelection) {
+            warningPanel.add(partialSnapshotWithMemoryWarningWidget);
+        }
+
+        // Show warning in case of saving memory since it is not really 'live'
+        if (includeMemory) {
+            warningPanel.add(memoryWarningWidget);
+        }
     }
 
     @Override

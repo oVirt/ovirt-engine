@@ -45,7 +45,7 @@
             <e:ListModelObjectCellTable ui:field="disksTable"/>
         </g:ScrollPanel>
         <ge:EntityModelCheckBoxEditor ui:field="memoryEditor" addStyleNames="{style.memoryEditor}" />
-        <g:SimplePanel ui:field="warningPanel" addStyleNames="{style.warningPanel}"/>
+        <g:FlowPanel ui:field="warningPanel" addStyleNames="{style.warningPanel}"/>
         <g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}"/>
 	</g:FlowPanel>
 

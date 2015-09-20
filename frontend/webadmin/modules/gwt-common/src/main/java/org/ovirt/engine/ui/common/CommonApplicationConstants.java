@@ -1927,6 +1927,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Saving memory may cause data loss when excluding disks!")
     String snapshotCreationWithMemoryAndPartialDisksWarning();
 
+    @DefaultStringValue("The VM will be paused while saving the memory")
+    String snapshotCreationWithMemoryNotLiveWarning();
+
     @DefaultStringValue("Previewing memory may cause data loss when excluding disks!")
     String snapshotPreviewWithMemoryAndPartialDisksWarning();
 
