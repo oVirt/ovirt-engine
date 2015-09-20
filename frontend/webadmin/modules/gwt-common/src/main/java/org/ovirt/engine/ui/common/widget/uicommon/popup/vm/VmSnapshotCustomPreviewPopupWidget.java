@@ -307,8 +307,8 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
             disksOfActiveSnapshot = Collections.emptyList();
         }
 
-        boolean isIncludeAllDisksOfSnapshot = selectedDisks.containsAll(disksOfSelectedSnapshot);
-        boolean isIncludeMemory = previewSnapshotModel.getSnapshotModel().getMemory().getEntity();
+        boolean includeAllDisksOfSnapshot = selectedDisks.containsAll(disksOfSelectedSnapshot);
+        boolean includeMemory = previewSnapshotModel.getSnapshotModel().getMemory().getEntity();
 
         SafeHtml warningImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(
                 resources.logWarningImage()).getHTML());
@@ -321,7 +321,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
         warningPanel.clear();
 
         // Show warning in case of previewing a memory snapshot and excluding disks of the selected snapshot.
-        if (!isIncludeAllDisksOfSnapshot && isIncludeMemory) {
+        if (!includeAllDisksOfSnapshot && includeMemory) {
             warningPanel.add(memoryWarningWidget);
         }
 

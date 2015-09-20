@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -23,6 +24,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -182,11 +184,11 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
     }
 
     private void updateMemoryWarning(SnapshotModel model) {
-        ArrayList<DiskImage> diskImages = (ArrayList<DiskImage>) model.getSnapshotDisks().getItems();
-        ArrayList<DiskImage> selectedDiskImages = (ArrayList<DiskImage>) model.getSnapshotDisks().getSelectedItems();
+        Collection<DiskImage> diskImages = model.getSnapshotDisks().getItems();
+        List<DiskImage> selectedDiskImages = model.getSnapshotDisks().getSelectedItems();
 
         boolean partialDisksSelection = selectedDiskImages != null && diskImages.size() != selectedDiskImages.size();
-        boolean isIncludeMemory = model.getMemory().getEntity();
+        boolean includeMemory = model.getMemory().getEntity();
 
         SafeHtml warningImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(
                 resources.logWarningImage()).getHTML());
@@ -194,7 +196,7 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
                 warningImage, constants.snapshotCreationWithMemoryAndPartialDisksWarning()));
 
         // Show warning in case of saving memory to snapshot and excluding some disks.
-        warningPanel.setWidget(isIncludeMemory && partialDisksSelection ? warningWidget : null);
+        warningPanel.setWidget(includeMemory && partialDisksSelection ? warningWidget : null);
     }
 
     @Override
