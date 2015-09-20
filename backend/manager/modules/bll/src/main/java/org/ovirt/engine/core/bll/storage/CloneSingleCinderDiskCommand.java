@@ -79,6 +79,12 @@ public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBa
                 ImageStorageDomainMap image_storage_domain_map = new ImageStorageDomainMap(cinderDisk.getImageId(),
                         cinderDisk.getStorageIds().get(0), cinderDisk.getQuotaId(), cinderDisk.getDiskProfileId());
                 getDbFacade().getImageStorageDomainMapDao().save(image_storage_domain_map);
+
+                getCompensationContext().snapshotNewEntity(image_storage_domain_map);
+                getCompensationContext().snapshotNewEntity(diskDynamic);
+                getCompensationContext().snapshotNewEntity(cinderDisk.getImage());
+                getCompensationContext().snapshotNewEntity(cinderDisk);
+                getCompensationContext().stateChanged();
                 return null;
             }
         });
