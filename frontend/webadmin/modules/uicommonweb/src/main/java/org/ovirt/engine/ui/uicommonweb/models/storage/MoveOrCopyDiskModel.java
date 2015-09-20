@@ -19,12 +19,8 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -36,8 +32,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SelectedQuotaValidation;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implements ICommandTarget {
@@ -81,6 +75,8 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
     public abstract void init(ArrayList<DiskImage> diskImages);
 
+    protected abstract void onInitDisks();
+
     protected abstract void initStorageDomains();
 
     protected abstract VdcActionType getActionType();
@@ -101,39 +97,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         setActiveStorageDomains(new ArrayList<StorageDomain>());
     }
 
-    protected void onInitDisks() {
-        final ArrayList<DiskModel> disks = new ArrayList<DiskModel>();
-
-        List<VdcQueryType> queries = new ArrayList<VdcQueryType>();
-        List<VdcQueryParametersBase> params = new ArrayList<VdcQueryParametersBase>();
-
-        for (DiskImage disk : getDiskImages()) {
-            disks.add(Linq.diskToModel(disk));
-            queries.add(VdcQueryType.GetVmsByDiskGuid);
-            params.add(new IdQueryParameters(disk.getId()));
-        }
-
-        if (getActionType() == VdcActionType.MoveDisks) {
-            Frontend.getInstance().runMultipleQueries(queries, params, new IFrontendMultipleQueryAsyncCallback() {
-                @Override
-                public void executed(FrontendMultipleQueryAsyncResult result) {
-                    for (int i = 0; i < result.getReturnValues().size(); i++) {
-                        Map<Boolean, List<VM>> resultValue = result.getReturnValues().get(i).getReturnValue();
-                        disks.get(i).setPluggedToRunningVm(!isAllVmsDown(resultValue));
-                    }
-
-                    setDisks(disks);
-                    initStorageDomains();
-                }
-            });
-        }
-        else {
-            setDisks(disks);
-            initStorageDomains();
-        }
-    }
-
-    private boolean isAllVmsDown(Map<Boolean, List<VM>> vmsMap) {
+    protected boolean isAllVmsDown(Map<Boolean, List<VM>> vmsMap) {
         if (vmsMap.get(Boolean.TRUE) != null) {
             for (VM vm : vmsMap.get(Boolean.TRUE)) {
                 if (vm.getStatus() != VMStatus.Down) {
