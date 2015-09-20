@@ -96,7 +96,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
             processedLunsList.add(lun);
         }
         // connect all vds in pool (except spm) to lun and getDeviceList
-        Pair<Boolean, Map<String, List<Guid>>> result = ConnectVdsToLun(processedLunsList);
+        Pair<Boolean, Map<String, List<Guid>>> result = connectVdsToLun(processedLunsList);
         if (result.getFirst()) {
             getReturnValue().setActionReturnValue(processedLunsList);
             setCommandShouldBeLogged(false);
@@ -122,7 +122,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
      * @return the map where the key is true/false value which means if connection successes/not successes and value is
      *         map of luns Ids -> connected hosts
      */
-    private Pair<Boolean, Map<String, List<Guid>>> ConnectVdsToLun(List<LUNs> luns) {
+    private Pair<Boolean, Map<String, List<Guid>>> connectVdsToLun(List<LUNs> luns) {
         Map<String, List<Guid>> resultMap = new HashMap<>();
         for (VDS vds : getAllRunningVdssInPool()) {
             // try to connect vds to luns and getDeviceList in order to refresh them
