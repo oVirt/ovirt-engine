@@ -1627,6 +1627,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot change Data Center association when editing a Cluster.")
     String VDS_GROUP_CANNOT_CHANGE_STORAGE_POOL();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Another Setup Networks process in progress on the host. Please try later after refreshing the host network capabilities.")
+    String ACTION_TYPE_FAILED_SETUP_NETWORKS_IN_PROGRESS();
+
     @DefaultStringValue("Cannot ${action} ${type}. The name of the logical network '${NetworkName}' is already used by an existing logical network in the same data-center.\n-Please choose a different name.")
     String ACTION_TYPE_FAILED_NETWORK_NAME_IN_USE();
 
