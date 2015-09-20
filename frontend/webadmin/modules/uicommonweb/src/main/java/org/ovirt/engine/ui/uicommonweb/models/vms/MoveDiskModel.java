@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
@@ -9,16 +10,21 @@ import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.MoveOrCopyDiskModel;
@@ -26,8 +32,11 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class MoveDiskModel extends MoveOrCopyDiskModel {
     protected List<String> problematicDisksForWarning = new ArrayList<String>();
@@ -53,6 +62,45 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
                 moveDiskModel.onInitDisks();
             }
         }));
+    }
+
+    @Override
+    protected void onInitDisks() {
+        final ArrayList<DiskModel> disks = new ArrayList<DiskModel>();
+        List<VdcQueryType> queries = new ArrayList<VdcQueryType>();
+        List<VdcQueryParametersBase> params = new ArrayList<VdcQueryParametersBase>();
+
+        for (DiskImage disk : getDiskImages()) {
+            disks.add(Linq.diskToModel(disk));
+            queries.add(VdcQueryType.GetVmsByDiskGuid);
+            params.add(new IdQueryParameters(disk.getId()));
+        }
+
+        Frontend.getInstance().runMultipleQueries(queries, params, new IFrontendMultipleQueryAsyncCallback() {
+            @Override
+            public void executed(FrontendMultipleQueryAsyncResult result) {
+                for (int i = 0; i < result.getReturnValues().size(); i++) {
+                    Map<Boolean, List<VM>> resultValue = result.getReturnValues().get(i).getReturnValue();
+                    disks.get(i).setPluggedToRunningVm(!isAllVmsDown(resultValue));
+                }
+
+                setDisks(disks);
+                updateMoveWarning(disks);
+                initStorageDomains();
+            }
+        });
+    }
+
+    private void updateMoveWarning(ArrayList<DiskModel> disks) {
+        List<String> liveMigrateDisks = new ArrayList<>();
+        for (DiskModel diskModel : disks) {
+            if (diskModel.isPluggedToRunningVm()) {
+                liveMigrateDisks.add(diskModel.getAlias().getEntity());
+            }
+        }
+        if (!liveMigrateDisks.isEmpty()) {
+            setMessage(messages.moveDisksWhileVmRunning(StringUtils.join(liveMigrateDisks, ", "))); //$NON-NLS-1$
+        }
     }
 
     @Override

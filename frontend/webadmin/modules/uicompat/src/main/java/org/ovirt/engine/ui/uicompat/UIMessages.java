@@ -358,6 +358,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("The following disks will become preallocated, and may consume considerably more space on the target: {0}")
     String moveDisksPreallocatedWarning(String disks);
 
+    @DefaultMessage("Moving the following disk(s) while the VM is running: {0}")
+    String moveDisksWhileVmRunning(String disks);
+
     @DefaultMessage("Error connecting to {0} using {1} protocol")
     String errorConnectingToConsole(String name, String s);
 
