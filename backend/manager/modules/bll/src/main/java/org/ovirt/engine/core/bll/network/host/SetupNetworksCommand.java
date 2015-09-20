@@ -11,6 +11,7 @@ import java.util.concurrent.TimeoutException;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.VdsHandler;
@@ -18,6 +19,8 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -30,6 +33,8 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
+import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UserConfiguredNetworkData;
@@ -82,6 +87,18 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
     protected void setActionMessageParameters() {
         addCanDoActionMessage(EngineMessage.VAR__ACTION__SETUP);
         addCanDoActionMessage(EngineMessage.VAR__TYPE__NETWORKS);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getVdsId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.HOST_NETWORK,
+                        EngineMessage.ACTION_TYPE_FAILED_SETUP_NETWORKS_IN_PROGRESS));
     }
 
     @Override
