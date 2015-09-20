@@ -51,10 +51,10 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
     // LUNs list returned by query
     private List<LUNs> lunsExpected;
 
-    @Test
     /**
      * Test query execution when LUNs filtering is enabled
      */
+    @Test
     public void testExecuteQueryWithFilteringLUNsEnabled() {
         mcr.mockConfigValue(ConfigValues.FilteringLUNsEnabled, Version.v3_1, true);
 
@@ -64,10 +64,10 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
         internalExecuteQuery();
     }
 
-    @Test
     /**
      * Test query execution when LUNs filtering is disabled
      */
+    @Test
     public void testExecuteQueryWithFilteringLUNsDisabled() {
         mcr.mockConfigValue(ConfigValues.FilteringLUNsEnabled, Version.v3_1, false);
 
