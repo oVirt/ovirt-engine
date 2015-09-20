@@ -111,8 +111,8 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
     }
 
     protected void expectGetLunsMap() {
-        for (int i = 0; i < GUIDS.length; i++) {
-            expectGetLunsMap(GUIDS[i].toString(), GUIDS[i].toString());
+        for (Guid GUID : GUIDS) {
+            expectGetLunsMap(GUID.toString(), GUID.toString());
         }
     }
 
@@ -133,9 +133,9 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
 
     protected List<LUNs> setUpLuns(boolean withDummyLun) {
         List<LUNs> luns = new ArrayList<LUNs>();
-        for (int i = 0; i < GUIDS.length; i++) {
+        for (Guid GUID : GUIDS) {
             LUNs lun = new LUNs();
-            lun.setLUN_id(GUIDS[i].toString());
+            lun.setLUN_id(GUID.toString());
             luns.add(lun);
         }
         if (withDummyLun) {
@@ -148,10 +148,10 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
 
     protected List<LUNs> setUpLunsFromDeviceList() {
         List<LUNs> luns = setUpLuns(false);
-        for (int i = 0; i < luns.size(); i++) {
+        for (LUNs lun : luns) {
             HashMap<String, Boolean> pathsDictionary = new HashMap<String, Boolean>();
             pathsDictionary.put(PHYSICAL_DEVICE_FIELD, true);
-            luns.get(i).setPathsDictionary(pathsDictionary);
+            lun.setPathsDictionary(pathsDictionary);
         }
         return luns;
     }
