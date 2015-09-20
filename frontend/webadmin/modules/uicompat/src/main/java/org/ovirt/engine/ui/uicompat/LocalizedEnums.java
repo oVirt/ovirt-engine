@@ -974,6 +974,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___SYSTEM_CHANGE_STORAGE_POOL_STATUS_NO_HOST_FOR_SPM();
 
+    String AuditLogType___VDS_LOW_MEM();
+
     String AuditLogType___VDS_HIGH_MEM_USE();
 
     String AuditLogType___HOST_INTERFACE_HIGH_NETWORK_USE();

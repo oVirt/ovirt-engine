@@ -42,6 +42,7 @@ public final class VdcEventNotificationUtils {
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_TIME_DRIFT_ALERT);
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_SET_NONOPERATIONAL);
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_SET_NONOPERATIONAL_IFACE_DOWN);
+        AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_LOW_MEM);
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_HIGH_MEM_USE);
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.HOST_INTERFACE_HIGH_NETWORK_USE);
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_HIGH_CPU_USE);
