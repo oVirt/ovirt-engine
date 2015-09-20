@@ -1174,7 +1174,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
             VdcActionType.CloneCinderDisks,
             buildCinderChildCommandParameters(cinderDisks, getVmSnapshotId()),
-            cloneContextAndDetachFromParent(),
+            cloneContext().withoutExecutionContext().withoutLock(),
             CINDERStorageHelper.getStorageEntities(cinderDisks));
         try {
             Map<Guid, Guid> diskImageMap = future.get().getActionReturnValue();

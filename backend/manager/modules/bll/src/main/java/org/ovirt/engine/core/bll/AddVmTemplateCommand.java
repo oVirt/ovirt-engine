@@ -303,15 +303,18 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 return null;
             }
         });
+
+        if (getVm() != null && !addVmTemplateCinderDisks(srcDeviceIdToTargetDeviceIdMapping)) {
+            // Error cloning Cinder disks for template
+            return;
+        }
+
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
             @Override
             public Void runInTransaction() {
                 addPermission();
                 addVmTemplateImages(srcDeviceIdToTargetDeviceIdMapping);
-                if (getVm() != null && !addVmTemplateCinderDisks(srcDeviceIdToTargetDeviceIdMapping)) {
-                    return null;
-                }
                 addVmInterfaces(srcDeviceIdToTargetDeviceIdMapping);
                 Set<GraphicsType> graphicsToSkip = getParameters().getGraphicsDevices().keySet();
                 if (isVmInDb) {
@@ -789,7 +792,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                 VdcActionType.CloneCinderDisks,
                 buildCinderChildCommandParameters(cinderDisks, getVmSnapshotId()),
-                cloneContextAndDetachFromParent(),
+                cloneContext().withoutExecutionContext().withoutLock(),
                 CINDERStorageHelper.getStorageEntities(cinderDisks));
         try {
             VdcReturnValueBase vdcReturnValueBase = future.get();
