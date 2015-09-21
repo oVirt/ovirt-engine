@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.ui.common.utils.ElementUtils;
+import org.ovirt.engine.ui.common.widget.tooltip.TooltipConfig.Width;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkCommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Grid;
@@ -149,6 +151,12 @@ public abstract class NetworkPanel extends NetworkItemPanel<LogicalNetworkModel>
             titlePanel.add(vlanLabel);
         }
         return titlePanel;
+    }
+
+    @Override
+    protected void initTooltip() {
+        super.initTooltip();
+        setToolTipMaxWidth(Width.W520);
     }
 
     protected abstract ImageResource getStatusImage();

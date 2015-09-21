@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
+import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurations;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.DcNetworkParams;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
@@ -27,7 +27,8 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
     private NetworkInterfaceModel vlanNicModel;
     private Network network;
 
-    public LogicalNetworkModel(Network network, HostSetupNetworksModel setupModel) {
+    public LogicalNetworkModel(Network network,
+            HostSetupNetworksModel setupModel) {
         super(setupModel);
         setNetwork(network);
         management = network.getCluster() != null && network.getCluster().isManagement();
@@ -142,9 +143,8 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             syncNetworkValues();
         }
     }
-
     private void storeAttachmentParamsBeforeDetach() {
-        NetworkAttachment networkAttachment = getSetupModel().getNetworkAttachmentForNetwork(getNetwork().getId());
+        NetworkAttachment networkAttachment = getNetworkAttachment();
         if (networkAttachment == null) {
             return;
         }
@@ -254,26 +254,25 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
     }
 
     public boolean isInSync() {
-        NetworkImplementationDetails details = getNetworkImplementationDetails();
-        return details == null || details.isInSync();
+        ReportedConfigurations reportedConfigurations = getReportedConfigurations();
+        return reportedConfigurations == null || reportedConfigurations.isNetworkInSync();
     }
 
     public boolean isManaged() {
-        NetworkImplementationDetails details = getNetworkImplementationDetails();
-        return details == null || details.isManaged();
+        return !(isAttached() && getNetworkAttachment() == null);
     }
 
-    public NetworkImplementationDetails getNetworkImplementationDetails() {
-        if (!isAttached()) {
-            return null;
-        }
-
-        VdsNetworkInterface nic = hasVlan() ? getVlanNicModel().getIface() : getAttachedToNic().getIface();
-        return nic.getNetworkImplementationDetails();
+    public ReportedConfigurations getReportedConfigurations() {
+        NetworkAttachment networkAttachment = getNetworkAttachment();
+        return networkAttachment == null ? null : networkAttachment.getReportedConfigurations();
     }
 
     @Override
     public String getType() {
         return HostSetupNetworksModel.NETWORK;
+    }
+
+    public NetworkAttachment getNetworkAttachment() {
+        return getSetupModel().getNetworkAttachmentForNetwork(getNetwork().getId());
     }
 }

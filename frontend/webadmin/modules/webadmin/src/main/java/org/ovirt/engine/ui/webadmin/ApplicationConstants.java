@@ -1369,6 +1369,51 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Out-of-sync")
     String hostOutOfSync();
 
+    @DefaultStringValue("<b>Host</b> Network's configurations differ from <b>DC</b>")
+    String hostOutOfSyncPreviewSentence();
+
+    @DefaultStringValue("Property")
+    String PropertyOutOfSyncPopUp();
+
+    @DefaultStringValue("Host")
+    String hostOutOfSyncPopUp();
+
+    @DefaultStringValue("DC")
+    String dcOutOfSyncPopUp();
+
+    @DefaultStringValue("Mtu")
+    String mtuOutOfSyncPopUp();
+
+    @DefaultStringValue("Bridged")
+    String bridgedOutOfSyncPopUp();
+
+    @DefaultStringValue("Vlan")
+    String vlanOutOfSyncPopUp();
+
+    @DefaultStringValue("Boot protocol")
+    String bootProtocolOutOfSyncPopUp();
+
+    @DefaultStringValue("IP address")
+    String ipAddressOutOfSyncPopUp();
+
+    @DefaultStringValue("Netmask")
+    String netmaskOutOfSyncPopUp();
+
+    @DefaultStringValue("Gateway")
+    String gatewayOutOfSyncPopUp();
+
+    @DefaultStringValue("QoS Out average link share")
+    String outAverageLinkShareOutOfSyncPopUp();
+
+    @DefaultStringValue("QoS Out average upper limit")
+    String outAverageUpperLimitOutOfSyncPopUp();
+
+    @DefaultStringValue("QoS Out average real time")
+    String outAverageRealTimeOutOfSyncPopUp();
+
+    @DefaultStringValue("Unknown property")
+    String unknownPropertyOutOfSyncPopUp();
+
     // Quota Storage
     @DefaultStringValue("Name")
     String nameQuotaStorage();
@@ -2865,9 +2910,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String noNetworkAssigned();
 
     // Item info
-    @DefaultStringValue("Not synchronized")
-    String networkNotInSync();
-
     @DefaultStringValue("Name")
     String nameItemInfo();
 

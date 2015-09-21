@@ -10,6 +10,7 @@ import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.ui.common.widget.MenuBar;
 import org.ovirt.engine.ui.common.widget.PopupPanel;
+import org.ovirt.engine.ui.common.widget.tooltip.TooltipConfig.Width;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkCommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkItemModel;
@@ -261,5 +262,9 @@ public abstract class NetworkItemPanel<T extends NetworkItemModel<?>> extends Fo
             // data
             return lastDragData;
         }
+    }
+
+    public void setToolTipMaxWidth(Width width){
+        tooltip.setMaxWidth(width);
     }
 }

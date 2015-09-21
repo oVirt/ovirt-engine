@@ -125,6 +125,10 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     private final NewNetworkLabelModel newLabelModel;
 
+    public List<NetworkAttachment> getExistingNetworkAttachments() {
+        return existingNetworkAttachments;
+    }
+
     private List<NetworkAttachment> existingNetworkAttachments;
 
 
@@ -511,9 +515,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             return existingAttachment;
         }
 
-        throw new IllegalArgumentException(
-                "Unable to find network attachment for network id " //$NON-NLS-1$
-                        + networkId);
+        return null;
     }
 
     private boolean shouldBeRemoved(Guid attachmentId) {
@@ -973,6 +975,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             public void onSuccess(Object model, Object returnValue) {
                 allBonds = ((VdcQueryReturnValue) returnValue).getReturnValue();
 
+                initNetworkModels();
+                initDcNetworkParams();
                 initNicModels();
 
                 hostSetupNetworksParametersData.allNics = allNics;
@@ -1064,9 +1068,6 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 allNetworks = (List<Network>) returnValue;
-                initNetworkModels();
-                initDcNetworkParams();
-
                 // chain the nic query
                 queryInterfaces();
             }

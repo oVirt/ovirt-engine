@@ -1,10 +1,15 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.ReportedConfiguration;
+import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurations;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.BondNetworkInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
@@ -21,6 +26,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Widget;
 
 public class ItemInfoPopup extends DecoratedPopupPanel {
 
@@ -49,12 +55,12 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
             SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkNotSyncImage()).getHTML());
     SafeHtml alertImage =
             SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.alertImage()).getHTML());
-    private static int defaultMtu = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultMTU);
+    private static int defaultMtu = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(
+            ConfigurationValues.DefaultMTU);
 
     public ItemInfoPopup() {
         super(true);
         contents.setCellPadding(5);
-
         setWidget(contents);
         getElement().getStyle().setZIndex(1);
     }
@@ -102,7 +108,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
             }
             // Not in sync
             if (!networkModel.isInSync()) {
-                addRow(templates.imageTextSetupNetwork(notInSyncImage, constants.networkNotInSync()));
+                addSyncDiff(networkModel);
             }
         }
 
@@ -146,6 +152,37 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
             addRow(constants.mtuItemInfo(),
                     entity.getMtu() == 0 ? messages.defaultMtu(defaultMtu) : String.valueOf(entity.getMtu()));
         }
+    }
+
+    /***
+     *
+     * @param networkModel must be managed
+     */
+    private void addSyncDiff(LogicalNetworkModel networkModel) {
+        addRow(templates.imageTextSetupNetwork(notInSyncImage, constants.hostOutOfSync()));
+        SafeHtml safeHtml  = SafeHtmlUtils.fromTrustedString(constants.hostOutOfSyncPreviewSentence());
+        addRow(safeHtml);
+        List<ReportedConfiguration> panelParameters = filterSyncProperties(networkModel);
+        Widget networkOutOfSyncPanel = new NetworkOutOfSyncPanel(panelParameters).outOfSyncTableAsWidget();
+        contents.insertRow(contents.getRowCount());
+        contents.setWidget(contents.getRowCount(), 0, networkOutOfSyncPanel);
+    }
+
+    /***
+     * will filter out all sync properties
+     * @param networkModel must be managed
+     */
+    private List<ReportedConfiguration> filterSyncProperties(LogicalNetworkModel networkModel){
+        ReportedConfigurations reportedConfigurations = networkModel.getReportedConfigurations();
+        List<ReportedConfiguration> reportedConfigurationList = reportedConfigurations.getReportedConfigurationList();
+        List<ReportedConfiguration> output = (List<ReportedConfiguration>) Linq.where(reportedConfigurationList,
+                new Linq.IPredicate<ReportedConfiguration>() {
+                    @Override
+                    public boolean match(ReportedConfiguration reportedConfiguration) {
+                        return !reportedConfiguration.isInSync();
+                    }
+                });
+        return output;
     }
 
     private void showNic(NetworkInterfaceModel nic) {
