@@ -165,10 +165,12 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
 
             result = runInternalAction(
                     VdcActionType.RemoveVm,
-                    withRootCommandInfo(new RemoveVmParameters(vm.getId(), false), getActionType()),
+                    new RemoveVmParameters(vm.getId(), false),
                     createRemoveVmStepContext(vm));
             if (!result.getSucceeded()) {
                 return false;
+            } else {
+                getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
             }
         }
 
