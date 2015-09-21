@@ -465,12 +465,16 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
     }
 
     private boolean checkIfModelIsDuplicate(FenceAgentModel model, FenceAgentModel concurrentExistingModel) {
-        if (model.getManagementIp().getEntity().equals(concurrentExistingModel.getManagementIp().getEntity())) {
+        if (model.getManagementIp().getEntity().equals(concurrentExistingModel.getManagementIp().getEntity()) &&
+                model.getPmType().getSelectedItem().equals(concurrentExistingModel.getPmType().getSelectedItem())) {
             //Force a change event by setting to true, which will change to false below.
             model.getManagementIp().setIsValid(true);
+            model.getPmType().setIsValid(true);
             //Duplicate, need to set the invalidity reason before switching to false to update the widgets properly.
             model.getManagementIp().getInvalidityReasons().add(constants.duplicateFenceAgentManagementIp());
+            model.getPmType().getInvalidityReasons().add(constants.duplicateFenceAgentManagementIp());
             model.getManagementIp().setIsValid(false);
+            model.getPmType().setIsValid(false);
         }
         return model.getManagementIp().getIsValid();
     }
