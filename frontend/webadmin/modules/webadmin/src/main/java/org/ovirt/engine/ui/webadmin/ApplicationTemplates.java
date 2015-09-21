@@ -133,8 +133,8 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     SafeHtml middleBold(String start, String middle, String end);
 
     @Template("<span><span style='position: relative; margin-left: 20px; display: inline-block; vertical-align: top; height: 14px; line-height: 14px;'>{0}</span>"
-            + "<span style='position: relative; margin-left: 3px; margin-right: 3px; white-space: nowrap; height: 14px; line-height: 14px;'>{1}</span></span>")
-    SafeHtml imageTextSetupNetworkUsage(SafeHtml image, String text);
+            + "<span style='color:{2} ;position: relative; margin-left: 3px; margin-right: 3px; white-space: nowrap; height: 14px; line-height: 14px;'>{1}</span></span>")
+    SafeHtml imageTextSetupNetworkUsage(SafeHtml image, String text, String color);
 
     @Template("<span><span style='position: relative; display: inline-block; vertical-align: top; height: 14px; line-height: 14px;'>{0}</span>"
             + "<span style='position: relative; margin-left: 3px; margin-right: 3px; white-space: nowrap; height: 14px; line-height: 14px;'>{1}</span></span>")
@@ -207,4 +207,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
 
     @Template("<div id=\"{0}\" style='text-align: center;'>{1}</div>")
     SafeHtml hostAdditionalStatusIcon(String id, SafeHtml statusImage);
+
+    @Template("{0} {1} {2}")
+    SafeHtml hostOutOfSyncPreviewSentence(SafeHtml host, SafeHtml outOfsyncSentence, SafeHtml dc);
 }

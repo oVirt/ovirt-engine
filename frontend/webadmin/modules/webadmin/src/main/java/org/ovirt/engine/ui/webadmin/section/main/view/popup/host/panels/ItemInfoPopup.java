@@ -38,6 +38,8 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     private final static ApplicationConstants constants = AssetProvider.getConstants();
     private final static ApplicationMessages messages = AssetProvider.getMessages();
     private final static String BACKGROUND_COLOR = "#333333";//$NON-NLS-1$
+    private final static String WHITE_TEXT_COLOR = "white";//$NON-NLS-1$
+    private final static String TEXT_COLOR = "#c4c4c4";//$NON-NLS-1$
 
     SafeHtml mgmtNetworkImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.mgmtNetwork())
             .getHTML());
@@ -135,25 +137,27 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
         // Usages
         if (networkModel.isManagement() || isDisplay || entity.isVmNetwork() || isMigration || isGlusterNw) {
-            addRow(SafeHtmlUtils.fromString(constants.usageItemInfo() + ":")); //$NON-NLS-1$
+
+            addRow(templates.strongTextWithColor(constants.usageItemInfo() + ":", WHITE_TEXT_COLOR));//$NON-NLS-1$
+
             if (networkModel.isManagement()) {
-                addRow(templates.imageTextSetupNetworkUsage(mgmtNetworkImage, constants.managementItemInfo()));
+                addRow(templates.imageTextSetupNetworkUsage(mgmtNetworkImage, constants.managementItemInfo(), TEXT_COLOR));
             }
 
             if (isDisplay) {
-                addRow(templates.imageTextSetupNetworkUsage(monitorImage, constants.displayItemInfo()));
+                addRow(templates.imageTextSetupNetworkUsage(monitorImage, constants.displayItemInfo(), TEXT_COLOR));
             }
 
             if (entity.isVmNetwork()) {
-                addRow(templates.imageTextSetupNetworkUsage(vmImage, constants.vmItemInfo()));
+                addRow(templates.imageTextSetupNetworkUsage(vmImage, constants.vmItemInfo(), TEXT_COLOR));
             }
 
             if (isMigration) {
-                addRow(templates.imageTextSetupNetworkUsage(migrationImage, constants.migrationItemInfo()));
+                addRow(templates.imageTextSetupNetworkUsage(migrationImage, constants.migrationItemInfo(), TEXT_COLOR));
             }
 
             if (isGlusterNw) {
-                addRow(templates.imageTextSetupNetworkUsage(glusterNwImage, constants.glusterNwItemInfo()));
+                addRow(templates.imageTextSetupNetworkUsage(glusterNwImage, constants.glusterNwItemInfo(), TEXT_COLOR));
             }
 
             insertHorizontalLine();
@@ -161,8 +165,9 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
         // Mtu
         if (!entity.isExternal()) {
-            addRow(constants.mtuItemInfo(),
-                    entity.getMtu() == 0 ? messages.defaultMtu(defaultMtu) : String.valueOf(entity.getMtu()));
+            final String mtuValue = entity.getMtu() == 0 ? messages.defaultMtu(defaultMtu) : String.valueOf(entity.getMtu());
+            final String mtu = templates.strongTextWithColor(constants.mtuItemInfo(), WHITE_TEXT_COLOR).asString() + ": " +templates.coloredText(mtuValue, TEXT_COLOR).asString();//$NON-NLS-1$
+            addRow(SafeHtmlUtils.fromTrustedString(mtu));
         }
     }
 
@@ -171,13 +176,20 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
      * @param networkModel must be managed
      */
     private void addSyncDiff(LogicalNetworkModel networkModel) {
-        addRow(templates.imageTextSetupNetwork(notInSyncImage, constants.hostOutOfSync()));
-        SafeHtml safeHtml  = SafeHtmlUtils.fromTrustedString(constants.hostOutOfSyncPreviewSentence());
+        addRow(templates.imageTextSetupNetwork(notInSyncImage, templates.coloredText(constants.hostOutOfSync(), TEXT_COLOR)));
+        SafeHtml safeHtml  = SafeHtmlUtils.fromTrustedString(generatePreviewSentence());
         addRow(safeHtml);
         List<ReportedConfiguration> panelParameters = filterSyncProperties(networkModel);
         Widget networkOutOfSyncPanel = new NetworkOutOfSyncPanel(panelParameters).outOfSyncTableAsWidget();
         contents.insertRow(contents.getRowCount());
         contents.setWidget(contents.getRowCount(), 0, networkOutOfSyncPanel);
+    }
+
+    private String generatePreviewSentence() {
+        SafeHtml host = templates.strongTextWithColor(constants.hostForOutOfSyncSentence(), WHITE_TEXT_COLOR);
+        SafeHtml dc = templates.strongTextWithColor(constants.dcForOutOfSyncSentence(), WHITE_TEXT_COLOR);
+        SafeHtml outOfSyncPreviewSentence = templates.coloredText(constants.hostOutOfSyncPreviewSentence(), TEXT_COLOR);
+        return templates.hostOutOfSyncPreviewSentence(host, outOfSyncPreviewSentence, dc).asString();
     }
 
     /***
