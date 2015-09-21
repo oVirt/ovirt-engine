@@ -98,7 +98,7 @@ public abstract class NetworkPanel extends NetworkItemPanel<LogicalNetworkModel>
             }
 
             if (!item.isInSync()) {
-                notSyncImage.setStylePrimaryName(style.networkImageBorder());
+                notSyncImage.setStylePrimaryName(style.syncImageBorder());
             }
         }
 

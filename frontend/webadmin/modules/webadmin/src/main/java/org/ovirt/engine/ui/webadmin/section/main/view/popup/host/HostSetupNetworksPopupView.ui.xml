@@ -173,6 +173,12 @@
             height: 18px !important;
         }
 
+        .syncImageBorder {
+            border: 1px solid #FFFFFF;
+            width: 18px !important;
+            height: 18px !important;
+        }
+
         .networkStatusPanel {
             margin-right: 5px;
         }

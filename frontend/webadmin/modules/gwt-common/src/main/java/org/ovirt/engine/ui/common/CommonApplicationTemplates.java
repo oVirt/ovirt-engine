@@ -110,4 +110,7 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
 
     @Template("<div class=\"{0}\" id=\"{1}\">{2}</div>")
     SafeHtml divWithStyle(String style, String id, SafeHtml text);
+
+    @Template("<p><hr size=\"2\" width=\"100%\"></p>")
+    SafeHtml horizontalLine();
 }

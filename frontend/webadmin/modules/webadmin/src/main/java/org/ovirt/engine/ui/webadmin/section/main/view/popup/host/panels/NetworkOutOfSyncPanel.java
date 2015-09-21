@@ -56,7 +56,11 @@ public class NetworkOutOfSyncPanel extends FlowPanel {
         return flowPanel.asWidget();
     }
 
-    private void addOutOfSyncRow(List<Label> values, TextAlign textAlign) {
+    private void addOutOfSyncRow(List<Label> values, TextAlign textAlign){
+        addOutOfSyncRow(values, textAlign, false);
+    }
+
+    private void addOutOfSyncRow(List<Label> values, TextAlign textAlign, boolean bottomBorderSolid) {
         Row row = new Row();
         Column mainColumn = new Column(MAIN_COLUMN_SIZE);
         boolean firstTime = true;
@@ -72,10 +76,21 @@ public class NetworkOutOfSyncPanel extends FlowPanel {
             }
             subColumn.add(label);
             mainColumn.add(subColumn);
-
         }
         row.add(mainColumn);
-        flowPanel.add(row);
+
+        if (bottomBorderSolid){
+            Row container = new Row();
+            container.setPaddingBottom(4);
+            container.add(row);
+            container.getElement().getStyle().setProperty("margin", "0 0 4px");//$NON-NLS-1$ //$NON-NLS-2$
+            container.getElement().getStyle().setProperty("borderBottomStyle", "solid");//$NON-NLS-1$ //$NON-NLS-2$
+            container.getElement().getStyle().setProperty("borderWidth", "1px");//$NON-NLS-1$ //$NON-NLS-2$
+            flowPanel.add(container);
+        }
+        else {
+            flowPanel.add(row);
+        }
     }
 
     private Label createLabel(String text) {
@@ -143,7 +158,7 @@ public class NetworkOutOfSyncPanel extends FlowPanel {
                 add(createLabel(constants.dcOutOfSyncPopUp(), true));
             }
         };
-        addOutOfSyncRow(values, TextAlign.CENTER);
+        addOutOfSyncRow(values, TextAlign.CENTER, true);
     }
 
 }
