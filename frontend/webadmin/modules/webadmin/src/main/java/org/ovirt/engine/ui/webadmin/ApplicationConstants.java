@@ -1369,7 +1369,13 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Out-of-sync")
     String hostOutOfSync();
 
-    @DefaultStringValue("<b>Host</b> Network's configurations differ from <b>DC</b>")
+    @DefaultStringValue("Host")
+    String hostForOutOfSyncSentence();
+
+    @DefaultStringValue("DC")
+    String dcForOutOfSyncSentence();
+
+    @DefaultStringValue("Network's configurations differ from")
     String hostOutOfSyncPreviewSentence();
 
     @DefaultStringValue("Property")
