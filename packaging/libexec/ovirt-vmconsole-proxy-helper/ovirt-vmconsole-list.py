@@ -158,10 +158,10 @@ def main():
 
         with contextlib.closing(urllib2.urlopen(req)) as res:
             if res.getcode() != _HTTP_STATUS_CODE_SUCCESS:
-                logger.error('Engine call failed: code=%d',
-                             res.getcode())
-            else:
-                print(handle_response(res.read()))
+                raise RuntimeError(
+                    'Engine call failed: code=%d' % res.getcode()
+                )
+            print(handle_response(res.read()))
 
     except Exception as ex:
         logger.error('Error: %s', ex)
