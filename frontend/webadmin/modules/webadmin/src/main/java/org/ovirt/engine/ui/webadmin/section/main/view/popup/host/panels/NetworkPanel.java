@@ -118,6 +118,7 @@ public abstract class NetworkPanel extends NetworkItemPanel<LogicalNetworkModel>
         rowPanel.setWidget(0, 0, dragImage);
 
         Panel statusPanel = new HorizontalPanel();
+        statusPanel.setStylePrimaryName(style.networkStatusPanel());
         rowPanel.setWidget(0, 1, statusPanel);
         if (alertImage != null) {
             statusPanel.add(alertImage);
@@ -128,14 +129,17 @@ public abstract class NetworkPanel extends NetworkItemPanel<LogicalNetworkModel>
             statusPanel.add(new Image(statusImage));
         }
 
+        if (notSyncImage != null) {
+            statusPanel.add(notSyncImage);
+        }
+
         rowPanel.setWidget(0, 2, createTitlePanel());
         rowPanel.setWidget(0, 3, mgmtNetworkImage);
         rowPanel.setWidget(0, 4, monitorImage);
         rowPanel.setWidget(0, 5, vmImage);
         rowPanel.setWidget(0, 6, migrationImage);
         rowPanel.setWidget(0, 7, glusterNwImage);
-        rowPanel.setWidget(0, 8, notSyncImage);
-        rowPanel.setWidget(0, 9, actionButton);
+        rowPanel.setWidget(0, 8, actionButton);
 
         return rowPanel;
     }

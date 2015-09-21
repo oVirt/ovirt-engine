@@ -173,6 +173,10 @@
             height: 18px !important;
         }
 
+        .networkStatusPanel {
+            margin-right: 5px;
+        }
+
         .emptyPanel {
             border: 1px dashed gray;
             color: gray;
