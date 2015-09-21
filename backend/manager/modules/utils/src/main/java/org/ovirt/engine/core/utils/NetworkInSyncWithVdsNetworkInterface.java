@@ -4,10 +4,11 @@ import static org.ovirt.engine.core.common.businessentities.network.ReportedConf
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_REAL_TIME;
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT;
 
-import java.util.Objects;
-
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
+import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
+import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurations;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -19,58 +20,41 @@ public class NetworkInSyncWithVdsNetworkInterface {
     private final Network network;
     private final HostNetworkQos ifaceQos;
     private final HostNetworkQos hostNetworkQos;
-
-    public NetworkInSyncWithVdsNetworkInterface(VdsNetworkInterface iface, Network network, HostNetworkQos hostNetworkQos) {
-        this.iface = iface;
-        this.network = network;
-        this.hostNetworkQos = hostNetworkQos;
-
-        ifaceQos = iface.getQos();
-    }
+    private final IpConfiguration networkDataCenterIpConfigurationDefinition;
 
     public NetworkInSyncWithVdsNetworkInterface(VdsNetworkInterface iface,
             Network network,
-            HostNetworkQos ifaceQos,
-            HostNetworkQos hostNetworkQos) {
+            HostNetworkQos hostNetworkQos,
+            IpConfiguration networkDataCenterIpConfigurationDefinition) {
         this.iface = iface;
         this.network = network;
-        this.ifaceQos = ifaceQos;
+        this.ifaceQos = iface.getQos();
         this.hostNetworkQos = hostNetworkQos;
+        this.networkDataCenterIpConfigurationDefinition = networkDataCenterIpConfigurationDefinition;
     }
 
     public boolean isNetworkInSync() {
-        return isNetworkMtuInSync()
-                && isNetworkVlanIdInSync()
-                && isNetworkBridgedFlagInSync()
-                && qosParametersEqual();
+        return reportConfigurationsOnHost().isNetworkInSync();
     }
 
     public ReportedConfigurations reportConfigurationsOnHost () {
         ReportedConfigurations result = new ReportedConfigurations();
 
-        result.setNetworkInSync(isNetworkInSync());
-
         Integer networkMtu = network.getMtu() == 0 ? NetworkUtils.getDefaultMtu() : network.getMtu();
         result.add(ReportedConfigurationType.MTU, iface.getMtu(), networkMtu, isNetworkMtuInSync());
-        result.add(ReportedConfigurationType.BRIDGED, iface.isBridged(), network.isVmNetwork(), isNetworkBridgedFlagInSync());
-        result.add(ReportedConfigurationType.VLAN, iface.getVlanId(), network.getVlanId(), isNetworkVlanIdInSync());
+        result.add(ReportedConfigurationType.BRIDGED, iface.isBridged(), network.isVmNetwork());
+        result.add(ReportedConfigurationType.VLAN, iface.getVlanId(), network.getVlanId());
+
+        addReportedIpConfiguration(result);
 
         boolean reportHostQos = ifaceQos != null || hostNetworkQos != null;
         if (reportHostQos) {
-            result.add(OUT_AVERAGE_LINK_SHARE, getOutAverageLinkshare(ifaceQos), getOutAverageLinkshare(hostNetworkQos), isOutAverageLinkShareInSync());
-            result.add(OUT_AVERAGE_UPPER_LIMIT, getOutAverageUpperlimit(ifaceQos), getOutAverageUpperlimit(hostNetworkQos), isOutAverageUpperLimitInSync());
-            result.add(OUT_AVERAGE_REAL_TIME, getOutAverageRealtime(ifaceQos), getOutAverageRealtime(hostNetworkQos), isOutAverageRealTimeInSync());
+            result.add(OUT_AVERAGE_LINK_SHARE, getOutAverageLinkshare(ifaceQos), getOutAverageLinkshare(hostNetworkQos));
+            result.add(OUT_AVERAGE_UPPER_LIMIT, getOutAverageUpperlimit(ifaceQos), getOutAverageUpperlimit(hostNetworkQos));
+            result.add(OUT_AVERAGE_REAL_TIME, getOutAverageRealtime(ifaceQos), getOutAverageRealtime(hostNetworkQos));
         }
 
         return result;
-    }
-
-    private boolean isNetworkBridgedFlagInSync() {
-        return iface.isBridged() == network.isVmNetwork();
-    }
-
-    private boolean isNetworkVlanIdInSync() {
-        return Objects.equals(iface.getVlanId(), network.getVlanId());
     }
 
     private boolean isNetworkMtuInSync() {
@@ -127,4 +111,30 @@ public class NetworkInSyncWithVdsNetworkInterface {
         return qos == null ? null : qos.getOutAverageLinkshare();
     }
 
+    private boolean isPrimaryAddressExist() {
+        return networkDataCenterIpConfigurationDefinition != null
+                && networkDataCenterIpConfigurationDefinition.hasPrimaryAddressSet();
+    }
+
+    private IPv4Address getPrimaryAddress() {
+        return networkDataCenterIpConfigurationDefinition.getPrimaryAddress();
+    }
+
+    private void addReportedIpConfiguration(ReportedConfigurations result) {
+        if (!isPrimaryAddressExist()) {
+            return;
+        }
+        NetworkBootProtocol definedBootProtocol =
+                isPrimaryAddressExist() ? getPrimaryAddress().getBootProtocol() : null;
+        result.add(ReportedConfigurationType.BOOT_PROTOCOL, iface.getBootProtocol(), definedBootProtocol);
+
+        if (definedBootProtocol == NetworkBootProtocol.STATIC_IP & iface.getBootProtocol() == definedBootProtocol) {
+            result.add(ReportedConfigurationType.NETMASK,
+                    iface.getSubnet(),
+                    isPrimaryAddressExist() ? getPrimaryAddress().getNetmask() : null);
+            result.add(ReportedConfigurationType.IP_ADDRESS,
+                    iface.getAddress(),
+                    isPrimaryAddressExist() ? getPrimaryAddress().getAddress() : null);
+        }
+    }
 }

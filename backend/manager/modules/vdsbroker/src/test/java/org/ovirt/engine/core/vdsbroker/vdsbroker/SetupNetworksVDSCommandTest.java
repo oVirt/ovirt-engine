@@ -204,7 +204,8 @@ public class SetupNetworksVDSCommandTest {
         verifyMethodPassedToHost();
         Map<String, Object> networkStruct = assertNeworkWasSent(network);
         HostNetworkQos result = new HostNetworkQosMapper(networkStruct).deserialize();
-        assertTrue(new NetworkInSyncWithVdsNetworkInterface(iface, network, result, expectedQos).qosParametersEqual());
+        iface.setQos(result);
+        assertTrue(new NetworkInSyncWithVdsNetworkInterface(iface, network, expectedQos, null).qosParametersEqual());
     }
 
     private void qos(Network network, VdsNetworkInterface iface, HostNetworkQos expectedQos) {
