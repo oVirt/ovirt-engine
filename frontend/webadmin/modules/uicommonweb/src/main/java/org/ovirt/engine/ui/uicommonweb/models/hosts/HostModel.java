@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -1025,7 +1026,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
             orderAgents(vds.getFenceAgents());
             List<FenceAgentModel> agents = new ArrayList<>();
             //Keep a list of examined agents to prevent duplicate management IPs from showing up in the UI.
-            Set<String> examinedAgents = new HashSet<>();
+            Set<Pair<String, String>> examinedAgents = new HashSet<>();
             for (FenceAgent agent: vds.getFenceAgents()) {
                 FenceAgentModel model = new FenceAgentModel();
                 model.setHost(this);
@@ -1040,7 +1041,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 model.getPmEncryptOptions().setEntity(agent.getEncryptOptions());
                 model.setPmOptionsMap(VdsStatic.pmOptionsStringToMap(agent.getOptions()));
                 model.setOrder(agent.getOrder());
-                if (!examinedAgents.contains(model.getManagementIp().getEntity())) {
+                if (!examinedAgents.contains(new Pair<String, String>(model.getManagementIp().getEntity(),
+                        model.getPmType().getSelectedItem()))) {
                     boolean added = false;
                     for (FenceAgentModel concurrentModel: agents) {
                         if (model.getOrder().getEntity() != null && model.getOrder().getEntity().equals(concurrentModel.getOrder().getEntity())) {
@@ -1053,7 +1055,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                         agents.add(model);
                     }
                 }
-                examinedAgents.add(model.getManagementIp().getEntity());
+                examinedAgents.add(new Pair<String, String>(model.getManagementIp().getEntity(),
+                        model.getPmType().getSelectedItem()));
             }
             getFenceAgentListModel().setItems(agents);
         }

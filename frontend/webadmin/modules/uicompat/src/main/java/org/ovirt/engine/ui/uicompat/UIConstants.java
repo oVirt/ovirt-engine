@@ -895,7 +895,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Concurrent with:")
     String concurrentFenceAgent();
 
-    @DefaultStringValue("Duplicate fence agent address found.")
+    @DefaultStringValue("Duplicate fence agent found.")
     String duplicateFenceAgentManagementIp();
 
     @DefaultStringValue("Name must contain alphanumeric characters, '-' or '_' (maximum length 15 characters).")
