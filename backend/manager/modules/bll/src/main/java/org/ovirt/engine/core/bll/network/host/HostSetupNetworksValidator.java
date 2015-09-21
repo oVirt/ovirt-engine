@@ -708,7 +708,7 @@ public class HostSetupNetworksValidator {
             existingAttachments);
         if (!invalidIds.isEmpty()) {
             EngineMessage engineMessage = EngineMessage.NETWORK_ATTACHMENTS_NOT_EXISTS;
-            return new ValidationResult(EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS,
+            return new ValidationResult(engineMessage,
                 ReplacementUtils.getListVariableAssignmentString(engineMessage, invalidIds));
         }
 
