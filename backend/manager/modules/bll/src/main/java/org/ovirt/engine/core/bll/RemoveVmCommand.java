@@ -294,7 +294,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                         buildRemoveAllVmImagesParameters(images));
 
         if (vdcRetValue.getSucceeded()) {
-            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
+            getTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
         }
 
         return vdcRetValue;
