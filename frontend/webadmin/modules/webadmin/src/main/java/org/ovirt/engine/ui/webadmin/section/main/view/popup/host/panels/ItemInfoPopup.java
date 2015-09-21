@@ -89,6 +89,8 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     }
 
     private void showNetwork(LogicalNetworkModel networkModel) {
+        boolean descriptionSectionHasValues = false;
+
         contents.removeAllRows();
         Network entity = networkModel.getNetwork();
         addRow(templates.titleSetupNetworkTooltip(networkModel.getName()));
@@ -97,19 +99,27 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         if (!networkModel.isManaged()) {
             addRow(templates.imageTextSetupNetwork(unknownImage, constants.unmanagedNetworkItemInfo()));
             addRow(SafeHtmlUtils.fromString(constants.unmanagedNetworkDescriptionItemInfo()));
+            descriptionSectionHasValues = true;
         }
         else {
             if (networkModel.getErrorMessage() != null) {
                 addRow(templates.imageTextSetupNetwork(alertImage, templates.maxWidthNteworkItemPopup(networkModel.getErrorMessage())));
+                descriptionSectionHasValues = true;
             }
             // Description
             if (entity.getDescription() != null && !entity.getDescription().trim().equals("")) { //$NON-NLS-1$
                 addRow(SafeHtmlUtils.fromString(entity.getDescription()));
+                descriptionSectionHasValues = true;
             }
             // Not in sync
             if (!networkModel.isInSync()) {
                 addSyncDiff(networkModel);
+                descriptionSectionHasValues = true;
             }
+        }
+
+        if (descriptionSectionHasValues) {
+            insertHorizontalLine();
         }
 
         boolean isDisplay = false;
@@ -121,9 +131,9 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
             isMigration = entity.getCluster().isMigration();
             isGlusterNw = entity.getCluster().isGluster();
         }
+
         // Usages
         if (networkModel.isManagement() || isDisplay || entity.isVmNetwork() || isMigration || isGlusterNw) {
-
             addRow(SafeHtmlUtils.fromString(constants.usageItemInfo() + ":")); //$NON-NLS-1$
             if (networkModel.isManagement()) {
                 addRow(templates.imageTextSetupNetworkUsage(mgmtNetworkImage, constants.managementItemInfo()));
@@ -145,6 +155,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
                 addRow(templates.imageTextSetupNetworkUsage(glusterNwImage, constants.glusterNwItemInfo()));
             }
 
+            insertHorizontalLine();
         }
 
         // Mtu
@@ -199,5 +210,9 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         if (nic instanceof BondNetworkInterfaceModel) {
             addRow(constants.bondOptionsItemInfo(), entity.getBondOptions());
         }
+    }
+
+    private void insertHorizontalLine() {
+        addRow(templates.horizontalLine());
     }
 }
