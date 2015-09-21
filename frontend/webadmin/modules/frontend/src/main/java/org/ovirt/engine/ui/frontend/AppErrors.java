@@ -1441,7 +1441,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. There's unset networkId among given network attachments.")
     String NETWORK_ATTACHMENT_NETWORK_ID_IS_NOT_SET();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Following Network Attachments does not exist: ${NETWORK_ATTACHMENT_NOT_EXISTS_LIST}.")
+    @DefaultStringValue("Cannot ${action} ${type}. Following Network Attachments do not exist: ${NETWORK_ATTACHMENTS_NOT_EXISTS_LIST}.")
     String NETWORK_ATTACHMENTS_NOT_EXISTS();
 
     @DefaultStringValue("Cannot ${action} ${type}. NetworkAttachment (id ${$referrerId}) does not reference nic coherently. Nic name and id reference different nics: nicId ${referringId} nicName ${referringName}}.")
