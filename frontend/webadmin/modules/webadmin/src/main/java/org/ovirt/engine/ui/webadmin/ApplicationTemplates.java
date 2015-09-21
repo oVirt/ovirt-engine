@@ -144,8 +144,8 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
             + "<span style='position: relative; margin-left: 3px; margin-right: 3px; white-space: normal; height: 14px; line-height: 14px;'>{1}</span></span>")
     SafeHtml imageTextSetupNetwork(SafeHtml image, SafeHtml text);
 
-    @Template("<div style='font-weight:bold; border-bottom-style:solid; border-bottom-width:1px; border-top-style:solid; border-top-width:1px; width:100%;'>{0}</div> ")
-    SafeHtml titleSetupNetworkTooltip(String title);
+    @Template("<div style='font-weight:bold; background-color:{1}; width:100%; padding:3px;'>{0}</div> ")
+    SafeHtml titleSetupNetworkTooltip(String title, String backgroundColor);
 
     @Template("<i>{0}<br />{1}</i>")
     SafeHtml italicTwoLines(String firstLine, String secondLine);
