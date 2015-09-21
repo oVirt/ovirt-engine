@@ -37,6 +37,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     private final static ApplicationResources resources = AssetProvider.getResources();
     private final static ApplicationConstants constants = AssetProvider.getConstants();
     private final static ApplicationMessages messages = AssetProvider.getMessages();
+    private final static String BACKGROUND_COLOR = "#333333";//$NON-NLS-1$
 
     SafeHtml mgmtNetworkImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.mgmtNetwork())
             .getHTML());
@@ -93,7 +94,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
         contents.removeAllRows();
         Network entity = networkModel.getNetwork();
-        addRow(templates.titleSetupNetworkTooltip(networkModel.getName()));
+        addRow(templates.titleSetupNetworkTooltip(networkModel.getName(), BACKGROUND_COLOR));
 
         // Not managed
         if (!networkModel.isManaged()) {
@@ -200,7 +201,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         contents.removeAllRows();
         VdsNetworkInterface entity = nic.getIface();
         NetworkBootProtocol bootProtocol = entity.getBootProtocol();
-        addRow(templates.titleSetupNetworkTooltip(nic.getName()));
+        addRow(templates.titleSetupNetworkTooltip(nic.getName(), BACKGROUND_COLOR));
         addRow(constants.bootProtocolItemInfo(), RENDERER.render(bootProtocol));
         if (bootProtocol == NetworkBootProtocol.STATIC_IP) {
             addRow(constants.addressItemInfo(), entity.getAddress());
