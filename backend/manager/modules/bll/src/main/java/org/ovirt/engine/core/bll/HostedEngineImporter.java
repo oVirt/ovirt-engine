@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
+import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -38,8 +39,8 @@ import org.slf4j.LoggerFactory;
  * The Hosted Engine VM Importer.
  * This class takes a VM and imports it, including its disks and nics.
  * It is assumed that all devices are set on the VM (disks and nics).
- * It is assumed that the disks exists already on the target storage domain
- * It is assumed that the Storage domain where the VM runs is already imported into the engine.
+ * It is assumed that the disks exists already on the target storage domain.
+ * It will try to import the storage domain of the VM.
  */
 public class HostedEngineImporter {
 
@@ -65,9 +66,9 @@ public class HostedEngineImporter {
     public void doImport(VM vm) {
         VdcReturnValueBase heVmImported;
         // get the special sd of hosted engine
-        StorageDomain sd = getHEStorageDomain();
+        StorageDomain sd = getHEStorageDomain(vm);
         // no point in trying this without the SD
-        if (sd != null && sd.getStatus() == StorageDomainStatus.Active) {
+        if (sd != null && (sd.getStatus() == StorageDomainStatus.Active)) {
             log.info("Try to import the Hosted Engine VM '{}'", vm);
             if (vmStaticDAO.get(vm.getId()) == null || removedHEVM(vm)) {
 
@@ -134,7 +135,7 @@ public class HostedEngineImporter {
         return parameters;
     }
 
-    private StorageDomain getHEStorageDomain() {
+    private StorageDomain getHEStorageDomain(VM vm) {
         ArrayList<StorageDomain> searchResult =
                 backend.runInternalQuery(
                         VdcQueryType.Search,
@@ -146,7 +147,11 @@ public class HostedEngineImporter {
         if (searchResult != null && !searchResult.isEmpty()) {
             return searchResult.get(0);
         } else {
-            return null;
+            StorageDomainManagementParameter importParams = new StorageDomainManagementParameter();
+            importParams.setVdsId(vm.getRunOnVds());
+            return backend.runInternalAction(
+                    VdcActionType.ImportHostedEngineStorageDomain,
+                    importParams).getActionReturnValue();
         }
     }
 

@@ -37,10 +37,10 @@ public class HostedEngineHelper {
 
     @PostConstruct
     private void init() {
-        List<VmStatic> allByName = dbFacade.getVmStaticDao().getAllByName(
+        List<VmStatic> byName = dbFacade.getVmStaticDao().getAllByName(
                 Config.<String>getValue(ConfigValues.HostedEngineVmName));
-        if (!allByName.isEmpty()) {
-            VmStatic vmStatic = allByName.get(0);
+        if (byName != null && !byName.isEmpty()) {
+            VmStatic vmStatic = byName.get(0);
             hostedEngineVm = dbFacade.getVmDao().get(vmStatic.getId());
             VmHandler.updateDisksFromDb(hostedEngineVm);
         }
@@ -180,5 +180,9 @@ public class HostedEngineHelper {
 
     public boolean isVmManaged() {
         return hostedEngineVm != null && hostedEngineVm.isManagedVm();
+    }
+
+    public StorageDomainStatic getStorageDomain() {
+        return sd;
     }
 }

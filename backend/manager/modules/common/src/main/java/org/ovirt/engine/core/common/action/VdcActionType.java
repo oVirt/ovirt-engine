@@ -495,7 +495,10 @@ public enum VdcActionType {
     UpdateNetworkAttachment(5202, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
     RemoveNetworkAttachment(5203, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
     PersistentHostSetupNetworks(5204, QuotaDependency.NONE),
-    SyncAllHostNetworks(5205, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE);
+    SyncAllHostNetworks(5205, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
+
+    // Hosted Engine
+    ImportHostedEngineStorageDomain(6000, false, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;
