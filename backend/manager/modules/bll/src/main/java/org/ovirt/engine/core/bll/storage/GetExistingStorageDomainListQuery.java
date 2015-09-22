@@ -61,7 +61,8 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
                         domain.setStoragePoolId(domainFromIrs.getSecond());
                         if (getParameters().getStorageFormatType() == null
                                 || getParameters().getStorageFormatType() == domain.getStorageFormat()) {
-                            if (domain.getStorageType().getValue() != getParameters().getStorageType().getValue()) {
+                            if (getParameters().getStorageType() != null
+                                    && domain.getStorageType().getValue() != getParameters().getStorageType().getValue()) {
                                 log.warn("The storage type of domain {} has been changed from {} to {}",
                                         domain.getStorageName(),
                                         domain.getStorageType().toString(),

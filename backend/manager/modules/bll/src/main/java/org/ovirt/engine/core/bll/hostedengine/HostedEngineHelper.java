@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.hostedengine;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -36,9 +37,10 @@ public class HostedEngineHelper {
 
     @PostConstruct
     private void init() {
-        VmStatic vmStatic = dbFacade.getVmStaticDao().getAllByName(
-                        Config.<String>getValue(ConfigValues.HostedEngineVmName)).get(0);
-        if (vmStatic != null) {
+        List<VmStatic> byName = dbFacade.getVmStaticDao().getAllByName(
+                Config.<String>getValue(ConfigValues.HostedEngineVmName));
+        if (byName != null && !byName.isEmpty()) {
+            VmStatic vmStatic = byName.get(0);
             hostedEngineVm = dbFacade.getVmDao().get(vmStatic.getId());
             VmHandler.updateDisksFromDb(hostedEngineVm);
             sd = dbFacade.getStorageDomainStaticDao().getByName(
@@ -176,5 +178,9 @@ public class HostedEngineHelper {
 
     public boolean isVmManaged() {
         return hostedEngineVm != null && hostedEngineVm.isManagedVm();
+    }
+
+    public StorageDomainStatic getStorageDomain() {
+        return sd;
     }
 }

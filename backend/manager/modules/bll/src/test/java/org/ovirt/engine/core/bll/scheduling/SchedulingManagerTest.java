@@ -56,10 +56,12 @@ public class SchedulingManagerTest {
     public static JavaArchive createDeployment() {
         return ShrinkWrap.create(JavaArchive.class)
                 .addClasses(
-                        CommonTestMocks.class,
                         SchedulingManager.class,
                         ExternalSchedulerDiscovery.class,
                         BasicMigrationHandler.class
+)
+                .addClasses(
+                        CommonTestMocks.commonClasses()
                 )
                 .addAsManifestResource(
                         EmptyAsset.INSTANCE,
