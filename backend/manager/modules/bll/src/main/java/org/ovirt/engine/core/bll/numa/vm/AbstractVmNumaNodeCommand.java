@@ -34,7 +34,7 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
 
     protected List<Guid> getDedicatedHostList() {
         List<Guid> dedicatedHost = getParameters().getDedicatedHostList();
-        if (dedicatedHost != null) {
+        if (!dedicatedHost.isEmpty()) {
             return dedicatedHost;
         }
         return getVm().getDedicatedVmForVdsList();
