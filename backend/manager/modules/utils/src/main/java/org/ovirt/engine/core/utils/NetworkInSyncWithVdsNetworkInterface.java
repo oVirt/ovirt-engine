@@ -128,7 +128,7 @@ public class NetworkInSyncWithVdsNetworkInterface {
                 isPrimaryAddressExist() ? getPrimaryAddress().getBootProtocol() : null;
         result.add(ReportedConfigurationType.BOOT_PROTOCOL, iface.getBootProtocol(), definedBootProtocol);
 
-        if (definedBootProtocol == NetworkBootProtocol.STATIC_IP & iface.getBootProtocol() == definedBootProtocol) {
+        if (definedBootProtocol == NetworkBootProtocol.STATIC_IP && iface.getBootProtocol() == definedBootProtocol) {
             result.add(ReportedConfigurationType.NETMASK,
                     iface.getSubnet(),
                     isPrimaryAddressExist() ? getPrimaryAddress().getNetmask() : null);
