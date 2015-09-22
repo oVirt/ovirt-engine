@@ -532,6 +532,10 @@ Docker container plugin for %{ovirt_product_name_short}'s setup
 %setup -c -q
 
 %build
+
+# Set the location of the JDK that will be used for compilation:
+export JAVA_HOME="${JAVA_HOME:=/usr/lib/jvm/java-1.8.0}"
+
 make %{make_common_opts}
 
 %install
