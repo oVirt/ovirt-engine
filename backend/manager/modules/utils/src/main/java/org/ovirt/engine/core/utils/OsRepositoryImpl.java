@@ -444,6 +444,11 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
+    public boolean isSoundDeviceEnabled(int osId, Version version) {
+        return getBoolean(getValueByVersion(idToUnameLookup.get(osId), "devices.audio.enabled", version), false);
+    }
+
+    @Override
     public int getOsIdByUniqueName(String uniqueOsName) {
         for (Map.Entry<Integer, String> entry : getUniqueOsNames().entrySet()) {
             if (entry.getValue().equals(uniqueOsName)) {

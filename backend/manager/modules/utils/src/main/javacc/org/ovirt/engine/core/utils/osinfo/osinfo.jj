@@ -60,6 +60,7 @@ void devices() : {} {
     | ("disk.hotpluggableInterfaces" hardwareInterfacesValue())
     | ("balloon.enabled" booleanValue())
     | ("audio" audioValue())
+    | ("audio.enabled" booleanValue())
     | ("cdInterface" cdInterfaceValue())
     | ("diskInterfaces" hardwareInterfacesValue())
     | ("maxPciDevices" intValue())

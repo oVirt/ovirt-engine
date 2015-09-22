@@ -200,6 +200,20 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         return true;
     }
 
+    protected boolean validateSoundDevice() {
+        if (!VmDeviceCommonUtils.isSoundDeviceExists(getVm().getManagedVmDeviceMap().values())) {
+            return true;
+        }
+
+        if (!osRepository.isSoundDeviceEnabled(getVm().getStaticData().getOsId(),
+                getVdsGroup().getCompatibilityVersion())) {
+            addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+            return failCanDoAction(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
+        }
+
+        return true;
+    }
+
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         return lockProperties.withScope(Scope.Command);

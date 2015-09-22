@@ -279,6 +279,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         doReturn(vdsGroup).when(cmd).getVdsGroup();
         doReturn(createStoragePool()).when(cmd).getStoragePool();
         cmd.getParameters().setVirtioScsiEnabled(true);
+        when(osRepository.isSoundDeviceEnabled(any(Integer.class), any(Version.class))).thenReturn(true);
         when(osRepository.getArchitectureFromOS(any(Integer.class))).thenReturn(ArchitectureType.x86_64);
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
                 new ArrayList<>(Arrays.asList("VirtIO")));
@@ -509,7 +510,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     }
 
     private void mockStorageDomainDaoGetForStoragePool(int domainSpaceGB) {
-        when(sdDao.getForStoragePool(Matchers.<Guid> any(Guid.class), Matchers.<Guid> any(Guid.class))).thenReturn(createStorageDomain(domainSpaceGB));
+        when(sdDao.getForStoragePool(Matchers.<Guid>any(Guid.class), Matchers.<Guid>any(Guid.class))).thenReturn(createStorageDomain(domainSpaceGB));
     }
 
     private void mockStorageDomainDaoGet(final int domainSpaceGB) {
@@ -735,6 +736,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         doReturn(Collections.<VmNetworkInterface> emptyList()).when(spy).getVmInterfaces();
         doReturn(Collections.<DiskImageBase> emptyList()).when(spy).getVmDisks();
         doReturn(false).when(spy).isVirtioScsiControllerAttached(any(Guid.class));
+        doReturn(true).when(osRepository).isSoundDeviceEnabled(any(Integer.class), any(Version.class));
         spy.setVmTemplateId(Guid.newGuid());
     }
 
@@ -752,25 +754,42 @@ public class AddVmCommandTest extends BaseCommandTest {
 
     @Test
     public void refuseBalloonOnPPC() {
-        ArrayList<String> reasons = new ArrayList<String>();
+        AddVmCommand<AddVmParameters> cmd = setupCanAddPpcTest();
+        cmd.getParameters().setBalloonEnabled(true);
+        when(osRepository.isBalloonEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getVdsGroup().getCompatibilityVersion())).thenReturn(false);
+
+        assertFalse(cmd.canDoAction());
+        assertTrue(cmd.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH.toString()));
+    }
+
+    @Test
+    public void refuseSoundDeviceOnPPC() {
+        AddVmCommand<AddVmParameters> cmd = setupCanAddPpcTest();
+        cmd.getParameters().setSoundDeviceEnabled(true);
+        when(osRepository.isSoundDeviceEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getVdsGroup().getCompatibilityVersion())).thenReturn(false);
+
+        assertFalse(cmd.canDoAction());
+        assertTrue(cmd.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH.toString()));
+    }
+
+    private AddVmCommand<AddVmParameters> setupCanAddPpcTest() {
         final int domainSizeGB = 20;
         final int sizeRequired = 5;
         AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired);
-        doReturn(true).when(cmd).validateCustomProperties(any(VmStatic.class), any(ArrayList.class));
-        doReturn(true).when(cmd).validateSpaceRequirements();
 
-        cmd.getParameters().setBalloonEnabled(true);
+        doReturn(true).when(cmd).validateSpaceRequirements();
+        doReturn(true).when(cmd).buildAndCheckDestStorageDomains();
         cmd.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
         VDSGroup cluster = new VDSGroup();
         cluster.setArchitecture(ArchitectureType.ppc64);
         cluster.setCompatibilityVersion(Version.getLast());
         doReturn(cluster).when(cmd).getVdsGroup();
-        doReturn(true).when(cmd).buildAndCheckDestStorageDomains();
-        when(osRepository.isBalloonEnabled(cmd.getParameters().getVm().getVmOsId(), cluster.getCompatibilityVersion())).thenReturn(false);
-        assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH.toString()));
+
+        return cmd;
     }
 
     @Test

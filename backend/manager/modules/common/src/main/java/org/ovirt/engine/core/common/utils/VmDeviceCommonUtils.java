@@ -476,4 +476,14 @@ public class VmDeviceCommonUtils {
 
         return false;
     }
+
+    public static boolean isSoundDeviceExists(Collection<VmDevice> devices) {
+        for (VmDevice device : devices) {
+            if (isSound(device)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

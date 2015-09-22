@@ -169,8 +169,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             setVmTemplateId(templateIdToUse);
 
             // API backward compatibility
-            if (parameters.isSoundDeviceEnabled() == null) {
-                parameters.setSoundDeviceEnabled(parameters.getVmStaticData().getVmType() == VmType.Desktop);
+            if (shouldOverrideSoundDevice()) {
+                parameters.setSoundDeviceEnabled(true);
             }
 
             if (parameters.isConsoleEnabled() == null) {
@@ -202,6 +202,21 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 getParameters().getVmStaticData().getMigrationSupport() == null) {
             setDefaultMigrationPolicy();
         }
+    }
+
+    /**
+     * Add sound device when the following holds:
+     * <ul>
+     *     <li>User has not specified a concrete value</li>
+     *     <li>Cluster in fact supports sound devices</li>
+     *     <li>VM is desktop type</li>
+     * </ul>
+     */
+    private boolean shouldOverrideSoundDevice() {
+        return getParameters().isSoundDeviceEnabled() == null &&
+                getVdsGroup() != null &&
+                isSoundDeviceEnabled() &&
+                getParameters().getVmStaticData().getVmType() == VmType.Desktop;
     }
 
     @Override
@@ -373,7 +388,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                                 isVirtioScsiEnabled(),
                                 hasWatchdog(),
                                 isBalloonEnabled(),
-                                getParameters().isSoundDeviceEnabled(),
+                                isSoundDeviceEnabled(),
                                 getReturnValue().getCanDoActionMessages())
                         && canAddVm(getReturnValue().getCanDoActionMessages(), destStorages.values())
                         && hostToRunExist();
@@ -521,6 +536,12 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 getVdsGroup().getCompatibilityVersion())) {
             addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
             return failCanDoAction(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
+        }
+
+        if (isSoundDeviceEnabled() && !osRepository.isSoundDeviceEnabled(getParameters().getVmStaticData().getOsId(),
+                getVdsGroup().getCompatibilityVersion())) {
+            addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+            return failCanDoAction(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
         // otherwise..
@@ -978,7 +999,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         VmDeviceUtils.copyVmDevices(vmDevicesSourceId,
                 getVmId(),
                 getSrcDeviceIdToTargetDeviceIdMapping(),
-                getParameters().isSoundDeviceEnabled(),
+                isSoundDeviceEnabled(),
                 getParameters().isConsoleEnabled(),
                 isVirtioScsiEnabled(),
                 isBalloonEnabled(),
@@ -1469,6 +1490,13 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return balloonEnabled != null ? balloonEnabled :
             osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(),
                     getVdsGroup().getCompatibilityVersion());
+    }
+
+    protected boolean isSoundDeviceEnabled() {
+        Boolean soundDeviceEnabled = getParameters().isSoundDeviceEnabled();
+        return soundDeviceEnabled != null ? soundDeviceEnabled :
+                osRepository.isSoundDeviceEnabled(getParameters().getVmStaticData().getOsId(),
+                        getVdsGroup().getCompatibilityVersion());
     }
 
     protected boolean hasWatchdog() {

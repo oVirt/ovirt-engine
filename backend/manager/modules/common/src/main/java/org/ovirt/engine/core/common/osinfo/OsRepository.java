@@ -293,4 +293,9 @@ public interface OsRepository {
      * @return true if the cpu supported otherwise false
      */
     public boolean isCpuSupported(int osId, Version version, String cpuId);
+
+    /**
+     * Checks if target OS architecture supports sound devices.
+     */
+    boolean isSoundDeviceEnabled(int osId, Version version);
 }

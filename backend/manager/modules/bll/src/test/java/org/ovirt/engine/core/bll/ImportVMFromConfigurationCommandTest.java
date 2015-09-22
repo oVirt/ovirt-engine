@@ -98,6 +98,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
                         Collections.singletonMap(Version.getLast(),
                                 Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)))));
         when(osRepository.isBalloonEnabled(anyInt(), any(Version.class))).thenReturn(true);
+        when(osRepository.isSoundDeviceEnabled(anyInt(), any(Version.class))).thenReturn(true);
         when(iconDefaultsProvider.getVmIconDefaults()).thenReturn(new HashMap<Integer, VmIconIdSizePair>(){{
             put(osId, new VmIconIdSizePair(
                     Guid.createGuidFromString("00000000-0000-0000-0000-00000000000a"),
