@@ -173,6 +173,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             return false;
         }
 
+        if (!validateSoundDevice()) {
+            return false;
+        }
+
         return canDoActionAfterCloneVm(domainsMap);
     }
 

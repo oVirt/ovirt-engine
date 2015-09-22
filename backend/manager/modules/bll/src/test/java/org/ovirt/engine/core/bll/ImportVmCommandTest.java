@@ -127,23 +127,53 @@ public class ImportVmCommandTest {
         vm.getManagedVmDeviceMap().put(deviceId, balloon);
     }
 
-    @Test
-    public void refuseBalloonOnPPC() {
-        final ImportVmCommand<ImportVmParameters> c = setupDiskSpaceTest(createParameters());
+    private void addSoundDeviceToVm(VM vm) {
+        Guid deviceId = Guid.newGuid();
+        Map<String, Object> specParams = new HashMap<>();
+        VmDevice sound = new VmDevice(new VmDeviceId(deviceId, vm.getId()),
+                VmDeviceGeneralType.SOUND, "", null, 0, specParams,
+                true, true, true, null, null, null, null);
 
-        addBalloonToVm(c.getVmFromExportDomain(null));
+        vm.getManagedVmDeviceMap().put(deviceId, sound);
+    }
 
-        c.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
+    private ImportVmCommand<ImportVmParameters> setupCanImportPpcTest() {
+        final ImportVmCommand<ImportVmParameters> cmd = setupDiskSpaceTest(createParameters());
+
+        cmd.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
         VDSGroup cluster = new VDSGroup();
         cluster.setArchitecture(ArchitectureType.ppc64);
         cluster.setCompatibilityVersion(Version.getLast());
-        doReturn(cluster).when(c).getVdsGroup();
-        doReturn(true).when(c).validateImages(any(Map.class));
-        when(osRepository.isBalloonEnabled(c.getParameters().getVm().getVmOsId(), cluster.getCompatibilityVersion())).thenReturn(false);
-        assertFalse(c.canDoAction());
-        assertTrue(c.getReturnValue()
+        doReturn(cluster).when(cmd).getVdsGroup();
+        doReturn(true).when(cmd).validateImages(any(Map.class));
+
+        return cmd;
+    }
+
+    @Test
+    public void refuseBalloonOnPPC() {
+        final ImportVmCommand<ImportVmParameters> cmd = setupCanImportPpcTest();
+
+        addBalloonToVm(cmd.getVmFromExportDomain(null));
+        when(osRepository.isBalloonEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getVdsGroup().getCompatibilityVersion())).thenReturn(false);
+
+        assertFalse(cmd.canDoAction());
+        assertTrue(cmd.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH.toString()));
+    }
+
+    @Test
+    public void refuseSoundDeviceOnPPC() {
+        final ImportVmCommand<ImportVmParameters> cmd = setupCanImportPpcTest();
+
+        addSoundDeviceToVm(cmd.getVmFromExportDomain(null));
+        when(osRepository.isSoundDeviceEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getVdsGroup().getCompatibilityVersion())).thenReturn(false);
+
+        assertFalse(cmd.canDoAction());
+        assertTrue(cmd.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH.toString()));
     }
 
     @Test

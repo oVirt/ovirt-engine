@@ -93,6 +93,10 @@ implements QuotaStorageDependent {
             return false;
         }
 
+        if (!validateSoundDevice()) {
+            return false;
+        }
+
         if (!validateNoDuplicateVm()) {
             return false;
         }

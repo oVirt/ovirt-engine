@@ -799,6 +799,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failCanDoAction(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
+        if (isSoundDeviceEnabled() && !osRepository.isSoundDeviceEnabled(getParameters().getVmStaticData().getOsId(),
+                getVdsGroup().getCompatibilityVersion())) {
+            addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+            return failCanDoAction(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
+        }
+
         if (!validate(VmHandler.checkNumaPreferredTuneMode(getParameters().getVmStaticData().getNumaTuneMode(),
                 getParameters().getVmStaticData().getvNumaNodeList(),
                 getVmId()))) {

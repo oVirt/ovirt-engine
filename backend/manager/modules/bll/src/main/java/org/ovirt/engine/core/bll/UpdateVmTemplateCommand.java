@@ -253,6 +253,13 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             }
         }
 
+        boolean soundDeviceEnabled = Boolean.TRUE.equals(getParameters().isSoundDeviceEnabled());
+        if (soundDeviceEnabled && !osRepository.isSoundDeviceEnabled(getParameters().getVmTemplateData().getOsId(),
+                getVdsGroup().getCompatibilityVersion())) {
+            addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+            return failCanDoAction(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
+        }
+
         return returnValue;
     }
 
