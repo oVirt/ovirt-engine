@@ -60,7 +60,7 @@ public class MemoryUtils {
         memoryVolume.getSnapshots().add(memoryVolume);
 
         DiskImage dataVolume = new DiskImage();
-        memoryVolume.setDiskAlias("metadata");
+        dataVolume.setDiskAlias("metadata");
         dataVolume.setvolumeFormat(VolumeFormat.COW);
         dataVolume.setVolumeType(VolumeType.Sparse);
         dataVolume.setSize(metadataSize);
