@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Image;
 
 /**
@@ -27,13 +28,19 @@ public class IconValidation implements IValidation {
         if (!typeValidation.getSuccess()) {
             return typeValidation;
         }
-        ValidationResult dimensionsValidation = validateBrowserParsabilityAndDimensions(icon);
+        ValidationResult dimensionsValidation = isIE()
+                                                ? ValidationResult.ok()
+                                                : validateBrowserParsabilityAndDimensions(icon);
         ValidationResult sizeValidation = validateSize(icon);
         if (dimensionsValidation.getSuccess() && sizeValidation.getSuccess()) {
             return ValidationResult.ok();
         }
         final List<String> reasons = Linq.concat(dimensionsValidation.getReasons(), sizeValidation.getReasons());
         return new ValidationResult(false, reasons);
+    }
+
+    private boolean isIE() {
+        return Window.Navigator.getUserAgent().toLowerCase().contains("trident"); //$NON-NLS-1$
     }
 
     /**
