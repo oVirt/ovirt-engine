@@ -409,3 +409,24 @@ replaced with an inner element:
       <type>other</type>
       ...
     </os>
+
+### Removed the `force` parameter from the request to retrieve a host
+
+The request to retrieve a host used to support a `force` matrix
+parameter to indicate that the data of the host should be refreshed
+(calling VDSM to reload host capabilities and devices) before retrieving
+it from the database:
+
+    GET /hosts/{host:id};force
+
+This `force` parameter has been superseded by the host `refresh` action,
+but kept for backwards compatibility. It has been completely removed
+now. Applications that require this functionality should perform two
+requests, first one to refresh the host:
+
+    POST /hosts/{host:id}/refresh
+    <action/>
+
+And then one to retrieve it, without the `force` parameter:
+
+   GET /hosts/{host:id}

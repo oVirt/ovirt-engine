@@ -1844,13 +1844,6 @@ actions:
 - name: /hosts/{host:id}|rel=get
   description: get the details of the specified host in the system
   request:
-    urlparams:
-      force: # This is deprecated, use the "refresh" action instead
-        context: matrix
-        type: 'xs:boolean'
-        value: true|false
-        required: false
-        deprecated: true
     headers:
       Filter: {value: true|false, required: false}
       All-Content: {value: true|false, required: false}

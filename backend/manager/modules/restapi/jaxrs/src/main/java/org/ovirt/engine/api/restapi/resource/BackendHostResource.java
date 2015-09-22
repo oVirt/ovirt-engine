@@ -95,12 +95,6 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public Host get() {
-        // This logic shouldn't be part of the "get" method as it is an action. It will be replaced by
-        // the "refresh" action and removed in the future.
-        if (isForce()) {
-            performAction(VdcActionType.RefreshHost, new VdsActionParameters(guid));
-        }
-
         Host host = getVdsByVdsId();
         deprecatedAddLinksToAgents(host);
         return host;
