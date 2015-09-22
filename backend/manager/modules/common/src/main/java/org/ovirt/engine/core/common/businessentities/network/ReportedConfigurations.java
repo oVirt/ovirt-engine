@@ -4,13 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
+
 /**
  * Reported configuration related to sole network.
  */
 public class ReportedConfigurations implements Serializable {
     private static final long serialVersionUID = -6086888024266749566L;
-
-    private  boolean networkInSync;
 
     /*
      * all reported configurations, with flag whether each configuration is in sync or not.
@@ -24,20 +24,25 @@ public class ReportedConfigurations implements Serializable {
         return this;
     }
 
+    public <T> ReportedConfigurations add(ReportedConfigurationType type, T actual, T expected) {
+        final boolean inSync = ObjectUtils.objectsEqual(actual, expected);
+        return add(type, actual, expected, inSync);
+    }
+
     public List<ReportedConfiguration> getReportedConfigurationList() {
         return reportedConfigurationList;
     }
-
 
     /**
      * all network configuration is in sync with host.
      */
     public boolean isNetworkInSync() {
-        return networkInSync;
-    }
+        for (ReportedConfiguration reportedConfig : reportedConfigurationList) {
+            if (!reportedConfig.isInSync()) {
+                return false;
+            }
+        }
 
-    public void setNetworkInSync(boolean networkInSync) {
-        this.networkInSync = networkInSync;
+        return true;
     }
-
 }

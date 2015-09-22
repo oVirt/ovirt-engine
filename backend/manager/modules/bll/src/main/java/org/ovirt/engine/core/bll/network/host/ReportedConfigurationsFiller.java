@@ -74,7 +74,8 @@ public class ReportedConfigurationsFiller {
         Network network) {
 
         HostNetworkQos hostNetworkQos = effectiveHostNetworkQos.getQos(networkAttachment, network);
-        return new NetworkInSyncWithVdsNetworkInterface(nic, network, hostNetworkQos);
+        return new NetworkInSyncWithVdsNetworkInterface(nic, network, hostNetworkQos, networkAttachment == null ? null
+                : networkAttachment.getIpConfiguration());
     }
 
     private Map<String, VdsNetworkInterface> nicsByNetworkId(List<VdsNetworkInterface> nics) {

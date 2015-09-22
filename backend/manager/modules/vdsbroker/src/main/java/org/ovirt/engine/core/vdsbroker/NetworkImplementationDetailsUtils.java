@@ -56,7 +56,10 @@ public class NetworkImplementationDetailsUtils {
         Network network) {
 
         HostNetworkQos hostNetworkQos = effectiveHostNetworkQos.getQos(networkAttachment, network);
-        return new NetworkInSyncWithVdsNetworkInterface(vdsNetworkInterface, network, hostNetworkQos);
+        return new NetworkInSyncWithVdsNetworkInterface(vdsNetworkInterface,
+                network,
+                hostNetworkQos,
+                networkAttachment == null ? null : networkAttachment.getIpConfiguration());
     }
 
     private NetworkInSyncWithVdsNetworkInterface build(VdsNetworkInterface nic, Network network) {
