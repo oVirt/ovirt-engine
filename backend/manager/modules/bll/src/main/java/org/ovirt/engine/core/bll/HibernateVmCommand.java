@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -106,7 +105,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
                                 getStorageDomainId(),
                                 image1GroupId,
                                 getVm().getTotalMemorySizeInBytes(),
-                                getMemoryVolumeType(),
+                                MemoryUtils.storageTypeToMemoryVolumeType(getStorageDomain().getStorageType()),
                                 VolumeFormat.RAW,
                                 hiberVol1,
                                 ""));
@@ -282,19 +281,5 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
             getReturnValue().setEndActionTryAgain(false);
         }
-    }
-
-    private VolumeType getMemoryVolumeType() {
-        return getMemoryVolumeTypeForStorageDomain(getStorageDomain().getStorageType());
-    }
-
-    /**
-     * Returns whether to use Sparse or Preallocation. If the storage type is file system devices ,it would be more
-     * efficient to use Sparse allocation. Otherwise for block devices we should use Preallocated for faster allocation.
-     *
-     * @return - VolumeType of allocation type to use.
-     */
-    public static VolumeType getMemoryVolumeTypeForStorageDomain(StorageType storageType) {
-        return storageType.isFileDomain() ? VolumeType.Sparse : VolumeType.Preallocated;
     }
 }

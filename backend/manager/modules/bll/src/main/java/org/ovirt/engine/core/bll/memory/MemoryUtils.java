@@ -8,6 +8,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
@@ -68,5 +69,15 @@ public class MemoryUtils {
         dataVolume.getSnapshots().add(dataVolume);
 
         return Arrays.asList(memoryVolume, dataVolume);
+    }
+
+    /**
+     * Returns whether to use Sparse or Preallocation. If the storage type is file system devices ,it would be more
+     * efficient to use Sparse allocation. Otherwise for block devices we should use Preallocated for faster allocation.
+     *
+     * @return - VolumeType of allocation type to use.
+     */
+    public static VolumeType storageTypeToMemoryVolumeType(StorageType storageType) {
+        return storageType.isFileDomain() ? VolumeType.Sparse : VolumeType.Preallocated;
     }
 }

@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.memory;
 
 import org.ovirt.engine.core.bll.Backend;
-import org.ovirt.engine.core.bll.HibernateVmCommand;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -116,7 +115,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
     private VolumeType getVolumeTypeForDomain() {
         if (volumeTypeForDomain == null) {
             StorageDomainStatic sdStatic = DbFacade.getInstance().getStorageDomainStaticDao().get(storageDomainId);
-            volumeTypeForDomain = HibernateVmCommand.getMemoryVolumeTypeForStorageDomain(sdStatic.getStorageType());
+            volumeTypeForDomain = MemoryUtils.storageTypeToMemoryVolumeType(sdStatic.getStorageType());
         }
         return volumeTypeForDomain;
     }
