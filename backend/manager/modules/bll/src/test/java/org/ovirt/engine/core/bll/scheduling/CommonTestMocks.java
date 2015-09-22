@@ -3,17 +3,29 @@ package org.ovirt.engine.core.bll.scheduling;
 import static org.mockito.Mockito.mock;
 
 import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.EngineSessionDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @Singleton
 public class CommonTestMocks {
 
+    // initialize core concrete services
+    @Inject
+    private Injector injector;
+    @Inject
+    private SessionDataContainer sessionDataContainer;
+
+    // providers of common dependencies
     @Produces
     private BackendInternal backendInternal = mock(BackendInternal.class);
     @Produces
@@ -24,5 +36,17 @@ public class CommonTestMocks {
     private ResourceManager resourceManager = mock(ResourceManager.class);
     @Produces
     private PolicyUnitDao policyUnitDao = mock(PolicyUnitDao.class);
+    @Produces
+    private QuotaManager quotaManager = mock(QuotaManager.class);
+    @Produces
+    private EngineSessionDao engineSessionDao = mock(EngineSessionDao.class);
+
+    public static Class<?>[] commonClasses() {
+        return new Class<?>[] {
+                CommonTestMocks.class,
+                Injector.class,
+                SessionDataContainer.class
+        };
+    }
 
 }

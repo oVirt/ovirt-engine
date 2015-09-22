@@ -312,6 +312,7 @@ public class VmsMonitoring {
                 vm.getDiskMap().put(Guid.newGuid(), diskImage);
             }
             vm.setVdsGroupId(getVdsManager().getVdsGroupId());
+            vm.setRunOnVds(getVdsManager().getVdsId());
             getVdsEventListener().importHostedEngineVm(vm);
         }
     }
