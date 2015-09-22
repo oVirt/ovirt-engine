@@ -33,6 +33,8 @@ import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.RandomUtils;
+import org.ovirt.engine.core.utils.linq.Function;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NetworkDeviceHelperImplTest {
@@ -359,11 +361,20 @@ public class NetworkDeviceHelperImplTest {
     public void getFreeVfWithExcludedVfs() {
         List<HostDevice> freeVfs = freeVfCommon(5, 2, 2, 2, 2);
         assertEquals(5, freeVfs.size());
-        List<String> excludedVfs = new ArrayList<>();
-        excludedVfs.add(freeVfs.get(0).getDeviceName());
-        excludedVfs.add(freeVfs.get(1).getDeviceName());
+        List<HostDevice> excludedVfs = new ArrayList<>();
+        excludedVfs.add(freeVfs.get(0));
+        excludedVfs.add(freeVfs.get(1));
         freeVfs.removeAll(excludedVfs);
-        assertTrue(freeVfs.contains(networkDeviceHelper.getFreeVf(nic, excludedVfs)));
+
+        List<String> excludedVfsNames = LinqUtils.transformToList(excludedVfs, new Function<HostDevice, String>() {
+
+            @Override
+            public String eval(HostDevice excludedVf) {
+                return excludedVf.getDeviceName();
+            }
+        });
+
+        assertTrue(freeVfs.contains(networkDeviceHelper.getFreeVf(nic, excludedVfsNames)));
     }
 
     @Test
