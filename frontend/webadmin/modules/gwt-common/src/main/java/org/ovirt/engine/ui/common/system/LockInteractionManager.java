@@ -1,8 +1,11 @@
 package org.ovirt.engine.ui.common.system;
 
 import org.ovirt.engine.ui.common.auth.CurrentUser;
+
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.BodyElement;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -20,6 +23,10 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
  * application.
  */
 public class LockInteractionManager implements LockInteractionHandler {
+
+    private static final String APP_STATUS_ATTRIBUTE = "data-app-status"; //$NON-NLS-1$
+    private static final String APP_STATUS_BUSY = "busy"; //$NON-NLS-1$
+    private static final String APP_STATUS_READY = "ready"; //$NON-NLS-1$
 
     private final PlaceManager placeManager;
     private final CurrentUser user;
@@ -47,6 +54,14 @@ public class LockInteractionManager implements LockInteractionHandler {
                     hideLoadingIndicator();
                 }
             });
+        }
+
+        // Set data attribute on body element to indicate the status of the application
+        BodyElement body = Document.get().getBody();
+        if (event.shouldLock()) {
+            body.setAttribute(APP_STATUS_ATTRIBUTE, APP_STATUS_BUSY);
+        } else {
+            body.setAttribute(APP_STATUS_ATTRIBUTE, APP_STATUS_READY);
         }
     }
 
