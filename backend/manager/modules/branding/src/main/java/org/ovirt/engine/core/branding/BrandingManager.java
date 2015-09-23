@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -124,20 +123,21 @@ public class BrandingManager {
     public synchronized List<BrandingTheme> getBrandingThemes() {
         if (themes == null && brandingRootPath.exists() && brandingRootPath.isDirectory()
                 && brandingRootPath.canRead()) {
-            themes = new ArrayList<BrandingTheme>();
-            List<File> directories = Arrays.asList(
-                    brandingRootPath.listFiles(new FileFilter() {
-                        @Override
-                        public boolean accept(final File file) {
-                            return file.isDirectory() && DIRECTORY_PATTERN.matcher(file.getName()).matches();
-                        }
-                    }));
-            Collections.sort(directories);
-            for (File directory : directories) {
-                BrandingTheme theme = new BrandingTheme(directory.getAbsolutePath(), brandingRootPath,
-                        CURRENT_BRANDING_VERSION);
-                if (theme.load()) {
-                    themes.add(theme);
+            themes = new ArrayList<>();
+            File[] directories = brandingRootPath.listFiles(new FileFilter() {
+                @Override
+                public boolean accept(final File file) {
+                    return file.isDirectory() && DIRECTORY_PATTERN.matcher(file.getName()).matches();
+                }
+            });
+            if (directories != null) {
+                Arrays.sort(directories);
+                for (File directory : directories) {
+                    BrandingTheme theme = new BrandingTheme(directory.getAbsolutePath(), brandingRootPath,
+                            CURRENT_BRANDING_VERSION);
+                    if (theme.load()) {
+                        themes.add(theme);
+                    }
                 }
             }
         }
