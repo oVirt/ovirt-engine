@@ -77,7 +77,7 @@ public class DragTargetScrollPanel extends Composite implements HasHandlers {
     void onPanelDragDrop(DropEvent event) {
         Guid vmGuid = Guid.createGuidFromString(event.getData("VM_GID")); //$NON-NLS-1$
         boolean pinned = Boolean.valueOf(event.getData("PINNED")); //$NON-NLS-1$
-        int vNumaNodeIndex = Integer.valueOf(event.getData("INDEX")); //$NON-NLS-1$
+        int vNumaNodeIndex = Integer.parseInt(event.getData("INDEX")); //$NON-NLS-1$
         container.removeStyleName(style.dragOver());
         event.preventDefault();
         UpdatedVnumaEvent.fire(this, vmGuid, pinned, vNumaNodeIndex, pNumaNodeIndex);
