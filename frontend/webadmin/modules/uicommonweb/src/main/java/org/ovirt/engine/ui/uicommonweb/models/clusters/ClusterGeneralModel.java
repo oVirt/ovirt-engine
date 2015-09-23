@@ -303,7 +303,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
                 serverSwift.setServerId(service.getServerId());
                 serverSwift.setServiceType(ServiceType.GLUSTER_SWIFT);
                 serverSwift.setStatus(service.getStatus());
-                serverSwiftModel = new GlusterSwiftServiceModel(service);
+                serverSwiftModel = new GlusterSwiftServiceModel(serverSwift);
                 serverSwiftMap.put(service.getServerId(), serverSwiftModel);
             }
             serverSwiftModel.getInternalServiceList().add(service);
