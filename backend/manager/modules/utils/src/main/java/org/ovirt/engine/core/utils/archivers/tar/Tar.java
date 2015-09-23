@@ -30,12 +30,15 @@ public class Tar {
             entry.setMode(0700);
             archive.putArchiveEntry(entry);
             archive.closeArchiveEntry();
-            for (String f : entry.getFile().list()) {
-                _recurse(
-                    archive,
-                    new File(entry.getFile(), f),
-                    new File(entry.getName(), f).getPath()
-                );
+            String[] names = entry.getFile().list();
+            if (names != null) {
+                for (String f : names) {
+                    _recurse(
+                        archive,
+                        new File(entry.getFile(), f),
+                        new File(entry.getName(), f).getPath()
+                    );
+                }
             }
         }
         else if (entry.getFile().isFile()) {
