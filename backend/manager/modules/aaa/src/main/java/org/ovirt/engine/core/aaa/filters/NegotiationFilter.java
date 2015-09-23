@@ -96,7 +96,7 @@ public class NegotiationFilter implements Filter {
             new Comparator<AuthenticationProfile>() {
                 @Override
                 public int compare(AuthenticationProfile o1, AuthenticationProfile o2) {
-                    return Integer.valueOf(o1.getNegotiationPriority()).compareTo(o2.getNegotiationPriority());
+                    return Integer.compare(o1.getNegotiationPriority(), o2.getNegotiationPriority());
                 }
             }
         );
