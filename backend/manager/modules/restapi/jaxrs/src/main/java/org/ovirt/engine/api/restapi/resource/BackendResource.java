@@ -176,7 +176,7 @@ public class BackendResource extends BaseBackendResource {
             HashMap<String, String> matrixConstraints = QueryHelper.getMatrixConstraints(getUriInfo(), MAX);
             String maxString = matrixConstraints.get(MAX);
             try {
-                return Integer.valueOf(maxString);
+                return Integer.parseInt(maxString);
             } catch (NumberFormatException e) {
                 log.error("Max number of results is not a valid number: '{}'", maxString);
                 throw new MalformedNumberException("Max number of results is not a valid number: " + maxString);
