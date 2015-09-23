@@ -331,6 +331,13 @@ public class DbFacade {
         return instance;
     }
 
+    /**
+     * Visible for testing
+     */
+    public static void setInstance(DbFacade dbFacade){
+        instance = dbFacade;
+    }
+
     private CustomMapSqlParameterSource getCustomMapSqlParameterSource() {
         return new CustomMapSqlParameterSource(dbEngineDialect);
     }

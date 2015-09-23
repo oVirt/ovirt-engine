@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.numa.vm;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.spy;
@@ -37,8 +36,10 @@ import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.linq.Function;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
 
-public class AddVmNumaNodesCommandTest extends BaseCommandTest {
+public class SetVmNumaNodesCommandTest extends BaseCommandTest {
 
     @Mock
     private DbFacade dbFacade;
@@ -61,6 +62,7 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
     private List<VmNumaNode> existingNumaNodes;
     private List<VdsNumaNode> vdsNumaNodes;
     private List<VmNumaNode> newNumaNodes;
+    private List<Guid> existingNumaNodeIds;
 
     @Before
     public void setUp() throws Exception {
@@ -71,6 +73,11 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
 
         vdsNumaNodes = new ArrayList<>(Arrays.asList(createVdsNumaNode(1), createVdsNumaNode(2)));
         existingNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(1), createVmNumaNode(2)));
+        existingNumaNodeIds = LinqUtils.transformToList(existingNumaNodes, new Function<VmNumaNode, Guid>() {
+            @Override public Guid eval(VmNumaNode vmNumaNode) {
+                return vmNumaNode.getId();
+            }
+        });
         newNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(1), createVmNumaNode(2)));
         mockVdsNumaNodeDao(vdsNumaNodeDao, vdsNumaNodes);
         mockVmNumaNodeDao(vmNumaNodeDao, existingNumaNodes);
@@ -87,141 +94,58 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
 
     @Test
     public void canSetNumaConfigurationWithVmFromParams() {
-        final AddVmNumaNodesCommand command = mockedCommandWithVmFromParams();
+        final SetVmNumaNodesCommand command = mockedCommandWithVmFromParams();
         command.executeCommand();
+        verify(vmNumaNodeDao).massRemoveNumaNodeByNumaNodeId(eq(existingNumaNodeIds));
         verify(vmNumaNodeDao).massSaveNumaNode(eq(newNumaNodes), any(Guid.class), any(Guid.class));
     }
 
     @Test
     public void canSetNumaConfigurationWithVmFromDb() {
-        final AddVmNumaNodesCommand command = mockedCommandWithVmFromDb();
+        final SetVmNumaNodesCommand command = mockedCommandWithVmFromDb();
         command.executeCommand();
+        verify(vmNumaNodeDao).massRemoveNumaNodeByNumaNodeId(eq(existingNumaNodeIds));
         verify(vmNumaNodeDao).massSaveNumaNode(eq(newNumaNodes), any(Guid.class), any(Guid.class));
     }
 
     @Test
     public void canSetNumaPinning() {
         newNumaNodes = Arrays.asList(createVmNumaNode(1, vdsNumaNodes));
-        final AddVmNumaNodesCommand command = mockedCommandWithVmFromParams();
+        final SetVmNumaNodesCommand command = mockedCommandWithVmFromParams();
         command.executeCommand();
+        verify(vmNumaNodeDao).massRemoveNumaNodeByNumaNodeId(eq(existingNumaNodeIds));
         verify(vmNumaNodeDao).massSaveNumaNode(eq(newNumaNodes), any(Guid.class), any(Guid.class));
     }
 
     @Test
     public void canDetectMissingVM() {
         when(vmDao.get(eq(vm.getId()))).thenReturn(null);
-        final AddVmNumaNodesCommand command = mockedCommandWithVmFromDb();
+        final SetVmNumaNodesCommand command = mockedCommandWithVmFromDb();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
     }
 
     @Test
-    public void canDetectZeroHostNodesWithVmFromParams() {
+    public void shouldRunValidation() {
         vdsNumaNodes.clear();
-        final AddVmNumaNodesCommand command = mockedCommandWithVmFromParams();
+        final SetVmNumaNodesCommand command = mockedCommandWithVmFromDb();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 EngineMessage.VM_NUMA_PINNED_VDS_NODE_EMPTY);
     }
 
-    @Test
-    public void canDetectMissingRequiredHostNumaNodes() {
-        existingNumaNodes.set(0, createVmNumaNode(1, vdsNumaNodes));
-        vdsNumaNodes.remove(0);
-        final AddVmNumaNodesCommand command = mockedCommandWithVmFromParams();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                EngineMessage.VM_NUMA_NODE_HOST_NODE_INVALID_INDEX);
-    }
 
-    @Test
-    public void canDetectZeroHostNodesWithVmFromDb() {
-        vdsNumaNodes.clear();
-        final AddVmNumaNodesCommand command = mockedCommandWithVmFromDb();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                EngineMessage.VM_NUMA_PINNED_VDS_NODE_EMPTY);
-    }
-
-    @Test
-    public void canDoWithPinnedHostOnVm() {
-        final AddVmNumaNodesCommand command = mockedCommandWithVmFromDb();
-
-        assertThat(command.canDoAction()).isTrue();
-    }
-
-    @Test
-    public void canOnlyDoWithPinnedToHostPolicy() {
-        final AddVmNumaNodesCommand command = mockedCommandWithVmFromDb();
-
-        vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
-
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST);
-    }
-
-    @Test
-    public void canNotDoWithoutPinnedHost() {
-        final AddVmNumaNodesCommand command = mockedCommandWithVmFromDb();
-        vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
-
-        vm.setDedicatedVmForVdsList(new ArrayList<Guid>());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST);
-    }
-
-    @Test
-    public void canNotDoWithTwoPinnedHost() {
-        final AddVmNumaNodesCommand command = mockedCommandWithVmFromDb();
-
-        vm.setDedicatedVmForVdsList(Arrays.asList(Guid.newGuid(), Guid.newGuid()));
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_VM_PINNED_TO_MULTIPLE_HOSTS);
-    }
-
-    @Test
-    public void canCreateAsMuchNumaNodesAsVirtualCores() {
-        final AddVmNumaNodesCommand command = mockedCommandWithVmFromDb();
-
-        vm.setNumOfSockets(1);
-        vm.setCpuPerSocket(4);
-        assertThat(command.canDoAction()).isTrue();
-    }
-
-    @Test
-    public void canCreateLessNumaNodesAsVirtualCores() {
-        final AddVmNumaNodesCommand command = mockedCommandWithVmFromDb();
-
-        vm.setNumOfSockets(1);
-        vm.setCpuPerSocket(5);
-        assertThat(command.canDoAction()).isTrue();
-    }
-
-    @Test
-    public void failCreateMoreNumaNodesThanVirtualCoresWithVmFromDb() {
-        final AddVmNumaNodesCommand command = mockedCommandWithVmFromDb();
-
-        vm.setNumOfSockets(1);
-        vm.setCpuPerSocket(3);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.VM_NUMA_NODE_MORE_NODES_THAN_CPUS);
-    }
-
-    @Test
-    public void failCreateMoreNumaNodesThanVirtualCoresWithVmFromParams() {
-        final AddVmNumaNodesCommand command = mockedCommandWithVmFromParams();
-        vm.setNumOfSockets(1);
-        vm.setCpuPerSocket(3);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.VM_NUMA_NODE_MORE_NODES_THAN_CPUS);
-    }
-
-    private AddVmNumaNodesCommand<VmNumaNodeOperationParameters> mockedCommandWithVmFromParams() {
+    private SetVmNumaNodesCommand<VmNumaNodeOperationParameters> mockedCommandWithVmFromParams() {
         return mockedCommand(new VmNumaNodeOperationParameters(vm, newNumaNodes));
     }
 
-    private AddVmNumaNodesCommand<VmNumaNodeOperationParameters> mockedCommandWithVmFromDb() {
+    private SetVmNumaNodesCommand<VmNumaNodeOperationParameters> mockedCommandWithVmFromDb() {
         return mockedCommand(new VmNumaNodeOperationParameters(vm.getId(), newNumaNodes));
     }
 
-    private AddVmNumaNodesCommand<VmNumaNodeOperationParameters> mockedCommand(VmNumaNodeOperationParameters parameters) {
-        final AddVmNumaNodesCommand<VmNumaNodeOperationParameters> command =
-                spy(new AddVmNumaNodesCommand<>(parameters));
+    private SetVmNumaNodesCommand<VmNumaNodeOperationParameters> mockedCommand(VmNumaNodeOperationParameters
+            parameters) {
+        final SetVmNumaNodesCommand<VmNumaNodeOperationParameters> command =
+                spy(new SetVmNumaNodesCommand<>(parameters));
         when(command.getDbFacade()).thenReturn(dbFacade);
         when(dbFacade.getVmNumaNodeDao()).thenReturn(vmNumaNodeDao);
         when(dbFacade.getVdsNumaNodeDao()).thenReturn(vdsNumaNodeDao);

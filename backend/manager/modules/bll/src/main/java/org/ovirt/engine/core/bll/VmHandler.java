@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.businessentities.EditableOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
-import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -913,81 +912,6 @@ public class VmHandler {
         List<VmNumaNode> nodes = dao.getAllVmNumaNodeByVmId(vm.getId());
 
         vm.setvNumaNodeList(nodes);
-    }
-
-    /**
-     * Cannot have more vm NUMA nodes than vm CPU core
-     *
-     * @param isNumaChanged
-     */
-    public static ValidationResult checkVmNumaNodesIntegrity(VM paramsVm, VM actualVm, boolean isNumaChanged) {
-        /* calculate the actual NUMA nodes */
-        List<VmNumaNode> paramVmNumaNodes = paramsVm.getvNumaNodeList();
-        boolean emptyParamVmNumaNodes = (paramVmNumaNodes == null) || (paramVmNumaNodes.isEmpty());
-        /* origVmNumaNodes = NUMA nodes list prior to update. */
-        List<VmNumaNode> origVmNumaNodes =
-                DbFacade.getInstance().getVmNumaNodeDao().getAllVmNumaNodeByVmId(actualVm.getId());
-        boolean emptyOrigVmNumaNodes = (origVmNumaNodes == null) || (origVmNumaNodes.isEmpty());
-
-        int NUMAnodesCount = 0;
-
-        /* return valid if no NUMA nodes */
-        if (emptyParamVmNumaNodes && emptyOrigVmNumaNodes) {
-            return ValidationResult.VALID;
-        }
-        /* if no NUMA nodes in parameters, but there are NUMA nodes in previous vm */
-        if (emptyParamVmNumaNodes && !emptyOrigVmNumaNodes) {
-            /* REST-api always provide emptyParamVmNumaNodes */
-            /* REST-api modifies NUMA nodes via: addVmNumaNodeCommand/updateVmNumaNodeCommand */
-            /* count NUMA nodes in previous vm, by default */
-            NUMAnodesCount = origVmNumaNodes.size();
-            /* if GUI update to reset NUMA nodes */
-            if (isNumaChanged == true)
-                return ValidationResult.VALID; // no NUMA nodes.
-        }
-        if (!emptyParamVmNumaNodes) {// An update to NUMA nodes
-            NUMAnodesCount = paramVmNumaNodes.size();
-        }
-
-        int cpuCount = paramsVm.getNumOfCpus(); // REST-api assigns cpuCount to parameters.
-        if (cpuCount < NUMAnodesCount) {
-            return new ValidationResult(EngineMessage.VM_NUMA_NODE_MORE_NODES_THAN_CPUS,
-                    String.format("$numaNodes %d", NUMAnodesCount),
-                    String.format("$cpus %d", cpuCount));
-        }
-
-        return ValidationResult.VALID;
-    }
-
-    /**
-     * preferred supports single pinned vnuma node (without that VM fails to run in libvirt). used by add/update VM
-     * commands
-     */
-    public static ValidationResult checkNumaPreferredTuneMode(NumaTuneMode numaTuneMode,
-            List<VmNumaNode> vmNumaNodes,
-            Guid vmId) {
-        // check tune mode
-        if (numaTuneMode != NumaTuneMode.PREFERRED) {
-            return ValidationResult.VALID;
-        }
-
-        if (vmNumaNodes == null && vmId != null) {
-            vmNumaNodes = DbFacade.getInstance().getVmNumaNodeDao().getAllVmNumaNodeByVmId(vmId);
-        }
-
-        // check single node pinned
-        if (vmNumaNodes != null && vmNumaNodes.size() == 1) {
-            List<Pair<Guid, Pair<Boolean, Integer>>> vdsNumaNodeList = vmNumaNodes.get(0).getVdsNumaNodeList();
-            boolean pinnedToSingleNode = vdsNumaNodeList != null
-                    && vdsNumaNodeList.size() == 1
-                    && vdsNumaNodeList.get(0).getSecond() != null
-                    && vdsNumaNodeList.get(0).getSecond().getFirst();
-            if (pinnedToSingleNode) {
-                return ValidationResult.VALID;
-            }
-        }
-
-        return new ValidationResult(EngineMessage.VM_NUMA_NODE_PREFERRED_NOT_PINNED_TO_SINGLE_NODE);
     }
 
     public static List<PermissionSubject> getPermissionsNeededToChangeCluster(Guid vmId, Guid clusterId) {

@@ -7,25 +7,34 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
-public class AddVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> extends AbstractVmNumaNodeCommand<T> {
+public class SetVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> extends AbstractVmNumaNodeCommand<T> {
 
-    public AddVmNumaNodesCommand(T parameters) {
+    private List<Guid> oldNumaNodeIds;
+
+    public SetVmNumaNodesCommand(T parameters) {
         super(parameters);
     }
 
     @Override
     protected void doInit() {
-        // Add new numa nodes to VM for inegrity checks
-        getVmNumaNodesForValidation().addAll(getParameters().getVmNumaNodeList());
+        // Store old numa node ids for deletion
+        oldNumaNodeIds = Entities.getIds(getVmNumaNodesForValidation());
+        // Set new numa nodes for validation
+        setVmNumaNodesForValidation(getParameters().getVmNumaNodeList());
     }
 
     @Override
     protected void executeCommand() {
+        if (!oldNumaNodeIds.isEmpty()) {
+            getVmNumaNodeDao().massRemoveNumaNodeByNumaNodeId(oldNumaNodeIds);
+        }
+
         List<VmNumaNode> vmNumaNodes = getParameters().getVmNumaNodeList();
         List<VdsNumaNode> vdsNumaNodes = getVdsNumaNodes();
 
@@ -49,9 +58,6 @@ public class AddVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> exte
             nodes.add(vmNumaNode);
         }
         getVmNumaNodeDao().massSaveNumaNode(nodes, null, getVm().getId());
-
-        // Used for restful API for reture first NUMA node GUID
-        setActionReturnValue(nodes.get(0).getId());
 
         setSucceeded(true);
     }

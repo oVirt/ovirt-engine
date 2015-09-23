@@ -4,7 +4,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -17,6 +16,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
+import org.ovirt.engine.core.bll.numa.vm.NumaValidator;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
@@ -80,10 +80,8 @@ import org.ovirt.engine.core.common.validation.group.UpdateVm;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDeviceDao;
-import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -513,56 +511,17 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (!getParameters().isUpdateNuma()) {
             return;
         }
-        VmNumaNodeDao dao = DbFacade.getInstance().getVmNumaNodeDao();
-        List<VmNumaNode> addList = new ArrayList<>();
-        List<VmNumaNode> oldList = dao.getAllVmNumaNodeByVmId(getVmId());
-        Map<Guid, VmNumaNode> removeMap = new HashMap<>();
-        for (VmNumaNode node : oldList) {
-            removeMap.put(node.getId(), node);
-        }
         List<VmNumaNode> newList = getParameters().getVmStaticData().getvNumaNodeList();
-        List<VmNumaNode> updateList = new ArrayList<>();
-        if (newList != null) {
-            for (VmNumaNode node : newList) {
-                // no id means new entity
-                if (node.getId() == null) {
-                    addList.add(node);
-                } else {
-                    updateList.add(node);
-                }
-            }
-        }
-        for (VmNumaNode vmNumaNode : updateList) {
-            removeMap.remove(vmNumaNode.getId());
-        }
-        VmNumaNodeOperationParameters params;
-        if (!removeMap.isEmpty()) {
-            params = new VmNumaNodeOperationParameters(getVmId(), new ArrayList<>(removeMap.values()));
-            addAddtionalParams(params);
-            addLogMessages(getBackend().runInternalAction(VdcActionType.RemoveVmNumaNodes, params));
-        }
-        if (!updateList.isEmpty()) {
-            params = new VmNumaNodeOperationParameters(getVmId(), updateList);
-            addAddtionalParams(params);
-            addLogMessages(getBackend().runInternalAction(VdcActionType.UpdateVmNumaNodes, params));
-        }
-        if (!addList.isEmpty()) {
-            params = new VmNumaNodeOperationParameters(getVmId(), addList);
-            addAddtionalParams(params);
-            addLogMessages(getBackend().runInternalAction(VdcActionType.AddVmNumaNodes, params));
-        }
+        VmNumaNodeOperationParameters params =
+                new VmNumaNodeOperationParameters(getParameters().getVm(), new ArrayList<>(newList));
+            addLogMessages(getBackend().runInternalAction(VdcActionType.SetVmNumaNodes, params));
+
     }
 
     private void addLogMessages(VdcReturnValueBase returnValueBase) {
         if (!returnValueBase.getSucceeded()) {
             auditLogDirector.log(this, AuditLogType.NUMA_UPDATE_VM_NUMA_NODE_FAILED);
         }
-    }
-
-    private void addAddtionalParams(VmNumaNodeOperationParameters params) {
-        params.setDedicatedHostList(getParameters().getVmStaticData().getDedicatedVmForVdsList());
-        params.setNumaTuneMode(getParameters().getVmStaticData().getNumaTuneMode());
-        params.setMigrationSupport(getParameters().getVmStaticData().getMigrationSupport());
     }
 
     @Override
@@ -809,15 +768,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failCanDoAction(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
-        if (!validate(VmHandler.checkNumaPreferredTuneMode(getParameters().getVmStaticData().getNumaTuneMode(),
-                getParameters().getVmStaticData().getvNumaNodeList(),
-                getVmId()))) {
-            return false;
-        }
-        if (getParameters().getVm().getMigrationSupport() == MigrationSupport.PINNED_TO_HOST &&
-                !validate(VmHandler.checkVmNumaNodesIntegrity(getParameters().getVm(),
-                        getVm(),
-                        getParameters().isUpdateNuma()))) {
+        if (!validate(NumaValidator.checkVmNumaNodesIntegrity(getParameters().getVm(), getParameters().getVm().getvNumaNodeList())
+        )) {
             return false;
         }
 
@@ -1069,5 +1021,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     public VmValidator createVmValidator(VM vm) {
         return new VmValidator(vm);
+    }
+
+    @Override
+    public void init() {
+        // we always need to verify new or existing numa nodes with the updated VM configuration
+        if (!getParameters().isUpdateNuma()) {
+            getParameters().getVm().setvNumaNodeList(getDbFacade().getVmNumaNodeDao().getAllVmNumaNodeByVmId
+                    (getParameters().getVmId()));
+        }
     }
 }
