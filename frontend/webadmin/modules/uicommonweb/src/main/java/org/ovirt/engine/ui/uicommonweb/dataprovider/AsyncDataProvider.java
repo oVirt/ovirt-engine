@@ -2722,7 +2722,6 @@ public class AsyncDataProvider {
      * Cache configuration values [raw (not converted) values from vdc_options table].
      */
     private void cacheConfigValues(AsyncQuery aQuery) {
-        getDefaultConfigurationVersion();
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object returnValue, AsyncQuery _asyncQuery) {
