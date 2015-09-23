@@ -130,7 +130,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior {
 
     @Override
     public boolean shouldShowDataCenterAlert(StoragePool selectedDataCenter) {
-        return selectedDataCenter != null && !getModel().UnassignedDataCenterId.equals(selectedDataCenter.getId()) &&
+        return selectedDataCenter != null && !StorageModel.UnassignedDataCenterId.equals(selectedDataCenter.getId()) &&
                 !isImportDataDomainEnabled(selectedDataCenter);
     }
 
