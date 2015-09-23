@@ -503,7 +503,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                 isFoundOvfDiskUpdated = isUpdated;
                 foundOvfDiskUpdateDate = date;
                 ovfDisk = ovfStoreDisk;
-                size = new Long(diskDescriptionMap.get(OvfInfoFileConstants.Size).toString());
+                size = Long.valueOf(diskDescriptionMap.get(OvfInfoFileConstants.Size).toString());
             }
         }
         return new Pair<>((DiskImage)ovfDisk, size);
