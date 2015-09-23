@@ -546,12 +546,11 @@ public class EngineConfigLogic {
 
     public ConfigKey fetchConfigKey(String key, String version) {
         ConfigKey configKey = getConfigKey(key);
-        testIfConfigKeyCanBeFetchedOrPrinted(configKey);
-
         if (configKey == null || configKey.getKey() == null) {
             log.debug("Unable to fetch the value of {} in version {}", key, version);
             return null;
         }
+        testIfConfigKeyCanBeFetchedOrPrinted(configKey);
         configKey.setVersion(version);
         log.debug("Fetching key={} ver={}", configKey.getKey(), version);
         try {
