@@ -388,7 +388,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         // Otherwise, set address according to the next available unit.
         if (StringUtils.isNotBlank(address)) {
             addressMap = XmlRpcStringUtils.string2Map(address);
-            int unit = Integer.valueOf(addressMap.get(VdsProperties.Unit));
+            int unit = Integer.parseInt(addressMap.get(VdsProperties.Unit));
             if (vmDeviceUnitMap.containsValue(unit)) {
                 addressMap = VmInfoBuilder.createAddressForScsiDisk(controllerIndex, availableUnit);
             }
