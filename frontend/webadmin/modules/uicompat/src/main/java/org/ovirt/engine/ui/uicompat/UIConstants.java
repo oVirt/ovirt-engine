@@ -606,6 +606,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Providers")
     String providersTitle();
 
+    @DefaultStringValue("You must select a provider")
+    String validateSelectExternalProvider();
+
     @DefaultStringValue("VNIC Profiles")
     String vnicProfilesTitle();
 

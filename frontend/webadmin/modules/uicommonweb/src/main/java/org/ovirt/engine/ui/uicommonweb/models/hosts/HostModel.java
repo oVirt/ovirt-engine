@@ -951,6 +951,10 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
             getExternalComputeResource().setIsValid(true);
             getExternalHostGroups().setIsValid(true);
         }
+        if (getExternalHostProviderEnabled().getEntity() && getProviders().getSelectedItem() == null) {
+            getProviders().getInvalidityReasons().add(constants.validateSelectExternalProvider());
+            getProviders().setIsValid(false);
+        }
 
         getAuthSshPort().validateEntity(new IValidation[] {new NotEmptyValidation(), new IntegerValidation(1, 65535)});
 
@@ -978,6 +982,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 && getExternalHostGroups().getIsValid()
                 && getExternalComputeResource().getIsValid()
                 && getUserPassword().getIsValid()
+                && getProviders().getIsValid()
         );
 
         setValidTab(TabName.POWER_MANAGEMENT_TAB, fenceAgentsValid);
