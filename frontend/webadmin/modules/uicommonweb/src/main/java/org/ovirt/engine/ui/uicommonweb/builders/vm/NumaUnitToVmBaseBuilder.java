@@ -62,9 +62,11 @@ public class NumaUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBuilder<U
 
     private void updateNumaPinning(VmNumaNode vmNumaNode, int index) {
         if (vmNumaNode.getVdsNumaNodeList() == null) {
-            vmNumaNode.setVdsNumaNodeList(new ArrayList<Pair<Guid, Pair<Boolean, Integer>>>());
+            ArrayList<Pair<Guid, Pair<Boolean, Integer>>> list = new ArrayList<Pair<Guid, Pair<Boolean, Integer>>>();
             Pair<Guid, Pair<Boolean, Integer>> pair = new Pair<Guid, Pair<Boolean, Integer>>();
             pair.setSecond(new Pair<Boolean, Integer>(false, index));
+            list.add(pair);
+            vmNumaNode.setVdsNumaNodeList(list);
         }
     }
 }
