@@ -172,8 +172,6 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
     }
 
     protected void deactivateStorageDomainAfterTaskExecution() {
-        final StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase(getStorageDomainId(), getStoragePoolId());
-        params.setSkipChecks(true);
         boolean isLastMaster = getStorageDomain().getStorageDomainType() == StorageDomainType.Master && electNewMaster() == null;
         if (isLastMaster) {  // Spawning a new thread waiting for tasks cleanup
             StoragePoolIsoMap map = loadStoragePoolIsoMap();
