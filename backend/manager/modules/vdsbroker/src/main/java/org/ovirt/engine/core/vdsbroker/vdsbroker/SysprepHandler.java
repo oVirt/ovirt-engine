@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class SysprepHandler {
-    public static final Map<String, Integer> timeZoneIndex = new HashMap<String, Integer>();
+    private static final Map<String, Integer> timeZoneIndex = new HashMap<String, Integer>();
     private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
     private static final Logger log = LoggerFactory.getLogger(SysprepHandler.class);
