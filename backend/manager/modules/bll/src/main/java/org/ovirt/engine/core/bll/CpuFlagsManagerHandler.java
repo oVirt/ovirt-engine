@@ -236,7 +236,7 @@ public class CpuFlagsManagerHandler implements BackendService {
             Comparator<ServerCpu> cpuComparator = new Comparator<ServerCpu>() {
                 @Override
                 public int compare(ServerCpu o1, ServerCpu o2) {
-                    return Integer.valueOf(o1.getLevel()).compareTo(o2.getLevel());
+                    return Integer.compare(o1.getLevel(), o2.getLevel());
                 }
             };
 
