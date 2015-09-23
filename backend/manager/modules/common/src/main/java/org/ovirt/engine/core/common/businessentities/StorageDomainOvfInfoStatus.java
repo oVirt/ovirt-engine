@@ -23,10 +23,6 @@ public enum StorageDomainOvfInfoStatus implements Identifiable{
         return value;
     }
 
-    public void setValue(int value) {
-        this.value = value;
-    }
-
     public static StorageDomainOvfInfoStatus forValue(int value) {
         return map.get(value);
     }
