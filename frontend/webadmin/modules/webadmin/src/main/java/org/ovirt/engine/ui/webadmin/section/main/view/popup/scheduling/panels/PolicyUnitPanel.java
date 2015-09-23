@@ -96,7 +96,7 @@ public class PolicyUnitPanel extends FocusPanel {
                 String labelText = null;
                 if (position <= -1) {
                     labelText = constants.firstFilter();
-                } else if (position >= 1) {
+                } else {
                     labelText = constants.lastFilter();
                 }
                 label.setText(labelText);
