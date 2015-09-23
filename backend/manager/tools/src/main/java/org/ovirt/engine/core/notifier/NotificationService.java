@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.notifier;
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -116,15 +117,16 @@ public class NotificationService implements Runnable {
                         prop.getProperty(NotificationProperties.FAILED_QUERIES_NOTIFICATION_RECIPIENTS, true);
                 if (!StringUtils.isEmpty(dbDownSubscribers)) {
                     for (String subscriber : dbDownSubscribers.split(",")) {
-                        new FirstMatchSimpleFilter.FilterEntry(
+                        FirstMatchSimpleFilter.FilterEntry subscriberEntry = new FirstMatchSimpleFilter.FilterEntry(
                                 EventsManager.DATABASE_UNREACHABLE,
                                 null,
                                 false,
                                 EventNotificationMethod.SMTP.getAsString(),
                                 subscriber);
+                        List<FirstMatchSimpleFilter.FilterEntry> subscriberEntries = Collections.singletonList(subscriberEntry);
+                        firstMatchSimpleFilter.addFilterEntries(subscriberEntries);
                     }
                 }
-
 
                 // Add configurations subscription
                 firstMatchSimpleFilter.addFilterEntries(
