@@ -678,10 +678,11 @@ public class VmHandler {
         String numOfMonitorsStr =
                 Config.getValue(ConfigValues.ValidNumOfMonitors).toString().replaceAll("[\\[\\]]", "");
         String values[] = numOfMonitorsStr.split(",");
-        for (String val : values) {
-            val = val.trim();
-            if (Integer.valueOf(val) > max) {
-                max = Integer.valueOf(val);
+        for (String text : values) {
+            text = text.trim();
+            int val = Integer.parseInt(text);
+            if (val > max) {
+                max = val;
             }
         }
         return max;
