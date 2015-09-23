@@ -28,7 +28,7 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
         final int highCpuUtilization = tryParseWithDefault(parameters.get(HIGH_UTILIZATION),
                 getHighUtilizationDefaultValue());
         final long overUtilizedMemory = parameters.containsKey(EvenDistributionBalancePolicyUnit.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED) ?
-                Long.valueOf(parameters.get(EvenDistributionBalancePolicyUnit.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED)) : 0L;
+                Long.parseLong(parameters.get(EvenDistributionBalancePolicyUnit.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED)) : 0L;
 
         return new FindVmAndDestinations(cluster, highCpuUtilization, overUtilizedMemory);
     }
@@ -69,7 +69,7 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
                                             List<VDS> candidateHosts,
                                             Map<String, String> parameters) {
         long requiredMemory = parameters.containsKey(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED) ?
-                Long.valueOf(parameters.get(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED)) : 0L;
+                Long.parseLong(parameters.get(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED)) : 0L;
 
         return getOverUtilizedMemoryHosts(candidateHosts, requiredMemory);
     }
@@ -79,7 +79,7 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
                                                  List<VDS> candidateHosts,
                                                  Map<String, String> parameters) {
         long requiredMemory = parameters.containsKey(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED) ?
-                Long.valueOf(parameters.get(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED)) : 0L;
+                Long.parseLong(parameters.get(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED)) : 0L;
 
         return getUnderUtilizedMemoryHosts(candidateHosts, requiredMemory, 0);
     }
