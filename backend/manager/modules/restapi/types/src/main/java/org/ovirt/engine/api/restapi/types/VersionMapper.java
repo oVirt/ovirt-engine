@@ -68,14 +68,12 @@ public class VersionMapper {
         if(parts.length < 1) {
             return null;
         }
-        if (parts.length > 0) {
-            try {
-                version.setMajor(Integer.parseInt(StringUtils.stripStart(parts[0], "0")));
-            }
-            catch(NumberFormatException e) {
-                log.error("Failed to map version string major component", e);
-                return null;
-            }
+        try {
+            version.setMajor(Integer.parseInt(StringUtils.stripStart(parts[0], "0")));
+        }
+        catch(NumberFormatException e) {
+            log.error("Failed to map version string major component", e);
+            return null;
         }
         if (parts.length > 1) {
             try {
