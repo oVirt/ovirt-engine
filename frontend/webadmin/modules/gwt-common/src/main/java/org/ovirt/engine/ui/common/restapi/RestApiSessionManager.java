@@ -121,7 +121,7 @@ public class RestApiSessionManager implements EngineSessionRefreshedHandler {
 
     public void setSessionTimeout(String engineSessionTimeout) {
         try {
-            setSessionTimeout(Integer.valueOf(engineSessionTimeout));
+            setSessionTimeout(Integer.parseInt(engineSessionTimeout));
         } catch (NumberFormatException ex) {
             setSessionTimeout(DEFAULT_ENGINE_SESSION_TIMEOUT);
         }
