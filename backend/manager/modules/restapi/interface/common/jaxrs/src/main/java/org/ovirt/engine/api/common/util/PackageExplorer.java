@@ -108,18 +108,7 @@ public class PackageExplorer {
     private static void walkDirs(List<String> classNames, String packageName, List<File> dirs)
             throws IOException {
         for (File directory : dirs) {
-            List<String> classes = new ArrayList<>();
             if (directory.exists()) {
-                File[] files = directory.listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        if (file.isDirectory()) {
-                            classes.addAll(getClassesUnder(file, in(packageName, file.getName())));
-                        } else if (isClass(file.getName())) {
-                            classes.add(in(packageName, trimClass(file.getName())));
-                        }
-                    }
-                }
                 classNames.addAll(getClassesUnder(directory, packageName));
             }
         }
