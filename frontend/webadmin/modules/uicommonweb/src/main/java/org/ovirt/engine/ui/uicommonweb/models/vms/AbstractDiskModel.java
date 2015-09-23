@@ -826,7 +826,7 @@ public abstract class AbstractDiskModel extends DiskModel {
     }
 
     private void updateDiskSize(DiskImage diskImage) {
-        long sizeToAddInGigabytes = Long.valueOf(getSizeExtend().getEntity());
+        long sizeToAddInGigabytes = Long.parseLong(getSizeExtend().getEntity());
         if (sizeToAddInGigabytes > 0) {
             diskImage.setSizeInGigabytes(diskImage.getSizeInGigabytes() + sizeToAddInGigabytes);
         }
