@@ -264,7 +264,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
                 .<Integer>getValue(ConfigValues.HighUtilizationForPowerSave));
         final long overUtilizedMemory =
                 parameters.containsKey(EvenDistributionBalancePolicyUnit.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED) ?
-                        Long.valueOf(parameters.get(EvenDistributionBalancePolicyUnit.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED)) :
+                        Long.parseLong(parameters.get(EvenDistributionBalancePolicyUnit.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED)) :
                         0L;
 
         return new FindVmAndDestinations(cluster, highUtilization, overUtilizedMemory);
@@ -317,9 +317,9 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
             List<VDS> candidateHosts,
             Map<String, String> parameters) {
         long lowMemoryLimit = parameters.containsKey(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED) ?
-                Long.valueOf(parameters.get(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED)) : 0L;
+                Long.parseLong(parameters.get(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED)) : 0L;
         long highMemoryLimit = parameters.containsKey(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED) ?
-                Long.valueOf(parameters.get(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED)) : 0L;
+                Long.parseLong(parameters.get(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED)) : 0L;
 
         List<VDS> result = new ArrayList<>();
         result.addAll(getUnderUtilizedMemoryHosts(candidateHosts, highMemoryLimit, 1));
@@ -330,9 +330,9 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
     @Override
     protected List<VDS> getSecondaryDestinations(VDSGroup cluster, List<VDS> candidateHosts, Map<String, String> parameters) {
         long notEnoughMemory = parameters.containsKey(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED) ?
-                Long.valueOf(parameters.get(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED)) : 0L;
+                Long.parseLong(parameters.get(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED)) : 0L;
         long tooMuchMemory = parameters.containsKey(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED) ?
-                Long.valueOf(parameters.get(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED)) : 0L;
+                Long.parseLong(parameters.get(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED)) : 0L;
 
         return getNormallyUtilizedMemoryHosts(candidateHosts, notEnoughMemory, tooMuchMemory);
     }
