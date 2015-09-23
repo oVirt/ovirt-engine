@@ -92,7 +92,7 @@ public final class Linq {
             long xid = x.getAuditLogId();
             long yid = y.getAuditLogId();
 
-            return Long.valueOf(xid).compareTo(yid);
+            return Long.compare(xid, yid);
         }
     }
 
