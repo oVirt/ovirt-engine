@@ -474,7 +474,7 @@ public class EngineConfigLogic {
                 }
                 int index = 0;
                 try {
-                    index = Integer.valueOf(console.readLine());
+                    index = Integer.parseInt(console.readLine());
                 } catch (NumberFormatException e) {
                     continue;
                 }
