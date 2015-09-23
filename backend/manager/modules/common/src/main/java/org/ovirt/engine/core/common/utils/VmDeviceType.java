@@ -58,7 +58,7 @@ public enum VmDeviceType {
      */
     public static VmDeviceType getoVirtDevice(int resourceType) {
         for (VmDeviceType deviceType : values()) {
-            if (deviceType.ovfResourceType != null && Integer.valueOf(deviceType.ovfResourceType) == resourceType) {
+            if (deviceType.ovfResourceType != null && Integer.parseInt(deviceType.ovfResourceType) == resourceType) {
                 return deviceType;
             }
         }
