@@ -71,41 +71,44 @@ public class GetoVirtISOsQuery<P extends IdQueryParameters> extends QueriesComma
             Matcher matcher = info.osPattern.matcher(nodeOS);
             if (matcher.matches() && info.path.isDirectory()) {
                 log.debug("Looking for list of ISOs in [{}], regex [{}]", info.path, info.isoPattern);
-                for (File file : info.path.listFiles()) {
-                    matcher = info.isoPattern.matcher(file.getName());
-                    if (matcher.matches()) {
-                        log.debug("ISO Found [{}]", file);
-                        String version = matcher.group(1);
-                        log.debug("ISO Version [{}]", version);
-                        File versionFile = new File(info.path, String.format("version-%s.txt", version));
-                        log.debug("versionFile [{}]", versionFile);
+                File[] files = info.path.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        matcher = info.isoPattern.matcher(file.getName());
+                        if (matcher.matches()) {
+                            log.debug("ISO Found [{}]", file);
+                            String version = matcher.group(1);
+                            log.debug("ISO Version [{}]", version);
+                            File versionFile = new File(info.path, String.format("version-%s.txt", version));
+                            log.debug("versionFile [{}]", versionFile);
 
-                        // Setting IsoData Class to get further [version] and [vdsm compatibility version] data
-                        IsoData isoData = new IsoData();
-                        isoData.setVersion(readIsoVersion(versionFile));
-                        String isoVersionText = isoData.getVersion();
-                        isoData.setVdsmCompitibilityVersion(readVdsmCompatibiltyVersion((
-                                versionFile.getAbsolutePath().replace(OVIRT_ISO_VERSION_PREFIX,
-                                        OVIRT_ISO_VDSM_COMPATIBILITY_PREFIX))));
+                            // Setting IsoData Class to get further [version] and [vdsm compatibility version] data
+                            IsoData isoData = new IsoData();
+                            isoData.setVersion(readIsoVersion(versionFile));
+                            String isoVersionText = isoData.getVersion();
+                            isoData.setVdsmCompitibilityVersion(readVdsmCompatibiltyVersion((
+                                    versionFile.getAbsolutePath().replace(OVIRT_ISO_VERSION_PREFIX,
+                                            OVIRT_ISO_VDSM_COMPATIBILITY_PREFIX))));
 
-                        if (StringUtils.isEmpty(isoVersionText)) {
-                            log.debug("Iso version file '{}' is empty.", versionFile.getAbsolutePath());
-                            continue;
-                        }
+                            if (StringUtils.isEmpty(isoVersionText)) {
+                                log.debug("Iso version file '{}' is empty.", versionFile.getAbsolutePath());
+                                continue;
+                            }
 
-                        String[] versionParts = isoVersionText.split(",");
-                        if (versionParts.length < 2) {
-                            log.debug("Iso version file '{}' contains invalid content. Expected: <major-version>,<release> format.",
-                                    versionFile.getAbsolutePath());
-                            continue;
-                        }
+                            String[] versionParts = isoVersionText.split(",");
+                            if (versionParts.length < 2) {
+                                log.debug("Iso version file '{}' contains invalid content. Expected: <major-version>,<release> format.",
+                                        versionFile.getAbsolutePath());
+                                continue;
+                            }
 
-                        RpmVersion isoVersion = new RpmVersion(file.getName());
+                            RpmVersion isoVersion = new RpmVersion(file.getName());
 
-                        if (isoData.getVdsmCompatibilityVersion() != null && isIsoCompatibleForUpgradeByClusterVersion(isoData) ||
-                            vdsOsVersion != null && VdsHandler.isIsoVersionCompatibleForUpgrade(vdsOsVersion, isoVersion)
-                        ) {
-                            availableISOsList.add(isoVersion);
+                            if (isoData.getVdsmCompatibilityVersion() != null && isIsoCompatibleForUpgradeByClusterVersion(isoData) ||
+                                    vdsOsVersion != null && VdsHandler.isIsoVersionCompatibleForUpgrade(vdsOsVersion, isoVersion)
+                                    ) {
+                                availableISOsList.add(isoVersion);
+                            }
                         }
                     }
                 }
