@@ -20,7 +20,7 @@ public abstract class ConsolesBase implements VmConsoles {
 
     private ConsoleProtocol selectedProtocol;
     protected final Map<ConsoleProtocol, ConsoleModel> consoleModels;
-    protected static final Map<Class, ConsoleProtocol> modelTypeMapping;
+    private static final Map<Class, ConsoleProtocol> modelTypeMapping;
 
     private final ConsoleOptionsFrontendPersister.ConsoleContext myContext;
 
