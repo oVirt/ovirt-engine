@@ -115,12 +115,12 @@ public final class GlusterVolumeProfileInfoReturnForXmlRpc extends StatusReturnF
 
     private StatsInfo getStatInfo(Map<String, Object> statsInfoMap, String statType) {
         StatsInfo statsInfo = new StatsInfo();
-        int statsDuration = Integer.valueOf((String) statsInfoMap.get(DURATION));
+        int statsDuration = Integer.parseInt((String) statsInfoMap.get(DURATION));
         statsInfo.setDuration(statsDuration);
         Pair<Long, TimeUnit> statsDurationFormatted = TimeConverter.autoConvert(statsDuration, TimeUnit.SECONDS);
         statsInfo.setDurationFormatted(new Pair<Integer, String>(statsDurationFormatted.getFirst().intValue(), statsDurationFormatted.getSecond().toString()));
-        statsInfo.setTotalWrite(Long.valueOf((String) statsInfoMap.get(TOTAL_WRITE)));
-        statsInfo.setTotalRead(Long.valueOf((String) statsInfoMap.get(TOTAL_READ)));
+        statsInfo.setTotalWrite(Long.parseLong((String) statsInfoMap.get(TOTAL_WRITE)));
+        statsInfo.setTotalRead(Long.parseLong((String) statsInfoMap.get(TOTAL_READ)));
         statsInfo.setBlockStats(getBlockStats((Object[]) statsInfoMap.get(BLOCK_STATS)));
         statsInfo.setFopStats(getFopStats((Object[]) statsInfoMap.get(FOP_STATS)));
         statsInfo.setProfileStatsType((statType.equals(CUMULATIVE_STATS) ? ProfileStatsType.CUMULATIVE
@@ -133,7 +133,7 @@ public final class GlusterVolumeProfileInfoReturnForXmlRpc extends StatusReturnF
         for (Object fopStatsObj : fopStatsObjects) {
             FopStats fopStats = new FopStats();
             Map<String, Object> fopStatsMap = (Map<String, Object>) fopStatsObj;
-            fopStats.setHits(Integer.valueOf((String) fopStatsMap.get(HITS)));
+            fopStats.setHits(Integer.parseInt((String) fopStatsMap.get(HITS)));
             fopStats.setName((String) fopStatsMap.get(NAME));
 
             Double minLatency = Double.valueOf((String) fopStatsMap.get(LATENCY_MIN));
