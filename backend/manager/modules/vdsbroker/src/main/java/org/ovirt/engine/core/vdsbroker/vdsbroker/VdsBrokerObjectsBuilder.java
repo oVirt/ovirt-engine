@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -505,8 +506,11 @@ public class VdsBrokerObjectsBuilder {
         }
 
         if (xmlRpcStruct.containsKey(VdsProperties.CDRom)) {
-            String isoName = Paths.get((String) xmlRpcStruct.get(VdsProperties.CDRom)).getFileName().toString();
-            vm.setCurrentCd(isoName);
+            Path fileName = Paths.get((String) xmlRpcStruct.get(VdsProperties.CDRom)).getFileName();
+            if (fileName != null) {
+                String isoName = fileName.toString();
+                vm.setCurrentCd(isoName);
+            }
         }
 
         if (xmlRpcStruct.containsKey(VdsProperties.GUEST_CPU_COUNT)) {
