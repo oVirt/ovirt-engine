@@ -106,9 +106,9 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
                 Map<String, Object> volumeStatusInfo = (Map<String, Object>) statusInfo.get("volumeStatsInfo");
                 capacityInfo = new GlusterVolumeSizeInfo();
                 capacityInfo.setVolumeId(volume.getId());
-                capacityInfo.setTotalSize(Long.valueOf((String) volumeStatusInfo.get(DETAIL_SIZE_TOTAL)));
-                capacityInfo.setUsedSize(Long.valueOf((String) volumeStatusInfo.get(DETAIL_SIZE_USED)));
-                capacityInfo.setFreeSize(Long.valueOf((String) volumeStatusInfo.get(DETAIL_SIZE_FREE)));
+                capacityInfo.setTotalSize(Long.parseLong((String) volumeStatusInfo.get(DETAIL_SIZE_TOTAL)));
+                capacityInfo.setUsedSize(Long.parseLong((String) volumeStatusInfo.get(DETAIL_SIZE_USED)));
+                capacityInfo.setFreeSize(Long.parseLong((String) volumeStatusInfo.get(DETAIL_SIZE_FREE)));
                 volumeAdvancedDetails.setCapacityInfo(capacityInfo);
             }
         }
@@ -230,10 +230,10 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
 
         // Fetch the volume status detail
         if (brick.containsKey(DETAIL_SIZE_TOTAL)) {
-            brickProperties.setTotalSize(Double.valueOf((String) brick.get(DETAIL_SIZE_TOTAL)));
+            brickProperties.setTotalSize(Double.parseDouble((String) brick.get(DETAIL_SIZE_TOTAL)));
         }
         if (brick.containsKey(DETAIL_SIZE_FREE)) {
-            brickProperties.setFreeSize(Double.valueOf((String) brick.get(DETAIL_SIZE_FREE)));
+            brickProperties.setFreeSize(Double.parseDouble((String) brick.get(DETAIL_SIZE_FREE)));
         }
 
         if (brick.containsKey(DETAIL_DEVICE)) {
@@ -241,7 +241,7 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
         }
 
         if (brick.containsKey(DETAIL_BLOCK_SIZE)) {
-            brickProperties.setBlockSize(Integer.valueOf((String) brick.get(DETAIL_BLOCK_SIZE)));
+            brickProperties.setBlockSize(Integer.parseInt((String) brick.get(DETAIL_BLOCK_SIZE)));
         }
 
         if (brick.containsKey(DETAIL_MNT_OPTIONS)) {
@@ -283,13 +283,13 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
             Mempool glusterMemoryPool = new Mempool();
             Map<String, Object> memPool = (Map<String, Object>) memPoolObj;
             glusterMemoryPool.setName((String) memPool.get(MEMORY_NAME));
-            glusterMemoryPool.setHotCount(Integer.valueOf((String) memPool.get(MEMORY_HOTCOUNT)));
-            glusterMemoryPool.setColdCount(Integer.valueOf((String) memPool.get(MEMORY_COLDCOUNT)));
-            glusterMemoryPool.setPadddedSize(Integer.valueOf((String) memPool.get(MEMORY_PADDDEDSIZEOF)));
-            glusterMemoryPool.setAllocCount(Integer.valueOf((String) memPool.get(MEMORY_ALLOCCOUNT)));
-            glusterMemoryPool.setMaxAlloc(Integer.valueOf((String) memPool.get(MEMORY_MAXALLOC)));
-            glusterMemoryPool.setPoolMisses(Integer.valueOf((String) memPool.get(MEMORY_POOLMISSES)));
-            glusterMemoryPool.setMaxStdAlloc(Integer.valueOf((String) memPool.get(MEMORY_MAXSTDALLOC)));
+            glusterMemoryPool.setHotCount(Integer.parseInt((String) memPool.get(MEMORY_HOTCOUNT)));
+            glusterMemoryPool.setColdCount(Integer.parseInt((String) memPool.get(MEMORY_COLDCOUNT)));
+            glusterMemoryPool.setPadddedSize(Integer.parseInt((String) memPool.get(MEMORY_PADDDEDSIZEOF)));
+            glusterMemoryPool.setAllocCount(Integer.parseInt((String) memPool.get(MEMORY_ALLOCCOUNT)));
+            glusterMemoryPool.setMaxAlloc(Integer.parseInt((String) memPool.get(MEMORY_MAXALLOC)));
+            glusterMemoryPool.setPoolMisses(Integer.parseInt((String) memPool.get(MEMORY_POOLMISSES)));
+            glusterMemoryPool.setMaxStdAlloc(Integer.parseInt((String) memPool.get(MEMORY_MAXSTDALLOC)));
             memPoolList.add(glusterMemoryPool);
         }
         return memPoolList;
@@ -297,16 +297,16 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
 
     private MallInfo prepareMallInfo(Map<String, Object> mallInfo) {
         MallInfo glusterMallInfo = new MallInfo();
-        glusterMallInfo.setArena(Integer.valueOf((String) mallInfo.get(MEMORY_ARENA)));
-        glusterMallInfo.setOrdblks(Integer.valueOf((String) mallInfo.get(MEMORY_ORDBLKS)));
-        glusterMallInfo.setSmblks(Integer.valueOf((String) mallInfo.get(MEMORY_SMBLKS)));
-        glusterMallInfo.setHblks(Integer.valueOf((String) mallInfo.get(MEMORY_HBLKS)));
-        glusterMallInfo.setHblkhd(Integer.valueOf((String) mallInfo.get(MEMORY_HBLKHD)));
-        glusterMallInfo.setUsmblks(Integer.valueOf((String) mallInfo.get(MEMORY_USMBLKS)));
-        glusterMallInfo.setFsmblks(Integer.valueOf((String) mallInfo.get(MEMORY_FSMBLKS)));
-        glusterMallInfo.setUordblks(Integer.valueOf((String) mallInfo.get(MEMORY_UORDBLKS)));
-        glusterMallInfo.setFordblks(Integer.valueOf((String) mallInfo.get(MEMORY_FORDBLKS)));
-        glusterMallInfo.setKeepcost(Integer.valueOf((String) mallInfo.get(MEMORY_KEEPCOST)));
+        glusterMallInfo.setArena(Integer.parseInt((String) mallInfo.get(MEMORY_ARENA)));
+        glusterMallInfo.setOrdblks(Integer.parseInt((String) mallInfo.get(MEMORY_ORDBLKS)));
+        glusterMallInfo.setSmblks(Integer.parseInt((String) mallInfo.get(MEMORY_SMBLKS)));
+        glusterMallInfo.setHblks(Integer.parseInt((String) mallInfo.get(MEMORY_HBLKS)));
+        glusterMallInfo.setHblkhd(Integer.parseInt((String) mallInfo.get(MEMORY_HBLKHD)));
+        glusterMallInfo.setUsmblks(Integer.parseInt((String) mallInfo.get(MEMORY_USMBLKS)));
+        glusterMallInfo.setFsmblks(Integer.parseInt((String) mallInfo.get(MEMORY_FSMBLKS)));
+        glusterMallInfo.setUordblks(Integer.parseInt((String) mallInfo.get(MEMORY_UORDBLKS)));
+        glusterMallInfo.setFordblks(Integer.parseInt((String) mallInfo.get(MEMORY_FORDBLKS)));
+        glusterMallInfo.setKeepcost(Integer.parseInt((String) mallInfo.get(MEMORY_KEEPCOST)));
         return glusterMallInfo;
     }
 
@@ -319,9 +319,9 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
             String[] hostNameArr = hostName.split(":", -1);
 
             clientInfo.setHostname(hostNameArr[0]);
-            clientInfo.setClientPort(Integer.valueOf(hostNameArr[1]));
-            clientInfo.setBytesRead(Long.valueOf((String) client.get(CLIENTS_BYTES_READ)));
-            clientInfo.setBytesWritten(Long.valueOf((String) client.get(CLIENTS_BYTES_WRITE)));
+            clientInfo.setClientPort(Integer.parseInt(hostNameArr[1]));
+            clientInfo.setBytesRead(Long.parseLong((String) client.get(CLIENTS_BYTES_READ)));
+            clientInfo.setBytesWritten(Long.parseLong((String) client.get(CLIENTS_BYTES_WRITE)));
             clientInfoList.add(clientInfo);
         }
         return clientInfoList;
