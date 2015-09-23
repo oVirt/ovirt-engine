@@ -51,15 +51,15 @@ public class GlusterVolumeTaskReturnForXmlRpc extends GlusterTaskInfoReturnForXm
     }
 
     private void populateGlusterVolumeTaskStatusDetail(GlusterVolumeTaskStatusDetail detail, Map<String, Object> map) {
-        detail.setFilesScanned(map.containsKey(FILES_SCANNED) ? Long.valueOf(map.get(FILES_SCANNED).toString()) : 0);
-        detail.setFilesMoved(map.containsKey(FILES_MOVED) ? Long.valueOf(map.get(FILES_MOVED).toString()) : 0);
-        detail.setFilesFailed(map.containsKey(FILES_FAILED) ? Long.valueOf(map.get(FILES_FAILED).toString()) : 0);
-        detail.setFilesSkipped(map.containsKey(FILES_SKIPPED) ? Long.valueOf(map.get(FILES_SKIPPED).toString()) : 0);
-        detail.setTotalSizeMoved(map.containsKey(TOTAL_SIZE_MOVED) ? Long.valueOf(map.get(TOTAL_SIZE_MOVED).toString())
+        detail.setFilesScanned(map.containsKey(FILES_SCANNED) ? Long.parseLong(map.get(FILES_SCANNED).toString()) : 0);
+        detail.setFilesMoved(map.containsKey(FILES_MOVED) ? Long.parseLong(map.get(FILES_MOVED).toString()) : 0);
+        detail.setFilesFailed(map.containsKey(FILES_FAILED) ? Long.parseLong(map.get(FILES_FAILED).toString()) : 0);
+        detail.setFilesSkipped(map.containsKey(FILES_SKIPPED) ? Long.parseLong(map.get(FILES_SKIPPED).toString()) : 0);
+        detail.setTotalSizeMoved(map.containsKey(TOTAL_SIZE_MOVED) ? Long.parseLong(map.get(TOTAL_SIZE_MOVED).toString())
                 : 0);
         detail.setStatus(map.containsKey(STATUS) ? GlusterAsyncTaskStatus.from(map.get(STATUS).toString())
                 .getJobExecutionStatus() : JobExecutionStatus.UNKNOWN);
-        detail.setRunTime(map.containsKey(RUNTIME) ? Double.valueOf(map.get(RUNTIME).toString()) : 0);
+        detail.setRunTime(map.containsKey(RUNTIME) ? Double.parseDouble(map.get(RUNTIME).toString()) : 0);
     }
 
     public GlusterVolumeTaskStatusEntity getStatusDetails() {
