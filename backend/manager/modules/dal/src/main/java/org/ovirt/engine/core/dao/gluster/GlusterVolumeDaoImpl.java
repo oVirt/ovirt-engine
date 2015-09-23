@@ -360,7 +360,7 @@ public class GlusterVolumeDaoImpl extends MassOperationsGenericDao<GlusterVolume
                                 .getConfigByClusterIdAndName(volume.getClusterId(),
                                         GlusterConstants.VOLUME_SNAPSHOT_MAX_HARD_LIMIT);
             }
-            volume.setSnapMaxLimit(config != null ? Integer.valueOf(config.getParamValue()) : 0);
+            volume.setSnapMaxLimit(config != null ? Integer.parseInt(config.getParamValue()) : 0);
         }
     }
 
