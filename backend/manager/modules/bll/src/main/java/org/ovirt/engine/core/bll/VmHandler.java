@@ -1004,10 +1004,16 @@ public class VmHandler {
         Set<GraphicsType> result = new HashSet<>();
 
         for (GraphicsType type : GraphicsType.values()) {
-            if (graphicsDevices.get(type) != null || // grapics set in params
-                    srcEntityGraphics.contains(type) && !graphicsResetInParams(type, graphicsDevices)) // graphics is in template and is not nulled in params
-            {
+            if (graphicsDevices.get(type) != null) {
                 result.add(type);
+            }
+        }
+
+        if (result.isEmpty()) {// if graphics are set in params, do not use template graphics
+            for (GraphicsType type : GraphicsType.values()) {
+                if (srcEntityGraphics.contains(type) && !graphicsResetInParams(type, graphicsDevices)) { // graphics is in template and is not nulled in params
+                    result.add(type);
+                }
             }
         }
 
