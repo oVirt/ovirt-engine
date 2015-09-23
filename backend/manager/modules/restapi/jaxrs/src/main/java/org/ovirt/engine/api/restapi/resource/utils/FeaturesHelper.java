@@ -398,6 +398,7 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Storage server connections");
         feature.setDescription("Ability to manage storage server connections");
+        features.getFeature().add(feature);
     }
 
     private void addFeatureAddVmFromOvf(Features features) {
@@ -537,6 +538,7 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("OpenStack Image Providers");
         feature.setDescription("Add/modify/remove OpenStack image providers.");
+        features.getFeature().add(feature);
     }
 
     private void addNetworkAttachmentsFeature(Features features) {
