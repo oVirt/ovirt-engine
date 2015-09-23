@@ -49,6 +49,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.BondMode;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -56,6 +57,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
@@ -1380,6 +1382,156 @@ public class HostSetupNetworksValidatorTest {
         testValidateQosNotPartiallyConfigured(true,
             false,
             failsWith(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS));
+    }
+
+    @Test
+    public void testValidateBondModeForLabeledVmNetwork(){
+        Bond bond = new Bond();
+        bond.setNetworkName(null);
+        bond.setName("bondName");
+        bond.setLabels(new HashSet<String>(Arrays.asList("label")));
+        bond.setNetworkName("vmNetwork");
+
+        Network vmNetwork = createNetworkWithName("vmNetwork");
+        vmNetwork.setVmNetwork(true);
+        vmNetwork.setLabel("label");
+
+        NetworkAttachment vmNetworkNetworkAttachment = createNetworkAttachment(vmNetwork, bond);
+
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addBonds(new Bond[]{bond}))
+            .addNetworks(vmNetwork)
+            .addExistingInterfaces(bond)
+            .build();
+
+        for (BondMode bondMode : BondMode.values()){
+            bond.setBondOptions(bondMode.getConfigurationValue());
+            ValidationResult result = validator.validateBondModeVsNetworksAttachedToIt(Arrays.asList(vmNetworkNetworkAttachment));
+            if (bondMode.isBondModeValidForVmNetwork()){
+                assertThat(result, isValid());
+            } else {
+                assertThat(result,
+                    failsWith(EngineMessage.INVALID_BOND_MODE_FOR_BOND_WITH_LABELED_VM_NETWORK,
+                            ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_BOND_NAME, "bondName"),
+                            ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME, "vmNetwork"),
+                            ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_LABEL, "label")
+                            ));
+            }
+        }
+    }
+
+    @Test
+    public void testValidateBondModeForVmNetwork(){
+        validateBondMode(true);
+    }
+
+    @Test
+    public void testValidateBondModeForNonVmNetwork(){
+        validateBondMode(false);
+    }
+
+    private void validateBondMode(boolean isVmNetwork){
+
+        Bond bond = new Bond();
+        bond.setNetworkName(null);
+        bond.setName("bondName");
+        bond.setNetworkName("networkName");
+
+        Network network = createNetworkWithName("networkName");
+        network.setVmNetwork(isVmNetwork);
+        NetworkAttachment vmNetworkNetworkAttachment = createNetworkAttachment(network, bond);
+
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addBonds(new Bond[]{bond}))
+            .addNetworks(network)
+            .addExistingInterfaces(bond)
+            .build();
+
+        for (BondMode bondMode : BondMode.values()){
+            bond.setBondOptions(bondMode.getConfigurationValue());
+            ValidationResult result = validator.validateBondModeVsNetworksAttachedToIt(Arrays.asList(vmNetworkNetworkAttachment));
+            if (!isVmNetwork || bondMode.isBondModeValidForVmNetwork()){
+                assertThat(result, isValid());
+            } else {
+                assertThat(result,
+                    failsWith(EngineMessage.INVALID_BOND_MODE_FOR_BOND_WITH_VM_NETWORK,
+                            ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_BOND_NAME, "bondName"),
+                            ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME, "networkName")
+                            ));
+            }
+        }
+    }
+
+    @Test
+    public void testValidateBondOptionsForNewAttachementWithVmNetwork(){
+        validateValidBonds(false, true, true, false);
+    }
+
+    @Test
+    public void testValidateBondOptionsForNewAttachementWithNonVmNetwork(){
+        validateValidBonds(true, false, true, false);
+    }
+
+    @Test
+    public void validateBondOptionsForNewAttachementWithOutOfSyncVmNetworkNotOverridden(){
+        validateValidBonds(true, true, false, false);
+    }
+
+    @Test
+    public void validateBondOptionsForNewAttachementWithOutOfSyncVmNetworOverridden(){
+        validateValidBonds(false, true, false, true);
+    }
+
+    private void validateValidBonds(boolean isValidForAllModes, boolean isVmNetwork, boolean isInSync, boolean isOverriddenConfiguration){
+        Network network = createNetworkWithName("network");
+        network.setVmNetwork(isVmNetwork);
+
+        Bond bond = new Bond();
+        bond.setNetworkName(null);
+        bond.setName("bondName");
+        bond.setNetworkName("network");
+        NetworkImplementationDetails networkImplementationDetails = new NetworkImplementationDetails(isInSync, true);
+        bond.setNetworkImplementationDetails(networkImplementationDetails);
+
+        NetworkAttachment networkAttachment = createNetworkAttachment(network, bond);
+        networkAttachment.setOverrideConfiguration(isOverriddenConfiguration);
+
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addBonds(new Bond[]{bond}))
+            .addNetworks(network)
+            .addExistingInterfaces(bond)
+            .build();
+
+        if (isValidForAllModes){
+            validateValidForAllBondModes(bond, networkAttachment, validator);
+        } else {
+            validateValidOnlyForNonVmNetworksBondMode(bond, networkAttachment, validator);
+
+        }
+    }
+
+    private void validateValidForAllBondModes(Bond bond, NetworkAttachment networkNetworkAttachment, HostSetupNetworksValidator validator){
+        for (BondMode bondMode : BondMode.values()){
+            bond.setBondOptions(bondMode.getConfigurationValue());
+            ValidationResult result = validator.validateBondModeVsNetworksAttachedToIt(Arrays.asList(networkNetworkAttachment));
+            assertThat(result, isValid());
+        }
+    }
+
+    private void validateValidOnlyForNonVmNetworksBondMode(Bond bond, NetworkAttachment networkNetworkAttachment, HostSetupNetworksValidator validator){
+        for (BondMode bondMode : BondMode.values()){
+            bond.setBondOptions(bondMode.getConfigurationValue());
+            ValidationResult result = validator.validateBondModeVsNetworksAttachedToIt(Arrays.asList(networkNetworkAttachment));
+            if (bondMode.isBondModeValidForVmNetwork()){
+                assertThat(result, isValid());
+            } else {
+                assertThat(result,
+                    failsWith(EngineMessage.INVALID_BOND_MODE_FOR_BOND_WITH_VM_NETWORK,
+                            ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_BOND_NAME, "bondName"),
+                            ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME, "network")
+                            ));
+            }
+        }
     }
 
     private void testValidateQosNotPartiallyConfigured(boolean networkAttachment1HasQos,

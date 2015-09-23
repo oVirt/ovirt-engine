@@ -29,11 +29,13 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.BondMode;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -64,7 +66,7 @@ public class HostSetupNetworksValidator {
     static final String VAR_INTERFACE_NAME = "interfaceName";
     static final String VAR_LABELED_INTERFACE_NAME = "labeledInterfaceName";
     static final String VAR_NIC_NAME = "nicName";
-
+    static final String VAR_LABEL = "label";
 
     private final NetworkExclusivenessValidator networkExclusivenessValidator;
 
@@ -88,6 +90,7 @@ public class HostSetupNetworksValidator {
     private Map<Guid, NetworkAttachment> networkAttachmentsByNetworkId;
     private Map<String, NicLabel> nicLabelByLabel;
     private HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper;
+    private List<VdsNetworkInterface> existingInterfaces;
 
     public HostSetupNetworksValidator(VDS host,
             HostSetupNetworksParameters params,
@@ -112,6 +115,7 @@ public class HostSetupNetworksValidator {
         this.vmDao = vmDao;
         this.existingInterfacesMap = new BusinessEntityMap<>(existingInterfaces);
         this.networkBusinessEntityMap = networkBusinessEntityMap;
+        this.existingInterfaces = existingInterfaces;
 
         this.removedBondVdsNetworkInterface = Entities.filterEntitiesByRequiredIds(params.getRemovedBonds(),
             existingInterfaces);
@@ -160,8 +164,69 @@ public class HostSetupNetworksValidator {
             attachmentsToConfigure);
         vr = skipValidation(vr) ? vr : validateCustomProperties();
         vr = skipValidation(vr) ? vr : validateQos(attachmentsToConfigure);
+        vr = skipValidation(vr) ? vr : validateBondModeVsNetworksAttachedToIt(attachmentsToConfigure);
 
         return vr;
+    }
+
+    protected ValidationResult validateBondModeVsNetworksAttachedToIt(
+            Collection<NetworkAttachment> attachmentsToConfigure) {
+        Map<String, VdsNetworkInterface> hostInterfacesByNetworkName = Entities.hostInterfacesByNetworkName(existingInterfaces);
+
+        for (NetworkAttachment attachment : attachmentsToConfigure){
+            if (!mustAttachementBeCheckedForBondMode(attachment, hostInterfacesByNetworkName)){
+                continue;
+            }
+            Bond bondToCheck = bondsMap.get(attachment.getNicName());
+
+            if (bondToCheck == null){
+                VdsNetworkInterface existingNetworkInterfaceForAttachement = existingInterfacesMap.get(attachment.getNicName());
+                if(existingNetworkInterfaceForAttachement == null || !existingNetworkInterfaceForAttachement.isBond()){
+                    continue;
+                }
+                bondToCheck = (Bond) existingNetworkInterfaceForAttachement;
+            }
+
+            String networkLabel = networkBusinessEntityMap.get(attachment.getNetworkName()).getLabel();
+            ValidationResult validationResult = checkBondMode(bondToCheck, networkLabel, attachment.getNetworkName());
+            if (!validationResult.isValid()){
+                return validationResult;
+            }
+        }
+        return ValidationResult.VALID;
+    }
+
+    private ValidationResult checkBondMode(Bond bondTocheck, String networkLabel, String networkName) {
+        if (BondMode.isBondModeValidForVmNetwork(bondTocheck.getBondOptions())){
+            return ValidationResult.VALID;
+        }
+
+        if (networkLabel != null && isNicToConfigureContainTheLabel(bondTocheck.getName(), networkLabel)){
+            return new ValidationResult(EngineMessage.INVALID_BOND_MODE_FOR_BOND_WITH_LABELED_VM_NETWORK,
+                    ReplacementUtils.createSetVariableString(VAR_BOND_NAME, bondTocheck.getName()),
+                    ReplacementUtils.createSetVariableString(VAR_LABEL, networkLabel),
+                    ReplacementUtils.createSetVariableString(VAR_NETWORK_NAME, networkName));
+        }
+
+        return new ValidationResult(EngineMessage.INVALID_BOND_MODE_FOR_BOND_WITH_VM_NETWORK,
+                ReplacementUtils.createSetVariableString(VAR_BOND_NAME, bondTocheck.getName()),
+                ReplacementUtils.createSetVariableString(VAR_NETWORK_NAME, networkName));
+    }
+
+    private boolean mustAttachementBeCheckedForBondMode(NetworkAttachment attachment,
+            Map<String, VdsNetworkInterface> hostInterfacesByNetworkName){
+        Network network = networkBusinessEntityMap.get(attachment.getNetworkName());
+        String networkName = attachment.getNetworkName();
+        if (!network.isVmNetwork()){
+            return false;
+        }
+        VdsNetworkInterface nic = hostInterfacesByNetworkName.get(networkName);
+        if (nic == null){
+            return true;
+        }
+        NetworkImplementationDetails networkImplementationDetails = nic.getNetworkImplementationDetails();
+        return networkImplementationDetails == null || networkImplementationDetails.isInSync()
+                || attachment.isOverrideConfiguration();
     }
 
     private ValidationResult validateQos(Collection<NetworkAttachment> attachmentsToConfigure) {
