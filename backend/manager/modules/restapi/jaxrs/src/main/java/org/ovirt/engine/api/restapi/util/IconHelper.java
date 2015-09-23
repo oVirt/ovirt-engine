@@ -35,7 +35,7 @@ public class IconHelper {
                 && !incoming.getSmallIcon().isSetData()
                 && !incoming.getSmallIcon().isSetMediaType();
         final boolean isNoIconSet = !incoming.isSetLargeIcon()
-                && !incoming.isSetLargeIcon();
+                && !incoming.isSetSmallIcon();
         return isLargeIconUpload
                 || isLargeIconIdSet
                 || isSmallIconIdSet
