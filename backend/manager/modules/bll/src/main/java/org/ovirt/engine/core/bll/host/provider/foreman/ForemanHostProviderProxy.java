@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.host.provider.foreman;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -274,7 +273,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
         runHttpMethod(
                 HttpMethodType.PUT,
                 "application/json; charset=utf-8",
-                Paths.get(DISCOVERED_HOSTS_ENTRY_POINT, discoverName).toString(),
+                DISCOVERED_HOSTS_ENTRY_POINT + "/" + discoverName,
                 entityBody
                 );
     }
