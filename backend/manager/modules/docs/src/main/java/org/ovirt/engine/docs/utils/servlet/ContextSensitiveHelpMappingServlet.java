@@ -159,9 +159,12 @@ public class ContextSensitiveHelpMappingServlet extends HttpServlet {
             log.error("csh configDir doesn't exist: " + configDir); //$NON-NLS-1$
             return jsonFiles;
         }
-        for (File configFile : configDir.listFiles()) {
-            if (configFile.isFile() && configFile.canRead() && configFile.getName().endsWith(JSON)) {
-                jsonFiles.add(configFile.getName());
+        File[] configFiles = configDir.listFiles();
+        if (configFiles != null) {
+            for (File configFile : configFiles) {
+                if (configFile.isFile() && configFile.canRead() && configFile.getName().endsWith(JSON)) {
+                    jsonFiles.add(configFile.getName());
+                }
             }
         }
 
@@ -184,12 +187,15 @@ public class ContextSensitiveHelpMappingServlet extends HttpServlet {
             log.info("Context-sensitive help is not installed. Manual directory doesn't exist: " + manualDir); //$NON-NLS-1$
             return locales;
         }
-        for (File dir : manualDir.listFiles()) {
-            if (dir.isDirectory() && dir.canRead()) {
-                String name = dir.getName();
-                Matcher m = LOCALE_PATTERN.matcher(name);
-                if (m.matches()) {
-                    locales.add(name);
+        File[] manualFiles = manualDir.listFiles();
+        if (manualFiles != null) {
+            for (File dir : manualFiles) {
+                if (dir.isDirectory() && dir.canRead()) {
+                    String name = dir.getName();
+                    Matcher m = LOCALE_PATTERN.matcher(name);
+                    if (m.matches()) {
+                        locales.add(name);
+                    }
                 }
             }
         }
