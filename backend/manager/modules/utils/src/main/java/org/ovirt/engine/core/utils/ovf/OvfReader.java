@@ -258,7 +258,7 @@ public abstract class OvfReader implements IOvfBuilder {
         }
         if (node.SelectSingleNode(OvfProperties.VMD_BOOT_ORDER, _xmlNS) != null
                 && !StringUtils.isEmpty(node.SelectSingleNode(OvfProperties.VMD_BOOT_ORDER, _xmlNS).innerText)) {
-            vmDevice.setBootOrder(Integer.valueOf(node.SelectSingleNode(OvfProperties.VMD_BOOT_ORDER, _xmlNS).innerText));
+            vmDevice.setBootOrder(Integer.parseInt(node.SelectSingleNode(OvfProperties.VMD_BOOT_ORDER, _xmlNS).innerText));
         } else {
             vmDevice.setBootOrder(0);
         }
@@ -902,7 +902,7 @@ public abstract class OvfReader implements IOvfBuilder {
     private int getResourceType(XmlNode node, String resource) {
         if (node.SelectSingleNode(resource, _xmlNS) != null
                 && !StringUtils.isEmpty(node.SelectSingleNode(resource, _xmlNS).innerText)) {
-            return Integer.valueOf(node.SelectSingleNode(resource, _xmlNS).innerText);
+            return Integer.parseInt(node.SelectSingleNode(resource, _xmlNS).innerText);
         }
         return -1;
     }
@@ -912,7 +912,7 @@ public abstract class OvfReader implements IOvfBuilder {
         int resourceSubType = getResourceType(node, OvfProperties.VMD_SUB_RESOURCE_TYPE);
         if (resourceSubType == -1) {
             // we need special handling for Monitor to define it as vnc or spice
-            if (Integer.valueOf(OvfHardware.Monitor) == resourceType) {
+            if (Integer.parseInt(OvfHardware.Monitor) == resourceType) {
                 // if default display type is defined in the ovf, set the video device that is suitable for it
                 if (defaultDisplayType != null) {
                     vmDevice.setDevice(defaultDisplayType.getDefaultVmDeviceType().getName());
@@ -923,7 +923,7 @@ public abstract class OvfReader implements IOvfBuilder {
                             && !StringUtils.isEmpty(node.SelectSingleNode(OvfProperties.VMD_VIRTUAL_QUANTITY,
                                     _xmlNS).innerText)) {
                         int virtualQuantity =
-                                Integer.valueOf(node.SelectSingleNode(OvfProperties.VMD_VIRTUAL_QUANTITY, _xmlNS).innerText);
+                                Integer.parseInt(node.SelectSingleNode(OvfProperties.VMD_VIRTUAL_QUANTITY, _xmlNS).innerText);
                         if (virtualQuantity > 1) {
                             vmDevice.setDevice(VmDeviceType.QXL.getName());
                         } else {
@@ -944,7 +944,7 @@ public abstract class OvfReader implements IOvfBuilder {
             } else {
                 vmDevice.setDevice(VmDeviceType.getoVirtDevice(resourceType).getName());
             }
-        } else if (Integer.valueOf(OvfHardware.Network) == resourceType) {
+        } else if (Integer.parseInt(OvfHardware.Network) == resourceType) {
             // handle interfaces with different sub types : we have 0-5 as the VmInterfaceType enum
             VmInterfaceType nicType = VmInterfaceType.forValue(resourceSubType);
             if (nicType != null) {
