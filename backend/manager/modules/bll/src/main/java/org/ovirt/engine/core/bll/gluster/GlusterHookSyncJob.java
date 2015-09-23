@@ -110,7 +110,6 @@ public class GlusterHookSyncJob extends GlusterJob {
             Map<String, GlusterHookEntity> newHookMap = new HashMap<>();
             List<GlusterServerHook> newServerHooks = new ArrayList<>();
             List<GlusterServerHook> updatedServerHooks = new ArrayList<>();
-            List<GlusterServerHook> deletedServerHooks = new ArrayList<>();
             Set<VDS> upServers = new HashSet<>();
 
 
@@ -144,13 +143,7 @@ public class GlusterHookSyncJob extends GlusterJob {
                         existingHook.setConflictStatus(conflictStatus | existingHookMap.get(key).getConflictStatus());
 
 
-                        if (conflictStatus==0) {
-                            //there is no conflict in server hook and engine's copy of hook
-                            //so remove from server hooks table if exists
-                            if (serverHook != null) {
-                                deletedServerHooks.add(serverHook);
-                            }
-                        } else {
+                        if (conflictStatus!=0) {
                             //there is a conflict. we need to either add or update entry in server hook
                             if (serverHook == null) {
                                 newServerHooks.add(buildServerHook(server.getId(), existingHook.getId(), fetchedHook));
