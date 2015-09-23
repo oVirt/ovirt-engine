@@ -468,7 +468,7 @@ public class QuotaModel extends EntityModel<Quota> {
         String text = (String) entity;
 
         try {
-            return new Integer(text);
+            return Integer.valueOf(text);
         } catch (Exception e) {
             return null;
         }
