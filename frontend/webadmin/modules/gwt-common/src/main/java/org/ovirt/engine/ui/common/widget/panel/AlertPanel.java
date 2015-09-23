@@ -47,8 +47,8 @@ public class AlertPanel extends Composite {
         SUCCESS(AlertType.SUCCESS, PatternflyConstants.PFICON_OK),
         INFO(AlertType.INFO, PatternflyConstants.PFICON_INFO);
 
-        public AlertType alertType;
-        public String iconStyleName;
+        private AlertType alertType;
+        private String iconStyleName;
 
         Type(AlertType alertType, String iconStyleName) {
             this.alertType = alertType;
