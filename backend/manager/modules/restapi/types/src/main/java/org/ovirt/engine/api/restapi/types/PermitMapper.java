@@ -19,14 +19,14 @@ public class PermitMapper {
         return template != null
                ? template
                : model.getId() != null
-                 ? ActionGroup.forValue(Integer.valueOf(model.getId()))
+                 ? ActionGroup.forValue(Integer.parseInt(model.getId()))
                  : ActionGroup.valueOf(model.getName().toUpperCase());
     }
 
     @Mapping(from = String.class, to = ActionGroup.class)
     public static ActionGroup map(String n, ActionGroup template) {
         try {
-            return ActionGroup.forValue(Integer.valueOf(n));
+            return ActionGroup.forValue(Integer.parseInt(n));
         } catch (NumberFormatException nfe) {
             return null;
         }
