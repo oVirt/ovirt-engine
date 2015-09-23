@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -33,14 +32,10 @@ public class BackendGraphicsConsoleResource
 
     @Override
     public GraphicsConsole get() {
-        List<String> supportedIds = new ArrayList<>();
-
         for (GraphicsConsole graphicsConsole : parent.list().getGraphicsConsoles()) {
             if (consoleId.equals(graphicsConsole.getId())) {
                 return graphicsConsole;
             }
-
-            supportedIds.add(graphicsConsole.getId());
         }
 
         throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
