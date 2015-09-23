@@ -38,7 +38,7 @@ public class AuthenticationProfile {
         this.authn = authn;
         this.authz = authz;
         this.mapper = mapper;
-        this.negotiationPriority = Integer.valueOf(config.getProperty(Authn.ConfigKeys.NEGOTIATION_PRIORITY, "50"));
+        this.negotiationPriority = Integer.parseInt(config.getProperty(Authn.ConfigKeys.NEGOTIATION_PRIORITY, "50"));
     }
 
     /**
