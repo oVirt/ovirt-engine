@@ -1300,7 +1300,7 @@ public class VdsBrokerObjectsBuilder {
             Map<String, Map<String, Object>> memStats = (Map<String, Map<String, Object>>)
                     xmlRpcStruct.get(VdsProperties.NUMA_NODE_FREE_MEM_STAT);
             for (Map.Entry<String, Map<String, Object>> item : memStats.entrySet()) {
-                VdsNumaNode node = NumaUtils.getVdsNumaNodeByIndex(vdsNumaNodes, Integer.valueOf(item.getKey()));
+                VdsNumaNode node = NumaUtils.getVdsNumaNodeByIndex(vdsNumaNodes, Integer.parseInt(item.getKey()));
                 if (node != null && node.getNumaNodeStatistics() != null) {
                     node.getNumaNodeStatistics().setMemFree(assignLongValue(item.getValue(),
                             VdsProperties.NUMA_NODE_FREE_MEM));
@@ -1327,9 +1327,9 @@ public class VdsBrokerObjectsBuilder {
             nodeCpuSys += cpuStat.getCpuSys();
             nodeCpuIdle += cpuStat.getCpuIdle();
         }
-        nodeStat.setCpuUser(Double.valueOf(percentageFormatter.format(nodeCpuUser / item.getValue().size())));
-        nodeStat.setCpuSys(Double.valueOf(percentageFormatter.format(nodeCpuSys / item.getValue().size())));
-        nodeStat.setCpuIdle(Double.valueOf(percentageFormatter.format(nodeCpuIdle / item.getValue().size())));
+        nodeStat.setCpuUser(Double.parseDouble(percentageFormatter.format(nodeCpuUser / item.getValue().size())));
+        nodeStat.setCpuSys(Double.parseDouble(percentageFormatter.format(nodeCpuSys / item.getValue().size())));
+        nodeStat.setCpuIdle(Double.parseDouble(percentageFormatter.format(nodeCpuIdle / item.getValue().size())));
         nodeStat.setCpuUsagePercent((int) (nodeStat.getCpuSys() + nodeStat.getCpuUser()));
         node.setIndex(item.getKey());
         node.setNumaNodeStatistics(nodeStat);
@@ -1338,7 +1338,7 @@ public class VdsBrokerObjectsBuilder {
 
     private static CpuStatistics buildVdsCpuStatistics(Map.Entry<String, Map<String, Object>> item) {
         CpuStatistics data = new CpuStatistics();
-        data.setCpuId(Integer.valueOf(item.getKey()));
+        data.setCpuId(Integer.parseInt(item.getKey()));
         data.setCpuUser(assignDoubleValue(item.getValue(), VdsProperties.NUMA_CPU_USER));
         data.setCpuSys(assignDoubleValue(item.getValue(), VdsProperties.NUMA_CPU_SYS));
         data.setCpuIdle(assignDoubleValue(item.getValue(), VdsProperties.NUMA_CPU_IDLE));
@@ -2163,7 +2163,7 @@ public class VdsBrokerObjectsBuilder {
             List<VdsNumaNode> newNumaNodeList = new ArrayList<>(numaNodeMap.size());
 
             for (Map.Entry<String, Map<String, Object>> item : numaNodeMap.entrySet()) {
-                int index = Integer.valueOf(item.getKey());
+                int index = Integer.parseInt(item.getKey());
                 Map<String, Object> itemMap = item.getValue();
                 List<Integer> cpuIds = extractIntegerList(itemMap, VdsProperties.NUMA_NODE_CPU_LIST);
                 long memTotal =  assignLongValue(itemMap, VdsProperties.NUMA_NODE_TOTAL_MEM);
@@ -2207,7 +2207,7 @@ public class VdsBrokerObjectsBuilder {
                 VdsProperties.VM_NUMA_NODES_RUNTIME_INFO);
         for (Map.Entry<String, Object[]> item : vNodesRunInfo.entrySet()) {
             VmNumaNode vNode = new VmNumaNode();
-            vNode.setIndex(Integer.valueOf(item.getKey()));
+            vNode.setIndex(Integer.parseInt(item.getKey()));
             for (Object pNodeIndex : item.getValue()) {
                 vNode.getVdsNumaNodeList().add(new Pair<>(
                         Guid.Empty, new Pair<>(false, (Integer)pNodeIndex)));
