@@ -245,10 +245,17 @@ public class SSHDialog implements Closeable {
             _client.connect();
         }
         catch(Exception e) {
-            log.debug(
-                "Could not connect to host '{}'",
-                _client.getDisplayHost()
-            );
+            if (_client != null) {
+                log.debug(
+                    "Could not connect to host '{}'",
+                    _client.getDisplayHost()
+                );
+            }
+            else {
+                log.debug(
+                    "Could not connect to host"
+                );
+            }
             log.debug("Exception", e);
             throw e;
         }
