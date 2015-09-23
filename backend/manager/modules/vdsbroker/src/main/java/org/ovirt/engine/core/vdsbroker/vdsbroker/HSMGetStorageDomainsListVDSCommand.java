@@ -18,8 +18,8 @@ public class HSMGetStorageDomainsListVDSCommand<P extends HSMGetStorageDomainsLi
         result =
                 getBroker().getStorageDomainsList(getParameters().getStoragePoolId().toString(),
                         getParameters().getStorageDomainType().getValue(),
-                        getParameters().getStorageType() != null ? Integer.valueOf(getParameters().getStorageType()
-                                .getValue()).toString() : "",
+                        getParameters().getStorageType() != null ? Integer.toString(getParameters().getStorageType()
+                                .getValue()) : "",
                         ((getParameters().getPath()) != null) ? getParameters().getPath() : "");
         proceedProxyReturnValue();
 
