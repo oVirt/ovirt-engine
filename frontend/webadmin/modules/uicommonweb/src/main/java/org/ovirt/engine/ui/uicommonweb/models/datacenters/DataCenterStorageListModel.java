@@ -108,7 +108,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         super.setEntity(value);
     }
 
-    private StorageDomainType privateStorageDomainType = getStorageDomainType().values()[0];
+    private StorageDomainType privateStorageDomainType = StorageDomainType.values()[0];
 
     public StorageDomainType getStorageDomainType() {
         return privateStorageDomainType;
