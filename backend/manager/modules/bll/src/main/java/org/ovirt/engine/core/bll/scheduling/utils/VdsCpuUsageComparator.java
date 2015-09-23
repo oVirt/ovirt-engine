@@ -19,7 +19,7 @@ public class VdsCpuUsageComparator implements Comparator<VDS>, Serializable {
 
     @Override
     public int compare(VDS o1, VDS o2) {
-        return Integer.valueOf(calculateCpuUsage(o1)).compareTo(calculateCpuUsage(o2));
+        return Integer.compare(calculateCpuUsage(o1), calculateCpuUsage(o2));
     }
 
     private int calculateCpuUsage(VDS o1) {
