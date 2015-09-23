@@ -214,7 +214,7 @@ public final class Linq {
 
         @Override
         public int compare(DiskImage x, DiskImage y) {
-            return x.getActualSize() < y.getActualSize() ? -1 : x.getActualSize() < y.getActualSize() ? 1 : 0;
+            return Double.compare(x.getActualSize(), y.getActualSize());
         }
 
     }
