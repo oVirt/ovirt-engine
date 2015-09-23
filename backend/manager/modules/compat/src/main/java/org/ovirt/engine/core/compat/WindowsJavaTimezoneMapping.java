@@ -2,6 +2,7 @@ package org.ovirt.engine.core.compat;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class WindowsJavaTimezoneMapping {
 
@@ -56,8 +57,8 @@ public class WindowsJavaTimezoneMapping {
             { "W. Europe Standard Time", "Europe/Berlin" }, { "West Asia Standard Time", "Asia/Tashkent" },
             { "West Pacific Standard Time", "Pacific/Port_Moresby" }, { "Yakutsk Standard Time", "Asia/Yakutsk" }, };
 
-    public final static Map<String, String> windowsToJava = new HashMap<String, String>();
-    public final static Map<String, String> javaToWindows = new HashMap<String, String>();
+    private final static Map<String, String> windowsToJava = new HashMap<String, String>();
+    private final static Map<String, String> javaToWindows = new HashMap<String, String>();
 
     static {
         for (String[] zone : zones) {
@@ -67,6 +68,14 @@ public class WindowsJavaTimezoneMapping {
             windowsToJava.put(win, java);
             javaToWindows.put(java, win);
         }
+    }
+
+    public static Set<String> getKeys() {
+        return windowsToJava.keySet();
+    }
+
+    public static String get(String key) {
+        return windowsToJava.get(key);
     }
 
 }

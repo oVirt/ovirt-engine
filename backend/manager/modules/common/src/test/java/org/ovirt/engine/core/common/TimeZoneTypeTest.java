@@ -54,7 +54,7 @@ public class TimeZoneTypeTest {
 
     @Test
     public void testWindowsTimeZonesKeys() {
-        final Set<String> windowsTimeZoneKeys = WindowsJavaTimezoneMapping.windowsToJava.keySet();
+        final Set<String> windowsTimeZoneKeys = WindowsJavaTimezoneMapping.getKeys();
         for (String timeZoneKey : TimeZoneType.WINDOWS_TIMEZONE.getTimeZoneList().keySet()) {
             assertThat(windowsTimeZoneKeys, hasItem(timeZoneKey));
         }

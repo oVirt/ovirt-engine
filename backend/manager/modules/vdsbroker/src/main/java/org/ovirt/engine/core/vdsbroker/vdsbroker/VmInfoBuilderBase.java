@@ -254,7 +254,7 @@ public abstract class VmInfoBuilderBase {
         String javaZoneId = null;
         if (osRepository.isWindows(vm.getOs())) {
             // convert to java & calculate offset
-            javaZoneId = WindowsJavaTimezoneMapping.windowsToJava.get(timeZone);
+            javaZoneId = WindowsJavaTimezoneMapping.get(timeZone);
         } else {
             javaZoneId = timeZone;
         }

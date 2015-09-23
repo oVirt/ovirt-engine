@@ -166,7 +166,7 @@ public class VmStatusCell extends AbstractCell<VM> {
             String javaZoneId = null;
             if (AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId())) {
                 // convert to java & calculate offset
-                javaZoneId = WindowsJavaTimezoneMapping.windowsToJava.get(timeZone);
+                javaZoneId = WindowsJavaTimezoneMapping.get(timeZone);
             } else {
                 javaZoneId = timeZone;
             }
