@@ -3781,4 +3781,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. No Host in Data Center ${storagePoolName} can serve as proxy.")
     String ACTION_TYPE_FAILED_NO_HOST_CAN_BE_PROXY_FOR_IMPORT_VM();
+    @DefaultStringValue("Network ${networkName} is attached to bond ${BondName}. VM networks cannot be attached to bonds in mode 0, 5 or 6.")
+    String INVALID_BOND_MODE_FOR_BOND_WITH_VM_NETWORK();
+
+    @DefaultStringValue("Network ${networkName} is attached (via label ${label}) to bond ${BondName}. VM networks cannot be attached to bonds in mode 0, 5 or 6.")
+    String INVALID_BOND_MODE_FOR_BOND_WITH_LABELED_VM_NETWORK();
 }
