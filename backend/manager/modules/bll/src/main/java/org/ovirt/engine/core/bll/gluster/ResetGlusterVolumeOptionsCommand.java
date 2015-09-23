@@ -46,9 +46,9 @@ public class ResetGlusterVolumeOptionsCommand extends GlusterVolumeCommandBase<R
 
             if (getParameters().getVolumeOption() != null && !(getParameters().getVolumeOption().getKey().isEmpty())) {
                 GlusterVolumeOptionEntity entity = getGlusterVolume().getOption(getParameters().getVolumeOption().getKey());
-                removeOptionInDb(entity);
                 isResetAllOptions = false;
                 if(entity != null) {
+                    removeOptionInDb(entity);
                     String optionValue = entity.getValue();
                     getParameters().getVolumeOption().setValue(optionValue != null ? optionValue : "");
                     addCustomValue(GlusterConstants.OPTION_KEY, getParameters().getVolumeOption().getKey());
