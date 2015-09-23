@@ -189,7 +189,7 @@ public class BrandingTheme {
     public int getVersion(final Properties properties) {
         int result = 0;
         try {
-            result = Integer.valueOf(properties.getProperty(VERSION_KEY));
+            result = Integer.parseInt(properties.getProperty(VERSION_KEY));
         } catch (NumberFormatException nfe) {
             // Do nothing, not a valid version, return 0.
         }
