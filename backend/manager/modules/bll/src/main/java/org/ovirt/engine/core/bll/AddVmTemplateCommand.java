@@ -600,7 +600,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 return false;
             }
 
-            Map<Guid, StorageDomain> storageDomains = new HashMap<>();
             Set<Guid> destImageDomains = getStorageGuidSet();
             destImageDomains.removeAll(sourceImageDomainsImageMap.keySet());
             for (Guid destImageDomain : destImageDomains) {
@@ -626,7 +625,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                     addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
                     return false;
                 }
-                storageDomains.put(destImageDomain, storage);
             }
             return validateSpaceRequirements();
         }
