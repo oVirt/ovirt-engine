@@ -3536,6 +3536,21 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Assigned ${numaNodes} NUMA nodes for ${cpus} CPU cores. Cannot assign more NUMA nodes than CPU cores.")
     String VM_NUMA_NODE_MORE_NODES_THAN_CPUS();
 
+    @DefaultStringValue("Cannot pin NUMA nodes when VM is not pin to a VDS.")
+    String VM_NUMA_PINNED_VDS_NOT_EXIST();
+
+    @DefaultStringValue("Host numa node with index ${vdsNodeIndex} does not exist.")
+    String VM_NUMA_NODE_HOST_NODE_INVALID_INDEX();
+
+    @DefaultStringValue("Cannot pin NUMA nodes when host NUMA nodes is empty.")
+    String VM_NUMA_PINNED_VDS_NODE_EMPTY();
+
+    @DefaultStringValue("NUMA node pinned index error.")
+    String VM_NUMA_NODE_PINNED_INDEX_ERROR();
+
+    @DefaultStringValue("NUMA node memory error.")
+    String VM_NUMA_NODE_MEMORY_ERROR();
+
     @DefaultStringValue("$detailMessage it is not a Hosted Engine host.")
     String VAR__DETAIL__NOT_HE_HOST();
 

@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.bll.numa.vm;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -19,14 +22,24 @@ public class UpdateVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> e
     }
 
     @Override
+    protected void doInit() {
+        // replace existing numa nodes with updated numa nodes for checks
+        final Map<Guid, VmNumaNode> updatedNodeMap = new HashMap<>();
+        for (VmNumaNode numaNode : getParameters().getVmNumaNodeList()) {
+            updatedNodeMap.put(numaNode.getId(), numaNode);
+        }
+        for (ListIterator<VmNumaNode> iterator = getVmNumaNodesForValidation().listIterator(); iterator.hasNext(); ) {
+            final VmNumaNode updatedNode = updatedNodeMap.get(iterator.next().getId());
+            if (updatedNode != null) {
+                iterator.set(updatedNode);
+            }
+        }
+    }
+
+    @Override
     protected void executeCommand() {
         List<VmNumaNode> vmNumaNodes = getParameters().getVmNumaNodeList();
-        // only single dedicated host allowed
-        Guid vdsId = getVm().getDedicatedVmForVdsList().get(0);
-        List<VdsNumaNode> vdsNumaNodes = new ArrayList<>();
-        if (vdsId != null) {
-            vdsNumaNodes = getVdsNumaNodeDao().getAllVdsNumaNodeByVdsId(vdsId);
-        }
+        List<VdsNumaNode> vdsNumaNodes = getVdsNumaNodes();
 
         List<VdsNumaNode> nodes = new ArrayList<>();
         for (VmNumaNode vmNumaNode : vmNumaNodes) {

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.enterprise.inject.Default;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -22,6 +23,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
+@Default
 public class VdsNumaNodeDaoImpl extends BaseDao implements VdsNumaNodeDao {
 
     @Override

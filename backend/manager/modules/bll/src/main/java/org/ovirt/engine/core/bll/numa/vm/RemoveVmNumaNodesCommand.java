@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.bll.numa.vm;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -15,6 +18,21 @@ public class RemoveVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> e
 
     public RemoveVmNumaNodesCommand(T parameters) {
         super(parameters);
+    }
+
+    @Override
+    protected void doInit() {
+        // remove numa nodes to delete for checks
+        final Map<Guid, VmNumaNode> removedNodeMap = new HashMap<>();
+        for (VmNumaNode numaNode : getParameters().getVmNumaNodeList()) {
+            removedNodeMap.put(numaNode.getId(), numaNode);
+        }
+        for (ListIterator<VmNumaNode> iterator = getVmNumaNodesForValidation().listIterator(); iterator.hasNext(); ) {
+            final VmNumaNode updatedNode = removedNodeMap.get(iterator.next().getId());
+            if (updatedNode != null) {
+                iterator.remove();
+            }
+        }
     }
 
     @Override

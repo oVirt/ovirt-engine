@@ -17,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
+import org.ovirt.engine.core.bll.numa.vm.NumaValidator;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
@@ -675,12 +676,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        if (!validate(VmHandler.checkNumaPreferredTuneMode(getParameters().getVmStaticData()
-                        .getNumaTuneMode(),
-                getParameters().getVmStaticData().getvNumaNodeList(), getVmId()))) {
-            return false;
-        }
-
         if (getVmId() != null && getVmStaticDao().get(getVmId()) != null) {
             return failCanDoAction(EngineMessage.VM_ID_EXISTS);
         }
@@ -707,11 +702,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        // validate NUMA nodes count not more than CPUs
-        if (getParameters().getVm().getMigrationSupport() == MigrationSupport.PINNED_TO_HOST &&
-                !validate(VmHandler.checkVmNumaNodesIntegrity(getParameters().getVm(),
-                        getParameters().getVm(),
-                        getParameters().isUpdateNuma()))) {
+        if (!validate(NumaValidator.checkVmNumaNodesIntegrity(getParameters().getVm(), getParameters().getVm().getvNumaNodeList()))) {
             return false;
         }
 
@@ -1077,14 +1068,12 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected void addVmNumaNodes() {
-        List<VmNumaNode> numaNodes = getParameters().getVmStaticData().getvNumaNodeList();
-        VmNumaNodeOperationParameters params = new VmNumaNodeOperationParameters(getVmId(), numaNodes);
-        params.setNumaTuneMode(getParameters().getVmStaticData().getNumaTuneMode());
-        params.setDedicatedHostList(getParameters().getVmStaticData().getDedicatedVmForVdsList());
-        params.setMigrationSupport(getParameters().getVmStaticData().getMigrationSupport());
-        if (numaNodes == null || numaNodes.isEmpty()) {
+        List<VmNumaNode> numaNodes = getParameters().getVm().getvNumaNodeList();
+        if (numaNodes.isEmpty()) {
             return;
         }
+        VmNumaNodeOperationParameters params = new VmNumaNodeOperationParameters(getParameters().getVm(), numaNodes);
+
         VdcReturnValueBase returnValueBase = getBackend().runInternalAction(VdcActionType.AddVmNumaNodes, params);
         if (!returnValueBase.getSucceeded()) {
             auditLogDirector.log(this, AuditLogType.NUMA_ADD_VM_NUMA_NODE_FAILED);
