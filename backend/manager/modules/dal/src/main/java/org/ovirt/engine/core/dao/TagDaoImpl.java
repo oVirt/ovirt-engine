@@ -37,7 +37,7 @@ public class TagDaoImpl extends BaseDao implements TagDao {
             entity.settag_name(getValueOrNull(rs, "tag_name", ""));
             entity.setparent_id(getGuidDefaultNewGuid(rs, "parent_id"));
             entity.setIsReadonly(rs.getBoolean("readonly"));
-            entity.settype(TagsType.forValue(Integer.valueOf(getValueOrNull(rs,
+            entity.settype(TagsType.forValue(Integer.parseInt(getValueOrNull(rs,
                     "type", "0"))));
             return entity;
         }
