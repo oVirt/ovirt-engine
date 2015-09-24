@@ -3293,6 +3293,6 @@ INNER JOIN host_device ON host_device.device_name = vm_device.device
 WHERE vm_device.type = 'hostdev';
 
 CREATE OR REPLACE VIEW user_profiles_view AS
-SELECT user_profiles.*, users.name AS login_name
+SELECT user_profiles.*, users.username || '@' || users.domain AS login_name
 FROM user_profiles
 INNER JOIN users ON user_profiles.user_id = users.user_id;

@@ -61,8 +61,7 @@ public class VMConsoleProxyServlet extends HttpServlet {
                             Map<String, String> jsonUser = new HashMap<String, String>();
 
                             jsonUser.put("entityid", profile.getUserId().toString());
-                            jsonUser.put("entity", "user-id");
-                            jsonUser.put("username", profile.getLoginName());
+                            jsonUser.put("entity", profile.getLoginName());
                             jsonUser.put("key", publicKey.trim());
 
                             jsonUsers.add(jsonUser);
