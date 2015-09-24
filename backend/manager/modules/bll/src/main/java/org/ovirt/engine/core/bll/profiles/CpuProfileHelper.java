@@ -28,7 +28,10 @@ public class CpuProfileHelper {
             return ValidationResult.VALID;
         if (vmBase.getCpuProfileId() == null) {
             List<CpuProfile> cpuProfiles = getCpuProfileDao().getAllForCluster(vmBase.getVdsGroupId());
-            if (cpuProfiles.size() == 1) {
+            /* TODO use a properly selected default CPU profile for the cluster once the API becomes available
+               see bug https://bugzilla.redhat.com/show_bug.cgi?id=1262293 for the explanation. We should probably
+               add a permission check as well to make sure the profile is available to the user who added the VM. */
+            if (cpuProfiles.size() > 0) {
                 vmBase.setCpuProfileId(cpuProfiles.get(0).getId());
                 return ValidationResult.VALID;
             } else {
