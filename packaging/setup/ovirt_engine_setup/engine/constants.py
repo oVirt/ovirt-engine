@@ -241,6 +241,13 @@ class FileLocations(object):
         SYSCONFDIR,
         'exports.d',
     )
+
+    NSS_DB_DIR = os.path.join(
+        SYSCONFDIR,
+        'pki',
+        'nssdb',
+    )
+
     OVIRT_NFS_EXPORT_FILE = os.path.join(
         NFS_EXPORT_DIR,
         'ovirt-engine-iso-domain.exports'
