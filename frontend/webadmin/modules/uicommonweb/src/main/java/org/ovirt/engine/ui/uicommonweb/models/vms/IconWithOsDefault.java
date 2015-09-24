@@ -1,18 +1,17 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 
 /**
- * Bean holding two icons in dataUri format.
- * <br/>
- * {@link #icon} - the visible, selected icon
- * <br/>
- * {@link #osDefaultIcon} - icon of currently selected os
+ * Icon model
  */
 public class IconWithOsDefault {
 
     /**
-     * Icon - this value changes over time during model-view communication
+     * Icon - large icon to be used
      */
     private final String icon;
 
@@ -24,39 +23,81 @@ public class IconWithOsDefault {
     /**
      * Id of small version of icon downloaded from server. Small icon is not visible, so there is no need to actually
      * download the data.
+     * <p>
+     *     null means that it is unknown i.e. large icon was newly uploaded by user
+     * </p>
      */
     private final Guid smallIconId;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    /**
+     * Result of validation of the {@link #icon}.
+     * <p>
+     *     Validation of icons is async operation and UnitVmModel#validate() method works synchronously so the
+     *     validation is precomputed.
+     * </p>
+     * <p>
+     *     null indicates that icon was not validated yet.
+     * </p>
+     */
+    private final ValidationResult validationResult;
 
-        IconWithOsDefault that = (IconWithOsDefault) o;
-
-        if (icon != null ? !icon.equals(that.icon) : that.icon != null) return false;
-        if (osDefaultIcon != null ? !osDefaultIcon.equals(that.osDefaultIcon) : that.osDefaultIcon != null)
-            return false;
-        if (smallIconId != null ? !smallIconId.equals(that.smallIconId) : that.smallIconId != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = icon != null ? icon.hashCode() : 0;
-        result = 31 * result + (osDefaultIcon != null ? osDefaultIcon.hashCode() : 0);
-        result = 31 * result + (smallIconId != null ? smallIconId.hashCode() : 0);
-        return result;
-    }
-
-    public IconWithOsDefault(String icon, String osDefaultIcon, Guid smallIconId) {
+    public IconWithOsDefault(String icon, String osDefaultIcon, Guid smallIconId, ValidationResult validationResult) {
         if (icon == null || osDefaultIcon == null) {
-            throw new IllegalArgumentException("Both arguments should not be null."); //$NON-NLS-1$
+            throw new IllegalArgumentException("Arguments 'icon' and 'osDefaultIcon' should not be null."); //$NON-NLS-1$
         }
         this.icon = icon;
         this.osDefaultIcon = osDefaultIcon;
         this.smallIconId = smallIconId;
+        this.validationResult = validationResult;
+    }
+
+    /**
+     * This method is intended to be used only with ids of predefined icons.
+     */
+    public static void create(final Guid largeOsDefaultIconId,
+                              final Guid smallOsDefaultIconId,
+                              final IconWithOsDefaultCallback callback) {
+        IconCache.getInstance().getOrFetchIcon(largeOsDefaultIconId, new IconCache.IconCallback() {
+            @Override
+            public void onSuccess(String resolvedIcon) {
+                final IconWithOsDefault instance =
+                        new IconWithOsDefault(resolvedIcon, resolvedIcon, smallOsDefaultIconId, ValidationResult.ok());
+                callback.onCreated(instance);
+            }
+        });
+    }
+
+    public void withDifferentOsIcon(final Guid osDefaultLargeIconId,
+                                    final Guid osDefaultSmallIconId,
+                                    final IconWithOsDefaultCallback callback) {
+        IconCache.getInstance().getOrFetchIcon(osDefaultLargeIconId, new IconCache.IconCallback() {
+            @Override
+            public void onSuccess(String currentOsDefaultIcon) {
+                final IconWithOsDefault newInstance = isCustom()
+                        ? new IconWithOsDefault(icon, currentOsDefaultIcon, smallIconId, validationResult)
+                        : new IconWithOsDefault(currentOsDefaultIcon, currentOsDefaultIcon, osDefaultSmallIconId,
+                                ValidationResult.ok());
+                callback.onCreated(newInstance);
+            }
+        });
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        IconWithOsDefault that = (IconWithOsDefault) o;
+        return Objects.equals(icon, that.icon) &&
+                Objects.equals(osDefaultIcon, that.osDefaultIcon) &&
+                Objects.equals(smallIconId, that.smallIconId) &&
+                Objects.equals(validationResult, that.validationResult);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(icon, osDefaultIcon, smallIconId, validationResult);
     }
 
     public String getIcon() {
@@ -71,6 +112,10 @@ public class IconWithOsDefault {
         return smallIconId;
     }
 
+    public ValidationResult getValidationResult() {
+        return validationResult;
+    }
+
     public boolean isCustom() {
         return !getIcon().equals(getOsDefaultIcon());
     }
@@ -81,6 +126,7 @@ public class IconWithOsDefault {
                 "icon='" + iconUriToString(icon) + //$NON-NLS-1$
                 "', osDefaultIcon='" + iconUriToString(osDefaultIcon) + "'" + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 ", smallIconId='" + smallIconId + "'" + //$NON-NLS-1$ //$NON-NLS-2$
+                ", validationResult='" + validationResult + "'" + //$NON-NLS-1$ //$NON-NLS-2$
                 '}';
     }
 
@@ -92,5 +138,9 @@ public class IconWithOsDefault {
             return icon;
         }
         return icon.substring(0, 30) + "…"; //$NON-NLS-1$
+    }
+
+    public interface IconWithOsDefaultCallback {
+        void onCreated(IconWithOsDefault instance);
     }
 }

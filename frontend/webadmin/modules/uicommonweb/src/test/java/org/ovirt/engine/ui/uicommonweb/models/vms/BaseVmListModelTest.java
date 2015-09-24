@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
+import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 
 public class BaseVmListModelTest extends BaseVmTest {
 
@@ -99,7 +100,8 @@ public class BaseVmListModelTest extends BaseVmTest {
         when(model.getNumaTuneMode().getSelectedItem()).thenReturn(NumaTuneMode.INTERLEAVE);
         when(model.getAutoConverge().getSelectedItem()).thenReturn(true);
         when(model.getMigrateCompressed().getSelectedItem()).thenReturn(true);
-        when(model.getIcon().getEntity()).thenReturn(new IconWithOsDefault(LARGE_ICON_DATA, LARGE_OS_DEFAULT_ICON_DATA, SMALL_ICON_ID));
+        when(model.getIcon().getEntity()).thenReturn(new IconWithOsDefault(
+                LARGE_ICON_DATA, LARGE_OS_DEFAULT_ICON_DATA, SMALL_ICON_ID, ValidationResult.ok()));
         when(model.getNumOfIoThreads().getEntity()).thenReturn(NUM_OF_IO_THREADS);
         when(model.getIoThreadsEnabled().getEntity()).thenReturn(true);
         when(model.getConsoleDisconnectAction().getSelectedItem()).thenReturn(ConsoleDisconnectAction.REBOOT);
