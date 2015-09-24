@@ -265,9 +265,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("5")
     //This value is in GB
     CriticalSpaceActionBlocker,
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    MacPoolRanges,
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     HasCluster,
@@ -626,9 +623,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     EnableSpiceRootCertificateValidation,
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("100000")
-    MaxMacsCountInPool,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
@@ -1030,11 +1024,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     HotPlugEnabled,
-
-    @Reloadable
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    AllowDuplicateMacAddresses,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)

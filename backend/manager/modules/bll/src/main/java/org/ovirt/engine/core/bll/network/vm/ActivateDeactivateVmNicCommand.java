@@ -24,8 +24,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
@@ -229,7 +227,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     protected ValidationResult macAvailable() {
-        Boolean allowDupMacs = Config.<Boolean> getValue(ConfigValues.AllowDuplicateMacAddresses);
+        Boolean allowDupMacs = getMacPool().isDuplicateMacAddressesAllowed();
         VmInterfaceManager vmInterfaceManager = new VmInterfaceManager(getMacPool());
         if (allowDupMacs || !vmInterfaceManager.existsPluggedInterfaceWithSameMac(getParameters().getNic())) {
             return ValidationResult.VALID;
