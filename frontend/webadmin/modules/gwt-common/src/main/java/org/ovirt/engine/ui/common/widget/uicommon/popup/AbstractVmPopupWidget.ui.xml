@@ -150,10 +150,6 @@
             color: #333333;
         }
 
-        .assignedVmsLabel {
-            margin-left: 8px;
-        }
-
         .prestartedHintLabel {
             font-size: 7pt;
             color: gray;
@@ -276,7 +272,7 @@
             color: #333333;
         }
 
-        .increaseVmsInPoolVms, .maxAssignedVmsPerUserVms {
+        .prestartedVmsInPoolVms, .increaseVmsInPoolVms, .maxAssignedVmsPerUserVms {
             float: left;
         }
 
@@ -477,7 +473,7 @@
                                 </g:FlowPanel>
                                 <g:FlowPanel ui:field="editPrestartedVmsPanel" addStyleNames="{style.editPrestartedVms}" >
                                     <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="editPrestartedVmsEditor" addStyleNames="{style.editPrestartedVmsEditor}" contentWidgetContainerStyleName="{style.textBox}" />
-                                    <g:ValueLabel ui:field="outOfxInPool" />
+                                    <g:Label text="{constants.vms}" addStyleNames="{style.prestartedVmsInPoolVms}" />
                                 </g:FlowPanel>
                             </g:FlowPanel>
 

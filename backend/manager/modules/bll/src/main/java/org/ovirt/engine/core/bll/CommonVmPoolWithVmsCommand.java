@@ -330,7 +330,8 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_FROM_POOL_CANNOT_BE_STATELESS);
         }
 
-        if (getParameters().getVmPool().getPrestartedVms() > getParameters().getVmPool().getAssignedVmsCount()) {
+        if (getParameters().getVmPool().getPrestartedVms() >
+                getParameters().getVmPool().getAssignedVmsCount() + getParameters().getVmsCount()) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_PRESTARTED_VMS_CANNOT_EXCEED_VMS_COUNT);
         }
 
