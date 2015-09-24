@@ -37,7 +37,6 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
 
         if (object.getIsNew()) {
             object.getNumOfDesktops().setEntity(1);
-            prestartedVmsEditor.setEnabled(false);
         }
     }
 

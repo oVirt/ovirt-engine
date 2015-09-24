@@ -130,7 +130,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.ValueLabel;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWidget<UnitVmModel>
@@ -151,8 +150,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         String provisioningRadioContent();
 
         String cdAttachedLabelWidth();
-
-        String assignedVmsLabel();
 
         String labelDisabled();
 
@@ -437,10 +434,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path("maxAssignedVmsPerUser.entity")
     @WithElementId("editMaxAssignedVmsPerUser")
     public IntegerEntityModelTextBoxOnlyEditor editMaxAssignedVmsPerUserEditor;
-
-    @UiField(provided = true)
-    @Path("assignedVms.entity")
-    public ValueLabel<Integer> outOfxInPool;
 
     @UiField
     @Ignore
@@ -1136,15 +1129,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         editPoolMaxAssignedVmsPerUserIcon =
                 new InfoIcon(templates.italicText(messages.maxAssignedVmsPerUserHelp()));
-
-        outOfxInPool = new ValueLabel<Integer>(new AbstractRenderer<Integer>() {
-
-            @Override
-            public String render(Integer object) {
-                return messages.outOfXVMsInPool(object.toString());
-            }
-
-        });
 
         numaInfoIcon = new InfoIcon(SafeHtmlUtils.fromTrustedString("")); //$NON-NLS-1$
     }
