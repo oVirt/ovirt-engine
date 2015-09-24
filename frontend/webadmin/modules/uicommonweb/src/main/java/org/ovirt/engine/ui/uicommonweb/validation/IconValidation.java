@@ -4,23 +4,36 @@ import java.util.List;
 
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Image;
+
+import com.google.gwt.dom.client.ImageElement;
 
 /**
  * It validates icons size, dimensions and file format.
  */
 public class IconValidation implements IValidation {
 
+    private final ImageElement imageElement;
+
+    /**
+     * @param imageElement the 'src' attribute of which is already set to string that will be validated from previous
+     *                    event loop run
+     */
+    public IconValidation(ImageElement imageElement) {
+        this.imageElement = imageElement;
+    }
+
     @Override
     public ValidationResult validate(Object iconObject) {
-        if (iconObject instanceof String) {
-            final String iconString = (String) iconObject;
-            return validate(iconString);
+        if (!(iconObject instanceof String)) {
+            throw new IllegalArgumentException("Illegal argument type: " //$NON-NLS-1$
+                    + (iconObject == null ? "null" : iconObject.getClass().toString())); //$NON-NLS-1$
         }
-        throw new IllegalArgumentException(
-                "Illegal argument type: " + (iconObject == null ? "null" : iconObject.getClass().toString())); //$NON-NLS-1$ //$NON-NLS-2$
+        final String iconUrl = (String) iconObject;
+        if (!iconUrl.equals(imageElement.getSrc())) {
+            throw new IllegalArgumentException("Validated url (" + iconUrl //$NON-NLS-1$
+                    + ") doesn't match url of the image widget (" + imageElement.getSrc() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        return validate(iconUrl);
     }
 
     private ValidationResult validate(String icon) {
@@ -28,9 +41,7 @@ public class IconValidation implements IValidation {
         if (!typeValidation.getSuccess()) {
             return typeValidation;
         }
-        ValidationResult dimensionsValidation = isIE()
-                                                ? ValidationResult.ok()
-                                                : validateBrowserParsabilityAndDimensions(icon);
+        ValidationResult dimensionsValidation = validateBrowserParsabilityAndDimensions(icon);
         ValidationResult sizeValidation = validateSize(icon);
         if (dimensionsValidation.getSuccess() && sizeValidation.getSuccess()) {
             return ValidationResult.ok();
@@ -39,29 +50,24 @@ public class IconValidation implements IValidation {
         return new ValidationResult(false, reasons);
     }
 
-    private boolean isIE() {
-        return Window.Navigator.getUserAgent().toLowerCase().contains("trident"); //$NON-NLS-1$
-    }
-
     /**
      * HTMLImageElement.complete and Max width 150px, max height 120px
      */
     private ValidationResult validateBrowserParsabilityAndDimensions(String icon) {
         final int maxWidth = 150;
         final int maxHeight = 120;
-        final Image image = new Image(icon);
-        boolean complete = isComplete(image.getElement());
+        boolean complete = isComplete(imageElement);
         if (!complete) {
             return ValidationResult.fail(ConstantsManager.getInstance().getConstants().iconIsNotParsable());
         }
-        boolean valid = image.getWidth() <= maxWidth
-                && image.getHeight() <= maxHeight;
+        boolean valid = imageElement.getWidth() <= maxWidth
+                && imageElement.getHeight() <= maxHeight;
         if (valid) {
             return ValidationResult.ok();
         }
         return ValidationResult.fail(
                 ConstantsManager.getInstance().getMessages().iconDimensionsTooLarge(
-                        image.getWidth(), image.getWidth(), maxWidth, maxHeight));
+                        imageElement.getWidth(), imageElement.getWidth(), maxWidth, maxHeight));
     }
 
     /**
@@ -69,7 +75,7 @@ public class IconValidation implements IValidation {
      * @param element has to be instance of HTMLImageElement
      * @return {@code true} if image is successfully loaded and parsed, {@code false} otherwise
      */
-    private native boolean isComplete(Element element) /*-{
+    private native boolean isComplete(ImageElement element) /*-{
         return element.complete;
     }-*/;
 

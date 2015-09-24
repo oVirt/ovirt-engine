@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.editor;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -14,8 +15,11 @@ import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IconWithOsDefault;
 import org.ovirt.engine.ui.uicommonweb.validation.IconValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
+
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -111,6 +115,14 @@ public class IconEditorWidget extends AbstractValidatedWidget
      */
     private boolean accessible;
 
+    /**
+     * Result of validation of current icon.
+     * <p>
+     *     null means that current icon hasn't been validated yet.
+     * </p>
+     */
+    private ValidationResult validationResult;
+
     @Inject
     public IconEditorWidget(CommonApplicationConstants constants,
                             CommonApplicationTemplates templates,
@@ -136,6 +148,33 @@ public class IconEditorWidget extends AbstractValidatedWidget
         setAccessible(true);
     }
 
+    private void validateIcon() {
+        final IconWithOsDefault oldValue = getValue();
+        createValidationImageElement(icon, new ImageElementCallback() {
+            @Override
+            public void onElementReady(ImageElement imageElement) {
+                validationResult = new IconValidation(imageElement).validate(icon);
+                updateErrorIconLabel(validationResult);
+                final IconWithOsDefault newValue = getValue();
+                ValueChangeEvent.fireIfNotEqual(IconEditorWidget.this, oldValue, newValue);
+            }
+        });
+    }
+
+    /**
+     * {@link Image} widget can't be used because it loads images lazily. {@link ImageElement} can't be used because it
+     * doesn't have Java methods register 'load' and 'error' callbacks.
+     */
+    private native void createValidationImageElement(String imageUrl, ImageElementCallback imageElementCallback) /*-{
+        var imageElement = document.createElement('img');
+        var callback = $entry(function () {
+            imageElementCallback.@org.ovirt.engine.ui.common.widget.editor.IconEditorWidget.ImageElementCallback::onJavaScriptImageObjectReady(Lcom/google/gwt/core/client/JavaScriptObject;)(imageElement);
+        });
+        imageElement.addEventListener('load', callback);
+        imageElement.addEventListener('error', callback);
+        imageElement.src = imageUrl;
+    }-*/;
+
     private KeyPressHandler createPreventEnterKeyPressHandler() {
         return new KeyPressHandler() {
             @Override
@@ -152,13 +191,18 @@ public class IconEditorWidget extends AbstractValidatedWidget
     @Override
     public void setValue(IconWithOsDefault value) {
         final IconWithOsDefault oldPair = getValue();
+        if (Objects.equals(value, oldPair)) {
+            return;
+        }
         if (value == null) {
             defaultIcon = null;
             smallIconId = null;
+            validationResult = null;
             setIcon(null);
         } else {
             defaultIcon = value.getOsDefaultIcon();
             smallIconId = value.getSmallIconId();
+            validationResult = value.getValidationResult();
             setIcon(value.getIcon());
         }
         final IconWithOsDefault newPair = getValue();
@@ -170,7 +214,7 @@ public class IconEditorWidget extends AbstractValidatedWidget
         if (icon == null || defaultIcon == null) {
             return null;
         }
-        return new IconWithOsDefault(icon, defaultIcon, smallIconId);
+        return new IconWithOsDefault(icon, defaultIcon, smallIconId, validationResult);
     }
 
     @Override
@@ -185,7 +229,7 @@ public class IconEditorWidget extends AbstractValidatedWidget
 
     @UiHandler("defaultButton")
     void onDefaultIconButton(ClickEvent event) {
-        setIconAndFireChangeEvent(defaultIcon);
+        setIconAndFireChangeEvent(defaultIcon, ValidationResult.ok());
     }
 
     /**
@@ -197,63 +241,28 @@ public class IconEditorWidget extends AbstractValidatedWidget
 
     protected void setIcon(final String icon) {
         this.icon = icon;
-        if (icon != null) {
-            initializeBrowserInternalImageCache(icon, new Callback() {
-                @Override
-                public void onLoadOrError() {
-                    final ValidationResult validation = (new IconValidation()).validate(icon);
-                    updateErrorIconLabel(validation);
-                    image.getElement().setAttribute("src", icon); //$NON-NLS-1$
-                }
-            });
+        image.setUrl(icon == null ? "" : icon); //$NON-NLS-1$
+        if (validationResult == null) {
+            validateIcon();
         } else {
-            updateErrorIconLabel(ValidationResult.ok());
-            image.getElement().setAttribute("src", ""); //$NON-NLS-1$ //$NON-NLS-2$
+            updateErrorIconLabel(validationResult);
         }
     }
 
-    /**
-     * Assigning to img.src attribute is generally an asynchronous operation. Current browsers behavior:
-     * <pre>
-     *     schema  | http(s): | data: |
-     *     browser
-     *     ========|==========|=======|
-     *     Firefox | async    | async |
-     *     Chrome  | sync     | sync  |
-     *     IE      | async    | async |
-     * </pre>
-     * Once the image is loaded, assigning to img.src attribute behaves synchronously (even though it is not guarantied
-     * by spec). This method does the first dummy load of param {@code icon} in order to make subsequent calls
-     * synchronous.
-     * <p>
-     *     This is a hack. Proper solution is to make validators work asynchronously.
-     * </p>
-     * Works since IE9, pure gwt implementation would require to attach image to DOM + CSS hiding.
-     */
-    private native void initializeBrowserInternalImageCache(String icon, Callback callback) /*-{
-        var image = new Image();
-        image.addEventListener('load', runCallback);
-        image.addEventListener('error', runCallback);
-        image.src = icon;
-
-        function runCallback() {
-            callback.@org.ovirt.engine.ui.common.widget.editor.IconEditorWidget.Callback::onLoadOrError()();
-        }
-    }-*/;
-
-    protected void setIconAndFireChangeEvent(String icon) {
+    protected void setIconAndFireChangeEvent(String icon, ValidationResult validationResult) {
         final IconWithOsDefault oldPair = getValue();
-        setIcon(icon);
+        this.validationResult = validationResult;
         smallIconId = null;
+        setIcon(icon);
         final IconWithOsDefault newPair = getValue();
         ValueChangeEvent.fireIfNotEqual(this, oldPair, newPair);
     }
 
-    private void updateErrorIconLabel(ValidationResult validation) {
-        if (!validation.getSuccess() && validation.getReasons().isEmpty()) {
+    private void updateErrorIconLabel(ValidationResult validationResult) {
+        if (!validationResult.getSuccess() && validationResult.getReasons().isEmpty()) {
             throw new IllegalArgumentException("Unsuccessful validation without any reason not allowed."); //$NON-NLS-1$
         }
-        updateErrorIconLabel(validation.getReasons());
+        updateErrorIconLabel(validationResult.getReasons());
     }
 
     private void updateErrorIconLabel(List<String> reasons) {
@@ -277,7 +286,7 @@ public class IconEditorWidget extends AbstractValidatedWidget
         var inputFileElement = this.@org.ovirt.engine.ui.common.widget.editor.IconEditorWidget::fileUpload.@com.google.gwt.user.client.ui.FileUpload::getElement()();
         var self = this;
         var javaCallback = $entry(function (dataUri) {
-            return self.@org.ovirt.engine.ui.common.widget.editor.IconEditorWidget::setIconAndFireChangeEvent(Ljava/lang/String;)(dataUri);
+            return self.@org.ovirt.engine.ui.common.widget.editor.IconEditorWidget::setIconAndFireChangeEvent(Ljava/lang/String;Lorg/ovirt/engine/ui/uicommonweb/validation/ValidationResult;)(dataUri, null);
         });
         if (inputFileElement.files.length > 0) {
             var file = inputFileElement.files[0];
@@ -406,7 +415,16 @@ public class IconEditorWidget extends AbstractValidatedWidget
                 defaultButton.addKeyUpHandler(handler));
     }
 
-    private static interface Callback {
-        public void onLoadOrError();
+    private abstract class ImageElementCallback {
+
+        private void onJavaScriptImageObjectReady(JavaScriptObject jsImageObject) {
+            if (!ImageElement.is(jsImageObject)) {
+                throw new RuntimeException("Unexpected type of JavaScript object"); //$NON-NLS-1$
+            }
+            final ImageElement imageElement = (ImageElement) ImageElement.as(jsImageObject);
+            onElementReady(imageElement);
+        }
+
+        public abstract void onElementReady(ImageElement imageElement);
     }
 }

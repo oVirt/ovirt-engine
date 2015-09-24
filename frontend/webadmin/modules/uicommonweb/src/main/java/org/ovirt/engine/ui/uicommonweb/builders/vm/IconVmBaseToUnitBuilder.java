@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IconCache;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IconWithOsDefault;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
+import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 
 public class IconVmBaseToUnitBuilder implements Builder<VmBase, UnitVmModel> {
 
@@ -26,7 +27,8 @@ public class IconVmBaseToUnitBuilder implements Builder<VmBase, UnitVmModel> {
                 destination.getIcon().setEntity(new IconWithOsDefault(
                         idToIconMap.get(iconId),
                         idToIconMap.get(defaultIconId),
-                        source.getSmallIconId()
+                        source.getSmallIconId(),
+                        ValidationResult.ok()
                 ));
                 rest.head().build(source, destination, rest.tail());
             }

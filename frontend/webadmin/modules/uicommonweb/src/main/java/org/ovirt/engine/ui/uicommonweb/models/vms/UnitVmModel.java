@@ -226,6 +226,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     /**
      * VM icon
+     * <p>
+     *     It may be null during initialization, it should never be null when {@link #validate()} is called.
+     * </p>
      */
     private NotChangableForVmInPoolEntityModel<IconWithOsDefault> icon;
 
@@ -1870,7 +1873,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                     getCustomCpu().setIsChangeable(true);
                 }
             }
-
         }
     }
 
@@ -2019,7 +2021,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return;
         }
 
-        List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = AsyncDataProvider.getInstance().getGraphicsAndDisplays(osType, cluster.getCompatibilityVersion());
+        List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = AsyncDataProvider.getInstance().getGraphicsAndDisplays(
+                osType,
+                cluster.getCompatibilityVersion());
         initDisplayModels(graphicsAndDisplays);
     }
 
@@ -2194,36 +2198,24 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void updateIconAccordingToOs() {
         final Integer osId = getOSType().getSelectedItem();
-        final String oldIcon = getIcon().getEntity() == null ? null : getIcon().getEntity().getIcon();
-        final Guid osDefaultIconId = AsyncDataProvider.getInstance().getOsDefaultIconId(osId, false);
-        IconCache.getInstance().getOrFetchIcon(osDefaultIconId, new IconCache.IconCallback() {
-            @Override
-            public void onSuccess(String currentOsDefaultIcon) {
-                String iconToShow = getIconToShow(currentOsDefaultIcon);
-                Guid smallIconId = getSmallIconId(iconToShow, oldIcon, currentOsDefaultIcon, osDefaultIconId);
-                IconWithOsDefault newIconPair = new IconWithOsDefault(iconToShow, currentOsDefaultIcon, smallIconId);
-                getIcon().setEntity(newIconPair);
-            }
-        });
-    }
-
-    private Guid getSmallIconId(String newIcon, String oldIcon, String newOsDefaultIcon, Guid newOsDefaultIconId) {
-        if (newIcon.equals(oldIcon)) {
-            return getIcon().getEntity().getSmallIconId();
-        }
-        if (newIcon.equals(newOsDefaultIcon)) {
-            return AsyncDataProvider.getInstance().getSmallByLargeOsDefaultIconId(newOsDefaultIconId);
-        }
-        return null;
-    }
-
-    protected String getIconToShow(String currentOsDefaultIcon) {
+        final Guid largeOsIconId = AsyncDataProvider.getInstance().getOsDefaultIconId(osId, false);
+        final Guid smallOsIconId = AsyncDataProvider.getInstance().getSmallByLargeOsDefaultIconId(largeOsIconId);
         if (getIcon().getEntity() == null) {
-            return  currentOsDefaultIcon;
+            IconWithOsDefault.create(largeOsIconId, smallOsIconId, new IconWithOsDefault.IconWithOsDefaultCallback() {
+                @Override
+                public void onCreated(IconWithOsDefault instance) {
+                    getIcon().setEntity(instance);
+                }
+            });
+        } else {
+            getIcon().getEntity().withDifferentOsIcon(largeOsIconId, smallOsIconId,
+                    new IconWithOsDefault.IconWithOsDefaultCallback() {
+                        @Override
+                        public void onCreated(IconWithOsDefault instance) {
+                            getIcon().setEntity(instance);
+                        }
+                    });
         }
-        return getIcon().getEntity().isCustom()
-                ? getIcon().getEntity().getIcon()
-                : currentOsDefaultIcon;
     }
 
     private void updateWatchdogModels() {
@@ -2679,7 +2671,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         boolean vmInitIsValid = getVmInitModel().validate();
         setValidTab(TabName.INITIAL_RUN_TAB, vmInitIsValid);
 
-        getIcon().validateEntity(new IValidation[]{new IconWithOsDefaultValidation()});
+        getIcon().validateEntity(new IValidation[] { new IconWithOsDefaultValidation() });
         setValidTab(TabName.ICON_TAB, getIcon().getIsValid());
 
         boolean hwPartValid = validateHwPart();

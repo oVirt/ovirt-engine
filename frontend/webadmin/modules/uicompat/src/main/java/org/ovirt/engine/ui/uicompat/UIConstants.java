@@ -2874,6 +2874,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Icon file is not parsable.")
     String iconIsNotParsable();
 
+    @DefaultStringValue("Icon is not validated yet. Please try it again later.")
+    String iconNotValidatedYet();
+
     @DefaultStringValue("Authentication Key value must be encoded in Base64.")
     String secretValueMustBeInBase64();
 
