@@ -30,7 +30,7 @@ public interface MacPoolManagerStrategy {
      * take specified mac from pool. May be unsuccessful depending on system setting.
      * @param mac mac to get from pool.
      * @return true if MAC was added successfully, and false if the MAC is in use and
-     * {@link org.ovirt.engine.core.common.config.ConfigValues#AllowDuplicateMacAddresses} is set to false
+     * {@link org.ovirt.engine.core.common.businessentities.MacPool#isAllowDuplicateMacAddresses()} is set to false
      */
     boolean addMac(String mac);
 
