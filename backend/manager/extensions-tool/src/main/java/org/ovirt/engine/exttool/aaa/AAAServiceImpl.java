@@ -495,7 +495,7 @@ public class AAAServiceImpl implements ModuleService {
         private static void dumpRecord(AAAServiceImpl module, ExtMap extMap, List<ExtKey> ignore, String title, String indent) {
             if (extMap != null) {
                 log.debug("{}{}: {}", indent, title, extMap);
-                Collection<ExtKey> keys = extMap.keySet();
+                Collection<ExtKey> keys = new HashSet<>(extMap.keySet());
                 if (module.argModuleMap.get("key") != null) {
                     Collection<ExtKey> k = new HashSet<>();
                     for (String uuid : (List<String>)module.argModuleMap.get("key")) {
