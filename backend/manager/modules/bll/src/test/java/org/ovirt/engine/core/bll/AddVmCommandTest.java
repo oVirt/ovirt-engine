@@ -32,6 +32,7 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -108,6 +109,9 @@ public class AddVmCommandTest extends BaseCommandTest {
 
     @Rule
     public InjectorRule injectorRule = new InjectorRule();
+
+    @Mock
+    private MacPoolPerDc macPoolPerDc;
 
     @Mock
     StorageDomainDao sdDao;
@@ -408,6 +412,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         mockDaos(result);
         mockBackend(result);
         initCommandMethods(result);
+        result.poolPerDc = this.macPoolPerDc;
         result.postConstruct();
         return result;
     }
@@ -464,6 +469,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     private AddVmCommand<AddVmParameters> setupCanAddVmTests(final int domainSizeGB) {
         VM vm = initializeMock(domainSizeGB);
         AddVmCommand<AddVmParameters> cmd = createCommand(vm);
+        cmd.poolPerDc = macPoolPerDc;
         initCommandMethods(cmd);
         doReturn(createVmTemplate()).when(cmd).getVmTemplate();
         doReturn(createStoragePool()).when(cmd).getStoragePool();

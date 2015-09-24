@@ -63,6 +63,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
 
     @Override
     protected void init() {
+        super.init();
         setVmName(getParameters().getVmName());
         setVdsId(getParameters().getProxyHostId());
         setVdsGroupId(getParameters().getVdsGroupId());

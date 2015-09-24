@@ -13,6 +13,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -63,6 +64,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     private final List<String> macsAdded = new ArrayList<>();
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
+    private MacPoolManagerStrategy macPool;
 
     ImportVmCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -80,6 +82,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     @Override
     protected boolean validate() {
+        macPool = getMacPool();
         if (getVdsGroup() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
         }
@@ -270,6 +273,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     @Override
     protected void init() {
+        super.init();
         T parameters = getParameters();
         // before the execute phase, parameters.getVmId().equals(parameters.getVm().getId() == true
         // afterwards if will be false if parameters.isImportAsNewEntity() == true, and there is no
@@ -404,7 +408,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             processImages();
             VmHandler.addVmInitToDB(getVm().getStaticData());
         } catch (RuntimeException e) {
-            getMacPool().freeMacs(macsAdded);
+            macPool.freeMacs(macsAdded);
             throw e;
         }
 
@@ -489,7 +493,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     }
 
     protected void addVmInterfaces() {
-        VmInterfaceManager vmInterfaceManager = new VmInterfaceManager(getMacPool());
+        VmInterfaceManager vmInterfaceManager = new VmInterfaceManager(macPool);
 
         VnicProfileHelper vnicProfileHelper =
                 new VnicProfileHelper(getVdsGroupId(),
@@ -503,7 +507,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
         // If we import it as a new entity, then we allocate all MAC addresses in advance
         if (getParameters().isImportAsNewEntity()) {
-            List<String> macAddresses = getMacPool().allocateMacAddresses(nics.size());
+            List<String> macAddresses = macPool.allocateMacAddresses(nics.size());
             for (int i = 0; i < nics.size(); ++i) {
                 nics.get(i).setMacAddress(macAddresses.get(i));
             }
@@ -535,8 +539,8 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     private void fillMacAddressIfMissing(VmNic iface) {
         if (StringUtils.isEmpty(iface.getMacAddress())
-                && getMacPool().getAvailableMacsCount() > 0) {
-            iface.setMacAddress(getMacPool().allocateNewMac());
+                && macPool.getAvailableMacsCount() > 0) {
+            iface.setMacAddress(macPool.allocateNewMac());
         }
     }
 

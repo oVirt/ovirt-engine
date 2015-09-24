@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -22,10 +26,17 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsParameters> extends VdsNetworkCommand<T> {
 
+    @Inject
+    private MacPoolPerDc poolPerDc;
+
     private VdsNetworkInterface iface;
 
     public DetachNetworkFromVdsInterfaceCommand(T paramenters) {
         super(paramenters);
+    }
+
+    private MacPoolManagerStrategy getMacPool() {
+        return poolPerDc.poolForDataCenter(getStoragePoolId());
     }
 
     @Override

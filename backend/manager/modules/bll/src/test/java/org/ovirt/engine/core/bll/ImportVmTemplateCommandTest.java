@@ -23,9 +23,7 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.ovirt.engine.core.bll.context.EngineContext;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -139,12 +137,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
             VolumeFormat volumeFormat,
             VolumeType volumeType,
             StorageType storageType) {
-        ImportVmTemplateCommand command = spy(new ImportVmTemplateCommand(createParameters()){
-            @Override
-            public VDSGroup getVdsGroup() {
-                return null;
-            }
-        });
+        ImportVmTemplateCommand command = createImportVmTemplateCommandSpy(createParameters());
 
         Backend backend = mock(Backend.class);
         doReturn(backend).when(command).getBackend();
@@ -154,7 +147,6 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         mockGetTemplatesFromExportDomainQuery(volumeFormat, volumeType, command);
         mockStorageDomainStatic(command, storageType);
         doReturn(mock(VmTemplateDao.class)).when(command).getVmTemplateDao();
-        doReturn(Mockito.mock(MacPoolManagerStrategy.class)).when(command).getMacPool();
         mockStoragePool(command);
         mockStorageDomains(command);
         doReturn(true).when(command).setAndValidateDiskProfiles();
@@ -269,13 +261,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         ImportVmTemplateParameters parameters = createParameters();
         parameters.getVmTemplate().setName(name);
         parameters.setImportAsNewEntity(isImportAsNewEntity);
-        ImportVmTemplateCommand command =
-                spy(new ImportVmTemplateCommand(parameters) {
-                    @Override
-                    public VDSGroup getVdsGroup() {
-                        return null;
-                    }
-                });
+        ImportVmTemplateCommand command = createImportVmTemplateCommandSpy(parameters);
         Set<ConstraintViolation<ImportVmTemplateParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
@@ -289,28 +275,17 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
      */
     @Test
     public void testOtherFieldsNotValidatedInImport() {
-        ImportVmTemplateParameters parameters = createParameters();
+        final ImportVmTemplateParameters parameters = createParameters();
 
         assertFalse(BusinessEntitiesDefinitions.GENERAL_DOMAIN_SIZE > string100.length());
         parameters.setImportAsNewEntity(true);
-        ImportVmTemplateCommand command =
-                spy(new ImportVmTemplateCommand(parameters) {
-                    @Override
-                    public VDSGroup getVdsGroup() {
-                        return null;
-                    }
-                });
+        ImportVmTemplateCommand command = createImportVmTemplateCommandSpy(parameters);
         Set<ConstraintViolation<ImportVmTemplateParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
         assertTrue(validate.isEmpty());
         parameters.setImportAsNewEntity(false);
-        command = spy(new ImportVmTemplateCommand(parameters) {
-                    @Override
-                    public VDSGroup getVdsGroup() {
-                        return null;
-                    }
-                });
+        command = createImportVmTemplateCommandSpy(parameters);
         validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
@@ -323,12 +298,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     @Test
     public void testManagedDeviceSyncWithNewDiskId() {
         ImportVmTemplateParameters parameters = createParameters();
-        ImportVmTemplateCommand command = spy(new ImportVmTemplateCommand(parameters){
-                    @Override
-                    public VDSGroup getVdsGroup() {
-                        return null;
-                    }
-                });
+        ImportVmTemplateCommand command = createImportVmTemplateCommandSpy(parameters);
         DiskImage disk = new DiskImage();
         disk.setStorageIds(new ArrayList<>());
         Map<Guid, VmDevice> managedDevices = new HashMap<>();
@@ -340,6 +310,18 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         assertEquals("The old disk id should be similar to the value at the newDiskIdForDisk.", beforeOldDiskId, oldDiskId);
         assertNotNull("The manged deivce should return the disk device by the new key", managedDevices.get(disk.getId()));
         assertNull("The manged deivce should not return the disk device by the old key", managedDevices.get(beforeOldDiskId));
+    }
+
+    private ImportVmTemplateCommand createImportVmTemplateCommandSpy(final ImportVmTemplateParameters parameters) {
+        ImportVmTemplateCommand spy = spy(new ImportVmTemplateCommand(parameters) {
+
+            @Override
+            public VDSGroup getVdsGroup() {
+                return null;
+            }
+        });
+
+        return spy;
     }
 
 }

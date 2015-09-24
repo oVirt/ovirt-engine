@@ -18,6 +18,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -95,6 +96,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     private List<DiskImage> imageList;
 
     private final SnapshotsManager snapshotsManager = new SnapshotsManager();
+    private MacPoolManagerStrategy macPool;
 
     public ImportVmCommand(T parameters) {
         this(parameters, null);
@@ -139,6 +141,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             return false;
         }
 
+        macPool = getMacPool();
         Map<Guid, StorageDomain> domainsMap = new HashMap<>();
         if (!validateBeforeCloneVm(domainsMap)) {
             return false;
@@ -147,7 +150,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         if (getParameters().isImportAsNewEntity()) {
             initImportClonedVm();
 
-            if (getVm().getInterfaces().size() > getMacPool().getAvailableMacsCount()) {
+            if (getVm().getInterfaces().size() > macPool.getAvailableMacsCount()) {
                 return failValidation(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
             }
         }
@@ -830,7 +833,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     /**
-     * Generates and saves a {@link DiskImageDynamic} for the given {@link #disk}.
+     * Generates and saves a {@link DiskImageDynamic} for the given <code>disk</code>
      *
      * @param disk
      *            The imported disk
@@ -1050,7 +1053,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     protected void removeVmNetworkInterfaces() {
-        new VmInterfaceManager(getMacPool()).removeAll(getVmId());
+        new VmInterfaceManager(macPool).removeAll(getVmId());
     }
 
     @Override

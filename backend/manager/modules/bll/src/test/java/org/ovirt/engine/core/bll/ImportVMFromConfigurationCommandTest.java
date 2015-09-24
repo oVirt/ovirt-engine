@@ -85,6 +85,9 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     @Mock
     private OvfVmIconDefaultsProvider iconDefaultsProvider;
 
+    @Mock
+    private MacPoolPerDc macPoolPerDc;
+
     @Before
     public void setUp() throws IOException {
         vmId = Guid.newGuid();
@@ -231,6 +234,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
                 return Collections.emptyList();
             }
         });
+        cmd.poolPerDc = this.macPoolPerDc;
         cmd.postConstruct();
         validator = spy(new ImportValidator(parameters));
         doReturn(validator).when(cmd).getImportValidator();

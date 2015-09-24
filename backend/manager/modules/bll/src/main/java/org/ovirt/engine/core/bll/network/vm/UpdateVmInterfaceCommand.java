@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -106,11 +107,12 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             succeeded = updateHost();
         } finally {
             setSucceeded(succeeded);
+            MacPoolManagerStrategy macPool = getMacPool();
             if (macAddedToPool) {
                 if (succeeded) {
-                    getMacPool().freeMac(oldIface.getMacAddress());
+                    macPool.freeMac(oldIface.getMacAddress());
                 } else {
-                    getMacPool().freeMac(getMacAddress());
+                    macPool.freeMac(getMacAddress());
                 }
             }
         }

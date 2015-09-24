@@ -24,6 +24,7 @@ public class CancelConvertVmCommand<T extends VmOperationParameterBase> extends 
 
     @Override
     protected void init() {
+        super.init();
         setVdsId(getVmManager().getConvertProxyHostId());
     }
 

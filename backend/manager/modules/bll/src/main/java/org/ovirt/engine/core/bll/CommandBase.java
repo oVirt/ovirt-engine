@@ -28,8 +28,6 @@ import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
 import org.ovirt.engine.core.bll.quota.InvalidQuotaParametersException;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParametersWrapper;
@@ -109,9 +107,6 @@ import com.woorea.openstack.base.client.OpenStackResponseException;
 
 public abstract class CommandBase<T extends VdcActionParametersBase> extends AuditLogableBase implements
         RollbackHandler, TransactionMethod<Object>, Command<T> {
-
-    @Inject
-    protected MacPoolPerDc poolPerDc;
 
     /* Multiplier used to convert GB to bytes or vice versa. */
     protected static final long BYTES_IN_GB = 1024 * 1024 * 1024;
@@ -1768,7 +1763,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             VdcActionType parentCommand,
             String description,
             Map<Guid, VdcObjectType> entitiesMap) {
-        return CommandCoordinatorUtil.createTask(taskId, this, asyncTaskCreationInfo, parentCommand, description, entitiesMap);
+        return CommandCoordinatorUtil.createTask(taskId,
+                this,
+                asyncTaskCreationInfo,
+                parentCommand,
+                description,
+                entitiesMap);
     }
 
     /**
@@ -2436,10 +2436,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     public CommandContext cloneContextAndDetachFromParent() {
         return cloneContext().withoutCompensationContext().withoutExecutionContext().withoutLock();
-    }
-
-    protected MacPoolManagerStrategy getMacPool() {
-        return poolPerDc.poolForDataCenter(getStoragePoolId());
     }
 
     protected SessionDataContainer getSessionDataContainer() {

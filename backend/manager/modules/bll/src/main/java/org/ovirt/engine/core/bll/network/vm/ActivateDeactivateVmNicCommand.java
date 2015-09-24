@@ -19,6 +19,7 @@ import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -352,8 +353,9 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     protected ValidationResult macAvailable() {
-        Boolean allowDupMacs = getMacPool().isDuplicateMacAddressesAllowed();
-        VmInterfaceManager vmInterfaceManager = new VmInterfaceManager(getMacPool());
+        MacPoolManagerStrategy macPool = getMacPool();
+        Boolean allowDupMacs = macPool.isDuplicateMacAddressesAllowed();
+        VmInterfaceManager vmInterfaceManager = new VmInterfaceManager(macPool);
         if (allowDupMacs || !vmInterfaceManager.existsPluggedInterfaceWithSameMac(getParameters().getNic())) {
             return ValidationResult.VALID;
         } else {

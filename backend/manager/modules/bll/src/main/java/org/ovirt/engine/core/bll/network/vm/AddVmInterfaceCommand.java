@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
@@ -26,6 +27,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends AbstractVmInterfaceCommand<T> {
 
+    private MacPoolManagerStrategy macPool;
+
     public AddVmInterfaceCommand(T parameters) {
         super(parameters);
     }
@@ -41,7 +44,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
 
         try {
             if (StringUtils.isEmpty(getMacAddress())) {
-                getInterface().setMacAddress(getMacPool().allocateNewMac());
+                getInterface().setMacAddress(macPool.allocateNewMac());
                 macAddedToPool = true;
             } else {
                 macAddedToPool = addMacToPool(getMacAddress());
@@ -69,7 +72,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         } finally {
             setSucceeded(succeeded);
             if (macAddedToPool && !succeeded) {
-                getMacPool().freeMac(getMacAddress());
+                macPool.freeMac(getMacAddress());
             }
         }
     }
@@ -93,6 +96,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
 
     @Override
     protected boolean validate() {
+        macPool = getMacPool();
         VmStatic vm = getVm().getStaticData();
         if (vm == null) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
@@ -145,7 +149,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             if (!validate(macAvailable())) {
                 return false;
             }
-        } else if (getMacPool().getAvailableMacsCount() <= 0) {
+        } else if (macPool.getAvailableMacsCount() <= 0) {
             addValidationMessage(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
             return false;
         }

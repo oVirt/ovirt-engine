@@ -8,10 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -47,6 +51,9 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameter
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> extends StorageHandlingCommandBase<T> {
 
+    @Inject
+    private MacPoolPerDc poolPerDc;
+
     private Map<String, Pair<String, String>> sharedLocks;
 
     public RemoveStoragePoolCommand(T parameters) {
@@ -55,6 +62,10 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
     protected RemoveStoragePoolCommand(Guid commandId) {
         super(commandId);
+    }
+
+    private MacPoolManagerStrategy getMacPool() {
+        return poolPerDc.poolForDataCenter(getStoragePoolId());
     }
 
     @Override

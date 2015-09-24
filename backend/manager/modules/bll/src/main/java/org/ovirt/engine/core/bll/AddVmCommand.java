@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.bll.numa.vm.NumaValidator;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -129,6 +130,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     private Map<Guid, Guid> srcDiskIdToTargetDiskIdMapping = new HashMap<>();
     private Map<Guid, Guid> srcVmNicIdToTargetVmNicIdMapping = new HashMap<>();
+    private MacPoolManagerStrategy macPool;
 
     public AddVmCommand(T parameters) {
         this(parameters, null);
@@ -500,6 +502,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     @Override
     protected boolean validate() {
+        macPool = getMacPool();
         if (getVdsGroup() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
         }
@@ -888,7 +891,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected boolean verifyAddVM(List<String> reasons, int vmPriority) {
-        return VmHandler.verifyAddVm(reasons, getVmInterfaces().size(), vmPriority, getMacPool());
+        return VmHandler.verifyAddVm(reasons, getVmInterfaces().size(), vmPriority, macPool);
     }
 
     @Override
@@ -1056,10 +1059,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected void addVmNetwork() {
         List<VmNic> nics = getVmInterfaces();
-        VmInterfaceManager vmInterfaceManager = new VmInterfaceManager(getMacPool());
+        VmInterfaceManager vmInterfaceManager = new VmInterfaceManager(macPool);
         vmInterfaceManager.sortVmNics(nics, getVmInterfaceDevices());
 
-        List<String> macAddresses = getMacPool().allocateMacAddresses(nics.size());
+        List<String> macAddresses = macPool.allocateMacAddresses(nics.size());
 
         // Add interfaces from template
         for (int i = 0; i < nics.size(); ++i) {

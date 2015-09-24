@@ -9,11 +9,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateCommand;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -48,6 +52,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @Deprecated
 public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends StorageDomainCommandBase<T> {
 
+    @Inject
+    private MacPoolPerDc poolPerDc;
+
     private static final Pattern VALIDATE_MAC_ADDRESS =
             Pattern.compile(MacAddressValidationPatterns.UNICAST_MAC_ADDRESS_FORMAT);
 
@@ -62,6 +69,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     private List<DiskImage> templateDisks;
     private StorageDomain sourceDomain;
     private Guid sourceDomainId = Guid.Empty;
+    private MacPoolManagerStrategy macPool;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -83,10 +91,23 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     @Override
     protected void init(T parameters) {
         super.init(parameters);
+
         setVmTemplateId(parameters.getContainerId());
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
         imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
         imageFromSourceDomainMap = new HashMap<>();
+    }
+
+    /*
+       this method exist not to do caching, but to deal with init being called from constructor in class hierarchy.
+       init method is not called via Postconstruct, but from constructor, meaning, that in tests
+       we're unable pro inject 'poolPerDc' soon enough.
+    * */
+    protected MacPoolManagerStrategy getMacPool() {
+        if (macPool == null) {
+            macPool = poolPerDc.poolForDataCenter(getStoragePoolId());
+        }
+        return macPool;
     }
 
     protected StorageDomain getSourceDomain() {
