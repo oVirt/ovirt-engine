@@ -16,6 +16,7 @@ export BUILD_JAVA_OPTS_GWT="\
 export JAVA_HOME="${JAVA_HOME:=/usr/lib/jvm/java-1.8.0}"
 
 # Use ovirt mirror if able, fall back to central maven
+mkdir -p "${MAVEN_SETTINGS%/*}"
 cat >"$MAVEN_SETTINGS" <<EOS
 <?xml version="1.0"?>
 <settings xmlns="http://maven.apache.org/POM/4.0.0"
