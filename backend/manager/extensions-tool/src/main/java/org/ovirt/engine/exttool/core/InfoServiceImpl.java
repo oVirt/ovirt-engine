@@ -37,7 +37,7 @@ public class InfoServiceImpl implements ModuleService {
 
 
                     Map<Object, Object> config = extension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION);
-                    Collection<Object> keys = config.keySet();
+                    Collection<Object> keys = new HashSet<>(config.keySet());
                     if (module.argMap.get("key") != null) {
                         keys.retainAll((List<String>)module.argMap.get("key"));
                     }
@@ -69,7 +69,7 @@ public class InfoServiceImpl implements ModuleService {
                 @Override
                 public void execute(InfoServiceImpl module) {
                     ExtensionProxy extension = module.getExtensionsManager().getExtensionByName((String)module.argMap.get("extension-name"));
-                    Collection<ExtKey> keys = extension.getContext().keySet();
+                    Collection<ExtKey> keys = new HashSet<>(extension.getContext().keySet());
                     if (module.argMap.get("key") != null) {
                         Collection<ExtKey> k = new HashSet<>();
                         for (String uuid : (List<String>)module.argMap.get("key")) {
