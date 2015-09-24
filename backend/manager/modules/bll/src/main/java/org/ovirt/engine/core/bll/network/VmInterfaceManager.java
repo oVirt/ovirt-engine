@@ -184,6 +184,23 @@ public class VmInterfaceManager {
         return vmNames;
     }
 
+    /***
+     * Returns whether or not there is a plugged network interface with the same MAC address as the given interface
+     *
+     * @param interfaceToPlug
+     *            the network interface that needs to be plugged
+     * @return <code>true</code> if the MAC is used by another plugged network interface, <code>false</code> otherwise.
+     */
+    public boolean existsPluggedInterfaceWithSameMac(VmNic interfaceToPlug) {
+        List<VmNic> vmNetworkIntrefaces = getVmNicDao().getPluggedForMac(interfaceToPlug.getMacAddress());
+        for (VmNic vmNetworkInterface : vmNetworkIntrefaces) {
+            if (!interfaceToPlug.getId().equals(vmNetworkInterface.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Sorts the list of NICs. The comparison is done either via PCI address, MAC address, or name, depending
      * on the information we have available
