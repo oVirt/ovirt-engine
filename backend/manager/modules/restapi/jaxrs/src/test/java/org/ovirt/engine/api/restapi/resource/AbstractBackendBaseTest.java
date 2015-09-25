@@ -9,6 +9,7 @@ import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqSearchParams;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -187,13 +188,21 @@ public abstract class AbstractBackendBaseTest extends Assert {
         return uriInfo;
     }
 
-    protected UriInfo addMatrixParameterExpectations(UriInfo mockUriInfo, String matrixParameter) {
+    protected UriInfo addMatrixParameterExpectations(UriInfo mockUriInfo, String parameterName, String parameterValue) {
         MultivaluedMap<String, String> matrixParams = new SimpleMultivaluedMap<>();
-        matrixParams.put(matrixParameter, null);
+        List<String> parameterValues = null;
+        if (parameterValue != null) {
+            parameterValues = Collections.singletonList(parameterValue);
+        }
+        matrixParams.put(parameterName, parameterValues);
         PathSegment segment = control.createMock(PathSegment.class);
         expect(segment.getMatrixParameters()).andReturn(matrixParams).anyTimes();
         expect(mockUriInfo.getPathSegments()).andReturn(Arrays.asList(segment)).anyTimes();
         return mockUriInfo;
+    }
+
+    protected UriInfo addMatrixParameterExpectations(UriInfo mockUriInfo, String parameterName) {
+        return addMatrixParameterExpectations(mockUriInfo, parameterName, "");
     }
 
     protected <E> void setUpGetEntityExpectations(VdcQueryType query,
