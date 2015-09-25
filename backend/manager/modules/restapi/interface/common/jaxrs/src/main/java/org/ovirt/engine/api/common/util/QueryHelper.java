@@ -40,11 +40,14 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.core.common.utils.CommonConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A container of static methods related to query resolution.
  */
 public class QueryHelper {
+    private static final Logger log = LoggerFactory.getLogger(QueryHelper.class);
 
     public static final String CONSTRAINT_PARAMETER = "search";
 
@@ -201,6 +204,69 @@ public class QueryHelper {
     public static String getMatrixConstraint(UriInfo uriInfo, String constraint) {
         HashMap<String, String> constraints = getMatrixConstraints(uriInfo, constraint);
         return constraints.containsKey(constraint) ? constraints.get(constraint) : null;
+    }
+
+    /**
+     * Returns the boolean value of the given matrix parameter. If the matrix parameter is present in the request but it
+     * doesn't have a value then the value of the {@code empty} parameter will be returned. If the matrix parameter
+     * isn't present, or has an invalid boolean value then the value of the {@code missing} parameter will be returned.
+     *
+     * @param uri the URL to extract the parameter from
+     * @param name the name of the parameter
+     * @param empty the value that will be returned if the parameter is present but has no value
+     * @param missing the value that will be returned if the parameter isn't present or has an invalid boolean value
+     */
+    public static boolean getBooleanMatrixParameter(UriInfo uri, String name, boolean empty, boolean missing) {
+        String text = getMatrixConstraint(uri, name);
+        if (text == null) {
+            return missing;
+        }
+        if (text.isEmpty()) {
+            return empty;
+        }
+        switch (text) {
+        case "true":
+            return true;
+        case "false":
+            return false;
+        default:
+            log.error(
+                "The value \"{}\" of matrix parameter \"{}\" isn't a valid boolean, it will be ignored.",
+                text, name
+            );
+            return missing;
+        }
+    }
+
+    /**
+     * Returns the integer value of the given matrix parameter. If the matrix parameter is present in the request but it
+     * doesn't have a value then the value of the {@code empty} parameter will be returned. If the matrix parameter
+     * isn't present, or has an invalid integer value then the value of the {@code missing} parameter will be returned.
+     *
+     * @param uri the URL to extract the parameter from
+     * @param name the name of the parameter
+     * @param empty the value that will be returned if the parameter is present but has no value
+     * @param missing the value that will be returned if the parameter isn't present or has in invalid integer value
+     */
+    public static int getIntegerMatrixParameter(UriInfo uri, String name, int empty, int missing) {
+        String text = getMatrixConstraint(uri, name);
+        if (text == null) {
+            return missing;
+        }
+        if (text.isEmpty()) {
+            return empty;
+        }
+        try {
+            return Integer.parseInt(text);
+        }
+        catch (NumberFormatException exception) {
+            log.error(
+                "The value \"{}\" of matrix parameter \"{}\" isn't a valid integer, it will be ignored.",
+                text, name
+            );
+            log.error("Exception", exception);
+            return missing;
+        }
     }
 
     public static boolean hasCurrentConstraint(UriInfo uriInfo) {
