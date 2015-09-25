@@ -18,11 +18,14 @@ package org.ovirt.engine.api.common.util;
 
 import static org.ovirt.engine.api.utils.ReflectionHelper.capitalize;
 import static org.ovirt.engine.api.utils.ReflectionHelper.get;
+import static org.ovirt.engine.api.utils.ReflectionHelper.invoke;
 import static org.ovirt.engine.api.utils.ReflectionHelper.isSet;
 
+import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -186,7 +189,6 @@ public class CompletenessAssertor {
                 }
             }
         }
-
         return missing;
     }
 
@@ -242,15 +244,49 @@ public class CompletenessAssertor {
     }
 
     @SuppressWarnings("unchecked")
-    private static boolean isList(Object model, String superField) {
-        return model !=null
-               && isSet(model, superField)
-               && isSet(get(model, superField), superField)
-               && get(get(model, superField), superField) instanceof List;
+    private static boolean isList(Object model, String name) {
+        if (model == null) {
+            return false;
+        }
+        Object value = get(model, name);
+        if (value == null) {
+            return false;
+        }
+        Class<? extends Object> clazz = value.getClass();
+        if (List.class.isAssignableFrom(clazz)) {
+            return true;
+        }
+        Method getter = null;
+        int count = 0;
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (method.getName().startsWith("get")) {
+                getter = method;
+                count++;
+            }
+        }
+        return count == 1 && List.class.isAssignableFrom(getter.getReturnType());
     }
 
     @SuppressWarnings("unchecked")
-    private static List<Object> asList(Object model, String superField) {
-        return (List<Object>)get(get(model, superField), superField);
+    private static List<Object> asList(Object model, String name) {
+        Object value = get(model, name);
+        if (value == null) {
+            return Collections.emptyList();
+        }
+        Class<? extends Object> clazz = value.getClass();
+        if (List.class.isAssignableFrom(clazz)) {
+            return (List<Object>) value;
+        }
+        Method getter = null;
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (method.getName().startsWith("get") && List.class.isAssignableFrom(method.getReturnType())) {
+                getter = method;
+                break;
+            }
+        }
+        if (getter == null) {
+            return Collections.emptyList();
+        }
+        return (List<Object>) invoke(value, getter);
     }
 }
