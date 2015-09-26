@@ -22,13 +22,4 @@
       <version>${org.ovirt.engine.api.ovirt-engine-extensions-api.version}</version>
     </dependency>
   </dependencies>
-  <build>
-    <plugins>
-      <!-- Create the JBoss module: -->
-      <plugin>
-        <groupId>org.ovirt.engine</groupId>
-        <artifactId>jboss-modules-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
 </project>

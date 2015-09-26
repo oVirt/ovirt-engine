@@ -587,22 +587,6 @@
           </configuration>
         </plugin>
 
-        <!-- Make sure that the goal that generates JBoss modules is
-             automatically executed in the package phase of any project
-             that uses the plugin: -->
-        <plugin>
-          <groupId>org.ovirt.engine</groupId>
-          <artifactId>jboss-modules-maven-plugin</artifactId>
-          <version>1.2-SNAPSHOT</version>
-          <executions>
-            <execution>
-              <phase>package</phase>
-              <goals>
-                <goal>jboss-modules</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>animal-sniffer-maven-plugin</artifactId>
@@ -665,7 +649,31 @@
         <directory>src/main/resources</directory>
       </resource>
     </resources>
+
+    <plugins>
+
+      <!-- Create and attach JBoss modules, for all child projects: -->
+      <plugin>
+        <groupId>org.ovirt.maven.plugins</groupId>
+        <artifactId>ovirt-jboss-modules-maven-plugin</artifactId>
+        <version>2.0.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-modules</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <category>common</category>
+        </configuration>
+      </plugin>
+
+    </plugins>
+
   </build>
+
   <profiles>
     <profile>
       <id>reporting</id>

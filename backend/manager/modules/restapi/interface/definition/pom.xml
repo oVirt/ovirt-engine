@@ -109,12 +109,6 @@
         </executions>
       </plugin>
 
-      <!-- Create the JBoss module: -->
-      <plugin>
-        <groupId>org.ovirt.engine</groupId>
-        <artifactId>jboss-modules-maven-plugin</artifactId>
-      </plugin>
-
       <!-- Run style checks: -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

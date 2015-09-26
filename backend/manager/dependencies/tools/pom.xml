@@ -36,8 +36,8 @@
   <build>
     <plugins>
         <plugin>
-          <groupId>org.ovirt.engine</groupId>
-          <artifactId>jboss-modules-maven-plugin</artifactId>
+          <groupId>org.ovirt.maven.plugins</groupId>
+          <artifactId>ovirt-jboss-modules-maven-plugin</artifactId>
           <configuration>
             <generateIndex>false</generateIndex>
             <category>tools</category>
