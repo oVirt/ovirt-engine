@@ -355,9 +355,8 @@ public class BackendVmsResourceTest
 
     @Test
     public void testCloneWithDisk() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
+        setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendVmsResource.CLONE, "true"));
         setUpTemplateDisksExpectations(GUIDS[1]);
-        setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
@@ -442,7 +441,7 @@ public class BackendVmsResourceTest
 
     @Test
     public void testClone() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
+        setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendVmsResource.CLONE, "true"));
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
@@ -475,7 +474,7 @@ public class BackendVmsResourceTest
                 new Object[]{GUIDS[2]},
                 getEntity(2));
 
-        Response response = collection.add(createModel(new Disks(){{setClone(true);}}));
+        Response response = collection.add(createModel(new Disks()));
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Vm);
         verifyModel((Vm) response.getEntity(), 2);
@@ -1082,9 +1081,8 @@ public class BackendVmsResourceTest
     }
 
     private void doTestCloneFromTemplateWithClonePermissions(Vm model, boolean copy) throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
+        setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendVmsResource.CLONE, "true"));
         setUpTemplateDisksExpectations(GUIDS[1]);
-        setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
@@ -1541,7 +1539,6 @@ public class BackendVmsResourceTest
 
     private Disks createDisksCollection() {
         Disks disks = new Disks();
-        disks.setClone(true);
         disks.getDisks().add(map(createDiskList().get(0), null));
         return disks;
     }

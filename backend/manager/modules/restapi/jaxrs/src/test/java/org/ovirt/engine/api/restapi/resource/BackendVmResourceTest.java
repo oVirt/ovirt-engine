@@ -1145,7 +1145,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testRemoveDetachOnly() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
+        setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendVmResource.DETACH_ONLY, "true"));
         setUpGetEntityExpectations();
         setUpGetPayloadExpectations(0, 1);
         setUpGetBallooningExpectations();
@@ -1156,7 +1156,6 @@ public class BackendVmResourceTest
         Action action = new Action();
         action.setVm(new Vm());
         action.getVm().setDisks(new Disks());
-        action.getVm().getDisks().setDetachOnly(true);
         verifyRemove(resource.remove(action));
     }
 

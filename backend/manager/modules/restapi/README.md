@@ -481,6 +481,48 @@ elements have been completely removed, so the only way to query or
 modify the power management agents is now the
 `/hosts/{host:id}/fenceagents` sub-collection.
 
+### Removed the `disks.clone` and `disks.detach_only` elements
+
+These elements aren't really part of the representation of disks, but
+parameters of the operations to add and remove virtual machines.
+
+The `disks.clone` element was used to indicate that the disks of a new
+virtual machine have to be cloned:
+
+    POST /vms
+    <vm>
+      ...
+      <disks>
+        <clone>true</clone>
+      </disks>
+    <vm>
+
+This has been now removed, and replaced by a new `clone` matrix
+parameter:
+
+    POST /vms;clone=true
+    <vm>
+      ...
+    </vm>
+
+The `disks.detach_only` element was used to indicate that when removing
+a virtual machine the disks don't have to be removed, but just detached
+from the virtual machine:
+
+    DELETE /vms/{vm:id}
+    <action>
+      <vm>
+        <disks>
+          <detach_only>true</detach_only>
+        </disks>
+      </vm>
+    </action>
+
+This has been now removed, and replaced by a new `detach_only` matrix
+parameter:
+
+    DELETE /vms/{vm:id};detach_only=true
+
 ### Rename element `vmpool` to `vm_pool`
 
 The names of the elements that represent pools of virtual machines used

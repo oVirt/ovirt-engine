@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.api.common.util.DetailHelper;
+import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.ConfigurationType;
@@ -81,6 +82,8 @@ public class BackendVmsResource extends
 
     static final String[] SUB_COLLECTIONS = { "applications", "disks", "nics", "numanodes", "cdroms", "snapshots", "tags", "permissions",
             "statistics", "reporteddevices", "watchdogs", "sessions", "katelloerrata", "graphicsconsoles", "hostdevices" };
+
+    public static final String CLONE = "clone";
 
     public BackendVmsResource() {
         super(Vm.class, org.ovirt.engine.core.common.businessentities.VM.class, SUB_COLLECTIONS);
@@ -164,7 +167,8 @@ public class BackendVmsResource extends
                                 .getId())
                                 : Guid.Empty;
 
-                if (vm.isSetDisks() && vm.getDisks().isSetClone() && vm.getDisks().isClone()) {
+                boolean clone = QueryHelper.getBooleanMatrixParameter(uriInfo, CLONE, true, false);
+                if (clone) {
                     response = cloneVmFromTemplate(staticVm, vm, template, instanceTypeEntity, cluster);
                 } else if (Guid.Empty.equals(template.getId())) {
                     response = addVmFromScratch(staticVm, vm, instanceTypeEntity, cluster);

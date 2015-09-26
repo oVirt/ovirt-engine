@@ -96,6 +96,7 @@ public class BackendVmResource extends
     private BackendVmsResource parent;
 
     public static final String NEXT_RUN = "next_run";
+    public static final String DETACH_ONLY = "detach_only";
 
     public BackendVmResource(String id, BackendVmsResource parent) {
         super(id, Vm.class, org.ovirt.engine.core.common.businessentities.VM.class, SUB_COLLECTIONS);
@@ -103,7 +104,7 @@ public class BackendVmResource extends
     }
 
     private boolean isNextRunRequested() {
-        return QueryHelper.getMatrixConstraints(getUriInfo(), NEXT_RUN).containsKey(NEXT_RUN);
+        return QueryHelper.getBooleanMatrixParameter(uriInfo, NEXT_RUN, true, false);
     }
 
     @Override
@@ -181,8 +182,8 @@ public class BackendVmResource extends
         boolean forceRemove = action != null && action.isSetForce() ? action.isForce() : false;
         RemoveVmParameters params = new RemoveVmParameters(guid, forceRemove);
         // If detach only is set we do not remove the VM disks
-        if (action != null && action.isSetVm() && action.getVm().isSetDisks()
-                && action.getVm().getDisks().isSetDetachOnly()) {
+        boolean detachOnly = QueryHelper.getBooleanMatrixParameter(uriInfo, DETACH_ONLY, true, false);
+        if (detachOnly) {
             params.setRemoveDisks(false);
         }
         return performAction(VdcActionType.RemoveVm, params);

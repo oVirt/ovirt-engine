@@ -15,24 +15,40 @@ actions:
 - name: /vms/{vm:id}|rel=get
   description: get the virtual machine in the system for the given virtual machine id
   request:
+    urlparams:
+      next_run:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
     headers:
       Filter: {value: true|false, required: false}
       All-Content: {value: true|false, required: false}
 - name: /vms/{vm:id}|rel=delete
   description: deletes the virtual machine in the system for the given virtual machine id
   request:
+    urlparams:
+      detach_only:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
     body:
       required: false
       parameterType: Action
       signatures:
-      - mandatoryArguments: {}
-        optionalArguments:
+      - optionalArguments:
           action.force: xs:boolean
-          action.vm.disks.detach_only: xs:boolean
         description: deletes the virtual machine in the system for the given virtual machine id with optional arguments where the vm can be forced to be removed and option to just detach the disks associated with the vm.
 - name: /vms/{vm:id}|rel=update
   description: update the virtual machine in the system for the given virtual machine id
   request:
+    urlparams:
+      next_run:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
     body:
       parameterType: Vm
       signatures:
@@ -120,6 +136,12 @@ actions:
 - name: /vms|rel=add
   description: add a virtual machine to the system
   request:
+    urlparams:
+      clone:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
     body:
       parameterType: Vm
       signatures:
@@ -172,7 +194,6 @@ actions:
             host.id|name: xs:string
           vm.origin: xs:string
           vm.os.kernel: xs:string
-          vm.disks.clone: xs:boolean
           vm.tunnel_migration: xs:boolean
           vm.migration_downtime: xs:int
           vm.virtio_scsi.enabled: xs:boolean
