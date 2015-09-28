@@ -7,7 +7,6 @@ import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.verif
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -16,7 +15,6 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
-import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
@@ -250,22 +248,24 @@ public class BackendStorageDomainVmResourceTest
 
     public void doTestImport(StorageDomain storageDomain, Cluster cluster, boolean collapseSnapshots, boolean importAsNewEntity) throws Exception {
         setUpGetEntityExpectations(1, StorageDomainType.ImportExport, GUIDS[2]);
-        setUriInfo(setUpActionExpectations(VdcActionType.ImportVm,
-                                           ImportVmParameters.class,
-                                           new String[] { "ContainerId", "StorageDomainId", "SourceDomainId", "DestDomainId", "StoragePoolId", "VdsGroupId", "CopyCollapse", "ImportAsNewEntity" },
-                                           new Object[] { VM_ID, GUIDS[2], STORAGE_DOMAIN_ID, GUIDS[2], DATA_CENTER_ID, GUIDS[1], collapseSnapshots, importAsNewEntity }));
+        UriInfo uriInfo = setUpActionExpectations(
+            VdcActionType.ImportVm,
+            ImportVmParameters.class,
+            new String[] { "ContainerId", "StorageDomainId", "SourceDomainId", "DestDomainId", "StoragePoolId", "VdsGroupId", "CopyCollapse", "ImportAsNewEntity" },
+            new Object[] { VM_ID, GUIDS[2], STORAGE_DOMAIN_ID, GUIDS[2], DATA_CENTER_ID, GUIDS[1], collapseSnapshots, importAsNewEntity },
+            true, // canDo,
+            true, // success
+            null, // taskReturn
+            null, // baseUri
+            false //replay
+        );
+        uriInfo = addMatrixParameterExpectations(uriInfo, BackendStorageDomainVmResource.COLLAPSE_SNAPSHOTS, Boolean.toString(collapseSnapshots));
+        setUriInfo(uriInfo);
+        control.replay();
 
         Action action = new Action();
         action.setStorageDomain(storageDomain);
         action.setCluster(cluster);
-
-        if(collapseSnapshots){
-            Vm vm = new Vm();
-            vm.setSnapshots(new Snapshots());
-            vm.getSnapshots().setCollapseSnapshots(collapseSnapshots);
-            action.setVm(vm);
-        }
-
         action.setClone(importAsNewEntity);
 
         verifyActionResponse(resource.doImport(action));

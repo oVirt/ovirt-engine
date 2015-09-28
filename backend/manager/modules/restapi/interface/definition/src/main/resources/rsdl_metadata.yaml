@@ -1404,13 +1404,18 @@ actions:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
         optionalArguments:
           action.storage_domain.id|name: xs:string
-          action.vm.snapshots.collapse_snapshots: xs:boolean
           action.clone: xs:boolen
           action.exclusive: xs:boolen
           action.vm.name: xs:string
           action.vm.disks.disk--COLLECTION:
             disk.id: xs:string
         description: import the specified virtual machine from the source storagedomain identified by storagedomain-identifier into the destination storage domain identified by storage_domain.id|name
+    urlparams:
+      collapse_snapshots:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
 - name: /storagedomains/{storagedomain:id}/disksnapshots|rel=get
   description: get the list of disk snapshots in the storage domain
 - name: /storagedomains/{storagedomain:id}/disksnapshots/{disksnapshot:id}|rel=delete

@@ -618,3 +618,24 @@ of logical units will be wrapped with the `logical_units` element:
         </volume_group>
       </storage>
     </storage_domain>
+
+### Removed the `snapshots.collapse_snapshots` element
+
+This element isn't really part of the representation of snapshots, but
+a parameter of the operation that imports a virtual machine from an
+export storage domain:
+
+    POST /storagedomains/{sd:id}/vms/{vm:id}/import
+    <action>
+      <vm>
+        <snapshots>
+          <collapse_snapshots>true</collapse_snapshots>
+        </snapshots>
+      </vm>
+    </action>
+
+This has been now removed, and replaced by a new `collapse_snapshots`
+matrix parameter:
+
+    POST /storagedomains/{sd:id}/vms/{vm:id}/import;collapse_snapshots
+    <action/>

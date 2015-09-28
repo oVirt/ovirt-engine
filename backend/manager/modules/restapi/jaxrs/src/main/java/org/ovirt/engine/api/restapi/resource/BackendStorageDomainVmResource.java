@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.Vms;
@@ -19,6 +20,8 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendStorageDomainVmResource
     extends AbstractBackendStorageDomainContentResource<Vms, Vm, org.ovirt.engine.core.common.businessentities.VM>
     implements StorageDomainContentResource<Vm> {
+
+    public static final String COLLAPSE_SNAPSHOTS = "collapse_snapshots";
 
     org.ovirt.engine.core.common.businessentities.VM vm;
 
@@ -69,9 +72,9 @@ public class BackendStorageDomainVmResource
         params.setImageToDestinationDomainMap(getDiskToDestinationMap(action));
         params.setForceOverride(action.isSetExclusive() ? action.isExclusive() : false);
 
-        if (action.isSetVm() && action.getVm().isSetSnapshots()
-                && action.getVm().getSnapshots().isSetCollapseSnapshots()) {
-            params.setCopyCollapse(action.getVm().getSnapshots().isCollapseSnapshots());
+        boolean collapseSnapshots = QueryHelper.getBooleanMatrixParameter(uriInfo, COLLAPSE_SNAPSHOTS, true, false);
+        if (collapseSnapshots) {
+            params.setCopyCollapse(collapseSnapshots);
         }
 
         if (action.isSetClone()) {
