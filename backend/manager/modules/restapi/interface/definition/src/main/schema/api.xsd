@@ -3213,7 +3213,13 @@
 
   <xs:complexType name="CustomProperties">
     <xs:sequence>
-      <xs:element name="custom_property" type="CustomProperty" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="custom_property" type="CustomProperty" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="CustomProperties"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 

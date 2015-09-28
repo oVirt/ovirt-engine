@@ -639,7 +639,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
     private void addCustomProperties(VersionCaps version, List<CustomProperty> envs) {
         version.setCustomProperties(new CustomProperties());
-        version.getCustomProperties().getCustomProperty().addAll(envs);
+        version.getCustomProperties().getCustomProperties().addAll(envs);
     }
 
     private List<Agent> getPowerManagementAgents(Version version) {

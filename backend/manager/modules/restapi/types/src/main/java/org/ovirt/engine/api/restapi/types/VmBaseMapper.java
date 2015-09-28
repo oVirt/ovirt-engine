@@ -206,7 +206,7 @@ public class VmBaseMapper {
             entity.setCpuProfileId(GuidUtils.asGuid(model.getCpuProfile().getId()));
         }
         if (model.isSetCustomProperties()) {
-            entity.setCustomProperties(CustomPropertiesParser.parse(model.getCustomProperties().getCustomProperty()));
+            entity.setCustomProperties(CustomPropertiesParser.parse(model.getCustomProperties().getCustomProperties()));
         }
         if (model.isSetLargeIcon() && model.getLargeIcon().isSetId()) {
             entity.setLargeIconId(GuidUtils.asGuid(model.getLargeIcon().getId()));
@@ -327,7 +327,7 @@ public class VmBaseMapper {
 
         if (!StringUtils.isEmpty(entity.getCustomProperties())) {
             CustomProperties hooks = new CustomProperties();
-            hooks.getCustomProperty().addAll(CustomPropertiesParser.parse(entity.getCustomProperties(), false));
+            hooks.getCustomProperties().addAll(CustomPropertiesParser.parse(entity.getCustomProperties(), false));
             model.setCustomProperties(hooks);
         }
 

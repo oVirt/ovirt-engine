@@ -573,7 +573,7 @@ public class VmMapper extends VmBaseMapper {
             }
         }
         if (vm.isSetCustomProperties()) {
-            params.setCustomProperties(CustomPropertiesParser.parse(vm.getCustomProperties().getCustomProperty()));
+            params.setCustomProperties(CustomPropertiesParser.parse(vm.getCustomProperties().getCustomProperties()));
         }
         if (vm.isSetBios()) {
             if (vm.getBios().isSetBootMenu()) {
@@ -697,7 +697,7 @@ public class VmMapper extends VmBaseMapper {
                     if (parts.length == 1) {
                         env.setValue(parts[1]);
                     }
-                    model.getCustomProperty().add(env);
+                    model.getCustomProperties().add(env);
                 }
             }
         }
@@ -707,7 +707,7 @@ public class VmMapper extends VmBaseMapper {
     @Mapping(from = CustomProperties.class, to = String.class)
     public static String map(CustomProperties model, String template) {
         StringBuilder buf = template != null ? new StringBuilder(template) : new StringBuilder();
-        for (CustomProperty env : model.getCustomProperty()) {
+        for (CustomProperty env : model.getCustomProperties()) {
             String envStr = map(env, null);
             if (envStr != null) {
                 if (buf.length() > 0) {

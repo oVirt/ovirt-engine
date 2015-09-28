@@ -166,7 +166,7 @@ public class BackendCapabilityResourceTest extends AbstractBackendResourceTest {
         verifyOsTypes(version.getOsTypes().getOsTypes());
 
         if (hooks) {
-            verifyHooksEnvs(version.getCustomProperties().getCustomProperty());
+            verifyHooksEnvs(version.getCustomProperties().getCustomProperties());
         }
         if (thp) {
             assertNotNull(version.getFeatures());

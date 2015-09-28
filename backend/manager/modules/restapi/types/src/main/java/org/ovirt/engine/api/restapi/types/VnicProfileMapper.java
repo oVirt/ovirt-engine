@@ -31,7 +31,7 @@ public class VnicProfileMapper {
         }
         if (model.isSetCustomProperties()) {
             entity.setCustomProperties(DevicePropertiesUtils.getInstance()
-                    .convertProperties(CustomPropertiesParser.parse(model.getCustomProperties().getCustomProperty())));
+                    .convertProperties(CustomPropertiesParser.parse(model.getCustomProperties().getCustomProperties())));
         }
         if (model.isSetQos() && model.getQos().isSetId()) {
             entity.setNetworkQosId(GuidUtils.asGuid(model.getQos().getId()));
@@ -59,7 +59,7 @@ public class VnicProfileMapper {
         model.setPortMirroring(entity.isPortMirroring());
         if (entity.getCustomProperties() != null && !entity.getCustomProperties().isEmpty()) {
             CustomProperties hooks = new CustomProperties();
-            hooks.getCustomProperty().addAll(CustomPropertiesParser.parse(
+            hooks.getCustomProperties().addAll(CustomPropertiesParser.parse(
                     DevicePropertiesUtils.getInstance().convertProperties(entity.getCustomProperties()), false));
             model.setCustomProperties(hooks);
         }
