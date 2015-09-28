@@ -32,14 +32,15 @@ The following XML schema complex types have been renamed:
 - `QoS` - `Qos`
 - `QoSs` - `Qoss`
 - `RSDL` - `Rsdl`
+- `SPM` - `Spm`
 - `SSHPublicKey` - `SshPublicKey`
 - `SSHPublicKeys` - `SshPublicKeys`
 - `SSH` - `Ssh`
 - `VCpuPin` - `VcpuPin`
-- `VirtIO_SCSI` - `VirtioScsi`
 - `VLAN` - `Vlan`
 - `VM` - `Vm`
 - `VMs` - `Vms`
+- `VirtIO_SCSI` - `VirtioScsi`
 
 First column is the old name, and second column is the new name.
 

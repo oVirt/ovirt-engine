@@ -1982,7 +1982,7 @@
                e.g. the standard VDSM port 54321 -->
           <xs:element name="port" type="xs:unsignedShort" minOccurs="0"/>
           <xs:element name="type" type="xs:string" minOccurs="0"/>
-          <xs:element name="spm" type="SPM" minOccurs="0"/>
+          <xs:element name="spm" type="Spm" minOccurs="0"/>
           <xs:element name="version" type="Version" minOccurs="0"/>
           <xs:element ref="hardware_information" minOccurs="0"/>
           <xs:element ref="power_management" minOccurs="0"/>
@@ -2029,9 +2029,9 @@
 
   <xs:element name="device_passthrough" type="HostDevicePassthrough" />
 
-  <xs:element name="spm" type="SPM"/>
+  <xs:element name="spm" type="Spm"/>
 
-  <xs:complexType name="SPM">
+  <xs:complexType name="Spm">
     <xs:sequence>
       <xs:element name="priority" type="xs:int" minOccurs="0" maxOccurs="1"/>
 

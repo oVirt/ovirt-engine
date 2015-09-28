@@ -35,7 +35,7 @@ import org.ovirt.engine.api.model.PmProxy;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.SELinux;
 import org.ovirt.engine.api.model.SELinuxMode;
-import org.ovirt.engine.api.model.SPM;
+import org.ovirt.engine.api.model.Spm;
 import org.ovirt.engine.api.model.SpmState;
 import org.ovirt.engine.api.model.Ssh;
 import org.ovirt.engine.api.model.Status;
@@ -205,7 +205,7 @@ public class HostMapper {
         } else if (status == HostStatus.MAINTENANCE || status == HostStatus.PREPARING_FOR_MAINTENANCE) {
             model.getStatus().setDetail(entity.getMaintenanceReason());
         }
-        SPM spm = new SPM();
+        Spm spm = new Spm();
         spm.setPriority(entity.getVdsSpmPriority());
         if (entity.getSpmStatus() != null) {
             spm.setStatus(StatusUtils.create(map(entity.getSpmStatus(), null)));
