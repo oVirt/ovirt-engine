@@ -3,17 +3,17 @@ package org.ovirt.engine.api.restapi.types;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.api.model.SupportedVersions;
 import org.ovirt.engine.api.model.Version;
+import org.ovirt.engine.api.model.Versions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class VersionMapper {
     private static final Logger log = LoggerFactory.getLogger(VersionMapper.class);
 
-    @Mapping(from = List.class, to = SupportedVersions.class)
-    public static SupportedVersions map(List<org.ovirt.engine.core.compat.Version> entity, SupportedVersions template) {
-        SupportedVersions model = template != null ? template : new SupportedVersions();
+    @Mapping(from = List.class, to = Versions.class)
+    public static Versions map(List<org.ovirt.engine.core.compat.Version> entity, Versions template) {
+        Versions model = template != null ? template : new Versions();
         for (org.ovirt.engine.core.compat.Version version : entity) {
             Version v = new Version();
             v.setMajor(version.getMajor());

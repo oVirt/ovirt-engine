@@ -548,7 +548,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="SupportedVersions">
+  <xs:complexType name="Versions">
     <xs:sequence>
       <xs:element name="version" type="Version" minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>
@@ -1460,7 +1460,7 @@
             <xs:element name="local" type="xs:boolean" minOccurs="0" />
             <xs:element name="storage_format" type="xs:string" minOccurs="0" />
             <xs:element name="version" type="Version" minOccurs="0" />
-            <xs:element name="supported_versions" type="SupportedVersions" minOccurs="0" />
+            <xs:element name="supported_versions" type="Versions" minOccurs="0" />
             <xs:element ref="status" minOccurs="0" maxOccurs="1" />
             <xs:element ref="mac_pool" minOccurs="0" />
             <xs:element name="quota_mode" type="xs:string" minOccurs="0" maxOccurs="1" />
@@ -1789,7 +1789,7 @@
           <xs:element name="memory_policy" type="MemoryPolicy" minOccurs="0" maxOccurs="1"/>
           <xs:element name="scheduling_policy" type="SchedulingPolicy" minOccurs="0" maxOccurs="1"/>
           <xs:element name="version" type="Version" minOccurs="0"/>
-          <xs:element name="supported_versions" type="SupportedVersions" minOccurs="0"/>
+          <xs:element name="supported_versions" type="Versions" minOccurs="0"/>
           <xs:element name="error_handling" type="ErrorHandling" minOccurs="0" maxOccurs="1"/>
           <xs:element name="virt_service" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="gluster_service" type="xs:boolean" minOccurs="0" maxOccurs="1"/>

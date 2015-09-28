@@ -6,7 +6,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DataCenters;
-import org.ovirt.engine.api.model.SupportedVersions;
+import org.ovirt.engine.api.model.Versions;
 import org.ovirt.engine.api.resource.DataCenterResource;
 import org.ovirt.engine.api.resource.DataCentersResource;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
@@ -67,7 +67,7 @@ public class BackendDataCentersResource extends
     protected DataCenter deprecatedPopulate(DataCenter model, StoragePool entity) {
         IdQueryParameters parameters = new IdQueryParameters(asGuid(model.getId()));
         model.setSupportedVersions(getMapper(List.class,
-                                             SupportedVersions.class).map(getEntity(List.class,
+                                             Versions.class).map(getEntity(List.class,
                                                                                     VdcQueryType.GetAvailableStoragePoolVersions,
                                                                                     parameters,
                                                                                     model.getId()),
