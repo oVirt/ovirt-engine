@@ -64,6 +64,7 @@
         <include name="common/businessentities/network/VdsNetworkInterface.java" />
         <include name="common/businessentities/network/NetworkInterface.java" />
         <include name="common/businessentities/network/Bond.java" />
+        <include name="common/businessentities/network/BondMode.java" />
         <include name="common/businessentities/network/Nic.java" />
         <include name="common/businessentities/network/Vlan.java" />
         <include name="common/businessentities/network/InterfaceStatus.java" />
