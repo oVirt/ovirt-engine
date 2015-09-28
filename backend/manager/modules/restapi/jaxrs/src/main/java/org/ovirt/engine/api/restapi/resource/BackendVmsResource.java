@@ -241,8 +241,8 @@ public class BackendVmsResource extends
 
     protected VmPayload getPayload(Vm vm) {
         VmPayload payload = null;
-        if (vm.isSetPayloads() && vm.getPayloads().isSetPayload()) {
-            payload = getMapper(Payload.class, VmPayload.class).map(vm.getPayloads().getPayload().get(0), new VmPayload());
+        if (vm.isSetPayloads() && vm.getPayloads().isSetPayloads()) {
+            payload = getMapper(Payload.class, VmPayload.class).map(vm.getPayloads().getPayloads().get(0), new VmPayload());
         }
         return payload;
     }
@@ -594,7 +594,7 @@ public class BackendVmsResource extends
             if (payload != null) {
                 Payload p = getMapper(VmPayload.class, Payload.class).map(payload, null);
                 Payloads payloads = new Payloads();
-                payloads.getPayload().add(p);
+                payloads.getPayloads().add(p);
                 vm.setPayloads(payloads);
             }
         }

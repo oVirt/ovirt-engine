@@ -631,7 +631,7 @@ public class BackendVmResource extends
             params.setApplyChangesLater(isNextRunRequested());
 
             if (incoming.isSetPayloads()) {
-                if (incoming.isSetPayloads() && incoming.getPayloads().isSetPayload()) {
+                if (incoming.isSetPayloads() && incoming.getPayloads().isSetPayloads()) {
                     params.setVmPayload(parent.getPayload(incoming));
                 } else {
                     params.setClearPayload(true);

@@ -3251,7 +3251,13 @@
 
   <xs:complexType name="Payloads">
     <xs:sequence>
-      <xs:element name="payload" type="Payload" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="payload" type="Payload" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="Payloads"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 

@@ -82,7 +82,7 @@ public class VmMapperTest extends
         from.setType(MappingTestHelper.shuffle(VmType.class).value());
         from.setOrigin(OriginType.VMWARE.name().toLowerCase());
         from.getDisplay().setType(MappingTestHelper.shuffle(DisplayType.class).value());
-        from.getPayloads().getPayload().get(0).setType(MappingTestHelper.shuffle(VmDeviceType.class).value());
+        from.getPayloads().getPayloads().get(0).setType(MappingTestHelper.shuffle(VmDeviceType.class).value());
         List<String> devices = from.getOs().getBoot().getDevices().getDevices();
         for (int i = 0; i < devices.size(); i++) {
             devices.set(i, MappingTestHelper.shuffle(BootDevice.class).value());

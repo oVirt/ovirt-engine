@@ -43,7 +43,7 @@ public class VmValidator implements Validator<Vm> {
             cpuValidator.validateEnums(vm.getCpu());
         }
         if (vm.isSetPayloads()) {
-            for (Payload payload : vm.getPayloads().getPayload()) {
+            for (Payload payload : vm.getPayloads().getPayloads()) {
                 payloadValidator.validateEnums(payload);
             }
         }
