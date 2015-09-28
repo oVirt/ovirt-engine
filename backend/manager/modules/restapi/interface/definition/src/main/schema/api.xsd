@@ -2329,7 +2329,7 @@
           <xs:element ref="host" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="storage_domain" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="vm" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="vmpool" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="vm_pool" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="template" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="disk" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
@@ -3500,13 +3500,7 @@
           <xs:element name="placement_policy" type="VmPlacementPolicy" minOccurs="0" maxOccurs="1"/>
           <xs:element name="fqdn" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="quota" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="vmpool" minOccurs="0" maxOccurs="1">
-            <xs:annotation>
-              <xs:appinfo>
-                <jaxb:property name="VmPool"/>
-              </xs:appinfo>
-            </xs:annotation>
-          </xs:element>
+          <xs:element ref="vm_pool" minOccurs="0" maxOccurs="1"/>
 
           <!-- used only to represent CD-ROMs and floppies supplied to the
                start action. Not usually included in the VM representation -->
@@ -3702,9 +3696,9 @@
 
   <!-- Virtual Machine Pools -->
 
-  <xs:element name="vmpool" type="VmPool"/>
+  <xs:element name="vm_pool" type="VmPool"/>
 
-  <xs:element name="vmpools" type="VmPools"/>
+  <xs:element name="vm_pools" type="VmPools"/>
 
   <xs:complexType name="VmPool">
     <xs:complexContent>
@@ -3734,7 +3728,7 @@
                 <jaxb:property name="VmPools"/>
             </xs:appinfo>
           </xs:annotation>
-          <xs:element ref="vmpool" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element ref="vm_pool" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

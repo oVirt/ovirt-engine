@@ -480,3 +480,10 @@ elements, and the inner `agents` element directly inside
 elements have been completely removed, so the only way to query or
 modify the power management agents is now the
 `/hosts/{host:id}/fenceagents` sub-collection.
+
+### Rename element `vmpool` to `vm_pool`
+
+The names of the elements that represent pools of virtual machines used
+to be `vmpool` and `vmpools`. They have been renamed to `vm_pool` and
+`vm_pools` in order to have a consistent correspondence between names of
+complex types (`VmPool` and `VmPools` in this case) and elements.

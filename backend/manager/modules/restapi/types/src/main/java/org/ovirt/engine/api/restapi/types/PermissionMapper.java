@@ -78,8 +78,8 @@ public class PermissionMapper {
                      ? GuidUtils.asGuid(p.getStorageDomain().getId())
                      : p.isSetVm() && p.getVm().isSetId()
                        ? GuidUtils.asGuid(p.getVm().getId())
-                       : p.isSetVmpool() && p.getVmpool().isSetId()
-                         ? GuidUtils.asGuid(p.getVmpool().getId())
+                       : p.isSetVmPool() && p.getVmPool().isSetId()
+                         ? GuidUtils.asGuid(p.getVmPool().getId())
                          : p.isSetTemplate() && p.getTemplate().isSetId()
                            ? GuidUtils.asGuid(p.getTemplate().getId())
                            : template;
@@ -97,7 +97,7 @@ public class PermissionMapper {
                      ? VdcObjectType.Storage
                      : p.isSetVm() && p.getVm().isSetId()
                        ? VdcObjectType.VM
-                       : p.isSetVmpool() && p.getVmpool().isSetId()
+                       : p.isSetVmPool() && p.getVmPool().isSetId()
                          ? VdcObjectType.VmPool
                          : p.isSetTemplate() && p.getTemplate().isSetId()
                            ? VdcObjectType.VmTemplate
@@ -133,8 +133,8 @@ public class PermissionMapper {
             model.getVm().setId(id);
             break;
         case VmPool :
-            model.setVmpool(new VmPool());
-            model.getVmpool().setId(id);
+            model.setVmPool(new VmPool());
+            model.getVmPool().setId(id);
             break;
         case VmTemplate :
             model.setTemplate(new Template());

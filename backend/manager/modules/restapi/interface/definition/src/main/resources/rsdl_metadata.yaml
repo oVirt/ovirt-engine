@@ -1793,7 +1793,7 @@ actions:
         description: add a new permission on the vm to the group in the system
       - mandatoryArguments:
           permission.role.id|name: xs:string
-          permission.vmpool.id: xs:string
+          permission.vm_pool.id: xs:string
         description: add a new permission on the vm pool to the group in the system
       - mandatoryArguments:
           permission.role.id|name: xs:string
@@ -2999,7 +2999,7 @@ actions:
         description: add a new role permission for the user on the vm
       - mandatoryArguments:
           permission.role.id|name: xs:string
-          permission.vmpool.id: xs:string
+          permission.vm_pool.id: xs:string
         description: add a new role permission for the user on the vm pool
       - mandatoryArguments:
           permission.role.id|name: xs:string
@@ -3073,10 +3073,15 @@ actions:
     body:
       parameterType: VmPool
       signatures:
-      - mandatoryArguments: {}
-        optionalArguments: {vmpool.cluster.id|name: 'xs:string', vmpool.template.id|name: 'xs:string',
-          vmpool.name: 'xs:string', vmpool.comment: 'xs:string', vmpool.size: 'xs:int', vmpool.max_user_vms: 'xs:int', vmpool.display.proxy: 'xs:string',
-          vmpool.description: 'xs:string'}
+      - optionalArguments:
+          vm_pool.cluster.id|name: xs:string
+          vm_pool.comment: xs:string
+          vm_pool.description: xs:string
+          vm_pool.display.proxy: xs:string
+          vm_pool.max_user_vms: xs:int
+          vm_pool.name: xs:string
+          vm_pool.size: xs:int
+          vm_pool.template.id|name: xs:string
         description: update the specified virtual machine pool in the system
 - name: /vmpools/{vmpool:id}/allocatevm|rel=allocatevm
   description: attach the user to a vm from the vmpool and run the vm
@@ -3091,10 +3096,18 @@ actions:
     body:
       parameterType: VmPool
       signatures:
-      - mandatoryArguments: {vmpool.cluster.id|name: 'xs:string', vmpool.template.id|name: 'xs:string',
-          vmpool.name: 'xs:string'}
-        optionalArguments: {vmpool.comment: 'xs:string', vmpool.size: 'xs:int', vmpool.max_user_vms: 'xs:int', vmpool.display.proxy: 'xs:string',
-          vmpool.description: 'xs:string', vmpool.soundcard_enabled: 'xs:boolean', vmpool.type: 'xs:string'}
+      - mandatoryArguments:
+          vm_pool.cluster.id|name: xs:string
+          vm_pool.name: xs:string
+          vm_pool.template.id|name: xs:string
+        optionalArguments:
+          vm_pool.comment: xs:string
+          vm_pool.description: xs:string
+          vm_pool.display.proxy: xs:string
+          vm_pool.max_user_vms: xs:int
+          vm_pool.size: xs:int
+          vm_pool.soundcard_enabled: xs:boolean
+          vm_pool.type: xs:string
         description: add a new vm pool to the system
 - name: /vmpools/{vmpool:id}/permissions|rel=get
   description: get the list of permissions for the specified vm pool
