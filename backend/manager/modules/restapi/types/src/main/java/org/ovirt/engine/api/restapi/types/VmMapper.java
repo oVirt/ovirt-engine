@@ -377,15 +377,13 @@ public class VmMapper extends VmBaseMapper {
         // and dynamic value (current/last run value, that can be different in case of run-once or edit while running)
         if (showDynamicInfo && entity.getDynamicData() != null && entity.getStatus().isRunningOrPaused()) {
             if (model.getOs() != null && entity.getBootSequence() != null) {
-                for (Boot boot : map(entity.getBootSequence(), null)) {
-                    model.getOs().getBoot().add(boot);
-                }
+                Boot boot = map(entity.getBootSequence(), null);
+                model.getOs().setBoot(boot);
             }
         } else {
             if (model.getOs() != null) {
-                for (Boot boot : map(entity.getDefaultBootSequence(), null)) {
-                    model.getOs().getBoot().add(boot);
-                }
+                Boot boot = map(entity.getBootSequence(), null);
+                model.getOs().setBoot(boot);
             }
         }
 
@@ -558,7 +556,8 @@ public class VmMapper extends VmBaseMapper {
 
             DisplayMapper.fillDisplayInParams(vm, params);
         }
-        if (vm.isSetOs() && vm.getOs().getBoot().size() > 0) {
+        if (vm.isSetOs() && vm.getOs().isSetBoot() && vm.getOs().getBoot().isSetDevices() &&
+                vm.getOs().getBoot().getDevices().isSetDevices()) {
             params.setBootSequence(map(vm.getOs().getBoot(), null));
         }
         if (vm.isSetCdroms() && vm.getCdroms().isSetCdRoms()) {
@@ -582,7 +581,8 @@ public class VmMapper extends VmBaseMapper {
             }
         }
         if (vm.isSetOs()) {
-            if (vm.getOs().isSetBoot() && vm.getOs().getBoot().size() > 0) {
+            if (vm.getOs().isSetBoot() && vm.getOs().isSetBoot() && vm.getOs().getBoot().isSetDevices() &&
+                    vm.getOs().getBoot().getDevices().isSetDevices()) {
                 params.setBootSequence(map(vm.getOs().getBoot(), null));
             }
             if (vm.getOs().isSetKernel()) {
@@ -839,94 +839,87 @@ public class VmMapper extends VmBaseMapper {
         }
     }
 
-    @Mapping(from = BootSequence.class, to = List.class)
-    public static List<Boot> map(BootSequence bootSequence,
-            List<Boot> template) {
-        List<Boot> boots = template != null ? template
-                : new ArrayList<Boot>();
+    @Mapping(from = BootSequence.class, to = Boot.class)
+    public static Boot map(BootSequence bootSequence, Boot template) {
+        Boot boot = template != null ? template : new Boot();
+        Boot.DevicesList list = new Boot.DevicesList();
+        boot.setDevices(list);
+        List<String> devices = list.getDevices();
         switch (bootSequence) {
         case C:
-            boots.add(getBoot(BootDevice.HD));
+            devices.add(BootDevice.HD.value());
             break;
         case DC:
-            boots.add(getBoot(BootDevice.CDROM));
-            boots.add(getBoot(BootDevice.HD));
+            devices.add(BootDevice.CDROM.value());
+            devices.add(BootDevice.HD.value());
             break;
         case N:
-            boots.add(getBoot(BootDevice.NETWORK));
+            devices.add(BootDevice.NETWORK.value());
             break;
         case CDN:
-            boots.add(getBoot(BootDevice.HD));
-            boots.add(getBoot(BootDevice.CDROM));
-            boots.add(getBoot(BootDevice.NETWORK));
+            devices.add(BootDevice.HD.value());
+            devices.add(BootDevice.CDROM.value());
+            devices.add(BootDevice.NETWORK.value());
             break;
         case CND:
-            boots.add(getBoot(BootDevice.HD));
-            boots.add(getBoot(BootDevice.NETWORK));
-            boots.add(getBoot(BootDevice.CDROM));
+            devices.add(BootDevice.HD.value());
+            devices.add(BootDevice.NETWORK.value());
+            devices.add(BootDevice.CDROM.value());
             break;
         case DCN:
-            boots.add(getBoot(BootDevice.CDROM));
-            boots.add(getBoot(BootDevice.HD));
-            boots.add(getBoot(BootDevice.NETWORK));
+            devices.add(BootDevice.CDROM.value());
+            devices.add(BootDevice.HD.value());
+            devices.add(BootDevice.NETWORK.value());
             break;
         case DNC:
-            boots.add(getBoot(BootDevice.CDROM));
-            boots.add(getBoot(BootDevice.NETWORK));
-            boots.add(getBoot(BootDevice.HD));
+            devices.add(BootDevice.CDROM.value());
+            devices.add(BootDevice.NETWORK.value());
+            devices.add(BootDevice.HD.value());
             break;
         case NCD:
-            boots.add(getBoot(BootDevice.NETWORK));
-            boots.add(getBoot(BootDevice.HD));
-            boots.add(getBoot(BootDevice.CDROM));
+            devices.add(BootDevice.NETWORK.value());
+            devices.add(BootDevice.HD.value());
+            devices.add(BootDevice.CDROM.value());
             break;
         case NDC:
-            boots.add(getBoot(BootDevice.NETWORK));
-            boots.add(getBoot(BootDevice.CDROM));
-            boots.add(getBoot(BootDevice.HD));
+            devices.add(BootDevice.NETWORK.value());
+            devices.add(BootDevice.CDROM.value());
+            devices.add(BootDevice.HD.value());
             break;
         case CD:
-            boots.add(getBoot(BootDevice.HD));
-            boots.add(getBoot(BootDevice.CDROM));
+            devices.add(BootDevice.HD.value());
+            devices.add(BootDevice.CDROM.value());
             break;
         case D:
-            boots.add(getBoot(BootDevice.CDROM));
+            devices.add(BootDevice.CDROM.value());
             break;
         case CN:
-            boots.add(getBoot(BootDevice.HD));
-            boots.add(getBoot(BootDevice.NETWORK));
+            devices.add(BootDevice.HD.value());
+            devices.add(BootDevice.NETWORK.value());
             break;
         case DN:
-            boots.add(getBoot(BootDevice.CDROM));
-            boots.add(getBoot(BootDevice.NETWORK));
+            devices.add(BootDevice.CDROM.value());
+            devices.add(BootDevice.NETWORK.value());
             break;
         case NC:
-            boots.add(getBoot(BootDevice.NETWORK));
-            boots.add(getBoot(BootDevice.HD));
+            devices.add(BootDevice.NETWORK.value());
+            devices.add(BootDevice.HD.value());
             break;
         case ND:
-            boots.add(getBoot(BootDevice.NETWORK));
-            boots.add(getBoot(BootDevice.CDROM));
+            devices.add(BootDevice.NETWORK.value());
+            devices.add(BootDevice.CDROM.value());
             break;
         }
-        return boots;
-    }
-
-    private static Boot getBoot(BootDevice device) {
-        Boot boot = new Boot();
-        boot.setDev(device.value());
         return boot;
     }
 
     @Mapping(from = Boot.class, to = List.class)
-    public static BootSequence map(List<Boot> boot, BootSequence template) {
+    public static BootSequence map(Boot boot, BootSequence template) {
         Set<BootDevice> devSet = new LinkedHashSet<BootDevice>();
-        for (Boot b : boot) {
-            if (b.isSetDev()) {
-                BootDevice dev = BootDevice.fromValue(b.getDev());
-                if (dev != null) {
-                    devSet.add(dev);
-                }
+        for (String device : boot.getDevices().getDevices()) {
+            BootDevice dev = BootDevice.fromValue(device);
+            if (dev != null) {
+                devSet.add(dev);
             }
         }
 

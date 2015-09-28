@@ -5,6 +5,7 @@ import static org.ovirt.engine.api.restapi.types.IntegerMapper.mapNullToMinusOne
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Bios;
+import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootMenu;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Cpu;
@@ -95,7 +96,8 @@ public class VmBaseMapper {
             entity.setMinAllocatedMem(memGuaranteed.intValue());
         }
         if (model.isSetOs()) {
-            if (model.getOs().isSetBoot() && model.getOs().getBoot().size() > 0) {
+            Boot boot = model.getOs().getBoot();
+            if (boot != null && boot.isSetDevices() && boot.getDevices().isSetDevices()) {
                 entity.setDefaultBootSequence(VmMapper.map(model.getOs().getBoot(), null));
             }
         }

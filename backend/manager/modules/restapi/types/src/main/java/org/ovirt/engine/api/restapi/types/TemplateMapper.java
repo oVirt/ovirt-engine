@@ -100,9 +100,8 @@ public class TemplateMapper extends VmBaseMapper {
             os.setType(SimpleDependecyInjector.getInstance().get(OsRepository.class).getUniqueOsNames().get(entity.getOsId()));
 
             if (entity.getDefaultBootSequence() != null) {
-                for (Boot boot : VmMapper.map(entity.getDefaultBootSequence(), null)) {
-                    os.getBoot().add(boot);
-                }
+                Boot boot = VmMapper.map(entity.getDefaultBootSequence(), null);
+                os.setBoot(boot);
             }
             os.setKernel(entity.getKernelUrl());
             os.setInitrd(entity.getInitrdUrl());

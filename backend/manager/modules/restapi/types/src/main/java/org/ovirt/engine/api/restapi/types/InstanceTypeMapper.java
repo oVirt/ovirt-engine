@@ -39,9 +39,8 @@ public class InstanceTypeMapper extends VmBaseMapper {
             }
 
             if (entity.getDefaultBootSequence() != null) {
-                for (Boot boot : VmMapper.map(entity.getDefaultBootSequence(), null)) {
-                    os.getBoot().add(boot);
-                }
+                Boot boot = VmMapper.map(entity.getDefaultBootSequence(), null);
+                os.setBoot(boot);
             }
             model.setOs(os);
         }

@@ -3039,14 +3039,31 @@
 
   <xs:complexType name="Boot">
     <xs:sequence>
-      <xs:element name="dev" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="devices" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:class name="DevicesList"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:sequence>
+            <xs:element name="device" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+              <xs:annotation>
+                <xs:appinfo>
+                  <jaxb:property name="Devices"/>
+                </xs:appinfo>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="OperatingSystem">
     <xs:sequence>
       <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="boot" type="Boot" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="boot" type="Boot" minOccurs="0" maxOccurs="1"/>
       <xs:element name="kernel" type="xs:string" minOccurs="0"/>
       <xs:element name="initrd" type="xs:string" minOccurs="0"/>
       <xs:element name="cmdline" type="xs:string" minOccurs="0"/>

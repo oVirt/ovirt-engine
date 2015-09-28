@@ -7,7 +7,6 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.ConfigurationType;
@@ -84,8 +83,9 @@ public class VmMapperTest extends
         from.setOrigin(OriginType.VMWARE.name().toLowerCase());
         from.getDisplay().setType(MappingTestHelper.shuffle(DisplayType.class).value());
         from.getPayloads().getPayload().get(0).setType(MappingTestHelper.shuffle(VmDeviceType.class).value());
-        for (Boot boot : from.getOs().getBoot()) {
-            boot.setDev(MappingTestHelper.shuffle(BootDevice.class).value());
+        List<String> devices = from.getOs().getBoot().getDevices().getDevices();
+        for (int i = 0; i < devices.size(); i++) {
+            devices.set(i, MappingTestHelper.shuffle(BootDevice.class).value());
         }
         while (from.getCpu().getTopology().getSockets() == 0) {
             from.getCpu().getTopology().setSockets(MappingTestHelper.rand(100));
@@ -151,11 +151,8 @@ public class VmMapperTest extends
         assertEquals(model.getBios().getBootMenu().isEnabled(), transform.getBios().getBootMenu().isEnabled());
         assertNotNull(transform.getOs());
         assertTrue(transform.getOs().isSetBoot());
-        assertEquals(model.getOs().getBoot().size(), transform.getOs().getBoot().size());
-        for (int i = 0; i < model.getOs().getBoot().size(); i++) {
-            assertEquals(model.getOs().getBoot().get(i).getDev(), transform.getOs().getBoot()
-                    .get(i).getDev());
-        }
+        assertEquals(model.getOs().getBoot().getDevices().getDevices(),
+                transform.getOs().getBoot().getDevices().getDevices());
         assertEquals(model.getOs().getKernel(), transform.getOs().getKernel());
         assertEquals(model.getOs().getInitrd(), transform.getOs().getInitrd());
         assertEquals(model.getOs().getCmdline(), transform.getOs().getCmdline());

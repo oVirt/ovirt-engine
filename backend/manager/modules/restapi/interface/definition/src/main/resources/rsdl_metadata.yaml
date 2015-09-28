@@ -389,14 +389,14 @@ actions:
           action.vm.placement_policy.hosts.host--COLLECTION:
             host.id|name: xs:string
           action.vm.placement_policy.affinity: xs:string
-          action.vm.os.kernel: xs:string
+          action.vm.os.kernel: xs:stringevic
           action.vm.display.type: xs:string
           action.vm.stateless: xs:boolean
           action.vm.os.cmdline: xs:string
           action.vm.domain.user.username: xs:string
           action.pause: xs:boolean
-          action.vm.os.boot--COLLECTION:
-            boot.dev: xs:string
+          action.vm.os.boot.devices.device--COLLECTION:
+            device: xs:string
           action.vm.domain.user.password: xs:string
           action.vm.initialization.cloud_init.host.address: xs:string
           action.vm.custom_emulated_machine: xs:string
@@ -2697,7 +2697,8 @@ actions:
           template.comment: xs:string
           template.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}
           template.os.type: xs:string
-          template.os.boot--COLLECTION: {boot.dev: 'xs:string'}
+          template.os.boot.devices.device--COLLECTION:
+            device: xs:string
           template.cpu.topology.sockets: xs:int
           template.cpu_shares: xs:int
           template.cpu.architecture: xs:string
@@ -2768,7 +2769,8 @@ actions:
           template.comment: xs:string
           template.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}
           template.os.type: xs:string
-          template.os.boot--COLLECTION: {boot.dev: 'xs:string'}
+          template.os.boot.devices.device--COLLECTION:
+            device: xs:string
           template.cpu.topology.sockets: xs:int
           template.cpu_shares: xs:int
           template.cpu.architecture: xs:string

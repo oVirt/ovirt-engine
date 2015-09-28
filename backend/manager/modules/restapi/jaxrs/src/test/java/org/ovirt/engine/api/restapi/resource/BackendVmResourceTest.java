@@ -631,8 +631,9 @@ public class BackendVmResourceTest
         Action action = new Action();
         action.setVm(new Vm());
         action.getVm().setOs(new OperatingSystem());
-        action.getVm().getOs().getBoot().add(new Boot());
-        action.getVm().getOs().getBoot().get(0).setDev(BootDevice.NETWORK.value());
+        action.getVm().getOs().setBoot(new Boot());
+        action.getVm().getOs().getBoot().setDevices(new Boot.DevicesList());
+        action.getVm().getOs().getBoot().getDevices().getDevices().add(BootDevice.NETWORK.value());
 
         verifyActionResponse(resource.start(action));
     }

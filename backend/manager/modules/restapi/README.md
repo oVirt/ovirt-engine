@@ -481,6 +481,47 @@ elements have been completely removed, so the only way to query or
 modify the power management agents is now the
 `/hosts/{host:id}/fenceagents` sub-collection.
 
+### Use multiple `boot.devices.device` instead of multiple `boot`
+
+In the past the way to specify the boot sequence when starting a virtual
+machine was to use multiple `boot` elements, each containing a `dev`
+element. For example, to specify that the virtual machine should first
+try to boot from CDROM and then from hard disk the following request was
+used:
+
+    POST /vms/{vm:id}/start
+    <action>
+      <vm>
+        ...
+        <boot>
+          <dev>cdrom</dev>
+        </boot>
+        <boot>
+          <dev>hd</dev>
+        </boot>
+      </vm>
+    </action>
+
+The common practice in other parts of the API is to represent arrays
+with a wrapper element. In that case that wrapper element could be named
+`boots`, but that doesn't make much sense, as what can have multiple
+values here is the boot device, not the boot sequence. To fix this
+inconsistence this has been replaced with a single `boot` element that
+can contain multiple devices:
+
+    POST /vms/{vm:id}/start
+    <action>
+      <vm>
+        ...
+        <boot>
+          <devices>
+            <device>cdrom</device>
+            <device>hd</device>
+          </devices>
+        </boot>
+      </vm>
+    </action>
+
 ### Removed the `disks.clone` and `disks.detach_only` elements
 
 These elements aren't really part of the representation of disks, but

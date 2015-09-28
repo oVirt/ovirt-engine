@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
-import org.ovirt.engine.api.model.Boot;
+import java.util.List;
+
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.DisplayDisconnectAction;
 import org.ovirt.engine.api.model.InheritableBoolean;
@@ -29,8 +30,9 @@ public class TemplateMapperTest
     protected Template postPopulate(Template from) {
         from.setType(MappingTestHelper.shuffle(VmType.class).value());
         from.setOrigin(OriginType.VMWARE.name().toLowerCase());
-        for (Boot boot : from.getOs().getBoot()) {
-            boot.setDev(MappingTestHelper.shuffle(BootDevice.class).value());
+        List<String> devices = from.getOs().getBoot().getDevices().getDevices();
+        for (int i = 0; i < devices.size(); i++) {
+            devices.set(i, MappingTestHelper.shuffle(BootDevice.class).value());
         }
         while (from.getCpu().getTopology().getSockets() == 0) {
             from.getCpu().getTopology().setSockets(MappingTestHelper.rand(100));
@@ -68,11 +70,8 @@ public class TemplateMapperTest
         assertNotNull(transform.isSetOs());
         assertEquals(model.getBios().getBootMenu().isEnabled(), transform.getBios().getBootMenu().isEnabled());
         assertTrue(transform.getOs().isSetBoot());
-        assertEquals(model.getOs().getBoot().size(), transform.getOs().getBoot().size());
-        for (int i = 0; i < model.getOs().getBoot().size(); i++) {
-            assertEquals(model.getOs().getBoot().get(i).getDev(),
-                    transform.getOs().getBoot().get(i).getDev());
-        }
+        assertEquals(model.getOs().getBoot().getDevices().getDevices(),
+                transform.getOs().getBoot().getDevices().getDevices());
         assertEquals(model.getOs().getKernel(), transform.getOs().getKernel());
         assertEquals(model.getOs().getInitrd(), transform.getOs().getInitrd());
         assertEquals(model.getOs().getCmdline(), transform.getOs().getCmdline());
