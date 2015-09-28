@@ -572,3 +572,49 @@ The names of the elements that represent pools of virtual machines used
 to be `vmpool` and `vmpools`. They have been renamed to `vm_pool` and
 `vm_pools` in order to have a consistent correspondence between names of
 complex types (`VmPool` and `VmPools` in this case) and elements.
+
+### Use `logical_units` instead of multiple `logical_unit`
+
+The logical units that are part of a volume group used to be reported as
+an unbounded number of `logical_unit` elements. For example, when
+reporting the details of a storage domain:
+
+    GET /storagedomains/{storagedomain:id}
+    <storage_domain>
+      ...
+      <storage>
+        ...
+        <volume_group>
+          <logical_unit>
+            <!-- First LU -->
+          </logical_unit>
+          <logical_unit>
+            <!-- Second LU -->
+          </logical_unit>
+          ...
+        </volume_group>
+      </storage>
+    </storage_domain>
+
+This is contrary to the usual practice in the API, as list of elements
+are always wrapped with an element. This has been fixed now, so the list
+of logical units will be wrapped with the `logical_units` element:
+
+    GET /storagedomains/{storagedomain:id}
+    <storage_domain>
+      ...
+      <storage>
+        ...
+        <volume_group>
+          <logical_units>
+            <logical_unit>
+              <!-- First LU -->
+            </logical_unit>
+            <logical_unit>
+              <!-- Second LU -->
+            </logical_unit>
+            ...
+          </logical_units>
+        </volume_group>
+      </storage>
+    </storage_domain>

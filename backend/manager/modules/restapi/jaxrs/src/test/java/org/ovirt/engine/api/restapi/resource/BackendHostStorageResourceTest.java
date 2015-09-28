@@ -128,8 +128,8 @@ public class BackendHostStorageResourceTest
         assertEquals(StorageType.ISCSI.value(), model.getType());
         if (!model.isSetVolumeGroup()) {
             assertEquals(GUIDS[index].toString(), model.getId());
-            assertEquals(1, model.getLogicalUnits().size());
-            assertEquals(GUIDS[index].toString(), model.getLogicalUnits().get(0).getId());
+            assertEquals(1, model.getLogicalUnits().getLogicalUnits().size());
+            assertEquals(GUIDS[index].toString(), model.getLogicalUnits().getLogicalUnits().get(0).getId());
         } else {
             assertEquals(VG_ID_PREFIX + GUIDS[index].toString(), model.getId());
             assertEquals(VG_ID_PREFIX + GUIDS[index].toString(), model.getVolumeGroup().getId());

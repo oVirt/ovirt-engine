@@ -681,25 +681,35 @@ actions:
     body:
       parameterType: Disk
       signatures:
-      - mandatoryArguments: {provisioned_size: 'xs:int', disk.interface: 'xs:string', disk.format: 'xs:string'}
+      - mandatoryArguments:
+          disk.format: xs:string
+          disk.interface: xs:string
+          provisioned_size: xs:int
         optionalArguments:
           disk.alias: xs:string
+          disk.bootable: xs:boolean
+          disk.description: xs:string
+          disk.disk_profile.id: xs:string
           disk.name: xs:string
+          disk.openstack_volume_type.name: xs:string
+          disk.propagate_errors: xs:boolean
+          disk.quota.id: xs:string
+          disk.shareable: xs:boolean
           disk.size: xs:int #deprecated, replaced by 'provisioned_size'
           disk.sparse: xs:boolean
-          disk.description: xs:string
-          disk.bootable: xs:boolean
-          disk.shareable: xs:boolean
-          disk.propagate_errors: xs:boolean
+          disk.storage_domains.storage_domain--COLLECTION:
+            storage_domain.id|name: xs:string
           disk.wipe_after_delete: xs:boolean
-          disk.quota.id: xs:string
-          disk.disk_profile.id: xs:string
-          disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
-          disk.openstack_volume_type.name: xs:string
         description: add a new disk to the virtual machine allocating space from the storage domain
         #the signature below is for direct-LUN disk, which doesn't require size, but requires the lun id, the lun type, and the lun connection-details.
-      - mandatoryArguments: {disk.interface: 'xs:string', disk.lun_storage.type: 'xs:string',
-          disk.lun_storage.logical_unit--COLLECTION: {logical_unit.id: 'xs:string', logical_unit.address: 'xs:string', logical_unit.port: 'xs:int', logical_unit.target: 'xs:string'}}
+      - mandatoryArguments:
+          disk.interface: xs:string
+          disk.lun_storage.logical_units.logical_unit--COLLECTION:
+            logical_unit.address: xs:string
+            logical_unit.id: xs:string
+            logical_unit.port: xs:int
+            logical_unit.target: xs:string
+          disk.lun_storage.type: xs:string
         optionalArguments:
           disk.alias: xs:string
           disk.sparse: xs:boolean
@@ -713,13 +723,17 @@ actions:
           disk.uses_scsi_reservation: xs:boolean
           disk.lun_storage.host: xs:string
         description: add a new direct lun disk to the virtual machine, this operation does not require size but needs lun connection details
-      - mandatoryArguments: {disk.id: 'xs:string'}
+      - mandatoryArguments:
+          disk.id: xs:string
         optionalArguments:
           disk.active: xs:boolean
           disk.read_only: xs:boolean
         description: attach a disk to the virtual machine
-      - mandatoryArguments: {disk.id: 'xs:string', disk.snapshot.id: 'xs:string'}
-        optionalArguments: {disk.active: 'xs:boolean'}
+      - mandatoryArguments:
+          disk.id: xs:string
+          disk.snapshot.id: xs:string
+        optionalArguments:
+          disk.active: xs:boolean
         description: attach a disk snapshot to the virtual machine
 - name: /vms/{vm:id}/disks/{disk:id}/activate|rel=activate
   description: activate a disk attached to a virtual machine
@@ -992,8 +1006,14 @@ actions:
           disk.openstack_volume_type.name: xs:string
         description: add a new disk to the system with specified size, space will be allocated from the storage domain for the disk
         #the signature below is for direct-LUN disk, which doesn't require size, but requires the lun id, the lun type, and the lun connection-details.
-      - mandatoryArguments: {disk.interface: 'xs:string', disk.lun_storage.type: 'xs:string',
-          disk.lun_storage.logical_unit--COLLECTION: {logical_unit.id: 'xs:string', logical_unit.address: 'xs:string', logical_unit.port: 'xs:int', logical_unit.target: 'xs:string'}}
+      - mandatoryArguments:
+          disk.interface: xs:string
+          disk.lun_storage.logical_units.logical-unit--COLLECTION:
+            logical_unit.address: xs:string
+            logical_unit.id: xs:string
+            logical_unit.port: xs:int
+            logical_unit.target: xs:string
+          disk.lun_storage.type: xs:string
         optionalArguments:
           disk.alias: xs:string
           disk.sparse: xs:boolean
@@ -1167,15 +1187,31 @@ actions:
     body:
       parameterType: StorageDomain
       signatures:
-      - mandatoryArguments: {}
-        optionalArguments: {storagedomain.name: 'xs:string'}
+      - optionalArguments:
+          storagedomain.name: xs:string
         description: update the storage domain
-      - mandatoryArguments: {storagedomain.storage.logical_unit--COLLECTION: {logical_unit.address: 'xs:string',
-            logical_unit.port: 'xs:int', logical_unit.target: 'xs:string', logical_unit.username: 'xs:string', logical_unit.password: 'xs:string',
-            logical_unit.serial: 'xs:string', logical_unit.vendor_id: 'xs:string', logical_unit.product_id: 'xs:string',
-            logical_unit.lun_mapping: 'xs:int', logical_unit.portal: 'xs:string', logical_unit.paths: 'xs:int', logical_unit.id: 'xs:string'}}
-        optionalArguments: {storagedomain.host.id--DEPRECATED: 'xs:string', storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage.override_luns: 'xs:boolean',
-          storagedomain.wipe_after_delete: 'xs:boolean', storagedomain.warning_low_space_indicator: 'xs:int', storagedomain.critical_space_action_blocker: 'xs:int'}
+      - mandatoryArguments:
+          storagedomain.storage.logical_units.logical_unit--COLLECTION:
+            logical_unit.address: xs:string
+            logical_unit.id: xs:string
+            logical_unit.lun_mapping: xs:int
+            logical_unit.password: xs:string
+            logical_unit.paths: xs:int
+            logical_unit.port: xs:int
+            logical_unit.portal: xs:string
+            logical_unit.product_id: xs:string
+            logical_unit.serial: xs:string
+            logical_unit.target: xs:string
+            logical_unit.username: xs:string
+            logical_unit.vendor_id: xs:string
+        optionalArguments:
+          storagedomain.comment: xs:string
+          storagedomain.critical_space_action_blocker: xs:int
+          storagedomain.host.id--DEPRECATED: xs:string
+          storagedomain.name: xs:string
+          storagedomain.storage.override_luns: xs:boolean
+          storagedomain.warning_low_space_indicator: xs:int
+          storagedomain.wipe_after_delete: xs:boolean
         description: update the storage domain
 - name: /storagedomains|rel=add
   description: add a new storage domain to the system
@@ -1183,41 +1219,86 @@ actions:
     body:
       parameterType: StorageDomain
       signatures:
-      - mandatoryArguments: {storagedomain.host.id|name: 'xs:string',
-          storagedomain.type: 'xs:string', storagedomain.storage.type: 'xs:string',
-          storagedomain.storage.address: 'xs:string',
-          storagedomain.storage.logical_unit--COLLECTION: {logical_unit.address: 'xs:string',
-            logical_unit.port: 'xs:int', logical_unit.target: 'xs:string', logical_unit.username: 'xs:string', logical_unit.password: 'xs:string',
-            logical_unit.serial: 'xs:string', logical_unit.vendor_id: 'xs:string', logical_unit.product_id: 'xs:string',
-            logical_unit.lun_mapping: 'xs:int', logical_unit.portal: 'xs:string', logical_unit.paths: 'xs:int', logical_unit.id: 'xs:string'}}
-        optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage.override_luns: 'xs:boolean',
-          storagedomain.storage_format: 'xs:string', storagedomain.wipe_after_delete: 'xs:boolean', storagedomain.warning_low_space_indicator: 'xs:int',
-          storagedomain.critical_space_action_blocker: 'xs:int'}
+      - mandatoryArguments:
+          storagedomain.host.id|name: xs:string
+          storagedomain.type: xs:string
+          storagedomain.storage.type: xs:string
+          storagedomain.storage.address: xs:string
+          storagedomain.storage.logical_units.logical_unit--COLLECTION:
+            logical_unit.address: xs:string
+            logical_unit.port: xs:int
+            logical_unit.target: xs:string
+            logical_unit.username: xs:string
+            logical_unit.password: xs:string
+            logical_unit.serial: xs:string
+            logical_unit.vendor_id: xs:string
+            logical_unit.product_id: xs:string
+            logical_unit.lun_mapping: xs:int
+            logical_unit.portal: xs:string
+            logical_unit.paths: xs:int
+            logical_unit.id: xs:string
+        optionalArguments:
+          storagedomain.comment: xs:string
+          storagedomain.critical_space_action_blocker: xs:int
+          storagedomain.name: xs:string
+          storagedomain.storage.override_luns: xs:boolean
+          storagedomain.storage_format: xs:string
+          storagedomain.warning_low_space_indicator: xs:int
+          storagedomain.wipe_after_delete: xs:boolean
         description: add a new storage domain to the system using a direct lun
-      - mandatoryArguments: {storagedomain.host.id|name: 'xs:string',
-          storagedomain.type: 'xs:string', storagedomain.storage.type: 'xs:string', storagedomain.import: 'xs:boolean'}
-        optionalArguments: {storagedomain.storage.address: 'xs:string', storagedomain.comment: 'xs:string',
-          storagedomain.warning_low_space_indicator: 'xs:int', storagedomain.critical_space_action_blocker: 'xs:int'}
+      - mandatoryArguments:
+          storagedomain.host.id|name: xs:string
+          storagedomain.import: xs:boolean
+          storagedomain.storage.type: xs:string
+          storagedomain.type: xs:string
+        optionalArguments:
+          storagedomain.comment: xs:string
+          storagedomain.critical_space_action_blocker: xs:int
+          storagedomain.storage.address: xs:string
+          storagedomain.warning_low_space_indicator: xs:int
         description: Import an existing block storage domain to the system using the targets already connected to the host
-      - mandatoryArguments: {storagedomain.host.id|name: 'xs:string',
-          storagedomain.type: 'xs:string', storagedomain.storage.type: 'xs:string',
-          storagedomain.storage.address: 'xs:string',
-          storagedomain.storage.path: 'xs:string'}
-        optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage_format: 'xs:string',
-          storagedomain.wipe_after_delete: 'xs:boolean', storagedomain.warning_low_space_indicator: 'xs:int', storagedomain.critical_space_action_blocker: 'xs:int'}
+      - mandatoryArguments:
+          storagedomain.host.id|name: xs:string
+          storagedomain.storage.address: xs:string
+          storagedomain.storage.path: xs:string
+          storagedomain.storage.type: xs:string
+          storagedomain.type: xs:string
+        optionalArguments:
+          storagedomain.comment: xs:string
+          storagedomain.critical_space_action_blocker: xs:int
+          storagedomain.name: xs:string
+          storagedomain.storage_format: xs:string
+          storagedomain.warning_low_space_indicator: xs:int
+          storagedomain.wipe_after_delete: xs:boolean
         description: add a new storage domain to the system using the storage on the given host and path
-      - mandatoryArguments: {storagedomain.host.id|name: 'xs:string',
-          storagedomain.type: 'xs:string', storagedomain.storage.type: 'xs:string',
-          storagedomain.storage.path: 'xs:string'}
-        optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage_format: 'xs:string', storagedomain.wipe_after_delete: 'xs:boolean',
-          storagedomain.warning_low_space_indicator: 'xs:int', storagedomain.critical_space_action_blocker: 'xs:int'}
+      - mandatoryArguments:
+          storagedomain.host.id|name: xs:string
+          storagedomain.storage.path: xs:string
+          storagedomain.storage.type: xs:string
+          storagedomain.type: xs:string
+        optionalArguments:
+          storagedomain.name: xs:string
+          storagedomain.comment: xs:string
+          storagedomain.critical_space_action_blocker: xs:int
+          storagedomain.storage_format: xs:string
+          storagedomain.warning_low_space_indicator: xs:int
+          storagedomain.wipe_after_delete: xs:boolean
         description: add a new storage domain to the system using the storage on the localhost at the given path
-      - mandatoryArguments: {storagedomain.host.id|name: 'xs:string',
-          storagedomain.type: 'xs:string', storagedomain.storage.type: 'xs:string',
-          storagedomain.storage.path: 'xs:string', storagedomain.storage.vfs_type: 'xs:string'}
-        optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage.address: 'xs:string',
-          storagedomain.storage.mount_options: 'xs:string', storagedomain.storage_format: 'xs:string', storagedomain.wipe_after_delete: 'xs:boolean',
-          storagedomain.warning_low_space_indicator: 'xs:int', storagedomain.critical_space_action_blocker: 'xs:int'}
+      - mandatoryArguments:
+          storagedomain.host.id|name: xs:string
+          storagedomain.storage.path: xs:string
+          storagedomain.storage.type: xs:string
+          storagedomain.storage.vfs_type: xs:string
+          storagedomain.type: xs:string
+        optionalArguments:
+          storagedomain.comment: xs:string
+          storagedomain.critical_space_action_blocker: xs:int
+          storagedomain.name: xs:string
+          storagedomain.storage.address: xs:string
+          storagedomain.storage.mount_options: xs:string
+          storagedomain.storage_format: xs:string
+          storagedomain.warning_low_space_indicator: xs:int
+          storagedomain.wipe_after_delete: xs:boolean
         description: add a new storage domain to the system using the gluster or posixfs storage
 - name: /storagedomains/{storagedomain:id}/files|rel=get
   description: get the files stored in the iso storage domain
@@ -3355,37 +3436,51 @@ actions:
     body:
       parameterType: Disk
       signatures:
-      - mandatoryArguments: {provisioned_size: 'xs:int', disk.interface: 'xs:string', disk.format: 'xs:string'}
+      - mandatoryArguments:
+          disk.format: xs:string
+          disk.interface: xs:string
+          provisioned_size: xs:int
         optionalArguments:
           disk.alias: xs:string
+          disk.bootable: xs:boolean
+          disk.description: xs:string
+          disk.disk_profile.id: xs:string
           disk.name: xs:string
+          disk.openstack_volume_type.name: xs:string
+          disk.propagate_errors: xs:boolean
+          disk.quota.id: xs:string
+          disk.shareable: xs:boolean
           disk.size: xs:int #deprecated, replaced by 'provisioned_size'
           disk.sparse: xs:boolean
-          disk.description: xs:string
-          disk.bootable: xs:boolean
-          disk.shareable: xs:boolean
-          disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
-          disk.quota.id: xs:string
-          disk.disk_profile.id: xs:string
-          disk.openstack_volume_type.name: xs:string
         description: add a new disk to the storage domain with the specified size allocating space from the storage domain
         #the signature below is for direct-LUN disk, which doesn't require size, but requires the lun id, the lun type, and the lun connection-details.
-      - mandatoryArguments: {disk.interface: 'xs:string', disk.format: 'xs:string', disk.lun_storage.type: 'xs:string',
-          disk.lun_storage.logical_unit--COLLECTION: {logical_unit.id: 'xs:string', logical_unit.address: 'xs:string', logical_unit.port: 'xs:int', logical_unit.target: 'xs:string'}}
+      - mandatoryArguments:
+          disk.format: xs:string
+          disk.interface: xs:string
+          disk.lun_storage.logical_units.logical_unit--COLLECTION:
+            logical_unit.address: xs:string
+            logical_unit.id: xs:string
+            logical_unit.port: xs:int
+            logical_unit.target: xs:string
+          disk.lun_storage.type: xs:string
         optionalArguments:
           disk.alias: xs:string
-          disk.sparse: xs:boolean
-          disk.description: xs:string
           disk.bootable: xs:boolean
-          disk.shareable: xs:boolean
+          disk.description: xs:string
           disk.propagate_errors: xs:boolean
-          disk.wipe_after_delete: xs:boolean
           disk.quota.id: xs:string
           disk.sgio: xs:string
+          disk.shareable: xs:boolean
+          disk.sparse: xs:boolean
+          disk.wipe_after_delete: xs:boolean
         description: add a new lun disk to the storage domain
     urlparams:
-      unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      unregistered:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks|rel=get
   description: get the list of all disks in the storage domain in the data center
   request:
@@ -3422,24 +3517,34 @@ actions:
     body:
       parameterType: Disk
       signatures:
-      - mandatoryArguments: {provisioned_size: 'xs:int', disk.interface: 'xs:string', disk.format: 'xs:string'}
+      - mandatoryArguments:
+          disk.format: xs:string
+          disk.interface: xs:string
+          provisioned_size: xs:int
         optionalArguments:
           disk.alias: xs:string
+          disk.bootable: xs:boolean
+          disk.description: xs:string
+          disk.disk_profile.id: xs:string
           disk.name: xs:string
+          disk.openstack_volume_type.name: xs:string
+          disk.propagate_errors: xs:boolean
+          disk.quota.id: xs:string
+          disk.shareable: xs:boolean
           disk.size: xs:int #deprecated, replaced by 'provisioned_size'
           disk.sparse: xs:boolean
-          disk.description: xs:string
-          disk.bootable: xs:boolean
-          disk.shareable: xs:boolean
-          disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
-          disk.quota.id: xs:string
-          disk.disk_profile.id: xs:string
-          disk.openstack_volume_type.name: xs:string
         description: add a new disk with the specified size to the storage domain in the data center, allocating space from the storage domain
         #the signature below is for direct-LUN disk, which doesn't require size, but requires the lun id, the lun type, and the lun connection-details.
-      - mandatoryArguments: {disk.interface: 'xs:string', disk.format: 'xs:string', disk.lun_storage.type: 'xs:string',
-          disk.lun_storage.logical_unit--COLLECTION: {logical_unit.id: 'xs:string', logical_unit.address: 'xs:string', logical_unit.port: 'xs:int', logical_unit.target: 'xs:string'}}
+      - mandatoryArguments:
+          disk.format: xs:string
+          disk.interface: xs:string
+          disk.lun_storage.logical_units.logical_unit--COLLECTION:
+            logical_unit.address: xs:string
+            logical_unit.id: xs:string
+            logical_unit.port: xs:int
+            logical_unit.target: xs:string
+          disk.lun_storage.type: xs:string
         optionalArguments:
           disk.alias: xs:string
           disk.sparse: xs:boolean
@@ -3452,7 +3557,11 @@ actions:
           disk.sgio: xs:string
         description: add a new lun disk to the storage domain in the data center
     urlparams:
-      unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      unregistered:
+        context: matrix
+        required: false
+        type: xs:boolean
+        value: true|false
 
 - name: /jobs|rel=get
   description: get the list of all external jobs in the system

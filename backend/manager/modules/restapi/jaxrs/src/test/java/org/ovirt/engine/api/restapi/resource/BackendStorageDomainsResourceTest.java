@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.LogicalUnit;
+import org.ovirt.engine.api.model.LogicalUnits;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainType;
@@ -359,7 +360,7 @@ public class BackendStorageDomainsResourceTest
         Host host = new Host();
         host.setId(GUIDS[0].toString());
         model.setHost(host);
-        for (LogicalUnit lun : model.getStorage().getVolumeGroup().getLogicalUnits()) {
+        for (LogicalUnit lun : model.getStorage().getVolumeGroup().getLogicalUnits().getLogicalUnits()) {
             lun.setAddress(null);
             lun.setTarget(null);
         }
@@ -703,11 +704,12 @@ public class BackendStorageDomainsResourceTest
         model.getStorage().setAddress(null);
         model.getStorage().setPath(null);
         model.getStorage().setVolumeGroup(new VolumeGroup());
-        model.getStorage().getVolumeGroup().getLogicalUnits().add(new LogicalUnit());
-        model.getStorage().getVolumeGroup().getLogicalUnits().get(0).setId(LUN);
-        model.getStorage().getVolumeGroup().getLogicalUnits().get(0).setTarget(TARGET);
-        model.getStorage().getVolumeGroup().getLogicalUnits().get(0).setAddress(ADDRESSES[0]);
-        model.getStorage().getVolumeGroup().getLogicalUnits().get(0).setPort(PORT);
+        model.getStorage().getVolumeGroup().setLogicalUnits(new LogicalUnits());
+        model.getStorage().getVolumeGroup().getLogicalUnits().getLogicalUnits().add(new LogicalUnit());
+        model.getStorage().getVolumeGroup().getLogicalUnits().getLogicalUnits().get(0).setId(LUN);
+        model.getStorage().getVolumeGroup().getLogicalUnits().getLogicalUnits().get(0).setTarget(TARGET);
+        model.getStorage().getVolumeGroup().getLogicalUnits().getLogicalUnits().get(0).setAddress(ADDRESSES[0]);
+        model.getStorage().getVolumeGroup().getLogicalUnits().getLogicalUnits().get(0).setPort(PORT);
         model.getStorage().setOverrideLuns(false);
         return model;
     }
@@ -721,11 +723,11 @@ public class BackendStorageDomainsResourceTest
         assertNotNull(model.getStorage().getVolumeGroup());
         assertEquals(GUIDS[GUIDS.length - 1].toString(), model.getStorage().getVolumeGroup().getId());
         assertTrue(model.getStorage().getVolumeGroup().isSetLogicalUnits());
-        assertNotNull(model.getStorage().getVolumeGroup().getLogicalUnits().get(0));
-        assertEquals(LUN, model.getStorage().getVolumeGroup().getLogicalUnits().get(0).getId());
-        assertEquals(TARGET, model.getStorage().getVolumeGroup().getLogicalUnits().get(0).getTarget());
-        assertEquals(ADDRESSES[0], model.getStorage().getVolumeGroup().getLogicalUnits().get(0).getAddress());
-        assertEquals(PORT, model.getStorage().getVolumeGroup().getLogicalUnits().get(0).getPort());
+        assertNotNull(model.getStorage().getVolumeGroup().getLogicalUnits().getLogicalUnits().get(0));
+        assertEquals(LUN, model.getStorage().getVolumeGroup().getLogicalUnits().getLogicalUnits().get(0).getId());
+        assertEquals(TARGET, model.getStorage().getVolumeGroup().getLogicalUnits().getLogicalUnits().get(0).getTarget());
+        assertEquals(ADDRESSES[0], model.getStorage().getVolumeGroup().getLogicalUnits().getLogicalUnits().get(0).getAddress());
+        assertEquals(PORT, model.getStorage().getVolumeGroup().getLogicalUnits().getLogicalUnits().get(0).getPort());
         assertEquals(7, model.getLinks().size());
         assertEquals("permissions", model.getLinks().get(0).getRel());
         assertNotNull(model.getLinks().get(0).getHref());

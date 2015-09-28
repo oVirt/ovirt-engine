@@ -2779,7 +2779,7 @@
   <xs:complexType name="VolumeGroup">
     <xs:sequence>
       <xs:element name="name" type="xs:string" minOccurs="0"/>
-      <xs:element ref="logical_unit" minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="logical_units" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="LogicalUnits"/>
@@ -2792,7 +2792,7 @@
 
   <xs:group name="IscsiStorage">
     <xs:sequence>
-      <xs:element ref="logical_unit" minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="logical_units" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="LogicalUnits"/>

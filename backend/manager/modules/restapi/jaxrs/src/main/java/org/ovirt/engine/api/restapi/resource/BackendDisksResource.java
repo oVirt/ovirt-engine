@@ -74,12 +74,13 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
     protected void validateDiskForCreation(Disk disk) {
         validateParameters(disk, 2, "interface");
         if (DiskResourceUtils.isLunDisk(disk)) {
-            validateParameters(disk.getLunStorage(), 3, "type"); // when creating a LUN disk, user must specify type.
+            validateParameters(disk.getLunStorage(), 2, "type"); // when creating a LUN disk, user must specify type.
             StorageType storageType = StorageType.fromValue(disk.getLunStorage().getType());
             if (storageType != null && storageType == StorageType.ISCSI) {
-                validateParameters(disk.getLunStorage().getLogicalUnits().get(0), 3, "address", "target", "port", "id");
+                validateParameters(disk.getLunStorage().getLogicalUnits().getLogicalUnits().get(0), 3, "address",
+                        "target", "port", "id");
             }
-        } else if (disk.isSetLunStorage() && disk.getLunStorage().getLogicalUnits().isEmpty()) {
+        } else if (disk.isSetLunStorage() && (!disk.getLunStorage().isSetLogicalUnits() || !disk.getLunStorage().getLogicalUnits().isSetLogicalUnits())) {
             // TODO: Implement nested entity existence validation infra for validateParameters()
             throw new WebFaultException(null,
                                         localize(Messages.INCOMPLETE_PARAMS_REASON),

@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.LogicalUnit;
+import org.ovirt.engine.api.model.LogicalUnits;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainStatus;
@@ -199,11 +200,11 @@ public class BackendStorageDomainsResource
     private ArrayList<String> getLunIds(Storage storage, StorageType storageType, Guid hostId) {
         List<LogicalUnit> logicalUnits = new ArrayList<LogicalUnit>();
 
-        if (storage.isSetLogicalUnits()) {
-            logicalUnits = storage.getLogicalUnits();
-        } else if (storage.isSetVolumeGroup() &&
-                storage.getVolumeGroup().isSetLogicalUnits()) {
-            logicalUnits = storage.getVolumeGroup().getLogicalUnits();
+        if (storage.isSetLogicalUnits() && storage.getLogicalUnits().isSetLogicalUnits()) {
+            logicalUnits = storage.getLogicalUnits().getLogicalUnits();
+        } else if (storage.isSetVolumeGroup() && storage.getVolumeGroup().isSetLogicalUnits() &&
+                storage.getVolumeGroup().getLogicalUnits().isSetLogicalUnits()) {
+            logicalUnits = storage.getVolumeGroup().getLogicalUnits().getLogicalUnits();
         }
 
         ArrayList<String> lunIds = new ArrayList<String>();
@@ -383,10 +384,11 @@ public class BackendStorageDomainsResource
         for (LUNs lun : getLunsByVgId(vg.getId())) {
             List<StorageServerConnections> lunConnections = lun.getLunConnections();
             if (lunConnections != null) {
+                vg.setLogicalUnits(new LogicalUnits());
                 for (StorageServerConnections cnx : lunConnections) {
                     LogicalUnit unit = map(lun);
                     unit = map(cnx, unit);
-                    vg.getLogicalUnits().add(unit);
+                    vg.getLogicalUnits().getLogicalUnits().add(unit);
                 }
             }
         }
@@ -395,9 +397,13 @@ public class BackendStorageDomainsResource
     protected void mapVolumeGroupFcp(StorageDomain model,
             org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         VolumeGroup vg = model.getStorage().getVolumeGroup();
-        for (LUNs lun : getLunsByVgId(vg.getId())) {
-            LogicalUnit unit = map(lun);
-            vg.getLogicalUnits().add(unit);
+        List<LUNs> luns = getLunsByVgId(vg.getId());
+        if (luns != null && !luns.isEmpty()) {
+            vg.setLogicalUnits(new LogicalUnits());
+            for (LUNs lun : luns) {
+                LogicalUnit unit = map(lun);
+                vg.getLogicalUnits().getLogicalUnits().add(unit);
+            }
         }
     }
 

@@ -34,7 +34,8 @@ public class BackendHostStorageResource
             Storage storage = map(lun);
             ArrayList<StorageServerConnections> lunConnections = lun.getLunConnections();
             if (lunConnections!=null && !lunConnections.isEmpty()) {
-                getMapper(StorageServerConnections.class, LogicalUnit.class).map(lunConnections.get(0), storage.getLogicalUnits().get(0));
+                getMapper(StorageServerConnections.class, LogicalUnit.class).map(lunConnections.get(0),
+                        storage.getLogicalUnits().getLogicalUnits().get(0));
             }
             ret.getStorage().add(addLinks(storage));
         }

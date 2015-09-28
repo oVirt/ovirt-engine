@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.LogicalUnit;
+import org.ovirt.engine.api.model.LogicalUnits;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -431,7 +432,7 @@ public class BackendVmDisksResourceTest
     @Test
     public void testAddLunDisk_MissingId() {
         Disk model = createIscsiLunDisk();
-        model.getLunStorage().getLogicalUnits().get(0).setId(null);
+        model.getLunStorage().getLogicalUnits().getLogicalUnits().get(0).setId(null);
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
         try {
@@ -446,7 +447,7 @@ public class BackendVmDisksResourceTest
     @Test
     public void testAddIscsiLunDisk_IncompleteParameters_ConnectionAddress() {
         Disk model = createIscsiLunDisk();
-        model.getLunStorage().getLogicalUnits().get(0).setAddress(null);
+        model.getLunStorage().getLogicalUnits().getLogicalUnits().get(0).setAddress(null);
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
         try {
@@ -461,7 +462,7 @@ public class BackendVmDisksResourceTest
     @Test
     public void testAddIscsiLunDisk_IncompleteParameters_ConnectionTarget() {
         Disk model = createIscsiLunDisk();
-        model.getLunStorage().getLogicalUnits().get(0).setTarget(null);
+        model.getLunStorage().getLogicalUnits().getLogicalUnits().get(0).setTarget(null);
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
         try {
@@ -476,7 +477,7 @@ public class BackendVmDisksResourceTest
     @Test
     public void testAddIscsiLunDisk_IncompleteParameters_ConnectionPort() {
         Disk model = createIscsiLunDisk();
-        model.getLunStorage().getLogicalUnits().get(0).setPort(null);
+        model.getLunStorage().getLogicalUnits().getLogicalUnits().get(0).setPort(null);
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
         try {
@@ -492,11 +493,12 @@ public class BackendVmDisksResourceTest
         Disk model = getModel(0);
         model.setLunStorage(new Storage());
         model.getLunStorage().setType("iscsi");
-        model.getLunStorage().getLogicalUnits().add(new LogicalUnit());
-        model.getLunStorage().getLogicalUnits().get(0).setId(GUIDS[0].toString());
-        model.getLunStorage().getLogicalUnits().get(0).setAddress(ISCSI_SERVER_ADDRESS);
-        model.getLunStorage().getLogicalUnits().get(0).setTarget(ISCSI_SERVER_TARGET);
-        model.getLunStorage().getLogicalUnits().get(0).setPort(ISCSI_SERVER_CONNECTION_PORT);
+        model.getLunStorage().setLogicalUnits(new LogicalUnits());
+        model.getLunStorage().getLogicalUnits().getLogicalUnits().add(new LogicalUnit());
+        model.getLunStorage().getLogicalUnits().getLogicalUnits().get(0).setId(GUIDS[0].toString());
+        model.getLunStorage().getLogicalUnits().getLogicalUnits().get(0).setAddress(ISCSI_SERVER_ADDRESS);
+        model.getLunStorage().getLogicalUnits().getLogicalUnits().get(0).setTarget(ISCSI_SERVER_TARGET);
+        model.getLunStorage().getLogicalUnits().getLogicalUnits().get(0).setPort(ISCSI_SERVER_CONNECTION_PORT);
         model.setProvisionedSize(null);
         return model;
     }

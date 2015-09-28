@@ -19,8 +19,8 @@ public class StorageLogicalUnitMapperTest extends AbstractInvertibleMappingTest<
         from.setType(MappingTestHelper.shuffle(StorageType.class).value());
         LogicalUnit unit = new LogicalUnit();
         unit.setId(from.getId());
-        from.unsetLogicalUnits();
-        from.getLogicalUnits().add(unit);
+        from.getLogicalUnits().unsetLogicalUnits();
+        from.getLogicalUnits().getLogicalUnits().add(unit);
         return from;
     }
 
@@ -29,9 +29,10 @@ public class StorageLogicalUnitMapperTest extends AbstractInvertibleMappingTest<
         assertNotNull(transform);
         assertEquals(model.getId(), transform.getId());
         assertEquals(model.getType(), transform.getType());
-        assertEquals(model.getLogicalUnits().size(), model.getLogicalUnits().size());
-        for (int i = 0; i < model.getLogicalUnits().size(); i++) {
-            assertEquals(model.getLogicalUnits().get(i).getId(), transform.getLogicalUnits().get(i).getId());
+        assertEquals(model.getLogicalUnits().getLogicalUnits().size(), model.getLogicalUnits().getLogicalUnits().size());
+        for (int i = 0; i < model.getLogicalUnits().getLogicalUnits().size(); i++) {
+            assertEquals(model.getLogicalUnits().getLogicalUnits().get(i).getId(),
+                    transform.getLogicalUnits().getLogicalUnits().get(i).getId());
         }
     }
 

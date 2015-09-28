@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import java.util.ArrayList;
 
 import org.ovirt.engine.api.model.LogicalUnit;
+import org.ovirt.engine.api.model.LogicalUnits;
 import org.ovirt.engine.api.model.LunStatus;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageType;
@@ -65,7 +66,8 @@ public class StorageLogicalUnitMapper {
         Storage model = template != null ? template : new Storage();
         model.setId(entity.getLUN_id());
         model.setType(StorageDomainMapper.map(entity.getLunType(), null));
-        model.getLogicalUnits().add(map(entity, (LogicalUnit)null));
+        model.setLogicalUnits(new LogicalUnits());
+        model.getLogicalUnits().getLogicalUnits().add(map(entity, (LogicalUnit) null));
         return model;
     }
 
@@ -75,8 +77,8 @@ public class StorageLogicalUnitMapper {
     @Mapping(from = Storage.class, to = LUNs.class)
     public static LUNs map(Storage model, LUNs template) {
         LUNs entity = template != null ? template : new LUNs();
-        if (model.isSetLogicalUnits()) {
-            LogicalUnit logicalUnit = model.getLogicalUnits().get(0);
+        if (model.isSetLogicalUnits() && model.getLogicalUnits().isSetLogicalUnits()) {
+            LogicalUnit logicalUnit = model.getLogicalUnits().getLogicalUnits().get(0);
             entity.setLUN_id(logicalUnit.getId());
             ArrayList<StorageServerConnections> connections = new ArrayList<StorageServerConnections>();
             connections.add(map(logicalUnit, null));

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -213,7 +214,14 @@ public class BackendStorageDomainResource extends
             // LUNs info was not supplied in the request so no need to check whether to extend
             return;
         }
-        List<LogicalUnit> existingLuns = storageDomain.getStorage().getVolumeGroup().getLogicalUnits();
+        List<LogicalUnit> existingLuns;
+        if (storageDomain.isSetStorage() && storageDomain.getStorage().isSetVolumeGroup() &&
+                storageDomain.getStorage().getVolumeGroup().isSetLogicalUnits()) {
+            existingLuns = storageDomain.getStorage().getVolumeGroup().getLogicalUnits().getLogicalUnits();
+        }
+        else {
+            existingLuns = Collections.emptyList();
+        }
         List<LogicalUnit> incomingLuns = getIncomingLuns(incoming.getStorage());
         List<LogicalUnit> newLuns = findNewLuns(existingLuns, incomingLuns);
         boolean overrideLuns = incoming.getStorage().isSetOverrideLuns() ?
@@ -260,16 +268,17 @@ public class BackendStorageDomainResource extends
 
     private List<LogicalUnit> getIncomingLuns(Storage storage) {
         // user may pass the LUNs under Storage, or Storage-->VolumeGroup; both are supported.
-        if (storage.getLogicalUnits().isEmpty()) {
-            if (storage.getVolumeGroup() != null) {
-                return storage.getVolumeGroup().getLogicalUnits();
+        if (!storage.isSetLogicalUnits() || !storage.getLogicalUnits().isSetLogicalUnits()) {
+            if (storage.isSetVolumeGroup() && storage.getVolumeGroup().isSetLogicalUnits()
+                    && storage.getVolumeGroup().getLogicalUnits().isSetLogicalUnits()) {
+                return storage.getVolumeGroup().getLogicalUnits().getLogicalUnits();
             }
             else {
                 return new ArrayList<LogicalUnit>();
             }
         }
         else {
-            return storage.getLogicalUnits();
+            return storage.getLogicalUnits().getLogicalUnits();
         }
     }
 
@@ -318,7 +327,7 @@ public class BackendStorageDomainResource extends
     }
 
     private boolean lunsEqual(LogicalUnit firstLun, LogicalUnit secondLun) {
-        return firstLun.getId().equals(secondLun.getId());
+        return Objects.equals(firstLun.getId(), secondLun.getId());
     }
 
     protected class UpdateParametersProvider implements
