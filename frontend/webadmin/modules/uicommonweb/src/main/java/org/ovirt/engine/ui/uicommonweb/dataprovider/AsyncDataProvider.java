@@ -75,6 +75,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerServic
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
+import org.ovirt.engine.core.common.businessentities.network.BondMode;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
@@ -3655,27 +3656,26 @@ public class AsyncDataProvider {
     public ArrayList<Map.Entry<String, EntityModel<String>>> getBondingOptionList(RefObject<Map.Entry<String, EntityModel<String>>> defaultItem) {
         ArrayList<Map.Entry<String, EntityModel<String>>> list =
                 new ArrayList<Map.Entry<String, EntityModel<String>>>();
+
+        list.add(getBondOption(BondMode.BOND1));
+        list.add(getBondOption(BondMode.BOND2));
+        list.add(getBondOption(BondMode.BOND4));
+        list.add(getBondOption(BondMode.BOND5));
+
         EntityModel<String> entityModel = new EntityModel<String>();
-        entityModel.setEntity("(Mode 1) Active-Backup"); //$NON-NLS-1$
-        list.add(new KeyValuePairCompat<String, EntityModel<String>>("mode=1 miimon=100", entityModel)); //$NON-NLS-1$
-        entityModel = new EntityModel<String>();
-        entityModel.setEntity("(Mode 2) Load balance (balance-xor)"); //$NON-NLS-1$
-        list.add(new KeyValuePairCompat<String, EntityModel<String>>("mode=2 miimon=100", entityModel)); //$NON-NLS-1$
-        entityModel = new EntityModel<String>();
-        entityModel.setEntity("(Mode 4) Dynamic link aggregation (802.3ad)"); //$NON-NLS-1$
-        defaultItem.argvalue = new KeyValuePairCompat<String, EntityModel<String>>("mode=4 miimon=100", entityModel); //$NON-NLS-1$
-        list.add(defaultItem.argvalue);
-        entityModel = new EntityModel<String>();
-        entityModel.setEntity("(Mode 5) Adaptive transmit load balancing (balance-tlb)"); //$NON-NLS-1$
-        list.add(new KeyValuePairCompat<String, EntityModel<String>>("mode=5 miimon=100", entityModel)); //$NON-NLS-1$
-        entityModel = new EntityModel<String>();
         entityModel.setEntity(""); //$NON-NLS-1$
         list.add(new KeyValuePairCompat<String, EntityModel<String>>("custom", entityModel)); //$NON-NLS-1$
         return list;
     }
 
+    private KeyValuePairCompat<String, EntityModel<String>> getBondOption(BondMode mode){
+        EntityModel<String> entityModel = new EntityModel<String>();
+        entityModel.setEntity(mode.getDescription());
+        return new KeyValuePairCompat<String, EntityModel<String>>(mode.getConfigurationValue(), entityModel);
+    }
+
     public String getDefaultBondingOption() {
-        return "mode=802.3ad miimon=150"; //$NON-NLS-1$
+        return BondMode.BOND4.getConfigurationValue("150"); //$NON-NLS-1$
     }
 
     public int getMaxVmPriority() {
