@@ -24,10 +24,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.BaseDevice;
-import org.ovirt.engine.api.model.BaseDevices;
+import org.ovirt.engine.api.model.BaseResources;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface DevicesResource<D extends BaseDevice, C extends BaseDevices>
+public interface DevicesResource<D extends BaseDevice, C extends BaseResources>
     extends ReadOnlyDevicesResource<D, C> {
 
     @POST

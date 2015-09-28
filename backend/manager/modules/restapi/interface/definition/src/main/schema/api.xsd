@@ -1542,7 +1542,7 @@
 
   <xs:complexType name="WatchDogs">
     <xs:complexContent>
-      <xs:extension base="BaseDevices">
+      <xs:extension base="BaseResources">
         <xs:sequence>
           <xs:element ref="watchdog" minOccurs="0" maxOccurs="unbounded">
             <xs:annotation>
@@ -3763,14 +3763,6 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="BaseDevices">
-    <xs:complexContent>
-      <xs:extension base="BaseResources">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
   <xs:element name="application" type="Application"/>
 
   <xs:element name="applications" type="Applications"/>
@@ -3837,7 +3829,7 @@
 
   <xs:complexType name="CdRoms">
     <xs:complexContent>
-      <xs:extension base="BaseDevices">
+      <xs:extension base="BaseResources">
         <xs:sequence>
           <xs:element ref="cdrom" minOccurs="0" maxOccurs="unbounded">
             <xs:annotation>
@@ -3863,7 +3855,7 @@
 
   <xs:complexType name="Floppies">
     <xs:complexContent>
-      <xs:extension base="BaseDevices">
+      <xs:extension base="BaseResources">
         <xs:sequence>
           <xs:element ref="floppy" minOccurs="0" maxOccurs="unbounded">
             <xs:annotation>
@@ -3916,7 +3908,7 @@
 
   <xs:complexType name="Disks">
     <xs:complexContent>
-      <xs:extension base="BaseDevices">
+      <xs:extension base="BaseResources">
         <xs:sequence>
           <xs:element ref="disk" minOccurs="0" maxOccurs="unbounded">
             <xs:annotation>
@@ -3944,7 +3936,7 @@
 
   <xs:complexType name="DiskSnapshots">
     <xs:complexContent>
-      <xs:extension base="BaseDevices">
+      <xs:extension base="BaseResources">
         <xs:sequence>
           <xs:element ref="disk_snapshot" minOccurs="0" maxOccurs="unbounded">
             <xs:annotation>
@@ -4006,7 +3998,7 @@
 
   <xs:complexType name="Nics">
     <xs:complexContent>
-      <xs:extension base="BaseDevices">
+      <xs:extension base="BaseResources">
         <xs:sequence>
           <xs:element ref="nic" minOccurs="0" maxOccurs="unbounded">
             <xs:annotation>

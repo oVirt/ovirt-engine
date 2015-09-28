@@ -22,10 +22,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.ovirt.engine.api.model.BaseDevice;
-import org.ovirt.engine.api.model.BaseDevices;
+import org.ovirt.engine.api.model.BaseResources;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface ReadOnlyDevicesResource<D extends BaseDevice, C extends BaseDevices> {
+public interface ReadOnlyDevicesResource<D extends BaseDevice, C extends BaseResources> {
 
     @GET
     public C list();

@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import org.ovirt.engine.api.model.BaseDevice;
-import org.ovirt.engine.api.model.BaseDevices;
+import org.ovirt.engine.api.model.BaseResources;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
 import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class AbstractBackendReadOnlyDevicesResource<D extends BaseDevice, C extends BaseDevices, Q extends IVdcQueryable>
+public abstract class AbstractBackendReadOnlyDevicesResource<D extends BaseDevice, C extends BaseResources, Q extends IVdcQueryable>
         extends AbstractBackendCollectionResource<D, Q>
         implements ReadOnlyDevicesResource<D, C> {
 

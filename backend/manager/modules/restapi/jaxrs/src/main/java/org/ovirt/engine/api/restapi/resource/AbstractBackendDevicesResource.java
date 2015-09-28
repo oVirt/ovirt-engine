@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.BaseDevice;
-import org.ovirt.engine.api.model.BaseDevices;
+import org.ovirt.engine.api.model.BaseResources;
 import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class AbstractBackendDevicesResource<D extends BaseDevice, C extends BaseDevices, Q extends IVdcQueryable>
+public abstract class AbstractBackendDevicesResource<D extends BaseDevice, C extends BaseResources, Q extends IVdcQueryable>
         extends AbstractBackendReadOnlyDevicesResource<D, C, Q>
         implements DevicesResource<D, C> {
 

@@ -1,13 +1,13 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import org.ovirt.engine.api.model.BaseDevice;
-import org.ovirt.engine.api.model.BaseDevices;
+import org.ovirt.engine.api.model.BaseResources;
 import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendDeviceResource<D extends BaseDevice, C extends BaseDevices, Q extends IVdcQueryable> extends BackendReadOnlyDeviceResource<D, C, Q> implements DeviceResource<D> {
+public class BackendDeviceResource<D extends BaseDevice, C extends BaseResources, Q extends IVdcQueryable> extends BackendReadOnlyDeviceResource<D, C, Q> implements DeviceResource<D> {
 
     protected VdcActionType updateType;
     protected ParametersProvider<D, Q> updateParametersProvider;
