@@ -2415,12 +2415,13 @@
     <xs:complexContent>
       <xs:extension base="BaseResources">
         <xs:sequence>
-          <xs:annotation>
-            <xs:appinfo>
-              <jaxb:property name="Event" />
-            </xs:appinfo>
-          </xs:annotation>
-          <xs:element ref="event" minOccurs="0" maxOccurs="unbounded" />
+          <xs:element ref="event" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="Events"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

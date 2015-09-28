@@ -121,6 +121,6 @@ public class BackendEventsResourceTest extends AbstractBackendCollectionResource
     }
     @Override
     protected List<org.ovirt.engine.api.model.Event> getCollection() {
-        return collection.list().getEvent();
+        return collection.list().getEvents();
     }
 }

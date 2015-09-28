@@ -36,7 +36,7 @@ public class BackendEventsResource
     private Events mapCollection(List<AuditLog> entities) {
         Events collection = new Events();
         for (AuditLog entity : entities) {
-            collection.getEvent().add(addLinks(map(entity)));
+            collection.getEvents().add(addLinks(map(entity)));
         }
         return collection;
     }
