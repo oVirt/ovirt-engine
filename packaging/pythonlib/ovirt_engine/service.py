@@ -545,7 +545,8 @@ class Daemon(base.Base):
 
     def daemonStdHandles(self):
         """Return handles for daemon context"""
-        return (sys.stdout, sys.stderr)
+        null = open(os.devnull, 'w')
+        return (null, null)
 
     def daemonContext(self):
         """Daemon logic
