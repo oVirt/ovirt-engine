@@ -19,7 +19,6 @@ import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.HostNics;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NicStatus;
-import org.ovirt.engine.api.model.Slaves;
 import org.ovirt.engine.api.resource.HostNicResource;
 import org.ovirt.engine.core.common.action.AddBondParameters;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
@@ -157,9 +156,9 @@ public class BackendHostNicsResourceTest
         nic.setNetwork(new Network());
         nic.getNetwork().setDescription(DESCRIPTIONS[0]);
         nic.setBonding(new Bonding());
-        nic.getBonding().setSlaves(new Slaves());
-        nic.getBonding().getSlaves().getSlaves().add(new HostNic());
-        nic.getBonding().getSlaves().getSlaves().get(0).setId(SLAVE_GUID.toString());
+        nic.getBonding().setSlaves(new HostNics());
+        nic.getBonding().getSlaves().getHostNics().add(new HostNic());
+        nic.getBonding().getSlaves().getHostNics().get(0).setId(SLAVE_GUID.toString());
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
         try {
@@ -359,9 +358,9 @@ public class BackendHostNicsResourceTest
         nic.setNetwork(new Network());
         nic.getNetwork().setName(NETWORK_NAME);
         nic.setBonding(new Bonding());
-        nic.getBonding().setSlaves(new Slaves());
-        nic.getBonding().getSlaves().getSlaves().add(new HostNic());
-        nic.getBonding().getSlaves().getSlaves().get(0).setName(SLAVE_NAME);
+        nic.getBonding().setSlaves(new HostNics());
+        nic.getBonding().getSlaves().getHostNics().add(new HostNic());
+        nic.getBonding().getSlaves().getHostNics().get(0).setName(SLAVE_NAME);
         return nic;
     }
 
@@ -404,9 +403,9 @@ public class BackendHostNicsResourceTest
         assertEquals(NETWORK_NAME, model.getNetwork().getName());
         assertNotNull(model.getBonding());
         assertNotNull(model.getBonding().getSlaves());
-        assertEquals(1, model.getBonding().getSlaves().getSlaves().size());
-        assertEquals(SLAVE_GUID.toString(), model.getBonding().getSlaves().getSlaves().get(0).getId());
-        assertNotNull(model.getBonding().getSlaves().getSlaves().get(0).getHref());
+        assertEquals(1, model.getBonding().getSlaves().getHostNics().size());
+        assertEquals(SLAVE_GUID.toString(), model.getBonding().getSlaves().getHostNics().get(0).getId());
+        assertNotNull(model.getBonding().getSlaves().getHostNics().get(0).getHref());
     }
 
     protected void verifySlave(HostNic model) {

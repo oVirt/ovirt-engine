@@ -26,11 +26,11 @@ import org.ovirt.engine.api.model.Bonding;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostNic;
+import org.ovirt.engine.api.model.HostNics;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.Roles;
-import org.ovirt.engine.api.model.Slaves;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmStatus;
@@ -238,15 +238,15 @@ public class CompletenessAssertorTest extends Assert {
         bond.setNetwork(new Network());
         bond.getNetwork().setId("0");
         bond.setBonding(new Bonding());
-        bond.getBonding().setSlaves(new Slaves());
+        bond.getBonding().setSlaves(new HostNics());
 
         HostNic slave = new HostNic();
         slave.setId("0");
-        bond.getBonding().getSlaves().getSlaves().add(slave);
+        bond.getBonding().getSlaves().getHostNics().add(slave);
 
         slave = new HostNic();
         slave.setId("0");
-        bond.getBonding().getSlaves().getSlaves().add(slave);
+        bond.getBonding().getSlaves().getHostNics().add(slave);
 
 
         CompletenessAssertor.validateParameters(bond, "name", "network.id|name", "bonding.slaves.id|name");

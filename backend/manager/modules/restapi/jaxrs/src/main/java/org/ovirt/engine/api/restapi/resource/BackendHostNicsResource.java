@@ -19,7 +19,6 @@ import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.HostNics;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.Network;
-import org.ovirt.engine.api.model.Slaves;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.resource.ActionResource;
@@ -202,10 +201,10 @@ public class BackendHostNicsResource
 
     protected HostNic addSlaveLinks(HostNic nic, List<VdsNetworkInterface> ifaces) {
         if(nic.getBonding() == null) nic.setBonding(new Bonding());
-        nic.getBonding().setSlaves(new Slaves());
+        nic.getBonding().setSlaves(new HostNics());
         for (VdsNetworkInterface i : ifaces) {
             if (isSlave(i, nic.getName())) {
-                nic.getBonding().getSlaves().getSlaves().add(slave(i.getId().toString()));
+                nic.getBonding().getSlaves().getHostNics().add(slave(i.getId().toString()));
             }
         }
         return nic;
@@ -271,7 +270,7 @@ public class BackendHostNicsResource
     protected String[] lookupSlaves(HostNic nic) {
         List<String> slaves = new ArrayList<>();
 
-        for (HostNic slave : nic.getBonding().getSlaves().getSlaves()) {
+        for (HostNic slave : nic.getBonding().getSlaves().getHostNics()) {
             if (slave.isSetId()) {
                 for (VdsNetworkInterface iface : getCollection()) {
                     if (iface.getId().toString().equals(slave.getId())) {
@@ -391,7 +390,7 @@ public class BackendHostNicsResource
             VdsNetworkInterface iface = map(nic, null);
             ifaces.add(iface);
             if (nic.isSetBonding() && nic.getBonding().isSetSlaves()) {
-                for (HostNic slave : nic.getBonding().getSlaves().getSlaves()) {
+                for (HostNic slave : nic.getBonding().getSlaves().getHostNics()) {
                     VdsNetworkInterface slaveIface = map(slave, slave.getId() == null
                             ? lookupInterfaceByName(slave.getName()) : lookupInterfaceById(slave.getId()));
                     slaveIface.setBondName(nic.getName());

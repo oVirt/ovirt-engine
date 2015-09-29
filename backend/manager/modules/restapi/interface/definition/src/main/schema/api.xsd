@@ -4247,26 +4247,12 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:element name="slaves" type="Slaves"/>
-
-  <xs:complexType name="Slaves">
-    <xs:sequence>
-      <xs:element ref="host_nic" maxOccurs="unbounded">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property name="Slaves"/>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-
   <xs:element name="bonding" type="Bonding"/>
 
   <xs:complexType name="Bonding">
     <xs:sequence>
       <xs:element ref="options" minOccurs="0" maxOccurs="1"/>
-      <xs:element ref="slaves" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="slaves" type="HostNics" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
 
