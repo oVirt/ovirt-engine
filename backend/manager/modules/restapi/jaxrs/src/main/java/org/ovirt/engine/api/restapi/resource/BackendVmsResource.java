@@ -84,6 +84,7 @@ public class BackendVmsResource extends
             "statistics", "reporteddevices", "watchdogs", "sessions", "katelloerrata", "graphicsconsoles", "hostdevices" };
 
     public static final String CLONE = "clone";
+    public static final String CLONE_PERMISSIONS = "clone_permissions";
 
     public BackendVmsResource() {
         super(Vm.class, org.ovirt.engine.core.common.businessentities.VM.class, SUB_COLLECTIONS);
@@ -347,7 +348,7 @@ public class BackendVmsResource extends
         IconHelper.setIconToParams(vm, params);
 
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
-        setupCloneTemplatePermissions(vm, params);
+        setupCloneTemplatePermissions(params);
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
 
         return performCreate(VdcActionType.AddVmFromTemplate,
@@ -466,7 +467,7 @@ public class BackendVmsResource extends
         params.setStorageDomainId(storageDomainId);
         params.setDiskInfoDestinationMap(getDisksToClone(vm.getDisks(), template.getId()));
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
-        setupCloneTemplatePermissions(vm, params);
+        setupCloneTemplatePermissions(params);
         addDevicesToParams(params, vm, template, instanceType, staticVm.getOsId(), cluster);
         IconHelper.setIconToParams(vm, params);
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
@@ -476,9 +477,10 @@ public class BackendVmsResource extends
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
     }
 
-    void setupCloneTemplatePermissions(Vm vm, VmManagementParametersBase params) {
-        if (vm.isSetPermissions() && vm.getPermissions().isSetClone()) {
-            params.setCopyTemplatePermissions(vm.getPermissions().isClone());
+    void setupCloneTemplatePermissions(VmManagementParametersBase params) {
+        boolean clonePermissions = QueryHelper.getBooleanMatrixParameter(uriInfo, CLONE_PERMISSIONS, true, false);
+        if (clonePermissions) {
+            params.setCopyTemplatePermissions(clonePermissions);
         }
     }
 

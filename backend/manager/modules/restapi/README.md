@@ -674,3 +674,39 @@ outer element and `host_storage` as the inner element:
       </host_storage>
       ...
     </host_storage>
+
+### Removed the `permissions.clone` element
+
+This element isn't really part of the representation of permissions, but
+a parameter of the operations to create virtual machines or templates:
+
+    POST /vms
+    <vm>
+      <template id="...">
+        <permissions>
+          <clone>true</clone>
+        </permissions>
+      </template>
+    </action>
+
+    POST /templates
+    <template>
+      <vm id="...">
+        <permissions>
+          <clone>true</clone>
+        </permissions>
+      </vm>
+    </template>
+
+This has been now removed, and replaced by a new `clone_permissions`
+matrix parameter:
+
+    POST /vms;clone_permissions
+    <vm>
+      <template id="..."/>
+    </vm>
+
+    POST /templates;clone_permissions
+    <template>
+      <vm id="..."/>
+    </template>

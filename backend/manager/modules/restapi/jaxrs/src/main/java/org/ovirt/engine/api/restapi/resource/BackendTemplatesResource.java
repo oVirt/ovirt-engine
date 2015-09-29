@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
+import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Template;
@@ -51,6 +52,8 @@ public class BackendTemplatesResource
     implements TemplatesResource {
 
     static final String[] SUB_COLLECTIONS = { "disks", "nics", "cdroms", "tags", "permissions", "watchdogs", "graphicsconsoles"};
+
+    public static final String CLONE_PERMISSIONS = "clone_permissions";
 
     public BackendTemplatesResource() {
         super(Template.class, VmTemplate.class, SUB_COLLECTIONS);
@@ -125,7 +128,7 @@ public class BackendTemplatesResource
             params.getDestinationStorageDomainId(),
             isDomainSet));
 
-        setupCloneVmPermissions(template, params);
+        setupCloneVmPermissions(params);
         IconHelper.setIconToParams(template, params);
 
         Response response = performCreate(
@@ -150,9 +153,10 @@ public class BackendTemplatesResource
         }
     }
 
-    void setupCloneVmPermissions(Template template, AddVmTemplateParameters params) {
-        if (template.isSetPermissions() && template.getPermissions().isSetClone()) {
-            params.setCopyVmPermissions(template.getPermissions().isClone());
+    void setupCloneVmPermissions(AddVmTemplateParameters params) {
+        boolean clonePermissions = QueryHelper.getBooleanMatrixParameter(uriInfo, CLONE_PERMISSIONS, true, false);
+        if (clonePermissions) {
+            params.setCopyVmPermissions(clonePermissions);
         }
     }
 

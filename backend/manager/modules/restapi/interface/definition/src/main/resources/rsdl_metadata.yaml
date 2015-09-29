@@ -142,6 +142,11 @@ actions:
         type: xs:boolean
         value: true|false
         required: false
+      clone_permissions:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
     body:
       parameterType: Vm
       signatures:
@@ -179,7 +184,6 @@ actions:
           vm.description: xs:string
           vm.comment: xs:string
           vm.stateless: xs:boolean
-          vm.permissions.clone: xs:boolean
           vm.delete_protected: xs:boolean
           vm.sso.methods.method--COLLECTION: {method.id: 'xs:string'}
           vm.rng_device.rate.bytes: xs:int
@@ -318,7 +322,6 @@ actions:
                 vm.description: xs:string
                 vm.comment: xs:string
                 vm.stateless: xs:boolean
-                vm.permissions.clone: xs:boolean
                 vm.delete_protected: xs:boolean
                 vm.sso.methods.method--COLLECTION: {method.id: 'xs:string'}
                 vm.rng_device.rate.bytes: xs:int
@@ -2825,6 +2828,12 @@ actions:
 - name: /templates|rel=add
   description: add a new template to the system
   request:
+    urlparams:
+      clone_permissions:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
     body:
       parameterType: Template
       signatures:
@@ -2880,7 +2889,6 @@ actions:
           template.custom_emulated_machine: xs:string
           template.custom_cpu_model: xs:string
           template.vm.disks.disk--COLLECTION: {disk.id: 'xs:string', disk.alias: 'xs:string', disk.description: 'xs:string', storage_domains.storage_domain--COLLECTION: {storage_domain.id: 'xs:string'}}
-          template.permissions.clone: xs:boolean
           template.version.version_name: xs:string
           template.version.base_template.id: xs:string
           template.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
@@ -2929,7 +2937,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {watchdog.action: 'xs:string', watchdog.model: 'xs:string'}
         description: update the watchdog for the template identified by the given id with a new action and model as specified in the request data
-    urlparams:
 - name: /templates/{template:id}/watchdogs|rel=add
   description: add a watchdog to the template identified by the given id
   request:

@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -24,7 +23,6 @@ import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Hosts;
 import org.ovirt.engine.api.model.Initialization;
-import org.ovirt.engine.api.model.Permissions;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -1022,14 +1020,14 @@ public class BackendVmsResourceTest
     @Test
     public void testAddWithClonePermissionsClone() throws Exception {
         Vm model = createModel(null);
-        model.setPermissions(new Permissions());
-        model.getPermissions().setClone(true);
 
         doTestAddWithClonePermissions(model, true);
     }
 
     private void doTestAddWithClonePermissions(Vm model, boolean copy) throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
+        UriInfo uriInfo = setUpBasicUriExpectations();
+        uriInfo = addMatrixParameterExpectations(uriInfo, BackendVmsResource.CLONE_PERMISSIONS, Boolean.toString(copy));
+        setUriInfo(uriInfo);
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
@@ -1075,13 +1073,16 @@ public class BackendVmsResourceTest
     @Test
     public void testCloneFromTemplateWithClonePermissionsClone() throws Exception {
         Vm model = createModel(createDisksCollection());
-        model.setPermissions(new Permissions());
-        model.getPermissions().setClone(true);
         doTestCloneFromTemplateWithClonePermissions(model, true);
     }
 
     private void doTestCloneFromTemplateWithClonePermissions(Vm model, boolean copy) throws Exception {
-        setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendVmsResource.CLONE, "true"));
+        UriInfo uriInfo = setUpBasicUriExpectations();
+        Map<String, String> matrixParameters = new HashMap<>();
+        matrixParameters.put(BackendVmsResource.CLONE, Boolean.toString(true));
+        matrixParameters.put(BackendVmsResource.CLONE_PERMISSIONS, Boolean.toString(copy));
+        uriInfo = addMatrixParameterExpectations(uriInfo, matrixParameters);
+        setUriInfo(uriInfo);
         setUpTemplateDisksExpectations(GUIDS[1]);
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);

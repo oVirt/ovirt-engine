@@ -4,15 +4,14 @@ import static org.easymock.EasyMock.expect;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
-import org.ovirt.engine.api.model.Permissions;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.TemplateVersion;
 import org.ovirt.engine.api.model.Vm;
@@ -51,14 +50,14 @@ public class BackendTemplatesResourceTest
     @Test
     public void testAddWithClonePermissionsClone() throws Exception {
         Template model = getModel(0);
-        model.setPermissions(new Permissions());
-        model.getPermissions().setClone(true);
 
         doTestAddWithClonePermissions(model, true);
     }
 
     private void doTestAddWithClonePermissions(Template model, boolean copy) throws Exception{
-        setUriInfo(setUpBasicUriExpectations());
+        UriInfo uriInfo = setUpBasicUriExpectations();
+        uriInfo = addMatrixParameterExpectations(uriInfo, BackendTemplatesResource.CLONE_PERMISSIONS, Boolean.toString(copy));
+        setUriInfo(uriInfo);
         setUpHttpHeaderExpectations("Expect", "201-created");
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
