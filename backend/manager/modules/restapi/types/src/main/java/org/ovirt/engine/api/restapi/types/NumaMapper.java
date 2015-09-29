@@ -33,7 +33,7 @@ public class NumaMapper {
             for (int id : entity.getCpuIds()) {
                 Core core = new Core();
                 core.setIndex(id);
-                cores.getCore().add(core);
+                cores.getCores().add(core);
             }
             cpu.setCores(cores);
             model.setCpu(cpu);
@@ -58,7 +58,7 @@ public class NumaMapper {
             for (int id : entity.getCpuIds()) {
                 Core core = new Core();
                 core.setIndex(id);
-                cores.getCore().add(core);
+                cores.getCores().add(core);
             }
             cpu.setCores(cores);
             model.setCpu(cpu);
@@ -97,7 +97,7 @@ public class NumaMapper {
             List<Integer> ids = new ArrayList<>();
             Cores cores = cpu.getCores();
             if (cores != null) {
-                for (Core core : cores.getCore()) {
+                for (Core core : cores.getCores()) {
                     Integer index = core.getIndex();
                     if (index != null) {
                         ids.add(index);

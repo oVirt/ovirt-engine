@@ -19,8 +19,8 @@ public class NumaMapperTest extends AbstractInvertibleMappingTest<VirtualNumaNod
         assertEquals(model.getId(), transform.getId());
         assertEquals(model.getIndex(), transform.getIndex());
         assertEquals(model.getMemory(), transform.getMemory());
-        List<Core> cpus1 = model.getCpu().getCores().getCore();
-        List<Core> cpus2 = transform.getCpu().getCores().getCore();
+        List<Core> cpus1 = model.getCpu().getCores().getCores();
+        List<Core> cpus2 = transform.getCpu().getCores().getCores();
         assertEquals(cpus1.size(), cpus2.size());
         for (int i = 0; i < cpus1.size(); i++) {
             assertEquals(cpus1.get(i).getIndex(), cpus2.get(i).getIndex());
