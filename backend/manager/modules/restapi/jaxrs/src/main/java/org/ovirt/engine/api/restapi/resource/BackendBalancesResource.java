@@ -23,7 +23,7 @@ public class BackendBalancesResource extends BackendPolicyUnitsResource<Balances
         if (clusterPolicy.getBalance() != null) {
             Balance balance = new Balance();
             balance.setId(clusterPolicy.getBalance().toString());
-            balances.setBalances(addLinks(map(clusterPolicy, balance)));
+            balances.getBalances().add(addLinks(map(clusterPolicy, balance)));
         }
         return balances;
     }

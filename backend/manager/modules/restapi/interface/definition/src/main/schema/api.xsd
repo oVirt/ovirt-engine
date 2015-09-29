@@ -1709,7 +1709,7 @@
     <xs:complexContent>
       <xs:extension base="BaseResources">
         <xs:sequence>
-          <xs:element ref="balance" minOccurs="0" maxOccurs="1">
+          <xs:element ref="balance" minOccurs="0" maxOccurs="unbounded">
             <xs:annotation>
               <xs:appinfo>
                 <jaxb:property name="Balances" />
