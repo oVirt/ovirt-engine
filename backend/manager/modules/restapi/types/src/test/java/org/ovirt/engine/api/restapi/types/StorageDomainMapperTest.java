@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.junit.Test;
+import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.NfsVersion;
-import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainStatus;
@@ -110,7 +110,7 @@ public class StorageDomainMapperTest extends
         connection.setuser_name("myuser1");
         connection.setpassword("123");
 
-        Storage RESTConnection = new Storage();
+        HostStorage RESTConnection = new HostStorage();
         RESTConnection.setId(connId.toString());
         RESTConnection.setType(StorageType.ISCSI.toString().toLowerCase());
         RESTConnection.setPort(3260);
@@ -141,7 +141,7 @@ public class StorageDomainMapperTest extends
         connection.setNfsVersion(org.ovirt.engine.core.common.businessentities.NfsVersion.V3);
         connection.setMountOptions("tcp");
 
-        Storage RESTConnection = new Storage();
+        HostStorage RESTConnection = new HostStorage();
         RESTConnection.setId(connId.toString());
         RESTConnection.setType(StorageType.NFS.toString().toLowerCase());
         RESTConnection.setAddress("1.2.135.255");
@@ -172,7 +172,7 @@ public class StorageDomainMapperTest extends
         connection.setVfsType("nfs");
         connection.setMountOptions("timeo=30");
 
-        Storage RESTConnection = new Storage();
+        HostStorage RESTConnection = new HostStorage();
         RESTConnection.setId(connId.toString());
         RESTConnection.setType(StorageType.POSIXFS.toString().toLowerCase());
         RESTConnection.setAddress("1.2.135.255");

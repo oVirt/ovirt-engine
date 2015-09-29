@@ -3,9 +3,9 @@ package org.ovirt.engine.api.restapi.types;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.EntityExternalStatus;
+import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.NfsVersion;
 import org.ovirt.engine.api.model.Status;
-import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainStatus;
@@ -69,7 +69,7 @@ public class StorageDomainMapper {
     public static StorageServerConnections map(StorageDomain model, StorageServerConnections template) {
         StorageServerConnections entity = template != null ? template : new StorageServerConnections();
         if (model.isSetStorage() && model.getStorage().isSetType()) {
-            Storage storage = model.getStorage();
+            HostStorage storage = model.getStorage();
             StorageType storageType = StorageType.fromValue(storage.getType());
             if (storageType != null) {
                 entity.setstorage_type(map(storageType, null));
@@ -149,7 +149,7 @@ public class StorageDomainMapper {
             externalStatus.setState(entityExternalStatus.value());
             model.setExternalStatus(externalStatus);
         }
-        model.setStorage(new Storage());
+        model.setStorage(new HostStorage());
         model.getStorage().setType(map(entity.getStorageType(), null));
         if (entity.getStorageType() == org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI ||
                 entity.getStorageType() == org.ovirt.engine.core.common.businessentities.storage.StorageType.FCP) {

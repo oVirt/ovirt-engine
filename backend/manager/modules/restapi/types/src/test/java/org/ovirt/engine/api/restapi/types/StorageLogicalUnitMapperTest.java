@@ -1,21 +1,21 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.junit.Test;
+import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.LunStatus;
-import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.compat.Guid;
 
-public class StorageLogicalUnitMapperTest extends AbstractInvertibleMappingTest<Storage, LUNs, LUNs> {
+public class StorageLogicalUnitMapperTest extends AbstractInvertibleMappingTest<HostStorage, LUNs, LUNs> {
 
     public StorageLogicalUnitMapperTest() {
-        super(Storage.class, LUNs.class, LUNs.class);
+        super(HostStorage.class, LUNs.class, LUNs.class);
     }
 
     @Override
-    protected Storage postPopulate(Storage from) {
+    protected HostStorage postPopulate(HostStorage from) {
         from.setType(MappingTestHelper.shuffle(StorageType.class).value());
         LogicalUnit unit = new LogicalUnit();
         unit.setId(from.getId());
@@ -25,7 +25,7 @@ public class StorageLogicalUnitMapperTest extends AbstractInvertibleMappingTest<
     }
 
     @Override
-    protected void verify(Storage model, Storage transform) {
+    protected void verify(HostStorage model, HostStorage transform) {
         assertNotNull(transform);
         assertEquals(model.getId(), transform.getId());
         assertEquals(model.getType(), transform.getType());

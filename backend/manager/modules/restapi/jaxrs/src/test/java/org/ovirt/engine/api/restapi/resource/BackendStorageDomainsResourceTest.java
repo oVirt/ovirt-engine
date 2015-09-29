@@ -10,9 +10,9 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.LogicalUnits;
-import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageType;
@@ -114,7 +114,7 @@ public class BackendStorageDomainsResourceTest
         model.setName(getSafeEntry(POSIX_IDX, NAMES));
         model.setDescription(getSafeEntry(POSIX_IDX, DESCRIPTIONS));
         model.setType(getSafeEntry(POSIX_IDX, TYPES).value());
-        model.setStorage(new Storage());
+        model.setStorage(new HostStorage());
         model.setHost(new Host());
         model.getHost().setId(GUIDS[0].toString());
         model.getStorage().setId(GUIDS[POSIX_IDX].toString());
@@ -500,7 +500,7 @@ public class BackendStorageDomainsResourceTest
         model.setName(NAMES[0]);
         model.setHost(new Host());
         model.getHost().setId(GUIDS[0].toString());
-        model.setStorage(new Storage());
+        model.setStorage(new HostStorage());
         model.getStorage().setAddress(ADDRESSES[0]);
         model.getStorage().setPath(PATHS[0]);
         setUriInfo(setUpBasicUriExpectations());
@@ -519,7 +519,7 @@ public class BackendStorageDomainsResourceTest
         model.setName(NAMES[0]);
         model.setHost(new Host());
         model.getHost().setId(GUIDS[0].toString());
-        model.setStorage(new Storage());
+        model.setStorage(new HostStorage());
         model.getStorage().setType(StorageType.NFS.value());
         model.getStorage().setPath(PATHS[0]);
         setUriInfo(setUpBasicUriExpectations());
@@ -528,7 +528,7 @@ public class BackendStorageDomainsResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Storage", "add", "address");
+            verifyIncompleteException(wae, "HostStorage", "add", "address");
         }
     }
 
@@ -644,7 +644,7 @@ public class BackendStorageDomainsResourceTest
         model.setName(getSafeEntry(index, NAMES));
         model.setDescription(getSafeEntry(index, DESCRIPTIONS));
         model.setType(getSafeEntry(index, TYPES).value());
-        model.setStorage(new Storage());
+        model.setStorage(new HostStorage());
         model.getStorage().setType(getSafeEntry(index, STORAGE_TYPES).value());
         model.getStorage().setAddress(getSafeEntry(index, ADDRESSES));
         model.getStorage().setPath(getSafeEntry(index, PATHS));

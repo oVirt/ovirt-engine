@@ -66,6 +66,7 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostDevice;
 import org.ovirt.engine.api.model.HostDevices;
 import org.ovirt.engine.api.model.HostNic;
+import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.Icon;
 import org.ovirt.engine.api.model.Image;
 import org.ovirt.engine.api.model.InstanceType;
@@ -106,7 +107,6 @@ import org.ovirt.engine.api.model.Session;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Step;
-import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageConnectionExtension;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -450,7 +450,7 @@ public class LinkHelper {
         TYPES.put(Snapshot.class, map);
 
         map = new ParentToCollectionMap(StorageResource.class, HostStorageResource.class, Host.class);
-        TYPES.put(Storage.class, map);
+        TYPES.put(HostStorage.class, map);
 
         map = new ParentToCollectionMap(StorageServerConnectionResource.class, StorageServerConnectionsResource.class);
         TYPES.put(StorageConnection.class, map);

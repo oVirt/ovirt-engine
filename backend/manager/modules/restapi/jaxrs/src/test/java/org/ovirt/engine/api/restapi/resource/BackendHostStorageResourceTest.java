@@ -7,7 +7,7 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.ovirt.engine.api.model.Storage;
+import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.resource.StorageResource;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostStorageResourceTest
-    extends AbstractBackendCollectionResourceTest<Storage, LUNs, BackendHostStorageResource> {
+    extends AbstractBackendCollectionResourceTest<HostStorage, LUNs, BackendHostStorageResource> {
 
     private static final Guid HOST_GUID = GUIDS[0];
     private static final int SINGLE_STORAGE_IDX = GUIDS.length - 2;
@@ -124,7 +124,7 @@ public class BackendHostStorageResourceTest
     }
 
     @Override
-    protected void verifyModel(Storage model, int index) {
+    protected void verifyModel(HostStorage model, int index) {
         assertEquals(StorageType.ISCSI.value(), model.getType());
         if (!model.isSetVolumeGroup()) {
             assertEquals(GUIDS[index].toString(), model.getId());
@@ -138,7 +138,7 @@ public class BackendHostStorageResourceTest
     }
 
     @Override
-    protected void verifyCollection(List<Storage> collection) throws Exception {
+    protected void verifyCollection(List<HostStorage> collection) throws Exception {
         assertNotNull(collection);
         assertEquals(NAMES.length * 2, collection.size());
         for (int i = 0; i < (NAMES.length * 2); i++) {
@@ -147,7 +147,7 @@ public class BackendHostStorageResourceTest
     }
 
     @Override
-    protected List<Storage> getCollection() {
-        return collection.list().getStorage();
+    protected List<HostStorage> getCollection() {
+        return collection.list().getHostStorages();
     }
 }

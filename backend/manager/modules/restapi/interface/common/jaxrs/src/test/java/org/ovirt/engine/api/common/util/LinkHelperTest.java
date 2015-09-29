@@ -34,10 +34,10 @@ import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Statistic;
-import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.Template;
@@ -166,7 +166,7 @@ public class LinkHelperTest extends Assert {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(STORAGE_DOMAIN_ID);
 
-        storageDomain.setStorage(new Storage());
+        storageDomain.setStorage(new HostStorage());
         storageDomain.getStorage().setPath("foo");
 
         LinkHelper.addLinks(setUpUriExpectations(), storageDomain);
@@ -360,7 +360,7 @@ public class LinkHelperTest extends Assert {
 
     @Test
     public void testStorageLinks() throws Exception {
-        Storage storage = new Storage();
+        HostStorage storage = new HostStorage();
         storage.setId(STORAGE_ID);
 
         storage.setHost(new Host());

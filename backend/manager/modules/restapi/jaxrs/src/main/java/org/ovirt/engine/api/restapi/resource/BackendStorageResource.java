@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import org.ovirt.engine.api.model.Storage;
+import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.resource.StorageResource;
 
 public class BackendStorageResource implements StorageResource {
@@ -14,7 +14,7 @@ public class BackendStorageResource implements StorageResource {
     }
 
     @Override
-    public Storage get() {
+    public HostStorage get() {
         return parent.lookupStorage(id);
     }
 }

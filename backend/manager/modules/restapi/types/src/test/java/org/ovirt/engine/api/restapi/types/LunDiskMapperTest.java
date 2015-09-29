@@ -8,7 +8,7 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskStatus;
-import org.ovirt.engine.api.model.Storage;
+import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 
 public class LunDiskMapperTest extends AbstractInvertibleMappingTest<Disk, LunDisk, LunDisk> {
@@ -22,7 +22,7 @@ public class LunDiskMapperTest extends AbstractInvertibleMappingTest<Disk, LunDi
         model.setFormat(MappingTestHelper.shuffle(DiskFormat.class).value());
         model.setInterface(MappingTestHelper.shuffle(DiskInterface.class).value());
         model.setStatus(StatusUtils.create(MappingTestHelper.shuffle(DiskStatus.class)));
-        model.setLunStorage(new Storage());
+        model.setLunStorage(new HostStorage());
         return model;
     }
 

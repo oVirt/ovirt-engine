@@ -1,18 +1,18 @@
 package org.ovirt.engine.api.restapi.types;
 
-import org.ovirt.engine.api.model.Storage;
+import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.VolumeGroup;
 
 
-public class StorageVolumeGroupMapperTest extends AbstractInvertibleMappingTest<Storage, org.ovirt.engine.core.common.businessentities.StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain> {
+public class StorageVolumeGroupMapperTest extends AbstractInvertibleMappingTest<HostStorage, org.ovirt.engine.core.common.businessentities.StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain> {
 
     public StorageVolumeGroupMapperTest() {
-        super(Storage.class, org.ovirt.engine.core.common.businessentities.StorageDomain.class, org.ovirt.engine.core.common.businessentities.StorageDomain.class);
+        super(HostStorage.class, org.ovirt.engine.core.common.businessentities.StorageDomain.class, org.ovirt.engine.core.common.businessentities.StorageDomain.class);
     }
 
     @Override
-    protected Storage postPopulate(Storage from) {
+    protected HostStorage postPopulate(HostStorage from) {
         from.setType(MappingTestHelper.shuffle(StorageType.class).value());
         from.setVolumeGroup(new VolumeGroup());
         from.getVolumeGroup().setId(from.getId());
@@ -20,7 +20,7 @@ public class StorageVolumeGroupMapperTest extends AbstractInvertibleMappingTest<
     }
 
     @Override
-    protected void verify(Storage model, Storage transform) {
+    protected void verify(HostStorage model, HostStorage transform) {
         assertNotNull(transform);
         assertEquals(model.getId(), transform.getId());
         assertEquals(model.getType(), transform.getType());

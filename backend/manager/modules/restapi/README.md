@@ -22,6 +22,7 @@ The following XML schema complex types have been renamed:
 - `DNS` - `Dns`
 - `HostNICStates` - `HostNicStates`
 - `HostNIC` - `HostNic`
+- `HostStorage` - `HostStorages`
 - `IO` - `Io`
 - `IP` - `Ip`
 - `IPs` - `Ips`
@@ -36,6 +37,7 @@ The following XML schema complex types have been renamed:
 - `SSHPublicKey` - `SshPublicKey`
 - `SSHPublicKeys` - `SshPublicKeys`
 - `SSH` - `Ssh`
+- `Storage` - `HostStorage`
 - `SupportedVersions` - `Versions`
 - `VCpuPin` - `VcpuPin`
 - `VLAN` - `Vlan`
@@ -639,3 +641,36 @@ matrix parameter:
 
     POST /storagedomains/{sd:id}/vms/{vm:id}/import;collapse_snapshots
     <action/>
+
+### Renamed `storage` and `host_storage` elements
+
+The host storage collection used the `storage` and `host_storage`
+elements and the `Storage` and `HostStorage` complex types to report the
+storage associated to a host:
+
+    GET /hosts/{host:id}/storage
+    <host_storage>
+      <storage>
+        ...
+      </storage>
+      <storage>
+        ...
+      </storage>
+      ...
+    </host_storage>
+
+This doesn't follow the pattern used in the rest of the API, where the
+outer element is a plural name and the inner element is the same name
+but in singular. This has now been changed to use `host_storages` as the
+outer element and `host_storage` as the inner element:
+
+    GET /hosts/{host:id}/storage
+    <host_storages>
+      <host_storage>
+        ...
+      </host_storage>
+      <host_storage>
+        ...
+      </host_storage>
+      ...
+    </host_storage>

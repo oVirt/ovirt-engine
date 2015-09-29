@@ -21,13 +21,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.ovirt.engine.api.model.HostStorage;
+import org.ovirt.engine.api.model.HostStorages;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface HostStorageResource {
 
     @GET
-    public HostStorage list();
+    public HostStorages list();
 
     /**
      * Sub-resource locator method, returns individual StorageResource on which the

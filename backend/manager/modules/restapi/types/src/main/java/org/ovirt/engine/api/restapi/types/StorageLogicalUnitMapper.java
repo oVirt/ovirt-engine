@@ -2,10 +2,10 @@ package org.ovirt.engine.api.restapi.types;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.LogicalUnits;
 import org.ovirt.engine.api.model.LunStatus;
-import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -61,9 +61,9 @@ public class StorageLogicalUnitMapper {
         return model;
     }
 
-    @Mapping(from = LUNs.class, to = Storage.class)
-    public static Storage map(LUNs entity, Storage template) {
-        Storage model = template != null ? template : new Storage();
+    @Mapping(from = LUNs.class, to = HostStorage.class)
+    public static HostStorage map(LUNs entity, HostStorage template) {
+        HostStorage model = template != null ? template : new HostStorage();
         model.setId(entity.getLUN_id());
         model.setType(StorageDomainMapper.map(entity.getLunType(), null));
         model.setLogicalUnits(new LogicalUnits());
@@ -74,8 +74,8 @@ public class StorageLogicalUnitMapper {
     /**
      * This mapping exists for adding a lun-disk, and assumes that 'storage' entity contains exactly one lun.
      */
-    @Mapping(from = Storage.class, to = LUNs.class)
-    public static LUNs map(Storage model, LUNs template) {
+    @Mapping(from = HostStorage.class, to = LUNs.class)
+    public static LUNs map(HostStorage model, LUNs template) {
         LUNs entity = template != null ? template : new LUNs();
         if (model.isSetLogicalUnits() && model.getLogicalUnits().isSetLogicalUnits()) {
             LogicalUnit logicalUnit = model.getLogicalUnits().getLogicalUnits().get(0);

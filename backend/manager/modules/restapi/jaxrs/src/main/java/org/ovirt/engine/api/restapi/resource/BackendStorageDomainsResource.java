@@ -11,9 +11,9 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
+import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.LogicalUnits;
-import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainStatus;
 import org.ovirt.engine.api.model.StorageDomains;
@@ -197,7 +197,7 @@ public class BackendStorageDomainsResource
                 "GetDeviceList", true);
     }
 
-    private ArrayList<String> getLunIds(Storage storage, StorageType storageType, Guid hostId) {
+    private ArrayList<String> getLunIds(HostStorage storage, StorageType storageType, Guid hostId) {
         List<LogicalUnit> logicalUnits = new ArrayList<LogicalUnit>();
 
         if (storage.isSetLogicalUnits() && storage.getLogicalUnits().isSetLogicalUnits()) {
@@ -259,7 +259,7 @@ public class BackendStorageDomainsResource
     @Override
     public Response add(StorageDomain storageDomain) {
         validateParameters(storageDomain, "host.id|name", "type", "storage");
-        Storage storageConnectionFromUser = storageDomain.getStorage();
+        HostStorage storageConnectionFromUser = storageDomain.getStorage();
         validateEnums(StorageDomain.class, storageDomain);
         Guid hostId = getHostId(storageDomain);
         StorageServerConnections cnx = null;
@@ -354,7 +354,7 @@ public class BackendStorageDomainsResource
 
     protected void mapFileDomain(StorageDomain model,
             org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
-        final Storage storage = model.getStorage();
+        final HostStorage storage = model.getStorage();
         StorageServerConnections cnx = getStorageServerConnection(entity.getStorage());
         if (cnx.getconnection().contains(":")) {
             String[] parts = cnx.getconnection().split(":");

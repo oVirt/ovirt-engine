@@ -2840,9 +2840,9 @@
   </xs:group>
 
 
-  <xs:element name="storage" type="Storage"/>
+  <xs:element name="host_storage" type="HostStorage"/>
 
-  <xs:complexType name="Storage">
+  <xs:complexType name="HostStorage">
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
@@ -2894,7 +2894,7 @@
           <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
           <xs:element name="external_status" type="Status" minOccurs="0" maxOccurs="1"/>
           <xs:element name="master" type="xs:boolean" minOccurs="0"/>
-          <xs:element ref="storage" minOccurs="0"/>
+          <xs:element name="storage" type="HostStorage" minOccurs="0"/>
           <!-- host is only relevant at creation and deletion time -->
           <xs:element ref="host" minOccurs="0"/>
           <!-- format is only relevant at deletion time -->
@@ -3923,7 +3923,7 @@
           <xs:element name="active" type="xs:boolean" minOccurs="0"/>
           <xs:element name="read_only" type="xs:boolean" minOccurs="0"/>
           <xs:element ref="quota" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="lun_storage" type="Storage" minOccurs="0"/>
+          <xs:element name="lun_storage" type="HostStorage" minOccurs="0"/>
           <xs:element name="sgio" type="xs:string" minOccurs="0"/>
           <xs:element name="uses_scsi_reservation" type="xs:boolean" minOccurs="0"/>
           <xs:element ref="snapshot" minOccurs="0" maxOccurs="1"/>
@@ -4343,13 +4343,19 @@
 
   <!-- Host Storage -->
 
-  <xs:element name="host_storage" type="HostStorage"/>
+  <xs:element name="host_storages" type="HostStorages"/>
 
-  <xs:complexType name="HostStorage">
+  <xs:complexType name="HostStorages">
     <xs:complexContent>
       <xs:extension base="BaseResources">
         <xs:sequence>
-          <xs:element ref="storage" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element ref="host_storage" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="HostStorages"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

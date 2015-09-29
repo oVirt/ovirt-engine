@@ -9,10 +9,10 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.LogicalUnits;
 import org.ovirt.engine.api.model.Snapshot;
-import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.resource.VmDiskResource;
@@ -425,7 +425,7 @@ public class BackendVmDisksResourceTest
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
             // Because of extra frame offset used current method name in test, while in real world used "add" method name
-            verifyIncompleteException(wae, "Storage", "testAddLunDisk_MissingType", "type");
+            verifyIncompleteException(wae, "HostStorage", "testAddLunDisk_MissingType", "type");
         }
     }
 
@@ -491,7 +491,7 @@ public class BackendVmDisksResourceTest
 
     private Disk createIscsiLunDisk() {
         Disk model = getModel(0);
-        model.setLunStorage(new Storage());
+        model.setLunStorage(new HostStorage());
         model.getLunStorage().setType("iscsi");
         model.getLunStorage().setLogicalUnits(new LogicalUnits());
         model.getLunStorage().getLogicalUnits().getLogicalUnits().add(new LogicalUnit());

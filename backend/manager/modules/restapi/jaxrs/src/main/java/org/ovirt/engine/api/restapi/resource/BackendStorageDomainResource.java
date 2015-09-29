@@ -16,8 +16,8 @@ import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Fault;
+import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.LogicalUnit;
-import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainStatus;
 import org.ovirt.engine.api.model.StorageDomainType;
@@ -266,7 +266,7 @@ public class BackendStorageDomainResource extends
         return super.deprecatedPopulate(model, entity);
     }
 
-    private List<LogicalUnit> getIncomingLuns(Storage storage) {
+    private List<LogicalUnit> getIncomingLuns(HostStorage storage) {
         // user may pass the LUNs under Storage, or Storage-->VolumeGroup; both are supported.
         if (!storage.isSetLogicalUnits() || !storage.getLogicalUnits().isSetLogicalUnits()) {
             if (storage.isSetVolumeGroup() && storage.getVolumeGroup().isSetLogicalUnits()

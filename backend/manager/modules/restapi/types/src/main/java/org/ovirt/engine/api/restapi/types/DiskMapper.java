@@ -9,11 +9,11 @@ import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.DiskStorageType;
+import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.OpenStackVolumeType;
 import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.ScsiGenericIO;
 import org.ovirt.engine.api.model.Snapshot;
-import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
@@ -177,7 +177,7 @@ public class DiskMapper {
                 entity.getDiskStorageType() == org.ovirt.engine.core.common.businessentities.storage.DiskStorageType.CINDER) {
             mapDiskImageToDiskFields((DiskImage) entity, model);
         } else {
-            model.setLunStorage(StorageLogicalUnitMapper.map(((LunDisk) entity).getLun(), new Storage()));
+            model.setLunStorage(StorageLogicalUnitMapper.map(((LunDisk) entity).getLun(), new HostStorage()));
             model.setUsesScsiReservation(((LunDisk) entity).isUsingScsiReservation());
             if (entity.getSgio() != null && entity.getDiskInterface() == map(DiskInterface.VIRTIO_SCSI, null)) {
                 model.setSgio(map(entity.getSgio(), null));
