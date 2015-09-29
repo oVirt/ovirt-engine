@@ -4925,10 +4925,6 @@
     <xs:complexContent>
       <xs:extension base="BaseResources">
         <xs:sequence>
-          <xs:element name="replica_count" type="xs:unsignedShort"
-            minOccurs="0" maxOccurs="1" />
-          <xs:element name="stripe_count" type="xs:unsignedShort"
-            minOccurs="0" maxOccurs="1" />
           <xs:element ref="brick" minOccurs="0" maxOccurs="unbounded">
             <xs:annotation>
               <xs:appinfo>

@@ -852,3 +852,14 @@ cluster only the `id` (and `href`) will be populated:
     </cluster>
 
 When creating or updating a cluster only the `id` will be accepted.
+
+### Removed the `bricks.replica_count` and `bricks.stripe_count` elements
+
+These elements aren't really part of the representation of a collection of
+bricks, but parameters of the operations to add and remove bricks. They have
+now been removed, and replaced by a new `replica_count` and `stripe_count`
+matrix parameters:
+
+    POST .../bricks;replica_count=3;stripe_count=2
+
+    DELETE .../bricks;replica_count=3

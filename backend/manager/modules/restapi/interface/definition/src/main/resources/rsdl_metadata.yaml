@@ -3413,11 +3413,24 @@ actions:
       parameterType: Bricks
       signatures:
       - mandatoryArguments:
-          brick--COLLECTION: {brick.server_id: 'xs:string', brick.brick_dir: 'xs:string'}
-        optionalArguments: {replica_count: 'xs:unsignedShort', stripe_count: 'xs:unsignedShort'}
+          brick--COLLECTION:
+            brick.server_id: xs:string
+            brick.brick_dir: xs:string
         description: add a new brick to the gluster volume attached to the cluster
     urlparams:
-      force: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      force:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
+      replica_count:
+        context: matrix
+        type: xs:unsignedShort
+        required: false
+      stripe_count:
+        context: matrix
+        type: xs:unsignedShort
+        required: false
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}|rel=get
   description: get the details of the specified brick in the gluster volume attached to the cluster
   request:
@@ -3430,9 +3443,14 @@ actions:
       parameterType: GlusterBricks
       signatures:
       - mandatoryArguments:
-          bricks--COLLECTION: {brick.id: 'xs:string'}
-        optionalArguments: {replica_count: 'xs:unsignedShort'}
+          bricks--COLLECTION:
+            brick.id: xs:string
         description: delete bricks in the gluster volume attached to the cluster
+    urlparams:
+      replica_count:
+        context: matrix
+        type: xs:unsignedShort
+        required: false
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/migrate|rel=migrate
   description: migrate the data from the brick to others and mark for deletion
   request:

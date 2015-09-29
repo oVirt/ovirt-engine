@@ -7,6 +7,7 @@ import java.util.List;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Fault;
@@ -38,6 +39,9 @@ public class BackendGlusterBricksResource
         extends AbstractBackendCollectionResource<GlusterBrick, GlusterBrickEntity>
         implements GlusterBricksResource {
     static final String[] SUB_COLLECTIONS = { "statistics" };
+
+    public static final String REPLICA_COUNT = "replica_count";
+    public static final String STRIPE_COUNT = "stripe_count";
 
     private BackendGlusterVolumeResource parent;
 
@@ -95,8 +99,8 @@ public class BackendGlusterBricksResource
         }
 
         List<GlusterBrickEntity> brickEntities = mapBricks(asGuid(getVolumeId()), bricks);
-        int replicaCount = bricks.isSetReplicaCount() ? bricks.getReplicaCount() : 0;
-        int stripeCount = bricks.isSetStripeCount() ? bricks.getStripeCount() : 0;
+        int replicaCount = QueryHelper.getIntegerMatrixParameter(uriInfo, REPLICA_COUNT, 0, 0);
+        int stripeCount = QueryHelper.getIntegerMatrixParameter(uriInfo, STRIPE_COUNT, 0, 0);
 
         return performCreationMultiple(VdcActionType.AddBricksToGlusterVolume,
                 new GlusterVolumeBricksActionParameters(asGuid(getVolumeId()),
@@ -158,7 +162,7 @@ public class BackendGlusterBricksResource
             }
         }
 
-        int replicaCount = bricks.isSetReplicaCount() ? bricks.getReplicaCount() : 0;
+        int replicaCount = QueryHelper.getIntegerMatrixParameter(uriInfo, STRIPE_COUNT, 0, 0);
 
         GlusterVolumeRemoveBricksParameters params = toParameters(bricks);
         params.setReplicaCount(replicaCount);
