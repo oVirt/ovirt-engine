@@ -140,7 +140,7 @@ public class HostMapper {
         }
         if (model.isSetPmProxies()) {
             List<FenceProxySourceType> fenceProxySources = new LinkedList<>();
-            for (PmProxy pmProxy : model.getPmProxies().getPmProxy()) {
+            for (PmProxy pmProxy : model.getPmProxies().getPmProxies()) {
                 fenceProxySources.add(FenceProxySourceType.forValue(pmProxy.getType()));
             }
             entity.setFenceProxySources(fenceProxySources);
@@ -389,7 +389,7 @@ public class HostMapper {
             for (FenceProxySourceType fenceProxySource : entity.getFenceProxySources()) {
                 PmProxy pmProxy = new PmProxy();
                 pmProxy.setType(fenceProxySource.getValue());
-                pmProxies.getPmProxy().add(pmProxy);
+                pmProxies.getPmProxies().add(pmProxy);
             }
             model.setPmProxies(pmProxies);
         }

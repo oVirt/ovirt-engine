@@ -158,9 +158,9 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         vds.setId(Guid.Empty);
         vds.setFenceProxySources(Arrays.asList(FenceProxySourceType.CLUSTER, FenceProxySourceType.DC));
         Host host = HostMapper.map(vds, (Host) null);
-        assertEquals(host.getPowerManagement().getPmProxies().getPmProxy().size(), 2);
-        assertTrue(host.getPowerManagement().getPmProxies().getPmProxy().get(0).getType().equalsIgnoreCase("cluster"));
-        assertTrue(host.getPowerManagement().getPmProxies().getPmProxy().get(1).getType().equalsIgnoreCase("dc"));
+        assertEquals(host.getPowerManagement().getPmProxies().getPmProxies().size(), 2);
+        assertTrue(host.getPowerManagement().getPmProxies().getPmProxies().get(0).getType().equalsIgnoreCase("cluster"));
+        assertTrue(host.getPowerManagement().getPmProxies().getPmProxies().get(1).getType().equalsIgnoreCase("dc"));
     }
 
     @Test

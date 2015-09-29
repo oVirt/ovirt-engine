@@ -5148,7 +5148,13 @@
   <xs:element name="pm_proxies" type="PmProxies"/>
   <xs:complexType name="PmProxies">
     <xs:sequence>
-      <xs:element ref="pm_proxy" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element ref="pm_proxy" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="PmProxies"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 

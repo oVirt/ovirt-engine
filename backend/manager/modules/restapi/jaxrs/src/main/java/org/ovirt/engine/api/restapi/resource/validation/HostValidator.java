@@ -16,7 +16,7 @@ public class HostValidator implements Validator<Host> {
     public void validateEnums(Host host) {
         if (host.isSetPowerManagement()) {
             if (host.getPowerManagement().isSetPmProxies()) {
-                for (PmProxy proxy : host.getPowerManagement().getPmProxies().getPmProxy()) {
+                for (PmProxy proxy : host.getPowerManagement().getPmProxies().getPmProxies()) {
                     validateEnum(PmProxyType.class, proxy.getType(), true);
                 }
             }
