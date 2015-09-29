@@ -4428,12 +4428,6 @@
 
   <xs:element name="tags" type="Tags"/>
 
-  <xs:complexType name="TagParent">
-    <xs:sequence>
-      <xs:element ref="tag" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
   <xs:complexType name="Tag">
     <xs:complexContent>
       <xs:extension base="BaseResource">
@@ -4443,7 +4437,7 @@
           <xs:element ref="template" minOccurs="0"/>
           <xs:element ref="user" minOccurs="0"/>
           <xs:element ref="group" minOccurs="0"/>
-          <xs:element name="parent" type="TagParent" minOccurs="0"/>
+          <xs:element name="parent" type="Tag" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

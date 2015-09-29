@@ -113,14 +113,14 @@ public class BackendTagResourceTest
                 getEntity(NEW_PARENT_IDX));
 
         Tag model = getModel(0);
-        model.getParent().getTag().setId(null);
-        model.getParent().getTag().setName(NAMES[PARENT_IDX]);
+        model.getParent().setId(null);
+        model.getParent().setName(NAMES[PARENT_IDX]);
 
         doTestMove(model, 0);
     }
 
     protected void doTestMove(Tag model, int index) throws Exception {
-        model.getParent().getTag().setId(NEW_PARENT_ID.toString());
+        model.getParent().setId(NEW_PARENT_ID.toString());
         setUpActionExpectations(VdcActionType.MoveTag,
                                 MoveTagParameters.class,
                                 new String[] { "TagId", "NewParentId" },

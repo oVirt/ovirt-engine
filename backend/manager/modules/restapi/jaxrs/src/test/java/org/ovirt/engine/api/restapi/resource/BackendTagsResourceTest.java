@@ -15,7 +15,6 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Tag;
-import org.ovirt.engine.api.model.TagParent;
 import org.ovirt.engine.api.restapi.resource.BaseBackendResource.WebFaultException;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -112,8 +111,8 @@ public class BackendTagsResourceTest
                                   getEntity(0));
 
         Tag model = getModel(0);
-        model.getParent().getTag().setId(null);
-        model.getParent().getTag().setName(NAMES[PARENT_IDX]);
+        model.getParent().setId(null);
+        model.getParent().setName(NAMES[PARENT_IDX]);
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
@@ -240,9 +239,8 @@ public class BackendTagsResourceTest
         model.setName(NAMES[index]);
         model.setDescription(DESCRIPTIONS[index]);
         if (includeParent) {
-            model.setParent(new TagParent());
-            model.getParent().setTag(new Tag());
-            model.getParent().getTag().setId(PARENT_GUID.toString());
+            model.setParent(new Tag());
+            model.getParent().setId(PARENT_GUID.toString());
         }
         return model;
     }
@@ -268,8 +266,7 @@ public class BackendTagsResourceTest
 
     static void verifyParent(Tag model, String parentId) {
         assertNotNull(model.getParent());
-        assertNotNull(model.getParent().getTag());
-        assertEquals(parentId, model.getParent().getTag().getId());
+        assertEquals(parentId, model.getParent().getId());
     }
 
     protected void verifyRoot(Tag root) {

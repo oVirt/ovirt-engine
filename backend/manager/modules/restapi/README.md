@@ -772,3 +772,24 @@ reported as follows:
 
 Note the use of `required_rng_source` and `supported_rng_source` instead
 of just `source`.
+
+### Removed the intermediate `tag.parent` element
+
+The relationship bettween a tag and it's parent tag used to be
+represented using an intermedite `parent` tag, that in turn contains
+another `tag` element:
+
+    <tag>
+      <name>mytag</name>
+      <parent>
+        <tag id="..." href="..."/>
+      </parent>
+    </tag>
+
+This structure has been simplified so that only one `parent` element is
+used now:
+
+    <tag>
+      <name>mytag</name>
+      <parent id="..." href="..."/>
+    </tag>

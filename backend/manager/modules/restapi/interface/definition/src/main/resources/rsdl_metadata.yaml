@@ -2725,8 +2725,10 @@ actions:
     body:
       parameterType: Tag
       signatures:
-      - mandatoryArguments: {}
-        optionalArguments: {tag.name: 'xs:string', tag.description: 'xs:string', tag.parent.tag.id|name: 'xs:string'}
+      - optionalArguments:
+          tag.name: xs:string
+          tag.description: xs:string
+          tag.parent.id|name: xs:string
         description: update the name, description or parent tag of the specified tag in the system
 - name: /tags|rel=add
   description: add a new tag to the system
@@ -2734,8 +2736,11 @@ actions:
     body:
       parameterType: Tag
       signatures:
-      - mandatoryArguments: {tag.name: 'xs:string'}
-        optionalArguments: {tag.description: 'xs:string', tag.parent.tag.id|name: 'xs:string'}
+      - mandatoryArguments:
+          tag.name: xs:string
+        optionalArguments:
+          tag.description: xs:string
+          tag.parent.id|name: xs:string
 - name: /templates|rel=get
   description: get the list of all templates in the system
   request:

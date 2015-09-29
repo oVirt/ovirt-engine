@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.Tag;
-import org.ovirt.engine.api.model.TagParent;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.compat.Guid;
@@ -35,20 +34,17 @@ public class TagMapper {
     }
 
     private static Guid parent(Tag model, Guid current) {
-        if (model.isSetParent() &&
-            model.getParent().isSetTag() &&
-            model.getParent().getTag().isSetId()) {
-            return GuidUtils.asGuid(model.getParent().getTag().getId());
+        if (model.isSetParent() && model.getParent().isSetId()) {
+            return GuidUtils.asGuid(model.getParent().getId());
         } else {
             return current == null ? Guid.Empty : current;
         }
     }
 
-    private static TagParent parent(Tags entity) {
+    private static Tag parent(Tags entity) {
         if (entity.getparent_id() != null) {
-            TagParent parent = new TagParent();
-            parent.setTag(new Tag());
-            parent.getTag().setId(entity.getparent_id().toString());
+            Tag parent = new Tag();
+            parent.setId(entity.getparent_id().toString());
             return parent;
         } else {
             return null;

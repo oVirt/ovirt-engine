@@ -40,7 +40,7 @@ public class BackendTagsResource
         validateParameters(tag, "name");
 
         if (isSetParentName(tag)) {
-            tag.getParent().getTag().setId(getParentId(tag));
+            tag.getParent().setId(getParentId(tag));
         }
 
         return performCreate(VdcActionType.AddTag,
@@ -65,11 +65,11 @@ public class BackendTagsResource
     }
 
     boolean isSetParentName(Tag tag) {
-        return tag.isSetParent() && tag.getParent().isSetTag() && tag.getParent().getTag().isSetName();
+        return tag.isSetParent() && tag.getParent().isSetName();
     }
 
     String getParentId(Tag tag) {
-        return lookupTagByName(tag.getParent().getTag().getName()).gettag_id().toString();
+        return lookupTagByName(tag.getParent().getName()).gettag_id().toString();
     }
 
     protected Tags lookupTagByName(String name) {

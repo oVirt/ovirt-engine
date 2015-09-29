@@ -38,16 +38,13 @@ public class BackendTagResource
     @Override
     public Tag update(Tag incoming) {
         if (parent.isSetParentName(incoming)) {
-            incoming.getParent().getTag().setId(parent.getParentId(incoming));
+            incoming.getParent().setId(parent.getParentId(incoming));
         }
 
         Tag existingTag = get();
-        String existingTagParentId =
-                existingTag.isSetParent() && existingTag.getParent().isSetTag() && existingTag.getParent().getTag().isSetId() ? existingTag.getParent()
-                        .getTag()
-                        .getId() : null;
-        if (isSetParent(incoming) && !incoming.getParent().getTag().getId().equals(existingTagParentId)) {
-            moveTag(asGuid(incoming.getParent().getTag().getId()));
+        String existingTagParentId = existingTag.isSetParent()? existingTag.getParent().getId(): null;
+        if (isSetParent(incoming) && !incoming.getParent().getId().equals(existingTagParentId)) {
+            moveTag(asGuid(incoming.getParent().getId()));
         }
 
         return performUpdate(incoming,
@@ -67,7 +64,7 @@ public class BackendTagResource
     }
 
     protected boolean isSetParent(Tag tag) {
-        return tag.isSetParent() && tag.getParent().isSetTag() && tag.getParent().getTag().isSetId();
+        return tag.isSetParent() && tag.getParent().isSetId();
     }
 
     protected class UpdateParametersProvider implements ParametersProvider<Tag, Tags> {
