@@ -50,7 +50,7 @@ public class BackendSchedulingPoliciesResource extends AbstractBackendCollection
     protected SchedulingPolicies mapCollection(List<ClusterPolicy> entities) {
         SchedulingPolicies collection = new SchedulingPolicies();
         for (ClusterPolicy entity : entities) {
-            collection.getSchedulingPolicy().add(addLinks(populate(map(entity), entity)));
+            collection.getSchedulingPolicies().add(addLinks(populate(map(entity), entity)));
         }
         return collection;
     }
