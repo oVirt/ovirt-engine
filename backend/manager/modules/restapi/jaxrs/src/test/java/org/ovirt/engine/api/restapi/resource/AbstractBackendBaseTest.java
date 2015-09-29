@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
@@ -189,12 +190,14 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected UriInfo addMatrixParameterExpectations(UriInfo mockUriInfo, String parameterName, String parameterValue) {
+        return addMatrixParameterExpectations(mockUriInfo, Collections.singletonMap(parameterName, parameterValue));
+    }
+
+    protected UriInfo addMatrixParameterExpectations(UriInfo mockUriInfo, Map<String, String> parameters) {
         MultivaluedMap<String, String> matrixParams = new SimpleMultivaluedMap<>();
-        List<String> parameterValues = null;
-        if (parameterValue != null) {
-            parameterValues = Collections.singletonList(parameterValue);
+        for (Map.Entry<String, String> entry : parameters.entrySet()) {
+            matrixParams.putSingle(entry.getKey(), entry.getValue());
         }
-        matrixParams.put(parameterName, parameterValues);
         PathSegment segment = control.createMock(PathSegment.class);
         expect(segment.getMatrixParameters()).andReturn(matrixParams).anyTimes();
         expect(mockUriInfo.getPathSegments()).andReturn(Arrays.asList(segment)).anyTimes();
