@@ -1803,7 +1803,24 @@
           <xs:element ref="display" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="ksm" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="serial_number" minOccurs="0" maxOccurs="1" />
-          <xs:element name="required_rng_sources" type="RngSources" minOccurs="0" maxOccurs="1" />
+          <xs:element name="required_rng_sources" minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+              <xs:annotation>
+                <xs:appinfo>
+                  <jaxb:class name="RequiredRngSourcesList"/>
+                </xs:appinfo>
+              </xs:annotation>
+              <xs:sequence>
+                <xs:element name="required_rng_source" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+                  <xs:annotation>
+                    <xs:appinfo>
+                      <jaxb:property name="RequiredRngSources"/>
+                    </xs:appinfo>
+                  </xs:annotation>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
           <xs:element ref="fencing_policy"  minOccurs="0" maxOccurs="1"/>
           <xs:element ref="migration" minOccurs="0" maxOccurs="1" />
           <xs:element name="management_network" type="Network" minOccurs="0" maxOccurs="1"/>
@@ -1904,7 +1921,24 @@
       <xs:element name="product_name" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="uuid" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="family" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="supported_rng_sources" type="RngSources" minOccurs="0" maxOccurs="1" />
+      <xs:element name="supported_rng_sources" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:class name="SupportedRngSourcesList"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:sequence>
+            <xs:element name="supported_rng_source" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+              <xs:annotation>
+                <xs:appinfo>
+                  <jaxb:property name="SupportedRngSources"/>
+                </xs:appinfo>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
@@ -3115,11 +3149,9 @@
 
   <xs:element name="rng_sources" type="RngSources" />
 
-  <xs:element name="source" type="xs:string" />
-
   <xs:complexType name="RngSources">
     <xs:sequence>
-      <xs:element ref="source" minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="source" type="xs:string" minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="RngSources" />
@@ -3134,7 +3166,7 @@
   <xs:complexType name="RngDevice">
     <xs:sequence>
       <xs:element name="rate" type="Rate" minOccurs="0" maxOccurs="1"/>
-      <xs:element ref="source" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="source" type="xs:string" minOccurs="1" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
 

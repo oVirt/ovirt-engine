@@ -27,8 +27,8 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
         policy.setPolicy(NONE);
         model.setSchedulingPolicy(policy);
         model.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM.value());
-        model.getRequiredRngSources().getRngSources().clear();
-        model.getRequiredRngSources().getRngSources().add(RngSource.RANDOM.name());
+        model.getRequiredRngSources().getRequiredRngSources().clear();
+        model.getRequiredRngSources().getRequiredRngSources().add(RngSource.RANDOM.name());
         model.getSchedulingPolicy().setPolicy(NONE);
         model.getSchedulingPolicy().setName(NONE);
         return model;

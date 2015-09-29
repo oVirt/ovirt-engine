@@ -26,7 +26,7 @@ public class ClusterValidator implements Validator<Cluster> {
                 validateEnum(MigrateOnError.class, cluster.getErrorHandling().getOnError(), true);
             }
             if (cluster.isSetRequiredRngSources()) {
-                for (String rngSourceStr : cluster.getRequiredRngSources().getRngSources()) {
+                for (String rngSourceStr : cluster.getRequiredRngSources().getRequiredRngSources()) {
                     validateEnum(RngSource.class, rngSourceStr, true);
                 }
             }

@@ -710,3 +710,65 @@ matrix parameter:
     <template>
       <vm id="..."/>
     </template>
+
+### Renamed the random number generator `source` elements
+
+The random number generator sources used to be reported using a
+collection of `source` elements wrapped by an element with a name
+reflecting its use. For example, the required random number generator
+sources of a cluster used to be reported as follows:
+
+    GET /clusters/{cluster:id}
+    <cluster>
+      ...
+      <required_rng_sources>
+        <source>RANDOM</source>
+      </required_rng_sources>
+      ...
+    </cluster>
+
+And the random number generator sources suported by a host used to be
+reported as follows:
+
+    GET /hosts/{host:id}
+    <host>
+      ...
+      <hardware_information>
+        <supported_rng_sources>
+          <source>RANDOM</source>
+        </supported_rng_sources>
+      </hardware_information>
+      ...
+    </host>
+
+This isn't consistent with the rest of the API, where collections are
+wrapped by a name in plural and elements by the same name in singular.
+This has been now fixed. The required random number generator sources
+will now be reported as follows:
+
+    GET /clusters/{cluster:id}
+    <cluster>
+      ...
+      <required_rng_sources>
+        <required_rng_sourcesRANDOM</required_rng_source>
+      </required_rng_sources>
+      ...
+    </cluster>
+
+
+And the random number generator sources supported by a host will be
+reported as follows:
+
+    GET /hosts/{host:id}
+    <host>
+      ...
+      <hardware_information>
+        <supported_rng_sources>
+          <supported_rng_source>RANDOM</supported_rng_source>
+        </supported_rng_sources>
+      </hardware_information>
+      ...
+    </host>
+
+Note the use of `required_rng_source` and `supported_rng_source` instead
+of just `source`.

@@ -7,7 +7,6 @@ import java.util.List;
 import org.ovirt.engine.api.model.Rate;
 import org.ovirt.engine.api.model.RngDevice;
 import org.ovirt.engine.api.model.RngSource;
-import org.ovirt.engine.api.model.RngSources;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 
 public class RngDeviceMapper {
@@ -32,7 +31,6 @@ public class RngDeviceMapper {
         return model;
     }
 
-    @Mapping(from = VmRngDevice.Source.class, to = RngSource.class)
     public static RngSource map(VmRngDevice.Source backend, RngSource rest) {
         if (backend != null) {
             return RngSource.fromValue(backend.name());
@@ -74,11 +72,10 @@ public class RngDeviceMapper {
         return null;
     }
 
-    @Mapping(from = RngSources.class, to = VmRngDevice.Source.class)
-    public static List<VmRngDevice.Source> mapRngSources(RngSources model, List<VmRngDevice.Source> template) {
-        if (model.getRngSources() != null) {
-            List<VmRngDevice.Source> result = new ArrayList<>();
-            for (String sourceString : model.getRngSources()) {
+    public static List<VmRngDevice.Source> mapRngSources(List<String> model) {
+        List<VmRngDevice.Source> result = new ArrayList<>(model != null? model.size(): 0);
+        if (model != null) {
+            for (String sourceString : model) {
                 try {
                     RngSource source = RngSource.fromValue(sourceString);
                     result.add(map(source, null));
@@ -86,25 +83,18 @@ public class RngDeviceMapper {
                     // do nothing - we have illegal string here
                 }
             }
-            return result;
         }
-
-        return null;
+        return result;
     }
 
-    @Mapping(from = VmRngDevice.Source.class, to = RngSources.class)
-    public static RngSources mapRngSources(Collection<VmRngDevice.Source> entity, RngSources template) {
-        RngSources result = (template == null)
-                ? new RngSources()
-                : template;
-
+    public static List<String> mapRngSources(Collection<VmRngDevice.Source> entity) {
+        List<String> result = new ArrayList<>(entity != null ? entity.size(): 0);
         if (entity != null) {
             for (VmRngDevice.Source source : entity) {
                 RngSource restSource = map(source, null);
-                result.getRngSources().add(restSource.name());
+                result.add(restSource.name());
             }
         }
-
         return result;
     }
 
