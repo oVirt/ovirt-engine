@@ -4,7 +4,7 @@ BUILD_UT=0
 SUFFIX=".git$(git rev-parse --short HEAD)"
 MAVEN_SETTINGS="/etc/maven/settings.xml"
 export BUILD_JAVA_OPTS_MAVEN="\
-    -Dgwt.compiler.localWorkers=2 \
+    -Dgwt.compiler.localWorkers=1 \
 "
 export EXTRA_BUILD_FLAGS="-gs $MAVEN_SETTINGS"
 export BUILD_JAVA_OPTS_GWT="\
