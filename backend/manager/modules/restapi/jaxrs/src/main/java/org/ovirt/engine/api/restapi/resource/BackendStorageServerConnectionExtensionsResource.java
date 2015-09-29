@@ -35,7 +35,7 @@ public class BackendStorageServerConnectionExtensionsResource
     private StorageConnectionExtensions mapCollection(List<StorageServerConnectionExtension> connectionExtensions) {
         StorageConnectionExtensions mappedConnectionExtensions = new StorageConnectionExtensions();
         for (StorageServerConnectionExtension connectionExtension : connectionExtensions) {
-            mappedConnectionExtensions.getStorageConnectionExtension().add(addLinks(populate(map(connectionExtension), connectionExtension)));
+            mappedConnectionExtensions.getStorageConnectionExtensions().add(addLinks(populate(map(connectionExtension), connectionExtension)));
         }
 
         return mappedConnectionExtensions;

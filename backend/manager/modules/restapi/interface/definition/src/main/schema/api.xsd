@@ -2705,13 +2705,19 @@
   <xs:element name="storage_connection_extension" type="StorageConnectionExtension"/>
 
   <xs:complexType name="StorageConnectionExtensions">
-      <xs:complexContent>
-          <xs:extension base="BaseResources">
-              <xs:sequence>
-                  <xs:element ref="storage_connection_extension" minOccurs="0" maxOccurs="unbounded"/>
-              </xs:sequence>
-          </xs:extension>
-      </xs:complexContent>
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="storage_connection_extension" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="StorageConnectionExtensions"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="StorageConnectionExtension">

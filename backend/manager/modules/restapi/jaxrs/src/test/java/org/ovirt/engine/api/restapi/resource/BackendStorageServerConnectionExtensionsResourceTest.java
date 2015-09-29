@@ -28,7 +28,7 @@ public class BackendStorageServerConnectionExtensionsResourceTest extends Abstra
     }
 
     @Override protected List<StorageConnectionExtension> getCollection() {
-        return collection.list().getStorageConnectionExtension();
+        return collection.list().getStorageConnectionExtensions();
     }
 
     @Test
