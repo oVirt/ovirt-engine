@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.FencingPolicy;
 import org.ovirt.engine.api.model.SkipIfConnectivityBroken;
-import org.ovirt.engine.api.model.SkipIfSDActive;
+import org.ovirt.engine.api.model.SkipIfSdActive;
 
 public class FencingPolicyMapper {
     @Mapping(from = FencingPolicy.class, to = org.ovirt.engine.core.common.businessentities.FencingPolicy.class)
@@ -27,7 +27,7 @@ public class FencingPolicyMapper {
     @Mapping(from = org.ovirt.engine.core.common.businessentities.FencingPolicy.class, to = FencingPolicy.class)
     public static FencingPolicy map(org.ovirt.engine.core.common.businessentities.FencingPolicy entity, FencingPolicy template) {
         FencingPolicy model = template != null ? template : new FencingPolicy();
-        SkipIfSDActive skipIfSdActive = new SkipIfSDActive();
+        SkipIfSdActive skipIfSdActive = new SkipIfSdActive();
         SkipIfConnectivityBroken skipIfConnBroken = new SkipIfConnectivityBroken();
         skipIfSdActive.setEnabled(entity.isSkipFencingIfSDActive());
         skipIfConnBroken.setEnabled(entity.isSkipFencingIfConnectivityBroken());

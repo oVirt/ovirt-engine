@@ -1486,7 +1486,7 @@
 
   <xs:element name="fencing_policy" type="FencingPolicy"/>
 
-  <xs:element name="skip_if_sd_active" type="SkipIfSDActive"/>
+  <xs:element name="skip_if_sd_active" type="SkipIfSdActive"/>
 
   <xs:element name="skip_if_connectivity_broken" type="SkipIfConnectivityBroken"/>
 
@@ -1497,7 +1497,7 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="SkipIfSDActive">
+  <xs:complexType name="SkipIfSdActive">
     <xs:sequence>
       <xs:element name="enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>

@@ -37,6 +37,7 @@ The following XML schema complex types have been renamed:
 - `SSHPublicKey` - `SshPublicKey`
 - `SSHPublicKeys` - `SshPublicKeys`
 - `SSH` - `Ssh`
+- `SkipIfSDActive` - `SkipIfSdActive`
 - `Storage` - `HostStorage`
 - `SupportedVersions` - `Versions`
 - `VCpuPin` - `VcpuPin`
