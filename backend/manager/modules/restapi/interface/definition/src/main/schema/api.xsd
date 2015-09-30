@@ -4218,11 +4218,11 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="nic_configuration" type="GuestNicConfiguration"/>
+  <xs:element name="nic_configuration" type="NicConfiguration"/>
 
-  <xs:element name="nic_configurations" type="GuestNicsConfiguration"/>
+  <xs:element name="nic_configurations" type="NicConfigurations"/>
 
-  <xs:complexType name="GuestNicConfiguration">
+  <xs:complexType name="NicConfiguration">
     <xs:sequence>
       <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element ref="ip" minOccurs="0" maxOccurs="1"/>
@@ -4231,7 +4231,7 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="GuestNicsConfiguration">
+  <xs:complexType name="NicConfigurations">
     <xs:sequence>
       <xs:element ref="nic_configuration" minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>

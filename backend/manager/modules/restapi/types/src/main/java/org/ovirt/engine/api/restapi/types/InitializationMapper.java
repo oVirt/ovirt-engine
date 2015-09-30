@@ -5,18 +5,18 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.BootProtocol;
-import org.ovirt.engine.api.model.GuestNicConfiguration;
-import org.ovirt.engine.api.model.GuestNicsConfiguration;
 import org.ovirt.engine.api.model.Initialization;
 import org.ovirt.engine.api.model.Ip;
+import org.ovirt.engine.api.model.NicConfiguration;
+import org.ovirt.engine.api.model.NicConfigurations;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 
 
 public class InitializationMapper {
-    @Mapping(from = GuestNicConfiguration.class, to = VmInitNetwork.class)
-    public static VmInitNetwork map(GuestNicConfiguration model, VmInitNetwork template) {
+    @Mapping(from = NicConfiguration.class, to = VmInitNetwork.class)
+    public static VmInitNetwork map(NicConfiguration model, VmInitNetwork template) {
         VmInitNetwork entity = template != null ? template : new VmInitNetwork();
 
         if (model.isSetName()) {
@@ -47,9 +47,9 @@ public class InitializationMapper {
         return entity;
     }
 
-    @Mapping(from = VmInitNetwork.class, to = GuestNicConfiguration.class)
-    public static GuestNicConfiguration map(VmInitNetwork entity, GuestNicConfiguration template) {
-        GuestNicConfiguration model = template != null ? template : new GuestNicConfiguration();
+    @Mapping(from = VmInitNetwork.class, to = NicConfiguration.class)
+    public static NicConfiguration map(VmInitNetwork entity, NicConfiguration template) {
+        NicConfiguration model = template != null ? template : new NicConfiguration();
 
         model.setName(entity.getName());
         model.setOnBoot(entity.getStartOnBoot());
@@ -111,7 +111,7 @@ public class InitializationMapper {
 
         if (model.isSetNicConfigurations()) {
             List<VmInitNetwork> networks = new ArrayList<VmInitNetwork>();
-            for (GuestNicConfiguration nic : model.getNicConfigurations().getNicConfigurations()) {
+            for (NicConfiguration nic : model.getNicConfigurations().getNicConfigurations()) {
                 networks.add(map(nic, null));
             }
             entity.setNetworks(networks);
@@ -183,7 +183,7 @@ public class InitializationMapper {
             model.setCustomScript(entity.getCustomScript());
         }
         if (entity.getNetworks() != null) {
-            model.setNicConfigurations(new GuestNicsConfiguration());
+            model.setNicConfigurations(new NicConfigurations());
             for (VmInitNetwork network : entity.getNetworks()) {
                 model.getNicConfigurations().getNicConfigurations().add(map(network, null));
             }

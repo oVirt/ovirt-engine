@@ -13,10 +13,10 @@ import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.CpuTune;
 import org.ovirt.engine.api.model.DisplayDisconnectAction;
 import org.ovirt.engine.api.model.DisplayType;
-import org.ovirt.engine.api.model.GuestNicConfiguration;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Hosts;
 import org.ovirt.engine.api.model.InheritableBoolean;
+import org.ovirt.engine.api.model.NicConfiguration;
 import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.SerialNumberPolicy;
 import org.ovirt.engine.api.model.Session;
@@ -104,7 +104,7 @@ public class VmMapperTest extends
         // VmPlacement - multiple hosts
         from.setPlacementPolicy(createPlacementPolicy(Guid.EVERYONE, Guid.SYSTEM));
         // Guest Nics configurations
-        for (GuestNicConfiguration guestNic : from.getInitialization().getNicConfigurations().getNicConfigurations()) {
+        for (NicConfiguration guestNic : from.getInitialization().getNicConfigurations().getNicConfigurations()) {
             guestNic.setBootProtocol(MappingTestHelper.shuffle(BootProtocol.class).value());
         }
         from.getDisplay().setType("spice");
