@@ -4747,7 +4747,24 @@
         <xs:sequence>
           <xs:element ref="cluster" minOccurs="0" maxOccurs="1"/>
           <xs:element name="volume_type" type="xs:string" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="transport_types" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="transport_types" minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+              <xs:annotation>
+                <xs:appinfo>
+                  <jaxb:class name="TransportTypesList"/>
+                </xs:appinfo>
+              </xs:annotation>
+              <xs:sequence>
+                <xs:element name="transport_type" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+                  <xs:annotation>
+                    <xs:appinfo>
+                      <jaxb:property name="TransportTypes"/>
+                    </xs:appinfo>
+                  </xs:annotation>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
           <xs:element name="replica_count" type="xs:unsignedShort" minOccurs="0" maxOccurs="1"/>
           <xs:element name="stripe_count" type="xs:unsignedShort" minOccurs="0" maxOccurs="1"/>
           <xs:element name="disperse_count" type="xs:unsignedShort" minOccurs="0" maxOccurs="1"/>

@@ -11,7 +11,6 @@ import org.ovirt.engine.api.model.GlusterVolumeType;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
 import org.ovirt.engine.api.model.TransportType;
-import org.ovirt.engine.api.model.TransportTypes;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -97,7 +96,7 @@ public class GlusterVolumeMapper {
             for (org.ovirt.engine.core.common.businessentities.gluster.TransportType transportType : fromVolume.getTransportTypes()) {
                 transportTypeList.add(map(transportType, null));
             }
-            volume.setTransportTypes(new TransportTypes());
+            volume.setTransportTypes(new GlusterVolume.TransportTypesList());
             volume.getTransportTypes()
                     .getTransportTypes()
                     .addAll(transportTypeList);
