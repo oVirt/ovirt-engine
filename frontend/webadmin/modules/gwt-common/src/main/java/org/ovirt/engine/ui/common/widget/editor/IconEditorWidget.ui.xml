@@ -76,9 +76,7 @@
                               addStyleNames="{style.inline-block} {style.iconButton}"/>
                     <d:InfoIcon ui:field="uploadInfoIcon"
                                 addStyleNames="{style.inline-block} {style.iconInfoIcon}"/>
-                    <g:HTMLPanel addStyleNames="{style.hidden}">
-                        <g:FileUpload ui:field="fileUpload"/>
-                    </g:HTMLPanel>
+                    <g:HTMLPanel ui:field="hiddenPanel" addStyleNames="{style.hidden}" />
                 </g:FlowPanel>
                 <g:Button ui:field="defaultButton" text="{constants.useDefaultIconVmPopup}"
                           addStyleNames="{style.iconButton}"/>
