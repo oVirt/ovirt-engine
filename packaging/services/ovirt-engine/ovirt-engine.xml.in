@@ -364,8 +364,7 @@
         <cache-container
            name="ovirt-engine"
            default-cache="timeout-base"
-           jndi-name="java:jboss/infinispan/ovirt-engine"
-           start="EAGER">
+           jndi-name="java:jboss/infinispan/ovirt-engine">
          <local-cache name="timeout-base">
            <transaction mode="NONE"/>
            <eviction max-entries="10000"/>
@@ -398,7 +397,6 @@
       <cache-container
           name="ovirt-engine"
           default-cache="timeout-base"
-          start="EAGER"
           jndi-name="java:jboss/infinispan/ovirt-engine">
         <local-cache name="timeout-base">
           <transaction mode="NONE"/>
