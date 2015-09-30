@@ -54,6 +54,8 @@ _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 def tolist(s):
+    if not s:
+        return []
     return [e.strip() for e in s.split(',')]
 
 

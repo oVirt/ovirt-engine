@@ -65,6 +65,8 @@ class Plugin(plugin.PluginBase):
     )
     def _customization(self):
         def tolist(s):
+            if not s:
+                return []
             return [e.strip() for e in s.split(',')]
 
         self.environment[

@@ -334,4 +334,11 @@ class ApacheEnv(object):
     NEED_RESTART = 'OVESETUP_APACHE/needRestart'
 
 
+@util.export
+@util.codegen
+@osetupattrsclass
+class RPMDistroEnv(object):
+    OVIRT_JBOSS_PACKAGES = 'OVESETUP_RPMDISTRO/jbossPackages'
+
+
 # vim: expandtab tabstop=4 shiftwidth=4
