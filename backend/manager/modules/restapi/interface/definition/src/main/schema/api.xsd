@@ -6001,20 +6001,6 @@
 
   <xs:element name="openstack_subnets" type="OpenStackSubnets"/>
 
-  <xs:element name="dns_servers" type="DnsServers"/>
-
-  <xs:complexType name="DnsServers">
-    <xs:sequence>
-      <xs:element name="dns_server" type="xs:string" minOccurs="0" maxOccurs="unbounded">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property name="DnsServers"/>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-
   <xs:complexType name="OpenStackSubnet">
     <xs:complexContent>
       <xs:extension base="BaseResource">
@@ -6022,7 +6008,24 @@
           <xs:element name="cidr" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="ip_version" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="gateway" type="xs:string" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="dns_servers" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="dns_servers" minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+              <xs:annotation>
+                <xs:appinfo>
+                  <jaxb:class name="DnsServersList"/>
+                </xs:appinfo>
+              </xs:annotation>
+              <xs:sequence>
+                <xs:element name="dns_server" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+                  <xs:annotation>
+                    <xs:appinfo>
+                      <jaxb:property name="DnsServers"/>
+                    </xs:appinfo>
+                  </xs:annotation>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
           <xs:element ref="openstack_network" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>

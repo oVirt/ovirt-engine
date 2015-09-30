@@ -19,7 +19,6 @@ package org.ovirt.engine.api.restapi.types.openstack;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.api.model.DnsServers;
 import org.ovirt.engine.api.model.OpenStackSubnet;
 import org.ovirt.engine.api.restapi.types.IpVersion;
 import org.ovirt.engine.api.restapi.types.IpVersionMapper;
@@ -47,7 +46,7 @@ public class OpenStackSubnetMapper {
         }
         List<String> entityDnsServers = entity.getDnsServers();
         if (entityDnsServers != null && !entityDnsServers.isEmpty()) {
-            DnsServers modelDnsServers = new DnsServers();
+            OpenStackSubnet.DnsServersList modelDnsServers = new OpenStackSubnet.DnsServersList();
             for (String entityDnsServer : entityDnsServers) {
                 modelDnsServers.getDnsServers().add(entityDnsServer);
             }
