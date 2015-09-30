@@ -19,7 +19,7 @@ public class PolicyUnitMapper {
         model.setEnabled(entity.isEnabled());
         model.setInternal(entity.isInternal());
         if (entity.getParameterRegExMap() != null && !entity.getParameterRegExMap().isEmpty()) {
-            model.setPropertiesMetaData(CustomPropertiesParser.fromMap(entity.getParameterRegExMap()));
+            model.setProperties(CustomPropertiesParser.fromMap(entity.getParameterRegExMap()));
         }
 
         return model;
@@ -49,8 +49,8 @@ public class PolicyUnitMapper {
         if (model.isSetInternal()) {
             entity.setInternal(model.isInternal());
         }
-        if (model.isSetPropertiesMetaData()) {
-            entity.setParameterRegExMap(CustomPropertiesParser.toMap(model.getPropertiesMetaData()));
+        if (model.isSetProperties()) {
+            entity.setParameterRegExMap(CustomPropertiesParser.toMap(model.getProperties()));
         }
 
         return entity;

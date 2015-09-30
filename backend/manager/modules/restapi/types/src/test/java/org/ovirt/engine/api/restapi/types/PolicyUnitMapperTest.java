@@ -21,9 +21,9 @@ public class PolicyUnitMapperTest extends AbstractInvertibleMappingTest<Scheduli
         assertEquals(model.getDescription(), transform.getDescription());
         assertEquals(model.getType(), transform.getType());
         assertEquals(model.isEnabled(), transform.isEnabled());
-        assertNotNull(model.getPropertiesMetaData());
-        assertEquals(CustomPropertiesParser.toMap(model.getPropertiesMetaData()),
-                CustomPropertiesParser.toMap(transform.getPropertiesMetaData()));
+        assertNotNull(model.getProperties());
+        assertEquals(CustomPropertiesParser.toMap(model.getProperties()),
+                CustomPropertiesParser.toMap(transform.getProperties()));
     }
 
     @Override

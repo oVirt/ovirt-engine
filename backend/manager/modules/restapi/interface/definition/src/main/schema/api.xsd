@@ -1609,10 +1609,10 @@
           <xs:element ref="properties" minOccurs="0" maxOccurs="1">
             <xs:annotation>
               <xs:appinfo>
-                <jaxb:property name="PropertiesMetaData"/>
+                <jaxb:property name="Properties"/>
               </xs:appinfo>
             </xs:annotation>
-        </xs:element>
+          </xs:element>
         </xs:sequence>
         <xs:attribute name="type" type="xs:string"/>
       </xs:extension>
