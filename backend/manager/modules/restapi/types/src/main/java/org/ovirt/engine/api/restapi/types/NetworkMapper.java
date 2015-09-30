@@ -9,7 +9,6 @@ import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkStatus;
 import org.ovirt.engine.api.model.Qos;
-import org.ovirt.engine.api.model.Usages;
 import org.ovirt.engine.api.model.Vlan;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -107,7 +106,7 @@ public class NetworkMapper {
         model.setStp(entity.getStp());
         model.setMtu(entity.getMtu());
 
-        model.setUsages(new Usages());
+        model.setUsages(new Network.UsagesList());
         if (entity.isVmNetwork()) {
             model.getUsages().getUsages().add(NetworkUsage.VM.value());
         }

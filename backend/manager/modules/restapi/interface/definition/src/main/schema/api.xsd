@@ -2596,7 +2596,24 @@
           <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
           <xs:element name="display" type="xs:boolean" minOccurs="0"/>
           <xs:element name="mtu" type="xs:int" minOccurs="0"/>
-          <xs:element ref="usages" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="usages" minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+              <xs:annotation>
+                <xs:appinfo>
+                  <jaxb:class name="UsagesList"/>
+                </xs:appinfo>
+              </xs:annotation>
+              <xs:sequence>
+                <xs:element name="usage" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+                  <xs:annotation>
+                    <xs:appinfo>
+                      <jaxb:property name="Usages"/>
+                    </xs:appinfo>
+                  </xs:annotation>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
           <xs:element name="required" type="xs:boolean" minOccurs="0"/>
           <xs:element name="profile_required" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="labels" minOccurs="0" maxOccurs="1"/>
