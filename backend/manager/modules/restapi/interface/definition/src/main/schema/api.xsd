@@ -5122,7 +5122,13 @@
   <xs:element name="brick_profile_details" type="BrickProfileDetails"/>
   <xs:complexType name="BrickProfileDetails">
     <xs:sequence>
-      <xs:element ref="brick_profile_detail" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element ref="brick_profile_detail" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="BrickProfileDetails"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
@@ -5140,7 +5146,13 @@
   <xs:element name="nfs_profile_details" type="NfsProfileDetails"/>
   <xs:complexType name="NfsProfileDetails">
     <xs:sequence>
-      <xs:element ref="nfs_profile_detail" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element ref="nfs_profile_detail" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="NfsProfileDetails"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 

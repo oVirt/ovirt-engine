@@ -56,7 +56,7 @@ public class GlusterVolumeProfileInfoMapper {
                 brickprofileDetail.setBrick(new GlusterBrick());
                 brickprofileDetail.getBrick().setBrickDir(brickDetailEntity.getName());
                 mapProfileDetails(brickDetailEntity.getProfileStats(), brickprofileDetail);
-                brickprofileDetails.getBrickProfileDetail().add(brickprofileDetail);
+                brickprofileDetails.getBrickProfileDetails().add(brickprofileDetail);
             }
         }
         model.setBrickProfileDetails(brickprofileDetails);
@@ -68,7 +68,7 @@ public class GlusterVolumeProfileInfoMapper {
                 NfsProfileDetail nfsprofileDetail = new NfsProfileDetail();
                 nfsprofileDetail.setNfsServerIp(nfsDetailEntity.getName());
                 mapProfileDetails(nfsDetailEntity.getProfileStats(), nfsprofileDetail);
-                nfsprofileDetails.getNfsProfileDetail().add(nfsprofileDetail);
+                nfsprofileDetails.getNfsProfileDetails().add(nfsprofileDetail);
             }
         }
         model.setNfsProfileDetails(nfsprofileDetails);
