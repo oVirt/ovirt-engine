@@ -24,6 +24,7 @@ import os
 
 from otopi import plugin, util
 
+from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 
@@ -50,6 +51,45 @@ class Plugin(plugin.PluginBase):
             oengcommcons.ConfigEnv.JBOSS_NEEDED,
             False
         )
+        self.environment.setdefault(
+            oengcommcons.RPMDistroEnv.OVIRT_JBOSS_PACKAGES,
+            '',
+        )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        before=(
+            osetupcons.Stages.DISTRO_RPM_PACKAGE_UPDATE_CHECK,
+        ),
+        condition=lambda self: self.environment[
+            oengcommcons.ConfigEnv.JBOSS_NEEDED
+        ],
+    )
+    def _version_lock_customization(self):
+        def tolist(s):
+            if not s:
+                return []
+            return [e.strip() for e in s.split(',')]
+
+        pkglist = tolist(
+            self.environment[
+                oengcommcons.RPMDistroEnv.OVIRT_JBOSS_PACKAGES
+            ]
+        )
+        if pkglist:
+            self.environment[
+                osetupcons.RPMDistroEnv.VERSION_LOCK_FILTER
+            ].extend(pkglist)
+            self.environment[
+                osetupcons.RPMDistroEnv.VERSION_LOCK_APPLY
+            ].extend(pkglist)
+            self.environment[
+                osetupcons.RPMDistroEnv.PACKAGES_UPGRADE_LIST
+            ].append(
+                {
+                    'packages': pkglist,
+                },
+            )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,

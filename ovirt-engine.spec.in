@@ -168,6 +168,7 @@ BuildRequires:	python
 BuildRequires:	unzip
 
 Requires:	%{jboss}
+Conflicts:	ovirt-engine-wildfly >= 11
 %if %{ovirt_wildfly_overlay}
 Requires:	ovirt-engine-wildfly-overlay
 %endif
@@ -771,9 +772,15 @@ rm -rf "%{buildroot}%{engine_data}/firewalld/aio"
 %endif
 
 %if %{ovirt_provides_jboss}
+%if %{ovirt_wildfly_overlay}
+OVIRT_JBOSS_PACKAGES=ovirt-engine-wildfly,ovirt-engine-wildfly-overlay
+%else
+OVIRT_JBOSS_PACKAGES=ovirt-engine-wildfly
+%endif
 cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-jboss.conf" << __EOF__
 [environment:default]
 OVESETUP_CONFIG/jbossHome=str:/usr/share/ovirt-engine-wildfly
+OVESETUP_RPMDISTRO/jbossPackages=str:${OVIRT_JBOSS_PACKAGES}
 __EOF__
 %endif
 
