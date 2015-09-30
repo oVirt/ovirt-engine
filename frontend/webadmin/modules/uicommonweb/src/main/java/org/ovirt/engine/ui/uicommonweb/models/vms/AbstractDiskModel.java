@@ -792,11 +792,7 @@ public abstract class AbstractDiskModel extends DiskModel {
     }
 
     protected void updateWipeAfterDeleteChangeability() {
-        if (isVmAttachedToPool()) {
-            getIsWipeAfterDelete().setIsChangeable(false);
-        } else {
-            getIsWipeAfterDelete().setIsChangeable(isEditEnabled());
-        }
+        getIsWipeAfterDelete().setIsChangeable(!isVmAttachedToPool());
     }
 
     private void updatePlugChangeability() {
