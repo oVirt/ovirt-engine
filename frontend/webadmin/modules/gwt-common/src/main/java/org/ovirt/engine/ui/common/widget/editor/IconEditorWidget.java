@@ -68,13 +68,13 @@ public class IconEditorWidget extends AbstractValidatedWidget
     protected Image image;
 
     @UiField
+    protected HTMLPanel hiddenPanel;
+
+    @UiField
     protected Button uploadButton;
 
     @UiField(provided = true)
     protected InfoIcon uploadInfoIcon;
-
-    @UiField
-    protected FileUpload fileUpload;
 
     @UiField
     protected Button defaultButton;
@@ -119,15 +119,6 @@ public class IconEditorWidget extends AbstractValidatedWidget
         uploadInfoIcon = new InfoIcon(
                 SafeHtmlUtils.fromTrustedString(constants.iconLimitationsIconVmPopup()));
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        fileUpload.getElement().setAttribute("accept", "image/gif,image/jpeg,image/png"); //$NON-NLS-1$ //$NON-NLS-2$
-        fileUpload.addChangeHandler(new ChangeHandler() {
-            @Override
-            public void onChange(ChangeEvent event) {
-                IconEditorWidget.this.readUploadedIconFile();
-            }
-        });
-        fileUpload.getElement().setTabIndex(-1); // can be moved to *.ui.xml file in form of attribute `tabIndex="-1"` since GWT 2.7.0
-
         KeyPressHandler preventEnterKeyPressHandler = createPreventEnterKeyPressHandler();
         uploadButton.addKeyPressHandler(preventEnterKeyPressHandler);
         defaultButton.addKeyPressHandler(preventEnterKeyPressHandler);
@@ -180,7 +171,18 @@ public class IconEditorWidget extends AbstractValidatedWidget
 
     @UiHandler("uploadButton")
     void onUploadIconButton(ClickEvent event) {
-        clickElement(fileUpload.getElement());
+        hiddenPanel.clear();
+        final FileUpload inputFileWidget = new FileUpload();
+        inputFileWidget.getElement().setAttribute("accept", "image/gif,image/jpeg,image/png"); //$NON-NLS-1$ //$NON-NLS-2$
+        inputFileWidget.addChangeHandler(new ChangeHandler() {
+            @Override
+            public void onChange(ChangeEvent event) {
+                readUploadedIconFile(inputFileWidget.getElement());
+            }
+        });
+        inputFileWidget.getElement().setTabIndex(-1);
+        hiddenPanel.add(inputFileWidget);
+        clickElement(inputFileWidget.getElement());
     }
 
     @UiHandler("defaultButton")
@@ -273,8 +275,7 @@ public class IconEditorWidget extends AbstractValidatedWidget
         return templates.unorderedList(builder.toSafeHtml());
     }
 
-    native void readUploadedIconFile() /*-{
-        var inputFileElement = this.@org.ovirt.engine.ui.common.widget.editor.IconEditorWidget::fileUpload.@com.google.gwt.user.client.ui.FileUpload::getElement()();
+    native void readUploadedIconFile(Element inputFileElement) /*-{
         var self = this;
         var javaCallback = $entry(function (dataUri) {
             return self.@org.ovirt.engine.ui.common.widget.editor.IconEditorWidget::setIconAndFireChangeEvent(Ljava/lang/String;)(dataUri);
