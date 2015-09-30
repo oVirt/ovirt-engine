@@ -7,17 +7,21 @@ import static org.ovirt.engine.api.model.StatisticUnit.SECONDS;
 import java.util.List;
 
 import org.ovirt.engine.api.model.BlockStatistic;
+import org.ovirt.engine.api.model.BlockStatistics;
 import org.ovirt.engine.api.model.BrickProfileDetail;
 import org.ovirt.engine.api.model.BrickProfileDetails;
 import org.ovirt.engine.api.model.EntityProfileDetail;
 import org.ovirt.engine.api.model.FopStatistic;
+import org.ovirt.engine.api.model.FopStatistics;
 import org.ovirt.engine.api.model.GlusterBrick;
 import org.ovirt.engine.api.model.GlusterVolumeProfileDetails;
 import org.ovirt.engine.api.model.NfsProfileDetail;
 import org.ovirt.engine.api.model.NfsProfileDetails;
 import org.ovirt.engine.api.model.ProfileDetail;
+import org.ovirt.engine.api.model.ProfileDetails;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.StatisticUnit;
+import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.ValueType;
 import org.ovirt.engine.api.restapi.utils.StatisticResourceUtils;
 import org.ovirt.engine.core.common.businessentities.gluster.BlockStats;
@@ -81,11 +85,13 @@ public class GlusterVolumeProfileInfoMapper {
             ProfileDetail profileDetail = new ProfileDetail();
             profileDetail.setProfileType(statsInfo.getProfileStatsType().name());
             profileDetail.setDuration(statsInfo.getDuration());
-            profileDetail.getStatistic().add(StatisticResourceUtils.setDatum(clone(TOTAL_READ), statsInfo.getTotalRead()));
-            profileDetail.getStatistic().add(StatisticResourceUtils.setDatum(clone(TOTAL_WRITE), statsInfo.getTotalWrite()));
+            profileDetail.setStatistics(new Statistics());
+            profileDetail.getStatistics().getStatistics().add(StatisticResourceUtils.setDatum(clone(TOTAL_READ), statsInfo.getTotalRead()));
+            profileDetail.getStatistics().getStatistics().add(StatisticResourceUtils.setDatum(clone(TOTAL_WRITE), statsInfo.getTotalWrite()));
             mapBlockStats(profileDetail, statsInfo);
             mapFopStats(profileDetail, statsInfo);
-            entityprofileDetail.getProfileDetail().add(profileDetail);
+            entityprofileDetail.setProfileDetails(new ProfileDetails());
+            entityprofileDetail.getProfileDetails().getProfileDetails().add(profileDetail);
 
         }
     }
@@ -94,21 +100,25 @@ public class GlusterVolumeProfileInfoMapper {
         for (FopStats fopStat: statsInfo.getFopStats()) {
             FopStatistic fStat = new FopStatistic();
             fStat.setName(fopStat.getName());
-            fStat.getStatistic().add(StatisticResourceUtils.setDatum(clone(MIN_LATENCY), fopStat.getMinLatency()));
-            fStat.getStatistic().add(StatisticResourceUtils.setDatum(clone(MAX_LATENCY), fopStat.getMaxLatency()));
-            fStat.getStatistic().add(StatisticResourceUtils.setDatum(clone(AVG_LATENCY), fopStat.getAvgLatency()));
-            fStat.getStatistic().add(StatisticResourceUtils.setDatum(clone(HITS), fopStat.getHits()));
-            profileDetail.getFopStatistic().add(fStat);
+            fStat.setStatistics(new Statistics());
+            fStat.getStatistics().getStatistics().add(StatisticResourceUtils.setDatum(clone(MIN_LATENCY), fopStat.getMinLatency()));
+            fStat.getStatistics().getStatistics().add(StatisticResourceUtils.setDatum(clone(MAX_LATENCY), fopStat.getMaxLatency()));
+            fStat.getStatistics().getStatistics().add(StatisticResourceUtils.setDatum(clone(AVG_LATENCY), fopStat.getAvgLatency()));
+            fStat.getStatistics().getStatistics().add(StatisticResourceUtils.setDatum(clone(HITS), fopStat.getHits()));
+            profileDetail.setFopStatistics(new FopStatistics());
+            profileDetail.getFopStatistics().getFopStatistics().add(fStat);
         }
     }
 
     private static void mapBlockStats(ProfileDetail profileDetail, StatsInfo statsInfo) {
         for (BlockStats blockStat: statsInfo.getBlockStats()) {
             BlockStatistic bStat = new BlockStatistic();
-            bStat.getStatistic().add(StatisticResourceUtils.setDatum(clone(BLOCK_SIZE), blockStat.getSize()));
-            bStat.getStatistic().add(StatisticResourceUtils.setDatum(clone(BYTES_BLOCK_READ), blockStat.getBlockRead()));
-            bStat.getStatistic().add(StatisticResourceUtils.setDatum(clone(BYTES_BLOCK_WRITE), blockStat.getBlockWrite()));
-            profileDetail.getBlockStatistic().add(bStat);
+            bStat.setStatistics(new Statistics());
+            bStat.getStatistics().getStatistics().add(StatisticResourceUtils.setDatum(clone(BLOCK_SIZE), blockStat.getSize()));
+            bStat.getStatistics().getStatistics().add(StatisticResourceUtils.setDatum(clone(BYTES_BLOCK_READ), blockStat.getBlockRead()));
+            bStat.getStatistics().getStatistics().add(StatisticResourceUtils.setDatum(clone(BYTES_BLOCK_WRITE), blockStat.getBlockWrite()));
+            profileDetail.setBlockStatistics(new BlockStatistics());
+            profileDetail.getBlockStatistics().getBlockStatistics().add(bStat);
         }
     }
 

@@ -5159,7 +5159,7 @@
   <xs:element name="entity_profile_detail" type="EntityProfileDetail"/>
   <xs:complexType name="EntityProfileDetail">
     <xs:sequence>
-      <xs:element ref="profile_detail" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="profile_details" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -5179,16 +5179,42 @@
     <xs:sequence>
       <xs:element name="profile_type" type="xs:string" minOccurs="1" maxOccurs="1" />
       <xs:element name="duration" type="xs:int" minOccurs="0" maxOccurs="1" />
-      <xs:element ref="statistic" minOccurs="0" maxOccurs="2"/>
-      <xs:element ref="block_statistic" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element ref="fop_statistic" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="statistics" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="block_statistics" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="fop_statistics" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
    </xs:complexType>
+
+  <xs:element name="profile_details" type="ProfileDetails"/>
+  <xs:complexType name="ProfileDetails">
+    <xs:sequence>
+      <xs:element ref="profile_detail" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="ProfileDetails"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
 
   <xs:element name="block_statistic" type="BlockStatistic"/>
   <xs:complexType name="BlockStatistic">
     <xs:sequence>
-      <xs:element ref="statistic" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="statistics" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="block_statistics" type="BlockStatistics"/>
+  <xs:complexType name="BlockStatistics">
+    <xs:sequence>
+      <xs:element ref="block_statistic" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="BlockStatistics"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
@@ -5196,7 +5222,20 @@
   <xs:complexType name="FopStatistic">
     <xs:sequence>
       <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element ref="statistic" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="statistics" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="fop_statistics" type="FopStatistics"/>
+  <xs:complexType name="FopStatistics">
+    <xs:sequence>
+      <xs:element ref="fop_statistic" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="FopStatistics"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
