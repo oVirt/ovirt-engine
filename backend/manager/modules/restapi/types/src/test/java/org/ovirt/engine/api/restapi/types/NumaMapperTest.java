@@ -25,8 +25,8 @@ public class NumaMapperTest extends AbstractInvertibleMappingTest<VirtualNumaNod
         for (int i = 0; i < cpus1.size(); i++) {
             assertEquals(cpus1.get(i).getIndex(), cpus2.get(i).getIndex());
         }
-        List<NumaNodePin> pins1 = model.getNumaNodePins().getNumaNodePin();
-        List<NumaNodePin> pins2 = transform.getNumaNodePins().getNumaNodePin();
+        List<NumaNodePin> pins1 = model.getNumaNodePins().getNumaNodePins();
+        List<NumaNodePin> pins2 = transform.getNumaNodePins().getNumaNodePins();
         assertEquals(pins1.size(), pins2.size());
         for (int i = 0; i < pins1.size(); i++) {
             assertEquals(pins1.get(i).getIndex(), pins2.get(i).getIndex());

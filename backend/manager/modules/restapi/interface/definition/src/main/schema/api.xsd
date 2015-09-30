@@ -5440,7 +5440,13 @@
 
   <xs:complexType name="NumaNodePins">
     <xs:sequence>
-      <xs:element ref="numa_node_pin" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="numa_node_pin" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="NumaNodePins"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 

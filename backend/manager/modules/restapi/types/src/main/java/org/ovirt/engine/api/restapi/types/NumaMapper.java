@@ -73,7 +73,7 @@ public class NumaMapper {
                 }
                 pin.setPinned(pair.getSecond().getFirst());
                 pin.setIndex(pair.getSecond().getSecond());
-                pins.getNumaNodePin().add(pin);
+                pins.getNumaNodePins().add(pin);
             }
             model.setNumaNodePins(pins);
         }
@@ -111,7 +111,7 @@ public class NumaMapper {
         }
         if (model.isSetNumaNodePins()) {
             List<Pair<Guid, Pair<Boolean, Integer>>> pairs = new ArrayList<Pair<Guid, Pair<Boolean, Integer>>>();
-            for (NumaNodePin pin : model.getNumaNodePins().getNumaNodePin()) {
+            for (NumaNodePin pin : model.getNumaNodePins().getNumaNodePins()) {
                 Pair<Boolean, Integer> first = new Pair<Boolean, Integer>(pin.isPinned(), pin.getIndex());
                 Guid guid = null;
                 NumaNode node = pin.getHostNumaNode();
