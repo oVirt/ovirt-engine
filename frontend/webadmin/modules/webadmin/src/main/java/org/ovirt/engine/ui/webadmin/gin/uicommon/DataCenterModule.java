@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterStorageListM
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterCpuQosListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterHostNetworkQosListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterStorageQosListModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.NewHostNetworkQosModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.CpuQosPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.HostNetworkQosPopupPresenterWidget;
@@ -55,6 +56,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.macpool.SharedMacPoolPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.QuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
@@ -134,13 +136,19 @@ public class DataCenterModule extends AbstractGinModule {
             final Provider<EditDataCenterNetworkPopupPresenterWidget> editNetworkPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<DataCenterListModel> mainModelProvider,
-            final Provider<DataCenterNetworkListModel> modelProvider) {
+            final Provider<DataCenterNetworkListModel> modelProvider,
+            final Provider<HostNetworkQosPopupPresenterWidget> addQosPopupProvider) {
         SearchableDetailTabModelProvider<Network, DataCenterListModel, DataCenterNetworkListModel> result =
                 new SearchableDetailTabModelProvider<Network, DataCenterListModel, DataCenterNetworkListModel>(
                         eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DataCenterNetworkListModel source,
                             UICommand lastExecutedCommand, Model windowModel) {
+
+                        if (windowModel instanceof NewHostNetworkQosModel) {
+                            return addQosPopupProvider.get();
+                        }
+
                         if (lastExecutedCommand == getModel().getNewCommand()) {
                             return newNetworkPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getEditCommand()) {
