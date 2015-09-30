@@ -142,6 +142,7 @@ public class NetworkAttachmentMapper {
         }
 
         if (entity.getReportedConfigurations() != null) {
+            model.setInSync(entity.getReportedConfigurations().isNetworkInSync());
             model.setReportedConfigurations(ReportedConfigurationsMapper.map(entity.getReportedConfigurations(), null));
         }
 

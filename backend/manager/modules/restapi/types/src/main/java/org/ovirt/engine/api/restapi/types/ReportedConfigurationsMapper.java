@@ -14,7 +14,6 @@ public class ReportedConfigurationsMapper {
         ReportedConfigurations model =
                 template == null ? new ReportedConfigurations() : template;
 
-        model.setInSync(entity.isNetworkInSync());
         List<ReportedConfiguration> reportedConfigurationList = model.getReportedConfigurations();
         for (org.ovirt.engine.core.common.businessentities.network.ReportedConfiguration reportedConfiguration : entity.getReportedConfigurationList()) {
 
