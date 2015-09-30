@@ -468,16 +468,31 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="vcpu_pins" type="VcpuPins"/>
+
+  <xs:complexType name="VcpuPins">
+    <xs:sequence>
+      <xs:element ref="vcpu_pin" minOccurs="1" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="VcpuPins"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
   <xs:element name="cpu_tune" type="CpuTune"/>
 
   <xs:complexType name="CpuTune">
     <xs:sequence>
+      <xs:element ref="vcpu_pins" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:appinfo>
-              <jaxb:property name="VcpuPin"/>
+            <jaxb:property name="VcpuPins"/>
           </xs:appinfo>
         </xs:annotation>
-      <xs:element ref="vcpu_pin" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 

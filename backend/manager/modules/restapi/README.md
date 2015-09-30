@@ -894,3 +894,34 @@ been replaced by `kind`, and both `kind` and `type` are now elements:
         ...
       </values>
     </statistic>
+
+### Use multiple `vcpu_pins.vcpu_pin` instead of multiple `vcpu_pin`
+
+In the past the way to specify the virtual to physical CPU pinning of a
+virtual machie was to use multiple `vcpu_pin` elements:
+
+    <vm>
+      <cpu>
+        <cpu_tune>
+          <vcpu_pin>...</vcpu_pin>
+          <vcpu_pin>...</vcpu_pin>
+          ...
+        </cpu_tune>
+      </cpu>
+    </vm>
+
+In order to conform to the common practice in other parts of the API
+this has been changed to use a wrapper element, in this case
+`vcpu_pins`:
+
+    <vm>
+      <cpu>
+        <cpu_tune>
+          <vcpu_pins>
+            <vcpu_pin>...</vcpu_pin>
+            <vcpu_pin>...</vcpu_pin>
+            ...
+          </vcpu_pins>
+        </cpu_tune>
+      </cpu>
+    </vm>

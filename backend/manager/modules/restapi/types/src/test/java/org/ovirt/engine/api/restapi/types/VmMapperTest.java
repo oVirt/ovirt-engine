@@ -24,6 +24,7 @@ import org.ovirt.engine.api.model.Sessions;
 import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.VcpuPin;
+import org.ovirt.engine.api.model.VcpuPins;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmDeviceType;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
@@ -97,7 +98,9 @@ public class VmMapperTest extends
         VcpuPin pin = new VcpuPin();
         pin.setVcpu(33);
         pin.setCpuSet("1-4,6");
-        cpuTune.getVcpuPin().add(pin);
+        VcpuPins pins = new VcpuPins();
+        pins.getVcpuPins().add(pin);
+        cpuTune.setVcpuPins(pins);
         from.getCpu().setCpuTune(cpuTune);
         from.setTimeZone(new TimeZone());
         from.getTimeZone().setName("Australia/Darwin");
@@ -409,10 +412,10 @@ public class VmMapperTest extends
     public void stringToCpuTune() {
         CpuTune cpuTune = VmMapper.stringToCpuTune("0#0");
         assertNotNull(cpuTune);
-        assertNotNull(cpuTune.getVcpuPin());
-        assertEquals(1, cpuTune.getVcpuPin().size());
-        assertEquals(0, (int) cpuTune.getVcpuPin().get(0).getVcpu());
-        assertEquals("0", cpuTune.getVcpuPin().get(0).getCpuSet());
+        assertNotNull(cpuTune.getVcpuPins());
+        assertEquals(1, cpuTune.getVcpuPins().getVcpuPins().size());
+        assertEquals(0, (int) cpuTune.getVcpuPins().getVcpuPins().get(0).getVcpu());
+        assertEquals("0", cpuTune.getVcpuPins().getVcpuPins().get(0).getCpuSet());
     }
 
     @Test(expected = IllegalArgumentException.class)

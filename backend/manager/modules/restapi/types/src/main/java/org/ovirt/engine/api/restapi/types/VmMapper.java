@@ -50,6 +50,7 @@ import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.VcpuPin;
+import org.ovirt.engine.api.model.VcpuPins;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmAffinity;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
@@ -1151,14 +1152,17 @@ public class VmMapper extends VmBaseMapper {
 
     static String cpuTuneToString(final CpuTune tune) {
         final StringBuilder builder = new StringBuilder();
-        boolean first = true;
-        for(final VcpuPin pin : tune.getVcpuPin()) {
-            if(first) {
-                first = false;
-            } else {
-                builder.append("_");
+        VcpuPins pins = tune.getVcpuPins();
+        if (pins != null) {
+            boolean first = true;
+            for (final VcpuPin pin : pins.getVcpuPins()) {
+                if (first) {
+                    first = false;
+                } else {
+                    builder.append("_");
+                }
+                builder.append(pin.getVcpu()).append('#').append(pin.getCpuSet());
             }
-            builder.append(pin.getVcpu()).append('#').append(pin.getCpuSet());
         }
         return builder.toString();
     }
@@ -1173,10 +1177,12 @@ public class VmMapper extends VmBaseMapper {
             return null;
         }
         final CpuTune cpuTune = new CpuTune();
+        VcpuPins pins = new VcpuPins();
         for(String strCpu : cpuPinning.split("_")) {
             VcpuPin pin = stringToVCpupin(strCpu);
-            cpuTune.getVcpuPin().add(pin);
+            pins.getVcpuPins().add(pin);
         }
+        cpuTune.setVcpuPins(pins);
 
         return cpuTune;
     }

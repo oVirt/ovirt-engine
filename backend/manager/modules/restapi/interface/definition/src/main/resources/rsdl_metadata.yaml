@@ -108,7 +108,9 @@ actions:
           vm.custom_cpu_model: xs:string
           vm.use_latest_template_version: xs:boolean
           vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.volume_id: 'xs:string', payload.files.file--COLLECTION: {file.name: 'xs:string', file.content: 'xs:string'}}
-          vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
+          vm.cpu.cpu_tune.vcpu_pins.vcpu_pin--COLLECTION:
+            vcpu_pin.vcpu: xs:int
+            vcpu_pin.cpu_set: xs:string
           vm.serial_number.policy: xs:string
           vm.serial_number.value: xs:string
           vm.bios.boot_menu.enabled: xs:boolean
@@ -207,7 +209,9 @@ actions:
           vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.volume_id: 'xs:string', payload.files.file--COLLECTION: {file.name: 'xs:string', file.content: 'xs:string'}}
           vm.initialization.configuration.type: 'xs:string'
           vm.initialization.configuration.data: 'xs:string'
-          vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
+          vm.cpu.cpu_tune.vcpu_pins.vcpu_pin--COLLECTION:
+            vcpu_pin.vcpu: xs:int
+            vcpu_pin.cpu_set: xs:string
           vm.use_latest_template_version: xs:boolean
           vm.serial_number.policy: xs:string
           vm.serial_number.value: xs:string
@@ -276,7 +280,9 @@ actions:
           vm.custom_emulated_machine: xs:string
           vm.custom_cpu_model: xs:string
           vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.volume_id: 'xs:string', payload.files.file--COLLECTION: {file.name: 'xs:string', file.content: 'xs:string'}}
-          vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
+          vm.cpu.cpu_tune.vcpu_pins.vcpu_pin--COLLECTION:
+            vcpu_pin.vcpu: xs:int
+            vcpu_pin.cpu_set: xs:string
           vm.serial_number.policy: xs:string
           vm.serial_number.value: xs:string
           vm.bios.boot_menu.enabled: xs:boolean
@@ -343,7 +349,9 @@ actions:
                 vm.initialization.configuration.type: 'xs:string'
                 vm.initialization.configuration.data: 'xs:string'
                 vm.initialization.regenerate_ids: 'xs:boolean'
-                vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
+                vm.cpu.cpu_tune.vcpu_pins.vcpu_pin--COLLECTION:
+                  vcpu_pin.vcpu: xs:int
+                  vcpu_pin.cpu_set: xs:string
                 vm.serial_number.policy: xs:string
                 vm.serial_number.value: xs:string
                 vm.bios.boot_menu.enabled: xs:boolean
@@ -2935,7 +2943,9 @@ actions:
           template.vm.disks.disk--COLLECTION: {disk.id: 'xs:string', disk.alias: 'xs:string', disk.description: 'xs:string', storage_domains.storage_domain--COLLECTION: {storage_domain.id: 'xs:string'}}
           template.version.version_name: xs:string
           template.version.base_template.id: xs:string
-          template.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
+          template.cpu.cpu_tune.vcpu_pins.vcpu_pin--COLLECTION:
+            vcpu_pin.vcpu: xs:int
+            vcpu_pin.cpu_set: xs:string
           template.serial_number.policy: xs:string
           template.serial_number.value: xs:string
           template.bios.boot_menu.enabled: xs:boolean
