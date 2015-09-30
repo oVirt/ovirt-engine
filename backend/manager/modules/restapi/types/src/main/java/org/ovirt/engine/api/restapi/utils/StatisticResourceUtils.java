@@ -5,7 +5,7 @@ import java.math.MathContext;
 import java.util.UUID;
 
 import org.ovirt.engine.api.model.Statistic;
-import org.ovirt.engine.api.model.StatisticType;
+import org.ovirt.engine.api.model.StatisticKind;
 import org.ovirt.engine.api.model.StatisticUnit;
 import org.ovirt.engine.api.model.Value;
 import org.ovirt.engine.api.model.ValueType;
@@ -15,17 +15,17 @@ public class StatisticResourceUtils {
 
     public static Statistic create(String name,
             String description,
-            StatisticType type,
+            StatisticKind kind,
             StatisticUnit unit,
             ValueType valueType) {
         Statistic statistic = new Statistic();
         statistic.setId(asId(name));
         statistic.setName(name);
         statistic.setDescription(description);
-        statistic.setType(type);
+        statistic.setKind(kind);
         statistic.setUnit(unit);
         statistic.setValues(new Values());
-        statistic.getValues().setType(valueType);
+        statistic.setType(valueType);
         statistic.getValues().getValues().add(new Value());
         return statistic;
     }

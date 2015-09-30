@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Statistic;
-import org.ovirt.engine.api.model.StatisticType;
+import org.ovirt.engine.api.model.StatisticKind;
 import org.ovirt.engine.api.model.StatisticUnit;
 import org.ovirt.engine.api.model.ValueType;
 import org.ovirt.engine.api.restapi.resource.BaseBackendResource.BackendFailureException;
@@ -21,8 +21,8 @@ public abstract class AbstractStatisticalQuery<R extends BaseResource, E> {
     protected static final long Kb = 1024L;
     protected static final long Mb = 1024 * Kb;
     protected static final BigDecimal CENT = new BigDecimal(100);
-    protected static final StatisticType GAUGE = StatisticType.GAUGE;
-    protected static final StatisticType COUNTER = StatisticType.COUNTER;
+    protected static final StatisticKind GAUGE = StatisticKind.GAUGE;
+    protected static final StatisticKind COUNTER = StatisticKind.COUNTER;
     protected static final StatisticUnit NONE = StatisticUnit.NONE;
     protected static final StatisticUnit PERCENT = StatisticUnit.PERCENT;
     protected static final StatisticUnit BYTES = StatisticUnit.BYTES;
@@ -81,14 +81,14 @@ public abstract class AbstractStatisticalQuery<R extends BaseResource, E> {
 
     public static Statistic create(String name,
                                    String description,
-                                   StatisticType type,
+                                   StatisticKind kind,
                                    StatisticUnit unit,
                                    ValueType valueType) {
-        return StatisticResourceUtils.create(name, description, type, unit, valueType);
+        return StatisticResourceUtils.create(name, description, kind, unit, valueType);
     }
 
     public static Statistic clone(Statistic s) {
-        return create(s.getName(), s.getDescription(), s.getType(), s.getUnit(), s.getValues().getType());
+        return create(s.getName(), s.getDescription(), s.getKind(), s.getUnit(), s.getType());
     }
 
 

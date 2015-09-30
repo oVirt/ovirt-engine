@@ -15,7 +15,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Statistic;
-import org.ovirt.engine.api.model.StatisticType;
+import org.ovirt.engine.api.model.StatisticKind;
 import org.ovirt.engine.api.model.StatisticUnit;
 import org.ovirt.engine.api.model.Value;
 import org.ovirt.engine.api.model.ValueType;
@@ -63,10 +63,10 @@ public class BackendStatisticsResourceTest extends AbstractBackendCollectionReso
         statistic.setName(name);
         statistic.setId(UUID.nameUUIDFromBytes(statistic.getName().getBytes()).toString());
         statistic.setUnit(StatisticUnit.BYTES);
-        statistic.setType(StatisticType.GAUGE);
+        statistic.setKind(StatisticKind.GAUGE);
         Value value = new Value();
         statistic.setValues(new Values());
-        statistic.getValues().setType(ValueType.INTEGER);
+        statistic.setType(ValueType.INTEGER);
         statistic.getValues().getValues().add(value);
         statistic.setHost(new Host());
         statistic.getHost().setId(GUIDS[2].toString());
@@ -132,8 +132,8 @@ public class BackendStatisticsResourceTest extends AbstractBackendCollectionReso
         assertEquals(UUID.nameUUIDFromBytes(name.getBytes()).toString(), statistic.getId());
         assertEquals(name, statistic.getName());
         assertEquals(StatisticUnit.BYTES, statistic.getUnit());
-        assertEquals(StatisticType.GAUGE, statistic.getType());
+        assertEquals(StatisticKind.GAUGE, statistic.getKind());
         assertTrue(statistic.isSetValues());
-        assertEquals(ValueType.INTEGER, statistic.getValues().getType());
+        assertEquals(ValueType.INTEGER, statistic.getType());
     }
 }

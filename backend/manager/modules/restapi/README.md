@@ -866,3 +866,31 @@ matrix parameters:
     POST .../bricks;replica_count=3;stripe_count=2
 
     DELETE .../bricks;replica_count=3
+
+### Renamed the statistics `type` property to `kind`
+
+The statistics used to be represented using a `type` element that
+indicates the kind of statistic (gauge, counter, etc) and also a `type`
+attribute that indicates the type of the values (integer, string, etc):
+
+    <statistic>
+      <type>GAUGE</type>
+      <values type="INTEGER">
+        <value>...</value>
+        <value>...</value>
+        ...
+      </values>
+    </statistic>
+
+To avoid the use of the `type` concept for both things the first has
+been replaced by `kind`, and both `kind` and `type` are now elements:
+
+    <statistic>
+      <kind>GAUGE</kind>
+      <type>INTEGER</type>
+      <values>
+        <value>...</value>
+        <value>...</value>
+        ...
+      </values>
+    </statistic>

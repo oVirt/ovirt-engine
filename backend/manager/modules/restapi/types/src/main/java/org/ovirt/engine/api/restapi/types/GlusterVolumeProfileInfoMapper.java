@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
-import static org.ovirt.engine.api.model.StatisticType.GAUGE;
+import static org.ovirt.engine.api.model.StatisticKind.GAUGE;
 import static org.ovirt.engine.api.model.StatisticUnit.BYTES;
 import static org.ovirt.engine.api.model.StatisticUnit.SECONDS;
 
@@ -113,7 +113,7 @@ public class GlusterVolumeProfileInfoMapper {
     }
 
     public static Statistic clone(Statistic s) {
-        return StatisticResourceUtils.create(s.getName(), s.getDescription(), s.getType(), s.getUnit(), s.getValues().getType());
+        return StatisticResourceUtils.create(s.getName(), s.getDescription(), s.getKind(), s.getUnit(), s.getType());
     }
 
 }

@@ -363,7 +363,8 @@
       <xs:extension base="BaseResource">
         <xs:sequence>
           <xs:element ref="values" minOccurs="1" maxOccurs="1"/>
-          <xs:element name="type" type="StatisticType" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="kind" type="StatisticKind" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="type" type="ValueType" minOccurs="1" maxOccurs="1"/>
           <xs:element name="unit" type="StatisticUnit" minOccurs="1" maxOccurs="1"/>
           <!-- only one of the following entity references is set -->
           <xs:element ref="disk" minOccurs="0" maxOccurs="1"/>
@@ -380,7 +381,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:simpleType name="StatisticType">
+  <xs:simpleType name="StatisticKind">
     <xs:restriction base="xs:string">
       <xs:enumeration value="GAUGE"/>
       <xs:enumeration value="COUNTER"/>
@@ -436,7 +437,6 @@
       </xs:annotation>
       <xs:element ref="value" minOccurs="1" maxOccurs="unbounded"/>
     </xs:sequence>
-    <xs:attribute name="type" type="ValueType"/>
   </xs:complexType>
 
   <xs:simpleType name="ValueType">
