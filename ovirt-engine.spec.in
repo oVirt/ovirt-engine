@@ -168,7 +168,7 @@ BuildRequires:	python
 BuildRequires:	unzip
 
 Requires:	%{jboss}
-Conflicts:	ovirt-engine-wildfly >= 11
+Conflicts:	%{jboss} >= 11
 %if %{ovirt_wildfly_overlay}
 Requires:	ovirt-engine-wildfly-overlay
 %endif
