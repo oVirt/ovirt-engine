@@ -322,11 +322,11 @@ public class EngineConfigLogic {
         String version = parser.getVersion();
         if (StringUtils.isBlank(version)) {
             ConfigKey configKey = getConfigKey(key);
-            testIfConfigKeyCanBeFetchedOrPrinted(configKey);
             if (configKey == null) {
                 throw new RuntimeException("Error fetching " + key
                         + " value: no such entry. Please verify key name and property file support.");
             }
+            testIfConfigKeyCanBeFetchedOrPrinted(configKey);
             printAllValuesForKey(configKey.getKey());
         } else {
             printKeyWithSpecifiedVersion(key, version);
