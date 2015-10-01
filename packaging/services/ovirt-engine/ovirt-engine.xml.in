@@ -200,7 +200,7 @@
       </root-logger>
     </subsystem>
 
-    <subsystem xmlns="urn:jboss:domain:datasources:1.0">
+    <subsystem xmlns="urn:jboss:domain:datasources:1.1">
       <datasources>
         <datasource jndi-name="java:/ENGINEDataSource" pool-name="ENGINEDataSource" enabled="true" use-ccm="false">
           <connection-url><![CDATA[$getstring('ENGINE_DB_URL')]]></connection-url>
