@@ -23,9 +23,9 @@ limitations under the License.
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.ovirt.engine</groupId>
+  <groupId>org.ovirt.maven.plugins</groupId>
   <artifactId>ovirt-findbugs-maven-plugin</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>oVirt Findbugs Maven Plugin</name>
@@ -33,6 +33,24 @@ limitations under the License.
   <description>
     Maven Plugin used to invoke findbugs with multiple filter files
   </description>
+
+  <url>http://www.ovirt.org</url>
+
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Juan Hernandez</name>
+      <email>juan.hernandez@redhat.com</email>
+      <organization>oVirt</organization>
+      <organizationUrl>http://www.ovirt.org</organizationUrl>
+    </developer>
+  </developers>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -89,9 +107,23 @@ limitations under the License.
         </configuration>
         <executions>
           <execution>
-            <id>mojo-descriptor</id>
+            <id>generate-mojo-descriptor</id>
             <goals>
               <goal>descriptor</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.10.2</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
             </goals>
           </execution>
         </executions>

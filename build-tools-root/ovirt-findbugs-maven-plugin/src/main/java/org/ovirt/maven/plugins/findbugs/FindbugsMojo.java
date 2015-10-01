@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.findbugs;
+package org.ovirt.maven.plugins.findbugs;
 
 import static org.codehaus.plexus.util.xml.Xpp3DomUtils.mergeXpp3Dom;
 

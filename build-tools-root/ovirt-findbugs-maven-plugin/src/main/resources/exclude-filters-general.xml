@@ -1,0 +1,55 @@
+<FindBugsFilter>
+    <!--
+    Currently Ignoring.
+    findbugs reason:
+    Dm: Reliance on default encoding (DM_DEFAULT_ENCODING)
+    -->
+    <Match>
+        <Bug pattern="DM_DEFAULT_ENCODING" />
+    </Match>
+
+    <!--
+    TBD:
+    findbugs reason:
+    EI: May expose internal representation by returning reference to mutable object (EI_EXPOSE_REP)
+    -->
+    <Match>
+        <Bug code="EI" />
+    </Match>
+
+    <!--
+    TBD:
+    findbugs reason:
+    EI2: May expose internal representation by incorporating reference to mutable object (EI_EXPOSE_REP2)
+    -->
+    <Match>
+        <Bug code="EI2" />
+    </Match>
+
+    <!--
+    Currently Ignoring.
+    findbugs reason:
+    REC: Exception is caught when Exception is not thrown (REC_CATCH_EXCEPTION)
+    -->
+    <Match>
+        <Bug code="REC" />
+    </Match>
+
+    <!--
+    TBD:
+    findbugs reason:
+    Se: Non-transient non-serializable instance field in serializable class (SE_BAD_FIELD)
+    -->
+    <Match>
+        <Bug code="Se" />
+    </Match>
+
+    <!--
+    Currently Ignoring.
+    findbugs reason:
+    SF: Switch statement found where default case is missing (SF_SWITCH_NO_DEFAULT)
+    -->
+    <Match>
+        <Bug code="SF" />
+    </Match>
+</FindBugsFilter>

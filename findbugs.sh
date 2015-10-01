@@ -10,7 +10,7 @@
 # findbugs:findbugs" command you have to use the following:
 
 mvn \
-    org.ovirt.engine:ovirt-findbugs-maven-plugin:findbugs \
+    org.ovirt.maven.plugins:ovirt-findbugs-maven-plugin:findbugs \
     -Pfindbugs-general
 
 # The "-Pfindbugs-general" is a profile that enables the general
