@@ -19,10 +19,17 @@ abstract class AbstractDiskRowMapper<T extends Disk> extends AbstractBaseDiskRow
     @Override
     public T mapRow(ResultSet rs, int rowNum) throws SQLException {
         T entity = super.mapRow(rs, rowNum);
+
         entity.setNumberOfVms(rs.getInt("number_of_vms"));
+
         String vmNames = rs.getString("vm_names");
         entity.setVmNames(StringUtils.isEmpty(vmNames) ? null
                 : new ArrayList<String>(Arrays.asList(vmNames.split(","))));
+
+        String templateVersionNames = rs.getString("template_version_names");
+        entity.setTemplateVersionNames(StringUtils.isEmpty(templateVersionNames) ? null
+                : new ArrayList<String>(Arrays.asList(templateVersionNames.split(","))));
+
         String entityType = rs.getString("entity_type");
         handleEntityType(entityType, entity);
 

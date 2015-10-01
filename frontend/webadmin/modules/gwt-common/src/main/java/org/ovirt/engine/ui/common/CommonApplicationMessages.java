@@ -207,4 +207,6 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("Details: {0}")
     String uncaughtExceptionAlertMessageDetails(String details);
 
+    @DefaultMessage(" ({0})")
+    String templateVersionName(String name);
 }

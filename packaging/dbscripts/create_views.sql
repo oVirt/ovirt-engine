@@ -12,7 +12,8 @@ OR REPLACE VIEW vms_for_disk_view AS
 SELECT
     array_agg ( vm_name ) AS array_vm_names,
     device_id,
-    entity_type
+    entity_type,
+    array_agg ( template_version_name ) AS array_template_version_name
 FROM
     vm_static
     JOIN vm_device ON vm_static.vm_guid = vm_device.vm_id
@@ -48,9 +49,10 @@ SELECT
     array_to_string ( vms_for_disk_view.array_vm_names,
         ',' ) AS vm_names,
     COALESCE ( array_upper ( vms_for_disk_view.array_vm_names,
-            1 )
-,
+            1 ),
         0 ) AS number_of_vms,
+    array_to_string ( vms_for_disk_view.array_template_version_name,
+         ',' ) AS template_version_names,
     base_disks.disk_id,
     base_disks.disk_alias AS disk_alias,
     base_disks.disk_description AS disk_description,
@@ -227,6 +229,7 @@ SELECT
     images_storage_domain_view.entity_type AS entity_type,
     images_storage_domain_view.number_of_vms AS number_of_vms,
     images_storage_domain_view.vm_names AS vm_names,
+    images_storage_domain_view.template_version_names AS template_version_names,
     storage_for_image_view.quota_id AS quota_id,
     storage_for_image_view.quota_name AS quota_name,
     images_storage_domain_view.quota_enforcement_type,
@@ -299,6 +302,7 @@ FROM (
             entity_type,
             number_of_vms,
             vm_names,
+            template_version_names,
             storage_for_image_view.quota_id AS quota_id,
             -- Quota fields
             storage_for_image_view.quota_name AS quota_name,
@@ -351,6 +355,7 @@ FROM (
             entity_type,
             number_of_vms,
             vm_names,
+            template_version_names,
             storage_for_image_view.quota_id,
             storage_for_image_view.quota_name,
             quota_enforcement_type,
@@ -396,6 +401,8 @@ FROM (
                 0 ) AS number_of_vms,
             array_to_string ( vms_for_disk_view.array_vm_names,
                 ',' ) AS vm_names,
+            array_to_string ( vms_for_disk_view.array_template_version_name,
+                ',' ) AS template_version_names,
             NULL AS quota_id,
             -- Quota fields
             NULL AS quota_name,
@@ -473,6 +480,7 @@ FROM (
             entity_type,
             number_of_vms,
             vm_names,
+            template_version_names,
             storage_for_image_view.quota_id AS quota_id,
             -- Quota fields
             storage_for_image_view.quota_name AS quota_name,
@@ -526,6 +534,7 @@ FROM (
             entity_type,
             number_of_vms,
             vm_names,
+            template_version_names,
             storage_for_image_view.quota_id,
             storage_for_image_view.quota_name,
             quota_enforcement_type,
@@ -572,6 +581,8 @@ FROM (
                 0 ) AS number_of_vms,
             array_to_string ( vms_for_disk_view.array_vm_names,
                 ',' ) AS vm_names,
+            array_to_string ( vms_for_disk_view.array_template_version_name,
+                ',' ) AS template_version_names,
             NULL AS quota_id,
             -- Quota fields
             NULL AS quota_name,
@@ -2288,6 +2299,7 @@ SELECT
     vm_images_view.entity_type,
     vm_images_view.number_of_vms,
     vm_images_view.vm_names,
+    vm_images_view.template_version_names,
     vm_images_view.quota_id,
     vm_images_view.quota_name,
     vm_images_view.disk_profile_id,

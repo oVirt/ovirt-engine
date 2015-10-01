@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -26,6 +27,7 @@ public abstract class Disk extends BaseDisk {
     private int numberOfVms;
     private ArrayList<String> vmNames;
     private DiskContentType contentType;
+    private List<String> templateVersionNames;
 
     /**
      * Plugged and readOnly are of type Boolean (as opposed to boolean) since they are optional.
@@ -85,6 +87,7 @@ public abstract class Disk extends BaseDisk {
         result = prime * result + ((plugged == null) ? 0 : plugged.hashCode());
         result = prime * result + ((readOnly == null) ? 0 : readOnly.hashCode());
         result = prime * result + ((vmNames == null) ? 0 : vmNames.hashCode());
+        result = prime * result + ((templateVersionNames == null) ? 0 : templateVersionNames.hashCode());
         result = prime * result + ((vmEntityType == null) ? 0 : vmEntityType.hashCode());
         result = prime * result + numberOfVms;
         result = prime * result + ((logicalName == null) ? 0 : logicalName.hashCode());
@@ -106,6 +109,7 @@ public abstract class Disk extends BaseDisk {
         return (ObjectUtils.objectsEqual(plugged, other.plugged)
                 && ObjectUtils.objectsEqual(readOnly, other.readOnly)
                 && ObjectUtils.objectsEqual(vmNames, other.vmNames)
+                && ObjectUtils.objectsEqual(templateVersionNames, other.templateVersionNames)
                 && ObjectUtils.objectsEqual(logicalName, other.logicalName)
                 && vmEntityType == other.vmEntityType
                 && numberOfVms == other.numberOfVms);
@@ -125,6 +129,14 @@ public abstract class Disk extends BaseDisk {
 
     public void setVmNames(ArrayList<String> vmNames) {
         this.vmNames = vmNames;
+    }
+
+    public List<String> getTemplateVersionNames() {
+        return this.templateVersionNames;
+    }
+
+    public void setTemplateVersionNames(List<String> templateVersionNames) {
+        this.templateVersionNames = templateVersionNames;
     }
 
     @JsonIgnore
