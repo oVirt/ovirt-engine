@@ -14,8 +14,8 @@ import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.AuthorizedKey;
-import org.ovirt.engine.api.model.CdRom;
-import org.ovirt.engine.api.model.CdRoms;
+import org.ovirt.engine.api.model.Cdrom;
+import org.ovirt.engine.api.model.Cdroms;
 import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.CloudInit;
 import org.ovirt.engine.api.model.CreationStatus;
@@ -212,7 +212,7 @@ public class BackendVmResource extends
     }
 
     @Override
-    public DevicesResource<CdRom, CdRoms> getCdRomsResource() {
+    public DevicesResource<Cdrom, Cdroms> getCdRomsResource() {
         return inject(new BackendCdRomsResource(guid,
                                                 VdcQueryType.GetVmByVmId,
                                                 new IdQueryParameters(guid)));

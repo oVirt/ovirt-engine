@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
 import javax.ws.rs.Path;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
@@ -38,7 +37,7 @@ import org.ovirt.engine.api.model.Application;
 import org.ovirt.engine.api.model.Balance;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Bookmark;
-import org.ovirt.engine.api.model.CdRom;
+import org.ovirt.engine.api.model.Cdrom;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.DataCenter;
@@ -355,7 +354,7 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(ReadOnlyDeviceResource.class, ReadOnlyDevicesResource.class, Template.class);
         map.add(DeviceResource.class, DevicesResource.class, Vm.class);
-        TYPES.put(CdRom.class, map);
+        TYPES.put(Cdrom.class, map);
 
         map = new ParentToCollectionMap(VmGraphicsConsoleResource.class, GraphicsConsolesResource.class, Vm.class);
         TYPES.put(GraphicsConsole.class, map);

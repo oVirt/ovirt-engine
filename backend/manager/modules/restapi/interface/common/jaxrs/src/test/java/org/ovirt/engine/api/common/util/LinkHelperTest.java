@@ -26,7 +26,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.ovirt.engine.api.model.CdRom;
+import org.ovirt.engine.api.model.Cdrom;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Disk;
@@ -321,7 +321,7 @@ public class LinkHelperTest extends Assert {
 
     @Test
     public void testCdRomLinks() throws Exception {
-        CdRom cdrom = new CdRom();
+        Cdrom cdrom = new Cdrom();
         cdrom.setId(CDROM_ID);
 
         cdrom.setVm(new Vm());

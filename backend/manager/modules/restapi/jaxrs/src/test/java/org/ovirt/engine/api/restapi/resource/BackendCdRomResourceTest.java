@@ -17,8 +17,8 @@ import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.CdRom;
-import org.ovirt.engine.api.model.CdRoms;
+import org.ovirt.engine.api.model.Cdrom;
+import org.ovirt.engine.api.model.Cdroms;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendCdRomResourceTest
-        extends AbstractBackendSubResourceTest<CdRom, VM, BackendCdRomResource> {
+        extends AbstractBackendSubResourceTest<Cdrom, VM, BackendCdRomResource> {
 
     protected static final String EJECT_ISO = "";
     protected static BackendCdRomsResource collection = getCollection();
@@ -50,8 +50,8 @@ public class BackendCdRomResourceTest
         );
     }
 
-    protected BackendDeviceResource<CdRom, CdRoms, VM> getNotFoundResource() {
-        BackendDeviceResource<CdRom, CdRoms, VM> ret = getResource(new Guid("0d0264ef-40de-45a1-b746-83a0088b47a7"));
+    protected BackendDeviceResource<Cdrom, Cdroms, VM> getNotFoundResource() {
+        BackendDeviceResource<Cdrom, Cdroms, VM> ret = getResource(new Guid("0d0264ef-40de-45a1-b746-83a0088b47a7"));
         ret.setUriInfo(setUpBasicUriExpectations());
         initResource(ret);
         initResource(ret.getCollection());
@@ -71,7 +71,7 @@ public class BackendCdRomResourceTest
 
     @Test
     public void testGetNotFound() throws Exception {
-        BackendDeviceResource<CdRom, CdRoms, VM> resource = getNotFoundResource();
+        BackendDeviceResource<Cdrom, Cdroms, VM> resource = getNotFoundResource();
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1);
         control.replay();
@@ -89,7 +89,7 @@ public class BackendCdRomResourceTest
         setUpEntityQueryExpectations(1);
         control.replay();
 
-        CdRom cdrom = resource.get();
+        Cdrom cdrom = resource.get();
         verifyModel(cdrom);
     }
 
@@ -99,7 +99,7 @@ public class BackendCdRomResourceTest
         setUpEntityQueryExpectations(1);
         control.replay();
 
-        CdRom cdrom = resource.get();
+        Cdrom cdrom = resource.get();
         verifyModelWithCurrentCd(cdrom);
     }
 
@@ -109,7 +109,7 @@ public class BackendCdRomResourceTest
         setUpEntityQueryExpectations(1);
         control.replay();
 
-        CdRom cdrom = resource.get();
+        Cdrom cdrom = resource.get();
         verifyModelWithCurrentCd(cdrom);
     }
 
@@ -119,7 +119,7 @@ public class BackendCdRomResourceTest
         setUpEntityQueryExpectations(1);
         control.replay();
 
-        CdRom cdrom = resource.get();
+        Cdrom cdrom = resource.get();
         verifyModel(cdrom);
     }
 
@@ -129,13 +129,13 @@ public class BackendCdRomResourceTest
         setUpEntityQueryExpectations(1);
         control.replay();
 
-        CdRom cdrom = resource.get();
+        Cdrom cdrom = resource.get();
         verifyModelWithCurrentCd(cdrom);
     }
 
     @Test
     public void testChangeCdNotFound() throws Exception {
-        BackendDeviceResource<CdRom, CdRoms, VM> resource = getNotFoundResource();
+        BackendDeviceResource<Cdrom, Cdroms, VM> resource = getNotFoundResource();
         setUriInfo(setUpBasicUriExpectations());
         resource.setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1);
@@ -158,9 +158,9 @@ public class BackendCdRomResourceTest
                                 new Object[] {EJECT_ISO},
                                 true,
                                 true);
-        CdRom update = getUpdate();
+        Cdrom update = getUpdate();
         update.getFile().setId(EJECT_ISO);
-        CdRom cdrom = resource.update(update);
+        Cdrom cdrom = resource.update(update);
         assertEquals(EJECT_ISO, cdrom.getFile().getId());
     }
 
@@ -174,7 +174,7 @@ public class BackendCdRomResourceTest
                                 new Object[] {ISO_PATH},
                                 true,
                                 true);
-        CdRom cdrom = resource.update(getUpdate());
+        Cdrom cdrom = resource.update(getUpdate());
         assertTrue(cdrom.isSetFile());
     }
 
@@ -188,7 +188,7 @@ public class BackendCdRomResourceTest
                                 new Object[] {ISO_PATH},
                                 true,
                                 true);
-        CdRom cdrom = resource.update(getUpdate());
+        Cdrom cdrom = resource.update(getUpdate());
         assertTrue(cdrom.isSetFile());
     }
 
@@ -225,7 +225,7 @@ public class BackendCdRomResourceTest
 
     @Test
     public void testUpdateNotFound() throws Exception {
-        BackendDeviceResource<CdRom, CdRoms, VM> resource = getNotFoundResource();
+        BackendDeviceResource<Cdrom, Cdroms, VM> resource = getNotFoundResource();
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, VMStatus.Down);
         control.replay();
@@ -247,21 +247,21 @@ public class BackendCdRomResourceTest
                                            true,
                                            true));
 
-        CdRom cdrom = resource.update(getUpdate());
+        Cdrom cdrom = resource.update(getUpdate());
         assertTrue(cdrom.isSetFile());
     }
 
     @Test
     public void testUpdateIncompleteParameters() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        CdRom update = new CdRom();
+        Cdrom update = new Cdrom();
         update.setFile(null);
         control.replay();
         try {
             resource.update(update);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "CdRom", "update", "file");
+             verifyIncompleteException(wae, "Cdrom", "update", "file");
         }
     }
 
@@ -345,8 +345,8 @@ public class BackendCdRomResourceTest
         }
     }
 
-    protected CdRom getUpdate() {
-        CdRom update = new CdRom();
+    protected Cdrom getUpdate() {
+        Cdrom update = new Cdrom();
         update.setFile(new File());
         update.getFile().setId(ISO_PATH);
         return update;
@@ -405,12 +405,12 @@ public class BackendCdRomResourceTest
         }
     }
 
-    protected void verifyModel(CdRom model) {
+    protected void verifyModel(Cdrom model) {
         verifyModelWithIso(model, ISO_PATH);
         verifyLinks(model);
     }
 
-    protected void verifyModelWithCurrentCd(CdRom model) {
+    protected void verifyModelWithCurrentCd(Cdrom model) {
         verifyModelWithIso(model, CURRENT_ISO_PATH);
         verifyLinks(model);
     }

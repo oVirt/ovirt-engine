@@ -561,8 +561,8 @@ public class VmMapper extends VmBaseMapper {
                 vm.getOs().getBoot().getDevices().isSetDevices()) {
             params.setBootSequence(map(vm.getOs().getBoot(), null));
         }
-        if (vm.isSetCdroms() && vm.getCdroms().isSetCdRoms()) {
-            String file = vm.getCdroms().getCdRoms().get(0).getFile().getId();
+        if (vm.isSetCdroms() && vm.getCdroms().isSetCdroms()) {
+            String file = vm.getCdroms().getCdroms().get(0).getFile().getId();
             if (file != null) {
                 params.setDiskPath(file);
             }

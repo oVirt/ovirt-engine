@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.ovirt.engine.api.model.CdRom;
-import org.ovirt.engine.api.model.CdRoms;
+import org.ovirt.engine.api.model.Cdrom;
+import org.ovirt.engine.api.model.Cdroms;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 @Ignore
-public class AbstractBackendCdRomsResourceTest<T extends AbstractBackendReadOnlyDevicesResource<CdRom, CdRoms, VM>>
-        extends AbstractBackendCollectionResourceTest<CdRom, VM, T> {
+public class AbstractBackendCdRomsResourceTest<T extends AbstractBackendReadOnlyDevicesResource<Cdrom, Cdroms, VM>>
+        extends AbstractBackendCollectionResourceTest<Cdrom, VM, T> {
 
     protected final static Guid PARENT_ID = GUIDS[1];
     protected final static String ISO_PATH = "Fedora-13-x86_64-Live.iso";
@@ -40,7 +40,7 @@ public class AbstractBackendCdRomsResourceTest<T extends AbstractBackendReadOnly
     @Ignore
     public void testQuery() throws Exception {
         // skip test inherited from base class as searching
-        // over CdRoms is unsupported by the backend
+        // over Cdroms is unsupported by the backend
     }
 
     protected void setUpQueryExpectations(String query) throws Exception {
@@ -94,34 +94,34 @@ public class AbstractBackendCdRomsResourceTest<T extends AbstractBackendReadOnly
         return vm;
     }
 
-    protected List<CdRom> getCollection() {
-        return collection.list().getCdRoms();
+    protected List<Cdrom> getCollection() {
+        return collection.list().getCdroms();
     }
 
-    static CdRom getModel(int index) {
-        CdRom model = new CdRom();
+    static Cdrom getModel(int index) {
+        Cdrom model = new Cdrom();
         model.setFile(new File());
         model.getFile().setId(ISO_PATH);
         return model;
     }
 
-    static CdRom getModelWithCurrentCd() {
-        CdRom model = new CdRom();
+    static Cdrom getModelWithCurrentCd() {
+        Cdrom model = new Cdrom();
         model.setFile(new File());
         model.getFile().setId(CURRENT_ISO_PATH);
         return model;
     }
 
-    protected void verifyModel(CdRom model, int index) {
+    protected void verifyModel(Cdrom model, int index) {
         verifyModelWithIso(model, ISO_PATH);
         verifyLinks(model);
     }
 
-    static void verifyModelSpecific(CdRom model, int index) {
+    static void verifyModelSpecific(Cdrom model, int index) {
         verifyModelWithIso(model, ISO_PATH);
     }
 
-    static void verifyModelWithIso(CdRom model, String isoPath) {
+    static void verifyModelWithIso(Cdrom model, String isoPath) {
         assertEquals(Guid.Empty.toString(), model.getId());
         assertTrue(model.isSetVm());
         assertEquals(PARENT_ID.toString(), model.getVm().getId());

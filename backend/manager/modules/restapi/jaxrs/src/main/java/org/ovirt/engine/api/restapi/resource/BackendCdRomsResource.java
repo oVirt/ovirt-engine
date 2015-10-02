@@ -5,8 +5,8 @@ import static org.ovirt.engine.api.restapi.types.CdRomMapper.CDROM_ID;
 import java.util.List;
 
 import org.ovirt.engine.api.common.util.QueryHelper;
-import org.ovirt.engine.api.model.CdRom;
-import org.ovirt.engine.api.model.CdRoms;
+import org.ovirt.engine.api.model.Cdrom;
+import org.ovirt.engine.api.model.Cdroms;
 import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
@@ -21,14 +21,14 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendCdRomsResource
-        extends AbstractBackendDevicesResource<CdRom, CdRoms, VM>
-        implements DevicesResource<CdRom, CdRoms> {
+        extends AbstractBackendDevicesResource<Cdrom, Cdroms, VM>
+        implements DevicesResource<Cdrom, Cdroms> {
 
     public BackendCdRomsResource(Guid parentId,
                                  VdcQueryType queryType,
                                  VdcQueryParametersBase queryParams) {
-        super(CdRom.class,
-              CdRoms.class,
+        super(Cdrom.class,
+              Cdroms.class,
               VM.class,
               parentId,
               queryType,
@@ -58,12 +58,12 @@ public class BackendCdRomsResource
     }
 
     @Override
-    protected VdcActionParametersBase getAddParameters(VM mapped, CdRom cdrom) {
+    protected VdcActionParametersBase getAddParameters(VM mapped, Cdrom cdrom) {
         return new VmManagementParametersBase(getUpdatable(mapped.getStaticData().getIsoPath()));
     }
 
     @Override
-    protected CdRoms mapCollection(List<VM> entities) {
+    protected Cdroms mapCollection(List<VM> entities) {
         if (QueryHelper.hasCurrentConstraint(getUriInfo())) {
             for (VM entity : entities) {
                 // change the iso path so the result of 'map' will contain current cd instead of the
@@ -84,19 +84,19 @@ public class BackendCdRomsResource
     }
 
     @Override
-    protected ParametersProvider<CdRom, VM> getUpdateParametersProvider() {
+    protected ParametersProvider<Cdrom, VM> getUpdateParametersProvider() {
         return new UpdateParametersProvider();
     }
 
-    protected class UpdateParametersProvider implements ParametersProvider<CdRom, VM> {
+    protected class UpdateParametersProvider implements ParametersProvider<Cdrom, VM> {
         @Override
-        public VdcActionParametersBase getParameters(CdRom incoming, VM entity) {
+        public VdcActionParametersBase getParameters(Cdrom incoming, VM entity) {
             return new VmManagementParametersBase(getUpdatable(incoming.getFile().getId()));
         }
     }
 
     @Override
-    public DeviceResource<CdRom> getDeviceSubResource(String id) {
+    public DeviceResource<Cdrom> getDeviceSubResource(String id) {
         return inject(
             new BackendCdRomResource(
                 parentId,

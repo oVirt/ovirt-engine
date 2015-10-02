@@ -19,6 +19,8 @@ The following XML schema complex types have been renamed:
 - `API` - `Api`
 - `CPU` - `Cpu`
 - `CPUs` - `Cpus`
+- `CdRom` - `Cdrom`
+- `CdRoms` - `Cdroms`
 - `DNS` - `Dns`
 - `GuestNicConfiguration` - `NicConfiguration`
 - `GuestNicsConfiguration` - `NicConfigurations`

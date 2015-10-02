@@ -5,8 +5,8 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.CdRom;
-import org.ovirt.engine.api.model.CdRoms;
+import org.ovirt.engine.api.model.Cdrom;
+import org.ovirt.engine.api.model.Cdroms;
 import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
@@ -106,7 +106,7 @@ public class BackendTemplateResource
     }
 
     @Override
-    public ReadOnlyDevicesResource<CdRom, CdRoms> getCdRomsResource() {
+    public ReadOnlyDevicesResource<Cdrom, Cdroms> getCdRomsResource() {
         return inject(new BackendReadOnlyCdRomsResource<VmTemplate>
                 (VmTemplate.class,
                         guid,

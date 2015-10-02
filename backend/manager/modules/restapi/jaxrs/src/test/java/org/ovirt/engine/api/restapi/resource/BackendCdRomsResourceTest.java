@@ -4,7 +4,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.CdRom;
+import org.ovirt.engine.api.model.Cdrom;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -47,12 +47,12 @@ public class BackendCdRomsResourceTest
                                   new String[] { "Id" },
                                   new Object[] { PARENT_ID },
                                   getEntity(0));
-        CdRom model = getModel(0);
+        Cdrom model = getModel(0);
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof CdRom);
-        verifyModel((CdRom) response.getEntity(), 0);
+        assertTrue(response.getEntity() instanceof Cdrom);
+        verifyModel((Cdrom) response.getEntity(), 0);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class BackendCdRomsResourceTest
                                            new Object[] {},
                                            canDo,
                                            success));
-        CdRom model = getModel(0);
+        Cdrom model = getModel(0);
 
         try {
             collection.add(model);
@@ -91,7 +91,7 @@ public class BackendCdRomsResourceTest
 
     @Test
     public void testAddIncompleteParameters() throws Exception {
-        CdRom model = new CdRom();
+        Cdrom model = new Cdrom();
         model.setName(NAMES[0]);
         model.setFile(new File());
 
@@ -101,7 +101,7 @@ public class BackendCdRomsResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "CdRom", "add", "file.id");
+             verifyIncompleteException(wae, "Cdrom", "add", "file.id");
         }
     }
 

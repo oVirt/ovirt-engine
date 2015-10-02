@@ -26,8 +26,8 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
-import org.ovirt.engine.api.model.CdRom;
-import org.ovirt.engine.api.model.CdRoms;
+import org.ovirt.engine.api.model.Cdrom;
+import org.ovirt.engine.api.model.Cdroms;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Template;
@@ -48,7 +48,7 @@ public interface TemplateResource extends UpdatableResource<Template>, Asynchron
     public Response remove();
 
     @Path("cdroms")
-    public ReadOnlyDevicesResource<CdRom, CdRoms> getCdRomsResource();
+    public ReadOnlyDevicesResource<Cdrom, Cdroms> getCdRomsResource();
 
     @Path("disks")
     public TemplateDisksResource getDisksResource();

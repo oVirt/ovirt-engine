@@ -3,8 +3,8 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.QueryHelper;
-import org.ovirt.engine.api.model.CdRom;
-import org.ovirt.engine.api.model.CdRoms;
+import org.ovirt.engine.api.model.Cdrom;
+import org.ovirt.engine.api.model.Cdroms;
 import org.ovirt.engine.api.resource.CdRomResource;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -15,20 +15,20 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendCdRomResource extends BackendDeviceResource<CdRom, CdRoms, VM> implements CdRomResource {
+public class BackendCdRomResource extends BackendDeviceResource<Cdrom, Cdroms, VM> implements CdRomResource {
 
     private Guid vmId;
 
     public BackendCdRomResource(
             Guid vmId,
             Guid cdRomId,
-            AbstractBackendReadOnlyDevicesResource<CdRom, CdRoms, VM> collection,
+            AbstractBackendReadOnlyDevicesResource<Cdrom, Cdroms, VM> collection,
             VdcActionType updateType,
-            ParametersProvider<CdRom, VM> updateParametersProvider,
+            ParametersProvider<Cdrom, VM> updateParametersProvider,
             String[] requiredUpdateFields,
             String... subCollections) {
         super(
-            CdRom.class,
+            Cdrom.class,
             VM.class,
             cdRomId,
             collection,
@@ -41,7 +41,7 @@ public class BackendCdRomResource extends BackendDeviceResource<CdRom, CdRoms, V
     }
 
     @Override
-    public CdRom update(CdRom resource) {
+    public Cdrom update(Cdrom resource) {
         if (QueryHelper.hasCurrentConstraint(getUriInfo())) {
             validateParameters(resource, requiredUpdateFields);
             performAction(VdcActionType.ChangeDisk,
@@ -54,7 +54,7 @@ public class BackendCdRomResource extends BackendDeviceResource<CdRom, CdRoms, V
     }
 
     @Override
-    public CdRom get() {
+    public Cdrom get() {
         if (QueryHelper.hasCurrentConstraint(getUriInfo())) {
             VM vm = collection.lookupEntity(guid);
             if (vm == null) {

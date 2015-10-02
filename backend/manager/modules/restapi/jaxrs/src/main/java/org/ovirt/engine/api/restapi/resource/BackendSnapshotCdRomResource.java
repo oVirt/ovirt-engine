@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.CdRom;
+import org.ovirt.engine.api.model.Cdrom;
 import org.ovirt.engine.api.resource.SnapshotCdRomResource;
 
 public class BackendSnapshotCdRomResource implements SnapshotCdRomResource {
@@ -18,8 +18,8 @@ public class BackendSnapshotCdRomResource implements SnapshotCdRomResource {
     }
 
     @Override
-    public CdRom get() {
-        for (CdRom cdRom : collection.list().getCdRoms()) {
+    public Cdrom get() {
+        for (Cdrom cdRom : collection.list().getCdroms()) {
             if (cdRom.getId().equals(cdRomId)) {
                 return cdRom;
             }

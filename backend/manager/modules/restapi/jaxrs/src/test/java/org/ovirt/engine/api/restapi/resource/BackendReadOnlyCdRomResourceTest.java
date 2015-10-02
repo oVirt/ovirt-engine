@@ -10,22 +10,22 @@ import java.util.List;
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.CdRom;
-import org.ovirt.engine.api.model.CdRoms;
+import org.ovirt.engine.api.model.Cdrom;
+import org.ovirt.engine.api.model.Cdroms;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendReadOnlyCdRomResourceTest
-        extends AbstractBackendSubResourceTest<CdRom, VM, BackendReadOnlyDeviceResource<CdRom, CdRoms, VM>> {
+        extends AbstractBackendSubResourceTest<Cdrom, VM, BackendReadOnlyDeviceResource<Cdrom, Cdroms, VM>> {
 
     public BackendReadOnlyCdRomResourceTest() {
         super(getResource(GUIDS[0]));
     }
 
-    protected static BackendReadOnlyDeviceResource<CdRom, CdRoms, VM> getResource(Guid id) {
-        return new BackendReadOnlyDeviceResource<CdRom, CdRoms, VM>(CdRom.class,
+    protected static BackendReadOnlyDeviceResource<Cdrom, Cdroms, VM> getResource(Guid id) {
+        return new BackendReadOnlyDeviceResource<Cdrom, Cdroms, VM>(Cdrom.class,
                                                                     VM.class,
                                                                     id,
                                                                     getCollection());
@@ -45,7 +45,7 @@ public class BackendReadOnlyCdRomResourceTest
 
     @Test
     public void testGetNotFound() throws Exception {
-        BackendReadOnlyDeviceResource<CdRom, CdRoms, VM> resource =
+        BackendReadOnlyDeviceResource<Cdrom, Cdroms, VM> resource =
             getResource(new Guid("0d0264ef-40de-45a1-b746-83a0088b47a8"));
         initResource(resource);
         initResource(resource.getCollection());
@@ -66,7 +66,7 @@ public class BackendReadOnlyCdRomResourceTest
         setUpEntityQueryExpectations(1);
         control.replay();
 
-        CdRom cdrom = resource.get();
+        Cdrom cdrom = resource.get();
         verifyModelSpecific(cdrom, 1);
         verifyLinks(cdrom);
     }

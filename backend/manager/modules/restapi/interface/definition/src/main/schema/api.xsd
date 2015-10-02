@@ -3833,9 +3833,9 @@
 
   <xs:element name="applications" type="Applications"/>
 
-  <xs:element name="cdrom" type="CdRom"/>
+  <xs:element name="cdrom" type="Cdrom"/>
 
-  <xs:element name="cdroms" type="CdRoms"/>
+  <xs:element name="cdroms" type="Cdroms"/>
 
   <xs:element name="floppy" type="Floppy"/>
 
@@ -3883,7 +3883,7 @@
 
   <xs:element name="watchdogs" type="Watchdogs"/>
 
-  <xs:complexType name="CdRom">
+  <xs:complexType name="Cdrom">
     <xs:complexContent>
       <xs:extension base="BaseDevice">
         <xs:sequence>
@@ -3893,14 +3893,14 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="CdRoms">
+  <xs:complexType name="Cdroms">
     <xs:complexContent>
       <xs:extension base="BaseResources">
         <xs:sequence>
           <xs:element ref="cdrom" minOccurs="0" maxOccurs="unbounded">
             <xs:annotation>
               <xs:appinfo>
-                <jaxb:property name="CdRoms"/>
+                <jaxb:property name="Cdroms"/>
               </xs:appinfo>
             </xs:annotation>
           </xs:element>

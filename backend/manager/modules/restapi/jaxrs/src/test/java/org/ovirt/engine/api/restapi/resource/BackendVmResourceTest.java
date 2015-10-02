@@ -23,8 +23,8 @@ import org.ovirt.engine.api.model.Bios;
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.BootMenu;
-import org.ovirt.engine.api.model.CdRom;
-import org.ovirt.engine.api.model.CdRoms;
+import org.ovirt.engine.api.model.Cdrom;
+import org.ovirt.engine.api.model.Cdroms;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Disks;
@@ -664,10 +664,10 @@ public class BackendVmResourceTest
 
         Action action = new Action();
         action.setVm(new Vm());
-        action.getVm().setCdroms(new CdRoms());
-        action.getVm().getCdroms().getCdRoms().add(new CdRom());
-        action.getVm().getCdroms().getCdRoms().get(0).setFile(new File());
-        action.getVm().getCdroms().getCdRoms().get(0).getFile().setId(ISO_ID);
+        action.getVm().setCdroms(new Cdroms());
+        action.getVm().getCdroms().getCdroms().add(new Cdrom());
+        action.getVm().getCdroms().getCdroms().get(0).setFile(new File());
+        action.getVm().getCdroms().getCdroms().get(0).getFile().setId(ISO_ID);
         action.getVm().setFloppies(new Floppies());
         action.getVm().getFloppies().getFloppies().add(new Floppy());
         action.getVm().getFloppies().getFloppies().get(0).setFile(new File());
