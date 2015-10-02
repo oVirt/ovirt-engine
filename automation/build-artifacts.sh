@@ -9,7 +9,7 @@ export BUILD_JAVA_OPTS_MAVEN="\
 export EXTRA_BUILD_FLAGS="-gs $MAVEN_SETTINGS"
 export BUILD_JAVA_OPTS_GWT="\
     -Xms1G \
-    -Xmx6G \
+    -Xmx4G \
 "
 
 # Set the location of the JDK that will be used for compilation:
