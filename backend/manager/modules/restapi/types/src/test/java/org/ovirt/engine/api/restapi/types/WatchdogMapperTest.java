@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.ovirt.engine.api.model.WatchDog;
+import org.ovirt.engine.api.model.Watchdog;
 import org.ovirt.engine.api.model.WatchdogAction;
 import org.ovirt.engine.api.model.WatchdogModel;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
@@ -17,7 +17,7 @@ public class WatchdogMapperTest {
         entity.setAction(VmWatchdogAction.RESET);
         entity.setModel(VmWatchdogType.i6300esb);
         entity.setId(Guid.Empty);
-        WatchDog model = WatchdogMapper.map(entity, null);
+        Watchdog model = WatchdogMapper.map(entity, null);
         Assert.assertNotNull(model);
         Assert.assertEquals(model.getAction(), "reset");
         Assert.assertEquals(model.getModel(), "i6300esb");
@@ -25,7 +25,7 @@ public class WatchdogMapperTest {
 
     @Test
     public void mapWatchdog() {
-        WatchDog model = new WatchDog();
+        Watchdog model = new Watchdog();
         model.setAction("reset");
         model.setModel("i6300esb");
         model.setId(Guid.Empty.toString());

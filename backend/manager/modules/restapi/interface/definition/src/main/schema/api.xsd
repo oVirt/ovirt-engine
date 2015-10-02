@@ -1538,14 +1538,14 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="WatchDogs">
+  <xs:complexType name="Watchdogs">
     <xs:complexContent>
       <xs:extension base="BaseResources">
         <xs:sequence>
           <xs:element ref="watchdog" minOccurs="0" maxOccurs="unbounded">
             <xs:annotation>
               <xs:appinfo>
-                <jaxb:property name="WatchDogs"/>
+                <jaxb:property name="Watchdogs"/>
               </xs:appinfo>
             </xs:annotation>
           </xs:element>
@@ -1554,7 +1554,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="WatchDog">
+  <xs:complexType name="Watchdog">
     <xs:complexContent>
       <xs:extension base="BaseDevice">
         <xs:sequence>
@@ -3879,9 +3879,9 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="watchdog" type="WatchDog"/>
+  <xs:element name="watchdog" type="Watchdog"/>
 
-  <xs:element name="watchdogs" type="WatchDogs"/>
+  <xs:element name="watchdogs" type="Watchdogs"/>
 
   <xs:complexType name="CdRom">
     <xs:complexContent>

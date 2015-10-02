@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.WatchDog;
+import org.ovirt.engine.api.model.Watchdog;
 import org.ovirt.engine.api.model.WatchdogAction;
 import org.ovirt.engine.api.model.WatchdogModel;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendWatchdogResourceTest extends AbstractBackendSubResourceTest<WatchDog, VmWatchdog, BackendWatchdogResource> {
+public class BackendWatchdogResourceTest extends AbstractBackendSubResourceTest<Watchdog, VmWatchdog, BackendWatchdogResource> {
 
     private static final Guid VM_ID = GUIDS[1];
     private static final Guid WATCHDOG_ID = GUIDS[0];
@@ -36,9 +36,9 @@ public class BackendWatchdogResourceTest extends AbstractBackendSubResourceTest<
         return new BackendWatchdogsResource(true, VM_ID, VdcQueryType.GetWatchdog, new IdQueryParameters(VM_ID));
     }
 
-    private static ParametersProvider<WatchDog, VmWatchdog> getUpdateParams() {
-        return new ParametersProvider<WatchDog, VmWatchdog>() {
-            public VdcActionParametersBase getParameters(WatchDog model, VmWatchdog entity) {
+    private static ParametersProvider<Watchdog, VmWatchdog> getUpdateParams() {
+        return new ParametersProvider<Watchdog, VmWatchdog>() {
+            public VdcActionParametersBase getParameters(Watchdog model, VmWatchdog entity) {
                 WatchdogParameters params = new WatchdogParameters();
                 params.setModel(VmWatchdogType.getByName(model.getModel()));
                 params.setAction(VmWatchdogAction.getByName(model.getAction()));
@@ -63,12 +63,12 @@ public class BackendWatchdogResourceTest extends AbstractBackendSubResourceTest<
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1);
         control.replay();
-        WatchDog watchDog = resource.get();
+        Watchdog watchDog = resource.get();
         verifyModel(watchDog, 0);
     }
 
     @Override
-    protected void verifyModel(WatchDog model, int index) {
+    protected void verifyModel(Watchdog model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
         // wd has no name and description
         verifyLinks(model);
@@ -87,7 +87,7 @@ public class BackendWatchdogResourceTest extends AbstractBackendSubResourceTest<
                 true
             )
         );
-        WatchDog wd = resource.update(getUpdate());
+        Watchdog wd = resource.update(getUpdate());
         assertTrue(wd.isSetAction());
     }
 
@@ -127,8 +127,8 @@ public class BackendWatchdogResourceTest extends AbstractBackendSubResourceTest<
         return watchDog;
     }
 
-    private WatchDog getUpdate() {
-        WatchDog watchDog = new WatchDog();
+    private Watchdog getUpdate() {
+        Watchdog watchDog = new Watchdog();
         watchDog.setId(WATCHDOG_ID.toString());
         watchDog.setAction(WatchdogAction.RESET.name().toLowerCase());
         watchDog.setModel(WatchdogModel.I6300ESB.name().toLowerCase());

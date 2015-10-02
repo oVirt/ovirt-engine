@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.WatchDog;
+import org.ovirt.engine.api.model.Watchdog;
 import org.ovirt.engine.api.model.WatchdogAction;
 import org.ovirt.engine.api.model.WatchdogModel;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -34,15 +34,15 @@ public class BackendWatchdogsResourceTest extends AbstractBackendWatchdogsResour
             new Object[] { PARENT_ID },
             getEntity(0)
         );
-        WatchDog model = getModel(0);
+        Watchdog model = getModel(0);
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof WatchDog);
-        verifyModel((WatchDog) response.getEntity(), 0);
+        assertTrue(response.getEntity() instanceof Watchdog);
+        verifyModel((Watchdog) response.getEntity(), 0);
     }
 
-    private WatchDog getModel(int i) {
-        WatchDog watchDog = new WatchDog();
+    private Watchdog getModel(int i) {
+        Watchdog watchDog = new Watchdog();
         watchDog.setAction(WatchdogAction.RESET.name().toLowerCase());
         watchDog.setModel(WatchdogModel.I6300ESB.name().toLowerCase());
         watchDog.setId(GUIDS[i].toString());

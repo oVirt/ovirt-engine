@@ -2,15 +2,15 @@ package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.WatchDog;
-import org.ovirt.engine.api.model.WatchDogs;
+import org.ovirt.engine.api.model.Watchdog;
+import org.ovirt.engine.api.model.Watchdogs;
 import org.ovirt.engine.api.resource.WatchdogResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendWatchdogResource extends BackendDeviceResource<WatchDog, WatchDogs, VmWatchdog> implements WatchdogResource {
+public class BackendWatchdogResource extends BackendDeviceResource<Watchdog, Watchdogs, VmWatchdog> implements WatchdogResource {
 
     private boolean parentIsVm;
     private Guid parentId;
@@ -19,12 +19,12 @@ public class BackendWatchdogResource extends BackendDeviceResource<WatchDog, Wat
             boolean parentIsVm,
             Guid parentId,
             Guid watchdogId,
-            AbstractBackendReadOnlyDevicesResource<WatchDog, WatchDogs, VmWatchdog> collection,
+            AbstractBackendReadOnlyDevicesResource<Watchdog, Watchdogs, VmWatchdog> collection,
             VdcActionType updateType,
-            org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider<WatchDog, VmWatchdog> updateParametersProvider,
+            org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider<Watchdog, VmWatchdog> updateParametersProvider,
             String[] requiredUpdateFields) {
         super(
-            WatchDog.class,
+            Watchdog.class,
             VmWatchdog.class,
             watchdogId,
             collection,

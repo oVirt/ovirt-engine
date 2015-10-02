@@ -47,6 +47,8 @@ The following XML schema complex types have been renamed:
 - `VM` - `Vm`
 - `VMs` - `Vms`
 - `VirtIO_SCSI` - `VirtioScsi`
+- `WatchDog` - `Watchdog`
+- `WatchDogs` - `Watchdogs`
 
 First column is the old name, and second column is the new name.
 

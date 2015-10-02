@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
-import org.ovirt.engine.api.model.WatchDog;
+import org.ovirt.engine.api.model.Watchdog;
 import org.ovirt.engine.api.model.WatchdogAction;
 import org.ovirt.engine.api.model.WatchdogModel;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 
 public class WatchdogMapper {
-    @Mapping(from = WatchDog.class, to = VmWatchdog.class)
-    public static VmWatchdog map(WatchDog model, VmWatchdog template) {
+    @Mapping(from = Watchdog.class, to = VmWatchdog.class)
+    public static VmWatchdog map(Watchdog model, VmWatchdog template) {
         VmWatchdog entity = template == null ? new VmWatchdog() : template;
         if (model.isSetId()) {
             entity.setId(GuidUtils.asGuid(model.getId()));
@@ -30,9 +30,9 @@ public class WatchdogMapper {
         return entity;
     }
 
-    @Mapping(from = VmWatchdog.class, to = WatchDog.class)
-    public static WatchDog map(VmWatchdog entity, WatchDog template) {
-        WatchDog model = template == null ? new WatchDog() : template;
+    @Mapping(from = VmWatchdog.class, to = Watchdog.class)
+    public static Watchdog map(VmWatchdog entity, Watchdog template) {
+        Watchdog model = template == null ? new Watchdog() : template;
         if (entity.getAction() != null) {
             WatchdogAction action = map(entity.getAction(), null);
             if (action != null) {

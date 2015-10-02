@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import org.ovirt.engine.api.model.Template;
-import org.ovirt.engine.api.model.WatchDog;
+import org.ovirt.engine.api.model.Watchdog;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -16,7 +16,7 @@ public class BackendTemplateWatchdogsResource extends BackendWatchdogsResource {
     }
 
     @Override
-    public WatchDog addParents(WatchDog device) {
+    public Watchdog addParents(Watchdog device) {
         device.setTemplate(new Template());
         device.getTemplate().setId(templateId.toString());
         return device;

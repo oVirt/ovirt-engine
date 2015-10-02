@@ -9,8 +9,8 @@ import java.util.List;
 
 import org.easymock.EasyMock;
 import org.junit.Ignore;
-import org.ovirt.engine.api.model.WatchDog;
-import org.ovirt.engine.api.model.WatchDogs;
+import org.ovirt.engine.api.model.Watchdog;
+import org.ovirt.engine.api.model.Watchdogs;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 @Ignore
-public abstract class AbstractBackendWatchdogsResourceTest<R extends AbstractBackendReadOnlyDevicesResource<WatchDog, WatchDogs, VmWatchdog>>
-        extends AbstractBackendCollectionResourceTest<WatchDog, VmWatchdog, R> {
+public abstract class AbstractBackendWatchdogsResourceTest<R extends AbstractBackendReadOnlyDevicesResource<Watchdog, Watchdogs, VmWatchdog>>
+        extends AbstractBackendCollectionResourceTest<Watchdog, VmWatchdog, R> {
     public AbstractBackendWatchdogsResourceTest(R collection) {
         super(collection, null, "");
     }
@@ -30,8 +30,8 @@ public abstract class AbstractBackendWatchdogsResourceTest<R extends AbstractBac
     protected static final Guid PARENT_ID = GUIDS[1];
 
     @Override
-    protected List<WatchDog> getCollection() {
-        return collection.list().getWatchDogs();
+    protected List<Watchdog> getCollection() {
+        return collection.list().getWatchdogs();
     }
 
     @Override
@@ -78,7 +78,7 @@ public abstract class AbstractBackendWatchdogsResourceTest<R extends AbstractBac
      * This method needed to be overridden because the super implementation assumes that there can be multiple
      * watchdogs, while there can be only 0 or 1.
      */
-    protected void verifyCollection(List<WatchDog> collection) throws Exception {
+    protected void verifyCollection(List<Watchdog> collection) throws Exception {
         assertNotNull(collection);
         assertEquals(1, collection.size());
         if(!collection.isEmpty()) {
@@ -90,7 +90,7 @@ public abstract class AbstractBackendWatchdogsResourceTest<R extends AbstractBac
     /**
      * This method needed to be overridden to disable name and description vaildation as watchdogs have none of these.
      */
-    protected void verifyModel(WatchDog model, int index) {
+    protected void verifyModel(Watchdog model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
         verifyLinks(model);
     }

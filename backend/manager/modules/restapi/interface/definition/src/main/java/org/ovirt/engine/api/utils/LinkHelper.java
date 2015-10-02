@@ -120,7 +120,7 @@ import org.ovirt.engine.api.model.VirtualNumaNode;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VnicProfile;
-import org.ovirt.engine.api.model.WatchDog;
+import org.ovirt.engine.api.model.Watchdog;
 import org.ovirt.engine.api.model.Weight;
 import org.ovirt.engine.api.resource.AffinityGroupResource;
 import org.ovirt.engine.api.resource.AffinityGroupsResource;
@@ -533,7 +533,7 @@ public class LinkHelper {
         map.add(DeviceResource.class, DevicesResource.class, Vm.class);
         map.add(WatchdogResource.class, DevicesResource.class, Vm.class);
         map.add(WatchdogResource.class, DevicesResource.class, Template.class);
-        TYPES.put(WatchDog.class, map);
+        TYPES.put(Watchdog.class, map);
 
         map = new ParentToCollectionMap(JobResource.class, JobsResource.class);
         TYPES.put(Job.class, map);
