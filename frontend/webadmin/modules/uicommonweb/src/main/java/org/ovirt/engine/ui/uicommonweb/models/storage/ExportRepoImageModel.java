@@ -49,6 +49,11 @@ public class ExportRepoImageModel extends ImportExportRepoImageBaseModel {
     }
 
     @Override
+    protected String getNoDomainAvailableMessage() {
+        return constants.noExternalImageProviderHasBeenConfiguredMsg();
+    }
+
+    @Override
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 

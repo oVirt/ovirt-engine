@@ -173,8 +173,10 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
         getCluster().setIsChangeable(!getCluster().getIsEmpty());
         getQuota().setIsChangeable(!getQuota().getIsEmpty());
         getOkCommand().setIsExecutionAllowed(!getStorageDomain().getIsEmpty());
-        setMessage(getStorageDomain().getIsEmpty() ? constants.noStorageDomainAvailableMsg() : null);
+        setMessage(getStorageDomain().getIsEmpty() ? getNoDomainAvailableMessage() : null);
     }
+
+    protected abstract String getNoDomainAvailableMessage();
 
     protected abstract List<StorageDomain> filterStorageDomains(List<StorageDomain> storageDomains);
 
