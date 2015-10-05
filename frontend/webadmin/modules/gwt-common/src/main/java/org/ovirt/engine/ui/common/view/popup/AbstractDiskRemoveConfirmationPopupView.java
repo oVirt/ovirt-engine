@@ -48,8 +48,7 @@ public abstract class AbstractDiskRemoveConfirmationPopupView extends RemoveConf
         }
 
         if (!notes.isEmpty()) {
-            String notes = messages.diskNote()
-                + getFormattedNote();
+            String notes = constants.htmlTab() + messages.diskNote() + getFormattedNote();
             addItemLabel(SafeHtmlUtils.fromSafeConstant("<b>" + notes + "</b>")); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
@@ -61,7 +60,7 @@ public abstract class AbstractDiskRemoveConfirmationPopupView extends RemoveConf
 
         for (int i = 0; i < notes.size(); i++) {
             String note = notes.get(i);
-            formattedNote.append(constants.lineBreak()).append(constants.htmlTab()).append(note);
+            formattedNote.append(constants.lineBreak()).append(constants.htmlTab()).append(constants.htmlTab()).append("- ").append(note); //$NON-NLS-1$
         }
 
         return formattedNote.toString();
