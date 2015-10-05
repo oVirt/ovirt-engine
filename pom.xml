@@ -75,7 +75,6 @@
     <vdsm-jsonrpc-java.version>1.1.4-SNAPSHOT</vdsm-jsonrpc-java.version>
     <slf4j.version>1.7.5</slf4j.version>
     <gwt.version>2.6.1</gwt.version>
-    <findbugs.version>2.5.2</findbugs.version>
     <mockito.version>1.9.0</mockito.version>
     <javassist.version>3.12.0.GA</javassist.version>
     <javax.mail.version>1.4.4</javax.mail.version>
@@ -623,6 +622,36 @@
           <version>2.8.1</version>
         </plugin>
 
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>findbugs-maven-plugin</artifactId>
+          <version>2.5.2</version>
+          <configuration>
+            <xmlOutput>true</xmlOutput>
+            <xmlOutputDirectory>target/site</xmlOutputDirectory>
+          </configuration>
+          <dependencies>
+
+            <!-- Whenever the findbugs plugin is used we need to force it to
+                 use version 3.x of findbugs, as version 2.x doesn't support
+                 Java 8: -->
+            <dependency>
+              <groupId>com.google.code.findbugs</groupId>
+              <artifactId>findbugs</artifactId>
+              <version>3.0.1</version>
+            </dependency>
+
+            <!-- We also want to have the .jar that contains the shared
+                 filters available in the classpath: -->
+            <dependency>
+              <groupId>org.ovirt.engine</groupId>
+              <artifactId>ovirt-findbugs-filters</artifactId>
+              <version>4.0.0-SNAPSHOT</version>
+            </dependency>
+
+          </dependencies>
+        </plugin>
+
       </plugins>
     </pluginManagement>
     <resources>
@@ -649,14 +678,8 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>findbugs-maven-plugin</artifactId>
-            <version>${findbugs.version}</version>
-            <configuration>
-              <xmlOutput>true</xmlOutput>
-              <!-- Optional derectory to put findbugs xdoc xml report -->
-              <xmlOutputDirectory>target/site</xmlOutputDirectory>
-            </configuration>
-         </plugin>
-       </plugins>
+          </plugin>
+        </plugins>
       </reporting>
     </profile>
     <profile>
@@ -733,7 +756,45 @@
         </pluginManagement>
       </build>
     </profile>
+
+    <profile>
+      <id>findbugs</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>findbugs-maven-plugin</artifactId>
+            <configuration>
+              <xmlOutput>true</xmlOutput>
+                <excludeFilterFile>exclude-filters-general.xml, ${project.basedir}/exclude-filters.xml</excludeFilterFile>
+                <xmlOutputDirectory>target/site</xmlOutputDirectory>
+              </configuration>
+            </plugin>
+          </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>findbugs-general</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>findbugs-maven-plugin</artifactId>
+            <configuration>
+              <excludeFilterFile>exclude-filters-general.xml, ${project.basedir}/exclude-filters.xml</excludeFilterFile>
+              <xmlOutputDirectory>target/site</xmlOutputDirectory>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
   </profiles>
+
   <!-- ====================================================================== -->
   <!-- Needed for MEAD, which runs 'mvn deploy -DaltDeploymentRepository=..'  -->
   <!-- and gets an error if there is no distributionManagement section        -->
