@@ -277,9 +277,9 @@ class Hostname(base.Base):
                 )
             )
         else:
-            if not self._DOMAIN_RE.match(components[1]):
+            if not self._DOMAIN_RE.match(fqdn):
                 raise RuntimeError(
-                    _('Host name {fqdn} has invalid domain name').format(
+                    _('Host name {fqdn} is not valid').format(
                         fqdn=fqdn,
                     )
                 )
