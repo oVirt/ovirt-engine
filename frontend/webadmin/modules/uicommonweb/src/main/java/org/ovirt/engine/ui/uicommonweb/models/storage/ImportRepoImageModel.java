@@ -66,6 +66,11 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
     }
 
     @Override
+    protected String getNoDomainAvailableMessage() {
+        return constants.noStorageDomainAvailableMsg();
+    }
+
+    @Override
     public boolean isImportModel() {
         return true;
     }

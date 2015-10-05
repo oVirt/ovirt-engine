@@ -1078,6 +1078,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("No active Storage Domain is available - check Storage Domains and Hosts status.")
     String noStorageDomainAvailableMsg();
 
+    @DefaultStringValue("No active external image provider has been configured.")
+    String noExternalImageProviderHasBeenConfiguredMsg();
+
     @DefaultStringValue("Source Storage Domain is not active")
     String sourceStorageDomainIsNotActiveMsg();
 
