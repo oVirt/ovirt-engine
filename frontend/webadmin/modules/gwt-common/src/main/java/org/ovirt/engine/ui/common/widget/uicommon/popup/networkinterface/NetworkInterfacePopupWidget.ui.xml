@@ -54,7 +54,7 @@
 			float: right;
 			line-height: 30px;
 			padding: 0 5px;
-			width: 370px;
+			width: 170px;
 		}
 	</ui:style>
 
@@ -72,19 +72,19 @@
 		<g:HorizontalPanel ui:field="linkStateSelectionPanel" width="100%">
 			<e:ListModelListBoxEditor ui:field="linkStateEditor" />
 			<g:SimplePanel addStyleNames="{style.contentWidget}">
-				<g:HorizontalPanel addStyleNames="{style.statusPanel}">
+				<g:VerticalPanel addStyleNames="{style.statusPanel}">
 					<ge:EntityModelRadioButtonEditor ui:field="linkedEditor"/>
 					<ge:EntityModelRadioButtonEditor ui:field="unlinkedEditor"/>
-				</g:HorizontalPanel>
+				</g:VerticalPanel>
 			</g:SimplePanel>
 		</g:HorizontalPanel>
 		<g:HorizontalPanel ui:field="cardStatusSelectionPanel" width="100%">
 			<e:ListModelListBoxEditor ui:field="cardStatusEditor" />
 			<g:SimplePanel addStyleNames="{style.contentWidget}">
-				<g:HorizontalPanel addStyleNames="{style.statusPanel}">
+				<g:VerticalPanel addStyleNames="{style.statusPanel}">
 					<ge:EntityModelRadioButtonEditor ui:field="pluggedEditor"/>
 					<ge:EntityModelRadioButtonEditor ui:field="unpluggedEditor"/>
-				</g:HorizontalPanel>
+				</g:VerticalPanel>
 			</g:SimplePanel>
 		</g:HorizontalPanel>
 	</g:FlowPanel>
