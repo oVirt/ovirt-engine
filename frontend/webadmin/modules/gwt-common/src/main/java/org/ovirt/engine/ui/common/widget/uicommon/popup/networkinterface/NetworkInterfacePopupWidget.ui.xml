@@ -17,7 +17,7 @@
 
 		.macExamplePanel {
 			float: right;
-    		width: 230px;
+    		width: 243px;
     		padding: 0 5px;
 		}
 
