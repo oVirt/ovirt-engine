@@ -121,7 +121,6 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
     private void localize() {
         isPluggedEditor.setLabel(constants.activateVmDiskPopup());
         isPluggedEditor.setWidgetTooltip(constants.activateVmDiskPopupToolTip());
-        isPluggedEditor.getContentWidgetContainer().setWidth("90px"); //$NON-NLS-1$
     }
 
     private void initManualWidgets(boolean allowMultipleSelection) {
