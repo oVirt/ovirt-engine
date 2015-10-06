@@ -160,10 +160,7 @@ BuildRequires:	assertj-core >= 2.2.0
 BuildRequires:	java-1.8.0-openjdk-devel >= 1:1.8.0
 BuildRequires:	jpackage-utils
 BuildRequires:	make
-BuildRequires:	maven >= 3.0.5
-BuildRequires:	maven-compiler-plugin >= 3.1
-BuildRequires:	maven-plugin-annotations >= 3.1
-BuildRequires:	plexus-utils >= 3.0.9
+BuildRequires:	maven
 BuildRequires:	python
 BuildRequires:	unzip
 

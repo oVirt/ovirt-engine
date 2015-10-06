@@ -768,12 +768,11 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>findbugs-maven-plugin</artifactId>
             <configuration>
-              <xmlOutput>true</xmlOutput>
-                <excludeFilterFile>exclude-filters-general.xml, ${project.basedir}/exclude-filters.xml</excludeFilterFile>
-                <xmlOutputDirectory>target/site</xmlOutputDirectory>
-              </configuration>
-            </plugin>
-          </plugins>
+              <excludeFilterFile>${project.basedir}/exclude-filters.xml</excludeFilterFile>
+              <xmlOutputDirectory>target/site</xmlOutputDirectory>
+            </configuration>
+          </plugin>
+        </plugins>
       </build>
     </profile>
 
