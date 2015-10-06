@@ -145,15 +145,25 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Storage
     }
 
     protected boolean connectStorageDomain(StorageDomain storageDomain) {
-        return StorageHelperDirector.getInstance()
-                .getItem(storageDomain.getStorageType())
-                .connectStorageToDomainByVdsId(storageDomain, getVdsId());
+        try {
+            return StorageHelperDirector.getInstance()
+                    .getItem(storageDomain.getStorageType())
+                    .connectStorageToDomainByVdsId(storageDomain, getVdsId());
+        } catch (RuntimeException e) {
+            log.error("Exception while connecting a storage domain", e);
+            return false;
+        }
     }
 
     protected boolean disconnectStorageDomain(StorageDomain storageDomain) {
-        return StorageHelperDirector.getInstance()
-                .getItem(storageDomain.getStorageType())
-                .disconnectStorageFromDomainByVdsId(storageDomain, getVdsId());
+        try {
+            return StorageHelperDirector.getInstance()
+                    .getItem(storageDomain.getStorageType())
+                    .disconnectStorageFromDomainByVdsId(storageDomain, getVdsId());
+        } catch (RuntimeException e) {
+            log.error("Exception while disconnecting a storage domain", e);
+            return false;
+        }
     }
 
     protected void logErrorMessage(StorageDomain storageDomain) {
