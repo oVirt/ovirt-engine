@@ -90,7 +90,6 @@ import org.ovirt.engine.core.dao.BusinessEntitySnapshotDao;
 import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.StatusAwareDao;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.Deserializer;
 import org.ovirt.engine.core.utils.ReflectionUtils;
@@ -129,6 +128,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     @Inject
     private SessionDataContainer sessionDataContainer;
+
+    @Inject
+    private BackendInternal backendInternal;
 
     /** Indicates whether the acquired locks should be released after the execute method or not */
     private boolean releaseLocksAtEndOfExecute = true;
@@ -279,7 +281,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected BackendInternal getBackend() {
-        return Injector.get(BackendInternal.class);
+        return backendInternal;
     }
 
     /**
