@@ -39,8 +39,13 @@
         }
 
         .isPluggedEditor {
-            position: absolute;
-            bottom: 10px;
+            float: right;
+            margin-top: -8px;
+            width: 140px;
+        }
+
+        .diskTypeSelection {
+            float: left;
         }
 
         .attachDiskPanel {
@@ -55,14 +60,16 @@
     </ui:style>
 
     <g:FlowPanel addStyleNames="{style.container}">
-        <w:RadioButtonsHorizontalPanel ui:field="diskTypePanel" name="diskTypePanel" addStyleNames="{style.obrand_diskTypePanel}"/>
+        <g:FlowPanel addStyleNames="{style.obrand_diskTypePanel}">
+            <w:RadioButtonsHorizontalPanel ui:field="diskTypePanel" name="diskTypePanel" addStyleNames="{style.diskTypeSelection}"/>
+            <ge:EntityModelCheckBoxEditor ui:field="isPluggedEditor" addStyleNames="{style.isPluggedEditor}" />
+        </g:FlowPanel>
         <g:VerticalPanel ui:field="attachDiskContainer" addStyleNames="{style.mainPanel}">
             <w:ValidatedPanelWidget ui:field="attachDiskPanel" addStyleNames="{style.attachDiskPanel}" />
             <g:FlowPanel ui:field="warningPanel" addStyleNames="{style.messagesLabel}">
                 <g:HTML ui:field="messageLabel" />
                 <g:HTML ui:field="warningLabel" visible="false" />
             </g:FlowPanel>
-            <ge:EntityModelCheckBoxEditor ui:field="isPluggedEditor" addStyleNames="{style.isPluggedEditor}" />
         </g:VerticalPanel>
     </g:FlowPanel>
 

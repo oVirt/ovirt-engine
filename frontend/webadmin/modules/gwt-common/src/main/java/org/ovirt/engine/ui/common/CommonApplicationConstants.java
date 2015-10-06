@@ -1259,7 +1259,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Allow Privileged SCSI I/O")
     String isSgIoUnfilteredEditor();
 
-    @DefaultStringValue("Activate")
+    @DefaultStringValue("Activate Disk(s)")
     String activateVmDiskPopup();
 
     @DefaultStringValue("When the VM is running, disks attached with an IDE interface won't be activated.")
