@@ -153,6 +153,8 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
         driver.edit(object);
 
         diskAliasLabel.asValueBox().setValue(object.getAlias().getEntity());
+        diskAliasLabel.setWidgetTooltip(object.getAlias().getEntity());
+
         diskSizeLabel.asValueBox().setValue((new DiskSizeRenderer<Integer>(SizeConverter.SizeUnit.GiB).render(
                 object.getSize().getEntity())));
 
@@ -161,6 +163,11 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
         sourceStorageLabel.getElement().getElementsByTagName("input").getItem(0). //$NON-NLS-1$
                 getStyle().setBorderColor("transparent"); //$NON-NLS-1$
+
+        StorageDomain sourceDomain = object.getSourceStorageDomain().getSelectedItem();
+        if (sourceDomain != null) {
+            sourceStorageLabel.setWidgetTooltip(object.getSourceStorageDomain().getSelectedItem().getName());
+        }
 
         updateStyles(object.getQuota().getIsAvailable());
     }
