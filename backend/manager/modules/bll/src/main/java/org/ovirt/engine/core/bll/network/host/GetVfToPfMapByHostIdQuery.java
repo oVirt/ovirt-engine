@@ -5,18 +5,18 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetAllVfsConfigByHostIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+public class GetVfToPfMapByHostIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
     @Inject
     private NetworkDeviceHelper networkDeviceHelper;
 
-    public GetAllVfsConfigByHostIdQuery(P parameters) {
+    public GetVfToPfMapByHostIdQuery(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getNetworkDeviceHelper().getHostNicVfsConfigsWithNumVfsDataByHostId(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(getNetworkDeviceHelper().getVfMap(getParameters().getId()));
     }
 
     NetworkDeviceHelper getNetworkDeviceHelper() {
