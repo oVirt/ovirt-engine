@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.storage.StorageServerConnectionExtensionValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
@@ -19,6 +20,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class StorageServerConnectionExtensionCommandBase<T extends VdcActionParametersBase> extends CommandBase<T> {
+
+    private StorageServerConnectionExtensionValidator connectionExtensionValidator = new StorageServerConnectionExtensionValidator();
 
     protected StorageServerConnectionExtensionCommandBase(T parameters) {
         super(parameters, null);
@@ -56,5 +59,9 @@ public abstract class StorageServerConnectionExtensionCommandBase<T extends VdcA
         lockMap.put(idLock, lockingPair);
         lockMap.put(hostTargetLock, lockingPair);
         return lockMap;
+    }
+
+    protected StorageServerConnectionExtensionValidator getConnectionExtensionValidator() {
+        return connectionExtensionValidator;
     }
 }
