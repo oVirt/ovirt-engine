@@ -6,16 +6,13 @@
     <ui:style>
         .container {
             width: 100%;
+            overflow: hidden;
         }
 
         .messagesLabel {
             color: #CD2127;
             width: 99%;
-            height: 60px;
-            position: absolute;
-            bottom: 30px;
             line-height: 18px;
-            overflow-y: auto;
         }
 
         .messagesLabel ul {
@@ -36,6 +33,9 @@
 
         .mainPanel {
             width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 517px;
         }
 
         .isPluggedEditor {
@@ -49,11 +49,6 @@
         }
 
         .attachDiskPanel {
-            position: absolute;
-            top: 40px;
-            bottom: 100px;
-            right: 2px;
-            left: 2px;
             padding: 2px;
         }
 
@@ -64,13 +59,13 @@
             <w:RadioButtonsHorizontalPanel ui:field="diskTypePanel" name="diskTypePanel" addStyleNames="{style.diskTypeSelection}"/>
             <ge:EntityModelCheckBoxEditor ui:field="isPluggedEditor" addStyleNames="{style.isPluggedEditor}" />
         </g:FlowPanel>
-        <g:VerticalPanel ui:field="attachDiskContainer" addStyleNames="{style.mainPanel}">
-            <w:ValidatedPanelWidget ui:field="attachDiskPanel" addStyleNames="{style.attachDiskPanel}" />
+        <g:FlowPanel ui:field="attachDiskContainer" addStyleNames="{style.mainPanel}">
+            <w:ValidatedPanelWidget ui:field="attachDiskPanel" />
             <g:FlowPanel ui:field="warningPanel" addStyleNames="{style.messagesLabel}">
                 <g:HTML ui:field="messageLabel" />
                 <g:HTML ui:field="warningLabel" visible="false" />
             </g:FlowPanel>
-        </g:VerticalPanel>
+        </g:FlowPanel>
     </g:FlowPanel>
 
 </ui:UiBinder>
