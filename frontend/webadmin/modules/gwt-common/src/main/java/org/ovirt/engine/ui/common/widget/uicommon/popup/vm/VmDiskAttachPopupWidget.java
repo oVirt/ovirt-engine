@@ -68,7 +68,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
     EntityModelCheckBoxEditor isPluggedEditor;
 
     @UiField
-    VerticalPanel attachDiskContainer;
+    FlowPanel attachDiskContainer;
 
     @UiField
     ValidatedPanelWidget attachDiskPanel;
