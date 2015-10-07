@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -13,11 +15,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -26,12 +31,17 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.HostDeviceId;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.HostDeviceDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -68,26 +78,32 @@ public class NetworkDeviceHelperImplTest {
     @Mock
     private HostNicVfsConfigDao hostNicVfsConfigDao;
 
+    @Mock
+    private VdsDao vdsDao;
+
     @Captor
     private ArgumentCaptor<HostDeviceId> hostDeviceIdCaptor;
 
     @Captor
     private ArgumentCaptor<Guid> vmIdCaptor;
-
     private NetworkDeviceHelperImpl networkDeviceHelper;
+
+    @Rule
+    public MockConfigRule mockConfigRule = new MockConfigRule();
 
     @Before
     public void setUp() {
-        networkDeviceHelper = new NetworkDeviceHelperImpl(interfaceDao, hostDeviceDao, hostNicVfsConfigDao);
+        networkDeviceHelper = new NetworkDeviceHelperImpl(interfaceDao, hostDeviceDao, hostNicVfsConfigDao, vdsDao);
 
         when(netDevice.getHostId()).thenReturn(HOST_ID);
         when(netDevice.getDeviceName()).thenReturn(NET_DEVICE_NAME);
+        when(netDevice.getName()).thenReturn(NET_DEVICE_NAME);
         when(netDevice.getNetworkInterfaceName()).thenReturn(NIC_NAME);
         when(netDevice.getParentDeviceName()).thenReturn(PCI_DEVICE_NAME);
 
         when(pciDevice.getHostId()).thenReturn(HOST_ID);
         when(pciDevice.getDeviceName()).thenReturn(PCI_DEVICE_NAME);
-        when(hostDeviceDao.getHostDeviceByHostIdAndDeviceName(HOST_ID, PCI_DEVICE_NAME)).thenReturn(pciDevice);
+        when(pciDevice.getName()).thenReturn(PCI_DEVICE_NAME);
 
         List<HostDevice> devices = new ArrayList<>();
         devices.add(netDevice);
@@ -280,7 +296,8 @@ public class NetworkDeviceHelperImplTest {
             int numOfVfsHasNoNic,
             int numOfVfsHasNetworkAttached,
             int numOfVfsHasVlanDeviceAttached) {
-        networkDeviceHelper = spy(new NetworkDeviceHelperImpl(interfaceDao, hostDeviceDao, hostNicVfsConfigDao));
+        networkDeviceHelper =
+                spy(new NetworkDeviceHelperImpl(interfaceDao, hostDeviceDao, hostNicVfsConfigDao, vdsDao));
 
         List<HostDevice> devices = new ArrayList<>();
         List<HostDevice> freeVfs = new ArrayList<>();
@@ -540,5 +557,61 @@ public class NetworkDeviceHelperImplTest {
         hostDevice.setHostId(HOST_ID);
         hostDevice.setVmId(vmId);
         return hostDevice;
+    }
+
+    @Test
+    public void testGetVfMapHostDoesNotSupportSriov() {
+        mockHostSupportsSriov(false);
+
+        final Map<Guid, Guid> actual = networkDeviceHelper.getVfMap(HOST_ID);
+
+        assertTrue(actual.isEmpty());
+    }
+
+    @Test
+    public void testGetVfMap() {
+        final HostDevice pfNetDevice = new HostDevice();
+        final HostDevice pfPciDevice = new HostDevice();
+
+        final Guid pfNicId = Guid.newGuid();
+        final String pfNicName = "pf" + NIC_NAME;
+        final String pfPciDeviceName = "pf" + PCI_DEVICE_NAME;
+
+        pfNetDevice.setHostId(HOST_ID);
+        pfNetDevice.setDeviceName("pf" + NET_DEVICE_NAME);
+        pfNetDevice.setNetworkInterfaceName(pfNicName);
+        pfNetDevice.setParentDeviceName(pfPciDeviceName);
+
+        pfPciDevice.setHostId(HOST_ID);
+        pfPciDevice.setDeviceName(pfPciDeviceName);
+        pfPciDevice.setDeviceName(pfPciDeviceName);
+
+        when(pciDevice.getParentPhysicalFunction()).thenReturn(pfPciDeviceName);
+        mockHostDevices(Arrays.asList(pfNetDevice, pfPciDevice, new HostDevice()));
+
+        when(nic.getVlanId()).thenReturn(null);
+        final VdsNetworkInterface pfNic = new VdsNetworkInterface();
+        pfNic.setId(pfNicId);
+        pfNic.setName(pfNetDevice.getNetworkInterfaceName());
+        final VdsNetworkInterface bondNic = new VdsNetworkInterface();
+        bondNic.setBonded(true);
+        final VdsNetworkInterface vlanNic = new VdsNetworkInterface();
+        vlanNic.setVlanId(666);
+        mockNics(Arrays.asList(pfNic, bondNic, vlanNic), true);
+
+        mockHostSupportsSriov(true);
+
+        final Map<Guid, Guid> actual = networkDeviceHelper.getVfMap(HOST_ID);
+
+        assertEquals(1, actual.size());
+        assertThat(actual, hasEntry(NIC_ID, pfNicId));
+    }
+
+    private void mockHostSupportsSriov(boolean support) {
+        final VDS host = new VDS();
+        final Version version = Version.v3_6;
+        host.setVdsGroupCompatibilityVersion(version);
+        mockConfigRule.mockConfigValue(ConfigValues.NetworkSriovSupported, version, support);
+        when(vdsDao.get(HOST_ID)).thenReturn(host);
     }
 }
