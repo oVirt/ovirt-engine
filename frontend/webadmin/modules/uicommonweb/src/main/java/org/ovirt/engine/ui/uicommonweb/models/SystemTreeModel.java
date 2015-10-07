@@ -214,7 +214,6 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
         doHostSearch();
         doVolumeSearch();
         doProviderSearch();
-        doErrataSearch();
         //Stop the timer if it is running. syncSearch only gets called by either a manual refresh and the timer
         //shouldn't run during that, or during a fast forward, and that restarts the timer each cycle.
         getTimer().stop();
@@ -398,23 +397,6 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
             }
         };
         AsyncDataProvider.getInstance().getAllProviders(providersQuery, false);
-    }
-
-    /**
-     * Create and run the query for engine's errata.
-     */
-    private void doErrataSearch() {
-        final AsyncQuery errataQuery = new AsyncQuery();
-        errataQuery.setModel(this);
-        errataQuery.asyncCallback = new INewAsyncCallback() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onSuccess(Object model, Object result) {
-                final SystemTreeModel systemTreeModel = (SystemTreeModel) model;
-                systemTreeModel.setErrata((List<Erratum>) result);
-            }
-        };
-        AsyncDataProvider.getInstance().getAllErrata(errataQuery);
     }
 
     @Override

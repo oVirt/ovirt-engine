@@ -89,8 +89,6 @@ public class MainTabEngineErrataPresenter extends AbstractMainTabWithDetailsPres
     protected void onBind() {
         super.onBind();
 
-        getModel().retrieveEngineErrata();
-
         // Handle the list model getting a query error -> simple view update.
         //
         getModel().addErrorMessageChangeListener(new IEventListener<PropertyChangedEventArgs>(){
