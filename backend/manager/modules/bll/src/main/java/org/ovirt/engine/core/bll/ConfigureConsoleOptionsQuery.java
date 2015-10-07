@@ -311,11 +311,11 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
     }
 
     private String determineSpiceProxy() {
-        if (!StringUtils.isNotBlank(getCachedVm().getVmPoolSpiceProxy())) {
+        if (StringUtils.isNotBlank(getCachedVm().getVmPoolSpiceProxy())) {
             return getCachedVm().getVmPoolSpiceProxy();
         }
 
-        if (!StringUtils.isNotBlank(getCachedVm().getVdsGroupSpiceProxy())) {
+        if (StringUtils.isNotBlank(getCachedVm().getVdsGroupSpiceProxy())) {
             return getCachedVm().getVdsGroupSpiceProxy();
         }
 
