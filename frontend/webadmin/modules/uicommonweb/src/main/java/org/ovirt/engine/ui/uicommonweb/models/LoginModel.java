@@ -201,6 +201,7 @@ public class LoginModel extends Model {
 
     public void login() {
         if (!validate()) {
+            this.setMessages((Arrays.asList(ConstantsManager.getInstance().getConstants().emptyFieldsInvalidReason())));
             getLoginFailedEvent().raise(this, EventArgs.EMPTY);
             return;
         }
