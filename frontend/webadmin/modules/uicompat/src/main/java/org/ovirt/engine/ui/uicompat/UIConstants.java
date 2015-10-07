@@ -1273,6 +1273,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("This field can't be empty.")
     String thisFieldCantBeEmptyInvalidReason();
 
+    @DefaultStringValue("Please fill in all fields.")
+    String emptyFieldsInvalidReason();
+
     @DefaultStringValue("This field can't contain trimming whitespace characters.")
     String trimmingSpacesInField();
 
