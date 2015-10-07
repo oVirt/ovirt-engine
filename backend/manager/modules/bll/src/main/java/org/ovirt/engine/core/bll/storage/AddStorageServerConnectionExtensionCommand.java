@@ -35,15 +35,7 @@ public class AddStorageServerConnectionExtensionCommand<T extends StorageServerC
     @Override
     protected boolean canDoAction() {
         StorageServerConnectionExtension newConnExt = getParameters().getStorageServerConnectionExtension();
-        StorageServerConnectionExtension existingConnExt =
-                getStorageServerConnectionExtensionDao().getByHostIdAndTarget(newConnExt.getHostId(),
-                        newConnExt.getIqn());
-        if (existingConnExt != null) {
-            addCanDoActionMessageVariable("target", newConnExt.getIqn());
-            addCanDoActionMessageVariable("vdsName", getVdsName());
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_EXTENSION_ALREADY_EXISTS);
-        }
-        return true;
+        return validate(getConnectionExtensionValidator().isConnectionDoesNotExistForHostAndTarget(newConnExt));
     }
 
     @Override

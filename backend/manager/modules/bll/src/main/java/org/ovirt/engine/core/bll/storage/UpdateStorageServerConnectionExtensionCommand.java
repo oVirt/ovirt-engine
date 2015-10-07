@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.validator.storage.StorageServerConnectionExtensionValidator;
 import org.ovirt.engine.core.common.action.StorageServerConnectionExtensionParameters;
+import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 
@@ -29,7 +29,9 @@ public class UpdateStorageServerConnectionExtensionCommand <T extends StorageSer
 
     @Override
     protected boolean canDoAction() {
-        return validate(StorageServerConnectionExtensionValidator.isConnectionExtensionExists(getParameters().getStorageServerConnectionExtension().getId()));
+        StorageServerConnectionExtension conn = getParameters().getStorageServerConnectionExtension();
+        return validate(getConnectionExtensionValidator().isConnectionExtensionExists(conn.getId())) &&
+                validate(getConnectionExtensionValidator().isConnectionDoesNotExistForHostAndTarget(conn));
     }
 
     @Override

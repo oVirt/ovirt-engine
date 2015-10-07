@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.validator.storage.StorageServerConnectionExtensionValidator;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -35,7 +34,7 @@ public class RemoveStorageServerConnectionExtensionCommand<T extends IdParameter
 
     @Override
     protected boolean canDoAction() {
-        return validate(StorageServerConnectionExtensionValidator.isConnectionExtensionExists(getParameters().getId()));
+        return validate(getConnectionExtensionValidator().isConnectionExtensionExists(getParameters().getId()));
     }
 
     @Override
