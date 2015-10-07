@@ -113,20 +113,20 @@ public abstract class AbstractLoginFormView extends AbstractView {
         informationMessagePanel.setVisible(false);
         passwordEditor.setAutoComplete("off"); //$NON-NLS-1$
 
-        userNameEditor.addLabelStyleName(ColumnSize.SM_2.getCssName());
+        userNameEditor.addLabelStyleName(ColumnSize.SM_3.getCssName());
         userNameEditor.addLabelStyleName(Styles.CONTROL_LABEL);
         userNameEditor.addLabelStyleName("white"); //$NON-NLS-1$
-        userNameEditor.addContentWidgetContainerStyleName(ColumnSize.SM_10.getCssName());
+        userNameEditor.addContentWidgetContainerStyleName(ColumnSize.SM_9.getCssName());
 
-        passwordEditor.addLabelStyleName(ColumnSize.SM_2.getCssName());
+        passwordEditor.addLabelStyleName(ColumnSize.SM_3.getCssName());
         passwordEditor.addLabelStyleName(Styles.CONTROL_LABEL);
         userNameEditor.addLabelStyleName("white"); //$NON-NLS-1$
-        passwordEditor.addContentWidgetContainerStyleName(ColumnSize.SM_10.getCssName());
+        passwordEditor.addContentWidgetContainerStyleName(ColumnSize.SM_9.getCssName());
 
-        profileEditor.addLabelStyleName(ColumnSize.SM_2.getCssName());
+        profileEditor.addLabelStyleName(ColumnSize.SM_3.getCssName());
         profileEditor.addLabelStyleName(Styles.CONTROL_LABEL);
         userNameEditor.addLabelStyleName("white"); //$NON-NLS-1$
-        profileEditor.addContentWidgetContainerStyleName(ColumnSize.SM_10.getCssName());
+        profileEditor.addContentWidgetContainerStyleName(ColumnSize.SM_9.getCssName());
     }
 
     private void initLocalizationEditor() {
