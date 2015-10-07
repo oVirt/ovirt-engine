@@ -9,7 +9,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendVmApplicationsResource extends AbstractBackendResource<Application, VM>
+public class BackendVmApplicationsResource
+        extends AbstractBackendResource<Application, VM>
         implements VmApplicationsResource {
 
     Guid vmId;
@@ -45,7 +46,7 @@ public class BackendVmApplicationsResource extends AbstractBackendResource<Appli
     }
 
     @Override
-    public VmApplicationResource getVmApplicationResource(String id) {
+    public VmApplicationResource getApplicationResource(String id) {
         return inject(new BackendVmApplicationResource(id, this));
     }
 }

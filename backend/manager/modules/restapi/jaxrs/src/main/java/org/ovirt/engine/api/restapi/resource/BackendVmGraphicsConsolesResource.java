@@ -30,7 +30,7 @@ public class BackendVmGraphicsConsolesResource
     }
 
     @Override
-    public GraphicsConsoleResource getGraphicsConsoleResource(String id) {
+    public GraphicsConsoleResource getConsoleResource(String id) {
         return inject(new BackendVmGraphicsConsoleResource(this, getGuid(), id));
     }
 

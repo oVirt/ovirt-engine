@@ -19,7 +19,7 @@ package types;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface GlusterVolumeProfileDetails {
+public interface GlusterVolumeProfileDetails extends Identified {
     BrickProfileDetail[] brickProfileDetails();
     NfsProfileDetail[] nfsProfileDetails();
 }

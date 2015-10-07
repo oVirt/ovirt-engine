@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface IscsiBond {
+public interface IscsiBond extends Identified {
     @Link DataCenter dataCenter();
     @Link StorageConnection[] storageConnections();
     @Link Network[] networks();

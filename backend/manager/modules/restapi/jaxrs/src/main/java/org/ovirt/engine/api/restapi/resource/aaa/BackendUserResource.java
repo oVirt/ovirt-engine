@@ -69,7 +69,7 @@ public class BackendUserResource
     }
 
     @Override
-    public SshPublicKeysResource getSSHPublicKeysResource() {
+    public SshPublicKeysResource getSshPublicKeysResource() {
         return inject(new BackendSSHPublicKeysResource(guid));
     }
 

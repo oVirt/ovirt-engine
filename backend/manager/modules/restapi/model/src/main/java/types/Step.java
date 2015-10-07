@@ -22,7 +22,7 @@ import org.ovirt.api.metamodel.annotations.Type;
 import java.util.Date;
 
 @Type
-public interface Step {
+public interface Step extends Identified {
     String type();
     Integer number();
     Status status();

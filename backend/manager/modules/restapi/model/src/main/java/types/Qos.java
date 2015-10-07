@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Qos {
+public interface Qos extends Identified {
     String type();
     Integer maxThroughput();
     Integer maxReadThroughput();

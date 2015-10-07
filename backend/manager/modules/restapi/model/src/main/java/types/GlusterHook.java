@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface GlusterHook {
+public interface GlusterHook extends Identified {
     String glusterCommand();
     String stage();
     String contentType();

@@ -61,7 +61,7 @@ public class BackendAffinityGroupVmsResource extends AbstractBackendCollectionRe
     }
 
     @Override
-    public AffinityGroupVmResource getAffinityGroupVmResource(String id) {
+    public AffinityGroupVmResource getVmResource(String id) {
         return inject(new BackendAffinityGroupVmResource(affinityGroupId, id));
     }
 }

@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface NetworkAttachment {
+public interface NetworkAttachment extends Identified {
     IpAddressAssignment[] ipAddressAssignments();
     Property[] properties();
     Boolean inSync();

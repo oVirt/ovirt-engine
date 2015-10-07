@@ -65,7 +65,7 @@ public class BackendExternalComputeResourcesResource
     }
 
     @Override
-    public ExternalComputeResourceResource getExternalComputeResource(String id) {
+    public ExternalComputeResourceResource getResourceResource(String id) {
         return inject(new BackendExternalComputeResourceResource(id, providerId));
     }
 }

@@ -22,12 +22,11 @@ import static java.util.stream.Collectors.joining;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -75,156 +74,13 @@ public class SchemaGenerator {
     private static final String JAXB_URI = "http://java.sun.com/xml/ns/jaxb";
     private static final String JAXB_PREFIX = "jaxb";
 
-    // Root types, those that can appear as the root element of valid XML documents. We currently can't figure this
-    // automatically because there isn't an operational model yet, and thus we don't now what types are returned or
-    // received by operations.
-    private static final Set<Name> ROOTS = new HashSet<>();
+    // Reference to the object used to calculate XML schema names:
+    @Inject private Names names;
+    @Inject private SchemaNames schemaNames;
 
-    private static void addRoot(String name) {
-        ROOTS.add(NameParser.parseUsingSeparator(name, '-'));
-    }
-
-    static {
-        addRoot("affinity-group");
-        addRoot("agent");
-        addRoot("application");
-        addRoot("authorized-key");
-        addRoot("balance");
-        addRoot("bookmark");
-        addRoot("cdrom");
-        addRoot("certificate");
-        addRoot("cluster");
-        addRoot("cpu-profile");
-        addRoot("data-center");
-        addRoot("device");
-        addRoot("disk");
-        addRoot("disk-profile");
-        addRoot("disk-snapshot");
-        addRoot("domain");
-        addRoot("event");
-        addRoot("external-compute-resource");
-        addRoot("external-discovered-host");
-        addRoot("external-host");
-        addRoot("external-host-group");
-        addRoot("external-provider");
-        addRoot("file");
-        addRoot("filter");
-        addRoot("floppy");
-        addRoot("gluster-brick");
-        addRoot("gluster-brick-advanced-details");
-        addRoot("gluster-hook");
-        addRoot("gluster-memory-pool");
-        addRoot("gluster-server-hook");
-        addRoot("gluster-volume");
-        addRoot("gluster-volume-profile-details");
-        addRoot("graphics-console");
-        addRoot("group");
-        addRoot("hook");
-        addRoot("host");
-        addRoot("host-device");
-        addRoot("host-nic");
-        addRoot("host-storage");
-        addRoot("icon");
-        addRoot("image");
-        addRoot("instance-type");
-        addRoot("iscsi-bond");
-        addRoot("job");
-        addRoot("katello-erratum");
-        addRoot("label");
-        addRoot("mac-pool");
-        addRoot("network");
-        addRoot("network-attachment");
-        addRoot("nic");
-        addRoot("numa-node");
-        addRoot("open-stack-image");
-        addRoot("open-stack-image-provider");
-        addRoot("open-stack-network");
-        addRoot("open-stack-network-provider");
-        addRoot("open-stack-provider");
-        addRoot("open-stack-subnet");
-        addRoot("openstack-volume-authentication-key");
-        addRoot("open-stack-volume-provider");
-        addRoot("open-stack-volume-type");
-        addRoot("operating-system-info");
-        addRoot("permission");
-        addRoot("permit");
-        addRoot("product");
-        addRoot("qos");
-        addRoot("quota");
-        addRoot("quota-cluster-limit");
-        addRoot("quota-storage-limit");
-        addRoot("reported-device");
-        addRoot("role");
-        addRoot("scheduling-policy");
-        addRoot("scheduling-policy-unit");
-        addRoot("session");
-        addRoot("snapshot");
-        addRoot("ssh");
-        addRoot("ssh-public-key");
-        addRoot("statistic");
-        addRoot("step");
-        addRoot("storage-connection");
-        addRoot("storage-connection-extension");
-        addRoot("storage-domain");
-        addRoot("tag");
-        addRoot("template");
-        addRoot("unmanaged-network");
-        addRoot("user");
-        addRoot("vendor");
-        addRoot("version");
-        addRoot("virtual-numa-node");
-        addRoot("vm");
-        addRoot("vm-base");
-        addRoot("vm-pool");
-        addRoot("vnic-profile");
-        addRoot("watchdog");
-        addRoot("weight");
-    }
-
-    // Exceptions to the rules to calculate complex type names:
-    private static final Map<String, String> TYPE_NAME_EXCEPTIONS = new HashMap<>();
-
-    static {
-        TYPE_NAME_EXCEPTIONS.put("Device", "BaseDevice");
-        TYPE_NAME_EXCEPTIONS.put("SeLinux", "SELinux");
-    }
-
-    // Exceptions to the rules to calculate tag names:
-    private static final Map<String, String> TAG_NAME_EXCEPTIONS = new HashMap<>();
-
-    static {
-        TAG_NAME_EXCEPTIONS.put("gluster_brick", "brick");
-        TAG_NAME_EXCEPTIONS.put("gluster_brick_memory_info", "brick_memoryinfo");
-        TAG_NAME_EXCEPTIONS.put("gluster_bricks", "bricks");
-        TAG_NAME_EXCEPTIONS.put("gluster_memory_pool", "memory_pool");
-        TAG_NAME_EXCEPTIONS.put("gluster_memory_pools", "memory_pools");
-        TAG_NAME_EXCEPTIONS.put("gluster_server_hook", "server_hook");
-        TAG_NAME_EXCEPTIONS.put("gluster_server_hooks", "server_hooks");
-        TAG_NAME_EXCEPTIONS.put("migration_options", "migration");
-        TAG_NAME_EXCEPTIONS.put("numa_node", "host_numa_node");
-        TAG_NAME_EXCEPTIONS.put("numa_nodes", "host_numa_nodes");
-        TAG_NAME_EXCEPTIONS.put("open_stack_image", "openstack_image");
-        TAG_NAME_EXCEPTIONS.put("open_stack_image_provider", "openstack_image_provider");
-        TAG_NAME_EXCEPTIONS.put("open_stack_image_providers", "openstack_image_providers");
-        TAG_NAME_EXCEPTIONS.put("open_stack_images", "openstack_images");
-        TAG_NAME_EXCEPTIONS.put("open_stack_network", "openstack_network");
-        TAG_NAME_EXCEPTIONS.put("open_stack_network_provider", "openstack_network_provider");
-        TAG_NAME_EXCEPTIONS.put("open_stack_network_providers", "openstack_network_providers");
-        TAG_NAME_EXCEPTIONS.put("open_stack_networks", "openstack_networks");
-        TAG_NAME_EXCEPTIONS.put("open_stack_subnet", "openstack_subnet");
-        TAG_NAME_EXCEPTIONS.put("open_stack_subnets", "openstack_subnets");
-        TAG_NAME_EXCEPTIONS.put("open_stack_volume", "openstack_volume");
-        TAG_NAME_EXCEPTIONS.put("open_stack_volume_provider", "openstack_volume_provider");
-        TAG_NAME_EXCEPTIONS.put("open_stack_volume_providers", "openstack_volume_providers");
-        TAG_NAME_EXCEPTIONS.put("open_stack_volumes", "openstack_volumes");
-        TAG_NAME_EXCEPTIONS.put("operating_system", "os");
-        TAG_NAME_EXCEPTIONS.put("operating_system_info", "operating_system");
-        TAG_NAME_EXCEPTIONS.put("operating_system_infos", "operation_systems");
-        TAG_NAME_EXCEPTIONS.put("operating_systems", "oss");
-        TAG_NAME_EXCEPTIONS.put("transparent_huge_pages", "transparent_hugepages");
-        TAG_NAME_EXCEPTIONS.put("virtual_numa_node", "vm_numa_node");
-        TAG_NAME_EXCEPTIONS.put("virtual_numa_nodes", "vm_numa_nodes");
-    }
+    // The type of the model used to represent types that have an identifier, thus they need to extends
+    // the "BaseResource" complex type:
+    private Type identifiedType;
 
     // Exceptions to the rules to calculate struct member type names:
     private static final Map<Name, Map<Name, String>> MEMBER_SCHEMA_TYPE_NAME_EXCEPTIONS = new HashMap<>();
@@ -273,22 +129,6 @@ public class SchemaGenerator {
         addMemberSchemaTypeNameException("vm-base", "memory", "xs:long");
     }
 
-    // Exceptions to the rules to calculate plurals:
-    private static final Map<String, String> PLURALS = new HashMap<>();
-
-    static {
-        PLURALS.put("display", "displays");
-        PLURALS.put("erratum", "errata");
-        PLURALS.put("key", "keys");
-    }
-
-    // Exceptions to the rules to calculate singulars:
-    private static final Map<String, String> SINGULARS = new HashMap<>();
-
-    static {
-        // No exceptions yet.
-    }
-
     // We will need an XML parser:
     private DocumentBuilder parser;
 
@@ -328,6 +168,15 @@ public class SchemaGenerator {
         // Save the reference to the model:
         this.model = model;
 
+        // Find the identified type:
+        Name identifiedTypeName = NameParser.parseUsingCase("Identified");
+        identifiedType = model.getType(identifiedTypeName);
+        if (identifiedType == null) {
+            throw new RuntimeException(
+                "Can't find the identified type \"" + identifiedTypeName + "\""
+            );
+        }
+
         // Parse the input XML schema:
         Document inSchema;
         try {
@@ -335,7 +184,7 @@ public class SchemaGenerator {
         }
         catch (Exception exception) {
             throw new RuntimeException(
-                "Can't parse input XML schema from file \"" + inFile.getAbsolutePath() + "\".",
+                "Can't parse input XML schema from file \"" + inFile.getAbsolutePath() + "\"",
                 exception
             );
         }
@@ -424,20 +273,17 @@ public class SchemaGenerator {
         writer.writeStartElement(XS_URI, "schema");
         writer.writeAttribute("version", "1.0");
 
-        // Find the struct and enum types and sort them by name, so that the order in the generated XML schema will be
-        // predictable:
+        // Find the struct and enum types:
         List<StructType> structTypes = new ArrayList<>();
         List<EnumType> enumTypes = new ArrayList<>();
         for (Type type : model.getTypes()) {
-            if (type instanceof StructType) {
+            if (type instanceof StructType && type != identifiedType) {
                 structTypes.add((StructType) type);
             }
             if (type instanceof EnumType) {
                 enumTypes.add((EnumType) type);
             }
         }
-        structTypes.sort(comparing(Concept::getName));
-        enumTypes.sort(comparing(Concept::getName));
 
         // Write the XML schema group of elements that are used by the capabilities resource to list the possible
         // values of the enum types. Eventually the complete capabilities elements will be generated, but for now
@@ -466,9 +312,9 @@ public class SchemaGenerator {
         writer.writeStartElement(XS_URI, "sequence");
         for (EnumType type : types) {
             Name name = type.getName();
-            Name plural = getPlural(name);
+            Name plural = names.getPlural(name);
             writer.writeStartElement(XS_URI, "element");
-            writer.writeAttribute("name", getSchemaTagName(plural));
+            writer.writeAttribute("name", schemaNames.getSchemaTagName(plural));
             writer.writeAttribute("type", getSchemaEnumTypeValuesName(name));
             writer.writeAttribute("minOccurs", "1");
             writer.writeAttribute("maxOccurs", "1");
@@ -486,8 +332,8 @@ public class SchemaGenerator {
             writer.writeAttribute("name", getSchemaEnumTypeValuesName(name));
             writer.writeStartElement(XS_URI, "sequence");
             writer.writeStartElement(XS_URI, "element");
-            writer.writeAttribute("name", getSchemaTagName(name));
-            writer.writeAttribute("type", getSchemaTypeName(name));
+            writer.writeAttribute("name", schemaNames.getSchemaTagName(name));
+            writer.writeAttribute("type", schemaNames.getSchemaTypeName(name));
             writer.writeAttribute("minOccurs", "0");
             writer.writeAttribute("maxOccurs", "unbounded");
             writer.writeEndElement();
@@ -500,15 +346,15 @@ public class SchemaGenerator {
     private void writeStructType(XMLStreamWriter writer, StructType type) throws XMLStreamException {
         // Get the name of the type, and its plural:
         Name typeName = type.getName();
-        Name typePlural = getPlural(typeName);
+        Name typePlural = names.getPlural(typeName);
 
-        // Check if this type is a root entity, one that can appear as the root of a valid XML document, as in that
+        // Check if this type is an identified type, one that can appear as the root of a valid XML document, as in that
         // case the complex types must extend "BaseResource" and "BaseResources":
-        boolean isRoot = ROOTS.contains(type.getName());
+        boolean isRoot = type.isExtension(identifiedType);
 
         // Tag for the entity:
         writer.writeStartElement(XS_URI, "element");
-        writer.writeAttribute("name", getSchemaTagName(typeName));
+        writer.writeAttribute("name", schemaNames.getSchemaTagName(typeName));
         writer.writeAttribute("type", getSchemaTypeName(type));
         writer.writeEndElement();
         writeLine(writer);
@@ -516,7 +362,7 @@ public class SchemaGenerator {
         // Determine if the complex type is an extension of other complex type:
         String baseComplexTypeName = null;
         Type baseType = type.getBase();
-        if (baseType != null) {
+        if (baseType != null && baseType != identifiedType) {
             baseComplexTypeName = getSchemaTypeName(baseType);
         }
         else {
@@ -543,14 +389,14 @@ public class SchemaGenerator {
 
         // Tag for the collection:
         writer.writeStartElement(XS_URI, "element");
-        writer.writeAttribute("name", getSchemaTagName(typePlural));
-        writer.writeAttribute("type", getSchemaTypeName(typePlural));
+        writer.writeAttribute("name", schemaNames.getSchemaTagName(typePlural));
+        writer.writeAttribute("type", schemaNames.getSchemaTypeName(typePlural));
         writer.writeEndElement();
         writeLine(writer);
 
         // Complex type for the collection:
         writer.writeStartElement(XS_URI, "complexType");
-        writer.writeAttribute("name", getSchemaTypeName(typePlural));
+        writer.writeAttribute("name", schemaNames.getSchemaTypeName(typePlural));
         if (isRoot) {
             writer.writeStartElement(XS_URI, "complexContent");
             writer.writeStartElement(XS_URI, "extension");
@@ -558,10 +404,10 @@ public class SchemaGenerator {
         }
         writer.writeStartElement(XS_URI, "sequence");
         writer.writeStartElement(XS_URI, "element");
-        writer.writeAttribute("ref", getSchemaTagName(typeName));
+        writer.writeAttribute("ref", schemaNames.getSchemaTagName(typeName));
         writer.writeAttribute("minOccurs", "0");
         writer.writeAttribute("maxOccurs", "unbounded");
-        writeJaxbProperty(writer, getSchemaTypeName(typePlural));
+        writeJaxbProperty(writer, schemaNames.getSchemaTypeName(typePlural));
         writer.writeEndElement();
         writer.writeEndElement();
         if (isRoot) {
@@ -586,11 +432,11 @@ public class SchemaGenerator {
     private void writeStructMember(XMLStreamWriter writer, StructType declaringType, Type memberType, Name memberName)
             throws XMLStreamException {
         // Calculate the singular of the name:
-        Name singular = getSingular(memberName);
+        Name singular = names.getSingular(memberName);
 
         // Write the element definition:
         writer.writeStartElement(XS_URI, "element");
-        writer.writeAttribute("name", getSchemaTagName(memberName));
+        writer.writeAttribute("name", schemaNames.getSchemaTagName(memberName));
         writer.writeAttribute("minOccurs", "0");
         writer.writeAttribute("maxOccurs", "1");
         if (memberType instanceof ListType) {
@@ -629,14 +475,14 @@ public class SchemaGenerator {
                 //   </xs:complexType>
                 // </xs:element>
                 writer.writeStartElement(XS_URI, "complexType");
-                writeJaxbClass(writer, getSchemaTypeName(memberName) + "List");
+                writeJaxbClass(writer, schemaNames.getSchemaTypeName(memberName) + "List");
                 writer.writeStartElement(XS_URI, "sequence");
                 writer.writeStartElement(XS_URI, "element");
-                writer.writeAttribute("name", getSchemaTagName(singular));
+                writer.writeAttribute("name", schemaNames.getSchemaTagName(singular));
                 writer.writeAttribute("type", elementTypeName);
                 writer.writeAttribute("minOccurs", "0");
                 writer.writeAttribute("maxOccurs", "unbounded");
-                writeJaxbProperty(writer, getSchemaTypeName(memberName));
+                writeJaxbProperty(writer, schemaNames.getSchemaTypeName(memberName));
                 writer.writeEndElement();
                 writer.writeEndElement();
                 writer.writeEndElement();
@@ -658,14 +504,14 @@ public class SchemaGenerator {
                 // <xs:element name="primary_disks" type="Disks" minOccurs="0" maxOccurs="1"/>
                 //
                 // Note that this assumes that a "Disks" complex type has been generated, which is always true.
-                writer.writeAttribute("name", getSchemaTagName(memberName));
-                writer.writeAttribute("type", getSchemaTypeName(getPlural(elementType.getName())));
+                writer.writeAttribute("name", schemaNames.getSchemaTagName(memberName));
+                writer.writeAttribute("type", schemaNames.getSchemaTypeName(names.getPlural(elementType.getName())));
                 writer.writeAttribute("minOccurs", "0");
                 writer.writeAttribute("maxOccurs", "1");
             }
         }
         else {
-            writer.writeAttribute("name", getSchemaTagName(memberName));
+            writer.writeAttribute("name", schemaNames.getSchemaTagName(memberName));
             writer.writeAttribute("type", getMemberSchemaTypeName(declaringType, memberType, memberName));
             writer.writeAttribute("minOccurs", "0");
             writer.writeAttribute("maxOccurs", "1");
@@ -740,36 +586,12 @@ public class SchemaGenerator {
         if (type == model.getDecimalType()) {
             return "xs:decimal";
         }
-        return getSchemaTypeName(type.getName());
+        return schemaNames.getSchemaTypeName(type.getName());
     }
 
-    private String getSchemaTypeName(Name name) {
-        StringBuilder buffer = new StringBuilder();
-        if (name != null) {
-            for (String word : name.getWords()) {
-                String capitalizedWord = Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase();
-                buffer.append(capitalizedWord);
-            }
-        }
-        String result = buffer.toString();
-        String exception = TYPE_NAME_EXCEPTIONS.get(result);
-        if (exception != null) {
-            result = exception;
-        }
-        return result;
-    }
-
-    private String getSchemaTagName(Name name) {
-        String result = name.words().map(String::toLowerCase).collect(joining("_"));
-        String exception = TAG_NAME_EXCEPTIONS.get(result);
-        if (exception != null) {
-            result = exception;
-        }
-        return result;
-    }
 
     private String getSchemaEnumTypeValuesName(Name name) {
-        return getSchemaTypeName(name) + "Values";
+        return schemaNames.getSchemaTypeName(name) + "Values";
     }
 
     private String getSchemaEnumValueName(EnumValue value) {
@@ -778,48 +600,6 @@ public class SchemaGenerator {
 
     private String getJavaEnumValueName(EnumValue value) {
         return value.getName().words().map(String::toUpperCase).collect(joining("_"));
-    }
-
-    private Name getPlural(Name singular) {
-        List<String> words = singular.getWords();
-        String last = words.get(words.size() - 1);
-        last = getPlural(last);
-        words.set(words.size() - 1, last);
-        return new Name(words);
-    }
-
-    private String getPlural(String singular) {
-        String plural = PLURALS.get(singular);
-        if (plural == null) {
-            if (singular.endsWith("y")) {
-                plural = singular.substring(0, singular.length() - 1) + "ies";
-            }
-            else {
-                plural = singular + "s";
-            }
-        }
-        return plural;
-    }
-
-    private Name getSingular(Name plural) {
-        List<String> words = plural.getWords();
-        String last = words.get(words.size() - 1);
-        last = getSingular(last);
-        words.set(words.size() - 1, last);
-        return new Name(words);
-    }
-
-    private String getSingular(String plural) {
-        String singular = SINGULARS.get(plural);
-        if (singular == null) {
-            if (plural.endsWith("ies")) {
-                singular = plural.substring(0, plural.length() - 3) + "y";
-            }
-            else if (plural.endsWith("s")) {
-                singular = plural.substring(0, plural.length() - 1);
-            }
-        }
-        return singular;
     }
 }
 

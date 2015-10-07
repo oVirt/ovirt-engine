@@ -22,7 +22,7 @@ import org.ovirt.api.metamodel.annotations.Type;
 import java.util.Date;
 
 @Type
-public interface KatelloErratum {
+public interface KatelloErratum extends Identified {
   String title();
   String type();
   Date issued();

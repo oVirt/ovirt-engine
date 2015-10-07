@@ -3,12 +3,14 @@ package org.ovirt.engine.api.restapi.resource;
 import org.ovirt.engine.api.model.Cdrom;
 import org.ovirt.engine.api.model.Cdroms;
 import org.ovirt.engine.api.model.Snapshot;
-import org.ovirt.engine.api.resource.SnapshotCdRomResource;
-import org.ovirt.engine.api.resource.SnapshotCdRomsResource;
+import org.ovirt.engine.api.resource.SnapshotCdromResource;
+import org.ovirt.engine.api.resource.SnapshotCdromsResource;
 import org.ovirt.engine.api.restapi.types.CdRomMapper;
 import org.ovirt.engine.core.common.businessentities.VM;
 
-public class BackendSnapshotCdRomsResource extends AbstractBackendCollectionResource<Cdrom, Snapshot> implements SnapshotCdRomsResource {
+public class BackendSnapshotCdRomsResource
+        extends AbstractBackendCollectionResource<Cdrom, Snapshot>
+        implements SnapshotCdromsResource {
 
     protected BackendSnapshotResource parent;
 
@@ -28,7 +30,7 @@ public class BackendSnapshotCdRomsResource extends AbstractBackendCollectionReso
     }
 
     @Override
-    public SnapshotCdRomResource getCdRomResource(String id) {
+    public SnapshotCdromResource getCdromResource(String id) {
         return new BackendSnapshotCdRomResource(id, this);
     }
 }

@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
@@ -117,7 +116,7 @@ public class BackendHostNicsResource
     }
 
     @Override
-    public HostNicResource getHostNicResource(String id) {
+    public HostNicResource getNicResource(String id) {
         return inject(new BackendHostNicResource(id, this));
     }
 

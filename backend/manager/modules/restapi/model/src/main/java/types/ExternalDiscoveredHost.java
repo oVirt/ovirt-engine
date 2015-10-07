@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface ExternalDiscoveredHost {
+public interface ExternalDiscoveredHost extends Identified {
     String ip();
     String mac();
     String subnetName();

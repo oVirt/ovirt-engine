@@ -16,7 +16,9 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendFenceAgentsResource extends AbstractBackendCollectionResource<Agent, FenceAgent> implements FenceAgentsResource {
+public class BackendFenceAgentsResource
+        extends AbstractBackendCollectionResource<Agent, FenceAgent>
+        implements FenceAgentsResource {
 
     protected BackendFenceAgentsResource(String hostId) {
         super(Agent.class, FenceAgent.class);
@@ -48,7 +50,7 @@ public class BackendFenceAgentsResource extends AbstractBackendCollectionResourc
     }
 
     @Override
-    public FenceAgentResource getFenceAgentResource(String id) {
+    public FenceAgentResource getAgentResource(String id) {
         return inject(new BackendFenceAgentResource(id));
     }
 

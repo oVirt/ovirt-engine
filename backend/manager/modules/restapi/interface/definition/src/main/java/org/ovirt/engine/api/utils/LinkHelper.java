@@ -124,7 +124,6 @@ import org.ovirt.engine.api.model.Watchdog;
 import org.ovirt.engine.api.model.Weight;
 import org.ovirt.engine.api.resource.AffinityGroupResource;
 import org.ovirt.engine.api.resource.AffinityGroupsResource;
-import org.ovirt.engine.api.resource.ApiResource;
 import org.ovirt.engine.api.resource.AssignedNetworkResource;
 import org.ovirt.engine.api.resource.AssignedNetworksResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
@@ -229,6 +228,7 @@ import org.ovirt.engine.api.resource.StorageServerConnectionExtensionsResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionsResource;
 import org.ovirt.engine.api.resource.SystemPermissionsResource;
+import org.ovirt.engine.api.resource.SystemResource;
 import org.ovirt.engine.api.resource.TagResource;
 import org.ovirt.engine.api.resource.TagsResource;
 import org.ovirt.engine.api.resource.TemplateCdromResource;
@@ -678,13 +678,13 @@ public class LinkHelper {
      * The path is the value of the {@link Path} annotation on resource locator method of the root resource that
      * returns a reference to this class of resource. For example, if the class is {@link BookmarksResource} then
      * returned value should be the value of the {@link Path} annotation on the
-     * {@link ApiResource#getBookmarksResource()} method.
+     * {@link SystemResource#getBookmarksResource()} method.
      *
      * @param clz the collection resource type
      * @return the relative path to the collection
      */
     private static String getPath(Class<?> clz) {
-        for (Method method : ApiResource.class.getMethods()) {
+        for (Method method : SystemResource.class.getMethods()) {
             if (method.getReturnType() == clz) {
                 Path annotation = method.getAnnotation(Path.class);
                 if (annotation != null) {
@@ -697,67 +697,23 @@ public class LinkHelper {
     }
 
     /**
-     * Obtain the relative path to a sub-collection
+     * Obtain the relative path to a sub-collection.
      *
      * The path is obtained from the @Path annotation on the method on @parent
-     * which returns an instance of @clz
-     *
-     * A case-insensitive check for @type's name as a substring of the method
-     * is also performed to guard against the case where @parent has multiple
-     * methods returning instances of @clz, e.g. VmResource has multiple
-     * methods return DevicesResource instances
+     * which returns an instance of @clz.
      *
      * @param clz    the collection resource type (e.g. AssignedTagsResource)
      * @param parent the parent resource type (e.g. VmResource)
-     * @param type   the model type (e.g. Tag)
      * @return       the relative path to the collection
      */
-    private static String getPath(Class<?> clz, Class<?> parent, Class<?> type) {
+    private static String getPath(Class<?> clz, Class<?> parent) {
         for (Method method : parent.getMethods()) {
-            if (method.getName().startsWith("get") &&
-                clz.isAssignableFrom(method.getReturnType()) &&
-                isPluralResourceGetter(method.getName(), type.getSimpleName())) {
+            if (method.getName().startsWith("get") && method.getReturnType() == clz) {
                 Path pathAnnotation = method.getAnnotation(Path.class);
                 return pathAnnotation.value();
             }
         }
         return null;
-    }
-
-    private static boolean isPluralResourceGetter(String method, String type) {
-        method = method.toLowerCase();
-        type = type.toLowerCase();
-
-        method = chopStart(method, "get");
-        method = chopEnd(method, "resource");
-        method = chopEnd(method, "s");
-
-        if (type.endsWith("y")) {
-            method = chopEnd(method, "ie");
-            type = chopEnd(type, "y");
-        }
-
-        return method.contains(type) || isExceptionalPluralResource(method, type);
-    }
-
-    private static boolean isExceptionalPluralResource(String method, String type) {
-        return "katelloerrata".equals(method) && "katelloerratum".equals(type);
-    }
-
-    private static String chopStart(String str, String chop) {
-        if (str.startsWith(chop)) {
-            return str.substring(chop.length());
-        } else {
-            return str;
-        }
-    }
-
-    private static String chopEnd(String str, String chop) {
-        if (str.endsWith(chop)) {
-            return str.substring(0, str.length() - chop.length());
-        } else {
-            return str;
-        }
     }
 
     /**
@@ -943,9 +899,7 @@ public class LinkHelper {
 
             Collection parentCollection = getCollection(parent, suggestedParentType);
 
-            String path = getPath(collection.getCollectionType(),
-                                  parentCollection.getResourceType(),
-                                  model.getClass());
+            String path = getPath(collection.getCollectionType(), parentCollection.getResourceType());
 
             uriBuilder = getUriBuilder(uriInfo, parent).path(path);
         } else {

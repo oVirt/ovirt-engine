@@ -32,7 +32,7 @@ public class BackendIconsResource
     }
 
     @Override
-    public IconResource getVmIconResource(String id) {
+    public IconResource getIconResource(String id) {
         return inject(new BackendIconResource(id));
     }
 }

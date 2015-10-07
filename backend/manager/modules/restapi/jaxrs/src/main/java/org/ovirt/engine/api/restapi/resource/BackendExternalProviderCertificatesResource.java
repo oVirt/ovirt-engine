@@ -62,7 +62,7 @@ public class BackendExternalProviderCertificatesResource
     }
 
     @Override
-    public ExternalProviderCertificateResource getCertificate(String id) {
+    public ExternalProviderCertificateResource getCertificateResource(String id) {
         return inject(new BackendExternalProviderCertificateResource(id, providerId));
     }
 }

@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface ExternalComputeResource {
+public interface ExternalComputeResource extends Identified {
     String provider();
     String user();
     String url();

@@ -22,7 +22,7 @@ import org.ovirt.api.metamodel.annotations.Type;
 import java.util.Date;
 
 @Type
-public interface Job {
+public interface Job extends Identified {
     Status status();
     Date startTime();
     Date endTime();

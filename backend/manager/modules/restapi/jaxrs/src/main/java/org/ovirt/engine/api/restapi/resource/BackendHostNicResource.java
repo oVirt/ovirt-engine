@@ -88,7 +88,7 @@ public class BackendHostNicResource
     }
 
     @Override
-    public Response updateVirtualFunctionsConfig(Action action) {
+    public Response updateVirtualFunctionsConfiguration(Action action) {
         validateParameters(action, "virtualFunctionsConfiguration.numberOfVirtualFunctions|allNetworksAllowed");
         final HostNicVfsConfig vfsConfig = parent.findVfsConfig(guid);
         if (vfsConfig == null) {
@@ -254,12 +254,12 @@ public class BackendHostNicResource
     }
 
     @Override
-    public LabelsResource getVfAllowedLabelsResource() {
+    public LabelsResource getVirtualFunctionAllowedLabelsResource() {
         return inject(new BackendVirtualFunctionAllowedLabelsResource(guid, parent.getHostId()));
     }
 
     @Override
-    public VirtualFunctionAllowedNetworksResource getVfAllowedNetworksResource() {
+    public VirtualFunctionAllowedNetworksResource getVirtualFunctionAllowedNetworksResource() {
         return inject(new BackendVirtualFunctionAllowedNetworksResource(guid, parent.getHostId()));
     }
 }

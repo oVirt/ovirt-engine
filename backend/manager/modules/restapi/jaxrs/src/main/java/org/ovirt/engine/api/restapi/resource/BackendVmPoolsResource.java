@@ -81,7 +81,7 @@ public class BackendVmPoolsResource
     }
 
     @Override
-    public VmPoolResource getVmPoolResource(String id) {
+    public VmPoolResource getPoolResource(String id) {
         return inject(new BackendVmPoolResource(id, this));
     }
 

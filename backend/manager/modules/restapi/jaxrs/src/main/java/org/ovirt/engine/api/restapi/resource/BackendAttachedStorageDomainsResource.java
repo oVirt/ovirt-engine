@@ -45,7 +45,7 @@ public class BackendAttachedStorageDomainsResource
     }
 
     @Override
-    public AttachedStorageDomainResource getAttachedStorageDomainResource(String id) {
+    public AttachedStorageDomainResource getStorageDomainResource(String id) {
         return inject(new BackendAttachedStorageDomainResource(id, dataCenterId, SUB_COLLECTIONS));
     }
 

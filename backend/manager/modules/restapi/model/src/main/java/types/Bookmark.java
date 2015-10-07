@@ -19,6 +19,6 @@ package types;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Bookmark {
+public interface Bookmark extends Identified {
     String value();
 }

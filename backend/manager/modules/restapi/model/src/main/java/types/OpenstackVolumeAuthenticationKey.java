@@ -22,7 +22,7 @@ import org.ovirt.api.metamodel.annotations.Type;
 import java.util.Date;
 
 @Type
-public interface OpenstackVolumeAuthenticationKey {
+public interface OpenstackVolumeAuthenticationKey extends Identified {
     String uuid();
     String value();
     String usageType();

@@ -19,6 +19,6 @@ package types;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Domain {
+public interface Domain extends Identified {
     User user();
 }

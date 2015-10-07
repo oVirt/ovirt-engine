@@ -62,7 +62,7 @@ public class BackendHostNicsResourceTest
 
     @Test
     public void testGet() throws Exception {
-        HostNicResource subresource = collection.getHostNicResource(GUIDS[SINGLE_NIC_IDX].toString());
+        HostNicResource subresource = collection.getNicResource(GUIDS[SINGLE_NIC_IDX].toString());
 
         setGetVdsQueryExpectations(1);
         setGetNetworksQueryExpectations(1);

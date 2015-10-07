@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Hook {
+public interface Hook extends Identified {
     String eventName();
     String md5();
 

@@ -19,7 +19,7 @@ package types;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Quota {
+public interface Quota extends Identified {
     DataCenter dataCenter();
     Vm[] vms();
     Disk[] disks();

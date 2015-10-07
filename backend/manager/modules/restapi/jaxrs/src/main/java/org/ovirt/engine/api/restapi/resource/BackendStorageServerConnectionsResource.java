@@ -16,7 +16,10 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendStorageServerConnectionsResource extends AbstractBackendCollectionResource<StorageConnection, StorageServerConnections> implements StorageServerConnectionsResource {
+public class BackendStorageServerConnectionsResource
+        extends AbstractBackendCollectionResource<StorageConnection, StorageServerConnections>
+        implements StorageServerConnectionsResource {
+
     private final EntityIdResolver<String> ENTITY_RETRIEVER =
             new QueryIdResolver<String>(VdcQueryType.GetStorageServerConnectionById,
                     StorageServerConnectionQueryParametersBase.class);

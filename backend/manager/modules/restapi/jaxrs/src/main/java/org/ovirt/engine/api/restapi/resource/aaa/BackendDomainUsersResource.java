@@ -46,7 +46,7 @@ public class BackendDomainUsersResource
     }
 
     @Override
-    public DomainUserResource getDomainUserResource(String id) {
+    public DomainUserResource getUserResource(String id) {
         return inject(new BackendDomainUserResource(id, this));
     }
 

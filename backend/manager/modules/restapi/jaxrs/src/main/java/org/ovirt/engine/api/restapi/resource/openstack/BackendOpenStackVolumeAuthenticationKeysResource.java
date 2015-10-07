@@ -17,7 +17,6 @@
 package org.ovirt.engine.api.restapi.resource.openstack;
 
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
@@ -82,7 +81,7 @@ public class BackendOpenStackVolumeAuthenticationKeysResource
     }
 
     @Override
-    public OpenstackVolumeAuthenticationKeyResource getOpenStackVolumeAuthenticationKey(String id) {
+    public OpenstackVolumeAuthenticationKeyResource getKeyResource(String id) {
         return inject(new BackendOpenStackVolumeAuthenticationKeyResource(providerId, id));
     }
 }

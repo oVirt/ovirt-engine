@@ -22,7 +22,7 @@ import org.ovirt.api.metamodel.annotations.Type;
 import java.util.Date;
 
 @Type
-public interface VmBase {
+public interface VmBase extends Identified {
     String type();
     Status status();
     Integer memory();

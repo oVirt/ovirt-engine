@@ -119,7 +119,7 @@ public class BackendClusterNetworksResource
     }
 
     @Override
-    public AssignedNetworkResource getAssignedNetworkResource(String id) {
+    public AssignedNetworkResource getNetworkResource(String id) {
         return inject(new BackendClusterNetworkResource(id, this));
     }
 

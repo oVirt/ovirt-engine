@@ -64,7 +64,7 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
     }
 
     @Override
-    public AttachedStorageDomainsResource getAttachedStorageDomainsResource() {
+    public AttachedStorageDomainsResource getStorageDomainsResource() {
         return inject(new BackendAttachedStorageDomainsResource(id));
     }
 

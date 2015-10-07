@@ -106,6 +106,12 @@
                 <argument>${project.basedir}/src/main/schema/api.xsd</argument>
                 <argument>--out-schema</argument>
                 <argument>${project.basedir}/target/generated-schema/api.xsd</argument>
+                <argument>--java</argument>
+                <argument>${project.basedir}/target/generated-sources/model</argument>
+                <argument>--jaxrs-package</argument>
+                <argument>^services\.(.*)$=org.ovirt.engine.api.resource.$1</argument>
+                <argument>--jaxrs-package</argument>
+                <argument>org.ovirt.engine.api.resource</argument>
               </arguments>
               <includePluginDependencies>true</includePluginDependencies>
               <includeProjectDependencies>false</includeProjectDependencies>
@@ -193,6 +199,7 @@
             <configuration>
               <sources>
                 <source>${project.build.directory}/generated-sources/xjc</source>
+                <source>${project.build.directory}/generated-sources/model</source>
               </sources>
             </configuration>
           </execution>

@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource.gluster;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.QueryHelper;
@@ -122,7 +121,7 @@ public class BackendGlusterVolumesResource
     }
 
     @Override
-    public GlusterVolumeResource getGlusterVolumeResource(String id) {
+    public GlusterVolumeResource getVolumeResource(String id) {
         return inject(new BackendGlusterVolumeResource(id, this));
     }
 }

@@ -19,7 +19,7 @@ package types;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface GlusterMemoryPool {
+public interface GlusterMemoryPool extends Identified {
     String type();
     Integer hotCount();
     Integer coldCount();

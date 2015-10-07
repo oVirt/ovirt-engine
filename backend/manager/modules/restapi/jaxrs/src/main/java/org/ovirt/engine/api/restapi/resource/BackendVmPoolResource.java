@@ -159,7 +159,7 @@ public class BackendVmPoolResource
     }
 
     @Override
-    public Response allocatevm(Action action) {
+    public Response allocateVm(Action action) {
         return doAction(VdcActionType.AttachUserToVmFromPoolAndRun,
                         new VmPoolUserParameters(guid,  getCurrent().getUser(), false),
                         action,

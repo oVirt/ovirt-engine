@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface AffinityGroup {
+public interface AffinityGroup extends Identified {
     Boolean positive();
     Boolean enforcing();
 

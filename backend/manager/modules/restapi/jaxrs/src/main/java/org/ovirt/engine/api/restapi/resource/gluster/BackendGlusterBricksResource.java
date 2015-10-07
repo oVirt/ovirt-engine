@@ -182,7 +182,7 @@ public class BackendGlusterBricksResource
     }
 
     @Override
-    public GlusterBrickResource getGlusterBrickResource(String brickId) {
+    public GlusterBrickResource getBrickResource(String brickId) {
         return inject(new BackendGlusterBrickResource(brickId, this));
     }
 

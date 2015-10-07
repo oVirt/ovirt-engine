@@ -22,7 +22,9 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -47,7 +49,6 @@ import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.model.Users;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.model.Vms;
-import org.ovirt.engine.api.resource.ApiResource;
 import org.ovirt.engine.api.resource.BookmarksResource;
 import org.ovirt.engine.api.resource.CapabilitiesResource;
 import org.ovirt.engine.api.resource.ClustersResource;
@@ -69,6 +70,7 @@ import org.ovirt.engine.api.resource.SchedulingPolicyUnitsResource;
 import org.ovirt.engine.api.resource.StorageDomainsResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionsResource;
 import org.ovirt.engine.api.resource.SystemPermissionsResource;
+import org.ovirt.engine.api.resource.SystemResource;
 import org.ovirt.engine.api.resource.TagsResource;
 import org.ovirt.engine.api.resource.TemplatesResource;
 import org.ovirt.engine.api.resource.VmPoolsResource;
@@ -112,7 +114,7 @@ import org.slf4j.LoggerFactory;
 
 public class BackendApiResource
     extends AbstractBackendActionableResource<Api, Object>
-    implements ApiResource {
+    implements SystemResource {
 
     private static final Logger log = LoggerFactory.getLogger(BackendApiResource.class);
     private static final String SYSTEM_STATS_ERROR = "Unknown error querying system statistics";
@@ -249,7 +251,7 @@ public class BackendApiResource
         return responseBuilder;
     }
 
-    @Override
+    @HEAD
     public Response head() {
         appMode = getCurrent().getApplicationMode();
         Api api = null;
@@ -262,7 +264,7 @@ public class BackendApiResource
         return getResponseBuilder(api).build();
     }
 
-    @Override
+    @GET
     public Response get() {
         appMode = getCurrent().getApplicationMode();
         if (QueryHelper.hasConstraint(getUriInfo(), RSDL_CONSTRAINT_PARAMETER)) {
@@ -440,7 +442,8 @@ public class BackendApiResource
         return inject(new BackendBookmarksResource());
     }
 
-    @Override
+    @GET
+    @Path("capabilities")
     public CapabilitiesResource getCapabilitiesResource() {
         return inject(new BackendCapabilitiesResource());
     }
@@ -521,17 +524,17 @@ public class BackendApiResource
     }
 
     @Override
-    public OpenstackImageProvidersResource getOpenStackImageProviersResource() {
+    public OpenstackImageProvidersResource getOpenstackImageProviersResource() {
         return inject(new BackendOpenStackImageProvidersResource());
     }
 
     @Override
-    public OpenstackNetworkProvidersResource getOpenStackNetworkProvidersResource() {
+    public OpenstackNetworkProvidersResource getOpenstackNetworkProvidersResource() {
         return inject(new BackendOpenStackNetworkProvidersResource());
     }
 
     @Override
-    public OpenstackVolumeProvidersResource getOpenStackVolumeProvidersResource() {
+    public OpenstackVolumeProvidersResource getOpenstackVolumeProvidersResource() {
         return inject(new BackendOpenStackVolumeProvidersResource());
     }
 

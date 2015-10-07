@@ -85,7 +85,7 @@ public class BackendOpenStackNetworkResource
     }
 
     @Override
-    public OpenstackSubnetsResource getOpenStackSubnets() {
+    public OpenstackSubnetsResource getSubnetsResource() {
         return inject(new BackendOpenStackSubnetsResource(providerId, id));
     }
 

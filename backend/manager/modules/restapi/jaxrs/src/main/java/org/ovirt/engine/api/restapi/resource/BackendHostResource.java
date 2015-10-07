@@ -385,7 +385,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     }
 
     @Override
-    public Response forceSelectSPM(Action action) {
+    public Response forceSelectSpm(Action action) {
         return doAction(VdcActionType.ForceSelectSPM,
                 new ForceSelectSPMParameters(guid), action);
     }
@@ -599,12 +599,12 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     }
 
     @Override
-    public HostNumaNodesResource getHostNumaNodesResource() {
+    public HostNumaNodesResource getNumaNodesResource() {
         return inject(new BackendHostNumaNodesResource(id));
     }
 
     @Override
-    public HostNicsResource getHostNicsResource() {
+    public HostNicsResource getNicsResource() {
         return inject(new BackendHostNicsResource(id));
     }
 
@@ -619,7 +619,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     }
 
     @Override
-    public HostStorageResource getHostStorageResource() {
+    public HostStorageResource getStorageResource() {
         return inject(new BackendHostStorageResource(id));
     }
 
@@ -650,7 +650,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     }
 
     @Override
-    public HostDevicesResource getHostDevicesResource() {
+    public HostDevicesResource getDevicesResource() {
         return inject(new BackendHostDevicesResource(guid));
     }
 
@@ -694,7 +694,6 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         parent.addCertificateInfo(model);
         return model;
     }
-
 
     @Override
     public Response remove() {

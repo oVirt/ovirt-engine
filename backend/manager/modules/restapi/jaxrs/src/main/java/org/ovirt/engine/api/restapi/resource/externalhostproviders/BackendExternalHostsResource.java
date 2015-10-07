@@ -63,7 +63,7 @@ public class BackendExternalHostsResource
     }
 
     @Override
-    public ExternalHostResource getExternalHost(String id) {
+    public ExternalHostResource getHostResource(String id) {
         return inject(new BackendExternalHostResource(id, providerId));
     }
 }

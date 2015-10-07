@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Permission {
+public interface Permission extends Identified {
     @Link Role role();
     @Link User user();
     @Link Group group();

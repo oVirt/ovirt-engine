@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface StorageConnection {
+public interface StorageConnection extends Identified {
     // Common to all types of storage connections:
     String address();
     String type();

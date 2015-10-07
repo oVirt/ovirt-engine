@@ -16,6 +16,7 @@ import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
 import org.ovirt.engine.api.restapi.resource.BackendStatisticsResource;
 import org.ovirt.engine.api.restapi.resource.VolumeStatisticalQuery;
+import org.ovirt.engine.api.restapi.types.GlusterVolumeProfileInfoMapper;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
@@ -133,7 +134,7 @@ public class BackendGlusterVolumeResource
     }
 
     @Override
-    public GlusterBricksResource getGlusterBrickResource() {
+    public GlusterBricksResource getGlusterBricksResource() {
         return inject(new BackendGlusterBricksResource(this));
     }
 
@@ -161,16 +162,17 @@ public class BackendGlusterVolumeResource
     }
 
     @Override
-    public GlusterVolumeProfileDetails getProfileStatistics() {
+    public Response getProfileStatistics(Action action) {
         boolean nfsStats = isNfsStatistics();
         VdcQueryReturnValue result = runQuery(VdcQueryType.GetGlusterVolumeProfileInfo,
                 new GlusterVolumeProfileParameters(Guid.createGuidFromString(parent.getParent().get().getId()), guid, nfsStats));
         if (result != null
                 && result.getSucceeded()
                 && result.getReturnValue() != null) {
-            return LinkHelper.addLinks(uriInfo, getMapper(GlusterVolumeProfileInfo.class,
-                    GlusterVolumeProfileDetails.class)
-            .map((GlusterVolumeProfileInfo)result.getReturnValue(), null));
+            GlusterVolumeProfileInfo info = result.getReturnValue();
+            GlusterVolumeProfileDetails statistics = GlusterVolumeProfileInfoMapper.map(info, null);
+            statistics = LinkHelper.addLinks(uriInfo, statistics);
+            return Response.ok(statistics).build();
         } else {
             //throw exception
             throw new WebFaultException(null, localize(Messages.BACKEND_FAILED), Response.Status.INTERNAL_SERVER_ERROR);

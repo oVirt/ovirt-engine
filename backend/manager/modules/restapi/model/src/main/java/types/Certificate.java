@@ -19,7 +19,7 @@ package types;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Certificate {
+public interface Certificate extends Identified {
     String organization();
     String subject();
     String content();

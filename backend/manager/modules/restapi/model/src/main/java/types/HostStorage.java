@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface HostStorage {
+public interface HostStorage extends Identified {
   // Common to all types of storages:
   String address();
   String type();

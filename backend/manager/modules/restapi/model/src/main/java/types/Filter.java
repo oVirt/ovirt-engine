@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Filter {
+public interface Filter extends Identified {
     Integer position();
 
     @Link SchedulingPolicyUnit schedulingPolicyUnit();

@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface HostDevice {
+public interface HostDevice extends Identified {
     String capability();
     Product product();
     Vendor vendor();

@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Weight {
+public interface Weight extends Identified {
     Integer factor();
 
     @Link SchedulingPolicy schedulingPolicy();

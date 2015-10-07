@@ -4,7 +4,6 @@ import static org.easymock.EasyMock.expect;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 

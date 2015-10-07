@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface StorageDomain {
+public interface StorageDomain extends Identified {
     String type();
     Status status();
     Status externalStatus();

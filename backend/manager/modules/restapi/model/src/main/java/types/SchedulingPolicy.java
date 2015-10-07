@@ -19,7 +19,7 @@ package types;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface SchedulingPolicy {
+public interface SchedulingPolicy extends Identified {
     Boolean locked();
     Boolean defaultPolicy();
     Property[] properties();

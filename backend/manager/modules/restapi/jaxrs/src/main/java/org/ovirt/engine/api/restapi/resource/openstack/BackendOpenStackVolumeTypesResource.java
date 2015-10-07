@@ -64,7 +64,7 @@ public class BackendOpenStackVolumeTypesResource
     }
 
     @Override
-    public OpenstackVolumeTypeResource getOpenStackVolumeType(String id) {
+    public OpenstackVolumeTypeResource getTypeResource(String id) {
         return inject(new BackendOpenStackVolumeTypeResource(providerId, id));
     }
 }

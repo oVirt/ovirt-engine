@@ -19,7 +19,7 @@ package types;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface OperatingSystemInfo {
+public interface OperatingSystemInfo extends Identified {
     Icon largeIcon();
     Icon smallIcon();
 }

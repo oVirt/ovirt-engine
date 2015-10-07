@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface QuotaStorageLimit {
+public interface QuotaStorageLimit extends Identified {
     Integer limit();
     Double usage();
 

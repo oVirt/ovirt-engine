@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Agent {
+public interface Agent extends Identified {
     String type();
     String address();
     String username();

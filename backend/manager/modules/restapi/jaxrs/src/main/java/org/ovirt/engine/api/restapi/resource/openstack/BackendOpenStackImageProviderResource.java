@@ -57,7 +57,7 @@ public class BackendOpenStackImageProviderResource
     }
 
     @Override
-    public OpenstackImagesResource getOpenStackImages() {
+    public OpenstackImagesResource getImagesResource() {
         return inject(new BackendOpenStackImagesResource(id));
     }
 

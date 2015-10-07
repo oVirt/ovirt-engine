@@ -19,7 +19,7 @@ package types;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Ssh {
+public interface Ssh extends Identified {
     Integer port();
     String fingerprint();
     String authenticationMethod();

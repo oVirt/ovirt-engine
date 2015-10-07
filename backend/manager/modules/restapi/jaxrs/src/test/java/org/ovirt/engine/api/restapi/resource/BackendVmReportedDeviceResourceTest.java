@@ -20,7 +20,7 @@ public class BackendVmReportedDeviceResourceTest
     protected static final String ADDRESS = "10.11.12.13";
 
     public BackendVmReportedDeviceResourceTest() {
-        super((BackendVmReportedDeviceResource) getCollection().getVmReportedDeviceResource(DEVICE_ID.toString()));
+        super((BackendVmReportedDeviceResource) getCollection().getReportedDeviceResource(DEVICE_ID.toString()));
     }
 
     protected static BackendVmReportedDevicesResource getCollection() {

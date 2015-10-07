@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Statistic {
+public interface Statistic extends Identified {
     Value[] values();
     StatisticKind kind();
     ValueType type();

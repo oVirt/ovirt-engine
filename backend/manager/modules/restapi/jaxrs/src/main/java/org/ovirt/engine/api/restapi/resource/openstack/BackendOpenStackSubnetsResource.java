@@ -17,7 +17,6 @@
 package org.ovirt.engine.api.restapi.resource.openstack;
 
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -121,7 +120,7 @@ public class BackendOpenStackSubnetsResource
     }
 
     @Override
-    public OpenstackSubnetResource getOpenStackSubnet(String id) {
+    public OpenstackSubnetResource getSubnetResource(String id) {
         return inject(new BackendOpenStackSubnetResource(providerId, networkId, id, this));
     }
 }

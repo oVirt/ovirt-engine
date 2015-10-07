@@ -91,14 +91,14 @@ public class BackendVmApplicationsResourceTest extends AbstractBackendResourceTe
     @Test
     public void testSubResourceLocator() throws Exception {
         control.replay();
-        assertTrue(resource.getVmApplicationResource(VM_ID.toString()) instanceof VmApplicationResource);
+        assertTrue(resource.getApplicationResource(VM_ID.toString()) instanceof VmApplicationResource);
     }
 
     @Test
     public void testSubResourceLocatorBadGuid() throws Exception {
         control.replay();
         try {
-            resource.getVmApplicationResource("foo");
+            resource.getApplicationResource("foo");
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyNotFoundException(wae);

@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Host {
+public interface Host extends Identified {
     String address();
     Status status();
     Certificate certificate();

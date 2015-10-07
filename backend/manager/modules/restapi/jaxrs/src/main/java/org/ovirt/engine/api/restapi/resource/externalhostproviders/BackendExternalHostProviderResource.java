@@ -60,22 +60,22 @@ public class BackendExternalHostProviderResource
     }
 
     @Override
-    public ExternalComputeResourcesResource getExternalComputeResources() {
+    public ExternalComputeResourcesResource getComputeResourcesResource() {
         return inject(new BackendExternalComputeResourcesResource(id));
     }
 
     @Override
-    public ExternalDiscoveredHostsResource getExternalDiscoveredHosts() {
+    public ExternalDiscoveredHostsResource getDiscoveredHostsResource() {
         return inject(new BackendExternalDiscoveredHostsResource(id));
     }
 
     @Override
-    public ExternalHostGroupsResource getExternalHostGroups() {
+    public ExternalHostGroupsResource getHostGroupsResource() {
         return inject(new BackendExternalHostGroupsResource(id));
     }
 
     @Override
-    public ExternalHostsResource getExternalHosts() {
+    public ExternalHostsResource getHostsResource() {
         return inject(new BackendExternalHostsResource(id));
     }
 

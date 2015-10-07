@@ -19,7 +19,7 @@ package types;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Version {
+public interface Version extends Identified {
     Integer major();
     Integer minor();
     Integer build();

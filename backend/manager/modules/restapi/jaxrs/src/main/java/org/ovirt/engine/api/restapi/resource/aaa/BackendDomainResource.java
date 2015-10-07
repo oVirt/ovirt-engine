@@ -33,12 +33,12 @@ implements DomainResource {
     }
 
     @Override
-    public DomainGroupsResource getDomainGroupsResource() {
+    public DomainGroupsResource getGroupsResource() {
         return inject(new BackendDomainGroupsResource(id, this));
     }
 
     @Override
-    public DomainUsersResource getDomainUsersResource() {
+    public DomainUsersResource getUsersResource() {
         return inject(new BackendDomainUsersResource(id, this));
     }
 

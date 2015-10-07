@@ -4,9 +4,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Cdrom;
-import org.ovirt.engine.api.resource.SnapshotCdRomResource;
+import org.ovirt.engine.api.resource.SnapshotCdromResource;
 
-public class BackendSnapshotCdRomResource implements SnapshotCdRomResource {
+public class BackendSnapshotCdRomResource implements SnapshotCdromResource {
 
     protected String cdRomId;
     protected BackendSnapshotCdRomsResource collection;

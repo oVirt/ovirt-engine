@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Role {
+public interface Role extends Identified {
     Boolean mutable();
     Boolean administrative();
 

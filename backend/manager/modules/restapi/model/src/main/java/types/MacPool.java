@@ -19,7 +19,7 @@ package types;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface MacPool {
+public interface MacPool extends Identified {
     Boolean allowDuplicates();
     Boolean defaultPool();
     Range[] ranges();

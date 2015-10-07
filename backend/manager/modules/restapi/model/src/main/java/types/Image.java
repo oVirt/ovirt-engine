@@ -20,6 +20,6 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Image {
+public interface Image extends Identified {
     @Link StorageDomain storageDomain();
 }

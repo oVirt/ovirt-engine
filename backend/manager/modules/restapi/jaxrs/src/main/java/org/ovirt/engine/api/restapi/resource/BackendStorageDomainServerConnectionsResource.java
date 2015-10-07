@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.StorageConnection;
@@ -15,7 +14,9 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendStorageDomainServerConnectionsResource extends AbstractBackendCollectionResource<StorageConnection, StorageServerConnections> implements StorageDomainServerConnectionsResource {
+public class BackendStorageDomainServerConnectionsResource
+        extends AbstractBackendCollectionResource<StorageConnection, StorageServerConnections>
+        implements StorageDomainServerConnectionsResource {
 
     Guid storageDomainId = null;
 
@@ -57,7 +58,7 @@ public class BackendStorageDomainServerConnectionsResource extends AbstractBacke
     }
 
     @Override
-    public StorageDomainServerConnectionResource getStorageConnectionResource(String id) {
+    public StorageDomainServerConnectionResource getConnectionResource(String id) {
         return inject(new BackendStorageDomainServerConnectionResource(id, this));
     }
 }

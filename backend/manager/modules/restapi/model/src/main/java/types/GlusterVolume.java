@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface GlusterVolume {
+public interface GlusterVolume extends Identified {
     String volumeType();
     String[] transportTypes();
     Integer replicaCount();

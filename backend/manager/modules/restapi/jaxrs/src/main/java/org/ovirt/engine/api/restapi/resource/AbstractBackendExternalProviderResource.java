@@ -65,7 +65,7 @@ public abstract class AbstractBackendExternalProviderResource<R extends External
     }
 
     @Override
-    public ExternalProviderCertificatesResource getCertificates() {
+    public ExternalProviderCertificatesResource getCertificatesResource() {
         return inject(new BackendExternalProviderCertificatesResource(id));
     }
 }

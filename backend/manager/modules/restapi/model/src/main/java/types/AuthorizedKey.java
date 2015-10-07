@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface AuthorizedKey {
+public interface AuthorizedKey extends Identified {
     String key();
 
     @Link User user();

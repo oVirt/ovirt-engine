@@ -22,7 +22,7 @@ import org.ovirt.api.metamodel.annotations.Type;
 import java.util.Date;
 
 @Type
-public interface Event {
+public interface Event extends Identified {
     Integer code();
     String severity();
     Date time();

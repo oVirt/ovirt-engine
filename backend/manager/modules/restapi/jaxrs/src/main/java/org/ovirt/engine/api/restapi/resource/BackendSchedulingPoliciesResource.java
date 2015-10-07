@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.SchedulingPolicies;
@@ -43,7 +42,7 @@ public class BackendSchedulingPoliciesResource extends AbstractBackendCollection
     }
 
     @Override
-    public SchedulingPolicyResource getSchedulingPolicyResource(String id) {
+    public SchedulingPolicyResource getPolicyResource(String id) {
         return inject(new BackendSchedulingPolicyResource(id));
     }
 

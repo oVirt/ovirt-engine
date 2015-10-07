@@ -79,7 +79,7 @@ public class BackendVmPoolResourceTest
                                            new Object[] { GUIDS[0], Boolean.FALSE },
                                            GUIDS[0]));
 
-        verifyTestAllocateVmActionResponse(resource.allocatevm(new Action()));
+        verifyTestAllocateVmActionResponse(resource.allocateVm(new Action()));
     }
 
     @Test

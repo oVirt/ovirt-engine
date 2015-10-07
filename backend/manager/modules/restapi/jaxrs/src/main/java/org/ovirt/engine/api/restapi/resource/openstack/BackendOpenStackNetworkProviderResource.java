@@ -59,12 +59,12 @@ public class BackendOpenStackNetworkProviderResource
     }
 
     @Override
-    public OpenstackNetworksResource getOpenStackNetworks() {
+    public OpenstackNetworksResource getNetworksResource() {
         return inject(new BackendOpenStackNetworksResource(id));
     }
 
     @Override
-    public ExternalProviderCertificatesResource getCertificates() {
+    public ExternalProviderCertificatesResource getCertificatesResource() {
         return inject(new BackendExternalProviderCertificatesResource(id));
     }
 

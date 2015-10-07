@@ -20,6 +20,6 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface OpenStackImage {
+public interface OpenStackImage extends Identified {
     @Link OpenStackImageProvider openstackImageProvider();
 }

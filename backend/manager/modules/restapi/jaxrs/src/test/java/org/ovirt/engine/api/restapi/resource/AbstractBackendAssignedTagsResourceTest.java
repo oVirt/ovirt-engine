@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -42,7 +41,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
     public void testBadGuid() throws Exception {
         control.replay();
         try {
-            collection.getAssignedTagResource("foo");
+            collection.getTagResource("foo");
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyNotFoundException(wae);

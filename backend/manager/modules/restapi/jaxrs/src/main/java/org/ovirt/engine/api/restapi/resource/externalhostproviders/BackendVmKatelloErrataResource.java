@@ -12,7 +12,9 @@ import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
-public class BackendVmKatelloErrataResource extends AbstractBackendCollectionResource<KatelloErratum, Erratum> implements KatelloErrataResource {
+public class BackendVmKatelloErrataResource
+        extends AbstractBackendCollectionResource<KatelloErratum, Erratum>
+        implements KatelloErrataResource {
 
     private String vmId;
 

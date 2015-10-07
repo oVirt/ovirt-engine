@@ -99,7 +99,7 @@ public class BackendOpenStackNetworkProvidersResource
     }
 
     @Override
-    public OpenstackNetworkProviderResource getOpenStackNetworkProvider(String id) {
+    public OpenstackNetworkProviderResource getProviderResource(String id) {
         return inject(new BackendOpenStackNetworkProviderResource(id));
     }
 }

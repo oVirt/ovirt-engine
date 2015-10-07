@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface VmPool {
+public interface VmPool extends Identified {
     Integer size();
     Integer prestartedVms();
     Integer maxUserVms();

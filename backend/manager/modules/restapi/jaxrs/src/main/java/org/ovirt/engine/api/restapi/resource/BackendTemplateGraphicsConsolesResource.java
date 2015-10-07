@@ -40,7 +40,7 @@ public class BackendTemplateGraphicsConsolesResource
     }
 
     @Override
-    public GraphicsConsoleResource getGraphicsConsoleResource(String id) {
+    public GraphicsConsoleResource getConsoleResource(String id) {
         return inject(new BackendGraphicsConsoleResource(this, getGuid(), id));
     }
 

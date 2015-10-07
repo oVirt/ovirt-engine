@@ -17,7 +17,6 @@
 package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
@@ -101,7 +100,7 @@ public class BackendExternalHostProvidersResource
     }
 
     @Override
-    public ExternalHostProviderResource getExternalHostProvider(String id) {
+    public ExternalHostProviderResource getProviderResource(String id) {
         return inject(new BackendExternalHostProviderResource(id));
     }
 }

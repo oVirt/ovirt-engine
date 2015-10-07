@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Balance {
+public interface Balance extends Identified {
     @Link SchedulingPolicy schedulingPolicy();
     @Link SchedulingPolicyUnit schedulingPolicyUnit();
 }

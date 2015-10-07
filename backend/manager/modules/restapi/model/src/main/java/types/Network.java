@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Network {
+public interface Network extends Identified {
     Ip ip();
     Vlan vlan();
     Boolean stp();

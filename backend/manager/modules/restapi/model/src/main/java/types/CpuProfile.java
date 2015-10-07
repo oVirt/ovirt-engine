@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface CpuProfile {
+public interface CpuProfile extends Identified {
     @Link Qos qos();
     @Link Cluster cluster();
 }

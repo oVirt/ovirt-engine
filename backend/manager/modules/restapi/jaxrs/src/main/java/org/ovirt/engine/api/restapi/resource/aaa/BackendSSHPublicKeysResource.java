@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-
 public class BackendSSHPublicKeysResource
         extends AbstractBackendCollectionResource<SshPublicKey, UserProfile>
         implements SshPublicKeysResource {
@@ -59,7 +58,7 @@ public class BackendSSHPublicKeysResource
     }
 
     @Override
-    public SshPublicKeyResource getSSHPublicKeyResource(String id) {
+    public SshPublicKeyResource getKeyResource(String id) {
         return inject(new BackendSSHPublicKeyResource(id, userId, this));
     }
 

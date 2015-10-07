@@ -41,7 +41,7 @@ public class BackendAssignedCpuProfilesResource extends AbstractBackendCpuProfil
     }
 
     @Override
-    public AssignedCpuProfileResource getAssignedCpuProfileResource(String id) {
+    public AssignedCpuProfileResource getProfileResource(String id) {
         return inject(new BackendAssignedCpuProfileResource(id, this));
     }
 

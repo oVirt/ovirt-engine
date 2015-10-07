@@ -118,7 +118,7 @@ public class BackendOpenStackVolumeProvidersResource
     }
 
     @Override
-    public OpenstackVolumeProviderResource getOpenStackVolumeProvider(String id) {
+    public OpenstackVolumeProviderResource getProviderResource(String id) {
         return inject(new BackendOpenStackVolumeProviderResource(id, this));
     }
 

@@ -19,7 +19,7 @@ package types;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface SchedulingPolicyUnit {
+public interface SchedulingPolicyUnit extends Identified {
     String type();
     Boolean internal();
     Boolean enabled();

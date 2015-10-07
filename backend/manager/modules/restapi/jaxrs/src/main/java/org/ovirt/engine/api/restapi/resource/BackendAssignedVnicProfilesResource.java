@@ -42,7 +42,7 @@ public class BackendAssignedVnicProfilesResource extends AbstractBackendVnicProf
     }
 
     @Override
-    public AssignedVnicProfileResource getAssignedVnicProfileResource(String id) {
+    public AssignedVnicProfileResource getProfileResource(String id) {
         return inject(new BackendAssignedVnicProfileResource(id, this));
     }
 

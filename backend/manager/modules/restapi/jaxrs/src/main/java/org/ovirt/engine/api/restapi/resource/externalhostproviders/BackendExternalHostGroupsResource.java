@@ -65,7 +65,7 @@ public class BackendExternalHostGroupsResource
     }
 
     @Override
-    public ExternalHostGroupResource getExternalHostGroup(String id) {
+    public ExternalHostGroupResource getGroupResource(String id) {
         return inject(new BackendExternalHostGroupResource(id, providerId));
     }
 }

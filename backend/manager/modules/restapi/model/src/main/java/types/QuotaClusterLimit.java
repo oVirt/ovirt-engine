@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface QuotaClusterLimit {
+public interface QuotaClusterLimit extends Identified {
     Integer vcpuLimit();
     Integer vcpuUsage();
     Double memoryLimit();

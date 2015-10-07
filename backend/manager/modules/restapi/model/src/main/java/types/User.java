@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface User {
+public interface User extends Identified {
     String domainEntryId();
     String department();
     Boolean loggedIn();

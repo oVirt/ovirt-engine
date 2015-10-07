@@ -2,6 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.nio.charset.StandardCharsets;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
@@ -12,7 +14,6 @@ import org.ovirt.engine.api.resource.ApiMediaType;
 import org.ovirt.engine.api.resource.VmGraphicsConsoleResource;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
-
 import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.ConsoleOptionsParams;
@@ -29,7 +30,14 @@ public class BackendVmGraphicsConsoleResource
         super(parent, vmGuid, consoleId);
     }
 
-    @Override
+    /**
+     * A method handling GET requests with media type x-virt-viewer.
+     * Returns a console representation usable by virt-viewer client (e.g. a .vv file)
+     *
+     * @return a console representation for virt-viewer (e.g. a .vv file)
+     */
+    @GET
+    @Produces({ApiMediaType.APPLICATION_X_VIRT_VIEWER})
     public Response generateDescriptor() {
         org.ovirt.engine.core.common.businessentities.GraphicsType graphicsType = asGraphicsType();
 

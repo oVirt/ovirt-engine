@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Device {
+public interface Device extends Identified {
     // Links to potential parents
     @Link Template template();
     @Link InstanceType instanceType();

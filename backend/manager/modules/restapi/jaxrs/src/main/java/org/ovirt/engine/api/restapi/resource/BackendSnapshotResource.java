@@ -8,7 +8,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.CreationResource;
-import org.ovirt.engine.api.resource.SnapshotCdRomsResource;
+import org.ovirt.engine.api.resource.SnapshotCdromsResource;
 import org.ovirt.engine.api.resource.SnapshotDisksResource;
 import org.ovirt.engine.api.resource.SnapshotNicsResource;
 import org.ovirt.engine.api.resource.SnapshotResource;
@@ -19,7 +19,9 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendSnapshotResource extends AbstractBackendActionableResource<Snapshot, org.ovirt.engine.core.common.businessentities.Snapshot> implements SnapshotResource {
+public class BackendSnapshotResource
+        extends AbstractBackendActionableResource<Snapshot, org.ovirt.engine.core.common.businessentities.Snapshot>
+        implements SnapshotResource {
 
     private static final String RESTORE_SNAPSHOT_CORRELATION_ID = "RestoreSnapshot";
     protected Guid parentId;
@@ -96,15 +98,16 @@ public class BackendSnapshotResource extends AbstractBackendActionableResource<S
     }
 
     @Override
-    public SnapshotCdRomsResource getSnapshotCdRomsResource() {
+    public SnapshotCdromsResource getCdromsResource() {
         return inject(new BackendSnapshotCdRomsResource(this));
     }
     @Override
-    public SnapshotDisksResource getSnapshotDisksResource() {
+    public SnapshotDisksResource getDisksResource() {
         return inject(new BackendSnapshotDisksResource(this));
     }
+
     @Override
-    public SnapshotNicsResource getSnapshotNicsResource() {
+    public SnapshotNicsResource getNicsResource() {
         return inject(new BackendSnapshotNicsResource(this));
     }
 

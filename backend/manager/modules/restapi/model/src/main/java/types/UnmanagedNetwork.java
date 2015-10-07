@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface UnmanagedNetwork {
+public interface UnmanagedNetwork extends Identified {
     @Link HostNic hostNic();
     @Link Host host();
 }

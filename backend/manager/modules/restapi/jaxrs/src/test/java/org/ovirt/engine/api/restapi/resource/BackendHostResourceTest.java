@@ -425,7 +425,7 @@ public class BackendHostResourceTest
                                            new String[] { "PreferredSPMId" },
                                            new Object[] { GUIDS[0] }));
 
-        verifyActionResponse(resource.forceSelectSPM(new Action()));
+        verifyActionResponse(resource.forceSelectSpm(new Action()));
     }
 
     @Test

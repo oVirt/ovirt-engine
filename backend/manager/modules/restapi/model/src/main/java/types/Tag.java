@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Tag {
+public interface Tag extends Identified {
     @Link Host host();
     @Link Vm vm();
     @Link User user();

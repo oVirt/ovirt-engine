@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.VirtualNumaNode;
@@ -101,7 +100,7 @@ public class BackendVmNumaNodesResource
     }
 
     @Override
-    public VmNumaNodeResource getVmNumaNodeResource(String id) {
+    public VmNumaNodeResource getNodeResource(String id) {
         return inject(new BackendVmNumaNodeResource(id,
                 this,
                 updateType,

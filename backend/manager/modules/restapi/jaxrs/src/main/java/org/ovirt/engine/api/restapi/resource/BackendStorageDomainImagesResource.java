@@ -33,7 +33,7 @@ public class BackendStorageDomainImagesResource
     }
 
     @Override
-    public ImageResource getDeviceResource(String id) {
+    public ImageResource getImageResource(String id) {
         return inject(new BackendStorageDomainImageResource(id, this));
     }
 

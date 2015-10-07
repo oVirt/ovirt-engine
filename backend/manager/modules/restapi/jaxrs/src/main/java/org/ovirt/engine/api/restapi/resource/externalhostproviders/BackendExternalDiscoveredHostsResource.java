@@ -65,7 +65,7 @@ public class BackendExternalDiscoveredHostsResource
     }
 
     @Override
-    public ExternalDiscoveredHostResource getExternalDiscoveredHost(String id) {
+    public ExternalDiscoveredHostResource getHostResource(String id) {
         return inject(new BackendExternalDiscoveredHostResource(id, providerId));
     }
 }

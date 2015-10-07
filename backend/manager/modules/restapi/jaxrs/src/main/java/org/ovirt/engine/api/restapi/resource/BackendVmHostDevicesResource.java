@@ -61,7 +61,7 @@ public class BackendVmHostDevicesResource
     }
 
     @Override
-    public VmHostDeviceResource getHostDeviceResource(String deviceId) {
+    public VmHostDeviceResource getDeviceResource(String deviceId) {
         return inject(new BackendVmHostDeviceResource(deviceId, this));
     }
 

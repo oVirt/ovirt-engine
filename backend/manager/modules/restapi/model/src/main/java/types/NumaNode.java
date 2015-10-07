@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface NumaNode {
+public interface NumaNode extends Identified {
     Integer index();
     Integer memory();
     Cpu cpu();

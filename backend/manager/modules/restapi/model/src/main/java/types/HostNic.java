@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface HostNic {
+public interface HostNic extends Identified {
     Mac mac();
     Ip ip();
     String baseInterface();

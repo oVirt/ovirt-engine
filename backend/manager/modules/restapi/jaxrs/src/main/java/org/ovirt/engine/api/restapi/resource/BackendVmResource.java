@@ -101,9 +101,9 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendVmResource extends
-        AbstractBackendActionableResource<Vm, org.ovirt.engine.core.common.businessentities.VM> implements
-        VmResource {
+public class BackendVmResource
+        extends AbstractBackendActionableResource<Vm, org.ovirt.engine.core.common.businessentities.VM>
+        implements VmResource {
 
     private static final long DEFAULT_TICKET_EXPIRY = 120 * 60; // 2 hours
     private BackendVmsResource parent;
@@ -704,17 +704,17 @@ public class BackendVmResource extends
     }
 
     @Override
-    public VmReportedDevicesResource getVmReportedDevicesResource() {
+    public VmReportedDevicesResource getReportedDevicesResource() {
         return inject(new BackendVmReportedDevicesResource(guid));
     }
 
     @Override
-    public VmSessionsResource getVmSessionsResource() {
+    public VmSessionsResource getSessionsResource() {
         return inject(new BackendVmSessionsResource(guid));
     }
 
     @Override
-    public GraphicsConsolesResource getVmGraphicsConsolesResource() {
+    public GraphicsConsolesResource getGraphicsConsolesResource() {
         return inject(new BackendVmGraphicsConsolesResource(guid));
     }
 
@@ -750,7 +750,7 @@ public class BackendVmResource extends
     }
 
     @Override
-    public VmHostDevicesResource getVmHostDevicesResource() {
+    public VmHostDevicesResource getHostDevicesResource() {
         return inject(new BackendVmHostDevicesResource(guid));
     }
 }

@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface DataCenter {
+public interface DataCenter extends Identified {
     Boolean local();
     String storageFormat();
     Version version();

@@ -20,6 +20,6 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface Application {
+public interface Application extends Identified {
     @Link Vm vm();
 }

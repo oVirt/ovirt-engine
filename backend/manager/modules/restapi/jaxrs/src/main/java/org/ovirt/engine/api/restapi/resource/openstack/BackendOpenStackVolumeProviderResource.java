@@ -61,12 +61,12 @@ public class BackendOpenStackVolumeProviderResource
     }
 
     @Override
-    public OpenstackVolumeTypesResource getOpenStackVolumeTypes() {
+    public OpenstackVolumeTypesResource getVolumeTypesResource() {
         return inject(new BackendOpenStackVolumeTypesResource(id));
     }
 
     @Override
-    public OpenstackVolumeAuthenticationKeysResource getOpenStackVolumeAuthenticationKeys() {
+    public OpenstackVolumeAuthenticationKeysResource getAuthenticationKeysResource() {
         return inject(new BackendOpenStackVolumeAuthenticationKeysResource(id));
     }
 

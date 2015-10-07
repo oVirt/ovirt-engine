@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface StorageConnectionExtension {
+public interface StorageConnectionExtension extends Identified {
     String target();
     String username();
     String password();

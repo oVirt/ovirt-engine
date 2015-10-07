@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface OpenStackVolumeType {
+public interface OpenStackVolumeType extends Identified {
     Property[] properties();
 
     @Link OpenStackVolumeProvider openstackVolumeProvider();

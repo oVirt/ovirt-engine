@@ -19,7 +19,7 @@ package types;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface ExternalProvider {
+public interface ExternalProvider extends Identified {
     String url();
     Boolean requiresAuthentication();
     String username();
