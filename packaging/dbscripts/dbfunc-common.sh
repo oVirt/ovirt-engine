@@ -97,6 +97,11 @@ dbfunc_common_schema_refresh() {
 	dbfunc_common_restore_permissions "${permissions}"
 }
 
+dbfunc_common_schema_recreate() {
+	dbfunc_common_schema_drop
+	dbfunc_common_schema_apply
+}
+
 # gets the configuration value of the given option name and version.
 # usage: <some variable>=get_config_value <name> <version>
 dbfunc_common_config_get_value() {

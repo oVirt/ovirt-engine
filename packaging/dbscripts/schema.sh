@@ -44,7 +44,7 @@ while getopts hvl:s:p:u:d:m:c:t option; do
 done
 
 case "${COMMAND}" in
-	apply|refresh|drop) ;;
+	apply|refresh|drop|recreate) ;;
 	'') die "Please specify command";;
 	*) die "Invalid command '${COMMAND}'";;
 esac
