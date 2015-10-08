@@ -68,8 +68,8 @@
 
                         <g:FlowPanel>
                             <b:FormGroup>
-                                <b:Column size="SM_8"></b:Column>
-                                <b:Column size="SM_4">
+                                <b:Column size="SM_7"></b:Column>
+                                <b:Column size="SM_5">
                                     <b:ListBox ui:field="localeBox" tabIndex="1" />
                                 </b:Column>
                             </b:FormGroup>
