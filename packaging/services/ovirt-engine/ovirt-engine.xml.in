@@ -171,6 +171,14 @@
         <level name="ERROR"/>
       </logger>
 
+      <!-- This is needed in order to avoid the multiple JBAS018567
+           warnings that the application server issues during startupt
+           becase we use modules that are marked as "private" using
+           the "jboss.api" property: -->
+      <logger category="org.jboss.as.dependency.private">
+        <level name="ERROR"/>
+      </logger>
+
       <!-- Loggers for the engine: -->
       <logger category="org.ovirt" use-parent-handlers="false">
         <level name="INFO"/>
