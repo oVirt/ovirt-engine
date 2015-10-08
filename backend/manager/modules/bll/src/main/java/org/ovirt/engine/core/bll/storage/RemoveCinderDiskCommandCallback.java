@@ -2,12 +2,15 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.List;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+
+import com.woorea.openstack.base.client.OpenStackResponseException;
 
 public class RemoveCinderDiskCommandCallback extends AbstractCinderDiskCommandCallback<RemoveCinderDiskCommand<RemoveCinderDiskParameters>> {
 
@@ -35,12 +38,23 @@ public class RemoveCinderDiskCommandCallback extends AbstractCinderDiskCommandCa
     private ImageStatus checkImageStatus(CinderDisk removedVolume) {
         try {
             return getCinderBroker().getImageStatusByClassificationType(removedVolume);
+        } catch (OpenStackResponseException ex) {
+            if (ex.getStatus() == HttpStatus.SC_NOT_FOUND) {
+                // Send image status as OK, since the disk might already be deleted.
+                log.info("Image status could not be provided since the cinder image might have already been removed from Cinder.");
+                return ImageStatus.OK;
+            }
+            logError(removedVolume, ex);
         } catch (Exception e) {
-            log.error("An exception occured while verifying status for volume id '{0}' with the following exception: {1}.",
-                    removedVolume.getImageId(),
-                    e);
-            return ImageStatus.ILLEGAL;
+            logError(removedVolume, e);
         }
+        return ImageStatus.ILLEGAL;
+    }
+
+    private void logError(CinderDisk removedVolume, Exception ex) {
+        log.error("An exception occurred while verifying status for volume id '{}' with the following exception: {}.",
+                removedVolume.getImageId(),
+                ex);
     }
 
     @Override
