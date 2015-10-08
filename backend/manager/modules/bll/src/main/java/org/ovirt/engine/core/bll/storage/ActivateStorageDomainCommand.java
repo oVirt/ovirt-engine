@@ -108,6 +108,11 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
 
         log.info("ActivateStorage Domain. Before Connect all hosts to pool. Time: {}", new Date());
         List<Pair<Guid, Boolean>> hostsConnectionResults = connectHostsInUpToDomainStorageServer();
+        if (isAllHostConnectionFailed(hostsConnectionResults)) {
+            log.error("Cannot connect storage server, aborting Storage Domain activation.");
+            setSucceeded(false);
+            return;
+        }
         syncStorageDomainInfo(hostsConnectionResults);
 
         runVdsCommand(VDSCommandType.ActivateStorageDomain,
@@ -134,6 +139,15 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
                     getStoragePool().getId());
         }
         setSucceeded(true);
+    }
+
+    private boolean isAllHostConnectionFailed(List<Pair<Guid, Boolean>> hostsConnectionResults) {
+        for (Pair<Guid, Boolean> hostsConnectionResult : hostsConnectionResults) {
+            if (hostsConnectionResult.getSecond()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void activateCinderStorageDomain() {
