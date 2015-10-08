@@ -39,7 +39,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@NonTransactiveCommandAttribute(forceCompensation=true)
+@NonTransactiveCommandAttribute(forceCompensation = true)
 public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersBase> extends
         StorageDomainCommandBase<T> {
 
@@ -103,7 +103,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
         // Master domain must not go through the Activating status.
         changeStorageDomainStatusInTransaction(map,
                 (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) ?
-                    StorageDomainStatus.Locked : StorageDomainStatus.Activating);
+                        StorageDomainStatus.Locked : StorageDomainStatus.Activating);
         freeLock();
 
         log.info("ActivateStorage Domain. Before Connect all hosts to pool. Time: {}", new Date());
