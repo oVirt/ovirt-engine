@@ -20,6 +20,7 @@
     <engine.db.host>localhost</engine.db.host>
     <engine.db.username>engine</engine.db.username>
     <engine.db.password>engine</engine.db.password>
+    <engine.db.command>apply</engine.db.command>
     <skipITs>true</skipITs>
   </properties>
 
@@ -208,6 +209,29 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>Create database schema</id>
+            <phase>pre-integration-test</phase>
+              <goals>
+                <goal>exec</goal>
+              </goals>
+            <configuration>
+              <environmentVariables>
+                <PGPASSWORD>${engine.db.password}</PGPASSWORD>
+              </environmentVariables>
+              <executable>sh</executable>
+              <commandlineArgs>../../../../packaging/dbscripts/schema.sh -s ${engine.db.host} -d ${engine.db.schema} -u ${engine.db.username} -c ${engine.db.command}</commandlineArgs>
+              <skip>${skipITs}</skip>
+        </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>${maven-failsafe-plugin.version}</version>
