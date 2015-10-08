@@ -2098,6 +2098,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getInstanceImages().updateActionsAvailability();
 
         initGraphicsConsoles();
+
+        updateSoundCard();
     }
 
     private void updateBootMenu() {
@@ -2194,6 +2196,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         updateIconAccordingToOs();
 
         initGraphicsConsoles();
+
+        updateSoundCard();
     }
 
     private void updateIconAccordingToOs() {
@@ -2298,6 +2302,15 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     private void overrideMigrationDowntimeChanged() {
         Boolean entity = getOverrideMigrationDowntime().getEntity();
         getMigrationDowntime().setIsChangeable(Boolean.TRUE.equals(entity));
+    }
+
+    private void updateSoundCard() {
+        if (getOSType().getSelectedItem() != null && getSelectedCluster() != null) {
+            int osType = getOSType().getSelectedItem();
+            boolean soundCardEnabled = AsyncDataProvider.getInstance().isSoundDeviceEnabled(osType,
+                    getSelectedCluster().getCompatibilityVersion());
+            getIsSoundcardEnabled().setIsChangeable(soundCardEnabled, constants.soundDeviceUnavailable());
+        }
     }
 
     protected void initGraphicsConsoles() {

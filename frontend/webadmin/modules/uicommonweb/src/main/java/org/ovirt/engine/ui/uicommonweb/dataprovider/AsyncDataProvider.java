@@ -254,6 +254,9 @@ public class AsyncDataProvider {
     // cached os's balloon enabled by default map (given compatibility version)
     private Map<Integer, Map<Version, Boolean>> balloonSupportMap;
 
+    // cached sound device enabled by map
+    private Map<Integer, Map<Version, Boolean>> soundDeviceSupportMap;
+
     // cached windows OS
     private List<Integer> windowsOsIds;
     // cached OS Architecture
@@ -323,6 +326,7 @@ public class AsyncDataProvider {
         initMemorySnapshotSupportMap();
         initSuspendSupportMap();
         initCustomPropertiesList();
+        initSoundDeviceSupportMap();
     }
 
     private void initCustomPropertiesList() {
@@ -545,6 +549,20 @@ public class AsyncDataProvider {
         };
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(
                 OsRepositoryVerb.GetDiskHotpluggableInterfacesMap), callback);
+    }
+
+    public Boolean isSoundDeviceEnabled(int osId, Version version) {
+        return soundDeviceSupportMap.get(osId).get(version);
+    }
+
+    public void initSoundDeviceSupportMap() {
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(
+                OsRepositoryVerb.GetSoundDeviceSupportMap), new AsyncQuery(new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model, Object result) {
+                        soundDeviceSupportMap = ((VdcQueryReturnValue) result).getReturnValue();
+                    }
+                }));
     }
 
     public Map<Pair<Integer, Version>, Set<String>> getDiskHotpluggableInterfacesMap() {

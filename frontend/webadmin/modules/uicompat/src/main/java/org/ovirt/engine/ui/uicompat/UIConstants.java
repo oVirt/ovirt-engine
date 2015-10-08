@@ -2939,4 +2939,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Not Configured")
     String notConfigured();
+
+    @DefaultStringValue("Soundcard is not available in selected cluster")
+    String soundDeviceUnavailable();
 }
