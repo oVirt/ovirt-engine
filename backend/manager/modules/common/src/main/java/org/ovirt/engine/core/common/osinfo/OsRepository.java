@@ -295,6 +295,11 @@ public interface OsRepository {
     public boolean isCpuSupported(int osId, Version version, String cpuId);
 
     /**
+     * @return a map that contain an pair (OS id and version) with the sound device support.
+     */
+    Map<Integer, Map<Version, Boolean>> getSoundDeviceSupportMap();
+
+    /**
      * Checks if target OS architecture supports sound devices.
      */
     boolean isSoundDeviceEnabled(int osId, Version version);

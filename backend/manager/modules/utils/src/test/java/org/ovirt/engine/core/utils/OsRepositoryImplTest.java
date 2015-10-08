@@ -53,6 +53,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel7/resources/maximum/ram").put("value", "2048");
         preferences.node("/os/rhel7/devices/display/protocols").put("value", "VNC/cirrus,SPICE/qxl");
         preferences.node("/os/rhel7/devices/balloon/enabled").put("value", "true");
+        preferences.node("/os/rhel7/devices/audio/enabled").put("value", "true");
         preferences.node("/os/rhel7/devices/floppy/support").put("value", "true");
         preferences.node("/os/rhel7/sysprepPath").put("value", PATH_TO_SYSPREP);
         preferences.node("/os/rhel7/productKey").put("value", SOME_PRODUCT_KEY);
@@ -193,6 +194,12 @@ public class OsRepositoryImplTest {
     public void testIsBalloonEnabled() throws Exception {
         assertTrue(OsRepositoryImpl.INSTANCE.isBalloonEnabled(777, null));
         assertTrue(OsRepositoryImpl.INSTANCE.getBalloonSupportMap().get(777).get(null));
+    }
+
+    @Test
+    public void testIsSoundDeviceEnabled() throws Exception {
+        assertTrue(OsRepositoryImpl.INSTANCE.isSoundDeviceEnabled(777, null));
+        assertTrue(OsRepositoryImpl.INSTANCE.getSoundDeviceSupportMap().get(777).get(null));
     }
 
     @Test

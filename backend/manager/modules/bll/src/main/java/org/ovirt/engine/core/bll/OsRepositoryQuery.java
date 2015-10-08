@@ -74,6 +74,10 @@ public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesComma
                 break;
             case GetDefaultOSes:
                 setReturnValue(osRepository.getDefaultOSes());
+                break;
+            case GetSoundDeviceSupportMap:
+                setReturnValue(osRepository.getSoundDeviceSupportMap());
+                break;
         }
     }
 }

@@ -444,6 +444,23 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
+    public Map<Integer, Map<Version, Boolean>> getSoundDeviceSupportMap() {
+        Map<Integer, Map<Version, Boolean>> soundDeviceSupportMap = new HashMap<>();
+        Set<Version> versionsWithNull = new HashSet<>(Version.ALL);
+        versionsWithNull.add(null);
+
+        for (Integer osId : getOsIds()) {
+            soundDeviceSupportMap.put(osId, new HashMap<Version, Boolean>());
+
+            for (Version ver : versionsWithNull) {
+                soundDeviceSupportMap.get(osId).put(ver, isSoundDeviceEnabled(osId, ver));
+            }
+        }
+
+        return soundDeviceSupportMap;
+    }
+
+    @Override
     public boolean isSoundDeviceEnabled(int osId, Version version) {
         return getBoolean(getValueByVersion(idToUnameLookup.get(osId), "devices.audio.enabled", version), false);
     }
