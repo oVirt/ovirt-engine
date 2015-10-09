@@ -49,9 +49,6 @@ public class ThreadPoolUtil {
             if (!threadName.startsWith("org.ovirt.thread.")) {
                 t.setName("org.ovirt.thread." + threadName);
             }
-            if (log.isDebugEnabled()) {
-                log.debug(String.format("About to run task '%s' from", r.getClass().getName()), new Exception());
-            }
 
             if (getQueue().size() > 5) {
                 log.warn("Executing a command '{}', but note that there are {} tasks in the queue.",
