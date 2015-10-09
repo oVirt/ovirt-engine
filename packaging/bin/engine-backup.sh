@@ -113,6 +113,7 @@ BACKUP_PATHS="/etc/ovirt-engine
 /etc/httpd/conf.d/z-ovirt-engine-proxy.conf
 /etc/httpd/conf.d/z-ovirt-engine-reports-proxy.conf
 /etc/yum/pluginconf.d/versionlock.list
+/etc/dnf/plugins/versionlock.list
 /etc/firewalld/services/ovirt-https.xml
 /etc/firewalld/services/ovirt-http.xml
 /etc/firewalld/services/ovirt-postgres.xml"
