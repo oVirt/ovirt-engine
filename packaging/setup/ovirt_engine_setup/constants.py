@@ -140,6 +140,13 @@ class FileLocations(object):
         'answers',
     )
 
+    OVIRT_ENGINE_DNF_VERSIONLOCK = os.path.join(
+        SYSCONFDIR,
+        'dnf',
+        'plugins',
+        'versionlock.list',
+    )
+
     OVIRT_ENGINE_YUM_VERSIONLOCK = os.path.join(
         SYSCONFDIR,
         'yum',
