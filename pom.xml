@@ -96,7 +96,8 @@
     <openstack-client.version>3.1.1</openstack-client.version>
 
     <!-- Plugins Versions -->
-    <maven-surefire-plugin.version>2.7.2</maven-surefire-plugin.version>
+    <maven-surefire-plugin.version>2.12.3</maven-surefire-plugin.version>
+    <maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
     <maven-resources-plugin.version>2.4.3</maven-resources-plugin.version>
     <maven-ejb-plugin.version>2.3</maven-ejb-plugin.version>
     <!-- https://jira.codehaus.org/browse/MGWT-350 -->
