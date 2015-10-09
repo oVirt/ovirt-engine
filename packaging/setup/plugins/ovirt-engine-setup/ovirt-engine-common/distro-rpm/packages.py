@@ -53,28 +53,31 @@ class Plugin(plugin.PluginBase):
         were locked at previous version.
         """
 
-        def _filterVersionLock(self):
-            modified = False
-            content = []
+        _VERSIONLOCK_LIST_FILES = (
+            osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
+            osetupcons.FileLocations.OVIRT_ENGINE_DNF_VERSIONLOCK,
+        )
 
-            if os.path.exists(
-                osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK
-            ):
-                with open(
-                    osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
-                ) as f:
-                    for line in f.read().splitlines():
-                        found = False
-                        for pattern in self.environment[
-                            osetupcons.RPMDistroEnv.VERSION_LOCK_FILTER
-                        ]:
-                            if line.find(pattern) != -1:
-                                found = True
-                                break
-                        if not found:
-                            content.append(line)
-                        else:
-                            modified = True
+        def _filterVersionLock(self):
+            modified = {}
+            content = {}
+            for versionlock_list_file in self._VERSIONLOCK_LIST_FILES:
+                modified[versionlock_list_file] = False
+                content[versionlock_list_file] = []
+                if os.path.exists(versionlock_list_file):
+                    with open(versionlock_list_file, 'r') as f:
+                        for line in f.read().splitlines():
+                            found = False
+                            for pattern in self.environment[
+                                osetupcons.RPMDistroEnv.VERSION_LOCK_FILTER
+                            ]:
+                                if line.find(pattern) != -1:
+                                    found = True
+                                    break
+                            if not found:
+                                content[versionlock_list_file].append(line)
+                            else:
+                                modified[versionlock_list_file] = True
             return (modified, content)
 
         @property
@@ -83,7 +86,7 @@ class Plugin(plugin.PluginBase):
 
         def __init__(self, parent):
             self._parent = parent
-            self._backup = None
+            self._backup = {}
 
         def __str__(self):
             return _("Version Lock Transaction")
@@ -93,31 +96,34 @@ class Plugin(plugin.PluginBase):
                 return
 
             modified, content = self._filterVersionLock()
-
-            if modified:
-                self._backup = '%s.%s' % (
-                    osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
-                    datetime.datetime.now().strftime('%Y%m%d%H%M%S'),
-                )
-                os.rename(
-                    osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
-                    self._backup,
-                )
-                with open(
-                    osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
-                    'w'
-                ) as f:
-                    f.write('\n'.join(content) + '\n')
+            for versionlock_list_file in self._VERSIONLOCK_LIST_FILES:
+                if modified[versionlock_list_file]:
+                    self._backup[versionlock_list_file] = '%s.%s' % (
+                        versionlock_list_file,
+                        datetime.datetime.now().strftime('%Y%m%d%H%M%S'),
+                    )
+                    os.rename(
+                        versionlock_list_file,
+                        self._backup[versionlock_list_file],
+                    )
+                    with open(
+                        versionlock_list_file,
+                        'w'
+                    ) as f:
+                        f.write(
+                            '\n'.join(content[versionlock_list_file]) + '\n'
+                        )
 
         def abort(self):
-            if (
-                self._backup is not None and
-                os.path.exists(self._backup)
-            ):
-                os.rename(
-                    self._backup,
-                    osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
-                )
+            for versionlock_list_file in self._VERSIONLOCK_LIST_FILES:
+                if (
+                    versionlock_list_file in self._backup and
+                    os.path.exists(self._backup[versionlock_list_file])
+                ):
+                    os.rename(
+                        self._backup[versionlock_list_file],
+                        versionlock_list_file,
+                    )
 
         def commit(self):
             # This must be always execucted so we be sure we
@@ -145,31 +151,39 @@ class Plugin(plugin.PluginBase):
                             'added': line,
                         }
                     )
-                self.environment[
-                    osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
-                ].append(osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK)
 
-                self.environment[
+                versionlock_uninstall_group = self.environment[
                     osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
                 ].createGroup(
                     group='versionlock',
                     description='YUM version locking configuration',
                     optional=False
-                ).addChanges(
-                    'versionlock',
-                    osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
-                    changes,
                 )
 
                 modified, content = self._filterVersionLock()
-                content.extend(out)
-                with open(
-                    osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
-                    'w',
-                ) as f:
-                    f.write('\n'.join(content) + '\n')
+                for versionlock_list_file in self._VERSIONLOCK_LIST_FILES:
+                    self.environment[
+                        osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
+                    ].append(versionlock_list_file)
+                    if os.path.exists(versionlock_list_file):
+                        versionlock_uninstall_group.addChanges(
+                            'versionlock',
+                            versionlock_list_file,
+                            changes,
+                        )
+                        content[versionlock_list_file].extend(out)
+                        with open(
+                            versionlock_list_file,
+                            'w',
+                        ) as f:
+                            f.write(
+                                '\n'.join(
+                                    content[versionlock_list_file]
+                                ) + '\n'
+                            )
 
     def _getSink(self):
+        # TODO: otopi is now providing minidnf too
         class MyMiniYumSink(self._miniyum.MiniYumSinkBase):
             def __init__(self, log):
                 super(MyMiniYumSink, self).__init__()
@@ -189,6 +203,7 @@ class Plugin(plugin.PluginBase):
         return MyMiniYumSink(self.logger)
 
     def _checkForPackagesUpdate(self, packages):
+        # TODO: otopi is now providing minidnf too
         update = []
         myum = self._miniyum.MiniYum(
             sink=self._getSink(),
@@ -204,6 +219,7 @@ class Plugin(plugin.PluginBase):
         return update
 
     def _checkForProductUpdate(self):
+        # TODO: otopi is now providing minidnf too
         missingRollback = []
         upgradeAvailable = False
         myum = self._miniyum.MiniYum(
@@ -316,7 +332,7 @@ class Plugin(plugin.PluginBase):
                 parent=self,
             )
         )
-
+        # TODO: otopi is now providing minidnf too
         from otopi import miniyum
         self._miniyum = miniyum
         self._enabled = True
