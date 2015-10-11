@@ -167,7 +167,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         mockMaxPciSlots();
 
         mockOsRepository();
-        mockOsRepositoryGraphics(0, Version.v3_3, new Pair<GraphicsType, DisplayType>(GraphicsType.SPICE, DisplayType.qxl));
+        mockOsRepositoryGraphics(0, Version.v3_3, new Pair<>(GraphicsType.SPICE, DisplayType.qxl));
         mockGraphicsDevices(vm.getId());
 
         mockStorageDomainDaoGetAllStoragesForPool(AVAILABLE_SPACE_GB);
@@ -191,7 +191,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     }
 
     private void mockOsRepositoryGraphics(int osId, Version ver, Pair<GraphicsType, DisplayType> supportedGraphicsAndDisplay) {
-        HashMap<Version, List<Pair<GraphicsType, DisplayType>>> value = new HashMap<Version, List<Pair<GraphicsType, DisplayType>>>();
+        HashMap<Version, List<Pair<GraphicsType, DisplayType>>> value = new HashMap<>();
         value.put(ver, Collections.singletonList(supportedGraphicsAndDisplay));
 
         HashMap<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> g = new HashMap<>();
@@ -213,7 +213,7 @@ public class AddVmCommandTest extends BaseCommandTest {
 
     @Test
     public void canAddVm() {
-        ArrayList<String> reasons = new ArrayList<String>();
+        ArrayList<String> reasons = new ArrayList<>();
         final int domainSizeGB = 20;
         final int sizeRequired = 5;
         AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired);
@@ -548,7 +548,7 @@ public class AddVmCommandTest extends BaseCommandTest {
             vmTemplate.setStoragePoolId(STORAGE_POOL_ID);
             DiskImage image = createDiskImageTemplate();
             vmTemplate.getDiskTemplateMap().put(image.getImageId(), image);
-            HashMap<Guid, DiskImage> diskImageMap = new HashMap<Guid, DiskImage>();
+            HashMap<Guid, DiskImage> diskImageMap = new HashMap<>();
             DiskImage diskImage = createDiskImage(REQUIRED_DISK_SIZE_GB);
             diskImageMap.put(diskImage.getId(), diskImage);
             vmTemplate.setDiskImageMap(diskImageMap);
@@ -583,7 +583,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         i.setSizeInGigabytes(USED_SPACE_GB + AVAILABLE_SPACE_GB);
         i.setActualSizeInBytes(REQUIRED_DISK_SIZE_GB * 1024L * 1024L * 1024L);
         i.setImageId(Guid.newGuid());
-        i.setStorageIds(new ArrayList<Guid>(Arrays.asList(STORAGE_DOMAIN_ID_1)));
+        i.setStorageIds(new ArrayList<>(Arrays.asList(STORAGE_DOMAIN_ID_1)));
         return i;
     }
 
@@ -597,7 +597,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         diskImage.setActualSize(size);
         diskImage.setId(Guid.newGuid());
         diskImage.setImageId(Guid.newGuid());
-        diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(STORAGE_DOMAIN_ID_1)));
+        diskImage.setStorageIds(new ArrayList<>(Arrays.asList(STORAGE_DOMAIN_ID_1)));
         return diskImage;
     }
 
@@ -675,7 +675,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     }
 
      protected void generateStorageToDisksMap(AddVmCommand<? extends AddVmParameters> command) {
-        command.storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
+        command.storageToDisksMap = new HashMap<>();
         command.storageToDisksMap.put(STORAGE_DOMAIN_ID_1, generateDisksList(NUM_DISKS_STORAGE_DOMAIN_1));
         command.storageToDisksMap.put(STORAGE_DOMAIN_ID_2, generateDisksList(NUM_DISKS_STORAGE_DOMAIN_2));
     }
