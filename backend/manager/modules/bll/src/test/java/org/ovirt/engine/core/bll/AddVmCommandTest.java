@@ -28,7 +28,6 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -460,7 +459,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     }
 
     private void initializeVmDaoMock(VM vm) {
-        when(vmDao.get(Matchers.<Guid>any(Guid.class))).thenReturn(vm);
+        when(vmDao.get(any(Guid.class))).thenReturn(vm);
     }
 
     private AddVmCommand<AddVmParameters> setupCanAddVmTests(final int domainSizeGB,
@@ -503,7 +502,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     }
 
     private void mockStorageDomainDaoGetForStoragePool(int domainSpaceGB) {
-        when(sdDao.getForStoragePool(Matchers.<Guid>any(Guid.class), Matchers.<Guid>any(Guid.class))).thenReturn(createStorageDomain(domainSpaceGB));
+        when(sdDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(createStorageDomain(domainSpaceGB));
     }
 
     private void mockStorageDomainDaoGet(final int domainSpaceGB) {
@@ -528,11 +527,11 @@ public class AddVmCommandTest extends BaseCommandTest {
     }
 
     private void mockVmTemplateDaoReturnVmTemplate() {
-        when(vmTemplateDao.get(Matchers.<Guid> any(Guid.class))).thenReturn(createVmTemplate());
+        when(vmTemplateDao.get(any(Guid.class))).thenReturn(createVmTemplate());
     }
 
     private void mockVdsGroupDaoReturnVdsGroup() {
-        when(vdsGroupDao.get(Matchers.<Guid>any(Guid.class))).thenReturn(createVdsGroup());
+        when(vdsGroupDao.get(any(Guid.class))).thenReturn(createVdsGroup());
     }
 
     private VmTemplate createVmTemplate() {
@@ -581,7 +580,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     }
 
     private void mockDiskImageDaoGetSnapshotById() {
-        when(diskImageDao.getSnapshotById(Matchers.<Guid> any(Guid.class))).thenReturn(createDiskImage(REQUIRED_DISK_SIZE_GB));
+        when(diskImageDao.getSnapshotById(any(Guid.class))).thenReturn(createDiskImage(REQUIRED_DISK_SIZE_GB));
     }
 
     private static DiskImage createDiskImage(int size) {
@@ -720,7 +719,7 @@ public class AddVmCommandTest extends BaseCommandTest {
 
 
     private <T extends AddVmParameters> void mockUninterestingMethods(AddVmCommand<T> spy) {
-        doReturn(true).when(spy).isVmNameValidLength(Matchers.<VM> any(VM.class));
+        doReturn(true).when(spy).isVmNameValidLength(any(VM.class));
         doReturn(false).when(spy).isVmWithSameNameExists(anyString(), any(Guid.class));
         doReturn(STORAGE_POOL_ID).when(spy).getStoragePoolId();
         doReturn(createVmTemplate()).when(spy).getVmTemplate();
