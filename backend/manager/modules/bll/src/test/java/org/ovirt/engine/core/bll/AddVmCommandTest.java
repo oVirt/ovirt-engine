@@ -255,7 +255,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     public void canAddVmWithVirtioScsiControllerNotSupportedOs() {
         VM vm = createVm();
         AddVmFromTemplateCommand<AddVmParameters> cmd = createVmFromTemplateCommand(vm);
-        VDSGroup vdsGroup = createVdsGroup();
+        vdsGroup = createVdsGroup();
 
         mockStorageDomainDaoGetForStoragePool();
         mockVmTemplateDaoReturnVmTemplate();
@@ -327,7 +327,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         // prepare a command to pass canDo action
         VM vm = createVm();
         vm.setVmOs(OsRepository.DEFAULT_X86_OS);
-        VDSGroup vdsGroup = createVdsGroup();
+        vdsGroup = createVdsGroup();
 
         AddVmFromTemplateCommand<AddVmParameters> cmd = createVmFromTemplateCommand(vm);
 
