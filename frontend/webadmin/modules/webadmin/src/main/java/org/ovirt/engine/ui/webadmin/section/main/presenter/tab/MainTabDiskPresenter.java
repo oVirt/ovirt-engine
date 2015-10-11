@@ -55,7 +55,10 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
     final IEventListener<EventArgs> systemTreeListener = new IEventListener<EventArgs>() {
         @Override
         public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-            getView().handleQuotaColumnVisibility();
+            // Should be invoked only when Disks tab is selected
+            if ((commonModelProvider.get().getSelectedItem() instanceof DiskListModel)) {
+                getView().handleQuotaColumnVisibility();
+            }
         }
     };
 
