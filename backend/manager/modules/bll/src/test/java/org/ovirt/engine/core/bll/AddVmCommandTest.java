@@ -212,8 +212,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     public void canAddVm() {
         ArrayList<String> reasons = new ArrayList<>();
         final int domainSizeGB = 20;
-        final int sizeRequired = 5;
-        AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired);
+        AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(domainSizeGB);
         cmd.postConstruct();
         doReturn(true).when(cmd).validateCustomProperties(any(VmStatic.class), anyList());
         doReturn(true).when(cmd).validateSpaceRequirements();
@@ -223,10 +222,9 @@ public class AddVmCommandTest extends BaseCommandTest {
     @Test
     public void canAddCloneVmFromSnapshotSnapshotDoesNotExist() {
         final int domainSizeGB = 15;
-        final int sizeRequired = 4;
         final Guid sourceSnapshotId = Guid.newGuid();
         AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd =
-                setupCanAddVmFromSnapshotTests(domainSizeGB, sizeRequired, sourceSnapshotId);
+                setupCanAddVmFromSnapshotTests(domainSizeGB, sourceSnapshotId);
         cmd.getVm().setName("vm1");
         mockNonInterestingMethodsForCloneVmFromSnapshot(cmd);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
@@ -236,10 +234,9 @@ public class AddVmCommandTest extends BaseCommandTest {
     @Test
     public void canAddCloneVmFromSnapshotNoConfiguration() {
         final int domainSizeGB = 15;
-        final int sizeRequired = 4;
         final Guid sourceSnapshotId = Guid.newGuid();
         AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd =
-                setupCanAddVmFromSnapshotTests(domainSizeGB, sizeRequired, sourceSnapshotId);
+                setupCanAddVmFromSnapshotTests(domainSizeGB, sourceSnapshotId);
         cmd.getVm().setName("vm1");
         mockNonInterestingMethodsForCloneVmFromSnapshot(cmd);
         SnapshotsValidator sv = spy(new SnapshotsValidator());
@@ -282,7 +279,7 @@ public class AddVmCommandTest extends BaseCommandTest {
 
     @Test
     public void isVirtioScsiEnabledDefaultedToTrue() {
-        AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(0, 0);
+        AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(0);
         doReturn(createVdsGroup()).when(cmd).getVdsGroup();
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
                 new ArrayList<>(Collections.singletonList("VirtIO_SCSI")));
@@ -291,7 +288,7 @@ public class AddVmCommandTest extends BaseCommandTest {
 
     @Test
     public void validateSpaceAndThreshold() {
-        AddVmCommand<AddVmParameters> command = setupCanAddVmTests(0, 0);
+        AddVmCommand<AddVmParameters> command = setupCanAddVmTests(0);
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForNewDisks(anyList());
         doReturn(storageDomainValidator).when(command).createStorageDomainValidator(any(StorageDomain.class));
@@ -302,7 +299,7 @@ public class AddVmCommandTest extends BaseCommandTest {
 
     @Test
     public void validateSpaceNotEnough() throws Exception {
-        AddVmCommand<AddVmParameters> command = setupCanAddVmTests(0, 0);
+        AddVmCommand<AddVmParameters> command = setupCanAddVmTests(0);
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(storageDomainValidator).hasSpaceForNewDisks(anyList());
@@ -314,7 +311,7 @@ public class AddVmCommandTest extends BaseCommandTest {
 
     @Test
     public void validateSpaceNotWithinThreshold() throws Exception {
-        AddVmCommand<AddVmParameters> command = setupCanAddVmTests(0, 0);
+        AddVmCommand<AddVmParameters> command = setupCanAddVmTests(0);
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(storageDomainValidator).when(command).createStorageDomainValidator(any(StorageDomain.class));
@@ -448,10 +445,9 @@ public class AddVmCommandTest extends BaseCommandTest {
         return cmd;
     }
 
-    protected AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> setupCanAddVmFromSnapshotTests(final int domainSizeGB,
-            final int sizeRequired,
-            Guid sourceSnapshotId) {
-        VM vm = initializeMock(domainSizeGB, sizeRequired);
+    protected AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> setupCanAddVmFromSnapshotTests
+            (final int domainSizeGB, Guid sourceSnapshotId) {
+        VM vm = initializeMock(domainSizeGB);
         initializeVmDaoMock(vm);
         AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd = createVmFromSnapshotCommand(vm, sourceSnapshotId);
         initCommandMethods(cmd);
@@ -462,9 +458,8 @@ public class AddVmCommandTest extends BaseCommandTest {
         when(vmDao.get(any(Guid.class))).thenReturn(vm);
     }
 
-    private AddVmCommand<AddVmParameters> setupCanAddVmTests(final int domainSizeGB,
-            final int sizeRequired) {
-        VM vm = initializeMock(domainSizeGB, sizeRequired);
+    private AddVmCommand<AddVmParameters> setupCanAddVmTests(final int domainSizeGB) {
+        VM vm = initializeMock(domainSizeGB);
         AddVmCommand<AddVmParameters> cmd = createCommand(vm);
         initCommandMethods(cmd);
         doReturn(createVmTemplate()).when(cmd).getVmTemplate();
@@ -478,14 +473,13 @@ public class AddVmCommandTest extends BaseCommandTest {
         doReturn(STORAGE_POOL_ID).when(cmd).getStoragePoolId();
     }
 
-    private VM initializeMock(final int domainSizeGB, final int sizeRequired) {
+    private VM initializeMock(final int domainSizeGB) {
         mockVmTemplateDaoReturnVmTemplate();
         mockDiskImageDaoGetSnapshotById();
         mockStorageDomainDaoGetForStoragePool(domainSizeGB);
         mockStorageDomainDaoGet(domainSizeGB);
         mockConfig();
-        VM vm = createVm();
-        return vm;
+        return createVm();
     }
 
     private void mockBackend(AddVmCommand<?> cmd) {
@@ -734,12 +728,12 @@ public class AddVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testBeanValidations() {
-        assertTrue(createCommand(initializeMock(1, 1)).validateInputs());
+        assertTrue(createCommand(initializeMock(1)).validateInputs());
     }
 
     @Test
     public void testPatternBasedNameFails() {
-        AddVmCommand<AddVmParameters> cmd = createCommand(initializeMock(1, 1));
+        AddVmCommand<AddVmParameters> cmd = createCommand(initializeMock(1));
         cmd.getParameters().getVm().setName("aa-??bb");
         assertFalse("Pattern-based name should not be supported for VM", cmd.validateInputs());
     }
@@ -765,8 +759,7 @@ public class AddVmCommandTest extends BaseCommandTest {
 
     private AddVmCommand<AddVmParameters> setupCanAddPpcTest() {
         final int domainSizeGB = 20;
-        final int sizeRequired = 5;
-        AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired);
+        AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(domainSizeGB);
 
         doReturn(true).when(cmd).validateSpaceRequirements();
         doReturn(true).when(cmd).buildAndCheckDestStorageDomains();
@@ -782,8 +775,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     @Test
     public void testStoragePoolDoesntExist() {
         final int domainSizeGB = 20;
-        final int sizeRequired = 5;
-        AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired);
+        AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(domainSizeGB);
 
         doReturn(null).when(cmd).getStoragePool();
 

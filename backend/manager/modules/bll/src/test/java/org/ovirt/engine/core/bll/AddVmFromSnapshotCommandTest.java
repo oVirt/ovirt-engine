@@ -136,7 +136,7 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTest{
 
     private void initCommand() {
         final Guid sourceSnapshotId = Guid.newGuid();
-        command = setupCanAddVmFromSnapshotTests(0, 0, sourceSnapshotId);
+        command = setupCanAddVmFromSnapshotTests(0, sourceSnapshotId);
         generateStorageToDisksMap(command);
         initDestSDs(command);
         storageDomainValidator = mock(StorageDomainValidator.class);
