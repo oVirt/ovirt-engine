@@ -88,7 +88,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     private static final int REQUIRED_DISK_SIZE_GB = 10;
     private static final int AVAILABLE_SPACE_GB = 11;
     private static final int USED_SPACE_GB = 4;
-    private static int MAX_PCI_SLOTS = 26;
+    private static final int MAX_PCI_SLOTS = 26;
     private static final Guid STORAGE_POOL_ID = Guid.newGuid();
     private static final String CPU_ID = "0";
     private VmTemplate vmTemplate = null;
