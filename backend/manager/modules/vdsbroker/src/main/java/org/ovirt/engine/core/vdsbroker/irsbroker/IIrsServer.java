@@ -11,6 +11,10 @@ public interface IIrsServer {
     OneUuidReturnForXmlRpc createVolume(String sdUUID, String spUUID, String imgGUID, String size, int volFormat,
             int volType, int diskType, String volUUID, String descr, String srcImgGUID, String srcVolUUID);
 
+    OneUuidReturnForXmlRpc createVolume(String sdUUID, String spUUID, String imgGUID, String size, int volFormat,
+            int volType, int diskType, String volUUID, String descr, String srcImgGUID, String srcVolUUID,
+            String initialSize);
+
     OneUuidReturnForXmlRpc copyImage(String sdUUID, String spUUID, String vmGUID, String srcImgGUID, String srcVolUUID,
             String dstImgGUID, String dstVolUUID, String descr, String dstSdUUID, int volType, int volFormat,
             int preallocate, String postZero, String force);

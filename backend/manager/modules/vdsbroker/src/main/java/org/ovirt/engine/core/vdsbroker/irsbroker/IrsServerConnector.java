@@ -9,6 +9,10 @@ public interface IrsServerConnector {
     public Map<String, Object> createVolume(String sdUUID, String spUUID, String imgGUID, String size, int volFormat,
             int volType, int diskType, String volUUID, String descr, String srcImgGUID, String srcVolUUID);
 
+    public Map<String, Object> createVolume(String sdUUID, String spUUID, String imgGUID, String size, int volFormat,
+            int volType, int diskType, String volUUID, String descr, String srcImgGUID, String srcVolUUID,
+            String initialSize);
+
     public Map<String, Object> copyImage(String sdUUID, String spUUID, String vmGUID, String srcImgGUID,
             String srcVolUUID, String dstImgGUID, String dstVolUUID, String descr);
 

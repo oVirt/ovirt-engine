@@ -764,6 +764,8 @@ select fn_db_add_config_value_for_versions_up_to('NetworkExclusivenessPermissive
 
 select fn_db_add_config_value_for_versions_up_to('GetDeviceListWithoutStatusSupported','false','3.5');
 
+select fn_db_add_config_value_for_versions_up_to('InitialSizeSparseDiskSupported','false','3.5');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------

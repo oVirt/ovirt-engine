@@ -64,6 +64,39 @@ public class JsonRpcIIrsServer implements IIrsServer {
     }
 
     @Override
+    public OneUuidReturnForXmlRpc createVolume(String sdUUID,
+                                               String spUUID,
+                                               String imgGUID,
+                                               String size,
+                                               int volFormat,
+                                               int volType,
+                                               int diskType,
+                                               String volUUID,
+                                               String descr,
+                                               String srcImgGUID,
+                                               String srcVolUUID,
+                                               String initialSize) {
+        JsonRpcRequest request =
+                new RequestBuilder("Volume.create").withParameter("volumeID", volUUID)
+                        .withParameter("storagepoolID", spUUID)
+                        .withParameter("storagedomainID", sdUUID)
+                        .withParameter("imageID", imgGUID)
+                        .withParameter("size", size)
+                        .withParameter("volFormat", volFormat)
+                        .withParameter("preallocate", volType)
+                        .withParameter("diskType", diskType)
+                        .withParameter("desc", descr)
+                        .withParameter("srcImgUUID", srcImgGUID)
+                        .withParameter("srcVolUUID", srcVolUUID)
+                        .withParameter("initialSize", initialSize)
+                        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request).withResponseKey("uuid");
+        return new OneUuidReturnForXmlRpc(response);
+    }
+
+
+    @Override
     public OneUuidReturnForXmlRpc copyImage(String sdUUID,
             String spUUID,
             String vmGUID,
