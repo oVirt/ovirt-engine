@@ -189,10 +189,10 @@ public class AddVmCommandTest extends BaseCommandTest {
     }
 
     private void mockOsRepositoryGraphics(int osId, Version ver, Pair<GraphicsType, DisplayType> supportedGraphicsAndDisplay) {
-        HashMap<Version, List<Pair<GraphicsType, DisplayType>>> value = new HashMap<>();
+        Map<Version, List<Pair<GraphicsType, DisplayType>>> value = new HashMap<>();
         value.put(ver, Collections.singletonList(supportedGraphicsAndDisplay));
 
-        HashMap<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> g = new HashMap<>();
+        Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> g = new HashMap<>();
         g.put(osId, value);
         when(osRepository.getGraphicsAndDisplays()).thenReturn(g);
     }
@@ -345,8 +345,8 @@ public class AddVmCommandTest extends BaseCommandTest {
         doReturn(createStoragePool()).when(cmd).getStoragePool();
 
         // prepare the mock values
-        HashMap<Pair<Integer, Version>, Set<String>> unsupported = new HashMap<>();
-        HashSet<String> value = new HashSet<>();
+        Map<Pair<Integer, Version>, Set<String>> unsupported = new HashMap<>();
+        Set<String> value = new HashSet<>();
         value.add(CPU_ID);
         unsupported.put(new Pair<>(vm.getVmOsId(), vdsGroup.getCompatibilityVersion()), value);
 
