@@ -184,7 +184,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         graphicsDevice.setDeviceId(Guid.Empty);
         graphicsDevice.setVmId(vmId);
 
-        when(deviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.GRAPHICS)).thenReturn(Arrays.asList(graphicsDevice));
+        when(deviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.GRAPHICS)).thenReturn(Collections.singletonList(graphicsDevice));
         doReturn(deviceDao).when(dbFacade).getVmDeviceDao();
     }
 
@@ -218,7 +218,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         cmd.postConstruct();
         doReturn(true).when(cmd).validateCustomProperties(any(VmStatic.class), any(ArrayList.class));
         doReturn(true).when(cmd).validateSpaceRequirements();
-        assertTrue("vm could not be added", cmd.canAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
+        assertTrue("vm could not be added", cmd.canAddVm(reasons, Collections.singletonList(createStorageDomain(domainSizeGB))));
     }
 
     @Test
@@ -275,7 +275,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         when(osRepository.isSoundDeviceEnabled(any(Integer.class), any(Version.class))).thenReturn(true);
         when(osRepository.getArchitectureFromOS(any(Integer.class))).thenReturn(ArchitectureType.x86_64);
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
-                new ArrayList<>(Arrays.asList("VirtIO")));
+                new ArrayList<>(Collections.singletonList("VirtIO")));
         mockGetAllSnapshots(cmd);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI);
@@ -286,7 +286,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(0, 0);
         doReturn(createVdsGroup()).when(cmd).getVdsGroup();
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
-                new ArrayList<>(Arrays.asList("VirtIO_SCSI")));
+                new ArrayList<>(Collections.singletonList("VirtIO_SCSI")));
         assertTrue("isVirtioScsiEnabled hasn't been defaulted to true on cluster >= 3.3.", cmd.isVirtioScsiEnabled());
     }
 
@@ -362,7 +362,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     private void mockDisplayTypes(int osId, Version clusterVersion) {
         Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> displayTypeMap = new HashMap<>();
         displayTypeMap.put(osId, new HashMap<Version, List<Pair<GraphicsType, DisplayType>>>());
-        displayTypeMap.get(osId).put(null, Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
+        displayTypeMap.get(osId).put(null, Collections.singletonList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
         when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
     }
 
@@ -520,7 +520,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     }
 
     private void mockStorageDomainDaoGetAllStoragesForPool(int domainSpaceGB) {
-        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Arrays.asList(createStorageDomain(domainSpaceGB)));
+        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.singletonList(createStorageDomain(domainSpaceGB)));
     }
 
     private void mockStorageDomainDaoGetForStoragePool() {
@@ -576,7 +576,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         i.setSizeInGigabytes(USED_SPACE_GB + AVAILABLE_SPACE_GB);
         i.setActualSizeInBytes(REQUIRED_DISK_SIZE_GB * 1024L * 1024L * 1024L);
         i.setImageId(Guid.newGuid());
-        i.setStorageIds(new ArrayList<>(Arrays.asList(STORAGE_DOMAIN_ID_1)));
+        i.setStorageIds(new ArrayList<>(Collections.singletonList(STORAGE_DOMAIN_ID_1)));
         return i;
     }
 
@@ -590,7 +590,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         diskImage.setActualSize(size);
         diskImage.setId(Guid.newGuid());
         diskImage.setImageId(Guid.newGuid());
-        diskImage.setStorageIds(new ArrayList<>(Arrays.asList(STORAGE_DOMAIN_ID_1)));
+        diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(STORAGE_DOMAIN_ID_1)));
         return diskImage;
     }
 
