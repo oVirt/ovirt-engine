@@ -261,7 +261,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         mockMaxPciSlots();
         mockStorageDomainDaoGetAllStoragesForPool(20);
         mockUninterestingMethods(cmd);
-        mockDisplayTypes(vm.getOs(), vdsGroup.getCompatibilityVersion());
+        mockDisplayTypes(vm.getOs());
         mockGraphicsDevices(vm.getId());
         doReturn(true).when(cmd).checkCpuSockets();
 
@@ -334,7 +334,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         mockConfig();
         mockMaxPciSlots();
         mockStorageDomainDaoGetAllStoragesForPool(20);
-        mockDisplayTypes(vm.getOs(), vdsGroup.getCompatibilityVersion());
+        mockDisplayTypes(vm.getOs());
         mockUninterestingMethods(cmd);
         mockGetAllSnapshots(cmd);
         when(osRepository.getArchitectureFromOS(0)).thenReturn(ArchitectureType.x86_64);
@@ -355,7 +355,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     }
 
 
-    private void mockDisplayTypes(int osId, Version clusterVersion) {
+    private void mockDisplayTypes(int osId) {
         Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> displayTypeMap = new HashMap<>();
         displayTypeMap.put(osId, new HashMap<Version, List<Pair<GraphicsType, DisplayType>>>());
         displayTypeMap.get(osId).put(null, Collections.singletonList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
