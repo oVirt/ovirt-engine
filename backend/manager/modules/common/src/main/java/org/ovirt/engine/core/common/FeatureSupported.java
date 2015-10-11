@@ -632,4 +632,13 @@ public class FeatureSupported {
     public static boolean getDeviceListWithoutStatusSupported(Version version) {
         return supportedInConfig(ConfigValues.GetDeviceListWithoutStatusSupported, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if initial size for sparse disk is supported.
+     */
+    public static boolean initialSizeSparseDiskSupported(Version version) {
+        return supportedInConfig(ConfigValues.InitialSizeSparseDiskSupported, version);
+    }
 }

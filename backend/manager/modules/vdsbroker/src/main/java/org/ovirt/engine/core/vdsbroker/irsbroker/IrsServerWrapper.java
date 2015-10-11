@@ -30,6 +30,16 @@ public class IrsServerWrapper implements IIrsServer {
     }
 
     @Override
+    public OneUuidReturnForXmlRpc createVolume(String sdUUID, String spUUID, String imgGUID, String size,
+            int volFormat, int volType, int diskType, String volUUID, String descr, String srcImgGUID, String srcVolUUID,
+            String initialSize) {
+        Map<String, Object> xmlRpcReturnValue = irsServer.createVolume(sdUUID, spUUID, imgGUID, size, volFormat,
+                volType, diskType, volUUID, descr, srcImgGUID, srcVolUUID, initialSize);
+        OneUuidReturnForXmlRpc wrapper = new OneUuidReturnForXmlRpc(xmlRpcReturnValue);
+        return wrapper;
+    }
+
+    @Override
     public OneUuidReturnForXmlRpc copyImage(String sdUUID, String spUUID, String vmGUID, String srcImgGUID,
             String srcVolUUID, String dstImgGUID, String dstVolUUID, String descr, String dstSdUUID, int volType,
             int volFormat, int preallocate, String postZero, String force) {

@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.vdsbroker.storage.StorageDomainHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,17 +27,33 @@ public class CreateImageVDSCommand<P extends CreateImageVDSCommandParameters> ex
         log.info("-- executeIrsBrokerCommand: calling 'createVolume' with two new parameters: description and UUID");
         // NOTE: The 'uuidReturn' variable will contain the taskID and not the
         // created image id!
-        uuidReturn = getIrsProxy().createVolume(
-                                                getParameters().getStorageDomainId().toString(),
-                                                getParameters().getStoragePoolId().toString(),
-                                                getParameters().getImageGroupId().toString(),
-                                                (Long.valueOf(getParameters().getImageSizeInBytes())).toString(),
-                                                getParameters().getVolumeFormat().getValue(),
-                                                getParameters().getImageType().getValue(),
-                                                2,
-                                                getParameters().getNewImageID().toString(),
-                                                getParameters().getNewImageDescription(), Guid.Empty.toString(),
-                                                Guid.Empty.toString());
+        if (isInitialImageSizeSupported() && getParameters().getImageInitialSizeInBytes() != 0) {
+            uuidReturn = getIrsProxy().createVolume(
+                    getParameters().getStorageDomainId().toString(),
+                    getParameters().getStoragePoolId().toString(),
+                    getParameters().getImageGroupId().toString(),
+                    (Long.valueOf(getParameters().getImageSizeInBytes())).toString(),
+                    getParameters().getVolumeFormat().getValue(),
+                    getParameters().getImageType().getValue(),
+                    2,
+                    getParameters().getNewImageID().toString(),
+                    getParameters().getNewImageDescription(), Guid.Empty.toString(),
+                    Guid.Empty.toString(),
+                    (Long.valueOf(getParameters().getImageInitialSizeInBytes())).toString());
+
+        } else {
+            uuidReturn = getIrsProxy().createVolume(
+                    getParameters().getStorageDomainId().toString(),
+                    getParameters().getStoragePoolId().toString(),
+                    getParameters().getImageGroupId().toString(),
+                    (Long.valueOf(getParameters().getImageSizeInBytes())).toString(),
+                    getParameters().getVolumeFormat().getValue(),
+                    getParameters().getImageType().getValue(),
+                    2,
+                    getParameters().getNewImageID().toString(),
+                    getParameters().getNewImageDescription(), Guid.Empty.toString(),
+                    Guid.Empty.toString());
+        }
 
         proceedProxyReturnValue();
 
@@ -46,5 +65,11 @@ public class CreateImageVDSCommand<P extends CreateImageVDSCommandParameters> ex
         getVDSReturnValue().setCreationInfo(
                 new AsyncTaskCreationInfo(taskID, AsyncTaskType.createVolume, getParameters()
                         .getStoragePoolId()));
+    }
+
+    private boolean isInitialImageSizeSupported() {
+        StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(
+                getParameters().getStoragePoolId());
+        return FeatureSupported.initialSizeSparseDiskSupported(storagePool.getCompatibilityVersion());
     }
 }

@@ -2206,6 +2206,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     GetDeviceListWithoutStatusSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    InitialSizeSparseDiskSupported,
+
     Invalid
 
 }

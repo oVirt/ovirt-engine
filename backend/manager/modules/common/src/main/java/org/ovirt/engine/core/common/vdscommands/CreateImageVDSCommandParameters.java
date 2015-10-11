@@ -19,6 +19,7 @@ public class CreateImageVDSCommandParameters extends StoragePoolDomainAndGroupId
 
     private long _imageSizeInBytes;
     private VolumeType _imageType;
+    private long imageInitialSizeInBytes;
 
     public long getImageSizeInBytes() {
         return _imageSizeInBytes;
@@ -26,6 +27,14 @@ public class CreateImageVDSCommandParameters extends StoragePoolDomainAndGroupId
 
     public VolumeType getImageType() {
         return _imageType;
+    }
+
+    public long getImageInitialSizeInBytes() {
+        return imageInitialSizeInBytes;
+    }
+
+    public void setImageInitialSizeInBytes(long imageInitialSizeInBytes) {
+        this.imageInitialSizeInBytes = imageInitialSizeInBytes;
     }
 
     private VolumeFormat privateVolumeFormat;
@@ -70,6 +79,7 @@ public class CreateImageVDSCommandParameters extends StoragePoolDomainAndGroupId
                 .append("imageSizeInBytes", getImageSizeInBytes())
                 .append("volumeFormat", getVolumeFormat())
                 .append("newImageId", getNewImageID())
-                .append("newImageDescription", getNewImageDescription());
+                .append("newImageDescription", getNewImageDescription())
+                .append("imageInitialSizeInBytes", getImageInitialSizeInBytes());
     }
 }
