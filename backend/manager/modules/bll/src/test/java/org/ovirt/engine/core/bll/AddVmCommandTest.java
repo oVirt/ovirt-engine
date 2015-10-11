@@ -704,8 +704,7 @@ public class AddVmCommandTest extends BaseCommandTest {
             public List<DiskImage> answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
                 DiskImage arg = (DiskImage) args[0];
-                List<DiskImage> list  = createDiskSnapshot(arg.getId(), 3);
-                return list;
+                return createDiskSnapshot(arg.getId(), 3);
             }
         }).when(command).getAllImageSnapshots(any(DiskImage.class));
     }
