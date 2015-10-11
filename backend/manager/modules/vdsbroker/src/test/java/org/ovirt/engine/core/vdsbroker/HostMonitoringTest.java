@@ -88,9 +88,9 @@ public class HostMonitoringTest {
 
     private void initConditions() {
         when(dbFacade.getClusterDao()).thenReturn(groupDao);
-        when(groupDao.get((Guid) any())).thenReturn(cluster);
+        when(groupDao.get(any(Guid.class))).thenReturn(cluster);
         when(dbFacade.getInterfaceDao()).thenReturn(interfaceDao);
-        when(interfaceDao.getAllInterfacesForVds(((Guid) any()))).thenReturn(Collections.<VdsNetworkInterface>emptyList());
+        when(interfaceDao.getAllInterfacesForVds(any(Guid.class))).thenReturn(Collections.<VdsNetworkInterface>emptyList());
     }
 
     private void initVds() {
