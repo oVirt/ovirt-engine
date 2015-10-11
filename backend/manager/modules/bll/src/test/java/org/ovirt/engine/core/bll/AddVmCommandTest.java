@@ -174,11 +174,9 @@ public class AddVmCommandTest extends BaseCommandTest {
         mockUninterestingMethods(cmd);
         mockGetAllSnapshots(cmd);
         doReturn(createStoragePool()).when(cmd).getStoragePool();
-        assertFalse("If the disk is too big, canDoAction should fail", cmd.canDoAction());
-        assertTrue("canDoAction failed for the wrong reason",
-                cmd.getReturnValue()
-                        .getCanDoActionMessages()
-                        .contains(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN.toString()));
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
     private void mockGraphicsDevices(Guid vmId) {
@@ -232,10 +230,8 @@ public class AddVmCommandTest extends BaseCommandTest {
                 setupCanAddVmFromSnapshotTests(domainSizeGB, sizeRequired, sourceSnapshotId);
         cmd.getVm().setName("vm1");
         mockNonInterestingMethodsForCloneVmFromSnapshot(cmd);
-        assertFalse("Clone vm should have failed due to non existing snapshot id", cmd.canDoAction());
-        ArrayList<String> reasons = cmd.getReturnValue().getCanDoActionMessages();
-        assertTrue("Clone vm should have failed due to non existing snapshot id",
-                reasons.contains(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST.toString()));
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
     }
 
     @Test
@@ -251,11 +247,8 @@ public class AddVmCommandTest extends BaseCommandTest {
         doReturn(ValidationResult.VALID).when(sv).vmNotDuringSnapshot(any(Guid.class));
         doReturn(sv).when(cmd).createSnapshotsValidator();
         when(snapshotDao.get(sourceSnapshotId)).thenReturn(new Snapshot());
-        assertFalse("Clone vm should have failed due to non existing vm configuration", cmd.canDoAction());
-        ArrayList<String>  reasons = cmd.getReturnValue().getCanDoActionMessages();
-        assertTrue("Clone vm should have failed due to no configuration id",
-                reasons.contains(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION.toString()));
-
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION);
     }
 
     @Test
@@ -758,10 +751,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         cmd.getParameters().setBalloonEnabled(true);
         when(osRepository.isBalloonEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getVdsGroup().getCompatibilityVersion())).thenReturn(false);
 
-        assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH.toString()));
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
     }
 
     @Test
@@ -770,10 +760,8 @@ public class AddVmCommandTest extends BaseCommandTest {
         cmd.getParameters().setSoundDeviceEnabled(true);
         when(osRepository.isSoundDeviceEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getVdsGroup().getCompatibilityVersion())).thenReturn(false);
 
-        assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH.toString()));
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+                (cmd, EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
     }
 
     private AddVmCommand<AddVmParameters> setupCanAddPpcTest() {
@@ -800,9 +788,7 @@ public class AddVmCommandTest extends BaseCommandTest {
 
         doReturn(null).when(cmd).getStoragePool();
 
-        assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST.toString()));
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
     }
 }
