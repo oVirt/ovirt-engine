@@ -91,9 +91,9 @@ public class AddVmCommandTest extends BaseCommandTest {
     private static final int MAX_PCI_SLOTS = 26;
     private static final Guid STORAGE_POOL_ID = Guid.newGuid();
     private static final String CPU_ID = "0";
-    private VmTemplate vmTemplate = null;
-    private VDSGroup vdsGroup = null;
-    private StoragePool storagePool = null;
+    private VmTemplate vmTemplate;
+    private VDSGroup vdsGroup;
+    private StoragePool storagePool;
     protected StorageDomainValidator storageDomainValidator;
 
     private static final Map<String, String> migrationMap = new HashMap<>();
