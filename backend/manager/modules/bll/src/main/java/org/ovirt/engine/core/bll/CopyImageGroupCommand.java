@@ -61,6 +61,11 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected boolean canDoAction() {
+        // Not relevant for import VM/VMTemplate
+        if (getParameters().isImportEntity()) {
+            return true;
+        }
+
         Disk disk = getDiskDao().get(getParameters().getImageGroupID());
         if (disk != null) {
             DiskValidator diskValidator = new DiskValidator(disk);
