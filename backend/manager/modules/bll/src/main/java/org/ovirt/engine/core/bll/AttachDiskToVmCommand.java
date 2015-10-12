@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -82,7 +81,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             return false;
         }
 
-        boolean isImageDisk = disk.getDiskStorageType() == DiskStorageType.IMAGE;
+        boolean isImageDisk = disk.getDiskStorageType().isInternal();
 
         if (isImageDisk) {
             //TODO : this load and check of the active disk will be removed
