@@ -65,6 +65,8 @@ select fn_db_add_config_value('AdUserName','','general');
 select fn_db_add_config_value('AdUserPassword','','general');
 select fn_db_add_config_value('AdvancedNFSOptionsEnabled','false','3.0');
 select fn_db_add_config_value('AffinityRulesEnforcementManagerEnabled', 'true', 'general');
+select fn_db_add_config_value('AffinityRulesEnforcementManagerRegularInterval', '1', 'general');
+
 select fn_db_add_config_value('AgentAppName','ovirt-guest-agent-common,ovirt-guest-agent','general');
 select fn_db_add_config_value('AllowClusterWithVirtGlusterEnabled','true','general');
 select fn_db_add_config_value('AllowDuplicateMacAddresses','false','general');
