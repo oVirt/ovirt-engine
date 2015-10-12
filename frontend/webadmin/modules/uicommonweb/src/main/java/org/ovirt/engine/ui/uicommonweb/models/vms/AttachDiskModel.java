@@ -85,7 +85,7 @@ public class AttachDiskModel extends NewDiskModel {
 
         AsyncDataProvider.getInstance().getAllAttachableDisks(
                 new AsyncQuery(this, cinderCallback
-                ), null, getVm().getId());
+                ), getVm().getStoragePoolId(), getVm().getId());
     }
 
     class GetDisksCallback implements INewAsyncCallback {
