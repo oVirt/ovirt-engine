@@ -452,7 +452,7 @@ public enum EngineError {
     GlusterSnapshotConfigSetFailedException(4707),
     GlusterSnapshotConfigGetFailedException(4708),
     GlusterSnapshotInfoFailedException(4709),
-    UnsupportedGlusterVolumeReplicaCountError(4710),
+    UnsupportedGlusterVolumeReplicaCountError(480),
 
     UnicodeArgumentException(4900),
 
