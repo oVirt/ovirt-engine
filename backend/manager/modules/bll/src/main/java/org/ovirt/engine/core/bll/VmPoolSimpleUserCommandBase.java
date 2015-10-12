@@ -32,7 +32,7 @@ public abstract class VmPoolSimpleUserCommandBase<T extends VmPoolSimpleUserPara
 
     @Override
     protected String getDescription() {
-        return getAdUserName();
+        return getVmPoolName();
     }
 
     private DbUser dbUser;
