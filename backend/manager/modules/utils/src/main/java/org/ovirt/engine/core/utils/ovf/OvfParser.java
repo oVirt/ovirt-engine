@@ -10,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
-import org.ovirt.engine.core.utils.ovf.xml.XmlNamespaceManager;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNodeList;
 import org.slf4j.Logger;
@@ -22,7 +21,6 @@ public class OvfParser {
     private static final String utcDateFormatStr = "yyyy/MM/dd HH:mm:ss";
     public static final String formatStrFromDiskDescription = "EEE MMM d HH:mm:ss zzz yyyy";
     private XmlDocument _document;
-    protected XmlNamespaceManager _xmlNS;
 
     public OvfParser(String ovfstring) throws OvfReaderException {
         try {
@@ -32,7 +30,6 @@ public class OvfParser {
             log.debug("Exception", e);
             throw new OvfReaderException(e);
         }
-        _xmlNS = new XmlNamespaceManager();
     }
 
     public boolean isTemplate() {
