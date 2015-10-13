@@ -21,7 +21,7 @@ public class XmlNode {
 
     }
 
-    public XmlNode SelectSingleNode(String string, XmlNamespaceManager _xmlns) {
+    public XmlNode selectSingleNode(String string, XmlNamespaceManager _xmlns) {
         try {
             XPathFactory factory = XPathFactory.newInstance();
             XPath xPath = factory.newXPath();
@@ -36,7 +36,7 @@ public class XmlNode {
         }
     }
 
-    public XmlNode SelectSingleNode(String string) {
+    public XmlNode selectSingleNode(String string) {
         try {
             XPathFactory factory = XPathFactory.newInstance();
             XPath xPath = factory.newXPath();
@@ -50,7 +50,7 @@ public class XmlNode {
         }
     }
 
-    public XmlNodeList SelectNodes(String string) {
+    public XmlNodeList selectNodes(String string) {
         try {
             XPathFactory factory = XPathFactory.newInstance();
             XPath xPath = factory.newXPath();
@@ -61,7 +61,7 @@ public class XmlNode {
         }
     }
 
-    public NodeList GetChildNodes() {
+    public NodeList getChildNodes() {
         return node.getChildNodes();
     }
 }

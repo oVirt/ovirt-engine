@@ -963,7 +963,7 @@ public abstract class OvfReader implements IOvfBuilder {
     private static Map<String, Object> getMapNode(XmlNode node) {
         Map<String, Object> returnValue = new HashMap<String, Object>();
 
-        NodeList list = node.GetChildNodes();
+        NodeList list = node.getChildNodes();
         for (int index = 0; index < list.getLength(); ++index) {
             Node currNode = list.item(index);
             short nodeType = currNode.getNodeType();
@@ -1016,14 +1016,14 @@ public abstract class OvfReader implements IOvfBuilder {
     protected XmlNode selectSingleNode(XmlNode node, String pattern, XmlNamespaceManager ns) {
         this.lastReadEntry = pattern;
         if (ns == null) {
-            return node.SelectSingleNode(pattern);
+            return node.selectSingleNode(pattern);
         }
-        return node.SelectSingleNode(pattern, ns);
+        return node.selectSingleNode(pattern, ns);
     }
 
     protected XmlNodeList selectNodes(XmlNode node, String pattern) {
         this.lastReadEntry = pattern;
-        return node.SelectNodes(pattern);
+        return node.selectNodes(pattern);
     }
 
     public String getLastReadEntry() {
