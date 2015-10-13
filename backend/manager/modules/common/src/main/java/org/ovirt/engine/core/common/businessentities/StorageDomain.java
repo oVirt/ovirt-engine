@@ -71,7 +71,7 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
 
     @Override
     public Guid getId() {
-        return this.getStorageStaticData().getId();
+        return getStorageStaticData() == null ? null : getStorageStaticData().getId();
     }
 
     @Override
