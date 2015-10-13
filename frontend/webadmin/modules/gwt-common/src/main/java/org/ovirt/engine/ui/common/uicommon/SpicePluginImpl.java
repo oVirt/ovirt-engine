@@ -292,7 +292,7 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                    var hostIp = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getHost()();
                                                    var port = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getPortAsString()();
                                                    var fullScreen = options.@org.ovirt.engine.core.common.console.ConsoleOptions::isFullScreen()();
-                                                   var password = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getTicket()()();
+                                                   var password = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getTicket()();
                                                    var numberOfMonitors = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getNumberOfMonitors()();
                                                    var usbListenPort = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getUsbListenPort()();
                                                    var adminConsole = options.@org.ovirt.engine.core.common.console.ConsoleOptions::isAdminConsole()();
