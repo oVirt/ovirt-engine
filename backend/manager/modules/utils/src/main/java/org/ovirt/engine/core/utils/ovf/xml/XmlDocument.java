@@ -26,10 +26,10 @@ public class XmlDocument {
     }
 
     public XmlDocument(String xml) throws Exception {
-        LoadXml(xml);
+        loadXml(xml);
     }
 
-    private void LoadXml(String ovfstring) throws Exception {
+    private void loadXml(String ovfstring) throws Exception {
         // load doc
         DocumentBuilderFactory fact = SecureDocumentBuilderFactory.newDocumentBuilderFactory();
         fact.setNamespaceAware(true);
@@ -46,7 +46,7 @@ public class XmlDocument {
         outerXml = ovfstring;
     }
 
-    public XmlNode SelectSingleNode(String string) {
+    public XmlNode selectSingleNode(String string) {
         try {
             XPathFactory factory = XPathFactory.newInstance();
             XPath xPath = factory.newXPath();
@@ -57,7 +57,7 @@ public class XmlDocument {
         }
     }
 
-    public XmlNode SelectSingleNode(String string, XmlNamespaceManager _xmlns) {
+    public XmlNode selectSingleNode(String string, XmlNamespaceManager _xmlns) {
         try {
             XPathFactory factory = XPathFactory.newInstance();
             XPath xPath = factory.newXPath();
@@ -69,7 +69,7 @@ public class XmlDocument {
         }
     }
 
-    public XmlNodeList SelectNodes(String string) {
+    public XmlNodeList selectNodes(String string) {
         try {
             XPathFactory factory = XPathFactory.newInstance();
             XPath xPath = factory.newXPath();
@@ -80,7 +80,7 @@ public class XmlDocument {
         }
     }
 
-    public XmlNodeList SelectNodes(String string, XmlNamespaceManager _xmlns) {
+    public XmlNodeList selectNodes(String string, XmlNamespaceManager _xmlns) {
         try {
             XPathFactory factory = XPathFactory.newInstance();
             XPath xPath = factory.newXPath();

@@ -36,12 +36,12 @@ public class OvfParser {
         String id1 = "1";
         String id2 = "2";
 
-        XmlNode node = _document.SelectSingleNode("//*/Content/TemplateId");
+        XmlNode node = _document.selectSingleNode("//*/Content/TemplateId");
         if (!StringUtils.isBlank(node.innerText)) {
             id1 = node.innerText;
         }
 
-        XmlNodeList list = _document.SelectNodes("//*/Content/Section");
+        XmlNodeList list = _document.selectNodes("//*/Content/Section");
         for (XmlNode section : list) {
             String value = section.attributes.get("xsi:type").getValue();
 

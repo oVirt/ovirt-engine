@@ -115,7 +115,7 @@ public class OvfUtils {
 
     private static ArchitectureType getOsSection(XmlDocument xmlDocument) {
         ArchitectureType archType = null;
-        XmlNode content = xmlDocument.SelectSingleNode("//*/Content");
+        XmlNode content = xmlDocument.selectSingleNode("//*/Content");
         XmlNodeList nodeList = content.SelectNodes("Section");
         XmlNode selectedSection = null;
         OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);

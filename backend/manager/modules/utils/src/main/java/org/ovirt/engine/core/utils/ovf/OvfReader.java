@@ -992,9 +992,9 @@ public abstract class OvfReader implements IOvfBuilder {
     protected XmlNode selectSingleNode(XmlDocument doc, String pattern, XmlNamespaceManager ns) {
         this.lastReadEntry = pattern;
         if (ns == null) {
-            return doc.SelectSingleNode(pattern);
+            return doc.selectSingleNode(pattern);
         }
-        return doc.SelectSingleNode(pattern, ns);
+        return doc.selectSingleNode(pattern, ns);
     }
 
     protected XmlNodeList selectNodes(XmlDocument doc, String pattern) {
@@ -1004,9 +1004,9 @@ public abstract class OvfReader implements IOvfBuilder {
     protected XmlNodeList selectNodes(XmlDocument doc, String pattern, XmlNamespaceManager ns) {
         this.lastReadEntry = pattern;
         if (ns == null) {
-            return doc.SelectNodes(pattern);
+            return doc.selectNodes(pattern);
         }
-        return doc.SelectNodes(pattern, ns);
+        return doc.selectNodes(pattern, ns);
     }
 
     protected XmlNode selectSingleNode(XmlNode node, String pattern) {
