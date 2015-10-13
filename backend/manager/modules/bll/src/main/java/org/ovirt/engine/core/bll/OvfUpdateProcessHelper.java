@@ -54,7 +54,7 @@ public class OvfUpdateProcessHelper {
     }
 
     protected String generateVmTemplateMetadata(VmTemplate template, List<DiskImage> allTemplateImages) {
-        return ovfManager.ExportTemplate(template, allTemplateImages, ClusterUtils.getCompatibilityVersion(template));
+        return ovfManager.exportTemplate(template, allTemplateImages, ClusterUtils.getCompatibilityVersion(template));
     }
 
     /**
@@ -119,7 +119,7 @@ public class OvfUpdateProcessHelper {
     }
 
     protected String generateVmMetadata(VM vm, ArrayList<DiskImage> AllVmImages) {
-        return ovfManager.ExportVm(vm, AllVmImages, ClusterUtils.getCompatibilityVersion(vm));
+        return ovfManager.exportVm(vm, AllVmImages, ClusterUtils.getCompatibilityVersion(vm));
     }
 
     protected VmDao getVmDao() {

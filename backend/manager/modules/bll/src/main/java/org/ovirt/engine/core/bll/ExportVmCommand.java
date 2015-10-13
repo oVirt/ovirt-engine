@@ -292,7 +292,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             vm.setVmtName(t.getName());
         }
         getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
-        String vmMeta = ovfManager.ExportVm(vm, AllVmImages, ClusterUtils.getCompatibilityVersion(vm));
+        String vmMeta = ovfManager.exportVm(vm, AllVmImages, ClusterUtils.getCompatibilityVersion(vm));
 
         vmsAndMetaDictionary.put(vm.getId(), new KeyValuePairCompat<>(vmMeta, imageGroupIds));
         UpdateVMVDSCommandParameters tempVar = new UpdateVMVDSCommandParameters(storagePoolId, vmsAndMetaDictionary);

@@ -833,7 +833,7 @@ public final class ImagesHandler {
                 VM vmSnapshot = new VM();
                 ArrayList<DiskImage> snapshotImages = new ArrayList<>();
 
-                ovfManager.ImportVm(snapConfig,
+                ovfManager.importVm(snapConfig,
                         vmSnapshot,
                         snapshotImages,
                         new ArrayList<VmNetworkInterface>());
@@ -854,7 +854,7 @@ public final class ImagesHandler {
                     snapshotImages.add(newImage);
                 }
 
-                String newOvf = ovfManager.ExportVm(vmSnapshot, snapshotImages, ClusterUtils.getCompatibilityVersion(vmSnapshot));
+                String newOvf = ovfManager.exportVm(vmSnapshot, snapshotImages, ClusterUtils.getCompatibilityVersion(vmSnapshot));
                 snapshot.setVmConfiguration(newOvf);
             }
         } catch (OvfReaderException e) {

@@ -384,7 +384,7 @@ public class SnapshotsManager {
         for (DiskImage image : disks) {
             image.setStorageIds(null);
         }
-        return new OvfManager().ExportVm(vm, new ArrayList<>(disks), ClusterUtils.getCompatibilityVersion(vm));
+        return new OvfManager().exportVm(vm, new ArrayList<>(disks), ClusterUtils.getCompatibilityVersion(vm));
     }
 
     /**
@@ -532,7 +532,7 @@ public class SnapshotsManager {
             VM tempVM = new VM();
             ArrayList<DiskImage> images = new ArrayList<>();
             ArrayList<VmNetworkInterface> interfaces = new ArrayList<>();
-            new OvfManager().ImportVm(configuration, tempVM, images, interfaces);
+            new OvfManager().importVm(configuration, tempVM, images, interfaces);
             for (DiskImage diskImage : images) {
                 DiskImage dbImage = getDiskImageDao().getSnapshotById(diskImage.getImageId());
                 if (dbImage != null) {

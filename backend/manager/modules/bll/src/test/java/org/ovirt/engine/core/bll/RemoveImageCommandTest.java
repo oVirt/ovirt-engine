@@ -112,7 +112,7 @@ public class RemoveImageCommandTest extends BaseCommandTest {
 
         OvfManager ovfManager = new OvfManager();
         ArrayList<DiskImage> disks = new ArrayList<DiskImage>(Arrays.asList(disk1, disk2));
-        String ovf = ovfManager.ExportVm(vm, disks, Version.v3_1);
+        String ovf = ovfManager.exportVm(vm, disks, Version.v3_1);
         Snapshot snap = new Snapshot();
         snap.setVmConfiguration(ovf);
         snap.setId(vmSnapshotId);
@@ -125,7 +125,7 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         String actualOvf = actual.getVmConfiguration();
 
         ArrayList<DiskImage> actualImages = new ArrayList<DiskImage>();
-        ovfManager.ImportVm(actualOvf, new VM(), actualImages, new ArrayList<VmNetworkInterface>());
+        ovfManager.importVm(actualOvf, new VM(), actualImages, new ArrayList<VmNetworkInterface>());
         assertEquals("Wrong number of disks", 1, actualImages.size());
         assertEquals("Wrong disk", disk1, actualImages.get(0));
     }
@@ -146,7 +146,7 @@ public class RemoveImageCommandTest extends BaseCommandTest {
 
         OvfManager ovfManager = new OvfManager();
         ArrayList<DiskImage> disks = new ArrayList<DiskImage>(Arrays.asList(disk1, disk2));
-        String ovf = ovfManager.ExportVm(vm, disks, Version.v3_0);
+        String ovf = ovfManager.exportVm(vm, disks, Version.v3_0);
         Snapshot snap = new Snapshot();
         snap.setVmConfiguration(ovf);
         snap.setId(vmSnapshotId);
@@ -159,7 +159,7 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         String actualOvf = actual.getVmConfiguration();
 
         ArrayList<DiskImage> actualImages = new ArrayList<DiskImage>();
-        ovfManager.ImportVm(actualOvf, new VM(), actualImages, new ArrayList<VmNetworkInterface>());
+        ovfManager.importVm(actualOvf, new VM(), actualImages, new ArrayList<VmNetworkInterface>());
         assertEquals("Wrong number of disks", 1, actualImages.size());
         assertEquals("Wrong disk", disk1, actualImages.get(0));
     }

@@ -39,7 +39,7 @@ public class OvfHelper {
         VM vm = new VM();
         ArrayList<DiskImage> diskImages = new ArrayList<>();
         ArrayList<VmNetworkInterface> interfaces  = new ArrayList<>();
-        ovfManager.ImportVm(ovf, vm, diskImages, interfaces);
+        ovfManager.importVm(ovf, vm, diskImages, interfaces);
 
         // add images
         vm.setImages(diskImages);
@@ -67,7 +67,7 @@ public class OvfHelper {
         ArrayList<DiskImage> diskImages = new ArrayList<>();
         ArrayList<VmNetworkInterface> interfaces = new ArrayList<>();
         VmTemplate template = new VmTemplate();
-        ovfManager.ImportTemplate(ovf, template, diskImages, interfaces);
+        ovfManager.importTemplate(ovf, template, diskImages, interfaces);
         template.setInterfaces(interfaces);
         // add disk map
         for (DiskImage disk : diskImages) {
@@ -105,7 +105,7 @@ public class OvfHelper {
             AllVmImages.addAll(images);
         }
 
-        return ovfManager.ExportVm(vm, AllVmImages, ClusterUtils.getCompatibilityVersion(vm));
+        return ovfManager.exportVm(vm, AllVmImages, ClusterUtils.getCompatibilityVersion(vm));
     }
 
     private void loadVmData(VM vm) {
@@ -127,6 +127,6 @@ public class OvfHelper {
     }
 
     public boolean isOvfTemplate(String ovfstring) throws OvfReaderException {
-        return ovfManager.IsOvfTemplate(ovfstring);
+        return ovfManager.isOvfTemplate(ovfstring);
     }
 }

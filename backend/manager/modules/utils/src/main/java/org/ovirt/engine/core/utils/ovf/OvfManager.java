@@ -24,21 +24,21 @@ public class OvfManager {
     private OvfVmIconDefaultsProvider iconDefaultsProvider = SimpleDependecyInjector.getInstance().get(
             OvfVmIconDefaultsProvider.class);
 
-    public String ExportVm(VM vm, ArrayList<DiskImage> images, Version version) {
+    public String exportVm(VM vm, ArrayList<DiskImage> images, Version version) {
         OvfWriter ovf = new OvfVmWriter(vm, images, version);
-        BuildOvf(ovf);
+        buildOvf(ovf);
 
         return ovf.getStringRepresentation();
     }
 
-    public String ExportTemplate(VmTemplate vmTemplate, List<DiskImage> images, Version version) {
+    public String exportTemplate(VmTemplate vmTemplate, List<DiskImage> images, Version version) {
         OvfWriter ovf = new OvfTemplateWriter(vmTemplate, images, version);
-        BuildOvf(ovf);
+        buildOvf(ovf);
 
         return ovf.getStringRepresentation();
     }
 
-    public void ImportVm(String ovfstring,
+    public void importVm(String ovfstring,
             VM vm,
             ArrayList<DiskImage> images,
             ArrayList<VmNetworkInterface> interfaces)
@@ -47,7 +47,7 @@ public class OvfManager {
         OvfReader ovf = null;
         try {
             ovf = new OvfVmReader(new XmlDocument(ovfstring), vm, images, interfaces);
-            BuildOvf(ovf);
+            buildOvf(ovf);
             initIcons(vm.getStaticData());
         } catch (Exception ex) {
             String message = generateOvfReaderErrorMessage(ovf, ex);
@@ -60,14 +60,14 @@ public class OvfManager {
         }
     }
 
-    public void ImportTemplate(String ovfstring, VmTemplate vmTemplate,
+    public void importTemplate(String ovfstring, VmTemplate vmTemplate,
             ArrayList<DiskImage> images, ArrayList<VmNetworkInterface> interfaces)
             throws OvfReaderException {
 
         OvfReader ovf = null;
         try {
             ovf = new OvfTemplateReader(new XmlDocument(ovfstring), vmTemplate, images, interfaces);
-            BuildOvf(ovf);
+            buildOvf(ovf);
             initIcons(vmTemplate);
         } catch (Exception ex) {
             String message = generateOvfReaderErrorMessage(ovf, ex);
@@ -108,11 +108,11 @@ public class OvfManager {
         log.debug("Error parsing OVF {}\n", ovfstring);
     }
 
-    public boolean IsOvfTemplate(String ovfstring) throws OvfReaderException {
+    public boolean isOvfTemplate(String ovfstring) throws OvfReaderException {
         return new OvfParser(ovfstring).isTemplate();
     }
 
-    private void BuildOvf(IOvfBuilder builder) {
+    private void buildOvf(IOvfBuilder builder) {
         builder.buildReference();
         builder.buildNetwork();
         builder.buildDisk();
