@@ -20,9 +20,6 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
         storageDomainSharedStatus = StorageDomainSharedStatus.Unattached;
     }
 
-    //this member is in use only by the Frontend project
-    private String vdcQueryableId;
-
     private Set<EngineError> alerts;
 
     /**
@@ -307,16 +304,7 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
 
     @Override
     public Object getQueryableId() {
-        if(vdcQueryableId == null){
-            return getId();
-        }
-        //used only by the Frontend project
-        return vdcQueryableId;
-    }
-
-    // this setter is in use only by Frontend project
-    public void setQueryableId(String value) {
-        this.vdcQueryableId = value;
+        return getId();
     }
 
     public boolean isAutoRecoverable() {
