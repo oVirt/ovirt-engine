@@ -179,7 +179,7 @@ public class OvfVmReader extends OvfReader {
             int root = GetFirstImage(_images, _images.get(0));
             if (root != -1) {
                 for(int i=0; i<_images.size(); i++) {
-                    int x = GetNextImage(_images, _images.get(i));
+                    int x = getNextImage(_images, _images.get(i));
                     if (x == -1) {
                         _vm.setAppList(_images.get(i).getAppList());
                     }
@@ -230,7 +230,7 @@ public class OvfVmReader extends OvfReader {
     }
 
     // function returns the index of image that is it's child
-    private static int GetNextImage(ArrayList<DiskImage> images, DiskImage curr) {
+    private static int getNextImage(ArrayList<DiskImage> images, DiskImage curr) {
         for (int i = 0; i < images.size(); i++) {
             if (images.get(i).getParentId().equals(curr.getImageId())) {
                 return i;
