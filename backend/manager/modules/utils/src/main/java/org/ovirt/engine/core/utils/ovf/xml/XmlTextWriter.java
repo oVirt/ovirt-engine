@@ -24,7 +24,7 @@ public class XmlTextWriter {
         }
     }
 
-    public void SetPrefix(String prefix, String uri) {
+    public void setPrefix(String prefix, String uri) {
         try {
             writer.setPrefix(prefix, uri);
         } catch (XMLStreamException e) {
@@ -32,7 +32,7 @@ public class XmlTextWriter {
         }
     }
 
-    public void WriteNamespace(String prefix, String uri) {
+    public void writeNamespace(String prefix, String uri) {
         try {
             writer.writeNamespace(prefix, uri);
         } catch (XMLStreamException e) {
@@ -40,11 +40,11 @@ public class XmlTextWriter {
         }
     }
 
-    public void WriteStartDocument(boolean b) {
+    public void writeStartDocument(boolean b) {
         // nothing, see ctor
     }
 
-    public void WriteStartElement(String namespaceURI, String localName) {
+    public void writeStartElement(String namespaceURI, String localName) {
         try {
             writer.writeStartElement(namespaceURI, localName);
         } catch (XMLStreamException e) {
@@ -52,7 +52,7 @@ public class XmlTextWriter {
         }
     }
 
-    public void WriteAttributeString(String namespaceURI, String localName, String value) {
+    public void writeAttributeString(String namespaceURI, String localName, String value) {
         try {
             writer.writeAttribute(namespaceURI, localName, value);
         } catch (XMLStreamException e) {
@@ -60,7 +60,7 @@ public class XmlTextWriter {
         }
     }
 
-    public void WriteEndElement() {
+    public void writeEndElement() {
         try {
             writer.writeEndElement();
         } catch (XMLStreamException e) {
@@ -69,25 +69,25 @@ public class XmlTextWriter {
     }
 
     @SuppressWarnings("unchecked")
-    public void WriteMap(Map<String, Object> map) {
+    public void writeMap(Map<String, Object> map) {
         if (map != null) {
             for (Entry<String, Object> param : map.entrySet()) {
-                WriteStartElement(param.getKey());
+                writeStartElement(param.getKey());
 
                 Object value = param.getValue();
 
                 if (value instanceof String) {
-                    WriteRaw((String) value);
+                    writeRaw((String) value);
                 } else if (value instanceof Map) {
-                    WriteMap((Map<String, Object>) value);
+                    writeMap((Map<String, Object>) value);
                 }
 
-                WriteEndElement();
+                writeEndElement();
             }
         }
     }
 
-    public void WriteStartElement(String localName) {
+    public void writeStartElement(String localName) {
         try {
             writer.writeStartElement(localName);
         } catch (XMLStreamException e) {
@@ -95,7 +95,7 @@ public class XmlTextWriter {
         }
     }
 
-    public void WriteRaw(String string) {
+    public void writeRaw (String string) {
         try {
             if (string == null)
                 string = "";
@@ -118,9 +118,9 @@ public class XmlTextWriter {
      *            The content to write inside the element.
      */
     public void writeElement(String name, String content) {
-        WriteStartElement(name);
-        WriteRaw(content);
-        WriteEndElement();
+        writeStartElement(name);
+        writeRaw(content);
+        writeEndElement();
     }
 
     public String getStringXML() {
