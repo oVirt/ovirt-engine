@@ -109,7 +109,7 @@ public class OvfManager {
     }
 
     public boolean IsOvfTemplate(String ovfstring) throws OvfReaderException {
-        return new OvfParser(ovfstring).IsTemplate();
+        return new OvfParser(ovfstring).isTemplate();
     }
 
     private void BuildOvf(IOvfBuilder builder) {

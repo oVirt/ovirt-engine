@@ -470,7 +470,7 @@ public abstract class OvfReader implements IOvfBuilder {
 
         node = selectSingleNode(content, OvfProperties.CREATION_DATE);
         if (node != null) {
-            Date creationDate = OvfParser.UtcDateStringToLocaDate(node.innerText);
+            Date creationDate = OvfParser.utcDateStringToLocaDate(node.innerText);
             if (creationDate != null) {
                 vmBase.setCreationDate(creationDate);
             }
@@ -478,7 +478,7 @@ public abstract class OvfReader implements IOvfBuilder {
 
         node = selectSingleNode(content, OvfProperties.EXPORT_DATE);
         if (node != null) {
-            Date exportDate = OvfParser.UtcDateStringToLocaDate(node.innerText);
+            Date exportDate = OvfParser.utcDateStringToLocaDate(node.innerText);
             if (exportDate != null) {
                 vmBase.setExportDate(exportDate);
             }
@@ -891,7 +891,7 @@ public abstract class OvfReader implements IOvfBuilder {
                 }
             }
             disk.setImageId(new Guid(node.attributes.get("ovf:id").getValue()));
-            disk.setId(OvfParser.GetImageGrupIdFromImageFile(node.attributes.get("ovf:href").getValue()));
+            disk.setId(OvfParser.getImageGroupIdFromImageFile(node.attributes.get("ovf:href").getValue()));
             // Default values:
             disk.setActive(true);
             disk.setImageStatus(ImageStatus.OK);

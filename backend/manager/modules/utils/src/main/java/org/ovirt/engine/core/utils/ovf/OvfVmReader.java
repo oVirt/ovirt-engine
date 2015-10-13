@@ -61,7 +61,7 @@ public class OvfVmReader extends OvfReader {
                 return diskImage.getImageId().equals(guid);
             }
         });
-        image.setId(OvfParser.GetImageGrupIdFromImageFile(selectSingleNode(node,
+        image.setId(OvfParser.getImageGroupIdFromImageFile(selectSingleNode(node,
                 "rasd:HostResource", _xmlNS).innerText));
         if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:Parent", _xmlNS).innerText)) {
             image.setParentId(new Guid(selectSingleNode(node, "rasd:Parent", _xmlNS).innerText));
@@ -79,17 +79,17 @@ public class OvfVmReader extends OvfReader {
         if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:StoragePoolId", _xmlNS).innerText)) {
             image.setStoragePoolId(new Guid(selectSingleNode(node, "rasd:StoragePoolId", _xmlNS).innerText));
         }
-        final Date creationDate = OvfParser.UtcDateStringToLocaDate(
+        final Date creationDate = OvfParser.utcDateStringToLocaDate(
                 selectSingleNode(node, "rasd:CreationDate", _xmlNS).innerText);
         if (creationDate != null) {
             image.setCreationDate(creationDate);
         }
-        final Date lastModified = OvfParser.UtcDateStringToLocaDate(
+        final Date lastModified = OvfParser.utcDateStringToLocaDate(
                 selectSingleNode(node, "rasd:LastModified", _xmlNS).innerText);
         if (lastModified != null) {
             image.setLastModified(lastModified);
         }
-        final Date last_modified_date = OvfParser.UtcDateStringToLocaDate(
+        final Date last_modified_date = OvfParser.utcDateStringToLocaDate(
                 selectSingleNode(node, "rasd:last_modified_date", _xmlNS).innerText);
         if (last_modified_date != null) {
             image.setLastModifiedDate(last_modified_date);
@@ -268,7 +268,7 @@ public class OvfVmReader extends OvfReader {
                 snapshot.setMemoryVolume(memory.innerText);
             }
 
-            final Date creationDate = OvfParser.UtcDateStringToLocaDate(selectSingleNode(node, "CreationDate", _xmlNS).innerText);
+            final Date creationDate = OvfParser.utcDateStringToLocaDate(selectSingleNode(node, "CreationDate", _xmlNS).innerText);
             if (creationDate != null) {
                 snapshot.setCreationDate(creationDate);
             }

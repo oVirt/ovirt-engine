@@ -79,7 +79,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteStartElement("References");
         for (DiskImage image : _images) {
             _writer.WriteStartElement("File");
-            _writer.WriteAttributeString(OVF_URI, "href", OvfParser.CreateImageFile(image));
+            _writer.WriteAttributeString(OVF_URI, "href", OvfParser.createImageFile(image));
             _writer.WriteAttributeString(OVF_URI, "id", image.getImageId().toString());
             _writer.WriteAttributeString(OVF_URI, "size", String.valueOf(image.getSize()));
             _writer.WriteAttributeString(OVF_URI, "description", StringUtils.defaultString(image.getDescription()));
@@ -175,13 +175,13 @@ public abstract class OvfWriter implements IOvfBuilder {
                 List<DiskImage> res = _images.subList(i, _images.size() - 1);
 
                 if (res.size() > 0) {
-                    _writer.WriteAttributeString(OVF_URI, "parentRef", OvfParser.CreateImageFile(res.get(0)));
+                    _writer.WriteAttributeString(OVF_URI, "parentRef", OvfParser.createImageFile(res.get(0)));
                 } else {
                     _writer.WriteAttributeString(OVF_URI, "parentRef", "");
                 }
             }
 
-            _writer.WriteAttributeString(OVF_URI, "fileRef", OvfParser.CreateImageFile(image));
+            _writer.WriteAttributeString(OVF_URI, "fileRef", OvfParser.createImageFile(image));
 
             String format = "";
             switch (image.getVolumeFormat()) {
@@ -256,11 +256,11 @@ public abstract class OvfWriter implements IOvfBuilder {
         }
 
         _writer.WriteStartElement(OvfProperties.CREATION_DATE);
-        _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(vmBase.getCreationDate()));
+        _writer.WriteRaw(OvfParser.localDateToUtcDateString(vmBase.getCreationDate()));
         _writer.WriteEndElement();
 
         _writer.WriteStartElement(OvfProperties.EXPORT_DATE);
-        _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(new Date()));
+        _writer.WriteRaw(OvfParser.localDateToUtcDateString(new Date()));
         _writer.WriteEndElement();
 
         _writer.WriteStartElement(OvfProperties.DELETE_PROTECTED);

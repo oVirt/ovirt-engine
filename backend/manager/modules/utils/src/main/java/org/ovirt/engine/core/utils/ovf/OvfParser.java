@@ -35,7 +35,7 @@ public class OvfParser {
         _xmlNS = new XmlNamespaceManager();
     }
 
-    public boolean IsTemplate() {
+    public boolean isTemplate() {
         String id1 = "1";
         String id2 = "2";
 
@@ -58,7 +58,7 @@ public class OvfParser {
 
     // imageFile is: [image group id]/[image id]
     // 7D1FE0AA-A153-4AAF-95B3-3654A54443BE/7D1FE0AA-A153-4AAF-95B3-3654A54443BE
-    public static String CreateImageFile(DiskImage image) {
+    public static String createImageFile(DiskImage image) {
         String retVal = "";
         if (image.getId() != null) {
             retVal += image.getId().toString();
@@ -69,14 +69,14 @@ public class OvfParser {
         return retVal;
     }
 
-    public static Guid GetImageGrupIdFromImageFile(String imageFile) {
+    public static Guid getImageGroupIdFromImageFile(String imageFile) {
         if (!StringUtils.isBlank(imageFile)) {
             return Guid.createGuidFromStringDefaultEmpty(imageFile.split("[/]", -1)[0]);
         }
         return null;
     }
 
-    public static String LocalDateToUtcDateString(Date date) {
+    public static String localDateToUtcDateString(Date date) {
         return getDateFormat(utcDateFormatStr).format(date);
     }
 
@@ -92,7 +92,7 @@ public class OvfParser {
      * @param str
      * @return the date or null if parse failed
      */
-    public static Date UtcDateStringToLocaDate(String str) {
+    public static Date utcDateStringToLocaDate(String str) {
         if (StringUtils.isBlank(str)) {
             return null;
         }

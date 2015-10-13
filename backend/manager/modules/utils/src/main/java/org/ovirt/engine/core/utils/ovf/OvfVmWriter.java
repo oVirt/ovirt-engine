@@ -236,7 +236,7 @@ public class OvfVmWriter extends OvfWriter {
             _writer.WriteRaw(OvfHardware.DiskImage);
             _writer.WriteEndElement();
             _writer.WriteStartElement(RASD_URI, "HostResource");
-            _writer.WriteRaw(OvfParser.CreateImageFile(image));
+            _writer.WriteRaw(OvfParser.createImageFile(image));
             _writer.WriteEndElement();
             _writer.WriteStartElement(RASD_URI, "Parent");
             _writer.WriteRaw(image.getParentId().toString());
@@ -258,13 +258,13 @@ public class OvfVmWriter extends OvfWriter {
                 _writer.WriteEndElement();
             }
             _writer.WriteStartElement(RASD_URI, "CreationDate");
-            _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(image.getCreationDate()));
+            _writer.WriteRaw(OvfParser.localDateToUtcDateString(image.getCreationDate()));
             _writer.WriteEndElement();
             _writer.WriteStartElement(RASD_URI, "LastModified");
-            _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(image.getLastModified()));
+            _writer.WriteRaw(OvfParser.localDateToUtcDateString(image.getLastModified()));
             _writer.WriteEndElement();
             _writer.WriteStartElement(RASD_URI, "last_modified_date");
-            _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(image.getLastModifiedDate()));
+            _writer.WriteRaw(OvfParser.localDateToUtcDateString(image.getLastModifiedDate()));
             _writer.WriteEndElement();
             writeManagedDeviceInfo(vmBase, _writer, image.getId());
             _writer.WriteEndElement(); // item
@@ -371,7 +371,7 @@ public class OvfVmWriter extends OvfWriter {
             _writer.WriteAttributeString(OVF_URI, "id", snapshot.getId().toString());
             _writer.writeElement("Type", snapshot.getType().name());
             _writer.writeElement("Description", snapshot.getDescription());
-            _writer.writeElement("CreationDate", OvfParser.LocalDateToUtcDateString(snapshot.getCreationDate()));
+            _writer.writeElement("CreationDate", OvfParser.localDateToUtcDateString(snapshot.getCreationDate()));
 
             if (!snapshot.getMemoryVolume().isEmpty()) {
                 _writer.writeElement("Memory", snapshot.getMemoryVolume());

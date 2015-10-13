@@ -173,10 +173,10 @@ public class OvfTemplateWriter extends OvfWriter {
                 _writer.WriteEndElement();
             }
             _writer.WriteStartElement(RASD_URI, "CreationDate");
-            _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(image.getCreationDate()));
+            _writer.WriteRaw(OvfParser.localDateToUtcDateString(image.getCreationDate()));
             _writer.WriteEndElement();
             _writer.WriteStartElement(RASD_URI, "LastModified");
-            _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(image.getLastModified()));
+            _writer.WriteRaw(OvfParser.localDateToUtcDateString(image.getLastModified()));
             _writer.WriteEndElement();
             writeManagedDeviceInfo(_vmTemplate, _writer, image.getId());
             _writer.WriteEndElement(); // item
