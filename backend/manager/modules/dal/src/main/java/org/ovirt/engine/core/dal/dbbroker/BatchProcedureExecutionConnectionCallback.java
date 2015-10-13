@@ -209,7 +209,7 @@ public final class BatchProcedureExecutionConnectionCallback implements Connecti
             } catch (Exception e) {
                 log.error("Can't map '{}' of type '{}' to type '{}', mapping to null value for parameter '{}'.",
                         value,
-                        value.getClass().getName(),
+                        value != null ? value.getClass().getName() : null,
                         sqlParam.getDataType(),
                         sqlParam.getName());
                 stmt.setObject(ordinal, null);
