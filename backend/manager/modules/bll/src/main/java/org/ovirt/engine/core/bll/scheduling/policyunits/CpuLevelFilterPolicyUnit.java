@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CpuFlagsManagerHandler;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -14,15 +17,22 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SchedulingUnit(
+        guid = "438b052c-90ab-40e8-9be0-a22560202ea6",
+        name = "CPU-Level",
+        type = PolicyUnitType.FILTER,
+        description = "Runs VMs only on hosts with a proper CPU level"
+)
 public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(CpuLevelFilterPolicyUnit.class);
 
-    private CpuFlagsManagerHandler cpuFlagsManagerHandler = Injector.get(CpuFlagsManagerHandler.class);
+    @Inject
+    private CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
     public CpuLevelFilterPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {

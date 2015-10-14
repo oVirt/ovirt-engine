@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.utils.FindVmAndDestinations;
 import org.ovirt.engine.core.bll.scheduling.utils.VdsCpuUsageComparator;
@@ -36,17 +37,13 @@ import org.slf4j.LoggerFactory;
 public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(CpuAndMemoryBalancingPolicyUnit.class);
 
-    /**
-     * The maximum amount of free memory that will still trigger the over utilization routines
-     * (the host is over utilized when the available free memory amount is lower than the maximum limit)
-     */
-    protected static final String LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED = "MaxFreeMemoryForOverUtilized";
-
-    /**
-     * The minimum amount of free memory that will start triggering the under utilization routines
-     * (the host is under utilized when the available free memory amount is greater than the minimal limit)
-     */
-    protected static final String HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED = "MinFreeMemoryForUnderUtilized";
+    @Override
+    protected Set<PolicyUnitParameter> getParameters() {
+        Set<PolicyUnitParameter> params = super.getParameters();
+        params.add(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED);
+        params.add(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED);
+        return params;
+    }
 
     public CpuAndMemoryBalancingPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {

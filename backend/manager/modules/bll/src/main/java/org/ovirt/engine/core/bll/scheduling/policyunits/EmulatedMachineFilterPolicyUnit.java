@@ -7,15 +7,23 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SchedulingUnit(
+        guid = "58894b5b-d55d-4f85-8f82-5bf217e640b0",
+        name = "Emulated-Machine",
+        description = "Runs VMs only on hosts with a proper emulated machine support",
+        type = PolicyUnitType.FILTER
+)
 public class EmulatedMachineFilterPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(EmulatedMachineFilterPolicyUnit.class);
 

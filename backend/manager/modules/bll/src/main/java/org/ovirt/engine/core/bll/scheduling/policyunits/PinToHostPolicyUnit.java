@@ -6,13 +6,21 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 
+@SchedulingUnit(
+        guid = "12262ab6-9690-4bc3-a2b3-35573b172d54",
+        name = "PinToHost",
+        description = "Filters out all hosts that VM is not pinned to",
+        type = PolicyUnitType.FILTER
+)
 public class PinToHostPolicyUnit extends PolicyUnitImpl {
 
     public PinToHostPolicyUnit(PolicyUnit policyUnit,

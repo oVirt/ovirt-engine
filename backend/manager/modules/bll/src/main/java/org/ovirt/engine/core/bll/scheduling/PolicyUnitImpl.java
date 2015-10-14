@@ -1,33 +1,14 @@
 package org.ovirt.engine.core.bll.scheduling;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
-import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.EmulatedMachineFilterPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionBalancePolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionWeightPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionBalancePolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionWeightPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationBalancePolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationWeightPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.HostDeviceFilterPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterFilterPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterWeightPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.MigrationPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.NetworkPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.NoneBalancePolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.NoneWeightPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.PinToHostPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingBalancePolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingWeightPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityFilterPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityWeightPolicyUnit;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -41,95 +22,36 @@ import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PolicyUnitImpl {
+public abstract class PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(PolicyUnitImpl.class);
 
     public static final int MaxSchedulerWeight = Config.<Integer> getValue(ConfigValues.MaxSchedulerWeight);;
-
-    public static PolicyUnitImpl getPolicyUnitImpl(PolicyUnit policyUnit,
-            PendingResourceManager pendingResourceManager) {
-        switch (policyUnit.getName()) {
-        case "Migration":
-            return new MigrationPolicyUnit(policyUnit, pendingResourceManager);
-        case "PinToHost":
-            return new PinToHostPolicyUnit(policyUnit, pendingResourceManager);
-        case "CPU":
-            return new CPUPolicyUnit(policyUnit, pendingResourceManager);
-        case "Memory":
-            return new MemoryPolicyUnit(policyUnit, pendingResourceManager);
-        case "Network":
-            return new NetworkPolicyUnit(policyUnit, pendingResourceManager);
-        case "HA":
-            if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
-                return new HostedEngineHAClusterWeightPolicyUnit(policyUnit, pendingResourceManager);
-            } else if (policyUnit.getPolicyUnitType() == PolicyUnitType.FILTER) {
-                return new HostedEngineHAClusterFilterPolicyUnit(policyUnit, pendingResourceManager);
-            }
-            break;
-        case "OptimalForHaReservation":
-            if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
-                return new HaReservationWeightPolicyUnit(policyUnit, pendingResourceManager);
-            }
-            else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING) {
-                return new HaReservationBalancePolicyUnit(policyUnit, pendingResourceManager);
-            }
-            break;
-        case "CPU-Level":
-            return new CpuLevelFilterPolicyUnit(policyUnit, pendingResourceManager);
-        case "None":
-            if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
-                return new NoneWeightPolicyUnit(policyUnit, pendingResourceManager);
-            }
-            else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING) {
-                return new NoneBalancePolicyUnit(policyUnit, pendingResourceManager);
-            }
-            break;
-        case "OptimalForPowerSaving":
-            if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
-                return new PowerSavingWeightPolicyUnit(policyUnit, pendingResourceManager);
-            }
-            else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING) {
-                return new PowerSavingBalancePolicyUnit(policyUnit, pendingResourceManager);
-            }
-            break;
-        case "OptimalForEvenDistribution":
-            if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
-                return new EvenDistributionWeightPolicyUnit(policyUnit, pendingResourceManager);
-            }
-            else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING) {
-                return new EvenDistributionBalancePolicyUnit(policyUnit, pendingResourceManager);
-            }
-            break;
-        case "OptimalForEvenGuestDistribution":
-                if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
-                    return new EvenGuestDistributionWeightPolicyUnit(policyUnit, pendingResourceManager);
-                }
-                else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING) {
-                    return new EvenGuestDistributionBalancePolicyUnit(policyUnit, pendingResourceManager);
-                }
-                break;
-        case "VmAffinityGroups":
-            if (policyUnit.getPolicyUnitType() == PolicyUnitType.FILTER) {
-                return new VmAffinityFilterPolicyUnit(policyUnit, pendingResourceManager);
-            } else if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
-                return new VmAffinityWeightPolicyUnit(policyUnit, pendingResourceManager);
-            }
-        case "Emulated-Machine":
-            return new EmulatedMachineFilterPolicyUnit(policyUnit, pendingResourceManager);
-        case "HostDevice":
-            return new HostDeviceFilterPolicyUnit(policyUnit, pendingResourceManager);
-        default:
-            break;
-        }
-        throw new NotImplementedException("policyUnit: " + policyUnit.getName());
-    }
 
     private final PolicyUnit policyUnit;
     protected VdsFreeMemoryChecker memoryChecker;
     protected PendingResourceManager pendingResourceManager;
 
     public PolicyUnitImpl(PolicyUnit policyUnit, PendingResourceManager pendingResourceManager) {
-        this.policyUnit = policyUnit;
+        if (policyUnit != null) {
+            // External policy unit provided
+            this.policyUnit = policyUnit;
+        } else {
+            // Internal policy unit, prepare the dummy db entity
+            this.policyUnit = new PolicyUnit();
+            this.policyUnit.setEnabled(true);
+            this.policyUnit.setName(getName());
+            this.policyUnit.setDescription(getDescription());
+            this.policyUnit.setId(getGuid());
+            this.policyUnit.setInternal(true);
+            this.policyUnit.setPolicyUnitType(getType());
+            this.policyUnit.setParameterRegExMap(new HashMap<String, String>());
+
+            // Add all supported config values to the saved policy unit configuration
+            for (PolicyUnitParameter parameter: getParameters()) {
+                this.policyUnit.getParameterRegExMap().put(parameter.getDbName(), parameter.getRegex());
+            }
+        }
+
         this.pendingResourceManager = pendingResourceManager;
     }
 
@@ -166,5 +88,36 @@ public class PolicyUnitImpl {
 
     public PendingResourceManager getPendingResourceManager() {
         return pendingResourceManager;
+    }
+
+    // The following methods are only used when instantiating an internal policy unit
+
+    protected String getName() {
+        SchedulingUnit unit = getClass().getAnnotation(SchedulingUnit.class);
+        return unit.name();
+    }
+
+    protected String getDescription() {
+        SchedulingUnit unit = getClass().getAnnotation(SchedulingUnit.class);
+        return unit.description();
+    }
+
+    protected PolicyUnitType getType() {
+        SchedulingUnit unit = getClass().getAnnotation(SchedulingUnit.class);
+        return unit.type();
+    }
+
+    protected Guid getGuid() {
+        SchedulingUnit unit = getClass().getAnnotation(SchedulingUnit.class);
+        return Guid.createGuidFromString(unit.guid());
+    }
+
+    protected Set<PolicyUnitParameter> getParameters() {
+        SchedulingUnit unit = getClass().getAnnotation(SchedulingUnit.class);
+        if (unit.parameters().length == 0) {
+            return EnumSet.noneOf(PolicyUnitParameter.class);
+        } else {
+            return EnumSet.copyOf(Arrays.asList(unit.parameters()));
+        }
     }
 }

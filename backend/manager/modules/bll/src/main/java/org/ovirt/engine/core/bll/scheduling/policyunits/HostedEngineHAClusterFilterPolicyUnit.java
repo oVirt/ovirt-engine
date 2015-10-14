@@ -5,15 +5,23 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SchedulingUnit(
+        guid = "e659c871-0bf1-4ccc-b748-f28f5d08dffd",
+        name = "HA",
+        description = "Runs the hosted engine VM only on hosts with a positive score",
+        type = PolicyUnitType.FILTER
+)
 public class HostedEngineHAClusterFilterPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(HostedEngineHAClusterFilterPolicyUnit.class);
 

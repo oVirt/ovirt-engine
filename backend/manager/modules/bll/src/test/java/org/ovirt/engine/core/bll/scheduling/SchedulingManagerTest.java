@@ -22,7 +22,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Spy;
-import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscovery;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -31,6 +30,7 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(Arquillian.class)
@@ -39,7 +39,11 @@ public class SchedulingManagerTest {
     @Rule
     public MockConfigRule mockConfigRule = new MockConfigRule(
             MockConfigRule.mockConfig(ConfigValues.ExternalSchedulerEnabled, false),
-            MockConfigRule.mockConfig(ConfigValues.EnableVdsLoadBalancing, false)
+            MockConfigRule.mockConfig(ConfigValues.EnableVdsLoadBalancing, false),
+            MockConfigRule.mockConfig(ConfigValues.MaxSchedulerWeight, Integer.MAX_VALUE),
+            MockConfigRule.mockConfig(ConfigValues.SpmVmGraceForEvenGuestDistribute, 10),
+            MockConfigRule.mockConfig(ConfigValues.MigrationThresholdForEvenGuestDistribute, 5),
+            MockConfigRule.mockConfig(ConfigValues.HighVmCountForEvenGuestDistribute, 10)
             );
 
     @Inject @Spy
@@ -47,11 +51,11 @@ public class SchedulingManagerTest {
 
     @Inject
     private DbFacade dbFacade;
+    @Inject
+    private Injector injector;
 
     @Produces
     private NetworkDeviceHelper networkDeviceHelper = mock(NetworkDeviceHelper.class);
-    @Produces
-    private HostDeviceManager hostDeviceManager = mock(HostDeviceManager.class);
 
     @Before
     public void initTest() {
@@ -67,6 +71,8 @@ public class SchedulingManagerTest {
     public static JavaArchive createDeployment() {
         return ShrinkWrap.create(JavaArchive.class)
                 .addClasses(
+                        Injector.class,
+                        CommonTestMocks.class,
                         SchedulingManager.class,
                         ExternalSchedulerDiscovery.class,
                         BasicMigrationHandler.class

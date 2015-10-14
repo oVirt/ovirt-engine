@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.scheduling.HaReservationHandling;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
+import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -14,12 +16,22 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SchedulingUnit(
+        guid = "7f262d70-6cac-11e3-981f-0800200c9a66",
+        name = "OptimalForHaReservation",
+        description = "Weights hosts according to their HA score regardless of hosted engine",
+        type = PolicyUnitType.WEIGHT,
+        parameters = {
+                PolicyUnitParameter.SCALE_DOWN
+        }
+)
 public class HaReservationWeightPolicyUnit extends PolicyUnitImpl {
 
     private static final Logger log = LoggerFactory.getLogger(HaReservationWeightPolicyUnit.class);
@@ -72,7 +84,7 @@ public class HaReservationWeightPolicyUnit extends PolicyUnitImpl {
             // Get scale down param
             Integer scaleDownParameter = 1;
             if (parameters.get("ScaleDown") != null) {
-                scaleDownParameter = Integer.parseInt(parameters.get("ScaleDown"));
+                scaleDownParameter = Integer.parseInt(parameters.get(PolicyUnitParameter.SCALE_DOWN.getDbName()));
             } else {
                 scaleDownParameter = Config.<Integer> getValue(ConfigValues.ScaleDownForHaReservation);
             }

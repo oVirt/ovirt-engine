@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsStaticDao;
@@ -24,6 +26,13 @@ import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SchedulingUnit(
+        guid = "84e6ddee-ab0d-42dd-82f0-c297779db566",
+        name = "VmAffinityGroups",
+        description = "Enables Affinity Groups hard enforcement for VMs; VMs in group are required to run either on"
+                + " the same hypervisor host (positive) or on independent hypervisor hosts (negative)",
+        type = PolicyUnitType.FILTER
+)
 public class VmAffinityFilterPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(VmAffinityFilterPolicyUnit.class);
 

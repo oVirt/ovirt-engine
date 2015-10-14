@@ -8,6 +8,8 @@ import java.util.Optional;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
+import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
 import org.ovirt.engine.core.bll.scheduling.utils.FindVmAndDestinations;
@@ -24,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -31,6 +34,18 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SchedulingUnit(
+        guid = "736999d0-1023-46a4-9a75-1316ed50e151",
+        name = "OptimalForPowerSaving",
+        type = PolicyUnitType.LOAD_BALANCING,
+        description = "Load balancing VMs in cluster according to hosts CPU load, striving cluster's hosts CPU load to"
+                + " be over 'LowUtilization' and under 'HighUtilization'",
+        parameters = {
+                PolicyUnitParameter.HIGH_UTILIZATION,
+                PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED,
+                PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED
+        }
+)
 public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUnit {
     private static final Logger log = LoggerFactory.getLogger(PowerSavingBalancePolicyUnit.class);
 
@@ -260,8 +275,8 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
         final int highUtilization = tryParseWithDefault(parameters.get("HighUtilization"), Config
                 .<Integer>getValue(ConfigValues.HighUtilizationForPowerSave));
         final long overUtilizedMemory =
-                parameters.containsKey(EvenDistributionBalancePolicyUnit.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED) ?
-                        Long.parseLong(parameters.get(EvenDistributionBalancePolicyUnit.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED)) :
+                parameters.containsKey(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName()) ?
+                        Long.parseLong(parameters.get(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName())) :
                         0L;
 
         return new FindVmAndDestinations(cluster, highUtilization, overUtilizedMemory);
@@ -313,10 +328,10 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
     protected List<VDS> getSecondarySources(VDSGroup cluster,
             List<VDS> candidateHosts,
             Map<String, String> parameters) {
-        long lowMemoryLimit = parameters.containsKey(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED) ?
-                Long.parseLong(parameters.get(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED)) : 0L;
-        long highMemoryLimit = parameters.containsKey(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED) ?
-                Long.parseLong(parameters.get(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED)) : 0L;
+        long lowMemoryLimit = parameters.containsKey(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName()) ?
+                Long.parseLong(parameters.get(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName())) : 0L;
+        long highMemoryLimit = parameters.containsKey(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName()) ?
+                Long.parseLong(parameters.get(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName())) : 0L;
 
         List<VDS> result = new ArrayList<>();
         result.addAll(getUnderUtilizedMemoryHosts(candidateHosts, highMemoryLimit, 1));
@@ -326,10 +341,10 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
 
     @Override
     protected List<VDS> getSecondaryDestinations(VDSGroup cluster, List<VDS> candidateHosts, Map<String, String> parameters) {
-        long notEnoughMemory = parameters.containsKey(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED) ?
-                Long.parseLong(parameters.get(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED)) : 0L;
-        long tooMuchMemory = parameters.containsKey(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED) ?
-                Long.parseLong(parameters.get(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED)) : 0L;
+        long notEnoughMemory = parameters.containsKey(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName()) ?
+                Long.parseLong(parameters.get(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName())) : 0L;
+        long tooMuchMemory = parameters.containsKey(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName()) ?
+                Long.parseLong(parameters.get(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName())) : 0L;
 
         return getNormallyUtilizedMemoryHosts(candidateHosts, notEnoughMemory, tooMuchMemory);
     }

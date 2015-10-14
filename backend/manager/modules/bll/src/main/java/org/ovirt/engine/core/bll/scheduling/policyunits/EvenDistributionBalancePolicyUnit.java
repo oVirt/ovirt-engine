@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
+import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.utils.FindVmAndDestinations;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -10,10 +12,23 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 
+@SchedulingUnit(
+        guid = "7db4ab05-81ab-42e8-868a-aee2df483ed2",
+        name = "OptimalForEvenDistribution",
+        type = PolicyUnitType.LOAD_BALANCING,
+        description = "Load balancing VMs in cluster according to hosts CPU load, striving cluster's hosts CPU load to"
+                + " be under 'HighUtilization'",
+        parameters = {
+                PolicyUnitParameter.HIGH_UTILIZATION,
+                PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED,
+                PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED
+        }
+)
 public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUnit {
 
-    private static final String HIGH_UTILIZATION = "HighUtilization";
+    private static final String HIGH_UTILIZATION = PolicyUnitParameter.HIGH_UTILIZATION.getDbName();
 
     public EvenDistributionBalancePolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
@@ -27,8 +42,8 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
     protected FindVmAndDestinations getFindVmAndDestinations(VDSGroup cluster, Map<String, String> parameters) {
         final int highCpuUtilization = tryParseWithDefault(parameters.get(HIGH_UTILIZATION),
                 getHighUtilizationDefaultValue());
-        final long overUtilizedMemory = parameters.containsKey(EvenDistributionBalancePolicyUnit.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED) ?
-                Long.parseLong(parameters.get(EvenDistributionBalancePolicyUnit.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED)) : 0L;
+        final long overUtilizedMemory = parameters.containsKey(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName()) ?
+                Long.parseLong(parameters.get(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName())) : 0L;
 
         return new FindVmAndDestinations(cluster, highCpuUtilization, overUtilizedMemory);
     }
@@ -68,8 +83,8 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
     protected List<VDS> getSecondarySources(VDSGroup cluster,
                                             List<VDS> candidateHosts,
                                             Map<String, String> parameters) {
-        long requiredMemory = parameters.containsKey(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED) ?
-                Long.parseLong(parameters.get(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED)) : 0L;
+        long requiredMemory = parameters.containsKey(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName()) ?
+                Long.parseLong(parameters.get(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName())) : 0L;
 
         return getOverUtilizedMemoryHosts(candidateHosts, requiredMemory);
     }
@@ -78,8 +93,8 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
     protected List<VDS> getSecondaryDestinations(VDSGroup cluster,
                                                  List<VDS> candidateHosts,
                                                  Map<String, String> parameters) {
-        long requiredMemory = parameters.containsKey(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED) ?
-                Long.parseLong(parameters.get(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED)) : 0L;
+        long requiredMemory = parameters.containsKey(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName()) ?
+                Long.parseLong(parameters.get(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName())) : 0L;
 
         return getUnderUtilizedMemoryHosts(candidateHosts, requiredMemory, 0);
     }

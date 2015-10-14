@@ -44,7 +44,7 @@ public class CpuAndMemoryBalancingPolicyUnitTest extends AbstractPolicyUnitTest 
         // mock host Dao
         VdsDao vdsDao = mock(VdsDao.class);
         doReturn(vdsDao).when(unit).getVdsDao();
-        doReturn(new ArrayList(hosts.values())).when(vdsDao).getAllForVdsGroup(any(Guid.class));
+        doReturn(new ArrayList<>(hosts.values())).when(vdsDao).getAllForVdsGroup(any(Guid.class));
 
         // mock VM Dao
         VmDao vmDao = mock(VmDao.class);

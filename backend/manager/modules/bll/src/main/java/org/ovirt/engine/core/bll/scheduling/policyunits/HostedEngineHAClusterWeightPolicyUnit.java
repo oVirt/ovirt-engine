@@ -5,13 +5,21 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
+@SchedulingUnit(
+        guid = "98e92667-6161-41fb-b3fa-34f820ccbc4b",
+        name = "HA",
+        description = "Weights hosts according to their HA score",
+        type = PolicyUnitType.WEIGHT
+)
 public class HostedEngineHAClusterWeightPolicyUnit extends PolicyUnitImpl {
     private static int DEFAULT_WEIGHT = 1;
     private static int MAXIMUM_HA_SCORE = 2400;

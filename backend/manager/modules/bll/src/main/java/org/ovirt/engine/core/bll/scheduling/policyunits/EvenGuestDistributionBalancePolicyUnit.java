@@ -5,15 +5,28 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.math.NumberUtils;
+import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
+import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SchedulingUnit(
+        guid = "d58c8e32-44e1-418f-9222-52cd887bf9e0",
+        name = "OptimalForEvenGuestDistribution",
+        type = PolicyUnitType.LOAD_BALANCING,
+        parameters = {
+                PolicyUnitParameter.SPM_VM_GRACE,
+                PolicyUnitParameter.HIGH_VM_COUNT,
+                PolicyUnitParameter.MIGRATION_THRESHOLD
+        }
+)
 public class EvenGuestDistributionBalancePolicyUnit extends EvenDistributionBalancePolicyUnit {
 
     private final int spmVmGraceDefault;
@@ -34,7 +47,7 @@ public class EvenGuestDistributionBalancePolicyUnit extends EvenDistributionBala
      */
     private int getOccupiedVmSlots(VDS vds, Map<String, String> parameters) {
         int occupiedSlots = vds.getVmActive();
-        final int spmVmCountGrace = NumberUtils.toInt(parameters.get("SpmVmGrace"),
+        final int spmVmCountGrace = NumberUtils.toInt(parameters.get(PolicyUnitParameter.SPM_VM_GRACE.getDbName()),
                 spmVmGraceDefault);
         if (vds.isSpm()) {
             occupiedSlots += spmVmCountGrace;
@@ -58,7 +71,7 @@ public class EvenGuestDistributionBalancePolicyUnit extends EvenDistributionBala
 
     @Override
     protected List<VDS> getPrimarySources(VDSGroup cluster, List<VDS> candidateHosts, final Map<String, String> parameters) {
-        final int highVmCountUtilization = NumberUtils.toInt(parameters.get("HighVmCount"),
+        final int highVmCountUtilization = NumberUtils.toInt(parameters.get(PolicyUnitParameter.HIGH_VM_COUNT.getDbName()),
                 highVmCountDefault);
 
         final VDS worstVDS = getWorstVDS(candidateHosts, parameters);
@@ -75,7 +88,7 @@ public class EvenGuestDistributionBalancePolicyUnit extends EvenDistributionBala
 
     @Override
     protected List<VDS> getPrimaryDestinations(VDSGroup cluster, List<VDS> candidateHosts, final Map<String, String> parameters) {
-        final int migrationThreshold = NumberUtils.toInt(parameters.get("MigrationThreshold"),
+        final int migrationThreshold = NumberUtils.toInt(parameters.get(PolicyUnitParameter.MIGRATION_THRESHOLD.getDbName()),
                 migrationThresholdDefault);
 
         final VDS worstVDS = getWorstVDS(candidateHosts, parameters);

@@ -16,6 +16,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -49,8 +50,8 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
 
         VDSGroup cluster = new VDSGroup();
         Map<String, String> parameters = new HashMap<>();
-        parameters.put(PowerSavingBalancePolicyUnit.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED, "900");
-        parameters.put(PowerSavingBalancePolicyUnit.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED, "512");
+        parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "900");
+        parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "512");
 
         ArrayList<String> messages = new ArrayList<>();
 
@@ -74,8 +75,8 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
 
         VDSGroup cluster = new VDSGroup();
         Map<String, String> parameters = new HashMap<>();
-        parameters.put(PowerSavingBalancePolicyUnit.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED, "768");
-        parameters.put(PowerSavingBalancePolicyUnit.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED, "128");
+        parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "768");
+        parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "128");
 
         ArrayList<String> messages = new ArrayList<>();
 
@@ -99,8 +100,8 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
 
         VDSGroup cluster = new VDSGroup();
         Map<String, String> parameters = new HashMap<>();
-        parameters.put(PowerSavingBalancePolicyUnit.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED, "768");
-        parameters.put(PowerSavingBalancePolicyUnit.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED, "128");
+        parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "768");
+        parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "128");
 
         ArrayList<String> messages = new ArrayList<>();
 
@@ -121,8 +122,8 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
 
         VDSGroup cluster = new VDSGroup();
         Map<String, String> parameters = new HashMap<>();
-        parameters.put(PowerSavingBalancePolicyUnit.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED, "768");
-        parameters.put(PowerSavingBalancePolicyUnit.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED, "128");
+        parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "768");
+        parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "128");
 
         ArrayList<String> messages = new ArrayList<>();
 
@@ -143,8 +144,8 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
 
         VDSGroup cluster = new VDSGroup();
         Map<String, String> parameters = new HashMap<>();
-        parameters.put(PowerSavingBalancePolicyUnit.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED, "768");
-        parameters.put(PowerSavingBalancePolicyUnit.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED, "128");
+        parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "768");
+        parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "128");
 
         ArrayList<String> messages = new ArrayList<>();
 

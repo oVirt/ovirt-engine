@@ -188,6 +188,10 @@ public class SchedulingManager implements BackendService {
     }
 
     private void loadClusterPolicies() {
+        // Load internal cluster policies
+        policyMap.putAll(InternalClusterPolicies.getClusterPolicies());
+
+        // Get all user provided cluster policies
         List<ClusterPolicy> allClusterPolicies = getClusterPolicyDao().getAll();
         for (ClusterPolicy clusterPolicy : allClusterPolicies) {
             policyMap.put(clusterPolicy.getId(), clusterPolicy);
@@ -195,13 +199,20 @@ public class SchedulingManager implements BackendService {
     }
 
     private void loadPolicyUnits() {
+        // Load internal policy units
+        for (Class<? extends PolicyUnitImpl> unitType: InternalPolicyUnits.getList()) {
+            PolicyUnitImpl unit = InternalPolicyUnits.instantiate(unitType, getPendingResourceManager());
+            if (unit != null) {
+                policyUnits.put(unit.getGuid(), Injector.injectMembers(unit));
+            } else {
+                log.error("Could not instantiate a policy unit {}.", unitType.getName());
+            }
+        }
+
+        // Load all external policy units
         List<PolicyUnit> allPolicyUnits = getPolicyUnitDao().getAll();
         for (PolicyUnit policyUnit : allPolicyUnits) {
-            if (policyUnit.isInternal()) {
-                policyUnits.put(policyUnit.getId(), Injector.injectMembers(PolicyUnitImpl.getPolicyUnitImpl(policyUnit, getPendingResourceManager())));
-            } else {
-                policyUnits.put(policyUnit.getId(), new PolicyUnitImpl(policyUnit, getPendingResourceManager()));
-            }
+            policyUnits.put(policyUnit.getId(), new ExternalPolicyUnit(policyUnit, getPendingResourceManager()));
         }
     }
 
