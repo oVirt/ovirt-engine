@@ -632,6 +632,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (!isInitVmRequired()) {
             return;
         }
+        loadVmInit();
 
         fetchVmDisksFromDb();
         // reevaluate boot parameters if VM was executed with 'run once'
@@ -918,6 +919,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return true;
     }
 
+    protected void loadVmInit() {
+        if (!getVm().isInitialized() && getVm().getVmInit() == null) {
+            VmHandler.updateVmInitFromDB(getVm().getStaticData(), false);
+        }
+    }
 
     /**
      * Checks whether rng device of vm is required by cluster, which is requirement for running vm.
