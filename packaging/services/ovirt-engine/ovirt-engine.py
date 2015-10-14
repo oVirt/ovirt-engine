@@ -222,7 +222,7 @@ class Daemon(service.Daemon):
     def _detectJBossVersion(self):
         proc = subprocess.Popen(
             executable=self._executable,
-            args=self._engineArgs + ['-v'],
+            args=['ovirt-engine-version'] + self._engineArgs + ['-v'],
             env=self._engineEnv,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -349,9 +349,6 @@ class Daemon(service.Daemon):
 
         # Add arguments for the java virtual machine:
         self._engineArgs.extend([
-            # The name or the process, as displayed by ps:
-            'ovirt-engine',
-
             # Virtual machine options:
             '-server',
             '-XX:+TieredCompilation',
@@ -370,18 +367,6 @@ class Daemon(service.Daemon):
         # Add extra jvm arguments provided in the configuration:
         for arg in shlex.split(self._config.get('ENGINE_JVM_ARGS')):
             self._engineArgs.append(arg)
-
-        # Add arguments for remote debugging of the java virtual machine:
-        engineDebugAddress = self._config.get('ENGINE_DEBUG_ADDRESS')
-        if engineDebugAddress:
-            self._engineArgs.append(
-                (
-                    '-Xrunjdwp:transport=dt_socket,address=%s,'
-                    'server=y,suspend=n'
-                ) % (
-                    engineDebugAddress
-                )
-            )
 
         # Enable verbose garbage collection if required:
         if self._config.getboolean('ENGINE_VERBOSE_GC'):
@@ -467,12 +452,25 @@ class Daemon(service.Daemon):
             with open(self._config.get('ENGINE_UP_MARK'), 'w') as f:
                 f.write('%s\n' % os.getpid())
 
+            #
+            # NOTE:
+            # jdwp must be set only for the process we are trying
+            # to debug, as jvm will open it and conflict with other
+            # instances.
+            #
             self.daemonAsExternalProcess(
                 executable=self._executable,
-                args=self._engineArgs + [
-                    '-c',
-                    os.path.basename(self._jbossConfigFile),
-                ],
+                args=(
+                    ['ovirt-engine'] +
+                    ([(
+                        '-Xrunjdwp:transport=dt_socket,address=%s,'
+                        'server=y,suspend=n'
+                    ) % (
+                        self._config.get('ENGINE_DEBUG_ADDRESS')
+                    )] if self._config.get('ENGINE_DEBUG_ADDRESS') else []) +
+                    self._engineArgs +
+                    ['-c', os.path.basename(self._jbossConfigFile)]
+                ),
                 env=self._engineEnv,
                 stopTime=self._config.getinteger(
                     'ENGINE_STOP_TIME'
