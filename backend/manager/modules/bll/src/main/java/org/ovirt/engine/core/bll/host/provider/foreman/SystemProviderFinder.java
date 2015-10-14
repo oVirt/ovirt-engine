@@ -30,7 +30,7 @@ public class SystemProviderFinder {
         }
 
         List<Provider<?>> hostProviders = dbFacade.getProviderDao().getAllByType(ProviderType.FOREMAN);
-        HostProviderProxy proxy = null;
+        HostProviderProxy proxy;
         for (Provider<?> provider : hostProviders) {
             proxy = ProviderProxyFactory.getInstance().create(provider);
             if (proxy.findContentHost(systemHostName) != null) {
@@ -38,6 +38,7 @@ public class SystemProviderFinder {
             }
         }
 
+        log.error("Failed to find host on any provider by host name '{}' ", systemHostName);
         return null;
     }
 
