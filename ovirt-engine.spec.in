@@ -209,7 +209,7 @@ Requires:	openstack-java-keystone-model >= %{openstack_java_version}
 Requires:	openstack-java-quantum-client >= %{openstack_java_version}
 Requires:	openstack-java-quantum-model >= %{openstack_java_version}
 Requires:	openstack-java-resteasy-connector >= %{openstack_java_version}
-Requires:	python-dnf-plugins-extras-versionlock.noarch
+Requires:	python-dnf-plugins-extras-versionlock
 Requires:	quartz
 Requires:	snmp4j
 Requires:	springframework-aop
