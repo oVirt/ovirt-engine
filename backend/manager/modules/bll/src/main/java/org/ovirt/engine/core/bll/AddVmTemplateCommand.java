@@ -192,6 +192,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         for (DiskImage image : images) {
             MultiValueMapUtils.addToMap(image.getStorageIds().get(0), image, sourceImageDomainsImageMap);
             if (!diskInfoDestinationMap.containsKey(image.getId())) {
+                // The volume's format and type were not specified and thus should be null.
+                image.setvolumeFormat(null);
+                image.setVolumeType(null);
                 diskInfoDestinationMap.put(image.getId(), image);
             }
         }
