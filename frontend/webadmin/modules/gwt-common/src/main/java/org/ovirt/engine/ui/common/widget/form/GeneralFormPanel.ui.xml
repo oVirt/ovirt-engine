@@ -9,20 +9,13 @@
         }
 
         .formPanelLabel {
-            white-space: nowrap;
             color: black;
             font-family: Arial, sans-serif;
-            padding-top: 1px;
-            padding-bottom: 2px;
         }
 
         .formPanelValue {
-            white-space: nowrap;
             color: #777777;
             font-family: Arial, sans-serif;
-            padding-left: 4px;
-            padding-top: 1px;
-            padding-bottom: 2px;
         }
     </ui:style>
 
