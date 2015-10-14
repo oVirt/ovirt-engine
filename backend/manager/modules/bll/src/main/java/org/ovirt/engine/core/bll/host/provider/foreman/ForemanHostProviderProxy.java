@@ -317,7 +317,6 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                 runContentHostListMethod(CONTENT_HOSTS_ENTRY_POINT + String.format(SEARCH_QUERY_FORMAT, hostNameFact));
 
         if (contentHosts.isEmpty()) {
-            log.error("Failed to find host on provider by host name '{}' ", hostName);
             return null;
         }
 
@@ -379,20 +378,22 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     public List<Erratum> getErrataForHost(String hostName) {
         ContentHost contentHost = findContentHost(hostName);
         if (contentHost == null) {
+            log.error("Failed to find host on provider '{}' by host name '{}' ", getProvider().getName(), hostName);
             return Collections.emptyList();
         }
 
-        return runErrataListMethod(String.format(CONTENT_HOST_ERRATA_ENTRY_POINT, contentHost.getId()));
+        return runErrataListMethod(String.format(CONTENT_HOST_ERRATA_ENTRY_POINT, contentHost.getUuid()));
     }
 
     @Override
     public Erratum getErratumForHost(String hostName, String erratumId) {
         ContentHost contentHost = findContentHost(hostName);
         if (contentHost == null) {
+            log.error("Failed to find host on provider '{}' by host name '{}' ", getProvider().getName(), hostName);
             return null;
         }
 
-        return runErratumMethod(String.format(CONTENT_HOST_ERRATUM_ENTRY_POINT, contentHost.getId(), erratumId));
+        return runErratumMethod(String.format(CONTENT_HOST_ERRATUM_ENTRY_POINT, contentHost.getUuid(), erratumId));
     }
 
     private Erratum runErratumMethod(String relativeUrl) {

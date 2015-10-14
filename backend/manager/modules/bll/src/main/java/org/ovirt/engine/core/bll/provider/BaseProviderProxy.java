@@ -203,4 +203,7 @@ public abstract class BaseProviderProxy implements ProviderProxy {
         return providerValidator;
     }
 
+    public Provider<?> getProvider() {
+        return hostProvider;
+    }
 }

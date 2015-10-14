@@ -5,15 +5,15 @@ import java.util.Date;
 
 public class ContentHost implements Serializable {
     private static final long serialVersionUID = -6496042131555889764L;
-    private String id;
+    private String uuid;
     private Date created;
 
-    public String getId() {
-        return id;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public Date getCreated() {
