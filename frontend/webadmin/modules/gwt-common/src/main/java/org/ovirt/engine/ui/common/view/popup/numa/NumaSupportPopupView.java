@@ -189,7 +189,7 @@ public class NumaSupportPopupView extends AbstractModelBoundPopupView<NumaSuppor
                     numaNode.getMemTotal() - numaNode.getNumaNodeStatistics().getMemFree());
             socketPanel.addWidget(numaPanel);
             AssignedVNumaNodesPanel assignedPanel = assignedVNumaPanelProvider.get();
-            assignedPanel.setNodes(supportModel.getVNumaNodeByNodeId(numaNode.getId()), numaNode.getIndex(),
+            assignedPanel.setNodes(supportModel.getVNumaNodeByNodeIndx(numaNode.getIndex()), numaNode.getIndex(),
                     supportModel.getNumaNodeList());
             socketPanel.addWidget(assignedPanel);
         }
