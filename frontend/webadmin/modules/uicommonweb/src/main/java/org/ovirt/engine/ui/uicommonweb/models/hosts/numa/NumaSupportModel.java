@@ -38,7 +38,7 @@ public class NumaSupportModel extends Model {
     private List<VdsNumaNode> numaNodeList;
     private List<VM> vmsWithvNumaNodeList;
     private List<VNodeModel> unassignedVNodeModelList;
-    protected Map<Guid, List<VNodeModel>> p2vNumaNodesMap;
+    protected Map<Integer, List<VNodeModel>> p2vNumaNodesMap;
     private List<Pair<Integer, Set<VdsNumaNode>>> firstLevelDistanceSetList;
     private final Event modelReady = new Event(new EventDefinition("ModelReady", NumaSupportModel.class)); //$NON-NLS-1$
     private Map<Integer, VdsNumaNode> indexNodeMap;
@@ -107,7 +107,7 @@ public class NumaSupportModel extends Model {
 
     protected void initVNumaNodes() {
         unassignedVNodeModelList = new ArrayList<VNodeModel>();
-        p2vNumaNodesMap = new HashMap<Guid, List<VNodeModel>>();
+        p2vNumaNodesMap = new HashMap<Integer, List<VNodeModel>>();
 
         for (VM vm : getVmsWithvNumaNodeList()) {
             if (vm.getvNumaNodeList() != null) {
@@ -120,8 +120,8 @@ public class NumaSupportModel extends Model {
                                 break;
                             } else {
                                 vNodeModel.setPinned(true);
-                                Guid nodeId = pair.getFirst();
-                                assignVNumaToPhysicalNuma(vNodeModel, nodeId);
+                                Integer nodeIdx = pair.getSecond().getSecond();
+                                assignVNumaToPhysicalNuma(vNodeModel, nodeIdx);
                             }
                         }
                     } else {
@@ -132,11 +132,11 @@ public class NumaSupportModel extends Model {
         }
     }
 
-    private void assignVNumaToPhysicalNuma(VNodeModel vNodeModel, Guid nodeId) {
-        if (!p2vNumaNodesMap.containsKey(nodeId)) {
-            p2vNumaNodesMap.put(nodeId, new ArrayList<VNodeModel>());
+    private void assignVNumaToPhysicalNuma(VNodeModel vNodeModel, Integer nodeIdx) {
+        if (!p2vNumaNodesMap.containsKey(nodeIdx)) {
+            p2vNumaNodesMap.put(nodeIdx, new ArrayList<VNodeModel>());
         }
-        p2vNumaNodesMap.get(nodeId)
+        p2vNumaNodesMap.get(nodeIdx)
                 .add(vNodeModel);
     }
 
@@ -150,8 +150,8 @@ public class NumaSupportModel extends Model {
         return indexNodeMap.get(index);
     }
 
-    public List<VNodeModel> getVNumaNodeByNodeId(Guid nodeId) {
-        return p2vNumaNodesMap.get(nodeId);
+    public List<VNodeModel> getVNumaNodeByNodeIndx(Integer nodeIdx) {
+        return p2vNumaNodesMap.get(nodeIdx);
     }
 
     private void initFirstLevelDistanceSetList() {
