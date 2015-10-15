@@ -360,7 +360,6 @@ public class RunVmCommandTest extends BaseCommandTest {
         doReturn(vm).when(command).getVm();
         doReturn(true).when(command).checkRngDeviceClusterCompatibility();
         doReturn(true).when(command).checkPayload(any(VmPayload.class), anyString());
-        doReturn(false).when(command).hasVmInit();
         doReturn(new VDSGroup()).when(command).getVdsGroup();
         assertTrue(command.canDoAction());
         assertTrue(command.getReturnValue().getCanDoActionMessages().isEmpty());
@@ -402,8 +401,6 @@ public class RunVmCommandTest extends BaseCommandTest {
                 .thenReturn(Collections.singletonList(rngAsDevice));
 
         doReturn(deviceDao).when(command).getVmDeviceDao();
-
-        doReturn(false).when(command).hasVmInit();
 
         Assert.assertThat(command.canDoAction(), is(clusterReqSources.contains(vmRngSource)));
     }

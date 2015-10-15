@@ -150,6 +150,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (getVm() != null) {
             needsHostDevices = hostDeviceManager.checkVmNeedsDirectPassthrough(getVm());
         }
+    loadVmInit();
     }
 
     @Override
@@ -999,7 +1000,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         boolean isWindowsOs = osRepository.isWindows(getVm().getVmOsId());
 
-        boolean isCloudInitEnabled = (!getVm().isInitialized() && hasVmInit() && !isWindowsOs) ||
+        boolean isCloudInitEnabled = (!getVm().isInitialized() && getVm().getVmInit() != null && !isWindowsOs) ||
                 (getParameters().getInitializationType() == InitializationType.CloudInit);
 
         boolean hasCdromPayload = getParameters().getVmPayload() != null &&
@@ -1035,10 +1036,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return true;
     }
 
-    protected boolean hasVmInit() {
-        VmHandler.updateVmInitFromDB(getVm().getStaticData(), false);
-
-        return getVm().getVmInit() != null;
+    protected void loadVmInit() {
+        if (getVm() != null && getVm().getVmInit() == null) {
+            VmHandler.updateVmInitFromDB(getVm().getStaticData(), false);
+        }
     }
 
     protected boolean hasMaximumNumberOfDisks() {
