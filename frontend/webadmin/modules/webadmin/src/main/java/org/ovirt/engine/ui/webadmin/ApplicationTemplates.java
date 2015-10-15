@@ -6,19 +6,6 @@ import com.google.gwt.safehtml.shared.SafeUri;
 
 public interface ApplicationTemplates extends CommonApplicationTemplates {
 
-    /**
-     * Creates a progress bar template.
-     *
-     * @param progress
-     *            Progress value in percent.
-     * @param text
-     *            Text to show within the progress bar.
-     */
-    @Template("<div id=\"{4}\" class='{3}'>" +
-            "<div style='background: {2}; width: {0}%; height: 100%'></div>" +
-            "<div class='engine-progress-text'>{1}</div></div>")
-    SafeHtml progressBar(int progress, String text, String color, String style, String id);
-
     @Template("<div>" +
             "<div style='float:right; width: {2}px; color: {3}; font-weight: {4}'>{5}%</div>" +
             "<div style='margin-right: {1}px; width: 100%; margin: auto;'>" +

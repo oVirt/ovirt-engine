@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
+import org.ovirt.engine.ui.common.widget.table.column.AbstractProgressBarColumn;
+
 /**
  * Column for displaying percent-based progress bar.
  *

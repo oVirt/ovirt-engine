@@ -48,6 +48,19 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     SafeHtml dialogButton(SafeHtml image, String text, String start, String stretch,
             String end, String contentStyleName, String customContentStyleName);
 
+    /**
+     * Creates a progress bar template.
+     *
+     * @param progress
+     *            Progress value in percent.
+     * @param text
+     *            Text to show within the progress bar.
+     */
+    @Template("<div id=\"{4}\" class='{3}'>" +
+            "<div style='background: {2}; width: {0}%; height: 100%'></div>" +
+            "<div class='engine-progress-text'>{1}</div></div>")
+    SafeHtml progressBar(int progress, String text, String color, String style, String id);
+
     @Template("<ul style='margin-top:0'>{0}</ul>")
     SafeHtml unsignedList(SafeHtml list);
 
