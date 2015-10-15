@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -10,12 +11,15 @@ public class GetHostArchitectureQuery<P extends IdQueryParameters> extends Queri
         super(parameters);
     }
 
+    @Inject
+    protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
+
     @Override
     protected void executeQueryCommand() {
         VDS host = getDbFacade().getVdsDao().get(getParameters().getId());
 
         ServerCpu sc =
-                getCpuFlagsManagerHandler().findMaxServerCpuByFlags(host.getCpuFlags(),
+                cpuFlagsManagerHandler.findMaxServerCpuByFlags(host.getCpuFlags(),
                         host.getVdsGroupCompatibilityVersion());
 
         getQueryReturnValue().setReturnValue(sc == null ? ArchitectureType.undefined : sc.getArchitecture());

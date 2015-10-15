@@ -43,8 +43,6 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     @Inject
     protected AuditLogDirector auditLogDirector;
 
-    @Inject
-    protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
     @Inject
     private SessionDataContainer sessionDataContainer;
@@ -66,10 +64,6 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     @PostConstruct
     protected final void postConstruct() {
         user = initUser();
-    }
-
-    protected CpuFlagsManagerHandler getCpuFlagsManagerHandler() {
-        return cpuFlagsManagerHandler;
     }
 
     private VdcQueryType initQueryType() {

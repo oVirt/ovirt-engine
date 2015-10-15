@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
@@ -7,6 +8,9 @@ public class GetVdsByVdsIdQuery<P extends IdQueryParameters> extends QueriesComm
     public GetVdsByVdsIdQuery(P parameters) {
         super(parameters);
     }
+
+    @Inject
+    protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
     @Override
     protected void executeQueryCommand() {
@@ -20,5 +24,9 @@ public class GetVdsByVdsIdQuery<P extends IdQueryParameters> extends QueriesComm
         }
 
         getQueryReturnValue().setReturnValue(vds);
+    }
+
+    protected CpuFlagsManagerHandler getCpuFlagsManagerHandler() {
+        return cpuFlagsManagerHandler;
     }
 }

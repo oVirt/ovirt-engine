@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
 import org.ovirt.engine.core.common.queries.GetSupportedCpuListParameters;
 
 public class GetSupportedCpuListQuery<P extends GetSupportedCpuListParameters> extends QueriesCommandBase<P> {
@@ -7,8 +8,12 @@ public class GetSupportedCpuListQuery<P extends GetSupportedCpuListParameters> e
         super(parameters);
     }
 
+    @Inject
+    protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
+
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getCpuFlagsManagerHandler().getSupportedServerCpuList(getCpuFlagsManagerHandler().getLatestDictionaryVersion(), getParameters().getMaxCpuName()));
+        getQueryReturnValue().setReturnValue(cpuFlagsManagerHandler.getSupportedServerCpuList(cpuFlagsManagerHandler.getLatestDictionaryVersion(),
+                getParameters().getMaxCpuName()));
     }
 }

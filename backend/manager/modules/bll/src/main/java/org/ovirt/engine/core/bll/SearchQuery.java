@@ -63,6 +63,9 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     @Inject
     private QuotaManager quotaManager;
 
+    @Inject
+    protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
+
     public SearchQuery(P parameters) {
         super(parameters);
     }
@@ -178,7 +181,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             @Override
             public List<VDS> filter(List<VDS> data) {
                 for (VDS vds : data) {
-                    vds.setCpuName(getCpuFlagsManagerHandler().findMaxServerCpuByFlags(vds.getCpuFlags(),
+                    vds.setCpuName(cpuFlagsManagerHandler.findMaxServerCpuByFlags(vds.getCpuFlags(),
                             vds.getVdsGroupCompatibilityVersion()));
                 }
                 return data;
