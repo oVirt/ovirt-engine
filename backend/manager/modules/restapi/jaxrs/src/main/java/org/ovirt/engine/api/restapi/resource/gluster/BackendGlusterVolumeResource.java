@@ -133,7 +133,7 @@ public class BackendGlusterVolumeResource
     }
 
     @Override
-    public GlusterBricksResource getGlusterBrickSubResource() {
+    public GlusterBricksResource getGlusterBrickResource() {
         return inject(new BackendGlusterBricksResource(this));
     }
 

@@ -24,7 +24,7 @@ public interface GlusterBricksResource {
     GlusterBricks list();
 
     @Path("{action: (migrate|stopmigrate)}/{oid}")
-    ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
+    ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     /**
      * Adds given list of bricks to the volume, and updates the database accordingly. The properties
@@ -71,8 +71,8 @@ public interface GlusterBricksResource {
      * dispatched.
      *
      * @param id the brick id
-     * @return matching subresource if found
+     * @return matching resource if found
      */
     @Path("{id}")
-    GlusterBrickResource getGlusterBrickSubResource(@PathParam("id") String id);
+    GlusterBrickResource getGlusterBrickResource(@PathParam("id") String id);
 }

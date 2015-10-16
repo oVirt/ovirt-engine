@@ -21,5 +21,5 @@ public interface AffinityGroupVmsResource {
     Response add(Vm vm);
 
     @Path("{id}")
-    AffinityGroupVmResource getAffinityGroupVmSubResource(@PathParam("id") String id);
+    AffinityGroupVmResource getAffinityGroupVmResource(@PathParam("id") String id);
 }

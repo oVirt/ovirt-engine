@@ -43,8 +43,8 @@ public interface StorageDomainsResource {
      * remainder of the URI is dispatched.
      *
      * @param id  the StorageDomain ID
-     * @return    matching subresource if found
+     * @return    matching resource if found
      */
     @Path("{id}")
-    public StorageDomainResource getStorageDomainSubResource(@PathParam("id") String id);
+    public StorageDomainResource getStorageDomainResource(@PathParam("id") String id);
 }

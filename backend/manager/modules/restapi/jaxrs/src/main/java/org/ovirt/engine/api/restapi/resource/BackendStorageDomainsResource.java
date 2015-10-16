@@ -71,7 +71,7 @@ public class BackendStorageDomainsResource
     }
 
     @Override
-    public StorageDomainResource getStorageDomainSubResource(String id) {
+    public StorageDomainResource getStorageDomainResource(String id) {
         return inject(new BackendStorageDomainResource(id, this));
     }
 

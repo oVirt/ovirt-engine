@@ -22,6 +22,6 @@ public interface QoSsResource {
     public Response add(Qos qos);
 
     @Path("{id}")
-    public QosResource getQosSubResource(@PathParam("id") String id);
+    public QosResource getQosResource(@PathParam("id") String id);
 
 }

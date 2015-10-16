@@ -21,7 +21,7 @@ public class BackendJobResource extends AbstractBackendActionableResource<Job, o
     }
 
     @Override
-    public ActionResource getActionSubresource(String action, String oid) {
+    public ActionResource getActionResource(String action, String oid) {
         return inject(new BackendActionResource(action, oid));
     }
 

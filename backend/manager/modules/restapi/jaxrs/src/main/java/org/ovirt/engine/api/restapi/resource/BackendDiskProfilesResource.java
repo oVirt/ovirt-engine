@@ -49,7 +49,7 @@ public class BackendDiskProfilesResource extends AbstractBackendDiskProfilesReso
     }
 
     @Override
-    public DiskProfileResource getDiskProfileSubResource(String id) {
+    public DiskProfileResource getDiskProfileResource(String id) {
         return inject(new BackendDiskProfileResource(id));
     }
 }

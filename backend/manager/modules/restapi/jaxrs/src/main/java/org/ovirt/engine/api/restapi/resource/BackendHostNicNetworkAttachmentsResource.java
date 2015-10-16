@@ -25,7 +25,7 @@ public class BackendHostNicNetworkAttachmentsResource extends AbstractBackendNet
     }
 
     @Override
-    public NetworkAttachmentResource getNetworkAttachmentSubResource(String id) {
+    public NetworkAttachmentResource getNetworkAttachmentResource(String id) {
         return inject(new BackendHostNicNetworkAttachmentResource(id, this));
     }
 

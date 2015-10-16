@@ -37,5 +37,5 @@ public interface AttachedStorageDomainsResource {
     Response add(StorageDomain storageDomain);
 
     @Path("{id}")
-    AttachedStorageDomainResource getAttachedStorageDomainSubResource(@PathParam("id") String id);
+    AttachedStorageDomainResource getAttachedStorageDomainResource(@PathParam("id") String id);
 }

@@ -60,7 +60,7 @@ public class BackendSSHPublicKeysResource
     }
 
     @Override
-    public SSHPublicKeyResource getSSHPublicKeySubResource(String id) {
+    public SSHPublicKeyResource getSSHPublicKeyResource(String id) {
         return inject(new BackendSSHPublicKeyResource(id, userId, this));
     }
 

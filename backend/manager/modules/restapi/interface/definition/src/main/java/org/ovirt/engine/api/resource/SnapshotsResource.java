@@ -41,8 +41,8 @@ public interface SnapshotsResource {
      * which the remainder of the URI is dispatched.
      *
      * @param id  the snapshot ID
-     * @return    matching subresource if found
+     * @return    matching resource if found
      */
     @Path("{id}")
-    SnapshotResource getSnapshotSubResource(@PathParam("id") String id);
+    SnapshotResource getSnapshotResource(@PathParam("id") String id);
 }

@@ -40,7 +40,7 @@ public class BackendFilesResource
     }
 
     @Override
-    public FileResource getFileSubResource(String id) {
+    public FileResource getFileResource(String id) {
         return new BackendFileResource(id, this);
     }
 

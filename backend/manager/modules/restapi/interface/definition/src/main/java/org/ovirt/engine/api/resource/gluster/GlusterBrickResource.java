@@ -22,7 +22,7 @@ import org.ovirt.engine.api.resource.MeasurableResource;
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface GlusterBrickResource extends MeasurableResource{
     @Path("{action: (replace)}/{oid}")
-    ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
+    ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @GET
     GlusterBrick get();

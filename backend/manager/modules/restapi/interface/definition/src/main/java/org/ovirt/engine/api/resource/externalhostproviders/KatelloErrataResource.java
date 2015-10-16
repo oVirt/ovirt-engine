@@ -15,5 +15,5 @@ public interface KatelloErrataResource {
     KatelloErrata list();
 
     @Path("{id}")
-    KatelloErratumResource getKatelloErratumSubResource(@PathParam("id") String id);
+    KatelloErratumResource getKatelloErratumResource(@PathParam("id") String id);
 }

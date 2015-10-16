@@ -37,5 +37,5 @@ public interface LabelsResource {
     Response add(Label label);
 
     @Path("{id}")
-    LabelResource getLabelSubResource(@PathParam("id") String id);
+    LabelResource getLabelResource(@PathParam("id") String id);
 }

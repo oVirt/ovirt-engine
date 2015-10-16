@@ -22,6 +22,6 @@ import javax.ws.rs.PathParam;
 public interface AsynchronouslyCreatedResource {
 
     @Path("creation_status/{oid}")
-    public CreationResource getCreationSubresource(@PathParam("oid")String oid);
+    public CreationResource getCreationResource(@PathParam("oid") String oid);
 
 }

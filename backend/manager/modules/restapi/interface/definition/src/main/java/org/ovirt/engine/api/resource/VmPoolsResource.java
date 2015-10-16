@@ -43,8 +43,8 @@ public interface VmPoolsResource {
      * which the remainder of the URI is dispatched.
      *
      * @param id  the VmPool ID
-     * @return    matching subresource if found
+     * @return    matching resource if found
      */
     @Path("{id}")
-    public VmPoolResource getVmPoolSubResource(@PathParam("id") String id);
+    public VmPoolResource getVmPoolResource(@PathParam("id") String id);
 }

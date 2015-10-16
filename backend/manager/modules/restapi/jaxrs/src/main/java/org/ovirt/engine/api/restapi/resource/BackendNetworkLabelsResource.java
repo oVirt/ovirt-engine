@@ -56,7 +56,7 @@ public class BackendNetworkLabelsResource extends AbstractBackendCollectionResou
     }
 
     @Override
-    public LabelResource getLabelSubResource(String id) {
+    public LabelResource getLabelResource(String id) {
         return inject(new BackendNetworkLabelResource(id, this));
     }
 

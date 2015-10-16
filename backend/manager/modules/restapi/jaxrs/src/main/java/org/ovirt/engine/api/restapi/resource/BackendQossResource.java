@@ -87,7 +87,7 @@ public class BackendQossResource extends AbstractBackendCollectionResource<Qos, 
     }
 
     @Override
-    public QosResource getQosSubResource(String id) {
+    public QosResource getQosResource(String id) {
         return inject(new BackendQosResource(id, this));
     }
 

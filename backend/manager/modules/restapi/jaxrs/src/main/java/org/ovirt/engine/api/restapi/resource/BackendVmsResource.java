@@ -99,7 +99,7 @@ public class BackendVmsResource extends
     }
 
     @Override
-    public VmResource getVmSubResource(String id) {
+    public VmResource getVmResource(String id) {
         return inject(new BackendVmResource(id, this));
     }
 

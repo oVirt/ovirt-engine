@@ -22,5 +22,5 @@ public interface NetworkAttachmentsResource {
     Response add(NetworkAttachment networkAttachment);
 
     @Path("{id}")
-    NetworkAttachmentResource getNetworkAttachmentSubResource(@PathParam("id") String id);
+    NetworkAttachmentResource getNetworkAttachmentResource(@PathParam("id") String id);
 }

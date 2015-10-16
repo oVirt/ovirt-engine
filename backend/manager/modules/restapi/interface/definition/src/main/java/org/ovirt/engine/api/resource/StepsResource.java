@@ -28,5 +28,5 @@ public interface StepsResource {
      * @return matching sub-resource if found
      */
     @Path("{id}")
-    public StepResource getStepSubResource(@PathParam("id") String id);
+    public StepResource getStepResource(@PathParam("id") String id);
 }

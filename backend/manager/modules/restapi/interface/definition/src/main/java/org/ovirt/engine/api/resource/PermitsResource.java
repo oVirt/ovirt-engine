@@ -50,8 +50,8 @@ public interface PermitsResource {
      * the remainder of the URI is dispatched.
      *
      * @param id  the Permit ID
-     * @return    matching subresource if found
+     * @return    matching resource if found
      */
     @Path("{id}")
-    public PermitResource getPermitSubResource(@PathParam("id") String id);
+    public PermitResource getPermitResource(@PathParam("id") String id);
 }

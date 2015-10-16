@@ -1009,7 +1009,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     @Override
-    public CapabiliyResource getCapabilitiesSubResource(String id) {
+    public CapabiliyResource getCapabilityResource(String id) {
         return new BackendCapabilityResource(id, this);
     }
 }

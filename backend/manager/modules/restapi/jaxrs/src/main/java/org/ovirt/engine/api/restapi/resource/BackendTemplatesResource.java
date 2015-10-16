@@ -69,7 +69,7 @@ public class BackendTemplatesResource
     }
 
     @Override
-    public TemplateResource getTemplateSubResource(String id) {
+    public TemplateResource getTemplateResource(String id) {
         return inject(new BackendTemplateResource(id));
     }
 

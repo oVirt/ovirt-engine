@@ -20,7 +20,7 @@ public class BackendTemplateTagsResource extends AbstractBackendAssignedTagsReso
     }
 
     @Override
-    public AssignedTagResource getAssignedTagSubResource(String id) {
+    public AssignedTagResource getAssignedTagResource(String id) {
         return inject(new BackendTemplateTagResource(asGuid(parentId), id));
     }
 }

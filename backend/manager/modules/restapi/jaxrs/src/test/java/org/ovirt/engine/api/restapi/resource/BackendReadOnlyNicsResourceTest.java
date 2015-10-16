@@ -25,7 +25,7 @@ public class BackendReadOnlyNicsResourceTest
     @Test
     public void testSubResourceLocator() throws Exception {
         control.replay();
-        Object subResource = collection.getDeviceSubResource(GUIDS[0].toString());
+        Object subResource = collection.getDeviceResource(GUIDS[0].toString());
         assertFalse(subResource instanceof DeviceResource);
         assertTrue(subResource instanceof ReadOnlyDeviceResource);
     }
@@ -34,7 +34,7 @@ public class BackendReadOnlyNicsResourceTest
     public void testSubResourceLocatorBadGuid() throws Exception {
         control.replay();
         try {
-            collection.getDeviceSubResource("foo");
+            collection.getDeviceResource("foo");
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyNotFoundException(wae);

@@ -134,9 +134,9 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
         return action.isSetAsync() && !action.isAsync();
     }
 
-    public ActionResource getActionSubresource(String action, String oid) {
+    public ActionResource getActionResource(String action, String oid) {
         // redirect back to the target resource if action no longer cached
-        // if not getActionSubresource() not overridden in resource sub-class
+        // if not getActionResource() not overridden in resource sub-class
         // (in which case async actions are not supported, and the action
         // resource should never be queried)
         //

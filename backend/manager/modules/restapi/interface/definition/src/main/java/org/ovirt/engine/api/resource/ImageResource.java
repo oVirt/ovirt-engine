@@ -34,7 +34,7 @@ public interface ImageResource {
     public Image get();
 
     @Path("{action: (import)}/{oid}")
-    public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
+    public ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})

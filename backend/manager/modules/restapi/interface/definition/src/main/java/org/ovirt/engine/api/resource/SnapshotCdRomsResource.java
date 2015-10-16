@@ -14,5 +14,5 @@ public interface SnapshotCdRomsResource {
     public Cdroms list();
 
     @Path("{id}")
-    public SnapshotCdRomResource getCdRomSubResource(@PathParam("id") String id);
+    public SnapshotCdRomResource getCdRomResource(@PathParam("id") String id);
 }

@@ -37,5 +37,5 @@ public interface AssignedNetworksResource {
     Response add(Network network);
 
     @Path("{id}")
-    AssignedNetworkResource getAssignedNetworkSubResource(@PathParam("id") String id);
+    AssignedNetworkResource getAssignedNetworkResource(@PathParam("id") String id);
 }

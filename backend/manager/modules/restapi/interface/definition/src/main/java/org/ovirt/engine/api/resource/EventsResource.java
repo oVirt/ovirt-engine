@@ -49,8 +49,8 @@ public interface EventsResource {
      * Sub-resource locator method, returns individual EventResource on which the remainder of the URI is dispatched.
      *
      * @param id the Event ID
-     * @return matching subresource if found
+     * @return matching resource if found
      */
     @Path("{id}")
-    EventResource getEventSubResource(@PathParam("id") String id);
+    EventResource getEventResource(@PathParam("id") String id);
 }

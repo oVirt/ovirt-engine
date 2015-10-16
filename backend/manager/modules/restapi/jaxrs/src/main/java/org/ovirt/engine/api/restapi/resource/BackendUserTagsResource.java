@@ -19,7 +19,7 @@ public class BackendUserTagsResource extends AbstractBackendAssignedTagsResource
     }
 
     @Override
-    public AssignedTagResource getAssignedTagSubResource(String id) {
+    public AssignedTagResource getAssignedTagResource(String id) {
         return inject(new BackendUserTagResource(asGuid(parentId), id));
     }
 }

@@ -54,7 +54,7 @@ public class BackendStepsResource extends AbstractBackendCollectionResource<Step
     }
 
     @Override
-    public StepResource getStepSubResource(String id) {
+    public StepResource getStepResource(String id) {
         return inject(new BackendStepResource(id, this));
     }
 

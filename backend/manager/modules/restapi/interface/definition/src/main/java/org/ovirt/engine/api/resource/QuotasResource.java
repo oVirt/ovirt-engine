@@ -18,7 +18,7 @@ public interface QuotasResource {
     public Quotas list();
 
     @Path("{id}")
-    public QuotaResource getQuotaSubResource(@PathParam("id") String id);
+    public QuotaResource getQuotaResource(@PathParam("id") String id);
 
     @POST
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })

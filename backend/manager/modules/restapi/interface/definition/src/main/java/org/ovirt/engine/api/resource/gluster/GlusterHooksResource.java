@@ -21,8 +21,8 @@ public interface GlusterHooksResource {
      * dispatched.
      *
      * @param id the identifier of the hook
-     * @return matching subresource if found
+     * @return matching resource if found
      */
     @Path("{id}")
-    GlusterHookResource getGlusterHookSubResource(@PathParam("id") String id);
+    GlusterHookResource getGlusterHookResource(@PathParam("id") String id);
 }

@@ -31,5 +31,5 @@ public interface StorageDomainContentsResource<C extends BaseResources, R extend
     public C list();
 
     @Path("{id}")
-    public StorageDomainContentResource<R> getStorageDomainContentSubResource(@PathParam("id") String id);
+    public StorageDomainContentResource<R> getStorageDomainContentResource(@PathParam("id") String id);
 }

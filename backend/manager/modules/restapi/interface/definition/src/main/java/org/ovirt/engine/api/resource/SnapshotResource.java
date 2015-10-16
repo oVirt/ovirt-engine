@@ -38,7 +38,7 @@ public interface SnapshotResource extends AsynchronouslyCreatedResource {
     Response remove();
 
     @Path("{action: (restore)}/{oid}")
-    ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
+    ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})

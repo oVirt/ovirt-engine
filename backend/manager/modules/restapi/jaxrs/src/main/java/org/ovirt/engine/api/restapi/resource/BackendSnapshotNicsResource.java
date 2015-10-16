@@ -31,7 +31,7 @@ public class BackendSnapshotNicsResource extends AbstractBackendCollectionResour
     }
 
     @Override
-    public SnapshotNicResource getNicSubResource(String id) {
+    public SnapshotNicResource getNicResource(String id) {
         return new BackendSnapshotNicResource(id, this);
     }
 }

@@ -47,7 +47,7 @@ public class BackendHostStorageResource
         return ret;
     }
 
-    public StorageResource getStorageSubResource(String id) {
+    public StorageResource getStorageResource(String id) {
         return new BackendStorageResource(id, this);
     }
 

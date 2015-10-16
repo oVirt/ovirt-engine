@@ -59,7 +59,7 @@ public class BackendGlusterHooksResource
     }
 
     @Override
-    public GlusterHookResource getGlusterHookSubResource(String id) {
+    public GlusterHookResource getGlusterHookResource(String id) {
         return inject(new BackendGlusterHookResource(id, this));
     }
 }

@@ -29,7 +29,7 @@ public class BackendExportDomainDiskResource
     }
 
     @Override
-    public CreationResource getCreationSubresource(String ids) {
+    public CreationResource getCreationResource(String ids) {
         return inject(new BackendCreationResource(ids));
     }
 

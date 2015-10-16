@@ -22,5 +22,5 @@ public interface VmHostDevicesResource {
     public Response add(HostDevice hostDevice);
 
     @Path("{id}")
-    public VmHostDeviceResource getHostDeviceSubResource(@PathParam("id") String id);
+    public VmHostDeviceResource getHostDeviceResource(@PathParam("id") String id);
 }

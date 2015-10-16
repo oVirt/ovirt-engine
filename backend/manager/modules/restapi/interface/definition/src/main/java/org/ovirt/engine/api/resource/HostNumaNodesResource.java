@@ -14,6 +14,6 @@ public interface HostNumaNodesResource {
     public NumaNodes list();
 
     @Path("{id}")
-    public HostNumaNodeResource getHostNumaNodeSubResource(@PathParam("id") String id);
+    public HostNumaNodeResource getHostNumaNodeResource(@PathParam("id") String id);
 
 }

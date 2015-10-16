@@ -44,7 +44,7 @@ public class BackendHostDevicesResource
     }
 
     @Override
-    public HostDeviceResource getHostDeviceSubResource(String id) {
+    public HostDeviceResource getHostDeviceResource(String id) {
         return inject(new BackendHostDeviceResource(id, this));
     }
 

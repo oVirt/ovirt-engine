@@ -72,7 +72,7 @@ public class BackendStorageDomainDisksResource extends BackendDisksResource {
     }
 
     @Override
-    public MovableCopyableDiskResource getDeviceSubResource(String id) {
+    public MovableCopyableDiskResource getDeviceResource(String id) {
         return inject(new BackendStorageDomainDiskResource(id, this));
     }
 

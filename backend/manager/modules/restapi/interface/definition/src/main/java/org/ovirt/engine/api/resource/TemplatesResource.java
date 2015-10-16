@@ -39,5 +39,5 @@ public interface TemplatesResource {
     public Response add(Template template);
 
     @Path("{id}")
-    public TemplateResource getTemplateSubResource(@PathParam("id") String id);
+    public TemplateResource getTemplateResource(@PathParam("id") String id);
 }

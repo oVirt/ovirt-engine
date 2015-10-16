@@ -36,7 +36,7 @@ public class BackendVmKatelloErrataResource extends AbstractBackendCollectionRes
     }
 
     @Override
-    public KatelloErratumResource getKatelloErratumSubResource(String id) {
+    public KatelloErratumResource getKatelloErratumResource(String id) {
         return inject(new BackendVmKatelloErratumResource(id, vmId));
     }
 

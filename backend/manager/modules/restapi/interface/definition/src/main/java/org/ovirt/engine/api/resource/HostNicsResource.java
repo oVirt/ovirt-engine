@@ -32,7 +32,7 @@ import org.ovirt.engine.api.model.HostNics;
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface HostNicsResource {
     @Path("{action: (setupnetworks)}")
-    ActionResource getActionSubresource(@PathParam("action") String action);
+    ActionResource getActionResource(@PathParam("action") String action);
 
     @GET
     HostNics list();
@@ -47,10 +47,10 @@ public interface HostNicsResource {
      *
      * @param id the nic ID
      *
-     * @return matching subresource if found
+     * @return matching resource if found
      */
     @Path("{id}")
-    HostNicResource getHostNicSubResource(@PathParam("id") String id);
+    HostNicResource getHostNicResource(@PathParam("id") String id);
 
     @POST
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })

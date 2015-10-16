@@ -37,5 +37,5 @@ public interface AssignedTagsResource {
     Response add(Tag network);
 
     @Path("{id}")
-    AssignedTagResource getAssignedTagSubResource(@PathParam("id") String id);
+    AssignedTagResource getAssignedTagResource(@PathParam("id") String id);
 }

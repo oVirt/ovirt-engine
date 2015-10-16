@@ -29,5 +29,5 @@ public interface JobsResource {
      * @return matching sub-resource if found
      */
     @Path("{id}")
-    public JobResource getJobSubResource(@PathParam("id") String id);
+    public JobResource getJobResource(@PathParam("id") String id);
 }

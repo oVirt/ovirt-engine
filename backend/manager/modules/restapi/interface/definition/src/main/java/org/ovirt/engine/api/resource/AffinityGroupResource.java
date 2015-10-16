@@ -29,5 +29,5 @@ public interface AffinityGroupResource extends UpdatableResource<AffinityGroup> 
     Response remove();
 
     @Path("vms")
-    public AffinityGroupVmsResource getAffinityGroupVmsSubResource();
+    public AffinityGroupVmsResource getAffinityGroupVmsResource();
 }

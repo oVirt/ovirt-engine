@@ -43,7 +43,7 @@ public class BackendSchedulingPoliciesResource extends AbstractBackendCollection
     }
 
     @Override
-    public SchedulingPolicyResource getSchedulingPolicySubResource(String id) {
+    public SchedulingPolicyResource getSchedulingPolicyResource(String id) {
         return inject(new BackendSchedulingPolicyResource(id));
     }
 

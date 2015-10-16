@@ -78,7 +78,7 @@ public class BackendVmDiskResource
     }
 
     @Override
-    public ActionResource getActionSubresource(String action, String oid) {
+    public ActionResource getActionResource(String action, String oid) {
         return inject(new BackendActionResource(action, oid));
     }
 

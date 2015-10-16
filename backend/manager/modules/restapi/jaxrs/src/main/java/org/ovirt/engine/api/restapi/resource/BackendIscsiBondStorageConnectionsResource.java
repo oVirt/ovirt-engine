@@ -42,7 +42,7 @@ public class BackendIscsiBondStorageConnectionsResource extends BackendStorageSe
     }
 
     @Override
-    public StorageServerConnectionResource getStorageConnectionSubResource(String id) {
+    public StorageServerConnectionResource getStorageConnectionResource(String id) {
         return inject(new BackendIscsiBondStorageConnectionResource(id, this));
     }
 

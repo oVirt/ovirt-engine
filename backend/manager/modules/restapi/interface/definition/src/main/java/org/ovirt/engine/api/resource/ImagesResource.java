@@ -15,6 +15,6 @@ public interface ImagesResource {
     public Images list();
 
     @Path("{id}")
-    public ImageResource getDeviceSubResource(@PathParam("id") String id);
+    public ImageResource getDeviceResource(@PathParam("id") String id);
 
 }

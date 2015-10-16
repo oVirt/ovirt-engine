@@ -14,6 +14,6 @@ public interface VmSessionsResource {
     public Sessions list();
 
     @Path("{iden}")
-    public VmSessionResource getSessionSubResource(@PathParam("iden") String id);
+    public VmSessionResource getSessionResource(@PathParam("iden") String id);
 
 }

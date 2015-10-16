@@ -65,7 +65,7 @@ public class BackendPermitsResource
     }
 
     @Override
-    public PermitResource getPermitSubResource(String id) {
+    public PermitResource getPermitResource(String id) {
         return inject(new BackendPermitResource(id, this));
     }
 

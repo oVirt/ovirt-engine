@@ -60,7 +60,7 @@ public class BackendHostNicLabelsResource extends AbstractBackendCollectionResou
     }
 
     @Override
-    public LabelResource getLabelSubResource(String id) {
+    public LabelResource getLabelResource(String id) {
         return inject(new BackendHostNicLabelResource(id, this));
     }
 

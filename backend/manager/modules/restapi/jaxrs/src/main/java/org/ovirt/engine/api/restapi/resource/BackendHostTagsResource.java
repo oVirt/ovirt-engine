@@ -19,7 +19,7 @@ public class BackendHostTagsResource extends AbstractBackendAssignedTagsResource
     }
 
     @Override
-    public AssignedTagResource getAssignedTagSubResource(String id) {
+    public AssignedTagResource getAssignedTagResource(String id) {
         return inject(new BackendHostTagResource(asGuid(parentId), id));
     }
 }

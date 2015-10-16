@@ -108,14 +108,14 @@ public class BackendCdRomsResourceTest
     @Test
     public void testSubResourceLocator() throws Exception {
         control.replay();
-        assertTrue(collection.getDeviceSubResource(GUIDS[0].toString()) instanceof DeviceResource);
+        assertTrue(collection.getDeviceResource(GUIDS[0].toString()) instanceof DeviceResource);
     }
 
     @Test
     public void testSubResourceLocatorBadGuid() throws Exception {
         control.replay();
         try {
-            collection.getDeviceSubResource("foo");
+            collection.getDeviceResource("foo");
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyNotFoundException(wae);

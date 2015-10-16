@@ -22,5 +22,5 @@ public interface BookmarksResource {
     Response add(Bookmark bookmark);
 
     @Path("{id}")
-    BookmarkResource getBookmarkSubResource(@PathParam("id") String id);
+    BookmarkResource getBookmarkResource(@PathParam("id") String id);
 }

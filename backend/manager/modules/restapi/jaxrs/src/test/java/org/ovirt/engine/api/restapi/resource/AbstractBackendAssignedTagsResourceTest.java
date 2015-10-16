@@ -42,7 +42,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
     public void testBadGuid() throws Exception {
         control.replay();
         try {
-            collection.getAssignedTagSubResource("foo");
+            collection.getAssignedTagResource("foo");
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyNotFoundException(wae);

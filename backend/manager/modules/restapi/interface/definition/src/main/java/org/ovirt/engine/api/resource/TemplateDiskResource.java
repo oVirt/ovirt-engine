@@ -32,7 +32,7 @@ import org.ovirt.engine.api.model.Disk;
 public interface TemplateDiskResource extends ReadOnlyDeviceResource<Disk>, CopyableResource {
 
     @Path("{action: (copy)}/{oid}")
-    public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
+    public ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})

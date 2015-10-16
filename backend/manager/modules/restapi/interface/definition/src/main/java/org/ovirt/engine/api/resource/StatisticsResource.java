@@ -34,8 +34,8 @@ public interface StatisticsResource {
      * which the remainder of the URI is dispatched.
      *
      * @param id  the Statistic ID
-     * @return    matching subresource if found
+     * @return    matching resource if found
      */
     @Path("{id}")
-    public StatisticResource getStatisticSubResource(@PathParam("id") String id);
+    public StatisticResource getStatisticResource(@PathParam("id") String id);
 }

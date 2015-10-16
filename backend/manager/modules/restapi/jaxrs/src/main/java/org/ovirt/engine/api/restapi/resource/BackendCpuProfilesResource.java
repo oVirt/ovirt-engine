@@ -49,7 +49,7 @@ public class BackendCpuProfilesResource extends AbstractBackendCpuProfilesResour
     }
 
     @Override
-    public CpuProfileResource getCpuProfileSubResource(String id) {
+    public CpuProfileResource getCpuProfileResource(String id) {
         return inject(new BackendCpuProfileResource(id));
     }
 }

@@ -123,7 +123,7 @@ public class BackendGroupsResource
     }
 
     @Override
-    public GroupResource getGroupSubResource(String id) {
+    public GroupResource getGroupResource(String id) {
         return inject(new BackendGroupResource(id, this));
     }
 

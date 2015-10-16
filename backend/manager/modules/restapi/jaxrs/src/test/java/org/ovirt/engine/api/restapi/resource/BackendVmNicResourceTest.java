@@ -43,7 +43,7 @@ public class BackendVmNicResourceTest
     protected static BackendVmNicsResource collection;
 
     public BackendVmNicResourceTest() {
-        super((BackendVmNicResource)getCollection().getDeviceSubResource(NIC_ID.toString()));
+        super((BackendVmNicResource)getCollection().getDeviceResource(NIC_ID.toString()));
     }
 
     protected static BackendVmNicsResource getCollection() {

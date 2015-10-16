@@ -42,7 +42,7 @@ public class BackendAffinityGroupResource
     }
 
     @Override
-    public AffinityGroupVmsResource getAffinityGroupVmsSubResource() {
+    public AffinityGroupVmsResource getAffinityGroupVmsResource() {
         return inject(new BackendAffinityGroupVmsResource(guid));
     }
 

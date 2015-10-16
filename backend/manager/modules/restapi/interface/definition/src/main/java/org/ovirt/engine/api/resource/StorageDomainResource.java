@@ -36,7 +36,7 @@ import org.ovirt.engine.api.model.Vms;
 public interface StorageDomainResource extends UpdatableResource<StorageDomain> {
 
     @Path("{action: (isattached|refreshluns)}/{oid}")
-    public ActionResource getActionSubresource(@PathParam("action")String action, @PathParam("oid")String oid);
+    public ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @Path("permissions")
     public AssignedPermissionsResource getPermissionsResource();

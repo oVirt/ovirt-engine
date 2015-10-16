@@ -98,14 +98,14 @@ public class BackendVmSessionsResource extends AbstractBackendCollectionResource
         if (this.userResource == null) {
             BackendUsersResource usersResource = new BackendUsersResource();
             inject(usersResource);
-            UserResource userResource = usersResource.getUserSubResource("");
+            UserResource userResource = usersResource.getUserResource("");
             this.userResource = (BackendUserResource) userResource;
         }
         return this.userResource;
     }
 
     @Override
-    public VmSessionResource getSessionSubResource(String id) {
+    public VmSessionResource getSessionResource(String id) {
         return inject(new BackendVmSessionResource(this, id));
     }
 

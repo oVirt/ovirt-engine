@@ -29,8 +29,8 @@ public interface StorageServerConnectionExtensionsResource {
      * Sub-resource locator method, returns individual DataCenterResource on which the remainder of the URI is
      * dispatched.
      * @param id  The storage connection extension ID.
-     * @return matching subresource if found
+     * @return matching resource if found
      */
     @Path("{id}")
-    public StorageServerConnectionExtensionResource getStorageConnectionExtensionSubResource(@PathParam("id") String id);
+    public StorageServerConnectionExtensionResource getStorageConnectionExtensionResource(@PathParam("id") String id);
 }

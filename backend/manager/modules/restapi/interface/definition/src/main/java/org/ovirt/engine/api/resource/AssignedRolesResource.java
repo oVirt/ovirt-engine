@@ -37,8 +37,8 @@ public interface AssignedRolesResource {
      * remainder of the URI is dispatched.
      *
      * @param id  the Role ID
-     * @return    matching subresource if found
+     * @return    matching resource if found
      */
     @Path("{id}")
-    public RoleResource getRoleSubResource(@PathParam("id") String id);
+    public RoleResource getRoleResource(@PathParam("id") String id);
 }

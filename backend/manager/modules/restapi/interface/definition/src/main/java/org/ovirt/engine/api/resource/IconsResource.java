@@ -14,5 +14,5 @@ public interface IconsResource {
     @GET Icons list();
 
     @Path("{id}")
-    IconResource getVmIconSubResource(@PathParam("id") String id);
+    IconResource getVmIconResource(@PathParam("id") String id);
 }

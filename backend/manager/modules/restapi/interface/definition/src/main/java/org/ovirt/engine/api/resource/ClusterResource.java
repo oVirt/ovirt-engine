@@ -35,7 +35,7 @@ public interface ClusterResource extends UpdatableResource<Cluster> {
     Response remove();
 
     @Path("networks")
-    public AssignedNetworksResource getAssignedNetworksSubResource();
+    public AssignedNetworksResource getAssignedNetworksResource();
 
     @Path("permissions")
     public AssignedPermissionsResource getPermissionsResource();

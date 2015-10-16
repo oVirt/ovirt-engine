@@ -37,7 +37,7 @@ public class BackendBookmarksResource extends
     }
 
     @Override
-    public BookmarkResource getBookmarkSubResource(String id) {
+    public BookmarkResource getBookmarkResource(String id) {
         return inject(new BackendBookmarkResource(id));
     }
 

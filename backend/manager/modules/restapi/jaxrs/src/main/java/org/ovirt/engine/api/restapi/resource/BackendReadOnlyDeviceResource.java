@@ -30,7 +30,7 @@ public class BackendReadOnlyDeviceResource<D extends BaseDevice, C extends BaseR
     }
 
     @Override
-    public CreationResource getCreationSubresource(String ids) {
+    public CreationResource getCreationResource(String ids) {
         return inject(new BackendCreationResource(ids));
     }
 

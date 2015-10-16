@@ -32,7 +32,7 @@ public class BackendSystemKatelloErrataResource extends AbstractBackendCollectio
     }
 
     @Override
-    public KatelloErratumResource getKatelloErratumSubResource(String id) {
+    public KatelloErratumResource getKatelloErratumResource(String id) {
         return inject(new BackendSystemKatelloErratumResource(id));
     }
 }

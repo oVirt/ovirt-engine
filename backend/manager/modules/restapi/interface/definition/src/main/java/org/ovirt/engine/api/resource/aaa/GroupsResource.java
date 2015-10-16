@@ -44,8 +44,8 @@ public interface GroupsResource {
      * the remainder of the URI is dispatched.
      *
      * @param id  the Group ID
-     * @return    matching subresource if found
+     * @return    matching resource if found
      */
     @Path("{id}")
-    public GroupResource getGroupSubResource(@PathParam("id") String id);
+    public GroupResource getGroupResource(@PathParam("id") String id);
 }

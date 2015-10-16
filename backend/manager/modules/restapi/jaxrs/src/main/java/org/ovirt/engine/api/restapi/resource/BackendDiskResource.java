@@ -42,7 +42,7 @@ public class BackendDiskResource extends AbstractBackendActionableResource<Disk,
     }
 
     @Override
-    public CreationResource getCreationSubresource(String ids) {
+    public CreationResource getCreationResource(String ids) {
         return inject(new BackendCreationResource(ids));
     }
 
@@ -70,7 +70,7 @@ public class BackendDiskResource extends AbstractBackendActionableResource<Disk,
     }
 
     @Override
-    public ActionResource getActionSubresource(String action, String oid) {
+    public ActionResource getActionResource(String action, String oid) {
         return inject(new BackendActionResource(action, oid));
     }
 

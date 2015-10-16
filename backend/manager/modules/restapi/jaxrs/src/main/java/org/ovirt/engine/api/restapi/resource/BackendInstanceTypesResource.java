@@ -96,7 +96,7 @@ public class BackendInstanceTypesResource
     }
 
     @Override
-    public InstanceTypeResource getInstanceTypeSubResource(String id) {
+    public InstanceTypeResource getInstanceTypeResource(String id) {
         return inject(new BackendInstanceTypeResource(id));
     }
 

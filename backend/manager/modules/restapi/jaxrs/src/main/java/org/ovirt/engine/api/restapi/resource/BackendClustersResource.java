@@ -69,7 +69,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
     }
 
     @Override
-    public ClusterResource getClusterSubResource(String id) {
+    public ClusterResource getClusterResource(String id) {
         return inject(new BackendClusterResource(id, this));
     }
 

@@ -48,7 +48,7 @@ public class BackendFenceAgentsResource extends AbstractBackendCollectionResourc
     }
 
     @Override
-    public FenceAgentResource getFenceAgentSubResource(String id) {
+    public FenceAgentResource getFenceAgentResource(String id) {
         return inject(new BackendFenceAgentResource(id));
     }
 

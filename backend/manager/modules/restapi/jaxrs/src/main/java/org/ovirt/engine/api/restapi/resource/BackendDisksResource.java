@@ -115,7 +115,7 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
     }
 
     @Override
-    public MovableCopyableDiskResource getDeviceSubResource(String id) {
+    public MovableCopyableDiskResource getDeviceResource(String id) {
         return inject(new BackendDiskResource(id));
     }
 

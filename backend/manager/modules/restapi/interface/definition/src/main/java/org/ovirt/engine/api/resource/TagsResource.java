@@ -39,5 +39,5 @@ public interface TagsResource {
     public Response add(Tag tag);
 
     @Path("{id}")
-    public TagResource getTagSubResource(@PathParam("id") String id);
+    public TagResource getTagResource(@PathParam("id") String id);
 }

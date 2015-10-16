@@ -520,14 +520,14 @@ public class BackendVmDisksResourceTest
     @Test
     public void testSubResourceLocator() throws Exception {
         control.replay();
-        assertTrue(collection.getDeviceSubResource(GUIDS[0].toString()) instanceof VmDiskResource);
+        assertTrue(collection.getDeviceResource(GUIDS[0].toString()) instanceof VmDiskResource);
     }
 
     @Test
     public void testSubResourceLocatorBadGuid() throws Exception {
         control.replay();
         try {
-            collection.getDeviceSubResource("foo");
+            collection.getDeviceResource("foo");
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyNotFoundException(wae);

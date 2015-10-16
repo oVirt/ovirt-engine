@@ -34,8 +34,8 @@ public interface HostStorageResource {
      * remainder of the URI is dispatched.
      *
      * @param id  the storage ID
-     * @return    matching subresource if found
+     * @return    matching resource if found
      */
     @Path("{id}")
-    public StorageResource getStorageSubResource(@PathParam("id") String id);
+    public StorageResource getStorageResource(@PathParam("id") String id);
 }

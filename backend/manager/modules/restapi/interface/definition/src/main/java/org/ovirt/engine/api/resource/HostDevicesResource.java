@@ -14,5 +14,5 @@ public interface HostDevicesResource {
     public HostDevices list();
 
     @Path("{id}")
-    public HostDeviceResource getHostDeviceSubResource(@PathParam("id") String id);
+    public HostDeviceResource getHostDeviceResource(@PathParam("id") String id);
 }

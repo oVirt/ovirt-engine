@@ -45,7 +45,7 @@ public class BackendStorageDomainDiskSnapshotsResource
     }
 
     @Override
-    public DiskSnapshotResource getDeviceSubResource(String id) {
+    public DiskSnapshotResource getDeviceResource(String id) {
         return inject(new BackendStorageDomainDiskSnapshotResource(id, this));
     }
 

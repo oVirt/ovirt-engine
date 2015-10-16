@@ -23,5 +23,5 @@ public interface VnicProfilesResource {
     public Response add(VnicProfile vnicProfile);
 
     @Path("{id}")
-    public VnicProfileResource getVnicProfileSubResource(@PathParam("id") String id);
+    public VnicProfileResource getVnicProfileResource(@PathParam("id") String id);
 }

@@ -18,8 +18,8 @@ public interface HostHooksResource {
      *
      * @param id
      *            the hook ID
-     * @return matching subresource if found
+     * @return matching resource if found
      */
     @Path("{id}")
-    public HostHookResource getHookSubResource(@PathParam("id") String id);
+    public HostHookResource getHookResource(@PathParam("id") String id);
 }

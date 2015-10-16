@@ -14,5 +14,5 @@ public interface SnapshotNicsResource {
     public Nics list();
 
     @Path("{id}")
-    public SnapshotNicResource getNicSubResource(@PathParam("id") String id);
+    public SnapshotNicResource getNicResource(@PathParam("id") String id);
 }

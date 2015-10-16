@@ -35,7 +35,7 @@ public class BackendQuotaClusterLimitsResource extends BackendQuotaLimitsResourc
     }
 
     @Override
-    public QuotaClusterLimitResource getSubResource(String id) {
+    public QuotaClusterLimitResource getLimitResource(String id) {
         return inject(new BackendQuotaClusterLimitResource(id, quotaId));
     }
 

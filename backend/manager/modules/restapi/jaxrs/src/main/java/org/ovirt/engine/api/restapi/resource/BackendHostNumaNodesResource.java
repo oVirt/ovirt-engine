@@ -41,7 +41,7 @@ public class BackendHostNumaNodesResource
     }
 
     @Override
-    public HostNumaNodeResource getHostNumaNodeSubResource(String id) {
+    public HostNumaNodeResource getHostNumaNodeResource(String id) {
         return inject(new BackendHostNumaNodeResource(id, this));
     }
 

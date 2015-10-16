@@ -37,7 +37,7 @@ public class BackendHostHooksResource extends AbstractBackendCollectionResource<
     }
 
     @Override
-    public HostHookResource getHookSubResource(String id) {
+    public HostHookResource getHookResource(String id) {
         return inject(new BackendHostHookResource(id, this));
     }
 

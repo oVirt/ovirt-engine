@@ -22,5 +22,5 @@ public interface CpuProfilesResource {
     Response add(CpuProfile cpuProfile);
 
     @Path("{id}")
-    CpuProfileResource getCpuProfileSubResource(@PathParam("id") String id);
+    CpuProfileResource getCpuProfileResource(@PathParam("id") String id);
 }

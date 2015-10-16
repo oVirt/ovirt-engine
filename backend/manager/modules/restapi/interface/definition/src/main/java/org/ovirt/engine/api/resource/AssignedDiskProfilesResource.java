@@ -21,5 +21,5 @@ public interface AssignedDiskProfilesResource {
     Response add(DiskProfile diskProfile);
 
     @Path("{id}")
-    AssignedDiskProfileResource getAssignedDiskProfileSubResource(@PathParam("id") String id);
+    AssignedDiskProfileResource getAssignedDiskProfileResource(@PathParam("id") String id);
 }

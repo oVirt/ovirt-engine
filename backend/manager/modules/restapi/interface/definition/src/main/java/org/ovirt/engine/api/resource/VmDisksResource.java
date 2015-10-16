@@ -11,5 +11,5 @@ import org.ovirt.engine.api.model.Disks;
 public interface VmDisksResource extends DevicesResource<Disk, Disks>{
     @Path("{iden}")
     @Override
-    VmDiskResource getDeviceSubResource(@PathParam("iden") String id);
+    VmDiskResource getDeviceResource(@PathParam("iden") String id);
 }

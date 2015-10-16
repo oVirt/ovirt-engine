@@ -16,7 +16,7 @@ import org.ovirt.engine.api.model.Job;
 public interface JobResource {
 
     @Path("{action: (end|clear)}/{oid}")
-    public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
+    public ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @POST
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })

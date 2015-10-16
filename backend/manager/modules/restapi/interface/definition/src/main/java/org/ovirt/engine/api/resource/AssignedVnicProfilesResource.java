@@ -39,5 +39,5 @@ public interface AssignedVnicProfilesResource {
     public Response add(VnicProfile vnicProfile);
 
     @Path("{id}")
-    public AssignedVnicProfileResource getAssignedVnicProfileSubResource(@PathParam("id") String id);
+    public AssignedVnicProfileResource getAssignedVnicProfileResource(@PathParam("id") String id);
 }

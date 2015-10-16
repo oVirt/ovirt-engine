@@ -10,7 +10,6 @@ import org.ovirt.engine.api.model.Weights;
 @Path("/weights")
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface WeightsResource extends PolicyUnitsResource<Weights, Weight> {
-    @Override
     @Path("{id}")
-    public WeightResource getSubResource(@PathParam("id") String id);
+    public WeightResource getWeightResource(@PathParam("id") String id);
 }

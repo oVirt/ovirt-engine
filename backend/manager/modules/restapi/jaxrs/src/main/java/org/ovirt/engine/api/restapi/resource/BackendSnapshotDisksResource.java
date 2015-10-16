@@ -38,7 +38,7 @@ public class BackendSnapshotDisksResource extends AbstractBackendCollectionResou
     }
 
     @Override
-    public SnapshotDiskResource getDiskSubResource(String id) {
+    public SnapshotDiskResource getDiskResource(String id) {
         return inject(new BackendSnapshotDiskResource(id, this));
     }
 }

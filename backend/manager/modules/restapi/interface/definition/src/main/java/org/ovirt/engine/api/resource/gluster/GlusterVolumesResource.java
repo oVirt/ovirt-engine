@@ -37,8 +37,8 @@ public interface GlusterVolumesResource {
      * dispatched.
      *
      * @param id the volume identifier
-     * @return matching subresource if found
+     * @return matching resource if found
      */
     @Path("{id}")
-    GlusterVolumeResource getGlusterVolumeSubResource(@PathParam("id") String id);
+    GlusterVolumeResource getGlusterVolumeResource(@PathParam("id") String id);
 }

@@ -45,7 +45,7 @@ public class BackendVmApplicationsResource extends AbstractBackendResource<Appli
     }
 
     @Override
-    public VmApplicationResource getVmApplicationSubResource(String id) {
+    public VmApplicationResource getVmApplicationResource(String id) {
         return inject(new BackendVmApplicationResource(id, this));
     }
 }

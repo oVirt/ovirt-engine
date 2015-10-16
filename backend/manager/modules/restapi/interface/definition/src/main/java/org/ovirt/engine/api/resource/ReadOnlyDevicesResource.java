@@ -35,8 +35,8 @@ public interface ReadOnlyDevicesResource<D extends BaseDevice, C extends BaseRes
      * remainder of the URI is dispatched.
      *
      * @param id  the Device ID
-     * @return    matching subresource if found
+     * @return    matching resource if found
      */
     @Path("{id}")
-    public ReadOnlyDeviceResource<D> getDeviceSubResource(@PathParam("id") String id);
+    public ReadOnlyDeviceResource<D> getDeviceResource(@PathParam("id") String id);
 }

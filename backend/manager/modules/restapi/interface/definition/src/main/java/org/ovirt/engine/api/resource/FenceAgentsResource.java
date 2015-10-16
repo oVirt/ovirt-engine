@@ -21,5 +21,5 @@ public interface FenceAgentsResource {
     Response add(Agent agent);
 
     @Path("{id}")
-    FenceAgentResource getFenceAgentSubResource(@PathParam("id") String id);
+    FenceAgentResource getFenceAgentResource(@PathParam("id") String id);
 }

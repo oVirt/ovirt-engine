@@ -23,5 +23,5 @@ public interface MacPoolsResource {
     public Response add(MacPool macPool);
 
     @Path("{id}")
-    public MacPoolResource getMacPoolSubResource(@PathParam("id") String id);
+    public MacPoolResource getMacPoolResource(@PathParam("id") String id);
 }

@@ -33,12 +33,8 @@ public class BackendWeightsResource extends BackendPolicyUnitsResource<Weights, 
     }
 
     @Override
-    public WeightResource getSubResource(String id) {
+    public WeightResource getWeightResource(String id) {
         return inject(new BackendWeightResource(id, this));
-    }
-
-    public WeightResource getWeightSubResource(String id) {
-        return getSubResource(id);
     }
 
     @Override

@@ -11,5 +11,5 @@ import org.ovirt.engine.api.model.Disks;
 public interface StorageDomainContentDisksResource extends ReadOnlyDevicesResource<Disk, Disks> {
     @Path("{identity}")
     @Override
-    public StorageDomainContentDiskResource getDeviceSubResource(@PathParam("identity") String id);
+    public StorageDomainContentDiskResource getDeviceResource(@PathParam("identity") String id);
 }

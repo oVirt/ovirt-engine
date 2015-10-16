@@ -53,8 +53,8 @@ public interface HostsResource {
      * remainder of the URI is dispatched.
      *
      * @param id  the Host ID
-     * @return    matching subresource if found
+     * @return    matching resource if found
      */
     @Path("{id}")
-    HostResource getHostSubResource(@PathParam("id") String id);
+    HostResource getHostResource(@PathParam("id") String id);
 }

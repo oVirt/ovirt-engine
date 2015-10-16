@@ -35,7 +35,7 @@ public class BackendHostStorageResourceTest
 
     @Test
     public void testGetNotFound() throws Exception {
-        StorageResource subresource = collection.getStorageSubResource("foo");
+        StorageResource subresource = collection.getStorageResource("foo");
         setUriInfo(setUpBasicUriExpectations());
         setUpQueryExpectations("");
         try {
@@ -48,7 +48,7 @@ public class BackendHostStorageResourceTest
 
     @Test
     public void testGet() throws Exception {
-        StorageResource subresource = collection.getStorageSubResource(GUIDS[SINGLE_STORAGE_IDX].toString());
+        StorageResource subresource = collection.getStorageResource(GUIDS[SINGLE_STORAGE_IDX].toString());
 
         setUriInfo(setUpBasicUriExpectations());
         setUpQueryExpectations("", null, false);
@@ -58,7 +58,7 @@ public class BackendHostStorageResourceTest
 
     @Test
     public void testGetVg() throws Exception {
-        StorageResource subresource = collection.getStorageSubResource(VG_ID_PREFIX + GUIDS[SINGLE_STORAGE_IDX].toString());
+        StorageResource subresource = collection.getStorageResource(VG_ID_PREFIX + GUIDS[SINGLE_STORAGE_IDX].toString());
 
         setUriInfo(setUpBasicUriExpectations());
         setUpQueryExpectations("");

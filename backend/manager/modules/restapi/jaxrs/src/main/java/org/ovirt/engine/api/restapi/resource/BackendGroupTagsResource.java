@@ -19,7 +19,7 @@ public class BackendGroupTagsResource extends AbstractBackendAssignedTagsResourc
     }
 
     @Override
-    public AssignedTagResource getAssignedTagSubResource(String id) {
+    public AssignedTagResource getAssignedTagResource(String id) {
         return inject(new BackendGroupTagResource(asGuid(parentId), id));
     }
 }

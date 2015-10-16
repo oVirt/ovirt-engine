@@ -57,7 +57,7 @@ public class BackendVmNicResource extends AbstractBackendNicResource implements 
     }
 
     @Override
-    public ActionResource getActionSubresource(String action, String oid) {
+    public ActionResource getActionResource(String action, String oid) {
         return null;
     }
 

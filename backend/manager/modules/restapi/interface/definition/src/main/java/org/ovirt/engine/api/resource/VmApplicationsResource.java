@@ -34,8 +34,8 @@ public interface VmApplicationsResource {
      * which the remainder of the URI is dispatched.
      *
      * @param id  the Application ID
-     * @return    matching subresource if found
+     * @return    matching resource if found
      */
     @Path("{id}")
-    public VmApplicationResource getVmApplicationSubResource(@PathParam("id") String id);
+    public VmApplicationResource getVmApplicationResource(@PathParam("id") String id);
 }

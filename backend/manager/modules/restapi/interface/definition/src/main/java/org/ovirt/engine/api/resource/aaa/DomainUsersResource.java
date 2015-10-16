@@ -31,5 +31,5 @@ public interface DomainUsersResource {
     public Users list();
 
     @Path("{id}")
-    public DomainUserResource getDomainUserSubResource(@PathParam("id") String id);
+    public DomainUserResource getDomainUserResource(@PathParam("id") String id);
 }

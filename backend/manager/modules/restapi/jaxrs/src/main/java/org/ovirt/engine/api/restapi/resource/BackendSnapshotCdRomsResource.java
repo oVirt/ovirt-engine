@@ -28,7 +28,7 @@ public class BackendSnapshotCdRomsResource extends AbstractBackendCollectionReso
     }
 
     @Override
-    public SnapshotCdRomResource getCdRomSubResource(String id) {
+    public SnapshotCdRomResource getCdRomResource(String id) {
         return new BackendSnapshotCdRomResource(id, this);
     }
 }

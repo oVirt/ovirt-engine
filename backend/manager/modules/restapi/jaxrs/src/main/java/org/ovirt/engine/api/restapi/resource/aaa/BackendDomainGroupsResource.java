@@ -45,7 +45,7 @@ public class BackendDomainGroupsResource
     }
 
     @Override
-    public DomainGroupResource getDomainGroupSubResource(String id) {
+    public DomainGroupResource getDomainGroupResource(String id) {
         return inject(new BackendDomainGroupResource(id, this));
     }
 

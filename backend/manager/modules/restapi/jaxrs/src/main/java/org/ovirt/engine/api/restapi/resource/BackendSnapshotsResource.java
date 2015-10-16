@@ -75,7 +75,7 @@ public class BackendSnapshotsResource
     }
 
     @Override
-    public SnapshotResource getSnapshotSubResource(String id) {
+    public SnapshotResource getSnapshotResource(String id) {
         return inject(new BackendSnapshotResource(id, parentId, this));
     }
 

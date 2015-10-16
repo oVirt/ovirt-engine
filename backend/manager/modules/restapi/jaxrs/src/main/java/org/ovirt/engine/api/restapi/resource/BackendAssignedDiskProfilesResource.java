@@ -41,7 +41,7 @@ public class BackendAssignedDiskProfilesResource extends AbstractBackendDiskProf
     }
 
     @Override
-    public AssignedDiskProfileResource getAssignedDiskProfileSubResource(String id) {
+    public AssignedDiskProfileResource getAssignedDiskProfileResource(String id) {
         return inject(new BackendAssignedDiskProfileResource(id, this));
     }
 

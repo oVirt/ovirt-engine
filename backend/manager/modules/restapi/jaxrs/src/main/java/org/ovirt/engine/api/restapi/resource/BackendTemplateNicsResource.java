@@ -45,7 +45,7 @@ public class BackendTemplateNicsResource
     }
 
     @Override
-    public DeviceResource<Nic> getDeviceSubResource(String id) {
+    public DeviceResource<Nic> getDeviceResource(String id) {
         return inject(
             new BackendTemplateNicResource(
                 parentId,

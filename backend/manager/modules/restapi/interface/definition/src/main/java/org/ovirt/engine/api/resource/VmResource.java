@@ -36,7 +36,7 @@ public interface VmResource extends UpdatableResource<Vm>, AsynchronouslyCreated
 
     @Path("{action: (start|stop|shutdown|reboot|suspend|detach|migrate|export|move|ticket|cancelmigration|"
             + "preview_snapshot|commit_snapshot|undo_snapshot|clone|maintenance|reordermacaddresses)}/{oid}")
-    public ActionResource getActionSubresource(@PathParam("action")String action, @PathParam("oid")String oid);
+    public ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @DELETE
     public Response remove();

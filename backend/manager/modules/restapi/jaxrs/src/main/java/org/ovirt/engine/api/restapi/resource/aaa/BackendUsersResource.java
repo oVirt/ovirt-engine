@@ -140,7 +140,7 @@ public class BackendUsersResource
         return user;
     }
 
-    public UserResource getUserSubResource(String id) {
+    public UserResource getUserResource(String id) {
         return inject(new BackendUserResource(id, this));
     }
 

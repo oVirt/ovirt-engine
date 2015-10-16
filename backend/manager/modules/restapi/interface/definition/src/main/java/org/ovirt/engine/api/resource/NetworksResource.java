@@ -38,5 +38,5 @@ public interface NetworksResource {
     Response add(Network network);
 
     @Path("{id}")
-    NetworkResource getNetworkSubResource(@PathParam("id") String id);
+    NetworkResource getNetworkResource(@PathParam("id") String id);
 }

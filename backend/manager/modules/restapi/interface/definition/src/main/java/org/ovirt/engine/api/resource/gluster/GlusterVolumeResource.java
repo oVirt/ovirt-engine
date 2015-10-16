@@ -29,7 +29,7 @@ public interface GlusterVolumeResource extends MeasurableResource {
     Response remove();
 
     @Path("{action: (start|stop|rebalance|stoprebalance|setOption|resetOption|resetAllOptions)}/{oid}")
-    ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
+    ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @POST
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
@@ -97,8 +97,8 @@ public interface GlusterVolumeResource extends MeasurableResource {
     /**
      * Sub-resource locator method, returns GlusterBricksResource on which the remainder of the URI is dispatched.
      *
-     * @return matching subresource if found
+     * @return matching resource if found
      */
     @Path("bricks")
-    GlusterBricksResource getGlusterBrickSubResource();
+    GlusterBricksResource getGlusterBrickResource();
 }

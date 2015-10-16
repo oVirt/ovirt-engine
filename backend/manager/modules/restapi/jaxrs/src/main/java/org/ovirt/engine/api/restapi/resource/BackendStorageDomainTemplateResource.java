@@ -82,7 +82,7 @@ public class BackendStorageDomainTemplateResource
     }
 
     @Override
-    public ActionResource getActionSubresource(String action, String ids) {
+    public ActionResource getActionResource(String action, String ids) {
         return inject(new BackendActionResource(action, ids));
     }
 

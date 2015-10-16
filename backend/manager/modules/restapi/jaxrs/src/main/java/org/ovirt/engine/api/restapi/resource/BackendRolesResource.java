@@ -45,7 +45,7 @@ public class BackendRolesResource
     }
 
     @Override
-    public UpdatableRoleResource getRoleSubResource(String id) {
+    public UpdatableRoleResource getRoleResource(String id) {
         return inject(new BackendRoleResource(id));
     }
 

@@ -112,7 +112,7 @@ public class BackendAssignedPermissionsResource
     }
 
     @Override
-    public PermissionResource getPermissionSubResource(String id) {
+    public PermissionResource getPermissionResource(String id) {
         return inject(new BackendPermissionResource(id, this, suggestedParentType));
     }
 

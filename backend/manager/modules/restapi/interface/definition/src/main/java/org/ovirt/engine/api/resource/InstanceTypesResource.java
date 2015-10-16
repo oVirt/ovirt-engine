@@ -39,5 +39,5 @@ public interface InstanceTypesResource {
     public Response add(InstanceType template);
 
     @Path("{id}")
-    public InstanceTypeResource getInstanceTypeSubResource(@PathParam("id") String id);
+    public InstanceTypeResource getInstanceTypeResource(@PathParam("id") String id);
 }

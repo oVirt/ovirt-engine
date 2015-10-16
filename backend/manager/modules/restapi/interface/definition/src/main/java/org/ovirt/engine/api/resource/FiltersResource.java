@@ -10,7 +10,6 @@ import org.ovirt.engine.api.model.Filters;
 @Path("/filters")
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface FiltersResource extends PolicyUnitsResource<Filters, Filter> {
-    @Override
     @Path("{id}")
-    public FilterResource getSubResource(@PathParam("id") String id);
+    public FilterResource getFilterResource(@PathParam("id") String id);
 }

@@ -50,7 +50,7 @@ public class BackendStatisticsResourceTest extends AbstractBackendCollectionReso
     public void testSubResourceLocator() throws Exception {
         String id = UUID.nameUUIDFromBytes(STATISTICS[1].getBytes()).toString();
         control.replay();
-        assertTrue(collection.getStatisticSubResource(id) instanceof StatisticResource);
+        assertTrue(collection.getStatisticResource(id) instanceof StatisticResource);
     }
 
     @SuppressWarnings("unchecked")

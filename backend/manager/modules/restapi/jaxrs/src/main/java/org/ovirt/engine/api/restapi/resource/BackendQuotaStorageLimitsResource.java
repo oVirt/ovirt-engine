@@ -35,7 +35,7 @@ public class BackendQuotaStorageLimitsResource extends BackendQuotaLimitsResourc
     }
 
     @Override
-    public QuotaStorageLimitResource getSubResource(String id) {
+    public QuotaStorageLimitResource getLimitResource(String id) {
         return inject(new BackendQuotaStorageLimitResource(id, quotaId));
     }
 

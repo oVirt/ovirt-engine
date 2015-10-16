@@ -43,7 +43,7 @@ public class BackendWatchdogsResource
     }
 
     @Override
-    public WatchdogResource getDeviceSubResource(String watchdogId) {
+    public WatchdogResource getDeviceResource(String watchdogId) {
         return inject(
             new BackendWatchdogResource(
                 parentIsVm,

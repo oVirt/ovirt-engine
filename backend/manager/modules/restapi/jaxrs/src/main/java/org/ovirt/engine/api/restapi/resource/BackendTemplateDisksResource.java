@@ -18,7 +18,7 @@ public class BackendTemplateDisksResource
     }
 
     @Override
-    public TemplateDiskResource getDeviceSubResource(String id) {
+    public TemplateDiskResource getDeviceResource(String id) {
         return inject(new BackendTemplateDiskResource(asGuidOr404(id), this));
     }
 

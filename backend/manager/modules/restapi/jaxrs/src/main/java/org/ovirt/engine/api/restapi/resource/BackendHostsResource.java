@@ -78,7 +78,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
     }
 
     @Override
-    public HostResource getHostSubResource(String id) {
+    public HostResource getHostResource(String id) {
         return inject(new BackendHostResource(id, this));
     }
 

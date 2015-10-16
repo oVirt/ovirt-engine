@@ -58,7 +58,7 @@ public class BackendStorageDomainVmsResource
     }
 
     @Override
-    public StorageDomainContentResource<Vm> getStorageDomainContentSubResource(String id) {
+    public StorageDomainContentResource<Vm> getStorageDomainContentResource(String id) {
         return inject(new BackendStorageDomainVmResource(this, id));
     }
 }

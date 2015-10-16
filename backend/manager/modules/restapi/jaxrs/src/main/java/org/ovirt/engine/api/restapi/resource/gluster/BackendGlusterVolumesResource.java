@@ -122,7 +122,7 @@ public class BackendGlusterVolumesResource
     }
 
     @Override
-    public GlusterVolumeResource getGlusterVolumeSubResource(String id) {
+    public GlusterVolumeResource getGlusterVolumeResource(String id) {
         return inject(new BackendGlusterVolumeResource(id, this));
     }
 }

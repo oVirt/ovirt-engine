@@ -43,7 +43,7 @@ public class BackendVmReportedDevicesResource extends AbstractBackendCollectionR
     }
 
     @Override
-    public VmReportedDeviceResource getVmReportedDeviceSubResource(String id) {
+    public VmReportedDeviceResource getVmReportedDeviceResource(String id) {
         return inject(new BackendVmReportedDeviceResource(id, this));
     }
 

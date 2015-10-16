@@ -44,8 +44,8 @@ public interface DataCentersResource {
      * remainder of the URI is dispatched.
      *
      * @param id  the DataCenter ID
-     * @return    matching subresource if found
+     * @return    matching resource if found
      */
     @Path("{id}")
-    public DataCenterResource getDataCenterSubResource(@PathParam("id") String id);
+    public DataCenterResource getDataCenterResource(@PathParam("id") String id);
 }

@@ -181,7 +181,7 @@ public class BackendGlusterBricksResource
     }
 
     @Override
-    public GlusterBrickResource getGlusterBrickSubResource(String brickId) {
+    public GlusterBrickResource getGlusterBrickResource(String brickId) {
         return inject(new BackendGlusterBrickResource(brickId, this));
     }
 
@@ -302,7 +302,7 @@ public class BackendGlusterBricksResource
     }
 
     @Override
-    public ActionResource getActionSubresource(String action, String id) {
+    public ActionResource getActionResource(String action, String id) {
         return inject(new BackendActionResource(action, id));
     }
 }

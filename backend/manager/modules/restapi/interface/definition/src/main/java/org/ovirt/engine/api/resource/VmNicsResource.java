@@ -11,5 +11,5 @@ import org.ovirt.engine.api.model.Nics;
 public interface VmNicsResource extends DevicesResource<Nic, Nics> {
     @Path("{iden}")
     @Override
-    VmNicResource getDeviceSubResource(@PathParam("iden") String id);
+    VmNicResource getDeviceResource(@PathParam("iden") String id);
 }

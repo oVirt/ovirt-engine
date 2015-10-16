@@ -92,7 +92,7 @@ public class BackendNetworksResource extends AbstractBackendNetworksResource imp
     }
 
     @Override
-    public NetworkResource getNetworkSubResource(String id) {
+    public NetworkResource getNetworkResource(String id) {
         return inject(new BackendNetworkResource(id, this));
     }
 

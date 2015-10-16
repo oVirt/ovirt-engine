@@ -14,5 +14,5 @@ public interface SnapshotDisksResource {
     public Disks list();
 
     @Path("{id}")
-    public SnapshotDiskResource getDiskSubResource(@PathParam("id") String id);
+    public SnapshotDiskResource getDiskResource(@PathParam("id") String id);
 }

@@ -19,7 +19,7 @@ public class BackendVmTagsResource extends AbstractBackendAssignedTagsResource {
     }
 
     @Override
-    public AssignedTagResource getAssignedTagSubResource(String id) {
+    public AssignedTagResource getAssignedTagResource(String id) {
         return inject(new BackendVmTagResource(asGuid(parentId), id));
     }
 }

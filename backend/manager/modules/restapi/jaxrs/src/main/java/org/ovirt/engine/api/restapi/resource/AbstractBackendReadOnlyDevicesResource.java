@@ -42,7 +42,7 @@ public abstract class AbstractBackendReadOnlyDevicesResource<D extends BaseDevic
     }
 
     @Override
-    public ReadOnlyDeviceResource<D> getDeviceSubResource(String id) {
+    public ReadOnlyDeviceResource<D> getDeviceResource(String id) {
         return inject(new BackendReadOnlyDeviceResource<D, C, Q>(modelType, entityType, asGuidOr404(id), this));
     }
 

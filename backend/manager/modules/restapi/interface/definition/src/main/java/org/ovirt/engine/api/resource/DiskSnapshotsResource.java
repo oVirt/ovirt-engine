@@ -15,6 +15,6 @@ public interface DiskSnapshotsResource {
     public DiskSnapshots list();
 
     @Path("{id}")
-    public DiskSnapshotResource getDeviceSubResource(@PathParam("id") String id);
+    public DiskSnapshotResource getDeviceResource(@PathParam("id") String id);
 
 }

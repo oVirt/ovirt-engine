@@ -31,12 +31,12 @@ public class BackendFiltersResource extends BackendPolicyUnitsResource<Filters, 
     }
 
     @Override
-    public FilterResource getSubResource(String id) {
+    public FilterResource getFilterResource(String id) {
         return inject(new BackendFilterResource(id, this));
     }
 
     public FilterResource getFilterSubResource(String id) {
-        return getSubResource(id);
+        return getFilterResource(id);
     }
 
     @Override

@@ -52,8 +52,8 @@ public interface VmsResource {
      * remainder of the URI is dispatched.
      *
      * @param id  the VM ID
-     * @return    matching subresource if found
+     * @return    matching resource if found
      */
     @Path("{id}")
-    public VmResource getVmSubResource(@PathParam("id") String id);
+    public VmResource getVmResource(@PathParam("id") String id);
 }

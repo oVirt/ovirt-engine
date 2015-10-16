@@ -39,5 +39,5 @@ public interface SSHPublicKeysResource {
     public Response add(SshPublicKey pubkey);
 
     @Path("{id}")
-    public SSHPublicKeyResource getSSHPublicKeySubResource(@PathParam("id") String id);
+    public SSHPublicKeyResource getSSHPublicKeyResource(@PathParam("id") String id);
 }

@@ -43,8 +43,8 @@ public interface ClustersResource {
      * remainder of the URI is dispatched.
      *
      * @param id  the Cluster ID
-     * @return    matching subresource if found
+     * @return    matching resource if found
      */
     @Path("{id}")
-    public ClusterResource getClusterSubResource(@PathParam("id") String id);
+    public ClusterResource getClusterResource(@PathParam("id") String id);
 }

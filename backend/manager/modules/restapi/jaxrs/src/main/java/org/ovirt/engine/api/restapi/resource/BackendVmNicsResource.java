@@ -107,7 +107,7 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
     }
 
     @Override
-    public VmNicResource getDeviceSubResource(String id) {
+    public VmNicResource getDeviceResource(String id) {
         return inject(
             new BackendVmNicResource(
                 parentId,

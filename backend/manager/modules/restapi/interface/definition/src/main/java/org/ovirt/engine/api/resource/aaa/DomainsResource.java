@@ -35,8 +35,8 @@ public interface DomainsResource {
      * Sub-resource locator method, returns individual DomainResource on which the remainder of the URI is dispatched.
      *
      * @param id the domain ID
-     * @return matching subresource if found
+     * @return matching resource if found
      */
     @Path("{id}")
-    public DomainResource getDomainSubResource(@PathParam("id") String id);
+    public DomainResource getDomainResource(@PathParam("id") String id);
 }

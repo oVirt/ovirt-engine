@@ -38,7 +38,7 @@ public class BackendJobsResource extends AbstractBackendCollectionResource<Job, 
     }
 
     @Override
-    public JobResource getJobSubResource(String id) {
+    public JobResource getJobResource(String id) {
         return inject(new BackendJobResource(id));
     }
 

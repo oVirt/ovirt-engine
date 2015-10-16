@@ -77,12 +77,12 @@ public class BackendSnapshotResource extends AbstractBackendActionableResource<S
     }
 
     @Override
-    public CreationResource getCreationSubresource(String ids) {
+    public CreationResource getCreationResource(String ids) {
         return inject(new BackendCreationResource(ids));
     }
 
     @Override
-    public ActionResource getActionSubresource(String action, String ids) {
+    public ActionResource getActionResource(String action, String ids) {
         return inject(new BackendActionResource(action, ids));
     }
 

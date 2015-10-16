@@ -31,5 +31,5 @@ public interface DomainGroupsResource {
     public Groups list();
 
     @Path("{id}")
-    public DomainGroupResource getDomainGroupSubResource(@PathParam("id") String id);
+    public DomainGroupResource getDomainGroupResource(@PathParam("id") String id);
 }

@@ -18,8 +18,8 @@ public interface VmReportedDevicesResource {
      * dispatched.
      * @param id
      *            the NetworkDevice ID
-     * @return matching subresource if found
+     * @return matching resource if found
      */
     @Path("{id}")
-    public VmReportedDeviceResource getVmReportedDeviceSubResource(@PathParam("id") String id);
+    public VmReportedDeviceResource getVmReportedDeviceResource(@PathParam("id") String id);
 }

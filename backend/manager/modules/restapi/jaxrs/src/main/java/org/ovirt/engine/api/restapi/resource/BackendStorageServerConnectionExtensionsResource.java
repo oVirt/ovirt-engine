@@ -52,7 +52,7 @@ public class BackendStorageServerConnectionExtensionsResource
     }
 
     @Override
-    public StorageServerConnectionExtensionResource getStorageConnectionExtensionSubResource(String id) {
+    public StorageServerConnectionExtensionResource getStorageConnectionExtensionResource(String id) {
         return inject(new BackendStorageServerConnectionExtensionResource(id, this));
     }
 }

@@ -21,5 +21,5 @@ public interface IscsiBondsResource {
     Response add(IscsiBond iscsiBond);
 
     @Path("{id}")
-    IscsiBondResource getIscsiBondSubResource(@PathParam("id") String id);
+    IscsiBondResource getIscsiBondResource(@PathParam("id") String id);
 }

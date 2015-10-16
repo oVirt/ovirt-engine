@@ -40,7 +40,7 @@ public class BackendDomainsResource extends AbstractBackendCollectionResource<Do
     }
 
     @Override
-    public DomainResource getDomainSubResource(String id) {
+    public DomainResource getDomainResource(String id) {
         return inject(new BackendDomainResource(id, this));
     }
 

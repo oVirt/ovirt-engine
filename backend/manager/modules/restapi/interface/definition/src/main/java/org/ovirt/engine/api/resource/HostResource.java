@@ -40,7 +40,7 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
 
     @Path("{action: (approve|install|upgrade|fence|activate|deactivate|commitnetconfig|iscsidiscover|iscsilogin|" +
             "forceselectspm|setupnetworks|enrollcertificate)}/{oid}")
-    ActionResource getActionSubresource(@PathParam("action")String action, @PathParam("oid")String oid);
+    ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @POST
     @Actionable

@@ -10,5 +10,5 @@ import org.ovirt.engine.api.model.Watchdogs;
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface WatchdogsResource extends DevicesResource<Watchdog, Watchdogs>{
     @Path("{id}")
-    WatchdogResource getDeviceSubResource(@PathParam("id") String id);
+    WatchdogResource getDeviceResource(@PathParam("id") String id);
 }

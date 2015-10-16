@@ -47,7 +47,7 @@ public class BackendMacPoolsResource
     }
 
     @Override
-    public MacPoolResource getMacPoolSubResource(String id) {
+    public MacPoolResource getMacPoolResource(String id) {
         return inject(new BackendMacPoolResource(id));
     }
 }

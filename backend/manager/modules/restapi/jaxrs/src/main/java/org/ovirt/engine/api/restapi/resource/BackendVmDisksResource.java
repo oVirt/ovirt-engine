@@ -80,7 +80,7 @@ public class BackendVmDisksResource
     }
 
     @Override
-    public VmDiskResource getDeviceSubResource(String id) {
+    public VmDiskResource getDeviceResource(String id) {
         return inject(
             new BackendVmDiskResource(
                 parentId,

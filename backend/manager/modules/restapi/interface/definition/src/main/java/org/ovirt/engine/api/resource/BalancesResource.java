@@ -10,7 +10,6 @@ import org.ovirt.engine.api.model.Balances;
 @Path("/balances")
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface BalancesResource extends PolicyUnitsResource<Balances, Balance> {
-    @Override
     @Path("{id}")
-    public BalanceResource getSubResource(@PathParam("id") String id);
+    public BalanceResource getBalanceResource(@PathParam("id") String id);
 }

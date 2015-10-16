@@ -30,7 +30,7 @@ public interface GlusterHookResource {
     Response remove();
 
     @Path("{action: (enable|disable|resolve)}/{oid}")
-    ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
+    ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     /**
      * Resolves status conflict of hook among servers in cluster by enabling gluster hook in

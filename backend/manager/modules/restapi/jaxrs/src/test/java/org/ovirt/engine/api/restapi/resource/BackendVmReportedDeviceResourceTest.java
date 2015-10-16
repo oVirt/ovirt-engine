@@ -19,7 +19,7 @@ public class BackendVmReportedDeviceResourceTest extends AbstractBackendSubResou
     protected static final String ADDRESS = "10.11.12.13";
 
     public BackendVmReportedDeviceResourceTest() {
-        super((BackendVmReportedDeviceResource) getCollection().getVmReportedDeviceSubResource(DEVICE_ID.toString()));
+        super((BackendVmReportedDeviceResource) getCollection().getVmReportedDeviceResource(DEVICE_ID.toString()));
     }
 
     protected static BackendVmReportedDevicesResource getCollection() {

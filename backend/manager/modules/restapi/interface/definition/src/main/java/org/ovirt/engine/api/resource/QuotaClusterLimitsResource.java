@@ -9,7 +9,6 @@ import org.ovirt.engine.api.model.QuotaClusterLimits;
 
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface QuotaClusterLimitsResource extends QuotaLimitsResource<QuotaClusterLimits, QuotaClusterLimit> {
-    @Override
     @Path("{id}")
-    public QuotaClusterLimitResource getSubResource(@PathParam("id") String id);
+    public QuotaClusterLimitResource getLimitResource(@PathParam("id") String id);
 }

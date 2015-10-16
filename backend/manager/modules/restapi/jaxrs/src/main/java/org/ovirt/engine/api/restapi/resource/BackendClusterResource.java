@@ -55,7 +55,7 @@ public class BackendClusterResource<P extends BackendClustersResource>
     }
 
     @Override
-    public AssignedNetworksResource getAssignedNetworksSubResource() {
+    public AssignedNetworksResource getAssignedNetworksResource() {
         return inject(new BackendClusterNetworksResource(id));
     }
 

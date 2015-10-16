@@ -18,7 +18,7 @@ import org.ovirt.engine.api.model.Nic;
 public interface VmNicResource extends NicResource {
 
     @Path("{action: (activate|deactivate)}/{oid}")
-    public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
+    public ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     // TODO remove on 4.1
     @Deprecated

@@ -88,7 +88,7 @@ public class BackendHostNicsResource
     }
 
     @Override
-    public HostNicResource getHostNicSubResource(String id) {
+    public HostNicResource getHostNicResource(String id) {
         return inject(new BackendHostNicResource(id, this));
     }
 
@@ -424,7 +424,7 @@ public class BackendHostNicsResource
 
 
     @Override
-    public ActionResource getActionSubresource(String action) {
+    public ActionResource getActionResource(String action) {
         return inject(new BackendActionResource(action, ""));
     }
 }

@@ -30,5 +30,5 @@ public interface UnmanagedNetworksResource {
     public UnmanagedNetworks list();
 
     @Path("{id}")
-    public UnmanagedNetworkResource getUnmanagedNetworkSubResource(@PathParam("id") String id);
+    public UnmanagedNetworkResource getUnmanagedNetworkResource(@PathParam("id") String id);
 }

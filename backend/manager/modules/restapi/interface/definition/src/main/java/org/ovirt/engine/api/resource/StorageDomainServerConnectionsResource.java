@@ -21,5 +21,5 @@ public interface StorageDomainServerConnectionsResource {
     public Response add(StorageConnection storageConnection);
 
     @Path("{id}")
-    public StorageDomainServerConnectionResource getStorageConnectionSubResource(@PathParam("id") String id);
+    public StorageDomainServerConnectionResource getStorageConnectionResource(@PathParam("id") String id);
 }

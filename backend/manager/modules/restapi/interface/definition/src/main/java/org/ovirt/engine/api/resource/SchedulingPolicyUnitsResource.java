@@ -15,6 +15,6 @@ public interface SchedulingPolicyUnitsResource {
     public SchedulingPolicyUnits list();
 
     @Path("{id}")
-    public SchedulingPolicyUnitResource getSchedulingPolicyUnitSubResource(@PathParam("id") String id);
+    public SchedulingPolicyUnitResource getSchedulingPolicyUnitResource(@PathParam("id") String id);
 
 }

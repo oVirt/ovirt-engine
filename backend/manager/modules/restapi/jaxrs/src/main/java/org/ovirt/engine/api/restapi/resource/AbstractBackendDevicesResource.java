@@ -44,7 +44,7 @@ public abstract class AbstractBackendDevicesResource<D extends BaseDevice, C ext
     }
 
     @Override
-    public DeviceResource<D> getDeviceSubResource(String id) {
+    public DeviceResource<D> getDeviceResource(String id) {
         return inject(new BackendDeviceResource<D, C, Q>(modelType,
                                                          entityType,
                                                          asGuidOr404(id),

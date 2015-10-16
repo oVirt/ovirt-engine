@@ -32,9 +32,9 @@ public interface TemplateDisksResource extends ReadOnlyDevicesResource<Disk, Dis
      * remainder of the URI is dispatched.
      *
      * @param id  the Device ID
-     * @return    matching subresource if found
+     * @return    matching resource if found
      */
     @Path("{id}")
-    public TemplateDiskResource getDeviceSubResource(@PathParam("id") String id);
+    public TemplateDiskResource getDeviceResource(@PathParam("id") String id);
 
 }

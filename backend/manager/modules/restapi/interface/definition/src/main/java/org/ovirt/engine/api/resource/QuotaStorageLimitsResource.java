@@ -9,7 +9,6 @@ import org.ovirt.engine.api.model.QuotaStorageLimits;
 
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface QuotaStorageLimitsResource extends QuotaLimitsResource<QuotaStorageLimits, QuotaStorageLimit> {
-    @Override
     @Path("{id}")
-    public QuotaStorageLimitResource getSubResource(@PathParam("id") String id);
+    public QuotaStorageLimitResource getLimitResource(@PathParam("id") String id);
 }

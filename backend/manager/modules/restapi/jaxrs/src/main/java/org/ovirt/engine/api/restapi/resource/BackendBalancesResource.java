@@ -29,12 +29,12 @@ public class BackendBalancesResource extends BackendPolicyUnitsResource<Balances
     }
 
     @Override
-    public BalanceResource getSubResource(String id) {
+    public BalanceResource getBalanceResource(String id) {
         return inject(new BackendBalanceResource(id, this));
     }
 
     public BalanceResource getBalanceSubResource(String id) {
-        return getSubResource(id);
+        return getBalanceResource(id);
     }
 
     @Override

@@ -22,5 +22,5 @@ public interface VmNumaNodesResource {
     public Response add(VirtualNumaNode node);
 
     @Path("{iden}")
-    public VmNumaNodeResource getVmNumaNodeSubResource(@PathParam("iden") String id);
+    public VmNumaNodeResource getVmNumaNodeResource(@PathParam("iden") String id);
 }

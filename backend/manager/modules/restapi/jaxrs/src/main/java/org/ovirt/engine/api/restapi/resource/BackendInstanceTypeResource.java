@@ -100,7 +100,7 @@ public class BackendInstanceTypeResource
     }
 
     @Override
-    public CreationResource getCreationSubresource(String oid) {
+    public CreationResource getCreationResource(String oid) {
         return inject(new BackendCreationResource(oid));
     }
 

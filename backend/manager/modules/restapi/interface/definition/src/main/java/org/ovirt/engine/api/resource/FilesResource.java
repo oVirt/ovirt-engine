@@ -30,5 +30,5 @@ public interface FilesResource {
     public Files list();
 
     @Path("{id}")
-    public FileResource getFileSubResource(@PathParam("id") String id);
+    public FileResource getFileResource(@PathParam("id") String id);
 }

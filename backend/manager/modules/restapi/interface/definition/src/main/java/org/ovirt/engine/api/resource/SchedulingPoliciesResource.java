@@ -23,5 +23,5 @@ public interface SchedulingPoliciesResource {
     public Response add(SchedulingPolicy schedulingPolicy);
 
     @Path("{id}")
-    public SchedulingPolicyResource getSchedulingPolicySubResource(@PathParam("id") String id);
+    public SchedulingPolicyResource getSchedulingPolicyResource(@PathParam("id") String id);
 }

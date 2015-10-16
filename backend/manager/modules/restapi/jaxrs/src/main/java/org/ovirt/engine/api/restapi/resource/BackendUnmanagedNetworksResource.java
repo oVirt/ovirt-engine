@@ -46,7 +46,7 @@ public class BackendUnmanagedNetworksResource extends AbstractBackendCollectionR
     }
 
     @Override
-    public UnmanagedNetworkResource getUnmanagedNetworkSubResource(String id) {
+    public UnmanagedNetworkResource getUnmanagedNetworkResource(String id) {
         return inject(new BackendUnmanagedNetworkResource(HexUtils.hex2string(id), hostId));
     }
 

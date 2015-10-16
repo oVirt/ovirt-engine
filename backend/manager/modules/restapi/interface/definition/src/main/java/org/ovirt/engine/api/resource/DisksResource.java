@@ -15,7 +15,7 @@ import org.ovirt.engine.api.model.Disks;
 public interface DisksResource extends ReadOnlyDevicesResource<Disk, Disks> {
     @Path("{identity}")
     @Override
-    MovableCopyableDiskResource getDeviceSubResource(@PathParam("identity") String id);
+    MovableCopyableDiskResource getDeviceResource(@PathParam("identity") String id);
 
     @POST
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
