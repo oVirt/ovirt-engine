@@ -55,6 +55,9 @@ public class VmBaseMapper {
             if (model.getCpu().getTopology().getSockets() != null) {
                 entity.setNumOfSockets(model.getCpu().getTopology().getSockets());
             }
+            if (model.getCpu().getTopology().getThreads() != null) {
+                entity.setThreadsPerCpu(model.getCpu().getTopology().getThreads());
+            }
         }
         if (model.isSetHighAvailability()) {
             if (model.getHighAvailability().isSetEnabled()) {
@@ -255,7 +258,8 @@ public class VmBaseMapper {
 
         CpuTopology topology = new CpuTopology();
         topology.setSockets(entity.getNumOfSockets());
-        topology.setCores(entity.getNumOfCpus() / entity.getNumOfSockets());
+        topology.setCores(entity.getCpuPerSocket());
+        topology.setThreads(entity.getThreadsPerCpu());
         model.setCpu(new CPU());
         model.getCpu().setTopology(topology);
 

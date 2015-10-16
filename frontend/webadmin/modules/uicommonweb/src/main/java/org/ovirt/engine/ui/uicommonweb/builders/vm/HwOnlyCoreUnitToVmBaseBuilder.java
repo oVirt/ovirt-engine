@@ -18,7 +18,8 @@ public class HwOnlyCoreUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBui
             vm.setNumOfIoThreads(0);
         }
         vm.setNumOfSockets(model.getNumOfSockets().getSelectedItem());
-        vm.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity()) / model.getNumOfSockets().getSelectedItem());
+        vm.setCpuPerSocket(model.getCoresPerSocket().getSelectedItem());
+        vm.setThreadsPerCpu(model.getThreadsPerCore().getSelectedItem());
         vm.setDefaultDisplayType(model.getDisplayType().getSelectedItem());
         vm.setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
         vm.setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());

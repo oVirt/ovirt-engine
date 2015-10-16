@@ -62,6 +62,7 @@ actions:
           vm.cpu.mode: xs:string
           vm.cpu.architecture: xs:string
           vm.cpu.topology.cores: xs:int
+          vm.cpu.topology.threads: xs:int
           vm.cpu_shares: xs:int
           vm.memory: xs:long
           vm.io.threads: xs:int
@@ -147,6 +148,7 @@ actions:
           vm.display.disconnect_action: xs:string
           vm.os.cmdline: xs:string
           vm.cpu.topology.cores: xs:int
+          vm.cpu.topology.threads: xs:int
           vm.cpu.architecture: xs:string
           vm.memory: xs:long
           vm.io.threads: xs:int
@@ -222,6 +224,7 @@ actions:
           vm.display.disconnect_action: xs:string
           vm.os.cmdline: xs:string
           vm.cpu.topology.cores: xs:int
+          vm.cpu.topology.threads: xs:int
           vm.cpu_shares: xs:int
           vm.cpu.architecture: xs:string
           vm.memory: xs:long
@@ -289,6 +292,7 @@ actions:
                 vm.display.disconnect_action: xs:string
                 vm.os.cmdline: xs:string
                 vm.cpu.topology.cores: xs:int
+                vm.cpu.topology.threads: xs:int
                 vm.memory: xs:long
                 vm.memory_policy.guaranteed: xs:long
                 vm.memory_policy.ballooning: xs:boolean
@@ -2762,6 +2766,7 @@ actions:
           template.memory_policy.guaranteed: xs:long
           template.memory_policy.ballooning: xs:boolean
           template.cpu.topology.cores: xs:int
+          template.cpu.topology.threds: xs:int
           template.high_availability.enabled: 'xs:boolean'
           template.os.cmdline: xs:string
           template.origin: xs:string
@@ -3672,6 +3677,7 @@ actions:
           instance_type.memory_policy.guaranteed: xs:long
           instance_type.memory_policy.ballooning: xs:boolean
           instance_type.cpu.topology.cores: xs:int
+          instance_type.cpu.topology.threads: xs:int
           instance_type.high_availability.enabled: xs:boolean
           instance_type.origin: xs:string
           instance_type.high_availability.priority: xs:int

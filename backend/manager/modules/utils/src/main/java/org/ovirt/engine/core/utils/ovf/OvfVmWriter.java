@@ -199,6 +199,9 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteStartElement(RASD_URI, "cpu_per_socket");
         _writer.WriteRaw(String.valueOf(vmBase.getCpuPerSocket()));
         _writer.WriteEndElement();
+        _writer.WriteStartElement(RASD_URI, "threads_per_cpu");
+        _writer.WriteRaw(String.valueOf(vmBase.getThreadsPerCpu()));
+        _writer.WriteEndElement();
         _writer.WriteEndElement(); // item
 
         // item memory

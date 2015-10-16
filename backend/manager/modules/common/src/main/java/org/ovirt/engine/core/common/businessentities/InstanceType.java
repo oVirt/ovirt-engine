@@ -33,6 +33,10 @@ public interface InstanceType extends BusinessEntity<Guid>, Nameable {
 
     void setCpuPerSocket(int value);
 
+    int getThreadsPerCpu();
+
+    void setThreadsPerCpu(int value);
+
     List<VmNetworkInterface> getInterfaces();
 
     void setInterfaces(List<VmNetworkInterface> value);

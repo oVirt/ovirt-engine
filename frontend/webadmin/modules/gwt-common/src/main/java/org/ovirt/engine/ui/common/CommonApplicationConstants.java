@@ -613,6 +613,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Cores per Virtual Socket")
     String coresPerSocket();
 
+    @DefaultStringValue("Threads per Core")
+    String threadsPerCore();
+
     @DefaultStringValue("Virtual Sockets")
     String numOfSockets();
 

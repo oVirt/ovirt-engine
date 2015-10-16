@@ -114,6 +114,9 @@ public class OvfTemplateWriter extends OvfWriter {
         _writer.WriteStartElement(RASD_URI, "cpu_per_socket");
         _writer.WriteRaw(String.valueOf(_vmTemplate.getCpuPerSocket()));
         _writer.WriteEndElement();
+        _writer.WriteStartElement(RASD_URI, "threads_per_cpu");
+        _writer.WriteRaw(String.valueOf(_vmTemplate.getThreadsPerCpu()));
+        _writer.WriteEndElement();
         _writer.WriteEndElement(); // item
 
         // item memory

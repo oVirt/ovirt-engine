@@ -36,6 +36,8 @@ public class BaseVmTest {
     protected static final String TIMEZONE = "Europe/Berlin"; //$NON-NLS-1$
     protected static final int NUM_OF_SOCKETS = 4;
     protected static final int TOTAL_CPU = 4;
+    protected static final int CORES_PER_SOCKET = 1;
+    protected static final int THREADS_PER_CORE = 1;
     protected static final UsbPolicy USB_POLICY = UsbPolicy.ENABLED_NATIVE;
     protected static final SsoMethod SSO_METHOD = SsoMethod.GUEST_AGENT;
     protected static final BootSequence BOOT_SEQUENCE = BootSequence.CD;

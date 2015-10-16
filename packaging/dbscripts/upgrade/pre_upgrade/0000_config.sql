@@ -440,6 +440,7 @@ select fn_db_add_config_value('MaxLDAPQueryPartsNumber','100','general');
 select fn_db_add_config_value('MaxMacsCountInPool','100000','general');
 select fn_db_add_config_value('MaxNumberOfHostsInStoragePool','250','general');
 select fn_db_add_config_value_for_versions_up_to('MaxNumOfCpuPerSocket', '16', '3.6');
+select fn_db_add_config_value_for_versions_up_to('MaxNumOfThreadsPerCpu', '8', '3.6');
 select fn_db_add_config_value('MaxNumOfVmCpus','64','3.0');
 select fn_db_add_config_value_for_versions_up_to('MaxNumOfVmCpus', '160', '3.5');
 select fn_db_add_config_value('MaxNumOfVmCpus', '240', '3.6');

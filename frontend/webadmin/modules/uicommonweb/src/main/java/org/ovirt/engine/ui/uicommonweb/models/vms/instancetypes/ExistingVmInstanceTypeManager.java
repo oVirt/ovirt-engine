@@ -22,12 +22,14 @@ public class ExistingVmInstanceTypeManager extends VmInstanceTypeManager {
     protected void doUpdateManagedFieldsFrom(VmBase vmBase) {
         boolean numOfSocketsChangable = getModel().getNumOfSockets().getIsChangable();
         boolean coresPerSocket = getModel().getCoresPerSocket().getIsChangable();
+        boolean threadsPerCore = getModel().getThreadsPerCore().getIsChangable();
 
         super.doUpdateManagedFieldsFrom(vmBase);
 
         deactivate();
         getModel().getNumOfSockets().setIsChangeable(numOfSocketsChangable);
         getModel().getCoresPerSocket().setIsChangeable(coresPerSocket);
+        getModel().getThreadsPerCore().setIsChangeable(threadsPerCore);
         activate();
     }
 

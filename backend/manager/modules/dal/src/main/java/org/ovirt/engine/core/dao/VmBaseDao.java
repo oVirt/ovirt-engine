@@ -43,6 +43,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
                 .addValue("vds_group_id", entity.getVdsGroupId())
                 .addValue("num_of_sockets", entity.getNumOfSockets())
                 .addValue("cpu_per_socket", entity.getCpuPerSocket())
+                .addValue("threads_per_cpu", entity.getThreadsPerCpu())
                 .addValue("os", entity.getOsId())
                 .addValue("num_of_monitors", entity.getNumOfMonitors())
                 .addValue("single_qxl_pci", entity.getSingleQxlPci())
@@ -111,6 +112,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
             entity.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("creation_date")));
             entity.setNumOfSockets(rs.getInt("num_of_sockets"));
             entity.setCpuPerSocket(rs.getInt("cpu_per_socket"));
+            entity.setThreadsPerCpu(rs.getInt("threads_per_cpu"));
             entity.setTimeZone(rs.getString("time_zone"));
             entity.setVmType(VmType.forValue(rs.getInt("vm_type")));
             entity.setUsbPolicy(UsbPolicy.forValue(rs.getInt("usb_policy")));

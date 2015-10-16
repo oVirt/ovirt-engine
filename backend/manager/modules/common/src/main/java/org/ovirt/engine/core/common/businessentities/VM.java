@@ -308,6 +308,9 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         return this.vmStatic.getNumOfCpus();
     }
 
+    public int getNumOfCpus(boolean countThreadsAsCPU) {
+        return countThreadsAsCPU ? this.getNumOfCpus() : (getNumOfSockets() * getCpuPerSocket());
+    }
     /**
      * This method is created for SOAP serialization of primitives that are readonly but sent by the client. The setter
      * implementation is empty and the field is not being changed.
@@ -333,6 +336,14 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
 
     public void setCpuPerSocket(int value) {
         this.vmStatic.setCpuPerSocket(value);
+    }
+
+    public int getThreadsPerCpu() {
+        return this.vmStatic.getThreadsPerCpu();
+    }
+
+    public void setThreadsPerCpu(int value) {
+        this.vmStatic.setThreadsPerCpu(value);
     }
 
     public UsbPolicy getUsbPolicy() {

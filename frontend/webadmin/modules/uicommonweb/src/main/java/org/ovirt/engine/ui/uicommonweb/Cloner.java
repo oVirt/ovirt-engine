@@ -413,6 +413,7 @@ public final class Cloner {
         obj.setAutoStartup(instance.isAutoStartup());
         obj.setChildCount(instance.getChildCount());
         obj.setCpuPerSocket(instance.getCpuPerSocket());
+        obj.setThreadsPerCpu(instance.getThreadsPerCpu());
         obj.setCreationDate(instance.getCreationDate());
         obj.setDefaultBootSequence(instance.getDefaultBootSequence());
         obj.setComment(instance.getComment());
@@ -469,6 +470,7 @@ public final class Cloner {
         obj.setOrigin(instance.getOrigin());
         obj.setAutoStartup(instance.isAutoStartup());
         obj.setCpuPerSocket(instance.getCpuPerSocket());
+        obj.setThreadsPerCpu(instance.getThreadsPerCpu());
         obj.setCreationDate(instance.getCreationDate());
         obj.setDedicatedVmForVdsList(instance.getDedicatedVmForVdsList());
         obj.setDescription(instance.getDescription());

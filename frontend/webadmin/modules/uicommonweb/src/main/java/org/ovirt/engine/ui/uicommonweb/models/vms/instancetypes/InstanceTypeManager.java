@@ -272,6 +272,7 @@ public abstract class InstanceTypeManager {
         maybeSetEntity(model.getIsHighlyAvailable(), vmBase.isAutoStartup());
         maybeSetSelectedItem(model.getNumOfSockets(), vmBase.getNumOfSockets());
         maybeSetSelectedItem(model.getCoresPerSocket(), vmBase.getCpuPerSocket());
+        maybeSetSelectedItem(model.getThreadsPerCore(), vmBase.getThreadsPerCpu());
 
         maybeSetSelectedItem(model.getEmulatedMachine(), vmBase.getCustomEmulatedMachine());
         maybeSetSelectedItem(model.getCustomCpu(), vmBase.getCustomCpuName());

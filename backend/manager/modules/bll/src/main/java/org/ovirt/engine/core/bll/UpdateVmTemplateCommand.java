@@ -202,7 +202,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         if (returnValue) {
             returnValue = AddVmCommand.checkCpuSockets(getParameters().getVmTemplateData().getNumOfSockets(),
-                    getParameters().getVmTemplateData().getCpuPerSocket(), getVdsGroup().getCompatibilityVersion()
+                    getParameters().getVmTemplateData().getCpuPerSocket(),
+                    getParameters().getVmTemplateData().getThreadsPerCpu(), getVdsGroup().getCompatibilityVersion()
                     .toString(), getReturnValue().getCanDoActionMessages());
         }
 

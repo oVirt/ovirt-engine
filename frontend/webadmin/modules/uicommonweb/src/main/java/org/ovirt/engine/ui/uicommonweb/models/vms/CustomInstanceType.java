@@ -74,6 +74,15 @@ public class CustomInstanceType implements InstanceType {
     }
 
     @Override
+    public int getThreadsPerCpu() {
+        return 0;
+    }
+
+    @Override
+    public void setThreadsPerCpu(int value) {
+    }
+
+    @Override
     public List<VmNetworkInterface> getInterfaces() {
         return null;
     }

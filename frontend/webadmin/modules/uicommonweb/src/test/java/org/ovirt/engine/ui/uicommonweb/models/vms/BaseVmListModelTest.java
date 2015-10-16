@@ -59,6 +59,8 @@ public class BaseVmListModelTest extends BaseVmTest {
         ListModel<TimeZoneModel> timeZoneModelListModel = mockTimeZoneListModel();
         when(model.getTimeZone()).thenReturn(timeZoneModelListModel);
         when(model.getNumOfSockets().getSelectedItem()).thenReturn(NUM_OF_SOCKETS);
+        when(model.getCoresPerSocket().getSelectedItem()).thenReturn(CORES_PER_SOCKET);
+        when(model.getThreadsPerCore().getSelectedItem()).thenReturn(THREADS_PER_CORE);
         SerialNumberPolicyModel serialNumberPolicyModel = mockSerialNumberPolicyModel();
         when(model.getSerialNumberPolicy()).thenReturn(serialNumberPolicyModel);
         when(model.getAllowConsoleReconnect().getEntity()).thenReturn(true);
@@ -135,7 +137,8 @@ public class BaseVmListModelTest extends BaseVmTest {
         assertTrue(vm.isSmartcardEnabled());
         assertEquals(SSO_METHOD, vm.getSsoMethod());
         assertEquals(NUM_OF_SOCKETS, vm.getNumOfSockets());
-        assertEquals(TOTAL_CPU / NUM_OF_SOCKETS, vm.getCpuPerSocket());
+        assertTrue(vm.getThreadsPerCpu() > 0);
+        assertEquals(TOTAL_CPU / (NUM_OF_SOCKETS * vm.getThreadsPerCpu()), vm.getCpuPerSocket());
         assertTrue(vm.isDeleteProtected());
         assertEquals(VNC_KEYBOARD_LAYOUT, vm.getVncKeyboardLayout());
         assertEquals(DISPLAY_TYPE, vm.getDefaultDisplayType());

@@ -285,8 +285,8 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("{0} VMs")
     String numberOfVmsForHostsLoad(int numberOfVms);
 
-    @DefaultMessage("{0} ({1} Socket(s), {2} Core(s) per Socket)")
-    String cpuInfoLabel(int numberOfCpus, int numberOfSockets, int numberOfCpusPerSocket);
+    @DefaultMessage("{0} ({1}:{2}:{3} Sockets:Cores/S.:Threads/C.)")
+    String cpuInfoLabel(int numberOfCpus, int numberOfSockets, int numberOfCpusPerSocket, int numberOfThreadsPerCore);
 
     @DefaultMessage("{0} (from Storage Domain {1})")
     String templateDiskDescription(String diskAlias, String storageDomainName);
@@ -343,8 +343,8 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("This Host Network QoS is used by {0} Networks.\nAre you sure you want to remove it?\n\nNetworks using this QoS:\n")
     String removeHostNetworkQosMessage(int numOfNetworks);
 
-    @DefaultMessage("{0} ({1} Socket(s), {2} Core(s) per Socket)")
-    String cpuInfoMessage(int numOfCpus, int sockets, int coresPerSocket);
+    @DefaultMessage("{0} ({1}:{2}:{3} Sockets:Cores/Sckt:Threads/Sckt)")
+    String cpuInfoMessage(int numOfCpus, int sockets, int coresPerSocket, int threadsPerSocket);
 
     @DefaultMessage("NUMA Topology - {0}")
     String numaTopologyTitle(String hostName);

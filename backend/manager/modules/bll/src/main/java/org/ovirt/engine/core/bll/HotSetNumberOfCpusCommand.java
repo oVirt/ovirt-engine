@@ -60,6 +60,12 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
                         getVm().getVdsGroupCompatibilityVersion().getValue())) {
             canDo = failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MAX_CPU_PER_SOCKET);
         }
+        if (getParameters().getVm().getThreadsPerCpu() >
+                Config.<Integer>getValue(
+                        ConfigValues.MaxNumOfThreadsPerCpu,
+                        getVm().getVdsGroupCompatibilityVersion().getValue())) {
+            canDo = failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MAX_THREADS_PER_CPU);
+        }
         if (getParameters().getVm().getNumOfSockets() >
                 Config.<Integer>getValue(
                         ConfigValues.MaxNumOfVmSockets,
@@ -139,7 +145,7 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
                     null,
                     QuotaConsumptionParameter.QuotaAction.CONSUME,
                     getVm().getVdsGroupId(),
-                    getVm().getCpuPerSocket() * cpuToConsume,
+                    getVm().getCpuPerSocket() * getVm().getThreadsPerCpu() * cpuToConsume,
                     0));
 
         } else if (cpuToConsume < 0) {
@@ -148,7 +154,7 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
                     null,
                     QuotaConsumptionParameter.QuotaAction.RELEASE,
                     getVm().getVdsGroupId(),
-                    getVm().getCpuPerSocket() * Math.abs(cpuToConsume),
+                    getVm().getCpuPerSocket() * getVm().getThreadsPerCpu() * Math.abs(cpuToConsume),
                     0));
         }
         return list;

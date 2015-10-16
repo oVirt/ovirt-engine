@@ -401,11 +401,22 @@ public abstract class OvfReader implements IOvfBuilder {
         }
     }
 
+    protected Integer parseNodeInteger(XmlNode sourceNode, String string, Integer defaultValue) {
+        XmlNode subNode = sourceNode.SelectSingleNode(string, _xmlNS);
+
+        if (subNode != null && subNode.innerText != null) {
+            return Integer.parseInt(subNode.innerText);
+        }
+
+        return defaultValue;
+    }
+
     private void readCpuItem(XmlNode node) {
         vmBase.setNumOfSockets(
                 Integer.parseInt(node.SelectSingleNode("rasd:num_of_sockets", _xmlNS).innerText));
         vmBase.setCpuPerSocket(
                 Integer.parseInt(node.SelectSingleNode("rasd:cpu_per_socket", _xmlNS).innerText));
+        vmBase.setThreadsPerCpu(parseNodeInteger(node, "rasd:threads_per_cpu", 1));
     }
 
     private void readMemoryItem(XmlNode node) {

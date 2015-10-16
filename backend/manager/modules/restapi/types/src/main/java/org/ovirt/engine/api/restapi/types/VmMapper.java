@@ -170,6 +170,7 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setDefaultDisplayType(entity.getDefaultDisplayType());
         staticVm.setNumOfSockets(entity.getNumOfSockets());
         staticVm.setCpuPerSocket(entity.getCpuPerSocket());
+        staticVm.setThreadsPerCpu(entity.getThreadsPerCpu());
         staticVm.setNumOfMonitors(entity.getNumOfMonitors());
         staticVm.setSingleQxlPci(entity.getSingleQxlPci());
         staticVm.setPriority(entity.getPriority());

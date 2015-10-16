@@ -334,6 +334,10 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("16")
     MaxNumOfCpuPerSocket,
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("8")
+    MaxNumOfThreadsPerCpu,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
     NumberVmRefreshesBeforeSave,

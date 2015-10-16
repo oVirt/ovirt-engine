@@ -193,6 +193,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     // cancel related events while fetching data
                     getModel().getTotalCPUCores().getEntityChangedEvent().removeListener(getModel());
                     getModel().getCoresPerSocket().getSelectedItemChangedEvent().removeListener(getModel());
+                    getModel().getThreadsPerCore().getSelectedItemChangedEvent().removeListener(getModel());
                     getModel().getNumOfSockets().getSelectedItemChangedEvent().removeListener(getModel());
 
                     AsyncDataProvider.getInstance().getHostById(new AsyncQuery(new INewAsyncCallback() {
@@ -366,7 +367,9 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         if (isHotSetCpuSupported()) {
             int numOfSockets = extractIntFromListModel(getModel().getNumOfSockets());
             int coresPerSocket = vm.getCpuPerSocket();
-            getModel().getTotalCPUCores().setEntity(Integer.toString(numOfSockets * coresPerSocket));
+            int threadsPerCore = vm.getThreadsPerCpu();
+
+            getModel().getTotalCPUCores().setEntity(Integer.toString(numOfSockets * coresPerSocket * threadsPerCore));
         } else {
             super.numOfSocketChanged();
         }
@@ -380,10 +383,13 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             }
             // must not change the num of cpu per socket so the list has only 1 item
             List<Integer> coresPerSockets = Arrays.asList(new Integer[]{vm.getCpuPerSocket()});
+            List<Integer> threadsPerCore = Arrays.asList(new Integer[]{vm.getThreadsPerCpu()});
 
+            getModel().getThreadsPerCore().setItems(threadsPerCore);
             getModel().getCoresPerSocket().setItems(coresPerSockets);
             getModel().getNumOfSockets().setItems(createSocketsRange());
 
+            getModel().getThreadsPerCore().setSelectedItem(vm.getThreadsPerCpu());
             getModel().getCoresPerSocket().setSelectedItem(vm.getCpuPerSocket());
             getModel().getNumOfSockets().setSelectedItem(vm.getNumOfSockets());
 

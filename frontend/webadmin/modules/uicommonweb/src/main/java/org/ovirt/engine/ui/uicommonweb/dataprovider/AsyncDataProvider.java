@@ -973,6 +973,19 @@ public class AsyncDataProvider {
         getConfigFromCache(tempVar, aQuery);
     }
 
+    public void getMaxNumOfThreadsPerCpu(AsyncQuery aQuery, String version) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                return source != null ? ((Integer) source).intValue() : 1;
+            }
+        };
+        GetConfigurationValueParameters tempVar =
+                new GetConfigurationValueParameters(ConfigurationValues.MaxNumOfThreadsPerCpu);
+        tempVar.setVersion(version);
+        getConfigFromCache(tempVar, aQuery);
+    }
+
     public void getClusterList(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

@@ -108,6 +108,16 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @EditableOnTemplate
     private int cpuPerSocket;
 
+    /**
+     * Guest's threads per core. For virtual hyper threading tuning.
+     * Useful for PPC tuning.
+     * Reasonable value for x86 is 1.
+     */
+    @CopyOnNewVersion
+    @EditableOnVmStatusField
+    @EditableOnTemplate
+    private int threadsPerCpu;
+
     @CopyOnNewVersion
     @EditableOnVmStatusField
     @EditableOnTemplate
@@ -303,6 +313,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         creationDate = new Date(0);
         numOfSockets = 1;
         cpuPerSocket = 1;
+        threadsPerCpu = 1;
         usbPolicy = UsbPolicy.DISABLED;
         isoPath = "";
         defaultBootSequence = BootSequence.C;
@@ -427,6 +438,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
                 vmBase.getMemSizeMb(),
                 vmBase.getNumOfSockets(),
                 vmBase.getCpuPerSocket(),
+                vmBase.getThreadsPerCpu(),
                 vmBase.getNumOfMonitors(),
                 vmBase.getSingleQxlPci(),
                 vmBase.getTimeZone(),
@@ -490,6 +502,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
             int memSizeMb,
             int numOfSockets,
             int cpusPerSocket,
+            int threadsPerCpu,
             int numOfMonitors,
             boolean singleQxlPci,
             String timezone,
@@ -551,6 +564,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         this.memSizeMb = memSizeMb;
         this.numOfSockets = numOfSockets;
         this.cpuPerSocket = cpusPerSocket;
+        this.threadsPerCpu = threadsPerCpu;
         this.numOfMonitors = numOfMonitors;
         this.singleQxlPci = singleQxlPci;
         this.timeZone = timezone;
@@ -658,7 +672,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     }
 
     public int getNumOfCpus() {
-        return this.getCpuPerSocket() * this.getNumOfSockets();
+        return this.getCpuPerSocket() * this.getNumOfSockets() * this.getThreadsPerCpu();
     }
 
     @Override
@@ -757,6 +771,14 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     public void setCpuPerSocket(int value) {
         this.cpuPerSocket = value;
+    }
+
+    public int getThreadsPerCpu() {
+        return threadsPerCpu;
+    }
+
+    public void setThreadsPerCpu(int value) {
+        this.threadsPerCpu = value;
     }
 
     public int getNumOfMonitors() {
@@ -934,6 +956,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + (autoStartup ? 1231 : 1237);
         result = prime * result + cpuPerSocket;
+        result = prime * result + threadsPerCpu;
         result = prime * result + ((creationDate == null) ? 0 : creationDate.hashCode());
         result = prime * result + ((defaultBootSequence == null) ? 0 : defaultBootSequence.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
@@ -1012,6 +1035,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
                 && memSizeMb == other.memSizeMb
                 && niceLevel == other.niceLevel
                 && numOfSockets == other.numOfSockets
+                && threadsPerCpu == other.threadsPerCpu
                 && numOfMonitors == other.numOfMonitors
                 && singleQxlPci == other.singleQxlPci
                 && origin == other.origin
@@ -1334,5 +1358,4 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     public void setCustomCpuName(String customCpuName) {
         this.customCpuName = ((customCpuName==null || customCpuName.trim().isEmpty()) ? null : customCpuName);
     }
-
 }

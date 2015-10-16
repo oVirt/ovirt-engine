@@ -356,7 +356,8 @@ public class TemplateGeneralModel extends AbstractGeneralModel {
         setCpuInfo(ConstantsManager.getInstance().getMessages().cpuInfoLabel(
                 template.getNumOfCpus(),
                 template.getNumOfSockets(),
-                template.getCpuPerSocket()));
+                template.getCpuPerSocket(),
+                template.getThreadsPerCpu()));
 
         setOS(AsyncDataProvider.getInstance().getOsName(template.getOsId()));
 
