@@ -224,6 +224,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             vmStatic.setMemSizeMb(instanceType.getMemSizeMb());
             vmStatic.setNumOfSockets(instanceType.getNumOfSockets());
             vmStatic.setCpuPerSocket(instanceType.getCpuPerSocket());
+            vmStatic.setThreadsPerCpu(instanceType.getThreadsPerCpu());
             vmStatic.setAutoStartup(instanceType.isAutoStartup());
 
             if (FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(), getVdsGroup().getCompatibilityVersion())) {

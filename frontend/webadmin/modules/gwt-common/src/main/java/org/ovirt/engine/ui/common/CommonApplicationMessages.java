@@ -74,9 +74,8 @@ public interface CommonApplicationMessages extends Messages {
     String disksStatusWarning(String status, String disksAliases);
 
     // Model-bound widgets
-
-    @DefaultMessage("{0} ({1} Socket(s), {2} Core(s) per Socket)")
-    String cpuInfoLabel(int numberOfCpus, int numberOfSockets, int numberOfCpusPerSocket);
+    @DefaultMessage("{0} ({1}:{2}:{3}  Sockets:Cores/S.:Threads/C.)")
+    String cpuInfoLabel(int numberOfCpus, int numberOfSockets, int numberOfCpusPerSocket, int numOfThreadsPerCore);
 
     @DefaultMessage("Clone VM from Snapshot is supported only for Clusters of version {0} and above")
     String cloneVmNotSupported(String minimalClusterVersion);

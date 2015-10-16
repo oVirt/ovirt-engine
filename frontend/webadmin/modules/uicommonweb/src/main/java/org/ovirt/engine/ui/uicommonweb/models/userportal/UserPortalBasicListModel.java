@@ -189,7 +189,8 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
     public void updateDetails(VM vm) {
         getSelectedItemDefinedMemory().setEntity(sizeParser(vm.getVmMemSizeMb()));
         getSelectedItemNumOfCpuCores().setEntity(
-                ConstantsManager.getInstance().getMessages().cpuInfoMessage(vm.getNumOfCpus(), vm.getNumOfSockets(), vm.getCpuPerSocket())
+                ConstantsManager.getInstance().getMessages().cpuInfoMessage(vm.getNumOfCpus(),
+                        vm.getNumOfSockets(), vm.getCpuPerSocket(), vm.getThreadsPerCpu())
         );
     }
 
@@ -233,5 +234,4 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
     protected ConsoleContext getConsoleContext() {
         return ConsoleContext.UP_BASIC;
     }
-
 }

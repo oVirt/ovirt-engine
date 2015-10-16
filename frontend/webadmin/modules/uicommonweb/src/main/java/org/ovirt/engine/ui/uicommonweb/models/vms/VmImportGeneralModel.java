@@ -156,7 +156,8 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
         setCpuInfo(ConstantsManager.getInstance().getMessages().cpuInfoLabel(
                 vm.getNumOfCpus(),
                 vm.getNumOfSockets(),
-                vm.getCpuPerSocket()));
+                vm.getCpuPerSocket(),
+                vm.getThreadsPerCpu()));
 
         setGuestCpuCount(vm.getGuestCpuCount());
 

@@ -446,8 +446,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
 
         return imagesRelatedChecks() && AddVmCommand.checkCpuSockets(getParameters().getMasterVm().getNumOfSockets(),
-                getParameters().getMasterVm().getCpuPerSocket(), getVdsGroup()
-                .getCompatibilityVersion().toString(), getReturnValue().getCanDoActionMessages());
+                getParameters().getMasterVm().getCpuPerSocket(), getParameters().getMasterVm().getThreadsPerCpu(),
+                getVdsGroup().getCompatibilityVersion().toString(), getReturnValue().getCanDoActionMessages());
     }
 
     @Override
@@ -695,6 +695,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getVmTemplateName(),
                         getParameters().getMasterVm().getNumOfSockets(),
                         getParameters().getMasterVm().getCpuPerSocket(),
+                        getParameters().getMasterVm().getThreadsPerCpu(),
                         getParameters().getMasterVm().getOsId(),
                         getParameters().getMasterVm().getVdsGroupId(),
                         getVmTemplateId(),

@@ -302,11 +302,18 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("coresPerSocket")
     public ListModelListBoxEditor<Integer> corePerSocketEditor;
 
+    @Path(value = "threadsPerCore.selectedItem")
+    @WithElementId("threadsPerCore")
+    public ListModelListBoxEditor<Integer> threadsPerCoreEditor;
+
     @UiField(provided = true)
     public EntityModelDetachableWidgetWithLabel numOfSocketsEditorWithDetachable;
 
     @UiField(provided = true)
     public EntityModelDetachableWidgetWithLabel corePerSocketEditorWithDetachable;
+
+    @UiField(provided = true)
+    public EntityModelDetachableWidgetWithLabel threadsPerCoreEditorWithDetachable;
 
     @UiField(provided = true)
     @Path(value = "emulatedMachine.selectedItem")
@@ -1345,6 +1352,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         numOfSocketsEditorWithDetachable = new EntityModelDetachableWidgetWithLabel(numOfSocketsEditor);
         corePerSocketEditor = new ListModelListBoxEditor<>(new ModeSwitchingVisibilityRenderer());
         corePerSocketEditorWithDetachable = new EntityModelDetachableWidgetWithLabel(corePerSocketEditor);
+        threadsPerCoreEditor = new ListModelListBoxEditor<>(new ModeSwitchingVisibilityRenderer());
+        threadsPerCoreEditorWithDetachable = new EntityModelDetachableWidgetWithLabel(threadsPerCoreEditor);
 
         // Pools
         poolTypeEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<EntityModel<VmPoolType>>() {
@@ -1585,6 +1594,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         totalvCPUsEditor.setLabel(constants.numOfVCPUs());
         corePerSocketEditorWithDetachable.setLabel(constants.coresPerSocket());
         numOfSocketsEditorWithDetachable.setLabel(constants.numOfSockets());
+        threadsPerCoreEditorWithDetachable.setLabel(constants.threadsPerCore());
         emulatedMachine.setLabel(constants.emulatedMachineLabel());
         customCpu.setLabel(constants.cpuModelLabel());
 
@@ -2040,8 +2050,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         totalvCPUsEditor.setTabIndex(nextTabIndex++);
 
         nextTabIndex = vcpusAdvancedParameterExpander.setTabIndexes(nextTabIndex);
-        corePerSocketEditor.setTabIndex(nextTabIndex++);
         numOfSocketsEditor.setTabIndex(nextTabIndex++);
+        corePerSocketEditor.setTabIndex(nextTabIndex++);
+        threadsPerCoreEditor.setTabIndex(nextTabIndex++);
         emulatedMachine.setTabIndex(nextTabIndex++);
         customCpu.setTabIndex(nextTabIndex++);
         nextTabIndex = serialNumberPolicyEditor.setTabIndexes(nextTabIndex);
@@ -2218,6 +2229,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 totalvCPUsEditorWithInfoIcon,
                 numOfSocketsEditorWithDetachable,
                 corePerSocketEditorWithDetachable,
+                threadsPerCoreEditorWithDetachable,
                 isHighlyAvailableEditorWithDetachable,
                 priorityLabelWithDetachable,
                 migrationModeEditorWithDetachable,

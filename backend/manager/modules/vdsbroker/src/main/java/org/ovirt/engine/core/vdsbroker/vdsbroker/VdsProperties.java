@@ -221,6 +221,7 @@ public final class VdsProperties {
     public static final String num_of_monitors = "spiceMonitors";
     public static final String num_of_cpus = "smp";
     public static final String cores_per_socket = "smpCoresPerSocket";
+    public static final String threads_per_core = "smpThreadsPerCore";
     public static final String max_number_of_cpus = "maxVCpus";
     public static final String cpuPinning = "cpuPinning";
     public static final String vm_name = "vmName";

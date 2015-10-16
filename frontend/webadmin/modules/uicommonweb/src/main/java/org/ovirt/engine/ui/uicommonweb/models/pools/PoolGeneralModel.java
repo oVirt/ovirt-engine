@@ -342,12 +342,10 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
     private void updateProperties() {
         final VmPool pool = getEntity();
 
-
         setName(pool.getName());
         setDescription(pool.getVmPoolDescription());
 
         AsyncQuery _asyncQuery = new AsyncQuery();
-
 
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
@@ -365,7 +363,8 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
                     poolGeneralModel.setCpuInfo(ConstantsManager.getInstance().getMessages().cpuInfoLabel(
                             getvm().getNumOfCpus(),
                             getvm().getNumOfSockets(),
-                            getvm().getCpuPerSocket()));
+                            getvm().getCpuPerSocket(),
+                            getvm().getThreadsPerCpu()));
                     poolGeneralModel.setMonitorCount(getvm().getNumOfMonitors());
 
                     poolGeneralModel.setOS(getvm().getVmOsId());

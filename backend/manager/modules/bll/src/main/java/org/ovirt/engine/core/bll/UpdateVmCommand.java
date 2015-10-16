@@ -161,6 +161,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         // save user selected value for hotplug before overriding with db values (when updating running vm)
         int cpuPerSocket = newVmStatic.getCpuPerSocket();
         int numOfSockets = newVmStatic.getNumOfSockets();
+        int threadsPerCpu = newVmStatic.getThreadsPerCpu();
         int memSizeMb = newVmStatic.getMemSizeMb();
 
         if (newVmStatic.getCreationDate().equals(DateTime.getMinValue())) {
@@ -178,7 +179,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         UpdateVmNetworks();
         updateVmNumaNodes();
         if (isHotSetEnabled()) {
-            hotSetCpus(cpuPerSocket, numOfSockets);
+            hotSetCpus(cpuPerSocket, numOfSockets, threadsPerCpu);
             hotSetMemory(memSizeMb);
         }
         final List<Guid> oldIconIds = IconUtils.updateVmIcon(
@@ -290,13 +291,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 getCompensationContext());
     }
 
-    private void hotSetCpus(int cpuPerSocket, int newNumOfSockets) {
+    private void hotSetCpus(int cpuPerSocket, int newNumOfSockets, int newThreadsPerCpu) {
         int currentSockets = getVm().getNumOfSockets();
         int currentCpuPerSocket = getVm().getCpuPerSocket();
+        int currentThreadsPerCpu = getVm().getThreadsPerCpu();
 
-        // try hotplug only if topology (cpuPerSocket) hasn't changed
+        // try hotplug only if topology (cpuPerSocket, threadsPerCpu) hasn't changed
         if (getVm().getStatus() == VMStatus.Up && currentSockets != newNumOfSockets
-                && currentCpuPerSocket == cpuPerSocket) {
+                && currentCpuPerSocket == cpuPerSocket && currentThreadsPerCpu == newThreadsPerCpu) {
             HotSetNumberOfCpusParameters params =
                     new HotSetNumberOfCpusParameters(
                             newVmStatic,
@@ -656,7 +658,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (!AddVmCommand.checkCpuSockets(vmFromParams.getNumOfSockets(),
-                vmFromParams.getCpuPerSocket(), getVdsGroup().getCompatibilityVersion()
+                vmFromParams.getCpuPerSocket(), vmFromParams.getThreadsPerCpu(), getVdsGroup().getCompatibilityVersion()
                 .toString(), getReturnValue().getCanDoActionMessages())) {
             return false;
         }
@@ -945,14 +947,13 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                         null,
                         QuotaConsumptionParameter.QuotaAction.RELEASE,
                         getVdsGroupId(),
-                        getVm().getVmtCpuPerSocket() * getVm().getNumOfSockets(),
+                        getVm().getNumOfCpus(),
                         getVm().getMemSizeMb()));
                 list.add(new QuotaVdsGroupConsumptionParameter(getParameters().getVmStaticData().getQuotaId(),
                         null,
                         QuotaConsumptionParameter.QuotaAction.CONSUME,
                         getParameters().getVmStaticData().getVdsGroupId(),
-                        getParameters().getVmStaticData().getCpuPerSocket()
-                                * getParameters().getVmStaticData().getNumOfSockets(),
+                        getParameters().getVmStaticData().getNumOfCpus(),
                         getParameters().getVmStaticData().getMemSizeMb()));
             }
 

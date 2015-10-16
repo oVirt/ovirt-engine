@@ -4,6 +4,7 @@ public enum ConfigurationValues {
     MaxNumOfVmCpus(ConfigAuthType.User),
     MaxNumOfVmSockets(ConfigAuthType.User),
     MaxNumOfCpuPerSocket(ConfigAuthType.User),
+    MaxNumOfThreadsPerCpu(ConfigAuthType.User),
     VdcVersion(ConfigAuthType.User),
     // GetAllAdDomains,
     SSLEnabled(ConfigAuthType.User),

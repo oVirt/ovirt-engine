@@ -59,6 +59,7 @@ public class ChangeVmClusterValidator {
             boolean isCpuSocketsValid = AddVmCommand.checkCpuSockets(
                     vm.getStaticData().getNumOfSockets(),
                     vm.getStaticData().getCpuPerSocket(),
+                    vm.getStaticData().getThreadsPerCpu(),
                     clusterCompatibilityVersion.getValue(),
                     parentCommand.getReturnValue().getCanDoActionMessages());
             if (!isCpuSocketsValid) {

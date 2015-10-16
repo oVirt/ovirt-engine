@@ -522,8 +522,9 @@
                         <g:FlowPanel addStyleNames="{style.sectionPanel}">
                             <d:AdvancedParametersExpander ui:field="vcpusAdvancedParameterExpander"/>
                             <g:FlowPanel ui:field="vcpusAdvancedParameterExpanderContent" addStyleNames="{style.generalExpanderContent}">
-                                <ge:EntityModelDetachableWidgetWithLabel ui:field="corePerSocketEditorWithDetachable" />
                                 <ge:EntityModelDetachableWidgetWithLabel ui:field="numOfSocketsEditorWithDetachable" />
+                                <ge:EntityModelDetachableWidgetWithLabel ui:field="corePerSocketEditorWithDetachable" />
+                                <ge:EntityModelDetachableWidgetWithLabel ui:field="threadsPerCoreEditorWithDetachable" />
                                 <e:ListModelTypeAheadChangeableListBoxEditor ui:field="emulatedMachine" />
                                 <e:ListModelTypeAheadChangeableListBoxEditor ui:field="customCpu" />
                             </g:FlowPanel>

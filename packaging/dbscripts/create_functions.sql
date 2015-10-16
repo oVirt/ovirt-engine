@@ -1241,4 +1241,14 @@ BEGIN
 END;$FUNCTION$
 LANGUAGE plpgsql;
 
+-- Computes number of vcpus for vm_static
+CREATE OR REPLACE FUNCTION fn_get_num_of_vcpus(vm_static)
+RETURNS INT STABLE
+AS $PROCEDURE$
+
+BEGIN
+    RETURN $1. num_of_sockets * $1. cpu_per_socket * $1. threads_per_cpu;
+END;$PROCEDURE$
+
+LANGUAGE plpgsql;
 

@@ -67,6 +67,8 @@ public class BackendInstanceTypesResourceTest
         expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
         expect(entity.getNumOfCpus()).andReturn(8).anyTimes();
         expect(entity.getNumOfSockets()).andReturn(2).anyTimes();
+        expect(entity.getThreadsPerCpu()).andReturn(1).anyTimes();
+        expect(entity.getCpuPerSocket()).andReturn(4).anyTimes();
         expect(entity.isBaseTemplate()).andReturn(true).anyTimes();
         return entity;
     }
@@ -94,6 +96,7 @@ public class BackendInstanceTypesResourceTest
         assertNotNull(model.getCpu().getTopology());
         assertEquals(4, model.getCpu().getTopology().getCores().intValue());
         assertEquals(2, model.getCpu().getTopology().getSockets().intValue());
+        assertEquals(1, model.getCpu().getTopology().getThreads().intValue());
     }
 
     @Override

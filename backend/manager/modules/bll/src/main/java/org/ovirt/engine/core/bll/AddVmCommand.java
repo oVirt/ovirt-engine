@@ -451,12 +451,12 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return true;
     }
 
-    public static boolean checkCpuSockets(int num_of_sockets, int cpu_per_socket, String compatibility_version,
-                                          List<String> CanDoActionMessages) {
+    public static boolean checkCpuSockets(int num_of_sockets, int cpu_per_socket, int threadsPerCpu,
+                                          String compatibility_version, List<String> CanDoActionMessages) {
         boolean retValue = true;
         if (retValue
-                && (num_of_sockets * cpu_per_socket) > Config.<Integer> getValue(ConfigValues.MaxNumOfVmCpus,
-                        compatibility_version)) {
+                && (num_of_sockets * cpu_per_socket * threadsPerCpu) >
+                Config.<Integer> getValue(ConfigValues.MaxNumOfVmCpus, compatibility_version)) {
             CanDoActionMessages.add(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_CPU.toString());
             retValue = false;
         }
@@ -470,12 +470,21 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             CanDoActionMessages.add(EngineMessage.ACTION_TYPE_FAILED_MAX_CPU_PER_SOCKET.toString());
             retValue = false;
         }
+        if (retValue
+                && threadsPerCpu > Config.<Integer> getValue(ConfigValues.MaxNumOfThreadsPerCpu, compatibility_version)) {
+            CanDoActionMessages.add(EngineMessage.ACTION_TYPE_FAILED_MAX_THREADS_PER_CPU.toString());
+            retValue = false;
+        }
         if (retValue && cpu_per_socket < 1) {
             CanDoActionMessages.add(EngineMessage.ACTION_TYPE_FAILED_MIN_CPU_PER_SOCKET.toString());
             retValue = false;
         }
         if (retValue && num_of_sockets < 1) {
             CanDoActionMessages.add(EngineMessage.ACTION_TYPE_FAILED_MIN_NUM_SOCKETS.toString());
+            retValue = false;
+        }
+        if (retValue && threadsPerCpu < 1) {
+            CanDoActionMessages.add(EngineMessage.ACTION_TYPE_FAILED_MIN_THREADS_PER_CPU.toString());
             retValue = false;
         }
         return retValue;
@@ -754,8 +763,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected boolean checkCpuSockets() {
         return AddVmCommand.checkCpuSockets(getParameters().getVmStaticData().getNumOfSockets(),
-                getParameters().getVmStaticData().getCpuPerSocket(), getVdsGroup().getCompatibilityVersion()
-                .toString(), getReturnValue().getCanDoActionMessages());
+                getParameters().getVmStaticData().getCpuPerSocket(), getParameters().getVmStaticData().getThreadsPerCpu(),
+                getVdsGroup().getCompatibilityVersion().toString(), getReturnValue().getCanDoActionMessages());
     }
 
     protected boolean buildAndCheckDestStorageDomains() {

@@ -268,6 +268,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
             getCoresPerSocket().setIsChangeable(false);
             getNumOfSockets().setIsChangeable(false);
+            getThreadsPerCore().setIsChangeable(false);
             getSerialNumberPolicy().setIsChangeable(false);
 
             getOSType().setIsChangeable(false);
@@ -645,6 +646,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void setCoresPerSocket(NotChangableForVmInPoolListModel<Integer> value) {
         privateCoresPerSocket = value;
+    }
+
+    private NotChangableForVmInPoolListModel<Integer> threadsPerCore;
+
+    public ListModel<Integer> getThreadsPerCore() {
+        return threadsPerCore;
+    }
+
+    private void setThreadsPerCore(NotChangableForVmInPoolListModel<Integer> value) {
+        threadsPerCore = value;
     }
 
     private NotChangableForVmInPoolListModel<VDS> privateDefaultHost;
@@ -1550,6 +1561,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setCoresPerSocket(new NotChangableForVmInPoolListModel<Integer>());
         getCoresPerSocket().getSelectedItemChangedEvent().addListener(this);
 
+        setThreadsPerCore(new NotChangableForVmInPoolListModel<Integer>());
+        getThreadsPerCore().getSelectedItemChangedEvent().addListener(this);
+
         setSerialNumberPolicy(new SerialNumberPolicyModel());
 
         setMigrationMode(new NotChangableForVmInPoolListModel<MigrationSupport>());
@@ -1813,6 +1827,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             }
             else if (sender == getCoresPerSocket()) {
                 coresPerSocket_EntityChanged(sender, args);
+            }
+            else if (sender == getThreadsPerCore()) {
+                threadsPerCore_EntityChanged(sender, args);
             }
             else if (sender == getMigrationMode()) {
                 behavior.updateUseHostCpuAvailability();
@@ -2377,26 +2394,46 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         behavior.updateMinAllocatedMemory();
     }
 
-    private void numOfSockets_EntityChanged(Object sender, EventArgs args) {
-        behavior.numOfSocketChanged();
-    }
-
     private void totalCPUCores_EntityChanged(Object sender, EventArgs args) {
         // do not listen on changes while the totalCpuCoresChanged is adjusting them
-        getNumOfSockets().getSelectedItemChangedEvent().removeListener(this);
-        getTotalCPUCores().getEntityChangedEvent().removeListener(this);
-        getCoresPerSocket().getSelectedItemChangedEvent().removeListener(this);
+        removeCPUListeners();
 
         behavior.totalCpuCoresChanged();
 
         // start listening again
+        addCPUListeners();
+    }
+
+    private void removeCPUListeners() {
+        getTotalCPUCores().getEntityChangedEvent().removeListener(this);
+        getNumOfSockets().getSelectedItemChangedEvent().removeListener(this);
+        getCoresPerSocket().getSelectedItemChangedEvent().removeListener(this);
+        getThreadsPerCore().getSelectedItemChangedEvent().removeListener(this);
+    }
+
+    private void addCPUListeners() {
         getTotalCPUCores().getEntityChangedEvent().addListener(this);
         getNumOfSockets().getSelectedItemChangedEvent().addListener(this);
         getCoresPerSocket().getSelectedItemChangedEvent().addListener(this);
+        getThreadsPerCore().getSelectedItemChangedEvent().addListener(this);
+    }
+
+    private void numOfSockets_EntityChanged(Object sender, EventArgs args) {
+        removeCPUListeners();
+        behavior.numOfSocketChanged();
+        addCPUListeners();
     }
 
     private void coresPerSocket_EntityChanged(Object sender, EventArgs args) {
+        removeCPUListeners();
         behavior.coresPerSocketChanged();
+        addCPUListeners();
+    }
+
+    private void threadsPerCore_EntityChanged(Object sender, EventArgs args) {
+        removeCPUListeners();
+        behavior.threadsPerCoreChanged();
+        addCPUListeners();
     }
 
     private void updateNumOfMonitors() {

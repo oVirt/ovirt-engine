@@ -37,7 +37,7 @@ public class CPUPolicyUnit extends PolicyUnitImpl {
             VDSGroup cluster = vdsGroupDao.get(vds.getVdsGroupId());
             Integer cores = SlaValidator.getEffectiveCpuCores(vds,
                     cluster != null && cluster.getCountThreadsAsCores());
-            if (cores != null && vm.getNumOfCpus() > cores) {
+            if (cores != null && vm.getNumOfCpus(false) > cores) {
                 messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__NOT_ENOUGH_CORES.toString());
                 log.debug("Host '{}' has less cores ({}) than vm cores ({})",
                         vds.getName(),

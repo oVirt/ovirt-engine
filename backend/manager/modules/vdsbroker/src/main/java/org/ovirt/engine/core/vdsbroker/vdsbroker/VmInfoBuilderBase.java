@@ -92,6 +92,7 @@ public abstract class VmInfoBuilderBase {
 
         if (Config.<Boolean> getValue(ConfigValues.SendSMPOnRunVm)) {
             createInfo.put(VdsProperties.cores_per_socket, (Integer.toString(vm.getCpuPerSocket())));
+            createInfo.put(VdsProperties.threads_per_core, (Integer.toString(vm.getThreadsPerCpu())));
             if (FeatureSupported.supportedInConfig(
                     ConfigValues.HotPlugCpuSupported,
                     vm.getVdsGroupCompatibilityVersion(),
@@ -187,7 +188,11 @@ public abstract class VmInfoBuilderBase {
         Integer maxVCpus = Config.<Integer>getValue(
                 ConfigValues.MaxNumOfVmCpus,
                 vm.getVdsGroupCompatibilityVersion().getValue());
-        maxVCpus = vm.getCpuPerSocket() * (Math.min(maxSockets, maxVCpus / vm.getCpuPerSocket()));
+
+        int threadsPerCore = vm.getThreadsPerCpu();
+        int cpuPerSocket = vm.getCpuPerSocket();
+        maxVCpus = cpuPerSocket * threadsPerCore *
+                (Math.min(maxSockets, maxVCpus / (cpuPerSocket * threadsPerCore)));
         return maxVCpus;
     }
 

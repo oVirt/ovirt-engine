@@ -2161,6 +2161,7 @@
         <column>is_initialized</column>
         <column>num_of_sockets</column>
         <column>cpu_per_socket</column>
+        <column>threads_per_cpu</column>
         <column>template_status</column>
         <column>usb_policy</column>
         <column>time_zone</column>
@@ -2229,7 +2230,8 @@
             <value>false</value> <!-- allow_console_reconnect -->
             <null />
             <value>1</value>
-            <value>1</value>
+            <value>1</value> <!-- cpu_per_socket -->
+            <value>1</value> <!-- threads_per_cpu -->
             <value>0</value>
             <value>1</value>
             <value>GMT standard time</value>
@@ -2299,6 +2301,7 @@
             <null />
             <value>1</value>
             <value>1</value>
+            <value>1</value> <!-- threads_per_cpu -->
             <value>0</value>
             <value>1</value>
             <value>GMT standard time</value>
@@ -2368,6 +2371,7 @@
             <null />
             <value>1</value>
             <value>1</value>
+            <value>1</value> <!-- threads_per_cpu -->
             <value>0</value>
             <value>1</value>
             <value>GMT standard time</value>
@@ -2437,6 +2441,7 @@
             <null />
             <value>1</value>
             <value>1</value>
+            <value>1</value> <!-- threads_per_cpu -->
             <value>0</value>
             <value>1</value>
             <value>GMT standard time</value>
@@ -2506,6 +2511,7 @@
             <null />
             <value>1</value>
             <value>1</value>
+            <value>1</value> <!-- threads_per_cpu -->
             <value>0</value>
             <value>1</value>
             <value>GMT standard time</value>
@@ -2575,6 +2581,7 @@
             <null />
             <value>1</value>
             <value>1</value>
+            <value>1</value> <!-- threads_per_cpu -->
             <value>0</value>
             <value>1</value>
             <value>GMT standard time</value>
@@ -2644,6 +2651,7 @@
             <null />
             <value>1</value>
             <value>1</value>
+            <value>1</value> <!-- threads_per_cpu -->
             <value>0</value>
             <value>1</value>
             <value>GMT standard time</value>
@@ -2713,6 +2721,7 @@
             <null />
             <value>1</value>
             <value>1</value>
+            <value>1</value> <!-- threads_per_cpu -->
             <value>0</value>
             <value>1</value>
             <value>GMT standard time</value>
@@ -2784,6 +2793,7 @@
             <value>1</value>
             <value>1</value>
             <value>1</value>
+            <value>1</value> <!-- threads_per_cpu -->
             <null />
             <value>1</value>
             <value></value>
@@ -2853,6 +2863,7 @@
             <value>1</value>
             <value>1</value>
             <value>1</value>
+            <value>1</value> <!-- threads_per_cpu -->
             <null />
             <value>1</value>
             <value></value>
@@ -2922,6 +2933,7 @@
             <value>1</value>
             <value>1</value>
             <value>1</value>
+            <value>1</value> <!-- threads_per_cpu -->
             <null />
             <value>1</value>
             <value></value>
@@ -2991,6 +3003,7 @@
             <value>1</value>
             <value>1</value>
             <value>1</value>
+            <value>1</value> <!-- threads_per_cpu -->
             <null />
             <value>1</value>
             <value></value>
@@ -3060,6 +3073,7 @@
             <value>1</value>
             <value>1</value>
             <value>1</value>
+            <value>1</value> <!-- threads_per_cpu -->
             <null />
             <value>1</value>
             <value></value>
@@ -3129,6 +3143,7 @@
             <value>1</value>
             <value>1</value>
             <value>1</value>
+            <value>1</value> <!-- threads_per_cpu -->
             <null />
             <value>1</value>
             <value></value>
@@ -3198,6 +3213,7 @@
             <value>1</value>
             <value>1</value>
             <value>1</value>
+            <value>1</value> <!-- threads_per_cpu -->
             <null />
             <value>1</value>
             <value></value>
@@ -3267,6 +3283,7 @@
             <value>1</value>
             <value>1</value>
             <value>1</value>
+            <value>1</value> <!-- threads_per_cpu -->
             <null />
             <value>1</value>
             <value></value>
@@ -3336,6 +3353,7 @@
             <value>1</value>
             <value>1</value>
             <value>1</value>
+            <value>1</value> <!-- threads_per_cpu -->
             <null />
             <value>1</value>
             <value></value>
