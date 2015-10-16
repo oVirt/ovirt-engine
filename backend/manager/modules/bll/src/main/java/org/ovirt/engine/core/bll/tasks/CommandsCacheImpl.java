@@ -105,7 +105,14 @@ public class CommandsCacheImpl implements CommandsCache {
     }
 
     public void persistCommandAssociatedEntities(Collection<CommandAssociatedEntity> cmdAssociatedEntities) {
-        DbFacade.getInstance().getCommandEntityDao().insertCommandAssociatedEntities(cmdAssociatedEntities);
+        Transaction transaction = TransactionSupport.suspend();
+        try {
+            DbFacade.getInstance().getCommandEntityDao().insertCommandAssociatedEntities(cmdAssociatedEntities);
+        } finally {
+            if (transaction != null) {
+                TransactionSupport.resume(transaction);
+            }
+        }
     }
 
     public List<CommandAssociatedEntity> getCommandAssociatedEntities(Guid cmdId) {
