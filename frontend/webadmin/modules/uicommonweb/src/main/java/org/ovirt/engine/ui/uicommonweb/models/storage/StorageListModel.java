@@ -549,13 +549,10 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             public void onSuccess(Object target, Object returnValue) {
 
                 Object[] array = (Object[]) target;
-                StorageListModel storageListModel = (StorageListModel) array[0];
                 RemoveStorageModel removeStorageModel = (RemoveStorageModel) array[1];
-                StorageDomain storage = storageListModel.getSelectedItem();
                 List<VDS> hosts = (List<VDS>) returnValue;
                 removeStorageModel.getHostList().setItems(hosts);
                 removeStorageModel.getHostList().setSelectedItem(Linq.firstOrDefault(hosts));
-                removeStorageModel.getFormat().setEntity(storage.getStorageDomainType().isDataDomain());
 
                 if (hosts.isEmpty()) {
                     UICommand tempVar = createCancelCommand("Cancel"); //$NON-NLS-1$
