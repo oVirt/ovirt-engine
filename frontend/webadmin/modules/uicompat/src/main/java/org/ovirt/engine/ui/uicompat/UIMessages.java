@@ -33,6 +33,24 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("This field can''t contain blanks or special characters, must be at least one character long, legal values are 0-9, a-z, ''_'', ''.'' and a length of up to {0} characters.")
     String hostNameMsg(int hostNameMaxLength);
 
+    @DefaultMessage("natural number")
+    String naturalNumber();
+
+    @DefaultMessage("real number")
+    String realNumber();
+
+    @DefaultMessage("This field must contain an {0} number")
+    String thisFieldMustContainTypeNumberInvalidReason(String type);
+
+    @DefaultMessage("{0} between {1} and {2}.")
+    String numberValidationNumberBetweenInvalidReason(String prefixMsg, String min, String max);
+
+    @DefaultMessage("{0} greater than or equal to {1}.")
+    String numberValidationNumberGreaterInvalidReason(String prefixMsg, String min);
+
+    @DefaultMessage("{0} less than or equal to {1}.")
+    String numberValidationNumberLessInvalidReason(String prefixMsg, String max);
+
     @DefaultMessage("{0} between {1} and {2}.")
     String integerValidationNumberBetweenInvalidReason(String prefixMsg, int min, int max);
 
