@@ -39,7 +39,7 @@ public class JavaLoggingUtils {
      */
     public static void addFileHandler(String fileName) {
         try {
-            FileHandler fh = new FileHandler(fileName);
+            FileHandler fh = new FileHandler(fileName, true);
             fh.setFormatter(new SimpleFormatter());
             Logger.getLogger("").addHandler(fh);
         } catch (SecurityException | IOException ex) {
