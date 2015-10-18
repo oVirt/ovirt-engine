@@ -31,7 +31,7 @@ public class ConfiguredRangeValidator implements ConstraintValidator<ConfiguredR
     public boolean isValid(Integer value, ConstraintValidatorContext context) {
         boolean result = value == null ? true : value >= min && value <= max;
         if (!result) {
-            context.buildConstraintViolationWithTemplate(rangeMessage);
+            context.buildConstraintViolationWithTemplate(rangeMessage).addConstraintViolation();
         }
         return result;
     }

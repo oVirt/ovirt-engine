@@ -5,7 +5,6 @@ import static org.ovirt.engine.core.common.businessentities.network.NetworkBootP
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
-
 import javax.validation.Validator;
 
 import org.junit.ClassRule;
@@ -44,6 +43,6 @@ public class SetupNetworksParametersTest {
 
         params.setConectivityTimeout(-1);
 
-        assertTrue(validator.validate(params).size() == 1);
+        assertTrue(validator.validate(params).size() == 2);
     }
 }
