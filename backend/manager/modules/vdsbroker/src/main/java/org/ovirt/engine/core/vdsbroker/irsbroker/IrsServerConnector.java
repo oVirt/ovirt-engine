@@ -3,8 +3,6 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 import java.util.Map;
 
 public interface IrsServerConnector {
-    public Map<String, Object> createVolume(String sdUUID, String spUUID, String imgGUID, int size, int volFormat,
-            int volType, int diskType, String volUUID, String descr, String srcImgGUID, String srcVolUUID);
 
     public Map<String, Object> createVolume(String sdUUID, String spUUID, String imgGUID, String size, int volFormat,
             int volType, int diskType, String volUUID, String descr, String srcImgGUID, String srcVolUUID);
