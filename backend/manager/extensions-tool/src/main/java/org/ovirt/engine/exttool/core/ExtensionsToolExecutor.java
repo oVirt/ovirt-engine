@@ -174,7 +174,7 @@ public class ExtensionsToolExecutor {
         Logger log = Logger.getLogger("");
         String logfile = (String)args.get("log-file");
         if(logfile != null) {
-            FileHandler fh = new FileHandler(logfile);
+            FileHandler fh = new FileHandler(logfile, true);
             fh.setFormatter(new SimpleFormatter());
             log.addHandler(fh);
         }
