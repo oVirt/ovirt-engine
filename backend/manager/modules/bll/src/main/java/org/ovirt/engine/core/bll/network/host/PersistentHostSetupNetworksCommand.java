@@ -1,19 +1,15 @@
 package org.ovirt.engine.core.bll.network.host;
 
-import java.util.Collection;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.host.function.NetworkNameFromNetworkAttachmentTransformationFunction;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 @NonTransactiveCommandAttribute
 public class PersistentHostSetupNetworksCommand<T extends PersistentHostSetupNetworksParameters> extends VdsCommand<T> {
@@ -36,12 +32,6 @@ public class PersistentHostSetupNetworksCommand<T extends PersistentHostSetupNet
     }
 
     public String getNetworkNames() {
-        if (getParameters().getNetworkAttachments().size() == 0) {
-            getParameters().setNetworkNames(StringUtils.EMPTY);
-        }
-        else if (StringUtils.isEmpty(getParameters().getNetworkNames())) {
-            updateModifiedNetworksNames();
-        }
         return getParameters().getNetworkNames();
     }
 
@@ -75,13 +65,6 @@ public class PersistentHostSetupNetworksCommand<T extends PersistentHostSetupNet
         setSucceeded(returnValue.getSucceeded());
     }
 
-    private void updateModifiedNetworksNames() {
-        Collection<String> networkNames =
-                LinqUtils.transformToList(getParameters().getNetworkAttachments(),
-                        new NetworkNameFromNetworkAttachmentTransformationFunction());
-        getParameters().setNetworkNames(StringUtils.join(networkNames, ", "));
-    }
-
     private boolean checkForChanges() {
         boolean output = getVdsDynamicDao().get(getVdsId()).getNetConfigDirty();
         return output;
@@ -89,7 +72,12 @@ public class PersistentHostSetupNetworksCommand<T extends PersistentHostSetupNet
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.PERSIST_NETWORK_ON_HOST_FINISHED
-                : AuditLogType.PERSIST_NETWORK_ON_HOST_FAILED;
+        if (StringUtils.isEmpty(getParameters().getNetworkNames())) {
+            return getSucceeded() ? AuditLogType.PERSIST_SETUP_NETWORK_ON_HOST_FINISHED
+                    : AuditLogType.PERSIST_SETUP_NETWORK_ON_HOST_FAILED;
+        } else {
+            return getSucceeded() ? AuditLogType.PERSIST_NETWORK_ON_HOST_FINISHED
+                    : AuditLogType.PERSIST_NETWORK_ON_HOST_FAILED;
+        }
     }
 }
