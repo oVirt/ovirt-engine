@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.validation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @SuppressWarnings("unused")
 public final class ValidationResult {
@@ -49,5 +50,23 @@ public final class ValidationResult {
                 "success=" + privateSuccess + //$NON-NLS-1$
                 ", reasons=" + privateReasons + //$NON-NLS-1$
                 "}"; //$NON-NLS-1$
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(privateSuccess, privateReasons);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ValidationResult that = (ValidationResult) o;
+        return Objects.equals(privateSuccess, that.privateSuccess)
+                && Objects.equals(privateReasons, that.privateReasons);
     }
 }
