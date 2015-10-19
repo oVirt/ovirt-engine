@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurations;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.utils.SubnetUtils;
 
 public class NetworkInSyncWithVdsNetworkInterface {
 
@@ -63,6 +64,14 @@ public class NetworkInSyncWithVdsNetworkInterface {
         boolean ifaceValueSetToDefaultMtu = iface.getMtu() == NetworkUtils.getDefaultMtu();
         boolean bothUsesDefaultValue = networkValueSetToDefaultMtu && ifaceValueSetToDefaultMtu;
         return (bothUsesDefaultValue || iface.getMtu() == network.getMtu());
+    }
+
+    private boolean isNetworkSubnetInSync() {
+        return getsSubnetUtilsInstance().equalSubnet(iface.getSubnet(), getPrimaryAddress().getNetmask());
+    }
+
+    public SubnetUtils getsSubnetUtilsInstance() {
+        return SubnetUtils.getInstance();
     }
 
     public boolean qosParametersEqual() {
@@ -125,17 +134,14 @@ public class NetworkInSyncWithVdsNetworkInterface {
         if (!isPrimaryAddressExist()) {
             return;
         }
-        NetworkBootProtocol definedBootProtocol =
-                isPrimaryAddressExist() ? getPrimaryAddress().getBootProtocol() : null;
+        NetworkBootProtocol definedBootProtocol = getPrimaryAddress().getBootProtocol();
         result.add(ReportedConfigurationType.BOOT_PROTOCOL, iface.getBootProtocol(), definedBootProtocol);
 
         if (definedBootProtocol == NetworkBootProtocol.STATIC_IP && iface.getBootProtocol() == definedBootProtocol) {
             result.add(ReportedConfigurationType.NETMASK,
-                    iface.getSubnet(),
-                    isPrimaryAddressExist() ? getPrimaryAddress().getNetmask() : null);
+                    iface.getSubnet(), getPrimaryAddress().getNetmask(), isNetworkSubnetInSync());
             result.add(ReportedConfigurationType.IP_ADDRESS,
-                    iface.getAddress(),
-                    isPrimaryAddressExist() ? getPrimaryAddress().getAddress() : null);
+                    iface.getAddress(), getPrimaryAddress().getAddress());
         }
     }
 }
