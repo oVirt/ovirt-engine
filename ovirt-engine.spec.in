@@ -55,6 +55,7 @@
 %global ovirt_wildfly_overlay 1
 %global ovirt_wildfly_fixup 1
 %global ovirt_with_aio 1
+%global ovirt_with_docker 1
 
 %global ovirt_product_name oVirt Engine
 %global ovirt_product_name_short oVirt Engine
@@ -519,6 +520,7 @@ Requires:	vdsm-jsonrpc-java >= 1.1.4
 All-in-one plugin for %{ovirt_product_name_short}'s setup
 %endif
 
+%if %{ovirt_with_docker}
 %package setup-plugin-dockerc
 Summary:	Docker container plugin for %{ovirt_product_name_short}'s setup
 Group:		%{ovirt_product_group}
@@ -529,6 +531,7 @@ Requires:	python-docker-py
 
 %description setup-plugin-dockerc
 Docker container plugin for %{ovirt_product_name_short}'s setup
+%endif
 
 %prep
 %setup -c -q
@@ -767,6 +770,14 @@ VDSM/disableNetworkManager=bool:False
 __EOF__
 %else
 rm -rf "%{buildroot}%{engine_data}/firewalld/aio"
+%endif
+
+%if ! %{ovirt_with_docker}
+rm -rf "%{buildroot}%{engine_data}/firewalld/dockerc"
+rm -rf "%{buildroot}%{engine_data}/setup/ovirt_engine_setup/dockerc"
+rm -rf "%{buildroot}%{engine_data}/setup/plugins/ovirt-engine-common/dockerc"
+rm -rf "%{buildroot}%{engine_data}/setup/plugins/ovirt-engine-remove/dockerc"
+rm -rf "%{buildroot}%{engine_data}/setup/plugins/ovirt-engine-setup/dockerc"
 %endif
 
 %if %{ovirt_provides_jboss}
@@ -1022,11 +1033,13 @@ fi
 %{engine_data}/firewalld/aio/
 %endif
 
+%if %{ovirt_with_docker}
 %files setup-plugin-dockerc
 
 %{engine_data}/firewalld/dockerc/
 %{engine_data}/setup/ovirt_engine_setup/dockerc/
 %{engine_data}/setup/plugins/*/dockerc/
+%endif
 
 %files dbscripts
 
