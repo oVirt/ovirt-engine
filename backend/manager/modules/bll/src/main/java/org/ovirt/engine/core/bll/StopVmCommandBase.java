@@ -109,18 +109,15 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
     @Override
     protected void endVmCommand() {
         setCommandShouldBeLogged(false);
-
-        if (getVm() != null) {
-            getVm().setStatus(VMStatus.Down);
-            getSnapshotDao().removeMemoryFromActiveSnapshot(getVmId());
-
-            getVmDynamicDao().update(getVm().getDynamicData());
+        if (getVm() == null) {
+            log.warn("VM is null, not performing full endAction");
+            setSucceeded(true);
+            return;
         }
 
-        else {
-            log.warn("StopVmCommandBase::EndVmCommand: Vm is null - not performing full endAction");
-        }
-
+        getVm().setStatus(VMStatus.Down);
+        getSnapshotDao().removeMemoryFromActiveSnapshot(getVmId());
+        getVmDynamicDao().update(getVm().getDynamicData());
         setSucceeded(true);
     }
 
