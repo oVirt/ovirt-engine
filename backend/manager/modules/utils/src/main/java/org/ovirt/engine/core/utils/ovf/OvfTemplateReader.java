@@ -33,7 +33,7 @@ public class OvfTemplateReader extends OvfReader {
     @Override
     protected void readOsSection(XmlNode section) {
         _vmTemplate.setId(new Guid(section.attributes.get("ovf:id").getValue()));
-        XmlNode node = section.SelectSingleNode("Description");
+        XmlNode node = selectSingleNode(section, "Description");
         if (node != null) {
             int osId = osRepository.getOsIdByUniqueName(node.innerText);
             _vmTemplate.setOsId(osId);
@@ -46,7 +46,7 @@ public class OvfTemplateReader extends OvfReader {
 
     @Override
     protected void readDiskImageItem(XmlNode node) {
-        final Guid guid = new Guid(node.SelectSingleNode("rasd:InstanceId", _xmlNS).innerText);
+        final Guid guid = new Guid(selectSingleNode(node, "rasd:InstanceId", _xmlNS).innerText);
 
         DiskImage image = LinqUtils.firstOrNull(_images, new Predicate<DiskImage>() {
             @Override
@@ -54,29 +54,29 @@ public class OvfTemplateReader extends OvfReader {
                 return diskImage.getImageId().equals(guid);
             }
         });
-        image.setId(OvfParser.GetImageGrupIdFromImageFile(node.SelectSingleNode(
+        image.setId(OvfParser.GetImageGrupIdFromImageFile(selectSingleNode(node,
                 "rasd:HostResource", _xmlNS).innerText));
-        if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:Parent", _xmlNS).innerText)) {
-            image.setParentId(new Guid(node.SelectSingleNode("rasd:Parent", _xmlNS).innerText));
+        if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:Parent", _xmlNS).innerText)) {
+            image.setParentId(new Guid(selectSingleNode(node, "rasd:Parent", _xmlNS).innerText));
         }
-        if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:Template", _xmlNS).innerText)) {
-            image.setImageTemplateId(new Guid(node.SelectSingleNode("rasd:Template", _xmlNS).innerText));
+        if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:Template", _xmlNS).innerText)) {
+            image.setImageTemplateId(new Guid(selectSingleNode(node, "rasd:Template", _xmlNS).innerText));
         }
-        image.setAppList(node.SelectSingleNode("rasd:ApplicationList", _xmlNS).innerText);
-        if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:StorageId", _xmlNS).innerText)) {
-            image.setStorageIds(new ArrayList<Guid>(Arrays.asList(new Guid(node.SelectSingleNode("rasd:StorageId",
+        image.setAppList(selectSingleNode(node, "rasd:ApplicationList", _xmlNS).innerText);
+        if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:StorageId", _xmlNS).innerText)) {
+            image.setStorageIds(new ArrayList<Guid>(Arrays.asList(new Guid(selectSingleNode(node, "rasd:StorageId",
                     _xmlNS).innerText))));
         }
-        if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).innerText)) {
-            image.setStoragePoolId(new Guid(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).innerText));
+        if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:StoragePoolId", _xmlNS).innerText)) {
+            image.setStoragePoolId(new Guid(selectSingleNode(node, "rasd:StoragePoolId", _xmlNS).innerText));
         }
         final Date creationDate = OvfParser.UtcDateStringToLocaDate(
-                node.SelectSingleNode("rasd:CreationDate", _xmlNS).innerText);
+                selectSingleNode(node, "rasd:CreationDate", _xmlNS).innerText);
         if (creationDate != null) {
             image.setCreationDate(creationDate);
         }
         final Date lastModified = OvfParser.UtcDateStringToLocaDate(
-                node.SelectSingleNode("rasd:LastModified", _xmlNS).innerText);
+                selectSingleNode(node, "rasd:LastModified", _xmlNS).innerText);
         if (lastModified != null) {
             image.setLastModified(lastModified);
         }
@@ -86,34 +86,34 @@ public class OvfTemplateReader extends OvfReader {
     @Override
     protected void readGeneralData(XmlNode content) {
         // General Vm
-        XmlNode node = content.SelectSingleNode(OvfProperties.NAME);
+        XmlNode node = selectSingleNode(content, OvfProperties.NAME);
         if (node != null) {
             _vmTemplate.setName(node.innerText);
             name = _vmTemplate.getName();
         }
-        node = content.SelectSingleNode(OvfProperties.TEMPLATE_ID);
+        node = selectSingleNode(content, OvfProperties.TEMPLATE_ID);
         if (node != null) {
             if (StringUtils.isNotEmpty(node.innerText)) {
                 _vmTemplate.setId(new Guid(node.innerText));
             }
         }
 
-        node = content.SelectSingleNode(OvfProperties.IS_DISABLED);
+        node = selectSingleNode(content, OvfProperties.IS_DISABLED);
         if (node != null) {
             _vmTemplate.setDisabled(Boolean.parseBoolean(node.innerText));
         }
 
-        node = content.SelectSingleNode(OvfProperties.TRUSTED_SERVICE);
+        node = selectSingleNode(content, OvfProperties.TRUSTED_SERVICE);
         if (node != null) {
             _vmTemplate.setTrustedService(Boolean.parseBoolean(node.innerText));
         }
 
-        node = content.SelectSingleNode(OvfProperties.TEMPLATE_TYPE);
+        node = selectSingleNode(content, OvfProperties.TEMPLATE_TYPE);
         if (node != null) {
             _vmTemplate.setTemplateType(VmEntityType.valueOf(node.innerText));
         }
 
-        node = content.SelectSingleNode(OvfProperties.BASE_TEMPLATE_ID);
+        node = selectSingleNode(content, OvfProperties.BASE_TEMPLATE_ID);
         if (node != null) {
             _vmTemplate.setBaseTemplateId(Guid.createGuidFromString(node.innerText));
         } else {
@@ -121,17 +121,17 @@ public class OvfTemplateReader extends OvfReader {
             _vmTemplate.setBaseTemplateId(_vmTemplate.getId());
         }
 
-        node = content.SelectSingleNode(OvfProperties.TEMPLATE_VERSION_NUMBER);
+        node = selectSingleNode(content, OvfProperties.TEMPLATE_VERSION_NUMBER);
         if (node != null) {
             _vmTemplate.setTemplateVersionNumber(Integer.parseInt(node.innerText));
         }
 
-        node = content.SelectSingleNode(OvfProperties.TEMPLATE_VERSION_NAME);
+        node = selectSingleNode(content, OvfProperties.TEMPLATE_VERSION_NAME);
         if (node != null) {
             _vmTemplate.setTemplateVersionName(node.innerText);
         }
 
-        node = content.SelectSingleNode("AutoStartup");
+        node = selectSingleNode(content, "AutoStartup");
         if (node != null) {
             _vmTemplate.setAutoStartup(Boolean.parseBoolean(node.innerText));
         }

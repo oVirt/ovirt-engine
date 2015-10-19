@@ -50,8 +50,9 @@ public class OvfManager {
             BuildOvf(ovf);
             initIcons(vm.getStaticData());
         } catch (Exception ex) {
-            logOvfLoadError(ex.getMessage(), ovfstring);
-            throw new OvfReaderException( ex, ovf != null ? ovf.getName() : null);
+            String message = generateOvfReaderErrorMessage(ovf, ex);
+            logOvfLoadError(message, ovfstring);
+            throw new OvfReaderException(message);
         }
         Guid id = vm.getStaticData().getId();
         for (VmNetworkInterface iface : interfaces) {
@@ -69,9 +70,26 @@ public class OvfManager {
             BuildOvf(ovf);
             initIcons(vmTemplate);
         } catch (Exception ex) {
-            logOvfLoadError(ex.getMessage(), ovfstring);
-            throw new OvfReaderException(ex, ovf != null ? ovf.getName() : null);
+            String message = generateOvfReaderErrorMessage(ovf, ex);
+            logOvfLoadError(message, ovfstring);
+            throw new OvfReaderException(message);
         }
+    }
+
+    private String generateOvfReaderErrorMessage(OvfReader ovf, Exception ex) {
+        StringBuilder message = new StringBuilder();
+        if (ovf == null) {
+            message.append("Error loading ovf, message")
+                .append(ex.getMessage());
+        } else {
+            message.append("OVF error: ")
+                    .append(ovf.getName())
+                    .append(": cannot read '")
+                    .append(ovf.getLastReadEntry())
+                    .append("' with value: ")
+                    .append(ex.getMessage());
+        }
+        return message.toString();
     }
 
     private void initIcons(VmBase vmBase) {

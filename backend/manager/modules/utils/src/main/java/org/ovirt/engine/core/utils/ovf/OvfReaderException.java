@@ -4,9 +4,8 @@ package org.ovirt.engine.core.utils.ovf;
 public class OvfReaderException extends Exception {
     private String name;
 
-    public OvfReaderException(Exception ex, String name) {
-        super(ex.getMessage(), ex);
-        this.name = name == null ? OvfReader.EmptyName : name;
+    public OvfReaderException(String message) {
+        super(message);
     }
 
     public OvfReaderException(Exception e) {
