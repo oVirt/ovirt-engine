@@ -16,15 +16,11 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StopVmParametersBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,88 +89,20 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
     @Override
     protected void executeVmCommand() {
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
-        // Mark that the stopped vm was suspended before for audit log messages
+        String hiberVol = getActiveSnapshot().getMemoryVolume();
         suspendedVm = getVm().getStatus() == VMStatus.Suspended;
-
-        if (suspendedVm || StringUtils.isNotEmpty(getActiveSnapshot().getMemoryVolume())) {
-            if (!stopSuspendedVm()) {
-                return;
-            }
-
-            // the following is true when the hibernation volumes don't exist
-            if (getTaskIdList().isEmpty()) {
-                endVmCommand();
-                setCommandShouldBeLogged(true);
-            } else {
-                setSucceeded(true);
-            }
+        if (suspendedVm) {
+            endVmCommand();
+            setCommandShouldBeLogged(true);
         } else {
             super.executeVmCommand();
         }
+        removeMemoryDisksIfNeeded(hiberVol);
     }
 
-    /**
-     * Start stopping operation for suspended VM, by deleting its storage image groups (Created by hibernation process
-     * which indicated its saved memory), and set the VM status to image locked.
-     *
-     * @return True - Operation succeeded <BR/>
-     *         False - Operation failed.
-     */
-    private boolean stopSuspendedVm() {
-        // Set the Vm to null, for getting the recent VM from the DB, instead from the cache.
-        setVm(null);
-        final VMStatus vmStatus = getVm().getStatus();
-
-        // Check whether stop VM procedure didn't started yet (Status is not imageLocked), by another transaction.
-        if (vmStatus == VMStatus.ImageLocked) {
-            return false;
-        }
-
-        // Set the VM to image locked to decrease race condition.
-        updateVmStatus(VMStatus.ImageLocked);
-
-        if (!removeHibernationDisks()) {
-            updateVmStatus(vmStatus);
-            return false;
-        }
-
-        return true;
-    }
-
-    private boolean removeHibernationDisks() {
-        String hiberVol = getActiveSnapshot().getMemoryVolume();
-        if (StringUtils.isEmpty(hiberVol)) {
-            return false;
-        }
-
-        return removeHibernationDisks(hiberVol);
-    }
-
-    private void updateVmStatus(VMStatus newStatus) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                getCompensationContext().snapshotEntityStatus(getVm().getDynamicData());
-                updateVmData(getVm().getDynamicData());
-                getCompensationContext().stateChanged();
-                return null;
-            }
-        });
-    }
-
-    /**
-     * Update Vm dynamic data in the DB.<BR/>
-     * If VM is active in the VDSM (not suspended/stop), we will use UpdateVmDynamicData VDS command, for preventing
-     * over write in the DB, otherwise , update directly to the DB.
-     */
-    private void updateVmData(VmDynamic vmDynamicData) {
-        if (getVm().getRunOnVds() != null) {
-            Backend.getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.UpdateVmDynamicData,
-                            new UpdateVmDynamicDataVDSCommandParameters(vmDynamicData));
-        } else {
-            getVmDynamicDao().update(vmDynamicData);
+    private void removeMemoryDisksIfNeeded(String hiberVol) {
+        if (StringUtils.isNotEmpty(hiberVol)) {
+            removeHibernationDisks(hiberVol);
         }
     }
 
