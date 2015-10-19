@@ -61,6 +61,8 @@ public class ExtensionsToolExecutor {
             Map<String, Object> argMap = parser.getParsedArgs();
             setupLogger(argMap);
 
+            log.debug("Version: {}-{} ({})", PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_DISPLAY_NAME);
+
             if((Boolean)argMap.get("help")) {
                 System.out.format("Usage: %s", parser.getUsage());
                 throw new ExitException("Help", 0);
