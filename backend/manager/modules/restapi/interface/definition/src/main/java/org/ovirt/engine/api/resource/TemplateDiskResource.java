@@ -29,23 +29,29 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Disk;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface TemplateDiskResource extends ReadOnlyDeviceResource<Disk>, CopyableResource {
+public interface TemplateDiskResource extends ReadOnlyDeviceResource<Disk> {
 
-    @Path("{action: (copy)}/{oid}")
-    public ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
+    @Path("{action: (copy|export)}/{oid}")
+    ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
+
+    @POST
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
+    @Actionable
+    @Path("copy")
+    Response copy(Action action);
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     @Actionable
     @Path("export")
-    public Response doExport(Action action);
+    Response doExport(Action action);
 
     // used for direct lun disk removal
     @DELETE
-    public Response remove();
+    Response remove();
 
     // used for removing disk from specific SD or forcing disk removal
     @DELETE
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
-    public Response remove(Action action);
+    Response remove(Action action);
 }
