@@ -319,6 +319,18 @@ public class DataCenterModel extends Model implements HasValidatedTabs {
     }
 
     public boolean validate() {
+        boolean generalTabValid = isGeneralTabValid();
+
+        getMacPoolModel().validate();
+
+        setValidTab(TabName.GENERAL_TAB, generalTabValid);
+        boolean macPoolTabValid = getMacPoolModel().getIsValid();
+        setValidTab(TabName.MAC_POOL_TAB, macPoolTabValid);
+        ValidationCompleteEvent.fire(getEventBus(), this);
+        return generalTabValid && macPoolTabValid;
+    }
+
+    public boolean isGeneralTabValid() {
         getName().validateEntity(new IValidation[] {
                 new NotEmptyValidation(),
                 new LengthValidation(40),
@@ -331,15 +343,8 @@ public class DataCenterModel extends Model implements HasValidatedTabs {
 
         getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
 
-        getMacPoolModel().validate();
-
-        boolean generalTabValid = getName().getIsValid() && getDescription().getIsValid() && getComment().getIsValid()
+        return getName().getIsValid() && getDescription().getIsValid() && getComment().getIsValid()
                 && getVersion().getIsValid();
-        setValidTab(TabName.GENERAL_TAB, generalTabValid);
-        boolean macPoolTabValid = getMacPoolModel().getIsValid();
-        setValidTab(TabName.MAC_POOL_TAB, macPoolTabValid);
-        ValidationCompleteEvent.fire(getEventBus(), this);
-        return  generalTabValid && macPoolTabValid;
     }
 
 }
