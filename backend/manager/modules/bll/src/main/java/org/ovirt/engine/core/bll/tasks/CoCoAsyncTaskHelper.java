@@ -274,23 +274,7 @@ public class CoCoAsyncTaskHelper {
         if (!taskId.equals(Guid.Empty)) {
             asyncTask = getAsyncTaskFromDb(taskId);
         }
-        if (asyncTask != null) {
-            if (VdcActionType.Unknown.equals(command.getParameters().getCommandType())) {
-                command.getParameters().setCommandType(command.getActionType());
-            }
-            VdcActionParametersBase parentParameters = command.getParentParameters(parentCommand);
-            asyncTask.setActionType(parentCommand);
-            asyncTask.setVdsmTaskId(asyncTaskCreationInfo.getVdsmTaskId());
-            asyncTask.setActionParameters(parentParameters);
-            asyncTask.setTaskParameters(command.getParameters());
-            asyncTask.setStepId(asyncTaskCreationInfo.getStepId());
-            asyncTask.setCommandId(command.getCommandId());
-            asyncTask.setRootCommandId(parentParameters.getCommandId());
-            asyncTask.setStoragePoolId(asyncTaskCreationInfo.getStoragePoolID());
-            asyncTask.setTaskType(asyncTaskCreationInfo.getTaskType());
-            asyncTask.setCommandStatus(command.getCommandStatus());
-            asyncTask.setCommandType(command.getParameters().getCommandType());
-        } else {
+        if (asyncTask == null) {
             asyncTask = createAsyncTask(command, asyncTaskCreationInfo, parentCommand);
         }
         return asyncTask;
@@ -300,10 +284,10 @@ public class CoCoAsyncTaskHelper {
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
+        VdcActionParametersBase parentParameters = command.getParentParameters();
         Guid parentCommandId =
-                command.getParentParameters() == null ? Guid.Empty : command.getParentParameters()
-                        .getCommandId();
-        VdcActionParametersBase parentParameters = command.getParentParameters(parentCommand);
+                parentParameters == null ? Guid.Empty : parentParameters.getCommandId();
+        parentParameters = parentParameters == null ? command.getParentParameters(parentCommand) : parentParameters;
         if (VdcActionType.Unknown.equals(command.getParameters().getCommandType())) {
             command.getParameters().setCommandType(command.getActionType());
         }
