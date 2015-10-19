@@ -8,6 +8,7 @@ public class SSOConstants {
     public static final String HEADER_AUTHORIZATION = "Authorization";
 
     public static final String HTTP_PARAM_AUTHORIZATION_CODE = "code";
+    public static final String HTTP_PARAM_AUTH_RECORD = "ovirt_auth_record";
     public static final String HTTP_PARAM_TOKEN = "token";
     public static final String HTTP_PARAM_REDIRECT_URI = "redirect_uri";
     public static final String HTTP_PARAM_SCOPE = "scope";

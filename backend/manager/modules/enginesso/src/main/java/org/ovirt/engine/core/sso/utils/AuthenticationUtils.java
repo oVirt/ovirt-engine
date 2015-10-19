@@ -7,6 +7,8 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authn;
@@ -31,9 +33,20 @@ public class AuthenticationUtils {
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(profile)) {
             throw new AuthenticationException("Please provide username and profile.");
         }
+
+        ObjectMapper mapper = new ObjectMapper().configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .enableDefaultTyping(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
+        mapper.getDeserializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
+        String authRecordJson = SSOUtils.getRequestParameter(request, SSOConstants.HTTP_PARAM_AUTH_RECORD, "");
+        ExtMap authRecord;
+        if (StringUtils.isNotEmpty(authRecordJson)) {
+            authRecord = mapper.readValue(authRecordJson, ExtMap.class);
+        } else {
+            authRecord = new ExtMap().mput(Authn.AuthRecord.PRINCIPAL, username);
+        }
         SSOSession ssoSession = login(request,
                 new Credentials(username, null, profile, SSOUtils.getSsoContext(request).getSsoProfiles().contains(profile)),
-                new ExtMap().mput(Authn.AuthRecord.PRINCIPAL, username));
+                authRecord);
         log.info("User {}@{} successfully logged in using login-on-behalf with client id : {} and scopes : {}",
                 username,
                 profile,

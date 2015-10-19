@@ -17,9 +17,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
+import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
 import org.ovirt.engine.core.uutils.net.HttpURLConnectionBuilder;
 import org.ovirt.engine.core.uutils.net.URLBuilder;
 
@@ -46,19 +48,30 @@ public class SSOOAuthServiceUtils {
 
     }
 
-    public static Map<String, Object> loginOnBehalf(String username, String scope) {
-        return loginWithPassword(username, "", scope);
+    public static Map<String, Object> loginOnBehalf(String username, String scope, ExtMap authRecord) {
+        return loginWithPasswordImpl(username, "", scope, authRecord);
     }
 
     public static Map<String, Object> loginWithPassword(String username, String password, String scope) {
+        return loginWithPasswordImpl(username, password, scope, null);
+    }
+
+    private static Map<String, Object> loginWithPasswordImpl(String username,
+                                                             String password,
+                                                             String scope,
+                                                             ExtMap authRecord) {
         HttpURLConnection connection = null;
         try {
             connection = createConnection("/oauth/token");
             setClientIdSecretBasicAuthHeader(connection);
-            postData(connection, new URLBuilder(connection.getURL()).addParameter("grant_type", "password")
+            URLBuilder urlBuilder = new URLBuilder(connection.getURL()).addParameter("grant_type", "password")
                     .addParameter("username", username)
                     .addParameter("password", password)
-                    .addParameter("scope", scope).buildURL().getQuery());
+                    .addParameter("scope", scope);
+            if (authRecord != null) {
+                urlBuilder.addParameter("ovirt_auth_record", new JsonObjectSerializer().serialize(authRecord));
+            }
+            postData(connection, urlBuilder.buildURL().getQuery());
             return getData(connection);
         } catch (Exception ex) {
             return buildMapWithError("server_error", ex.getMessage());

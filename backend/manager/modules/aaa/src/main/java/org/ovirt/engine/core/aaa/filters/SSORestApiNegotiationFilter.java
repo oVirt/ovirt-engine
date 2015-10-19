@@ -111,7 +111,7 @@ public class SSORestApiNegotiationFilter implements Filter {
                     stack = new ArrayDeque<>();
                     stack.addAll(profiles);
                 }
-                String username = doAuth(req, resp, stack);
+                AuthResult authResult = doAuth(req, resp, stack);
 
                 if (!stack.isEmpty()) {
                     req.getSession(true).setAttribute(STACK_ATTR, stack);
@@ -119,9 +119,9 @@ public class SSORestApiNegotiationFilter implements Filter {
                     if (session != null) {
                         session.removeAttribute(STACK_ATTR);
                     }
-                    if (username != null) {
-                        log.debug("SSORestApiNegotiationFilter invoking SSOOAuthServiceUtils.loginOnBehalf for : {}", username);
-                        Map<String, Object> jsonResponse = SSOOAuthServiceUtils.loginOnBehalf(username, scope);
+                    if (authResult.username != null) {
+                        log.debug("SSORestApiNegotiationFilter invoking SSOOAuthServiceUtils.loginOnBehalf for : {}", authResult.username);
+                        Map<String, Object> jsonResponse = SSOOAuthServiceUtils.loginOnBehalf(authResult.username, scope, authResult.authRecord);
                         FiltersHelper.isStatusOk(jsonResponse);
                         log.debug("SSORestApiNegotiationFilter creating user session");
                         SSOUtils.createUserSession(req, FiltersHelper.getPayloadForToken((String) jsonResponse.get("access_token")), false);
@@ -140,9 +140,9 @@ public class SSORestApiNegotiationFilter implements Filter {
         }
     }
 
-    private String doAuth(HttpServletRequest req, HttpServletResponse rsp, Deque<AuthenticationProfile> stack)
+    private AuthResult doAuth(HttpServletRequest req, HttpServletResponse rsp, Deque<AuthenticationProfile> stack)
             throws IOException, ServletException {
-        String username = null;
+        AuthResult authResult = new AuthResult();
         log.debug("Performing external authentication");
 
         boolean stop = false;
@@ -165,7 +165,8 @@ public class SSORestApiNegotiationFilter implements Filter {
             switch (output.<Integer> get(Authn.InvokeKeys.RESULT)) {
                 case Authn.AuthResult.SUCCESS:
                     ExtMap authRecord = output.get(Authn.InvokeKeys.AUTH_RECORD);
-                    username = String.format("%s@%s", authRecord.get(Authn.AuthRecord.PRINCIPAL), profile.getName());
+                    authResult.authRecord = authRecord;
+                    authResult.username = String.format("%s@%s", authRecord.get(Authn.AuthRecord.PRINCIPAL), profile.getName());
                     stack.clear();
                     break;
 
@@ -184,12 +185,17 @@ public class SSORestApiNegotiationFilter implements Filter {
                     break;
             }
         }
-        log.debug("External Authentication result: {}", StringUtils.isNotEmpty(username));
-        return username;
+        log.debug("External Authentication result: {}", StringUtils.isNotEmpty(authResult.username));
+        return authResult;
     }
 
     @Override
     public void destroy() {
         // empty
+    }
+
+    class AuthResult {
+        String username;
+        ExtMap authRecord;
     }
 }
