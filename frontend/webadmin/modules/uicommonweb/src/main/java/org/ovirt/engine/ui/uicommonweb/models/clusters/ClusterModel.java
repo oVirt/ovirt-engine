@@ -1944,17 +1944,14 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
     }
 
     public boolean validate(boolean validateStoragePool, boolean validateCpu, boolean validateCustomProperties) {
-        getName().validateEntity(new IValidation[] {
-                new NotEmptyValidation(),
-                new LengthValidation(40),
-                new I18NNameValidation() });
+        validateName();
 
         if (validateStoragePool) {
             getDataCenter().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
 
         if (validateCpu) {
-            getCPU().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+            validateCPU();
         }
         else {
             getCPU().validateSelectedItem(new IValidation[] {});
@@ -2018,6 +2015,17 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         setValidTab(TabName.GENERAL_TAB, generalTabValid);
         ValidationCompleteEvent.fire(getEventBus(), this);
         return generalTabValid && getCustomPropertySheet().getIsValid() && getSpiceProxy().getIsValid();
+    }
+
+    public void validateName() {
+        getName().validateEntity(new IValidation[] {
+                new NotEmptyValidation(),
+                new LengthValidation(40),
+                new I18NNameValidation() });
+    }
+
+    public void validateCPU() {
+        getCPU().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
     }
 
     private void validateRngRequiredSource() {
