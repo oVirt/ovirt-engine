@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter;
 
+import org.ovirt.engine.ui.common.widget.AlertManager;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.userportal.place.UserPortalPlaceManager;
 import com.google.gwt.event.shared.EventBus;
@@ -31,15 +32,18 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
     private final UserPortalPlaceManager placeManager;
     private final String basicGuideUrl;
     private final String extendedGuideUrl;
+    private final AlertManager alertManager;
 
     @Inject
     public MainSectionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy, HeaderPresenterWidget header,
-            UserPortalPlaceManager userPortalPlaceManager, ApplicationDynamicMessages dynamicMessages) {
+            UserPortalPlaceManager userPortalPlaceManager, ApplicationDynamicMessages dynamicMessages,
+            AlertManager alertManager) {
         super(eventBus, view, proxy, RevealType.RootLayout);
         this.header = header;
         this.placeManager = userPortalPlaceManager;
         this.basicGuideUrl = dynamicMessages.guideUrl();
         this.extendedGuideUrl = dynamicMessages.extendedGuideUrl();
+        this.alertManager = alertManager;
     }
 
     @Override
@@ -47,6 +51,17 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
         super.onReveal();
 
         setInSlot(TYPE_SetHeader, header);
+
+        // Enable alerts within the scope of main section
+        alertManager.setCanShowAlerts(true);
+    }
+
+    @Override
+    protected void onHide() {
+        super.onHide();
+
+        // Disable alerts outside the scope of main section
+        alertManager.setCanShowAlerts(false);
     }
 
     @Override
