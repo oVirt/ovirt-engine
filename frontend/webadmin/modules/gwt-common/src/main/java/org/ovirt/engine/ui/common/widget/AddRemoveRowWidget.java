@@ -260,7 +260,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
             return;
         }
 
-        if (item == last.previous() && last.hasPrevious()) { // add plus button to previous item
+        if (item == last.previous() && last.hasPrevious() && this.showAddButton) { // add plus button to previous item
             Pair<T, V> previousItem = last.previous();
             getEntry(previousItem.getSecond()).appendButton(createButton(previousItem, true));
         }
@@ -268,7 +268,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         removeEntry(item);
         onRemove(value, widget);
 
-        if (items.isEmpty()) {
+        if (items.isEmpty() && this.showGhost) {
             Pair<T, V> ghostItem = addGhostEntry();
             onAdd(ghostItem.getFirst(), ghostItem.getSecond());
         }

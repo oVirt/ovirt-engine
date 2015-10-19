@@ -206,6 +206,10 @@
             display: none;
         }
 
+        .expanderContainer {
+            padding-top: 15px;
+        }
+
         .fetchLink {
             margin: 3px;
             font-size: 10pt;
@@ -384,7 +388,7 @@
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
-                                    <b:Column size="LG_12">
+                                    <b:Column size="LG_12" addStyleNames="{style.expanderContainer}">
                                         <d:AdvancedParametersExpander ui:field="pmExpander"/>
                                         <g:FlowPanel ui:field="pmExpanderContent">
                                             <h:HostProxySourceEditor ui:field="proxySourceEditor" />

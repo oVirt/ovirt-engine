@@ -27,11 +27,24 @@
             font-weight: bold;
         }
 
+        .addProxyLabel {
+            font-style: italic;
+            float: left;
+        }
+
+        .addButton {
+            float: right;
+        }
+
     </ui:style>
 
     <g:FlowPanel>
         <g:Label ui:field="header" addStyleNames="{style.headerStyle}"/>
         <g:FlowPanel ui:field="contentPanel" addStyleNames="{style.contentPanel}" />
+        <g:Label ui:field="newProxyLabel" addStyleNames="{style.addProxyLabel}" />
+        <g:PushButton ui:field="newProxyButton" addStyleNames="{style.addButton} {style.buttonStyle} buttonStyle_pfly_fix">
+            <g:upFace image="{resources.increaseIcon}" />
+        </g:PushButton>
     </g:FlowPanel>
 
 </ui:UiBinder>

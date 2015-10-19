@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+             xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:style>
+        .container {
+            padding-top: 10px !important;
+        }
+    </ui:style>
+
+    <d:SimpleDialogPanel width="450px" height="200px">
+      <d:content>
+        <g:HTMLPanel styleName="container {style.container}">
+          <b:Row>
+            <b:Column size="SM_12">
+              <e:ListModelListBoxEditor ui:field="pmProxyType" />
+              <g:Label ui:field="noItemsAvailableLabel" />
+            </b:Column>
+          </b:Row>
+        </g:HTMLPanel>
+      </d:content>
+    </d:SimpleDialogPanel>
+
+</ui:UiBinder>

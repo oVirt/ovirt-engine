@@ -728,6 +728,15 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Power Management Proxy Preference")
     String hostPopupSourceText();
 
+    @DefaultStringValue("Select proxy type")
+    String hostProxyPreferenceTypeLabel();
+
+    @DefaultStringValue("No host proxy types available")
+    String noHostProxyPrefenceTypeAvailableLabel();
+
+    @DefaultStringValue("Add Power Management Proxy")
+    String hostPopupAddProxyPreferenceType();
+
     @DefaultStringValue("SPM")
     String spmTestButtonLabel();
 
