@@ -34,4 +34,10 @@ public class CinderDisk extends DiskImage {
         result = 31 * result + (cinderConnectionInfo != null ? cinderConnectionInfo.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public boolean hasActualSize() {
+        // not applicable for Cinder disks
+        return false;
+    }
 }

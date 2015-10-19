@@ -191,7 +191,9 @@ public class DiskMapper {
             model.setImageId(entity.getImageId().toString());
         }
         model.setProvisionedSize(entity.getSize());
-        model.setActualSize(entity.getActualSizeInBytes());
+        if (entity.hasActualSize()) {
+            model.setActualSize(entity.getActualSizeInBytes());
+        }
 
         if (entity.getSnapshotId() != null) {
             model.setSnapshot(new Snapshot());

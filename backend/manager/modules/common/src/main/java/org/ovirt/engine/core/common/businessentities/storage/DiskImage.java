@@ -125,6 +125,10 @@ public class DiskImage extends DiskImageBase implements IImage {
         setActualSize(getActualSizeInBytes() * 1.0 / (1024 * 1024 * 1024));
     }
 
+    public boolean hasActualSize() {
+        return true;
+    }
+
     public int getReadRate() {
         return readRateFromDiskImageDynamic;
     }
