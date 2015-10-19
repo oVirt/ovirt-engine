@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.common.validation;
 
-import org.ovirt.engine.core.common.utils.IpAddressConverter;
+import org.ovirt.engine.core.common.utils.IPAddressConverter;
+import org.ovirt.engine.core.common.utils.IPv4AddressConverter;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 
 public class CidrValidator {
+
+    private IPAddressConverter ipAddressConverter = IPv4AddressConverter.getInstance();
 
     private static CidrValidator cidrValidator = new CidrValidator();
 
@@ -41,7 +44,7 @@ public class CidrValidator {
      */
     public boolean isCidrNetworkAddressValid(String cidr) {
         String[] temp = cidr.split("/");
-        long ipAsInteger = IpAddressConverter.getInstance().convertIpToLong(temp[0]);
+        long ipAsInteger = ipAddressConverter.convertIpAddressToLong(temp[0]);
         int mask = Integer.parseInt(temp[1]);
         return isNetworkAddress(ipAsInteger, mask);
     }

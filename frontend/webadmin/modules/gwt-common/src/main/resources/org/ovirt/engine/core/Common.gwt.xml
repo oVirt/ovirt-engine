@@ -337,7 +337,8 @@
         <!-- Backend Validation framework -->
         <include name="common/validation/annotation/HostnameOrIp.java" />
         <include name="common/validation/group/**" />
-        <include name="common/utils/IpAddressConverter.java"/>
+        <include name="common/utils/IPAddressConverter.java"/>
+        <include name="common/utils/IPv4AddressConverter.java"/>
         <include name="common/validation/CidrValidator.java"/>
         <include name="common/validation/MaskValidator.java"/>
 
