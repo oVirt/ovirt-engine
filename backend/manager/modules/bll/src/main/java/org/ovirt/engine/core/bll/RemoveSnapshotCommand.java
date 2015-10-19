@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -59,6 +60,14 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     public RemoveSnapshotCommand(T parameters) {
         super(parameters);
+    }
+
+    public RemoveSnapshotCommand(T parameters, CommandContext context) {
+        super(parameters, context);
+    }
+
+    public RemoveSnapshotCommand(Guid commandId) {
+        super(commandId);
     }
 
     @Override

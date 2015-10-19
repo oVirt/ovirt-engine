@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
@@ -41,14 +42,19 @@ public class RemoveSnapshotCommandCallback extends CommandCallback {
 
     @Override
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
-        getCommand(cmdId).endAction();
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
+        endAction(cmdId, true);
     }
 
     @Override
     public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
-        getCommand(cmdId).endAction();
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
+        endAction(cmdId, false);
+    }
+
+    private void endAction(Guid commandId, boolean succeeded) {
+        RemoveSnapshotCommand<RemoveSnapshotParameters> command = getCommand(commandId);
+        command.endAction();
+        CommandCoordinatorUtil.removeAllCommandsInHierarchy(commandId);
+        ExecutionHandler.endJob(command.getExecutionContext(), succeeded);
     }
 
     private RemoveSnapshotCommand<RemoveSnapshotParameters> getCommand(Guid cmdId) {
