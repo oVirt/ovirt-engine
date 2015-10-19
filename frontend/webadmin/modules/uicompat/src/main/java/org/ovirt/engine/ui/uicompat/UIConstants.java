@@ -895,6 +895,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Edit fence agent")
     String editFenceAgent();
 
+    @DefaultStringValue("Select fence proxy preference type to add")
+    String selectFenceProxy();
+
     @DefaultStringValue("Concurrent with:")
     String concurrentFenceAgent();
 
@@ -2942,4 +2945,10 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Soundcard is not available in selected cluster")
     String soundDeviceUnavailable();
+
+    @DefaultStringValue("Unable to remove proxy preference")
+    String unableToRemoveTitle();
+
+    @DefaultStringValue("You must have at least 1 proxy preference")
+    String unableToRemove();
 }

@@ -43,9 +43,9 @@ public class FenceAgentsEditor extends AddRemoveRowWidget<FenceAgentListModel, F
     @UiField
     PushButton newAgentButton;
 
-    HandlerRegistration addClickHandlerRegistration;
+    private HandlerRegistration addClickHandlerRegistration;
 
-    FenceAgentListModel listModel;
+    private FenceAgentListModel listModel;
 
     //Need this to 'initialize' the model which attaches the appropriate handlers.
     final FenceAgentModelProvider modelProvider;

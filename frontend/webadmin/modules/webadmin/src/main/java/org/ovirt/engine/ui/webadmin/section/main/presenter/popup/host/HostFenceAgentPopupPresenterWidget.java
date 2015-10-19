@@ -18,6 +18,7 @@ public class HostFenceAgentPopupPresenterWidget extends AbstractModelBoundPopupP
         HasUiCommandClickHandlers getTestButton();
         void updatePmSlotLabelText(boolean ciscoUcsSelected);
     }
+
     final FenceAgentModelProvider provider;
 
     @Inject

@@ -71,6 +71,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.VfsConfigP
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksLabelPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.FenceAgentModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.FenceProxyModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -398,6 +399,7 @@ public class HostModule extends AbstractGinModule {
         bind(HostDeviceListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<VDS>>(){}).in(Singleton.class);
         bind(FenceAgentModelProvider.class).in(Singleton.class);
+        bind(FenceProxyModelProvider.class).in(Singleton.class);
         bind(HostErrataCountModel.class).in(Singleton.class);
         bind(HostErrataListModel.class).in(Singleton.class);
 

@@ -52,7 +52,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.uicommon.model.FenceAgentModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.host.FenceAgentsEditor;
 import org.ovirt.engine.ui.webadmin.widget.host.HostProxySourceEditor;
 import org.ovirt.engine.ui.webadmin.widget.provider.HostNetworkProviderWidget;
@@ -218,7 +217,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     final FenceAgentsEditor fenceAgentsEditor;
 
     @Path(value = "pmProxyPreferencesList")
-    @UiField
+    @UiField(provided = true)
     HostProxySourceEditor proxySourceEditor;
 
     @UiField
@@ -380,10 +379,11 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
     @Inject
     public HostPopupView(EventBus eventBus, FenceAgentsEditor fenceAgentEditor,
-            FenceAgentModelProvider fenceAgentModelProvider) {
+            HostProxySourceEditor proxySourceEditor) {
         super(eventBus);
 
         this.fenceAgentsEditor = fenceAgentEditor;
+        this.proxySourceEditor = proxySourceEditor;
         initEditors();
         initInfoIcon();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));

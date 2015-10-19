@@ -2,7 +2,8 @@ package org.ovirt.engine.ui.webadmin.widget.host;
 
 import org.ovirt.engine.ui.common.css.OvirtCss;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.FenceProxyModel;
+
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -17,10 +18,10 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
-public class HostProxySourceWidget extends AbstractModelBoundPopupWidget<EntityModel<String>>
-    implements HasValueChangeHandlers<EntityModel<String>>, HasEnabled {
+public class HostProxySourceWidget extends AbstractModelBoundPopupWidget<FenceProxyModel>
+    implements HasValueChangeHandlers<FenceProxyModel>, HasEnabled {
 
-    interface Driver extends SimpleBeanEditorDriver<EntityModel<String>, HostProxySourceWidget> {
+    interface Driver extends SimpleBeanEditorDriver<FenceProxyModel, HostProxySourceWidget> {
     }
 
     public interface WidgetUiBinder extends UiBinder<Widget, HostProxySourceWidget> {
@@ -36,14 +37,14 @@ public class HostProxySourceWidget extends AbstractModelBoundPopupWidget<EntityM
     PushButton down;
 
     @UiField
-    @Path(value = "entity")
+    @Path(value = "entity.value")
     Label proxyLabel;
 
     @UiField
     @Ignore
     Label orderLabel;
 
-    EntityModel<String> model;
+    FenceProxyModel model;
 
     public HostProxySourceWidget() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
@@ -51,18 +52,18 @@ public class HostProxySourceWidget extends AbstractModelBoundPopupWidget<EntityM
     }
 
     @Override
-    public void edit(EntityModel<String> object) {
+    public void edit(FenceProxyModel object) {
         driver.edit(object);
         this.model = object;
     }
 
     @Override
-    public EntityModel<String> flush() {
+    public FenceProxyModel flush() {
         return driver.flush();
     }
 
     @Override
-    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<EntityModel<String>> handler) {
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<FenceProxyModel> handler) {
         return addHandler(handler, ValueChangeEvent.getType());
     }
 
@@ -102,7 +103,7 @@ public class HostProxySourceWidget extends AbstractModelBoundPopupWidget<EntityM
         down.addClickHandler(handler);
     }
 
-    public EntityModel<String> getModel() {
+    public FenceProxyModel getModel() {
         return model;
     }
 }

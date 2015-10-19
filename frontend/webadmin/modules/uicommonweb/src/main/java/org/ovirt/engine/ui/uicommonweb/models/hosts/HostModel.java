@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
+import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -341,12 +342,12 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         StringBuilder builder = new StringBuilder();
 
         if (getPmProxyPreferencesList().getItems() != null) {
-            Collection<EntityModel<String>> items = getPmProxyPreferencesList().getItems();
-            for (EntityModel<String> item : items) {
+            Collection<FenceProxyModel> items = getPmProxyPreferencesList().getItems();
+            for (FenceProxyModel item : items) {
                 if (builder.length() > 0) {
                     builder.append(",");    //$NON-NLS-1$
                 }
-                builder.append(item.getEntity());
+                builder.append(item.getEntity().getValue());
 
             }
         }
@@ -357,24 +358,24 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     public void setPmProxyPreferences(String value) {
         // Create list from the provided comma delimited string.
         String[] array = value.split(",");    //$NON-NLS-1$
-        List<EntityModel<String>> list = new ArrayList<>();
+        List<FenceProxyModel> list = new ArrayList<>();
 
         for (String item : array) {
-            EntityModel<String> model = new EntityModel<>();
-            model.setEntity(item);
+            FenceProxyModel model = new FenceProxyModel();
+            model.setEntity(FenceProxySourceType.forValue(item));
             list.add(model);
         }
 
         getPmProxyPreferencesList().setItems(list);
     }
 
-    private ListModel<EntityModel<String>> pmProxyPreferencesList;
+    private ListModel<FenceProxyModel> pmProxyPreferencesList;
 
-    public ListModel<EntityModel<String>> getPmProxyPreferencesList() {
+    public ListModel<FenceProxyModel> getPmProxyPreferencesList() {
         return pmProxyPreferencesList;
     }
 
-    private void setPmProxyPreferencesList(ListModel<EntityModel<String>> value) {
+    private void setPmProxyPreferencesList(ListModel<FenceProxyModel> value) {
         pmProxyPreferencesList = value;
     }
 
@@ -608,7 +609,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         setPmKdumpDetection(new EntityModel<Boolean>());
         getPmKdumpDetection().setEntity(true);
 
-        setPmProxyPreferencesList(new ListModel<EntityModel<String>>());
+        setPmProxyPreferencesList(new ListModel<FenceProxyModel>());
         getPmProxyPreferencesList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
