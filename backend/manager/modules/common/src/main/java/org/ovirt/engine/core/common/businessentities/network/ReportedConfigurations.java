@@ -24,6 +24,11 @@ public class ReportedConfigurations implements Serializable {
         return this;
     }
 
+    /***
+     * The function adds a reported configuration property. Please note that
+     * {@link org.ovirt.engine.core.common.businessentities.network.ReportedConfiguration#inSync} will be calculate
+     * using {@link java.util.Objects#equals(Object, Object)}.
+     */
     public <T> ReportedConfigurations add(ReportedConfigurationType type, T actual, T expected) {
         final boolean inSync = ObjectUtils.objectsEqual(actual, expected);
         return add(type, actual, expected, inSync);
