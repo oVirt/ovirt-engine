@@ -357,13 +357,10 @@ public class LinkHelper {
         map.add(DeviceResource.class, DevicesResource.class, VM.class);
         TYPES.put(CdRom.class, map);
 
-        map = new ParentToCollectionMap(VmGraphicsConsoleResource.class, GraphicsConsolesResource.class, VM.class);
-        TYPES.put(GraphicsConsole.class, map);
-
-        map = new ParentToCollectionMap(GraphicsConsoleResource.class, GraphicsConsolesResource.class, Template.class);
-        TYPES.put(GraphicsConsole.class, map);
-
-        map = new ParentToCollectionMap(GraphicsConsoleResource.class, GraphicsConsolesResource.class, InstanceType.class);
+        map = new ParentToCollectionMap(GraphicsConsoleResource.class, GraphicsConsolesResource.class);
+        map.add(VmGraphicsConsoleResource.class, GraphicsConsolesResource.class, VM.class);
+        map.add(GraphicsConsoleResource.class, GraphicsConsolesResource.class, Template.class);
+        map.add(GraphicsConsoleResource.class, GraphicsConsolesResource.class, InstanceType.class);
         TYPES.put(GraphicsConsole.class, map);
 
         map = new ParentToCollectionMap(VmApplicationResource.class, VmApplicationsResource.class, VM.class);
