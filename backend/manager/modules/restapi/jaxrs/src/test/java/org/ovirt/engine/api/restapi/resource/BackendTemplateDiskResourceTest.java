@@ -38,20 +38,7 @@ public class BackendTemplateDiskResourceTest
         extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk, BackendTemplateDiskResource> {
 
     public BackendTemplateDiskResourceTest() {
-        super(new BackendTemplateDiskResource(GUIDS[1],
-                                              getcollection()));
-    }
-
-    protected static BackendTemplateDisksResource getcollection() {
-        return new BackendTemplateDisksResource(PARENT_ID,
-                                                VdcQueryType.GetVmTemplatesDisks,
-                                                new IdQueryParameters(PARENT_ID));
-    }
-
-    @Override
-    protected void init() {
-        super.init();
-        initResource(resource.getCollection());
+        super(new BackendTemplateDiskResource(GUIDS[1].toString(), PARENT_ID));
     }
 
     @Test

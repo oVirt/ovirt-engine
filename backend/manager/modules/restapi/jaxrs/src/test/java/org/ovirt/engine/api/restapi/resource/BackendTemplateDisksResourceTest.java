@@ -1,44 +1,155 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.util.List;
+import static org.easymock.EasyMock.expect;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.StorageDomain;
-import org.ovirt.engine.api.resource.DeviceResource;
-import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
+import org.ovirt.engine.api.model.StorageDomains;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplateDisksResourceTest
-        extends AbstractBackendDisksResourceTest<BackendTemplateDisksResource> {
+        extends AbstractBackendCollectionResourceTest<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk, BackendTemplateDisksResource> {
+
+    private static final Guid TEMPLATE_ID = GUIDS[1];
 
     public BackendTemplateDisksResourceTest() {
-        super(new BackendTemplateDisksResource(PARENT_ID,
-                                               VdcQueryType.GetVmTemplatesDisks,
-                                               new IdQueryParameters(PARENT_ID)),
-              VdcQueryType.GetVmTemplatesDisks,
-              new IdQueryParameters(PARENT_ID),
-              "Id");
+        super(new BackendTemplateDisksResource(TEMPLATE_ID), null, null );
     }
 
+    @Override
     @Test
-    public void testSubResourceLocator() throws Exception {
+    @Ignore
+    public void testQuery() throws Exception {
+        // skip test inherited from base class as searching
+        // over DiskImages is unsupported by the backend
+    }
+
+    @Override
+    protected void setUpQueryExpectations(String query) throws Exception {
+        setUpEntityQueryExpectations(1);
         control.replay();
-        Object subResource = collection.getDeviceResource(GUIDS[0].toString());
-        assertFalse(subResource instanceof DeviceResource);
-        assertTrue(subResource instanceof ReadOnlyDeviceResource);
+    }
+
+    @Override
+    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+        setUpEntityQueryExpectations(1, failure);
+        control.replay();
+    }
+
+    protected void setUpEntityQueryExpectations(int times) throws Exception {
+        setUpEntityQueryExpectations(times, null);
+    }
+
+    protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
+        while (times-- > 0) {
+            setUpEntityQueryExpectations(
+                VdcQueryType.GetVmTemplatesDisks,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { TEMPLATE_ID },
+                getEntityList(),
+                failure
+            );
+        }
+    }
+
+    protected List<org.ovirt.engine.core.common.businessentities.storage.Disk> getEntityList() {
+        List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities = new ArrayList<>();
+        for (int i = 0; i < NAMES.length; i++) {
+            entities.add(getEntity(i));
+        }
+        return entities;
+    }
+
+    @Override
+    protected org.ovirt.engine.core.common.businessentities.storage.Disk getEntity(int index) {
+        return setUpEntityExpectations(control.createMock(DiskImage.class), index);
+    }
+
+    static org.ovirt.engine.core.common.businessentities.storage.Disk setUpEntityExpectations(DiskImage entity, int index) {
+        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
+        expect(entity.getVmSnapshotId()).andReturn(GUIDS[2]).anyTimes();
+        expect(entity.getVolumeFormat()).andReturn(VolumeFormat.RAW).anyTimes();
+        expect(entity.getDiskInterface()).andReturn(DiskInterface.VirtIO).anyTimes();
+        expect(entity.getImageStatus()).andReturn(ImageStatus.OK).anyTimes();
+        expect(entity.getVolumeType()).andReturn(VolumeType.Sparse).anyTimes();
+        expect(entity.isBoot()).andReturn(false).anyTimes();
+        expect(entity.isShareable()).andReturn(false).anyTimes();
+        expect(entity.getPropagateErrors()).andReturn(PropagateErrors.On).anyTimes();
+        expect(entity.getDiskStorageType()).andReturn(DiskStorageType.IMAGE).anyTimes();
+        expect(entity.getImageId()).andReturn(GUIDS[1]).anyTimes();
+        expect(entity.getReadOnly()).andReturn(true).anyTimes();
+        ArrayList<Guid> sdIds = new ArrayList<>();
+        sdIds.add(Guid.Empty);
+        expect(entity.getStorageIds()).andReturn(sdIds).anyTimes();
+        return setUpStatisticalEntityExpectations(entity);
+    }
+
+    static org.ovirt.engine.core.common.businessentities.storage.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
+        expect(entity.getReadRate()).andReturn(1).anyTimes();
+        expect(entity.getWriteRate()).andReturn(2).anyTimes();
+        expect(entity.getReadLatency()).andReturn(3.0).anyTimes();
+        expect(entity.getWriteLatency()).andReturn(4.0).anyTimes();
+        expect(entity.getFlushLatency()).andReturn(5.0).anyTimes();
+        return entity;
+    }
+
+    @Override
+    protected List<Disk> getCollection() {
+        return collection.list().getDisks();
+    }
+
+    static Disk getModel(int index) {
+        Disk model = new Disk();
+        model.setFormat(DiskFormat.COW.toString());
+        model.setInterface(DiskInterface.VirtIO.toString());
+        model.setSparse(true);
+        model.setBootable(false);
+        model.setShareable(false);
+        model.setPropagateErrors(true);
+        model.setStorageDomains(new StorageDomains());
+        model.getStorageDomains().getStorageDomains().add(new StorageDomain());
+        model.getStorageDomains().getStorageDomains().get(0).setId(GUIDS[2].toString());
+        model.setProvisionedSize(1000000000L);
+        return model;
+    }
+
+    @Override
+    protected void verifyModel(Disk model, int index) {
+        verifyModelSpecific(model, index);
+        verifyLinks(model);
+    }
+
+    static void verifyModelSpecific(Disk model, int index) {
+        assertEquals(GUIDS[index].toString(), model.getId());
+        assertTrue(model.isSparse());
+        assertTrue(!model.isBootable());
+        assertTrue(model.isPropagateErrors());
     }
 
     @Test
     public void testSubResourceLocatorBadGuid() throws Exception {
         control.replay();
         try {
-            collection.getDeviceResource("foo");
+            collection.getDiskResource("foo");
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyNotFoundException(wae);

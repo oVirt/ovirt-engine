@@ -16,25 +16,18 @@
 
 package org.ovirt.engine.api.resource;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 
-
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface TemplateDisksResource extends ReadOnlyDevicesResource<Disk, Disks>{
+public interface TemplateDisksResource {
+    @GET
+    Disks list();
 
-    /**
-     * Sub-resource locator method, returns individual DeviceResource on which the
-     * remainder of the URI is dispatched.
-     *
-     * @param id  the Device ID
-     * @return    matching resource if found
-     */
     @Path("{id}")
-    public TemplateDiskResource getDeviceResource(@PathParam("id") String id);
-
+    TemplateDiskResource getDiskResource(@PathParam("id") String id);
 }

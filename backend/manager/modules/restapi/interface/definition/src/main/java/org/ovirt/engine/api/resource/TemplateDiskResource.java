@@ -18,6 +18,7 @@ package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -29,7 +30,18 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Disk;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface TemplateDiskResource extends ReadOnlyDeviceResource<Disk> {
+public interface TemplateDiskResource extends AsynchronouslyCreatedResource {
+    @GET
+    Disk get();
+
+    // used for direct lun disk removal
+    @DELETE
+    Response remove();
+
+    // used for removing disk from specific SD or forcing disk removal
+    @DELETE
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
+    Response remove(Action action);
 
     @Path("{action: (copy|export)}/{oid}")
     ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
@@ -45,13 +57,4 @@ public interface TemplateDiskResource extends ReadOnlyDeviceResource<Disk> {
     @Actionable
     @Path("export")
     Response doExport(Action action);
-
-    // used for direct lun disk removal
-    @DELETE
-    Response remove();
-
-    // used for removing disk from specific SD or forcing disk removal
-    @DELETE
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
-    Response remove(Action action);
 }

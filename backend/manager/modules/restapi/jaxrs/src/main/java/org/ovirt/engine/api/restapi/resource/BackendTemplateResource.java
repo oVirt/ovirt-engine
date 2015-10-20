@@ -116,9 +116,7 @@ public class BackendTemplateResource
 
     @Override
     public TemplateDisksResource getDisksResource() {
-        return inject(new BackendTemplateDisksResource(guid,
-                VdcQueryType.GetVmTemplatesDisks,
-                new IdQueryParameters(guid)));
+        return inject(new BackendTemplateDisksResource(guid));
     }
 
     @Override

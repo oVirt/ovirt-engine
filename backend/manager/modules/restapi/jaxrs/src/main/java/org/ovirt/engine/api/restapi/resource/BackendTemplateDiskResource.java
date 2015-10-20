@@ -1,10 +1,13 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.List;
+import java.util.Objects;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
-import org.ovirt.engine.api.model.Disks;
+import org.ovirt.engine.api.model.Template;
+import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.TemplateDiskResource;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -15,13 +18,42 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendTemplateDiskResource extends BackendReadOnlyDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.storage.Disk>
+public class BackendTemplateDiskResource
+        extends AbstractBackendActionableResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk>
         implements TemplateDiskResource {
 
-    public BackendTemplateDiskResource(Guid guid,
-                                       BackendTemplateDisksResource collection,
-                                       String... subCollections) {
-        super(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class, guid, collection, subCollections);
+    private Guid templateId;
+
+    public BackendTemplateDiskResource(String diskId, Guid templateId) {
+        super(diskId, Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class);
+        this.templateId = templateId;
+    }
+
+    @Override
+    public Disk get() {
+        List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities = getBackendCollection(
+            org.ovirt.engine.core.common.businessentities.storage.Disk.class,
+            VdcQueryType.GetVmTemplatesDisks,
+            new IdQueryParameters(templateId)
+        );
+        for (org.ovirt.engine.core.common.businessentities.storage.Disk entity : entities) {
+            if (Objects.equals(entity.getId(), guid)) {
+                return addLinks(populate(map(entity), entity));
+            }
+        }
+        return notFound();
+    }
+
+    @Override
+    public CreationResource getCreationResource(String ids) {
+        return inject(new BackendCreationResource(ids));
+    }
+
+    @Override
+    public Disk addParents(Disk entity) {
+        entity.setTemplate(new Template());
+        entity.getTemplate().setId(templateId.toString());
+        return entity;
     }
 
     @Override
