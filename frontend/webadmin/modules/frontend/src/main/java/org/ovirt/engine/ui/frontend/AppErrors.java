@@ -634,6 +634,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. A Template with the same identifier already exists.")
     String ACTION_TYPE_FAILED_TEMPLATE_GUID_ALREADY_EXISTS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Template ${templateName} (${templateId}) is being set as base template.")
+    String ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_SET_AS_BASE_TEMPLATE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Sub Version of selected template (${subVersionId}) is being concurrently removed. Please wait and try again later.")
+    String ACTION_TYPE_FAILED_SUBVERSION_BEING_CONCURRENTLY_REMOVED();
+
     @DefaultStringValue("Cannot ${action} ${type}. The Role is Read-Only.")
     String ACTION_TYPE_FAILED_ROLE_IS_READ_ONLY();
 
@@ -2084,7 +2090,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM ${VmName} is being migrated.")
     String ACTION_TYPE_FAILED_VM_IS_BEING_MIGRATED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Template ${TemplateName} is being removed.")
+    @DefaultStringValue("Cannot ${action} ${type}. Template ${templateName} (${templateId}) is being removed.")
     String ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_REMOVED();
 
     @DefaultStringValue("Cannot ${action} ${type}. VM ${VmName} is being removed from export domain.")

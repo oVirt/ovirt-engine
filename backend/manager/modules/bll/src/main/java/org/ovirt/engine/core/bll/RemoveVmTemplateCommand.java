@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -43,6 +44,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmIconDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
+import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -53,6 +55,10 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     private List<DiskImage> imageTemplates;
     private final Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<>();
+    /** used only while removing base-template */
+    private EngineLock baseTemplateSuccessorLock;
+    /** used only while removing base-template */
+    private VmTemplate baseTemplateSuccessor;
 
     @Inject
     private VmIconDao vmIconDao;
@@ -155,18 +161,8 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
                     String.format("$vmsList %1$s", StringUtils.join(problematicVmNames, ",")));
         }
 
-        // for base templates, make sure it has no versions that need to be removed first
-        if (vmTemplateId.equals(template.getBaseTemplateId())) {
-            List<VmTemplate> templateVersions = getVmTemplateDao().getTemplateVersionsForBaseTemplate(vmTemplateId);
-            if (!templateVersions.isEmpty()) {
-                List<String> templateVersionsNames = new ArrayList<>();
-                for (VmTemplate version : templateVersions) {
-                    templateVersionsNames.add(version.getName());
-                }
-
-                return failCanDoAction(EngineMessage.VMT_CANNOT_REMOVE_BASE_WITH_VERSIONS,
-                        String.format("$versionsList %1$s", StringUtils.join(templateVersionsNames, ",")));
-            }
+        if (template.isBaseTemplate() && !tryLockSubVersionIfExists()) {
+            return false;
         }
 
         if (!isInstanceType && !validate(checkNoDisksBasedOnTemplateDisks())) {
@@ -174,6 +170,60 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
 
         return true;
+    }
+
+    /**
+     * It locks direct sub-template of deleted template if it exits.
+     * @return true if locking was successful or there is no direct sub-template, false otherwise
+     */
+    private boolean tryLockSubVersionIfExists() {
+        final List<VmTemplate> templateSubVersions =
+                getVmTemplateDao().getTemplateVersionsForBaseTemplate(getVmTemplateId());
+        if (templateSubVersions.isEmpty()) {
+            return true;
+        }
+        baseTemplateSuccessor = templateSubVersions
+                .stream()
+                .min(Comparator.comparing(VmTemplate::getTemplateVersionNumber))
+                .get();
+        final Pair<Boolean, List<String>> isLockedAndFailMessages = acquireBaseTemplateSuccessorLock();
+        if (!isLockedAndFailMessages.getFirst()) {
+            getReturnValue().getCanDoActionMessages().addAll(isLockedAndFailMessages.getSecond());
+            return false;
+        }
+        final boolean baseTemplateSuccessorExists = getVmTemplateDao().get(baseTemplateSuccessor.getId()) != null;
+        if (!baseTemplateSuccessorExists) {
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_SUBVERSION_BEING_CONCURRENTLY_REMOVED,
+                    String.format("$subVersionId %s", baseTemplateSuccessor.getId().toString()));
+        }
+        return true;
+    }
+
+    /**
+     * To prevent concurrent deletion.
+     * @return first: true ~ successfully locked, false otherwise; second: fail reasons in form suitable for
+     *         canDoActionMessages
+     */
+    private Pair<Boolean, List<String>> acquireBaseTemplateSuccessorLock() {
+        final Map<String, Pair<String, String>> lockSharedMap = Collections.singletonMap(
+                baseTemplateSuccessor.getId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE,
+                        createSubTemplateLockMessage(baseTemplateSuccessor)));
+        baseTemplateSuccessorLock = new EngineLock(null, lockSharedMap);
+        final Pair<Boolean, Set<String>> isLockedAndFailReason = getLockManager().acquireLock(baseTemplateSuccessorLock);
+        if (isLockedAndFailReason.getFirst()) {
+            return new Pair<>(true, null);
+        }
+        baseTemplateSuccessorLock = null;
+        final List<String> lockFailReasons = extractVariableDeclarations(isLockedAndFailReason.getSecond());
+        return new Pair<>(false, lockFailReasons);
+    }
+
+    private String createSubTemplateLockMessage(VmTemplate template) {
+        return String.format("%s$templateName %s$templateId %s",
+                EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_SET_AS_BASE_TEMPLATE,
+                template.getName(),
+                template.getId());
     }
 
     private ValidationResult checkNoDisksBasedOnTemplateDisks() {
@@ -208,6 +258,9 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     @Override
     protected void executeCommand() {
+        if (getVmTemplate().isBaseTemplate()) {
+            shiftBaseTemplateToSuccessor();
+        }
         final List<CinderDisk> cinderDisks =
                 ImagesHandler.filterDisksBasedOnCinder(DbFacade.getInstance()
                         .getDiskDao()
@@ -235,6 +288,27 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             // if for some reason template doesn't have images, remove it now and not in end action
             HandleEndAction();
         }
+    }
+
+    private void shiftBaseTemplateToSuccessor() {
+        try {
+            getVmTemplateDao().shiftBaseTemplate(getVmTemplateId());
+        } finally {
+            freeSubTemplateLock();
+        }
+    }
+
+    private void freeSubTemplateLock() {
+        if (baseTemplateSuccessorLock != null) {
+            getLockManager().releaseLock(baseTemplateSuccessorLock);
+            baseTemplateSuccessorLock = null;
+        }
+    }
+
+    @Override
+    protected void freeCustomLocks() {
+        super.freeCustomLocks();
+        freeSubTemplateLock();
     }
 
     /**
@@ -266,7 +340,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     private String getTemplateExclusiveLockMessage() {
         return new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_REMOVED.name())
-        .append(String.format("$TemplateName %1$s", getVmTemplate().getName()))
+        .append(String.format("$templateName %s$templateId %s", getVmTemplate().getName(), getVmTemplate().getId()))
         .toString();
     }
 

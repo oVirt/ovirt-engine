@@ -219,4 +219,10 @@ public interface VmTemplateDao extends GenericDao<VmTemplate, Guid>, StatusAware
     List<VmTemplate> getAllTemplatesWithDisksOnOtherStorageDomain(Guid storageDomainGuid);
 
     List<VmTemplate> getAllWithoutIcon();
+
+    /**
+     * It moves the base template role from specified template is its direct successor (sub-template) by changing
+     * 'vmt_guid' column of all sub-templates.
+     */
+    void shiftBaseTemplate(Guid baseTemplateId);
 }

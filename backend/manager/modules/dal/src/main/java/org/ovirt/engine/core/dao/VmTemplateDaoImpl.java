@@ -253,6 +253,12 @@ public class VmTemplateDaoImpl extends VmBaseDao<VmTemplate> implements VmTempla
                         .addValue("template_id", id));
     }
 
+    @Override
+    public void shiftBaseTemplate(Guid baseTemplateId) {
+        getCallsHandler().executeModification("UpdateVmTemplateShiftBaseTemplate",
+                getCustomMapSqlParameterSource().addValue("base_template_id", baseTemplateId));
+    }
+
     private final static class VMTemplateRowMapper extends AbstractVmRowMapper<VmTemplate> {
         public static final VMTemplateRowMapper instance = new VMTemplateRowMapper();
 
