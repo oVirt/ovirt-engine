@@ -18,6 +18,7 @@ package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -30,9 +31,24 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Disk;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface VmDiskResource extends DiskResource, DeviceResource<Disk> {
-    @Path("{action: (activate|deactivate|move)}/{oid}")
+public interface VmDiskResource extends DeviceResource<Disk>, MeasurableResource {
+    @Path("{action: (activate|deactivate|move|export)}/{oid}")
     ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
+
+    @GET
+    @Override
+    Disk get();
+
+    @PUT
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
+    Disk update(Disk device);
+
+    @DELETE
+    Response remove();
+
+    @DELETE
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
+    Response remove(Action action);
 
     @POST
     @Actionable
@@ -47,16 +63,17 @@ public interface VmDiskResource extends DiskResource, DeviceResource<Disk> {
     Response deactivate(Action action);
 
     @POST
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
+    @Actionable
+    @Path("export")
+    Response doExport(Action action);
+
+    @POST
     @Actionable
     @Path("move")
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     Response move(Action action);
 
-    @PUT
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
-    Disk update(Disk device);
-
-    @DELETE
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
-    Response remove(Action action);
+    @Path("permissions")
+    AssignedPermissionsResource getPermissionsResource();
 }

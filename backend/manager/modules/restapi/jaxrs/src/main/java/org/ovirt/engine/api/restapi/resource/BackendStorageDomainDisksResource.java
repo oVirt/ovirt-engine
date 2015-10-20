@@ -8,7 +8,7 @@ import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.StorageDomain;
-import org.ovirt.engine.api.resource.MovableCopyableDiskResource;
+import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.RegisterDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -72,7 +72,7 @@ public class BackendStorageDomainDisksResource extends BackendDisksResource {
     }
 
     @Override
-    public MovableCopyableDiskResource getDeviceResource(String id) {
+    public DiskResource getDeviceResource(String id) {
         return inject(new BackendStorageDomainDiskResource(id, this));
     }
 

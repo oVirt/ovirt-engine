@@ -18,7 +18,7 @@ import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.CreationResource;
-import org.ovirt.engine.api.resource.MovableCopyableDiskResource;
+import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
@@ -35,7 +35,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendDiskResource extends AbstractBackendActionableResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk>
-        implements MovableCopyableDiskResource {
+        implements DiskResource {
 
     protected BackendDiskResource(String id) {
         super(id, Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class);

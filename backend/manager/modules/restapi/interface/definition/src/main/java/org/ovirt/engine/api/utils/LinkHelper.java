@@ -184,7 +184,6 @@ import org.ovirt.engine.api.resource.LabelResource;
 import org.ovirt.engine.api.resource.LabelsResource;
 import org.ovirt.engine.api.resource.MacPoolResource;
 import org.ovirt.engine.api.resource.MacPoolsResource;
-import org.ovirt.engine.api.resource.MovableCopyableDiskResource;
 import org.ovirt.engine.api.resource.NetworkAttachmentResource;
 import org.ovirt.engine.api.resource.NetworkAttachmentsResource;
 import org.ovirt.engine.api.resource.NetworkResource;
@@ -380,10 +379,9 @@ public class LinkHelper {
         map = new ParentToCollectionMap(MacPoolResource.class, MacPoolsResource.class);
         TYPES.put(MacPool.class, map);
 
-        map = new ParentToCollectionMap(MovableCopyableDiskResource.class, DisksResource.class);
+        map = new ParentToCollectionMap(DiskResource.class, DisksResource.class);
         map.add(VmDiskResource.class, VmDisksResource.class, Vm.class);
         map.add(TemplateDiskResource.class, TemplateDisksResource.class, Template.class);
-        map.add(DiskResource.class, DisksResource.class, StorageDomain.class);
         TYPES.put(Disk.class, map);
 
         map = new ParentToCollectionMap(DiskSnapshotResource.class, DiskSnapshotsResource.class, StorageDomain.class);

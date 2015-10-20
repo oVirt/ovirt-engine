@@ -1,15 +1,14 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageType;
+import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.DisksResource;
-import org.ovirt.engine.api.resource.MovableCopyableDiskResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.utils.DiskResourceUtils;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
@@ -115,7 +114,7 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
     }
 
     @Override
-    public MovableCopyableDiskResource getDeviceResource(String id) {
+    public DiskResource getDeviceResource(String id) {
         return inject(new BackendDiskResource(id));
     }
 
