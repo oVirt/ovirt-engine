@@ -37,8 +37,8 @@ public class CreateCinderSnapshotCommandCallback extends AbstractCinderDiskComma
 
     @Override
     public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
-        log.error("Failed adding a Cinder snapshot. snapshot ID: {}", getDiskId());
         super.onFailed(cmdId, childCmdIds);
+        log.error("Failed adding a Cinder snapshot. snapshot ID: {}", getDiskId());
         getCommand().getParameters().setTaskGroupSuccess(false);
         onFinish(cmdId);
     }
