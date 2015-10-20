@@ -240,13 +240,6 @@
             width: 238px;
         }
 
-        .nameEditorContent {
-            float: right !important;
-            width: 238px;
-            padding-left: 5px;
-            padding-right: 5px;
-        }
-
         .editPrestartedVmsEditor, .editMaxAssignedVmsPerUserEditor {
             float: left;
             padding-right: 10px;
@@ -440,7 +433,7 @@
                                     <g:Label ui:field="nameLabel" addStyleNames="{style.nameLabel}" />
                                     <d:InfoIcon ui:field="poolNameIcon" addStyleNames="{style.poolNameIcon} avmpw_infoIcon_pfly_fix" />
                                 </g:FlowPanel>
-                                <ge:EntityModelTextBoxOnlyEditor ui:field="nameEditor" addStyleNames="avmpw_nameEditor_pfly_fix" contentWidgetContainerStyleName="{style.nameEditorContent}"/>
+                                <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
                             </g:FlowPanel>
                             <ge:StringEntityModelTextBoxEditor ui:field="templateVersionNameEditor" />
                             <ge:StringEntityModelTextBoxEditor ui:field="vmIdEditor" />

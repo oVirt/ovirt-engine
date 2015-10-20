@@ -192,7 +192,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "name.entity")
     @WithElementId("name")
-    public StringEntityModelTextBoxOnlyEditor nameEditor;
+    public StringEntityModelTextBoxEditor nameEditor;
 
     @UiField(provided = true)
     @Path(value = "templateVersionName.entity")
@@ -1105,7 +1105,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         kernel_pathEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         initrd_pathEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         kernel_parametersEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
-        nameEditor = new StringEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        nameEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         prestartedVmsEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
         editPrestartedVmsEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
         maxAssignedVmsPerUserEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
