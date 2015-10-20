@@ -1307,9 +1307,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Storage Domain")
     String storageDomainVmDiskTable();
 
-    @DefaultStringValue("Specific User/Group")
-    String specificUserGroupPermission();
-
     @DefaultStringValue("Everyone")
     String everyonePermission();
 
@@ -1326,13 +1323,19 @@ public interface CommonApplicationConstants extends Constants {
 
     // Permissions popup
     @DefaultStringValue("First Name")
-    String firsNamePermissionsPopup();
+    String firstNamePermissionsPopup();
+
+    @DefaultStringValue("Group Name")
+    String groupNamePermissionsPopup();
 
     @DefaultStringValue("Last Name")
     String lastNamePermissionsPopup();
 
     @DefaultStringValue("User Name")
     String userNamePermissionsPopup();
+
+    @DefaultStringValue("Display Name")
+    String displayNamePermissionsPopup();
 
     @DefaultStringValue("Search:")
     String searchPermissionsPopup();
@@ -2322,4 +2325,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Provider")
     String providerLabel();
+
+    @DefaultStringValue("Groups:")
+    String groups();
 }

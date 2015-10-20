@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.searchbackend.VdcUserConditionFieldAutoCompleter.UserOrGroup;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -40,6 +41,7 @@ public class MainTabUserPresenter extends AbstractMainTabWithDetailsPresenter<Db
     }
 
     public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<DbUser> {
+        void userTypeChanged(UserOrGroup newType);
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
@@ -52,6 +54,12 @@ public class MainTabUserPresenter extends AbstractMainTabWithDetailsPresenter<Db
     public MainTabUserPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<DbUser, UserListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
+    }
+
+    @Override
+    protected void onReveal() {
+        super.onReveal();
+        getView().userTypeChanged(UserOrGroup.User);
     }
 
     @Override

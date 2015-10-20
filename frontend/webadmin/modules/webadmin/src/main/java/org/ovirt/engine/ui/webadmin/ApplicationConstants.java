@@ -2164,6 +2164,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Group")
     String groupUser();
 
+    @DefaultStringValue("Group Name")
+    String groupNameUser();
+
     @DefaultStringValue("E-mail")
     String emailUser();
 

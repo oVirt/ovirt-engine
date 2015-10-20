@@ -77,7 +77,7 @@ public class BackendDomainGroupResourceTest
 
     @Override
     protected DirectoryGroup getEntity(int index) {
-        return new DirectoryGroup(DOMAIN, NAMESPACE, EXTERNAL_IDS[index], NAMES[index]);
+        return new DirectoryGroup(DOMAIN, NAMESPACE, EXTERNAL_IDS[index], NAMES[index], "");
     }
 }
 

@@ -18,6 +18,7 @@ public class DirectoryEntry implements IVdcQueryable {
     private String namespace;
     private String id;
     private String name;
+    private String displayName;
     private DirectoryEntryStatus status;
 
     /**
@@ -25,11 +26,12 @@ public class DirectoryEntry implements IVdcQueryable {
      */
     private List<DirectoryGroup> groups;
 
-    public DirectoryEntry(String directoryName, String namespace, String id, String name) {
+    public DirectoryEntry(String directoryName, String namespace, String id, String name, String displayName) {
         this.directoryName = directoryName;
         this.namespace = namespace;
         this.id = id;
         this.name = name;
+        this.displayName = displayName;
         this.status = DirectoryEntryStatus.UNAVAILABLE;
         this.groups = new ArrayList<>(1);
     }
@@ -60,6 +62,14 @@ public class DirectoryEntry implements IVdcQueryable {
 
     public String getName() {
         return name;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public void setName(String name) {

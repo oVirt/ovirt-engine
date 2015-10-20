@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
+import org.ovirt.engine.core.searchbackend.VdcUserConditionFieldAutoCompleter.UserOrGroup;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -35,11 +37,16 @@ import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
+import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel.AdSearchType;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.inject.Inject;
 
 public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
@@ -91,6 +98,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
             final UserEventNotifierListModel userEventNotifierListModel, final UserGeneralModel userGeneralModel,
             final UserQuotaListModel userQuotaListModel, final UserPermissionListModel userPermissionListModel,
             final UserEventListModel userEventListModel) {
+        setIsTimerDisabled(true);
         this.userGroupListModel = userGroupListModel;
         this.userEventNotifierListModel = userEventNotifierListModel;
         setDetailList(userGeneralModel, userQuotaListModel, userPermissionListModel, userEventListModel);
@@ -147,6 +155,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
     public Map<Guid, Boolean> attachedTagsToEntities;
     public ArrayList<Tags> allAttachedTags;
     public int selectedItemsCounter;
+    private UserOrGroup userOrGroup;
 
     private void getAttachedTagsToSelectedUsers(TagListModel model) {
         ArrayList<Guid> userIds = new ArrayList<>();
@@ -302,6 +311,11 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
         }
 
         AdElementListModel model = new AdElementListModel();
+        if (getUserOrGroup() == UserOrGroup.Group) {
+            model.setSearchType(AdSearchType.GROUP);
+        } else {
+            model.setSearchType(AdSearchType.USER);
+        }
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().addUsersAndGroupsTitle());
         model.setHelpTag(HelpTag.add_users_and_groups);
@@ -309,10 +323,26 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
         model.setIsRoleListHidden(true);
         model.getIsEveryoneSelectionHidden().setEntity(true);
 
-        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnAdd", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar2);
+        UICommand addCommand = new UICommand("OnAdd", this); //$NON-NLS-1$
+        addCommand.setTitle(ConstantsManager.getInstance().getConstants().add());
+        model.getCommands().add(addCommand);
+
+        UICommand addAndCloseCommand = new UICommand("OnAddAndClose", this); //$NON-NLS-1$
+        addAndCloseCommand.setTitle(ConstantsManager.getInstance().getConstants().addAndClose());
+        addAndCloseCommand.setIsDefault(true);
+        model.getCommands().add(addAndCloseCommand);
+
+        UICommand closeCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        closeCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
+        model.getCommands().add(closeCommand);
+    }
+
+    public UserOrGroup getUserOrGroup() {
+        return this.userOrGroup;
+    }
+
+    public void setUserOrGroup(UserOrGroup value) {
+        this.userOrGroup = value;
     }
 
     public void remove() {
@@ -359,6 +389,13 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
     private final UserGroupListModel userGroupListModel;
     private final UserEventNotifierListModel userEventNotifierListModel;
 
+    private IFrontendActionAsyncCallback nopCallback = new IFrontendActionAsyncCallback() {
+        @Override
+        public void executed(FrontendActionAsyncResult result) {
+            // Nothing.
+        }
+    };
+
     @Override
     protected void updateDetailsAvailability() {
         if (getSelectedItem() != null) {
@@ -372,7 +409,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
         setWindow(null);
     }
 
-    public void onAdd() {
+    public void onAdd(final boolean closeWindow) {
         AdElementListModel model = (AdElementListModel) getWindow();
 
         if (model.getProgress() != null) {
@@ -384,68 +421,70 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
             return;
         }
 
-        ArrayList<DbUser> items = new ArrayList<>();
-        for (Object item : model.getItems()) {
-            EntityModel entityModel = (EntityModel) item;
-            if (entityModel.getIsSelected()) {
-                items.add((DbUser) entityModel.getEntity());
+        List<EntityModel<DbUser>> selectedItems = new ArrayList<>();
+        for (EntityModel<DbUser> dbUserEntity : model.getItems()) {
+            if (dbUserEntity.getIsSelected()) {
+                selectedItems.add(dbUserEntity);
             }
         }
 
-        ArrayList<VdcActionType> actionsList = new ArrayList<>(items.size());
-        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<>(items.size());
+        List<VdcActionType> actionsList = new ArrayList<>(selectedItems.size());
+        List<VdcActionParametersBase> parametersList = new ArrayList<>(selectedItems.size());
         VdcActionParametersBase parameters = null;
-        for (DbUser item : items) {
-            if (item.isGroup()) {
+        for (EntityModel<DbUser> item : selectedItems) {
+            if (item.getEntity().isGroup()) {
                 actionsList.add(VdcActionType.AddGroup);
                 DbGroup grp = new DbGroup();
-                grp.setExternalId(item.getExternalId());
-                grp.setName(item.getFirstName());
-                grp.setNamespace(item.getNamespace());
-                grp.setId(item.getId());
-                grp.setDomain(item.getDomain());
+                grp.setExternalId(item.getEntity().getExternalId());
+                grp.setName(item.getEntity().getFirstName());
+                grp.setNamespace(item.getEntity().getNamespace());
+                grp.setId(item.getEntity().getId());
+                grp.setDomain(item.getEntity().getDomain());
                 parameters = new AddGroupParameters(grp);
             }
             else {
                 actionsList.add(VdcActionType.AddUser);
-                parameters = new AddUserParameters(item);
+                parameters = new AddUserParameters(item.getEntity());
             }
             parametersList.add(parameters);
         }
 
         model.startProgress();
 
-        IFrontendActionAsyncCallback nopCallback = new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                // Nothing.
-            }
-        };
-
         IFrontendActionAsyncCallback lastCallback = new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {
                 AdElementListModel localModel = (AdElementListModel) result.getState();
                 localModel.stopProgress();
-                cancel();
+                //Refresh user list.
+                syncSearch();
+                if (closeWindow) {
+                    cancel();
+                }
             }
         };
 
-        ArrayList<IFrontendActionAsyncCallback> callbacksList = new ArrayList<>(items.size());
-        for (int i = 1; i < items.size(); i++) {
+        Collection<EntityModel<DbUser>> currentItems = model.getItems();
+        List<IFrontendActionAsyncCallback> callbacksList = new ArrayList<>(selectedItems.size());
+        for (EntityModel<DbUser> user: selectedItems) {
             callbacksList.add(nopCallback);
+            currentItems.remove(user);
         }
+        callbacksList.remove(callbacksList.size() - 1);
         callbacksList.add(lastCallback);
 
+        //Refresh display
+        model.setItems(null);
+        model.setItems(currentItems);
         Frontend.getInstance().runMultipleActions(actionsList, parametersList, callbacksList, lastCallback, model);
     }
 
     public void onRemove() {
-        ArrayList<DbUser> items = Linq.<DbUser> cast(getSelectedItems());
+        List<DbUser> selectedItems = Linq.<DbUser> cast(getSelectedItems());
 
         ArrayList<VdcActionParametersBase> userPrms = new ArrayList<>();
         ArrayList<VdcActionParametersBase> groupPrms = new ArrayList<>();
-        for (DbUser item : items) {
+        for (DbUser item : selectedItems) {
             if (!item.isGroup()) {
                 userPrms.add(new IdParameters(item.getId()));
             }
@@ -454,16 +493,29 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
             }
         }
 
-        if (userPrms.size() > 0) {
-            Frontend.getInstance().runMultipleAction(VdcActionType.RemoveUser, userPrms);
+        IFrontendMultipleActionAsyncCallback lastCallback = new IFrontendMultipleActionAsyncCallback() {
+            @Override
+            public void executed(FrontendMultipleActionAsyncResult result) {
+                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 
+                    @Override
+                    public void execute() {
+                        //Refresh user list.
+                        syncSearch();
+                        cancel();
+                    }
+                });
+            }
+        };
+        if (getUserOrGroup() == UserOrGroup.User) {
+            if (userPrms.size() > 0) {
+                Frontend.getInstance().runMultipleAction(VdcActionType.RemoveUser, userPrms, lastCallback);
+            }
+        } else if (getUserOrGroup() == UserOrGroup.Group) {
+            if (groupPrms.size() > 0) {
+                Frontend.getInstance().runMultipleAction(VdcActionType.RemoveGroup, groupPrms, lastCallback);
+            }
         }
-
-        if (groupPrms.size() > 0) {
-            Frontend.getInstance().runMultipleAction(VdcActionType.RemoveGroup, groupPrms);
-        }
-
-        cancel();
     }
 
     @Override
@@ -510,9 +562,11 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
             onAssignTags();
         }
         if ("OnAdd".equals(command.getName())) { //$NON-NLS-1$
-            onAdd();
+            onAdd(false);
         }
-
+        if ("OnAddAndClose".equals(command.getName())) { //$NON-NLS-1$
+            onAdd(true);
+        }
         if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }

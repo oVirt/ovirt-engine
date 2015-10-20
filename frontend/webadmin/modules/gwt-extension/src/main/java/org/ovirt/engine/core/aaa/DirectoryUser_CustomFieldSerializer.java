@@ -7,7 +7,6 @@ import com.google.gwt.user.client.rpc.SerializationStreamWriter;
  * We use a custom serializer for directory users because we want to replace the directory reference with the name of
  * the directory.
  */
-@SuppressWarnings("unused")
 public class DirectoryUser_CustomFieldSerializer {
 
     public static DirectoryUser instantiate(SerializationStreamReader reader) throws SerializationException {
@@ -16,7 +15,8 @@ public class DirectoryUser_CustomFieldSerializer {
         String id =  reader.readString();
         String name = reader.readString();
         String principal = reader.readString();
-        return new DirectoryUser(directoryName, namespace, id, name, principal);
+        String displayName = reader.readString();
+        return new DirectoryUser(directoryName, namespace, id, name, principal, displayName);
     }
 
     public static void serialize(SerializationStreamWriter writer, DirectoryUser user) throws SerializationException {
@@ -25,6 +25,7 @@ public class DirectoryUser_CustomFieldSerializer {
         writer.writeObject(user.getId());
         writer.writeString(user.getName());
         writer.writeString(user.getPrincipal());
+        writer.writeString(user.getDisplayName());
         writer.writeBoolean(user.isAdmin());
         writer.writeString(user.getDepartment());
         writer.writeString(user.getEmail());

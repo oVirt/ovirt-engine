@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.aaa.ProfileEntry;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.searchbackend.VdcUserConditionFieldAutoCompleter.UserOrGroup;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -23,6 +24,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextCol
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasKeyPressHandlers;
@@ -31,6 +33,7 @@ import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Label;
@@ -51,7 +54,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     /**
      * This is the max width of a column in this dialogs
      */
-    private static final String MAX_COL_WIDTH = "270px"; //$NON-NLS-1$
+    private static final String MAX_COL_WIDTH = "267px"; //$NON-NLS-1$
 
     @UiField
     @WithElementId
@@ -85,7 +88,12 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     @UiField
     @Ignore
     @WithElementId
-    public RadioButton specificUserOrGroupRadio;
+    public RadioButton specificUserRadio;
+
+    @UiField
+    @Ignore
+    @WithElementId
+    public RadioButton specificGroupRadio;
 
     @UiField
     @Ignore
@@ -96,9 +104,6 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     @Path("searchString")
     @WithElementId("searchString")
     public TextBoxChanger searchStringEditor;
-
-    @UiField
-    public FlowPanel everyonePanel;
 
     @UiField
     public FlowPanel roleSelectionPanel;
@@ -113,6 +118,11 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     @UiField
     Style style;
 
+    private AbstractEntityModelTextColumn<DbUser> firstNameColumn;
+    private AbstractEntityModelTextColumn<DbUser> groupNameColumn;
+    private AbstractEntityModelTextColumn<DbUser> lastNameColumn;
+    private AbstractEntityModelTextColumn<DbUser> userNameColumn;
+    private AbstractEntityModelTextColumn<DbUser> displayNameColumn;
     private PopupNativeKeyPressHandler nativeKeyPressHandler;
 
     private final static CommonApplicationConstants constants = AssetProvider.getConstants();
@@ -126,7 +136,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
         generateIds();
         searchStringEditor.setStyleName("");
         initTable();
-        specificUserOrGroupRadio.setValue(true);
+        specificUserRadio.setValue(true);
         everyoneRadio.setValue(false);
         myGroupsRadio.setValue(false);
         //Have to add these classes to the searchStringEditor as the UiBinder seems to remove them
@@ -157,27 +167,63 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     }
 
     private void initTable() {
-        // Table Entity Columns
-        searchItems.addColumn(new AbstractEntityModelTextColumn<DbUser>() {
+        groupNameColumn = new AbstractEntityModelTextColumn<DbUser>() {
             @Override
             public String getText(DbUser user) {
                 return user.getFirstName();
             }
-        }, constants.firsNamePermissionsPopup(), MAX_COL_WIDTH);
+        };
+        searchItems.addColumn(groupNameColumn, constants.groupNamePermissionsPopup(), MAX_COL_WIDTH);
 
-        searchItems.addColumn(new AbstractEntityModelTextColumn<DbUser>() {
-            @Override
-            public String getText(DbUser user) {
-                return user.getLastName();
-            }
-        }, constants.lastNamePermissionsPopup(), MAX_COL_WIDTH);
-
-        searchItems.addColumn(new AbstractEntityModelTextColumn<DbUser>() {
+        displayNameColumn = new AbstractEntityModelTextColumn<DbUser>() {
             @Override
             public String getText(DbUser user) {
                 return user.getLoginName();
             }
-        }, constants.userNamePermissionsPopup(), MAX_COL_WIDTH);
+        };
+        searchItems.addColumn(displayNameColumn, constants.displayNamePermissionsPopup(), MAX_COL_WIDTH);
+        // Table Entity Columns
+        firstNameColumn = new AbstractEntityModelTextColumn<DbUser>() {
+            @Override
+            public String getText(DbUser user) {
+                return user.getFirstName();
+            }
+        };
+        searchItems.addColumn(firstNameColumn, constants.firstNamePermissionsPopup(), MAX_COL_WIDTH);
+
+        lastNameColumn = new AbstractEntityModelTextColumn<DbUser>() {
+            @Override
+            public String getText(DbUser user) {
+                return user.getLastName();
+            }
+        };
+        searchItems.addColumn(lastNameColumn, constants.lastNamePermissionsPopup(), MAX_COL_WIDTH);
+
+        userNameColumn = new AbstractEntityModelTextColumn<DbUser>() {
+            @Override
+            public String getText(DbUser user) {
+                return user.getLoginName();
+            }
+        };
+        searchItems.addColumn(userNameColumn, constants.userNamePermissionsPopup(), MAX_COL_WIDTH);
+    }
+
+    @Override
+    public void userTypeChanged(UserOrGroup newType, boolean setRadioValue) {
+        boolean isUser = newType == UserOrGroup.User;
+        searchItems.ensureColumnVisible(firstNameColumn, constants.firstNamePermissionsPopup(), isUser, MAX_COL_WIDTH);
+        searchItems.ensureColumnVisible(groupNameColumn, constants.groupNamePermissionsPopup(), !isUser, MAX_COL_WIDTH);
+        searchItems.ensureColumnVisible(lastNameColumn, constants.lastNamePermissionsPopup(), isUser, MAX_COL_WIDTH);
+        searchItems.ensureColumnVisible(userNameColumn, constants.userNamePermissionsPopup(), isUser, MAX_COL_WIDTH);
+        searchItems.ensureColumnVisible(displayNameColumn, constants.displayNamePermissionsPopup(), !isUser,
+                MAX_COL_WIDTH);
+        if (setRadioValue) {
+            if (isUser) {
+                specificUserRadio.setValue(true, false);
+            } else {
+                specificGroupRadio.setValue(true, false);
+            }
+        }
     }
 
     void localize() {
@@ -217,8 +263,13 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     }
 
     @Override
-    public HasClickHandlers getSpecificUserOrGroupRadio() {
-        return specificUserOrGroupRadio;
+    public HasClickHandlers getSpecificUserRadio() {
+        return specificUserRadio;
+    }
+
+    @Override
+    public HasClickHandlers getSpecificGroupRadio() {
+        return specificGroupRadio;
     }
 
     @Override
@@ -258,18 +309,24 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     }
 
     @Override
-    public void hideRoleSelection(Boolean indic) {
+    public void hideRoleSelection(boolean indic) {
         roleSelectionPanel.setVisible(!indic);
     }
 
     @Override
-    public void hideEveryoneSelection(Boolean indic) {
-        everyonePanel.setVisible(!indic);
+    public void hideEveryoneSelection(boolean indic) {
+        everyoneRadio.setVisible(!indic);
+        myGroupsRadio.setVisible(!indic);
     }
 
     @Override
     public void setMessage(String message) {
         super.setMessage(message);
         errorMessage.setText(message);
+    }
+
+    @Override
+    public void setLoadingState(LoadingState state) {
+        searchItems.setLoadingState(state);
     }
 }

@@ -228,4 +228,22 @@ public interface CommonApplicationMessages extends Messages {
 
     @DefaultMessage(" ({0})")
     String templateVersionName(String name);
+
+    @DefaultMessage("Login name: {0}")
+    String principalLoginName(String name);
+
+    @DefaultMessage("Name: {0} {1}")
+    String principalName(String firstName, String lastName);
+
+    @DefaultMessage("E-mail: {0}")
+    String principalEmail(String email);
+
+    @DefaultMessage("Department: {0}")
+    String principalDepartment(String department);
+
+    @DefaultMessage("Notes: {0}")
+    String principalNote(String note);
+
+    @DefaultMessage("Namespace: {0}")
+    String principalNamespace(String namespace);
 }

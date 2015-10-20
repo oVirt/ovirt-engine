@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -33,8 +32,16 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class AdElementListModel extends SearchableListModel<Object, EntityModel<DbUser>> {
+
+    public enum AdSearchType {
+        USER,
+        GROUP,
+        EVERYONE,
+        MY_GROUPS;
+    }
 
     private UICommand privateSearchMyGroupsCommand;
 
@@ -142,7 +149,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
     private boolean isRoleListHidden;
 
     public boolean getIsRoleListHidden() {
-        return isEveryoneSelected || isMyGroupsSelected;
+        return searchType == AdSearchType.EVERYONE || searchType == AdSearchType.MY_GROUPS;
     }
 
     public void setIsRoleListHidden(boolean value) {
@@ -155,33 +162,20 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         }
     }
 
-    private boolean isEveryoneSelected;
+    private AdSearchType searchType;
+
+    public AdSearchType getSearchType() {
+        return searchType;
+    }
+
+    public void setSearchType(AdSearchType value) {
+        if (searchType != value) {
+            searchType = value;
+            onPropertyChanged(new PropertyChangedEventArgs("AdSearchType")); //$NON-NLS-1$
+        }
+    }
 
     private List<ProfileEntry> profileEntries;
-
-    public boolean getIsEveryoneSelected() {
-        return isEveryoneSelected;
-    }
-
-    public void setIsEveryoneSelected(boolean value) {
-        if (isEveryoneSelected != value) {
-            isEveryoneSelected = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsEveryoneSelected")); //$NON-NLS-1$
-        }
-    }
-
-    private boolean isMyGroupsSelected;
-
-    public boolean getIsMyGroupsSelected() {
-        return isMyGroupsSelected;
-    }
-
-    public void setIsMyGroupsSelected(boolean value) {
-        if (isMyGroupsSelected != value) {
-            isMyGroupsSelected = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsMyGroupsSelected")); //$NON-NLS-1$
-        }
-    }
 
     public AdElementListModel() {
         setSearchMyGroupsCommand(new UICommand("SearchMyGroups", this)); //$NON-NLS-1$
@@ -204,6 +198,8 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
 
         setSearchInProgress(new EntityModel<Boolean>());
         getSearchInProgress().setEntity(false);
+
+        searchType = AdSearchType.USER;
 
         setIsTimerDisabled(true);
 
@@ -336,6 +332,14 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         super.syncSearch();
         // var exclude = ExcludeItems != null ? ExcludeItems.Cast<DbUser>() : new List<DbUser>();
 
+        if (this.searchType == AdSearchType.USER) {
+            syncSearchUsers();
+        } else if (this.searchType == AdSearchType.GROUP) {
+            syncSearchGroups();
+        }
+    }
+
+    private void syncSearchUsers() {
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.setHandleFailure(true);
@@ -350,14 +354,17 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
 
                 setusers(new ArrayList<EntityModel<DbUser>>());
                 addUsersToModel(queryReturnValue, getExcludeUsers());
-                onUserAndAdGroupsLoaded(adElementListModel);
+                onAdUsersLoaded(adElementListModel);
             }
         };
 
         findUsers("allnames=" //$NON-NLS-1$
-                + (StringHelper.isNullOrEmpty(getSearchString()) ? "*" : getSearchString()), //$NON-NLS-1$
+                + (StringUtils.isEmpty(getSearchString()) ? "*" : getSearchString()), //$NON-NLS-1$
                 _asyncQuery);
+    }
 
+    private void syncSearchGroups() {
+        AsyncQuery _asyncQuery;
         _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.setHandleFailure(true);
@@ -378,11 +385,11 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
                 }
                 adElementListModel.setgroups(new ArrayList<EntityModel<DbUser>>());
                 addGroupsToModel(queryReturnValue, excludeUsers);
-                onUserAndAdGroupsLoaded(adElementListModel);
+                onAdGroupsLoaded(adElementListModel);
             }
         };
 
-        findGroups("name=" + (StringHelper.isNullOrEmpty(getSearchString()) ? "*" : getSearchString()), //$NON-NLS-1$ //$NON-NLS-2$
+        findGroups("name=" + (StringUtils.isEmpty(getSearchString()) ? "*" : getSearchString()), //$NON-NLS-1$ //$NON-NLS-2$
                 _asyncQuery);
     }
 
@@ -401,19 +408,17 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         for (IVdcQueryable item : (Collection<IVdcQueryable>) returnValue.getReturnValue()) {
             DirectoryGroup a = (DirectoryGroup) item;
             if (!excludeUsers.contains(a.getId())) {
-                // XXX: This should use DbGroup and not DbUser.
-                DbUser tempVar3 = new DbUser();
-                tempVar3.setExternalId(a.getId());
-                tempVar3.setFirstName(a.getName());
-                tempVar3.setLastName(""); //$NON-NLS-1$
-                tempVar3.setLoginName(""); //$NON-NLS-1$
-                tempVar3.setDomain(a.getDirectoryName());
-                tempVar3.setNamespace(a.getNamespace());
-                DbUser user = tempVar3;
+                DbUser group = new DbUser();
+                group.setExternalId(a.getId());
+                group.setFirstName(a.getName());
+                group.setLastName(""); //$NON-NLS-1$
+                group.setLoginName(a.getDisplayName());
+                group.setDomain(a.getDirectoryName());
+                group.setNamespace(a.getNamespace());
 
-                EntityModel<DbUser> tempVar4 = new EntityModel<>();
-                tempVar4.setEntity(user);
-                getgroups().add(tempVar4);
+                EntityModel<DbUser> groupEntity = new EntityModel<>();
+                groupEntity.setEntity(group);
+                getgroups().add(groupEntity);
             }
         }
     }
@@ -439,11 +444,28 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
                         new SearchParameters("ADUSER@" + (getProfile().getSelectedItem()).getAuthz() + ":" + getNamespace().getSelectedItem() + ": " + searchString, SearchType.DirectoryUser), query); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
+    protected void onAdUsersLoaded(AdElementListModel adElementListModel) {
+        onAdItemsLoaded(adElementListModel, getusers());
+    }
+
+    protected void onAdGroupsLoaded(AdElementListModel adElementListModel) {
+        onAdItemsLoaded(adElementListModel, getgroups());
+    }
+
+    private void onAdItemsLoaded(AdElementListModel adElementListModel, List<EntityModel<DbUser>> userOrGroups) {
+        getSearchInProgress().setEntity(false);
+        List<EntityModel<DbUser>> items = new ArrayList<>();
+        items.addAll(userOrGroups);
+        adElementListModel.getSelectAll().setEntity(false);
+        adElementListModel.setItems(items);
+        setIsEmpty(items.isEmpty());
+    }
+
     protected void onUserAndAdGroupsLoaded(AdElementListModel adElementListModel) {
         if (adElementListModel.getusers() != null && adElementListModel.getgroups() != null) {
             getSearchInProgress().setEntity(false);
 
-            ArrayList<EntityModel<DbUser>> items = new ArrayList<>();
+            List<EntityModel<DbUser>> items = new ArrayList<>();
             items.addAll(getusers());
             items.addAll(getgroups());
             adElementListModel.getSelectAll().setEntity(false);

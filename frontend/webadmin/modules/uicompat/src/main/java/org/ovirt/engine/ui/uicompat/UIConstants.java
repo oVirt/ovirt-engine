@@ -276,6 +276,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Add Users and Groups")
     String addUsersAndGroupsTitle();
 
+    @DefaultStringValue("Add")
+    String add();
+
+    @DefaultStringValue("Add and Close")
+    String addAndClose();
+
     @DefaultStringValue("Remove User(s)")
     String removeUsersTitle();
 

@@ -1,9 +1,11 @@
 package org.ovirt.engine.ui.common.presenter.popup.permissions;
 
+import org.ovirt.engine.core.searchbackend.VdcUserConditionFieldAutoCompleter.UserOrGroup;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
+import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel.AdSearchType;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -24,6 +26,7 @@ import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HasHandlers;
+import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.user.client.ui.HasValue;
 
 public abstract class AbstractPermissionsPopupPresenterWidget<V extends AbstractPermissionsPopupPresenterWidget.ViewDef<M>, M extends AdElementListModel>
@@ -39,7 +42,9 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
 
         HasClickHandlers getEveryoneRadio();
 
-        HasClickHandlers getSpecificUserOrGroupRadio();
+        HasClickHandlers getSpecificUserRadio();
+
+        HasClickHandlers getSpecificGroupRadio();
 
         HasClickHandlers getMyGroupsRadio();
 
@@ -49,10 +54,13 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
 
         void changeStateOfElementsWhenAccessIsForEveryoneOrMyGroups(boolean isEveryone, boolean isMyGroups);
 
-        void hideRoleSelection(Boolean indic);
+        void hideRoleSelection(boolean indic);
 
-        void hideEveryoneSelection(Boolean indic);
+        void hideEveryoneSelection(boolean indic);
 
+        void userTypeChanged(UserOrGroup newType, boolean setRadioValue);
+
+        void setLoadingState(LoadingState state);
     }
 
     public AbstractPermissionsPopupPresenterWidget(EventBus eventBus, V view) {
@@ -69,6 +77,7 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
         registerHandler(getView().getSearchButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+                getView().setLoadingState(LoadingState.LOADING);
                 getView().getSearchButton().getCommand().execute();
             }
         }));
@@ -95,29 +104,42 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
         registerHandler(getView().getEveryoneRadio().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                model.setIsEveryoneSelected(true);
-                model.setIsMyGroupsSelected(false);
+                model.setSearchType(AdSearchType.EVERYONE);
                 getView().changeStateOfElementsWhenAccessIsForEveryoneOrMyGroups(true, false);
-                // Disable relevant elements
+                getView().userTypeChanged(UserOrGroup.User, false);
+                model.setItems(null);
             }
         }));
 
         registerHandler(getView().getMyGroupsRadio().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                model.setIsEveryoneSelected(false);
-                model.setIsMyGroupsSelected(true);
+                model.setSearchType(AdSearchType.MY_GROUPS);
                 getView().changeStateOfElementsWhenAccessIsForEveryoneOrMyGroups(false, true);
                 getModel().getSearchMyGroupsCommand().execute();
+                getView().userTypeChanged(UserOrGroup.User, false);
+                model.setItems(null);
+                getView().setLoadingState(LoadingState.LOADING);
             }
         }));
 
-        registerHandler(getView().getSpecificUserOrGroupRadio().addClickHandler(new ClickHandler() {
+        registerHandler(getView().getSpecificUserRadio().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                model.setIsEveryoneSelected(false);
-                model.setIsMyGroupsSelected(false);
+                model.setSearchType(AdSearchType.USER);
                 getView().changeStateOfElementsWhenAccessIsForEveryoneOrMyGroups(false, false);
+                getView().userTypeChanged(UserOrGroup.User, true);
+                model.setItems(null);
+            }
+        }));
+
+        registerHandler(getView().getSpecificGroupRadio().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                model.setSearchType(AdSearchType.GROUP);
+                getView().changeStateOfElementsWhenAccessIsForEveryoneOrMyGroups(false, false);
+                getView().userTypeChanged(UserOrGroup.Group, true);
+                model.setItems(null);
             }
         }));
 
@@ -202,4 +224,13 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
         }
     }
 
+    @Override
+    protected void onReveal() {
+        super.onReveal();
+        UserOrGroup searchType = UserOrGroup.User;
+        if (getModel().getSearchType() == AdSearchType.GROUP) {
+            searchType = UserOrGroup.Group;
+        }
+        getView().userTypeChanged(searchType, true);
+    }
 }

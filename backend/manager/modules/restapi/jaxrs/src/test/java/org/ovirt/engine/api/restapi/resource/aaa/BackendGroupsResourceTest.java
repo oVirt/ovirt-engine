@@ -328,11 +328,11 @@ public class BackendGroupsResourceTest
 
     @Override
     protected DbGroup getEntity(int index) {
-        return new DbGroup(new DirectoryGroup(DOMAIN, NAMESPACE, EXTERNAL_IDS[index], GROUP_NAMES[index]));
+        return new DbGroup(new DirectoryGroup(DOMAIN, NAMESPACE, EXTERNAL_IDS[index], GROUP_NAMES[index], ""));
     }
 
     private DirectoryGroup getDirectoryGroup(int index) {
-        return new DirectoryGroup(DOMAIN, NAMESPACE, EXTERNAL_IDS[index], GROUP_NAMES[index]);
+        return new DirectoryGroup(DOMAIN, NAMESPACE, EXTERNAL_IDS[index], GROUP_NAMES[index], "");
     }
 
     @Override

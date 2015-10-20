@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.users;
 import java.util.ArrayList;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -44,35 +43,6 @@ public class UserPortalAdElementListModel extends AdElementListModel {
         dbUser.setLoginName(getSearchString());
         dbUser.setDomain((getProfile().getSelectedItem()).getAuthz());
         return dbUser;
-    }
-
-    @Override
-    protected void addGroupsToModel(VdcQueryReturnValue returnValue, Set<String> excludeUsers) {
-        Iterable<DbGroup> filteredGroups = Linq.where((ArrayList<DbGroup>) returnValue.getReturnValue(),
-                new Linq.DbGroupPredicate(getTargetDbGroup()));
-
-        for (DbGroup group : filteredGroups) {
-            if (!excludeUsers.contains(group.getId().toString())) {
-                DbUser dbUser = new DbUser();
-                dbUser.setExternalId(group.getExternalId());
-                dbUser.setFirstName(group.getName());
-                dbUser.setLastName(""); //$NON-NLS-1$
-                dbUser.setLoginName(""); //$NON-NLS-1$
-                dbUser.setDomain(group.getDomain());
-                dbUser.setNamespace(group.getNamespace());
-
-                EntityModel entity = new EntityModel();
-                entity.setEntity(dbUser);
-                getgroups().add(entity);
-            }
-        }
-    }
-
-    private DbGroup getTargetDbGroup() {
-        DbGroup dbGroup = new DbGroup();
-        dbGroup.setName(getSearchString());
-        dbGroup.setDomain((getProfile().getSelectedItem()).getAuthz());
-        return dbGroup;
     }
 
     @Override

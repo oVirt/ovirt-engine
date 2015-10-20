@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
+import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel.AdSearchType;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
@@ -188,13 +189,13 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
             return;
         }
 
-        if (!model.getIsEveryoneSelected() && model.getSelectedItems() == null) {
+        if (model.getSearchType() != AdSearchType.EVERYONE && model.getSelectedItems() == null) {
             cancel();
             return;
         }
 
         ArrayList<DbUser> items = new ArrayList<>();
-        if (model.getIsEveryoneSelected()) {
+        if (model.getSearchType() == AdSearchType.EVERYONE) {
             DbUser tempVar = new DbUser();
             tempVar.setId(ApplicationGuids.everyone.asGuid());
             items.add(tempVar);

@@ -79,7 +79,7 @@ public class BackendDomainUserResourceTest
         return new DirectoryUser(DOMAIN, NAMESPACE,
                 DirectoryEntryIdUtils.decode(EXTERNAL_IDS[index]),
                 NAMES[index],
-                NAMES[index]);
+                NAMES[index], "");
     }
 }
 

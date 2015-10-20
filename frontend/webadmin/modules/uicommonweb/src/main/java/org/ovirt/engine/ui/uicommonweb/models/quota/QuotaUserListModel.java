@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
+import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel.AdSearchType;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
@@ -200,12 +201,12 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
             return;
         }
 
-        if (model.getSelectedItems() == null && !model.getIsEveryoneSelected()) {
+        if (model.getSelectedItems() == null && model.getSearchType() != AdSearchType.EVERYONE) {
             cancel();
             return;
         }
         ArrayList<DbUser> items = new ArrayList<>();
-        if (model.getIsEveryoneSelected()) {
+        if (model.getSearchType() == AdSearchType.EVERYONE) {
             DbUser tempVar = new DbUser();
             tempVar.setId(ApplicationGuids.everyone.asGuid());
             items.add(tempVar);

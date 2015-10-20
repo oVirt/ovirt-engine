@@ -152,7 +152,8 @@ public class DirectoryUtils {
                     principalRecord.<String> get(Authz.PrincipalRecord.NAMESPACE),
                     principalRecord.<String> get(Authz.PrincipalRecord.ID),
                     principalRecord.<String> get(Authz.PrincipalRecord.NAME),
-                    principalRecord.<String> get(Authz.PrincipalRecord.PRINCIPAL)
+                    principalRecord.<String> get(Authz.PrincipalRecord.PRINCIPAL),
+                    principalRecord.<String> get(Authz.PrincipalRecord.DISPLAY_NAME)
                     );
             directoryUser.setDepartment(principalRecord.<String> get(Authz.PrincipalRecord.DEPARTMENT));
             directoryUser.setFirstName(principalRecord.<String> get(Authz.PrincipalRecord.FIRST_NAME));
@@ -179,7 +180,8 @@ public class DirectoryUtils {
                     authzName,
                     group.<String> get(Authz.GroupRecord.NAMESPACE),
                     group.<String> get(Authz.GroupRecord.ID),
-                    group.<String> get(Authz.GroupRecord.NAME)
+                    group.<String> get(Authz.GroupRecord.NAME),
+                    group.<String> get(Authz.GroupRecord.DISPLAY_NAME)
                     );
             for (ExtMap memberOf : group.<List<ExtMap>> get(Authz.GroupRecord.GROUPS, Collections.<ExtMap> emptyList())) {
                 directoryGroup.getGroups().add(mapGroupRecordToDirectoryGroup(authzName, memberOf));

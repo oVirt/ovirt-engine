@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
  * @param <T>
  *            Entity value type.
  */
+@SuppressWarnings("rawtypes")
 public abstract class AbstractEntityModelTextColumn<T> extends AbstractTextColumn<EntityModel> {
 
     @SuppressWarnings("unchecked")
