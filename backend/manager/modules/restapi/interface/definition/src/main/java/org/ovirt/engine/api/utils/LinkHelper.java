@@ -237,6 +237,8 @@ import org.ovirt.engine.api.resource.UnmanagedNetworksResource;
 import org.ovirt.engine.api.resource.UpdatableRoleResource;
 import org.ovirt.engine.api.resource.VmApplicationResource;
 import org.ovirt.engine.api.resource.VmApplicationsResource;
+import org.ovirt.engine.api.resource.VmCdromResource;
+import org.ovirt.engine.api.resource.VmCdromsResource;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.resource.VmGraphicsConsoleResource;
@@ -354,7 +356,7 @@ public class LinkHelper {
         ParentToCollectionMap map;
 
         map = new ParentToCollectionMap(TemplateCdromResource.class, TemplateCdromsResource.class, Template.class);
-        map.add(DeviceResource.class, DevicesResource.class, Vm.class);
+        map.add(VmCdromResource.class, VmCdromsResource.class, Vm.class);
         TYPES.put(Cdrom.class, map);
 
         map = new ParentToCollectionMap(GraphicsConsoleResource.class, GraphicsConsolesResource.class);

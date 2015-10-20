@@ -28,8 +28,6 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
-import org.ovirt.engine.api.model.Cdrom;
-import org.ovirt.engine.api.model.Cdroms;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource;
 
@@ -179,7 +177,7 @@ public interface VmResource extends AsynchronouslyCreatedResource, MeasurableRes
     public VmApplicationsResource getApplicationsResource();
 
     @Path("cdroms")
-    public DevicesResource<Cdrom, Cdroms> getCdRomsResource();
+    public VmCdromsResource getCdromsResource();
 
     @Path("watchdogs")
     public WatchdogsResource getWatchdogsResource();

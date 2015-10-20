@@ -5,7 +5,6 @@ import static org.ovirt.engine.core.utils.Ticketing.generateOTP;
 
 import java.util.List;
 import java.util.Set;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -14,8 +13,6 @@ import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.AuthorizedKey;
-import org.ovirt.engine.api.model.Cdrom;
-import org.ovirt.engine.api.model.Cdroms;
 import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.CloudInit;
 import org.ovirt.engine.api.model.CreationStatus;
@@ -30,11 +27,11 @@ import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.CreationResource;
-import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.api.resource.GraphicsConsolesResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmApplicationsResource;
+import org.ovirt.engine.api.resource.VmCdromsResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.resource.VmHostDevicesResource;
 import org.ovirt.engine.api.resource.VmNicsResource;
@@ -212,10 +209,8 @@ public class BackendVmResource extends
     }
 
     @Override
-    public DevicesResource<Cdrom, Cdroms> getCdRomsResource() {
-        return inject(new BackendCdRomsResource(guid,
-                                                VdcQueryType.GetVmByVmId,
-                                                new IdQueryParameters(guid)));
+    public VmCdromsResource getCdromsResource() {
+        return inject(new BackendVmCdromsResource(guid));
     }
 
     @Override
