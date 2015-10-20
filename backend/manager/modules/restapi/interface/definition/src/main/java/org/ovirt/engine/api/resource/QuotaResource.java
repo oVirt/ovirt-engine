@@ -1,6 +1,9 @@
 package org.ovirt.engine.api.resource;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
@@ -8,16 +11,23 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Quota;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface QuotaResource extends UpdatableResource<Quota> {
+public interface QuotaResource {
+    @GET
+    Quota get();
+
+    @PUT
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
+    Quota update(Quota quota);
+
     @DELETE
-    public Response remove();
+    Response remove();
 
     @Path("quotastoragelimits")
-    public QuotaStorageLimitsResource getQuotaStorageLimitsResource();
+    QuotaStorageLimitsResource getQuotaStorageLimitsResource();
 
     @Path("quotaclusterlimits")
-    public QuotaClusterLimitsResource getQuotaClusterLimitsResource();
+    QuotaClusterLimitsResource getQuotaClusterLimitsResource();
 
     @Path("permissions")
-    public AssignedPermissionsResource getPermissionsResource();
+    AssignedPermissionsResource getPermissionsResource();
 }

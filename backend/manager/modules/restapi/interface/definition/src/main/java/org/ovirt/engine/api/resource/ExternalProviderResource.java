@@ -16,33 +16,26 @@
 
 package org.ovirt.engine.api.resource;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
-import org.ovirt.engine.api.model.ExternalProvider;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface ExternalProviderResource<R extends ExternalProvider> extends UpdatableResource<R> {
+public interface ExternalProviderResource {
     @Path("certificates")
-    public ExternalProviderCertificatesResource getCertificates();
+    ExternalProviderCertificatesResource getCertificates();
 
     @POST
     @Actionable
     @Path("testconnectivity")
-    public Response testConnectivity(Action action);
+    Response testConnectivity(Action action);
 
     @POST
     @Actionable
     @Path("importcertificates")
-    public Response importCertificates(Action action);
-
-    @PUT
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-    public R update(R resource);
+    Response importCertificates(Action action);
 }

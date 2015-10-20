@@ -16,7 +16,10 @@
 
 package org.ovirt.engine.api.resource;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
@@ -26,18 +29,23 @@ import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface InstanceTypeResource extends UpdatableResource<InstanceType>, AsynchronouslyCreatedResource {
+public interface InstanceTypeResource extends AsynchronouslyCreatedResource {
+    @GET
+    InstanceType get();
+
+    @PUT
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
+    InstanceType update(InstanceType instanceType);
 
     @DELETE
-    public Response remove();
+    Response remove();
 
     @Path("nics")
-    public DevicesResource<Nic, Nics> getNicsResource();
+    DevicesResource<Nic, Nics> getNicsResource();
 
     @Path("watchdogs")
-    public WatchdogsResource getWatchdogsResource();
+    WatchdogsResource getWatchdogsResource();
 
     @Path("graphicsconsoles")
-    public GraphicsConsolesResource getGraphicsConsolesResource();
-
+    GraphicsConsolesResource getGraphicsConsolesResource();
 }

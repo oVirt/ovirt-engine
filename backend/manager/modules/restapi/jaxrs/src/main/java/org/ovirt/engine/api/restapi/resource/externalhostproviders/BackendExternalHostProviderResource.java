@@ -29,14 +29,34 @@ import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostsResource
 import org.ovirt.engine.api.restapi.resource.AbstractBackendExternalProviderResource;
 import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
 import org.ovirt.engine.core.common.action.ProviderParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendExternalHostProviderResource
         extends AbstractBackendExternalProviderResource<ExternalHostProvider>
         implements ExternalHostProviderResource {
+
     public BackendExternalHostProviderResource(String id) {
         super(id, ExternalHostProvider.class, SUB_COLLECTIONS);
+    }
+
+    @Override
+    public ExternalHostProvider get() {
+        return performGet(VdcQueryType.GetProviderById, new IdQueryParameters(guid));
+    }
+
+    @Override
+    public ExternalHostProvider update(ExternalHostProvider incoming) {
+        return performUpdate(
+            incoming,
+            new QueryIdResolver<Guid>(VdcQueryType.GetProviderById, IdQueryParameters.class),
+            VdcActionType.UpdateProvider,
+            new UpdateParametersProvider()
+        );
     }
 
     @Override
@@ -65,5 +85,12 @@ public class BackendExternalHostProviderResource
         Provider provider = BackendExternalProviderHelper.getProvider(this, id);
         ProviderParameters parameters = new ProviderParameters(provider);
         return performAction(VdcActionType.RemoveProvider, parameters);
+    }
+
+    private class UpdateParametersProvider implements ParametersProvider<ExternalHostProvider, Provider> {
+        @Override
+        public VdcActionParametersBase getParameters(ExternalHostProvider incoming, Provider entity) {
+            return new ProviderParameters(map(incoming, entity));
+        }
     }
 }

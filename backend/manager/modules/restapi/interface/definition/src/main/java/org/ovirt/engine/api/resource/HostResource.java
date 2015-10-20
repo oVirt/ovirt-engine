@@ -18,7 +18,9 @@ package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -30,7 +32,14 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface HostResource extends UpdatableResource<Host>, MeasurableResource {
+public interface HostResource extends MeasurableResource {
+    @GET
+    Host get();
+
+    @PUT
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
+    Host update(Host host);
+
     @DELETE
     Response remove();
 
@@ -114,7 +123,7 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
     HostNicsResource getHostNicsResource();
 
     @Path("networkattachments")
-    public NetworkAttachmentsResource getNetworkAttachmentsResource();
+    NetworkAttachmentsResource getNetworkAttachmentsResource();
 
     @Path("storage")
     HostStorageResource getHostStorageResource();
@@ -138,7 +147,7 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
     HostDevicesResource getHostDevicesResource();
 
     @Path("unmanagednetworks")
-    public UnmanagedNetworksResource getUnmanagedNetworksResource();
+    UnmanagedNetworksResource getUnmanagedNetworksResource();
 
     @POST
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
@@ -147,5 +156,5 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
     Response setupNetworks(Action action);
 
     @Path("storageconnectionextensions")
-    public StorageServerConnectionExtensionsResource getStorageConnectionExtensionsResource();
+    StorageServerConnectionExtensionsResource getStorageConnectionExtensionsResource();
 }

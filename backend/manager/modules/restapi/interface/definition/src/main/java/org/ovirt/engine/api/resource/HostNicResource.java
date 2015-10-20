@@ -20,6 +20,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -30,9 +31,13 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.HostNic;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface HostNicResource extends UpdatableResource<HostNic>, MeasurableResource {
+public interface HostNicResource extends MeasurableResource {
     @GET
     HostNic get();
+
+    @PUT
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
+    HostNic update(HostNic nic);
 
     @DELETE
     Response remove();

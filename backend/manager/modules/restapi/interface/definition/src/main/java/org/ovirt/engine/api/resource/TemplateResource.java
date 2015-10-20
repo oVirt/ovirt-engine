@@ -18,7 +18,9 @@ package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -33,39 +35,44 @@ import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Template;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface TemplateResource extends UpdatableResource<Template>, AsynchronouslyCreatedResource {
+public interface TemplateResource extends AsynchronouslyCreatedResource {
+    @GET
+    Template get();
+
+    @PUT
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
+    Template update(Template template);
 
     @Path("{action: (export)}/{oid}")
-    public ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
+    ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     @Actionable
     @Path("export")
-    public Response export(Action action);
+    Response export(Action action);
 
     @DELETE
-    public Response remove();
+    Response remove();
 
     @Path("cdroms")
-    public ReadOnlyDevicesResource<Cdrom, Cdroms> getCdRomsResource();
+    ReadOnlyDevicesResource<Cdrom, Cdroms> getCdRomsResource();
 
     @Path("disks")
-    public TemplateDisksResource getDisksResource();
+    TemplateDisksResource getDisksResource();
 
     @Path("nics")
-    public DevicesResource<Nic, Nics> getNicsResource();
+    DevicesResource<Nic, Nics> getNicsResource();
 
     @Path("tags")
-    public AssignedTagsResource getTagsResource();
+    AssignedTagsResource getTagsResource();
 
     @Path("permissions")
-    public AssignedPermissionsResource getPermissionsResource();
+    AssignedPermissionsResource getPermissionsResource();
 
     @Path("watchdogs")
-    public WatchdogsResource getWatchdogsResource();
+    WatchdogsResource getWatchdogsResource();
 
     @Path("graphicsconsoles")
-    public GraphicsConsolesResource getGraphicsConsolesResource();
-
+    GraphicsConsolesResource getGraphicsConsolesResource();
 }

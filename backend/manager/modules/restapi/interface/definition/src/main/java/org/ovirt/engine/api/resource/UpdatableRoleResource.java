@@ -16,11 +16,15 @@
 
 package org.ovirt.engine.api.resource;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Produces;
 
 import org.ovirt.engine.api.model.Role;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface UpdatableRoleResource extends UpdatableResource<Role>, RoleResource {
-
+public interface UpdatableRoleResource extends RoleResource {
+    @PUT
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
+    Role update(Role role);
 }

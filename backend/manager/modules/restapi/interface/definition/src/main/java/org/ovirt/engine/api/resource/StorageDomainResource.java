@@ -18,7 +18,9 @@ package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -33,51 +35,57 @@ import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.Vms;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface StorageDomainResource extends UpdatableResource<StorageDomain> {
+public interface StorageDomainResource {
+    @GET
+    StorageDomain get();
+
+    @PUT
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
+    StorageDomain update(StorageDomain domain);
 
     @Path("{action: (isattached|refreshluns)}/{oid}")
-    public ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
+    ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @Path("permissions")
-    public AssignedPermissionsResource getPermissionsResource();
+    AssignedPermissionsResource getPermissionsResource();
 
     @Path("vms")
-    public StorageDomainContentsResource<Vms, Vm> getStorageDomainVmsResource();
+    StorageDomainContentsResource<Vms, Vm> getStorageDomainVmsResource();
 
     @Path("templates")
-    public StorageDomainContentsResource<Templates, Template> getStorageDomainTemplatesResource();
+    StorageDomainContentsResource<Templates, Template> getStorageDomainTemplatesResource();
 
     @Path("files")
-    public FilesResource getFilesResource();
+    FilesResource getFilesResource();
 
     @Path("disks")
-    public DisksResource getDisksResource();
+    DisksResource getDisksResource();
 
     @Path("storageconnections")
-    public StorageDomainServerConnectionsResource getStorageConnectionsResource();
+    StorageDomainServerConnectionsResource getStorageConnectionsResource();
 
     @Path("images")
-    public ImagesResource getImagesResource();
+    ImagesResource getImagesResource();
 
     @Path("disksnapshots")
-    public DiskSnapshotsResource getDiskSnapshotsResource();
+    DiskSnapshotsResource getDiskSnapshotsResource();
 
     @Path("diskprofiles")
-    public AssignedDiskProfilesResource getDiskProfilesResource();
+    AssignedDiskProfilesResource getDiskProfilesResource();
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     @Actionable
     @Path("isattached")
-    public Response getIsAttached(Action action);
+    Response getIsAttached(Action action);
 
     @DELETE
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
-    public Response remove(StorageDomain storageDomain);
+    Response remove(StorageDomain storageDomain);
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     @Actionable
     @Path("refreshluns")
-    public Response refreshLuns(Action action);
+    Response refreshLuns(Action action);
 }

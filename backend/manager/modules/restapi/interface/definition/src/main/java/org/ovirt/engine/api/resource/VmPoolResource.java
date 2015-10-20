@@ -18,7 +18,9 @@ package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -29,21 +31,26 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.VmPool;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface VmPoolResource extends UpdatableResource<VmPool>, AsynchronouslyCreatedResource {
+public interface VmPoolResource extends AsynchronouslyCreatedResource {
+    @GET
+    VmPool get();
+
+    @PUT
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
+    VmPool update(VmPool pool);
 
     @Path("{action: (allocatevm)}/{oid}")
-    public ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
+    ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     @Actionable
     @Path("allocatevm")
-    public Response allocatevm(Action action);
+    Response allocatevm(Action action);
 
     @Path("permissions")
-    public AssignedPermissionsResource getPermissionsResource();
+    AssignedPermissionsResource getPermissionsResource();
 
     @DELETE
-    public Response remove();
-
+    Response remove();
 }

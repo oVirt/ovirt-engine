@@ -18,6 +18,8 @@ package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
@@ -26,7 +28,14 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.DataCenter;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface DataCenterResource extends UpdatableResource<DataCenter> {
+public interface DataCenterResource {
+    @GET
+    DataCenter get();
+
+    @PUT
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
+    DataCenter update(DataCenter dataCenter);
+
     @DELETE
     Response remove();
 
@@ -35,24 +44,23 @@ public interface DataCenterResource extends UpdatableResource<DataCenter> {
     Response remove(Action action);
 
     @Path("storagedomains")
-    public AttachedStorageDomainsResource getAttachedStorageDomainsResource();
+    AttachedStorageDomainsResource getAttachedStorageDomainsResource();
 
     @Path("clusters")
-    public ClustersResource getClustersResource();
+    ClustersResource getClustersResource();
 
     @Path("networks")
-    public NetworksResource getNetworksResource();
+    NetworksResource getNetworksResource();
 
     @Path("permissions")
-    public AssignedPermissionsResource getPermissionsResource();
+    AssignedPermissionsResource getPermissionsResource();
 
     @Path("quotas")
-    public QuotasResource getQuotasResource();
-
+    QuotasResource getQuotasResource();
 
     @Path("qoss")
-    public QoSsResource getQossResource();
+    QoSsResource getQossResource();
 
     @Path("iscsibonds")
-    public IscsiBondsResource getIscsiBondsResource();
+    IscsiBondsResource getIscsiBondsResource();
 }

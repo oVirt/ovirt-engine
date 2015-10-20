@@ -18,7 +18,9 @@ package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -32,11 +34,18 @@ import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface VmResource extends UpdatableResource<Vm>, AsynchronouslyCreatedResource, MeasurableResource {
+public interface VmResource extends AsynchronouslyCreatedResource, MeasurableResource {
 
     @Path("{action: (start|stop|shutdown|reboot|suspend|detach|migrate|export|move|ticket|cancelmigration|"
             + "preview_snapshot|commit_snapshot|undo_snapshot|clone|maintenance|reordermacaddresses)}/{oid}")
     public ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
+
+    @GET
+    Vm get();
+
+    @PUT
+    @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
+    Vm update(Vm vm);
 
     @DELETE
     public Response remove();

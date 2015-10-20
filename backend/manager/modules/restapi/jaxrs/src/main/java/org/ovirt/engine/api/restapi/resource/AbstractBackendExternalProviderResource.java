@@ -29,40 +29,14 @@ import org.ovirt.engine.api.resource.ExternalProviderCertificatesResource;
 import org.ovirt.engine.api.resource.ExternalProviderResource;
 import org.ovirt.engine.core.common.action.ImportProviderCertificateParameters;
 import org.ovirt.engine.core.common.action.ProviderParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendExternalProviderResource<R extends ExternalProvider>
         extends AbstractBackendActionableResource<R, Provider>
-        implements ExternalProviderResource<R> {
+        implements ExternalProviderResource {
     public AbstractBackendExternalProviderResource(String id, Class<R> modelType, String... subCollections) {
         super(id, modelType, Provider.class, subCollections);
-    }
-
-    @Override
-    public R get() {
-        return performGet(VdcQueryType.GetProviderById, new IdQueryParameters(guid));
-    }
-
-    @Override
-    public R update(R incoming) {
-        return performUpdate(
-            incoming,
-            new QueryIdResolver<Guid>(VdcQueryType.GetProviderById, IdQueryParameters.class),
-            VdcActionType.UpdateProvider,
-            new UpdateParametersProvider()
-        );
-    }
-
-    protected class UpdateParametersProvider implements ParametersProvider<R, Provider> {
-        @Override
-        public VdcActionParametersBase getParameters(R incoming, Provider entity) {
-            return new ProviderParameters(map(incoming, entity));
-        }
     }
 
     @Override

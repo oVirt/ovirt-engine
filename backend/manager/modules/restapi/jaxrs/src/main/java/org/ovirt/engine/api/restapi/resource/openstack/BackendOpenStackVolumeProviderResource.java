@@ -27,8 +27,12 @@ import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypesResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendExternalProviderResource;
 import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
 import org.ovirt.engine.core.common.action.ProviderParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackVolumeProviderResource
         extends AbstractBackendExternalProviderResource<OpenStackVolumeProvider>
@@ -39,6 +43,21 @@ public class BackendOpenStackVolumeProviderResource
     public BackendOpenStackVolumeProviderResource(String id, BackendOpenStackVolumeProvidersResource parent) {
         super(id, OpenStackVolumeProvider.class, SUB_COLLECTIONS);
         this.parent = parent;
+    }
+
+    @Override
+    public OpenStackVolumeProvider get() {
+        return performGet(VdcQueryType.GetProviderById, new IdQueryParameters(guid));
+    }
+
+    @Override
+    public OpenStackVolumeProvider update(OpenStackVolumeProvider incoming) {
+        return performUpdate(
+            incoming,
+            new QueryIdResolver<Guid>(VdcQueryType.GetProviderById, IdQueryParameters.class),
+            VdcActionType.UpdateProvider,
+            new UpdateParametersProvider()
+        );
     }
 
     @Override
@@ -65,5 +84,12 @@ public class BackendOpenStackVolumeProviderResource
         Provider provider = BackendExternalProviderHelper.getProvider(this, id);
         ProviderParameters parameters = new ProviderParameters(provider);
         return performAction(VdcActionType.RemoveProvider, parameters);
+    }
+
+    private class UpdateParametersProvider implements ParametersProvider<OpenStackVolumeProvider, Provider> {
+        @Override
+        public VdcActionParametersBase getParameters(OpenStackVolumeProvider incoming, Provider entity) {
+            return new ProviderParameters(map(incoming, entity));
+        }
     }
 }

@@ -18,7 +18,9 @@ package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
@@ -30,32 +32,38 @@ import org.ovirt.engine.api.resource.gluster.GlusterHooksResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface ClusterResource extends UpdatableResource<Cluster> {
+public interface ClusterResource {
+    @GET
+    Cluster get();
+
+    @PUT
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
+    Cluster update(Cluster cluster);
+
     @DELETE
     Response remove();
 
     @Path("networks")
-    public AssignedNetworksResource getAssignedNetworksResource();
+    AssignedNetworksResource getAssignedNetworksResource();
 
     @Path("permissions")
-    public AssignedPermissionsResource getPermissionsResource();
+    AssignedPermissionsResource getPermissionsResource();
 
     @Path("glustervolumes")
-    public GlusterVolumesResource getGlusterVolumesResource();
+    GlusterVolumesResource getGlusterVolumesResource();
 
     @Path("glusterhooks")
-    public GlusterHooksResource getGlusterHooksResource();
+    GlusterHooksResource getGlusterHooksResource();
 
     @Path("affinitygroups")
-    public AffinityGroupsResource getAffinityGroupsResource();
+    AffinityGroupsResource getAffinityGroupsResource();
 
     @Path("cpuprofiles")
-    public AssignedCpuProfilesResource getCpuProfilesResource();
+    AssignedCpuProfilesResource getCpuProfilesResource();
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     @Actionable
     @Path("resetemulatedmachine")
-    public Response resetEmulatedMachine(Action action);
-
+    Response resetEmulatedMachine(Action action);
 }
