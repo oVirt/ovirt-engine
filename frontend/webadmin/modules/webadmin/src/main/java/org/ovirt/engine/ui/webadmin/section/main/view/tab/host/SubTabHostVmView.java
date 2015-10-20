@@ -53,7 +53,9 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
     void initTable() {
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new VmStatusColumn<VM>(), constants.empty(), "30px"); //$NON-NLS-1$
+        VmStatusColumn<VM> statusIconColumn = new VmStatusColumn<>();
+        statusIconColumn.setContextMenuTitle(constants.statusIconVm());
+        getTable().addColumn(statusIconColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<VM> nameColumn = new AbstractTextColumn<VM>() {
             @Override
@@ -65,6 +67,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         getTable().addColumn(nameColumn, constants.nameVm(), "160px"); //$NON-NLS-1$
 
         VmTypeColumn typeColumn = new VmTypeColumn();
+        typeColumn.setContextMenuTitle(constants.typeVm());
         getTable().addColumn(typeColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<VM> clusterColumn = new AbstractTextColumn<VM>() {

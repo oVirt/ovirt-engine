@@ -29,7 +29,9 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
 
     @Override
     public void initTable() {
-        getTable().addColumn(new NicActivateStatusColumn<VmNetworkInterface>(), constants.empty(), "30px"); //$NON-NLS-1$
+        NicActivateStatusColumn<VmNetworkInterface> statusColumn = new NicActivateStatusColumn<>();
+        statusColumn.setContextMenuTitle(constants.vnicStatusNetworkVM());
+        getTable().addColumn(statusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<VmNetworkInterface> nameColumn = new AbstractTextColumn<VmNetworkInterface>() {
             @Override

@@ -59,7 +59,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         getTable().enableColumnResizing();
 
         VolumeStatusColumn statusColumn = new VolumeStatusColumn(model.getStartCommand());
-
+        statusColumn.setContextMenuTitle(constants.statusVolume());
         statusColumn.makeSortable(new Comparator<GlusterVolumeEntity>() {
             @Override
             public int compare(GlusterVolumeEntity o1, GlusterVolumeEntity o2) {
@@ -76,7 +76,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         };
         nameColumn.makeSortable();
 
-        getTable().addColumn(nameColumn, constants.NameVolume(), "150px"); //$NON-NLS-1$
+        getTable().addColumn(nameColumn, constants.nameVolume(), "150px"); //$NON-NLS-1$
 
         AbstractTextColumn<GlusterVolumeEntity> clusterColumn = new AbstractTextColumn<GlusterVolumeEntity>() {
             @Override

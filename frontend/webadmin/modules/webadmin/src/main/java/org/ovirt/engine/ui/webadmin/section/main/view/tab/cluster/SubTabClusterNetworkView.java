@@ -72,7 +72,9 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
     void initTable() {
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new NetworkStatusColumn(), "", "20px"); //$NON-NLS-1$ //$NON-NLS-2$
+        NetworkStatusColumn statusIconColumn = new NetworkStatusColumn();
+        statusIconColumn.setContextMenuTitle(constants.statusIconNetwork());
+        getTable().addColumn(statusIconColumn, "", "20px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         AbstractTextColumn<Network> nameColumn = new AbstractTextColumn<Network>() {
             @Override

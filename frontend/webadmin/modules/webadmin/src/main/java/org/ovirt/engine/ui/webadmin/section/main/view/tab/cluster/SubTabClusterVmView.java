@@ -45,7 +45,8 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
     void initTable() {
         getTable().enableColumnResizing();
 
-        VmStatusColumn<VM> statusIconColumn = new VmStatusColumn<VM>();
+        VmStatusColumn<VM> statusIconColumn = new VmStatusColumn<>();
+        statusIconColumn.setContextMenuTitle(constants.statusIconVm());
         statusIconColumn.makeSortable(VmConditionFieldAutoCompleter.STATUS);
         getTable().addColumn(statusIconColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
@@ -59,6 +60,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
         getTable().addColumn(nameColumn, constants.nameVm(), "220px"); //$NON-NLS-1$
 
         VmTypeColumn typeColumn = new VmTypeColumn();
+        typeColumn.setContextMenuTitle(constants.typeVm());
         typeColumn.makeSortable(VmConditionFieldAutoCompleter.TYPE);
         getTable().addColumn(typeColumn, constants.empty(), "30px"); //$NON-NLS-1$
 

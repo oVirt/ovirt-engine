@@ -35,7 +35,9 @@ public class EventListModelTable<T extends EventListModel> extends AbstractModel
     public void initTable() {
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new AuditLogSeverityColumn(), constants.empty(), "20px"); //$NON-NLS-1$
+        AuditLogSeverityColumn severityColumn = new AuditLogSeverityColumn();
+        severityColumn.setContextMenuTitle(constants.severityEvent());
+        getTable().addColumn(severityColumn, constants.empty(), "20px"); //$NON-NLS-1$
 
         AbstractTextColumn<AuditLog> logTimeColumn = new AbstractFullDateTimeColumn<AuditLog>() {
             @Override

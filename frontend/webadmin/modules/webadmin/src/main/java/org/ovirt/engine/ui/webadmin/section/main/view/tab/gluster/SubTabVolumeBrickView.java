@@ -55,6 +55,7 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
         getTable().enableColumnResizing();
 
         BrickStatusColumn brickStatusColumn = new BrickStatusColumn();
+        brickStatusColumn.setContextMenuTitle(constants.statusVolumeBrick());
         brickStatusColumn.makeSortable();
         getTable().addColumn(brickStatusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 

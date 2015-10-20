@@ -85,6 +85,10 @@ public class DisksViewColumns {
     }
 
     public static final AbstractImageResourceColumn<Disk> bootableDiskColumn = new AbstractImageResourceColumn<Disk>() {
+        {
+            setContextMenuTitle(constants.bootableDisk());
+        }
+
         @Override
         public ImageResource getValue(Disk object) {
             return object.isBoot() ? getDefaultImage() : null;
@@ -105,6 +109,10 @@ public class DisksViewColumns {
     };
 
     public static final AbstractImageResourceColumn<Disk> shareableDiskColumn = new AbstractImageResourceColumn<Disk>() {
+        {
+            setContextMenuTitle(constants.shareable());
+        }
+
         @Override
         public ImageResource getValue(Disk object) {
             return object.isShareable() ? getDefaultImage() : null;
@@ -125,6 +133,10 @@ public class DisksViewColumns {
     };
 
     public static final AbstractImageResourceColumn<Disk> readOnlyDiskColumn = new AbstractImageResourceColumn<Disk>() {
+        {
+            setContextMenuTitle(constants.readOnly());
+        }
+
         @Override
         public ImageResource getValue(Disk object) {
             return object.getReadOnly() ? getDefaultImage() : null;
@@ -145,6 +157,10 @@ public class DisksViewColumns {
     };
 
     public static final AbstractImageResourceColumn<Disk> diskContainersIconColumn = new AbstractImageResourceColumn<Disk>() {
+        {
+            setContextMenuTitle(constants.containersIconDisk());
+        }
+
         @Override
         public ImageResource getValue(Disk object) {
             if (object.getVmEntityType() == null) {
@@ -166,7 +182,11 @@ public class DisksViewColumns {
         }
     };
 
-    public static final DiskStatusColumn diskStatusColumn = new DiskStatusColumn();
+    public static final DiskStatusColumn diskStatusColumn = new DiskStatusColumn() {
+        {
+            setContextMenuTitle(constants.statusDisk());
+        }
+    };
 
     public static final DiskContainersColumn diskContainersColumn = new DiskContainersColumn();
 

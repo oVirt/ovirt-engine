@@ -53,7 +53,9 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
     void initTable() {
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new DcStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        DcStatusColumn statusIconColumn = new DcStatusColumn();
+        statusIconColumn.setContextMenuTitle(constants.statusIconDc());
+        getTable().addColumn(statusIconColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<StoragePool> nameColumn = new AbstractTextColumn<StoragePool>() {
             @Override

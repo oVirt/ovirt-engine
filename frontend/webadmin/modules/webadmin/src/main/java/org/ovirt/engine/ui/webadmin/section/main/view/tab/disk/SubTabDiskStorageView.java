@@ -45,7 +45,9 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
     void initTable() {
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new StorageDomainSharedStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        StorageDomainSharedStatusColumn sharedStatusColumn = new StorageDomainSharedStatusColumn();
+        sharedStatusColumn.setContextMenuTitle(constants.sharedStatusStorage());
+        getTable().addColumn(sharedStatusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<StorageDomain> nameColumn = new AbstractTextColumn<StorageDomain>() {
             @Override

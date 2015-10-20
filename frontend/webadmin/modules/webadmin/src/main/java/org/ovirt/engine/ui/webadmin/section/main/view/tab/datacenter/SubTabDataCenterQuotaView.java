@@ -42,7 +42,9 @@ public class SubTabDataCenterQuotaView extends AbstractSubTabTableView<StoragePo
     void initTable() {
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new QuotaDcStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        QuotaDcStatusColumn dcStatusColumn = new QuotaDcStatusColumn();
+        dcStatusColumn.setContextMenuTitle(constants.dcStatusQuota());
+        getTable().addColumn(dcStatusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<Quota> nameColumn = new AbstractTextColumn<Quota>() {
             @Override

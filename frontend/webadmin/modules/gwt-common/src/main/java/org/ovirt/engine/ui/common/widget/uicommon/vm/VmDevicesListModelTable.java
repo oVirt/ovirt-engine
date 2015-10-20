@@ -38,6 +38,7 @@ public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDev
 
     private void addGeneralTypeColumn() {
         final VmDeviceGeneralTypeColumn<VmDevice> deviceGeneralTypeColumn = new VmDeviceGeneralTypeColumn<>();
+        deviceGeneralTypeColumn.setContextMenuTitle(constants.deviceGeneralType());
         deviceGeneralTypeColumn.makeSortable();
         getTable().addColumn(deviceGeneralTypeColumn, constants.empty(), "30px"); //$NON-NLS-1$
     }

@@ -65,6 +65,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
                 return SafeHtmlUtils.fromSafeConstant(constants.inactive());
             }
         };
+        pluggedColumn.setContextMenuTitle(constants.pluggedVm());
         getTable().addColumn(pluggedColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<VM> nameColumn = new AbstractTextColumn<VM>() {
@@ -76,7 +77,9 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameVm(), "140px"); //$NON-NLS-1$
 
-        getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        VmTypeColumn typeColumn = new VmTypeColumn();
+        typeColumn.setContextMenuTitle(constants.typeVm());
+        getTable().addColumn(typeColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<VM> clusterColumn = new AbstractTextColumn<VM>() {
             @Override

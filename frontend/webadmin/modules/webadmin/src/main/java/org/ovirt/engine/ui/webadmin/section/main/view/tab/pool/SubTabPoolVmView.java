@@ -48,7 +48,9 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
 
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new VmStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        VmStatusColumn<VM> statusIconColumn = new VmStatusColumn<>();
+        statusIconColumn.setContextMenuTitle(constants.statusIconVm());
+        getTable().addColumn(statusIconColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<VM> nameColumn = new AbstractTextColumn<VM>() {
             @Override
@@ -58,7 +60,9 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
         };
         getTable().addColumn(nameColumn, constants.nameVm(), "200px"); //$NON-NLS-1$
 
-        getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        VmTypeColumn typeColumn = new VmTypeColumn();
+        typeColumn.setContextMenuTitle(constants.typeVm());
+        getTable().addColumn(typeColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<VM> hostColumn = new AbstractTextColumn<VM>() {
             @Override

@@ -47,7 +47,9 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<Storage
     void initTable() {
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new StorageDomainStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        StorageDomainStatusColumn statusIconColumn = new StorageDomainStatusColumn();
+        statusIconColumn.setContextMenuTitle(constants.statusIconStorage());
+        getTable().addColumn(statusIconColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<StorageDomain> nameColumn = new AbstractTextColumn<StorageDomain>() {
             @Override

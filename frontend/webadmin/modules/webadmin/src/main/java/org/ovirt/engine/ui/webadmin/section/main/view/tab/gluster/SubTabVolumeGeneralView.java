@@ -91,7 +91,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 1, 11);
 
-        formBuilder.addFormItem(new FormItem(constants.NameVolume(), name, 0, 0));
+        formBuilder.addFormItem(new FormItem(constants.nameVolume(), name, 0, 0));
 
         formBuilder.addFormItem(new FormItem(constants.volumeIdVolume(), volumeId, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.volumeTypeVolume(), volumeType, 2, 0));

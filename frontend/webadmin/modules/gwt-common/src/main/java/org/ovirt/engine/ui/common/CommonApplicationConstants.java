@@ -459,8 +459,14 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Reboot")
     String rebootVm();
 
+    @DefaultStringValue("Plugged")
+    String pluggedVm();
+
     @DefaultStringValue("Name")
     String nameVm();
+
+    @DefaultStringValue("Type")
+    String typeVm();
 
     @DefaultStringValue("Alias")
     String aliasVm();
@@ -821,6 +827,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Inherited Permission")
     String inheritedPermission();
 
+    @DefaultStringValue("Type")
+    String typePermission();
+
     @DefaultStringValue("User")
     String userPermission();
 
@@ -916,6 +925,9 @@ public interface CommonApplicationConstants extends Constants {
     String mb();
 
     // Event
+    @DefaultStringValue("Severity")
+    String severityEvent();
+
     @DefaultStringValue("Time")
     String timeEvent();
 
@@ -1112,6 +1124,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Unattached")
     String unattachedDisk();
+
+    @DefaultStringValue("Disk Containers Icon")
+    String containersIconDisk();
 
     @DefaultStringValue("Apply later")
     String applyLater();
@@ -2204,6 +2219,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("<No-Watchdog>")
     String noWatchdogLabel();
+
+    @DefaultStringValue("Device General Type")
+    String deviceGeneralType();
 
     @DefaultStringValue("Device Type")
     String deviceType();

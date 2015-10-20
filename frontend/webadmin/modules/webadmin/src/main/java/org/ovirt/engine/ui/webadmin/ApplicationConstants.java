@@ -1283,6 +1283,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Status")
     String statusDc();
 
+    @DefaultStringValue("Status Icon")
+    String statusIconDc();
+
     @DefaultStringValue("Compatibility Version")
     String comptVersDc();
 
@@ -1320,6 +1323,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String dataCenterMacPoolTab();
 
     // Storage DC
+    @DefaultStringValue("Status")
+    String statusStorageDc();
+
     @DefaultStringValue("Domain status in Data Center")
     String domainStatusInDcStorageDc();
 
@@ -1575,6 +1581,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Status")
     String statusHost();
 
+    @DefaultStringValue("Status Icon")
+    String statusIconHost();
+
+    @DefaultStringValue("Additional Status")
+    String additionalStatusHost();
+
     @DefaultStringValue("Virtual Machines")
     String vmsCount();
 
@@ -1775,6 +1787,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String liveSnapshotSupportHostGeneral();
 
     // Storage
+    @DefaultStringValue("Shared Status")
+    String sharedStatusStorage();
+
+    @DefaultStringValue("Additional Status")
+    String additionalStatusStorage();
+
     @DefaultStringValue("Domain Name")
     String domainNameStorage();
 
@@ -1816,6 +1834,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Status")
     String statusStorage();
+
+    @DefaultStringValue("Status Icon")
+    String statusIconStorage();
 
     @DefaultStringValue("Used Space")
     String usedSpaceStorage();
@@ -1935,6 +1956,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Status")
     String statusVm();
+
+    @DefaultStringValue("Status Icon")
+    String statusIconVm();
 
     @DefaultStringValue("Uptime")
     String uptimeVm();
@@ -2116,6 +2140,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String restoreTemplate();
 
     // User
+    @DefaultStringValue("Status")
+    String statusUser();
+
     @DefaultStringValue("First Name")
     String firstnameUser();
 
@@ -2159,6 +2186,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String emailUserGeneral();
 
     // Quota
+    @DefaultStringValue("Data Center Status")
+    String dcStatusQuota();
+
     @DefaultStringValue("Name")
     String nameQuota();
 
@@ -2268,6 +2298,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Status")
     String statusNetwork();
 
+    @DefaultStringValue("Status Icon")
+    String statusIconNetwork();
+
     @DefaultStringValue("Display Network")
     String displayNetwork();
 
@@ -2334,6 +2367,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Status")
     String statusClusterHost();
+
+    @DefaultStringValue("Status Icon")
+    String statusIconClusterHost();
 
     @DefaultStringValue("VMs")
     String vmsClusterHost();
@@ -3023,7 +3059,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String optimizeForVirtStoreVolume();
 
     @DefaultStringValue("Name")
-    String NameVolume();
+    String nameVolume();
 
     @DefaultStringValue("Cluster")
     String clusterVolume();

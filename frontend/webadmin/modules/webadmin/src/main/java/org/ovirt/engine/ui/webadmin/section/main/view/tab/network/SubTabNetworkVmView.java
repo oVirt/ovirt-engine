@@ -115,7 +115,11 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
     }
 
     private final VmStatusColumn<PairQueryable<VmNetworkInterface, VM>> vmStatusColumn =
-            new VmStatusColumn<PairQueryable<VmNetworkInterface, VM>>();
+            new VmStatusColumn<PairQueryable<VmNetworkInterface, VM>>() {
+                {
+                    setContextMenuTitle(constants.statusVm());
+                }
+            };
     private final AbstractTextColumn<PairQueryable<VmNetworkInterface, VM>> nameColumn =
             new AbstractTextColumn<PairQueryable<VmNetworkInterface, VM>>() {
                 @Override

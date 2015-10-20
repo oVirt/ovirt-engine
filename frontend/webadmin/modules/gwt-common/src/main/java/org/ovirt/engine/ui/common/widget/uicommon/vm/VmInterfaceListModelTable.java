@@ -70,7 +70,8 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
     public void initTable() {
         getTable().enableColumnResizing();
 
-        NicActivateStatusColumn<VmNetworkInterface> statusColumn = new NicActivateStatusColumn<VmNetworkInterface>();
+        NicActivateStatusColumn<VmNetworkInterface> statusColumn = new NicActivateStatusColumn<>();
+        statusColumn.setContextMenuTitle(constants.vnicStatusNetworkVM());
         statusColumn.makeSortable();
         getTable().addColumn(statusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 

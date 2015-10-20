@@ -36,7 +36,9 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
     void initTable() {
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new UserStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        UserStatusColumn statusColumn = new UserStatusColumn();
+        statusColumn.setContextMenuTitle(constants.statusUser());
+        getTable().addColumn(statusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<DbUser> firstNameColumn = new AbstractTextColumn<DbUser>() {
             @Override

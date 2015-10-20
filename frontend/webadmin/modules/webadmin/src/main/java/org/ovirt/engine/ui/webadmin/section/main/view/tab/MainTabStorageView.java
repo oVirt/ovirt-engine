@@ -54,8 +54,13 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
     void initTable() {
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new StorageDomainSharedStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
-        getTable().addColumn(new StorageDomainAdditionalStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        StorageDomainSharedStatusColumn sharedStatusColumn = new StorageDomainSharedStatusColumn();
+        sharedStatusColumn.setContextMenuTitle(constants.sharedStatusStorage());
+        getTable().addColumn(sharedStatusColumn, constants.empty(), "30px"); //$NON-NLS-1$
+
+        StorageDomainAdditionalStatusColumn additionalStatusColumn = new StorageDomainAdditionalStatusColumn();
+        additionalStatusColumn.setContextMenuTitle(constants.additionalStatusStorage());
+        getTable().addColumn(additionalStatusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<StorageDomain> nameColumn = new AbstractTextColumn<StorageDomain>() {
             @Override

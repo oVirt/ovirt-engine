@@ -86,7 +86,11 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         getTable().setTableTopMargin(20);
     }
 
-    private final HostStatusColumn<PairQueryable<VdsNetworkInterface, VDS>> hostStatus = new HostStatusColumn<PairQueryable<VdsNetworkInterface, VDS>>();
+    private final HostStatusColumn<PairQueryable<VdsNetworkInterface, VDS>> hostStatus = new HostStatusColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
+        {
+            setContextMenuTitle(constants.statusHost());
+        }
+    };
 
     private final AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>> nameColumn = new AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
         @Override

@@ -43,7 +43,9 @@ public class PermissionListModelTable<P extends PermissionListModel<?>> extends 
     }
 
     private void addTypeColumn() {
-        getTable().addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        PermissionTypeColumn typeColumn = new PermissionTypeColumn();
+        typeColumn.setContextMenuTitle(constants.typePermission());
+        getTable().addColumn(typeColumn, constants.empty(), "30px"); //$NON-NLS-1$
     }
 
     private void addUserColumn() {

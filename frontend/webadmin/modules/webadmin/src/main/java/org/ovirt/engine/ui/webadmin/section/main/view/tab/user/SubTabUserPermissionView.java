@@ -42,7 +42,9 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, Pe
     }
 
     void initTable() {
-        getTable().addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        PermissionTypeColumn typeColumn = new PermissionTypeColumn();
+        typeColumn.setContextMenuTitle(constants.typePermission());
+        getTable().addColumn(typeColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<Permission> roleColumn = new AbstractTextColumn<Permission>() {
             @Override
