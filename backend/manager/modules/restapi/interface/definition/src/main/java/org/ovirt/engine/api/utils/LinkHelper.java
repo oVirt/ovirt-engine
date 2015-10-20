@@ -226,6 +226,8 @@ import org.ovirt.engine.api.resource.StorageServerConnectionsResource;
 import org.ovirt.engine.api.resource.SystemPermissionsResource;
 import org.ovirt.engine.api.resource.TagResource;
 import org.ovirt.engine.api.resource.TagsResource;
+import org.ovirt.engine.api.resource.TemplateCdromResource;
+import org.ovirt.engine.api.resource.TemplateCdromsResource;
 import org.ovirt.engine.api.resource.TemplateDiskResource;
 import org.ovirt.engine.api.resource.TemplateDisksResource;
 import org.ovirt.engine.api.resource.TemplateResource;
@@ -351,7 +353,7 @@ public class LinkHelper {
     static {
         ParentToCollectionMap map;
 
-        map = new ParentToCollectionMap(ReadOnlyDeviceResource.class, ReadOnlyDevicesResource.class, Template.class);
+        map = new ParentToCollectionMap(TemplateCdromResource.class, TemplateCdromsResource.class, Template.class);
         map.add(DeviceResource.class, DevicesResource.class, Vm.class);
         TYPES.put(Cdrom.class, map);
 

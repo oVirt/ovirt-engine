@@ -1,12 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.Cdrom;
-import org.ovirt.engine.api.model.Cdroms;
 import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
@@ -18,7 +15,7 @@ import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.api.resource.GraphicsConsolesResource;
-import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
+import org.ovirt.engine.api.resource.TemplateCdromsResource;
 import org.ovirt.engine.api.resource.TemplateDisksResource;
 import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.WatchdogsResource;
@@ -106,12 +103,8 @@ public class BackendTemplateResource
     }
 
     @Override
-    public ReadOnlyDevicesResource<Cdrom, Cdroms> getCdRomsResource() {
-        return inject(new BackendReadOnlyCdRomsResource<VmTemplate>
-                (VmTemplate.class,
-                        guid,
-                        VdcQueryType.GetVmTemplate,
-                        new GetVmTemplateParameters(guid)));
+    public TemplateCdromsResource getCdromsResource() {
+        return inject(new BackendTemplateCdromsResource(guid));
     }
 
     @Override
