@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -185,7 +186,8 @@ implements QuotaStorageDependent {
     }
 
     private boolean isHostInSupportedClusterForProxyHost(VDS host) {
-        return FeatureSupported.importVmFromExternalProvider(host.getVdsGroupCompatibilityVersion());
+        return FeatureSupported.importVmFromExternalProvider(host.getVdsGroupCompatibilityVersion())
+                && getVdsGroupDao().get(host.getVdsGroupId()).getArchitecture() != ArchitectureType.ppc64;
     }
 
     @Override
