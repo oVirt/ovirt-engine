@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -12,12 +13,16 @@ import org.ovirt.engine.api.model.Disks;
 
 @Path("/disks")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface DisksResource extends ReadOnlyDevicesResource<Disk, Disks> {
-    @Path("{identity}")
-    @Override
-    DiskResource getDeviceResource(@PathParam("identity") String id);
+public interface DisksResource {
+    @GET
+    Disks list();
 
     @POST
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     Response add(Disk device);
+
+    @Path("{id}")
+    DiskResource getDiskResource(@PathParam("id") String id);
 }
+
+

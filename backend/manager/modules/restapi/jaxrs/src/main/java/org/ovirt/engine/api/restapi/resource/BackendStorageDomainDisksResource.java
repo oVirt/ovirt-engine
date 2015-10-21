@@ -72,7 +72,7 @@ public class BackendStorageDomainDisksResource extends BackendDisksResource {
     }
 
     @Override
-    public DiskResource getDeviceResource(String id) {
+    public DiskResource getDiskResource(String id) {
         return inject(new BackendStorageDomainDiskResource(id, this));
     }
 

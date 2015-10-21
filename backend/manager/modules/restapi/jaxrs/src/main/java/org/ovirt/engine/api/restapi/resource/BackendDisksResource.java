@@ -20,7 +20,9 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendDisksResource extends AbstractBackendCollectionResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> implements DisksResource{
+public class BackendDisksResource
+        extends AbstractBackendCollectionResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk>
+        implements DisksResource {
 
     static final String[] SUB_COLLECTIONS = { "permissions", "statistics" };
     public BackendDisksResource() {
@@ -114,7 +116,7 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
     }
 
     @Override
-    public DiskResource getDeviceResource(String id) {
+    public DiskResource getDiskResource(String id) {
         return inject(new BackendDiskResource(id));
     }
 

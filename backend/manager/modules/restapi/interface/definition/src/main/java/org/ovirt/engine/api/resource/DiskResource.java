@@ -14,12 +14,11 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Disk;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface DiskResource extends ReadOnlyDeviceResource<Disk>, MeasurableResource {
+public interface DiskResource extends AsynchronouslyCreatedResource, MeasurableResource {
     @Path("{action: (copy|move|export)}/{oid}")
     ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @GET
-    @Override
     Disk get();
 
     @DELETE
