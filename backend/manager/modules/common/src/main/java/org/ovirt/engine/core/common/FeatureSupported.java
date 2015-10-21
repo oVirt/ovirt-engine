@@ -641,4 +641,14 @@ public class FeatureSupported {
     public static boolean initialSizeSparseDiskSupported(Version version) {
         return supportedInConfig(ConfigValues.InitialSizeSparseDiskSupported, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code>  if import VM from VMware is supported for the given version
+     */
+    public static boolean importVmFromExternalProvider(Version version) {
+        return supportedInConfig(ConfigValues.ImportVmFromExternalProviderSupported, version);
+    }
+
 }

@@ -273,6 +273,7 @@ select fn_db_add_config_value_for_versions_up_to('ReportedDisksLogicalNames', 'f
 select fn_db_add_config_value_for_versions_up_to('AutoConvergenceSupported','false','3.5');
 
 select fn_db_add_config_value_for_versions_up_to('MigrationCompressionSupported','false','3.5');
+select fn_db_add_config_value_for_versions_up_to('ImportVmFromExternalProviderSupported','false','3.5');
 
 select fn_db_add_config_value_for_versions_up_to('HostDevicePassthroughSupported','false','3.5');
 select fn_db_add_config_value('HostDevicePassthroughCapabilities', 'pci,scsi,usb_device', 'general');
