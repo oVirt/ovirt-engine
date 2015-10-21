@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
+import static java.util.stream.Collectors.joining;
+
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -73,11 +75,14 @@ public class HostNicMapper {
         if (model.isSetBonding()) {
             entity.setBonded(true);
             if (model.getBonding().isSetOptions()) {
-                StringBuffer buf = new StringBuffer();
-                for(Option opt : model.getBonding().getOptions().getOptions()){
-                    buf.append(opt.getName() + "=" + opt.getValue() + " ");
-                }
-                entity.setBondOptions(buf.toString().substring(0, buf.length() - 1));
+
+                List<Option> bondingOptions = model.getBonding().getOptions().getOptions();
+                String optionsString = bondingOptions.stream()
+                        .filter(Option::isSetName)
+                        .map(x -> x.getName() + "=" + x.getValue())
+                        .collect(joining(" "));
+
+                entity.setBondOptions(optionsString);
             }
         }
         if(model.isSetBootProtocol()){
