@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.Objects;
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.Nic;
-import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.resource.CreationResource;
-import org.ovirt.engine.api.resource.TemplateNicResource;
+import org.ovirt.engine.api.resource.InstanceTypeNicResource;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -33,17 +33,18 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendTemplateNicResource
+public class BackendInstanceTypeNicResource
         extends AbstractBackendActionableResource<Nic, VmNetworkInterface>
-        implements TemplateNicResource {
+        implements InstanceTypeNicResource {
 
-    private Guid templateId;
+    private Guid instanceTypeId;
 
-    protected BackendTemplateNicResource(String nicId, Guid templateId) {
+    protected BackendInstanceTypeNicResource(String nicId, Guid instanceTypeId) {
         super(nicId, Nic.class, VmNetworkInterface.class);
-        this.templateId = templateId;
+        this.instanceTypeId = instanceTypeId;
     }
 
+    @Override
     public Nic get() {
         VmNetworkInterface nic = lookupNic(guid);
         if (nic != null) {
@@ -56,10 +57,10 @@ public class BackendTemplateNicResource
         List<VmNetworkInterface> nics = getBackendCollection(
             VmNetworkInterface.class,
             VdcQueryType.GetTemplateInterfacesByTemplateId,
-            new IdQueryParameters(templateId)
+            new IdQueryParameters(instanceTypeId)
         );
         for (VmNetworkInterface nic : nics) {
-            if (Objects.equals(nic.getId(), nicId)) {
+            if (Objects.equals(nic.getId(), guid)) {
                 return nic;
             }
         }
@@ -71,7 +72,8 @@ public class BackendTemplateNicResource
         return performUpdate(
             nic,
             new NicResolver(),
-            VdcActionType.UpdateVmTemplateInterface, new UpdateParametersProvider()
+            VdcActionType.UpdateVmTemplateInterface,
+            new UpdateParametersProvider()
         );
     }
 
@@ -80,7 +82,7 @@ public class BackendTemplateNicResource
         get();
         return performAction(
             VdcActionType.RemoveVmTemplateInterface,
-            new RemoveVmTemplateInterfaceParameters(templateId, guid)
+            new RemoveVmTemplateInterfaceParameters(instanceTypeId, guid)
         );
     }
 
@@ -91,9 +93,9 @@ public class BackendTemplateNicResource
 
     @Override
     protected Nic addParents(Nic nic) {
-        Template template = new Template();
-        template.setId(templateId.toString());
-        nic.setTemplate(template);
+        InstanceType instanceType = new InstanceType();
+        instanceType.setId(instanceTypeId.toString());
+        nic.setInstanceType(instanceType);
         return nic;
     }
 
@@ -108,7 +110,8 @@ public class BackendTemplateNicResource
         @Override
         public VdcActionParametersBase getParameters(Nic incoming, VmNetworkInterface entity) {
             VmNetworkInterface nic = map(incoming, entity);
-            return new AddVmTemplateInterfaceParameters(templateId, nic);
+            return new AddVmTemplateInterfaceParameters(instanceTypeId, nic);
         }
     }
+
 }

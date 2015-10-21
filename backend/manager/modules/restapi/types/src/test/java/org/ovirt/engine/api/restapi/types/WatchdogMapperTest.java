@@ -38,7 +38,7 @@ public class WatchdogMapperTest {
     @Test
     public void mapModel() {
         for (WatchdogModel model : WatchdogModel.values()) {
-            VmWatchdogType backendModel = WatchdogMapper.map(model, null);
+            VmWatchdogType backendModel = WatchdogMapper.map(model);
             Assert.assertNotNull(backendModel);
             Assert.assertEquals(backendModel.name().toLowerCase(), model.name().toLowerCase());
         }
@@ -47,7 +47,7 @@ public class WatchdogMapperTest {
     @Test
     public void mapBackendModel() {
         for (VmWatchdogType type : VmWatchdogType.values()) {
-            WatchdogModel model = WatchdogMapper.map(type, null);
+            WatchdogModel model = WatchdogMapper.map(type);
             Assert.assertNotNull(model);
             Assert.assertEquals(model.name().toLowerCase(), type.name().toLowerCase());
         }
@@ -56,7 +56,7 @@ public class WatchdogMapperTest {
     @Test
     public void mapAction() {
         for (WatchdogAction action : WatchdogAction.values()) {
-            VmWatchdogAction backendAction = WatchdogMapper.map(action, null);
+            VmWatchdogAction backendAction = WatchdogMapper.map(action);
             Assert.assertNotNull(backendAction);
             Assert.assertEquals(backendAction.name().toLowerCase(), action.name().toLowerCase());
         }
@@ -65,7 +65,7 @@ public class WatchdogMapperTest {
     @Test
     public void mapBackendAction() {
         for (VmWatchdogAction action : VmWatchdogAction.values()) {
-            WatchdogAction apiAction = WatchdogMapper.map(action, null);
+            WatchdogAction apiAction = WatchdogMapper.map(action);
             Assert.assertNotNull(apiAction);
             Assert.assertEquals(apiAction.name().toLowerCase(), action.name().toLowerCase());
         }

@@ -180,7 +180,7 @@ public interface VmResource extends AsynchronouslyCreatedResource, MeasurableRes
     public VmCdromsResource getCdromsResource();
 
     @Path("watchdogs")
-    public WatchdogsResource getWatchdogsResource();
+    public VmWatchdogsResource getWatchdogsResource();
 
     @Path("disks")
     public VmDisksResource getDisksResource();

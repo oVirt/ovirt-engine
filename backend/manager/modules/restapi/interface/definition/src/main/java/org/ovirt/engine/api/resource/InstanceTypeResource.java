@@ -42,7 +42,7 @@ public interface InstanceTypeResource extends AsynchronouslyCreatedResource {
     InstanceTypeNicsResource getNicsResource();
 
     @Path("watchdogs")
-    WatchdogsResource getWatchdogsResource();
+    InstanceTypeWatchdogsResource getWatchdogsResource();
 
     @Path("graphicsconsoles")
     GraphicsConsolesResource getGraphicsConsolesResource();

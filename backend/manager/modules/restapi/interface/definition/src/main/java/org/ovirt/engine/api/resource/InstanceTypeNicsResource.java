@@ -37,5 +37,5 @@ public interface InstanceTypeNicsResource {
     Response add(Nic nic);
 
     @Path("{id}")
-    DeviceResource<Nic> getNicResource(@PathParam("id") String id);
+    InstanceTypeNicResource getNicResource(@PathParam("id") String id);
 }

@@ -67,7 +67,7 @@ public interface TemplateResource extends AsynchronouslyCreatedResource {
     AssignedPermissionsResource getPermissionsResource();
 
     @Path("watchdogs")
-    WatchdogsResource getWatchdogsResource();
+    TemplateWatchdogsResource getWatchdogsResource();
 
     @Path("graphicsconsoles")
     GraphicsConsolesResource getGraphicsConsolesResource();

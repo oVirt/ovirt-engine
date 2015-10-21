@@ -18,13 +18,13 @@ public class WatchdogMapper {
         if (model.isSetAction()) {
             WatchdogAction wdAction = WatchdogAction.fromValue(model.getAction());
             if (wdAction != null) {
-                entity.setAction(map(wdAction, null));
+                entity.setAction(map(wdAction));
             }
         }
         if (model.isSetModel()) {
             WatchdogModel wdModel = WatchdogModel.fromValue(model.getModel());
             if (wdModel != null) {
-                entity.setModel(map(wdModel, null));
+                entity.setModel(map(wdModel));
             }
         }
         return entity;
@@ -34,13 +34,13 @@ public class WatchdogMapper {
     public static Watchdog map(VmWatchdog entity, Watchdog template) {
         Watchdog model = template == null ? new Watchdog() : template;
         if (entity.getAction() != null) {
-            WatchdogAction action = map(entity.getAction(), null);
+            WatchdogAction action = map(entity.getAction());
             if (action != null) {
                 model.setAction(action.name().toLowerCase());
             }
         }
         if (entity.getModel() != null) {
-            WatchdogModel wdModel = map(entity.getModel(), null);
+            WatchdogModel wdModel = map(entity.getModel());
             if (wdModel != null) {
                 model.setModel(wdModel.name().toLowerCase());
             }
@@ -49,8 +49,7 @@ public class WatchdogMapper {
         return model;
     }
 
-    @Mapping(from = WatchdogAction.class, to = VmWatchdogAction.class)
-    public static VmWatchdogAction map(WatchdogAction action, VmWatchdogAction incoming) {
+    public static VmWatchdogAction map(WatchdogAction action) {
         switch (action) {
         case DUMP:
             return VmWatchdogAction.DUMP;
@@ -67,8 +66,7 @@ public class WatchdogMapper {
         }
     }
 
-    @Mapping(from = VmWatchdogAction.class, to = WatchdogAction.class)
-    public static WatchdogAction map(VmWatchdogAction action, WatchdogAction incoming) {
+    public static WatchdogAction map(VmWatchdogAction action) {
         switch (action) {
         case DUMP:
             return WatchdogAction.DUMP;
@@ -85,8 +83,7 @@ public class WatchdogMapper {
         }
     }
 
-    @Mapping(from = WatchdogModel.class, to = VmWatchdogType.class)
-    public static VmWatchdogType map(WatchdogModel model, VmWatchdogType incoming) {
+    public static VmWatchdogType map(WatchdogModel model) {
         switch (model) {
         case I6300ESB:
             return VmWatchdogType.i6300esb;
@@ -95,8 +92,7 @@ public class WatchdogMapper {
         }
     }
 
-    @Mapping(from = VmWatchdogType.class, to = WatchdogModel.class)
-    public static WatchdogModel map(VmWatchdogType model, WatchdogModel incoming) {
+    public static WatchdogModel map(VmWatchdogType model) {
         switch (model) {
         case i6300esb:
             return WatchdogModel.I6300ESB;

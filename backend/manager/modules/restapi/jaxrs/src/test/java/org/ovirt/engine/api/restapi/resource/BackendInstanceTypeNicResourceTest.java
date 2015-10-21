@@ -20,7 +20,6 @@ import static org.easymock.EasyMock.expect;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
@@ -32,14 +31,14 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendTemplateNicResourceTest
-        extends AbstractBackendSubResourceTest<Nic, VmNetworkInterface, BackendTemplateNicResource> {
+public class BackendInstanceTypeNicResourceTest
+        extends AbstractBackendSubResourceTest<Nic, VmNetworkInterface, BackendInstanceTypeNicResource> {
 
-    private static final Guid TEMPLATE_ID = GUIDS[1];
+    private static final Guid INSTANCE_TYPE_ID = GUIDS[1];
     private static final Guid NIC_ID = GUIDS[0];
 
-    public BackendTemplateNicResourceTest() {
-        super(new BackendTemplateNicResource(NIC_ID.toString(), TEMPLATE_ID));
+    public BackendInstanceTypeNicResourceTest() {
+        super(new BackendInstanceTypeNicResource(NIC_ID.toString(), INSTANCE_TYPE_ID));
     }
 
     @Test
@@ -50,7 +49,7 @@ public class BackendTemplateNicResourceTest
                 VdcActionType.RemoveVmTemplateInterface,
                 RemoveVmTemplateInterfaceParameters.class,
                 new String[] { "VmTemplateId", "InterfaceId" },
-                new Object[] { TEMPLATE_ID, NIC_ID },
+                new Object[] { INSTANCE_TYPE_ID, NIC_ID },
                 true,
                 true
             )
@@ -75,7 +74,7 @@ public class BackendTemplateNicResourceTest
                 VdcActionType.RemoveVmTemplateInterface,
                 RemoveVmTemplateInterfaceParameters.class,
                 new String[] { "VmTemplateId", "InterfaceId" },
-                new Object[] { TEMPLATE_ID, NIC_ID },
+                new Object[] { INSTANCE_TYPE_ID, NIC_ID },
                 canDo,
                 success
             )
@@ -94,7 +93,7 @@ public class BackendTemplateNicResourceTest
             VdcQueryType.GetTemplateInterfacesByTemplateId,
             IdQueryParameters.class,
             new String[] { "Id" },
-            new Object[] { TEMPLATE_ID },
+            new Object[] { INSTANCE_TYPE_ID },
             setUpNicsExpectations()
         );
     }

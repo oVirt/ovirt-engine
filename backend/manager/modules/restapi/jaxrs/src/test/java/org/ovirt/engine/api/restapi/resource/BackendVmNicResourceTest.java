@@ -1,15 +1,27 @@
+/*
+Copyright (c) 2015 Red Hat, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.easymock.EasyMock.expect;
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendNicsResourceTest.PARENT_ID;
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendNicsResourceTest.setUpEntityExpectations;
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendNicsResourceTest.verifyModelSpecific;
-import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.PARENT_GUID;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -20,7 +32,6 @@ import org.ovirt.engine.api.model.Mac;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Statistic;
-import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.api.restapi.util.RxTxCalculator;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
@@ -37,38 +48,31 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendVmNicResourceTest
         extends AbstractBackendSubResourceTest<Nic, VmNetworkInterface, BackendVmNicResource> {
 
-    protected static final Guid NIC_ID = GUIDS[1];
-    protected static final String ADDRESS = "10.11.12.13";
-
-    protected static BackendVmNicsResource collection;
+    private static final Guid VM_ID = GUIDS[0];
+    private static final Guid NIC_ID = GUIDS[1];
+    private static final String ADDRESS = "10.11.12.13";
+    private static final String[] ADDRESSES = { "10.11.12.13", "13.12.11.10", "10.01.10.01" };
 
     public BackendVmNicResourceTest() {
-        super((BackendVmNicResource)getCollection().getNicResource(NIC_ID.toString()));
-    }
-
-    protected static BackendVmNicsResource getCollection() {
-        return new BackendVmNicsResource(PARENT_ID);
-    }
-
-    @Override
-    protected void init() {
-        super.init();
-        initResource(resource.getCollection());
+        super(new BackendVmNicResource(NIC_ID.toString(), VM_ID));
     }
 
     @Test
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetVmInterfacesByVmId,
-                                     IdQueryParameters.class,
-                                     new String[] { "Id" },
-                                     new Object[] { PARENT_ID },
-                                     new ArrayList<VmNetworkInterface>());
+        setUpEntityQueryExpectations(
+            VdcQueryType.GetVmInterfacesByVmId,
+            IdQueryParameters.class,
+            new String[] { "Id" },
+            new Object[] { VM_ID },
+            Collections.emptyList()
+        );
         control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
+        }
+        catch (WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }
@@ -108,16 +112,19 @@ public class BackendVmNicResourceTest
     @Test
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetVmInterfacesByVmId,
-                                     IdQueryParameters.class,
-                                     new String[] { "Id" },
-                                     new Object[] { PARENT_ID },
-                                     new ArrayList<VmNetworkInterface>());
+        setUpEntityQueryExpectations(
+            VdcQueryType.GetVmInterfacesByVmId,
+            IdQueryParameters.class,
+            new String[] { "Id" },
+            new Object[] { VM_ID },
+            new ArrayList<VmNetworkInterface>()
+        );
         control.replay();
         try {
             resource.update(getNic(false));
             fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
+        }
+        catch (WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }
@@ -126,13 +133,16 @@ public class BackendVmNicResourceTest
     public void testUpdate() throws Exception {
         setUpGetEntityExpectations(2);
         setAllContentHeaderExpectation();
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
-            AddVmInterfaceParameters.class,
-            new String[]{"VmId", "Interface.Id"},
-            new Object[]{PARENT_ID, GUIDS[1]},
-            true,
-            true));
-
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.UpdateVmInterface,
+                AddVmInterfaceParameters.class,
+                new String[] { "VmId", "Interface.Id" },
+                new Object[] { VM_ID, NIC_ID },
+                true,
+                true
+            )
+        );
         Nic nic = resource.update(getNic(false));
         assertNotNull(nic);
     }
@@ -143,7 +153,7 @@ public class BackendVmNicResourceTest
 
         @SuppressWarnings("unchecked")
         BackendStatisticsResource<Nic, VmNetworkInterface> statisticsResource =
-            (BackendStatisticsResource<Nic, VmNetworkInterface>)((NicResource) resource).getStatisticsResource();
+            (BackendStatisticsResource<Nic, VmNetworkInterface>)(resource.getStatisticsResource());
         assertNotNull(statisticsResource);
 
         verifyQuery(statisticsResource.getQuery(), entity);
@@ -160,7 +170,7 @@ public class BackendVmNicResourceTest
                 VdcActionType.RemoveVmInterface,
                 RemoveVmInterfaceParameters.class,
                 new String[] { "VmId", "InterfaceId" },
-                new Object[] { PARENT_ID, NIC_ID },
+                new Object[] { VM_ID, NIC_ID },
                 true,
                 true
             )
@@ -187,7 +197,7 @@ public class BackendVmNicResourceTest
                 VdcActionType.RemoveVmInterface,
                 RemoveVmInterfaceParameters.class,
                 new String[] { "VmId", "InterfaceId" },
-                new Object[] { PARENT_ID, NIC_ID },
+                new Object[] { VM_ID, NIC_ID },
                 canDo,
                 success
             )
@@ -205,11 +215,13 @@ public class BackendVmNicResourceTest
         while (times-- > 0) {
             VM vm = new VM();
             vm.setVdsGroupId(GUIDS[0]);
-            setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
-                    IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { PARENT_ID },
-                    vm);
+            setUpEntityQueryExpectations(
+                VdcQueryType.GetVmByVmId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { VM_ID },
+                vm
+            );
         }
     }
 
@@ -246,11 +258,13 @@ public class BackendVmNicResourceTest
         expect(stats.getTransmittedBytes()).andReturn(60L);
         List<VmNetworkInterface> ifaces = new ArrayList<VmNetworkInterface>();
         ifaces.add(entity);
-        setUpEntityQueryExpectations(VdcQueryType.GetVmInterfacesByVmId,
-                                     IdQueryParameters.class,
-                                     new String[] { "Id" },
-                                     new Object[] { PARENT_ID },
-                                     ifaces);
+        setUpEntityQueryExpectations(
+            VdcQueryType.GetVmInterfacesByVmId,
+            IdQueryParameters.class,
+            new String[] { "Id" },
+            new Object[] { VM_ID },
+            ifaces
+        );
         control.replay();
         return entity;
     }
@@ -259,16 +273,30 @@ public class BackendVmNicResourceTest
         assertEquals(Nic.class, query.getParentType());
         assertSame(entity, query.resolve(NIC_ID));
         List<Statistic> statistics = query.getStatistics(entity);
-        verifyStatistics(statistics,
-                new String[] { "data.current.rx", "data.current.tx", "errors.total.rx", "errors.total.tx",
-                        "data.total.rx", "data.total.tx" },
-                new BigDecimal[] { asDec(RxTxCalculator.percent2bytes(50, 10D)), asDec(RxTxCalculator.percent2bytes(50, 20D)),
-                        asDec(30), asDec(40), asDec(50), asDec(60) });
+        verifyStatistics(
+            statistics,
+            new String[] {
+                "data.current.rx",
+                "data.current.tx",
+                "errors.total.rx",
+                "errors.total.tx",
+                "data.total.rx",
+                "data.total.tx"
+            },
+            new BigDecimal[] {
+                asDec(RxTxCalculator.percent2bytes(50, 10D)),
+                asDec(RxTxCalculator.percent2bytes(50, 20D)),
+                asDec(30),
+                asDec(40),
+                asDec(50),
+                asDec(60)
+            }
+        );
         Statistic adopted = query.adopt(new Statistic());
         assertTrue(adopted.isSetNic());
         assertEquals(NIC_ID.toString(), adopted.getNic().getId());
         assertTrue(adopted.getNic().isSetVm());
-        assertEquals(PARENT_ID.toString(), adopted.getNic().getVm().getId());
+        assertEquals(VM_ID.toString(), adopted.getNic().getVm().getId());
     }
 
     protected Nic getNic(boolean withNetwork) {
@@ -310,11 +338,13 @@ public class BackendVmNicResourceTest
 
     protected void setUpEntityQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetVmInterfacesByVmId,
-                                         IdQueryParameters.class,
-                                         new String[] { "Id" },
-                                         new Object[] { PARENT_ID },
-                                         getEntityList());
+            setUpEntityQueryExpectations(
+                VdcQueryType.GetVmInterfacesByVmId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { VM_ID },
+                getEntityList()
+            );
         }
     }
 
@@ -324,11 +354,13 @@ public class BackendVmNicResourceTest
 
     protected void setUpGetEntityExpectations(int times, VmNetworkInterface entity) throws Exception {
         while (times-- > 0) {
-            setUpGetEntityExpectations(VdcQueryType.GetVmInterfacesByVmId,
-                                       IdQueryParameters.class,
-                                       new String[] { "Id" },
-                                       new Object[] { PARENT_ID },
-                                       entity);
+            setUpGetEntityExpectations(
+                VdcQueryType.GetVmInterfacesByVmId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { VM_ID },
+                entity
+            );
         }
     }
 
@@ -337,10 +369,14 @@ public class BackendVmNicResourceTest
         BackendVmNicResource backendVmNicResource = (BackendVmNicResource) resource;
         setUpGetEntityExpectations(3);
         setAllContentHeaderExpectation();
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.UpdateVmInterface,
                 AddVmInterfaceParameters.class,
                 new String[] { "VmId", "Interface.Id" },
-                new Object[] { PARENT_ID, GUIDS[1] }));
+                new Object[] { VM_ID, NIC_ID }
+            )
+        );
 
         verifyActionResponse(backendVmNicResource.activate(new Action()));
     }
@@ -356,16 +392,20 @@ public class BackendVmNicResourceTest
         BackendVmNicResource backendVmNicResource = (BackendVmNicResource) resource;
         setAllContentHeaderExpectation();
         setUpGetEntityExpectations(3);
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.UpdateVmInterface,
                 AddVmInterfaceParameters.class,
                 new String[] { "VmId", "Interface.Id" },
-                new Object[] { PARENT_ID, GUIDS[1] }));
+                new Object[] { VM_ID, NIC_ID }
+            )
+        );
 
         verifyActionResponse(backendVmNicResource.deactivate(new Action()));
     }
 
     private void verifyActionResponse(Response r) throws Exception {
-        verifyActionResponse(r, "vms/" + PARENT_GUID.toString() + "/nics/" + NIC_ID.toString(), false);
+        verifyActionResponse(r, "vms/" + VM_ID + "/nics/" + NIC_ID, false);
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
@@ -377,11 +417,13 @@ public class BackendVmNicResourceTest
 
     protected void setGetGuestAgentQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetVmGuestAgentInterfacesByVmId,
-                    IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { PARENT_ID },
-                    getListOfVmGuestAgentInterfaces());
+            setUpEntityQueryExpectations(
+                VdcQueryType.GetVmGuestAgentInterfacesByVmId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { VM_ID },
+                getListOfVmGuestAgentInterfaces()
+            );
         }
     }
 
@@ -392,5 +434,53 @@ public class BackendVmNicResourceTest
         List<VmGuestAgentInterface> list = new ArrayList<VmGuestAgentInterface>();
         list.add(iface);
         return list;
+    }
+
+    private VmNetworkInterface setUpEntityExpectations(
+            VmNetworkInterface entity,
+            VmNetworkStatistics statistics,
+            int index) {
+        return setUpEntityExpectations(entity, statistics, index, NAMES[2]);
+    }
+
+    private VmNetworkInterface setUpEntityExpectations(
+            VmNetworkInterface entity,
+            VmNetworkStatistics statistics,
+            int index,
+            String networkName) {
+        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
+        expect(entity.getVmId()).andReturn(VM_ID).anyTimes();
+        expect(entity.getNetworkName()).andReturn(networkName).anyTimes();
+        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
+        expect(entity.getMacAddress()).andReturn(ADDRESSES[2]).anyTimes();
+        expect(entity.getType()).andReturn(0).anyTimes();
+        expect(entity.getSpeed()).andReturn(50).anyTimes();
+        return setUpStatisticalEntityExpectations(entity, statistics);
+    }
+
+    private VmNetworkInterface setUpStatisticalEntityExpectations(VmNetworkInterface entity, VmNetworkStatistics statistics) {
+        expect(entity.getStatistics()).andReturn(statistics).anyTimes();
+        expect(statistics.getReceiveRate()).andReturn(1D).anyTimes();
+        expect(statistics.getReceiveDropRate()).andReturn(2D).anyTimes();
+        expect(statistics.getTransmitRate()).andReturn(3D).anyTimes();
+        expect(statistics.getTransmitDropRate()).andReturn(4D).anyTimes();
+        expect(statistics.getReceivedBytes()).andReturn(5L).anyTimes();
+        expect(statistics.getTransmittedBytes()).andReturn(6L).anyTimes();
+        return entity;
+    }
+
+    @Override
+    protected void verifyModel(Nic model, int index) {
+        verifyModelSpecific(model, index);
+        verifyLinks(model);
+    }
+
+    private void verifyModelSpecific(Nic model, int index) {
+        assertEquals(GUIDS[index].toString(), model.getId());
+        assertEquals(NAMES[index].toString(), model.getName());
+        assertTrue(model.isSetVm());
+        assertEquals(VM_ID.toString(), model.getVm().getId());
+        assertTrue(model.isSetMac());
+        assertEquals(ADDRESSES[2].toString(), model.getMac().getAddress());
     }
 }

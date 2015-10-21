@@ -1,8 +1,23 @@
+/*
+Copyright (c) 2015 Red Hat, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 import java.util.Set;
-
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -18,13 +33,11 @@ import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
-import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
 import org.ovirt.engine.api.restapi.resource.utils.DiskResourceUtils;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
-import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -33,23 +46,28 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmDisksResource
-        extends AbstractBackendDevicesResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.storage.Disk>
+        extends AbstractBackendCollectionResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk>
         implements VmDisksResource {
 
     static final String[] SUB_COLLECTIONS = {"permissions", "statistics"};
 
-    public BackendVmDisksResource(Guid parentId,
-                                  VdcQueryType queryType,
-                                  VdcQueryParametersBase queryParams) {
-        super(Disk.class,
-              Disks.class,
-              org.ovirt.engine.core.common.businessentities.storage.Disk.class,
-              parentId,
-              queryType,
-              queryParams,
-              VdcActionType.AddDisk,
-              VdcActionType.UpdateVmDisk,
-              SUB_COLLECTIONS);
+    private Guid vmId;
+
+    public BackendVmDisksResource(Guid vmId) {
+        super(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class, SUB_COLLECTIONS);
+        this.vmId = vmId;
+    }
+
+    public Disks list() {
+        return mapCollection(getBackendCollection(VdcQueryType.GetAllDisksByVmId, new IdQueryParameters(vmId)));
+    }
+
+    private Disks mapCollection(List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities) {
+        Disks collection = new Disks();
+        for (org.ovirt.engine.core.common.businessentities.storage.Disk entity : entities) {
+            collection.getDisks().add(addLinks(populate(map(entity), entity)));
+        }
+        return collection;
     }
 
     @Override
@@ -57,15 +75,16 @@ public class BackendVmDisksResource
         validateEnums(Disk.class, disk);
 
         if (disk.isSetId()) {
-            return Response.fromResponse(attachDiskToVm(disk))
-                           .entity(map(lookupEntity(asGuid(disk.getId()))))
-                           .build();
-        }else {
+            return attachDiskToVm(disk);
+        }
+        else {
             validateDiskForCreation(disk);
             updateStorageTypeForDisk(disk);
-            return performCreate(addAction,
-                    getAddParameters(map(disk), disk),
-                    getEntityIdResolver(disk.getName()));
+            return performCreate(
+                VdcActionType.AddDisk,
+                getAddParameters(map(disk), disk),
+                new AddDiskResolver()
+            );
         }
     }
 
@@ -81,37 +100,7 @@ public class BackendVmDisksResource
 
     @Override
     public VmDiskResource getDiskResource(String id) {
-        return inject(
-            new BackendVmDiskResource(
-                parentId,
-                id,
-                this,
-                updateType,
-                getUpdateParametersProvider(),
-                getRequiredUpdateFields(),
-                subCollections
-            )
-        );
-    }
-
-    @Override
-    protected <T> boolean matchEntity(org.ovirt.engine.core.common.businessentities.storage.Disk entity, T id) {
-        return id != null && (id.equals(entity.getId()));
-    }
-
-    @Override
-    protected boolean matchEntity(org.ovirt.engine.core.common.businessentities.storage.Disk entity, String name) {
-        return false;
-    }
-
-    @Override
-    protected String[] getRequiredAddFields() {
-        return new String[] { "provisionedSize|size", "format", "interface" };
-    }
-
-    @Override
-    protected String[] getRequiredUpdateFields() {
-        return new String[0];
+        return inject(new BackendVmDiskResource(id, vmId));
     }
 
     @Override
@@ -136,9 +125,8 @@ public class BackendVmDisksResource
         return model;
     }
 
-    @Override
-    protected VdcActionParametersBase getAddParameters(org.ovirt.engine.core.common.businessentities.storage.Disk entity, Disk disk) {
-        AddDiskParameters parameters = new AddDiskParameters(parentId, entity);
+    private VdcActionParametersBase getAddParameters(org.ovirt.engine.core.common.businessentities.storage.Disk entity, Disk disk) {
+        AddDiskParameters parameters = new AddDiskParameters(vmId, entity);
         Guid storageDomainId = getStorageDomainId(disk);
         if (storageDomainId != null) {
             parameters.setStorageDomainId(storageDomainId);
@@ -185,18 +173,6 @@ public class BackendVmDisksResource
     }
 
     @Override
-    protected ParametersProvider<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> getUpdateParametersProvider() {
-        return new UpdateParametersProvider();
-    }
-
-    protected class UpdateParametersProvider implements ParametersProvider<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> {
-        @Override
-        public VdcActionParametersBase getParameters(Disk incoming, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
-            return new UpdateVmDiskParameters(parentId, entity.getId(), map(incoming, entity));
-        }
-    }
-
-    @Override
     protected Disk deprecatedPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
         Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
         if (details.contains("statistics")) {
@@ -216,17 +192,18 @@ public class BackendVmDisksResource
     }
 
     private Response attachDiskToVm(Disk disk) {
+        Guid diskId = Guid.createGuidFromStringDefaultEmpty(disk.getId());
         boolean isDiskActive = BooleanUtils.toBooleanDefaultIfNull(disk.isActive(), false);
         boolean isDiskReadOnly = BooleanUtils.toBooleanDefaultIfNull(disk.isReadOnly(), false);
-        AttachDetachVmDiskParameters params = new AttachDetachVmDiskParameters(parentId,
-                Guid.createGuidFromStringDefaultEmpty(disk.getId()), isDiskActive, isDiskReadOnly);
+        AttachDetachVmDiskParameters params = new AttachDetachVmDiskParameters(vmId, diskId, isDiskActive,
+                isDiskReadOnly);
 
         if (disk.isSetSnapshot()) {
             validateParameters(disk, "snapshot.id");
             params.setSnapshotId(asGuid(disk.getSnapshot().getId()));
         }
 
-        return performAction(VdcActionType.AttachDiskToVm, params);
+        return performCreate(VdcActionType.AttachDiskToVm, params, new AttachDiskResolver(diskId));
     }
 
     protected void validateDiskForCreation(Disk disk) {
@@ -247,5 +224,47 @@ public class BackendVmDisksResource
             validateParameters(disk, 3, "provisionedSize|size", "format"); // Non lun disks require size and format
         }
         validateEnums(Disk.class, disk);
+    }
+
+    @Override
+    protected Disk addParents(Disk disk) {
+        Vm vm = new Vm();
+        vm.setId(vmId.toString());
+        disk.setVm(vm);
+        return disk;
+    }
+
+    // The command that adds a disk returns the identifier of the new disk, so we can use simple resolver in that case.
+    private class AddDiskResolver implements IResolver<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> {
+        @Override
+        public org.ovirt.engine.core.common.businessentities.storage.Disk resolve(Guid id) throws BackendFailureException {
+            return getEntity(
+                org.ovirt.engine.core.common.businessentities.storage.Disk.class,
+                VdcQueryType.GetDiskByDiskId,
+                new IdQueryParameters(id),
+                id.toString(),
+                true
+            );
+        }
+    }
+
+    // The command that attaches a disk doesn't resturn the disk id, so we need to pass it to the resolver:
+    private class AttachDiskResolver implements IResolver<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> {
+        private Guid diskId;
+
+        public AttachDiskResolver(Guid diskId) {
+            this.diskId = diskId;
+        }
+
+        @Override
+        public org.ovirt.engine.core.common.businessentities.storage.Disk resolve(Guid id) throws BackendFailureException {
+            return getEntity(
+                    org.ovirt.engine.core.common.businessentities.storage.Disk.class,
+                    VdcQueryType.GetDiskByDiskId,
+                    new IdQueryParameters(diskId),
+                    diskId.toString(),
+                    true
+            );
+        }
     }
 }

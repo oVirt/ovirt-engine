@@ -1,14 +1,10 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.easymock.EasyMock.expect;
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.PARENT_ID;
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.setUpEntityExpectations;
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.verifyModelSpecific;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -26,8 +22,14 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -37,8 +39,11 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendTemplateDiskResourceTest
         extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk, BackendTemplateDiskResource> {
 
+    private static final Guid TEMPLATE_ID = GUIDS[0];
+    private static final Guid DISK_ID = GUIDS[1];
+
     public BackendTemplateDiskResourceTest() {
-        super(new BackendTemplateDiskResource(GUIDS[1].toString(), PARENT_ID));
+        super(new BackendTemplateDiskResource(DISK_ID.toString(), TEMPLATE_ID));
     }
 
     @Test
@@ -47,7 +52,7 @@ public class BackendTemplateDiskResourceTest
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplatesDisks,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
-                                     new Object[] { PARENT_ID },
+                                     new Object[] { TEMPLATE_ID },
                                      new ArrayList<DiskImage>());
         control.replay();
         try {
@@ -88,7 +93,7 @@ public class BackendTemplateDiskResourceTest
             setUpEntityQueryExpectations(VdcQueryType.GetVmTemplatesDisks,
                     IdQueryParameters.class,
                     new String[] { "Id" },
-                    new Object[] { PARENT_ID },
+                    new Object[] { TEMPLATE_ID },
                     getEntityList());
         }
     }
@@ -201,7 +206,7 @@ public class BackendTemplateDiskResourceTest
             setUpEntityQueryExpectations(VdcQueryType.GetVmTemplatesDisks,
                     IdQueryParameters.class,
                     new String[] { "Id" },
-                    new Object[] { PARENT_ID },
+                    new Object[] { TEMPLATE_ID },
                     getEntityList());
         }
     }
@@ -307,7 +312,7 @@ public class BackendTemplateDiskResourceTest
     }
 
     private void verifyActionResponse(Response r) throws Exception {
-        verifyActionResponse(r, "templates/" + PARENT_ID + "/disks/" + PARENT_ID, false);
+        verifyActionResponse(r, "templates/" + TEMPLATE_ID + "/disks/" + DISK_ID, false);
     }
 
     @Test
@@ -335,4 +340,40 @@ public class BackendTemplateDiskResourceTest
         EasyMock.reset(httpHeaders);
         expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue);
     }
+
+    private org.ovirt.engine.core.common.businessentities.storage.Disk setUpEntityExpectations(DiskImage entity, int index) {
+        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
+        expect(entity.getVmSnapshotId()).andReturn(GUIDS[2]).anyTimes();
+        expect(entity.getVolumeFormat()).andReturn(VolumeFormat.RAW).anyTimes();
+        expect(entity.getDiskInterface()).andReturn(DiskInterface.VirtIO).anyTimes();
+        expect(entity.getImageStatus()).andReturn(ImageStatus.OK).anyTimes();
+        expect(entity.getVolumeType()).andReturn(VolumeType.Sparse).anyTimes();
+        expect(entity.isBoot()).andReturn(false).anyTimes();
+        expect(entity.isShareable()).andReturn(false).anyTimes();
+        expect(entity.getPropagateErrors()).andReturn(PropagateErrors.On).anyTimes();
+        expect(entity.getDiskStorageType()).andReturn(DiskStorageType.IMAGE).anyTimes();
+        expect(entity.getImageId()).andReturn(GUIDS[1]).anyTimes();
+        expect(entity.getReadOnly()).andReturn(true).anyTimes();
+        ArrayList<Guid> sdIds = new ArrayList<>();
+        sdIds.add(Guid.Empty);
+        expect(entity.getStorageIds()).andReturn(sdIds).anyTimes();
+        return setUpStatisticalEntityExpectations(entity);
+    }
+
+    private org.ovirt.engine.core.common.businessentities.storage.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
+        expect(entity.getReadRate()).andReturn(1).anyTimes();
+        expect(entity.getWriteRate()).andReturn(2).anyTimes();
+        expect(entity.getReadLatency()).andReturn(3.0).anyTimes();
+        expect(entity.getWriteLatency()).andReturn(4.0).anyTimes();
+        expect(entity.getFlushLatency()).andReturn(5.0).anyTimes();
+        return entity;
+    }
+
+    private void verifyModelSpecific(Disk model, int index) {
+        assertEquals(GUIDS[index].toString(), model.getId());
+        assertTrue(model.isSparse());
+        assertTrue(!model.isBootable());
+        assertTrue(model.isPropagateErrors());
+    }
+
 }

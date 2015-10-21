@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.PARENT_ID;
-
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -25,7 +23,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 
-public class BackendStorageDomainDiskResourceTest extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk, BackendDiskResource> {
+public class BackendStorageDomainDiskResourceTest
+        extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk, BackendDiskResource> {
 
     protected static final Guid DISK_ID = GUIDS[1];
     protected static final Guid STORAGE_DOMAIN_ID = GUIDS[0];
@@ -96,7 +95,7 @@ public class BackendStorageDomainDiskResourceTest extends AbstractBackendSubReso
     }
 
     private void verifyActionResponse(Response r) throws Exception {
-        verifyActionResponse(r, "/disks/" + PARENT_ID, false);
+        verifyActionResponse(r, "/disks/" + DISK_ID, false);
     }
 
     @Test

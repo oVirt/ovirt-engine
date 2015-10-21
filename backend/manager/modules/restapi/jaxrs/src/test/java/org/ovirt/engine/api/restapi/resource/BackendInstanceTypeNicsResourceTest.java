@@ -1,3 +1,19 @@
+/*
+Copyright (c) 2015 Red Hat, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.easymock.EasyMock.expect;
@@ -11,7 +27,7 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.NicInterface;
-import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
+import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -20,14 +36,14 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendVmNicsResourceTest
-        extends AbstractBackendCollectionResourceTest<Nic, VmNetworkInterface, BackendVmNicsResource> {
+public class BackendInstanceTypeNicsResourceTest
+        extends AbstractBackendCollectionResourceTest<Nic, VmNetworkInterface, BackendTemplateNicsResource> {
 
-    private static final Guid VM_ID = GUIDS[1];
-    private static final String[] ADDRESSES = { "10.11.12.13", "13.12.11.10", "10.01.10.01" };
+    protected static final Guid INSTANCE_TYPE_ID = GUIDS[1];
+    protected static final String[] ADDRESSES = { "10.11.12.13", "13.12.11.10", "10.01.10.01" };
 
-    public BackendVmNicsResourceTest() {
-        super(new BackendVmNicsResource(VM_ID), null, null);
+    public BackendInstanceTypeNicsResourceTest() {
+        super(new BackendTemplateNicsResource(INSTANCE_TYPE_ID), null, null);
     }
 
     @Override
@@ -49,10 +65,10 @@ public class BackendVmNicsResourceTest
     protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(
-                VdcQueryType.GetVmInterfacesByVmId,
+                VdcQueryType.GetTemplateInterfacesByTemplateId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
-                new Object[] { VM_ID },
+                new Object[] { INSTANCE_TYPE_ID },
                 getEntityList(),
                 failure
             );
@@ -89,7 +105,7 @@ public class BackendVmNicsResourceTest
             int index,
             String networkName) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getVmId()).andReturn(VM_ID).anyTimes();
+        expect(entity.getVmId()).andReturn(INSTANCE_TYPE_ID).anyTimes();
         expect(entity.getNetworkName()).andReturn(networkName).anyTimes();
         expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getMacAddress()).andReturn(ADDRESSES[2]).anyTimes();
@@ -133,7 +149,7 @@ public class BackendVmNicsResourceTest
         assertEquals(GUIDS[index].toString(), model.getId());
         assertEquals(NAMES[index].toString(), model.getName());
         assertTrue(model.isSetVm());
-        assertEquals(VM_ID.toString(), model.getVm().getId());
+        assertEquals(INSTANCE_TYPE_ID.toString(), model.getVm().getId());
         assertTrue(model.isSetMac());
         assertEquals(ADDRESSES[2].toString(), model.getMac().getAddress());
     }
@@ -158,7 +174,7 @@ public class BackendVmNicsResourceTest
             setUpEntityQueryExpectations(VdcQueryType.GetVmGuestAgentInterfacesByVmId,
                     IdQueryParameters.class,
                     new String[] { "Id" },
-                    new Object[] { VM_ID },
+                    new Object[] { INSTANCE_TYPE_ID },
                     getListOfVmGuestAgentInterfaces());
         }
     }
@@ -167,43 +183,25 @@ public class BackendVmNicsResourceTest
     private Object getListOfVmGuestAgentInterfaces() {
         VmGuestAgentInterface iface = new VmGuestAgentInterface();
         iface.setMacAddress(ADDRESSES[2]);
-        List<VmGuestAgentInterface> list = new ArrayList<VmGuestAgentInterface>();
+        List<VmGuestAgentInterface> list = new ArrayList<>();
         list.add(iface);
         return list;
     }
-
-    @Test
-    public void testListIncludeStatistics() throws Exception {
-        try {
-            accepts.add("application/xml; detail=statistics");
-            setUriInfo(setUpUriExpectations(null));
-            setGetGuestAgentQueryExpectations(3);
-            setUpQueryExpectations("");
-
-            List<Nic> nics = getCollection();
-            assertTrue(nics.get(0).isSetStatistics());
-            verifyCollection(nics);
-        } finally {
-            accepts.clear();
-        }
-    }
-
     @Test
     public void testAddNic() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setGetGuestAgentQueryExpectations(1);
         setUpCreationExpectations(
-            VdcActionType.AddVmInterface,
-            AddVmInterfaceParameters.class,
-            new String[] { "VmId" },
-            new Object[] { VM_ID },
+            VdcActionType.AddVmTemplateInterface,
+            AddVmTemplateInterfaceParameters.class,
+            new String[] {},
+            new Object[] {},
             true,
             true,
             null,
-            VdcQueryType.GetVmInterfacesByVmId,
+            VdcQueryType.GetTemplateInterfacesByTemplateId,
             IdQueryParameters.class,
             new String[] { "Id" },
-            new Object[] { VM_ID },
+            new Object[] { INSTANCE_TYPE_ID },
             asList(getEntity(0))
         );
         Nic model = getModel(0);
@@ -227,10 +225,10 @@ public class BackendVmNicsResourceTest
     private void doTestBadAddNic(boolean canDo, boolean success, String detail) throws Exception {
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.AddVmInterface,
-                AddVmInterfaceParameters.class,
-                new String[] { "VmId" },
-                new Object[] { VM_ID },
+                VdcActionType.AddVmTemplateInterface,
+                AddVmTemplateInterfaceParameters.class,
+                new String[] { "VmTemplateId" },
+                new Object[] { INSTANCE_TYPE_ID },
                 canDo,
                 success
             )
@@ -275,7 +273,6 @@ public class BackendVmNicsResourceTest
     @Override
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
-        setGetGuestAgentQueryExpectations(3);
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());

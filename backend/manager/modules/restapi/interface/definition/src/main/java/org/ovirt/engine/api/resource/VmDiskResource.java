@@ -31,12 +31,11 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Disk;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface VmDiskResource extends DeviceResource<Disk>, MeasurableResource {
+public interface VmDiskResource extends AsynchronouslyCreatedResource, MeasurableResource {
     @Path("{action: (activate|deactivate|move|export)}/{oid}")
     ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @GET
-    @Override
     Disk get();
 
     @PUT

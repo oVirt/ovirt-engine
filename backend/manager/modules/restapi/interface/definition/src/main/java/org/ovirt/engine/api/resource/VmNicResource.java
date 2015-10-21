@@ -15,10 +15,9 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Nic;
 
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
-public interface VmNicResource extends NicResource {
-
+public interface VmNicResource extends AsynchronouslyCreatedResource, MeasurableResource {
     @Path("{action: (activate|deactivate)}/{oid}")
-    public ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
+    ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     // TODO remove on 4.1
     @Deprecated
@@ -26,7 +25,7 @@ public interface VmNicResource extends NicResource {
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     @Actionable
     @Path("activate")
-    public Response activate(Action action);
+    Response activate(Action action);
 
     // TODO remove on 4.1
     @Deprecated
@@ -34,20 +33,18 @@ public interface VmNicResource extends NicResource {
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
     @Actionable
     @Path("deactivate")
-    public Response deactivate(Action action);
+    Response deactivate(Action action);
 
     @PUT
-    @Override
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-    public Nic update(Nic device);
+    Nic update(Nic device);
 
     @GET
-    @Override
-    public Nic get();
+    Nic get();
 
     @DELETE
     Response remove();
 
     @Path("reporteddevices")
-    public VmReportedDevicesResource getVmReportedDevicesResource();
+    VmReportedDevicesResource getVmReportedDevicesResource();
 }

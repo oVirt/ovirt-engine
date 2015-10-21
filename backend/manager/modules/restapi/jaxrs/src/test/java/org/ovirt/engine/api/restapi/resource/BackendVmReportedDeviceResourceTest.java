@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.easymock.EasyMock.expect;
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.PARENT_ID;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +12,10 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendVmReportedDeviceResourceTest extends AbstractBackendSubResourceTest<ReportedDevice, VmGuestAgentInterface, BackendVmReportedDeviceResource> {
+public class BackendVmReportedDeviceResourceTest
+        extends AbstractBackendSubResourceTest<ReportedDevice, VmGuestAgentInterface, BackendVmReportedDeviceResource> {
 
+    private static final Guid VM_ID = GUIDS[1];
     protected static final Guid DEVICE_ID = new Guid("7365646e-6131-302e-3131-2e31322e3133");
     protected static final String ADDRESS = "10.11.12.13";
 
@@ -23,7 +24,7 @@ public class BackendVmReportedDeviceResourceTest extends AbstractBackendSubResou
     }
 
     protected static BackendVmReportedDevicesResource getCollection() {
-        return new BackendVmReportedDevicesResource(PARENT_ID);
+        return new BackendVmReportedDevicesResource(VM_ID);
     }
 
     @Override
@@ -48,7 +49,7 @@ public class BackendVmReportedDeviceResourceTest extends AbstractBackendSubResou
             setUpEntityQueryExpectations(VdcQueryType.GetVmGuestAgentInterfacesByVmId,
                     IdQueryParameters.class,
                     new String[] { "Id" },
-                    new Object[] { PARENT_ID },
+                    new Object[] { VM_ID },
                     getEntityList());
         }
     }

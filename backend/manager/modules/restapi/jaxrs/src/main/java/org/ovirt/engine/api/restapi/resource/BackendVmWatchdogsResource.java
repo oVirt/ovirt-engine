@@ -20,13 +20,13 @@ import java.util.List;
 import java.util.Objects;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.Template;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.Watchdog;
 import org.ovirt.engine.api.model.WatchdogAction;
 import org.ovirt.engine.api.model.WatchdogModel;
 import org.ovirt.engine.api.model.Watchdogs;
-import org.ovirt.engine.api.resource.TemplateWatchdogResource;
-import org.ovirt.engine.api.resource.TemplateWatchdogsResource;
+import org.ovirt.engine.api.resource.VmWatchdogResource;
+import org.ovirt.engine.api.resource.VmWatchdogsResource;
 import org.ovirt.engine.api.restapi.types.WatchdogMapper;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
@@ -35,20 +35,20 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendTemplateWatchdogsResource
+public class BackendVmWatchdogsResource
         extends AbstractBackendCollectionResource<Watchdog, VmWatchdog>
-        implements TemplateWatchdogsResource {
+        implements VmWatchdogsResource {
 
-    private Guid templateId;
+    private Guid vmId;
 
-    public BackendTemplateWatchdogsResource(Guid templateId) {
+    public BackendVmWatchdogsResource(Guid vmId) {
         super(Watchdog.class, VmWatchdog.class);
-        this.templateId = templateId;
+        this.vmId = vmId;
     }
 
     @Override
     public Watchdogs list() {
-        return mapCollection(getBackendCollection(VdcQueryType.GetWatchdog, new IdQueryParameters(templateId)));
+        return mapCollection(getBackendCollection(VdcQueryType.GetWatchdog, new IdQueryParameters(vmId)));
     }
 
     private Watchdogs mapCollection(List<VmWatchdog> entities) {
@@ -65,28 +65,28 @@ public class BackendTemplateWatchdogsResource
         WatchdogParameters parameters = new WatchdogParameters();
         parameters.setAction(WatchdogMapper.map(WatchdogAction.fromValue(watchdog.getAction())));
         parameters.setModel(WatchdogMapper.map(WatchdogModel.fromValue(watchdog.getModel())));
-        parameters.setId(templateId);
-        parameters.setVm(false);
+        parameters.setId(vmId);
+        parameters.setVm(true);
         return performCreate(VdcActionType.AddWatchdog, parameters, new WatchdogResolver());
     }
 
     @Override
-    public TemplateWatchdogResource getWatchdogResource(String watchdogId) {
-        return inject(new BackendTemplateWatchdogResource(watchdogId, templateId));
+    public VmWatchdogResource getWatchdogResource(String watchdogId) {
+        return inject(new BackendVmWatchdogResource(watchdogId, vmId));
     }
 
     @Override
     public Watchdog addParents(Watchdog watchdog) {
-        Template template = new Template();
-        template.setId(templateId.toString());
-        watchdog.setTemplate(template);
+        Vm vm = new Vm();
+        vm.setId(vmId.toString());
+        watchdog.setVm(vm);
         return watchdog;
     }
 
     private class WatchdogResolver implements IResolver<Guid, VmWatchdog> {
         @Override
         public VmWatchdog resolve(Guid id) throws BackendFailureException {
-            List<VmWatchdog> watchdogs = getBackendCollection(VdcQueryType.GetWatchdog, new IdQueryParameters(templateId));
+            List<VmWatchdog> watchdogs = getBackendCollection(VdcQueryType.GetWatchdog, new IdQueryParameters(vmId));
             for (VmWatchdog watchdog : watchdogs) {
                 if (Objects.equals(watchdog.getId(), id)) {
                     return watchdog;

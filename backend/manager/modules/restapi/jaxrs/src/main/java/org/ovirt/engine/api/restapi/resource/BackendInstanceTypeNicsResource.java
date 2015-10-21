@@ -1,67 +1,61 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.List;
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.Nic;
-import org.ovirt.engine.api.resource.DeviceResource;
+import org.ovirt.engine.api.model.Nics;
+import org.ovirt.engine.api.resource.InstanceTypeNicResource;
 import org.ovirt.engine.api.resource.InstanceTypeNicsResource;
-import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendInstanceTypeNicsResource
-        extends BackendNicsResource
-        implements InstanceTypeNicsResource {
+public class BackendInstanceTypeNicsResource extends AbstractBackendNicsResource implements InstanceTypeNicsResource {
+    private Guid instanceTypeId;
 
-    public BackendInstanceTypeNicsResource(Guid parentId) {
-        super(parentId,
-              VdcQueryType.GetTemplateInterfacesByTemplateId,
-              new IdQueryParameters(parentId),
-              VdcActionType.AddVmTemplateInterface,
-              VdcActionType.UpdateVmTemplateInterface);
+    public BackendInstanceTypeNicsResource(Guid instanceTypeId) {
+        super(instanceTypeId, VdcQueryType.GetTemplateInterfacesByTemplateId);
+        this.instanceTypeId = instanceTypeId;
     }
 
-    @Override
-    protected ParametersProvider<Nic, VmNetworkInterface> getUpdateParametersProvider() {
-        return new UpdateParametersProvider();
-    }
-
-    protected class UpdateParametersProvider implements ParametersProvider<Nic, VmNetworkInterface> {
-        @Override
-        public VdcActionParametersBase getParameters(Nic incoming, VmNetworkInterface entity) {
-            VmNetworkInterface nic = map(incoming, entity);
-            return new AddVmTemplateInterfaceParameters(parentId, nic);
+    public Nics list() {
+        Nics nics = new Nics();
+        List<VmNetworkInterface> entities = getBackendCollection(
+            VdcQueryType.GetTemplateInterfacesByTemplateId,
+            new IdQueryParameters(instanceTypeId)
+        );
+        for (VmNetworkInterface entity : entities) {
+            Nic nic = populate(map(entity), entity);
+            nics.getNics().add(addLinks(nic));
         }
+        return nics;
     }
 
-    @Override
-    protected VdcActionParametersBase getAddParameters(VmNetworkInterface entity, Nic nic) {
-        return new AddVmTemplateInterfaceParameters(parentId, entity);
-    }
-
-    @Override
-    public DeviceResource<Nic> getNicResource(String id) {
-        return inject(
-            new BackendTemplateNicResource(
-                parentId,
-                id,
-                this,
-                updateType,
-                getUpdateParametersProvider(),
-                getRequiredUpdateFields(),
-                subCollections
-            )
+    public Response add(Nic nic) {
+        validateEnums(Nic.class, nic);
+        validateParameters(nic, "name");
+        return performCreate(
+            VdcActionType.AddVmTemplateInterface,
+            new AddVmTemplateInterfaceParameters(instanceTypeId, map(nic)),
+            new NicResolver(nic.getName())
         );
     }
+
+    @Override
+    public InstanceTypeNicResource getNicResource(String id) {
+        return inject(new BackendInstanceTypeNicResource(id, instanceTypeId));
+    }
+
     @Override
     public Nic addParents(Nic nic) {
-        InstanceType parent = new InstanceType();
-        parent.setId(parentId.toString());
-        nic.setInstanceType(parent);
+        InstanceType instanceType = new InstanceType();
+        instanceType.setId(instanceTypeId.toString());
+        nic.setInstanceType(instanceType);
         return nic;
     }
 }

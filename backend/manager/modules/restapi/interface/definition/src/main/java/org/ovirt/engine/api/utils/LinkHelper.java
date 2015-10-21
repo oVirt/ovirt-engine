@@ -143,7 +143,6 @@ import org.ovirt.engine.api.resource.CpuProfileResource;
 import org.ovirt.engine.api.resource.CpuProfilesResource;
 import org.ovirt.engine.api.resource.DataCenterResource;
 import org.ovirt.engine.api.resource.DataCentersResource;
-import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.api.resource.DiskProfileResource;
 import org.ovirt.engine.api.resource.DiskProfilesResource;
 import org.ovirt.engine.api.resource.DiskResource;
@@ -173,8 +172,11 @@ import org.ovirt.engine.api.resource.IconResource;
 import org.ovirt.engine.api.resource.IconsResource;
 import org.ovirt.engine.api.resource.ImageResource;
 import org.ovirt.engine.api.resource.ImagesResource;
+import org.ovirt.engine.api.resource.InstanceTypeNicResource;
 import org.ovirt.engine.api.resource.InstanceTypeNicsResource;
 import org.ovirt.engine.api.resource.InstanceTypeResource;
+import org.ovirt.engine.api.resource.InstanceTypeWatchdogResource;
+import org.ovirt.engine.api.resource.InstanceTypeWatchdogsResource;
 import org.ovirt.engine.api.resource.InstanceTypesResource;
 import org.ovirt.engine.api.resource.IscsiBondResource;
 import org.ovirt.engine.api.resource.IscsiBondsResource;
@@ -228,8 +230,11 @@ import org.ovirt.engine.api.resource.TemplateCdromResource;
 import org.ovirt.engine.api.resource.TemplateCdromsResource;
 import org.ovirt.engine.api.resource.TemplateDiskResource;
 import org.ovirt.engine.api.resource.TemplateDisksResource;
+import org.ovirt.engine.api.resource.TemplateNicResource;
 import org.ovirt.engine.api.resource.TemplateNicsResource;
 import org.ovirt.engine.api.resource.TemplateResource;
+import org.ovirt.engine.api.resource.TemplateWatchdogResource;
+import org.ovirt.engine.api.resource.TemplateWatchdogsResource;
 import org.ovirt.engine.api.resource.TemplatesResource;
 import org.ovirt.engine.api.resource.UnmanagedNetworkResource;
 import org.ovirt.engine.api.resource.UnmanagedNetworksResource;
@@ -254,11 +259,11 @@ import org.ovirt.engine.api.resource.VmReportedDevicesResource;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmSessionResource;
 import org.ovirt.engine.api.resource.VmSessionsResource;
+import org.ovirt.engine.api.resource.VmWatchdogResource;
+import org.ovirt.engine.api.resource.VmWatchdogsResource;
 import org.ovirt.engine.api.resource.VmsResource;
 import org.ovirt.engine.api.resource.VnicProfileResource;
 import org.ovirt.engine.api.resource.VnicProfilesResource;
-import org.ovirt.engine.api.resource.WatchdogResource;
-import org.ovirt.engine.api.resource.WatchdogsResource;
 import org.ovirt.engine.api.resource.WeightResource;
 import org.ovirt.engine.api.resource.WeightsResource;
 import org.ovirt.engine.api.resource.aaa.DomainGroupResource;
@@ -428,9 +433,10 @@ public class LinkHelper {
         map.add(NetworkResource.class, NetworksResource.class, Network.class);
         TYPES.put(Network.class, map);
 
-        map = new ParentToCollectionMap(VmNicResource.class, VmNicsResource.class, Vm.class);
-        map.add(DeviceResource.class, TemplateNicsResource.class, Template.class);
-        map.add(DeviceResource.class, InstanceTypeNicsResource.class, InstanceType.class);
+        map = new ParentToCollectionMap();
+        map.add(InstanceTypeNicResource.class, InstanceTypeNicsResource.class, InstanceType.class);
+        map.add(TemplateNicResource.class, TemplateNicsResource.class, Template.class);
+        map.add(VmNicResource.class, VmNicsResource.class, Vm.class);
         TYPES.put(Nic.class, map);
 
         map = new ParentToCollectionMap(VmNumaNodeResource.class, VmNumaNodesResource.class, Vm.class);
@@ -525,9 +531,10 @@ public class LinkHelper {
         map = new ParentToCollectionMap(CapabiliyResource.class, CapabilitiesResource.class);
         TYPES.put(VersionCaps.class, map);
 
-        map = new ParentToCollectionMap(DeviceResource.class, WatchdogsResource.class);
-        map.add(WatchdogResource.class, WatchdogsResource.class, Vm.class);
-        map.add(WatchdogResource.class, WatchdogsResource.class, Template.class);
+        map = new ParentToCollectionMap();
+        map.add(InstanceTypeWatchdogResource.class, InstanceTypeWatchdogsResource.class, InstanceType.class);
+        map.add(TemplateWatchdogResource.class, TemplateWatchdogsResource.class, Template.class);
+        map.add(VmWatchdogResource.class, VmWatchdogsResource.class, Vm.class);
         TYPES.put(Watchdog.class, map);
 
         map = new ParentToCollectionMap(JobResource.class, JobsResource.class);
@@ -1153,6 +1160,10 @@ public class LinkHelper {
      * tags collection which is keyed on the NO_PARENT key.
      */
     private static class ParentToCollectionMap extends LinkedHashMap<Class<? extends BaseResource>, Collection> {
+        public ParentToCollectionMap() {
+            super();
+        }
+
         public ParentToCollectionMap(Class<?> resourceType,
                                      Class<?> collectionType,
                                      Class<? extends BaseResource> parentType) {

@@ -16,7 +16,7 @@ import org.ovirt.engine.api.resource.TemplateCdromsResource;
 import org.ovirt.engine.api.resource.TemplateDisksResource;
 import org.ovirt.engine.api.resource.TemplateNicsResource;
 import org.ovirt.engine.api.resource.TemplateResource;
-import org.ovirt.engine.api.resource.WatchdogsResource;
+import org.ovirt.engine.api.resource.TemplateWatchdogsResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
@@ -201,10 +201,8 @@ public class BackendTemplateResource
     }
 
     @Override
-    public WatchdogsResource getWatchdogsResource() {
-        return inject(new BackendTemplateWatchdogsResource(guid,
-                VdcQueryType.GetWatchdog,
-                new IdQueryParameters(guid)));
+    public TemplateWatchdogsResource getWatchdogsResource() {
+        return inject(new BackendTemplateWatchdogsResource(guid));
     }
 
     @Override
