@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -34,7 +34,7 @@ public class TemplatesTree<M extends SearchableListModel> extends AbstractSubTab
         panel.setWidth("100%"); //$NON-NLS-1$
 
         addItemToPanel(panel, new Image(resources.vmImage()), "25px"); //$NON-NLS-1$
-        addTextBoxToPanel(panel, new TextBoxLabel(), template.getName(), ""); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new StringValueLabel(), template.getName(), ""); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), template.getDiskTemplateMap().size(), "110px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), template.getActualDiskSize(), "110px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new FullDateTimeLabel(), template.getCreationDate(), "140px"); //$NON-NLS-1$
@@ -51,8 +51,8 @@ public class TemplatesTree<M extends SearchableListModel> extends AbstractSubTab
         panel.setWidth("100%"); //$NON-NLS-1$
 
         addItemToPanel(panel, new Image(resources.diskImage()), "25px"); //$NON-NLS-1$
-        addTextBoxToPanel(panel, new TextBoxLabel(), disk.getDiskAlias(), ""); //$NON-NLS-1$
-        addTextBoxToPanel(panel, new TextBoxLabel(), "", "110px"); //$NON-NLS-1$ //$NON-NLS-2$
+        addTextBoxToPanel(panel, new StringValueLabel(), disk.getDiskAlias(), ""); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new StringValueLabel(), "", "110px"); //$NON-NLS-1$ //$NON-NLS-2$
         addValueLabelToPanel(panel, new DiskSizeLabel<Long>(SizeConverter.SizeUnit.BYTES), disk.getSize(), "110px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), disk.getActualSize(), "110px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new FullDateTimeLabel(), disk.getCreationDate(), "140px"); //$NON-NLS-1$

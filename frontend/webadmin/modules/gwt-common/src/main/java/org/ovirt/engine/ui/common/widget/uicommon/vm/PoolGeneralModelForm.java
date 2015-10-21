@@ -4,7 +4,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
@@ -16,21 +16,21 @@ public class PoolGeneralModelForm extends AbstractModelBoundFormWidget<PoolGener
     interface Driver extends SimpleBeanEditorDriver<PoolGeneralModel, PoolGeneralModelForm> {
     }
 
-    TextBoxLabel name = new TextBoxLabel();
-    TextBoxLabel description = new TextBoxLabel();
-    TextBoxLabel template = new TextBoxLabel();
-    TextBoxLabel definedMemory = new TextBoxLabel();
-    TextBoxLabel minAllocatedMemory = new TextBoxLabel();
+    StringValueLabel name = new StringValueLabel();
+    StringValueLabel description = new StringValueLabel();
+    StringValueLabel template = new StringValueLabel();
+    StringValueLabel definedMemory = new StringValueLabel();
+    StringValueLabel minAllocatedMemory = new StringValueLabel();
     @Ignore
-    TextBoxLabel oS = new TextBoxLabel();
-    TextBoxLabel cpuInfo = new TextBoxLabel();
-    TextBoxLabel graphicsType = new TextBoxLabel();
-    TextBoxLabel defaultDisplayType = new TextBoxLabel();
-    TextBoxLabel usbPolicy = new TextBoxLabel();
-    TextBoxLabel defaultHost = new TextBoxLabel();
+    StringValueLabel oS = new StringValueLabel();
+    StringValueLabel cpuInfo = new StringValueLabel();
+    StringValueLabel graphicsType = new StringValueLabel();
+    StringValueLabel defaultDisplayType = new StringValueLabel();
+    StringValueLabel usbPolicy = new StringValueLabel();
+    StringValueLabel defaultHost = new StringValueLabel();
 
     @Ignore
-    TextBoxLabel monitorCount = new TextBoxLabel();
+    StringValueLabel monitorCount = new StringValueLabel();
 
     private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
@@ -69,8 +69,8 @@ public class PoolGeneralModelForm extends AbstractModelBoundFormWidget<PoolGener
         driver.edit(model);
 
         // Required because of type conversion
-        monitorCount.setText(Integer.toString(getModel().getMonitorCount()));
-        oS.setText(AsyncDataProvider.getInstance().getOsName(getModel().getOS()));
+        monitorCount.setValue(Integer.toString(getModel().getMonitorCount()));
+        oS.setValue(AsyncDataProvider.getInstance().getOsName(getModel().getOS()));
 
         // Add a tooltip to display long named/many hosts
         defaultHost.setTitle(getModel().getDefaultHost());

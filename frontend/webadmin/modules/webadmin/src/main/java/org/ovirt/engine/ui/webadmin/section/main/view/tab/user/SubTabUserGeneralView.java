@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -36,9 +36,9 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
     interface Driver extends SimpleBeanEditorDriver<UserGeneralModel, SubTabUserGeneralView> {
     }
 
-    TextBoxLabel domain = new TextBoxLabel();
+    StringValueLabel domain = new StringValueLabel();
 
-    TextBoxLabel email = new TextBoxLabel();
+    StringValueLabel email = new StringValueLabel();
 
     @UiField(provided = true)
     @WithElementId

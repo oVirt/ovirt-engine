@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import com.google.gwt.core.client.GWT;
@@ -17,34 +17,34 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     interface Driver extends SimpleBeanEditorDriver<VmGeneralModel, VmGeneralModelForm> {
     }
 
-    TextBoxLabel name = new TextBoxLabel();
-    TextBoxLabel description = new TextBoxLabel();
-    TextBoxLabel quotaName = new TextBoxLabel();
-    TextBoxLabel template = new TextBoxLabel();
-    TextBoxLabel definedMemory = new TextBoxLabel();
-    TextBoxLabel minAllocatedMemory = new TextBoxLabel();
+    StringValueLabel name = new StringValueLabel();
+    StringValueLabel description = new StringValueLabel();
+    StringValueLabel quotaName = new StringValueLabel();
+    StringValueLabel template = new StringValueLabel();
+    StringValueLabel definedMemory = new StringValueLabel();
+    StringValueLabel minAllocatedMemory = new StringValueLabel();
     @Path("OS")
-    TextBoxLabel oS = new TextBoxLabel();
-    TextBoxLabel cpuInfo = new TextBoxLabel();
-    TextBoxLabel guestCpuCount = new TextBoxLabel();
-    TextBoxLabel graphicsType = new TextBoxLabel();
-    TextBoxLabel defaultDisplayType = new TextBoxLabel();
-    TextBoxLabel origin = new TextBoxLabel();
-    TextBoxLabel priority = new TextBoxLabel();
-    TextBoxLabel usbPolicy = new TextBoxLabel();
-    TextBoxLabel defaultHost = new TextBoxLabel();
-    TextBoxLabel customProperties = new TextBoxLabel();
-    TextBoxLabel domain = new TextBoxLabel();
-    TextBoxLabel compatibilityVersion = new TextBoxLabel();
-    TextBoxLabel vmId = new TextBoxLabel();
-    TextBoxLabel fqdn = new TextBoxLabel();
-    TextBoxLabel guestFreeCachedBufferedMemInfo = new TextBoxLabel();
-    TextBoxLabel timeZone = new TextBoxLabel();
+    StringValueLabel oS = new StringValueLabel();
+    StringValueLabel cpuInfo = new StringValueLabel();
+    StringValueLabel guestCpuCount = new StringValueLabel();
+    StringValueLabel graphicsType = new StringValueLabel();
+    StringValueLabel defaultDisplayType = new StringValueLabel();
+    StringValueLabel origin = new StringValueLabel();
+    StringValueLabel priority = new StringValueLabel();
+    StringValueLabel usbPolicy = new StringValueLabel();
+    StringValueLabel defaultHost = new StringValueLabel();
+    StringValueLabel customProperties = new StringValueLabel();
+    StringValueLabel domain = new StringValueLabel();
+    StringValueLabel compatibilityVersion = new StringValueLabel();
+    StringValueLabel vmId = new StringValueLabel();
+    StringValueLabel fqdn = new StringValueLabel();
+    StringValueLabel guestFreeCachedBufferedMemInfo = new StringValueLabel();
+    StringValueLabel timeZone = new StringValueLabel();
 
     BooleanLabel isHighlyAvailable;
 
     @Ignore
-    TextBoxLabel monitorCount = new TextBoxLabel();
+    StringValueLabel monitorCount = new StringValueLabel();
 
     private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
@@ -132,7 +132,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         driver.edit(model);
 
         // Required because of type conversion
-        monitorCount.setText(Integer.toString(getModel().getMonitorCount()));
+        monitorCount.setValue(Integer.toString(getModel().getMonitorCount()));
 
         // Add a tooltip to display long named/many hosts
         defaultHost.setTitle(getModel().getDefaultHost());

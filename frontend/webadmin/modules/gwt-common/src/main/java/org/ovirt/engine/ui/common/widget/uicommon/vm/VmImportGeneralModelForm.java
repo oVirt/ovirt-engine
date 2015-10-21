@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBox;
 import org.ovirt.engine.ui.common.widget.editor.TextBoxChanger;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportSource;
@@ -25,32 +25,32 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
 
     @Path("name.entity")
     TextBoxChanger name = new TextBoxChanger();
-    TextBoxLabel description = new TextBoxLabel();
+    StringValueLabel description = new StringValueLabel();
     @UiField(provided = true)
     @Path("operatingSystems.selectedItem")
     ListModelListBox<Integer> operatingSystems;
     @Path("OS")
-    TextBoxLabel os = new TextBoxLabel();
-    TextBoxLabel template = new TextBoxLabel();
-    TextBoxLabel definedMemory = new TextBoxLabel();
-    TextBoxLabel defaultDisplayType = new TextBoxLabel();
-    TextBoxLabel priority = new TextBoxLabel();
-    TextBoxLabel minAllocatedMemory = new TextBoxLabel();
-    TextBoxLabel guestFreeCachedBufferedMemInfo = new TextBoxLabel();
-    TextBoxLabel usbPolicy = new TextBoxLabel();
-    TextBoxLabel defaultHost = new TextBoxLabel();
-    TextBoxLabel customProperties = new TextBoxLabel();
-    TextBoxLabel domain = new TextBoxLabel();
-    TextBoxLabel compatibilityVersion = new TextBoxLabel();
-    TextBoxLabel vmId = new TextBoxLabel();
-    TextBoxLabel fqdn = new TextBoxLabel();
-    TextBoxLabel cpuInfo = new TextBoxLabel();
-    TextBoxLabel guestCpuCount = new TextBoxLabel();
-    TextBoxLabel quotaName = new TextBoxLabel();
-    TextBoxLabel origin = new TextBoxLabel();
+    StringValueLabel os = new StringValueLabel();
+    StringValueLabel template = new StringValueLabel();
+    StringValueLabel definedMemory = new StringValueLabel();
+    StringValueLabel defaultDisplayType = new StringValueLabel();
+    StringValueLabel priority = new StringValueLabel();
+    StringValueLabel minAllocatedMemory = new StringValueLabel();
+    StringValueLabel guestFreeCachedBufferedMemInfo = new StringValueLabel();
+    StringValueLabel usbPolicy = new StringValueLabel();
+    StringValueLabel defaultHost = new StringValueLabel();
+    StringValueLabel customProperties = new StringValueLabel();
+    StringValueLabel domain = new StringValueLabel();
+    StringValueLabel compatibilityVersion = new StringValueLabel();
+    StringValueLabel vmId = new StringValueLabel();
+    StringValueLabel fqdn = new StringValueLabel();
+    StringValueLabel cpuInfo = new StringValueLabel();
+    StringValueLabel guestCpuCount = new StringValueLabel();
+    StringValueLabel quotaName = new StringValueLabel();
+    StringValueLabel origin = new StringValueLabel();
 
     @Ignore
-    TextBoxLabel monitorCount = new TextBoxLabel();
+    StringValueLabel monitorCount = new StringValueLabel();
 
     private final static CommonApplicationConstants constants = AssetProvider.getConstants();
     private final Driver driver = GWT.create(Driver.class);
@@ -71,7 +71,7 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
         driver.edit(model);
 
         // Required because of type conversion
-        monitorCount.setText(Integer.toString(getModel().getMonitorCount()));
+        monitorCount.setValue(Integer.toString(getModel().getMonitorCount()));
 
         // Add a tooltip to display long named/many hosts
         defaultHost.setTitle(getModel().getDefaultHost());

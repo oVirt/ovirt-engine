@@ -13,8 +13,7 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabelBase;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.label.VolumeTransportTypeLabel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
@@ -31,6 +30,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.ValueLabel;
 
 public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolumeEntity, VolumeListModel, VolumeGeneralModel> implements SubTabVolumeGeneralPresenter.ViewDef, Editor<VolumeGeneralModel> {
 
@@ -45,16 +45,16 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     @WithElementId
     GeneralFormPanel formPanel;
 
-    TextBoxLabel name = new TextBoxLabel();
-    TextBoxLabel volumeId = new TextBoxLabel();
-    TextBoxLabel volumeType = new TextBoxLabel();
-    TextBoxLabel replicaCount = new TextBoxLabel();
-    TextBoxLabel stripeCount = new TextBoxLabel();
-    TextBoxLabel disperseCount = new TextBoxLabel();
-    TextBoxLabel redundancyCount = new TextBoxLabel();
-    TextBoxLabel numOfBricks = new TextBoxLabel();
+    StringValueLabel name = new StringValueLabel();
+    StringValueLabel volumeId = new StringValueLabel();
+    StringValueLabel volumeType = new StringValueLabel();
+    StringValueLabel replicaCount = new StringValueLabel();
+    StringValueLabel stripeCount = new StringValueLabel();
+    StringValueLabel disperseCount = new StringValueLabel();
+    StringValueLabel redundancyCount = new StringValueLabel();
+    StringValueLabel numOfBricks = new StringValueLabel();
     VolumeTransportTypeLabel transportTypes = new VolumeTransportTypeLabel();
-    TextBoxLabel snapMaxLimit = new TextBoxLabel();
+    StringValueLabel snapMaxLimit = new StringValueLabel();
 
     VolumeCapacityLabel<Long> volumeTotalCapacity;
     VolumeCapacityLabel<Long> volumeUsedCapacity;
@@ -68,7 +68,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     FormItem redundancyCountFormItem;
 
     @Ignore
-    DetailsTextBoxLabel<ArrayList<TextBoxLabelBase<Long>>, Long> volumeCapacityDetailsLabel = new DetailsTextBoxLabel<ArrayList<TextBoxLabelBase<Long>>, Long>(constants.total(), constants.used(), constants.free());
+    DetailsTextBoxLabel<ArrayList<ValueLabel<Long>>, Long> volumeCapacityDetailsLabel = new DetailsTextBoxLabel<ArrayList<ValueLabel<Long>>, Long>(constants.total(), constants.used(), constants.free());
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -148,8 +148,8 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         disperseCountFormItem.setIsAvailable(selectedItem.getVolumeType().isDispersedType());
         redundancyCountFormItem.setIsAvailable(selectedItem.getVolumeType().isDispersedType());
 
-        ArrayList<TextBoxLabelBase<Long>> volumeCapacityDetails =
-                new ArrayList<TextBoxLabelBase<Long>>(Arrays.asList(volumeTotalCapacity, volumeUsedCapacity, volumeFreeCapacity));
+        ArrayList<ValueLabel<Long>> volumeCapacityDetails =
+                new ArrayList<ValueLabel<Long>>(Arrays.asList(volumeTotalCapacity, volumeUsedCapacity, volumeFreeCapacity));
         volumeCapacityDetailsLabel.setValue(volumeCapacityDetails);
 
         formBuilder.update(getDetailModel());

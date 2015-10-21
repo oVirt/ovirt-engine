@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -295,8 +295,8 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         }
     }
 
-    protected void addTextBoxToPanel(HorizontalPanel panel, TextBoxLabel item, String text, String width) {
-        item.setText(text);
+    protected void addTextBoxToPanel(HorizontalPanel panel, StringValueLabel item, String text, String width) {
+        item.setValue(text);
         addItemToPanel(panel, item, width);
     }
 
@@ -307,9 +307,9 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
             label.setText(text);
             addItemToPanel(panel, item, width);
         }
-        else if (w instanceof TextBoxLabel) {
-            TextBoxLabel label = (TextBoxLabel) item.getWidget();
-            label.setText(text);
+        else if (w instanceof StringValueLabel) {
+            StringValueLabel label = (StringValueLabel) item.getWidget();
+            label.setValue(text);
             addItemToPanel(panel, item, width);
         }
         else {

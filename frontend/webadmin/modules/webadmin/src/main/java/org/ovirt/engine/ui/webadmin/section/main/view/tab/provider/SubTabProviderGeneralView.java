@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
@@ -40,10 +40,10 @@ public class SubTabProviderGeneralView extends AbstractSubTabFormView<Provider, 
 
     private final Driver driver = GWT.create(Driver.class);
 
-    TextBoxLabel name = new TextBoxLabel();
+    StringValueLabel name = new StringValueLabel();
     ValueLabel<ProviderType> type = new ValueLabel<ProviderType>(new EnumRenderer<ProviderType>());
-    TextBoxLabel description = new TextBoxLabel();
-    TextBoxLabel url = new TextBoxLabel();
+    StringValueLabel description = new StringValueLabel();
+    StringValueLabel url = new StringValueLabel();
 
     @UiField(provided = true)
     @WithElementId

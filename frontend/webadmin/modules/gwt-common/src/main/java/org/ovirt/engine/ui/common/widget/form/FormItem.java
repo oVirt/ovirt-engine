@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.common.widget.form;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.user.client.ui.HasText;
@@ -40,19 +40,19 @@ public class FormItem {
     /**
      * Replaces provided value widget if {@code defaultValueCondition} holds {@code true}.
      */
-    private TextBoxLabel defaultValueLabel;
+    private StringValueLabel defaultValueLabel;
     private DefaultValueCondition defaultValueCondition;
 
     /**
      * Replaces resolved value widget if the widget's text is {@code null} or empty string.
      */
-    private final TextBoxLabel emptyValueLabel = new TextBoxLabel(constants.unAvailablePropertyLabel());
+    private final StringValueLabel emptyValueLabel = new StringValueLabel(constants.unAvailablePropertyLabel());
 
     private boolean autoPlacement = false;
     private int autoPlacementRow = UNASSIGNED_ROW;
 
     public FormItem(int row, int column) {
-        this("", new TextBoxLabel(), row, column); //$NON-NLS-1$
+        this("", new StringValueLabel(), row, column); //$NON-NLS-1$
     }
 
     public FormItem(String name, Widget valueWidget, int column) {
@@ -101,7 +101,7 @@ public class FormItem {
      * Use {@code defaultValue} based on dynamic {@code defaultValueCondition}.
      */
     public FormItem withDefaultValue(String defaultValue, DefaultValueCondition defaultValueCondition) {
-        this.defaultValueLabel = new TextBoxLabel(defaultValue);
+        this.defaultValueLabel = new StringValueLabel(defaultValue);
         this.defaultValueCondition = defaultValueCondition;
         return this;
     }
@@ -110,7 +110,7 @@ public class FormItem {
      * Set custom "empty" value shown when the resolved value widget's text is {@code null} or empty string.
      */
     public FormItem withEmptyValue(String emptyValue) {
-        emptyValueLabel.setText(emptyValue);
+        emptyValueLabel.setValue(emptyValue);
         return this;
     }
 

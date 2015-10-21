@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
@@ -37,28 +37,28 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
     interface Driver extends SimpleBeanEditorDriver<PoolGeneralModel, SubTabPoolGeneralView> {
     }
 
-    TextBoxLabel cpuInfo = new TextBoxLabel();
-    TextBoxLabel graphicsType = new TextBoxLabel();
-    TextBoxLabel defaultDisplayType = new TextBoxLabel();
-    TextBoxLabel defaultHost = new TextBoxLabel();
-    TextBoxLabel definedMemory = new TextBoxLabel();
-    TextBoxLabel description = new TextBoxLabel();
-    TextBoxLabel domain = new TextBoxLabel();
-    TextBoxLabel minAllocatedMemory = new TextBoxLabel();
-    TextBoxLabel name = new TextBoxLabel();
-    TextBoxLabel origin = new TextBoxLabel();
+    StringValueLabel cpuInfo = new StringValueLabel();
+    StringValueLabel graphicsType = new StringValueLabel();
+    StringValueLabel defaultDisplayType = new StringValueLabel();
+    StringValueLabel defaultHost = new StringValueLabel();
+    StringValueLabel definedMemory = new StringValueLabel();
+    StringValueLabel description = new StringValueLabel();
+    StringValueLabel domain = new StringValueLabel();
+    StringValueLabel minAllocatedMemory = new StringValueLabel();
+    StringValueLabel name = new StringValueLabel();
+    StringValueLabel origin = new StringValueLabel();
     @Ignore
-    TextBoxLabel oS = new TextBoxLabel();
-    TextBoxLabel template = new TextBoxLabel();
-    TextBoxLabel timeZone = new TextBoxLabel();
-    TextBoxLabel usbPolicy = new TextBoxLabel();
-    TextBoxLabel quotaName = new TextBoxLabel();
+    StringValueLabel oS = new StringValueLabel();
+    StringValueLabel template = new StringValueLabel();
+    StringValueLabel timeZone = new StringValueLabel();
+    StringValueLabel usbPolicy = new StringValueLabel();
+    StringValueLabel quotaName = new StringValueLabel();
 
     @Ignore
-    TextBoxLabel isStateless = new TextBoxLabel();
+    StringValueLabel isStateless = new StringValueLabel();
 
     @Ignore
-    TextBoxLabel monitorCount = new TextBoxLabel();
+    StringValueLabel monitorCount = new StringValueLabel();
 
     @UiField(provided = true)
     @WithElementId
@@ -129,9 +129,9 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
         driver.edit(getDetailModel());
 
         // Required because of type conversion
-        monitorCount.setText(String.valueOf(getDetailModel().getMonitorCount()));
-        isStateless.setText(Boolean.toString(getDetailModel().getIsStateless()));
-        oS.setText(AsyncDataProvider.getInstance().getOsName(getDetailModel().getOS()));
+        monitorCount.setValue(String.valueOf(getDetailModel().getMonitorCount()));
+        isStateless.setValue(Boolean.toString(getDetailModel().getIsStateless()));
+        oS.setValue(AsyncDataProvider.getInstance().getOsName(getDetailModel().getOS()));
 
         formBuilder.update(getDetailModel());
 

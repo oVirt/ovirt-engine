@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.common.widget.label.StorageSizeLabel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -55,28 +55,28 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
     PercentLabel<Integer> overAllocationRatio = new PercentLabel<Integer>();
 
     @Ignore
-    TextBoxLabel warningLowSpaceIndicator = new TextBoxLabel();
+    StringValueLabel warningLowSpaceIndicator = new StringValueLabel();
 
     @Ignore
     StorageSizeLabel<Integer> criticalSpaceActionBlocker = new StorageSizeLabel<Integer>();
 
     @Path("path")
-    TextBoxLabel path = new TextBoxLabel();
+    StringValueLabel path = new StringValueLabel();
 
     @Path("vfsType")
-    TextBoxLabel vfsType = new TextBoxLabel();
+    StringValueLabel vfsType = new StringValueLabel();
 
     @Path("mountOptions")
-    TextBoxLabel mountOptions = new TextBoxLabel();
+    StringValueLabel mountOptions = new StringValueLabel();
 
     @Path("nfsVersion")
-    TextBoxLabel nfsVersion = new TextBoxLabel();
+    StringValueLabel nfsVersion = new StringValueLabel();
 
     @Path("retransmissions")
-    TextBoxLabel retransmissions = new TextBoxLabel();
+    StringValueLabel retransmissions = new StringValueLabel();
 
     @Path("timeout")
-    TextBoxLabel timeout = new TextBoxLabel();
+    StringValueLabel timeout = new StringValueLabel();
 
     @UiField(provided = true)
     @WithElementId

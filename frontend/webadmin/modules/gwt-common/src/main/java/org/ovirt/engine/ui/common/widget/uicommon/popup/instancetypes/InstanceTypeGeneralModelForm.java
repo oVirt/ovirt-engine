@@ -4,7 +4,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.models.configure.instancetypes.InstanceTypeGeneralModel;
 import com.google.gwt.core.client.GWT;
@@ -15,8 +15,8 @@ public class InstanceTypeGeneralModelForm extends AbstractModelBoundFormWidget<I
     interface Driver extends SimpleBeanEditorDriver<InstanceTypeGeneralModel, InstanceTypeGeneralModelForm> {
     }
 
-    TextBoxLabel name = new TextBoxLabel();
-    TextBoxLabel description = new TextBoxLabel();
+    StringValueLabel name = new StringValueLabel();
+    StringValueLabel description = new StringValueLabel();
 
     private final Driver driver = GWT.create(Driver.class);
 

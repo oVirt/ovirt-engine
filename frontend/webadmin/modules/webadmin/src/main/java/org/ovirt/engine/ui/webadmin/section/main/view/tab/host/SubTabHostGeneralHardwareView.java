@@ -11,13 +11,13 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHardwareGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralHardwarePresenter;
-import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberTextBoxLabel;
+import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberValueLabel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Float;
@@ -42,17 +42,17 @@ public class SubTabHostGeneralHardwareView
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
-    TextBoxLabel hardwareManufacturer = new TextBoxLabel();
-    TextBoxLabel hardwareProductName = new TextBoxLabel();
-    TextBoxLabel hardwareSerialNumber = new TextBoxLabel();
-    TextBoxLabel hardwareVersion = new TextBoxLabel();
-    TextBoxLabel hardwareUUID = new TextBoxLabel();
-    TextBoxLabel hardwareFamily = new TextBoxLabel();
-    TextBoxLabel cpuType = new TextBoxLabel();
-    TextBoxLabel cpuModel = new TextBoxLabel();
-    NullableNumberTextBoxLabel<Integer> numberOfSockets = new NullableNumberTextBoxLabel<Integer>(constants.unknown());
-    TextBoxLabel coresPerSocket = new TextBoxLabel();
-    TextBoxLabel threadsPerCore = new TextBoxLabel();
+    StringValueLabel hardwareManufacturer = new StringValueLabel();
+    StringValueLabel hardwareProductName = new StringValueLabel();
+    StringValueLabel hardwareSerialNumber = new StringValueLabel();
+    StringValueLabel hardwareVersion = new StringValueLabel();
+    StringValueLabel hardwareUUID = new StringValueLabel();
+    StringValueLabel hardwareFamily = new StringValueLabel();
+    StringValueLabel cpuType = new StringValueLabel();
+    StringValueLabel cpuModel = new StringValueLabel();
+    NullableNumberValueLabel<Integer> numberOfSockets = new NullableNumberValueLabel<Integer>(constants.unknown());
+    StringValueLabel coresPerSocket = new StringValueLabel();
+    StringValueLabel threadsPerCore = new StringValueLabel();
 
     @UiField(provided = true)
     GeneralFormPanel formPanel;
@@ -135,13 +135,13 @@ public class SubTabHostGeneralHardwareView
                     }
                 };
 
-                TextBoxLabel interfaceName = new TextBoxLabel(
+                StringValueLabel interfaceName = new StringValueLabel(
                         hbaDevice.get(HostHardwareGeneralModel.HbaDeviceKeys.MODEL_NAME));
-                TextBoxLabel interfaceType = new TextBoxLabel(
+                StringValueLabel interfaceType = new StringValueLabel(
                         hbaDevice.get(HostHardwareGeneralModel.HbaDeviceKeys.TYPE));
-                TextBoxLabel interfaceWWNN = new TextBoxLabel(
+                StringValueLabel interfaceWWNN = new StringValueLabel(
                         hbaDevice.get(HostHardwareGeneralModel.HbaDeviceKeys.WWNN));
-                TextBoxLabel portWWPNs = new TextBoxLabel(
+                StringValueLabel portWWPNs = new StringValueLabel(
                         hbaDevice.get(HostHardwareGeneralModel.HbaDeviceKeys.WWNPS));
 
                 FormBuilder hbaFormBuilder = new FormBuilder(hbaFormPanel, 1, 4);

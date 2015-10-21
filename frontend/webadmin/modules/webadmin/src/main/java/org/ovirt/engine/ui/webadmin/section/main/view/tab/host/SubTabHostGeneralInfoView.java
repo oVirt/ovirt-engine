@@ -18,20 +18,18 @@ import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.common.widget.label.BooleanTextBoxLabel;
 import org.ovirt.engine.ui.common.widget.label.EnumTextBoxLabel;
 import org.ovirt.engine.ui.common.widget.label.MemorySizeTextBoxLabel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabelBase;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralInfoPresenter;
 import org.ovirt.engine.ui.webadmin.widget.alert.InLineAlertWidget;
 import org.ovirt.engine.ui.webadmin.widget.alert.InLineAlertWidget.AlertType;
 import org.ovirt.engine.ui.webadmin.widget.label.DetailsTextBoxLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
-import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberTextBoxLabel;
+import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberValueLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.PercentTextBoxLabel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
@@ -40,6 +38,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.ValueLabel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostListModel<Void>, HostGeneralModel>
@@ -52,21 +51,20 @@ public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostL
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Path("IScsiInitiatorName")
-    TextBoxLabel iScsiInitiatorName = new TextBoxLabel();
+    StringValueLabel iScsiInitiatorName = new StringValueLabel();
     PercentTextBoxLabel<Integer> sharedMemory = new PercentTextBoxLabel<Integer>();
     BooleanTextBoxLabel memoryPageSharing = new BooleanTextBoxLabel(constants.active(), constants.inactive());
-    NullableNumberTextBoxLabel<Integer> activeVms = new NullableNumberTextBoxLabel<Integer>();
-    NullableNumberTextBoxLabel<Integer> logicalCores = new NullableNumberTextBoxLabel<Integer>();
-    TextBoxLabel onlineCores = new TextBoxLabel();
-    TextBoxLabel spmPriority = new TextBoxLabel();
-    TextBoxLabel hostedEngineHa = new TextBoxLabel();
+    NullableNumberValueLabel<Integer> activeVms = new NullableNumberValueLabel<Integer>();
+    NullableNumberValueLabel<Integer> logicalCores = new NullableNumberValueLabel<Integer>();
+    StringValueLabel onlineCores = new StringValueLabel();
+    StringValueLabel spmPriority = new StringValueLabel();
+    StringValueLabel hostedEngineHa = new StringValueLabel();
     FullDateTimeLabel bootTime = new FullDateTimeLabel();
-    TextBoxLabel kdumpStatus = new TextBoxLabel();
-    TextBoxLabel selinuxEnforceMode = new TextBoxLabel();
+    StringValueLabel kdumpStatus = new StringValueLabel();
+    StringValueLabel selinuxEnforceMode = new StringValueLabel();
 
     MemorySizeTextBoxLabel<Integer> physicalMemory = new MemorySizeTextBoxLabel<Integer>();
     MemorySizeTextBoxLabel<Integer> usedMemory = new MemorySizeTextBoxLabel<Integer>();
@@ -81,14 +79,14 @@ public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostL
     BooleanTextBoxLabel hostDevicePassthroughSupport = new BooleanTextBoxLabel(constants.enabled(), constants.disabled());
 
     @Ignore
-    DetailsTextBoxLabel<ArrayList<TextBoxLabelBase<Integer>>, Integer> physicalMemoryDetails =
-            new DetailsTextBoxLabel<ArrayList<TextBoxLabelBase<Integer>>, Integer>(constants.total(),
+    DetailsTextBoxLabel<ArrayList<ValueLabel<Integer>>, Integer> physicalMemoryDetails =
+            new DetailsTextBoxLabel<ArrayList<ValueLabel<Integer>>, Integer>(constants.total(),
                     constants.used(),
                     constants.free());
 
     @Ignore
-    DetailsTextBoxLabel<ArrayList<TextBoxLabelBase<Long>>, Long> swapSizeDetails =
-            new DetailsTextBoxLabel<ArrayList<TextBoxLabelBase<Long>>, Long>(constants.total(),
+    DetailsTextBoxLabel<ArrayList<ValueLabel<Long>>, Long> swapSizeDetails =
+            new DetailsTextBoxLabel<ArrayList<ValueLabel<Long>>, Long>(constants.total(),
                     constants.used(),
                     constants.free());
 
@@ -173,11 +171,11 @@ public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostL
 
         automaticLargePage.setValue((VdsTransparentHugePagesState) getDetailModel().getAutomaticLargePage());
 
-        ArrayList<TextBoxLabelBase<Integer>> physicalMemoryDetailsArray =
-                new ArrayList<TextBoxLabelBase<Integer>>(Arrays.asList(physicalMemory, usedMemory, freeMemory));
+        ArrayList<ValueLabel<Integer>> physicalMemoryDetailsArray =
+                new ArrayList<ValueLabel<Integer>>(Arrays.asList(physicalMemory, usedMemory, freeMemory));
 
-        ArrayList<TextBoxLabelBase<Long>> swapSizeDetailsArray =
-                new ArrayList<TextBoxLabelBase<Long>>(Arrays.asList(swapTotal, usedSwap, swapFree));
+        ArrayList<ValueLabel<Long>> swapSizeDetailsArray =
+                new ArrayList<ValueLabel<Long>>(Arrays.asList(swapTotal, usedSwap, swapFree));
 
         physicalMemoryDetails.setValue(physicalMemoryDetailsArray);
         swapSizeDetails.setValue(swapSizeDetailsArray);
