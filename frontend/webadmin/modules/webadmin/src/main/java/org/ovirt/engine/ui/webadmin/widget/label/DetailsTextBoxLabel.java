@@ -2,10 +2,11 @@ package org.ovirt.engine.ui.webadmin.widget.label;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabelBase;
 import org.ovirt.engine.ui.webadmin.widget.renderer.DetailsRenderer;
 
-public class DetailsTextBoxLabel<T extends ArrayList<TextBoxLabelBase<V>>, V> extends TextBoxLabelBase<T> {
+import com.google.gwt.user.client.ui.ValueLabel;
+
+public class DetailsTextBoxLabel<T extends ArrayList<ValueLabel<V>>, V> extends ValueLabel<T> {
 
     public DetailsTextBoxLabel(String... delimiters) {
         super(new DetailsRenderer<V>(delimiters));

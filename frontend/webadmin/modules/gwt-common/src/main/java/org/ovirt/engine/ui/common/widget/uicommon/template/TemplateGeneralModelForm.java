@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
 import com.google.gwt.core.client.GWT;
@@ -17,28 +17,28 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
     interface Driver extends SimpleBeanEditorDriver<TemplateGeneralModel, TemplateGeneralModelForm> {
     }
 
-    TextBoxLabel name = new TextBoxLabel();
-    TextBoxLabel description = new TextBoxLabel();
-    TextBoxLabel hostCluster = new TextBoxLabel();
-    TextBoxLabel definedMemory = new TextBoxLabel();
+    StringValueLabel name = new StringValueLabel();
+    StringValueLabel description = new StringValueLabel();
+    StringValueLabel hostCluster = new StringValueLabel();
+    StringValueLabel definedMemory = new StringValueLabel();
     @Path("OS")
-    TextBoxLabel oS = new TextBoxLabel();
-    TextBoxLabel cpuInfo = new TextBoxLabel();
-    TextBoxLabel graphicsType = new TextBoxLabel();
-    TextBoxLabel defaultDisplayType = new TextBoxLabel();
-    TextBoxLabel origin = new TextBoxLabel();
-    TextBoxLabel priority = new TextBoxLabel();
-    TextBoxLabel usbPolicy = new TextBoxLabel();
-    TextBoxLabel domain = new TextBoxLabel();
-    TextBoxLabel timeZone = new TextBoxLabel();
-    TextBoxLabel quotaName = new TextBoxLabel();
+    StringValueLabel oS = new StringValueLabel();
+    StringValueLabel cpuInfo = new StringValueLabel();
+    StringValueLabel graphicsType = new StringValueLabel();
+    StringValueLabel defaultDisplayType = new StringValueLabel();
+    StringValueLabel origin = new StringValueLabel();
+    StringValueLabel priority = new StringValueLabel();
+    StringValueLabel usbPolicy = new StringValueLabel();
+    StringValueLabel domain = new StringValueLabel();
+    StringValueLabel timeZone = new StringValueLabel();
+    StringValueLabel quotaName = new StringValueLabel();
 
     BooleanLabel isHighlyAvailable;
 
     @Ignore
-    TextBoxLabel monitorCount = new TextBoxLabel();
+    StringValueLabel monitorCount = new StringValueLabel();
     @Ignore
-    TextBoxLabel isStateless = new TextBoxLabel();
+    StringValueLabel isStateless = new StringValueLabel();
 
     private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
@@ -110,8 +110,8 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
         driver.edit(model);
 
         // Required because of type conversion
-        monitorCount.setText(Integer.toString(getModel().getMonitorCount()));
-        isStateless.setText(Boolean.toString(getModel().getIsStateless()));
+        monitorCount.setValue(Integer.toString(getModel().getMonitorCount()));
+        isStateless.setValue(Boolean.toString(getModel().getIsStateless()));
     }
 
 }

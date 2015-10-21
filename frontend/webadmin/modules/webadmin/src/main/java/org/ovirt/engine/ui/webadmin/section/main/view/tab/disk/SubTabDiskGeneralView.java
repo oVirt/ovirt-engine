@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -37,13 +37,13 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
     interface Driver extends SimpleBeanEditorDriver<DiskGeneralModel, SubTabDiskGeneralView> {
     }
 
-    TextBoxLabel alias = new TextBoxLabel();
-    TextBoxLabel description = new TextBoxLabel();
-    TextBoxLabel diskId = new TextBoxLabel();
-    TextBoxLabel lunId = new TextBoxLabel();
-    TextBoxLabel diskProfileName = new TextBoxLabel();
-    TextBoxLabel quotaName = new TextBoxLabel();
-    TextBoxLabel alignment = new TextBoxLabel();
+    StringValueLabel alias = new StringValueLabel();
+    StringValueLabel description = new StringValueLabel();
+    StringValueLabel diskId = new StringValueLabel();
+    StringValueLabel lunId = new StringValueLabel();
+    StringValueLabel diskProfileName = new StringValueLabel();
+    StringValueLabel quotaName = new StringValueLabel();
+    StringValueLabel alignment = new StringValueLabel();
     BooleanLabel wipeAfterDelete = new BooleanLabel(constants.yes(), constants.no());
 
     @UiField(provided = true)

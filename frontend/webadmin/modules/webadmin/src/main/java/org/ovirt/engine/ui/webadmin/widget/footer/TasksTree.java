@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
@@ -40,15 +40,15 @@ public class TasksTree extends AbstractSubTabTree<TaskListModel, Job, Step> {
         panel.setWidth("100%"); //$NON-NLS-1$
 
         addItemToPanel(panel, new Image(getStatusImage(task.getStatus())), "25px"); //$NON-NLS-1$
-        TextBoxLabel descriptionTextBoxLabel = new TextBoxLabel();
+        StringValueLabel descriptionTextBoxLabel = new StringValueLabel();
         descriptionTextBoxLabel.getElement().getStyle().setPaddingRight(5, Unit.PX);
         descriptionTextBoxLabel.getElement().getStyle().setTextOverflow(TextOverflow.ELLIPSIS);
         addTextBoxToPanel(panel, descriptionTextBoxLabel, task.getDescription(), ""); //$NON-NLS-1$
         addValueLabelToPanel(panel, new FullDateTimeLabel(), task.getStartTime(), "150px"); //$NON-NLS-1$
-        addTextBoxToPanel(panel, new TextBoxLabel(), task.getEndTime() == null ? "" : constants.untilEndTime(), "80px"); //$NON-NLS-1$ //$NON-NLS-2$
+        addTextBoxToPanel(panel, new StringValueLabel(), task.getEndTime() == null ? "" : constants.untilEndTime(), "80px"); //$NON-NLS-1$ //$NON-NLS-2$
         addValueLabelToPanel(panel, new FullDateTimeLabel(), task.getEndTime(), "150px"); //$NON-NLS-1$
 
-        WidgetTooltip corrIdTextBoxLabelTooltip = new WidgetTooltip(new TextBoxLabel());
+        WidgetTooltip corrIdTextBoxLabelTooltip = new WidgetTooltip(new StringValueLabel());
         corrIdTextBoxLabelTooltip.setText(constants.correltaionIdEvent());
         corrIdTextBoxLabelTooltip.reconfigure();
 
@@ -103,12 +103,12 @@ public class TasksTree extends AbstractSubTabTree<TaskListModel, Job, Step> {
         panel.setWidth("100%"); //$NON-NLS-1$
 
         addItemToPanel(panel, new Image(getStatusImage(step.getStatus())), "25px"); //$NON-NLS-1$
-        TextBoxLabel descriptionTextBoxLabel = new TextBoxLabel();
+        StringValueLabel descriptionTextBoxLabel = new StringValueLabel();
         descriptionTextBoxLabel.getElement().getStyle().setPaddingRight(5, Unit.PX);
         descriptionTextBoxLabel.getElement().getStyle().setTextOverflow(TextOverflow.ELLIPSIS);
         addTextBoxToPanel(panel, descriptionTextBoxLabel, step.getDescription(), ""); //$NON-NLS-1$
         addValueLabelToPanel(panel, new FullDateTimeLabel(), step.getStartTime(), "150px"); //$NON-NLS-1$
-        addTextBoxToPanel(panel, new TextBoxLabel(), step.getEndTime() == null ? "" : constants.until(), "80px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        addTextBoxToPanel(panel, new StringValueLabel(), step.getEndTime() == null ? "" : constants.until(), "80px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         addValueLabelToPanel(panel, new FullDateTimeLabel(), step.getEndTime(), "150px"); //$NON-NLS-1$
 
         TreeItem treeItem = new TreeItem(panel);

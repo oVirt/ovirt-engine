@@ -9,14 +9,14 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralSoftwarePresenter;
-import org.ovirt.engine.ui.webadmin.widget.label.VersionTextBoxLabel;
+import org.ovirt.engine.ui.webadmin.widget.label.VersionValueLabel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -46,14 +46,14 @@ public class SubTabHostGeneralSoftwareView extends AbstractSubTabFormView<VDS, H
     FormBuilder formBuilder;
 
     @Path("OS")
-    TextBoxLabel oS = new TextBoxLabel();
-    TextBoxLabel kvmVersion = new TextBoxLabel();
-    VersionTextBoxLabel libvirtVersion = new VersionTextBoxLabel();
-    TextBoxLabel spiceVersion = new TextBoxLabel();
-    TextBoxLabel kernelVersion = new TextBoxLabel();
-    VersionTextBoxLabel glusterVersion = new VersionTextBoxLabel();
-    VersionTextBoxLabel vdsmVersion = new VersionTextBoxLabel();
-    VersionTextBoxLabel librbdVersion = new VersionTextBoxLabel();
+    StringValueLabel oS = new StringValueLabel();
+    StringValueLabel kvmVersion = new StringValueLabel();
+    VersionValueLabel libvirtVersion = new VersionValueLabel();
+    StringValueLabel spiceVersion = new StringValueLabel();
+    StringValueLabel kernelVersion = new StringValueLabel();
+    VersionValueLabel glusterVersion = new VersionValueLabel();
+    VersionValueLabel vdsmVersion = new VersionValueLabel();
+    VersionValueLabel librbdVersion = new VersionValueLabel();
 
     @UiField(provided = true)
     @WithElementId

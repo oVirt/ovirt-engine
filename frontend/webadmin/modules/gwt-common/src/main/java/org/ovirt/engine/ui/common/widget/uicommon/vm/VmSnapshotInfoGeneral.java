@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 
 public class VmSnapshotInfoGeneral extends GeneralFormPanel {
 
@@ -16,9 +16,9 @@ public class VmSnapshotInfoGeneral extends GeneralFormPanel {
 
     private final FormBuilder formBuilder;
 
-    private TextBoxLabel definedMemory = new TextBoxLabel();
-    private TextBoxLabel minAllocatedMemory = new TextBoxLabel();
-    private TextBoxLabel cpuInfo = new TextBoxLabel();
+    private StringValueLabel definedMemory = new StringValueLabel();
+    private StringValueLabel minAllocatedMemory = new StringValueLabel();
+    private StringValueLabel cpuInfo = new StringValueLabel();
 
     public VmSnapshotInfoGeneral() {
 

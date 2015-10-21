@@ -2,7 +2,9 @@ package org.ovirt.engine.ui.common.widget.label;
 
 import org.ovirt.engine.ui.common.widget.renderer.BooleanRenderer;
 
-public class BooleanTextBoxLabel extends TextBoxLabelBase<Boolean> {
+import com.google.gwt.user.client.ui.ValueLabel;
+
+public class BooleanTextBoxLabel extends ValueLabel<Boolean> {
 
     public BooleanTextBoxLabel() {
         super(new BooleanRenderer());

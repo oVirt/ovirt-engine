@@ -5,13 +5,13 @@ import org.ovirt.engine.core.common.businessentities.Erratum.ErrataSeverity;
 import org.ovirt.engine.core.common.businessentities.Erratum.ErrataType;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.label.EnumTextBoxLabel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
-import org.ovirt.engine.ui.webadmin.widget.label.TextBoxListLabel;
+import org.ovirt.engine.ui.webadmin.widget.label.ValueListLabel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -23,7 +23,7 @@ public class ErrataDetailModelForm extends AbstractModelBoundFormWidget<EntityMo
     }
 
     @Path("entity.id")
-    TextBoxLabel id = new TextBoxLabel();
+    StringValueLabel id = new StringValueLabel();
     @Path("entity.issued")
     FullDateTimeLabel issued = new FullDateTimeLabel(false);
     @Path("entity.type")
@@ -31,13 +31,13 @@ public class ErrataDetailModelForm extends AbstractModelBoundFormWidget<EntityMo
     @Path("entity.severity")
     EnumTextBoxLabel<ErrataSeverity> severity = new EnumTextBoxLabel<>();
     @Path("entity.description")
-    TextBoxLabel description = new TextBoxLabel();
+    StringValueLabel description = new StringValueLabel();
     @Path("entity.solution")
-    TextBoxLabel solution = new TextBoxLabel();
+    StringValueLabel solution = new StringValueLabel();
     @Path("entity.summary")
-    TextBoxLabel summary = new TextBoxLabel();
+    StringValueLabel summary = new StringValueLabel();
     @Path("entity.packages")
-    TextBoxListLabel<String> packages = new TextBoxListLabel<String>(", "); //$NON-NLS-1$
+    ValueListLabel<String> packages = new ValueListLabel<String>(", "); //$NON-NLS-1$
     private final Driver driver = GWT.create(Driver.class);
 
     private EntityModel<Erratum> currentModel;

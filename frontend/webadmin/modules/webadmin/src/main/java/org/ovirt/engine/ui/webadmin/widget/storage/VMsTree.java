@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -41,9 +41,9 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
         panel.setWidth("100%"); //$NON-NLS-1$
 
         addItemToPanel(panel, new Image(resources.vmImage()), "25px"); //$NON-NLS-1$
-        addTextBoxToPanel(panel, new TextBoxLabel(), vm.getName(), ""); //$NON-NLS-1$
-        addTextBoxToPanel(panel, new TextBoxLabel(), String.valueOf(vm.getDiskMap().size()), "80px"); //$NON-NLS-1$
-        addTextBoxToPanel(panel, new TextBoxLabel(), vm.getVmtName(), "160px"); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new StringValueLabel(), vm.getName(), ""); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new StringValueLabel(), String.valueOf(vm.getDiskMap().size()), "80px"); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new StringValueLabel(), vm.getVmtName(), "160px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), vm.getDiskSize(), "110px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), vm.getActualDiskWithSnapshotsSize(), "110px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new FullDateTimeLabel(), vm.getVmCreationDate(), "140px"); //$NON-NLS-1$
@@ -108,9 +108,9 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
             String name = disk.getDescription();
 
             addItemToPanel(panel, new Image(image), "25px"); //$NON-NLS-1$
-            addTextBoxToPanel(panel, new TextBoxLabel(), name, ""); //$NON-NLS-1$
-            addTextBoxToPanel(panel, new TextBoxLabel(), "", "80px"); //$NON-NLS-1$ //$NON-NLS-2$
-            addTextBoxToPanel(panel, new TextBoxLabel(), "", "160px"); //$NON-NLS-1$ //$NON-NLS-2$
+            addTextBoxToPanel(panel, new StringValueLabel(), name, ""); //$NON-NLS-1$
+            addTextBoxToPanel(panel, new StringValueLabel(), "", "80px"); //$NON-NLS-1$ //$NON-NLS-2$
+            addTextBoxToPanel(panel, new StringValueLabel(), "", "160px"); //$NON-NLS-1$ //$NON-NLS-2$
             addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "110px"); //$NON-NLS-1$
             addValueLabelToPanel(panel, new DiskSizeLabel<Double>(SizeConverter.SizeUnit.GiB), disk.getActualSize(), "110px"); //$NON-NLS-1$
             addValueLabelToPanel(panel, new FullDateTimeLabel(), disk.getCreationDate(), "140px"); //$NON-NLS-1$
@@ -141,9 +141,9 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
             String name = disk.getDiskAlias();
 
             addItemToPanel(panel, new Image(image), "25px"); //$NON-NLS-1$
-            addTextBoxToPanel(panel, new TextBoxLabel(), name, ""); //$NON-NLS-1$
-            addTextBoxToPanel(panel, new TextBoxLabel(), "", "80px"); //$NON-NLS-1$ //$NON-NLS-2$
-            addTextBoxToPanel(panel, new TextBoxLabel(), "", "160px"); //$NON-NLS-1$ //$NON-NLS-2$
+            addTextBoxToPanel(panel, new StringValueLabel(), name, ""); //$NON-NLS-1$
+            addTextBoxToPanel(panel, new StringValueLabel(), "", "80px"); //$NON-NLS-1$ //$NON-NLS-2$
+            addTextBoxToPanel(panel, new StringValueLabel(), "", "160px"); //$NON-NLS-1$ //$NON-NLS-2$
 
             boolean isDiskImage = disk.getDiskStorageType() == DiskStorageType.IMAGE;
             Double actualSize =

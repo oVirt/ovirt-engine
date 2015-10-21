@@ -5,7 +5,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
 import com.google.gwt.core.client.GWT;
@@ -18,14 +18,14 @@ public class VmGuestInfoModelForm extends AbstractModelBoundFormWidget<VmGuestIn
 
     private final Driver driver = GWT.create(Driver.class);
 
-    TextBoxLabel guestUserName = new TextBoxLabel();
-    TextBoxLabel guestOsArch = new TextBoxLabel();
-    TextBoxLabel guestOsType = new TextBoxLabel();
-    TextBoxLabel guestOsNamedVersion = new TextBoxLabel();
-    TextBoxLabel guestOsKernelVersion = new TextBoxLabel();
-    TextBoxLabel guestOsTimezone = new TextBoxLabel();
-    TextBoxLabel consoleUserName = new TextBoxLabel();
-    TextBoxLabel clientIp = new TextBoxLabel();
+    StringValueLabel guestUserName = new StringValueLabel();
+    StringValueLabel guestOsArch = new StringValueLabel();
+    StringValueLabel guestOsType = new StringValueLabel();
+    StringValueLabel guestOsNamedVersion = new StringValueLabel();
+    StringValueLabel guestOsKernelVersion = new StringValueLabel();
+    StringValueLabel guestOsTimezone = new StringValueLabel();
+    StringValueLabel consoleUserName = new StringValueLabel();
+    StringValueLabel clientIp = new StringValueLabel();
 
     private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 

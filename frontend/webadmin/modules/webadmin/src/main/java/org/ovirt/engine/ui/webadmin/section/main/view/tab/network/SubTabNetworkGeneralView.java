@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
 import org.ovirt.engine.ui.common.widget.label.GuidLabel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EmptyValueRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkGeneralModel;
@@ -45,13 +45,13 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
-    TextBoxLabel name = new TextBoxLabel();
+    StringValueLabel name = new StringValueLabel();
     GuidLabel id = new GuidLabel();
-    TextBoxLabel description = new TextBoxLabel();
+    StringValueLabel description = new StringValueLabel();
     BooleanLabel vmNetwork = new BooleanLabel(constants.trueVmNetwork(), constants.falseVmNetwork());
     ValueLabel<Integer> vlan = new ValueLabel<Integer>(new EmptyValueRenderer<Integer>(constants.noneVlan()));
     ValueLabel<Integer> mtu = new ValueLabel<Integer>(new MtuRenderer());
-    TextBoxLabel externalId = new TextBoxLabel();
+    StringValueLabel externalId = new StringValueLabel();
 
     @UiField(provided = true)
     @WithElementId

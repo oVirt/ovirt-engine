@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunSelectionColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractScrollableTextColumn;
@@ -151,14 +151,13 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
     }
 
     private void additemToRootNodePanel(HorizontalPanel panel,
-            TextBoxLabel item,
+            StringValueLabel item,
             String text,
             String width,
             TextAlignment align) {
         item.getElement().getStyle().setBackgroundColor("transparent"); //$NON-NLS-1$
         item.getElement().getStyle().setColor("black"); //$NON-NLS-1$
-        item.setAlignment(align);
-        item.setText(text);
+        item.setValue(text);
 
         panel.add(item);
         panel.setCellWidth(item, width);
@@ -168,9 +167,9 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
     protected TreeItem createRootNode(SanTargetModel rootModel) {
         HorizontalPanel panel = new HorizontalPanel();
 
-        additemToRootNodePanel(panel, new TextBoxLabel(), rootModel.getName(), "", TextAlignment.LEFT); //$NON-NLS-1$
-        additemToRootNodePanel(panel, new TextBoxLabel(), rootModel.getAddress(), "95px", TextAlignment.LEFT); //$NON-NLS-1$
-        additemToRootNodePanel(panel, new TextBoxLabel(), rootModel.getPort(), "60px", TextAlignment.LEFT); //$NON-NLS-1$
+        additemToRootNodePanel(panel, new StringValueLabel(), rootModel.getName(), "", TextAlignment.LEFT); //$NON-NLS-1$
+        additemToRootNodePanel(panel, new StringValueLabel(), rootModel.getAddress(), "95px", TextAlignment.LEFT); //$NON-NLS-1$
+        additemToRootNodePanel(panel, new StringValueLabel(), rootModel.getPort(), "60px", TextAlignment.LEFT); //$NON-NLS-1$
         addLoginButton(panel, rootModel);
 
         panel.setSpacing(1);

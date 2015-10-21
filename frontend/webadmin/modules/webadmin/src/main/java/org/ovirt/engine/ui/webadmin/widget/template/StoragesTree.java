@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.EnumLabel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -48,7 +48,7 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
         StorageDomain storage = storageDomainModel.getStorageDomain();
 
         addItemToPanel(panel, new Image(resources.storageImage()), "25px"); //$NON-NLS-1$
-        addTextBoxToPanel(panel, new TextBoxLabel(), storage.getStorageName(), ""); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new StringValueLabel(), storage.getStorageName(), ""); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<StorageDomainType>(), storage.getStorageDomainType(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<StorageDomainSharedStatus>(), storage.getStorageDomainSharedStatus(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getAvailableDiskSize(), "120px"); //$NON-NLS-1$
@@ -69,7 +69,7 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
         DiskImage disk = (DiskImage) diskModel.getDisk();
 
         addItemToPanel(panel, new Image(resources.diskImage()), "30px"); //$NON-NLS-1$
-        addTextBoxToPanel(panel, new TextBoxLabel(), disk.getDiskAlias(), ""); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new StringValueLabel(), disk.getDiskAlias(), ""); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<ImageStatus>(), disk.getImageStatus(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<VolumeType>(), disk.getVolumeType(), "120px"); //$NON-NLS-1$

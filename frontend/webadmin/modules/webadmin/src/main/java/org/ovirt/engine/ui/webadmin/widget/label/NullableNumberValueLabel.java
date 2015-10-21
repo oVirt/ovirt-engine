@@ -1,20 +1,20 @@
 package org.ovirt.engine.ui.webadmin.widget.label;
 
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabelBase;
 import org.ovirt.engine.ui.common.widget.renderer.NullableNumberRenderer;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.user.client.ui.ValueLabel;
 
-public class NullableNumberTextBoxLabel<T extends Number> extends TextBoxLabelBase<T> {
+public class NullableNumberValueLabel<T extends Number> extends ValueLabel<T> {
 
-    public NullableNumberTextBoxLabel() {
+    public NullableNumberValueLabel() {
         super(new NullableNumberRenderer());
     }
 
-    public NullableNumberTextBoxLabel(String nullLabel) {
+    public NullableNumberValueLabel(String nullLabel) {
         super(new NullableNumberRenderer(nullLabel));
     }
 
-    public NullableNumberTextBoxLabel(NumberFormat format) {
+    public NullableNumberValueLabel(NumberFormat format) {
         super(new NullableNumberRenderer(format));
     }
 

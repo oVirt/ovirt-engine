@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
 import org.ovirt.engine.ui.common.widget.label.ClusterTypeLabel;
 import org.ovirt.engine.ui.common.widget.label.ResiliencePolicyLabel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
@@ -22,20 +22,20 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
     interface Driver extends SimpleBeanEditorDriver<ClusterGeneralModel, ClusterGeneralModelForm> {
     }
 
-    TextBoxLabel name = new TextBoxLabel();
-    TextBoxLabel description = new TextBoxLabel();
-    TextBoxLabel dataCenterName = new TextBoxLabel();
-    TextBoxLabel cpuType = new TextBoxLabel();
+    StringValueLabel name = new StringValueLabel();
+    StringValueLabel description = new StringValueLabel();
+    StringValueLabel dataCenterName = new StringValueLabel();
+    StringValueLabel cpuType = new StringValueLabel();
     BooleanLabel cpuThreads;
     PercentLabel<Integer> memoryOverCommit;
     ResiliencePolicyLabel resiliencePolicy;
     ClusterTypeLabel clusterType;
-    TextBoxLabel noOfVolumesTotal = new TextBoxLabel();
-    TextBoxLabel noOfVolumesUp = new TextBoxLabel();
-    TextBoxLabel noOfVolumesDown = new TextBoxLabel();
-    TextBoxLabel compatibilityVersion = new TextBoxLabel();
-    TextBoxLabel emulatedMachine = new TextBoxLabel();
-    TextBoxLabel numberOfVms = new TextBoxLabel();
+    StringValueLabel noOfVolumesTotal = new StringValueLabel();
+    StringValueLabel noOfVolumesUp = new StringValueLabel();
+    StringValueLabel noOfVolumesDown = new StringValueLabel();
+    StringValueLabel compatibilityVersion = new StringValueLabel();
+    StringValueLabel emulatedMachine = new StringValueLabel();
+    StringValueLabel numberOfVms = new StringValueLabel();
 
     private final Driver driver = GWT.create(Driver.class);
 
