@@ -3,13 +3,11 @@ package org.ovirt.engine.api.restapi.resource;
 import org.ovirt.engine.api.model.BaseDevice;
 import org.ovirt.engine.api.model.BaseResources;
 import org.ovirt.engine.api.resource.CreationResource;
-import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendReadOnlyDeviceResource<D extends BaseDevice, C extends BaseResources, Q extends IVdcQueryable>
-        extends AbstractBackendActionableResource<D, Q>
-        implements ReadOnlyDeviceResource<D> {
+        extends AbstractBackendActionableResource<D, Q> {
 
     protected AbstractBackendReadOnlyDevicesResource<D, C, Q> collection;
 
@@ -22,7 +20,6 @@ public class BackendReadOnlyDeviceResource<D extends BaseDevice, C extends BaseR
         this.collection = collection;
     }
 
-    @Override
     public D get() {
         Q entity = collection.lookupEntity(guid);
         if (entity == null) {
@@ -31,7 +28,6 @@ public class BackendReadOnlyDeviceResource<D extends BaseDevice, C extends BaseR
         return addLinks(populate(map(entity), entity));
     }
 
-    @Override
     public CreationResource getCreationResource(String ids) {
         return inject(new BackendCreationResource(ids));
     }
