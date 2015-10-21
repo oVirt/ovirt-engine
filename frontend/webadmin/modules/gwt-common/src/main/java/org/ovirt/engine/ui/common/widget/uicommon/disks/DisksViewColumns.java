@@ -416,8 +416,9 @@ public class DisksViewColumns {
         AbstractTextColumn<Disk> column = new AbstractTextColumn<Disk>() {
             @Override
             public String getValue(Disk disk) {
-                return disk.getDiskStorageType() == DiskStorageType.IMAGE ?
-                        ((DiskImage) disk).getImageId().toString() : null;
+                return disk.getDiskStorageType() == DiskStorageType.IMAGE ||
+                        disk.getDiskStorageType() == DiskStorageType.CINDER
+                                ? ((DiskImage) disk).getImageId().toString() : null;
             }
         };
 
