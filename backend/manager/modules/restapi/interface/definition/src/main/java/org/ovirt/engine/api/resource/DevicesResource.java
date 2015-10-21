@@ -17,6 +17,7 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -27,19 +28,14 @@ import org.ovirt.engine.api.model.BaseDevice;
 import org.ovirt.engine.api.model.BaseResources;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface DevicesResource<D extends BaseDevice, C extends BaseResources>
-    extends ReadOnlyDevicesResource<D, C> {
+public interface DevicesResource<D extends BaseDevice, C extends BaseResources> {
+    @GET
+    C list();
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     Response add(D device);
 
-    // Note the departure from the usual convention of naming the path
-    // parameter as "id". This is to work-around a RESTEasy bug in handling
-    // covariant return types - in this case, we've narrowed the return
-    // type of the overridden getDeviceResource() method from the original
-    // ReadOnlyDeviceResource to the DeviceResource sub-interface.
-    @Path("{iden}")
-    @Override
-    DeviceResource<D> getDeviceResource(@PathParam("iden") String id);
+    @Path("{id}")
+    DeviceResource<D> getDeviceResource(@PathParam("id") String id);
 }

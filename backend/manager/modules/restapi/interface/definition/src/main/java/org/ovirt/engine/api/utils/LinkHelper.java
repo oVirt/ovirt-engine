@@ -188,6 +188,7 @@ import org.ovirt.engine.api.resource.NetworkAttachmentResource;
 import org.ovirt.engine.api.resource.NetworkAttachmentsResource;
 import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.api.resource.NetworksResource;
+import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.api.resource.OperatingSystemResource;
 import org.ovirt.engine.api.resource.OperatingSystemsResource;
 import org.ovirt.engine.api.resource.PermissionResource;
@@ -201,8 +202,6 @@ import org.ovirt.engine.api.resource.QuotaResource;
 import org.ovirt.engine.api.resource.QuotaStorageLimitResource;
 import org.ovirt.engine.api.resource.QuotaStorageLimitsResource;
 import org.ovirt.engine.api.resource.QuotasResource;
-import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
-import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
 import org.ovirt.engine.api.resource.RolesResource;
 import org.ovirt.engine.api.resource.SchedulingPoliciesResource;
 import org.ovirt.engine.api.resource.SchedulingPolicyResource;
@@ -430,7 +429,7 @@ public class LinkHelper {
         map = new ParentToCollectionMap(DeviceResource.class, DevicesResource.class);
         map.add(DeviceResource.class, DevicesResource.class, Vm.class);
         map.add(DeviceResource.class, DevicesResource.class, Template.class);
-        map.add(ReadOnlyDeviceResource.class, ReadOnlyDevicesResource.class, Template.class);
+        map.add(NicResource.class, DevicesResource.class, Template.class);
         map.add(VmNicResource.class, DevicesResource.class, Vm.class);
         TYPES.put(Nic.class, map);
 
