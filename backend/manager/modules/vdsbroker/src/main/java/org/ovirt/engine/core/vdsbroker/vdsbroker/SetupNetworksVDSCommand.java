@@ -112,8 +112,9 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
 
             iface.setVdsId(host.getId());
             VdsNetworkInterface baseNic = calculateBaseNic.getBaseNic(iface);
-            NetworkAttachment networkAttachment =
+            NetworkAttachment networkAttachment = baseNic == null ? null :
                 networkAttachmentDao.getNetworkAttachmentByNicIdAndNetworkId(baseNic.getId(), network.getId());
+
             if (hostNetworkQosSupported && NetworkUtils.qosConfiguredOnInterface(networkAttachment, network)) {
                 HostNetworkQos hostNetworkQos = effectiveHostNetworkQos.getQos(networkAttachment, network);
                 new HostNetworkQosMapper(opts).serialize(hostNetworkQos);
