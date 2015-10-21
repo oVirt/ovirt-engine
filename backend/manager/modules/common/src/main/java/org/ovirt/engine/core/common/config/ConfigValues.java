@@ -2271,6 +2271,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     InitialSizeSparseDiskSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    ImportVmFromExternalProviderSupported,
+
     Invalid
 
 }

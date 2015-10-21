@@ -18,6 +18,7 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.ConvertVmParameters;
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -86,6 +88,10 @@ implements QuotaStorageDependent {
         }
 
         if (getVdsId() != null && !validate(validateRequestedProxyHost())) {
+            return false;
+        }
+
+        if (Guid.isNullOrEmpty(getVdsId()) && !validate(validateEligibleProxyHostExists())) {
             return false;
         }
 
@@ -151,6 +157,11 @@ implements QuotaStorageDependent {
             return new ValidationResult(EngineMessage.VDS_DOES_NOT_EXIST);
         }
 
+        if (!isHostInSupportedClusterForProxyHost(getVds())) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOST_CANNOT_BE_PROXY_FOR_IMPORT_VM,
+                    String.format("$vdsName %s", getVdsName()));
+        }
+
         if (!getStoragePoolId().equals(getVds().getStoragePoolId())) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VDS_NOT_IN_DEST_STORAGE_POOL);
         }
@@ -160,6 +171,21 @@ implements QuotaStorageDependent {
         }
 
         return ValidationResult.VALID;
+    }
+
+    private ValidationResult validateEligibleProxyHostExists() {
+        for (VDS host : getVdsDao().getAllForStoragePoolAndStatus(getStoragePoolId(), VDSStatus.Up)) {
+            if (isHostInSupportedClusterForProxyHost(host)) {
+                return ValidationResult.VALID;
+            }
+        }
+
+        return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NO_HOST_CAN_BE_PROXY_FOR_IMPORT_VM,
+                String.format("$storagePoolName %s", getStoragePoolName()));
+    }
+
+    private boolean isHostInSupportedClusterForProxyHost(VDS host) {
+        return FeatureSupported.importVmFromExternalProvider(host.getVdsGroupCompatibilityVersion());
     }
 
     @Override

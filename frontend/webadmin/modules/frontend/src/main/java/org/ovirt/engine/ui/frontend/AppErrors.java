@@ -3828,11 +3828,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Some of the host still use xmlrpc protocol which is not supported by cluster 3.6 or higher")
     String ACTION_TYPE_FAILED_WRONG_PROTOCOL_FOR_CLUSTER_VERSION();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Host ${vdsName} cannot serve as proxy. Verify its cluster architecture and compatibility version are supported.")
+    @DefaultStringValue("Cannot ${action} ${type}. Host ${vdsName} cannot serve as proxy. Verify its cluster compatibility version is supported.")
     String ACTION_TYPE_FAILED_HOST_CANNOT_BE_PROXY_FOR_IMPORT_VM();
 
     @DefaultStringValue("Cannot ${action} ${type}. No Host in Data Center ${storagePoolName} can serve as proxy.")
     String ACTION_TYPE_FAILED_NO_HOST_CAN_BE_PROXY_FOR_IMPORT_VM();
+
     @DefaultStringValue("Network ${networkName} is attached to bond ${BondName}. VM networks cannot be attached to bonds in mode 0, 5 or 6.")
     String INVALID_BOND_MODE_FOR_BOND_WITH_VM_NETWORK();
 
