@@ -130,7 +130,12 @@ public class ExtensionsToolExecutor {
         for(File f : files) {
             log.debug("Loading extension file '{}'", f.getName());
             try {
-                loadedExtensions.add(extensionsManager.load(f));
+                String name = extensionsManager.load(f);
+                if (name == null) {
+                    log.debug("Extension file '{}' disabled", f.getName());
+                } else {
+                    loadedExtensions.add(name);
+                }
             } catch (Exception ex) {
                 log.error("Extension '{}' load failed (ignored): {}", f.getName(), ex.getMessage());
                 log.debug("Exception:", ex);
