@@ -5,11 +5,17 @@ import java.util.HashMap;
 public enum ArchitectureType implements Identifiable {
 
     undefined(0),
+    /* Host & Guest architecture */
     x86_64(1),
+    /* Host & Guest architecture */
     ppc64(2),
+    /* Guest architecture */
     ppc(3),
+    /* Guest architecture */
     x86(4),
+    /* Guest architecture */
     ppc64le(5),
+    /* Guest architecture */
     ppcle(6);
 
     private int value;
