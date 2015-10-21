@@ -8,7 +8,6 @@ import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArgumen
 import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ACTION_EDIT;
 import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ACTION_LIST;
 import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ACTION_VALIDATE;
-import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ARG_ADD_PERMISSIONS;
 import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ARG_CHANGE_PASSWORD_MSG;
 import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ARG_CONFIG_FILE;
 import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ARG_DOMAIN;
@@ -73,8 +72,8 @@ public class ManageDomains {
     private final String INFO_ABOUT_NOT_ADDING_PERMISSIONS =
             "The domain %1$s has been added to the engine as an authentication source but no users from that domain"
             + " have been granted permissions within the oVirt Manager.%n"
-            + "Users from this domain can be granted permissions by editing the domain using action edit and"
-            +" specifying --add-permissions or from the Web administration interface logging in as admin@internal user.";
+            + "Users from this domain can be granted permissions from the Web administration interface logging in as "
+            + "admin@internal user.";
 
     private final String SERVICE_RESTART_MESSAGE =
             "oVirt Engine restart is required in order for the changes to take place (service ovirt-engine restart).";
@@ -545,19 +544,11 @@ public class ManageDomains {
     }
 
     private void printSuccessMessage(String domainName, String action) {
-        if (args.containsKey(ARG_ADD_PERMISSIONS)) {
-            System.out.print(String.format(SUCCESS_MESSAGE_FOR_ACTION_WITH_ADD_PERMISSIONS, "added", domainName));
-        }
         System.out.println(SERVICE_RESTART_MESSAGE);
     }
 
     private void handleAddPermissions(String domainName, String userName, String userId) {
-        if (args.containsKey(ARG_ADD_PERMISSIONS)) {
-            updatePermissionsTable(userName, domainName, userId);
-        } else
-        if (!userHasPermissions(userName, domainName)) {
-            System.out.println(String.format(INFO_ABOUT_NOT_ADDING_PERMISSIONS, domainName));
-        }
+        System.out.println(String.format(INFO_ABOUT_NOT_ADDING_PERMISSIONS, domainName));
     }
 
     private ManageDomainsResult updatePermissionsTable(String userName, String domainName,

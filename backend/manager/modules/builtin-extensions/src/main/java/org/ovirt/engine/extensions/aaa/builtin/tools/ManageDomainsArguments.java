@@ -30,11 +30,6 @@ public class ManageDomainsArguments {
     public static final String ACTION_VALIDATE = "validate";
 
     /**
-     * Add permissions
-     */
-    public static final String ARG_ADD_PERMISSIONS = "add-permissions";
-
-    /**
      * Change password message
      */
     public static final String ARG_CHANGE_PASSWORD_MSG = "change-password-msg";

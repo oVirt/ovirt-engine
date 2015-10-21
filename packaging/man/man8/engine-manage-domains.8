@@ -23,12 +23,12 @@ Available actions:
 .PP
 .B Add domain
 .RS 4
-engine-manage-domains add --domain=\fIDOMAIN\fR --provider=\fIPROVIDER\fR --user=\fIUSER\fR  [--add-permissions] [--config-file=\fICFG_FILE\fR] [--ldap-servers=\fISERVERS\fR] [--resolve-kdc] [--password-file=\fIPASS_FILE\fR] [--change-password-msg]
+engine-manage-domains add --domain=\fIDOMAIN\fR --provider=\fIPROVIDER\fR --user=\fIUSER\fR [--config-file=\fICFG_FILE\fR] [--ldap-servers=\fISERVERS\fR] [--resolve-kdc] [--password-file=\fIPASS_FILE\fR] [--change-password-msg]
 .RE
 .PP
 .B Edit domain
 .RS 4
-engine-manage-domains edit --domain=\fIDOMAIN\fR [--provider=\fIPROVIDER\fR] [--user=\fIUSER\fR]  [--add-permissions] [--config-file=\fICFG_FILE\fR] [--ldap-servers=\fISERVERS\fR] [--resolve-kdc] [--password-file=\fIPASS_FILE\fR] [--change-password-msg]
+engine-manage-domains edit --domain=\fIDOMAIN\fR [--provider=\fIPROVIDER\fR] [--user=\fIUSER\fR] [--config-file=\fICFG_FILE\fR] [--ldap-servers=\fISERVERS\fR] [--resolve-kdc] [--password-file=\fIPASS_FILE\fR] [--change-password-msg]
 .RE
 .PP
 .B Delete domain
@@ -46,11 +46,6 @@ engine-manage-domains validate [--report] [--config-file=\fICFG_FILE\fR]
 engine-manage-domains list [--config-file=\fICFG_FILE\fR]
 .RE
 .SH OPTIONS
-.PP
-\fB\-\-add\-permissions\fR
-.RS 4
-Add engine superuser permissions to the user.
-.RE
 .PP
 \fB\-\-change\-password\-msg\fR
 .RS 4
