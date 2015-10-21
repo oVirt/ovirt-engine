@@ -23,7 +23,7 @@ public class BackendTemplateNicResourceTest
     private static final Guid NIC_ID = GUIDS[1];
 
     public BackendTemplateNicResourceTest() {
-        super((BackendTemplateNicResource) getCollection().getDeviceResource(NIC_ID.toString()));
+        super((BackendTemplateNicResource) getCollection().getNicResource(NIC_ID.toString()));
     }
 
     private static BackendTemplateNicsResource getCollection() {

@@ -4,8 +4,6 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.BaseDevice;
 import org.ovirt.engine.api.model.BaseResources;
-import org.ovirt.engine.api.resource.DeviceResource;
-import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -15,8 +13,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendDevicesResource<D extends BaseDevice, C extends BaseResources, Q extends IVdcQueryable>
-        extends AbstractBackendReadOnlyDevicesResource<D, C, Q>
-        implements DevicesResource<D, C> {
+        extends AbstractBackendReadOnlyDevicesResource<D, C, Q> {
 
     protected VdcActionType addAction;
     protected VdcActionType updateType;
@@ -35,23 +32,11 @@ public abstract class AbstractBackendDevicesResource<D extends BaseDevice, C ext
         this.updateType = updateType;
     }
 
-    @Override
     public Response add(D device) {
         validateParameters(device, getRequiredAddFields());
         return performCreate(addAction,
                                getAddParameters(map(device), device),
                                getEntityIdResolver(device.getName()));
-    }
-
-    @Override
-    public DeviceResource<D> getDeviceResource(String id) {
-        return inject(new BackendDeviceResource<D, C, Q>(modelType,
-                                                         entityType,
-                                                         asGuidOr404(id),
-                                                         this,
-                                                         updateType,
-                                                         getUpdateParametersProvider(),
-                                                         getRequiredUpdateFields()));
     }
 
     public EntityIdResolver<Guid> getEntityIdResolver(String name) {

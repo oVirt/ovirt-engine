@@ -1,10 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import org.ovirt.engine.api.model.Nic;
-import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.resource.DeviceResource;
-import org.ovirt.engine.api.resource.DevicesResource;
+import org.ovirt.engine.api.resource.TemplateNicsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -16,7 +15,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplateNicsResource
             extends BackendNicsResource
-            implements DevicesResource<Nic, Nics>{
+            implements TemplateNicsResource {
 
     public BackendTemplateNicsResource(Guid parentId) {
         super(parentId,
@@ -45,7 +44,7 @@ public class BackendTemplateNicsResource
     }
 
     @Override
-    public DeviceResource<Nic> getDeviceResource(String id) {
+    public DeviceResource<Nic> getNicResource(String id) {
         return inject(
             new BackendTemplateNicResource(
                 parentId,

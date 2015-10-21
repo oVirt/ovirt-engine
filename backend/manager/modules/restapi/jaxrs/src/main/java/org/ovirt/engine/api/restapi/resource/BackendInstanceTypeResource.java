@@ -1,18 +1,14 @@
 package org.ovirt.engine.api.restapi.resource;
 
-
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.InstanceType;
-import org.ovirt.engine.api.model.Nic;
-import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.VirtioScsi;
 import org.ovirt.engine.api.resource.CreationResource;
-import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.api.resource.GraphicsConsolesResource;
+import org.ovirt.engine.api.resource.InstanceTypeNicsResource;
 import org.ovirt.engine.api.resource.InstanceTypeResource;
 import org.ovirt.engine.api.resource.WatchdogsResource;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
@@ -83,7 +79,7 @@ public class BackendInstanceTypeResource
     }
 
     @Override
-    public DevicesResource<Nic, Nics> getNicsResource() {
+    public InstanceTypeNicsResource getNicsResource() {
         return inject(new BackendInstanceTypeNicsResource(guid));
     }
 

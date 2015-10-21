@@ -6,7 +6,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Nic;
-import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -88,16 +87,10 @@ public class BackendTemplateNicsResourceTest
     }
 
     @Test
-    public void testSubResourceLocator() throws Exception {
-        control.replay();
-        assertTrue(collection.getDeviceResource(GUIDS[0].toString()) instanceof NicResource);
-    }
-
-    @Test
     public void testSubResourceLocatorBadGuid() throws Exception {
         control.replay();
         try {
-            collection.getDeviceResource("foo");
+            collection.getNicResource("foo");
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyNotFoundException(wae);

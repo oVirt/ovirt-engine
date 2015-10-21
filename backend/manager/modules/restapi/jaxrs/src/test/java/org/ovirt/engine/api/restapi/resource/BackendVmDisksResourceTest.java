@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -15,7 +14,6 @@ import org.ovirt.engine.api.model.LogicalUnits;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
-import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
@@ -518,16 +516,10 @@ public class BackendVmDisksResourceTest
     }
 
     @Test
-    public void testSubResourceLocator() throws Exception {
-        control.replay();
-        assertTrue(collection.getDeviceResource(GUIDS[0].toString()) instanceof VmDiskResource);
-    }
-
-    @Test
     public void testSubResourceLocatorBadGuid() throws Exception {
         control.replay();
         try {
-            collection.getDeviceResource("foo");
+            collection.getDiskResource("foo");
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyNotFoundException(wae);

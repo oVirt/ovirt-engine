@@ -1,14 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Nic;
-import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -103,23 +101,6 @@ public class BackendNicsResourceTest
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
             verifyIncompleteException(wae, "Nic", "add", "name");
-        }
-    }
-
-    @Test
-    public void testSubResourceLocator() throws Exception {
-        control.replay();
-        assertTrue(collection.getDeviceResource(GUIDS[0].toString()) instanceof NicResource);
-    }
-
-    @Test
-    public void testSubResourceLocatorBadGuid() throws Exception {
-        control.replay();
-        try {
-            collection.getDeviceResource("foo");
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
         }
     }
 

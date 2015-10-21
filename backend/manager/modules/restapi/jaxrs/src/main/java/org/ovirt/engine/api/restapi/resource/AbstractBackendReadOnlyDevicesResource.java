@@ -6,16 +6,13 @@ import java.util.List;
 import org.ovirt.engine.api.model.BaseDevice;
 import org.ovirt.engine.api.model.BaseResources;
 import org.ovirt.engine.api.model.Vm;
-import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
-import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendReadOnlyDevicesResource<D extends BaseDevice, C extends BaseResources, Q extends IVdcQueryable>
-        extends AbstractBackendCollectionResource<D, Q>
-        implements ReadOnlyDevicesResource<D, C> {
+        extends AbstractBackendCollectionResource<D, Q> {
 
     protected Class<C> collectionType;
     protected Guid parentId;
@@ -36,14 +33,8 @@ public abstract class AbstractBackendReadOnlyDevicesResource<D extends BaseDevic
         this.queryParams = queryParams;
     }
 
-    @Override
     public C list() {
         return mapCollection(getBackendCollection(queryType, queryParams));
-    }
-
-    @Override
-    public ReadOnlyDeviceResource<D> getDeviceResource(String id) {
-        return inject(new BackendReadOnlyDeviceResource<D, C, Q>(modelType, entityType, asGuidOr404(id), this));
     }
 
     @Override

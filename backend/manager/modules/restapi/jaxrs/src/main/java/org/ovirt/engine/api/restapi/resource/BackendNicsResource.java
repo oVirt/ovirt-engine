@@ -1,12 +1,10 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
-import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -15,8 +13,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class BackendNicsResource
-        extends AbstractBackendDevicesResource<Nic, Nics, VmNetworkInterface>
-        implements DevicesResource<Nic, Nics> {
+        extends AbstractBackendDevicesResource<Nic, Nics, VmNetworkInterface> {
 
     static final String SUB_COLLECTIONS = "statistics";
 

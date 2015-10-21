@@ -5,18 +5,16 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Console;
-import org.ovirt.engine.api.model.Nic;
-import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.VirtioScsi;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.CreationResource;
-import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.api.resource.GraphicsConsolesResource;
 import org.ovirt.engine.api.resource.TemplateCdromsResource;
 import org.ovirt.engine.api.resource.TemplateDisksResource;
+import org.ovirt.engine.api.resource.TemplateNicsResource;
 import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.WatchdogsResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
@@ -113,7 +111,7 @@ public class BackendTemplateResource
     }
 
     @Override
-    public DevicesResource<Nic, Nics> getNicsResource() {
+    public TemplateNicsResource getNicsResource() {
         return inject(new BackendTemplateNicsResource(guid));
     }
 

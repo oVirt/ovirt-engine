@@ -28,8 +28,6 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
-import org.ovirt.engine.api.model.Nic;
-import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Template;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
@@ -60,7 +58,7 @@ public interface TemplateResource extends AsynchronouslyCreatedResource {
     TemplateDisksResource getDisksResource();
 
     @Path("nics")
-    DevicesResource<Nic, Nics> getNicsResource();
+    TemplateNicsResource getNicsResource();
 
     @Path("tags")
     AssignedTagsResource getTagsResource();

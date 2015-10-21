@@ -25,8 +25,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.InstanceType;
-import org.ovirt.engine.api.model.Nic;
-import org.ovirt.engine.api.model.Nics;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface InstanceTypeResource extends AsynchronouslyCreatedResource {
@@ -41,7 +39,7 @@ public interface InstanceTypeResource extends AsynchronouslyCreatedResource {
     Response remove();
 
     @Path("nics")
-    DevicesResource<Nic, Nics> getNicsResource();
+    InstanceTypeNicsResource getNicsResource();
 
     @Path("watchdogs")
     WatchdogsResource getWatchdogsResource();

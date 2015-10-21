@@ -18,7 +18,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendWatchdogsResource
-        extends AbstractBackendDevicesResource<Watchdog, Watchdogs, VmWatchdog> implements WatchdogsResource {
+        extends AbstractBackendDevicesResource<Watchdog, Watchdogs, VmWatchdog>
+        implements WatchdogsResource {
 
     private boolean parentIsVm;
     private Guid parentId;
@@ -43,7 +44,7 @@ public class BackendWatchdogsResource
     }
 
     @Override
-    public WatchdogResource getDeviceResource(String watchdogId) {
+    public WatchdogResource getWatchdogResource(String watchdogId) {
         return inject(
             new BackendWatchdogResource(
                 parentIsVm,
