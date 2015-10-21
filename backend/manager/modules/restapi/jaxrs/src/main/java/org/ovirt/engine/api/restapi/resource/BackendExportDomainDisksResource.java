@@ -42,7 +42,7 @@ public class BackendExportDomainDisksResource
     }
 
     @Override
-    public StorageDomainContentDiskResource getDeviceResource(String id) {
+    public StorageDomainContentDiskResource getDiskResource(String id) {
         return inject(new BackendExportDomainDiskResource(id, this));
     }
 }
