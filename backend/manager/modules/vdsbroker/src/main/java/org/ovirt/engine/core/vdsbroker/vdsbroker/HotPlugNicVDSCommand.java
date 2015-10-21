@@ -53,10 +53,6 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
                         .getHasAgent()));
         map.put(VdsProperties.DeviceId, vmDevice.getId().getDeviceId().toString());
 
-        if (vmDevice.getBootOrder() > 0) {
-            map.put(VdsProperties.BootOrder, String.valueOf(vmDevice.getBootOrder()));
-        }
-
         VmInfoBuilder.addProfileDataToNic(map, getParameters().getVm(), vmDevice, nic);
         VmInfoBuilder.addNetworkFiltersToNic(map, clusterVersion);
         return map;
