@@ -825,7 +825,8 @@ BEGIN
                                INNER JOIN base_disks i
                                ON i.disk_id = vd.device_id
                                AND vd.snapshot_id IS NULL
-                               WHERE i.shareable = v_shareable)
+                               WHERE i.disk_storage_type in (0, 2)  -- Filter VMs with Images (0) or Cinder (2) disks.
+                                 AND i.shareable = v_shareable)
       AND vs.vds_group_id IN (SELECT vg.vds_group_id
                               FROM vds_groups vg, storage_pool sp
                               WHERE vg.storage_pool_id = v_storage_pool_id);
