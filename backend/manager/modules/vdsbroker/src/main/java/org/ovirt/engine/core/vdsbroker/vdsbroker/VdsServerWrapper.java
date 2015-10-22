@@ -2044,4 +2044,14 @@ public class VdsServerWrapper implements IVdsServer {
             throw new XmlRpcRunTimeException(ute);
         }
     }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc refreshVolume(String sdUUID, String spUUID, String imgUUID, String volUUID) {
+        try {
+            Map<String, Object> xmpRpcReturnValue = vdsServer.refreshVolume(sdUUID, spUUID, imgUUID, volUUID);
+            return new StatusOnlyReturnForXmlRpc(xmpRpcReturnValue);
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    };
 }

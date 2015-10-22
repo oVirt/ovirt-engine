@@ -2122,4 +2122,17 @@ public class JsonRpcVdsServer implements IVdsServer {
                 .withResponseType(Object[].class);
         return new OneVmReturnForXmlRpc(response);
     }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc refreshVolume(String sdUUID, String spUUID, String imgUUID, String volUUID) {
+        JsonRpcRequest request =
+                new RequestBuilder("Volume.refresh")
+                        .withParameter("storagepoolID", spUUID)
+                        .withParameter("storagedomainID", sdUUID)
+                        .withParameter("imageID", imgUUID)
+                        .withParameter("volumeID", volUUID)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
 }
