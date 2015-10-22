@@ -12,12 +12,15 @@ import java.util.Objects;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.ManageLabeledNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.network.ManageLabeledNetworksParametersBuilderFactory;
-import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
+import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
 final class NetworkClustersToSetupNetworksParametersTransformerImpl
@@ -25,27 +28,39 @@ final class NetworkClustersToSetupNetworksParametersTransformerImpl
 
     private final NetworkDao networkDao;
     private final InterfaceDao interfaceDao;
+    private final VdsStaticDao vdsStaticDao;
+    private final NetworkClusterDao networkClusterDao;
+    private final NetworkAttachmentDao networkAttachmentDao;
     private final ManageLabeledNetworksParametersBuilderFactory manageLabeledNetworksParametersBuilderFactory;
     private final CommandContext commandContext;
 
     NetworkClustersToSetupNetworksParametersTransformerImpl(
             NetworkDao networkDao,
             InterfaceDao interfaceDao,
+            VdsStaticDao vdsStaticDao,
+            NetworkClusterDao networkClusterDao,
+            NetworkAttachmentDao networkAttachmentDao,
             ManageLabeledNetworksParametersBuilderFactory manageLabeledNetworksParametersBuilderFactory,
             CommandContext commandContext) {
         Objects.requireNonNull(networkDao, "networkDao cannot be null");
         Objects.requireNonNull(interfaceDao, "interfaceDao cannot be null");
+        Objects.requireNonNull(vdsStaticDao, "vdsStaticDao cannot be null");
+        Objects.requireNonNull(networkClusterDao, "networkClusterDao cannot be null");
+        Objects.requireNonNull(networkAttachmentDao, "networkAttachmentDao cannot be null");
         Objects.requireNonNull(manageLabeledNetworksParametersBuilderFactory,
                 "manageLabeledNetworksParametersBuilderFactory cannot be null");
 
         this.networkDao = networkDao;
         this.interfaceDao = interfaceDao;
+        this.vdsStaticDao = vdsStaticDao;
+        this.networkClusterDao = networkClusterDao;
+        this.networkAttachmentDao = networkAttachmentDao;
         this.manageLabeledNetworksParametersBuilderFactory = manageLabeledNetworksParametersBuilderFactory;
         this.commandContext = commandContext;
     }
 
     @Override
-    public List<PersistentSetupNetworksParameters> transform(
+    public List<PersistentHostSetupNetworksParameters> transform(
             Collection<NetworkCluster> attachments,
             Collection<NetworkCluster> detachments) {
 
@@ -70,7 +85,6 @@ final class NetworkClustersToSetupNetworksParametersTransformerImpl
         }
 
         Map<Guid, List<Network>> detachNetworksByHost = new HashMap<>();
-        Map<Guid, List<VdsNetworkInterface>> detachNicsByHost = new HashMap<>();
 
         for (NetworkCluster networkCluster : detachments) {
             final Network network = networkDao.get(networkCluster.getNetworkId());
@@ -81,61 +95,55 @@ final class NetworkClustersToSetupNetworksParametersTransformerImpl
             for (VdsNetworkInterface nic : nics) {
                 if (!detachNetworksByHost.containsKey(nic.getVdsId())) {
                     detachNetworksByHost.put(nic.getVdsId(), new ArrayList<Network>());
-                    detachNicsByHost.put(nic.getVdsId(), new ArrayList<VdsNetworkInterface>());
                 }
 
-                detachNicsByHost.get(nic.getVdsId()).add(nic);
                 detachNetworksByHost.get(nic.getVdsId()).add(network);
             }
         }
 
         return createSetupNetworksParameters(attachNetworksByHost,
                 labelsToNicsByHost,
-                detachNetworksByHost,
-                detachNicsByHost);
+                detachNetworksByHost);
     }
 
-    private List<PersistentSetupNetworksParameters> createSetupNetworksParameters(
+    private List<PersistentHostSetupNetworksParameters> createSetupNetworksParameters(
             Map<Guid, List<Network>> attachNetworksByHost,
             Map<Guid, Map<String, VdsNetworkInterface>> labelsToNicsByHost,
-            Map<Guid, List<Network>> detachNetworksByHost,
-            Map<Guid, List<VdsNetworkInterface>> detachNicsByHost) {
+            Map<Guid, List<Network>> detachNetworksByHost) {
 
-        final List<PersistentSetupNetworksParameters> parameters = new ArrayList<>(attachNetworksByHost.size());
+        final List<PersistentHostSetupNetworksParameters> parameters = new ArrayList<>(attachNetworksByHost.size());
         final ManageLabeledNetworksParametersBuilder builder =
-                manageLabeledNetworksParametersBuilderFactory.create(commandContext);
+                manageLabeledNetworksParametersBuilderFactory.create(commandContext,
+                        interfaceDao,
+                        vdsStaticDao,
+                        networkClusterDao,
+                        networkAttachmentDao);
         for (Entry<Guid, List<Network>> entry : attachNetworksByHost.entrySet()) {
             final Guid hostId = entry.getKey();
             final List<Network> attachHostNetworks = entry.getValue();
             final List<Network> detachHostNetworks;
-            final List<VdsNetworkInterface> labeledNicsToBeRemoved;
             if (detachNetworksByHost.containsKey(hostId)) {
                 detachHostNetworks = detachNetworksByHost.get(hostId);
-                labeledNicsToBeRemoved = detachNicsByHost.get(hostId);
             } else {
                 detachHostNetworks = Collections.emptyList();
-                labeledNicsToBeRemoved = Collections.emptyList();
             }
             final Map<String, VdsNetworkInterface> nicsByLabel = labelsToNicsByHost.get(hostId);
             parameters.add(builder.buildParameters(
                     hostId,
                     attachHostNetworks,
                     detachHostNetworks,
-                    nicsByLabel,
-                    labeledNicsToBeRemoved));
+                    nicsByLabel));
         }
 
         for (Entry<Guid, List<Network>> entry : detachNetworksByHost.entrySet()) {
             final Guid hostId = entry.getKey();
             if (!attachNetworksByHost.containsKey(hostId)) {
                 final List<Network> detachHostNetworks = entry.getValue();
-                final List<VdsNetworkInterface> labeledNicsToBeRemoved = detachNicsByHost.get(hostId);
                 parameters.add(builder.buildParameters(
                         hostId,
                         Collections.<Network>emptyList(),
                         detachHostNetworks,
-                        Collections.<String, VdsNetworkInterface>emptyMap(),
-                        labeledNicsToBeRemoved));
+                        Collections.<String, VdsNetworkInterface>emptyMap()));
             }
         }
         return parameters;

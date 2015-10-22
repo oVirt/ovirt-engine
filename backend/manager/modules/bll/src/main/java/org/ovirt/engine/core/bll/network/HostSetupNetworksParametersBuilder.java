@@ -69,7 +69,7 @@ public abstract class HostSetupNetworksParametersBuilder {
     protected void addAttachmentToParameters(VdsNetworkInterface baseNic,
             Network network,
             PersistentHostSetupNetworksParameters params) {
-        NetworkAttachment attachmentToConfigure = getNetworkToAttachment(baseNic.getVdsId()).get(network.getId());
+        NetworkAttachment attachmentToConfigure = getNetworkIdToAttachmentMap(baseNic.getVdsId()).get(network.getId());
 
         if (attachmentToConfigure == null) {
             // The network is not attached to the host, attach it to the nic with the label
@@ -171,7 +171,7 @@ public abstract class HostSetupNetworksParametersBuilder {
         return hostIdToNics.get(hostId);
     }
 
-    public Map<Guid, NetworkAttachment> getNetworkToAttachment(Guid hostId) {
+    public Map<Guid, NetworkAttachment> getNetworkIdToAttachmentMap(Guid hostId) {
         if (!networkToAttachmentByHostId.containsKey(hostId)) {
             networkToAttachmentByHostId.put(hostId,
                     new MapNetworkAttachments(networkAttachmentDao.getAllForHost(hostId)).byNetworkId());

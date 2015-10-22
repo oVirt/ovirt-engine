@@ -529,7 +529,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 PersistentHostSetupNetworksParameters setupNetworkParams = createHostSetupNetworksParameters(hostId);
                 setupNetworkParams.setNetworkNames(network.getName());
 
-                NetworkAttachment attachment = getNetworkToAttachment(hostId).get(network.getId());
+                NetworkAttachment attachment = getNetworkIdToAttachmentMap(hostId).get(network.getId());
                 attachment.setOverrideConfiguration(true);
                 setupNetworkParams.getNetworkAttachments().add(attachment);
                 parameters.add(setupNetworkParams);
