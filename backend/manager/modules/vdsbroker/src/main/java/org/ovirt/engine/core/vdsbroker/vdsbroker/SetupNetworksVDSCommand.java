@@ -112,7 +112,9 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
 
             iface.setVdsId(host.getId());
             VdsNetworkInterface baseNic = calculateBaseNic.getBaseNic(iface);
-            NetworkAttachment networkAttachment = baseNic == null ? null :
+            //baseNic can have null-valued id, since iface can be newly created interface without vlan passed from client.
+            boolean unableToObtainNetworkAttachment = baseNic == null || baseNic.getId() == null;
+            NetworkAttachment networkAttachment = unableToObtainNetworkAttachment ? null :
                 networkAttachmentDao.getNetworkAttachmentByNicIdAndNetworkId(baseNic.getId(), network.getId());
 
             if (hostNetworkQosSupported && NetworkUtils.qosConfiguredOnInterface(networkAttachment, network)) {
