@@ -7,7 +7,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.PredefinedRoles;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.NetworkParametersBuilder;
+import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.network.RemoveNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -114,27 +114,18 @@ public class NetworkHelper {
         return VersionSupport.isActionSupported(VdcActionType.SetupNetworks, version);
     }
 
-    public static void removeNetworkFromHostsInCluster(Network network, Guid clusterId, CommandContext context) {
-        List<VdsNetworkInterface> nics = DbFacade.getInstance().getInterfaceDao().getAllInterfacesByLabelForCluster(clusterId, network.getLabel());
-        removeNetworkFromHosts(network, context, nics);
-    }
-
     public static void removeNetworkFromHostsInDataCenter(Network network, Guid dataCenterId, CommandContext context) {
         List<VdsNetworkInterface> nics = DbFacade.getInstance().getInterfaceDao().getAllInterfacesByLabelForDataCenter(dataCenterId, network.getLabel());
         removeNetworkFromHosts(network, context, nics);
     }
 
     private static void removeNetworkFromHosts(Network network, CommandContext context, List<VdsNetworkInterface> nics) {
-
-        final ManagementNetworkUtil managementNetworkUtil = Injector.get(ManagementNetworkUtil.class);
-
-        RemoveNetworkParametersBuilder builder =
-                new RemoveNetworkParametersBuilder(network, context, managementNetworkUtil);
-        ArrayList<VdcActionParametersBase> parameters = builder.buildParameters(nics);
+        RemoveNetworkParametersBuilder builder = Injector.get(RemoveNetworkParametersBuilder.class);
+        ArrayList<VdcActionParametersBase> parameters = builder.buildParameters(network, nics);
 
         if (!parameters.isEmpty()) {
-            NetworkParametersBuilder.updateParametersSequencing(parameters);
-            Backend.getInstance().runInternalMultipleActions(VdcActionType.PersistentSetupNetworks, parameters, context);
+            HostSetupNetworksParametersBuilder.updateParametersSequencing(parameters);
+            Backend.getInstance().runInternalMultipleActions(VdcActionType.PersistentHostSetupNetworks, parameters, context);
         }
     }
 

@@ -10,7 +10,6 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
@@ -77,10 +76,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
     private InterfaceDao interfaceDao;
 
     @Inject
-    private VdsStaticDao vdsStaticDao;
-
-    @Inject
-    private NetworkClusterDao networkClusterDao;
+    private ChangeClusterParametersBuilder changeClusterParametersBuilder;
 
     private StoragePool targetStoragePool;
 
@@ -367,11 +363,10 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
     }
 
     private void configureNetworks() {
-        ChangeClusterParametersBuilder builder = new ChangeClusterParametersBuilder(getContext());
         final PersistentHostSetupNetworksParameters params;
 
         try {
-            params = builder.buildParameters(getVdsId(), getSourceCluster().getId(), getTargetCluster().getId());
+            params = changeClusterParametersBuilder.buildParameters(getVdsId(), getSourceCluster().getId(), getTargetCluster().getId());
         } catch (EngineException e) {
             auditLogDirector.log(new AuditLogableBase(getVdsId()),
                     AuditLogType.CONFIGURE_NETWORK_BY_LABELS_WHEN_CHANGING_CLUSTER_FAILED);
@@ -494,10 +489,17 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         return targetCluster;
     }
 
-    private class ChangeClusterParametersBuilder extends HostSetupNetworksParametersBuilder {
+    private static class ChangeClusterParametersBuilder extends HostSetupNetworksParametersBuilder {
 
-        public ChangeClusterParametersBuilder(CommandContext commandContext) {
-            super(commandContext, interfaceDao, vdsStaticDao, networkClusterDao, networkAttachmentDao);
+        @Inject
+        NetworkDao networkDao;
+
+        @Inject
+        public ChangeClusterParametersBuilder(InterfaceDao interfaceDao,
+                VdsStaticDao vdsStaticDao,
+                NetworkClusterDao networkClusterDao,
+                NetworkAttachmentDao networkAttachmentDao) {
+            super(interfaceDao, vdsStaticDao, networkClusterDao, networkAttachmentDao);
         }
 
         public PersistentHostSetupNetworksParameters buildParameters(Guid hostId,
@@ -508,13 +510,13 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
             PersistentHostSetupNetworksParameters params = createHostSetupNetworksParameters(hostId);
             Map<String, VdsNetworkInterface> nicsByNetwork =
-                    Entities.hostInterfacesByNetworkName(getNics());
+                    Entities.hostInterfacesByNetworkName(getNics(hostId));
             Map<String, List<Network>> targetNetworksByLabel = getClusterNetworksByLabel(targetClusterNetworks);
             Map<String, List<Network>> sourceNetworksByLabel =
                     getClusterNetworksByLabel(networkDao.getAllForCluster(sourceClusterId));
 
             // Detect which networks should be added and which should be removed
-            for (VdsNetworkInterface nic : getNics()) {
+            for (VdsNetworkInterface nic : getNics(hostId)) {
                 adjustNetworksByLabel(sourceNetworksByLabel,
                         targetClusterNetworksByName,
                         targetNetworksByLabel,
@@ -607,10 +609,10 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                         if (!isNetworkAssignedToTargetCluster(targetNetworksByName, networkName)) {
                             // the network is not attached to the target cluster- should be removed from the host
                             params.getRemovedUnmanagedNetworks().add(networkName);
-                        } else if (!isNetworkLabelExistInTargetHost(networkName, targetNetworksByName)) {
+                        } else if (!isNetworkLabelExistInTargetHost(nic.getVdsId(), networkName, targetNetworksByName)) {
                             // the target network doesn't have label that exist on the host
                             Network targetNetwork = targetNetworksByName.get(networkName);
-                            NetworkAttachment attachment = getNetworkToAttachment().get(targetNetwork.getId());
+                            NetworkAttachment attachment = getNetworkToAttachment(nic.getVdsId()).get(targetNetwork.getId());
                             params.getRemovedNetworkAttachments().add(attachment.getId());
                         }
                     }
@@ -633,13 +635,13 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
         }
 
-        private boolean isNetworkLabelExistInTargetHost(String networkName, Map<String, Network> targetNetworksByName) {
+        private boolean isNetworkLabelExistInTargetHost(Guid hostId, String networkName, Map<String, Network> targetNetworksByName) {
             Network targetNetwork = targetNetworksByName.get(networkName);
-            return NetworkUtils.isLabeled(targetNetwork) && isHostContainLabel(targetNetwork.getLabel());
+            return NetworkUtils.isLabeled(targetNetwork) && isHostContainLabel(hostId, targetNetwork.getLabel());
         }
 
-        private boolean isHostContainLabel(String label) {
-            for (VdsNetworkInterface nic : getNics()) {
+        private boolean isHostContainLabel(Guid hostId, String label) {
+            for (VdsNetworkInterface nic : getNics(hostId)) {
                 if (NetworkUtils.isLabeled(nic) && nic.getLabels().contains(label)) {
                     return true;
                 }
