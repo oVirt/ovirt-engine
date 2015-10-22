@@ -74,7 +74,7 @@ public class InstanceImageLineModel extends EntityModel {
         String diskName = disk.getDiskAlias();
         String size = Long.toString(disk.getSize());
 
-        if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+        if (disk.getDiskStorageType() == DiskStorageType.IMAGE || disk.getDiskStorageType() == DiskStorageType.CINDER) {
             size = Long.toString(((DiskImage) disk).getSizeInGigabytes());
         }
 
