@@ -2122,6 +2122,20 @@ public class JsonRpcVdsServer implements IVdsServer {
         return new OneVmReturnForXmlRpc(response);
     }
 
+    @Override
+    public StatusOnlyReturnForXmlRpc refreshVolume(String sdUUID, String spUUID, String imgUUID, String volUUID) {
+        JsonRpcRequest request =
+                new RequestBuilder("Volume.refresh")
+                        .withParameter("storagepoolID", spUUID)
+                        .withParameter("storagedomainID", sdUUID)
+                        .withParameter("imageID", imgUUID)
+                        .withParameter("volumeID", volUUID)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
     public StatusOnlyReturnForXmlRpc glusterStopProcesses() {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterHost.processesStop").build();
