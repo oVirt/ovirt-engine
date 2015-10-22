@@ -2,12 +2,16 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -41,6 +45,8 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
     private static final Logger log = LoggerFactory.getLogger(RemoveVmPoolCommand.class);
 
     private List<VM> cachedVmsInPool;
+    private Set<Guid> vmsRemoved = new HashSet<>();
+    private boolean allVmsDown;
 
     public RemoveVmPoolCommand(T parameters) {
         this(parameters, null);
@@ -122,7 +128,14 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
             }
 
         });
-        setSucceeded(stopVms() && removeVmsInPool() && removeVmPool());
+        setCommandShouldBeLogged(false);  // disable logging at the end of command execution
+        log();                            // and log the message now
+        stopVms();
+        if (allVmsDown) {
+            endSuccessfully();
+        } else {
+            setSucceeded(true);
+        }
     }
 
     private void setPoolBeingDestroyed() {
@@ -137,40 +150,61 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
         }
     }
 
-    private boolean stopVms() {
+    private void stopVms() {
+        allVmsDown = true;
+
         for (VM vm : getCachedVmsInPool()) {
             if (!vm.isDown()) {
-                VdcReturnValueBase result = runInternalAction(
+                CommandCoordinatorUtil.executeAsyncCommand(
                         VdcActionType.StopVm,
                         withRootCommandInfo(new StopVmParameters(vm.getId(), StopVmTypeEnum.NORMAL)),
                         cloneContextAndDetachFromParent());
-                if (!result.getSucceeded()) {
-                    return false;
-                }
+                allVmsDown = false;
+            } else {
+                removeVm(vm);
             }
         }
+    }
+
+    @Override
+    protected void endSuccessfully() {
+        setSucceeded(removeAllVmsInPool() && removeVmPool());
+        log();
+    }
+
+    @Override
+    protected void endWithFailure() {
+        setSucceeded(true);
+        log();
+    }
+
+    private boolean removeVm(VM vm) {
+        RemoveVmFromPoolParameters removeVmFromPoolParameters = new RemoveVmFromPoolParameters(vm.getId());
+        removeVmFromPoolParameters.setTransactionScopeOption(TransactionScopeOption.Suppress);
+        VdcReturnValueBase result = runInternalActionWithTasksContext(
+                VdcActionType.RemoveVmFromPool,
+                removeVmFromPoolParameters);
+        if (!result.getSucceeded()) {
+            return false;
+        }
+
+        result = runInternalAction(
+                VdcActionType.RemoveVm,
+                new RemoveVmParameters(vm.getId(), false),
+                createRemoveVmStepContext(vm));
+        if (!result.getSucceeded()) {
+            return false;
+        }
+
+        vmsRemoved.add(vm.getId());
+
         return true;
     }
 
-    private boolean removeVmsInPool() {
+    private boolean removeAllVmsInPool() {
         for (VM vm : getCachedVmsInPool()) {
-            RemoveVmFromPoolParameters removeVmFromPoolParameters = new RemoveVmFromPoolParameters(vm.getId());
-            removeVmFromPoolParameters.setTransactionScopeOption(TransactionScopeOption.Suppress);
-            VdcReturnValueBase result = runInternalActionWithTasksContext(
-                    VdcActionType.RemoveVmFromPool,
-                    removeVmFromPoolParameters);
-            if (!result.getSucceeded()) {
+            if (!vmsRemoved.contains(vm.getId()) && !removeVm(vm)) {
                 return false;
-            }
-
-            result = runInternalAction(
-                    VdcActionType.RemoveVm,
-                    new RemoveVmParameters(vm.getId(), false),
-                    createRemoveVmStepContext(vm));
-            if (!result.getSucceeded()) {
-                return false;
-            } else {
-                getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
             }
         }
 
@@ -229,8 +263,17 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
     }
 
     @Override
+    public CommandCallback getCallback() {
+        return new RemoveVmPoolCommandCallback();
+    }
+
+    @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.USER_REMOVE_VM_POOL : AuditLogType.USER_REMOVE_VM_POOL_FAILED;
+        if (getActionState() == CommandActionState.EXECUTE) {
+            return AuditLogType.USER_REMOVE_VM_POOL_INITIATED;
+        } else {
+            return getSucceeded() ? AuditLogType.USER_REMOVE_VM_POOL : AuditLogType.USER_REMOVE_VM_POOL_FAILED;
+        }
     }
 
     @Override
