@@ -1,15 +1,13 @@
 package org.ovirt.engine.core.bll.network;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.common.AuditLogType;
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -22,10 +20,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
@@ -36,21 +31,18 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 public abstract class HostSetupNetworksParametersBuilder {
 
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
-    private CommandContext commandContext;
-    private List<VdsNetworkInterface> nics;
-    private InterfaceDao interfaceDao;
-    private VdsStaticDao vdsStaticDao;
-    private NetworkClusterDao networkClusterDao;
-    private NetworkAttachmentDao networkAttachmentDao;
-    private Map<Guid, NetworkAttachment> networkToAttachment;
+    protected InterfaceDao interfaceDao;
+    protected VdsStaticDao vdsStaticDao;
+    protected NetworkClusterDao networkClusterDao;
+    protected NetworkAttachmentDao networkAttachmentDao;
+    private Map<Guid, List<VdsNetworkInterface>> hostIdToNics = new HashMap<>();
+    private Map<Guid, Map<Guid, NetworkAttachment>> networkToAttachmentByHostId = new HashMap<>();
 
-    public HostSetupNetworksParametersBuilder(CommandContext commandContext,
-            InterfaceDao interfaceDao,
+    @Inject
+    public HostSetupNetworksParametersBuilder(InterfaceDao interfaceDao,
             VdsStaticDao vdsStaticDao,
             NetworkClusterDao networkClusterDao,
             NetworkAttachmentDao networkAttachmentDao) {
-        this.commandContext = commandContext;
         this.interfaceDao = interfaceDao;
         this.vdsStaticDao = vdsStaticDao;
         this.networkClusterDao = networkClusterDao;
@@ -58,13 +50,6 @@ public abstract class HostSetupNetworksParametersBuilder {
     }
 
     protected PersistentHostSetupNetworksParameters createHostSetupNetworksParameters(Guid hostId) {
-        VDS host = new VDS();
-        host.setId(hostId);
-        NetworkConfigurator configurator = new NetworkConfigurator(host, commandContext);
-        nics = configurator.filterBondsWithoutSlaves(interfaceDao.getAllInterfacesForVds(hostId));
-
-        networkToAttachment = new MapNetworkAttachments(networkAttachmentDao.getAllForHost(hostId)).byNetworkId();
-
         PersistentHostSetupNetworksParameters parameters = new PersistentHostSetupNetworksParameters(hostId);
         parameters.setRollbackOnFailure(true);
         parameters.setShouldBeLogged(false);
@@ -81,29 +66,10 @@ public abstract class HostSetupNetworksParametersBuilder {
         return null;
     }
 
-    protected void reportNonUpdateableHosts(AuditLogType auditLogType, Set<Guid> nonUpdateableHosts) {
-        if (nonUpdateableHosts.isEmpty()) {
-            return;
-        }
-
-        List<String> hostNames = new ArrayList<>(nonUpdateableHosts.size());
-        for (Guid hostId : nonUpdateableHosts) {
-            hostNames.add(vdsStaticDao.get(hostId).getName());
-        }
-
-        AuditLogableBase logable = new AuditLogableBase();
-        addValuesToLog(logable);
-        logable.addCustomValue("HostNames", StringUtils.join(hostNames, ", "));
-        auditLogDirector.log(logable, auditLogType);
-    }
-
-    protected void addValuesToLog(AuditLogableBase logable) {
-    }
-
     protected void addAttachmentToParameters(VdsNetworkInterface baseNic,
             Network network,
             PersistentHostSetupNetworksParameters params) {
-        NetworkAttachment attachmentToConfigure = getNetworkToAttachment().get(network.getId());
+        NetworkAttachment attachmentToConfigure = getNetworkToAttachment(baseNic.getVdsId()).get(network.getId());
 
         if (attachmentToConfigure == null) {
             // The network is not attached to the host, attach it to the nic with the label
@@ -130,13 +96,13 @@ public abstract class HostSetupNetworksParametersBuilder {
      *            the underlying interface of the vlan device
      * @return the vlan device if exists, else <code>null</code>
      */
-    private VdsNetworkInterface getVlanDevice(final VdsNetworkInterface baseNic,
+    protected VdsNetworkInterface getVlanDevice(final VdsNetworkInterface baseNic,
             final Integer vlanId) {
         if (vlanId == null) {
             return null;
         }
 
-        return LinqUtils.firstOrNull(getNics(), new Predicate<VdsNetworkInterface>() {
+        return LinqUtils.firstOrNull(getNics(baseNic.getVdsId()), new Predicate<VdsNetworkInterface>() {
 
             @Override
             public boolean eval(VdsNetworkInterface t) {
@@ -194,11 +160,23 @@ public abstract class HostSetupNetworksParametersBuilder {
         return networkClusterDao.get(new NetworkClusterId(clusterId, network.getId()));
     }
 
-    public List<VdsNetworkInterface> getNics() {
-        return nics;
+    public List<VdsNetworkInterface> getNics(Guid hostId) {
+        if (!hostIdToNics.containsKey(hostId)) {
+            VDS host = new VDS();
+            host.setId(hostId);
+            NetworkConfigurator configurator = new NetworkConfigurator(host, null);
+            hostIdToNics.put(hostId, configurator.filterBondsWithoutSlaves(interfaceDao.getAllInterfacesForVds(hostId)));
+        }
+
+        return hostIdToNics.get(hostId);
     }
 
-    public Map<Guid, NetworkAttachment> getNetworkToAttachment() {
-        return networkToAttachment;
+    public Map<Guid, NetworkAttachment> getNetworkToAttachment(Guid hostId) {
+        if (!networkToAttachmentByHostId.containsKey(hostId)) {
+            networkToAttachmentByHostId.put(hostId,
+                    new MapNetworkAttachments(networkAttachmentDao.getAllForHost(hostId)).byNetworkId());
+        }
+
+        return networkToAttachmentByHostId.get(hostId);
     }
 }

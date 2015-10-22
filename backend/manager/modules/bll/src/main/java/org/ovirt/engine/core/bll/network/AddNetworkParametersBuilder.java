@@ -1,70 +1,57 @@
 package org.ovirt.engine.core.bll.network;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
+import javax.inject.Inject;
+
+import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
-public class AddNetworkParametersBuilder extends NetworkParametersBuilder {
+public class AddNetworkParametersBuilder extends HostSetupNetworksParametersBuilder {
 
-    private Network network;
-
-    public AddNetworkParametersBuilder(Network network, CommandContext commandContext) {
-        super(commandContext);
-        this.network = network;
+    @Inject
+    public AddNetworkParametersBuilder(InterfaceDao interfaceDao,
+            VdsStaticDao vdsStaticDao,
+            NetworkClusterDao networkClusterDao,
+            NetworkAttachmentDao networkAttachmentDao) {
+        super(interfaceDao, vdsStaticDao, networkClusterDao, networkAttachmentDao);
     }
 
-    public ArrayList<VdcActionParametersBase> buildParameters(List<VdsNetworkInterface> nics) {
-        Set<Guid> nonUpdateableHosts = new HashSet<>();
+    public ArrayList<VdcActionParametersBase> buildParameters(Network network, List<VdsNetworkInterface> nics) {
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
-        boolean vlanNetwork = NetworkUtils.isVlan(network);
 
         for (VdsNetworkInterface nic : nics) {
-            PersistentSetupNetworksParameters setupNetworkParams = createSetupNetworksParameters(nic.getVdsId());
+            PersistentHostSetupNetworksParameters setupNetworkParams =
+                    createHostSetupNetworksParameters(nic.getVdsId());
             setupNetworkParams.setNetworkNames(network.getName());
-            VdsNetworkInterface nicToConfigure = getNicToConfigure(setupNetworkParams.getInterfaces(), nic.getId());
+            VdsNetworkInterface nicToConfigure = getNicToConfigure(getNics(nic.getVdsId()), nic.getId());
             if (nicToConfigure == null) {
                 throw new EngineException(EngineError.LABELED_NETWORK_INTERFACE_NOT_FOUND);
             }
 
-            NetworkCluster networkCluster = getNetworkCluster(nicToConfigure, network);
-            if (vlanNetwork) {
-                VdsNetworkInterface vlan = createVlanDevice(nic, network);
-                addBootProtocolForRoleNetwork(networkCluster, vlan);
-                setupNetworkParams.getInterfaces().add(vlan);
-            } else if (nicToConfigure.getNetworkName() == null) {
-                nicToConfigure.setNetworkName(network.getName());
-                addBootProtocolForRoleNetwork(networkCluster, nicToConfigure);
-            } else {
-                // if a network is already assigned to that nic, it cannot be configured
-                nonUpdateableHosts.add(nic.getVdsId());
-                continue;
-            }
+            NetworkAttachment networkAttachment =
+                    new NetworkAttachment(nicToConfigure,
+                            network,
+                            NetworkUtils.createIpConfigurationFromVdsNetworkInterface(getVlanDevice(nicToConfigure,
+                                    network.getVlanId())));
+
+            setupNetworkParams.getNetworkAttachments().add(networkAttachment);
+            addBootProtocolForRoleNetworkAttachment(nicToConfigure, network, networkAttachment);
 
             parameters.add(setupNetworkParams);
         }
 
-        reportNonUpdateableHosts(AuditLogType.ADD_NETWORK_BY_LABEL_FAILED, nonUpdateableHosts);
         return parameters;
-    }
-
-    @Override
-    protected void addValuesToLog(AuditLogableBase logable) {
-        logable.setStoragePoolId(network.getDataCenterId());
-        logable.addCustomValue("Network", network.getName());
-        logable.addCustomValue("Label", network.getLabel());
     }
 }

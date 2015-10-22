@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.network.dc;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,9 +19,8 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.common.predicates.VmNetworkCanBeUpdatedPredicate;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.AddNetworkParametersBuilder;
-import org.ovirt.engine.core.bll.network.NetworkParametersBuilder;
+import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.network.RemoveNetworkParametersBuilder;
-import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
@@ -30,13 +28,14 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
+import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
@@ -49,10 +48,11 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -65,9 +65,6 @@ import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkModification<T> implements RenamedEntityInfoProvider {
 
     @Inject
-    private ManagementNetworkUtil managementNetworkUtil;
-
-    @Inject
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
 
     @Inject
@@ -77,16 +74,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     private VmDao vmDao;
 
     @Inject
-    private HostNetworkQosDao hostNetworkQosDao;
-
-    @Inject
-    private NetworkAttachmentDao networkAttachmentDao;
-
-    @Inject
-    private InterfaceDao interfaceDao;
-
-    @Inject
-    private NetworkImplementationDetailsUtils networkImplementationDetailsUtils;
+    private SyncNetworkParametersBuilder syncNetworkParametersBuilder;
 
     private Network oldNetwork;
 
@@ -134,12 +122,11 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     }
 
     private void applyNetworkChangesToHosts() {
-        SyncNetworkParametersBuilder builder = new SyncNetworkParametersBuilder(getContext());
-        ArrayList<VdcActionParametersBase> parameters = builder.buildParameters(getNetwork(), getOldNetwork());
+        ArrayList<VdcActionParametersBase> parameters = syncNetworkParametersBuilder.buildParameters(getNetwork(), getOldNetwork());
 
         if (!parameters.isEmpty()) {
-            NetworkParametersBuilder.updateParametersSequencing(parameters);
-            runInternalMultipleActions(VdcActionType.PersistentSetupNetworks, parameters);
+            HostSetupNetworksParametersBuilder.updateParametersSequencing(parameters);
+            runInternalMultipleActions(VdcActionType.PersistentHostSetupNetworks, parameters);
         }
     }
 
@@ -182,9 +169,9 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     }
 
     private boolean allowedNetworkLabelManipulation() {
-        boolean labelNotChanged = !labelChanged();
+        boolean labelNotChanged = !labelChanged(getNetwork(), getOldNetwork());
 
-        return !getNetwork().isExternal() && (labelNotChanged || labelAdded());
+        return !getNetwork().isExternal() && (labelNotChanged || labelAdded(getNetwork(), getOldNetwork()));
     }
 
     /**
@@ -403,25 +390,38 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     }
 
-    private class SyncNetworkParametersBuilder extends NetworkParametersBuilder {
+    private static class SyncNetworkParametersBuilder extends HostSetupNetworksParametersBuilder {
 
-        public SyncNetworkParametersBuilder(CommandContext commandContext) {
-            super(commandContext);
+        @Inject
+        private NetworkImplementationDetailsUtils networkImplementationDetailsUtils;
+
+        @Inject
+        private AddNetworkParametersBuilder addNetworkParametersBuilder;
+
+        @Inject
+        private RemoveNetworkParametersBuilder removeNetworkParametersBuilder;
+
+        @Inject
+        public SyncNetworkParametersBuilder(InterfaceDao interfaceDao,
+                VdsStaticDao vdsStaticDao,
+                NetworkClusterDao networkClusterDao,
+                NetworkAttachmentDao networkAttachmentDao) {
+            super(interfaceDao, vdsStaticDao, networkClusterDao, networkAttachmentDao);
         }
 
         private ArrayList<VdcActionParametersBase> buildParameters(Network network, Network oldNetwork) {
             ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
             List<VdsNetworkInterface> nics =
-                    getDbFacade().getInterfaceDao().getVdsInterfacesByNetworkId(network.getId());
+                    interfaceDao.getVdsInterfacesByNetworkId(network.getId());
 
             // sync network on nics if the label wasn't changed
-            if (!labelChanged()) {
-                createSyncNetworkParameters(parameters, nics);
+            if (!labelChanged(network, oldNetwork)) {
+                createSyncNetworkParameters(network, parameters, nics);
                 return parameters;
             }
 
             // add network to labeled interfaces and sync network on the rest
-            if (labelAdded() || labelRenamed()) {
+            if (labelAdded(network, oldNetwork) || labelRenamed(network, oldNetwork)) {
                 List<VdsNetworkInterface> labeledNics = getLabeledNics(network);
                 Map<Guid, VdsNetworkInterface> hostToNic = mapHostToNic(nics);
                 List<VdsNetworkInterface> nicsForAdd = new ArrayList<>();
@@ -447,13 +447,13 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                     }
                 }
 
-                parameters.addAll(createAddNetworkParameters(nicsForAdd));
-                createSyncNetworkParameters(parameters, nicsForSync);
+                parameters.addAll(createAddNetworkParameters(network, nicsForAdd));
+                createSyncNetworkParameters(network, parameters, nicsForSync);
                 return parameters;
             }
 
             // remove network from labeled interfaces
-            if (labelRemoved()) {
+            if (labelRemoved(network, oldNetwork)) {
                 List<VdsNetworkInterface> labeledNics = getLabeledNics(oldNetwork);
                 Map<Guid, VdsNetworkInterface> hostToNic = mapHostToNic(nics);
                 List<VdsNetworkInterface> nicsForRemove = new ArrayList<>();
@@ -476,23 +476,20 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                     }
                 }
 
-                parameters.addAll(createRemoveNetworkParameters(nicsForRemove));
-                createSyncNetworkParameters(parameters, nicsForSync);
+                parameters.addAll(createRemoveNetworkParameters(network, nicsForRemove));
+                createSyncNetworkParameters(network, parameters, nicsForSync);
                 return parameters;
             }
 
             return parameters;
         }
 
-        private ArrayList<VdcActionParametersBase> createAddNetworkParameters(List<VdsNetworkInterface> nicsForAdd) {
-            AddNetworkParametersBuilder builder = new AddNetworkParametersBuilder(getNetwork(), getContext());
-            return builder.buildParameters(nicsForAdd);
+        private ArrayList<VdcActionParametersBase> createAddNetworkParameters(Network network, List<VdsNetworkInterface> nicsForAdd) {
+            return addNetworkParametersBuilder.buildParameters(network, nicsForAdd);
         }
 
-        private ArrayList<VdcActionParametersBase> createRemoveNetworkParameters(List<VdsNetworkInterface> nicsForRemove) {
-            RemoveNetworkParametersBuilder builder =
-                    new RemoveNetworkParametersBuilder(getOldNetwork(), getContext(), managementNetworkUtil);
-            return builder.buildParameters(nicsForRemove);
+        private ArrayList<VdcActionParametersBase> createRemoveNetworkParameters(Network oldNetwork, List<VdsNetworkInterface> nicsForRemove) {
+            return removeNetworkParametersBuilder.buildParameters(oldNetwork, nicsForRemove);
         }
 
         private Map<Guid, VdsNetworkInterface> mapHostToNic(List<VdsNetworkInterface> nics) {
@@ -504,23 +501,24 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         }
 
         private List<VdsNetworkInterface> getLabeledNics(Network network) {
-            List<NetworkCluster> clusters = getNetworkClusterDao().getAllForNetwork(network.getId());
+            List<NetworkCluster> clusters = networkClusterDao.getAllForNetwork(network.getId());
             List<VdsNetworkInterface> labeledNics = new ArrayList<>();
             for (NetworkCluster networkCluster : clusters) {
-                labeledNics.addAll(getDbFacade().getInterfaceDao()
-                        .getAllInterfacesByLabelForCluster(networkCluster.getClusterId(), network.getLabel()));
+                labeledNics.addAll(interfaceDao.getAllInterfacesByLabelForCluster(networkCluster.getClusterId(),
+                        network.getLabel()));
             }
             return labeledNics;
         }
 
-        private void createSyncNetworkParameters(ArrayList<VdcActionParametersBase> parameters,
+        private void createSyncNetworkParameters(Network network, ArrayList<VdcActionParametersBase> parameters,
                 Collection<VdsNetworkInterface> nics) {
 
             Set<Guid> hostIdsToSync = new HashSet<>();
             for (VdsNetworkInterface nic : nics) {
                 NetworkImplementationDetails networkImplementationDetails =
-                    networkImplementationDetailsUtils.calculateNetworkImplementationDetails(nic, getNetwork());
-                boolean networkShouldBeSynced = networkImplementationDetails != null && !networkImplementationDetails.isInSync();
+                        networkImplementationDetailsUtils.calculateNetworkImplementationDetails(nic, network);
+                boolean networkShouldBeSynced =
+                        networkImplementationDetails != null && !networkImplementationDetails.isInSync();
 
                 if (networkShouldBeSynced) {
                     hostIdsToSync.add(nic.getVdsId());
@@ -528,28 +526,31 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             }
 
             for (Guid hostId : hostIdsToSync) {
-                PersistentSetupNetworksParameters setupNetworkParams = createSetupNetworksParameters(hostId);
-                setupNetworkParams.setNetworkNames(getNetworkName());
-                setupNetworkParams.setNetworksToSync(Collections.singletonList(getNetworkName()));
+                PersistentHostSetupNetworksParameters setupNetworkParams = createHostSetupNetworksParameters(hostId);
+                setupNetworkParams.setNetworkNames(network.getName());
+
+                NetworkAttachment attachment = getNetworkToAttachment(hostId).get(network.getId());
+                attachment.setOverrideConfiguration(true);
+                setupNetworkParams.getNetworkAttachments().add(attachment);
                 parameters.add(setupNetworkParams);
             }
         }
 
     }
 
-    private boolean labelChanged() {
-        return !Objects.equals(getNetwork().getLabel(), getOldNetwork().getLabel());
+    private static boolean labelChanged(Network network, Network oldNetwork) {
+        return !Objects.equals(network.getLabel(), oldNetwork.getLabel());
     }
 
-    private boolean labelAdded() {
-        return !NetworkUtils.isLabeled(getOldNetwork()) && NetworkUtils.isLabeled(getNetwork());
+    private static boolean labelAdded(Network network, Network oldNetwork) {
+        return !NetworkUtils.isLabeled(oldNetwork) && NetworkUtils.isLabeled(network);
     }
 
-    private boolean labelRemoved() {
-        return NetworkUtils.isLabeled(getOldNetwork()) && !NetworkUtils.isLabeled(getNetwork());
+    private static boolean labelRemoved(Network network, Network oldNetwork) {
+        return NetworkUtils.isLabeled(oldNetwork) && !NetworkUtils.isLabeled(network);
     }
 
-    private boolean labelRenamed() {
-        return NetworkUtils.isLabeled(getOldNetwork()) && NetworkUtils.isLabeled(getNetwork()) && labelChanged();
+    private static boolean labelRenamed(Network network, Network oldNetwork) {
+        return NetworkUtils.isLabeled(oldNetwork) && NetworkUtils.isLabeled(network) && labelChanged(network, oldNetwork);
     }
 }
