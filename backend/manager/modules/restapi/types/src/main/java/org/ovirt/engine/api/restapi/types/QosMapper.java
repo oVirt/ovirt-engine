@@ -129,7 +129,7 @@ public class QosMapper {
     @Mapping(from = Qos.class, to = QosBase.class)
     public static QosBase map(Qos model, QosBase template) {
         QosBase entity = template == null ? null : template;
-        QosType qosType = QosTypeMapper.map (model.getType().toLowerCase(), entity == null ? null : entity.getQosType());
+        QosType qosType = QosTypeMapper.map (model.getType(), entity == null ? null : entity.getQosType());
 
         if (entity == null) {
             entity = createNewQosEntityForQosType(qosType);
