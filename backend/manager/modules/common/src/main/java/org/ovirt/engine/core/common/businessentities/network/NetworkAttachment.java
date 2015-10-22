@@ -59,6 +59,16 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
         reportedConfigurations = networkAttachment.getReportedConfigurations();
     }
 
+    public NetworkAttachment(VdsNetworkInterface baseNic, Network network, IpConfiguration ipConfiguration) {
+        this.networkId = network.getId();
+        this.networkName = network.getName();
+
+        this.nicId = baseNic.getId();
+        this.nicName = baseNic.getName();
+
+        this.ipConfiguration = ipConfiguration;
+    }
+
     @Override
     public Guid getId() {
         return id;

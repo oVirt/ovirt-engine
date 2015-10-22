@@ -12,6 +12,8 @@ import java.util.Set;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
+import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -253,5 +255,22 @@ public final class NetworkUtils {
      */
     public static boolean isRoleNetwork(NetworkCluster networkCluster) {
         return networkCluster.isDisplay() || networkCluster.isMigration() || networkCluster.isGluster();
+    }
+
+    public static IpConfiguration createIpConfigurationFromVdsNetworkInterface(VdsNetworkInterface nic) {
+        if (nic == null) {
+            return null;
+        }
+
+        IPv4Address iPv4Address = new IPv4Address();
+        iPv4Address.setAddress(nic.getAddress());
+        iPv4Address.setNetmask(nic.getSubnet());
+        iPv4Address.setGateway(nic.getGateway());
+        iPv4Address.setBootProtocol(nic.getBootProtocol());
+
+        IpConfiguration ipConfiguration = new IpConfiguration();
+        ipConfiguration.setIPv4Addresses(Collections.singletonList(iPv4Address));
+
+        return ipConfiguration;
     }
 }

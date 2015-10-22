@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -9,8 +8,6 @@ import java.util.Map;
 import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.Entities;
-import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
-import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -115,35 +112,21 @@ public class HostNetworkAttachmentsPersister {
     }
 
     private void createNetworkAttachmentForReportedNetworksNotHavingOne(VdsNetworkInterface nic, String networkName) {
-        NetworkAttachment networkAttachment = new NetworkAttachment();
+        NetworkAttachment networkAttachment =
+                new NetworkAttachment(getBaseInterfaceNicOrThis(nic),
+                        clusterNetworks.get(networkName),
+                        NetworkUtils.createIpConfigurationFromVdsNetworkInterface(nic));
         networkAttachment.setId(Guid.newGuid());
-        networkAttachment.setNetworkId(clusterNetworks.get(networkName).getId());
-        Guid nicId = getBaseInterfaceNicOrThis(nic).getId();
 
-        networkAttachment.setNicId(nicId);
         if (customPropertiesForNics != null) {
             networkAttachment.setProperties(customPropertiesForNics.getCustomPropertiesFor(nic));
         }
-        networkAttachment.setIpConfiguration(createIpConfigurationFromVdsNetworkInterface(nic));
 
         networkAttachmentDao.save(networkAttachment);
     }
 
     private VdsNetworkInterface getBaseInterfaceNicOrThis(VdsNetworkInterface nic) {
         return nic.getBaseInterface() == null ? nic : nicsByName.get(nic.getBaseInterface());
-    }
-
-    private IpConfiguration createIpConfigurationFromVdsNetworkInterface(VdsNetworkInterface nic) {
-        IPv4Address iPv4Address = new IPv4Address();
-        iPv4Address.setAddress(nic.getAddress());
-        iPv4Address.setNetmask(nic.getSubnet());
-        iPv4Address.setGateway(nic.getGateway());
-        iPv4Address.setBootProtocol(nic.getBootProtocol());
-
-        IpConfiguration ipConfiguration = new IpConfiguration();
-        ipConfiguration.setIPv4Addresses(Collections.singletonList(iPv4Address));
-
-        return ipConfiguration;
     }
 
     private NetworkAttachment getNetworkAttachmentRelatedToNetwork(List<NetworkAttachment> networkAttachments,
