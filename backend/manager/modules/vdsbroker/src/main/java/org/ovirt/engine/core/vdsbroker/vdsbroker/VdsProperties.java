@@ -332,6 +332,7 @@ public final class VdsProperties {
     public static final String Devices = "devices";
     public static final String GuestDiskMapping = "guestDiskMapping";
     public static final String Name = "name";
+    public static final String HostDev = "hostdev";
 
     public static final String Index = "index";
     public static final String PoolId = "poolID";
