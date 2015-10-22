@@ -1289,6 +1289,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Everyone")
     String everyonePermission();
 
+    @DefaultStringValue("My Groups")
+    String myGroupsPermission();
+
     // Permissions popup
     @DefaultStringValue("Role to Assign:")
     String roleToAssignPermissionsPopup();

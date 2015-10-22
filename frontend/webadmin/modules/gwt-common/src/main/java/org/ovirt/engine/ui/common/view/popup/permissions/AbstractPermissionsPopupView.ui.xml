@@ -47,6 +47,9 @@
                         <b:Column size="LG_3">
                             <g:RadioButton name="everyoneOrSpecific" ui:field="everyoneRadio" text="{constants.everyonePermission}"></g:RadioButton>
                         </b:Column>
+                        <b:Column size="LG_3">
+                            <g:RadioButton name="everyoneOrSpecific" ui:field="myGroupsRadio" text="{constants.myGroupsPermission}"></g:RadioButton>
+                        </b:Column>
                     </g:FlowPanel>
                 </b:Row>
                 <b:Row>

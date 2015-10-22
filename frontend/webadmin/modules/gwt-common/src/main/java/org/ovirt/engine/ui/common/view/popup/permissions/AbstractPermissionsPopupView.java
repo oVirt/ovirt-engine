@@ -88,6 +88,11 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     public RadioButton specificUserOrGroupRadio;
 
     @UiField
+    @Ignore
+    @WithElementId
+    public RadioButton myGroupsRadio;
+
+    @UiField
     @Path("searchString")
     @WithElementId("searchString")
     public TextBoxChanger searchStringEditor;
@@ -123,6 +128,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
         initTable();
         specificUserOrGroupRadio.setValue(true);
         everyoneRadio.setValue(false);
+        myGroupsRadio.setValue(false);
         //Have to add these classes to the searchStringEditor as the UiBinder seems to remove them
         searchStringEditor.addStyleName("form-control"); //$NON-NLS-1$
         searchStringEditor.addStyleName(style.alignBottomSearch());
@@ -217,6 +223,11 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     }
 
     @Override
+    public HasClickHandlers getMyGroupsRadio() {
+        return myGroupsRadio;
+    }
+
+    @Override
     public PopupNativeKeyPressHandler getNativeKeyPressHandler() {
         return nativeKeyPressHandler;
     }
@@ -233,10 +244,12 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     }
 
     @Override
-    public void changeStateOfElementsWhenAccessIsForEveryone(boolean isEveryone) {
-        profileSelection.setEnabled(!isEveryone);
-        searchStringEditor.setEnabled(!isEveryone);
-        searchButton.getCommand().setIsExecutionAllowed(!isEveryone);
+    public void changeStateOfElementsWhenAccessIsForEveryoneOrMyGroups(boolean isEveryone, boolean isMyGroups) {
+        boolean isEveryoneOrMyGroups = isEveryone || isMyGroups;
+        profileSelection.setEnabled(!isEveryoneOrMyGroups);
+        namespaceSelection.setEnabled(!isEveryoneOrMyGroups);
+        searchStringEditor.setEnabled(!isEveryoneOrMyGroups);
+        searchButton.getCommand().setIsExecutionAllowed(!isEveryoneOrMyGroups);
         searchItems.setVisible(!isEveryone);
     }
 

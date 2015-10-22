@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -23,6 +24,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -33,6 +35,16 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class AdElementListModel extends SearchableListModel<Object, EntityModel<DbUser>> {
+
+    private UICommand privateSearchMyGroupsCommand;
+
+    public UICommand getSearchMyGroupsCommand() {
+        return privateSearchMyGroupsCommand;
+    }
+
+    private void setSearchMyGroupsCommand(UICommand value) {
+        privateSearchMyGroupsCommand = value;
+    }
 
     private EntityModel<Boolean> searchInProgress;
 
@@ -117,10 +129,20 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         privateIsEveryoneSelectionHidden = value;
     }
 
+    private EntityModel<Boolean> privateIsMyGroupsSelectionHidden;
+
+    public EntityModel<Boolean> getIsMyGroupsSelectionHidden() {
+        return privateIsMyGroupsSelectionHidden;
+    }
+
+    private void setIsMyGroupsSelectionHidden(EntityModel<Boolean> value) {
+        privateIsMyGroupsSelectionHidden = value;
+    }
+
     private boolean isRoleListHidden;
 
     public boolean getIsRoleListHidden() {
-        return isEveryoneSelected;
+        return isEveryoneSelected || isMyGroupsSelected;
     }
 
     public void setIsRoleListHidden(boolean value) {
@@ -148,7 +170,21 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         }
     }
 
+    private boolean isMyGroupsSelected;
+
+    public boolean getIsMyGroupsSelected() {
+        return isMyGroupsSelected;
+    }
+
+    public void setIsMyGroupsSelected(boolean value) {
+        if (isMyGroupsSelected != value) {
+            isMyGroupsSelected = value;
+            onPropertyChanged(new PropertyChangedEventArgs("IsMyGroupsSelected")); //$NON-NLS-1$
+        }
+    }
+
     public AdElementListModel() {
+        setSearchMyGroupsCommand(new UICommand("SearchMyGroups", this)); //$NON-NLS-1$
         setRole(new ListModel<Role>());
         setProfile(new ListModel<ProfileEntry>());
         setNamespace(new ListModel<String>());
@@ -162,6 +198,9 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
 
         setIsEveryoneSelectionHidden(new EntityModel<Boolean>());
         getIsEveryoneSelectionHidden().setEntity(false);
+
+        setIsMyGroupsSelectionHidden(new EntityModel<Boolean>());
+        getIsMyGroupsSelectionHidden().setEntity(false);
 
         setSearchInProgress(new EntityModel<Boolean>());
         getSearchInProgress().setEntity(false);
@@ -196,6 +235,46 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
 
             }
         }));
+    }
+
+    @Override
+    public void executeCommand(UICommand command) {
+        super.executeCommand(command);
+
+        if (command == getSearchMyGroupsCommand()) {
+            searchMyGroups();
+        }
+    }
+
+    public void searchMyGroups() {
+        getSearchInProgress().setEntity(true);
+        AsyncQuery asyncQuery = new AsyncQuery();
+        asyncQuery.setModel(this);
+        asyncQuery.setHandleFailure(true);
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object ReturnValue) {
+                AdElementListModel adElementListModel = (AdElementListModel) model;
+                VdcQueryReturnValue queryReturnValue = (VdcQueryReturnValue) ReturnValue;
+                if (handleQueryError(queryReturnValue, adElementListModel)) {
+                    return;
+                }
+
+                HashSet<String> excludeUsers = new HashSet<String>();
+                if (adElementListModel.getExcludeItems() != null) {
+                    for (DbUser item : adElementListModel.getExcludeItems()) {
+                        excludeUsers.add(item.getExternalId());
+                    }
+                }
+                adElementListModel.setgroups(new ArrayList<EntityModel<DbUser>>());
+                addGroupsToModel(queryReturnValue, excludeUsers);
+                adElementListModel.setusers(new ArrayList<EntityModel<DbUser>>());
+                onUserAndAdGroupsLoaded(adElementListModel);
+            }
+        };
+
+        Frontend.getInstance()
+                .runQuery(VdcQueryType.GetDirectoryGroupsForUser, new VdcQueryParametersBase(), asyncQuery);
     }
 
     protected void populateProfiles(List<ProfileEntry> profiles) {

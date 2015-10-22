@@ -41,11 +41,13 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
 
         HasClickHandlers getSpecificUserOrGroupRadio();
 
+        HasClickHandlers getMyGroupsRadio();
+
         HasHandlers getSearchStringEditor();
 
         PopupNativeKeyPressHandler getNativeKeyPressHandler();
 
-        void changeStateOfElementsWhenAccessIsForEveryone(boolean isEveryone);
+        void changeStateOfElementsWhenAccessIsForEveryoneOrMyGroups(boolean isEveryone, boolean isMyGroups);
 
         void hideRoleSelection(Boolean indic);
 
@@ -94,8 +96,19 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
             @Override
             public void onClick(ClickEvent event) {
                 model.setIsEveryoneSelected(true);
-                getView().changeStateOfElementsWhenAccessIsForEveryone(true);
+                model.setIsMyGroupsSelected(false);
+                getView().changeStateOfElementsWhenAccessIsForEveryoneOrMyGroups(true, false);
                 // Disable relevant elements
+            }
+        }));
+
+        registerHandler(getView().getMyGroupsRadio().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                model.setIsEveryoneSelected(false);
+                model.setIsMyGroupsSelected(true);
+                getView().changeStateOfElementsWhenAccessIsForEveryoneOrMyGroups(false, true);
+                getModel().getSearchMyGroupsCommand().execute();
             }
         }));
 
@@ -103,7 +116,8 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
             @Override
             public void onClick(ClickEvent event) {
                 model.setIsEveryoneSelected(false);
-                getView().changeStateOfElementsWhenAccessIsForEveryone(false);
+                model.setIsMyGroupsSelected(false);
+                getView().changeStateOfElementsWhenAccessIsForEveryoneOrMyGroups(false, false);
             }
         }));
 
