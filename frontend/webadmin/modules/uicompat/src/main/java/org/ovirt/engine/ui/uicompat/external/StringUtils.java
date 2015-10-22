@@ -16,6 +16,7 @@ package org.ovirt.engine.ui.uicompat.external;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import java.math.BigDecimal;
 import java.util.Iterator;
 
 public class StringUtils {
@@ -100,6 +101,19 @@ public class StringUtils {
      */
     public static String render(Object obj) {
         return obj == null ? null : obj.toString();
+    }
+
+    /**
+     * Returns the equivalent BigDecimal representation of a String, if possible.
+     *
+     * @param str
+     *            The String to try to parse.
+     * @return null if the String is null or empty, its BigDecimal value otherwise.
+     * @throws NumberFormatException
+     *             if the String cannot be parsed as an BigDecimal.
+     */
+    public static BigDecimal parseBigDecimal(String str) {
+        return str == null || str.isEmpty() ? null : new BigDecimal(str);
     }
 
     /**
