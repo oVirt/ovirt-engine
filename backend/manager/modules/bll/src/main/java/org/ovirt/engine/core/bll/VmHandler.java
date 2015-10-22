@@ -83,6 +83,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmInitDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -909,6 +910,13 @@ public class VmHandler {
             return false;
         }
         return true;
+    }
+
+    public static void updateNumaNodesFromDb(VM vm){
+        VmNumaNodeDao dao = DbFacade.getInstance().getVmNumaNodeDao();
+        List<VmNumaNode> nodes = dao.getAllVmNumaNodeByVmId(vm.getId());
+
+        vm.setvNumaNodeList(nodes);
     }
 
     /**
