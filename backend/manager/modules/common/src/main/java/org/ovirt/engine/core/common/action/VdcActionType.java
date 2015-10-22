@@ -114,8 +114,6 @@ public enum VdcActionType {
 
     @Deprecated
     SetupNetworks(158, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
-    @Deprecated
-    PersistentSetupNetworks(159, QuotaDependency.NONE),
 
     // VnicProfile Commands
     AddVnicProfile(160, ActionGroup.CREATE_NETWORK_VNIC_PROFILE, false, QuotaDependency.NONE),
