@@ -81,10 +81,8 @@ public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> 
             throw e;
         } catch (VDSNetworkException e) {
             setVdsRuntimeError(e);
-            if (isPolicyResetMessage(e.getVdsError().getMessage())) {
-                log.info("Policy reset required for network reconfiguration");
-            } else {
-                log.error("Error: {}", e.getMessage());
+            log.error("Error: {}", e.getMessage());
+            if (!"Policy reset".equals(e.getVdsError().getMessage())) {
                 log.error("Exception", e);
             }
         } catch (Exception e) {
