@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 public class AuditLogDirector {
     private static final Logger log = LoggerFactory.getLogger(AuditLogDirector.class);
     private static final Pattern pattern = Pattern.compile("\\$\\{\\w*\\}"); // match ${<alphanumeric>...}
+    private static final int USERNAME_LENGTH = 255;
     static final String UNKNOWN_VARIABLE_VALUE = "<UNKNOWN>";
     static final String UNKNOWN_REASON_VALUE = "Not Specified";
     static final String REASON_TOKEN = "reason";
@@ -88,7 +89,8 @@ public class AuditLogDirector {
             log.warn("Unable to create AuditLog");
         } else {
             setPropertiesFromAuditLogableBase(auditLogable, auditLog);
-
+            // truncate user name
+            auditLog.setUserName(StringUtils.abbreviate(auditLog.getUserName(), USERNAME_LENGTH));
             getDbFacadeInstance().getAuditLogDao().save(auditLog);
             logMessage(severity, getMessageToLog(loggerString, auditLog));
         }
