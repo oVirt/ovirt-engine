@@ -31,7 +31,7 @@ public class QosTypeMapper {
     }
 
     private static QosType mapModelQosType(String type) {
-        switch(type) {
+        switch(type.toLowerCase()) {
             case "storage": return QosType.STORAGE;
             case "cpu": return QosType.CPU;
             case "network": return QosType.NETWORK;
