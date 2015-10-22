@@ -311,4 +311,6 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc setNumberOfCpus(String vmId, String numberOfCpus);
 
     StatusOnlyReturnForXmlRpc updateVmPolicy(Map info);
+
+    StatusOnlyReturnForXmlRpc refreshVolume(String sdUUID, String spUUID, String imgUUID, String volUUID);
 }

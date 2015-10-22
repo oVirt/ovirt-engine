@@ -10,10 +10,11 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExtendImageSizeParameters;
 import org.ovirt.engine.core.common.action.MergeParameters;
+import org.ovirt.engine.core.common.action.RefreshVolumeParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
-import org.ovirt.engine.core.common.businessentities.VolumeFormat;
-import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ import org.slf4j.LoggerFactory;
 @NonTransactiveCommandAttribute
 public class MergeExtendCommand<T extends MergeParameters>
         extends CommandBase<T> {
-    private static final Logger log = LoggerFactory.getLogger(MergeCommand.class);
+    private static final Logger log = LoggerFactory.getLogger(MergeExtendCommand.class);
 
     public MergeExtendCommand(T parameters) {
         super(parameters);
@@ -34,40 +35,34 @@ public class MergeExtendCommand<T extends MergeParameters>
     }
 
     public void executeCommand() {
-        if (getParameters().getTopImage().getSize() == getParameters().getBaseImage().getSize()) {
-            log.debug("No image size update required");
-            setSucceeded(true);
-            setCommandStatus(CommandStatus.SUCCEEDED);
-            return;
-        }
-
-        // Only raw base volumes on block storage need explicit extension; others
-        // only need their size updated in the database.
-        if (isBaseRawBlock()) {
-            extendImageSize();
+        if (ImagesHandler.isDiskImageRawBlock(getParameters().getBaseImage())) {
+            if (getParameters().getTopImage().getSize() != getParameters().getBaseImage().getSize()) {
+                // Only raw base volumes on block storage need explicit extension
+                extendImageSize();
+            } else if (getParameters().getBaseImage().getImageStatus() == ImageStatus.ILLEGAL) {
+                // Refresh the image in case this is a Live Merge recovery from an execution that
+                // extended the volume and updated the database but was unable to refresh the host.
+                refreshImageOnHost();
+            } else {
+                log.info("Base and top image sizes are the same; no extension required");
+                setCommandStatus(CommandStatus.SUCCEEDED);
+            }
         } else {
-            updateSizeInDb();
+            if (getParameters().getTopImage().getSize() != getParameters().getBaseImage().getSize()) {
+                updateSizeInDb();
+            } else {
+                log.info("Base and top image sizes are the same; no image size update required");
+            }
             setCommandStatus(CommandStatus.SUCCEEDED);
         }
         setSucceeded(true);
     }
 
-    private boolean isBaseRawBlock() {
-        if (getParameters().getBaseImage().getVolumeFormat() == VolumeFormat.RAW) {
-            List<image_storage_domain_map> maps = getDbFacade().getImageStorageDomainMapDao()
-                    .getAllByImageId(getParameters().getBaseImage().getImageId());
-            if (!maps.isEmpty()
-                    && getStorageDomainDAO().get(maps.get(0).getstorage_domain_id())
-                    .getStorageType().isBlockDomain()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private void extendImageSize() {
         Guid diskImageId = getParameters().getBaseImage().getImageId();
         long sizeInBytes = getParameters().getTopImage().getSize();
+        log.info("Extending size of base volume {} to {} bytes", diskImageId, sizeInBytes);
+
         ExtendImageSizeParameters parameters =
                 new ExtendImageSizeParameters(diskImageId, sizeInBytes, true);
         parameters.setStoragePoolId(getParameters().getBaseImage().getStoragePoolId());
@@ -80,15 +75,36 @@ public class MergeExtendCommand<T extends MergeParameters>
                 VdcActionType.ExtendImageSize,
                 parameters,
                 cloneContextAndDetachFromParent());
-        log.info("Extending size of base volume {} to {} bytes", diskImageId, sizeInBytes);
+    }
+
+    private void refreshImageOnHost() {
+        log.info("Refreshing volume {} on host {}",
+                getParameters().getBaseImage().getImageId(), getParameters().getVdsId());
+
+        RefreshVolumeParameters parameters = new RefreshVolumeParameters(
+                getParameters().getVdsId(),
+                getParameters().getStoragePoolId(),
+                getParameters().getStorageDomainId(),
+                getParameters().getImageGroupId(),
+                getParameters().getBaseImage().getImageId());
+        parameters.setParentCommand(VdcActionType.MergeExtend);
+        parameters.setParentParameters(getParameters());
+
+        VdcReturnValueBase returnValue = runInternalAction(VdcActionType.RefreshVolume, parameters);
+        setSucceeded(returnValue.getSucceeded());
+        if (!getSucceeded()) {
+            log.error("Error refreshing volume {} on host {}, VMs using the volume"
+                    + " should be restarted to detect the new size.");
+        }
+        setCommandStatus(getSucceeded() ? CommandStatus.SUCCEEDED : CommandStatus.FAILED);
     }
 
     private void updateSizeInDb() {
         Guid diskImage = getParameters().getBaseImage().getImageId();
         long sizeInBytes = getParameters().getTopImage().getSize();
+        log.info("Updating size of image {} to {}", diskImage, sizeInBytes);
 
         getDbFacade().getImageDao().updateImageSize(diskImage, sizeInBytes);
-        log.info("Updated size of image {} to {}", diskImage, sizeInBytes);
     }
 
     @Override

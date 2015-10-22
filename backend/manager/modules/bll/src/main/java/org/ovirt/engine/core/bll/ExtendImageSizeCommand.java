@@ -15,6 +15,9 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExtendImageSizeParameters;
+import org.ovirt.engine.core.common.action.RefreshVolumeParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -79,6 +82,8 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
     protected void endSuccessfully() {
         if (getImage().getActive()) {
             updateRelevantVms();
+        } else if (ImagesHandler.isDiskImageRawBlock(getImage())) {
+            refreshVolume();
         }
 
         DiskImage diskImage = getImageInfo();
@@ -127,6 +132,46 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
         return runVdsCommand(VDSCommandType.ExtendVmDiskSize, params);
     }
 
+    /**
+     * Refreshes the size of an extended volume for the VM having the image to extend attached.
+     * Note that because this is not an active layer image, it can only be in use by a single VM.
+     */
+    public void refreshVolume() {
+        List<VM> vms = getVmsDiskPluggedTo();
+        if (vms.isEmpty() || vms.get(0).getStatus().isDownOrSuspended()) {
+            return;
+        }
+        VM vm = vms.get(0);
+
+        log.infoFormat("Refreshing size of extended volume '{0}' for VM '{1}' on host '{2}'",
+                getParameters().getImageId(), vm.getName(), vm.getRunOnVdsName());
+
+        RefreshVolumeParameters parameters = new RefreshVolumeParameters(
+                vm.getRunOnVds(),
+                getParameters().getStoragePoolId(),
+                getParameters().getStorageDomainId(),
+                getParameters().getImageGroupID(),
+                getParameters().getImageId());
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+
+        VdcReturnValueBase returnValue =
+                runInternalAction(VdcActionType.RefreshVolume,
+                        parameters,
+                        cloneContextAndDetachFromParent());
+
+        if (returnValue == null || !returnValue.getSucceeded()) {
+            // TODO this might be better in MergeExtendCommand: there is a race due to the refresh
+            // being called from endSuccessfully(), and it would also give more context upon error.
+            // The flow to refresh an internal volume is called only from Live Merge, thus the
+            // solution to retry the operation.  This should be updated if ever used elsewhere.
+            log.warnFormat("Failed to update host '{0}' with the new size of volume '{1}' due to error. "
+                            + "Please try the operation again.",
+                    vm.getRunOnVdsName(), getParameters().getImageId());
+            updateAuditLogFailedToUpdateHost(vm.getRunOnVdsName());
+        }
+    }
+
     private DiskImage getImageInfo() {
         DiskImage diskImage = null;
         GetImageInfoVDSCommandParameters params = new GetImageInfoVDSCommandParameters(
@@ -166,6 +211,11 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
     private void updateAuditLogFailedToUpdateVM(String vmName) {
         addCustomValue("VmName", vmName);
         AuditLogDirector.log(this, AuditLogType.USER_EXTEND_DISK_SIZE_UPDATE_VM_FAILURE);
+    }
+
+    private void updateAuditLogFailedToUpdateHost(String vdsName) {
+        addCustomValue("VdsName", vdsName);
+        AuditLogDirector.log(this, AuditLogType.USER_EXTEND_DISK_SIZE_UPDATE_HOST_FAILURE);
     }
 
     @Override
