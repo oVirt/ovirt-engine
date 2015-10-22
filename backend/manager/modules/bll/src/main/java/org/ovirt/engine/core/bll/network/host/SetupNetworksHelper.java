@@ -735,7 +735,7 @@ public class SetupNetworksHelper {
                 || iface.getBootProtocol() != existingIface.getBootProtocol()
                 || staticBootProtoPropertiesChanged(iface, existingIface)
                 || !ObjectUtils.equals(iface.getQos(), existingIface.getQos())
-                || customPropertiesChanged(iface, existingIface);
+                || customPropertiesChanged(iface);
     }
 
     /**
@@ -767,15 +767,16 @@ public class SetupNetworksHelper {
     /**
      * @param iface
      *            New interface definition.
-     * @param existingIface
-     *            Existing interface definition.
      * @return <code>true</code> iff the custom properties have changed (null and empty map are considered equal).
      */
-    private boolean customPropertiesChanged(VdsNetworkInterface iface, VdsNetworkInterface existingIface) {
+    private boolean customPropertiesChanged(VdsNetworkInterface iface) {
         String networkName = iface.getNetworkName();
         Network network = getExistingClusterNetworks().get(networkName);
         VdsNetworkInterface baseNic = calculateBaseNic.getBaseNic(iface, getExistingIfaces());
-        NetworkAttachment networkAttachment = baseNic == null || network == null ? null :
+
+        //baseNic can have null-valued id, since iface can be newly created interface without vlan passed from client.
+        boolean unableToObtainNetworkAttachment = baseNic == null || baseNic.getId() == null || network == null;
+        NetworkAttachment networkAttachment = unableToObtainNetworkAttachment ? null :
             networkAttachmentDao.getNetworkAttachmentByNicIdAndNetworkId(baseNic.getId(), network.getId());
 
 
