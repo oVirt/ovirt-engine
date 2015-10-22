@@ -19,6 +19,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
@@ -470,9 +471,20 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return status;
     }
 
+    private StorageDomainSharedStatus getStorageDomainSharedStatus() {
+        return getStorageDomain() == null ? null : getStorageDomain().getStorageDomainSharedStatus();
+    }
+
     protected void addStorageDomainStatusIllegalMessage() {
         addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
-        addCanDoActionMessageVariable("status", getStorageDomainStatus());
+        StorageDomainStatus status = getStorageDomainStatus();
+        StorageDomainSharedStatus sharedStatus = getStorageDomainSharedStatus();
+        Object messageParameter = status;
+        if (status == StorageDomainStatus.Unknown && sharedStatus != null) {
+            // We got more informative information than "Unknown".
+            messageParameter = sharedStatus;
+        }
+        addCanDoActionMessageVariable("status", messageParameter);
     }
 
     protected BaseDiskDao getBaseDiskDao() {
