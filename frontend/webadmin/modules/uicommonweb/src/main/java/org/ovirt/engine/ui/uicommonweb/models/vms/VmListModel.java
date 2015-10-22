@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -1763,8 +1764,12 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 @Override
                 public void onSuccess(Object thisModel, Object returnValue) {
                     List<String> changedFields = ((VdcQueryReturnValue)returnValue).<List<String>> getReturnValue();
-                    if (!changedFields.isEmpty()) {
+                    // provide warnings if isVmUnpinned()
+                    if (!changedFields.isEmpty() || isVmUnpinned()) {
                         VmNextRunConfigurationModel confirmModel = new VmNextRunConfigurationModel();
+                        if (isVmUnpinned()) {
+                            confirmModel.setVmUnpinned();
+                        }
                         confirmModel.setTitle(ConstantsManager.getInstance().getConstants().editNextRunConfigurationTitle());
                         confirmModel.setHelpTag(HelpTag.edit_next_run_configuration);
                         confirmModel.setHashName("edit_next_run_configuration"); //$NON-NLS-1$
@@ -1785,6 +1790,16 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                     else {
                         updateExistingVm(false);
                     }
+                }
+
+                private boolean isVmUnpinned() {
+                    if (selectedItem.isRunning()) {
+                        if (selectedItem.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST
+                            && getcurrentVm().getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
+                            return true;
+                        }
+                    }
+                    return false;
                 }
             }));
         }
@@ -2198,6 +2213,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         }
         else if ("updateExistingVm".equals(command.getName())) { // $NON-NLS-1$
             VmNextRunConfigurationModel model = (VmNextRunConfigurationModel) getConfirmWindow();
+            if (!model.validate()) {
+                return;
+            }
+
             updateExistingVm(model.getApplyCpuLater().getEntity());
             cancelConfirmation();
         }

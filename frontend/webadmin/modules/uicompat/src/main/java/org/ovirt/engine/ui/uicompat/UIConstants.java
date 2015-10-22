@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicompat;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 
 import com.google.gwt.i18n.client.Constants;
-import com.google.gwt.i18n.client.Messages.DefaultMessage;
 
 public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
@@ -179,7 +178,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Power Management Configuration")
     String powerManagementConfigurationTitle();
 
-    @DefaultStringValue("Next Start Configuration")
+    @DefaultStringValue("Pending Virtual Machine changes")
     String editNextRunConfigurationTitle();
 
     @DefaultStringValue("Unsupported CPU type for current cluster")

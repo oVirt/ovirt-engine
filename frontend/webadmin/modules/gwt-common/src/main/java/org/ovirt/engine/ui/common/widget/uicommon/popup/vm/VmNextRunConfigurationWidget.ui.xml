@@ -10,24 +10,53 @@
             clear: both;
         }
         .contentWidgets {
-            width: 97%;
+            width: 90%;
         }
         .sectionPanel {
-            margin-bottom: 20px;
+            margin-bottom: 10px;
+            margin-left: 5px;
+        }
+        .sectionTitle {
+            font-weight: bold;
+        }
+        .confirmationLabel{
+            color: red;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .warningSectionPanel{
+            border-color: red;
+            border-width: 2;
+            border-style: solid;
+        }
+        .warningsLabel{
+            color: red;
+            font-weight: bold;
+            font-size: 125%;
         }
 	</ui:style>
 
 	<g:FlowPanel>
-        <g:HTML ui:field="message1" />
-        <d:AdvancedParametersExpander ui:field="changedFieldsExpander" addStyleNames="{style.verticalPanel}"/>
-        <g:FlowPanel ui:field="changedFieldsExpanderContent" addStyleNames="{style.sectionPanel}">
-            <g:HTML ui:field="changedFields" />
+        <g:FlowPanel ui:field="vmUnpinnedPanel" addStyleNames="{style.warningSectionPanel}">
+            <g:HTML ui:field="warningSectionTitle" addStyleNames="{style.warningsLabel}"/>
+            <g:FlowPanel addStyleNames="{style.sectionPanel}">
+                <g:HTML ui:field="vmUnpinnedPanelTitle" addStyleNames="{style.sectionTitle}"/>
+                <g:HTML ui:field="vmUnpinnedMessage1" />
+                <g:HTML ui:field="vmUnpinnedMessage2" />
+                <ge:EntityModelCheckBoxEditor ui:field="vmUnpinnedLatchEditor" addStyleNames="{style.confirmationLabel}"/>
+            </g:FlowPanel>
         </g:FlowPanel>
-        <g:FlowPanel ui:field="hotplugPanel">
-            <g:HTML ui:field="applyNowTitleMessage" />
-            <g:HTML ui:field="applyNowCpuMessage" />
-            <g:HTML ui:field="applyNowMemoryMessage" />
+        <g:FlowPanel ui:field="hotplugPanel" addStyleNames="{style.sectionPanel}">
+            <g:HTML ui:field="applyNowTitleMessage" addStyleNames="{style.sectionTitle}"/>
+            <g:HTML ui:field="applyNowCpuMessage"/>
+            <g:HTML ui:field="applyNowMemoryMessage"/>
             <ge:EntityModelCheckBoxEditor ui:field="applyCpuLaterEditor" addStyleNames="{style.contentWidgets}"/>
+        </g:FlowPanel>
+        <g:FlowPanel ui:field="changedFieldsPanel" addStyleNames="{style.sectionPanel}">
+            <g:HTML ui:field="changedFieldsPanelTitle" addStyleNames="{style.sectionTitle}"/>
+            <g:FlowPanel ui:field="changedFieldsContent" addStyleNames="{style.sectionPanel}">
+                <g:HTML ui:field="changedFields" />
+            </g:FlowPanel>
         </g:FlowPanel>
 	</g:FlowPanel>
 

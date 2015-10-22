@@ -150,17 +150,29 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("Policy of assigning serial numbers to running VMs. Can be Host''s UUID, Vm''s UUID or any custom value.")
     String serialNumberInfo();
 
-    @DefaultMessage("Some of the changes will be applied only on the vm next start.")
+    @DefaultMessage("Changes that require Virtual Machine reboot:")
     String nextRunConfigurationExists();
 
-    @DefaultMessage("The following values can be applied immediately:<br/>")
+    @DefaultMessage("Changes that can be applied immediately:")
     String nextRunConfigurationCanBeAppliedImmediately();
 
-    @DefaultMessage("- cpu<br/>")
+    @DefaultMessage("CPU")
     String nextRunConfigurationCpuValue();
 
-    @DefaultMessage("- memory<br/>")
+    @DefaultMessage("Memory increase")
     String nextRunConfigurationMemoryValue();
+
+    @DefaultMessage("Migration option changed to allow migration:")
+    String unpinnedRunningVmWarningTitle();
+
+    @DefaultMessage("Following changes may put VM in risk:")
+    String warningSectionTitle();
+
+    @DefaultMessage("Due to host hardware incompatibility - Migration might fail or application(s) may fail.")
+    String unpinnedRunningVmWarningIncompatability();
+
+    @DefaultMessage("Migrating Virtual Machine may contain information about old host.")
+    String unpinnedRunningVmWarningSecurity();
 
     @DefaultMessage("{0} (Previewing: {1})")
     String snapshotPreviewing(String snapshotDescription, String diskAliases);

@@ -11,9 +11,21 @@ public class VmNextRunConfigurationModel extends ConfirmationModel {
     private boolean cpuPluggable;
     private boolean memoryPluggable;
     private List<String> changedFields;
+    private boolean vmUnpinned;
 
     public VmNextRunConfigurationModel() {
         setApplyCpuLater(new EntityModel<Boolean>(false));
+        setLatch(new EntityModel<Boolean>(false));
+    }
+
+    public boolean isVmUnpinned() {
+        return vmUnpinned;
+    }
+
+    public void setVmUnpinned() {
+        getLatch().setIsAvailable(true);
+        getLatch().setIsChangeable(true);
+        vmUnpinned = true;
     }
 
     public EntityModel<Boolean> getApplyCpuLater() {
