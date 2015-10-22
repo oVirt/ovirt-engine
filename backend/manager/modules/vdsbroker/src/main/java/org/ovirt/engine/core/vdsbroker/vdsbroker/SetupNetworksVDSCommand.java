@@ -112,7 +112,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
 
             iface.setVdsId(host.getId());
             VdsNetworkInterface baseNic = calculateBaseNic.getBaseNic(iface);
-            NetworkAttachment networkAttachment = baseNic == null ? null :
+            NetworkAttachment networkAttachment = baseNic == null || baseNic.getId() == null ? null :
                 networkAttachmentDao.getNetworkAttachmentByNicIdAndNetworkId(baseNic.getId(), network.getId());
 
             if (hostNetworkQosSupported && NetworkUtils.qosConfiguredOnInterface(networkAttachment, network)) {
