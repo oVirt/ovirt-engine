@@ -612,7 +612,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                         } else if (!isNetworkLabelExistInTargetHost(nic.getVdsId(), networkName, targetNetworksByName)) {
                             // the target network doesn't have label that exist on the host
                             Network targetNetwork = targetNetworksByName.get(networkName);
-                            NetworkAttachment attachment = getNetworkToAttachment(nic.getVdsId()).get(targetNetwork.getId());
+                            NetworkAttachment attachment = getNetworkIdToAttachmentMap(nic.getVdsId()).get(targetNetwork.getId());
                             params.getRemovedNetworkAttachments().add(attachment.getId());
                         }
                     }

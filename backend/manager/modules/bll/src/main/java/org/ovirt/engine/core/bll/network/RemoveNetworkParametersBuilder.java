@@ -57,7 +57,7 @@ public class RemoveNetworkParametersBuilder extends HostSetupNetworksParametersB
                 throw new EngineException(EngineError.LABELED_NETWORK_INTERFACE_NOT_FOUND);
             }
 
-            NetworkAttachment networkAttachment = getNetworkToAttachment(nic.getVdsId()).get(network.getId());
+            NetworkAttachment networkAttachment = getNetworkIdToAttachmentMap(nic.getVdsId()).get(network.getId());
 
             if (networkAttachment != null) {
                 if (networkAttachment.getNicId().equals(nicToConfigure.getId())) {

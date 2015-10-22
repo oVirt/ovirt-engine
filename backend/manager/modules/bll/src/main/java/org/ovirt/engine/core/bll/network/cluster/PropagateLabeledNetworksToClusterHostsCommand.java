@@ -13,7 +13,7 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.NetworkParametersBuilder;
+import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.network.cluster.transformer.NetworkClustersToSetupNetworksParametersTransformer;
 import org.ovirt.engine.core.bll.network.cluster.transformer.NetworkClustersToSetupNetworksParametersTransformerFactory;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -75,8 +75,8 @@ public class PropagateLabeledNetworksToClusterHostsCommand extends CommandBase<M
                 param.getAttachments(),
                 param.getDetachments()));
 
-        NetworkParametersBuilder.updateParametersSequencing(setupNetworksParams);
-        runInternalMultipleActions(VdcActionType.PersistentSetupNetworks, setupNetworksParams);
+        HostSetupNetworksParametersBuilder.updateParametersSequencing(setupNetworksParams);
+        runInternalMultipleActions(VdcActionType.PersistentHostSetupNetworks, setupNetworksParams);
     }
 
     private Map<Guid, ManageNetworkClustersParameters> mapParametersByClusterId() {
