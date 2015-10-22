@@ -796,13 +796,16 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             VmNic vmInterface,
             VmDevice vmDevice,
             String vfName) {
+        struct.put(VdsProperties.Type, vmDevice.getType().getValue());
+        struct.put(VdsProperties.Device, vmDevice.getDevice());
+        struct.put(VdsProperties.HostDev, vfName);
 
-        struct.put(VdsProperties.Type, VmDeviceType.HOST_DEVICE.getName());
-        struct.put(VdsProperties.Device, vfName);
+        addAddress(vmDevice, struct);
+        struct.put(VdsProperties.MAC_ADDR, vmInterface.getMacAddress());
+        addBootOrder(vmDevice, struct);
         struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
 
         Map<String, Object> specParams = new HashMap<>();
-        specParams.put(VdsProperties.MAC_ADDR, vmInterface.getMacAddress());
 
         VnicProfile vnicProfile = DbFacade.getInstance().getVnicProfileDao().get(vmInterface.getVnicProfileId());
         Network network = DbFacade.getInstance().getNetworkDao().get(vnicProfile.getNetworkId());
