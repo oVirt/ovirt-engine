@@ -165,10 +165,10 @@ BuildRequires:	maven
 BuildRequires:	python
 BuildRequires:	unzip
 
-Requires:	%{jboss}
+Requires:	%{jboss} >= 8.2.1
 Conflicts:	%{jboss} >= 11
 %if %{ovirt_wildfly_overlay}
-Requires:	ovirt-engine-wildfly-overlay
+Requires:	ovirt-engine-wildfly-overlay >= 002
 %endif
 
 Requires:	%{name}-backend = %{version}-%{release}
