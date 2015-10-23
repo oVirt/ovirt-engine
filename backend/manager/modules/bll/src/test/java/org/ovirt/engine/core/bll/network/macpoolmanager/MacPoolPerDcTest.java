@@ -16,7 +16,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.common.businessentities.MacPool;
@@ -66,15 +65,6 @@ public class MacPoolPerDcTest extends DbDependentTestBase {
         dataCenter = createStoragePool(macPool);
         vmNic = createVmNic();
         pool = new MacPoolPerDc(macPoolDao);
-    }
-
-    @Test()
-    public void testInitCanBeCalledTwice() throws Exception {
-        pool.initialize();
-        Mockito.verify(macPoolDao).getAll();
-
-        pool.initialize();
-        Mockito.verifyNoMoreInteractions(storagePoolDao, vmNicDao, macPoolDao);
     }
 
     @Test()
@@ -249,34 +239,5 @@ public class MacPoolPerDcTest extends DbDependentTestBase {
 
     protected void mockStoragePool(StoragePool storagePool) {
         when(storagePoolDao.get(eq(storagePool.getId()))).thenReturn(storagePool);
-    }
-
-    private void expectNotInitializedException() {
-        expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage(MacPoolPerDc.NOT_INITIALIZED_EXCEPTION_MESSAGE);
-    }
-
-    @Test
-    public void testPoolForDataCenterMethod() throws Exception {
-        expectNotInitializedException();
-        pool.poolForDataCenter(Guid.newGuid());
-    }
-
-    @Test
-    public void testCreatePoolMethod() throws Exception {
-        expectNotInitializedException();
-        pool.createPool(new MacPool());
-    }
-
-    @Test
-    public void testModifyPoolMethod() throws Exception {
-        expectNotInitializedException();
-        pool.modifyPool(new MacPool());
-    }
-
-    @Test
-    public void testRemovePoolMethod() throws Exception {
-        expectNotInitializedException();
-        pool.removePool(Guid.newGuid());
     }
 }

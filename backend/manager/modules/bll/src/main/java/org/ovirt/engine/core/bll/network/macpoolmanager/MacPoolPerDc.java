@@ -33,15 +33,11 @@ public class MacPoolPerDc {
 
     static final String UNABLE_TO_CREATE_MAC_POOL_IT_ALREADY_EXIST = "This MAC Pool already exist";
     static final String INEXISTENT_POOL_EXCEPTION_MESSAGE = "Coding error, pool for requested GUID does not exist";
-    static final String NOT_INITIALIZED_EXCEPTION_MESSAGE = "This instance was not yet initialized.";
-    static final String CANNOT_REMOVE_POOL_EXCEPTION_MESSAGE = "Cannot remove pool which is still in use.";
     static final String POOL_TO_BE_REMOVED_DOES_NOT_EXIST_EXCEPTION_MESSAGE =
             "Trying to removed pool which does not exist.";
     private static final Logger log = LoggerFactory.getLogger(MacPoolPerDc.class);
     private final Map<Guid, MacPoolManagerStrategy> macPools = new HashMap<>();
-
     private final ReentrantReadWriteLock lockObj = new ReentrantReadWriteLock();
-    private boolean initialized = false;
 
     public MacPoolPerDc() {}
 
@@ -51,17 +47,11 @@ public class MacPoolPerDc {
 
     @PostConstruct
     void initialize() {
-        try (AutoCloseableLock lock = writeLockResource()) {
-            if (initialized) {
-                log.error("Trying to initialize multiple times.");
-                return;
-            }
-
-            final List<MacPool> macPools = macPoolDao.getAll();
+        try {
+            List<MacPool> macPools = macPoolDao.getAll();
             for (MacPool macPool : macPools) {
                 initializeMacPool(macPool);
             }
-            initialized = true;
             log.info("Successfully initialized");
         } catch (RuntimeException e) {
             log.error("Error initializing: {}", e.getMessage());
@@ -80,7 +70,6 @@ public class MacPoolPerDc {
 
     public MacPoolManagerStrategy poolForDataCenter(Guid dataCenterId) {
         try (AutoCloseableLock lock = readLockResource()) {
-            checkInitialized();
             return getPoolWithoutLocking(getMacPoolId(dataCenterId));
         }
     }
@@ -110,7 +99,6 @@ public class MacPoolPerDc {
      */
     public void createPool(MacPool macPool) {
         try (AutoCloseableLock lock = writeLockResource()) {
-            checkInitialized();
             createPoolWithoutLocking(macPool);
         }
     }
@@ -132,8 +120,6 @@ public class MacPoolPerDc {
      */
     public void modifyPool(MacPool macPool) {
         try (AutoCloseableLock lock = writeLockResource()) {
-            checkInitialized();
-
             if (!macPools.containsKey(macPool.getId())) {
                 throw new IllegalStateException(INEXISTENT_POOL_EXCEPTION_MESSAGE);
             }
@@ -152,15 +138,8 @@ public class MacPoolPerDc {
         return MacAddressRangeUtils.clipMultiCastsFromRanges(disjointRanges.getRanges());
     }
 
-    private void checkInitialized() {
-        if (!initialized) {
-            throw new IllegalStateException(NOT_INITIALIZED_EXCEPTION_MESSAGE);
-        }
-    }
-
     public void removePool(Guid macPoolId) {
         try (AutoCloseableLock lock = writeLockResource()) {
-            checkInitialized();
             removeWithoutLocking(macPoolId);
         }
     }
