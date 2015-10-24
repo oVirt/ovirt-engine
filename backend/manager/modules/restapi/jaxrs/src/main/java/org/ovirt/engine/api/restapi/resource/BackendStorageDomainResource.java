@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -21,19 +20,16 @@ import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainStatus;
 import org.ovirt.engine.api.model.StorageDomainType;
-import org.ovirt.engine.api.model.Template;
-import org.ovirt.engine.api.model.Templates;
-import org.ovirt.engine.api.model.Vm;
-import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.AssignedDiskProfilesResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.DiskSnapshotsResource;
 import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.resource.FilesResource;
 import org.ovirt.engine.api.resource.ImagesResource;
-import org.ovirt.engine.api.resource.StorageDomainContentsResource;
 import org.ovirt.engine.api.resource.StorageDomainResource;
 import org.ovirt.engine.api.resource.StorageDomainServerConnectionsResource;
+import org.ovirt.engine.api.resource.StorageDomainTemplatesResource;
+import org.ovirt.engine.api.resource.StorageDomainVmsResource;
 import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
@@ -53,8 +49,9 @@ import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryP
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendStorageDomainResource extends
-        AbstractBackendActionableResource<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain> implements StorageDomainResource {
+public class BackendStorageDomainResource
+        extends AbstractBackendActionableResource<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain>
+        implements StorageDomainResource {
 
     private final BackendStorageDomainsResource parent;
 
@@ -351,12 +348,12 @@ public class BackendStorageDomainResource extends
     }
 
     @Override
-    public StorageDomainContentsResource<Templates, Template> getStorageDomainTemplatesResource() {
+    public StorageDomainTemplatesResource getTemplatesResource() {
         return inject(new BackendStorageDomainTemplatesResource(guid));
     }
 
     @Override
-    public StorageDomainContentsResource<Vms, Vm> getStorageDomainVmsResource() {
+    public StorageDomainVmsResource getVmsResource() {
         return inject(new BackendStorageDomainVmsResource(guid));
     }
 

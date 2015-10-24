@@ -7,16 +7,16 @@ import java.util.List;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.Vms;
-import org.ovirt.engine.api.resource.StorageDomainContentResource;
-import org.ovirt.engine.api.resource.StorageDomainContentsResource;
+import org.ovirt.engine.api.resource.StorageDomainVmResource;
+import org.ovirt.engine.api.resource.StorageDomainVmsResource;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainVmsResource
-    extends AbstractBackendStorageDomainContentsResource<Vms, Vm, org.ovirt.engine.core.common.businessentities.VM>
-        implements StorageDomainContentsResource<Vms, Vm> {
+        extends AbstractBackendStorageDomainContentsResource<Vms, Vm, org.ovirt.engine.core.common.businessentities.VM>
+        implements StorageDomainVmsResource {
 
     static final String[] SUB_COLLECTIONS = { "disks" };
 
@@ -58,7 +58,7 @@ public class BackendStorageDomainVmsResource
     }
 
     @Override
-    public StorageDomainContentResource<Vm> getStorageDomainContentResource(String id) {
+    public StorageDomainVmResource getVmResource(String id) {
         return inject(new BackendStorageDomainVmResource(this, id));
     }
 }

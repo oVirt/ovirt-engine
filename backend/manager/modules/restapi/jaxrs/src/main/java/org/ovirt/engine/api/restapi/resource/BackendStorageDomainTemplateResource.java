@@ -7,7 +7,7 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.StorageDomainContentDisksResource;
-import org.ovirt.engine.api.resource.StorageDomainContentResource;
+import org.ovirt.engine.api.resource.StorageDomainTemplateResource;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
@@ -20,7 +20,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainTemplateResource
     extends AbstractBackendStorageDomainContentResource<Templates, Template, VmTemplate>
-    implements StorageDomainContentResource<Template> {
+    implements StorageDomainTemplateResource {
 
     VmTemplate template;
 

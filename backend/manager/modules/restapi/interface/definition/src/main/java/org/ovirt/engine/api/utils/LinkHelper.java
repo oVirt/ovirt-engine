@@ -214,9 +214,11 @@ import org.ovirt.engine.api.resource.StatisticResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.StepResource;
 import org.ovirt.engine.api.resource.StepsResource;
-import org.ovirt.engine.api.resource.StorageDomainContentResource;
-import org.ovirt.engine.api.resource.StorageDomainContentsResource;
 import org.ovirt.engine.api.resource.StorageDomainResource;
+import org.ovirt.engine.api.resource.StorageDomainTemplateResource;
+import org.ovirt.engine.api.resource.StorageDomainTemplatesResource;
+import org.ovirt.engine.api.resource.StorageDomainVmResource;
+import org.ovirt.engine.api.resource.StorageDomainVmsResource;
 import org.ovirt.engine.api.resource.StorageDomainsResource;
 import org.ovirt.engine.api.resource.StorageResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionExtensionResource;
@@ -477,7 +479,7 @@ public class LinkHelper {
         TYPES.put(Icon.class, map);
 
         map = new ParentToCollectionMap(TemplateResource.class, TemplatesResource.class);
-        map.add(StorageDomainContentResource.class, StorageDomainContentsResource.class, StorageDomain.class);
+        map.add(StorageDomainTemplateResource.class, StorageDomainTemplatesResource.class, StorageDomain.class);
         TYPES.put(Template.class, map);
 
         map = new ParentToCollectionMap(InstanceTypeResource.class, InstanceTypesResource.class);
@@ -488,7 +490,7 @@ public class LinkHelper {
         TYPES.put(User.class, map);
 
         map = new ParentToCollectionMap(VmResource.class, VmsResource.class);
-        map.add(StorageDomainContentResource.class, StorageDomainContentsResource.class, StorageDomain.class);
+        map.add(StorageDomainVmResource.class, StorageDomainVmsResource.class, StorageDomain.class);
 //        map.add(SnapshotResource.class, SnapshotsResource.class, Snapshot.class);
         TYPES.put(Vm.class, map);
 

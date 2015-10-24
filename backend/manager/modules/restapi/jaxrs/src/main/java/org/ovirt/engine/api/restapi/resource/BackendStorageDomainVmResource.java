@@ -8,7 +8,7 @@ import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.StorageDomainContentDisksResource;
-import org.ovirt.engine.api.resource.StorageDomainContentResource;
+import org.ovirt.engine.api.resource.StorageDomainVmResource;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -19,7 +19,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainVmResource
     extends AbstractBackendStorageDomainContentResource<Vms, Vm, org.ovirt.engine.core.common.businessentities.VM>
-    implements StorageDomainContentResource<Vm> {
+    implements StorageDomainVmResource {
 
     public static final String COLLAPSE_SNAPSHOTS = "collapse_snapshots";
 

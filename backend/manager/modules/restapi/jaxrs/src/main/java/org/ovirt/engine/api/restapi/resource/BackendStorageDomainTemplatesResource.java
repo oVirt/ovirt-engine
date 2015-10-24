@@ -9,8 +9,8 @@ import java.util.Map;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
-import org.ovirt.engine.api.resource.StorageDomainContentResource;
-import org.ovirt.engine.api.resource.StorageDomainContentsResource;
+import org.ovirt.engine.api.resource.StorageDomainTemplateResource;
+import org.ovirt.engine.api.resource.StorageDomainTemplatesResource;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainTemplatesResource
-    extends AbstractBackendStorageDomainContentsResource<Templates, Template, VmTemplate>
-        implements StorageDomainContentsResource<Templates, Template> {
+        extends AbstractBackendStorageDomainContentsResource<Templates, Template, VmTemplate>
+        implements StorageDomainTemplatesResource {
 
     static final String[] SUB_COLLECTIONS = { "disks" };
 
@@ -67,7 +67,7 @@ public class BackendStorageDomainTemplatesResource
     }
 
     @Override
-    public StorageDomainContentResource<Template> getStorageDomainContentResource(String id) {
+    public StorageDomainTemplateResource getTemplateResource(String id) {
         return inject(new BackendStorageDomainTemplateResource(this, id));
     }
 }
