@@ -13,10 +13,14 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -33,7 +37,9 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
@@ -41,6 +47,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -353,6 +360,38 @@ public class VmsMonitoring {
         saveVmJobsToDb();
     }
 
+    protected void setOsId(VmStatic vmStatic, String guestOsNameFromVdsm, int defaultArchOsId) {
+        if (StringUtils.isEmpty(guestOsNameFromVdsm)) {
+            log.debug("VM '{}': setting default OS ID: '{}'", vmStatic.getName(), defaultArchOsId);
+            vmStatic.setOsId(defaultArchOsId);
+        }
+    }
+
+    protected void setDisplayType(VmStatic vmStatic, String displayTypeFromVdsm, DisplayType defaultDisplayType) {
+        if (StringUtils.isEmpty(displayTypeFromVdsm)) {
+            log.debug("VM '{}': setting default display type: '{}'", vmStatic.getName(), defaultDisplayType.getValue());
+            vmStatic.setDefaultDisplayType(defaultDisplayType);
+        }
+    }
+
+    private int getDefaultOsId(ArchitectureType architecture) {
+        OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+        Integer defaultArchOsId = osRepository.getDefaultOSes().get(architecture);
+        return (defaultArchOsId == null) ? 0 : defaultArchOsId;
+    }
+
+    private DisplayType getDefaultDisplayType(int osId, Version clusterVersion) {
+        OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+        List<Pair<GraphicsType, DisplayType>> pairs = osRepository.getGraphicsAndDisplays(osId, clusterVersion);
+
+        if (!pairs.isEmpty()) {
+            Pair<GraphicsType, DisplayType> graphicsDisplayPair = pairs.get(0);
+            return graphicsDisplayPair.getSecond();
+        }
+
+        return DisplayType.qxl;
+    }
+
     protected void processExternallyManagedVms() {
         // Fetching for details from the host
         // and marking the VMs for addition
@@ -361,6 +400,10 @@ public class VmsMonitoring {
             vmsToQuery.add(pair.getSecond().getVmDynamic().getId().toString());
         }
         if (!vmsToQuery.isEmpty()) {
+            VDSGroup vdsGroup = getDbFacade().getVdsGroupDao().get(vdsManager.getVdsGroupId());
+            int defaultOsId = getDefaultOsId(vdsGroup.getArchitecture());
+            DisplayType defaultDisplayType = getDefaultDisplayType(defaultOsId, vdsGroup.getCompatibilityVersion());
+
             // Query VDSM for VMs info, and creating a proper VMStatic to be used when importing them
             Map[] vmsInfo = getVmInfo(vmsToQuery);
             for (Map vmInfo : vmsInfo) {
@@ -383,6 +426,9 @@ public class VmsMonitoring {
                 vmStatic.setNumOfSockets(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.num_of_cpus)));
                 vmStatic.setMemSizeMb(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.mem_size_mb)));
                 vmStatic.setSingleQxlPci(false);
+
+                setOsId(vmStatic, (String) vmInfo.get(VdsProperties.guest_os), defaultOsId);
+                setDisplayType(vmStatic, (String) vmInfo.get(VdsProperties.displayType), defaultDisplayType);
 
                 externalVmsToAdd.add(vmStatic);
                 log.info("Importing VM '{}' as '{}', as it is running on the on Host, but does not exist in the engine.", vmNameOnHost, vmStatic.getName());
