@@ -133,6 +133,7 @@ import org.ovirt.engine.core.common.queries.GetVmFromOvaQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmsFromExternalProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
@@ -2632,6 +2633,17 @@ public class AsyncDataProvider {
         params.setOs(os);
         params.setVdsGroupCompatibilityVersion(compatibilityVersion);
         Frontend.getInstance().runQuery(VdcQueryType.GetFilteredAttachableDisks, params, aQuery);
+    }
+
+    public void getAncestorImagesByImagesIds(AsyncQuery aQuery, List<Guid> imagesIds) {
+        aQuery.converterCallback = new IAsyncConverter<Map<Guid, DiskImage>>() {
+            @Override
+            public Map<Guid, DiskImage> Convert(Object returnValue, AsyncQuery asyncQuery) {
+                return (Map<Guid, DiskImage>) returnValue;
+            }
+        };
+        IdsQueryParameters params = new IdsQueryParameters(imagesIds);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAncestorImagesByImagesIds, params, aQuery);
     }
 
     public void getPermittedStorageDomainsByStoragePoolId(AsyncQuery aQuery,

@@ -101,6 +101,19 @@ public interface DiskImageDao extends ReadDao<DiskImage, Guid> {
     DiskImage getAncestor(Guid id);
 
     /**
+     * Retrieves the ancestor of the given image (or the image itself, if it has no ancestors).
+     *
+     * @param id
+     *            the id of the image to get the ancestor for.
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return The ancestral image.
+     */
+    DiskImage getAncestor(Guid id, Guid userID, boolean isFiltered);
+
+    /**
      * Return all images that don't have a Disk entity in the DB and are part of a snapshot of the given VM ID.
      *
      * @param vmId
