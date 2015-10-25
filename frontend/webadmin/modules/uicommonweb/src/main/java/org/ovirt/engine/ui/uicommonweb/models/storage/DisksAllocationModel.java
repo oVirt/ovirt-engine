@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -26,6 +27,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq.DiskModelByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -57,6 +59,16 @@ public class DisksAllocationModel extends EntityModel {
         return disks;
     }
 
+    private Model container;
+
+    public Model getContainer() {
+        return container;
+    }
+
+    public void setContainer(Model container) {
+        this.container = container;
+    }
+
     public void setDisks(List<DiskModel> value) {
         disks = value;
 
@@ -66,6 +78,7 @@ public class DisksAllocationModel extends EntityModel {
 
         sortDisks();
 
+        setDefaultVolumeInformationSelection(disks);
         for (final DiskModel diskModel : disks) {
             diskModel.getStorageDomain().getSelectedItemChangedEvent().removeListener(storageDomainEventListener);
             diskModel.getStorageDomain().getSelectedItemChangedEvent().addListener(storageDomainEventListener);
@@ -82,6 +95,26 @@ public class DisksAllocationModel extends EntityModel {
                 }
             });
         }
+    }
+
+    private void setDefaultVolumeInformationSelection(List<DiskModel> diskModels) {
+        final Map<Guid, DiskModel> diskModelsMap = new HashMap<>();
+        for (DiskModel diskModel : diskModels) {
+            diskModelsMap.put(((DiskImage) diskModel.getDisk()).getImageId(), diskModel);
+        }
+
+        Model model = getContainer() != null ? getContainer() : this;
+        AsyncDataProvider.getInstance().getAncestorImagesByImagesIds(new AsyncQuery(model, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                Map<Guid, DiskImage> imagesAncestors = (Map<Guid, DiskImage>) returnValue;
+                for (Map.Entry<Guid, DiskImage> entry : imagesAncestors.entrySet()) {
+                    DiskModel diskModel = diskModelsMap.get(entry.getKey());
+                    diskModel.getVolumeType().setSelectedItem(entry.getValue().getVolumeType());
+                    diskModel.getVolumeFormat().setSelectedItem(entry.getValue().getVolumeFormat());
+                }
+            }
+        }), new ArrayList<>(diskModelsMap.keySet()));
     }
 
     public void sortDisks() {

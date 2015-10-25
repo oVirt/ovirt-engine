@@ -123,8 +123,13 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
 
     @Override
     public DiskImage getAncestor(Guid id) {
+        return getAncestor(id, null, false);
+    }
+
+    @Override
+    public DiskImage getAncestor(Guid id, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("image_guid", id);
+                .addValue("image_guid", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
         return getCallsHandler().executeRead("GetAncestralImageByImageGuid",
                 DiskImageRowMapper.instance,
