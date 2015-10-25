@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -184,7 +185,7 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
                 getSelectedItems() != null ? Linq.<DiskImage> cast(getSelectedItems()) : new ArrayList<DiskImage>();
 
         for (DiskImage disk : disks) {
-            if (disk.getImageStatus() != ImageStatus.OK) {
+            if (disk.getImageStatus() != ImageStatus.OK || disk.getDiskStorageType() != DiskStorageType.IMAGE) {
                 return false;
             }
         }
