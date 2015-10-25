@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.lock.InMemoryLockManager;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -22,9 +23,12 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -52,36 +56,38 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
     private DiskImageDao diskImageDao;
 
     private RemoveDiskCommand<RemoveDiskParameters> cmd;
-    private DiskImage disk;
+    private Disk disk;
     private VM vm;
     private VmDevice vmDevice;
 
     @Before
     public void setUp() {
-        Guid diskId = Guid.newGuid();
-
         disk = new DiskImage();
-        disk.setId(diskId);
-        disk.setVmEntityType(VmEntityType.VM);
+        setupDisk();
 
         Guid vmId = Guid.newGuid();
         vm = new VM();
         vm.setId(vmId);
 
-        VmDeviceId vmDeviceId = new VmDeviceId(diskId, vmId);
+        VmDeviceId vmDeviceId = new VmDeviceId(disk.getId(), vmId);
         vmDevice = new VmDevice();
         vmDevice.setId(vmDeviceId);
         vmDevice.setIsPlugged(true);
 
-        when(vmDao.getVmsListForDisk(diskId, Boolean.TRUE)).thenReturn(Collections.singletonList(vm));
+        when(vmDao.getVmsListForDisk(disk.getId(), Boolean.TRUE)).thenReturn(Collections.singletonList(vm));
         when(vmDeviceDao.get(vmDeviceId)).thenReturn(vmDevice);
 
-        RemoveDiskParameters params = new RemoveDiskParameters(diskId);
+        RemoveDiskParameters params = new RemoveDiskParameters(disk.getId());
 
         cmd = spy(new RemoveDiskCommand<RemoveDiskParameters>(params));
         doReturn(disk).when(cmd).getDisk();
         doReturn(vmDeviceDao).when(cmd).getVmDeviceDao();
         doReturn(vmDao).when(cmd).getVmDao();
+    }
+
+    protected void setupDisk() {
+        disk.setId(Guid.newGuid());
+        disk.setVmEntityType(VmEntityType.VM);
     }
 
     /* Tests for canDoAction() flow */
@@ -113,7 +119,7 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
         ArrayList<Guid> storageIds = new ArrayList<>();
         storageIds.add(domain.getId());
         storageIds.add(Guid.newGuid());
-        disk.setStorageIds(storageIds);
+        ((DiskImage)disk).setStorageIds(storageIds);
 
         doReturn(domain).when(cmd).getStorageDomain();
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
@@ -133,9 +139,40 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testCanDoActionOvfDiskNotIllegal() {
-        disk.setImageStatus(ImageStatus.OK);
+        ((DiskImage)disk).setImageStatus(ImageStatus.OK);
         disk.setContentType(DiskContentType.OVF_STORE);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_NOT_IN_APPLICABLE_STATUS);
     }
+
+    @Test
+    public void testPreImportedHostedEngineLunDiskRemove() {
+        disk = new LunDisk();
+        setupDisk();
+        disk.setDiskAlias(StorageConstants.HOSTED_ENGINE_LUN_DISK_ALIAS);
+        doReturn(disk).when(cmd).getDisk();
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+    }
+
+    @Test
+    public void testImportedHostedEngineLunDiskRemove() {
+        vm.setOrigin(OriginType.MANAGED_HOSTED_ENGINE);
+        vm.setStatus(VMStatus.Up);
+        disk = new LunDisk();
+        setupDisk();
+        disk.setDiskAlias(StorageConstants.HOSTED_ENGINE_LUN_DISK_ALIAS);
+        doReturn(disk).when(cmd).getDisk();
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+    }
+
+    @Test
+    public void testImportedHostedEngineImageDiskRemove() {
+        vm.setOrigin(OriginType.MANAGED_HOSTED_ENGINE);
+        vm.setStatus(VMStatus.Up);
+        doReturn(disk).when(cmd).getDisk();
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(
+                cmd,
+                EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_DISK);
+    }
+
 }

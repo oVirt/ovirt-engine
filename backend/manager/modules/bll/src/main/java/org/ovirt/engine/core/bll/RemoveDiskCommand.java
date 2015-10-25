@@ -96,16 +96,31 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
         }
 
-        DiskValidator oldDiskValidator = new DiskValidator(getDisk());
-
-        return validate(oldDiskValidator.validateNotHostedEngineDisk()) && validateAllVmsForDiskAreDown() &&
-                canRemoveDiskBasedOnStorageTypeCheck();
+        return (validateHostedEngineDisks() && validateAllVmsForDiskAreDown())
+                && canRemoveDiskBasedOnStorageTypeCheck();
     }
 
+    private boolean validateHostedEngineDisks() {
+        DiskValidator oldDiskValidator = new DiskValidator(getDisk());
+        if (getDisk().getVmEntityType() != null && getDisk().getVmEntityType().isVmType()) {
+            for (VM vm : getVmsForDiskId()) {
+                if (!validate(oldDiskValidator.validRemovableHostedEngineDisks(vm))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Validate that all vms containing the disk are down, except hosted engine vm
+     *
+     * @return
+     */
     private boolean validateAllVmsForDiskAreDown() {
         if (getDisk().getVmEntityType() != null && getDisk().getVmEntityType().isVmType()) {
             for (VM vm : getVmsForDiskId()) {
-                if (vm.getStatus() != VMStatus.Down) {
+                if (vm.getStatus() != VMStatus.Down && !vm.isHostedEngine()) {
                     VmDevice vmDevice = getVmDeviceDao().get(new VmDeviceId(getDisk().getId(), vm.getId()));
                     if (vmDevice.getIsPlugged()) {
                         addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
