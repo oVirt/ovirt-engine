@@ -4,21 +4,23 @@ import java.util.Arrays;
 
 import org.ovirt.engine.core.common.validation.CidrValidator;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class CidrValidation implements IValidation {
 
-    public CidrValidation() {
-    }
+    public static final String ILLEGAL_ARGUMENT_EXCEPTION_MESSAGE = "Argument must be a String or a null"; //$NON-NLS-1$
 
     @Override
     public ValidationResult validate(Object value) {
         // This validation must be applied to a String
-        assert value == null || value instanceof String;
+        if (!(value instanceof String) && value != null) {
+            throw new IllegalArgumentException(ILLEGAL_ARGUMENT_EXCEPTION_MESSAGE);
+        }
         String cidr = (String) value;
         ValidationResult result = new ValidationResult();
-        if (!CidrValidator.getInstance().isCidrFormatValid(cidr)) {
+        if (!getCidrValidator().isCidrFormatValid(cidr)) {
             failWith(result, getThisFieldMustContainCidrInFormatMsg());
-        } else if (!CidrValidator.getInstance().isCidrNetworkAddressValid(cidr)) {
+        } else if (!getCidrValidator().isCidrNetworkAddressValid(cidr)) {
             failWith(result, getCidrNotNetworkAddress());
         }
 
@@ -31,14 +33,25 @@ public class CidrValidation implements IValidation {
         return;
     }
 
-    protected String getThisFieldMustContainCidrInFormatMsg() {
-        return ConstantsManager.getInstance()
-                .getConstants()
-                .thisFieldMustContainCidrInFormatMsg();
+    protected UIConstants getUiConstants() {
+        return getConstantsManager().getConstants();
+    }
+
+    protected ConstantsManager getConstantsManager() {
+        return ConstantsManager.getInstance();
     }
 
     protected String getCidrNotNetworkAddress() {
-        return ConstantsManager.getInstance().getConstants().cidrNotNetworkAddress();
+        return getUiConstants().cidrNotNetworkAddress();
+    }
+
+    protected String getThisFieldMustContainCidrInFormatMsg() {
+        return getUiConstants()
+                .thisFieldMustContainCidrInFormatMsg();
+    }
+
+    protected CidrValidator getCidrValidator() {
+        return CidrValidator.getInstance();
     }
 
 }

@@ -5,101 +5,81 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 import java.util.Arrays;
-import java.util.Collection;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.validation.CidrValidator;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
-@RunWith(Parameterized.class)
+@RunWith(MockitoJUnitRunner.class)
 public class CidrValidationTest {
+    private static final String BAD_CIDR_FORMAT = "BAD_CIDR_FORMAT"; //$NON-NLS-1$
+    private static final String CIDR_IS_NOT_A_NETWORK_ADDRESS = "CIDR_IS_NOT_A_NETWORK_ADDRESS"; //$NON-NLS-1$
+    private static final String CIDR = "CIDR"; //$NON-NLS-1$
 
     @Spy
-    private CidrValidation validation;
+    private CidrValidation underTest;
 
-    private final String cidr;
-    private final boolean isCidrValid;
+    @Mock
+    private ConstantsManager mockedConstantsManager;
 
-    public CidrValidationTest(String cidr, boolean isCidrValid) {
-        this.cidr = cidr;
-        this.isCidrValid = isCidrValid;
-    }
+    @Mock
+    private UIConstants mockedUiConstants;
+
+    @Mock
+    private CidrValidator mockedCidrValidator;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setup() {
-        validation = spy(new CidrValidation());
-        doReturn(null).when(validation).getThisFieldMustContainCidrInFormatMsg();
-        doReturn(null).when(validation).getCidrNotNetworkAddress();
+        underTest = spy(new CidrValidation());
+        doReturn(mockedCidrValidator).when(underTest).getCidrValidator();
+        doReturn(mockedConstantsManager).when(underTest).getConstantsManager();
+        doReturn(mockedUiConstants).when(mockedConstantsManager).getConstants();
+        doReturn(BAD_CIDR_FORMAT).when(underTest).getThisFieldMustContainCidrInFormatMsg();
+        doReturn(CIDR_IS_NOT_A_NETWORK_ADDRESS).when(underTest).getCidrNotNetworkAddress();
     }
 
     @Test
-    public void checkCidrValidation() {
-        assertEquals("Failed to validate CIDR: " + cidr, isCidrValid, validation.validate(cidr).getSuccess());//$NON-NLS-1$
+    public void checkCidrBadFormat() {
+        doReturn(false).when(mockedCidrValidator).isCidrFormatValid(CIDR);
+        ValidationResult actualResult = underTest.validate(CIDR);
+        ValidationResult expectedResult = new ValidationResult(false, Arrays.asList(BAD_CIDR_FORMAT));
+        assertEquals(expectedResult, actualResult);
+
     }
 
-    @Parameterized.Parameters
-    public static Collection<Object[]> namesParams() {
-        return Arrays.asList(new Object[][] {
-                // Bad Format
-                { null, false }, //$NON-NLS-1$
-                { "", false }, //$NON-NLS-1$
-                { "?\"?>!", false }, //$NON-NLS-1$
-                { "a", false }, //$NON-NLS-1$
-                { "a.a", false }, //$NON-NLS-1$
-                { "a.a.a", false }, //$NON-NLS-1$
-                { "a.a.a.a", false }, //$NON-NLS-1$
-                { "a.a.a.a/a", false }, //$NON-NLS-1$
-                { "1", false }, //$NON-NLS-1$
-                { "1.1.1.1", false }, //$NON-NLS-1$
-                { "1.1.1.1/", false }, //$NON-NLS-1$
-                { "1000.1.1.1/24", false }, //$NON-NLS-1$
-                { "1.1000.1.1/24", false }, //$NON-NLS-1$
-                { "1.1.1000.1/24", false }, //$NON-NLS-1$
-                { "1.1.1.1000/24", false }, //$NON-NLS-1$
-                { "1.1.1.1/33", false }, //$NON-NLS-1$
-                { "1111.1.1.1/1", false }, //$NON-NLS-1$
-                { "1111.1.1.1/32", false }, //$NON-NLS-1$
-                { "1.1.1.1/1/1", false }, //$NON-NLS-1$
-                { "1.1/1.1/.1/.1", false }, //$NON-NLS-1$
-                { "256.1.1.1/1", false }, //$NON-NLS-1$
-                { "256.1.1.1/32", false }, //$NON-NLS-1$
-                { "256.1.1.1/222222222222222222222222", false }, //$NON-NLS-1$
-                { "255.?.?././", false }, //$NON-NLS-1$
-                { "255?23?1?0/8", false }, //$NON-NLS-1$
-                { "23\22\22\22\22\\", false }, //$NON-NLS-1$
-                { ".................", false }, //$NON-NLS-1$
-                { "././././", false }, //$NON-NLS-1$
-                { "?/?/?/?/", false }, //$NON-NLS-1$
-
-                // Not A Network address
-                { "253.0.0.32/26", false }, //$NON-NLS-1$
-                { "255.255.255.192/25", false }, //$NON-NLS-1$
-                { "255.255.255.16/24", false }, //$NON-NLS-1$
-                { "255.254.192.0/17", false }, //$NON-NLS-1$
-                { "255.255.255.250/16", false }, //$NON-NLS-1$
-                { "255.255.192.17/14", false }, //$NON-NLS-1$
-                { "255.128.0.0/8", false }, //$NON-NLS-1$
-                { "240.255.255.247/3", false }, //$NON-NLS-1$
-                { "224.0.0.0/2", false }, //$NON-NLS-1$
-                { "192.0.0.0/1", false }, //$NON-NLS-1$
-                { "255.255.255.255/0", false }, //$NON-NLS-1$
-
-                // valid CIDR
-                { "255.255.255.255/32", true }, //$NON-NLS-1$
-                { "0.0.0.0/32", true }, //$NON-NLS-1$
-                { "255.255.255.254/31", true }, //$NON-NLS-1$
-                { "255.255.255.248/29", true }, //$NON-NLS-1$
-                { "255.255.255.0/24", true }, //$NON-NLS-1$
-                { "255.255.254.0/23", true }, //$NON-NLS-1$
-                { "255.0.254.0/23", true }, //$NON-NLS-1$
-                { "255.255.0.0/16", true }, //$NON-NLS-1$
-                { "255.252.0.0/14", true }, //$NON-NLS-1$
-                { "255.0.0.0/8", true }, //$NON-NLS-1$
-                { "248.0.0.0/5", true }, //$NON-NLS-1$
-                { "128.0.0.0/1", true }, //$NON-NLS-1$
-        });
+    @Test
+    public void checkCidrCidrIsNotANetworkAddress() {
+        doReturn(true).when(mockedCidrValidator).isCidrFormatValid(CIDR);
+        doReturn(false).when(mockedCidrValidator).isCidrNetworkAddressValid(CIDR);
+        ValidationResult actualResult = underTest.validate(CIDR);
+        ValidationResult expectedResult = new ValidationResult(false, Arrays.asList(CIDR_IS_NOT_A_NETWORK_ADDRESS));
+        assertEquals(expectedResult, actualResult);
     }
 
+    @Test
+    public void checkValidCidr() {
+        doReturn(true).when(mockedCidrValidator).isCidrFormatValid(CIDR);
+        doReturn(true).when(mockedCidrValidator).isCidrNetworkAddressValid(CIDR);
+        ValidationResult actualResult = underTest.validate(CIDR);
+        ValidationResult expectedResult = new ValidationResult();
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void checkStringInputAssertion() {
+        expectedException.expectMessage(CidrValidation.ILLEGAL_ARGUMENT_EXCEPTION_MESSAGE);
+        expectedException.expect(IllegalArgumentException.class);
+        ValidationResult actualResult = underTest.validate(new Object());
+    }
 }
