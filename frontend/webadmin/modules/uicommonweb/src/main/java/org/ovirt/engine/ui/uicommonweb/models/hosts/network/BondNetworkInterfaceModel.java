@@ -17,7 +17,7 @@ public class BondNetworkInterfaceModel extends NetworkInterfaceModel {
             Collection<LogicalNetworkModel> nicNetworks,
             Collection<NetworkLabelModel> nicLabels,
             List<NetworkInterfaceModel> bonded, HostSetupNetworksModel setupModel) {
-        super(bondNic, nicNetworks, nicLabels, false, setupModel);
+        super(bondNic, nicNetworks, nicLabels, false, null, setupModel);
         this.bonded = bonded;
 
         setThisBondModelToRelatedSlavesModels(bonded);

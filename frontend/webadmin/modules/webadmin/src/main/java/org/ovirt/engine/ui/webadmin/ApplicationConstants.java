@@ -4693,4 +4693,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Are you sure you want to continue?")
     String areYouSureYouWantToContinue();
+
+    @DefaultStringValue("Physical Function")
+    String physicalFunction();
 }

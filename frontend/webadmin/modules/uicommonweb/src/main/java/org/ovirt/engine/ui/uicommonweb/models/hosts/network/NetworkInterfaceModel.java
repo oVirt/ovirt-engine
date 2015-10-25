@@ -20,6 +20,7 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
     private List<NetworkLabelModel> labels;
     private VdsNetworkInterface iface;
     private boolean sriovEnabled = false;
+    private VdsNetworkInterface physicalFunction;
 
     public NetworkInterfaceModel(HostSetupNetworksModel setupModel) {
         super(setupModel);
@@ -32,8 +33,9 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
             Collection<LogicalNetworkModel> nicNetworks,
             Collection<NetworkLabelModel> nicLabels,
             boolean sriovEnabled,
+            VdsNetworkInterface physicalFunction,
             HostSetupNetworksModel setupModel) {
-        this(nic, sriovEnabled, setupModel);
+        this(nic, sriovEnabled, physicalFunction, setupModel);
 
         // attach all networks
         for (LogicalNetworkModel network : nicNetworks) {
@@ -48,10 +50,14 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
         }
     }
 
-    public NetworkInterfaceModel(VdsNetworkInterface nic, boolean sriovEnabled, HostSetupNetworksModel setupModel) {
+    public NetworkInterfaceModel(VdsNetworkInterface nic,
+            boolean sriovEnabled,
+            VdsNetworkInterface physicalFunction,
+            HostSetupNetworksModel setupModel) {
         this(setupModel);
         setIface(nic);
         this.sriovEnabled = sriovEnabled;
+        this.physicalFunction = physicalFunction;
     }
 
     public BondNetworkInterfaceModel getBond() {
@@ -136,5 +142,13 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
 
     public boolean isSriovEnabled() {
         return sriovEnabled;
+    }
+
+    public boolean isVf() {
+        return physicalFunction != null;
+    }
+
+    public VdsNetworkInterface getPhysicalFunction() {
+        return physicalFunction;
     }
 }

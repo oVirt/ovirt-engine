@@ -117,6 +117,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     private List<VdsNetworkInterface> allNics;
 
+    private Map<Guid, Guid> vfMap;
+
     private Map<String, NetworkInterfaceModel> nicMap;
 
     private Map<String, LogicalNetworkModel> networkMap;
@@ -766,7 +768,6 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     private void initNicModels() {
         Map<String, NetworkInterfaceModel> nicModels = new HashMap<>();
-        Map<String, VdsNetworkInterface> nicMap = new HashMap<>();
         List<VdsNetworkInterface> physicalNics = new ArrayList<>();
         Map<String, List<VdsNetworkInterface>> bondToNic = new HashMap<>();
         Map<String, Set<LogicalNetworkModel>> nicToNetwork = new HashMap<>();
@@ -774,9 +775,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         labelToIface.clear();
 
         // map all nics
-        for (VdsNetworkInterface nic : allNics) {
-            nicMap.put(nic.getName(), nic);
-        }
+        final Map<Guid, VdsNetworkInterface> nicsById =  Entities.businessEntitiesById(allNics);
+        final Map<String, VdsNetworkInterface> nicMap = Entities.entitiesByName(allNics);
 
         // pass over all nics
         for (VdsNetworkInterface nic : allNics) {
@@ -834,7 +834,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 if (networkModel.hasVlan()) {
                     NetworkInterfaceModel existingEridge = networkModel.getVlanNicModel();
                     assert existingEridge == null : "should have only one bridge, but found " + existingEridge; //$NON-NLS-1$
-                    networkModel.setVlanNicModel(new NetworkInterfaceModel(nic, nicNetworks, null, false, this));
+                    networkModel.setVlanNicModel(new NetworkInterfaceModel(nic, nicNetworks, null, false, null, this));
                 }
                 nicToNetwork.get(ifName).add(networkModel);
 
@@ -899,8 +899,10 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             if (bondedNics != null) {
                 List<NetworkInterfaceModel> bondedModels = new ArrayList<>();
                 for (VdsNetworkInterface bonded : bondedNics) {
+                    final VdsNetworkInterface physicalFunction = findPhysicalFunction(nicsById, bonded.getId());
                     NetworkInterfaceModel bondedModel = new NetworkInterfaceModel(bonded,
                             nicToVfsConfig.containsKey(bonded.getId()),
+                            physicalFunction,
                             this);
                     bondedModel.setBonded(true);
                     bondedModels.add(bondedModel);
@@ -913,17 +915,31 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
                 nicModels.put(nicName, bondNetworkInterfaceModel);
             } else {
+                final VdsNetworkInterface physicalFunction = findPhysicalFunction(nicsById, nic.getId());
                 NetworkInterfaceModel nicModel = new NetworkInterfaceModel(nic,
-                                nicNetworks,
-                                nicLabels,
-                                nicToVfsConfig.containsKey(nic.getId()),
-                                this);
+                        nicNetworks,
+                        nicLabels,
+                        nicToVfsConfig.containsKey(nic.getId()),
+                        physicalFunction,
+                        this);
 
                 nicModels.put(nicName, nicModel);
             }
         }
         initLabeledNetworksErrorMessages(errorLabelNetworks, nicModels);
         setNics(nicModels);
+    }
+
+    private VdsNetworkInterface findPhysicalFunction(Map<Guid, VdsNetworkInterface> nicsById, Guid nicId) {
+        final boolean vf = vfMap.containsKey(nicId);
+        final VdsNetworkInterface physicalFunction;
+        if (vf) {
+            final Guid pfId = vfMap.get(nicId);
+            physicalFunction = nicsById.get(pfId);
+        } else {
+            physicalFunction = null;
+        }
+        return physicalFunction;
     }
 
     private NetworkParameters createBeforeSyncNetParams(VdsNetworkInterface nic, NetworkAttachment attachment) {
@@ -1004,6 +1020,28 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             asyncQuery);
     }
 
+    private void queryVfMap() {
+        final AsyncQuery asyncQuery = new AsyncQuery();
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValueObj) {
+                VdcQueryReturnValue returnValue = (VdcQueryReturnValue) returnValueObj;
+                vfMap = returnValue.getReturnValue();
+                if (vfMap == null) {
+                    vfMap = Collections.emptyMap();
+                }
+
+                // chain the free bonds query
+                queryFreeBonds();
+            }
+        };
+
+        VDS vds = getEntity();
+        IdQueryParameters params = new IdQueryParameters(vds.getId());
+        params.setRefresh(false);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVfToPfMapByHostId, params, asyncQuery);
+    }
+
     private void queryInterfaces() {
         // query for interfaces
         AsyncQuery asyncQuery = new AsyncQuery();
@@ -1012,8 +1050,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             @Override
             public void onSuccess(Object model, Object returnValueObj) {
                 VdcQueryReturnValue returnValue = (VdcQueryReturnValue) returnValueObj;
-                Object returnValue2 = returnValue.getReturnValue();
-                HostSetupNetworksModel.this.allNics = (List<VdsNetworkInterface>) returnValue2;
+                allNics = returnValue.getReturnValue();
 
                 // chain the network attachments query
                 queryNetworkAttachments();
@@ -1062,8 +1099,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                     nicToVfsConfig.put(vfsConfig.getNicId(), new HostNicVfsConfig(vfsConfig));
                 }
 
-                // chain the free bonds query
-                queryFreeBonds();
+                queryVfMap();
             }
         };
 
