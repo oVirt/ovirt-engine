@@ -162,10 +162,13 @@ public class DiskValidator {
     }
 
     public ValidationResult validateNotHostedEngineDisk() {
-        boolean isHostedEngineDisk = disk.getDiskStorageType() == DiskStorageType.LUN &&
-                StorageConstants.HOSTED_ENGINE_LUN_DISK_ALIAS.equals(disk.getDiskAlias());
-        return isHostedEngineDisk ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_DISK) :
+        return isHostedEngineDirectLunDisk() ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_DISK) :
                 ValidationResult.VALID;
+    }
+
+    private boolean isHostedEngineDirectLunDisk() {
+        return disk.getDiskStorageType() == DiskStorageType.LUN &&
+                    StorageConstants.HOSTED_ENGINE_LUN_DISK_ALIAS.equals(disk.getDiskAlias());
     }
 
     public ValidationResult isUsingScsiReservationValid(VM vm, LunDisk lunDisk) {
@@ -180,4 +183,11 @@ public class DiskValidator {
 
         return  ValidationResult.VALID;
     }
+
+    public ValidationResult validRemovableHostedEngineDisks(VM vm) {
+        return isHostedEngineDirectLunDisk() || !vm.isHostedEngine()
+                ? ValidationResult.VALID
+                : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_DISK);
+    }
+
 }
