@@ -28,7 +28,7 @@ public class InstanceImagesAttachDiskModel extends AttachDiskModel {
         // Get cinder attachable disks
         AsyncDataProvider.getInstance().getFilteredAttachableDisks(
                 new AsyncQuery(this, new InstanceImageGetDisksCallback(DiskStorageType.CINDER, prevSelectedDisk)
-                ), null, getVm().getId(), os, compatibilityVersion);
+                ), getVm().getStoragePoolId(), getVm().getId(), os, compatibilityVersion);
     }
 
     public void loadAttachableDisks(Disk prevSelected) {
