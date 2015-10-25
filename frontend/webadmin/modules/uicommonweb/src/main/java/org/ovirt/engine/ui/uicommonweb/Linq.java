@@ -598,7 +598,7 @@ public final class Linq {
         return null;
     }
 
-    public static <TSource> boolean all(Iterable<TSource> source, IPredicate<TSource> predicate) {
+    public static <TSource> boolean all(Iterable<TSource> source, IPredicate<? super TSource> predicate) {
 
         for (TSource item : source) {
             if (!predicate.match(item)) {
@@ -609,7 +609,8 @@ public final class Linq {
         return true;
     }
 
-    public static <TSource> Collection<TSource> where(Collection<TSource> source, IPredicate<TSource> predicate) {
+    public static <TSource> Collection<TSource> where(Collection<TSource> source,
+            IPredicate<? super TSource> predicate) {
         ArrayList<TSource> list = new ArrayList<TSource>();
 
         for (TSource item : source) {
@@ -631,7 +632,7 @@ public final class Linq {
         return retVersion;
     }
 
-    public static <TSource> TSource firstOrDefault(Iterable<TSource> source, IPredicate<TSource> predicate) {
+    public static <TSource> TSource firstOrDefault(Iterable<TSource> source, IPredicate<? super TSource> predicate) {
         for (TSource item : source) {
             if (predicate.match(item)) {
                 return item;
@@ -641,6 +642,9 @@ public final class Linq {
         return null;
     }
 
+    public static <T> boolean contains(Iterable<T> source, IPredicate<? super T> predicate) {
+        return firstOrDefault(source, predicate) == null ? false : true;
+    }
     /**
      * Returns a new instance of list containing all items of the provided source.
      */
@@ -752,7 +756,7 @@ public final class Linq {
 
     public static ArrayList<StorageDomain> getStorageDomainsByIds(ArrayList<Guid> storageIds,
             ArrayList<StorageDomain> storageDomains) {
-        ArrayList<StorageDomain> list = new ArrayList<StorageDomain>();
+        ArrayList<StorageDomain> list = new ArrayList<>();
         for (Guid storageId : storageIds) {
             StorageDomain storageDomain = getStorageById(storageId, storageDomains);
             if (storageDomain != null) {

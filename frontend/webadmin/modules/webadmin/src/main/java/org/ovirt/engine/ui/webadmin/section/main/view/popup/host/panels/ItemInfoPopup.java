@@ -223,6 +223,9 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         if (nic instanceof BondNetworkInterfaceModel) {
             addRow(constants.bondOptionsItemInfo(), entity.getBondOptions());
         }
+        if (nic.isVf()) {
+            addRow(constants.physicalFunction(), nic.getPhysicalFunction().getName());
+        }
     }
 
     private void insertHorizontalLine() {

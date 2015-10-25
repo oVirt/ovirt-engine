@@ -57,7 +57,13 @@ public class NicPanel<T extends NetworkInterfaceModel> extends NetworkItemPanel<
     }
 
     private ImageResource getNicIcon() {
-        return item.isSriovEnabled() ? resources.nicSriov() : resources.nicIcon();
+        if (item.isSriovEnabled()) {
+            return resources.nicSriov();
+        } else if (item.isVf()) {
+            return resources.nicVF();
+        } else {
+            return resources.nicIcon();
+        }
     }
 
     private ImageResource getStatusImage() {
