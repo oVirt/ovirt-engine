@@ -90,7 +90,7 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
     @Source("images/os/large/ubuntu_13_10.png")
     ImageResource ubuntu_13_10LargeImage();
 
-    @Source("images/os/large/ubuntu_14_04.jpg")
+    @Source("images/os/large/ubuntu_14_04.png")
     ImageResource ubuntu_14_04LargeImage();
 
     @Source("images/os/large/debian_7.png")
@@ -113,7 +113,7 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
     @Source("images/os/large/sles_11.png")
     ImageResource sles_11_ppc64LargeImage();
 
-    @Source("images/os/large/ubuntu_14_04.jpg")
+    @Source("images/os/large/ubuntu_14_04.png")
     ImageResource ubuntu_14_04_ppc64LargeImage();
 
     @Source("images/os/large/freebsd.png")
@@ -125,61 +125,61 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
     // OS type small images
 
     // TODO remove the same resources from ApplicationResources and rename this
-    @Source("images/os/other.jpg")
+    @Source("images/os/other.png")
     ImageResource otherSmallImage();
 
-    @Source("images/os/other_linux.jpg")
+    @Source("images/os/other_linux.png")
     ImageResource other_linuxSmallImage();
 
-    @Source("images/os/rhel_3.jpg")
+    @Source("images/os/rhel_3.png")
     ImageResource rhel_3SmallImage();
 
-    @Source("images/os/rhel_3x64.jpg")
+    @Source("images/os/rhel_3x64.png")
     ImageResource rhel_3x64SmallImage();
 
-    @Source("images/os/rhel_4.jpg")
+    @Source("images/os/rhel_4.png")
     ImageResource rhel_4SmallImage();
 
-    @Source("images/os/rhel_4x64.jpg")
+    @Source("images/os/rhel_4x64.png")
     ImageResource rhel_4x64SmallImage();
 
-    @Source("images/os/rhel_5.jpg")
+    @Source("images/os/rhel_5.png")
     ImageResource rhel_5SmallImage();
 
-    @Source("images/os/rhel_5x64.jpg")
+    @Source("images/os/rhel_5x64.png")
     ImageResource rhel_5x64SmallImage();
 
-    @Source("images/os/rhel_6.jpg")
+    @Source("images/os/rhel_6.png")
     ImageResource rhel_6SmallImage();
 
-    @Source("images/os/rhel_6x64.jpg")
+    @Source("images/os/rhel_6x64.png")
     ImageResource rhel_6x64SmallImage();
 
-    @Source("images/os/rhel_7x64.jpg")
+    @Source("images/os/rhel_7x64.png")
     ImageResource rhel_7x64SmallImage();
 
-    @Source("images/os/windows_2003.jpg")
+    @Source("images/os/windows_2003.png")
     ImageResource windows_2003SmallImage();
 
-    @Source("images/os/windows_2003x64.jpg")
+    @Source("images/os/windows_2003x64.png")
     ImageResource windows_2003x64SmallImage();
 
-    @Source("images/os/windows_2008.jpg")
+    @Source("images/os/windows_2008.png")
     ImageResource windows_2008SmallImage();
 
-    @Source("images/os/windows_2008R2x64.jpg")
+    @Source("images/os/windows_2008R2x64.png")
     ImageResource windows_2008R2x64SmallImage();
 
-    @Source("images/os/windows_2008x64.jpg")
+    @Source("images/os/windows_2008x64.png")
     ImageResource windows_2008x64SmallImage();
 
-    @Source("images/os/windows_7.jpg")
+    @Source("images/os/windows_7.png")
     ImageResource windows_7SmallImage();
 
-    @Source("images/os/windows_7x64.jpg")
+    @Source("images/os/windows_7x64.png")
     ImageResource windows_7x64SmallImage();
 
-    @Source("images/os/windows_xp.jpg")
+    @Source("images/os/windows_xp.png")
     ImageResource windows_xpSmallImage();
 
     @Source("images/os/windows_8.png")
@@ -209,7 +209,7 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
     @Source("images/os/ubuntu_13_10.png")
     ImageResource ubuntu_13_10SmallImage();
 
-    @Source("images/os/ubuntu_14_04.jpg")
+    @Source("images/os/ubuntu_14_04.png")
     ImageResource ubuntu_14_04SmallImage();
 
     @Source("images/os/debian_7.png")
@@ -217,22 +217,22 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
 
     // ppc64 OSes small images
 
-    @Source("images/os/other.jpg")
+    @Source("images/os/other.png")
     ImageResource other_ppc64SmallImage();
 
-    @Source("images/os/other_linux.jpg")
+    @Source("images/os/other_linux.png")
     ImageResource other_linux_ppc64SmallImage();
 
-    @Source("images/os/rhel_6.jpg")
+    @Source("images/os/rhel_6.png")
     ImageResource rhel_6_ppc64SmallImage();
 
-    @Source("images/os/rhel_7x64.jpg")
+    @Source("images/os/rhel_7x64.png")
     ImageResource rhel_7_ppc64SmallImage();
 
     @Source("images/os/sles_11.png")
     ImageResource sles_11_ppc64SmallImage();
 
-    @Source("images/os/ubuntu_14_04.jpg")
+    @Source("images/os/ubuntu_14_04.png")
     ImageResource ubuntu_14_04_ppc64SmallImage();
 
     @Source("images/os/freebsd.png")
