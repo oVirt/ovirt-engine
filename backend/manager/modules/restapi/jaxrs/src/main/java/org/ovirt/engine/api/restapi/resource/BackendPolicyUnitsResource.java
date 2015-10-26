@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.BaseResources;
-import org.ovirt.engine.api.resource.PolicyUnitsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -10,7 +9,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class BackendPolicyUnitsResource<M extends BaseResources, N extends BaseResource> extends AbstractBackendCollectionResource<N, ClusterPolicy> implements PolicyUnitsResource<M, N> {
+public abstract class BackendPolicyUnitsResource<M extends BaseResources, N extends BaseResource>
+        extends AbstractBackendCollectionResource<N, ClusterPolicy> {
 
     protected final Guid schedulingPolicyId;
     private static final String[] SUB_COLLECTIONS = {};

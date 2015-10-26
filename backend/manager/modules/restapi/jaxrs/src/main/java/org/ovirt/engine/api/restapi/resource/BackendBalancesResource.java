@@ -10,7 +10,9 @@ import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendBalancesResource extends BackendPolicyUnitsResource<Balances, Balance> implements BalancesResource {
+public class BackendBalancesResource
+        extends BackendPolicyUnitsResource<Balances, Balance>
+        implements BalancesResource {
 
     protected BackendBalancesResource(Guid schedulingPolicyId) {
         super(schedulingPolicyId, Balance.class);
@@ -33,10 +35,6 @@ public class BackendBalancesResource extends BackendPolicyUnitsResource<Balances
         return inject(new BackendBalanceResource(id, this));
     }
 
-    public BalanceResource getBalanceSubResource(String id) {
-        return getBalanceResource(id);
-    }
-
     @Override
     public Balance add(Balance incoming) {
         return performAdd(incoming);
@@ -56,5 +54,4 @@ public class BackendBalancesResource extends BackendPolicyUnitsResource<Balances
     protected void updateIncomingId(Balance incoming) {
         incoming.setId(incoming.getSchedulingPolicyUnit().getId());
     }
-
 }

@@ -10,7 +10,9 @@ import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendFiltersResource extends BackendPolicyUnitsResource<Filters, Filter> implements FiltersResource {
+public class BackendFiltersResource
+        extends BackendPolicyUnitsResource<Filters, Filter>
+        implements FiltersResource {
 
     protected BackendFiltersResource(Guid schedulingPolicyId) {
         super(schedulingPolicyId, Filter.class);
@@ -33,10 +35,6 @@ public class BackendFiltersResource extends BackendPolicyUnitsResource<Filters, 
     @Override
     public FilterResource getFilterResource(String id) {
         return inject(new BackendFilterResource(id, this));
-    }
-
-    public FilterResource getFilterSubResource(String id) {
-        return getFilterResource(id);
     }
 
     @Override
