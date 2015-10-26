@@ -253,7 +253,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         createParams.setCinderDisks(cinderDisks);
         createParams.setVmSnapshotId(newSnapshotId);
         createParams.setParentHasTasks(!getReturnValue().getVdsmTaskIdList().isEmpty());
-        return withRootCommandInfo(createParams, getActionType());
+        return withRootCommandInfo(createParams);
     }
 
     private List<DiskImage> getImagesToPreview() {

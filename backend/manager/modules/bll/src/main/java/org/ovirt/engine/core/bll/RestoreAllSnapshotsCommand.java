@@ -175,7 +175,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         restoreParams.setParentHasTasks(!getReturnValue().getVdsmTaskIdList().isEmpty());
         restoreParams.setParentCommand(getActionType());
         restoreParams.setParentParameters(getParameters());
-        return withRootCommandInfo(restoreParams, getActionType());
+        return withRootCommandInfo(restoreParams);
     }
 
     private Snapshot getSnapshot() {

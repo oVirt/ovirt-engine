@@ -245,7 +245,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         removeParam.setParentHasTasks(!getReturnValue().getVdsmTaskIdList().isEmpty());
         Future<VdcReturnValueBase> future =
                 CommandCoordinatorUtil.executeAsyncCommand(VdcActionType.RemoveAllVmCinderDisks,
-                        withRootCommandInfo(removeParam, getActionType()),
+                        withRootCommandInfo(removeParam),
                         cloneContextAndDetachFromParent(),
                         CINDERStorageHelper.getStorageEntities(cinderDisks));
         try {

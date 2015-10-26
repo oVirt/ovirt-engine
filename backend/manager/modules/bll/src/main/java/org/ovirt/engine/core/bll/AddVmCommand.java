@@ -1214,7 +1214,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private CloneCinderDisksParameters buildCinderChildCommandParameters(List<CinderDisk> cinderDisks, Guid vmSnapshotId) {
         CloneCinderDisksParameters createParams = new CloneCinderDisksParameters(cinderDisks, vmSnapshotId, diskInfoDestinationMap);
         createParams.setParentHasTasks(!getReturnValue().getVdsmTaskIdList().isEmpty());
-        return withRootCommandInfo(createParams, getActionType());
+        return withRootCommandInfo(createParams);
     }
 
     @Override

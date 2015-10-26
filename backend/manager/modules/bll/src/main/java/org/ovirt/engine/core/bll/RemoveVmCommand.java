@@ -359,7 +359,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             param.setParentHasTasks(!getReturnValue().getVdsmTaskIdList().isEmpty());
             Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                     VdcActionType.RemoveAllVmCinderDisks,
-                    withRootCommandInfo(param, getActionType()),
+                    withRootCommandInfo(param),
                     cloneContextAndDetachFromParent(),
                     CINDERStorageHelper.getStorageEntities(cinderDisks));
             try {

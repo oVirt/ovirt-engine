@@ -349,7 +349,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         createParams.setVmSnapshotId(newActiveSnapshotId);
         createParams.setParentHasTasks(!cachedImagesDisks.isEmpty() || getMemoryImageBuilder().isCreateTasks());
         createParams.setDescription(getParameters().getDescription());
-        return withRootCommandInfo(createParams, getActionType());
+        return withRootCommandInfo(createParams);
     }
 
     private void fastForwardDisksToActiveSnapshot() {

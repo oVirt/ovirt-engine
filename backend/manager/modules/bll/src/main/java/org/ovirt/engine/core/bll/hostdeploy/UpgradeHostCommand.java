@@ -77,7 +77,7 @@ public class UpgradeHostCommand<T extends UpgradeHostParameters> extends VdsComm
     public MaintenanceNumberOfVdssParameters createMaintenanceParams() {
         MaintenanceNumberOfVdssParameters params =
                 new MaintenanceNumberOfVdssParameters(Collections.singletonList(getVdsId()), true);
-        return withRootCommandInfo(params, getActionType());
+        return withRootCommandInfo(params);
     }
 
     @Override

@@ -2439,4 +2439,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         params.setParentCommand(parentCommand);
         return params;
     }
+
+    protected final <P extends VdcActionParametersBase> P withRootCommandInfo(P params) {
+        return withRootCommandInfo(params, getActionType());
+    }
 }

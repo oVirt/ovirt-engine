@@ -142,7 +142,7 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
             if (!vm.isDown()) {
                 VdcReturnValueBase result = runInternalAction(
                         VdcActionType.StopVm,
-                        withRootCommandInfo(new StopVmParameters(vm.getId(), StopVmTypeEnum.NORMAL), getActionType()),
+                        withRootCommandInfo(new StopVmParameters(vm.getId(), StopVmTypeEnum.NORMAL)),
                         cloneContextAndDetachFromParent());
                 if (!result.getSucceeded()) {
                     return false;
