@@ -1067,6 +1067,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("The right bound of the MAC address range must not be smaller than its left bound.")
     String invalidMacRangeRightBound();
 
+    @DefaultStringValue("There are too many MACs in this range. Number of MACs in any MAC address range must be smaller than (2^32)-1.")
+    String tooBigMacRange();
+
     @DefaultStringValue("Label already exists in the Data Center.")
     String labelAlreadyExists();
 

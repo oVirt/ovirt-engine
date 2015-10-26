@@ -10,16 +10,39 @@ public class MacRangeValidation implements IValidation {
         this.lowestMacAddress = lowestMacAddress;
     }
 
+    private static long macToLong(String mac) {
+        final int HEX_RADIX = 16;
+
+        String macWithoutCommas = mac.replaceAll(":", "");  //$NON-NLS-1$ //$NON-NLS-2$
+        return Long.parseLong(macWithoutCommas, HEX_RADIX);
+    }
+
     @Override
     public ValidationResult validate(Object value) {
-        ValidationResult res = new ValidationResult();
-        if (((String) value).compareToIgnoreCase(lowestMacAddress) < 0) {
+        String highestMacAddress = (String) value;
+
+        if (highestMacAddress.compareToIgnoreCase(lowestMacAddress) < 0) {
+            ValidationResult res = new ValidationResult();
             res.setSuccess(false);
             res.getReasons().add(ConstantsManager.getInstance()
                     .getConstants()
                     .invalidMacRangeRightBound());
+            return res;
         }
-        return res;
+
+        long highestMacAddressLong = macToLong(highestMacAddress);
+        long lowerMacAddressLong = macToLong(lowestMacAddress);
+        long macCount = highestMacAddressLong - lowerMacAddressLong + 1;
+        if (macCount >= Integer.MAX_VALUE) {
+            ValidationResult res = new ValidationResult();
+            res.setSuccess(false);
+            res.getReasons().add(ConstantsManager.getInstance()
+                    .getConstants()
+                    .tooBigMacRange());
+            return res;
+        }
+
+        return new ValidationResult();
     }
 
 }
