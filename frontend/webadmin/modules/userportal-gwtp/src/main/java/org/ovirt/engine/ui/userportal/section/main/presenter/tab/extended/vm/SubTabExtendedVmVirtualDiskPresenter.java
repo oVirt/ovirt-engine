@@ -18,7 +18,8 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabExtendedVmVirtualDiskPresenter
-        extends AbstractSubTabExtendedVmPresenter<VmDiskListModel, SubTabExtendedVmVirtualDiskPresenter.ViewDef, SubTabExtendedVmVirtualDiskPresenter.ProxyDef> {
+        extends AbstractSubTabExtendedVmPresenter<VmDiskListModel, SubTabExtendedVmVirtualDiskPresenter.ViewDef,
+            SubTabExtendedVmVirtualDiskPresenter.ProxyDef> {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -38,8 +39,9 @@ public class SubTabExtendedVmVirtualDiskPresenter
 
     @Inject
     public SubTabExtendedVmVirtualDiskPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, VmDiskListModelProvider modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
+            PlaceManager placeManager, ExtendedVmMainTabSelectedItems selectedItems,
+            VmDiskListModelProvider modelProvider) {
+        super(eventBus, view, proxy, placeManager, selectedItems, modelProvider);
     }
 
 }

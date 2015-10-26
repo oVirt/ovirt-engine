@@ -37,8 +37,8 @@ public class DiskSubTabPanelPresenter extends
 
     @Inject
     public DiskSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            ScrollableTabBarPresenterWidget tabBar) {
-        super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, tabBar);
+            DiskMainTabSelectedItems selectedItems, ScrollableTabBarPresenterWidget tabBar) {
+        super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems, tabBar);
     }
 
 }

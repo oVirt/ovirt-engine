@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -11,19 +10,18 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterVmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ClusterSelectionChangeEvent;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.TabData;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-public class SubTabClusterVmPresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel<Void>, ClusterVmListModel, SubTabClusterVmPresenter.ViewDef, SubTabClusterVmPresenter.ProxyDef> {
+public class SubTabClusterVmPresenter
+    extends AbstractSubTabClusterPresenter<ClusterVmListModel, SubTabClusterVmPresenter.ViewDef,
+        SubTabClusterVmPresenter.ProxyDef> {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -43,20 +41,9 @@ public class SubTabClusterVmPresenter extends AbstractSubTabPresenter<VDSGroup, 
 
     @Inject
     public SubTabClusterVmPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager,
+            PlaceManager placeManager, ClusterMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<VM, ClusterListModel<Void>, ClusterVmListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
                 ClusterSubTabPanelPresenter.TYPE_SetTabContent);
     }
-
-    @Override
-    protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(WebAdminApplicationPlaces.clusterMainTabPlace);
-    }
-
-    @ProxyEvent
-    public void onClusterSelectionChange(ClusterSelectionChangeEvent event) {
-        updateMainTabSelection(event.getSelectedItems());
-    }
-
 }

@@ -39,10 +39,10 @@ public class SubTabExtendedTemplateEventsPresenter
 
     @Inject
     public SubTabExtendedTemplateEventsPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager,
+            PlaceManager placeManager, ExtendedTemplateMainTabSelectedItems selectedItems,
             UserPortalSearchableDetailModelProvider<AuditLog, UserPortalTemplateListModel,
                 UserPortalTemplateEventListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
+        super(eventBus, view, proxy, placeManager, selectedItems, modelProvider);
     }
 
 }

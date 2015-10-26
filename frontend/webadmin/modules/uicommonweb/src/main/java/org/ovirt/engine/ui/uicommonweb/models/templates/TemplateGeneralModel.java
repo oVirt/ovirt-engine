@@ -10,14 +10,12 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractGeneralModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.Translator;
 
-@SuppressWarnings("unused")
-public class TemplateGeneralModel extends AbstractGeneralModel {
+public class TemplateGeneralModel extends AbstractGeneralModel<VmTemplate> {
 
     @Override
     public VmTemplate getEntity() {
@@ -26,8 +24,6 @@ public class TemplateGeneralModel extends AbstractGeneralModel {
         }
         if (super.getEntity() instanceof VmTemplate) {
             return (VmTemplate) super.getEntity();
-        } else if (super.getEntity() instanceof ImportTemplateData) {
-            return ((ImportTemplateData) super.getEntity()).getTemplate();
         } else {
             Map.Entry<VmTemplate, ArrayList<DiskImage>> pair =
                     (Map.Entry<VmTemplate, ArrayList<DiskImage>>) super.getEntity();

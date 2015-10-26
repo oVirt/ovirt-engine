@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host;
 
 import org.ovirt.engine.core.common.businessentities.ErrataCounts;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.widget.AbstractUiCommandButton;
@@ -16,7 +15,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.HostSelectionChangeEvent;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -27,18 +25,16 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.TabData;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 /**
  * Presenter for the sub-sub tab (Hosts > General > Errata) that contains errata (singular: Erratum)
  * for the selected Host.
  */
-public class SubTabHostGeneralHostErrataPresenter extends
-    AbstractSubTabPresenter<VDS, HostListModel<Void>, HostErrataCountModel,
+public class SubTabHostGeneralHostErrataPresenter
+    extends AbstractSubTabHostPresenter<HostErrataCountModel,
         SubTabHostGeneralHostErrataPresenter.ViewDef, SubTabHostGeneralHostErrataPresenter.ProxyDef> {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
@@ -63,29 +59,20 @@ public class SubTabHostGeneralHostErrataPresenter extends
     }
 
     private final HostErrataCountModel errataCountModel;
-    private VDS currentSelectedHost;
 
     @Inject
     public SubTabHostGeneralHostErrataPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, DetailTabModelProvider<HostListModel<Void>,
-                HostErrataCountModel> errataCountModelProvider) {
-        super(eventBus, view, proxy, placeManager, errataCountModelProvider,
+            PlaceManager placeManager,  HostMainTabSelectedItems selectedItems,
+            DetailTabModelProvider<HostListModel<Void>, HostErrataCountModel> errataCountModelProvider) {
+        super(eventBus, view, proxy, placeManager, errataCountModelProvider, selectedItems,
                 HostGeneralSubTabPanelPresenter.TYPE_SetTabContent);
 
         errataCountModel = getModelProvider().getModel();
     }
 
     @Override
-    protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(WebAdminApplicationPlaces.hostMainTabPlace);
-    }
-
-    @ProxyEvent
-    public void onHostSelectionChange(HostSelectionChangeEvent event) {
-        updateMainTabSelection(event.getSelectedItems());
-        currentSelectedHost = event.getSelectedItems().isEmpty()
-                ? null
-                : event.getSelectedItems().get(0);
+    public void itemChanged(VDS item) {
+        super.itemChanged(item);
         if (isVisible()) {
             updateModel();
         }
@@ -167,6 +154,7 @@ public class SubTabHostGeneralHostErrataPresenter extends
 
 
     private void updateModel() {
+        VDS currentSelectedHost = getSelectedMainItems().getSelectedItem();
         if (currentSelectedHost != null) {
             errataCountModel.setGuid(currentSelectedHost.getId());
             errataCountModel.setEntity(currentSelectedHost);

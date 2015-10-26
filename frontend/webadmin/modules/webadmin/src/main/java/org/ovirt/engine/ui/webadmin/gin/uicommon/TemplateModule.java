@@ -40,6 +40,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.SingleSelect
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.TemplateMainTabSelectedItems;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -240,6 +241,7 @@ public class TemplateModule extends AbstractGinModule {
         bind(TemplateVmListModel.class).in(Singleton.class);
         bind(TemplateEventListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<VmTemplate>>(){}).in(Singleton.class);
+        bind(TemplateMainTabSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<TemplateListModel, TemplateGeneralModel>>(){})

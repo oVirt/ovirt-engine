@@ -69,6 +69,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetwo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.VfsConfigPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostMainTabSelectedItems;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksLabelPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.FenceAgentModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.FenceProxyModelProvider;
@@ -401,6 +402,7 @@ public class HostModule extends AbstractGinModule {
         bind(FenceProxyModelProvider.class).in(Singleton.class);
         bind(HostErrataCountModel.class).in(Singleton.class);
         bind(HostErrataListModel.class).in(Singleton.class);
+        bind(HostMainTabSelectedItems.class).asEagerSingleton();
 
 
         // Form Detail Models

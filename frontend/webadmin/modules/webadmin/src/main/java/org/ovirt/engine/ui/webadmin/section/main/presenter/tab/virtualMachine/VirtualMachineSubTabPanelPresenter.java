@@ -37,8 +37,8 @@ public class VirtualMachineSubTabPanelPresenter extends
 
     @Inject
     public VirtualMachineSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            ScrollableTabBarPresenterWidget tabBar) {
-        super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, tabBar);
+            VirtualMachineMainTabSelectedItems selectedItems, ScrollableTabBarPresenterWidget tabBar) {
+        super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems, tabBar);
     }
 
 }

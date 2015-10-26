@@ -37,8 +37,8 @@ public class ProviderSubTabPanelPresenter extends
 
     @Inject
     public ProviderSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            ScrollableTabBarPresenterWidget tabBar) {
-        super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, tabBar);
+            ProviderMainTabSelectedItems selectedItems, ScrollableTabBarPresenterWidget tabBar) {
+        super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems, tabBar);
     }
 
 }

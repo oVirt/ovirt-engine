@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -13,7 +12,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VirtualMachineSelectionChangeEvent;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -21,13 +19,13 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.TabData;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-public class SubTabVirtualMachineGeneralPresenter extends AbstractSubTabPresenter<VM, VmListModel<Void>, VmGeneralModel, SubTabVirtualMachineGeneralPresenter.ViewDef, SubTabVirtualMachineGeneralPresenter.ProxyDef> {
+public class SubTabVirtualMachineGeneralPresenter
+    extends AbstractSubTabVirtualMachinePresenter<VmGeneralModel, SubTabVirtualMachineGeneralPresenter.ViewDef,
+        SubTabVirtualMachineGeneralPresenter.ProxyDef> {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -60,9 +58,9 @@ public class SubTabVirtualMachineGeneralPresenter extends AbstractSubTabPresente
 
     @Inject
     public SubTabVirtualMachineGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager,
+            PlaceManager placeManager, VirtualMachineMainTabSelectedItems selectedItems,
             DetailModelProvider<VmListModel<Void>, VmGeneralModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }
 
@@ -117,15 +115,4 @@ public class SubTabVirtualMachineGeneralPresenter extends AbstractSubTabPresente
         final Label label = new Label(text);
         view.addAlert(label);
     }
-
-    @Override
-    protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(WebAdminApplicationPlaces.virtualMachineMainTabPlace);
-    }
-
-    @ProxyEvent
-    public void onVirtualMachineSelectionChange(VirtualMachineSelectionChangeEvent event) {
-        updateMainTabSelection(event.getSelectedItems());
-    }
-
 }

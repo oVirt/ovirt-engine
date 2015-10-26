@@ -37,8 +37,9 @@ public class SubTabExtendedTemplateNetworkInterfacesPresenter
 
     @Inject
     public SubTabExtendedTemplateNetworkInterfacesPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, TemplateInterfaceListModelProvider modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
+            PlaceManager placeManager, ExtendedTemplateMainTabSelectedItems selectedItems,
+            TemplateInterfaceListModelProvider modelProvider) {
+        super(eventBus, view, proxy, placeManager, selectedItems, modelProvider);
     }
 
 }

@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
-import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -11,19 +10,18 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_grou
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ClusterSelectionChangeEvent;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.TabData;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-public class SubTabClusterAffinityGroupPresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel<Void>, ClusterAffinityGroupListModel, SubTabClusterAffinityGroupPresenter.ViewDef, SubTabClusterAffinityGroupPresenter.ProxyDef> {
+public class SubTabClusterAffinityGroupPresenter
+    extends AbstractSubTabClusterPresenter<ClusterAffinityGroupListModel, SubTabClusterAffinityGroupPresenter.ViewDef,
+        SubTabClusterAffinityGroupPresenter.ProxyDef> {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -36,27 +34,17 @@ public class SubTabClusterAffinityGroupPresenter extends AbstractSubTabPresenter
     }
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
-    static TabData getTabData(
-            SearchableDetailModelProvider<AffinityGroup, ClusterListModel<Void>, ClusterAffinityGroupListModel> modelProvider) {
+    static TabData getTabData(SearchableDetailModelProvider<AffinityGroup, ClusterListModel<Void>,
+            ClusterAffinityGroupListModel> modelProvider) {
         return new ModelBoundTabData(constants.affinityGroupSubTabLabel(), 6, modelProvider);
     }
 
     @Inject
     public SubTabClusterAffinityGroupPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager,
-            SearchableDetailModelProvider<AffinityGroup, ClusterListModel<Void>, ClusterAffinityGroupListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider,
+            PlaceManager placeManager, ClusterMainTabSelectedItems selectedItems,
+            SearchableDetailModelProvider<AffinityGroup, ClusterListModel<Void>,
+            ClusterAffinityGroupListModel> modelProvider) {
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
                 ClusterSubTabPanelPresenter.TYPE_SetTabContent);
     }
-
-    @Override
-    protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(WebAdminApplicationPlaces.clusterMainTabPlace);
-    }
-
-    @ProxyEvent
-    public void onClusterSelectionChange(ClusterSelectionChangeEvent event) {
-        updateMainTabSelection(event.getSelectedItems());
-    }
-
 }

@@ -45,6 +45,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeP
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeProfileStatisticsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeRebalanceStatusPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.VolumeMainTabSelectedItems;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -300,6 +301,7 @@ public class VolumeModule extends AbstractGinModule {
         bind(VolumeGeoRepListModel.class).in(Singleton.class);
         bind(GlusterVolumeSnapshotListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<GlusterVolumeEntity>>(){}).in(Singleton.class);
+        bind(VolumeMainTabSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<VolumeListModel, VolumeGeneralModel>>(){})

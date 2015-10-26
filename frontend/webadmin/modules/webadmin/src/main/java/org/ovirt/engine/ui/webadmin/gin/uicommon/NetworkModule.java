@@ -52,6 +52,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.VfsConfigP
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.VnicProfilePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ExternalSubnetPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ImportNetworksPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.NetworkMainTabSelectedItems;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksLabelPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 import com.google.gwt.event.shared.EventBus;
@@ -343,6 +344,7 @@ public class NetworkModule extends AbstractGinModule {
         bind(NetworkVmListModel.class).in(Singleton.class);
         bind(NetworkTemplateListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<NetworkView>>(){}).in(Singleton.class);
+        bind(NetworkMainTabSelectedItems.class).asEagerSingleton();
 
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, NetworkListModel, PermissionListModel<NetworkView>>>(){})

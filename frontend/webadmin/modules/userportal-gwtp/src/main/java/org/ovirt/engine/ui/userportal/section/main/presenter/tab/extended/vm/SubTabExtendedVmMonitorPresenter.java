@@ -20,7 +20,8 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabExtendedVmMonitorPresenter
-        extends AbstractSubTabExtendedVmPresenter<VmMonitorModel, SubTabExtendedVmMonitorPresenter.ViewDef, SubTabExtendedVmMonitorPresenter.ProxyDef>
+        extends AbstractSubTabExtendedVmPresenter<VmMonitorModel, SubTabExtendedVmMonitorPresenter.ViewDef,
+            SubTabExtendedVmMonitorPresenter.ProxyDef>
         implements VmMonitorValueChangeHandler {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
@@ -44,8 +45,9 @@ public class SubTabExtendedVmMonitorPresenter
 
     @Inject
     public SubTabExtendedVmMonitorPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, VmMonitorModelProvider modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
+            PlaceManager placeManager, ExtendedVmMainTabSelectedItems selectedItems,
+            VmMonitorModelProvider modelProvider) {
+        super(eventBus, view, proxy, placeManager, selectedItems, modelProvider);
     }
 
     @Override

@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -22,7 +21,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.HostSelectionChangeEvent;
 import org.ovirt.engine.ui.webadmin.widget.alert.InLineAlertWidget.AlertType;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -35,14 +33,13 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.TabData;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-public class SubTabHostGeneralInfoPresenter extends AbstractSubTabPresenter<VDS, HostListModel<Void>, HostGeneralModel,
-    SubTabHostGeneralInfoPresenter.ViewDef, SubTabHostGeneralInfoPresenter.ProxyDef> {
+public class SubTabHostGeneralInfoPresenter
+    extends AbstractSubTabHostPresenter<HostGeneralModel, SubTabHostGeneralInfoPresenter.ViewDef,
+        SubTabHostGeneralInfoPresenter.ProxyDef> {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
     private final static ApplicationMessages messages = AssetProvider.getMessages();
@@ -89,8 +86,9 @@ public class SubTabHostGeneralInfoPresenter extends AbstractSubTabPresenter<VDS,
 
     @Inject
     public SubTabHostGeneralInfoPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, DetailModelProvider<HostListModel<Void>, HostGeneralModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider,
+            PlaceManager placeManager, HostMainTabSelectedItems selectedItems,
+            DetailModelProvider<HostListModel<Void>, HostGeneralModel> modelProvider) {
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
                 HostGeneralSubTabPanelPresenter.TYPE_SetTabContent);
     }
 
@@ -236,15 +234,4 @@ public class SubTabHostGeneralInfoPresenter extends AbstractSubTabPresenter<VDS,
     private void addTextAndLinkAlert(final ViewDef view, final String text, final UICommand command) {
         addTextAndLinkAlert(view, text, command, AlertType.ALERT);
     }
-
-    @Override
-    protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(WebAdminApplicationPlaces.hostMainTabPlace);
-    }
-
-    @ProxyEvent
-    public void onHostSelectionChange(HostSelectionChangeEvent event) {
-        updateMainTabSelection(event.getSelectedItems());
-    }
-
 }

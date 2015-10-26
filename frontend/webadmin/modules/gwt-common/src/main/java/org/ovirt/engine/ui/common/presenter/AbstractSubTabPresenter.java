@@ -35,8 +35,9 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
  * @param <V> View type (extends AbstractSubTabPresenter.ViewDef<T>)
  * @param <P> Proxy type (extends TabContentProxyPlace)
  */
-public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel, D extends HasEntity, V extends AbstractSubTabPresenter.ViewDef<T>, P extends TabContentProxyPlace<?>>
-        extends AbstractTabPresenter<V, P> {
+public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel, D extends HasEntity,
+  V extends AbstractSubTabPresenter.ViewDef<T>, P extends TabContentProxyPlace<?>>
+        extends AbstractTabPresenter<V, P> implements MainTabSelectedItemChangeListener<T> {
 
     // TODO(vszocs) use HasActionTable<I> instead of raw type HasActionTable, this will
     // require adding new type parameter to presenter (do later as part of refactoring)
@@ -54,8 +55,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
 
     private final PlaceManager placeManager;
     private final DetailModelProvider<M, D> modelProvider;
-
-    private List<T> mainTabSelectedItems;
+    private final AbstractMainTabSelectedItems<T> selectedMainItems;
 
     /**
      * @param eventBus
@@ -68,10 +68,12 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
      */
     public AbstractSubTabPresenter(EventBus eventBus, V view, P proxy,
             PlaceManager placeManager, DetailModelProvider<M, D> modelProvider,
+            AbstractMainTabSelectedItems<T> selectedMainItems,
             Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, slot);
         this.placeManager = placeManager;
         this.modelProvider = modelProvider;
+        this.selectedMainItems = selectedMainItems;
     }
 
     @Override
@@ -94,6 +96,15 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
             }));
         }
         initializeHandlers();
+        getSelectedMainItems().registerListener(this);
+        itemChanged(getSelectedMainItems().getSelectedItem());
+    }
+
+    @Override
+    public void itemChanged(T item) {
+        if (item != null && getView().asWidget().isVisible()) {
+            getView().setMainTabSelectedItem(item);
+        }
     }
 
     /**
@@ -146,33 +157,11 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         super.prepareFromRequest(request);
 
         // Reveal presenter only when there is something selected in the main tab
-        if (hasMainTabSelection()) {
+        if (selectedMainItems.hasSelection()) {
             getProxy().manualReveal(this);
         } else {
             getProxy().manualRevealFailed();
             placeManager.revealPlace(getMainTabRequest());
-        }
-    }
-
-    protected boolean hasMainTabSelection() {
-        return mainTabSelectedItems != null && !mainTabSelectedItems.isEmpty();
-    }
-
-    protected T getMainTabSelectedItem() {
-        return hasMainTabSelection() ? mainTabSelectedItems.get(0) : null;
-    }
-
-    /**
-     * Notifies this sub tab presenter that the main tab selection has changed.
-     */
-    protected void updateMainTabSelection(List<T> mainTabSelectedItems) {
-        this.mainTabSelectedItems = mainTabSelectedItems;
-
-        T firstSelectedItem = getMainTabSelectedItem();
-
-        // Notify view of selection change
-        if (firstSelectedItem != null) {
-            getView().setMainTabSelectedItem(firstSelectedItem);
         }
     }
 
@@ -252,4 +241,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         return modelProvider;
     }
 
+    protected AbstractMainTabSelectedItems<T> getSelectedMainItems() {
+        return selectedMainItems;
+    }
 }

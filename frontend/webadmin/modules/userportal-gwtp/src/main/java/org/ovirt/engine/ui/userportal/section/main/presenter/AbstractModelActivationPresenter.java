@@ -6,7 +6,6 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
-import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
@@ -36,26 +35,20 @@ public abstract class AbstractModelActivationPresenter<T, M extends SearchableLi
         this.modelProvider = modelProvider;
     }
 
-    @ProxyEvent
-    public void onSearchableModelActivation(SearchableModelActivationEvent event) {
-        SearchableListModel currentModel = modelProvider.getModel();
-
-        if (event.getListModel() == currentModel) {
-            // Activate model
-            currentModel.getSearchCommand().execute();
-        } else {
-            // Stop model
-            currentModel.setItems(null);
-            currentModel.stopRefresh();
-        }
-    }
-
     @Override
     protected void onReveal() {
         super.onReveal();
-
-        // Request activation of the associated list model
-        SearchableModelActivationEvent.fire(this, modelProvider.getModel());
+        // Activate model
+        SearchableListModel currentModel = modelProvider.getModel();
+        currentModel.getSearchCommand().execute();
     }
 
+    @Override
+    protected void onHide() {
+        super.onHide();
+        // Stop model
+        SearchableListModel currentModel = modelProvider.getModel();
+        currentModel.setItems(null);
+        currentModel.stopRefresh();
+    }
 }

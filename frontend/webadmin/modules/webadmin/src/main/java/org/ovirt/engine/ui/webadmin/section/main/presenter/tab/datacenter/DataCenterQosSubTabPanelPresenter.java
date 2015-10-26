@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractSubTabPanelPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DataCenterSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -24,7 +23,6 @@ import com.gwtplatform.mvp.client.annotations.ChangeTab;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.RequestTabs;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
@@ -58,8 +56,10 @@ public class DataCenterQosSubTabPanelPresenter extends
 
     @Inject
     public DataCenterQosSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            ScrollableTabBarPresenterWidget tabBar, SubTabDataCenterStorageQosPresenter dataCenterStorageQosPresenter) {
-        super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, tabBar, DataCenterSubTabPanelPresenter.TYPE_SetTabContent);
+            ScrollableTabBarPresenterWidget tabBar, DataCenterMainTabSelectedItems selectedItems,
+            SubTabDataCenterStorageQosPresenter dataCenterStorageQosPresenter) {
+        super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, tabBar, selectedItems,
+                DataCenterSubTabPanelPresenter.TYPE_SetTabContent);
         this.lastPresenter = dataCenterStorageQosPresenter;
     }
 
@@ -67,11 +67,6 @@ public class DataCenterQosSubTabPanelPresenter extends
     static TabData getTabData(
             ModelProvider<DataCenterListModel> modelProvider) {
         return new ModelBoundTabData(constants.dataCenterQosSubTabLabel(), 2, modelProvider);
-    }
-
-    @ProxyEvent
-    public void onDataCenterSelectionChange(DataCenterSelectionChangeEvent event) {
-        this.mainTabSelectedItems = event.getSelectedItems();
     }
 
     @Override

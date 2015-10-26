@@ -32,6 +32,8 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmMonitorModel;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.ExtendedTemplateMainTabSelectedItems;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.ExtendedVmMainTabSelectedItems;
 import org.ovirt.engine.ui.userportal.uicommon.UserPortalConfigurator;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDetailModelProvider;
@@ -59,6 +61,7 @@ public class UiCommonModule extends BaseUiCommonModule {
         bindModels();
         bindModelProviders();
         bindIntegration();
+        bindMainTabEventHandlers();
     }
 
     void bindModels() {
@@ -145,4 +148,8 @@ public class UiCommonModule extends BaseUiCommonModule {
         bind(UserPortalLoginModel.class).in(Singleton.class);
     }
 
+    void bindMainTabEventHandlers() {
+        bind(ExtendedTemplateMainTabSelectedItems.class).asEagerSingleton();
+        bind(ExtendedVmMainTabSelectedItems.class).asEagerSingleton();
+    }
 }

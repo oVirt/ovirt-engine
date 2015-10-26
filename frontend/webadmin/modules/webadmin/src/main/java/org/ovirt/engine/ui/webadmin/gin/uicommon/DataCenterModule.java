@@ -55,6 +55,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.macpool.SharedMacPoolPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.QuotaPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.DataCenterMainTabSelectedItems;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -496,6 +497,7 @@ public class DataCenterModule extends AbstractGinModule {
         bind(DataCenterStorageQosListModel.class).in(Singleton.class);
         bind(DataCenterCpuQosListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<StoragePool>>(){}).in(Singleton.class);
+        bind(DataCenterMainTabSelectedItems.class).asEagerSingleton();
 
         // Search-able Detail Models
         bind(new TypeLiteral<SearchableDetailModelProvider<VDSGroup, DataCenterListModel, DataCenterClusterListModel>>(){})

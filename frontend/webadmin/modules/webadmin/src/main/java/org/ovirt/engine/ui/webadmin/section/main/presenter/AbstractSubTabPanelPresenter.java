@@ -1,8 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
-import java.util.List;
-
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.ui.common.presenter.AbstractMainTabSelectedItems;
 import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter;
 import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.DynamicTabPanel;
 import org.ovirt.engine.ui.common.presenter.ScrollableTabBarPresenterWidget;
@@ -39,8 +37,8 @@ public abstract class AbstractSubTabPanelPresenter<V extends AbstractSubTabPanel
     @ContentSlot
     public static final Type<RevealContentHandler<?>> TYPE_SetTabBar = new Type<>();
 
+    protected final AbstractMainTabSelectedItems<?> selectedItems;
     protected final ScrollableTabBarPresenterWidget tabBar;
-    protected List<? extends IVdcQueryable> mainTabSelectedItems;
 
     @Inject
     private PlaceManager placeManager;
@@ -49,9 +47,10 @@ public abstract class AbstractSubTabPanelPresenter<V extends AbstractSubTabPanel
             Object tabContentSlot,
             Type<RequestTabsHandler> requestTabsEventType,
             Type<ChangeTabHandler> changeTabEventType,
+            AbstractMainTabSelectedItems<?> selectedItems,
             ScrollableTabBarPresenterWidget tabBar) {
         this(eventBus, view, proxy, tabContentSlot, requestTabsEventType, changeTabEventType,
-                tabBar, MainContentPresenter.TYPE_SetSubTabPanelContent);
+                tabBar, selectedItems, MainContentPresenter.TYPE_SetSubTabPanelContent);
     }
 
     public AbstractSubTabPanelPresenter(EventBus eventBus, V view, P proxy,
@@ -59,10 +58,12 @@ public abstract class AbstractSubTabPanelPresenter<V extends AbstractSubTabPanel
             Type<RequestTabsHandler> requestTabsEventType,
             Type<ChangeTabHandler> changeTabEventType,
             ScrollableTabBarPresenterWidget tabBar,
+            AbstractMainTabSelectedItems<?> selectedItems,
             Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, tabContentSlot, requestTabsEventType, changeTabEventType,
                 slot);
         getView().setUiHandlers(tabBar);
+        this.selectedItems = selectedItems;
         this.tabBar = tabBar;
         this.tabBar.setWantsOffset(false);
     }
@@ -96,7 +97,7 @@ public abstract class AbstractSubTabPanelPresenter<V extends AbstractSubTabPanel
 
         if (getProxy() instanceof TabContentProxyPlace && getMainTabRequest() != null) {
             // Reveal presenter only when there is something selected in the main tab
-            if (mainTabSelectedItems != null && !mainTabSelectedItems.isEmpty()) {
+            if (selectedItems != null && selectedItems.hasSelection()) {
                 ((TabContentProxyPlace<AbstractSubTabPanelPresenter<V, P>>)getProxy()).manualReveal(this);
             } else {
                 ((TabContentProxyPlace<AbstractSubTabPanelPresenter<V, P>>)getProxy()).manualRevealFailed();

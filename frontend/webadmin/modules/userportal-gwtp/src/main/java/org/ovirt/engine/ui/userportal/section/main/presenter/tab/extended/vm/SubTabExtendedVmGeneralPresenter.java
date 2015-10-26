@@ -19,7 +19,8 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabExtendedVmGeneralPresenter
-        extends AbstractSubTabExtendedVmPresenter<VmGeneralModel, SubTabExtendedVmGeneralPresenter.ViewDef, SubTabExtendedVmGeneralPresenter.ProxyDef> {
+        extends AbstractSubTabExtendedVmPresenter<VmGeneralModel, SubTabExtendedVmGeneralPresenter.ViewDef,
+            SubTabExtendedVmGeneralPresenter.ProxyDef> {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -42,9 +43,9 @@ public class SubTabExtendedVmGeneralPresenter
 
     @Inject
     public SubTabExtendedVmGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager,
+            PlaceManager placeManager, ExtendedVmMainTabSelectedItems selectedItems,
             UserPortalDetailModelProvider<UserPortalListModel, VmGeneralModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
+        super(eventBus, view, proxy, placeManager, selectedItems, modelProvider);
     }
 
     @Override

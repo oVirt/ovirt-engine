@@ -37,8 +37,8 @@ public class ClusterSubTabPanelPresenter extends AbstractSubTabPanelPresenter<Cl
 
     @Inject
     public ClusterSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            ScrollableTabBarPresenterWidget tabBar) {
-        super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, tabBar);
+            ClusterMainTabSelectedItems selectedItems, ScrollableTabBarPresenterWidget tabBar) {
+        super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems, tabBar);
     }
 
 }

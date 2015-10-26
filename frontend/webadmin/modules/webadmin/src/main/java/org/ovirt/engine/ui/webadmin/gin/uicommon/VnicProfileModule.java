@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileVmListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.VnicProfilePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.profile.VnicProfileMainTabSelectedItems;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -80,6 +81,7 @@ public class VnicProfileModule extends AbstractGinModule {
         bind(VnicProfileVmListModel.class).in(Singleton.class);
         bind(VnicProfileTemplateListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<VnicProfileView>>(){}).in(Singleton.class);
+        bind(VnicProfileMainTabSelectedItems.class).asEagerSingleton();
 
         // Search-able Detail Models
         bind(new TypeLiteral<SearchableDetailModelProvider<VmTemplate, VnicProfileListModel, VnicProfileTemplateListModel>>(){})

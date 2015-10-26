@@ -31,6 +31,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopup
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.user.ManageEventsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.UserMainTabSelectedItems;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
@@ -170,6 +172,7 @@ public class UserModule extends AbstractGinModule {
         bind(UserQuotaListModel.class).in(Singleton.class);
         bind(UserEventListModel.class).in(Singleton.class);
         bind(UserGroupListModel.class).in(Singleton.class);
+        bind(UserMainTabSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<UserListModel, UserGeneralModel>>(){})

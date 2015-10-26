@@ -38,9 +38,9 @@ public class SubTabExtendedTemplateGeneralPresenter
 
     @Inject
     public SubTabExtendedTemplateGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager,
+            PlaceManager placeManager, ExtendedTemplateMainTabSelectedItems selectedItems,
             UserPortalDetailModelProvider<UserPortalTemplateListModel, TemplateGeneralModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
+        super(eventBus, view, proxy, placeManager, selectedItems, modelProvider);
     }
 
 }

@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.errata.ErrataMainTabSelectedItems;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -54,6 +55,7 @@ public class ErrataModule extends AbstractGinModule {
     @Override
     protected void configure() {
         bind(EngineErrataListModel.class).in(Singleton.class);
+        bind(ErrataMainTabSelectedItems.class).asEagerSingleton();
     }
 
 }

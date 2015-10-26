@@ -20,7 +20,8 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabExtendedPoolNetworkInterfacePresenter
-        extends AbstractSubTabExtendedVmPresenter<PoolInterfaceListModel, SubTabExtendedPoolNetworkInterfacePresenter.ViewDef, SubTabExtendedPoolNetworkInterfacePresenter.ProxyDef> {
+        extends AbstractSubTabExtendedVmPresenter<PoolInterfaceListModel,
+            SubTabExtendedPoolNetworkInterfacePresenter.ViewDef, SubTabExtendedPoolNetworkInterfacePresenter.ProxyDef> {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -34,15 +35,17 @@ public class SubTabExtendedPoolNetworkInterfacePresenter
 
     @TabInfo(container = ExtendedVmSubTabPanelPresenter.class)
     static TabData getTabData(
-            UserPortalSearchableDetailModelProvider<VmNetworkInterface, UserPortalListModel, PoolInterfaceListModel> modelProvider) {
+            UserPortalSearchableDetailModelProvider<VmNetworkInterface, UserPortalListModel,
+                PoolInterfaceListModel> modelProvider) {
         return new ModelBoundTabData(constants.extendedVirtualMachineNetworkInterfaceSubTabLabel(), 3, modelProvider);
     }
 
     @Inject
     public SubTabExtendedPoolNetworkInterfacePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager,
-            UserPortalSearchableDetailModelProvider<VmNetworkInterface, UserPortalListModel, PoolInterfaceListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
+            PlaceManager placeManager, ExtendedVmMainTabSelectedItems selectedItems,
+            UserPortalSearchableDetailModelProvider<VmNetworkInterface, UserPortalListModel,
+                PoolInterfaceListModel> modelProvider) {
+        super(eventBus, view, proxy, placeManager, selectedItems, modelProvider);
     }
 
 }

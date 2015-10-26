@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
-import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -10,19 +9,18 @@ import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.NetworkSelectionChangeEvent;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.TabData;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-public class SubTabNetworkGeneralPresenter extends AbstractSubTabPresenter<NetworkView, NetworkListModel, NetworkGeneralModel, SubTabNetworkGeneralPresenter.ViewDef, SubTabNetworkGeneralPresenter.ProxyDef> {
+public class SubTabNetworkGeneralPresenter
+    extends AbstractSubTabNetworkPresenter<NetworkGeneralModel, SubTabNetworkGeneralPresenter.ViewDef,
+        SubTabNetworkGeneralPresenter.ProxyDef> {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -42,20 +40,9 @@ public class SubTabNetworkGeneralPresenter extends AbstractSubTabPresenter<Netwo
 
     @Inject
     public SubTabNetworkGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager,
+            PlaceManager placeManager, NetworkMainTabSelectedItems selectedItems,
             DetailModelProvider<NetworkListModel, NetworkGeneralModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
                 NetworkSubTabPanelPresenter.TYPE_SetTabContent);
     }
-
-    @Override
-    protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(WebAdminApplicationPlaces.networkMainTabPlace);
-    }
-
-    @ProxyEvent
-    public void onNetworkSelectionChange(NetworkSelectionChangeEvent event) {
-        updateMainTabSelection(event.getSelectedItems());
-    }
-
 }

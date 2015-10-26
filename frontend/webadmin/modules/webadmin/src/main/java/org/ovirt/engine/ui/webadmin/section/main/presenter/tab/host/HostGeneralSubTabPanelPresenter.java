@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractSubTabPanelPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.HostSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -26,7 +25,6 @@ import com.gwtplatform.mvp.client.annotations.ChangeTab;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.RequestTabs;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
@@ -61,8 +59,9 @@ public class HostGeneralSubTabPanelPresenter extends AbstractSubTabPanelPresente
 
     @Inject
     public HostGeneralSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            ScrollableTabBarPresenterWidget tabBar, SubTabHostGeneralInfoPresenter infoPresenter) {
-        super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, tabBar,
+            ScrollableTabBarPresenterWidget tabBar, HostMainTabSelectedItems selectedItems,
+            SubTabHostGeneralInfoPresenter infoPresenter) {
+        super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, tabBar, selectedItems,
                 HostSubTabPanelPresenter.TYPE_SetTabContent);
         lastPresenter = infoPresenter;
     }
@@ -71,11 +70,6 @@ public class HostGeneralSubTabPanelPresenter extends AbstractSubTabPanelPresente
     static TabData getTabData(
             DetailModelProvider<HostListModel<Void>, HostGeneralModel> modelProvider) {
         return new ModelBoundTabData(constants.hostGeneralSubTabLabel(), 0, modelProvider);
-    }
-
-    @ProxyEvent
-    public void onHostSelectionChange(HostSelectionChangeEvent event) {
-        this.mainTabSelectedItems = event.getSelectedItems();
     }
 
     @SuppressWarnings("unchecked")

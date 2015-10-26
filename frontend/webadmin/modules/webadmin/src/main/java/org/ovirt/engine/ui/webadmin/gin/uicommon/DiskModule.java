@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAl
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.ImportExportImagePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.DiskMainTabSelectedItems;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -101,6 +102,7 @@ public class DiskModule extends AbstractGinModule {
         bind(DiskTemplateListModel.class).in(Singleton.class);
         bind(DiskStorageListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<Disk>>(){}).in(Singleton.class);
+        bind(DiskMainTabSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<DiskListModel, DiskGeneralModel>>(){})

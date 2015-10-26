@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -32,8 +33,7 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-@SuppressWarnings("unused")
-public class TemplateStorageListModel extends SearchableListModel {
+public class TemplateStorageListModel extends SearchableListModel<VmTemplate, StorageDomainModel> {
 
     private UICommand privateRemoveCommand;
 
@@ -45,8 +45,8 @@ public class TemplateStorageListModel extends SearchableListModel {
         privateRemoveCommand = value;
     }
 
-    ArrayList<StorageDomainModel> storageDomainModels;
-    Collection value;
+    List<StorageDomainModel> storageDomainModels;
+    Collection<StorageDomainModel> value;
 
     public TemplateStorageListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().storageTitle());
@@ -83,7 +83,7 @@ public class TemplateStorageListModel extends SearchableListModel {
     }
 
     @Override
-    public void setItems(Collection value) {
+    public void setItems(Collection<StorageDomainModel> value) {
         if (storageDomainModels != null) {
             Collections.sort(storageDomainModels, new StorageDomainModelByNameComparer());
             itemsChanging(value, items);
@@ -98,14 +98,15 @@ public class TemplateStorageListModel extends SearchableListModel {
             VmTemplate template = (VmTemplate) getEntity();
             AsyncDataProvider.getInstance().getTemplateDiskList(new AsyncQuery(this,
                     new INewAsyncCallback() {
+                        @SuppressWarnings("unchecked")
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
                             TemplateStorageListModel templateStorageListModel = (TemplateStorageListModel) target;
-                            ArrayList<DiskImage> diskImages = (ArrayList<DiskImage>) returnValue;
+                            List<DiskImage> diskImages = (List<DiskImage>) returnValue;
 
-                            ArrayList<StorageDomain> storageDomains =
+                            List<StorageDomain> storageDomains =
                                     Linq.<StorageDomain> cast(templateStorageListModel.value);
-                            ArrayList<StorageDomainModel> storageDomainModels = new ArrayList<>();
+                            List<StorageDomainModel> storageDomainModels = new ArrayList<>();
 
                             for (StorageDomain storageDomain : storageDomains) {
                                 StorageDomainModel storageDomainModel = new StorageDomainModel();
@@ -142,9 +143,9 @@ public class TemplateStorageListModel extends SearchableListModel {
         model.setHelpTag(HelpTag.remove_template_disks);
         model.setHashName("remove_template_disks"); //$NON-NLS-1$
 
-        ArrayList<DiskModel> disks =
+        List<DiskModel> disks =
                 getSelectedItems() != null ? Linq.<DiskModel> cast(getSelectedItems()) : new ArrayList<DiskModel>();
-        ArrayList<String> items = new ArrayList<>();
+        List<String> items = new ArrayList<>();
         for (DiskModel diskModel : disks) {
             items.add(ConstantsManager.getInstance().getMessages().templateDiskDescription(
                     diskModel.getDisk().getDiskAlias(),
@@ -160,14 +161,15 @@ public class TemplateStorageListModel extends SearchableListModel {
 
     private void onRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
-        ArrayList<DiskModel> disks = (ArrayList<DiskModel>) getSelectedItems();
+        List<VdcActionParametersBase> parameters = new ArrayList<>();
+        List<StorageDomainModel> storageDomains = (List<StorageDomainModel>) getSelectedItems();
 
-        for (DiskModel diskModel : disks) {
-            RemoveDiskParameters params =
-                    new RemoveDiskParameters(diskModel.getDisk().getId(),
-                            ((StorageDomain) diskModel.getStorageDomain().getSelectedItem()).getId());
-            parameters.add(params);
+        for (StorageDomainModel storageDomainModel : storageDomains) {
+            for (DiskImage diskModel: storageDomainModel.getDisks()) {
+                RemoveDiskParameters params =
+                    new RemoveDiskParameters(diskModel.getId(), storageDomainModel.getStorageDomain().getId());
+                parameters.add(params);
+            }
         }
 
         model.startProgress();

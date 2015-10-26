@@ -80,6 +80,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCr
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCustomPreviewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotPreviewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VncInfoPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.VirtualMachineMainTabSelectedItems;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 
@@ -483,8 +484,7 @@ public class VirtualMachineModule extends AbstractGinModule {
         bind(new TypeLiteral<VmDevicesListModel<VM>>() {}).in(Singleton.class);
         bind(VmErrataCountModel.class).in(Singleton.class);
         bind(VmErrataListModel.class).in(Singleton.class);
-
-
+        bind(VirtualMachineMainTabSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<VmListModel<Void>, VmGeneralModel>>(){})

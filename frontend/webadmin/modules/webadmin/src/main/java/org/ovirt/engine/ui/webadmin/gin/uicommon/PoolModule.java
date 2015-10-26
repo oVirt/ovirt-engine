@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolVmListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolEditPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.PoolMainTabSelectedItems;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -109,6 +110,7 @@ public class PoolModule extends AbstractGinModule {
         bind(PoolGeneralModel.class).in(Singleton.class);
         bind(PoolVmListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<VmPool>>(){}).in(Singleton.class);
+        bind(PoolMainTabSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<PoolListModel, PoolGeneralModel>>(){})

@@ -2,12 +2,14 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.RegisterCinderDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -22,7 +24,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-public class StorageRegisterDiskListModel extends SearchableListModel {
+public class StorageRegisterDiskListModel extends SearchableListModel<StorageDomain, Disk> {
     private UICommand registerCommand;
 
     public UICommand getRegisterCommand() {
@@ -93,7 +95,7 @@ public class StorageRegisterDiskListModel extends SearchableListModel {
                 new AsyncQuery(this, new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object ReturnValue) {
-                        ArrayList<CinderDisk> newItems = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                        List<Disk> newItems = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                         Collections.sort(newItems, new Linq.DiskByAliasComparer());
                         setItems(newItems);
                     }

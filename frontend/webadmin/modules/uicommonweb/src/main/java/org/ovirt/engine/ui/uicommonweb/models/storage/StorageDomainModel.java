@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class StorageDomainModel extends EntityModel {
+public class StorageDomainModel extends EntityModel<StorageDomain> {
 
     private StorageDomain storageDomain;
 
@@ -45,7 +45,7 @@ public class StorageDomainModel extends EntityModel {
             DiskModel diskModel = new DiskModel();
             diskModel.setDisk(diskImage);
 
-            ListModel storageDomain = new ListModel();
+            ListModel<StorageDomain> storageDomain = new ListModel<>();
             storageDomain.setSelectedItem(getStorageDomain());
             diskModel.setStorageDomain(storageDomain);
 

@@ -47,6 +47,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.MultipleHostsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.CpuProfilePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.AffinityGroupPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.ClusterMainTabSelectedItems;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -308,6 +309,7 @@ public class ClusterModule extends AbstractGinModule {
         bind(CpuProfileListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<VDSGroup>>(){}).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<CpuProfile>>(){}).in(Singleton.class);
+        bind(ClusterMainTabSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<ClusterListModel<Void>, ClusterServiceModel>>(){})

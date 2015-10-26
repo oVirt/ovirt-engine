@@ -38,8 +38,9 @@ public class SubTabExtendedTemplatePermissionsPresenter
 
     @Inject
     public SubTabExtendedTemplatePermissionsPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, TemplatePermissionListModelProvider modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
+            PlaceManager placeManager, ExtendedTemplateMainTabSelectedItems selectedItems,
+            TemplatePermissionListModelProvider modelProvider) {
+        super(eventBus, view, proxy, placeManager, selectedItems, modelProvider);
     }
 
 }

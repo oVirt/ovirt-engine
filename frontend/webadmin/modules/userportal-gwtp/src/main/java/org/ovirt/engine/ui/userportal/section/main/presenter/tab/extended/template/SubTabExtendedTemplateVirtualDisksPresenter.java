@@ -39,10 +39,10 @@ public class SubTabExtendedTemplateVirtualDisksPresenter
 
     @Inject
     public SubTabExtendedTemplateVirtualDisksPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager,
+            PlaceManager placeManager, ExtendedTemplateMainTabSelectedItems selectedItems,
             UserPortalSearchableDetailModelProvider<DiskImage, UserPortalTemplateListModel,
                 UserPortalTemplateDiskListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
+        super(eventBus, view, proxy, placeManager, selectedItems, modelProvider);
     }
 
 }

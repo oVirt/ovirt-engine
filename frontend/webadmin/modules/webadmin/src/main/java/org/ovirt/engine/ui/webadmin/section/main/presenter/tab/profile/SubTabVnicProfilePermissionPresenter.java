@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.profile;
 
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
-import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -11,21 +10,18 @@ import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VnicProfileSelectionChangeEvent;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.TabData;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-public class SubTabVnicProfilePermissionPresenter extends AbstractSubTabPresenter<VnicProfileView, VnicProfileListModel,
-    PermissionListModel<VnicProfileView>, SubTabVnicProfilePermissionPresenter.ViewDef,
-    SubTabVnicProfilePermissionPresenter.ProxyDef> {
+public class SubTabVnicProfilePermissionPresenter
+    extends AbstractSubTabVnicProfilePresenter<PermissionListModel<VnicProfileView>,
+        SubTabVnicProfilePermissionPresenter.ViewDef, SubTabVnicProfilePermissionPresenter.ProxyDef> {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -47,20 +43,10 @@ public class SubTabVnicProfilePermissionPresenter extends AbstractSubTabPresente
 
     @Inject
     public SubTabVnicProfilePermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager,
+            PlaceManager placeManager, VnicProfileMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<Permission, VnicProfileListModel,
             PermissionListModel<VnicProfileView>> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, VnicProfileSubTabPanelPresenter.TYPE_SetTabContent);
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+                VnicProfileSubTabPanelPresenter.TYPE_SetTabContent);
     }
-
-    @Override
-    protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(WebAdminApplicationPlaces.vnicProfileMainTabPlace);
-    }
-
-    @ProxyEvent
-    public void onVnicProfileSelectionChange(VnicProfileSelectionChangeEvent event) {
-        updateMainTabSelection(event.getSelectedItems());
-    }
-
 }
