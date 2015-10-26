@@ -136,7 +136,9 @@ public abstract class AbstractErrataCountModel extends EntityModel<HasErrata> {
     }
 
     protected void initCommands(Model m) {
-        m.getCommands().add(UICommand.createDefaultOkUiCommand(CLOSE, this));
+        UICommand closeCommand = UICommand.createDefaultOkUiCommand(CLOSE, this);
+        closeCommand.setIsCancel(true);
+        m.getCommands().add(closeCommand);
     }
 
     @Override
