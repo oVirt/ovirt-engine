@@ -22,19 +22,16 @@ public class IrsServerWrapper implements IIrsServer {
 
     @Override
     public OneUuidReturnForXmlRpc createVolume(String sdUUID, String spUUID, String imgGUID, String size,
-            int volFormat, int volType, int diskType, String volUUID, String descr, String srcImgGUID, String srcVolUUID) {
-        Map<String, Object> xmlRpcReturnValue = irsServer.createVolume(sdUUID, spUUID, imgGUID, size, volFormat,
-                volType, diskType, volUUID, descr, srcImgGUID, srcVolUUID);
-        OneUuidReturnForXmlRpc wrapper = new OneUuidReturnForXmlRpc(xmlRpcReturnValue);
-        return wrapper;
-    }
-
-    @Override
-    public OneUuidReturnForXmlRpc createVolume(String sdUUID, String spUUID, String imgGUID, String size,
             int volFormat, int volType, int diskType, String volUUID, String descr, String srcImgGUID, String srcVolUUID,
             String initialSize) {
-        Map<String, Object> xmlRpcReturnValue = irsServer.createVolume(sdUUID, spUUID, imgGUID, size, volFormat,
-                volType, diskType, volUUID, descr, srcImgGUID, srcVolUUID, initialSize);
+        Map<String, Object> xmlRpcReturnValue;
+        if (initialSize != null) {
+            xmlRpcReturnValue = irsServer.createVolume(sdUUID, spUUID, imgGUID, size, volFormat,
+                    volType, diskType, volUUID, descr, srcImgGUID, srcVolUUID, initialSize);
+        } else {
+            xmlRpcReturnValue = irsServer.createVolume(sdUUID, spUUID, imgGUID, size, volFormat,
+                    volType, diskType, volUUID, descr, srcImgGUID, srcVolUUID);
+        }
         OneUuidReturnForXmlRpc wrapper = new OneUuidReturnForXmlRpc(xmlRpcReturnValue);
         return wrapper;
     }

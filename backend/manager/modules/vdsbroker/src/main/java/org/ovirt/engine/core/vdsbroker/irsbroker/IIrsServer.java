@@ -9,9 +9,6 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
 public interface IIrsServer {
 
     OneUuidReturnForXmlRpc createVolume(String sdUUID, String spUUID, String imgGUID, String size, int volFormat,
-            int volType, int diskType, String volUUID, String descr, String srcImgGUID, String srcVolUUID);
-
-    OneUuidReturnForXmlRpc createVolume(String sdUUID, String spUUID, String imgGUID, String size, int volFormat,
             int volType, int diskType, String volUUID, String descr, String srcImgGUID, String srcVolUUID,
             String initialSize);
 

@@ -27,33 +27,22 @@ public class CreateImageVDSCommand<P extends CreateImageVDSCommandParameters> ex
         log.info("-- executeIrsBrokerCommand: calling 'createVolume' with two new parameters: description and UUID");
         // NOTE: The 'uuidReturn' variable will contain the taskID and not the
         // created image id!
+        String imageInitSize = null;
         if (isInitialImageSizeSupported() && getParameters().getImageInitialSizeInBytes() != 0) {
-            uuidReturn = getIrsProxy().createVolume(
-                    getParameters().getStorageDomainId().toString(),
-                    getParameters().getStoragePoolId().toString(),
-                    getParameters().getImageGroupId().toString(),
-                    (Long.valueOf(getParameters().getImageSizeInBytes())).toString(),
-                    getParameters().getVolumeFormat().getValue(),
-                    getParameters().getImageType().getValue(),
-                    2,
-                    getParameters().getNewImageID().toString(),
-                    getParameters().getNewImageDescription(), Guid.Empty.toString(),
-                    Guid.Empty.toString(),
-                    (Long.valueOf(getParameters().getImageInitialSizeInBytes())).toString());
-
-        } else {
-            uuidReturn = getIrsProxy().createVolume(
-                    getParameters().getStorageDomainId().toString(),
-                    getParameters().getStoragePoolId().toString(),
-                    getParameters().getImageGroupId().toString(),
-                    (Long.valueOf(getParameters().getImageSizeInBytes())).toString(),
-                    getParameters().getVolumeFormat().getValue(),
-                    getParameters().getImageType().getValue(),
-                    2,
-                    getParameters().getNewImageID().toString(),
-                    getParameters().getNewImageDescription(), Guid.Empty.toString(),
-                    Guid.Empty.toString());
+            imageInitSize = (Long.valueOf(getParameters().getImageInitialSizeInBytes())).toString();
         }
+        uuidReturn = getIrsProxy().createVolume(
+                getParameters().getStorageDomainId().toString(),
+                getParameters().getStoragePoolId().toString(),
+                getParameters().getImageGroupId().toString(),
+                (Long.valueOf(getParameters().getImageSizeInBytes())).toString(),
+                getParameters().getVolumeFormat().getValue(),
+                getParameters().getImageType().getValue(),
+                2,
+                getParameters().getNewImageID().toString(),
+                getParameters().getNewImageDescription(), Guid.Empty.toString(),
+                Guid.Empty.toString(),
+                imageInitSize);
 
         proceedProxyReturnValue();
 
