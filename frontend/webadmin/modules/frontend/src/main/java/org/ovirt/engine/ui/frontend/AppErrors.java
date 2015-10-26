@@ -133,6 +133,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("The host and destination cluster architectures do not match.")
     String ACTION_TYPE_FAILED_VDS_CLUSTER_DIFFERENT_ARCHITECTURES();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Moving a host to a cluster with different management network is not allowed. That might cause connectivity loss.")
+    String ACTION_TYPE_FAILED_HOST_CLUSTER_DIFFERENT_MANAGEMENT_NETWORKS();
+
     @DefaultStringValue("Cannot switch Host to Maintenance mode. Host has asynchronous running tasks,\nwait for operation to complete and retry.")
     String VDS_CANNOT_MAINTENANCE_SPM_WITH_RUNNING_TASKS();
 
