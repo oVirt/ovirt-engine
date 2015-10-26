@@ -17,6 +17,10 @@
             padding-top: 10px;
         }
 
+        .errataDetailPanel {
+            overflow: scroll;
+        }
+
         .progressDotsImage {
             margin: 10px;
         }
@@ -29,9 +33,9 @@
                     <t:ErrataTableView ui:field="errataTableView"/>
                 </g:center>
                 <g:south size="300">
-                    <g:FlowPanel ui:field="errataDetailPanel">
+                    <g:FlowPanel ui:field="errataDetailPanel" addStyleNames="{style.errataDetailPanel}">
                         <g:FlowPanel addStyleNames="{style.errataTitlePanel}">
-                            <g:HTMLPanel tag="span" ui:field="errataTitle" addStyleNames="{style.errataTitleLabel}"/>
+                            <g:HTMLPanel tag="span" ui:field="errataTitle" addStyleNames="{style.errataTitleLabel}" />
                         </g:FlowPanel>
                         <er:ErrataDetailModelForm ui:field="errataDetailModelForm" />
                     </g:FlowPanel>
