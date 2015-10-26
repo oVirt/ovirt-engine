@@ -20,6 +20,7 @@
 
 
 import gettext
+import re
 
 from otopi import constants as otopicons
 from otopi import plugin, util
@@ -84,14 +85,33 @@ class Plugin(plugin.PluginBase):
 
         rc, stdout, stderr = self._dbUtil()
         if rc != 0:
-            raise RuntimeError(
-                _(
-                    'Failed checking Engine database:\n'
-                    '{output}\n'.format(
-                        output=stdout,
+            exceptTextBase = _(
+                'Failed checking Engine database: '
+                'an exception occurred while validating the Engine'
+                ' database, please check the logs for getting more info'
+            )
+            stderrLines = stderr.splitlines()
+            for stderrLine in stderrLines:
+                if re.match('^ERROR: ', stderrLine):
+                    break
+            else:
+                stderrLine = stderrLines[0]
+
+            if stderrLine != '':
+                exceptText = _(
+                    '{base}:\n{output}\n'.format(
+                        base=exceptTextBase,
+                        output=stderrLine,
                     )
                 )
-            )
+            else:
+                exceptText = _(
+                    '{base}.\n'.format(
+                        base=exceptTextBase,
+                    )
+                )
+
+            raise RuntimeError(exceptText)
 
         return (stdout, rc)
 
