@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -39,7 +38,6 @@ public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBa
         cinderDisk.setId(Guid.createGuidFromString(volumeId));
         cinderDisk.setImageId(Guid.createGuidFromString(volumeId));
         cinderDisk.setImageStatus(ImageStatus.LOCKED);
-        cinderDisk.setVolumeType(VolumeType.Sparse);
         cinderDisk.setVolumeClassification(VolumeClassification.Volume);
         cinderDisk.setVmSnapshotId(getParameters().getVmSnapshotId());
 
