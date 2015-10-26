@@ -89,6 +89,10 @@ class StringValueConverter {
             } catch(ReflectiveOperationException e) {}
         }
 
+        if (v == null) {
+            throw new IllegalArgumentException(String.format("Failed to convert '%s' to %s", value, clazz.getName()));
+        }
+
         return v;
     }
 
