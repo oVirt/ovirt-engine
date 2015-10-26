@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -54,7 +53,6 @@ import org.ovirt.engine.api.model.Schema;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Url;
 import org.ovirt.engine.api.resource.CreationResource;
-import org.ovirt.engine.api.resource.RsdlIgnore;
 import org.ovirt.engine.api.utils.ReflectionHelper;
 
 public class RsdlBuilder {
@@ -778,9 +776,6 @@ public class RsdlBuilder {
 
 
     private boolean isRequiresDescription(Method m) {
-        if (m.isAnnotationPresent(RsdlIgnore.class)) {
-            return false;
-        }
         boolean pathRelevant = !(m.isAnnotationPresent(Path.class) && m.getAnnotation(Path.class).value().contains(":"));
         boolean returnValueRelevant = !m.getReturnType().equals(CreationResource.class);
         return pathRelevant && returnValueRelevant;
