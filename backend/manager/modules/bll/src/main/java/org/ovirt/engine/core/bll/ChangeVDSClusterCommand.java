@@ -159,7 +159,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         }
 
         if (!isDetachedSourceCluster() && !isSameManagementNetwork()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_CHANGED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_CLUSTER_DIFFERENT_MANAGEMENT_NETWORKS);
         }
 
         if (FeatureSupported.hostNetworkQos(sourceClusterCompatibilityVersion)
