@@ -114,9 +114,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
             // pick an UP host randomly - all should have latest compat version already if we passed the canDo.
             for (VDS vds : allForVdsGroup) {
                 if (vds.getStatus() == VDSStatus.Up) {
-                    emulatedMachine = ListUtils.firstMatch(
-                            Config.<List<String>>getValue(ConfigValues.ClusterEmulatedMachines,
-                                    getParameters().getVdsGroup().getCompatibilityVersion().getValue()), vds.getSupportedEmulatedMachines().split(","));
+                    emulatedMachine = getEmulatedMachineOfHostInCluster(vds);
                     break;
                 }
             }
@@ -175,6 +173,13 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
             momPolicyUpdatedEvent.fire(getVdsGroup());
         }
         setSucceeded(true);
+    }
+
+    private String getEmulatedMachineOfHostInCluster(VDS vds) {
+        return ListUtils.firstMatch(
+                Config.<List<String>>getValue(ConfigValues.ClusterEmulatedMachines,
+                        getParameters().getVdsGroup().getCompatibilityVersion().getValue()),
+                vds.getSupportedEmulatedMachines().split(","));
     }
 
     private void addOrUpdateAddtionalClusterFeatures() {
@@ -362,6 +367,9 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
                     result = false;
                     break;
                 }
+                if (!isSupportedEmulatedMachinesMatchClusterLevel(vds)) {
+                    return failCanDoAction(EngineMessage.VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_INCOMPATIBLE_EMULATED_MACHINE);
+                }
             }
 
             if (result) {
@@ -505,6 +513,10 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
             }
         }
         return result;
+    }
+
+    protected boolean isSupportedEmulatedMachinesMatchClusterLevel(VDS vds) {
+        return getEmulatedMachineOfHostInCluster(vds) != null;
     }
 
     private Set<SupportedAdditionalClusterFeature> getAdditionalClusterFeaturesAdded() {

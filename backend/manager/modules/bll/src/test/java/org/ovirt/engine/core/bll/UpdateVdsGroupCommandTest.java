@@ -546,6 +546,7 @@ public class UpdateVdsGroupCommandTest {
         doReturn(hostFeatureDao).when(cmd).getHostFeatureDao();
         doReturn(networkClusterValidator).when(cmd).createManagementNetworkClusterValidator();
         doReturn(true).when(cmd).validateClusterPolicy();
+        doReturn(true).when(cmd).isSupportedEmulatedMachinesMatchClusterLevel(any(VDS.class));
 
         if (StringUtils.isEmpty(group.getCpuName())) {
             doReturn(ArchitectureType.undefined).when(cmd).getArchitecture();

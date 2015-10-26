@@ -1264,6 +1264,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot change Cluster Compatibility Version to higher version when there are active Hosts with lower version.\n-Please move Hosts with lower version to maintenance first.")
     String VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS();
 
+    @DefaultStringValue("Cannot change Cluster Compatibility Version to higher version when there are active Hosts whose emulated machine flags are not supported at the requested version.")
+    String VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_INCOMPATIBLE_EMULATED_MACHINE();
+
     @DefaultStringValue("Cannot enable new Cluster feature when there are active hosts which don't support the selected feature.\n-Please move hosts with lower version to maintenance first.")
     String VDS_GROUP_CANNOT_UPDATE_SUPPORTED_FEATURES_WITH_LOWER_HOSTS();
 
