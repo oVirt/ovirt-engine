@@ -59,6 +59,8 @@ public interface IVdsEventListener {
 
     void runFailedAutoStartVMs(List<Guid> vmIds);
 
+    void runColdRebootVms(List<Guid> vmIds);
+
     void addExternallyManagedVms(List<VmStatic> externalVmList);
 
     void handleVdsMaintenanceTimeout(Guid vdsId);

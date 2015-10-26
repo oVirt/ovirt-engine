@@ -1,16 +1,24 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ShutdownVmParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
+
+    @Inject
+    private ResourceManager resourceManager;
 
     public RebootVmCommand(T parameters) {
         super(parameters);
@@ -25,15 +33,23 @@ public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOpera
 
     @Override
     protected void perform() {
-        final VDSReturnValue returnValue = runVdsCommand(VDSCommandType.RebootVm, new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
-        setActionReturnValue(returnValue.getReturnValue());
-        setSucceeded(returnValue.getSucceeded());
+        if (isColdReboot()) {
+            VdcReturnValueBase returnValue = runInternalAction(VdcActionType.ShutdownVm, new ShutdownVmParameters(getVmId(), false));
+            setReturnValue(returnValue);
+            setSucceeded(returnValue.getSucceeded());
+            if (getSucceeded()) {
+                resourceManager.getVmManager(getVmId()).setColdReboot(true);
+            }
+        } else {
+            final VDSReturnValue returnValue = runVdsCommand(VDSCommandType.RebootVm, new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
+            setActionReturnValue(returnValue.getReturnValue());
+            setSucceeded(returnValue.getSucceeded());
+        }
     }
 
     @Override
     protected boolean canDoAction() {
-        final VM vm = getVm();
-        if (vm == null) {
+        if (getVm() == null) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
@@ -41,7 +57,7 @@ public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOpera
             return false;
         }
 
-        if (getVm().getStatus() != VMStatus.Up) {
+        if (getVm().getStatus() != VMStatus.Up && getVm().getStatus() != VMStatus.PoweringUp) {
             return failVmStatusIllegal();
         }
 
@@ -51,5 +67,9 @@ public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOpera
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.USER_REBOOT_VM : AuditLogType.USER_FAILED_REBOOT_VM;
+    }
+
+    private boolean isColdReboot() {
+        return getVm().isRunOnce() || getVm().isNextRunConfigurationExists();
     }
 }

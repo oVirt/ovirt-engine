@@ -28,6 +28,8 @@ public class VmManager {
     private Double lastStatusEventTimestamp;
     private Guid lastStatusEventReporterId;
 
+    private boolean coldReboot;
+
     public VmManager(Guid id) {
         this.id = id;
         convertOperationProgress = -1;
@@ -146,5 +148,13 @@ public class VmManager {
         if (vdsId.equals(lastStatusEventReporterId)) {
             lastStatusEventReporterId = null;
         }
+    }
+
+    public boolean isColdReboot() {
+        return coldReboot;
+    }
+
+    public void setColdReboot(boolean coldReboot) {
+        this.coldReboot = coldReboot;
     }
 }

@@ -76,6 +76,7 @@ public class VmAnalyzer {
     private boolean autoVmToRun;
     private boolean externalVm;
     private boolean hostedEngineUnmanaged;
+    private boolean coldRebootVmToRun;
 
     //dependencies
     private final VmsMonitoring vmsMonitoring; // aggregate all data using it.
@@ -225,6 +226,9 @@ public class VmAnalyzer {
         } else {
             // Vm moved safely to down status. May be migration - just remove it from Async Running command.
             vmsMonitoring.getResourceManager().removeAsyncRunningVm(vmDynamic.getId());
+            if (getVmManager() != null && getVmManager().isColdReboot()) {
+                setColdRebootFlag();
+            }
         }
     }
 
@@ -681,6 +685,8 @@ public class VmAnalyzer {
                     && !poweredDown) {
                 autoVmToRun = true;
                 log.info("add VM '{}' to HA rerun treatment", dbVm.getName());
+            } else if (getVmManager() != null && getVmManager().isColdReboot()) {
+                setColdRebootFlag();
             }
         }
     }
@@ -1034,6 +1040,12 @@ public class VmAnalyzer {
         auditLogDirector.log(auditLogable, logType);
     }
 
+    private void setColdRebootFlag() {
+        coldRebootVmToRun = true;
+        getVmManager().setColdReboot(false);
+        log.info("add VM '{}' to cold reboot treatment", dbVm.getName());
+    }
+
     public boolean isRerun() {
         return rerun;
     }
@@ -1078,7 +1090,18 @@ public class VmAnalyzer {
         return vmsMonitoring.getVdsManager();
     }
 
+    private VmManager getVmManager() {
+        if (getDbVm() == null) {
+            return null;
+        }
+        return vmsMonitoring.getVmManager(getDbVm().getId());
+    }
+
     public boolean isHostedEngineUnmanaged() {
         return hostedEngineUnmanaged;
+    }
+
+    public boolean isColdRebootVmToRun() {
+        return coldRebootVmToRun;
     }
 }

@@ -103,7 +103,9 @@ public class VdsEventListener implements IVdsEventListener {
     @Inject
     private AvailableUpdatesFinder availableUpdatesFinder;
     @Inject
-    AutoStartVmsRunner autoStartVmsRunner;
+    private HaAutoStartVmsRunner haAutoStartVmsRunner;
+    @Inject
+    private ColdRebootAutoStartVmsRunner coldRebootAutoStartVmsRunner;
     @Inject
     private VdsDao vdsDao;
     @Inject
@@ -471,7 +473,21 @@ public class VdsEventListener implements IVdsEventListener {
                     event.getVmName(), vmId);
         }
 
-        autoStartVmsRunner.addVmsToRun(vmIds);
+        haAutoStartVmsRunner.addVmsToRun(vmIds);
+    }
+
+    @Override
+    public void runColdRebootVms(List<Guid> vmIds) {
+        for (Guid vmId : vmIds) {
+            AuditLogableBase event = new AuditLogableBase();
+            event.setVmId(vmId);
+            auditLogDirector.log(event, AuditLogType.COLD_REBOOT_VM_DOWN);
+
+            log.info("VM is down as a part of cold reboot process. Attempting to restart. VM Name '{}', VM Id '{}",
+                    event.getVmName(), vmId);
+        }
+
+        coldRebootAutoStartVmsRunner.addVmsToRun(vmIds);
     }
 
     @Override

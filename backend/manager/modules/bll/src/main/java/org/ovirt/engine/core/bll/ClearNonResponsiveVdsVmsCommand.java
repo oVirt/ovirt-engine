@@ -27,7 +27,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> extends VdsCommand<T> {
 
     @Inject
-    private AutoStartVmsRunner autoStartVmsRunner;
+    private HaAutoStartVmsRunner haAutoStartVmsRunner;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -73,7 +73,7 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
         runVdsCommand(VDSCommandType.UpdateVdsVMsCleared,
                         new UpdateVdsVMsClearedVDSCommandParameters(getVdsId()));
         if (!autoStartVmIdsToRerun.isEmpty()) {
-            autoStartVmsRunner.addVmsToRun(autoStartVmIdsToRerun);
+            haAutoStartVmsRunner.addVmsToRun(autoStartVmIdsToRerun);
         }
         setSucceeded(true);
     }

@@ -101,6 +101,7 @@ public class VmsMonitoring {
     private final List<VmDeviceId> removedDeviceIds = new ArrayList<>();
     private final List<LUNs> vmLunDisksToSave = new ArrayList<>();
     private final List<Guid> autoVmsToRun = new ArrayList<>();
+    private final List<Guid> coldRebootVmsToRun = new ArrayList<>();
     private final List<VmStatic> externalVmsToAdd = new ArrayList<>();
     private final Map<Guid, VmJob> vmJobsToUpdate = new HashMap<>();
     private final List<Guid> vmJobIdsToRemove = new ArrayList<>();
@@ -263,6 +264,10 @@ public class VmsMonitoring {
                 autoVmsToRun.add(vmAnalyzer.getDbVm().getId());
             }
 
+            if (vmAnalyzer.isColdRebootVmToRun()) {
+                coldRebootVmsToRun.add(vmAnalyzer.getDbVm().getId());
+            }
+
             // process all vms that their ip changed.
             if (vmAnalyzer.isClientIpChanged()) {
                 final VmDynamic vmDynamic = vmAnalyzer.getVdsmVm().getVmDynamic();
@@ -296,6 +301,9 @@ public class VmsMonitoring {
 
         // run all vms that crashed that marked with auto startup
         getVdsEventListener().runFailedAutoStartVMs(autoVmsToRun);
+
+        // run all vms that went down as a part of cold reboot process
+        getVdsEventListener().runColdRebootVms(coldRebootVmsToRun);
 
         // process all vms that went down
         getVdsEventListener().processOnVmStop(movedToDownVms, vdsManager.getVdsId());
@@ -817,6 +825,10 @@ public class VmsMonitoring {
 
     public VdsManager getVdsManager() {
         return vdsManager;
+    }
+
+    public VmManager getVmManager(Guid vmId) {
+        return vmManagers.get(vmId);
     }
 
     public void addVmGuestAgentNics(Guid id, List<VmGuestAgentInterface> vmGuestAgentInterfaces) {

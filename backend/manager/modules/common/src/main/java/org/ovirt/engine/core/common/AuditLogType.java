@@ -1124,6 +1124,10 @@ public enum AuditLogType {
     ADD_VM_FROM_SNAPSHOT_INVALID_INTERFACES(9607, AuditLogSeverity.WARNING,
             AuditLogTimeInterval.MINUTE.getValue()),
 
+    COLD_REBOOT_VM_DOWN(9611),
+    COLD_REBOOT_FAILED(9612, AuditLogSeverity.ERROR),
+    EXCEEDED_MAXIMUM_NUM_OF_COLD_REBOOT_VM_ATTEMPTS(9613, AuditLogSeverity.ERROR),
+
     // DWH
     DWH_STOPPED(9701),
     DWH_STARTED(9700),

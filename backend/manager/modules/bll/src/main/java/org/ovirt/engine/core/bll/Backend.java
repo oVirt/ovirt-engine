@@ -275,7 +275,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         _startedAt = DateTime.getNow();
 
         loadService(VmPoolMonitor.class);
-        loadService(AutoStartVmsRunner.class);
+        loadService(HaAutoStartVmsRunner.class);
         loadService(QuotaManager.class);
 
         //initializes attestation

@@ -129,7 +129,7 @@ public class RestartVdsVmsOperation {
         }
 
         if (!autoStartVmIdsToRerun.isEmpty()) {
-            Injector.get(AutoStartVmsRunner.class).addVmsToRun(autoStartVmIdsToRerun);
+            Injector.get(HaAutoStartVmsRunner.class).addVmsToRun(autoStartVmIdsToRerun);
         }
     }
 }

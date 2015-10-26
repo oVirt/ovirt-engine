@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -18,10 +18,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
-import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -38,38 +34,38 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * This class represent a job which is responsible for running HA VMs
- */
-@Singleton
-public class AutoStartVmsRunner implements BackendService {
+public abstract class AutoStartVmsRunner implements BackendService {
 
-    private static final Logger log = LoggerFactory.getLogger(AutoStartVmsRunner.class);
     /** How long to wait before rerun HA VM that failed to start (not because of lock acquisition) */
-    private static final int RETRY_TO_RUN_HA_VM_INTERVAL =
+    private static final int RETRY_TO_RUN_AUTO_START_VM_INTERVAL =
             Config.<Integer> getValue(ConfigValues.RetryToRunAutoStartVmIntervalInSeconds);
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+
     @Inject
     private AuditLogDirector auditLogDirector;
+
     @Inject
     private SchedulerUtilQuartzImpl schedulerUtil;
+
     @Inject
     private LockManager lockManager;
+
     @Inject
     private BackendInternal backend;
+
     @Inject
     private VmDynamicDao vmDynamicDao;
+
     @Inject
     private VmDao vmDao;
 
-    /** Records of HA VMs that need to be restarted */
+    /** Records of VMs that need to be started */
     private CopyOnWriteArraySet<AutoStartVmToRestart> autoStartVmsToRestart;
-
-    private AutoStartVmsRunner() {
-    }
 
     @PostConstruct
     private void init() {
-        initAutoStartVmsToRestart();
+        autoStartVmsToRestart = new CopyOnWriteArraySet<>(getInitialVmsToStart());
 
         int autoStartVmsRunnerIntervalInSeconds =
                 Config.<Integer>getValue(ConfigValues.AutoStartVmsRunnerIntervalInSeconds);
@@ -83,19 +79,7 @@ public class AutoStartVmsRunner implements BackendService {
                 TimeUnit.SECONDS);
     }
 
-    private void initAutoStartVmsToRestart() {
-        // There might be HA VMs which went down just before the engine stopped, we detected
-        // the failure and updated the DB but didn't made it to rerun the VM. So here we'll
-        // take all the HA VMs which are down because of an error and add them to the set
-        List<VM> failedAutoStartVms = getVmDao().getAllFailedAutoStartVms();
-        ArrayList<AutoStartVmToRestart> initialFailedVms = new ArrayList<>(failedAutoStartVms.size());
-        for (VM vm: failedAutoStartVms) {
-            log.info("Found HA VM which is down because of an error, trying to restart it, VM '{}' ({})",
-                    vm.getName(), vm.getId());
-            initialFailedVms.add(new AutoStartVmToRestart(vm.getId()));
-        }
-        autoStartVmsToRestart = new CopyOnWriteArraySet<>(initialFailedVms);
-    }
+    protected abstract Collection<AutoStartVmToRestart> getInitialVmsToStart();
 
     /**
      * Add the given VM IDs to the set of VMs which will be started in the next iteration.
@@ -115,9 +99,9 @@ public class AutoStartVmsRunner implements BackendService {
     public void startFailedAutoStartVms() {
         LinkedList<AutoStartVmToRestart> vmsToRemove = new LinkedList<>();
         final DateTime iterationStartTime = DateTime.getNow();
-        final Date nextTimeOfRetryToRun = iterationStartTime.addSeconds(RETRY_TO_RUN_HA_VM_INTERVAL);
+        final Date nextTimeOfRetryToRun = iterationStartTime.addSeconds(RETRY_TO_RUN_AUTO_START_VM_INTERVAL);
 
-        for(AutoStartVmToRestart autoStartVmToRestart: autoStartVmsToRestart) {
+        for (AutoStartVmToRestart autoStartVmToRestart : autoStartVmsToRestart) {
             // if it is not the time to try to run the VM yet, skip it for now
             // (we'll try again in the next iteration)
             if (!autoStartVmToRestart.isTimeToRun(iterationStartTime)) {
@@ -130,7 +114,7 @@ public class AutoStartVmsRunner implements BackendService {
             // try to acquire the required lock for running the VM, if the lock cannot be
             // acquired, skip for now  and we'll try again in the next iteration
             if (!acquireLock(runVmLock)) {
-                log.debug("Could not acquire lock for running HA VM '{}'", vmId);
+                log.debug("Could not acquire lock for auto starting VM '{}'", vmId);
                 continue;
             }
 
@@ -148,13 +132,13 @@ public class AutoStartVmsRunner implements BackendService {
                 vmsToRemove.add(autoStartVmToRestart);
             }
             else {
-                logFailedAttemptToRestartHighlyAvailableVm(vmId);
+                logFailedAttemptToRestartVm(vmId);
 
                 if (!autoStartVmToRestart.scheduleNextTimeToRun(nextTimeOfRetryToRun)) {
                     // if we could not schedule the next time to run the VM, it means
                     // that we reached the maximum number of tried so don't try anymore
                     vmsToRemove.add(autoStartVmToRestart);
-                    logFailureToRestartHighlyAvailableVm(vmId);
+                    logFailureToRestartVm(vmId);
                 }
             }
         }
@@ -170,23 +154,23 @@ public class AutoStartVmsRunner implements BackendService {
         lockManager.releaseLock(lock);
     }
 
-    private void logFailedAttemptToRestartHighlyAvailableVm(Guid vmId) {
+    protected abstract boolean isVmNeedsToBeAutoStarted(Guid vmId);
+
+    private void logFailedAttemptToRestartVm(Guid vmId) {
         AuditLogableBase event = new AuditLogableBase();
         event.setVmId(vmId);
-        auditLogDirector.log(event, AuditLogType.HA_VM_RESTART_FAILED);
+        auditLogDirector.log(event, getRestartFailedAuditLogType());
     }
 
-    private void logFailureToRestartHighlyAvailableVm(Guid vmId) {
+    protected abstract AuditLogType getRestartFailedAuditLogType();
+
+    private void logFailureToRestartVm(Guid vmId) {
         AuditLogableBase event = new AuditLogableBase();
         event.setVmId(vmId);
-        auditLogDirector.log(event, AuditLogType.EXCEEDED_MAXIMUM_NUM_OF_RESTART_HA_VM_ATTEMPTS);
+        auditLogDirector.log(event, getExceededMaxNumOfRestartsAuditLogType());
     }
 
-    private boolean isVmNeedsToBeAutoStarted(Guid vmId) {
-        VmDynamic vmDynamic = getVmDynamicDao().get(vmId);
-        return vmDynamic.getStatus() == VMStatus.Down &&
-                vmDynamic.getExitStatus() == VmExitStatus.Error;
-    }
+    protected abstract AuditLogType getExceededMaxNumOfRestartsAuditLogType();
 
     private EngineLock createEngineLockForRunVm(Guid vmId) {
         return new EngineLock(
@@ -194,7 +178,7 @@ public class AutoStartVmsRunner implements BackendService {
                 RunVmCommandBase.getSharedLocksForRunVm());
     }
 
-    protected String getLockMessage() {
+    private String getLockMessage() {
         return EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED.name();
     }
 
@@ -213,11 +197,11 @@ public class AutoStartVmsRunner implements BackendService {
                 ExecutionHandler.createInternalJobContext(lock)).getSucceeded();
     }
 
-    private static class AutoStartVmToRestart {
+    protected static class AutoStartVmToRestart {
         /** The earliest date in Java */
         private static final Date MIN_DATE = DateTime.getMinValue();
         /** How many times to try to restart highly available VM that went down */
-        private static final int MAXIMUM_NUM_OF_TRIES_TO_RESTART_HA_VM =
+        private static final int MAXIMUM_NUM_OF_TRIES_TO_AUTO_START_VM =
                 Config.<Integer> getValue(ConfigValues.MaxNumOfTriesToRunFailedAutoStartVm);
 
         /** The next time we should try to run the VM */
@@ -238,7 +222,7 @@ public class AutoStartVmsRunner implements BackendService {
          */
         boolean scheduleNextTimeToRun(Date timeToRunTheVm) {
             this.timeToRunTheVm = timeToRunTheVm;
-            return ++numOfRuns < MAXIMUM_NUM_OF_TRIES_TO_RESTART_HA_VM;
+            return ++numOfRuns < MAXIMUM_NUM_OF_TRIES_TO_AUTO_START_VM;
         }
 
         boolean isTimeToRun(Date time) {

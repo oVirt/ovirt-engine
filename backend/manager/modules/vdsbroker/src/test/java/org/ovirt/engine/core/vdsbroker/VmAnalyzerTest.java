@@ -95,6 +95,8 @@ public class VmAnalyzerTest {
     @Mock
     private VdsManager vdsManager;
     @Mock
+    private VmManager vmManager;
+    @Mock
     private VDS vdsManagerVds;
     @Mock
     private ResourceManager resourceManager;
@@ -359,7 +361,9 @@ public class VmAnalyzerTest {
         when(vdsManager.getVdsId()).thenReturn(VmTestPairs.SRC_HOST_ID);
         when(vdsManager.getVdsGroupId()).thenReturn(VmTestPairs.CLUSTER_ID);
         when(vdsManager.getCopyVds()).thenReturn(vdsManagerVds);
+        when(vmManager.isColdReboot()).thenReturn(false);
         when(vmsMonitoring.getVdsManager()).thenReturn(vdsManager);
+        when(vmsMonitoring.getVmManager(any())).thenReturn(vmManager);
         when(vmsMonitoring.getResourceManager()).thenReturn(resourceManager);
         when(resourceManager.getVdsManager(any(Guid.class))).thenReturn(vdsManager);
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
