@@ -13,6 +13,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Image;
 
 /**
  * Composite panel that renders three checkboxes that allow the user to (client-side) filter
@@ -39,9 +40,19 @@ public class ErrataFilterPanel extends Composite {
     @UiField
     CheckBox enhancementCheckbox;
 
+    @UiField
+    Image securityCheckboxImage;
+
+    @UiField
+    Image bugCheckboxImage;
+
+    @UiField
+    Image enhancementCheckboxImage;
+
     public ErrataFilterPanel() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         init();
+        showPanelItems(false);
         localize();
     }
 
@@ -53,6 +64,16 @@ public class ErrataFilterPanel extends Composite {
         securityCheckbox.setValue(security);
         bugCheckbox.setValue(bugs);
         enhancementCheckbox.setValue(enhancements);
+        showPanelItems(true);
+    }
+
+    private void showPanelItems(boolean show) {
+        securityCheckbox.setVisible(show);
+        bugCheckbox.setVisible(show);
+        enhancementCheckbox.setVisible(show);
+        enhancementCheckboxImage.setVisible(show);
+        bugCheckboxImage.setVisible(show);
+        securityCheckboxImage.setVisible(show);
     }
 
     public void addValueChangeHandler(final ValueChangeHandler<ErrataFilterValue> handler) {

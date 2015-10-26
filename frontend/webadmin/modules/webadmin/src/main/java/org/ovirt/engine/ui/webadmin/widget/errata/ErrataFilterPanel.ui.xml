@@ -25,11 +25,11 @@
     </ui:style>
 
     <g:FlowPanel>
-        <g:Image resource="{resources.security}" addStyleNames="{style.security}"/>
+        <g:Image ui:field="securityCheckboxImage" resource="{resources.security}" addStyleNames="{style.security}"/>
         <g:CheckBox ui:field="securityCheckbox" addStyleNames="{style.securityCheckbox}"/>
-        <g:Image resource="{resources.bug}" addStyleNames="{style.bug}"/>
+        <g:Image ui:field="bugCheckboxImage" resource="{resources.bug}" addStyleNames="{style.bug}"/>
         <g:CheckBox ui:field="bugCheckbox" addStyleNames="{style.bugCheckbox}"/>
-        <g:Image resource="{resources.enhancement}" addStyleNames="{style.enhancement}"/>
+        <g:Image ui:field="enhancementCheckboxImage" resource="{resources.enhancement}" addStyleNames="{style.enhancement}"/>
         <g:CheckBox ui:field="enhancementCheckbox" addStyleNames="{style.enhancementCheckbox}"/>
     </g:FlowPanel>
 
