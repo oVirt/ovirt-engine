@@ -27,7 +27,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Hosts;
 
-@Path("/hosts")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface HostsResource {
     @GET

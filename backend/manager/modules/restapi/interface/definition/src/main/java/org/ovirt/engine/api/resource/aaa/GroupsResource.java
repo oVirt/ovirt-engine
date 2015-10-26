@@ -28,7 +28,6 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Groups;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
-@Path("/groups")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface GroupsResource {
 

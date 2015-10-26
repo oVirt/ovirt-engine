@@ -28,7 +28,6 @@ import org.ovirt.engine.api.model.OpenStackImageProvider;
 import org.ovirt.engine.api.model.OpenStackImageProviders;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
-@Path("/openstackimageproviders")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface OpenStackImageProvidersResource {
     @GET

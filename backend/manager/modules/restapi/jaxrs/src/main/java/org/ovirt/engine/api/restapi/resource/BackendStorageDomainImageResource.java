@@ -5,6 +5,7 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Image;
+import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.ImageResource;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
@@ -81,5 +82,13 @@ public class BackendStorageDomainImageResource
     @Override
     public Image get() {
         return performGet(VdcQueryType.GetImageById, new GetImageByIdParameters(getStorageDomainId(), id));
+    }
+
+    @Override
+    protected Image addParents(Image image) {
+        StorageDomain storageDomain = new StorageDomain();
+        storageDomain.setId(getStorageDomainId().toString());
+        image.setStorageDomain(storageDomain);
+        return image;
     }
 }

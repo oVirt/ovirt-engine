@@ -27,8 +27,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DataCenters;
 
-
-@Path("/datacenters")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface DataCentersResource {
 

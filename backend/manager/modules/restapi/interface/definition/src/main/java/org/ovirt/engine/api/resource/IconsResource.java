@@ -7,7 +7,6 @@ import javax.ws.rs.Produces;
 
 import org.ovirt.engine.api.model.Icons;
 
-@Path("/icons")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface IconsResource {
 

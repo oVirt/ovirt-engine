@@ -27,7 +27,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.Vms;
 
-@Path("/vms")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface VmsResource {
 

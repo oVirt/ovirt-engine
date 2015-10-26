@@ -28,7 +28,6 @@ import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.model.OpenStackNetworkProviders;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
-@Path("/openstacknetworkproviders")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface OpenStackNetworkProvidersResource {
 

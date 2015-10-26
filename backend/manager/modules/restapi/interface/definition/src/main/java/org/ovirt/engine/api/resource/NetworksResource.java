@@ -27,7 +27,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
 
-@Path("/networks")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface NetworksResource {
     @GET

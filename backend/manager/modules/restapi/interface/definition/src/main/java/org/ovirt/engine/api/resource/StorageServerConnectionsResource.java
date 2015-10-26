@@ -11,7 +11,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageConnections;
 
-@Path("/storageconnections")
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface StorageServerConnectionsResource {
     @GET

@@ -24,7 +24,6 @@ import javax.ws.rs.Produces;
 import org.ovirt.engine.api.model.Domains;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
-@Path("/domains")
 @Produces( { ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface DomainsResource {
 

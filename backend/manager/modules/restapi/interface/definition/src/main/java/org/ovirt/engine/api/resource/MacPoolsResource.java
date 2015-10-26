@@ -11,7 +11,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.api.model.MacPools;
 
-@Path("/macpools")
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface MacPoolsResource {
 

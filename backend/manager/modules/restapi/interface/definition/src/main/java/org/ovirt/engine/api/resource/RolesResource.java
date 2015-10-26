@@ -30,7 +30,6 @@ import org.ovirt.engine.api.model.Roles;
 /**
  * Provides read-only access to the global set of roles
  */
-@Path("/roles")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface RolesResource {
 

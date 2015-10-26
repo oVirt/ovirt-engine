@@ -48,6 +48,48 @@ import org.ovirt.engine.api.model.Users;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.ApiResource;
+import org.ovirt.engine.api.resource.BookmarksResource;
+import org.ovirt.engine.api.resource.CapabilitiesResource;
+import org.ovirt.engine.api.resource.ClustersResource;
+import org.ovirt.engine.api.resource.CpuProfilesResource;
+import org.ovirt.engine.api.resource.DataCentersResource;
+import org.ovirt.engine.api.resource.DiskProfilesResource;
+import org.ovirt.engine.api.resource.DisksResource;
+import org.ovirt.engine.api.resource.EventsResource;
+import org.ovirt.engine.api.resource.HostsResource;
+import org.ovirt.engine.api.resource.IconsResource;
+import org.ovirt.engine.api.resource.InstanceTypesResource;
+import org.ovirt.engine.api.resource.JobsResource;
+import org.ovirt.engine.api.resource.MacPoolsResource;
+import org.ovirt.engine.api.resource.NetworksResource;
+import org.ovirt.engine.api.resource.OperatingSystemsResource;
+import org.ovirt.engine.api.resource.RolesResource;
+import org.ovirt.engine.api.resource.SchedulingPoliciesResource;
+import org.ovirt.engine.api.resource.SchedulingPolicyUnitsResource;
+import org.ovirt.engine.api.resource.StorageDomainsResource;
+import org.ovirt.engine.api.resource.StorageServerConnectionsResource;
+import org.ovirt.engine.api.resource.SystemPermissionsResource;
+import org.ovirt.engine.api.resource.TagsResource;
+import org.ovirt.engine.api.resource.TemplatesResource;
+import org.ovirt.engine.api.resource.VmPoolsResource;
+import org.ovirt.engine.api.resource.VmsResource;
+import org.ovirt.engine.api.resource.VnicProfilesResource;
+import org.ovirt.engine.api.resource.aaa.DomainsResource;
+import org.ovirt.engine.api.resource.aaa.GroupsResource;
+import org.ovirt.engine.api.resource.aaa.UsersResource;
+import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostProvidersResource;
+import org.ovirt.engine.api.resource.externalhostproviders.SystemKatelloErrataResource;
+import org.ovirt.engine.api.resource.openstack.OpenStackImageProvidersResource;
+import org.ovirt.engine.api.resource.openstack.OpenStackNetworkProvidersResource;
+import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProvidersResource;
+import org.ovirt.engine.api.restapi.resource.aaa.BackendDomainsResource;
+import org.ovirt.engine.api.restapi.resource.aaa.BackendGroupsResource;
+import org.ovirt.engine.api.restapi.resource.aaa.BackendUsersResource;
+import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendExternalHostProvidersResource;
+import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendSystemKatelloErrataResource;
+import org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackImageProvidersResource;
+import org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackNetworkProvidersResource;
+import org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackVolumeProvidersResource;
 import org.ovirt.engine.api.restapi.types.DateMapper;
 import org.ovirt.engine.api.restapi.types.VersionMapper;
 import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
@@ -391,5 +433,175 @@ public class BackendApiResource
         return doAction(VdcActionType.ReloadConfigurations,
                         new VdcActionParametersBase(),
                         action);
+    }
+
+    @Override
+    public BookmarksResource getBookmarksResource() {
+        return inject(new BackendBookmarksResource());
+    }
+
+    @Override
+    public CapabilitiesResource getCapabilitiesResource() {
+        return inject(new BackendCapabilitiesResource());
+    }
+
+    @Override
+    public ClustersResource getClustersResource() {
+        return inject(new BackendClustersResource());
+    }
+
+    @Override
+    public CpuProfilesResource getCpuProfilesResource() {
+        return inject(new BackendCpuProfilesResource());
+    }
+
+    @Override
+    public DataCentersResource getDataCentersResource() {
+        return inject(new BackendDataCentersResource());
+    }
+
+    @Override
+    public DiskProfilesResource getDiskProfilesResource() {
+        return inject(new BackendDiskProfilesResource());
+    }
+
+    @Override
+    public DisksResource getDisksResource() {
+        return inject(new BackendDisksResource());
+    }
+
+    @Override
+    public DomainsResource getDomainsResource() {
+        return inject(new BackendDomainsResource());
+    }
+
+    @Override
+    public EventsResource getEventsResource() {
+        return inject(new BackendEventsResource());
+    }
+
+    @Override
+    public ExternalHostProvidersResource getExternalHostProvidersResource() {
+        return inject(new BackendExternalHostProvidersResource());
+    }
+
+    @Override
+    public GroupsResource getGroupsResource() {
+        return inject(new BackendGroupsResource());
+    }
+
+    @Override
+    public HostsResource getHostsResource() {
+        return inject(new BackendHostsResource());
+    }
+
+    @Override
+    public IconsResource getIconsResource() {
+        return inject(new BackendIconsResource());
+    }
+
+    @Override
+    public InstanceTypesResource getInstanceTypesResource() {
+        return inject(new BackendInstanceTypesResource());
+    }
+
+    @Override
+    public JobsResource getJobsResource() {
+        return inject(new BackendJobsResource());
+    }
+
+    @Override
+    public MacPoolsResource getMacPoolsResource() {
+        return inject(new BackendMacPoolsResource());
+    }
+
+    @Override
+    public NetworksResource getNetworksResource() {
+        return inject(new BackendNetworksResource());
+    }
+
+    @Override
+    public OpenStackImageProvidersResource getOpenStackImageProviersResource() {
+        return inject(new BackendOpenStackImageProvidersResource());
+    }
+
+    @Override
+    public OpenStackNetworkProvidersResource getOpenStackNetworkProvidersResource() {
+        return inject(new BackendOpenStackNetworkProvidersResource());
+    }
+
+    @Override
+    public OpenStackVolumeProvidersResource getOpenStackVolumeProvidersResource() {
+        return inject(new BackendOpenStackVolumeProvidersResource());
+    }
+
+    @Override
+    public OperatingSystemsResource getOperatingSystemsResource() {
+        return inject(new BackendOperatingSystemsResource());
+    }
+
+    @Override
+    public RolesResource getRolesResource() {
+        return inject(new BackendRolesResource());
+    }
+
+    @Override
+    public SchedulingPoliciesResource getSchedulingPoliciesResource() {
+        return inject(new BackendSchedulingPoliciesResource());
+    }
+
+    @Override
+    public SchedulingPolicyUnitsResource getSchedulingPolicyUnitsResource() {
+        return inject(new BackendSchedulingPolicyUnitsResource());
+    }
+
+    @Override
+    public StorageDomainsResource getStorageDomainsResource() {
+        return inject(new BackendStorageDomainsResource());
+    }
+
+    @Override
+    public StorageServerConnectionsResource getStorageConnectionsResource() {
+        return inject(new BackendStorageServerConnectionsResource());
+    }
+
+    @Override
+    public SystemKatelloErrataResource getKatelloErrataResource() {
+        return inject(new BackendSystemKatelloErrataResource());
+    }
+
+    @Override
+    public SystemPermissionsResource getPermissionsResource() {
+        return inject(new BackendSystemPermissionsResource());
+    }
+
+    @Override
+    public TagsResource getTagsResource() {
+        return inject(new BackendTagsResource());
+    }
+
+    @Override
+    public TemplatesResource getTemplatesResource() {
+        return inject(new BackendTemplatesResource());
+    }
+
+    @Override
+    public UsersResource getUsersResource() {
+        return inject(new BackendUsersResource());
+    }
+
+    @Override
+    public VmPoolsResource getVmPoolsResource() {
+        return inject(new BackendVmPoolsResource());
+    }
+
+    @Override
+    public VmsResource getVmsResource() {
+        return inject(new BackendVmsResource());
+    }
+
+    @Override
+    public VnicProfilesResource getVnicProfilesResource() {
+        return inject(new BackendVnicProfilesResource());
     }
 }

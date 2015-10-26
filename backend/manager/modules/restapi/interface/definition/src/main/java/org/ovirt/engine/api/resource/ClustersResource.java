@@ -27,7 +27,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Clusters;
 
-@Path("/clusters")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface ClustersResource {
 

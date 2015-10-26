@@ -28,7 +28,6 @@ import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.model.OpenStackVolumeProviders;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
-@Path("/openstackvolumeproviders")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface OpenStackVolumeProvidersResource {
     @GET

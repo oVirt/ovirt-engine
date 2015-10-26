@@ -27,7 +27,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
 
-@Path("/templates")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface TemplatesResource {
 

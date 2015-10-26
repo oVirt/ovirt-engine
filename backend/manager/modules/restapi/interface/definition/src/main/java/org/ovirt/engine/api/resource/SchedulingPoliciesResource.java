@@ -11,7 +11,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.SchedulingPolicies;
 import org.ovirt.engine.api.model.SchedulingPolicy;
 
-@Path("/schedulingpolicies")
 @Produces( { ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface SchedulingPoliciesResource {
 

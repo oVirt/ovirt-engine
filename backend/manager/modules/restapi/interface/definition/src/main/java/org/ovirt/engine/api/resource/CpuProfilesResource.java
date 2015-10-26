@@ -11,7 +11,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.CpuProfiles;
 
-@Path("/cpuprofiles")
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface CpuProfilesResource {
     @GET

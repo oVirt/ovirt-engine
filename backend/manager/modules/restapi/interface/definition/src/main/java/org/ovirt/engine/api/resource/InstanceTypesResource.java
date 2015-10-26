@@ -27,7 +27,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.InstanceTypes;
 
-@Path("/instancetypes")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface InstanceTypesResource {
 

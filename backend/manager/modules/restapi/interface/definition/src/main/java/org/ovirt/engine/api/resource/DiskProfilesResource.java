@@ -11,7 +11,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.api.model.DiskProfiles;
 
-@Path("/diskprofiles")
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface DiskProfilesResource {
     @GET

@@ -11,7 +11,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Bookmark;
 import org.ovirt.engine.api.model.Bookmarks;
 
-@Path("/bookmarks")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface BookmarksResource {
     @GET

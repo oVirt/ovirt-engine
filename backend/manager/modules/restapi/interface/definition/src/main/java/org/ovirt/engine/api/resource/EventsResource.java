@@ -29,7 +29,6 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.Events;
 
-@Path("/events")
 @Produces( { ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface EventsResource {
     @GET

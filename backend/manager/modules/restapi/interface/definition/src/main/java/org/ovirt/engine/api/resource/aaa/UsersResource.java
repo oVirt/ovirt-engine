@@ -28,7 +28,6 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Users;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
-@Path("/users")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface UsersResource {
 

@@ -28,7 +28,6 @@ import org.ovirt.engine.api.model.ExternalHostProvider;
 import org.ovirt.engine.api.model.ExternalHostProviders;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
-@Path("/externalhostproviders")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface ExternalHostProvidersResource {
     @GET

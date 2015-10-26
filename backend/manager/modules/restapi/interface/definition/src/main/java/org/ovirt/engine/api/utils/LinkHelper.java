@@ -123,6 +123,7 @@ import org.ovirt.engine.api.model.Watchdog;
 import org.ovirt.engine.api.model.Weight;
 import org.ovirt.engine.api.resource.AffinityGroupResource;
 import org.ovirt.engine.api.resource.AffinityGroupsResource;
+import org.ovirt.engine.api.resource.ApiResource;
 import org.ovirt.engine.api.resource.AssignedNetworkResource;
 import org.ovirt.engine.api.resource.AssignedNetworksResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
@@ -313,6 +314,8 @@ import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProviderResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProvidersResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypeResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypesResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -340,6 +343,7 @@ import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypesResource;
  * with this information for every resource type.
  */
 public class LinkHelper {
+    private static final Logger log = LoggerFactory.getLogger(LinkHelper.class);
 
     private static final String SEARCH_RELATION = "/search";
     private static final String SEARCH_TEMPLATE = "?search={query}";
@@ -667,21 +671,25 @@ public class LinkHelper {
     /**
      * Obtain the relative path to a top-level collection
      *
-     * The path is simply the value of the @Path annotation on the
-     * supplied collection resource type
+     * The path is the value of the {@link Path} annotation on resource locator method of the root resource that
+     * returns a reference to this class of resource. For example, if the class is {@link BookmarksResource} then
+     * returned value should be the value of the {@link Path} annotation on the
+     * {@link ApiResource#getBookmarksResource()} method.
      *
      * @param clz the collection resource type
-     * @return    the relative path to the collection
+     * @return the relative path to the collection
      */
     private static String getPath(Class<?> clz) {
-        Path pathAnnotation = clz.getAnnotation(Path.class);
-
-        String path = pathAnnotation.value();
-        if (path.startsWith("/")) {
-            path = path.substring(1);
+        for (Method method : ApiResource.class.getMethods()) {
+            if (method.getReturnType() == clz) {
+                Path annotation = method.getAnnotation(Path.class);
+                if (annotation != null) {
+                    return annotation.value();
+                }
+            }
         }
-
-        return path;
+        log.error("Can't find relative path for class \"" + clz.getName() + "\", will return null");
+        return null;
     }
 
     /**

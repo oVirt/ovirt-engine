@@ -11,7 +11,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.api.model.Jobs;
 
-@Path("/jobs")
 @Produces( { ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface JobsResource {
 

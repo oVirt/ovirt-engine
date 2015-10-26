@@ -27,7 +27,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.Tags;
 
-@Path("/tags")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
 public interface TagsResource {
 
