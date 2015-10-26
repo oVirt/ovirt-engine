@@ -683,7 +683,11 @@ public class AAAServiceImpl implements ModuleService {
 
     @Override
     public void run() throws Exception {
-        action.execute(this);
+        int iterations = (Integer)argModuleMap.get("iterations");
+        for (int i = 0; i < iterations; i++) {
+            log.info("Iteration: {}", i);
+            action.execute(this);
+        }
     }
 
     private static ExtMap createQueryFilter(ExtUUID entity, Map<String, Object> argMap) {
