@@ -58,6 +58,10 @@ public class ClusterPolicy implements BusinessEntity<Guid>, IVdcQueryable, Namea
      */
     private Guid balance;
     /**
+     * policy unit id that indicates which host selector to execute
+     */
+    private Guid selector = null;
+    /**
      * Map of custom properties for policy
      */
     private Map<String, String> parameterMap;
@@ -146,6 +150,14 @@ public class ClusterPolicy implements BusinessEntity<Guid>, IVdcQueryable, Namea
         this.balance = balance;
     }
 
+    public Guid getSelector() {
+        return selector;
+    }
+
+    public void setSelector(Guid selector) {
+        this.selector = selector;
+    }
+
     public Map<String, String> getParameterMap() {
         return parameterMap;
     }
@@ -166,7 +178,8 @@ public class ClusterPolicy implements BusinessEntity<Guid>, IVdcQueryable, Namea
                 id,
                 locked,
                 name,
-                parameterMap
+                parameterMap,
+                selector
         );
     }
 
@@ -185,6 +198,7 @@ public class ClusterPolicy implements BusinessEntity<Guid>, IVdcQueryable, Namea
                 && Objects.equals(filterPositionMap, other.filterPositionMap)
                 && Objects.equals(filters, other.filters)
                 && Objects.equals(functions, other.functions)
+                && Objects.equals(selector, other.selector)
                 && Objects.equals(id, other.id)
                 && locked == other.locked
                 && Objects.equals(name, other.name)

@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.bll.scheduling.selector.SelectorInstance;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -82,6 +83,11 @@ public abstract class PolicyUnitImpl {
             Map<String, String> parameters,
             ArrayList<String> messages) {
         log.error("Policy unit '{}' balance is not implemented", getPolicyUnit().getName());
+        return null;
+    }
+
+    public SelectorInstance selector(Map<String, String> parameters) {
+        log.error("Policy unit '{}' selector is not implemented", getPolicyUnit().getName());
         return null;
     }
 

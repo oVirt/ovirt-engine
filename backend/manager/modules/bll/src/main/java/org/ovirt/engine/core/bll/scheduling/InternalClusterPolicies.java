@@ -274,6 +274,11 @@ public class InternalClusterPolicies {
             return this;
         }
 
+        public final PolicyBuilder setSelector(Class<? extends PolicyUnitImpl> selector) {
+            policy.setSelector(getGuidAndValidateType(selector, PolicyUnitType.SELECTOR));
+            return this;
+        }
+
         private Guid getGuidAndValidateType(Class<? extends PolicyUnitImpl> unit, PolicyUnitType expectedType) {
             SchedulingUnit guid = unit.getAnnotation(SchedulingUnit.class);
 

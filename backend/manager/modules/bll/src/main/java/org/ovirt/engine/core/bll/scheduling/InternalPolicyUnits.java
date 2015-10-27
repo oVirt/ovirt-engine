@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.bll.scheduling.policyunits.BasicWeightSelectorPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CompatibilityVersionFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit;
@@ -34,9 +35,11 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.PinToHostPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingCPUWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingMemoryWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.RankSelectorPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityWeightPolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.compat.Guid;
 
 public class InternalPolicyUnits {
     private static final Set<Class<? extends PolicyUnitImpl>> enabledUnits = new HashSet<>();
@@ -72,6 +75,8 @@ public class InternalPolicyUnits {
         enabledUnits.add(InClusterUpgradeFilterPolicyUnit.class);
         enabledUnits.add(InClusterUpgradeWeightPolicyUnit.class);
         enabledUnits.add(LabelFilterPolicyUnit.class);
+        enabledUnits.add(BasicWeightSelectorPolicyUnit.class);
+        enabledUnits.add(RankSelectorPolicyUnit.class);
     }
 
     public static Collection<Class<? extends PolicyUnitImpl>> getList() {
@@ -100,5 +105,16 @@ public class InternalPolicyUnits {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static Guid getGuid(Class<? extends PolicyUnitImpl> unitType) {
+        // This check is only performed once during the static initializer run
+        // and serves as a sanity check
+        if (unitType.getAnnotation(SchedulingUnit.class) == null) {
+            throw new IllegalArgumentException(unitType.getName()
+                    + " is missing the required SchedulingUnit annotation metadata.");
+        }
+
+        return Guid.createGuidFromString(unitType.getAnnotation(SchedulingUnit.class).guid());
     }
 }

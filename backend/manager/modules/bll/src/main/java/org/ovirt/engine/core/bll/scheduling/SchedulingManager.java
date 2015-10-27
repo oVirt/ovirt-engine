@@ -35,6 +35,8 @@ import org.ovirt.engine.core.bll.scheduling.pending.PendingMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingOvercommitMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
+import org.ovirt.engine.core.bll.scheduling.policyunits.BasicWeightSelectorPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.selector.SelectorInstance;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -203,7 +205,16 @@ public class SchedulingManager implements BackendService {
         // Get all user provided cluster policies
         List<ClusterPolicy> allClusterPolicies = getClusterPolicyDao().getAll(
                 Collections.unmodifiableMap(internalTypes));
+        final Guid defaultSelectorGuid = InternalPolicyUnits.getGuid(BasicWeightSelectorPolicyUnit.class);
+
         for (ClusterPolicy clusterPolicy : allClusterPolicies) {
+            // Make sure the selector field is filled, this can be
+            // removed once we add proper support to DB, UI and REST.
+            if (clusterPolicy.getSelector() == null) {
+                // Use the Basic selector as default
+                clusterPolicy.setSelector(defaultSelectorGuid);
+            }
+
             policyMap.put(clusterPolicy.getId(), clusterPolicy);
         }
     }
@@ -419,9 +430,16 @@ public class SchedulingManager implements BackendService {
         default:
             // select best runnable host with scoring functions (from policy)
             List<Pair<Guid, Integer>> functions = policy.getFunctions();
+            Guid selector = policy.getSelector();
+            PolicyUnitImpl selectorUnit = policyUnits.get(selector);
+            SelectorInstance selectorInstance = selectorUnit.selector(parameters);
+
+            List<Guid> runnableGuids = runnableHosts.stream().map(VDS::getId).collect(Collectors.toList());
+            selectorInstance.init(functions, runnableGuids);
+
             if (functions != null && !functions.isEmpty()
                     && shouldWeighClusterHosts(cluster, runnableHosts)) {
-                Guid bestHostByFunctions = runFunctions(functions, cluster, runnableHosts, vm, parameters);
+                Guid bestHostByFunctions = runFunctions(selectorInstance, functions, cluster, runnableHosts, vm, parameters);
                 if (bestHostByFunctions != null) {
                     return bestHostByFunctions;
                 }
@@ -701,7 +719,8 @@ public class SchedulingManager implements BackendService {
         });
     }
 
-    private Guid runFunctions(List<Pair<Guid, Integer>> functions,
+    private Guid runFunctions(SelectorInstance selector,
+            List<Pair<Guid, Integer>> functions,
             Cluster cluster,
             List<VDS> hostList,
             VM vm,
@@ -720,49 +739,37 @@ public class SchedulingManager implements BackendService {
             }
         }
 
-        Map<Guid, Integer> hostCostTable = runInternalFunctions(internalScoreFunctions, cluster, hostList, vm,
-                parameters);
+        runInternalFunctions(selector, internalScoreFunctions, cluster, hostList,
+                vm, parameters);
 
         if (Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled) && !externalScoreFunctions.isEmpty()) {
-            runExternalFunctions(externalScoreFunctions, hostList, vm, parameters, hostCostTable);
+            runExternalFunctions(selector, externalScoreFunctions, hostList, vm, parameters);
         }
-        Entry<Guid, Integer> bestHostEntry = null;
-        for (Entry<Guid, Integer> entry : hostCostTable.entrySet()) {
-            if (bestHostEntry == null || bestHostEntry.getValue() > entry.getValue()) {
-                bestHostEntry = entry;
-            }
-        }
-        if (bestHostEntry == null) {
-            return null;
-        }
-        return bestHostEntry.getKey();
+
+        return selector.best();
     }
 
-    private Map<Guid, Integer> runInternalFunctions(List<Pair<PolicyUnitImpl, Integer>> functions,
+    private void runInternalFunctions(SelectorInstance selector,
+            List<Pair<PolicyUnitImpl, Integer>> functions,
             Cluster cluster,
             List<VDS> hostList,
             VM vm,
             Map<String, String> parameters) {
-        Map<Guid, Integer> hostCostTable = new HashMap<>();
+
         for (Pair<PolicyUnitImpl, Integer> pair : functions) {
             List<Pair<Guid, Integer>> scoreResult = pair.getFirst().score(cluster, hostList, vm, parameters);
             for (Pair<Guid, Integer> result : scoreResult) {
                 Guid hostId = result.getFirst();
-                if (hostCostTable.get(hostId) == null) {
-                    hostCostTable.put(hostId, 0);
-                }
-                hostCostTable.put(hostId,
-                        hostCostTable.get(hostId) + pair.getSecond() * result.getSecond());
+                selector.record(pair.getFirst().getGuid(), result.getFirst(), result.getSecond());
             }
         }
-        return hostCostTable;
     }
 
-    private void runExternalFunctions(List<Pair<PolicyUnitImpl, Integer>> functions,
+    private void runExternalFunctions(SelectorInstance selector,
+            List<Pair<PolicyUnitImpl, Integer>> functions,
             List<VDS> hostList,
             VM vm,
-            Map<String, String> parameters,
-            Map<Guid, Integer> hostCostTable) {
+            Map<String, String> parameters) {
         List<Pair<String, Integer>> scoreNameAndWeight = new ArrayList<>();
         for (Pair<PolicyUnitImpl, Integer> pair : functions) {
             scoreNameAndWeight.add(new Pair<>(pair.getFirst().getPolicyUnit().getName(),
@@ -779,23 +786,20 @@ public class SchedulingManager implements BackendService {
                         vm.getId(),
                         parameters);
         if (externalScores != null) {
-            sumScoreResults(hostCostTable, externalScores);
+            sumScoreResults(selector, externalScores);
         }
     }
 
-    private void sumScoreResults(Map<Guid, Integer> hostCostTable, List<Pair<Guid, Integer>> externalScores) {
+    private void sumScoreResults(SelectorInstance selector, List<Pair<Guid, Integer>> externalScores) {
         if (externalScores == null) {
             // the external scheduler proxy may return null if error happens, in this case the external scores will
             // remain empty
             log.warn("External scheduler proxy returned null score");
         } else {
             for (Pair<Guid, Integer> pair : externalScores) {
-                Guid hostId = pair.getFirst();
-                if (hostCostTable.get(hostId) == null) {
-                    hostCostTable.put(hostId, 0);
-                }
-                hostCostTable.put(hostId,
-                        hostCostTable.get(hostId) + pair.getSecond());
+                // This is called only for results from the external scheduler. And the external scheduler sums
+                // the values on the remote side already (this needs to be changed) and does not report the UUIDs.
+                selector.record(null, pair.getFirst(), pair.getSecond());
             }
         }
     }

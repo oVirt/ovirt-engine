@@ -7,7 +7,8 @@ import org.ovirt.engine.core.common.businessentities.Identifiable;
 public enum PolicyUnitType implements Identifiable {
     FILTER(0),
     WEIGHT(1),
-    LOAD_BALANCING(2);
+    LOAD_BALANCING(2),
+    SELECTOR(3);
 
     private int intValue;
     private static final HashMap<Integer, PolicyUnitType> mappings = new HashMap<>();
