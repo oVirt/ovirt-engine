@@ -158,7 +158,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             }
         }
 
-        if (!isDetachedSourceCluster() && !isSameManagementNetwork()) {
+        if (!(VDSStatus.PendingApproval == vds.getStatus() || isDetachedSourceCluster() || isSameManagementNetwork())) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_CLUSTER_DIFFERENT_MANAGEMENT_NETWORKS);
         }
 
