@@ -482,7 +482,7 @@ public class VmMapper extends VmBaseMapper {
         if (model.getPlacementPolicy() == null) {
             model.setPlacementPolicy(new VmPlacementPolicy());
         }
-        if (entity.getDedicatedVmForVdsList().size() > 1) {
+        if (!entity.getDedicatedVmForVdsList().isEmpty()) {
             Hosts hostsList = new Hosts();
             for (Guid hostGuid : entity.getDedicatedVmForVdsList()) {
                 Host newHost = new Host();
