@@ -66,7 +66,9 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             return true;
         }
 
-        Disk disk = getDiskDao().get(getParameters().getImageGroupID());
+        Guid imageGroupId = Guid.isNullOrEmpty(getParameters().getImageGroupID()) ?
+                getImageGroupId() : getParameters().getImageGroupID();
+        Disk disk = getDiskDao().get(imageGroupId);
         if (disk != null) {
             DiskValidator diskValidator = new DiskValidator(disk);
             return validate(diskValidator.validateUnsupportedDiskStorageType(

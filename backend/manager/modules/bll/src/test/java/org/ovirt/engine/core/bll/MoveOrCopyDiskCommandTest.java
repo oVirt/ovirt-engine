@@ -351,6 +351,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         doReturn(false).when(command).acquireLock();
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(storageDomainDao).when(command).getStorageDomainDao();
+        doReturn(disk.getId()).when(command).getImageGroupId();
     }
 
     private void initSnapshotValidator() {
