@@ -485,7 +485,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                     for (Network net : targetLabeledNetworks) {
                         if (targetNetworksByName.containsKey(net.getName())
                                 && !nicsByNetwork.containsKey(net.getName())) {
-                            configureNetwork(nic, params.getInterfaces(), net);
+                            configureNetwork(nic, params.getInterfaces(), net, params.getInterfaces());
                         } else if (configuredNetworkNotAssignedToCluster(targetNetworksByName, nicsByNetwork, net)) {
                             removeNetworkFromParameters(params, nic, net);
                         }

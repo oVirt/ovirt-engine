@@ -51,16 +51,30 @@ public abstract class NetworkParametersBuilder {
         return DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(hostId);
     }
 
-    protected VdsNetworkInterface createVlanDevice(VdsNetworkInterface nic, Network network) {
-        VdsNetworkInterface vlan = new Vlan();
+    protected VdsNetworkInterface createAndConfigureVlanDevice(VdsNetworkInterface nic, Network network,
+            List<VdsNetworkInterface> existingInterfaces) {
+        VdsNetworkInterface vlan = createVlanDevice(NetworkUtils.constructVlanDeviceName(nic, network),
+                existingInterfaces);
         vlan.setNetworkName(network.getName());
         vlan.setVdsId(nic.getVdsId());
-        vlan.setName(NetworkUtils.constructVlanDeviceName(nic, network));
         vlan.setVlanId(network.getVlanId());
         vlan.setBaseInterface(nic.getName());
         vlan.setBootProtocol(NetworkBootProtocol.NONE);
         return vlan;
     }
+
+    protected VdsNetworkInterface createVlanDevice(String name, List<VdsNetworkInterface> existingInterfaces) {
+        if (existingInterfaces!=null){
+            for(VdsNetworkInterface existingNic:existingInterfaces){
+                if(name.equals(existingNic.getName()))
+                    return existingNic;
+            }
+        }
+        Vlan vlan = new Vlan();
+        vlan.setName(name);
+        return vlan;
+    }
+
 
     protected VdsNetworkInterface getNicToConfigure(List<VdsNetworkInterface> nics, Guid id) {
         for (VdsNetworkInterface nic : nics) {
@@ -102,18 +116,25 @@ public abstract class NetworkParametersBuilder {
      * @param network
      *            the network to attach
      */
-    protected void configureNetwork(VdsNetworkInterface nic, List<VdsNetworkInterface> nics, Network network) {
+    protected void configureNetwork(VdsNetworkInterface nic, List<VdsNetworkInterface> nics, Network network,
+            List<VdsNetworkInterface> existingInterfaces) {
         NetworkCluster networkCluster = getNetworkCluster(nic, network);
         if (NetworkUtils.isVlan(network)) {
-            VdsNetworkInterface vlan = createVlanDevice(nic, network);
+            VdsNetworkInterface vlan = createAndConfigureVlanDevice(nic, network, existingInterfaces);
             addBootProtocolForRoleNetwork(networkCluster, vlan);
-            nics.add(vlan);
+            if (shouldAddVlanToNic(vlan)){
+                nics.add(vlan);
+            }
         } else if (StringUtils.isEmpty(nic.getNetworkName())) {
             nic.setNetworkName(network.getName());
             addBootProtocolForRoleNetwork(networkCluster, nic);
         } else {
             throw new VdcBLLException(VdcBllErrors.NETWORK_LABEL_CONFLICT);
         }
+    }
+
+    protected boolean shouldAddVlanToNic(VdsNetworkInterface vlan) {
+        return vlan.getId()==null;
     }
 
     /**

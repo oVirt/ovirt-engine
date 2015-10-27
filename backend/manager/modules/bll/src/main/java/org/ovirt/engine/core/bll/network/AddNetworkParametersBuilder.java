@@ -42,9 +42,12 @@ public class AddNetworkParametersBuilder extends NetworkParametersBuilder {
 
             NetworkCluster networkCluster = getNetworkCluster(nicToConfigure, network);
             if (vlanNetwork) {
-                VdsNetworkInterface vlan = createVlanDevice(nic, network);
+                VdsNetworkInterface vlan = createAndConfigureVlanDevice(nic, network, setupNetworkParams.getInterfaces());
                 addBootProtocolForRoleNetwork(networkCluster, vlan);
-                setupNetworkParams.getInterfaces().add(vlan);
+
+                if (shouldAddVlanToNic(vlan)) {
+                    setupNetworkParams.getInterfaces().add(vlan);
+                }
             } else if (nicToConfigure.getNetworkName() == null) {
                 nicToConfigure.setNetworkName(network.getName());
                 addBootProtocolForRoleNetwork(networkCluster, nicToConfigure);

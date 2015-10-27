@@ -40,7 +40,7 @@ public class AddNetworksByLabelParametersBuilder extends NetworkParametersBuilde
         labelConfiguredNic(label, nicToConfigure);
 
         // configure networks on the nic
-        parameters.getInterfaces().addAll(configureNetworks(nicToConfigure, networkToAdd));
+        parameters.getInterfaces().addAll(configureNetworks(nicToConfigure, networkToAdd, parameters.getInterfaces()));
         return parameters;
     }
 
@@ -61,7 +61,9 @@ public class AddNetworksByLabelParametersBuilder extends NetworkParametersBuilde
             }
 
             // configure the network on the nic
-            parameters.getInterfaces().addAll(configureNetworks(nicToConfigure, Collections.singleton(network)));
+            parameters.getInterfaces().addAll(configureNetworks(nicToConfigure,
+                    Collections.singleton(network),
+                    parameters.getInterfaces()));
         }
 
         parameters.setNetworkNames(StringUtils.join(Entities.objectNames(networkToAdd), ", "));
@@ -98,14 +100,18 @@ public class AddNetworksByLabelParametersBuilder extends NetworkParametersBuilde
      *            the underlying interface to configure
      * @param networks
      *            the networks to configure on the nic
+     * @param existingInterfaces
+     *            existing interfaces
      * @return a list of vlan devices or an empty list
      */
-    public List<VdsNetworkInterface> configureNetworks(VdsNetworkInterface nic, Set<Network> networks) {
+    public List<VdsNetworkInterface> configureNetworks(VdsNetworkInterface nic, Set<Network> networks,
+            List<VdsNetworkInterface> existingInterfaces) {
         List<VdsNetworkInterface> vlans = new ArrayList<>();
         for (Network network : networks) {
-            configureNetwork(nic, vlans, network);
+            configureNetwork(nic, vlans, network, existingInterfaces);
         }
 
         return vlans;
     }
+
 }
