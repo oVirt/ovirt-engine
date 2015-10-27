@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -914,6 +915,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                    getParameters().getVmPayload().getDeviceType() == VmDeviceType.CDROM) {
                return failCanDoAction(VdcBllMessages.VMPAYLOAD_CDROM_WITH_CLOUD_INIT);
            }
+        }
+
+        if (!VmHandler.isCpuSupported(
+                getVm().getVmOsId(),
+                getVdsGroup().getcompatibility_version(),
+                getVdsGroup().getcpu_name(),
+                getReturnValue().getCanDoActionMessages())) {
+            return false;
         }
 
         return true;
