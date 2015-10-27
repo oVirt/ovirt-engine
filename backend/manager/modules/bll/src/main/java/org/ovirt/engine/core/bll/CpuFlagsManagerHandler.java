@@ -127,7 +127,7 @@ public final class CpuFlagsManagerHandler {
 
     }
 
-        private static class CpuFlagsManager {
+        static class CpuFlagsManager {
         private List<ServerCpu> _intelCpuList;
         private List<ServerCpu> _amdCpuList;
         private List<ServerCpu> _ibmCpuList;
