@@ -24,6 +24,7 @@ import java.util.Set;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -62,6 +63,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -76,6 +78,12 @@ public class RunVmCommandTest extends BaseCommandTest {
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.GuestToolsSetupIsoPrefix, "General", "")
             );
+
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
+
+    @Rule
+    public VmHandlerRule vmHandlerRule = new VmHandlerRule();
 
     /**
      * The command under test.
@@ -103,9 +111,13 @@ public class RunVmCommandTest extends BaseCommandTest {
     @Mock
     OsRepository osRepository;
 
+    @Mock
+    CpuFlagsManagerHandler cpuFlagsManagerHandler;
+
     private static final String ACTIVE_ISO_PREFIX =
             "/rhev/data-center/mnt/some_computer/f6bccab4-e2f5-4e02-bba0-5748a7bc07b6/images/11111111-1111-1111-1111-111111111111";
     private static final String INACTIVE_ISO_PREFIX = "";
+    public static final String CPU_ID = "mock-cpu-id";
 
     public void mockBackend() {
         doReturn(backend).when(command).getBackend();
@@ -325,9 +337,12 @@ public class RunVmCommandTest extends BaseCommandTest {
 
     @Before
     public void createCommand() {
-
+        mockCpuFlagsManagerHandler();
         when(osRepository.isWindows(Mockito.anyInt())).thenReturn(false);
+        when(osRepository.isCpuSupported(Mockito.anyInt(), Mockito.any(Version.class), Mockito.anyString()))
+                .thenReturn(true);
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        updateVmHandler();
 
         RunVmParams param = new RunVmParams(Guid.newGuid());
         command = spy(new RunVmCommand<RunVmParams>(param) {
@@ -341,6 +356,16 @@ public class RunVmCommandTest extends BaseCommandTest {
         doNothing().when(command).initParametersForPassthroughVnics();
         mockSuccessfulSnapshotValidator();
         mockBackend();
+    }
+
+    private void mockCpuFlagsManagerHandler() {
+        injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
+        when(cpuFlagsManagerHandler.getCpuId(anyString(), any(Version.class))).thenReturn(CPU_ID);
+    }
+
+    private void updateVmHandler() {
+        vmHandlerRule.updateCpuFlagsManagerHandler(cpuFlagsManagerHandler);
+        vmHandlerRule.updateOsRepository(osRepository);
     }
 
     private void mockIsoDomainListSyncronizer() {

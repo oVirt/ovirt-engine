@@ -1024,6 +1024,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
            }
         }
 
+        if (!VmHandler.isCpuSupported(
+                getVm().getVmOsId(),
+                getVdsGroup().getCompatibilityVersion(),
+                getVdsGroup().getCpuName(),
+                getReturnValue().getCanDoActionMessages())) {
+            return false;
+        }
+
         try {
             acquireHostDevicesLock();
             if (!checkRequiredHostDevicesAvailability()) {
