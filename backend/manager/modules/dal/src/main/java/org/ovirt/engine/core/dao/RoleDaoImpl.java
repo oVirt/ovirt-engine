@@ -70,6 +70,15 @@ public class RoleDaoImpl extends BaseDao implements RoleDao {
     }
 
     @Override
+    public List<Role> getAllNonAdminRoles() {
+        Integer appMode = Config.<Integer> getValue(ConfigValues.ApplicationMode);
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("app_mode", appMode);
+
+        return getCallsHandler().executeReadList("GetAllNonAdminRoles", RolesRowMapper.instance, parameterSource);
+    }
+
+    @Override
     public List<Role> getAnyAdminRoleForUserAndGroups(Guid id, String groupIds) {
         Integer appMode = Config.<Integer> getValue(ConfigValues.ApplicationMode);
         return getAnyAdminRoleForUserAndGroups(id, groupIds, appMode.intValue());

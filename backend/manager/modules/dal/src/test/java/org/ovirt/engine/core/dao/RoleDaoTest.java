@@ -19,6 +19,7 @@ public class RoleDaoTest extends BaseDaoTestCase {
     private static final Guid USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
     private static final Guid OTHER_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
     private static final int ROLE_COUNT = 6;
+    private static final int NON_ADMIN_ROLE_COUNT = 5;
 
     private RoleDao dao;
     private Role existingRole;
@@ -92,6 +93,18 @@ public class RoleDaoTest extends BaseDaoTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals(ROLE_COUNT, result.size());
+    }
+
+    /**
+     * Ensures the right number of non-admin roles are returned.
+     */
+    @Test
+    public void testGetAllNonAdminRoles() {
+        List<Role> result = dao.getAllNonAdminRoles();
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(NON_ADMIN_ROLE_COUNT, result.size());
     }
 
     /**

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -14,6 +15,10 @@ import org.ovirt.engine.core.dao.RoleDao;
 
 /** A test case for the {@link GetAllRolesQuery} class. */
 public class GetAllRolesQueryTest extends AbstractUserQueryTest<MultilevelAdministrationsQueriesParameters, GetAllRolesQuery<MultilevelAdministrationsQueriesParameters>> {
+    @Override
+    protected void initQuery(GetAllRolesQuery<MultilevelAdministrationsQueriesParameters> query) {
+        doReturn(Boolean.TRUE).when(query).isAdminUser();
+    }
 
     @Test
     public void testExecuteQueryCommand() {

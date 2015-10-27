@@ -148,7 +148,6 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
         });
 
         roleSelection = new ListModelListBoxEditor<>(new NameRenderer<Role>());
-
         namespaceSelection = new ListModelListBoxEditor<String>(new NullSafeRenderer<String>() {
             @Override
             protected String renderNullSafe(String object) {

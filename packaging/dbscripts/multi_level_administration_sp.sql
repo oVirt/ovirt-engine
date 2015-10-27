@@ -277,6 +277,16 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetAllNonAdminRoles(v_app_mode INTEGER) RETURNS SETOF roles STABLE
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM roles
+   WHERE (roles.app_mode & v_app_mode) > 0
+      AND role_type != 1;
+
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 

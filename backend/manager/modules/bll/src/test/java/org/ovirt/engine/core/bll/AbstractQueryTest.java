@@ -75,8 +75,13 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
         doReturn(sessionDataContainer).when(query).getSessionDataContainer();
         doReturn(dbFacadeMock).when(query).getDbFacade();
         doReturn(dbUserMock).when(query).initUser();
+        initQuery(query);
         query.postConstruct();
         return query;
+    }
+
+    /** Hook for initialization */
+    protected void initQuery(Q query) {
     }
 
     /** Extract the {@link Class} object for the P generic parameter */

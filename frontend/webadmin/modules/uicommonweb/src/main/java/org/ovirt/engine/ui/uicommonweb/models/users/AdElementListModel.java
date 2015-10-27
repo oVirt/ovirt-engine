@@ -207,7 +207,6 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
 
         setIsTimerDisabled(true);
 
-
         AsyncDataProvider.getInstance().getAAAProfilesEntriesList(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
@@ -224,8 +223,6 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
             }
 
         }));
-
-
 
         AsyncDataProvider.getInstance().getRoleList(new AsyncQuery(this, new INewAsyncCallback() {
 

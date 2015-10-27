@@ -7,8 +7,16 @@ public class GetAllRolesQuery<P extends MultilevelAdministrationsQueriesParamete
         super(parameters);
     }
 
+    protected boolean isAdminUser() {
+        return MultiLevelAdministrationHandler.isAdminUser(getUser());
+    }
+
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade().getRoleDao().getAll());
+        if (!isAdminUser()) {
+            setReturnValue(getDbFacade().getRoleDao().getAllNonAdminRoles());
+        } else {
+            setReturnValue(getDbFacade().getRoleDao().getAll());
+        }
     }
 }

@@ -46,4 +46,11 @@ public interface RoleDao extends GenericDao<Role, Guid> {
      * @return the list of the roles
      */
     List<Role> getAnyAdminRoleForUserAndGroups(Guid userId, String groupIds, int appMode);
+
+    /**
+     * This method retrieves all roles except admin-ones.
+     *
+     * @return the list of the roles
+     */
+    List<Role> getAllNonAdminRoles();
 }
