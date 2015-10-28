@@ -42,6 +42,7 @@ import com.thoughtworks.qdox.model.JavaModel;
 import com.thoughtworks.qdox.model.JavaParameter;
 import org.ovirt.api.metamodel.concepts.Attribute;
 import org.ovirt.api.metamodel.concepts.Concept;
+import org.ovirt.api.metamodel.concepts.Constraint;
 import org.ovirt.api.metamodel.concepts.EnumType;
 import org.ovirt.api.metamodel.concepts.EnumValue;
 import org.ovirt.api.metamodel.concepts.Expression;
@@ -89,6 +90,12 @@ public class ModelAnalyzer {
      * the keys are the names of the element types and the values are the list types that have been created.
      */
     private Map<Name, ListType> listTypes = new HashMap<>();
+
+    /**
+     * The constraints can't be completely analyzed till all the types have been resolved, so we store them in this
+     * list in order to analyze them later.
+     */
+    private List<Constraint> undefinedConstraints = new ArrayList<>();
 
     /**
      * Sets the model that will be populated by this analyzer.
@@ -150,6 +157,9 @@ public class ModelAnalyzer {
         // completely defined ones:
         fixUndefinedTypeUsages();
         fixUndefinedServiceUsages();
+
+        // Analyze constraints:
+        parseConstraints();
     }
 
     private void analyzeClass(JavaClass javaClass) {
@@ -320,12 +330,21 @@ public class ModelAnalyzer {
         analyzeName(javaClass, method);
         analyzeDocumentation(javaClass, method);
 
-        // Analyze the parameters:
-        javaClass.getMethods().forEach(x -> analyzeParameter(x, method));
+        // Analyze the members:
+        javaClass.getMethods().forEach(x -> analyzeMethodMember(x, method));
 
         // Add the member to the service:
         method.setDeclaringService(service);
         service.addMethod(method);
+    }
+
+    private void analyzeMethodMember(JavaMethod javaMethod, Method method) {
+        if (isAnnotatedWith(javaMethod, ModelAnnotations.IN) || isAnnotatedWith(javaMethod, ModelAnnotations.OUT)) {
+            analyzeParameter(javaMethod, method);
+        }
+        if (isAnnotatedWith(javaMethod, ModelAnnotations.REQUIRED) || isAnnotatedWith(javaMethod, ModelAnnotations.ALLOWED)) {
+            analyzeConstraint(javaMethod, method);
+        }
     }
 
     private void analyzeParameter(JavaMethod javaMethod, Method method) {
@@ -355,6 +374,32 @@ public class ModelAnalyzer {
         // Add the parameter to the method:
         parameter.setDeclaringMethod(method);
         method.addParameter(parameter);
+    }
+
+    private void analyzeConstraint(JavaMethod javaMethod, Method method) {
+        // Create the constraint:
+        Constraint constraint = new Constraint();
+        analyzeName(javaMethod, constraint);
+        analyzeDocumentation(javaMethod, constraint);
+
+        // Get the direction:
+        if (isAnnotatedWith(javaMethod, ModelAnnotations.IN)) {
+            constraint.setIn(true);
+        }
+        if (isAnnotatedWith(javaMethod, ModelAnnotations.OUT)) {
+            constraint.setOut(true);
+        }
+
+        // Get the source:
+        String source = javaMethod.getSourceCode();
+        constraint.setSource(source);
+
+        // Remember to analyze the constraint source once the types and services have been completely defined:
+        undefinedConstraints.add(constraint);
+
+        // Add the constraint to the method:
+        constraint.setDeclaringMethod(method);
+        method.addConstraint(constraint);
     }
 
     private void analyzeServiceLocator(JavaMethod javaMethod, Service service) {
@@ -627,10 +672,28 @@ public class ModelAnalyzer {
         }
     }
 
+    /**
+     * Parse the sources of the constraints.
+     */
+    private void parseConstraints() {
+        undefinedConstraints.stream().forEach(this::parseConstraint);
+    }
+
+    /**
+     * Parse the source of the given constraint.
+     */
+    private void parseConstraint(Constraint constraint) {
+        ConstraintAnalyzer analyzer = new ConstraintAnalyzer();
+        analyzer.setModel(model);
+        analyzer.setMethod(constraint.getDeclaringMethod());
+        analyzer.setConstraint(constraint);
+        analyzer.analyzeSource(constraint.getSource());
+    }
+
     private Expression analyzeExpression(String javaExpression) {
         // TODO: Analyze the expression tree.
-        Expression expression = new Expression();
-        expression.setValue(javaExpression);
+        Expression expression = null;
+        // expression.setValue(javaExpression);
         return expression;
     }
 

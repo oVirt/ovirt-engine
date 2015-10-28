@@ -16,10 +16,12 @@ limitations under the License.
 
 package org.ovirt.api.metamodel.analyzer;
 
+import org.ovirt.api.metamodel.annotations.Allowed;
 import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Method;
 import org.ovirt.api.metamodel.annotations.Out;
+import org.ovirt.api.metamodel.annotations.Required;
 import org.ovirt.api.metamodel.annotations.Root;
 import org.ovirt.api.metamodel.annotations.Service;
 import org.ovirt.api.metamodel.annotations.Type;
@@ -29,10 +31,12 @@ import org.ovirt.api.metamodel.annotations.Type;
  * many places we extract the names here.
  */
 public class ModelAnnotations {
+    public static final String ALLOWED = Allowed.class.getName();
     public static final String IN = In.class.getName();
     public static final String LINK = Link.class.getName();
     public static final String METHOD = Method.class.getName();
     public static final String OUT = Out.class.getName();
+    public static final String REQUIRED = Required.class.getName();
     public static final String ROOT = Root.class.getName();
     public static final String SERVICE = Service.class.getName();
     public static final String TYPE = Type.class.getName();

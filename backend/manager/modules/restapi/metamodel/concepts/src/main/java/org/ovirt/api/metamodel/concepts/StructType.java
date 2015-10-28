@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
+import java.util.Optional;
 
 public class StructType extends Type {
     // Reference to the base of this type:
@@ -85,6 +86,13 @@ public class StructType extends Type {
     }
 
     /**
+     * Returns the attribute that has the given name, or an empty {@link Optional} if no such attribute exists.
+     */
+    public Optional<Attribute> getAttribute(Name name) {
+        return getAttributes().stream().filter(named(name)).findFirst();
+    }
+
+    /**
      * Returns the list of attributes that are declared directly in this type, not including the ones that are declared
      * in the base types. The returned list is a copy of the one used internally, so it is safe to modify it. If you
      * aren't going to modify the list consider using the {@link #declaredAttributes()} method instead.
@@ -140,6 +148,13 @@ public class StructType extends Type {
     }
 
     /**
+     * Returns the link that has the given name, or an empty {@link Optional} if no such link exists.
+     */
+    public Optional<Link> getLink(Name name) {
+        return getLinks().stream().filter(named(name)).findFirst();
+    }
+
+    /**
      * Returns the list of links that are declared directly in this type, not including the ones that are declared
      * in the base types. The returned list is a copy of the one used internally, so it is safe to modify it. If you
      * aren't going to modify the list consider using the {@link #declaredLinks()} method instead.
@@ -170,4 +185,3 @@ public class StructType extends Type {
         links.addAll(newLinks);
     }
 }
-

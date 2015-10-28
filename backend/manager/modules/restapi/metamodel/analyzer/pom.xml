@@ -60,10 +60,42 @@ limitations under the License.
       <version>2.0-M3</version>
     </dependency>
 
+    <!-- This is needed by the constraint parser: -->
+    <dependency>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr4-runtime</artifactId>
+      <version>4.2.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+    </dependency>
+
   </dependencies>
 
   <build>
     <plugins>
+
+      <!-- Generate the constraint parser: -->
+      <plugin>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-maven-plugin</artifactId>
+        <version>4.2.2</version>
+        <configuration>
+          <listener>true</listener>
+          <visitor>false</visitor>
+        </configuration>
+        <executions>
+          <execution>
+            <id>generate-constraint-parser</id>
+            <goals>
+              <goal>antlr4</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
       <!-- Attach the sources: -->
       <plugin>

@@ -65,4 +65,3 @@ public class Method extends ServiceMember {
         this.constraints.addAll(constraints);
     }
 }
-
