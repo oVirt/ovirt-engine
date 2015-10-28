@@ -209,7 +209,7 @@
       <id>all-user-agents</id>
       <properties>
         <!-- See [gwt-user.jar:com/google/gwt/useragent/UserAgent.gwt.xml] for a complete list -->
-        <gwt.userAgent>ie8,ie9,ie10,gecko1_8,safari</gwt.userAgent>
+        <gwt.userAgent>ie9,ie10,gecko1_8,safari</gwt.userAgent>
       </properties>
     </profile>
     <profile>
