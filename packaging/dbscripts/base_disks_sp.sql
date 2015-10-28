@@ -141,3 +141,15 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetBaseDisksByAlias(v_disk_alias varchar(255))
+RETURNS SETOF base_disks STABLE
+AS $procedure$
+BEGIN
+    RETURN QUERY
+    SELECT *
+    FROM   base_disks
+    WHERE  disk_alias = v_disk_alias;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
