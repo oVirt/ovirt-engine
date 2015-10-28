@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.List;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -47,6 +49,12 @@ public class BaseDiskDaoImpl extends DefaultGenericDao<BaseDisk, Guid> implement
     @Override
     public boolean exists(Guid id) {
         return get(id) != null;
+    }
+
+    @Override public List<BaseDisk> getDisksByAlias(String alias) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("disk_alias", alias);
+        return getCallsHandler().executeReadList("GetBaseDisksByAlias", BaseDiskRowMapper.instance, parameterSource);
     }
 
     private static class BaseDiskRowMapper extends AbstractBaseDiskRowMapper<BaseDisk> {
