@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.queries.IdAndNameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -823,7 +824,12 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
 
     public void initTunedProfiles() {
         this.startProgress();
-        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterTunedProfiles, new VdcQueryParametersBase(), new AsyncQuery(new INewAsyncCallback() {
+        if (getVersion() == null || getVersion().getSelectedItem() == null) {
+            return;
+        }
+        Version version = getVersion().getSelectedItem();
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterTunedProfiles, new IdAndNameQueryParameters(null, version.getValue()),
+                new AsyncQuery(new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 ClusterModel.this.stopProgress();
@@ -1598,6 +1604,10 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         updateMigrationOptions();
 
         refreshAdditionalClusterFeaturesList();
+
+        if (getEnableGlusterService().getEntity()) {
+            initTunedProfiles();
+        }
     }
 
     private void updateKSMPolicy(Version version) {
