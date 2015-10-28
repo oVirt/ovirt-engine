@@ -3,7 +3,7 @@ package org.ovirt.engine.core.uutils.crypto.ticket;
 import static org.junit.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.util.HashMap;
@@ -144,7 +144,8 @@ public class TicketTest {
             TypeFactory.defaultInstance().constructMapType(HashMap.class, String.class, String.class)
         );
         map.put("data", "Content");
-        String modifiedTicket = new Base64(0).encodeToString(new ObjectMapper().writeValueAsString(map).getBytes(Charset.forName("UTF-8")));
+        String modifiedTicket = new Base64(0).encodeToString(new ObjectMapper().writeValueAsString(map).getBytes(
+                StandardCharsets.UTF_8));
 
         new TicketDecoder(getKeyStore("JKS", "ticket/ca1.jks", "changeit"), "1.2.3.4").decode(modifiedTicket);
     }

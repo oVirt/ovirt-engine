@@ -3,7 +3,7 @@ package org.ovirt.engine.core.uutils.crypto.ticket;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -80,7 +80,7 @@ public class TicketDecoder {
         if (peer != null) {
             cert = peer;
         } else {
-            try (InputStream is = new ByteArrayInputStream(map.get("certificate").getBytes(Charset.forName("UTF-8")))) {
+            try (InputStream is = new ByteArrayInputStream(map.get("certificate").getBytes(StandardCharsets.UTF_8))) {
                 cert = CertificateFactory.getInstance("X.509").generateCertificate(is);
             }
         }
@@ -103,7 +103,7 @@ public class TicketDecoder {
         Signature sig = Signature.getInstance(String.format("%swith%s", map.get("digest"), cert.getPublicKey().getAlgorithm()));
         sig.initVerify(cert.getPublicKey());
         for (String field : signedFields) {
-            byte[] buf = map.get(field).getBytes(Charset.forName("UTF-8"));
+            byte[] buf = map.get(field).getBytes(StandardCharsets.UTF_8);
             sig.update(buf);
         }
         if (!sig.verify(Base64.decodeBase64(map.get("signature")))) {

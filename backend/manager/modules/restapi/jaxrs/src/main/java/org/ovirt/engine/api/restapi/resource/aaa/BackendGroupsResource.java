@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource.aaa;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.List;
@@ -75,7 +75,7 @@ public class BackendGroupsResource
         }
         else if (group.isSetDomain() && group.getDomain().isSetId()) {
             for (String domain : authzProvidersNames) {
-                Guid domainId = new Guid(domain.getBytes(Charset.forName("UTF-8")), true);
+                Guid domainId = new Guid(domain.getBytes(StandardCharsets.UTF_8), true);
                 if (domainId.toString().equals(group.getDomain().getId())) {
                    return domain;
                 }

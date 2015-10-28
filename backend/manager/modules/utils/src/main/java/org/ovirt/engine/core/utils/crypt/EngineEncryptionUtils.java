@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
@@ -156,7 +156,7 @@ public class EngineEncryptionUtils {
             Cipher rsa = Cipher.getInstance("RSA");
             rsa.init(Cipher.ENCRYPT_MODE, getCertificate().getPublicKey());
             return new Base64(0).encodeToString(
-                rsa.doFinal(source.getBytes(Charset.forName("UTF-8")))
+                rsa.doFinal(source.getBytes(StandardCharsets.UTF_8))
             );
         }
     }
@@ -177,7 +177,7 @@ public class EngineEncryptionUtils {
             rsa.init(Cipher.DECRYPT_MODE, getPrivateKeyEntry().getPrivateKey());
             return new String(
                 rsa.doFinal(new Base64().decode(source)),
-                Charset.forName("UTF-8")
+                StandardCharsets.UTF_8
             );
         }
     }

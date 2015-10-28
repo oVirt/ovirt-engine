@@ -3,7 +3,7 @@ package org.ovirt.engine.exttool.core;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -211,7 +211,7 @@ public class InfoServiceImpl implements ModuleService {
         Properties props = new Properties();
         try (
             InputStream in = InfoServiceImpl.class.getResourceAsStream("info.properties");
-            Reader reader = new InputStreamReader(in, Charset.forName("UTF-8"));
+            Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
         ) {
             props.load(reader);
         }

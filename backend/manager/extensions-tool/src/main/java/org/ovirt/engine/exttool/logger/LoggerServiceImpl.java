@@ -3,7 +3,7 @@ package org.ovirt.engine.exttool.logger;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -145,7 +145,7 @@ public class LoggerServiceImpl implements ModuleService {
         Properties props = new Properties();
         try (
             InputStream in = LoggerServiceImpl.class.getResourceAsStream("arguments.properties");
-            Reader reader = new InputStreamReader(in, Charset.forName("UTF-8"));
+            Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
         ) {
             props.load(reader);
         }

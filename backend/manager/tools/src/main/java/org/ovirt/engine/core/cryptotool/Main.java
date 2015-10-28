@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.cert.CertificateFactory;
@@ -74,7 +74,7 @@ public class Main {
                 public void execute(Map<String, Object> argMap) throws IOException, GeneralSecurityException {
                     if (
                         !EnvelopePBE.check(
-                            new String(readStream(System.in), Charset.forName("UTF-8")),
+                            new String(readStream(System.in), StandardCharsets.UTF_8),
                             getPassword("Password: ", (String)argMap.get("password"))
                         )
                     ) {
@@ -122,7 +122,7 @@ public class Main {
                                     keystorePassword
                                 )
                             ),
-                            new String(readStream(System.in), Charset.forName("UTF-8"))
+                            new String(readStream(System.in), StandardCharsets.UTF_8)
                         )
                     );
                 }

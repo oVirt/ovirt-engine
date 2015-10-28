@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
 import java.io.ByteArrayOutputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -423,7 +423,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             ByteArrayOutputStream out = new ConstraintByteArrayOutputStream(256);
             client.executeCommand(Config.<String> getValue(ConfigValues.GetVdsmIdByVdsmToolCommand),
                                   null, out, null);
-            return new String(out.toByteArray(), Charset.forName("UTF-8"));
+            return new String(out.toByteArray(), StandardCharsets.UTF_8);
         }
         catch (Exception e) {
             log.warn(

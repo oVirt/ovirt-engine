@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
@@ -40,7 +41,7 @@ public class BackendVmGraphicsConsoleResource
 
         Response.ResponseBuilder builder;
         if (returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
-            builder = Response.ok(((String) returnValue.getReturnValue()).getBytes(Charset.forName("UTF-8")), ApiMediaType.APPLICATION_X_VIRT_VIEWER);
+            builder = Response.ok(((String) returnValue.getReturnValue()).getBytes(StandardCharsets.UTF_8), ApiMediaType.APPLICATION_X_VIRT_VIEWER);
         } else {
             builder = Response.noContent();
         }

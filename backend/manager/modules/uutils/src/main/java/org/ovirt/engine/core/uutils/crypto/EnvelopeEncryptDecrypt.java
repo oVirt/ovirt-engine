@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.uutils.crypto;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyException;
@@ -91,12 +91,13 @@ public class EnvelopeEncryptDecrypt {
         map.put(VERSION_KEY, VERSION);
         map.put(WRAP_ALGO_KEY, wrapAlgo);
         map.put(CIPHER_ALGO_KEY, algo);
-        map.put(ENCRYPTED_CONTENT_KEY, base64.encodeToString(cipher.doFinal(new ObjectMapper().writeValueAsString(env).getBytes(Charset.forName("UTF-8")))));
+        map.put(ENCRYPTED_CONTENT_KEY, base64.encodeToString(cipher.doFinal(new ObjectMapper().writeValueAsString(env).getBytes(
+                StandardCharsets.UTF_8))));
         map.put(IV_KEY, base64.encodeToString(cipher.getIV()));
         map.put(WRAPPED_KEY_KEY, base64.encodeToString(wrap.wrap(key)));
         map.put(WRAP_KEY_DIGEST_ALGO_KEY, PUBKEY_DIGEST_ALGO);
         map.put(WRAP_KEY_DIGEST_KEY, base64.encodeToString(MessageDigest.getInstance(PUBKEY_DIGEST_ALGO).digest(cert.getPublicKey().getEncoded())));
-        return base64.encodeToString(new ObjectMapper().writeValueAsString(map).getBytes(Charset.forName("UTF-8")));
+        return base64.encodeToString(new ObjectMapper().writeValueAsString(map).getBytes(StandardCharsets.UTF_8));
     }
 
     /**

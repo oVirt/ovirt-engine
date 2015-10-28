@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.uutils.crypto;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -37,8 +37,8 @@ public class CryptMD5 {
 
     public static String crypt(String password, String salt) {
         try {
-            byte[] passwordBytes = password.getBytes(Charset.forName("UTF-8"));
-            byte[] saltBytes = salt.getBytes(Charset.forName("UTF-8"));
+            byte[] passwordBytes = password.getBytes(StandardCharsets.UTF_8);
+            byte[] saltBytes = salt.getBytes(StandardCharsets.UTF_8);
             byte[] altresult;
 
             if (salt.length() > SALT_MAX_LENGTH) {
@@ -47,7 +47,7 @@ public class CryptMD5 {
 
             MessageDigest digest = MessageDigest.getInstance("MD5");
             digest.update(passwordBytes);
-            digest.update(SALT_PREFIX.getBytes(Charset.forName("UTF-8")));
+            digest.update(SALT_PREFIX.getBytes(StandardCharsets.UTF_8));
             digest.update(saltBytes);
 
             MessageDigest altdigest = MessageDigest.getInstance("MD5");

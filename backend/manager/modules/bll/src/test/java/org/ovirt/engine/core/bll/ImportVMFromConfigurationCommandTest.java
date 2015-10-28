@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -119,7 +119,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     }
 
     private void setXmlOvfData() throws IOException {
-        xmlOvfData = new String(Files.readAllBytes(Paths.get(VM_OVF_XML_DATA)), Charset.forName("UTF-8"));
+        xmlOvfData = new String(Files.readAllBytes(Paths.get(VM_OVF_XML_DATA)), StandardCharsets.UTF_8);
     }
 
     @Test

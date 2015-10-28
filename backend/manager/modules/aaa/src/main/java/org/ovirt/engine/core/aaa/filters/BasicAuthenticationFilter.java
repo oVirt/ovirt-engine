@@ -2,7 +2,7 @@ package org.ovirt.engine.core.aaa.filters;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,7 +78,7 @@ public class BasicAuthenticationFilter implements Filter {
             if (headerValue != null && headerValue.startsWith("Basic ")) {
                 String[] creds = new String(
                         Base64.decodeBase64(headerValue.substring("Basic".length())),
-                        Charset.forName("UTF-8")
+                        StandardCharsets.UTF_8
                     ).split(":", 2);
                 if (creds != null && creds.length == 2) {
                     handleCredentials(req, creds[0], creds[1]);

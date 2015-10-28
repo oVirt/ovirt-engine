@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Field;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -596,7 +596,7 @@ public class AAAServiceImpl implements ModuleService {
         } else if ("file".equals(type)) {
             try(
                 InputStream is = new FileInputStream(value);
-                Reader reader = new InputStreamReader(is, Charset.forName("UTF-8"));
+                Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
                 BufferedReader breader = new BufferedReader(reader);
             ) {
                 password = breader.readLine();
@@ -645,7 +645,7 @@ public class AAAServiceImpl implements ModuleService {
         Properties props = new Properties();
         try (
             InputStream in = AAAServiceImpl.class.getResourceAsStream("arguments.properties");
-            Reader reader = new InputStreamReader(in, Charset.forName("UTF-8"));
+            Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
         ) {
             props.load(reader);
         }

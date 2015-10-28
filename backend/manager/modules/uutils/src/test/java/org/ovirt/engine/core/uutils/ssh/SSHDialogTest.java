@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
@@ -77,14 +77,14 @@ public class SSHDialogTest {
             _incoming = incoming == null ? null : new BufferedReader(
                 new InputStreamReader(
                     incoming,
-                    Charset.forName("UTF-8")
+                    StandardCharsets.UTF_8
                 ),
                 BUFFER_SIZE
             );
             _outgoing = outgoing == null ? null : new PrintWriter(
                 new OutputStreamWriter(
                     outgoing,
-                    Charset.forName("UTF-8")
+                    StandardCharsets.UTF_8
                 ),
                 true
             );
@@ -457,14 +457,14 @@ public class SSHDialogTest {
             _incoming = incoming == null ? null : new BufferedReader(
                 new InputStreamReader(
                     incoming,
-                    Charset.forName("UTF-8")
+                    StandardCharsets.UTF_8
                 ),
                 BUFFER_SIZE
             );
             _outgoing = outgoing == null ? null : new PrintWriter(
                 new OutputStreamWriter(
                     outgoing,
-                    Charset.forName("UTF-8")
+                    StandardCharsets.UTF_8
                 ),
                 true
             );

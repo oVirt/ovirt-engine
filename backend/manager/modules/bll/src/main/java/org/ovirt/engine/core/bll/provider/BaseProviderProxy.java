@@ -8,7 +8,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.cert.Certificate;
 import java.util.List;
@@ -150,7 +150,7 @@ public abstract class BaseProviderProxy implements ProviderProxy {
                     String.format("Basic %1$s",
                             new Base64(0).encodeToString(
                                     String.format("%1$s:%2$s", hostProvider.getUsername(), hostProvider.getPassword())
-                                            .getBytes(Charset.forName("UTF-8")))
+                                            .getBytes(StandardCharsets.UTF_8))
                             )
                             .toString());
         }
@@ -174,7 +174,7 @@ public abstract class BaseProviderProxy implements ProviderProxy {
             connection.setDoOutput(httpMethod != HttpMethodType.GET);
             connection.setRequestMethod(httpMethod.toString());
             if (body != null) {
-                byte[] bytes = body.getBytes(Charset.forName("UTF-8"));
+                byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
                 connection.setRequestProperty("Content-Length",
                         new StringBuilder().append(bytes.length).toString());
 

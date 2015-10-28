@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -47,7 +47,7 @@ public class OpenSslCAWrapper {
                 )
             )
         ) {
-            os.write(request.getBytes(Charset.forName("UTF-8")));
+            os.write(request.getBytes(StandardCharsets.UTF_8));
         }
 
         if (
@@ -162,8 +162,8 @@ public class OpenSslCAWrapper {
             log.debug("Running Sign Certificate request script");
             Process process = getRuntime().exec(command_array);
             try (
-                final BufferedReader stdOutput = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
-                final BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream(), Charset.forName("UTF-8")));
+                final BufferedReader stdOutput = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+                final BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8));
             ) {
                 int exitCode = 0;
                 boolean completed = false;

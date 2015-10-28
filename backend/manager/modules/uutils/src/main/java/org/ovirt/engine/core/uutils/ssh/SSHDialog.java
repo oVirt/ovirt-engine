@@ -8,7 +8,7 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.SequenceInputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.Arrays;
@@ -338,7 +338,7 @@ public class SSHDialog implements Closeable {
                         throw new RuntimeException(
                             String.format(
                                 "Unexpected error during execution: %1$s",
-                                new String(stderr.toByteArray(), Charset.forName("UTF-8"))
+                                new String(stderr.toByteArray(), StandardCharsets.UTF_8)
                             )
                         );
                     }

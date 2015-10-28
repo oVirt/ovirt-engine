@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.resource.aaa;
 
 import static org.ovirt.engine.api.utils.ReflectionHelper.assignChildModel;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.List;
@@ -82,7 +82,7 @@ public class BackendUsersResource
         }
         else if (user.isSetDomain() && user.getDomain().isSetId()) {
             for (String domain : authzProvidersNames) {
-                Guid domainId = asGuid(domain.getBytes(Charset.forName("UTF-8")), true);
+                Guid domainId = asGuid(domain.getBytes(StandardCharsets.UTF_8), true);
                 if (domainId.toString().equals(user.getDomain().getId())) {
                    return domain;
                 }

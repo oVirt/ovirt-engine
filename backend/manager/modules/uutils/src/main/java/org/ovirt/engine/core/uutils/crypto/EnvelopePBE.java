@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.uutils.crypto;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -79,6 +79,6 @@ public class EnvelopePBE {
                 ).getEncoded()
             )
         );
-        return base64.encodeToString(new ObjectMapper().writeValueAsString(map).getBytes(Charset.forName("UTF-8")));
+        return base64.encodeToString(new ObjectMapper().writeValueAsString(map).getBytes(StandardCharsets.UTF_8));
     }
 }

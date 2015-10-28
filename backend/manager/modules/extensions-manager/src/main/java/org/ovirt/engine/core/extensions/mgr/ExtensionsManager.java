@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -145,7 +145,7 @@ public class ExtensionsManager extends Observable {
     public String load(File file) {
         try (
             InputStream is = new FileInputStream(file);
-            Reader reader = new InputStreamReader(is, Charset.forName("UTF-8"));
+            Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
         ) {
             Properties props = new Properties();
             props.load(reader);

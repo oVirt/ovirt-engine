@@ -7,7 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,7 +45,7 @@ public class ShellLikeConfdTest {
             in = new FileInputStream(URLDecoder.decode(ClassLoader.getSystemResource("config.conf.ref").getPath(), "UTF-8"));
             byte buffer[] = new byte[2048];
             int size = in.read(buffer);
-            reference = new String(buffer, 0, size, Charset.forName("UTF-8"));
+            reference = new String(buffer, 0, size, StandardCharsets.UTF_8);
         }
         finally {
             try {

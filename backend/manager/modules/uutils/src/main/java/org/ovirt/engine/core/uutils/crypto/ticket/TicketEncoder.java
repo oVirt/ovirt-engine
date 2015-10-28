@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.uutils.crypto.ticket;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
@@ -74,7 +74,7 @@ public class TicketEncoder {
                 fields.append(",");
             }
             fields.append(entry.getKey());
-            signature.update(entry.getValue().getBytes(Charset.forName("UTF-8")));
+            signature.update(entry.getValue().getBytes(StandardCharsets.UTF_8));
         }
 
         /*
@@ -91,7 +91,7 @@ public class TicketEncoder {
             new Base64(76).encodeToString(cert.getEncoded())
         ));
 
-        return base64.encodeToString(new ObjectMapper().writeValueAsString(map).getBytes(Charset.forName("UTF-8")));
+        return base64.encodeToString(new ObjectMapper().writeValueAsString(map).getBytes(StandardCharsets.UTF_8));
     }
 }
 
