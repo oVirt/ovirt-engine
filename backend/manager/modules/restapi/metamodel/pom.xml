@@ -86,6 +86,23 @@ limitations under the License.
 
       </plugins>
     </pluginManagement>
+
+    <plugins>
+
+      <!-- Run findbugs in all the projects with a explicit list
+           of exclussions: -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>3.0.2</version>
+        <configuration>
+          <xmlOutput>true</xmlOutput>
+          <xmlOutputDirectory>target/site</xmlOutputDirectory>
+          <excludeFilterFile>${project.basedir}/exclude-filters.xml</excludeFilterFile>
+        </configuration>
+      </plugin>
+
+    </plugins>
   </build>
 
 </project>
