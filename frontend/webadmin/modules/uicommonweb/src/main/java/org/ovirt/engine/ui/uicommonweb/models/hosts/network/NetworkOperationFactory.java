@@ -198,8 +198,7 @@ public class NetworkOperationFactory {
 
             if (network.getNetwork().isVmNetwork()) {
                 if (dst instanceof BondNetworkInterfaceModel){
-                    String bondMode = BondMode.getBondMode((Bond) dst.getIface());
-                    if (!BondMode.isBondModeValidForVmNetwork(bondMode)){
+                    if (!BondMode.isBondModeValidForVmNetwork(((Bond) dst.getIface()).getBondOptions())){
                         return NetworkOperation.NULL_OPERATION_INVALID_BOND_MODE;
                     }
                 }

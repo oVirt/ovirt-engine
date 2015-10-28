@@ -46,8 +46,7 @@ public class SetupNetworksJoinBondsModel extends SetupNetworksBondModel {
     }
 
     private void addBondOptionIfMissing(String candidateOption, boolean doesBondHaveVmNetworkAttached) {
-        String bondMode = BondMode.getBondMode(candidateOption);
-        if (doesBondHaveVmNetworkAttached && !BondMode.isBondModeValidForVmNetwork(bondMode)){
+        if (doesBondHaveVmNetworkAttached && !BondMode.isBondModeValidForVmNetwork(candidateOption)){
             return;
         }
         if (!pairForBondOption.containsKey(candidateOption)) {

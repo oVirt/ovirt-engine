@@ -3663,7 +3663,7 @@ public class AsyncDataProvider {
                 new ArrayList<Map.Entry<String, EntityModel<String>>>();
 
         for(BondMode mode : BondMode.values()){
-            if (!BondMode.BOND_MODES_VALID_FOR_VM_NETWORK.contains(mode.getValue()) && hasVmNetworkAttached){
+            if (!mode.isBondModeValidForVmNetwork() && hasVmNetworkAttached){
                 continue;
             }
             KeyValuePairCompat<String, EntityModel<String>> bondOption = getBondOption(mode);
