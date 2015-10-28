@@ -64,4 +64,10 @@ public class BaseDiskDaoTest extends BaseGenericDaoTestCase<Guid, BaseDisk, Base
     public void existsForNonExistingDisk() throws Exception {
         assertFalse(dao.exists(Guid.Empty));
     }
+
+    @Test
+    public void getBaseDiskByAlias() {
+        assertTrue(dao.getDisksByAlias("No such disk alias").size() == 0);
+        assertTrue(dao.getDisksByAlias("New Disk Alias Name").size() > 1);
+    }
 }
