@@ -5,9 +5,9 @@ import java.util.Arrays;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdAndNameQueryParameters;
 
-public class GetGlusterTunedProfilesQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+public class GetGlusterTunedProfilesQuery<P extends IdAndNameQueryParameters> extends QueriesCommandBase<P> {
 
     public GetGlusterTunedProfilesQuery(P parameters) {
         super(parameters);
@@ -15,7 +15,8 @@ public class GetGlusterTunedProfilesQuery<P extends VdcQueryParametersBase> exte
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(Arrays.asList(Config.<String> getValue(ConfigValues.GlusterTunedProfile).split(",")));
+        String version = getParameters().getName();
+        getQueryReturnValue().setReturnValue(Arrays.asList(Config.<String> getValue(ConfigValues.GlusterTunedProfile, version).split(",")));
     }
 
 }

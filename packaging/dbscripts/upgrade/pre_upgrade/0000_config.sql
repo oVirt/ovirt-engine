@@ -202,7 +202,6 @@ select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.4');
 select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.5');
 select fn_db_add_config_value('GlusterRefreshRateGeoRepDiscoveryInSecs', '3600', 'general');
 select fn_db_add_config_value('GlusterRefreshRateGeoRepStatusInSecs', '300', 'general');
-select fn_db_add_config_value('GlusterTunedProfile', 'rhs-high-throughput,rhs-virtualization', 'general');
 
 -- Gluster Disk Provisioning --
 select fn_db_add_config_value('GlusterBrickProvisioningEnabled', 'false', '3.0');
@@ -1223,6 +1222,8 @@ select fn_db_delete_config_value('HotPlugCpuEnabled','3.0,3.1,3.2,3.3,3.4,3.5');
 -- and from the update version and beyond, the input value.
 ------------------------------------------------------------------------------------
 select fn_db_split_config_value('SpiceSecureChannels','smain,sinputs','smain,sinputs,scursor,splayback,srecord,sdisplay,susbredir,ssmartcard', '3.1');
+-- Gluster Tuned profile --
+select fn_db_split_config_value('GlusterTunedProfile', 'rhs-high-throughput,rhs-virtualization', 'rhgs-sequential-io,rhgs-random-io', '3.5');
 
 ------------------------------------------------------------------------------------
 --                  Simple direct updates section
