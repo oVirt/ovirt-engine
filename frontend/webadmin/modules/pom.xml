@@ -92,17 +92,31 @@
   <build>
     <pluginManagement>
       <plugins>
+
+        <!-- This project needs to use Java 7 because the source is
+             used by the GWT compiler, and it doesn't currently support
+             Java 8: -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <configuration>
-            <source>${maven.compiler.source}</source>
-            <target>${maven.compiler.target}</target>
+            <source>1.7</source>
             <encoding>${project.build.sourceEncoding}</encoding>
             <!-- We use maven-processor-plugin to invoke annotation processors -->
             <compilerArgument>-proc:none</compilerArgument>
           </configuration>
         </plugin>
+
+        <!-- Enable the check of the Java 7 signature that is disabled
+             by default: -->
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>animal-sniffer-maven-plugin</artifactId>
+          <configuration>
+            <skip>false</skip>
+          </configuration>
+        </plugin>
+
         <plugin>
           <groupId>org.bsc.maven</groupId>
           <artifactId>maven-processor-plugin</artifactId>

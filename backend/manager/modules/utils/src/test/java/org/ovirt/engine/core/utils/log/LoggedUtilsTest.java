@@ -342,11 +342,11 @@ public class LoggedUtilsTest {
      * Verifies that no logging was done on the given log mock.
      */
     private static void verifyNoLogging(Logger logMock) {
-        verify(logMock, never()).trace(any(String.class), any());
-        verify(logMock, never()).debug(any(String.class), any());
-        verify(logMock, never()).info(any(String.class), any());
-        verify(logMock, never()).warn(any(String.class), any());
-        verify(logMock, never()).error(any(String.class), any());
+        verify(logMock, never()).trace(any(String.class), (Object) any());
+        verify(logMock, never()).debug(any(String.class), (Object) any());
+        verify(logMock, never()).info(any(String.class), (Object) any());
+        verify(logMock, never()).warn(any(String.class), (Object) any());
+        verify(logMock, never()).error(any(String.class), (Object) any());
     }
 
     /**

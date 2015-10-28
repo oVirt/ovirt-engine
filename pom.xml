@@ -38,9 +38,6 @@
     <engine.version>${project.version}</engine.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
-    <animal.sniffer.signature>java17</animal.sniffer.signature>
 
     <!-- Dependencies Versions -->
     <junit.version>4.11</junit.version>
@@ -433,8 +430,8 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>2.3.2</version>
           <configuration>
-            <source>${maven.compiler.source}</source>
-            <target>${maven.compiler.target}</target>
+            <source>1.8</source>
+            <target>1.8</target>
             <includes>
               <include>**/*.txt</include>
               <include>**/*.java</include>
@@ -587,6 +584,11 @@
           </configuration>
         </plugin>
 
+        <!-- This plugin is used to check that the code doesn't use
+             classes or methods that aren't available in Java 7, as
+             Java 8 isn't supported by GWT. Note that by default
+             the check is disabled, it will be enabled in the specific
+             projects that require it: -->
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>animal-sniffer-maven-plugin</artifactId>
@@ -594,9 +596,10 @@
           <configuration>
             <signature>
               <groupId>org.codehaus.mojo.signature</groupId>
-              <artifactId>${animal.sniffer.signature}</artifactId>
+              <artifactId>java17</artifactId>
               <version>1.0</version>
             </signature>
+            <skip>true</skip>
           </configuration>
         </plugin>
 

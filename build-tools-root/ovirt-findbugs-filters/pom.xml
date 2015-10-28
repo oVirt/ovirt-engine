@@ -34,4 +34,29 @@ limitations under the License.
     Findbugs filter files shared by all the modules.
   </description>
 
+  <build>
+    <pluginManagement>
+      <plugins>
+
+        <!-- There is no signature to check in this module, but without
+             this configuration the execution of animal sniffer will
+             just fail: -->
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>animal-sniffer-maven-plugin</artifactId>
+          <version>1.14</version>
+          <configuration>
+            <signature>
+              <groupId>org.codehaus.mojo.signature</groupId>
+              <artifactId>java17</artifactId>
+              <version>1.0</version>
+            </signature>
+            <skip>true</skip>
+          </configuration>
+        </plugin>
+
+      </plugins>
+    </pluginManagement>
+  </build>
+
 </project>

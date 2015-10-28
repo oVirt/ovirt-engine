@@ -440,12 +440,12 @@ public class ResourceManager implements BackendService {
         return cmd;
     }
 
-    private <P extends VdsIdVDSCommandParametersBase> FutureVDSCommand createFutureCommand(FutureVDSCommandType commandType,
+    private <P extends VdsIdVDSCommandParametersBase> FutureVDSCommand<P> createFutureCommand(FutureVDSCommandType commandType,
             P parameters) {
         try {
-            Class<FutureVDSCommand> type =
-                    (Class<FutureVDSCommand>) Class.forName(commandType.getFullyQualifiedClassName());
-            Constructor<FutureVDSCommand> constructor = ReflectionUtils.findConstructor(type, parameters.getClass());
+            Class<FutureVDSCommand<P>> type =
+                    (Class<FutureVDSCommand<P>>) Class.forName(commandType.getFullyQualifiedClassName());
+            Constructor<FutureVDSCommand<P>> constructor = ReflectionUtils.findConstructor(type, parameters.getClass());
 
             if (constructor != null) {
                 return instantiateInjectedCommand(parameters, constructor);
