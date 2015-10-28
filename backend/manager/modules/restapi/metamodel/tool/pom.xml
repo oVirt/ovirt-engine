@@ -62,9 +62,9 @@ limitations under the License.
 
     <!-- The tool runs in a CDI environment, implemented by Weld: -->
     <dependency>
-      <groupId>org.jboss.weld</groupId>
+      <groupId>org.jboss.weld.se</groupId>
       <artifactId>weld-se</artifactId>
-      <version>1.0.1-Final</version>
+      <version>2.3.0.Final</version>
       <exclusions>
         <exclusion>
           <groupId>org.slf4j</groupId>
