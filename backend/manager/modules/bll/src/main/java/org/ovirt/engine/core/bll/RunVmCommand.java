@@ -917,15 +917,19 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
            }
         }
 
-        if (!VmHandler.isCpuSupported(
-                getVm().getVmOsId(),
-                getVdsGroup().getcompatibility_version(),
-                getVdsGroup().getcpu_name(),
-                getReturnValue().getCanDoActionMessages())) {
+        if (!isCpuSupported()) {
             return false;
         }
 
         return true;
+    }
+
+    protected boolean isCpuSupported() {
+        return VmHandler.isCpuSupported(
+                getVm().getVmOsId(),
+                getVdsGroup().getcompatibility_version(),
+                getVdsGroup().getcpu_name(),
+                getReturnValue().getCanDoActionMessages());
     }
 
     protected void loadVmInit() {

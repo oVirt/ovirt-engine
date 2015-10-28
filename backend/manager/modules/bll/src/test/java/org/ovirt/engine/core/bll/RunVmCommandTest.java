@@ -356,6 +356,7 @@ public class RunVmCommandTest {
         vm.setStatus(VMStatus.Down);
         doReturn(new StoragePool()).when(command).getStoragePool();
         doReturn(vm).when(command).getVm();
+        doReturn(true).when(command).isCpuSupported();
         doReturn(true).when(command).checkRngDeviceClusterCompatibility();
         doReturn(true).when(command).checkPayload(any(VmPayload.class), anyString());
         doReturn(new VDSGroup()).when(command).getVdsGroup();
@@ -388,6 +389,7 @@ public class RunVmCommandTest {
         doReturn(vm).when(command).getVm();
 
         VDSGroup cluster = mock(VDSGroup.class);
+        doReturn(true).when(command).isCpuSupported();
         when(cluster.getRequiredRngSources()).thenReturn(clusterReqSources);
         doReturn(cluster).when(command).getVdsGroup();
 
