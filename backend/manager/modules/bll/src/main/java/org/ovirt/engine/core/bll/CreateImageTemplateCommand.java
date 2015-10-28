@@ -46,8 +46,11 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         Guid destinationImageGroupID = Guid.newGuid();
         setDestinationImageId(Guid.newGuid());
         DiskImage newImage = cloneDiskImage(getDestinationImageId());
-        fillVolumeInformation(newImage);
 
+        if (getParameters().getVolumeFormat() == null || getParameters().getVolumeType() == null) {
+            // At least one of the volume arguments should be copied from the ancestral image.
+            fillVolumeInformation(newImage);
+        }
         if (getParameters().getVolumeFormat() != null) {
             newImage.setvolumeFormat(getParameters().getVolumeFormat());
         }
