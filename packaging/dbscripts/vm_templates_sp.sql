@@ -361,20 +361,21 @@ LANGUAGE plpgsql;
 
 -- It abandons the base template of id v_base_template_id and makes its direct successor to be the next base template
 CREATE OR REPLACE FUNCTION UpdateVmTemplateShiftBaseTemplate(v_base_template_id UUID)
-    RETURNS VOID
+RETURNS VOID
     AS $procedure$
 BEGIN
     UPDATE vm_static
     SET vmt_guid = (SELECT vm_guid
-                    FROM vm_static
-                    WHERE entity_type = 'TEMPLATE'
-                          AND vmt_guid = v_base_template_id
-                    ORDER BY template_version_number
-                    OFFSET 1
-                    LIMIT 1)
+        FROM vm_static
+        WHERE entity_type = 'TEMPLATE'
+            AND vmt_guid = v_base_template_id
+        ORDER BY template_version_number
+        OFFSET 1
+        LIMIT 1
+    )
     WHERE entity_type = 'TEMPLATE'
-          AND vmt_guid = v_base_template_id
-          AND vm_guid != vmt_guid;
+        AND vmt_guid = v_base_template_id
+        AND vm_guid != vmt_guid;
 END; $procedure$
 LANGUAGE plpgsql;
 
