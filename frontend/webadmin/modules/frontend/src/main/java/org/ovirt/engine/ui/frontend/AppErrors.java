@@ -1771,8 +1771,17 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following bonds consist of less than two Network Interfaces: ${NETWORK_BONDS_INVALID_SLAVE_COUNT_LIST}.")
     String NETWORK_BONDS_INVALID_SLAVE_COUNT();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The VM(s) '${NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST}' are actively using the Logical Network(s) '${networkNames}'. Please stop the VMs and try again.")
+    @DefaultStringValue("Cannot ${action} ${type}. The following VMs are actively using the Logical Network '${networkName}' : '${NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST}'. Please stop the VMs and try again.")
     String NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The following Logical Network: '${networkName}' is being used by the following VM: '${vmName}'. Please stop the VM and try again.")
+    String NETWORK_CANNOT_DETACH_NETWORK_USED_BY_SINGLE_VM();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The following VMs are actively using the Logical Networks '${networkNames}' : '${vmNames}'. Please stop the VMs and try again.")
+    String MULTIPLE_NETWORKS_CANNOT_DETACH_NETWORKS_USED_BY_VMS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The following Logical Networks: '${networkNames}' are being used by the following VM: '${vmName}'. Please stop the VM and try again.")
+    String MULTIPLE_NETWORKS_CANNOT_DETACH_NETWORKS_USED_BY_SINGLE_VM();
 
     @DefaultStringValue("Cannot ${action} ${type}. STP can only be enabled on VM Networks.")
     String NON_VM_NETWORK_CANNOT_SUPPORT_STP();
