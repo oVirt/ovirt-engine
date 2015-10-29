@@ -136,14 +136,14 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                }
 
                                                var options = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getOptions()();
-
+                                               // the !! is there to convert the value to boolean because it is returned as int
                                                var hostIp = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getHost()();
                                                var port = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getPortAsString()();
-                                               var fullScreen = options.@org.ovirt.engine.core.common.console.ConsoleOptions::isFullScreen()();
+                                               var fullScreen = !!options.@org.ovirt.engine.core.common.console.ConsoleOptions::isFullScreen()();
                                                var password = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getTicket()();
                                                var numberOfMonitors = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getNumberOfMonitors()();
                                                var usbListenPort = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getUsbListenPort()();
-                                               var adminConsole = options.@org.ovirt.engine.core.common.console.ConsoleOptions::isAdminConsole()();
+                                               var adminConsole = !!options.@org.ovirt.engine.core.common.console.ConsoleOptions::isAdminConsole()();
                                                var guestHostName = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getGuestHostName()();
                                                var securePort = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getSecurePort()();
                                                var sslChanels = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getSslChanels()();
@@ -153,13 +153,12 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                var title = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getTitle()();
                                                var hotKey = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getHotKeysAsString()();
                                                var id = "SpiceX_" + guestHostName;
-                                               var noTaskMgrExecution = options.@org.ovirt.engine.core.common.console.ConsoleOptions::isNoTaskMgrExecution()();
-                                               var usbAutoShare = options.@org.ovirt.engine.core.common.console.ConsoleOptions::isUsbAutoShare()();
+                                               var noTaskMgrExecution = !!options.@org.ovirt.engine.core.common.console.ConsoleOptions::isNoTaskMgrExecution()();
+                                               var usbAutoShare = !!options.@org.ovirt.engine.core.common.console.ConsoleOptions::isUsbAutoShare()();
                                                var usbFilter = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getUsbFilter()();
                                                var disconnectedEvent = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getDisconnectedEvent()();
                                                var connectedEvent = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getConnectedEvent()();
-                                               var wanOptionsEnabled = options.@org.ovirt.engine.core.common.console.ConsoleOptions::isWanOptionsEnabled()();
-                                               // the !! is there to convert the value to boolean because it is returned as int
+                                               var wanOptionsEnabled = !!options.@org.ovirt.engine.core.common.console.ConsoleOptions::isWanOptionsEnabled()();
                                                var smartcardEnabled =  !!options.@org.ovirt.engine.core.common.console.ConsoleOptions::passSmartcardOption()();
                                                var colorDepth = options.@org.ovirt.engine.core.common.console.ConsoleOptions::colorDepthAsInt()();
                                                var disableEffects = options.@org.ovirt.engine.core.common.console.ConsoleOptions::disableEffectsAsString()();
@@ -288,14 +287,14 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                        }
                                                    }
                                                    var options = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getOptions()();
-
+                                                   // the !! is there to convert the value to boolean because it is returned as int
                                                    var hostIp = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getHost()();
                                                    var port = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getPortAsString()();
-                                                   var fullScreen = options.@org.ovirt.engine.core.common.console.ConsoleOptions::isFullScreen()();
+                                                   var fullScreen = !!options.@org.ovirt.engine.core.common.console.ConsoleOptions::isFullScreen()();
                                                    var password = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getTicket()();
                                                    var numberOfMonitors = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getNumberOfMonitors()();
                                                    var usbListenPort = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getUsbListenPort()();
-                                                   var adminConsole = options.@org.ovirt.engine.core.common.console.ConsoleOptions::isAdminConsole()();
+                                                   var adminConsole = !!options.@org.ovirt.engine.core.common.console.ConsoleOptions::isAdminConsole()();
                                                    var guestHostName = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getGuestHostName()();
                                                    var securePort = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getSecurePort()();
                                                    var sslChanels = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getSslChanels()();
@@ -308,14 +307,13 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                    var version = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getPluginVersionStr()();
                                                    var spiceCabURL = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getSpiceCabURL()();
                                                    var spiceCabOjectClassId = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getSpiceObjectClassId()();
-                                                   var noTaskMgrExecution = options.@org.ovirt.engine.core.common.console.ConsoleOptions::isNoTaskMgrExecution()();
-                                                   var usbAutoShare = options.@org.ovirt.engine.core.common.console.ConsoleOptions::isUsbAutoShare()();
+                                                   var noTaskMgrExecution = !!options.@org.ovirt.engine.core.common.console.ConsoleOptions::isNoTaskMgrExecution()();
+                                                   var usbAutoShare = !!options.@org.ovirt.engine.core.common.console.ConsoleOptions::isUsbAutoShare()();
                                                    var usbFilter = options.@org.ovirt.engine.core.common.console.ConsoleOptions::getUsbFilter()();
                                                    var disconnectedEvent = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getDisconnectedEvent()();
                                                    var menuItemSelectedEvent = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getMenuItemSelectedEvent()();
                                                    var connectedEvent = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getConnectedEvent()();
-                                                   var wanOptionsEnabled = options.@org.ovirt.engine.core.common.console.ConsoleOptions::isWanOptionsEnabled()();
-                                                   // the !! is there to convert the value to boolean because it is returned as int
+                                                   var wanOptionsEnabled = !!options.@org.ovirt.engine.core.common.console.ConsoleOptions::isWanOptionsEnabled()();
                                                    var smartcardEnabled =  !!options.@org.ovirt.engine.core.common.console.ConsoleOptions::passSmartcardOption()();
                                                    var colorDepth = options.@org.ovirt.engine.core.common.console.ConsoleOptions::colorDepthAsInt()();
                                                    var disableEffects = options.@org.ovirt.engine.core.common.console.ConsoleOptions::disableEffectsAsString()();
@@ -325,7 +323,6 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                    var id = "SpiceX_" + guestHostName;
                                                    //alert("Host IP ["+hostIp+"], port ["+port+"], fullScreen ["+fullScreen+"], password ["+password+"], numberOfMonitors ["+numberOfMonitors+"], Usb Listen Port ["+usbListenPort+"], Admin Console ["+adminConsole+"], Guest HostName ["+guestHostName+"], Secure Port ["+securePort+"], Ssl Chanels ["+sslChanels+"], cipherSuite ["+cipherSuite+"], Host Subject ["+hostSubject+"], Title [" + title+"], Hot Key ["+hotKey+"], Menu ["+menu+"], version ["+version+"]");
                                                    //alert("Trust Store ["+trustStore+"]");
-
                                                    this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::loadActiveX(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(id,codebase,spiceCabOjectClassId);
                                                    var client = $wnd.document.getElementById(id);
                                                    attachEventIe11Safe(client, 'onreadystatechange', onReadyStateChange);
