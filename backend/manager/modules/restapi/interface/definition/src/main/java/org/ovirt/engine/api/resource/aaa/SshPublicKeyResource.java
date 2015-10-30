@@ -17,27 +17,25 @@
 package org.ovirt.engine.api.resource.aaa;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.SshPublicKey;
-import org.ovirt.engine.api.model.SshPublicKeys;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface SSHPublicKeysResource {
+public interface SshPublicKeyResource {
 
     @GET
-    public SshPublicKeys list();
+    public SshPublicKey get();
 
-    @POST
+    @PUT
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-    public Response add(SshPublicKey pubkey);
+    public SshPublicKey update(SshPublicKey resource);
 
-    @Path("{id}")
-    public SSHPublicKeyResource getSSHPublicKeyResource(@PathParam("id") String id);
+    @DELETE
+    public Response remove();
 }

@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.resource.aaa;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.SshPublicKey;
-import org.ovirt.engine.api.resource.aaa.SSHPublicKeyResource;
+import org.ovirt.engine.api.resource.aaa.SshPublicKeyResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 import org.ovirt.engine.core.common.action.UserProfileParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -15,7 +15,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendSSHPublicKeyResource
     extends AbstractBackendSubResource<SshPublicKey, UserProfile>
-    implements SSHPublicKeyResource {
+    implements SshPublicKeyResource {
 
     private Guid userId;
 

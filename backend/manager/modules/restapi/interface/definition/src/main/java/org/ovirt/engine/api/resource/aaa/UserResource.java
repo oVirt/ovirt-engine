@@ -47,5 +47,5 @@ public interface UserResource {
     public AssignedTagsResource getTagsResource();
 
     @Path("sshpublickeys")
-    public SSHPublicKeysResource getSSHPublicKeysResource();
+    public SshPublicKeysResource getSSHPublicKeysResource();
 }

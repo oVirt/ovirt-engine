@@ -1,15 +1,14 @@
 package org.ovirt.engine.api.restapi.resource.aaa;
 
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.SshPublicKey;
 import org.ovirt.engine.api.model.SshPublicKeys;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.api.resource.aaa.SSHPublicKeyResource;
-import org.ovirt.engine.api.resource.aaa.SSHPublicKeysResource;
+import org.ovirt.engine.api.resource.aaa.SshPublicKeyResource;
+import org.ovirt.engine.api.resource.aaa.SshPublicKeysResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.core.common.action.UserProfileParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -21,7 +20,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendSSHPublicKeysResource
         extends AbstractBackendCollectionResource<SshPublicKey, UserProfile>
-        implements SSHPublicKeysResource {
+        implements SshPublicKeysResource {
 
     private Guid userId;
 
@@ -60,7 +59,7 @@ public class BackendSSHPublicKeysResource
     }
 
     @Override
-    public SSHPublicKeyResource getSSHPublicKeyResource(String id) {
+    public SshPublicKeyResource getSSHPublicKeyResource(String id) {
         return inject(new BackendSSHPublicKeyResource(id, userId, this));
     }
 

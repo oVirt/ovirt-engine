@@ -9,7 +9,7 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedRolesResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
-import org.ovirt.engine.api.resource.aaa.SSHPublicKeysResource;
+import org.ovirt.engine.api.resource.aaa.SshPublicKeysResource;
 import org.ovirt.engine.api.resource.aaa.UserResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 import org.ovirt.engine.api.restapi.resource.BackendAssignedPermissionsResource;
@@ -69,7 +69,7 @@ public class BackendUserResource
     }
 
     @Override
-    public SSHPublicKeysResource getSSHPublicKeysResource() {
+    public SshPublicKeysResource getSSHPublicKeysResource() {
         return inject(new BackendSSHPublicKeysResource(guid));
     }
 
