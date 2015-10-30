@@ -131,7 +131,7 @@ public interface VmResource extends AsynchronouslyCreatedResource, MeasurableRes
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     @Actionable
     @Path("clone")
-    public Response cloneVm(Action action);
+    public Response clone(Action action);
 
     @POST
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })

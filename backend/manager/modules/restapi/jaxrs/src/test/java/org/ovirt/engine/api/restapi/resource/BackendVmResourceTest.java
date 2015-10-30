@@ -938,7 +938,7 @@ public class BackendVmResourceTest
         vm.setName("someNewName");
         action.setVm(vm);
 
-        Response response = resource.cloneVm(action);
+        Response response = resource.clone(action);
         verifyActionResponse(response);
         Action actionResponse = (Action)response.getEntity();
         assertTrue(actionResponse.isSetStatus());

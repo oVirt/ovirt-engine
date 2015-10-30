@@ -330,7 +330,7 @@ public class BackendVmResource extends
     }
 
     @Override
-    public Response cloneVm(Action action) {
+    public Response clone(Action action) {
         validateParameters(action, "vm.name");
 
         org.ovirt.engine.core.common.businessentities.VM vm = getEntity(
