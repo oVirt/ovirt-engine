@@ -422,9 +422,8 @@ public class BackendHostNicsResource
         return networks;
     }
 
-
     @Override
-    public ActionResource getActionResource(String action) {
-        return inject(new BackendActionResource(action, ""));
+    public ActionResource getActionResource(String action, String oid) {
+        return inject(new BackendActionResource(action, oid));
     }
 }

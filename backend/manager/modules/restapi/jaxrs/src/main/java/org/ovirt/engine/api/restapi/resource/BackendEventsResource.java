@@ -1,13 +1,13 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.EntityExternalStatus;
 import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.Events;
+import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.EventResource;
 import org.ovirt.engine.api.resource.EventsResource;
 import org.ovirt.engine.api.restapi.types.ExternalStatusMapper;
@@ -91,5 +91,10 @@ public class BackendEventsResource
             parameters =  new AddExternalEventParameters(map(event), null);
         }
         return parameters;
+    }
+
+    @Override
+    public ActionResource getActionResource(String action, String oid) {
+        return inject(new BackendActionResource(action, oid));
     }
 }

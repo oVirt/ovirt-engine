@@ -31,6 +31,9 @@ import org.ovirt.engine.api.model.Events;
 
 @Produces( { ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface EventsResource {
+    @Path("{action: (undelete)}/{oid}")
+    ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
+
     @GET
     Events list();
 

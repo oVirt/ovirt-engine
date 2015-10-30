@@ -7,6 +7,7 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.GraphicsType;
 import org.ovirt.engine.api.model.ProxyTicket;
+import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.ApiMediaType;
 import org.ovirt.engine.api.resource.VmGraphicsConsoleResource;
 import org.ovirt.engine.api.restapi.types.VmMapper;
@@ -79,4 +80,8 @@ public class BackendVmGraphicsConsoleResource
         return ticketQueryReturnValue.getReturnValue();
     }
 
+    @Override
+    public ActionResource getActionResource(String action, String oid) {
+        return inject(new BackendActionResource(action, oid));
+    }
 }
