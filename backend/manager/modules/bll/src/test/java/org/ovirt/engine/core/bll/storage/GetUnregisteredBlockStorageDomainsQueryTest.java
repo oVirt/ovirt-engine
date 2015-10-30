@@ -262,14 +262,14 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
         return Collections.singletonList(storageDomain);
     }
 
-    private VdcReturnValueBase createSuccessVdcReturnValue() {
+    private static VdcReturnValueBase createSuccessVdcReturnValue() {
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setSucceeded(true);
 
         return returnValue;
     }
 
-    private VdcQueryReturnValue createGetDeviceListReturnValue(List<LUNs> luns) {
+    private static VdcQueryReturnValue createGetDeviceListReturnValue(List<LUNs> luns) {
         VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
         returnValue.setSucceeded(true);
         returnValue.setReturnValue(luns);
@@ -277,7 +277,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
         return returnValue;
     }
 
-    private VDSReturnValue createGetVGInfoReturnValue(List<LUNs> luns) {
+    private static VDSReturnValue createGetVGInfoReturnValue(List<LUNs> luns) {
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
         returnValue.setReturnValue(luns);
