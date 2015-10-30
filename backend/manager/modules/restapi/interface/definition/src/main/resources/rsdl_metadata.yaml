@@ -1660,14 +1660,12 @@ actions:
 - name: /datacenters/{datacenter:id}|rel=delete
   description: delete the specified data center in the system
   request:
-    body:
-      required: false
-      parameterType: Action
-      signatures:
-      - mandatoryArguments: {}
-        optionalArguments:
-          action.force: xs:boolean
-        description: delete the specified data center in the system
+    urlparams:
+      force:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
 - name: /datacenters|rel=add
   description: add a new data center to the system
   request:

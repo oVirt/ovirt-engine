@@ -24,7 +24,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.DataCenter;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
@@ -38,10 +37,6 @@ public interface DataCenterResource {
 
     @DELETE
     Response remove();
-
-    @DELETE
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-    Response remove(Action action);
 
     @Path("storagedomains")
     AttachedStorageDomainsResource getAttachedStorageDomainsResource();

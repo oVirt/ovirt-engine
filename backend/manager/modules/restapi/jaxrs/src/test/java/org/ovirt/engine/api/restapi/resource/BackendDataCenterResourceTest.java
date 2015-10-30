@@ -7,11 +7,10 @@ import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResourceTe
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
@@ -161,37 +160,38 @@ public class BackendDataCenterResourceTest
     public void testRemoveForced() throws Exception {
         setUpGetEntityExpectations(1);
         setUpVersionExpectations();
-        setUriInfo(
-            setUpActionExpectations(
-                VdcActionType.RemoveStoragePool,
-                StoragePoolParametersBase.class,
-                new String[] { "StoragePoolId", "ForceDelete" },
-                new Object[] { GUIDS[0], Boolean.TRUE },
-                true,
-                true
-            )
+        UriInfo uriInfo = setUpActionExpectations(
+            VdcActionType.RemoveStoragePool,
+            StoragePoolParametersBase.class,
+            new String[] { "StoragePoolId", "ForceDelete" },
+            new Object[] { GUIDS[0], Boolean.TRUE },
+            true,
+            true,
+            false
         );
-        Action action = new Action();
-        action.setForce(true);
-        verifyRemove(resource.remove(action));
+        uriInfo = addMatrixParameterExpectations(uriInfo, BackendDataCenterResource.FORCE, Boolean.TRUE.toString());
+        setUriInfo(uriInfo);
+        control.replay();
+        verifyRemove(resource.remove());
     }
 
     @Test
     public void testRemoveForcedIncomplete() throws Exception {
         setUpGetEntityExpectations(1);
         setUpVersionExpectations();
-        setUriInfo(
-            setUpActionExpectations(
-                VdcActionType.RemoveStoragePool,
-                StoragePoolParametersBase.class,
-                new String[] { "StoragePoolId", "ForceDelete" },
-                new Object[] { GUIDS[0], Boolean.FALSE },
-                true,
-                true
-            )
+        UriInfo uriInfo = setUpActionExpectations(
+            VdcActionType.RemoveStoragePool,
+            StoragePoolParametersBase.class,
+            new String[] { "StoragePoolId", "ForceDelete" },
+            new Object[] { GUIDS[0], Boolean.FALSE },
+            true,
+            true,
+            false
         );
-        Action action = new Action();
-        resource.remove(action);
+        uriInfo = addMatrixParameterExpectations(uriInfo, BackendDataCenterResource.FORCE, Boolean.FALSE.toString());
+        setUriInfo(uriInfo);
+        control.replay();
+        resource.remove();
     }
 
     @Test

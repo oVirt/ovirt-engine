@@ -3,10 +3,9 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResource.SUB_COLLECTIONS;
 
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainsResource;
@@ -32,6 +31,8 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendDataCenterResource extends AbstractBackendSubResource<DataCenter, StoragePool>
         implements DataCenterResource {
 
+    public static final String FORCE = "force";
+
     private final BackendDataCentersResource parent;
 
     public BackendDataCenterResource(String id, BackendDataCentersResource parent) {
@@ -48,9 +49,9 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
     public DataCenter update(DataCenter incoming) {
         validateEnums(DataCenter.class, incoming);
         return performUpdate(incoming,
-                             new QueryIdResolver<Guid>(VdcQueryType.GetStoragePoolById, IdQueryParameters.class),
-                             VdcActionType.UpdateStoragePool,
-                             new UpdateParametersProvider());
+                new QueryIdResolver<Guid>(VdcQueryType.GetStoragePoolById, IdQueryParameters.class),
+                VdcActionType.UpdateStoragePool,
+                new UpdateParametersProvider());
     }
 
     @Override
@@ -143,10 +144,10 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
     @SuppressWarnings("unchecked")
     public static  List<StoragePool> getStoragePools(Guid storageDomainId, AbstractBackendResource parent) {
         return parent.getEntity(List.class,
-                                                    VdcQueryType.GetStoragePoolsByStorageDomainId,
-                                                    new IdQueryParameters(storageDomainId),
-                                                    "Datacenters",
-                                                    true);
+                VdcQueryType.GetStoragePoolsByStorageDomainId,
+                new IdQueryParameters(storageDomainId),
+                "Datacenters",
+                true);
     }
 
     @Override
@@ -157,15 +158,10 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveStoragePool, new StoragePoolParametersBase(asGuid(id)));
-    }
-
-    @Override
-    public Response remove(Action action) {
-        get();
         StoragePoolParametersBase params = new StoragePoolParametersBase(asGuid(id));
-        if (action != null && action.isSetForce()) {
-            params.setForceDelete(action.isForce());
+        boolean force = QueryHelper.getBooleanMatrixParameter(uriInfo, FORCE, true, false);
+        if (force) {
+            params.setForceDelete(force);
         }
         return performAction(VdcActionType.RemoveStoragePool, params);
     }

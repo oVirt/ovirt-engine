@@ -929,3 +929,19 @@ this has been changed to use a wrapper element, in this case
         </cpu_tune>
       </cpu>
     </vm>
+
+### Use `force` matrix parameter to force remove a data center
+
+The operation that removes a data center supports a `force` parameter.
+In order to use it the `DELETE` operation used to support an optional
+action parameter:
+
+    DELETE /datacenters/{datacenter:id}
+    <action>
+      <force>true</force>
+    </action>
+
+This optional action parameter has been replaced with an optional matrix
+parameter:
+
+    DELETE /datacenters/{datacenter:id};force=true
