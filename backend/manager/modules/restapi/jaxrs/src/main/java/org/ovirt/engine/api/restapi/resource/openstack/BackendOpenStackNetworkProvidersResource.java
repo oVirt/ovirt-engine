@@ -24,8 +24,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.model.OpenStackNetworkProviders;
-import org.ovirt.engine.api.resource.openstack.OpenStackNetworkProviderResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackNetworkProvidersResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackNetworkProviderResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackNetworkProvidersResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -39,7 +39,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackNetworkProvidersResource
         extends AbstractBackendCollectionResource<OpenStackNetworkProvider, Provider>
-        implements OpenStackNetworkProvidersResource {
+        implements OpenstackNetworkProvidersResource {
     static final String[] SUB_COLLECTIONS = {
         "networks",
         "certificates"
@@ -99,7 +99,7 @@ public class BackendOpenStackNetworkProvidersResource
     }
 
     @Override
-    public OpenStackNetworkProviderResource getOpenStackNetworkProvider(String id) {
+    public OpenstackNetworkProviderResource getOpenStackNetworkProvider(String id) {
         return inject(new BackendOpenStackNetworkProviderResource(id));
     }
 }

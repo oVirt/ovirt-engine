@@ -24,20 +24,20 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.OpenStackNetworkProvider;
-import org.ovirt.engine.api.model.OpenStackNetworkProviders;
+import org.ovirt.engine.api.model.OpenStackSubnet;
+import org.ovirt.engine.api.model.OpenStackSubnets;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
+@Path("subnets")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface OpenStackNetworkProvidersResource {
-
+public interface OpenstackSubnetsResource {
     @GET
-    public OpenStackNetworkProviders list();
+    public OpenStackSubnets list();
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-    public Response add(OpenStackNetworkProvider provider);
+    public Response add(OpenStackSubnet subnet);
 
     @Path("{id}")
-    public OpenStackNetworkProviderResource getOpenStackNetworkProvider(@PathParam("id") String id);
+    OpenstackSubnetResource getOpenStackSubnet(@PathParam("id") String id);
 }

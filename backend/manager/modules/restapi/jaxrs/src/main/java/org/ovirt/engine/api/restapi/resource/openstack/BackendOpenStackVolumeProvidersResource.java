@@ -25,8 +25,8 @@ import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.model.OpenStackVolumeProviders;
-import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProviderResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProvidersResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackVolumeProviderResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackVolumeProvidersResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.api.restapi.types.DataCenterMapper;
 import org.ovirt.engine.core.common.action.ProviderParameters;
@@ -44,7 +44,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackVolumeProvidersResource
         extends AbstractBackendCollectionResource<OpenStackVolumeProvider, Provider>
-        implements OpenStackVolumeProvidersResource {
+        implements OpenstackVolumeProvidersResource {
     static final String[] SUB_COLLECTIONS = {
         "volumetypes",
         "certificates",
@@ -118,7 +118,7 @@ public class BackendOpenStackVolumeProvidersResource
     }
 
     @Override
-    public OpenStackVolumeProviderResource getOpenStackVolumeProvider(String id) {
+    public OpenstackVolumeProviderResource getOpenStackVolumeProvider(String id) {
         return inject(new BackendOpenStackVolumeProviderResource(id, this));
     }
 

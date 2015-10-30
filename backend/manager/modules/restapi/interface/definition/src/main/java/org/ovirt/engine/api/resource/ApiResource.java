@@ -31,9 +31,9 @@ import org.ovirt.engine.api.resource.aaa.GroupsResource;
 import org.ovirt.engine.api.resource.aaa.UsersResource;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostProvidersResource;
 import org.ovirt.engine.api.resource.externalhostproviders.SystemKatelloErrataResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackImageProvidersResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackNetworkProvidersResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProvidersResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackImageProvidersResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackNetworkProvidersResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackVolumeProvidersResource;
 
 @Path("/")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
@@ -102,13 +102,13 @@ public interface ApiResource {
     NetworksResource getNetworksResource();
 
     @Path("openstackimageproviders")
-    OpenStackImageProvidersResource getOpenStackImageProviersResource();
+    OpenstackImageProvidersResource getOpenStackImageProviersResource();
 
     @Path("openstacknetworkproviders")
-    OpenStackNetworkProvidersResource getOpenStackNetworkProvidersResource();
+    OpenstackNetworkProvidersResource getOpenStackNetworkProvidersResource();
 
     @Path("openstackvolumeproviders")
-    OpenStackVolumeProvidersResource getOpenStackVolumeProvidersResource();
+    OpenstackVolumeProvidersResource getOpenStackVolumeProvidersResource();
 
     @Path("operatingsystems")
     OperatingSystemsResource getOperatingSystemsResource();

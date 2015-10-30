@@ -22,8 +22,8 @@ import java.util.Set;
 import org.ovirt.engine.api.model.OpenStackNetwork;
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.model.OpenStackNetworks;
-import org.ovirt.engine.api.resource.openstack.OpenStackNetworkResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackNetworksResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackNetworkResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackNetworksResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -33,7 +33,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackNetworksResource
         extends AbstractBackendCollectionResource<OpenStackNetwork, Network>
-        implements OpenStackNetworksResource {
+        implements OpenstackNetworksResource {
     static final String[] SUB_COLLECTIONS = {
         "subnets"
     };
@@ -84,7 +84,7 @@ public class BackendOpenStackNetworksResource
     }
 
     @Override
-    public OpenStackNetworkResource getOpenStackNetwork(String id) {
+    public OpenstackNetworkResource getOpenStackNetwork(String id) {
         return inject(new BackendOpenStackNetworkResource(providerId, id));
     }
 }

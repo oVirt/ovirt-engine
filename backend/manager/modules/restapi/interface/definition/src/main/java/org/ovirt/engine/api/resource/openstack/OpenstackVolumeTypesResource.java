@@ -16,28 +16,20 @@
 
 package org.ovirt.engine.api.resource.openstack;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.OpenStackSubnet;
-import org.ovirt.engine.api.model.OpenStackSubnets;
+import org.ovirt.engine.api.model.OpenStackVolumeTypes;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
-@Path("subnets")
+@Path("volumes")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface OpenStackSubnetsResource {
+public interface OpenstackVolumeTypesResource {
     @GET
-    public OpenStackSubnets list();
-
-    @POST
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-    public Response add(OpenStackSubnet subnet);
+    public OpenStackVolumeTypes list();
 
     @Path("{id}")
-    OpenStackSubnetResource getOpenStackSubnet(@PathParam("id") String id);
+    OpenstackVolumeTypeResource getOpenStackVolumeType(@PathParam("id") String id);
 }

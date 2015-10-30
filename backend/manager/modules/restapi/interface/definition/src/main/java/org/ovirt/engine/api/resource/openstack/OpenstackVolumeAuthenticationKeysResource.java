@@ -24,19 +24,20 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.OpenStackImageProvider;
-import org.ovirt.engine.api.model.OpenStackImageProviders;
+import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKey;
+import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKeys;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
+@Path("authenticationkeys")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface OpenStackImageProvidersResource {
+public interface OpenstackVolumeAuthenticationKeysResource {
     @GET
-    public OpenStackImageProviders list();
+    OpenstackVolumeAuthenticationKeys list();
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-    public Response add(OpenStackImageProvider provider);
+    Response add(OpenstackVolumeAuthenticationKey authenticationKey);
 
     @Path("{id}")
-    public OpenStackImageProviderResource getOpenStackImageProvider(@PathParam("id") String id);
+    OpenstackVolumeAuthenticationKeyResource getOpenStackVolumeAuthenticationKey(@PathParam("id") String id);
 }

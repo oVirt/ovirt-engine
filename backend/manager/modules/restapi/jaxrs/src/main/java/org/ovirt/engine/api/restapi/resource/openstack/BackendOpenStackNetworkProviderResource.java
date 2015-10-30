@@ -22,8 +22,8 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.resource.ExternalProviderCertificatesResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackNetworkProviderResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackNetworksResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackNetworkProviderResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackNetworksResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendExternalProviderResource;
 import org.ovirt.engine.api.restapi.resource.BackendExternalProviderCertificatesResource;
 import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
@@ -37,7 +37,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackNetworkProviderResource
         extends AbstractBackendExternalProviderResource<OpenStackNetworkProvider>
-        implements OpenStackNetworkProviderResource {
+        implements OpenstackNetworkProviderResource {
 
     public BackendOpenStackNetworkProviderResource(String id) {
         super(id, OpenStackNetworkProvider.class, SUB_COLLECTIONS);
@@ -59,7 +59,7 @@ public class BackendOpenStackNetworkProviderResource
     }
 
     @Override
-    public OpenStackNetworksResource getOpenStackNetworks() {
+    public OpenstackNetworksResource getOpenStackNetworks() {
         return inject(new BackendOpenStackNetworksResource(id));
     }
 

@@ -22,7 +22,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.OpenStackImage;
 import org.ovirt.engine.api.model.OpenStackImageProvider;
-import org.ovirt.engine.api.resource.openstack.OpenStackImageResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackImageResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -34,7 +34,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackImageResource
         extends AbstractBackendActionableResource<OpenStackImage, RepoImage>
-        implements OpenStackImageResource {
+        implements OpenstackImageResource {
     private String providerId;
 
     protected BackendOpenStackImageResource(String providerId, String id) {

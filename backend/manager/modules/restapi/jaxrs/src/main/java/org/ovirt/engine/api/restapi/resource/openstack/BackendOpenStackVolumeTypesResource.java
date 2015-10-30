@@ -21,8 +21,8 @@ import java.util.List;
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.model.OpenStackVolumeType;
 import org.ovirt.engine.api.model.OpenStackVolumeTypes;
-import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypeResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypesResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackVolumeTypeResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackVolumeTypesResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -31,7 +31,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackVolumeTypesResource
         extends AbstractBackendCollectionResource<OpenStackVolumeType, CinderVolumeType>
-        implements OpenStackVolumeTypesResource {
+        implements OpenstackVolumeTypesResource {
     private String providerId;
 
     public BackendOpenStackVolumeTypesResource(String providerId) {
@@ -64,7 +64,7 @@ public class BackendOpenStackVolumeTypesResource
     }
 
     @Override
-    public OpenStackVolumeTypeResource getOpenStackVolumeType(String id) {
+    public OpenstackVolumeTypeResource getOpenStackVolumeType(String id) {
         return inject(new BackendOpenStackVolumeTypeResource(providerId, id));
     }
 }

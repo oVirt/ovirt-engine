@@ -25,7 +25,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.api.model.OpenStackNetwork;
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.model.OpenStackSubnet;
-import org.ovirt.engine.api.resource.openstack.OpenStackSubnetResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackSubnetResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
 import org.ovirt.engine.core.common.action.ExternalSubnetParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -36,7 +36,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackSubnetResource
         extends AbstractBackendActionableResource<OpenStackSubnet, ExternalSubnet>
-        implements OpenStackSubnetResource {
+        implements OpenstackSubnetResource {
     private String providerId;
     private String networkId;
     private BackendOpenStackSubnetsResource parent;

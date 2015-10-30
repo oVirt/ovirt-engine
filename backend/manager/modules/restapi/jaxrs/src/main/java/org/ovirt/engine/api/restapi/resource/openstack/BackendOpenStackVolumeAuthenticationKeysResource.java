@@ -23,8 +23,8 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKey;
 import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKeys;
-import org.ovirt.engine.api.resource.openstack.OpenStackVolumeAuthenticationKeyResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackVolumeAuthenticationKeysResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackVolumeAuthenticationKeyResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackVolumeAuthenticationKeysResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.LibvirtSecretParameters;
@@ -36,7 +36,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackVolumeAuthenticationKeysResource
         extends AbstractBackendCollectionResource<OpenstackVolumeAuthenticationKey, LibvirtSecret>
-        implements OpenStackVolumeAuthenticationKeysResource {
+        implements OpenstackVolumeAuthenticationKeysResource {
     private String providerId;
 
     public BackendOpenStackVolumeAuthenticationKeysResource(String providerId) {
@@ -82,7 +82,7 @@ public class BackendOpenStackVolumeAuthenticationKeysResource
     }
 
     @Override
-    public OpenStackVolumeAuthenticationKeyResource getOpenStackVolumeAuthenticationKey(String id) {
+    public OpenstackVolumeAuthenticationKeyResource getOpenStackVolumeAuthenticationKey(String id) {
         return inject(new BackendOpenStackVolumeAuthenticationKeyResource(providerId, id));
     }
 }

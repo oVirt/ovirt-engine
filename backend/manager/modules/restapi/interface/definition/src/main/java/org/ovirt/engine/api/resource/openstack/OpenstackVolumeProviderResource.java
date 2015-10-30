@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2014 Red Hat, Inc.
+* Copyright (c) 2015 Red Hat, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -17,27 +17,32 @@
 package org.ovirt.engine.api.resource.openstack;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKey;
-import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKeys;
+import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.resource.ApiMediaType;
+import org.ovirt.engine.api.resource.ExternalProviderResource;
 
-@Path("authenticationkeys")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface OpenStackVolumeAuthenticationKeysResource {
+public interface OpenstackVolumeProviderResource extends ExternalProviderResource {
     @GET
-    OpenstackVolumeAuthenticationKeys list();
+    OpenStackVolumeProvider get();
 
-    @POST
+    @PUT
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-    Response add(OpenstackVolumeAuthenticationKey authenticationKey);
+    OpenStackVolumeProvider update(OpenStackVolumeProvider provider);
 
-    @Path("{id}")
-    OpenStackVolumeAuthenticationKeyResource getOpenStackVolumeAuthenticationKey(@PathParam("id") String id);
+    @Path("volumetypes")
+    OpenstackVolumeTypesResource getOpenStackVolumeTypes();
+
+    @Path("authenticationkeys")
+    OpenstackVolumeAuthenticationKeysResource getOpenStackVolumeAuthenticationKeys();
+
+    @DELETE
+    Response remove();
 }

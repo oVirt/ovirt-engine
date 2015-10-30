@@ -21,8 +21,8 @@ import java.util.List;
 import org.ovirt.engine.api.model.OpenStackImage;
 import org.ovirt.engine.api.model.OpenStackImageProvider;
 import org.ovirt.engine.api.model.OpenStackImages;
-import org.ovirt.engine.api.resource.openstack.OpenStackImageResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackImagesResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackImageResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackImagesResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
@@ -32,7 +32,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackImagesResource
         extends AbstractBackendCollectionResource<OpenStackImage, RepoImage>
-        implements OpenStackImagesResource {
+        implements OpenstackImagesResource {
     private String providerId;
 
     public BackendOpenStackImagesResource(String providerId) {
@@ -64,7 +64,7 @@ public class BackendOpenStackImagesResource
     }
 
     @Override
-    public OpenStackImageResource getOpenStackImage(String id) {
+    public OpenstackImageResource getOpenStackImage(String id) {
         return inject(new BackendOpenStackImageResource(providerId, id));
     }
 }

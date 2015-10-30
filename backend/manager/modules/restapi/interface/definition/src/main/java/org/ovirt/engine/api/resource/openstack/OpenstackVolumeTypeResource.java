@@ -17,23 +17,13 @@
 package org.ovirt.engine.api.resource.openstack;
 
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.Actionable;
-import org.ovirt.engine.api.model.OpenStackImage;
+import org.ovirt.engine.api.model.OpenStackVolumeType;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface OpenStackImageResource {
+public interface OpenstackVolumeTypeResource {
     @GET
-    public OpenStackImage get();
-
-    @POST
-    @Actionable
-    @Path("import")
-    public Response doImport(Action action);
+    public OpenStackVolumeType get();
 }

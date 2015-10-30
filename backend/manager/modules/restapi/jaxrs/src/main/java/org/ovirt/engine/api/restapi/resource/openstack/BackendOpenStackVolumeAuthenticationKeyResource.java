@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKey;
-import org.ovirt.engine.api.resource.openstack.OpenStackVolumeAuthenticationKeyResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackVolumeAuthenticationKeyResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
 import org.ovirt.engine.core.common.action.LibvirtSecretParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -32,7 +32,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackVolumeAuthenticationKeyResource
         extends AbstractBackendActionableResource<OpenstackVolumeAuthenticationKey, LibvirtSecret>
-        implements OpenStackVolumeAuthenticationKeyResource {
+        implements OpenstackVolumeAuthenticationKeyResource {
     private String providerId;
 
     protected BackendOpenStackVolumeAuthenticationKeyResource(String providerId, String id) {

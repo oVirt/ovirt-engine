@@ -16,30 +16,24 @@
 
 package org.ovirt.engine.api.resource.openstack;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.OpenStackNetworkProvider;
+import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.Actionable;
+import org.ovirt.engine.api.model.OpenStackImage;
 import org.ovirt.engine.api.resource.ApiMediaType;
-import org.ovirt.engine.api.resource.ExternalProviderResource;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface OpenStackNetworkProviderResource extends ExternalProviderResource {
+public interface OpenstackImageResource {
     @GET
-    OpenStackNetworkProvider get();
+    public OpenStackImage get();
 
-    @PUT
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-    OpenStackNetworkProvider update(OpenStackNetworkProvider provider);
-
-    @Path("networks")
-    OpenStackNetworksResource getOpenStackNetworks();
-
-    @DELETE
-    Response remove();
+    @POST
+    @Actionable
+    @Path("import")
+    public Response doImport(Action action);
 }

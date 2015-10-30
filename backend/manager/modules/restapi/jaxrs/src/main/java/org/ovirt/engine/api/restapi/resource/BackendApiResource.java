@@ -79,9 +79,9 @@ import org.ovirt.engine.api.resource.aaa.GroupsResource;
 import org.ovirt.engine.api.resource.aaa.UsersResource;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostProvidersResource;
 import org.ovirt.engine.api.resource.externalhostproviders.SystemKatelloErrataResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackImageProvidersResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackNetworkProvidersResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProvidersResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackImageProvidersResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackNetworkProvidersResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackVolumeProvidersResource;
 import org.ovirt.engine.api.restapi.resource.aaa.BackendDomainsResource;
 import org.ovirt.engine.api.restapi.resource.aaa.BackendGroupsResource;
 import org.ovirt.engine.api.restapi.resource.aaa.BackendUsersResource;
@@ -521,17 +521,17 @@ public class BackendApiResource
     }
 
     @Override
-    public OpenStackImageProvidersResource getOpenStackImageProviersResource() {
+    public OpenstackImageProvidersResource getOpenStackImageProviersResource() {
         return inject(new BackendOpenStackImageProvidersResource());
     }
 
     @Override
-    public OpenStackNetworkProvidersResource getOpenStackNetworkProvidersResource() {
+    public OpenstackNetworkProvidersResource getOpenStackNetworkProvidersResource() {
         return inject(new BackendOpenStackNetworkProvidersResource());
     }
 
     @Override
-    public OpenStackVolumeProvidersResource getOpenStackVolumeProvidersResource() {
+    public OpenstackVolumeProvidersResource getOpenStackVolumeProvidersResource() {
         return inject(new BackendOpenStackVolumeProvidersResource());
     }
 

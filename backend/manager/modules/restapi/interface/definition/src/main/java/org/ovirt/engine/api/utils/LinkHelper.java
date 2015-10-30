@@ -298,22 +298,22 @@ import org.ovirt.engine.api.resource.gluster.GlusterHookResource;
 import org.ovirt.engine.api.resource.gluster.GlusterHooksResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumeResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackImageProviderResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackImageProvidersResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackImageResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackImagesResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackNetworkProviderResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackNetworkProvidersResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackNetworkResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackNetworksResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackSubnetResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackSubnetsResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackVolumeAuthenticationKeyResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackVolumeAuthenticationKeysResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProviderResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProvidersResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypeResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypesResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackImageProviderResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackImageProvidersResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackImageResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackImagesResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackNetworkProviderResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackNetworkProvidersResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackNetworkResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackNetworksResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackSubnetResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackSubnetsResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackVolumeAuthenticationKeyResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackVolumeAuthenticationKeysResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackVolumeProviderResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackVolumeProvidersResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackVolumeTypeResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackVolumeTypesResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -628,35 +628,35 @@ public class LinkHelper {
         TYPES.put(ExternalComputeResource.class, map);
 
         // OpenStack image providers:
-        map = new ParentToCollectionMap(OpenStackImageProviderResource.class, OpenStackImageProvidersResource.class);
+        map = new ParentToCollectionMap(OpenstackImageProviderResource.class, OpenstackImageProvidersResource.class);
         TYPES.put(OpenStackImageProvider.class, map);
 
-        map = new ParentToCollectionMap(OpenStackImageResource.class, OpenStackImagesResource.class);
-        map.add(OpenStackImageResource.class, OpenStackImagesResource.class, OpenStackImageProvider.class);
+        map = new ParentToCollectionMap(OpenstackImageResource.class, OpenstackImagesResource.class);
+        map.add(OpenstackImageResource.class, OpenstackImagesResource.class, OpenStackImageProvider.class);
         TYPES.put(OpenStackImage.class, map);
 
         // OpenStack volume providers:
-        map = new ParentToCollectionMap(OpenStackVolumeProviderResource.class, OpenStackVolumeProvidersResource.class);
+        map = new ParentToCollectionMap(OpenstackVolumeProviderResource.class, OpenstackVolumeProvidersResource.class);
         TYPES.put(OpenStackVolumeProvider.class, map);
 
-        map = new ParentToCollectionMap(OpenStackVolumeTypeResource.class, OpenStackVolumeTypesResource.class);
-        map.add(OpenStackVolumeTypeResource.class, OpenStackVolumeTypesResource.class, OpenStackVolumeProvider.class);
+        map = new ParentToCollectionMap(OpenstackVolumeTypeResource.class, OpenstackVolumeTypesResource.class);
+        map.add(OpenstackVolumeTypeResource.class, OpenstackVolumeTypesResource.class, OpenStackVolumeProvider.class);
         TYPES.put(OpenStackVolumeType.class, map);
 
-        map = new ParentToCollectionMap(OpenStackVolumeAuthenticationKeyResource.class, OpenStackVolumeAuthenticationKeysResource.class);
-        map.add(OpenStackVolumeAuthenticationKeyResource.class, OpenStackVolumeAuthenticationKeysResource.class, OpenStackVolumeProvider.class);
+        map = new ParentToCollectionMap(OpenstackVolumeAuthenticationKeyResource.class, OpenstackVolumeAuthenticationKeysResource.class);
+        map.add(OpenstackVolumeAuthenticationKeyResource.class, OpenstackVolumeAuthenticationKeysResource.class, OpenStackVolumeProvider.class);
         TYPES.put(OpenstackVolumeAuthenticationKey.class, map);
 
         // OpenStack network providers:
-        map = new ParentToCollectionMap(OpenStackNetworkProviderResource.class, OpenStackNetworkProvidersResource.class);
+        map = new ParentToCollectionMap(OpenstackNetworkProviderResource.class, OpenstackNetworkProvidersResource.class);
         TYPES.put(OpenStackNetworkProvider.class, map);
 
-        map = new ParentToCollectionMap(OpenStackNetworkResource.class, OpenStackNetworksResource.class);
-        map.add(OpenStackNetworkResource.class, OpenStackNetworksResource.class, OpenStackNetworkProvider.class);
+        map = new ParentToCollectionMap(OpenstackNetworkResource.class, OpenstackNetworksResource.class);
+        map.add(OpenstackNetworkResource.class, OpenstackNetworksResource.class, OpenStackNetworkProvider.class);
         TYPES.put(OpenStackNetwork.class, map);
 
-        map = new ParentToCollectionMap(OpenStackSubnetResource.class, OpenStackSubnetsResource.class);
-        map.add(OpenStackSubnetResource.class, OpenStackSubnetsResource.class, OpenStackNetwork.class);
+        map = new ParentToCollectionMap(OpenstackSubnetResource.class, OpenstackSubnetsResource.class);
+        map.add(OpenstackSubnetResource.class, OpenstackSubnetsResource.class, OpenStackNetwork.class);
         TYPES.put(OpenStackSubnet.class, map);
 
         map = new ParentToCollectionMap(FenceAgentResource.class, FenceAgentsResource.class, Host.class);

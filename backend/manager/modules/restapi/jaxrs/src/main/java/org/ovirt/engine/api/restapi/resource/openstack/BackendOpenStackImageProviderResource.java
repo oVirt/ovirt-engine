@@ -21,8 +21,8 @@ import static org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackIm
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.OpenStackImageProvider;
-import org.ovirt.engine.api.resource.openstack.OpenStackImageProviderResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackImagesResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackImageProviderResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackImagesResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendExternalProviderResource;
 import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
 import org.ovirt.engine.core.common.action.ProviderParameters;
@@ -35,7 +35,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackImageProviderResource
         extends AbstractBackendExternalProviderResource<OpenStackImageProvider>
-        implements OpenStackImageProviderResource {
+        implements OpenstackImageProviderResource {
 
     public BackendOpenStackImageProviderResource(String id) {
         super(id, OpenStackImageProvider.class, SUB_COLLECTIONS);
@@ -57,7 +57,7 @@ public class BackendOpenStackImageProviderResource
     }
 
     @Override
-    public OpenStackImagesResource getOpenStackImages() {
+    public OpenstackImagesResource getOpenStackImages() {
         return inject(new BackendOpenStackImagesResource(id));
     }
 

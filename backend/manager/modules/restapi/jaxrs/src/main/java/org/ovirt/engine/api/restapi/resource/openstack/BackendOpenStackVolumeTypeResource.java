@@ -22,7 +22,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.model.OpenStackVolumeType;
-import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypeResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackVolumeTypeResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
 import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -31,7 +31,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackVolumeTypeResource
         extends AbstractBackendActionableResource<OpenStackVolumeType, CinderVolumeType>
-        implements OpenStackVolumeTypeResource {
+        implements OpenstackVolumeTypeResource {
     private String providerId;
 
     protected BackendOpenStackVolumeTypeResource(String providerId, String id) {

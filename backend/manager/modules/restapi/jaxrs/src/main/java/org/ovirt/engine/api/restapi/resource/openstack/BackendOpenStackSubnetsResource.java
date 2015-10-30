@@ -25,8 +25,8 @@ import org.ovirt.engine.api.model.OpenStackNetwork;
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.model.OpenStackSubnet;
 import org.ovirt.engine.api.model.OpenStackSubnets;
-import org.ovirt.engine.api.resource.openstack.OpenStackSubnetResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackSubnetsResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackSubnetResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackSubnetsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.core.common.action.AddExternalSubnetParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -37,7 +37,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackSubnetsResource
         extends AbstractBackendCollectionResource<OpenStackSubnet, ExternalSubnet>
-        implements OpenStackSubnetsResource {
+        implements OpenstackSubnetsResource {
     private String providerId;
     private String networkId;
 
@@ -121,7 +121,7 @@ public class BackendOpenStackSubnetsResource
     }
 
     @Override
-    public OpenStackSubnetResource getOpenStackSubnet(String id) {
+    public OpenstackSubnetResource getOpenStackSubnet(String id) {
         return inject(new BackendOpenStackSubnetResource(providerId, networkId, id, this));
     }
 }

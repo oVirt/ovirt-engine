@@ -17,24 +17,26 @@
 package org.ovirt.engine.api.resource.openstack;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKey;
+import org.ovirt.engine.api.model.OpenStackVolumeProvider;
+import org.ovirt.engine.api.model.OpenStackVolumeProviders;
 import org.ovirt.engine.api.resource.ApiMediaType;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-public interface OpenStackVolumeAuthenticationKeyResource {
+public interface OpenstackVolumeProvidersResource {
     @GET
-    OpenstackVolumeAuthenticationKey get();
+    public OpenStackVolumeProviders list();
 
-    @PUT
+    @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-    OpenstackVolumeAuthenticationKey update(OpenstackVolumeAuthenticationKey resource);
+    public Response add(OpenStackVolumeProvider provider);
 
-    @DELETE
-    Response remove();
+    @Path("{id}")
+    public OpenstackVolumeProviderResource getOpenStackVolumeProvider(@PathParam("id") String id);
 }

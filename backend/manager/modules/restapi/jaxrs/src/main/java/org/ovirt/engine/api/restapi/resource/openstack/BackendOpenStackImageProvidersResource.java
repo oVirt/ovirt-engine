@@ -24,8 +24,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.OpenStackImageProvider;
 import org.ovirt.engine.api.model.OpenStackImageProviders;
-import org.ovirt.engine.api.resource.openstack.OpenStackImageProviderResource;
-import org.ovirt.engine.api.resource.openstack.OpenStackImageProvidersResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackImageProviderResource;
+import org.ovirt.engine.api.resource.openstack.OpenstackImageProvidersResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -39,7 +39,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackImageProvidersResource
         extends AbstractBackendCollectionResource<OpenStackImageProvider, Provider>
-        implements OpenStackImageProvidersResource {
+        implements OpenstackImageProvidersResource {
     static final String[] SUB_COLLECTIONS = {
         "images",
         "certificates"
@@ -98,7 +98,7 @@ public class BackendOpenStackImageProvidersResource
     }
 
     @Override
-    public OpenStackImageProviderResource getOpenStackImageProvider(String id) {
+    public OpenstackImageProviderResource getOpenStackImageProvider(String id) {
         return inject(new BackendOpenStackImageProviderResource(id));
     }
 }
