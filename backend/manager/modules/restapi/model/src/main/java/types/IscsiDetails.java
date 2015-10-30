@@ -14,7 +14,30 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-/**
- * This package will contain the classes that represent types used in the RESTAPI.
- */
 package types;
+
+import org.ovirt.api.metamodel.annotations.Type;
+
+@Type
+public interface IscsiDetails {
+  // For initiator:
+  String initiator();
+
+  // For target:
+  Integer port();
+  String target();
+  String username();
+  String password();
+  String portal();
+  String address();
+  String serial();
+  String vendorId();
+  String productId();
+  Integer lunMapping();
+  Integer size();
+  Integer paths();
+  String status();
+  String volumeGroupId();
+  String storageDomainId();
+  String diskIo();
+}

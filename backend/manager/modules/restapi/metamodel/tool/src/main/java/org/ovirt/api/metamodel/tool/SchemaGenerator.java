@@ -85,21 +85,145 @@ public class SchemaGenerator {
     }
 
     static {
-        // No roots yet.
+        addRoot("affinity-group");
+        addRoot("agent");
+        addRoot("application");
+        addRoot("authorized-key");
+        addRoot("balance");
+        addRoot("bookmark");
+        addRoot("cdrom");
+        addRoot("certificate");
+        addRoot("cluster");
+        addRoot("cpu-profile");
+        addRoot("data-center");
+        addRoot("device");
+        addRoot("disk");
+        addRoot("disk-profile");
+        addRoot("disk-snapshot");
+        addRoot("domain");
+        addRoot("event");
+        addRoot("external-compute-resource");
+        addRoot("external-discovered-host");
+        addRoot("external-host");
+        addRoot("external-host-group");
+        addRoot("external-provider");
+        addRoot("file");
+        addRoot("filter");
+        addRoot("floppy");
+        addRoot("gluster-brick");
+        addRoot("gluster-brick-advanced-details");
+        addRoot("gluster-hook");
+        addRoot("gluster-memory-pool");
+        addRoot("gluster-server-hook");
+        addRoot("gluster-volume");
+        addRoot("gluster-volume-profile-details");
+        addRoot("graphics-console");
+        addRoot("group");
+        addRoot("hook");
+        addRoot("host");
+        addRoot("host-device");
+        addRoot("host-nic");
+        addRoot("host-storage");
+        addRoot("icon");
+        addRoot("image");
+        addRoot("instance-type");
+        addRoot("iscsi-bond");
+        addRoot("job");
+        addRoot("katello-erratum");
+        addRoot("label");
+        addRoot("mac-pool");
+        addRoot("network");
+        addRoot("network-attachment");
+        addRoot("nic");
+        addRoot("numa-node");
+        addRoot("open-stack-image");
+        addRoot("open-stack-image-provider");
+        addRoot("open-stack-network");
+        addRoot("open-stack-network-provider");
+        addRoot("open-stack-provider");
+        addRoot("open-stack-subnet");
+        addRoot("openstack-volume-authentication-key");
+        addRoot("open-stack-volume-provider");
+        addRoot("open-stack-volume-type");
+        addRoot("operating-system-info");
+        addRoot("permission");
+        addRoot("permit");
+        addRoot("product");
+        addRoot("qos");
+        addRoot("quota");
+        addRoot("quota-cluster-limit");
+        addRoot("quota-storage-limit");
+        addRoot("reported-device");
+        addRoot("role");
+        addRoot("scheduling-policy");
+        addRoot("scheduling-policy-unit");
+        addRoot("session");
+        addRoot("snapshot");
+        addRoot("ssh");
+        addRoot("ssh-public-key");
+        addRoot("statistic");
+        addRoot("step");
+        addRoot("storage-connection");
+        addRoot("storage-connection-extension");
+        addRoot("storage-domain");
+        addRoot("tag");
+        addRoot("template");
+        addRoot("unmanaged-network");
+        addRoot("user");
+        addRoot("vendor");
+        addRoot("version");
+        addRoot("virtual-numa-node");
+        addRoot("vm");
+        addRoot("vm-base");
+        addRoot("vm-pool");
+        addRoot("vnic-profile");
+        addRoot("watchdog");
+        addRoot("weight");
     }
 
     // Exceptions to the rules to calculate complex type names:
     private static final Map<String, String> TYPE_NAME_EXCEPTIONS = new HashMap<>();
 
     static {
-        // No exceptions yet.
+        TYPE_NAME_EXCEPTIONS.put("Device", "BaseDevice");
+        TYPE_NAME_EXCEPTIONS.put("SeLinux", "SELinux");
     }
 
     // Exceptions to the rules to calculate tag names:
     private static final Map<String, String> TAG_NAME_EXCEPTIONS = new HashMap<>();
 
     static {
-        // No exceptions yet.
+        TAG_NAME_EXCEPTIONS.put("gluster_brick", "brick");
+        TAG_NAME_EXCEPTIONS.put("gluster_brick_memory_info", "brick_memoryinfo");
+        TAG_NAME_EXCEPTIONS.put("gluster_bricks", "bricks");
+        TAG_NAME_EXCEPTIONS.put("gluster_memory_pool", "memory_pool");
+        TAG_NAME_EXCEPTIONS.put("gluster_memory_pools", "memory_pools");
+        TAG_NAME_EXCEPTIONS.put("gluster_server_hook", "server_hook");
+        TAG_NAME_EXCEPTIONS.put("gluster_server_hooks", "server_hooks");
+        TAG_NAME_EXCEPTIONS.put("migration_options", "migration");
+        TAG_NAME_EXCEPTIONS.put("numa_node", "host_numa_node");
+        TAG_NAME_EXCEPTIONS.put("numa_nodes", "host_numa_nodes");
+        TAG_NAME_EXCEPTIONS.put("open_stack_image", "openstack_image");
+        TAG_NAME_EXCEPTIONS.put("open_stack_image_provider", "openstack_image_provider");
+        TAG_NAME_EXCEPTIONS.put("open_stack_image_providers", "openstack_image_providers");
+        TAG_NAME_EXCEPTIONS.put("open_stack_images", "openstack_images");
+        TAG_NAME_EXCEPTIONS.put("open_stack_network", "openstack_network");
+        TAG_NAME_EXCEPTIONS.put("open_stack_network_provider", "openstack_network_provider");
+        TAG_NAME_EXCEPTIONS.put("open_stack_network_providers", "openstack_network_providers");
+        TAG_NAME_EXCEPTIONS.put("open_stack_networks", "openstack_networks");
+        TAG_NAME_EXCEPTIONS.put("open_stack_subnet", "openstack_subnet");
+        TAG_NAME_EXCEPTIONS.put("open_stack_subnets", "openstack_subnets");
+        TAG_NAME_EXCEPTIONS.put("open_stack_volume", "openstack_volume");
+        TAG_NAME_EXCEPTIONS.put("open_stack_volume_provider", "openstack_volume_provider");
+        TAG_NAME_EXCEPTIONS.put("open_stack_volume_providers", "openstack_volume_providers");
+        TAG_NAME_EXCEPTIONS.put("open_stack_volumes", "openstack_volumes");
+        TAG_NAME_EXCEPTIONS.put("operating_system", "os");
+        TAG_NAME_EXCEPTIONS.put("operating_system_info", "operating_system");
+        TAG_NAME_EXCEPTIONS.put("operating_system_infos", "operation_systems");
+        TAG_NAME_EXCEPTIONS.put("operating_systems", "oss");
+        TAG_NAME_EXCEPTIONS.put("transparent_huge_pages", "transparent_hugepages");
+        TAG_NAME_EXCEPTIONS.put("virtual_numa_node", "vm_numa_node");
+        TAG_NAME_EXCEPTIONS.put("virtual_numa_nodes", "vm_numa_nodes");
     }
 
     // Exceptions to the rules to calculate struct member type names:
@@ -125,7 +249,28 @@ public class SchemaGenerator {
     }
 
     static {
-        // No exceptions yet.
+        addMemberSchemaTypeNameException("disk", "actual-size", "xs:long");
+        addMemberSchemaTypeNameException("disk", "provisioned-size", "xs:long");
+        addMemberSchemaTypeNameException("gluster-client", "bytes-read", "xs:long");
+        addMemberSchemaTypeNameException("gluster-client", "bytes-written", "xs:long");
+        addMemberSchemaTypeNameException("host", "max-scheduling-memory", "xs:long");
+        addMemberSchemaTypeNameException("host", "memory", "xs:long");
+        addMemberSchemaTypeNameException("host-nic", "speed", "xs:long");
+        addMemberSchemaTypeNameException("logical-unit", "size", "xs:long");
+        addMemberSchemaTypeNameException("memory-policy", "guaranteed", "xs:long");
+        addMemberSchemaTypeNameException("numa-node", "memory", "xs:long");
+        addMemberSchemaTypeNameException("quota-cluster-limit", "memory-limit", "xs:double");
+        addMemberSchemaTypeNameException("quota-cluster-limit", "memory-usage", "xs:double");
+        addMemberSchemaTypeNameException("quota-storage-limit", "limit", "xs:long");
+        addMemberSchemaTypeNameException("quota-storage-limit", "usage", "xs:double");
+        addMemberSchemaTypeNameException("statistic", "kind", "StatisticKind");
+        addMemberSchemaTypeNameException("statistic", "type", "ValueType");
+        addMemberSchemaTypeNameException("statistic", "unit", "StatisticUnit");
+        addMemberSchemaTypeNameException("storage-domain", "available", "xs:long");
+        addMemberSchemaTypeNameException("storage-domain", "used", "xs:long");
+        addMemberSchemaTypeNameException("storage-domain", "committed", "xs:long");
+        addMemberSchemaTypeNameException("ticket", "expiry", "xs:unsignedInt");
+        addMemberSchemaTypeNameException("vm-base", "memory", "xs:long");
     }
 
     // Exceptions to the rules to calculate plurals:
