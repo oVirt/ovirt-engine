@@ -33,13 +33,11 @@ actions:
         type: xs:boolean
         value: true|false
         required: false
-    body:
-      required: false
-      parameterType: Action
-      signatures:
-      - optionalArguments:
-          action.force: xs:boolean
-        description: deletes the virtual machine in the system for the given virtual machine id with optional arguments where the vm can be forced to be removed and option to just detach the disks associated with the vm.
+      force:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
 - name: /vms/{vm:id}|rel=update
   description: update the virtual machine in the system for the given virtual machine id
   request:
@@ -658,7 +656,6 @@ actions:
         context: matrix
         type: xs:boolean
         value: true|false
-        required: false
 - name: /vms/{vm:id}/disks/{disk:id}|rel=update
   description: update the parameters of the disk attached to the virtual machine
   request:

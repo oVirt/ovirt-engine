@@ -108,8 +108,9 @@ public class BackendVmResource extends
     private static final long DEFAULT_TICKET_EXPIRY = 120 * 60; // 2 hours
     private BackendVmsResource parent;
 
-    public static final String NEXT_RUN = "next_run";
     public static final String DETACH_ONLY = "detach_only";
+    public static final String FORCE = "force";
+    public static final String NEXT_RUN = "next_run";
 
     public BackendVmResource(String id, BackendVmsResource parent) {
         super(id, Vm.class, org.ovirt.engine.core.common.businessentities.VM.class, SUB_COLLECTIONS);
@@ -186,14 +187,8 @@ public class BackendVmResource extends
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveVm, new RemoveVmParameters(guid, false));
-    }
-
-    @Override
-    public Response remove(Action action) {
-        get();
-        boolean forceRemove = action != null && action.isSetForce() ? action.isForce() : false;
-        RemoveVmParameters params = new RemoveVmParameters(guid, forceRemove);
+        boolean force = QueryHelper.getBooleanMatrixParameter(uriInfo, FORCE, true, false);
+        RemoveVmParameters params = new RemoveVmParameters(guid, force);
         // If detach only is set we do not remove the VM disks
         boolean detachOnly = QueryHelper.getBooleanMatrixParameter(uriInfo, DETACH_ONLY, true, false);
         if (detachOnly) {

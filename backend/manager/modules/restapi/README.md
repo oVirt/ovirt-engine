@@ -1046,3 +1046,19 @@ This optional action parameter has been replaced with an optional matrix
 parameter:
 
     DELETE /vms/{vm:id}/disks/{disk:id};detach_only=true
+
+### Use `force` matrix parameter to force remove a virtual machine
+
+The operation that removes a virtual machine supports a `force`
+parameter. In order to use it the `DELETE` method used to support an
+optional action parameter:
+
+    DELETE /vms/{vm:id}
+    <action>
+      <force>true</force>
+    </action>
+
+This optional action parameter has been replaced with an optional matrix
+parameter:
+
+    DELETE /vms/{vm:id};force=true

@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -27,7 +26,6 @@ import org.ovirt.engine.api.model.Cdrom;
 import org.ovirt.engine.api.model.Cdroms;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
-import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.File;
@@ -1130,49 +1128,65 @@ public class BackendVmResourceTest
 
     @Test
     public void testRemoveForced() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
         setUpGetPayloadExpectations(0, 1);
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
-        setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
-                "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.TRUE }, true, true);
-        verifyRemove(resource.remove(new Action() {
-            {
-                setForce(true);
-            }
-        }));
+        UriInfo uriInfo = setUpActionExpectations(
+            VdcActionType.RemoveVm,
+            RemoveVmParameters.class,
+            new String[] { "VmId", "Force" },
+            new Object[] { GUIDS[0], Boolean.TRUE },
+            true,
+            true,
+            false
+        );
+        uriInfo = addMatrixParameterExpectations(uriInfo, BackendVmResource.FORCE, Boolean.TRUE.toString());
+        setUriInfo(uriInfo);
+        control.replay();
+        verifyRemove(resource.remove());
     }
 
     @Test
     public void testRemoveDetachOnly() throws Exception {
-        setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendVmResource.DETACH_ONLY, "true"));
         setUpGetEntityExpectations();
         setUpGetPayloadExpectations(0, 1);
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
-        setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
-                "VmId", "RemoveDisks" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
-
-        Action action = new Action();
-        action.setVm(new Vm());
-        action.getVm().setDisks(new Disks());
-        verifyRemove(resource.remove(action));
+        UriInfo uriInfo = setUpActionExpectations(
+            VdcActionType.RemoveVm,
+            RemoveVmParameters.class,
+            new String[] { "VmId", "RemoveDisks" },
+            new Object[] { GUIDS[0], Boolean.FALSE },
+            true,
+            true,
+            false
+        );
+        uriInfo = addMatrixParameterExpectations(uriInfo, BackendVmResource.DETACH_ONLY, Boolean.TRUE.toString());
+        setUriInfo(uriInfo);
+        control.replay();
+        verifyRemove(resource.remove());
     }
 
     @Test
     public void testRemoveForcedIncomplete() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
         setUpGetPayloadExpectations(0, 1);
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
-        setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
-                "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
-        verifyRemove(resource.remove(new Action() {
-            {
-            }
-        }));
+        UriInfo uriInfo = setUpActionExpectations(
+            VdcActionType.RemoveVm,
+            RemoveVmParameters.class,
+            new String[] { "VmId", "Force" },
+            new Object[] { GUIDS[0], Boolean.FALSE },
+            true,
+            true,
+            false
+        );
+        uriInfo = addMatrixParameterExpectations(uriInfo, BackendVmResource.DETACH_ONLY, Boolean.FALSE.toString());
+        setUriInfo(uriInfo);
+        control.replay();
+        verifyRemove(resource.remove());
     }
 
     @Test

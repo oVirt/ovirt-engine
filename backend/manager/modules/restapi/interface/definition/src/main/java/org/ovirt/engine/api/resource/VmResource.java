@@ -48,10 +48,6 @@ public interface VmResource extends AsynchronouslyCreatedResource, MeasurableRes
     @DELETE
     public Response remove();
 
-    @DELETE
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
-    public Response remove(Action action);
-
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     @Actionable
