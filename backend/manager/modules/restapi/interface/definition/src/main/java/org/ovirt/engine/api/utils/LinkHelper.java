@@ -196,8 +196,8 @@ import org.ovirt.engine.api.resource.OperatingSystemsResource;
 import org.ovirt.engine.api.resource.PermissionResource;
 import org.ovirt.engine.api.resource.PermitResource;
 import org.ovirt.engine.api.resource.PermitsResource;
-import org.ovirt.engine.api.resource.QoSsResource;
 import org.ovirt.engine.api.resource.QosResource;
+import org.ovirt.engine.api.resource.QossResource;
 import org.ovirt.engine.api.resource.QuotaClusterLimitResource;
 import org.ovirt.engine.api.resource.QuotaClusterLimitsResource;
 import org.ovirt.engine.api.resource.QuotaResource;
@@ -590,8 +590,8 @@ public class LinkHelper {
         map = new ParentToCollectionMap(BalanceResource.class, BalancesResource.class, SchedulingPolicy.class);
         TYPES.put(Balance.class, map);
 
-        map = new ParentToCollectionMap(QosResource.class, QoSsResource.class, DataCenter.class);
-        map.add(QosResource.class, QoSsResource.class, Network.class);
+        map = new ParentToCollectionMap(QosResource.class, QossResource.class, DataCenter.class);
+        map.add(QosResource.class, QossResource.class, Network.class);
         TYPES.put(Qos.class, map);
 
         map = new ParentToCollectionMap(IscsiBondResource.class, IscsiBondsResource.class, DataCenter.class);

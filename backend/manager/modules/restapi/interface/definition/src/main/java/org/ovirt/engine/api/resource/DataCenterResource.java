@@ -54,7 +54,7 @@ public interface DataCenterResource {
     QuotasResource getQuotasResource();
 
     @Path("qoss")
-    QoSsResource getQossResource();
+    QossResource getQossResource();
 
     @Path("iscsibonds")
     IscsiBondsResource getIscsiBondsResource();

@@ -13,7 +13,7 @@ import org.ovirt.engine.api.resource.ClustersResource;
 import org.ovirt.engine.api.resource.DataCenterResource;
 import org.ovirt.engine.api.resource.IscsiBondsResource;
 import org.ovirt.engine.api.resource.NetworksResource;
-import org.ovirt.engine.api.resource.QoSsResource;
+import org.ovirt.engine.api.resource.QossResource;
 import org.ovirt.engine.api.resource.QuotasResource;
 import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -151,7 +151,7 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
     }
 
     @Override
-    public QoSsResource getQossResource() {
+    public QossResource getQossResource() {
         return inject(new BackendQossResource(id));
     }
 

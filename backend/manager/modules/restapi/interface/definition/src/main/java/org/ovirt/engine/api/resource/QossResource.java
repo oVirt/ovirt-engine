@@ -12,7 +12,7 @@ import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.model.Qoss;
 
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
-public interface QoSsResource {
+public interface QossResource {
 
     @GET
     public Qoss list();

@@ -8,8 +8,8 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.model.QosType;
 import org.ovirt.engine.api.model.Qoss;
-import org.ovirt.engine.api.resource.QoSsResource;
 import org.ovirt.engine.api.resource.QosResource;
+import org.ovirt.engine.api.resource.QossResource;
 import org.ovirt.engine.api.restapi.types.QosTypeMapper;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.queries.QosQueryParameterBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendQossResource extends AbstractBackendCollectionResource<Qos, QosBase> implements QoSsResource {
+public class BackendQossResource extends AbstractBackendCollectionResource<Qos, QosBase> implements QossResource {
 
     protected Guid dataCenterId;
 
