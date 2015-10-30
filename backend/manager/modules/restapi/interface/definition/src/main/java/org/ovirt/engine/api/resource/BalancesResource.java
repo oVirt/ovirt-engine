@@ -6,6 +6,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Balance;
 import org.ovirt.engine.api.model.Balances;
@@ -18,7 +19,7 @@ public interface BalancesResource {
 
     @POST
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
-    Balance add(Balance balance);
+    Response add(Balance balance);
 
     @Path("{id}")
     BalanceResource getBalanceResource(@PathParam("id") String id);

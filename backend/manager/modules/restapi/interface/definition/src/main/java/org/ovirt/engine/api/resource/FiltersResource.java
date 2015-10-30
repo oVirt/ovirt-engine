@@ -6,6 +6,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Filter;
 import org.ovirt.engine.api.model.Filters;
@@ -18,7 +19,7 @@ public interface FiltersResource {
 
     @POST
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
-    Filter add(Filter filter);
+    Response add(Filter filter);
 
     @Path("{id}")
     FilterResource getFilterResource(@PathParam("id") String id);

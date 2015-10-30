@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Balance;
 import org.ovirt.engine.api.model.Balances;
 import org.ovirt.engine.api.resource.BalanceResource;
@@ -36,7 +38,7 @@ public class BackendBalancesResource
     }
 
     @Override
-    public Balance add(Balance incoming) {
+    public Response add(Balance incoming) {
         return performAdd(incoming);
     }
 

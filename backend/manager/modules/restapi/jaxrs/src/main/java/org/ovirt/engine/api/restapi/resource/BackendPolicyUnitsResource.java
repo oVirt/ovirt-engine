@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.BaseResources;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
@@ -26,13 +28,14 @@ public abstract class BackendPolicyUnitsResource<M extends BaseResources, N exte
     protected abstract void updateIncomingId(N incoming);
 
     // need to revisit: update should be in a separate hierarchy
-    protected N performAdd(N incoming) {
+    protected Response performAdd(N incoming) {
         ClusterPolicy entity = getClusterPolicy();
         performAction(VdcActionType.EditClusterPolicy, getAddParametersProvider().getParameters(incoming, entity));
         entity = getClusterPolicy();
         updateIncomingId(incoming);
         N model = map(entity, incoming);
-        return addLinks(doPopulate(model, entity));
+        model = addLinks(doPopulate(model, entity));
+        return Response.ok(model).build();
     }
 
     protected ClusterPolicy getClusterPolicy() {

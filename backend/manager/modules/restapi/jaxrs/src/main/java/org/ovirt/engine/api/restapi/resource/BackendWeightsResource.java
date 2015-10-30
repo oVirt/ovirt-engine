@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Weight;
 import org.ovirt.engine.api.model.Weights;
 import org.ovirt.engine.api.resource.WeightResource;
@@ -38,7 +40,7 @@ public class BackendWeightsResource extends BackendPolicyUnitsResource<Weights, 
     }
 
     @Override
-    public Weight add(Weight incoming) {
+    public Response add(Weight incoming) {
         return performAdd(incoming);
     }
 

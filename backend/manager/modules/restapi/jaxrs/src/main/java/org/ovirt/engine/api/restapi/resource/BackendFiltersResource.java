@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Filter;
 import org.ovirt.engine.api.model.Filters;
 import org.ovirt.engine.api.resource.FilterResource;
@@ -38,7 +40,7 @@ public class BackendFiltersResource
     }
 
     @Override
-    public Filter add(Filter incoming) {
+    public Response add(Filter incoming) {
         return performAdd(incoming);
     }
 
