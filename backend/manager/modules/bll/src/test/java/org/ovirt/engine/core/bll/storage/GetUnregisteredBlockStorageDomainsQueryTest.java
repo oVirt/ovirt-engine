@@ -92,7 +92,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
         doReturn(createGetVGInfoReturnValue(luns)).when(getQuery()).
                 executeGetVGInfo(any(GetVGInfoVDSCommandParameters.class));
 
-        doReturn(createGetStorageDomainInfoReturnValue(storageDomainId)).when(getQuery()).
+        doReturn(createGetStorageDomainInfoReturnValue()).when(getQuery()).
                 executeHSMGetStorageDomainInfo(any(HSMGetStorageDomainInfoVDSCommandParameters.class));
 
         // Execute query
@@ -128,7 +128,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
         doReturn(createGetVGInfoReturnValue(luns)).when(getQuery()).
                 executeGetVGInfo(any(GetVGInfoVDSCommandParameters.class));
 
-        doReturn(createGetStorageDomainInfoReturnValue(storageDomainId)).when(getQuery()).
+        doReturn(createGetStorageDomainInfoReturnValue()).when(getQuery()).
                 executeHSMGetStorageDomainInfo(any(HSMGetStorageDomainInfoVDSCommandParameters.class));
 
         // Execute query
@@ -188,7 +188,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
         doReturn(createGetVGInfoReturnValue(luns)).when(getQuery()).
                 executeGetVGInfo(any(GetVGInfoVDSCommandParameters.class));
 
-        doReturn(createGetStorageDomainInfoReturnValue(storageDomainId)).when(getQuery()).
+        doReturn(createGetStorageDomainInfoReturnValue()).when(getQuery()).
                 executeHSMGetStorageDomainInfo(any(HSMGetStorageDomainInfoVDSCommandParameters.class));
 
         // Execute query
@@ -285,7 +285,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
         return returnValue;
     }
 
-    private VDSReturnValue createGetStorageDomainInfoReturnValue(Guid storageDomainId) {
+    private VDSReturnValue createGetStorageDomainInfoReturnValue() {
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
 
