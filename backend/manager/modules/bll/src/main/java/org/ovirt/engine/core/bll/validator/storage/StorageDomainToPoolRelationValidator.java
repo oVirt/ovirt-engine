@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -17,8 +16,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 /**
  * CanDoAction validation methods for attaching a storage domain to a DC (pool).
@@ -96,20 +93,13 @@ public class StorageDomainToPoolRelationValidator {
 
         final StorageDomainType type = storageDomainStatic.getStorageDomainType();
 
-        // Get the number of storage domains of the given type currently attached
-        // to the pool:
-        int count = LinqUtils.filter(
-                getStorageDomainDao().getAllForStoragePool(storagePool.getId()),
-                new Predicate<StorageDomain>() {
-                    @Override
-                    public boolean eval(StorageDomain a) {
-                        return a.getStorageDomainType() == type;
-                    }
-                }
-        ).size();
+        // Check if such a domain type is already present in the pool
+        boolean hasSuchType =
+                getStorageDomainDao().getAllForStoragePool(storagePool.getId()).stream().
+                        anyMatch(a -> a.getStorageDomainType() == type);
 
-        // If the count is zero we are okay, we can add a new one:
-        if (count == 0) {
+        // If it's the first domain of that type, we are okay, we can add a new one:
+        if (!hasSuchType) {
             return ValidationResult.VALID;
         }
 
