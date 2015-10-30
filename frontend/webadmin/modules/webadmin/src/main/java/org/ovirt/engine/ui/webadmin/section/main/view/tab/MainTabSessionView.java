@@ -59,6 +59,15 @@ public class MainTabSessionView extends AbstractMainTabWithDetailsTableView<User
         userIdColumn.makeSortable(SessionConditionFieldAutoCompleter.USER_ID);
         getTable().addColumn(userIdColumn, constants.userId(), "200px"); //$NON-NLS-1$
 
+        AbstractTextColumn<UserSession> sourceIpColumn =
+                new AbstractTextColumn<UserSession>() {
+                    @Override
+                    public String getValue(UserSession session) {
+                        return session.getSourceIp();
+                    }
+                };
+        getTable().addColumn(sourceIpColumn, constants.sourceIp(), "200px"); //$NON-NLS-1$
+
         getTable().addActionButton(new WebAdminButtonDefinition<UserSession>(constants.terminateSession()) {
             @Override
             protected UICommand resolveCommand() {

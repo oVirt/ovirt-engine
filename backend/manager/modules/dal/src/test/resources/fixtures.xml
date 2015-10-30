@@ -5287,17 +5287,20 @@
         <column>engine_session_id</column>
         <column>user_id</column>
         <column>user_name</column>
+        <column>source_ip</column>
         <column>group_ids</column>
         <row>
             <value>9ee57fd0-6f67-11e4-9e67-3c970e14c386</value>
             <value>9bf7c640-b620-456f-a550-0348f366544a</value>
             <value>userportal2</value>
+            <value>10.18.16.144</value>
             <value>35487601-05ef-43b0-932d-8663ea4c9495,fa63c7e0-d9d4-492f-9e4e-6ed8c4719364</value>
         </row>
         <row>
             <value>c6f975b2-6f67-11e4-8455-3c970e14c386</value>
             <value>9bf7c640-b620-456f-a550-0348f366544b</value>
             <value>userportal3</value>
+            <value>fe80::56ee:75ff:fe5c:6cc7</value>
             <value>26df4393-659b-4b8a-b0f6-3ee94d32e82f,08963ba9-b1c8-498d-989f-75cf8142eab7</value>
         </row>
     </table>

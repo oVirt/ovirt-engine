@@ -95,6 +95,7 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
                 setSucceeded(false);
             } else {
                 String engineSessionId = sessionDataContainer.generateEngineSessionId();
+                sessionDataContainer.setSourceIp(engineSessionId, getParameters().getSourceIp());
                 sessionDataContainer.setUser(engineSessionId, user);
                 sessionDataContainer.refresh(engineSessionId);
                 sessionDataContainer.setProfile(engineSessionId, profile);

@@ -84,6 +84,7 @@ public class SSOPostLoginServlet extends HttpServlet {
                                 username,
                                 (String) payload.get("principal_id"),
                                 (String) payload.get("email"),
+                                request.getRemoteAddr(),
                                 (List<Map>) payload.get("group_ids"),
                                 loginAsAdmin));
                 if (!queryRetVal.getSucceeded() ) {

@@ -8,6 +8,7 @@ CREATE OR REPLACE FUNCTION InsertEngineSession (
     v_engine_session_id TEXT,
     v_user_id UUID,
     v_user_name VARCHAR(255),
+    v_source_ip VARCHAR(50),
     v_group_ids VARCHAR(2048),
     v_role_ids VARCHAR(2048)
     )
@@ -17,6 +18,7 @@ BEGIN
         engine_session_id,
         user_id,
         user_name,
+        source_ip,
         group_ids,
         role_ids
         )
@@ -24,6 +26,7 @@ BEGIN
         v_engine_session_id,
         v_user_id,
         v_user_name,
+        v_source_ip,
         v_group_ids,
         v_role_ids
         );

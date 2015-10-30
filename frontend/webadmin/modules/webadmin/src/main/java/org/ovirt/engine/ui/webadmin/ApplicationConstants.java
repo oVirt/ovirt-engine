@@ -2131,6 +2131,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Session DB Id")
     String sessionDbId();
 
+    @DefaultStringValue("Source IP")
+    String sourceIp();
+
     @DefaultStringValue("Group")
     String groupUser();
 

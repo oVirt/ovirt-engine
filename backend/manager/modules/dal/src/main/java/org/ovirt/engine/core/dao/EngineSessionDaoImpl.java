@@ -34,6 +34,7 @@ public class EngineSessionDaoImpl extends BaseDao implements EngineSessionDao {
             session.setEngineSessionId(rs.getString("engine_session_id"));
             session.setUserId(getGuidDefaultEmpty(rs, "user_id"));
             session.setUserName(rs.getString("user_name"));
+            session.setSourceIp(rs.getString("source_ip"));
             session.setGroupIds(convertToGuidList(rs.getString("group_ids"), ','));
             session.setRoleIds(convertToGuidList(rs.getString("role_ids"), ','));
             return session;
@@ -58,6 +59,7 @@ public class EngineSessionDaoImpl extends BaseDao implements EngineSessionDao {
             addValue("engine_session_id", session.getEngineSessionId());
             addValue("user_id", session.getUserId());
             addValue("user_name", session.getUserName());
+            addValue("source_ip", session.getSourceIp());
             addValue("group_ids", StringUtils.join(session.getGroupIds(), ","));
             addValue("role_ids", StringUtils.join(session.getRoleIds(), ","));
         }

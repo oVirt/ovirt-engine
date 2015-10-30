@@ -45,6 +45,7 @@ public class SessionDataContainer {
     private ConcurrentMap<String, SessionInfo> sessionInfoMap = new ConcurrentHashMap<>();
 
     private static final String USER_PARAMETER_NAME = "user";
+    private static final String SOURCE_IP = "source_ip";
     private static final String PASSWORD_PARAMETER_NAME = "password";
     private static final String PROFILE_PARAMETER_NAME = "profile";
     private static final String HARD_LIMIT_PARAMETER_NAME = "hard_limit";
@@ -122,7 +123,7 @@ public class SessionDataContainer {
         SessionInfo sessionInfo = getSessionInfo(sessionId);
         if (sessionInfo != null) {
             sessionInfo.contentOfSession.put(ENGINE_SESSION_SEQ_ID,
-                    engineSessionDao.save(new EngineSession(getUser(sessionId, false), sessionId)));
+                    engineSessionDao.save(new EngineSession(getUser(sessionId, false), sessionId, getSourceIp(sessionId))));
         }
     }
 
@@ -321,6 +322,14 @@ public class SessionDataContainer {
 
     public String getSsoAccessToken(String engineSessionId) {
         return (String) getData(engineSessionId, SSO_ACCESS_TOKEN_PARAMETER_NAME, false);
+    }
+
+    public void setSourceIp(String engineSessionId, String sourceIp) {
+        setData(engineSessionId, SOURCE_IP, sourceIp);
+    }
+
+    public String getSourceIp(String engineSessionId) {
+        return (String) getData(engineSessionId, SOURCE_IP, false);
     }
 
     private void refresh(SessionInfo sessionInfo) {

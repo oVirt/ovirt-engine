@@ -42,6 +42,7 @@ public class SSOUtils {
                             username,
                             (String) payload.get("principal_id"),
                             (String) payload.get("email"),
+                            req == null ? "" : req.getRemoteAddr(),
                             (List<Map>) payload.get("group_ids"),
                             loginAsAdmin));
             if (!queryRetVal.getSucceeded()) {

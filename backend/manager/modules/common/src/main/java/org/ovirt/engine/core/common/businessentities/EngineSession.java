@@ -19,6 +19,8 @@ public class EngineSession implements IVdcQueryable {
 
     private Guid userId;
 
+    private String sourceIp;
+
     @Size(min = 1, max = BusinessEntitiesDefinitions.USER_LOGIN_NAME_SIZE)
     private String userName;
 
@@ -28,11 +30,12 @@ public class EngineSession implements IVdcQueryable {
 
     public EngineSession() {}
 
-    public EngineSession(DbUser dbUser, String engineSessionId) {
+    public EngineSession(DbUser dbUser, String engineSessionId, String sourceIp) {
         setUserId(dbUser.getId());
         setUserName(dbUser.getLoginName());
         setGroupIds(dbUser.getGroupIds());
         setEngineSessionId(engineSessionId);
+        setSourceIp(sourceIp);
     }
 
     @Override
@@ -126,5 +129,13 @@ public class EngineSession implements IVdcQueryable {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getSourceIp() {
+        return sourceIp;
+    }
+
+    public void setSourceIp(String sourceIp) {
+        this.sourceIp = sourceIp;
     }
 }
