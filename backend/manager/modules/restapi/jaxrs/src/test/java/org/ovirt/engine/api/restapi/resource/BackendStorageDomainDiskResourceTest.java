@@ -91,7 +91,7 @@ public class BackendStorageDomainDiskResourceTest
         action.setStorageDomain(new StorageDomain());
         action.getStorageDomain().setId(GUIDS[3].toString());
 
-        verifyActionResponse(resource.doExport(action));
+        verifyActionResponse(resource.export(action));
     }
 
     private void verifyActionResponse(Response r) throws Exception {
@@ -114,10 +114,10 @@ public class BackendStorageDomainDiskResourceTest
         setUriInfo(setUpBasicUriExpectations());
         try {
             control.replay();
-            resource.doExport(new Action());
+            resource.export(new Action());
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Action", "doExport", "storageDomain.id|name");
+            verifyIncompleteException(wae, "Action", "export", "storageDomain.id|name");
         }
     }
 

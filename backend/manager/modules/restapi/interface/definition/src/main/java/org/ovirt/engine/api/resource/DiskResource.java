@@ -43,5 +43,5 @@ public interface DiskResource extends AsynchronouslyCreatedResource, MeasurableR
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     @Actionable
     @Path("export")
-    Response doExport(Action action);
+    Response export(Action action);
 }

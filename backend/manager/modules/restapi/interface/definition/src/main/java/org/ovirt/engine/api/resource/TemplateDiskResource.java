@@ -56,5 +56,5 @@ public interface TemplateDiskResource extends AsynchronouslyCreatedResource {
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     @Actionable
     @Path("export")
-    Response doExport(Action action);
+    Response export(Action action);
 }

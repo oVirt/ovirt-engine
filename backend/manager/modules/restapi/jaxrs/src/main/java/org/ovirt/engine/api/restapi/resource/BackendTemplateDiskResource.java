@@ -74,7 +74,7 @@ public class BackendTemplateDiskResource
     }
 
     @Override
-    public Response doExport(Action action) {
+    public Response export(Action action) {
         validateParameters(action, "storageDomain.id|name");
         return doAction(VdcActionType.ExportRepoImage,
                 new ExportRepoImageParameters(guid, getStorageDomainId(action)), action);
