@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
+import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Snapshot;
@@ -53,8 +54,10 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmDiskResource
-    extends AbstractBackendActionableResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk>
-    implements VmDiskResource {
+        extends AbstractBackendActionableResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk>
+        implements VmDiskResource {
+
+    public static final String DETACH_ONLY = "detach_only";
 
     private Guid vmId;
 
@@ -195,13 +198,8 @@ public class BackendVmDiskResource
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveDisk, new RemoveDiskParameters(guid));
-    }
-
-    @Override
-    public Response remove(Action action) {
-        get();
-        if (action.isSetDetach() && action.isDetach()) {
+        boolean detach = QueryHelper.getBooleanMatrixParameter(uriInfo, DETACH_ONLY, true, false);
+        if (detach) {
             return performAction(VdcActionType.DetachDiskFromVm, new AttachDetachVmDiskParameters(vmId, guid));
         }
         else {

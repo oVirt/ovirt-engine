@@ -1030,3 +1030,19 @@ matrix parameters `force` and `storage_domain`:
     DELETE /templates/{template:id}/disks/{disk:id};force=true
 
     DELETE /templates/{template:id}/disks/{disk:id};storage_domain=123
+
+### Use `detach_only` matrix parameter to detach VM disk
+
+The operation that removes a virtual machine supports a `detach`
+parameter. In order to use it the `DELETE` method used to support an
+optional action parameter:
+
+    DELETE /vms/{vm:id}/disks/{disk:id}
+    <action>
+      <detach>true</detach>
+    </action>
+
+This optional action parameter has been replaced with an optional matrix
+parameter:
+
+    DELETE /vms/{vm:id}/disks/{disk:id};detach_only=true

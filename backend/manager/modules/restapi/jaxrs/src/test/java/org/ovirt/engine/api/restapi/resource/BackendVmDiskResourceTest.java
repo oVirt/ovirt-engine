@@ -285,19 +285,19 @@ public class BackendVmDiskResourceTest
     public void testDetach() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1);
-        setUriInfo(
-            setUpActionExpectations(
-                VdcActionType.DetachDiskFromVm,
-                AttachDetachVmDiskParameters.class,
-                new String[] { "VmId", "EntityInfo" },
-                new Object[] { VM_ID, new EntityInfo(VdcObjectType.Disk, DISK_ID) },
-                true,
-                true
-            )
+        UriInfo uriInfo = setUpActionExpectations(
+            VdcActionType.DetachDiskFromVm,
+            AttachDetachVmDiskParameters.class,
+            new String[] { "VmId", "EntityInfo" },
+            new Object[] { VM_ID, new EntityInfo(VdcObjectType.Disk, DISK_ID) },
+            true,
+            true,
+            false
         );
-        Action action = new Action();
-        action.setDetach(true);
-        verifyRemove(resource.remove(action));
+        uriInfo = addMatrixParameterExpectations(uriInfo, BackendVmDiskResource.DETACH_ONLY, Boolean.TRUE.toString());
+        setUriInfo(uriInfo);
+        control.replay();
+        verifyRemove(resource.remove());
     }
 
     @Test

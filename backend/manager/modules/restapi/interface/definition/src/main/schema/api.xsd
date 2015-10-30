@@ -185,8 +185,6 @@
       <xs:element name="fix_layout" type="xs:boolean" minOccurs="0"/>
       <!-- In gluster brick replace action, the new brick that will replace current one -->
       <xs:element name="brick" type="GlusterBrick" minOccurs="0"/>
-      <!-- detach Disk from VM (as opposed to deleting it) -->
-      <xs:element name="detach" type="xs:boolean" minOccurs="0"/>
       <!-- import Vm/Template as new entity -->
       <xs:element name="clone" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
       <!-- indicates whether to restore snapshot's memory on preview/restore snapshot -->

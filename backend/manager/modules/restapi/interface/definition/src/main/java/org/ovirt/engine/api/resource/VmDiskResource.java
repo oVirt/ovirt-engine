@@ -45,10 +45,6 @@ public interface VmDiskResource extends AsynchronouslyCreatedResource, Measurabl
     @DELETE
     Response remove();
 
-    @DELETE
-    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
-    Response remove(Action action);
-
     @POST
     @Actionable
     @Path("activate")

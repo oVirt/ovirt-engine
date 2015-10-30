@@ -653,12 +653,12 @@ actions:
 - name: /vms/{vm:id}/disks/{disk:id}|rel=delete
   description: delete or detach a disk for a given virtual machine
   request:
-    body:
-      required: false
-      parameterType: Action
-      signatures:
-      - mandatoryArguments: {action.detach: 'xs:boolean'}
-        description: delete or detach a disk for a given virtual machine based on detach flag provided
+    urlparams:
+      detach_only:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
 - name: /vms/{vm:id}/disks/{disk:id}|rel=update
   description: update the parameters of the disk attached to the virtual machine
   request:
