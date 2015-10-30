@@ -204,6 +204,7 @@ import org.ovirt.engine.api.resource.QuotaResource;
 import org.ovirt.engine.api.resource.QuotaStorageLimitResource;
 import org.ovirt.engine.api.resource.QuotaStorageLimitsResource;
 import org.ovirt.engine.api.resource.QuotasResource;
+import org.ovirt.engine.api.resource.RoleResource;
 import org.ovirt.engine.api.resource.RolesResource;
 import org.ovirt.engine.api.resource.SchedulingPoliciesResource;
 import org.ovirt.engine.api.resource.SchedulingPolicyResource;
@@ -241,7 +242,6 @@ import org.ovirt.engine.api.resource.TemplateWatchdogsResource;
 import org.ovirt.engine.api.resource.TemplatesResource;
 import org.ovirt.engine.api.resource.UnmanagedNetworkResource;
 import org.ovirt.engine.api.resource.UnmanagedNetworksResource;
-import org.ovirt.engine.api.resource.UpdatableRoleResource;
 import org.ovirt.engine.api.resource.VmApplicationResource;
 import org.ovirt.engine.api.resource.VmApplicationsResource;
 import org.ovirt.engine.api.resource.VmCdromResource;
@@ -451,8 +451,8 @@ public class LinkHelper {
         map = new ParentToCollectionMap(PermitResource.class, PermitsResource.class, Role.class);
         TYPES.put(Permit.class, map);
 
-        map = new ParentToCollectionMap(UpdatableRoleResource.class, RolesResource.class);
-        map.add(UpdatableRoleResource.class, AssignedRolesResource.class, User.class);
+        map = new ParentToCollectionMap(RoleResource.class, RolesResource.class);
+        map.add(RoleResource.class, AssignedRolesResource.class, User.class);
         TYPES.put(Role.class, map);
 
         map = new ParentToCollectionMap(SnapshotResource.class, SnapshotsResource.class, Vm.class);

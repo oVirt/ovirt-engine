@@ -7,7 +7,7 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.PermitsResource;
-import org.ovirt.engine.api.resource.UpdatableRoleResource;
+import org.ovirt.engine.api.resource.RoleResource;
 import org.ovirt.engine.core.common.action.RolesOperationsParameters;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -18,7 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendRoleResource
     extends AbstractBackendSubResource<Role, org.ovirt.engine.core.common.businessentities.Role>
-    implements UpdatableRoleResource{
+    implements RoleResource {
 
     private Guid userId;
 

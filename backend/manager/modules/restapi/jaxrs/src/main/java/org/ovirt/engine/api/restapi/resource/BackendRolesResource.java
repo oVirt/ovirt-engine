@@ -2,14 +2,13 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.Roles;
+import org.ovirt.engine.api.resource.RoleResource;
 import org.ovirt.engine.api.resource.RolesResource;
-import org.ovirt.engine.api.resource.UpdatableRoleResource;
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.core.common.action.RoleWithActionGroupsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -45,7 +44,7 @@ public class BackendRolesResource
     }
 
     @Override
-    public UpdatableRoleResource getRoleResource(String id) {
+    public RoleResource getRoleResource(String id) {
         return inject(new BackendRoleResource(id));
     }
 
