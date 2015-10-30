@@ -3013,14 +3013,17 @@ actions:
 - name: /templates/{template:id}/disks/{disk:id}|rel=delete
   description: delete the specified disk attached to the template
   request:
-    body:
-      required: false
-      parameterType: Action
-      signatures:
-      - mandatoryArguments: {}
-        optionalArguments:
-          action.storage_domain.id: xs:string
-          action.force: xs:boolean
+    urlparams:
+      force:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
+      storage_domain:
+        context: matrix
+        type: xs:string
+        value: the identifier of the storage domain
+        required: false
 - name: /templates/{template:id}/disks/{disk:id}/copy|rel=copy
   description: copy the specified disk attached to the template to a specific storage domain
   request:

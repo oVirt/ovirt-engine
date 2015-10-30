@@ -1011,3 +1011,22 @@ This optional action parameter has been replaced with an optional matrix
 parameter:
 
     DELETE /storageconnections/{storageconnection:id};host=myhost
+
+### Use `force` and `storage_domain` matrix parameters to remove template disks
+
+The operation that removes a template disk supports the `force` and
+`storage_domain` parameters. In order to use it them the `DELETE` method
+used to support an optional action parameter:
+
+    DELETE /templates/{template:id}/disks/{disk:id}
+    <action>
+      <force>...</force>
+      <storage_domain id="..."/>
+    </action>
+
+This optional action parameter has been replaced with the optional
+matrix parameters `force` and `storage_domain`:
+
+    DELETE /templates/{template:id}/disks/{disk:id};force=true
+
+    DELETE /templates/{template:id}/disks/{disk:id};storage_domain=123

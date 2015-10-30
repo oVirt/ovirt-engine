@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Template;
@@ -21,6 +22,9 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendTemplateDiskResource
         extends AbstractBackendActionableResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk>
         implements TemplateDiskResource {
+
+    public static final String FORCE = "force";
+    public static final String STORAGE_DOMAIN = "storage_domain";
 
     private Guid templateId;
 
@@ -81,21 +85,17 @@ public class BackendTemplateDiskResource
     }
 
     @Override
-    public Response remove(Action action) {
+    public Response remove() {
         get(); // will throw 404 if entity not found.
         RemoveDiskParameters params = new RemoveDiskParameters(asGuid(id));
-        if (action.isSetForce()) {
-            params.setForceDelete(action.isForce());
+        boolean force = QueryHelper.getBooleanMatrixParameter(uriInfo, FORCE, true, false);
+        if (force) {
+            params.setForceDelete(force);
         }
-        if (action.isSetStorageDomain() && action.getStorageDomain().isSetId()) {
-            params.setStorageDomainId(asGuid(action.getStorageDomain().getId()));
+        String storageDomain = QueryHelper.getMatrixConstraint(uriInfo, STORAGE_DOMAIN);
+        if (storageDomain != null) {
+            params.setStorageDomainId(asGuid(storageDomain));
         }
         return performAction(VdcActionType.RemoveDisk, params);
-    }
-
-    @Override
-    public Response remove() {
-        get();
-        return performAction(VdcActionType.RemoveDisk, new RemoveDiskParameters(guid));
     }
 }

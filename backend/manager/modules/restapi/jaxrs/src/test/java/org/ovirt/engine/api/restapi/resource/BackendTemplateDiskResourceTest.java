@@ -175,30 +175,37 @@ public class BackendTemplateDiskResourceTest
     @Test
     public void testRemoveByStorageDomain() throws Exception {
         setUpGetEntityExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
-                RemoveDiskParameters.class,
-                new String[] { "DiskId" },
-                new Object[] { GUIDS[1] },
-                true,
-                true));
-        Action action = new Action();
-        action.setStorageDomain(new StorageDomain());
-        action.getStorageDomain().setId(GUIDS[0].toString());
-        verifyRemove(resource.remove(action));
+        UriInfo uriInfo = setUpActionExpectations(
+            VdcActionType.RemoveDisk,
+            RemoveDiskParameters.class,
+            new String[] { "DiskId" },
+            new Object[] { GUIDS[1] },
+            true,
+            true,
+            false
+        );
+        uriInfo = addMatrixParameterExpectations(uriInfo, BackendTemplateDiskResource.STORAGE_DOMAIN, GUIDS[0].toString());
+        setUriInfo(uriInfo);
+        control.replay();
+        verifyRemove(resource.remove());
     }
 
     @Test
     public void testRemoveForced() throws Exception {
         setUpGetEntityExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
-                RemoveDiskParameters.class,
-                new String[] { "DiskId" },
-                new Object[] { GUIDS[1] },
-                true,
-                true));
-        Action action = new Action();
-        action.setForce(true);
-        verifyRemove(resource.remove(action));
+        UriInfo uriInfo = setUpActionExpectations(
+            VdcActionType.RemoveDisk,
+            RemoveDiskParameters.class,
+            new String[] { "DiskId" },
+            new Object[] { GUIDS[1] },
+            true,
+            true,
+            false
+        );
+        uriInfo = addMatrixParameterExpectations(uriInfo, BackendTemplateDiskResource.FORCE, Boolean.TRUE.toString());
+        setUriInfo(uriInfo);
+        control.replay();
+        verifyRemove(resource.remove());
     }
 
     private void setUpGetEntityExpectations(int times) {
