@@ -1,8 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.BaseResources;
-import org.ovirt.engine.api.resource.QuotaLimitsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -12,7 +13,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class BackendQuotaLimitsResource<M extends BaseResources, N extends BaseResource> extends AbstractBackendCollectionResource<N, Quota> implements QuotaLimitsResource<M, N> {
+public abstract class BackendQuotaLimitsResource<M extends BaseResources, N extends BaseResource>
+        extends AbstractBackendCollectionResource<N, Quota> {
 
     protected final Guid quotaId;
 
@@ -33,14 +35,14 @@ public abstract class BackendQuotaLimitsResource<M extends BaseResources, N exte
         };
     }
 
-    @Override
-    public N add(N incoming) {
+    public Response add(N incoming) {
         Quota entity = getQuota();
         performAction(VdcActionType.UpdateQuota, getAddParametersProvider().getParameters(incoming, entity));
         entity = getQuota();
         updateIncomingId(incoming, entity);
         N model = map(entity, incoming);
-        return addLinks(doPopulate(model, entity));
+        model = addLinks(doPopulate(model, entity));
+        return Response.ok(model).build();
     }
 
     protected Quota getQuota() {

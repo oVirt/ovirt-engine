@@ -8,7 +8,9 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendQuotaClusterLimitsResource extends BackendQuotaLimitsResource<QuotaClusterLimits, QuotaClusterLimit> implements QuotaClusterLimitsResource {
+public class BackendQuotaClusterLimitsResource
+        extends BackendQuotaLimitsResource<QuotaClusterLimits, QuotaClusterLimit>
+        implements QuotaClusterLimitsResource {
 
     protected BackendQuotaClusterLimitsResource(Guid quotaId) {
         super(quotaId, QuotaClusterLimit.class);

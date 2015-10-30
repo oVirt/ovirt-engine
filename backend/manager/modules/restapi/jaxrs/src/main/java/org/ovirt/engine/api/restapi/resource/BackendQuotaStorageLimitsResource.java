@@ -8,7 +8,9 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendQuotaStorageLimitsResource extends BackendQuotaLimitsResource<QuotaStorageLimits, QuotaStorageLimit> implements QuotaStorageLimitsResource {
+public class BackendQuotaStorageLimitsResource
+        extends BackendQuotaLimitsResource<QuotaStorageLimits, QuotaStorageLimit>
+        implements QuotaStorageLimitsResource {
 
     protected BackendQuotaStorageLimitsResource(Guid quotaId) {
         super(quotaId, QuotaStorageLimit.class);
