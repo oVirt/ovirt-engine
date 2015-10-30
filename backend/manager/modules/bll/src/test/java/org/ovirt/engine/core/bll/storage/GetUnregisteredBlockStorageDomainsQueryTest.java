@@ -103,11 +103,11 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
                 getQuery().getQueryReturnValue().getReturnValue();
 
         List<StorageDomain> storageDomains = returnValue.getFirst();
-        assertEquals(storageDomains.size(), 1);
+        assertEquals(1, storageDomains.size());
         assertEquals(storageDomains.get(0).getId(), storageDomainId);
 
         List<StorageServerConnections> connections = returnValue.getSecond();
-        assertEquals(connections.size(), 2);
+        assertEquals(2, connections.size());
     }
 
     @Test
@@ -141,7 +141,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
                 getQuery().getQueryReturnValue().getReturnValue();
 
         List<StorageDomain> storageDomains = returnValue.getFirst();
-        assertEquals(storageDomains.size(), 0);
+        assertEquals(0, storageDomains.size());
     }
 
     @Test
@@ -170,10 +170,10 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
                 getQuery().getQueryReturnValue().getReturnValue();
 
         List<StorageDomain> storageDomains = returnValue.getFirst();
-        assertEquals(storageDomains.size(), 0);
+        assertEquals(0, storageDomains.size());
 
         List<StorageServerConnections> connections = returnValue.getSecond();
-        assertEquals(connections.size(), 2);
+        assertEquals(2, connections.size());
     }
 
     @Test
@@ -201,7 +201,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
                 getQuery().getQueryReturnValue().getReturnValue();
 
         List<StorageDomain> storageDomains = returnValue.getFirst();
-        assertEquals(storageDomains.size(), 1);
+        assertEquals(1, storageDomains.size());
         assertEquals(storageDomains.get(0).getId(), storageDomainId);
     }
 
@@ -230,7 +230,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
                 getQuery().getQueryReturnValue().getReturnValue();
 
         List<StorageDomain> storageDomains = returnValue.getFirst();
-        assertEquals(storageDomains.size(), 0);
+        assertEquals(0, storageDomains.size());
     }
 
     private List<StorageServerConnections> getConnections() {
