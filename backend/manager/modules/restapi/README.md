@@ -1062,3 +1062,27 @@ This optional action parameter has been replaced with an optional matrix
 parameter:
 
     DELETE /vms/{vm:id};force=true
+
+### Use `POST` instead of `DELETE` to remove multiple bricks
+
+The operation that removes multiple Gluster bricks was implemented using
+the `DELETE` method and passing the list of bricks as the body of the
+request:
+
+    DELETE /clusters/{cluster:id}/glustervolumes/{volume:id}/bricks
+    <bricks>
+      <bricks id="..."/>
+      <bricks id="..."/>
+      ...
+    </bricks>
+
+This is problematic because the `DELETE` method shouldn't have a body,
+so it has been replaced with a new `remove` action that uses the `POST`
+method:
+
+    POST /clusters/{cluster:id}/glustervolumes/{volume:id}/bricks/remove
+    <bricks>
+      <bricks id="..."/>
+      <bricks id="..."/>
+      ...
+    </bricks>

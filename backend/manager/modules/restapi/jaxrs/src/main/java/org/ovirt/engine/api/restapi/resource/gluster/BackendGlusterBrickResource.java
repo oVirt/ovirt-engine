@@ -115,6 +115,8 @@ public class BackendGlusterBrickResource
         brick.setId(id);
         GlusterBricks bricks = new GlusterBricks();
         bricks.getGlusterBricks().add(brick);
-        return parent.remove(bricks);
+        Action action = new Action();
+        action.setBricks(bricks);
+        return parent.remove(action);
     }
 }

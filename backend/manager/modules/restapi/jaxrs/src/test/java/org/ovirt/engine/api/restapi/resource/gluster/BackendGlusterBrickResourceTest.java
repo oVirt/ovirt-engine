@@ -10,7 +10,6 @@ import static org.ovirt.engine.api.restapi.resource.gluster.GlusterTestHelper.vo
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -20,7 +19,6 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.GlusterBrick;
-import org.ovirt.engine.api.model.GlusterBricks;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.resource.StatisticsResource;
@@ -143,7 +141,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
     }
 
     private void setUpCallParentRemoveExpectations() {
-        expect(bricksResourceMock.remove(anyObject(GlusterBricks.class))).andReturn(Response.ok().build()).once();
+        expect(bricksResourceMock.remove(anyObject(Action.class))).andReturn(Response.ok().build()).once();
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,

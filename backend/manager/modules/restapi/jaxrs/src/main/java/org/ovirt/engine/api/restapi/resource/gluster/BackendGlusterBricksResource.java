@@ -155,14 +155,15 @@ public class BackendGlusterBricksResource
     }
 
     @Override
-    public Response remove(GlusterBricks bricks) {
+    public Response remove(Action action) {
+        GlusterBricks bricks = action.getBricks();
         if (bricks.getGlusterBricks().size() > 0) {
             for (GlusterBrick brick : bricks.getGlusterBricks()) {
                 validateParameters(brick, "id|name");
             }
         }
 
-        int replicaCount = QueryHelper.getIntegerMatrixParameter(uriInfo, STRIPE_COUNT, 0, 0);
+        int replicaCount = QueryHelper.getIntegerMatrixParameter(uriInfo, REPLICA_COUNT, 0, 0);
 
         GlusterVolumeRemoveBricksParameters params = toParameters(bricks);
         params.setReplicaCount(replicaCount);

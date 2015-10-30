@@ -12,7 +12,6 @@ import static org.ovirt.engine.api.restapi.resource.gluster.GlusterTestHelper.vo
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -228,7 +227,9 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
                 new Object[] { volumeId, getBrickEntitiesToRemove() },
                 true,
                 true));
-        verifyRemove(collection.remove(getBrickModelsToRemove()));
+        Action action = new Action();
+        action.setBricks(getBrickModelsToRemove());
+        verifyRemove(collection.remove(action));
     }
 
     @Test
@@ -245,7 +246,9 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
                 new Object[] {},
                 true,
                 true));
-        verifyRemove(collection.remove(getBrickModelsToRemove()));
+        Action action = new Action();
+        action.setBricks(getBrickModelsToRemove());
+        verifyRemove(collection.remove(action));
     }
 
     @Test

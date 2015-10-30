@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.resource.gluster;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -23,7 +22,7 @@ public interface GlusterBricksResource {
     @GET
     GlusterBricks list();
 
-    @Path("{action: (migrate|stopmigrate)}/{oid}")
+    @Path("{action: (migrate|stopmigrate|remove)}/{oid}")
     ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     /**
@@ -41,11 +40,14 @@ public interface GlusterBricksResource {
     /**
      * Removes the given brick from the volume and deletes it from the database.
      *
-     * @param bricks
-     *            List of bricks to be removed
+     * @param action
+     *            The action containing the list of bricks to be removed
      */
-    @DELETE
-    Response remove(GlusterBricks bricks);
+    @POST
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
+    @Actionable
+    @Path("remove")
+    Response remove(Action action);
 
 
     @POST

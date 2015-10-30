@@ -3453,7 +3453,7 @@ actions:
   request:
     headers:
       All-Content: {value: true|false, required: false}
-- name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=delete
+- name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/removebricks|rel=removebricks
   description: delete the bricks in the gluster volume attached to the cluster
   request:
     body:
