@@ -1168,12 +1168,22 @@ actions:
 - name: /storagedomains/{storagedomain:id}|rel=delete
   description: delete the specified storage domain in the system
   request:
-    body:
-      parameterType: StorageDomain
-      signatures:
-      - mandatoryArguments: {storagedomain.host.id|name: 'xs:string'}
-        optionalArguments: {storagedomain.format: 'xs:boolean'}
-        description: delete the specified storage domain in the system with options to format the storage domain
+    urlparams:
+      force:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
+      destroy:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
+      destroy:
+        context: matrix
+        type: xs:string
+        value: the id or name of the host
+        required: true
 - name: /storagedomains/{storagedomain:id}/isattached|rel=isattached
   description: Querying if the Storage Domain is already attached to a Data Center by the is_attached boolean field, which is part of the storage server. IMPORTANT, Executing this API will cause the Host to disconnect from the Storage Domain.
   request:

@@ -26,8 +26,6 @@ public interface StorageDomain {
     Status externalStatus();
     Boolean master();
     HostStorage storage();
-    Boolean format(); // TODO: Should be an action parameter.
-    Boolean destroy(); // TODO: Should be an action parameter.
     Integer available();
     Integer used();
     Integer committed();
@@ -38,7 +36,7 @@ public interface StorageDomain {
     Integer criticalSpaceActionBlocker();
 
     /**
-     * Host is only relevant at creation and deletion time.
+     * Host is only relevant at creation time.
      * @return
      */
     @Link Host host();

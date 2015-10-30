@@ -961,3 +961,35 @@ This optional action parameter has been replaced with an optional matrix
 parameter:
 
     DELETE /host/{host:id};force=true
+
+### Use matrix parameters for force remove storage domain
+
+The operation that removes a storage domain supports the `force`,
+`destroy` and `host` parameters. These parameters were passed to the
+`DELETE` method using the representation of the storage domain as the
+body:
+
+    DELETE /storagedomains/{storagedomain:id}
+    <storage_domain>
+      <force>...</force>
+      <destroy>...</destroy>
+      <host id="...">
+        <name>...</name>
+      </host>
+    </storage_domain>
+
+This was problematic, as the HTTP `DELETE` parameters shouldn't have a
+body, and the representation of the storage domain shouldn't include
+things that aren't attributes of the storage domain, rather parameters
+of the operation.
+
+The `force`, `delete` and `host` attributes have been replaced by
+equivalent matrix parameters, and the operation doesn't now accept a
+body. For example, now the correct way to delete a storage domain with
+the `force` parameter is the following:
+
+    DELETE /storagedomain/{storagedomain:id};host=myhost;force=true
+
+To delete with the `destroy` parameter:
+
+    DELETE /storagedomain/{storagedomain:id};host=myhost;destroy=true

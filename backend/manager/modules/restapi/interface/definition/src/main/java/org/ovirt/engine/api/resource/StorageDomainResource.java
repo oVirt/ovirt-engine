@@ -73,11 +73,11 @@ public interface StorageDomainResource {
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
     @Actionable
     @Path("isattached")
-    Response getIsAttached(Action action);
+    Response isAttached(Action action);
 
     @DELETE
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
-    Response remove(StorageDomain storageDomain);
+    Response remove();
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})

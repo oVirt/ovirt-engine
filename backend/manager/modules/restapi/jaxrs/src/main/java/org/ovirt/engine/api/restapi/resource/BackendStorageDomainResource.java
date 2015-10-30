@@ -11,6 +11,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
@@ -52,6 +53,10 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendStorageDomainResource
         extends AbstractBackendActionableResource<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain>
         implements StorageDomainResource {
+
+    public static final String DESTROY = "destroy";
+    public static final String FORMAT = "format";
+    public static final String HOST = "host";
 
     private final BackendStorageDomainsResource parent;
 
@@ -102,30 +107,49 @@ public class BackendStorageDomainResource
     }
 
     @Override
-    public Response remove(StorageDomain storageDomain) {
-        if (storageDomain == null) {
+    public Response remove() {
+        String host = QueryHelper.getMatrixConstraint(uriInfo, HOST);
+        if (host == null) {
             Fault fault = new Fault();
-            fault.setReason("storage-domain parameter is missing");
+            fault.setReason("host parameter is missing");
             throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(fault).build());
         }
-        validateParameters(storageDomain, "host.id|name");
         get();
-        if (storageDomain.isSetDestroy() && storageDomain.isDestroy()) {
+        Guid hostId = getHostId(host);
+        boolean destroy = QueryHelper.getBooleanMatrixParameter(uriInfo, DESTROY, true, false);
+        boolean format = QueryHelper.getBooleanMatrixParameter(uriInfo, FORMAT, true, false);
+        if (destroy) {
             StorageDomainParametersBase parameters = new StorageDomainParametersBase(guid);
-            parameters.setVdsId(getHostId(storageDomain));
+            parameters.setVdsId(hostId);
             return performAction(VdcActionType.ForceRemoveStorageDomain, parameters);
         } else {
             RemoveStorageDomainParameters parameters = new RemoveStorageDomainParameters(guid);
-            parameters.setVdsId(getHostId(storageDomain));
-            if (storageDomain.isSetFormat()) {
-                parameters.setDoFormat(storageDomain.isFormat());
-            }
+            parameters.setVdsId(hostId);
+            parameters.setDoFormat(format);
             return performAction(VdcActionType.RemoveStorageDomain, parameters);
         }
     }
 
+    private Guid getHostId(String host) {
+        try {
+            return Guid.createGuidFromString(host);
+        }
+        catch (IllegalArgumentException exception) {
+            VdsStatic entity = getEntity(
+                VdsStatic.class,
+                VdcQueryType.GetVdsStaticByName,
+                new NameQueryParameters(host),
+                host
+            );
+            if (entity != null) {
+                return entity.getId();
+            }
+            return Guid.Empty;
+        }
+    }
+
     @Override
-    public Response getIsAttached(Action action) {
+    public Response isAttached(Action action) {
         validateParameters(action, "host.id|name");
         Guid hostId = getHostId(action);
         org.ovirt.engine.core.common.businessentities.StorageDomain storageDomainToAttach = getEntity(
@@ -277,19 +301,6 @@ public class BackendStorageDomainResource
         else {
             return storage.getLogicalUnits().getLogicalUnits();
         }
-    }
-
-    private Guid getHostId(StorageDomain storageDomain) {
-        // presence of host ID or name already validated
-        return storageDomain.getHost().isSetId()
-                ? new Guid(storageDomain.getHost().getId())
-                : storageDomain.getHost().isSetName()
-                        ? getEntity(VdsStatic.class,
-                                VdcQueryType.GetVdsStaticByName,
-                                new NameQueryParameters(storageDomain.getHost().getName()),
-                                "Hosts: name=" + storageDomain.getHost().getName()).getId()
-                        : null;
-
     }
 
     private ExtendSANStorageDomainParameters createParameters(Guid storageDomainId,

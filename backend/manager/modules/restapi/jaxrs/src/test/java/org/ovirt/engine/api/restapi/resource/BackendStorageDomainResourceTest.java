@@ -7,14 +7,15 @@ import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResourc
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResourceTest.verifyModelSpecific;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.LogicalUnits;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -209,9 +210,11 @@ public class BackendStorageDomainResourceTest
 
     @Test
     public void testRemoveStorageDomainNull() throws Exception {
+        UriInfo uriInfo = setUpBasicUriExpectations();
+        setUriInfo(uriInfo);
         control.replay();
         try {
-            resource.remove(null); // GUIDS[0].toString()
+            resource.remove();
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             assertEquals(400, wae.getResponse().getStatus());
@@ -220,85 +223,86 @@ public class BackendStorageDomainResourceTest
 
     public void testRemoveWithHostId() throws Exception {
         setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageDomain,
-                RemoveStorageDomainParameters.class,
-                new String[] { "StorageDomainId", "VdsId", "DoFormat" },
-                new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE },
-                true,
-                true));
-
-        StorageDomain storageDomain = new StorageDomain();
-        storageDomain.setHost(new Host());
-        storageDomain.getHost().setId(GUIDS[1].toString());
-        verifyRemove(resource.remove(storageDomain));// GUIDS[0].toString()
+        UriInfo uriInfo = setUpActionExpectations(
+            VdcActionType.RemoveStorageDomain,
+            RemoveStorageDomainParameters.class,
+            new String[] { "StorageDomainId", "VdsId", "DoFormat" },
+            new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE },
+            true,
+            true,
+            false
+        );
+        uriInfo = addMatrixParameterExpectations(uriInfo, BackendStorageDomainResource.HOST, GUIDS[1].toString());
+        setUriInfo(uriInfo);
+        control.replay();
+        verifyRemove(resource.remove());
     }
 
     @Test
     public void testRemoveWithFormat() throws Exception {
         setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageDomain,
-                RemoveStorageDomainParameters.class,
-                new String[] { "StorageDomainId", "VdsId", "DoFormat" },
-                new Object[] { GUIDS[0], GUIDS[1], Boolean.TRUE },
-                true,
-                true));
-
-        StorageDomain storageDomain = new StorageDomain();
-        storageDomain.setHost(new Host());
-        storageDomain.getHost().setId(GUIDS[1].toString());
-        storageDomain.setFormat(true);
-        verifyRemove(resource.remove(storageDomain));// GUIDS[0].toString()
+        UriInfo uriInfo = setUpActionExpectations(
+            VdcActionType.RemoveStorageDomain,
+            RemoveStorageDomainParameters.class,
+            new String[] { "StorageDomainId", "VdsId", "DoFormat" },
+            new Object[] { GUIDS[0], GUIDS[1], Boolean.TRUE },
+            true,
+            true,
+            false
+        );
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put(BackendStorageDomainResource.HOST, GUIDS[1].toString());
+        parameters.put(BackendStorageDomainResource.FORMAT, Boolean.TRUE.toString());
+        uriInfo = addMatrixParameterExpectations(uriInfo, parameters);
+        setUriInfo(uriInfo);
+        control.replay();
+        verifyRemove(resource.remove());
     }
 
     @Test
     public void testRemoveWithDestroy() throws Exception {
         setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.ForceRemoveStorageDomain,
-                StorageDomainParametersBase.class,
-                new String[] { "StorageDomainId", "VdsId" },
-                new Object[] { GUIDS[0], GUIDS[1] },
-                true,
-                true));
-
-        StorageDomain storageDomain = new StorageDomain();
-        storageDomain.setHost(new Host());
-        storageDomain.getHost().setId(GUIDS[1].toString());
-        storageDomain.setDestroy(true);
-        verifyRemove(resource.remove(storageDomain));// GUIDS[0].toString()
+        UriInfo uriInfo = setUpActionExpectations(
+            VdcActionType.ForceRemoveStorageDomain,
+            StorageDomainParametersBase.class,
+            new String[] { "StorageDomainId", "VdsId" },
+            new Object[] { GUIDS[0], GUIDS[1] },
+            true,
+            true,
+            false
+        );
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put(BackendStorageDomainResource.HOST, GUIDS[1].toString());
+        parameters.put(BackendStorageDomainResource.DESTROY, Boolean.TRUE.toString());
+        uriInfo = addMatrixParameterExpectations(uriInfo, parameters);
+        setUriInfo(uriInfo);
+        control.replay();
+        verifyRemove(resource.remove());
     }
 
     @Test
     public void testRemoveWithHostName() throws Exception {
         setUpGetEntityExpectations();
-
-        setUpGetEntityExpectations(VdcQueryType.GetVdsStaticByName,
-                NameQueryParameters.class,
-                new String[] { "Name" },
-                new Object[] { NAMES[1] },
-                setUpVDStatic(1));
-
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageDomain,
-                RemoveStorageDomainParameters.class,
-                new String[] { "StorageDomainId", "VdsId", "DoFormat" },
-                new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE },
-                true,
-                true));
-
-        StorageDomain storageDomain = new StorageDomain();
-        storageDomain.setHost(new Host());
-        storageDomain.getHost().setName(NAMES[1]);
-        verifyRemove(resource.remove(storageDomain));// GUIDS[0].toString()
-    }
-
-    @Test
-    public void testIncompleteRemove() throws Exception {
+        setUpGetEntityExpectations(
+            VdcQueryType.GetVdsStaticByName,
+            NameQueryParameters.class,
+            new String[] { "Name" },
+            new Object[] { NAMES[1] },
+            setUpVDStatic(1)
+        );
+        UriInfo uriInfo = setUpActionExpectations(
+            VdcActionType.RemoveStorageDomain,
+            RemoveStorageDomainParameters.class,
+            new String[] { "StorageDomainId", "VdsId", "DoFormat" },
+            new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE },
+            true,
+            true,
+            false
+        );
+        uriInfo = addMatrixParameterExpectations(uriInfo, BackendStorageDomainResource.HOST, NAMES[1]);
+        setUriInfo(uriInfo);
         control.replay();
-        try {
-            resource.remove(new StorageDomain());// GUIDS[0].toString()
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "StorageDomain", "remove", "host.id|name");
-        }
+        verifyRemove(resource.remove());
     }
 
     @Test
@@ -313,20 +317,23 @@ public class BackendStorageDomainResourceTest
 
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageDomain,
-                RemoveStorageDomainParameters.class,
-                new String[] { "StorageDomainId", "VdsId", "DoFormat" },
-                new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE },
-                canDo,
-                success));
-
+        UriInfo uriInfo = setUpActionExpectations(
+            VdcActionType.RemoveStorageDomain,
+            RemoveStorageDomainParameters.class,
+            new String[] { "StorageDomainId", "VdsId", "DoFormat" },
+            new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE },
+            canDo,
+            success,
+            false
+        );
+        uriInfo = addMatrixParameterExpectations(uriInfo, BackendStorageDomainResource.HOST, GUIDS[1].toString());
+        setUriInfo(uriInfo);
+        control.replay();
         try {
-            StorageDomain storageDomain = new StorageDomain();
-            storageDomain.setHost(new Host());
-            storageDomain.getHost().setId(GUIDS[1].toString());
-            resource.remove(storageDomain);// GUIDS[0].toString()
+            resource.remove();
             fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
+        }
+        catch (WebApplicationException wae) {
             verifyFault(wae, detail);
         }
     }
