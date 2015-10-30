@@ -12,8 +12,6 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
 import org.ovirt.engine.core.bll.validator.VirtIoRngValidator;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -658,37 +656,14 @@ public class VmDeviceUtils {
             false);
     }
 
-    /**
-     * Check if the network interface can be plugged.
-     *
-     * The network interface cannot be plugged if another plugged network interface has the same MAC address.
-     *
-     * @param iface the network interface to be checked
-     * @param vdsGroupId cluster id.
-     * @return true if the network interface can be plugged, false otherwise
-     */
-    private static boolean canPlugInterface(VmNic iface, Guid vdsGroupId) {
-        VDSGroup vdsGroup = dbFacade.getVdsGroupDao().get(vdsGroupId);
-        Guid dataCenterId = vdsGroup == null ? null : vdsGroup.getStoragePoolId();
-        String macAddress = iface.getMacAddress();
-        boolean canPlugInterface = canPlugInterfaceInDc(macAddress, dataCenterId);
-        if (!canPlugInterface) {
-            new VmInterfaceManager().auditLogMacInUseUnplug(iface);
-        }
-        return canPlugInterface;
-    }
-
-    private static boolean canPlugInterfaceInDc(String macAddress, Guid dataCenterId) {
-        if (dataCenterId == null) {
+    private static boolean canPlugInterface(VmNic iface) {
+        VmInterfaceManager vmIfaceManager = new VmInterfaceManager();
+        if (vmIfaceManager.existsPluggedInterfaceWithSameMac(iface)) {
+            vmIfaceManager.auditLogMacInUseUnplug(iface);
             return false;
-        }
-
-        if (macAddress == null) {
+        } else {
             return true;
         }
-
-        MacPoolManagerStrategy pool = MacPoolPerDcSingleton.getInstance().poolForDataCenter(dataCenterId);
-        return !pool.isMacInUse(macAddress);
     }
 
     /*
@@ -1668,7 +1643,7 @@ public class VmDeviceUtils {
                 exportedDevice = vmDevice;
             }
 
-            exportedDevice.setIsPlugged(exportedDevice.getIsPlugged() && canPlugInterface(iface, vmBase.getVdsGroupId()));
+            exportedDevice.setIsPlugged(exportedDevice.getIsPlugged() && canPlugInterface(iface));
             updateImportedVmDevice(vmBase, vmDevice, deviceId, vmDevicesToUpdate);
         }
     }
