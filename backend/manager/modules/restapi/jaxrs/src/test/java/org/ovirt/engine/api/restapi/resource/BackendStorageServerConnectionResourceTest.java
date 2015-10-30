@@ -3,9 +3,9 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.easymock.EasyMock.expect;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
@@ -107,27 +107,38 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
         StorageServerConnections connection = new StorageServerConnections();
         connection.setid(GUIDS[3].toString());
         connection.setconnection("/data1");
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageServerConnection,
-                StorageServerConnectionParametersBase.class,
-                new String[] { "StorageServerConnection", "VdsId" },
-                new Object[] { connection, GUIDS[1] },
-                true,
-                true));
-        Action action = new Action();
-        action.setHost(host);
-        verifyRemove(resource.remove(action));
+        UriInfo uriInfo = setUpActionExpectations(
+            VdcActionType.RemoveStorageServerConnection,
+            StorageServerConnectionParametersBase.class,
+            new String[] { "StorageServerConnection", "VdsId" },
+            new Object[] { connection, GUIDS[1] },
+            true,
+            true,
+            false
+        );
+        uriInfo = addMatrixParameterExpectations(
+            uriInfo,
+            BackendStorageServerConnectionResource.HOST,
+            GUIDS[1].toString()
+        );
+        setUriInfo(uriInfo);
+        control.replay();
+        verifyRemove(resource.remove());
     }
 
     @Test
     public void testRemoveNotExisting() throws Exception {
         setUpGetNotExistingEntityExpectations();
-        Host host = new Host();
-        host.setId(GUIDS[1].toString());
+        UriInfo uriInfo = setUpBasicUriExpectations();
+        uriInfo = addMatrixParameterExpectations(
+            uriInfo,
+            BackendStorageServerConnectionResource.HOST,
+            GUIDS[1].toString()
+        );
+        setUriInfo(uriInfo);
         control.replay();
         try {
-            Action action = new Action();
-            action.setHost(host);
-            resource.remove(action);
+            resource.remove();
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             assertNotNull(wae.getResponse());
@@ -143,16 +154,24 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
         StorageServerConnections connection = new StorageServerConnections();
         connection.setid(GUIDS[3].toString());
         connection.setconnection("/data1");
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageServerConnection,
-                StorageServerConnectionParametersBase.class,
-                new String[] { "StorageServerConnection", "VdsId" },
-                new Object[] { connection, GUIDS[1] },
-                false,
-                false));
+        UriInfo uriInfo = setUpActionExpectations(
+            VdcActionType.RemoveStorageServerConnection,
+            StorageServerConnectionParametersBase.class,
+            new String[] { "StorageServerConnection", "VdsId" },
+            new Object[] { connection, GUIDS[1] },
+            false,
+            false,
+            false
+        );
+        uriInfo = addMatrixParameterExpectations(
+                uriInfo,
+                BackendStorageServerConnectionResource.HOST,
+                GUIDS[1].toString()
+        );
+        setUriInfo(uriInfo);
+        control.replay();
         try {
-            Action action = new Action();
-            action.setHost(host);
-            resource.remove(action);
+            resource.remove();
         } catch (WebApplicationException wae) {
             assertNotNull(wae.getResponse());
             assertEquals(400, wae.getResponse().getStatus());

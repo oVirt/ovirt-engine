@@ -3733,12 +3733,12 @@ actions:
 - name: /storageconnections/{storageconnection:id}|rel=delete
   description: delete the specified storage connection in the system
   request:
-    body:
-      required: false
-      parameterType: Host
-      signatures:
-      - mandatoryArguments: {}
-        optionalArguments:  {action.host.id|name: 'xs:string'}
+    urlparams:
+      host:
+        context: matrix
+        type: xs:string
+        value: the id or name of the host
+        required: false
 
 - name: /storageconnections/{storageconnection:id}|rel=update
   description: update the specified storage connection in the system

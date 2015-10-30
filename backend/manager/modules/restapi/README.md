@@ -993,3 +993,21 @@ the `force` parameter is the following:
 To delete with the `destroy` parameter:
 
     DELETE /storagedomain/{storagedomain:id};host=myhost;destroy=true
+
+### Use `host` matrix parameter to remove storage server connection
+
+The operation that removes a storage server connection supports a
+`host` parameter. In order to use it the `DELETE` method used to
+support an optional action parameter:
+
+    DELETE /storageconnections/{storageconnection:id}
+    <action>
+      <host id="...">
+        <name>...</name>
+      </host>
+    </action>
+
+This optional action parameter has been replaced with an optional matrix
+parameter:
+
+    DELETE /storageconnections/{storageconnection:id};host=myhost

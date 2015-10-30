@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.resource.StorageServerConnectionResource;
@@ -19,6 +19,8 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendStorageServerConnectionResource extends
         AbstractBackendSubResource<StorageConnection, org.ovirt.engine.core.common.businessentities.StorageServerConnections> implements StorageServerConnectionResource {
     private BackendStorageServerConnectionsResource parent;
+
+    public static final String HOST = "host";
 
     public BackendStorageServerConnectionResource(String id, BackendStorageServerConnectionsResource parent) {
         super(id, StorageConnection.class, StorageServerConnections.class);
@@ -42,19 +44,37 @@ public class BackendStorageServerConnectionResource extends
     }
 
     @Override
-    public Response remove(Action action) {
+    public Response remove() {
         get();
         StorageServerConnections connection = new StorageServerConnections();
         connection.setid(id);
+
+        String host = QueryHelper.getMatrixConstraint(uriInfo, HOST);
         Guid hostId = Guid.Empty;
-
-        if (action != null && action.isSetHost()) {
-            hostId = getHostId(action.getHost());
+        if (host != null) {
+            hostId = getHostId(host);
         }
-
         StorageServerConnectionParametersBase parameters =
                 new StorageServerConnectionParametersBase(connection, hostId);
         return performAction(VdcActionType.RemoveStorageServerConnection, parameters);
+    }
+
+    private Guid getHostId(String host) {
+        try {
+            return Guid.createGuidFromString(host);
+        }
+        catch (IllegalArgumentException exception) {
+            VdsStatic entity = getEntity(
+                VdsStatic.class,
+                VdcQueryType.GetVdsStaticByName,
+                new NameQueryParameters(host),
+                host
+            );
+            if (entity != null) {
+                return entity.getId();
+            }
+            return Guid.Empty;
+        }
     }
 
     public BackendStorageServerConnectionsResource getParent() {
@@ -84,16 +104,5 @@ public class BackendStorageServerConnectionResource extends
                                     "Hosts: name=" + host.getName()).getId()
                             : null;
         }
-    }
-
-    @Override
-    public Response remove() {
-        get();
-        StorageServerConnections connection = new StorageServerConnections();
-        connection.setid(id);
-        Guid hostId = Guid.Empty;
-        StorageServerConnectionParametersBase parameters =
-                new StorageServerConnectionParametersBase(connection, hostId);
-        return performAction(VdcActionType.RemoveStorageServerConnection, parameters);
     }
 }
