@@ -42,6 +42,8 @@ public class SchedulingPolicyMapper {
         }
         if (model.isSetName()) {
             entity.setName(model.getName());
+        } else if (model.isSetPolicy()){
+            entity.setName(model.getPolicy());
         }
         if (model.isSetDescription()) {
             entity.setDescription(model.getDescription());
