@@ -945,3 +945,19 @@ This optional action parameter has been replaced with an optional matrix
 parameter:
 
     DELETE /datacenters/{datacenter:id};force=true
+
+### Use `force` matrix parameter to force remove a host
+
+The operation that removes a host supports a `force` parameter. In
+order to use it the `DELETE` operation used to support an optional
+action parameter:
+
+    DELETE /host/{host:id}
+    <action>
+      <force>true</force>
+    </action>
+
+This optional action parameter has been replaced with an optional matrix
+parameter:
+
+    DELETE /host/{host:id};force=true

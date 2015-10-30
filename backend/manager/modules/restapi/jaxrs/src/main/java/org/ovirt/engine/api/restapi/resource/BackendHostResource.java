@@ -5,9 +5,9 @@ import static org.ovirt.engine.api.restapi.resource.BackendHostsResource.SUB_COL
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
@@ -79,8 +79,9 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendHostResource extends AbstractBackendActionableResource<Host, VDS> implements
-        HostResource {
+public class BackendHostResource extends AbstractBackendActionableResource<Host, VDS> implements HostResource {
+
+    public static final String FORCE = "force";
 
     private static final String DEFAULT_ISCSI_PORT = "3260";
 
@@ -676,16 +677,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveVds, new RemoveVdsParameters(guid));
-    }
-
-    @Override
-    public Response remove(Action action) {
-        get();
-        boolean force = false;
-        if (action != null && action.isSetForce()) {
-            force = action.isForce();
-        }
+        boolean force = QueryHelper.getBooleanMatrixParameter(uriInfo, FORCE, true, false);
         return performAction(VdcActionType.RemoveVds, new RemoveVdsParameters(guid, force));
     }
 

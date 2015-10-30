@@ -2004,12 +2004,12 @@ actions:
 - name: /hosts/{host:id}|rel=delete
   description: delete the specified host in the system
   request:
-    body:
-      required: false
-      parameterType: Action
-      signatures:
-      - mandatoryArguments: {}
-        description: delete the specified host in the system
+    urlparams:
+      force:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
 - name: /hosts/{host:id}|rel=update
   description: update the specified host in the system
   request:

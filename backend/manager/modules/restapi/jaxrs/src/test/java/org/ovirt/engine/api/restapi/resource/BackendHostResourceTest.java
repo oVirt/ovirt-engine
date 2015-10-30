@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -611,36 +610,37 @@ public class BackendHostResourceTest
     @Test
     public void testRemoveForced() throws Exception {
         setUpGetEntityExpectations(1);
-        setUriInfo(
-            setUpActionExpectations(
-                VdcActionType.RemoveVds,
-                RemoveVdsParameters.class,
-                new String[] { "VdsId", "ForceAction" },
-                new Object[] { GUIDS[0], Boolean.TRUE },
-                true,
-                true
-            )
+        UriInfo uriInfo = setUpActionExpectations(
+            VdcActionType.RemoveVds,
+            RemoveVdsParameters.class,
+            new String[] { "VdsId", "ForceAction" },
+            new Object[] { GUIDS[0], Boolean.TRUE },
+            true,
+            true,
+            false
         );
-        Action action = new Action();
-        action.setForce(true);
-        verifyRemove(resource.remove(action));
+        uriInfo = addMatrixParameterExpectations(uriInfo, BackendHostResource.FORCE, Boolean.TRUE.toString());
+        setUriInfo(uriInfo);
+        control.replay();
+        verifyRemove(resource.remove());
     }
 
     @Test
     public void testRemoveForcedIncomplete() throws Exception {
         setUpGetEntityExpectations(1);
-        setUriInfo(
-            setUpActionExpectations(
-                VdcActionType.RemoveVds,
-                RemoveVdsParameters.class,
-                new String[] { "VdsId", "ForceAction" },
-                new Object[] { GUIDS[0], Boolean.FALSE },
-                true,
-                true
-            )
+        UriInfo uriInfo = setUpActionExpectations(
+            VdcActionType.RemoveVds,
+            RemoveVdsParameters.class,
+            new String[] { "VdsId", "ForceAction" },
+            new Object[] { GUIDS[0], Boolean.FALSE },
+            true,
+            true,
+            false
         );
-        Action action = new Action();
-        verifyRemove(resource.remove(action));
+        uriInfo = addMatrixParameterExpectations(uriInfo, BackendHostResource.FORCE, Boolean.FALSE.toString());
+        setUriInfo(uriInfo);
+        control.replay();
+        verifyRemove(resource.remove());
     }
 
     @Test

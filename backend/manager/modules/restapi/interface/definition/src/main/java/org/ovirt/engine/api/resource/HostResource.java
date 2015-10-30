@@ -43,10 +43,6 @@ public interface HostResource extends MeasurableResource {
     @DELETE
     Response remove();
 
-    @DELETE
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
-    Response remove(Action action);
-
     @Path("{action: (approve|install|upgrade|fence|activate|deactivate|commitnetconfig|iscsidiscover|iscsilogin|" +
             "forceselectspm|setupnetworks|enrollcertificate)}/{oid}")
     ActionResource getActionResource(@PathParam("action") String action, @PathParam("oid") String oid);
