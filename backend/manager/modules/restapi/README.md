@@ -1086,3 +1086,22 @@ method:
       <bricks id="..."/>
       ...
     </bricks>
+
+### Removed the `scheduling_policy.policy` element
+
+The element was kept for backward compatibility. Use
+`scheduling_policy.name` instead.
+
+    POST /schedulingpolicies
+    <scheduling_policy>
+      ...
+      <name>policy_name</name>
+      ...
+    </scheduling_policy>
+
+    PUT /schedulingpolicies/{schedulingpolicy:id}
+    <scheduling_policy>
+      ...
+      <name>policy_name</name>
+      ...
+    </scheduling_policy>
