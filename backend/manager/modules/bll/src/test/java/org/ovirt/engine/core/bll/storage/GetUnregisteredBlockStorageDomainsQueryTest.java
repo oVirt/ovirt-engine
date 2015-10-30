@@ -117,8 +117,6 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
         when(getQueryParameters().getVdsId()).thenReturn(Guid.newGuid());
 
         List<LUNs> luns = getLUNs(storageDomainId, vgId);
-        List<LUNs> externalLuns = new ArrayList<>();
-        externalLuns.add(luns.get(1));
         doReturn(luns).when(lunDao).getAll();
 
         doReturn(createSuccessVdcReturnValue()).when(getQuery()).
