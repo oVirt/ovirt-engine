@@ -180,7 +180,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
         return new Pair<Boolean, AuditLogType>(true, null);
     }
 
-    private boolean isActiveCinderDomainAvailable(Guid poolId) {
+    public boolean isActiveCinderDomainAvailable(Guid poolId) {
         return isActiveStorageDomainAvailable(StorageType.CINDER, poolId);
     }
 

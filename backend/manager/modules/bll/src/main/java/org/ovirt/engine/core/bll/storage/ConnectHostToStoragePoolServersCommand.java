@@ -55,6 +55,12 @@ public class ConnectHostToStoragePoolServersCommand extends
             connectSucceeded = connectStorageServersByType(connectionsType, connections) && connectSucceeded;
         }
 
+        CINDERStorageHelper CINDERStorageHelper = new CINDERStorageHelper();
+        if (CINDERStorageHelper.isActiveCinderDomainAvailable(getStoragePool().getId())) {
+            connectSucceeded &= CINDERStorageHelper.prepareConnectHostToStoragePoolServers(
+                    getContext(), getParameters(), null);
+        }
+
         log.info("Host '{}' storage connection was {} ", getVds().getName(), connectSucceeded ? "succeeded" : "failed");
 
         return connectSucceeded;
