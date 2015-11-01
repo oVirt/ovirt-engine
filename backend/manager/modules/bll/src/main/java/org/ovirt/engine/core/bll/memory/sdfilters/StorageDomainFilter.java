@@ -1,24 +1,17 @@
 package org.ovirt.engine.core.bll.memory.sdfilters;
 
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.utils.linq.Predicate;
+
 
 public abstract class StorageDomainFilter {
 
     public List<StorageDomain> filterStorageDomains(List<StorageDomain> domainsInPool, List<DiskImage> memoryDisks) {
-        domainsInPool = new LinkedList<>(domainsInPool);
-        Iterator<StorageDomain> iterator = domainsInPool.iterator();
-        while (iterator.hasNext()) {
-            if (!getPredicate(memoryDisks).eval(iterator.next())) {
-                iterator.remove();
-            }
-        }
-        return domainsInPool;
+        return domainsInPool.stream().filter(getPredicate(memoryDisks)).collect(Collectors.toList());
     }
 
     protected abstract Predicate<StorageDomain> getPredicate(final List<DiskImage> memoryDisks);

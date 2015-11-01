@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +23,6 @@ import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainFilter;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MemoryStorageHandlerTest {
@@ -172,12 +172,7 @@ public class MemoryStorageHandlerTest {
 
         @Override
         protected Predicate<StorageDomain> getPredicate(List<DiskImage> memoryDisks) {
-            return new Predicate<StorageDomain>() {
-                @Override
-                public boolean eval(StorageDomain storageDomain) {
-                    return !sdToReject.equals(storageDomain);
-                }
-            };
+            return storageDomain -> !sdToReject.equals(storageDomain);
         }
     }
 

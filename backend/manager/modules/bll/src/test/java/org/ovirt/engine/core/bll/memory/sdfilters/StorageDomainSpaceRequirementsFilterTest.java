@@ -39,21 +39,21 @@ public class StorageDomainSpaceRequirementsFilterTest extends StorageDomainFilte
 
     @Test
     public void testStorageDomainForMemoryIsValid() {
-        assertTrue(filter.getPredicate(memoryDisks).eval(storageDomain));
+        assertTrue(filter.getPredicate(memoryDisks).test(storageDomain));
     }
 
     @Test
     public void testStorageDomainForMemoryIsNotValidWhenItHasLowSpace() {
         when(storageDomainValidator.isDomainWithinThresholds())
                 .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        assertFalse(filter.getPredicate(memoryDisks).eval(storageDomain));
+        assertFalse(filter.getPredicate(memoryDisks).test(storageDomain));
     }
 
     @Test
     public void testStorageDomainForMemoryIsNotValidWhenItHasNoSpaceForClonedDisks() {
         when(storageDomainValidator.hasSpaceForClonedDisks(memoryDisks))
                 .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        assertFalse(filter.getPredicate(memoryDisks).eval(storageDomain));
+        assertFalse(filter.getPredicate(memoryDisks).test(storageDomain));
     }
 
     private void initFilter() {

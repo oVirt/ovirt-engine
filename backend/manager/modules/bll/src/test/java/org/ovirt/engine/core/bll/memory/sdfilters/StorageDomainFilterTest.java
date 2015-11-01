@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StorageDomainFilterTest extends StorageDomainFilterAbstractTest {
@@ -44,7 +44,7 @@ public class StorageDomainFilterTest extends StorageDomainFilterAbstractTest {
             }
         };
 
-        when(predicate.eval(storageDomain)).thenReturn(!removeStorageDomainFromList);
+        when(predicate.test(storageDomain)).thenReturn(!removeStorageDomainFromList);
 
         List<StorageDomain> storageDomains = Arrays.asList(storageDomain);
         return filter.filterStorageDomains(storageDomains, memoryDisks);

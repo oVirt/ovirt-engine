@@ -27,6 +27,6 @@ public class StorageDomainTypeFilterTest extends StorageDomainFilterAbstractTest
     @Theory
     public void testStorageDomainForMemoryIsValidOnlyForDataTypes(StorageDomainType storageDomainType) {
         storageDomain.setStorageDomainType(storageDomainType);
-        assertEquals(filter.getPredicate(memoryDisks).eval(storageDomain), storageDomainType.isDataDomain());
+        assertEquals(filter.getPredicate(memoryDisks).test(storageDomain), storageDomainType.isDataDomain());
     }
 }
