@@ -12,6 +12,10 @@ public class IdsQueryParameters extends VdcQueryParametersBase {
     public IdsQueryParameters() {
     }
 
+    public IdsQueryParameters(List<Guid> ids) {
+        this.ids = ids;
+    }
+
     public List<Guid> getIds() {
         return ids;
     }
