@@ -669,20 +669,25 @@ public class VmDeviceUtils {
     private static boolean canPlugInterface(VmNic iface, Guid vdsGroupId) {
         VDSGroup vdsGroup = dbFacade.getVdsGroupDao().get(vdsGroupId);
         Guid dataCenterId = vdsGroup == null ? null : vdsGroup.getStoragePoolId();
-        boolean canPlugInterface = canPlugInterfaceInDc(iface, dataCenterId);
+        String macAddress = iface.getMacAddress();
+        boolean canPlugInterface = canPlugInterfaceInDc(macAddress, dataCenterId);
         if (!canPlugInterface) {
             new VmInterfaceManager().auditLogMacInUseUnplug(iface);
         }
         return canPlugInterface;
     }
 
-    private static boolean canPlugInterfaceInDc(VmNic iface, Guid dataCenterId) {
+    private static boolean canPlugInterfaceInDc(String macAddress, Guid dataCenterId) {
         if (dataCenterId == null) {
             return false;
-        } else {
-            MacPoolManagerStrategy pool = MacPoolPerDcSingleton.getInstance().poolForDataCenter(dataCenterId);
-            return !pool.isMacInUse(iface.getMacAddress());
         }
+
+        if (macAddress == null) {
+            return true;
+        }
+
+        MacPoolManagerStrategy pool = MacPoolPerDcSingleton.getInstance().poolForDataCenter(dataCenterId);
+        return !pool.isMacInUse(macAddress);
     }
 
     /*
