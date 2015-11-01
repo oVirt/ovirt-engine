@@ -130,11 +130,6 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
      */
     private void fillVolumeInformation(DiskImage disk) {
         DiskImage ancestor = getDiskImageDao().getAncestor(getDiskImage().getImageId());
-        if (ancestor == null) {
-            log.warn("Can't find ancestor of Disk with ID '{}', using original disk for volume info.",
-                    getDiskImage().getImageId());
-            ancestor = getDiskImage();
-        }
         disk.setvolumeFormat(ancestor.getVolumeFormat());
         disk.setVolumeType(ancestor.getVolumeType());
     }
