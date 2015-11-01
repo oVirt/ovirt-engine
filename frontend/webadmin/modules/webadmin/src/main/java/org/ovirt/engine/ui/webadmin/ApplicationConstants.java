@@ -4333,7 +4333,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Storage Domain")
     String diskProfileStorageDomainLabel();
 
-    @DefaultStringValue("Limit")
+    @DefaultStringValue("Limit (%)")
     String cpuQosCpuLimit();
 
     @DefaultStringValue("Description")
