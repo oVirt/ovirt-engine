@@ -345,9 +345,11 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private ImagesContainterParametersBase buildChildCommandParameters(DiskImage cinderDisk) {
-        ImagesContainterParametersBase createParams = new ImagesContainterParametersBase(cinderDisk.getId());
+        ImagesContainterParametersBase createParams =
+                new ImagesContainterParametersBase(((CinderDisk) getDiskDao().get(cinderDisk.getId())).getImageId());
         createParams.setVmSnapshotId(newActiveSnapshotId);
         createParams.setParentHasTasks(!cachedImagesDisks.isEmpty() || getMemoryImageBuilder().isCreateTasks());
+        createParams.setStorageDomainId(cinderDisk.getStorageIds().get(0));
         createParams.setDescription(getParameters().getDescription());
         return withRootCommandInfo(createParams);
     }

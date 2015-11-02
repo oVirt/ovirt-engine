@@ -125,14 +125,14 @@ public class CreateCinderSnapshotCommand<T extends ImagesContainterParametersBas
 
     protected CinderDisk getDisk() {
         if (disk == null) {
-            disk = (CinderDisk) getDiskDao().get(getImageId());
+            disk = (CinderDisk) getDiskImageDao().get(getImageId());
         }
         return disk;
     }
 
     @Override
     public Guid getStorageDomainId() {
-        return getDisk().getStorageIds().get(0);
+        return getParameters().getStorageDomainId();
     }
 
     @Override
