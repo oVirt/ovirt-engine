@@ -275,12 +275,24 @@ public class CoCoAsyncTaskHelper {
             asyncTask = getAsyncTaskFromDb(taskId);
         }
         if (asyncTask != null) {
+            VdcActionParametersBase parentParameters = command.getParentParameters();
+            Guid parentCommandId =
+                    parentParameters == null ? Guid.Empty : parentParameters.getCommandId();
+            parentParameters = parentParameters == null ? command.getParentParameters(parentCommand) : parentParameters;
             if (VdcActionType.Unknown.equals(command.getParameters().getCommandType())) {
                 command.getParameters().setCommandType(command.getActionType());
             }
+            asyncTask.setActionType(parentCommand);
             asyncTask.setVdsmTaskId(asyncTaskCreationInfo.getVdsmTaskId());
+            asyncTask.setActionParameters(parentParameters);
             asyncTask.setTaskParameters(command.getParameters());
             asyncTask.setStepId(asyncTaskCreationInfo.getStepId());
+            asyncTask.setCommandId(command.getCommandId());
+            asyncTask.setRootCmdEntity(getParentCommandEntity(parentCommandId,
+                    parentCommand,
+                    parentParameters));
+            asyncTask.setChildCmdEntity(getChildCommandEntity(command,
+                    parentCommand));
             asyncTask.setStoragePoolId(asyncTaskCreationInfo.getStoragePoolID());
             asyncTask.setTaskType(asyncTaskCreationInfo.getTaskType());
             asyncTask.setCommandStatus(command.getCommandStatus());
