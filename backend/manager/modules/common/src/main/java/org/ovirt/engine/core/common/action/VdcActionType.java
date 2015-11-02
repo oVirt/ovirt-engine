@@ -483,6 +483,7 @@ public enum VdcActionType {
     RemoveAllCinderSnapshotDisks(3216, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.STORAGE),
     FreezeVm(3217, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.NONE),
     ThawVm(3218, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.NONE),
+    RemoveCinderDiskVolume(3219, QuotaDependency.STORAGE),
 
     // Host Devices
     RefreshHostDevices(4000, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
