@@ -114,7 +114,6 @@ public class RestoreFromCinderSnapshotCommand<T extends RestoreFromSnapshotParam
 
     private RemoveCinderDiskParameters buildRemoveDiskChildCommandParameters(CinderDisk cinderDisk) {
         RemoveCinderDiskParameters removeDiskParams = new RemoveCinderDiskParameters(cinderDisk.getId());
-        removeDiskParams.setFaultTolerant(true);
         removeDiskParams.setShouldBeLogged(false);
         removeDiskParams.setParentCommand(getActionType());
         removeDiskParams.setParentParameters(getParameters());
