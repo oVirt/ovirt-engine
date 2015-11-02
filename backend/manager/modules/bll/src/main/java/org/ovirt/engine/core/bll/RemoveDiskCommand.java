@@ -40,7 +40,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -316,10 +315,6 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 break;
             case CINDER:
                 RemoveCinderDiskParameters params = new RemoveCinderDiskParameters(getParameters().getDiskId());
-                if ( ((CinderDisk)getDisk()).getImageStatus() == ImageStatus.ILLEGAL) {
-                    params.setFaultTolerant(true);
-                }
-
                 Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                         VdcActionType.RemoveCinderDisk,
                         params,
