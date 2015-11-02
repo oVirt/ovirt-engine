@@ -204,7 +204,7 @@ Summary:	Management server for Open Virtualization
 Group:		%{ovirt_product_group}
 License:	ASL 2.0
 URL:		http://www.ovirt.org
-Source0:	http://resources.ovirt.org/pub/ovirt-3.6/src/@PACKAGE_NAME@/@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.gz
+Source0:	http://resources.ovirt.org/pub/ovirt-3.6-snapshot/src/@PACKAGE_NAME@/@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.gz
 
 BuildArch:	noarch
 
