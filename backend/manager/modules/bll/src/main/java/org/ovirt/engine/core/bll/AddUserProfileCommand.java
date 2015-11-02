@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.UserProfileParameters;
@@ -47,7 +48,7 @@ public class AddUserProfileCommand<T extends UserProfileParameters> extends User
         UserProfile profile = getParameters().getUserProfile();
         profile.setId(Guid.newGuid());
         profile.setUserId(getUserId()); /* must be overridden */
-        if (!profile.getSshPublicKey().isEmpty() && Guid.isNullOrEmpty(profile.getSshPublicKeyId())) {
+        if (!StringUtils.isEmpty(profile.getSshPublicKey()) && Guid.isNullOrEmpty(profile.getSshPublicKeyId())) {
             profile.setSshPublicKeyId(Guid.newGuid());
         }
         userProfileDao.save(profile);
