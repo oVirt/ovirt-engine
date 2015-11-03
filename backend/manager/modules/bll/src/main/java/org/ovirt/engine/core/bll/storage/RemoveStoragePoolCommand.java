@@ -187,20 +187,8 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             }
         }
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                detachStorageDomainWithEntities(masterDomain);
-                getCompensationContext().snapshotEntity(masterDomain.getStorageStaticData());
-                masterDomain.setStorageDomainType(StorageDomainType.Data);
-                getDbFacade().getStorageDomainStaticDao().update(masterDomain.getStorageStaticData());
-                getCompensationContext().stateChanged();
-                return null;
-            }
-        });
-
         handleDestroyStoragePoolCommand();
+        handleMasterDomain(masterDomain);
         runSynchronizeOperation(new DisconnectStoragePoolAsyncOperationFactory());
 
         setSucceeded(true);
@@ -224,6 +212,20 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         }
 
         return retVal;
+    }
+
+    private void handleMasterDomain(final StorageDomain masterDomain) {
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                detachStorageDomainWithEntities(masterDomain);
+                getCompensationContext().snapshotEntity(masterDomain.getStorageStaticData());
+                masterDomain.setStorageDomainType(StorageDomainType.Data);
+                getDbFacade().getStorageDomainStaticDao().update(masterDomain.getStorageStaticData());
+                getCompensationContext().stateChanged();
+                return null;
+            }
+        });
     }
 
     private void handleDestroyStoragePoolCommand() {
