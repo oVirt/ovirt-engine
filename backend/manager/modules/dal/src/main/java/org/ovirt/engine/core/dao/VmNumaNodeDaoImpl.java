@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class VmNumaNodeDaoImpl extends VdsNumaNodeDaoImpl implements VmNumaNodeDao {
+public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements VmNumaNodeDao {
 
     @Override
     public List<VmNumaNode> getAllVmNumaNodeByVmId(Guid vmId) {

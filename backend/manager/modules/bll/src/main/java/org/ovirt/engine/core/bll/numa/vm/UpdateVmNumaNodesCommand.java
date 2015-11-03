@@ -28,7 +28,7 @@ public class UpdateVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> e
             vdsNumaNodes = getVdsNumaNodeDao().getAllVdsNumaNodeByVdsId(vdsId);
         }
 
-        List<VdsNumaNode> nodes = new ArrayList<>();
+        List<VmNumaNode> nodes = new ArrayList<>();
         for (VmNumaNode vmNumaNode : vmNumaNodes) {
             for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {
                 if (pair.getSecond() != null && pair.getSecond().getFirst()) {

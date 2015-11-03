@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
-public interface VmNumaNodeDao extends VdsNumaNodeDao {
+public interface VmNumaNodeDao extends NumaNodeDao<VmNumaNode> {
 
     /**
      * Get all numa nodes of a vm by vm id

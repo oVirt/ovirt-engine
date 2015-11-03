@@ -14,7 +14,6 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
-import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -138,19 +137,19 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase {
         Guid vmNumaNode1 = Guid.newGuid();
         Guid vmNumaNode2 = Guid.newGuid();
 
-        List<VdsNumaNode> newVmNode = new ArrayList<>();
-        VdsNumaNode newVmNumaNode = new VmNumaNode();
+        List<VmNumaNode> newVmNode = new ArrayList<>();
+        VmNumaNode newVmNumaNode = new VmNumaNode();
         newVmNumaNode.setCpuIds(generateCpuList(0, 4));
         newVmNumaNode.setId(vmNumaNode1);
         newVmNumaNode.setIndex(0);
-        ((VmNumaNode)newVmNumaNode).getVdsNumaNodeList().add(new Pair<>(vdsNumaNode1, new Pair<>(true, 0)));
+        newVmNumaNode.getVdsNumaNodeList().add(new Pair<>(vdsNumaNode1, new Pair<>(true, 0)));
         newVmNode.add(newVmNumaNode);
 
         newVmNumaNode = new VmNumaNode();
         newVmNumaNode.setCpuIds(generateCpuList(4, 4));
         newVmNumaNode.setId(vmNumaNode2);
         newVmNumaNode.setIndex(1);
-        ((VmNumaNode)newVmNumaNode).getVdsNumaNodeList().add(new Pair<>(vdsNumaNode2, new Pair<>(true, 1)));
+        newVmNumaNode.getVdsNumaNodeList().add(new Pair<>(vdsNumaNode2, new Pair<>(true, 1)));
         newVmNode.add(newVmNumaNode);
 
         vmNumaNodeDao.massSaveNumaNode(newVmNode, null, ANOTHER_EXISTING_VM_ID);
@@ -196,14 +195,14 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase {
         Guid vmNumaNode1 = Guid.newGuid();
         Guid vmNumaNode2 = Guid.newGuid();
 
-        List<VdsNumaNode> newVmNode = new ArrayList<>();
-        VdsNumaNode newVmNumaNode = new VmNumaNode();
+        List<VmNumaNode> newVmNode = new ArrayList<>();
+        VmNumaNode newVmNumaNode = new VmNumaNode();
         newVmNumaNode.setCpuIds(generateCpuList(0, 4));
         newVmNumaNode.setId(vmNumaNode1);
         newVmNumaNode.setIndex(0);
         newVmNumaNode.setNumaNodeDistances(generateDistance(2, 0));
         newVmNumaNode.setNumaNodeStatistics(newNodeStatistics);
-        ((VmNumaNode)newVmNumaNode).getVdsNumaNodeList().add(new Pair<>(vdsNumaNode1, new Pair<>(true, 0)));
+        newVmNumaNode.getVdsNumaNodeList().add(new Pair<>(vdsNumaNode1, new Pair<>(true, 0)));
         newVmNode.add(newVmNumaNode);
 
         newVmNumaNode = new VmNumaNode();
@@ -212,7 +211,7 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase {
         newVmNumaNode.setIndex(1);
         newVmNumaNode.setNumaNodeDistances(generateDistance(2, 1));
         newVmNumaNode.setNumaNodeStatistics(newNodeStatistics);
-        ((VmNumaNode)newVmNumaNode).getVdsNumaNodeList().add(new Pair<>(vdsNumaNode2, new Pair<>(true, 1)));
+        newVmNumaNode.getVdsNumaNodeList().add(new Pair<>(vdsNumaNode2, new Pair<>(true, 1)));
         newVmNode.add(newVmNumaNode);
 
         vmNumaNodeDao.massSaveNumaNode(newVmNode, null, ANOTHER_EXISTING_VM_ID);
@@ -278,7 +277,7 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase {
         Guid vmNumaNode1 = Guid.newGuid();
         Guid vmNumaNode2 = Guid.newGuid();
 
-        List<VdsNumaNode> newVmNode = new ArrayList<>();
+        List<VmNumaNode> newVmNode = new ArrayList<>();
         VmNumaNode newVmNumaNode = new VmNumaNode();
         newVmNumaNode.setCpuIds(generateCpuList(0, 4));
         newVmNumaNode.setId(vmNumaNode1);

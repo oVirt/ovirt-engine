@@ -29,7 +29,7 @@ public class AddVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> exte
             vdsNumaNodes = getVdsNumaNodeDao().getAllVdsNumaNodeByVdsId(vdsId);
         }
 
-        List<VdsNumaNode> nodes = new ArrayList<>();
+        List<VmNumaNode> nodes = new ArrayList<>();
         for (VmNumaNode vmNumaNode : vmNumaNodes) {
             vmNumaNode.setId(Guid.newGuid());
             for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {

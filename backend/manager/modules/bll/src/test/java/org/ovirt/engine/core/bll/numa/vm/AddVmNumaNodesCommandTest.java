@@ -73,7 +73,7 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
 
         vmNumaNode = new VmNumaNode();
         vmNumaNode.setIndex(1);
-        when(vmNumaNodeDao.getAllVdsNumaNodeByVdsId(any(Guid.class))).thenReturn(Arrays.<VdsNumaNode>asList(vmNumaNode));
+        when(vmNumaNodeDao.getAllVmNumaNodeByVmId(any(Guid.class))).thenReturn(Arrays.asList(vmNumaNode));
         vmNumaNode.setVdsNumaNodeList(Arrays.asList(new Pair<>(vdsNumaNode.getId(), new Pair<>(true, vdsNumaNode.getIndex()))));
 
         vm = new VM();
