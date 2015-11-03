@@ -1,20 +1,28 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.Map;
+
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.StorageDomainContentDisksResource;
 import org.ovirt.engine.api.resource.StorageDomainContentResource;
+import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+
 
 public class BackendStorageDomainVmResource
     extends AbstractBackendStorageDomainContentResource<VMs, VM, org.ovirt.engine.core.common.businessentities.VM>
@@ -74,6 +82,8 @@ public class BackendStorageDomainVmResource
             params.setCopyCollapse(action.getVm().getSnapshots().isCollapseSnapshots());
         }
 
+        setVolumesTypeFormat(action);
+
         if (action.isSetClone()) {
             params.setImportAsNewEntity(action.isClone());
             if (action.isSetVm() && action.getVm().isSetName()) {
@@ -82,6 +92,32 @@ public class BackendStorageDomainVmResource
         }
 
         return doAction(VdcActionType.ImportVm, params, action);
+    }
+
+    private void setVolumesTypeFormat(Action action) {
+        if (action.isSetVm()) {
+            VM modelVm = action.getVm();
+            if (!modelVm.isSetDisks()) {
+                return;
+            }
+            Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> entityDisks = getDiskMap();
+            for (Disk modelDisk : modelVm.getDisks().getDisks()) {
+                validateParameters(modelDisk, "id");
+                Guid modelDiskId = Guid.createGuidFromString(modelDisk.getId());
+                DiskImage entityDisk = (DiskImage) entityDisks.get(modelDiskId);
+                if (entityDisk == null) {
+                    continue;
+                }
+                if (modelDisk.isSetFormat()) {
+                    DiskFormat modelDiskFormat = DiskFormat.fromValue(modelDisk.getFormat());
+                    VolumeFormat entityDiskFormat = DiskMapper.map(modelDiskFormat, null);
+                    entityDisk.setvolumeFormat(entityDiskFormat);
+                }
+                if (modelDisk.isSetSparse()) {
+                    entityDisk.setVolumeType(modelDisk.isSparse() ? VolumeType.Sparse : VolumeType.Preallocated);
+                }
+            }
+        }
     }
 
     @Override
@@ -114,7 +150,7 @@ public class BackendStorageDomainVmResource
     }
 
     @Override
-    public java.util.Map<Guid, Disk> getDiskMap() {
+    public Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> getDiskMap() {
         return getEntity().getDiskMap();
     }
 
