@@ -25,6 +25,8 @@
             margin-bottom: 10px;
         }
         .warningSectionPanel{
+            margin: 5px;
+            padding: 5px;
             border-color: red;
             border-width: 2;
             border-style: solid;

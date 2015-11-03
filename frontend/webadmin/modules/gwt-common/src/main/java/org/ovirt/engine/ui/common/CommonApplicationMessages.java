@@ -157,7 +157,7 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("Policy of assigning serial numbers to running VMs. Can be Host''s UUID, Vm''s UUID or any custom value.")
     String serialNumberInfo();
 
-    @DefaultMessage("Changes that require Virtual Machine reboot:")
+    @DefaultMessage("Changes that require Virtual Machine restart:")
     String nextRunConfigurationExists();
 
     @DefaultMessage("Changes that can be applied immediately:")
@@ -166,7 +166,7 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("CPU")
     String nextRunConfigurationCpuValue();
 
-    @DefaultMessage("Memory increase")
+    @DefaultMessage("Memory")
     String nextRunConfigurationMemoryValue();
 
     @DefaultMessage("Migration option changed to allow migration:")
