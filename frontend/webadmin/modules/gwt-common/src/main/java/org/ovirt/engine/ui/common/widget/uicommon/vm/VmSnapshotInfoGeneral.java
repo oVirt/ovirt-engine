@@ -24,11 +24,11 @@ public class VmSnapshotInfoGeneral extends GeneralFormPanel {
 
         formBuilder = new FormBuilder(this, 1, 3);
 
-        formBuilder.addFormItem(new FormItem(constants.definedMemoryVm(), definedMemory, 0, 0));
-        formBuilder.addFormItem(new FormItem(constants.physMemGauranteedVm(), minAllocatedMemory, 1, 0));
-        formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresVm(), cpuInfo, 2, 0));
+        formBuilder.addFormItem(new FormItem(constants.definedMemoryVm(), definedMemory, 0, 0), 3, 9);
+        formBuilder.addFormItem(new FormItem(constants.physMemGauranteedVm(), minAllocatedMemory, 1, 0), 3, 9);
+        formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresVm(), cpuInfo, 2, 0), 3, 9);
 
-        formBuilder.setRelativeColumnWidth(0, 5);
+        formBuilder.setRelativeColumnWidth(0, 12);
         setWidth("100%"); //$NON-NLS-1$
     }
 
