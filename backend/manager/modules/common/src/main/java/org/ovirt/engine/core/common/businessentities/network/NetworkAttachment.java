@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.NetworkIdOrNetworkNameIsSet;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
-import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -20,7 +19,7 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -8052325342869681284L;
 
-    @NotNull(groups = { UpdateEntity.class, RemoveEntity.class })
+    @NotNull(groups = { UpdateEntity.class }, message = "NETWORK_ATTACHMENTS_ID_MUST_BE_SET_FOR_UPDATE")
     private Guid id;
 
     private Guid networkId;
@@ -29,6 +28,7 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
 
     private Guid nicId;
 
+    @Valid
     private HostNetworkQos hostNetworkQos;
 
     private String nicName;
