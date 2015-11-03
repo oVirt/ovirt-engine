@@ -15,6 +15,8 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
+import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
@@ -175,6 +177,39 @@ public class BackendStorageDomainVmResourceTest
         cluster.setId(GUIDS[1].toString());
         setUpGetDataCenterByStorageDomainExpectations(STORAGE_DOMAIN_ID);
         doTestImport(storageDomain, cluster, false, true);
+    }
+
+    @Test
+    public void testImportWithDiskWithoutId() throws Exception {
+        StorageDomain storageDomain = new StorageDomain();
+        storageDomain.setId(GUIDS[2].toString());
+        Cluster cluster = new Cluster();
+        cluster.setId(GUIDS[1].toString());
+        setUpGetDataCenterByStorageDomainExpectations(STORAGE_DOMAIN_ID);
+        setUpGetEntityExpectations(1, StorageDomainType.ImportExport, GUIDS[2]);
+        UriInfo uriInfo = setUpBasicUriExpectations();
+        uriInfo = addMatrixParameterExpectations(uriInfo,
+                BackendStorageDomainVmResource.COLLAPSE_SNAPSHOTS,
+                Boolean.toString(true));
+        setUriInfo(uriInfo);
+
+        Action action = new Action();
+        action.setStorageDomain(storageDomain);
+        action.setCluster(cluster);
+        action.setClone(false);
+        Vm vm = new Vm();
+        Disks disks = new Disks();
+        disks.getDisks().add(new Disk());
+        vm.setDisks(disks);
+        action.setVm(vm);
+
+        control.replay();
+        try {
+            resource.doImport(action);
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyIncompleteException(wae, "Disk", "setVolumesTypeFormat", "id");
+        }
     }
 
     @Test

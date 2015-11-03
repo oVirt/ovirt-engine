@@ -3,6 +3,38 @@
 This document contains miscellaneous information about the oVirt REST
 API.
 
+## Features
+
+### Support change of allocation policy of disks imported
+
+Adding support for changing the allocation policy of disks imported
+from an export domain as part of importing a VM.
+The caller can specify for each disks the format and allocation
+policy. Note that `collapse_snapshots` should be true.
+The disk ids should be the ids of the existing disks that the user
+is importing.
+
+For example, to force one of the disks to be preallocated:
+
+    POST /storagedomains/{storagedomain:id}/vms/{vm:id}
+         /import;collapse_snapshots=true
+    <action>
+      <storage_domain>
+        <name>mydata</name>
+      </storage_domain>
+      <cluster>
+        <name>mycluster</name>
+      </cluster>
+      <vm>
+        <disks>
+          <disk id="792f8ca8-3932-429b-9660-006ba144bc72">
+            <format>raw</format>
+            <sparse>false</sparse>
+          </disk>
+        </disks>
+      </vm>
+    </action>
+
 ## Backwards compatibility breaking changes in oVirt 4.0
 
 This section enumerates the backwards compatibility breaking changes
