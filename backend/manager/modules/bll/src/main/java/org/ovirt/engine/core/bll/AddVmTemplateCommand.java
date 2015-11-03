@@ -338,7 +338,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                             getParameters().isSoundDeviceEnabled(),
                             getParameters().isConsoleEnabled(),
                             getParameters().isVirtioScsiEnabled(),
-                            getParameters().isBalloonEnabled(),
+                            Boolean.TRUE.equals(getParameters().isBalloonEnabled()),
                             graphicsToSkip,
                             false);
                 }
