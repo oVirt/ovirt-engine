@@ -200,7 +200,7 @@ public class AffinityRulesEnforcer {
         // Select the host with the least amount of VMs
         Guid host = chooseCandidateHostForMigration(hostCount);
         if (host == null) {
-            return null;
+            return Collections.emptyList();
         }
 
         return hostCount.get(host);
