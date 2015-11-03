@@ -212,6 +212,8 @@ Requires:	openstack-java-quantum-model >= %{openstack_java_version}
 Requires:	openstack-java-resteasy-connector >= %{openstack_java_version}
 Requires:	python-dnf-plugins-extras-versionlock
 Requires:	quartz
+# On Fedora slf4j package is split and we need also jdk14 part
+Requires:	slf4j-jdk14 >= 1.7.0
 Requires:	snmp4j
 Requires:	springframework-aop
 Requires:	springframework-beans
