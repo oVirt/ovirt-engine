@@ -17,5 +17,14 @@ limitations under the License.
 package org.ovirt.api.metamodel.concepts;
 
 public class Module extends Concept {
+    private Model model;
+
+    public Model getModel() {
+        return model;
+    }
+
+    public void setModel(Model newModel) {
+        model = newModel;
+    }
 }
 

@@ -16,6 +16,20 @@ limitations under the License.
 
 package org.ovirt.api.metamodel.analyzer;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaAnnotatedElement;
 import com.thoughtworks.qdox.model.JavaAnnotation;
@@ -23,6 +37,7 @@ import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaField;
 import com.thoughtworks.qdox.model.JavaMethod;
 import com.thoughtworks.qdox.model.JavaModel;
+import com.thoughtworks.qdox.model.JavaParameter;
 import org.ovirt.api.metamodel.concepts.Attribute;
 import org.ovirt.api.metamodel.concepts.Concept;
 import org.ovirt.api.metamodel.concepts.EnumType;
@@ -40,20 +55,6 @@ import org.ovirt.api.metamodel.concepts.Parameter;
 import org.ovirt.api.metamodel.concepts.Service;
 import org.ovirt.api.metamodel.concepts.StructType;
 import org.ovirt.api.metamodel.concepts.Type;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 /**
  * This class analyzes the Java sources from a directory and populates a model with the concepts extracted from it.
@@ -152,7 +153,7 @@ public class ModelAnalyzer {
                 analyzeStruct(javaClass);
             }
         }
-        if (isAnnotatedWith(javaClass, ModelAnnotations.SERVICE)) {
+        if (isAnnotatedWith(javaClass, ModelAnnotations.SERVICE) || isAnnotatedWith(javaClass, ModelAnnotations.ROOT)) {
             analyzeService(javaClass);
         }
     }
@@ -259,6 +260,23 @@ public class ModelAnalyzer {
         analyzeName(javaClass, service);
         analyzeDocumentation(javaClass, service);
 
+        // Analyze the base service:
+        JavaClass javaSuperClass = null;
+        if (javaClass.isInterface()) {
+            List<JavaClass> javaSuperInterfaces = javaClass.getInterfaces();
+            if (javaSuperInterfaces != null && javaSuperInterfaces.size() > 0) {
+                javaSuperClass = javaSuperInterfaces.get(0);
+            }
+        }
+        else {
+            javaSuperClass = javaClass.getSuperJavaClass();
+        }
+        if (javaSuperClass != null) {
+            String javaSuperClassName = removeSuffix(javaSuperClass.getName(), SERVICE_SUFFIX);
+            Name baseTypeName = NameParser.parseUsingCase(javaSuperClassName);
+            assignService(baseTypeName, service::setBase);
+        }
+
         // Analyze the members:
         javaClass.getNestedClasses().forEach(x -> analyzeServiceMember(x, service));
         javaClass.getMethods().forEach(x -> analyzeServiceMember(x, service));
@@ -285,9 +303,7 @@ public class ModelAnalyzer {
     }
 
     private void analyzeServiceMember(JavaClass javaClass, Service service) {
-        if (isAnnotatedWith(javaClass, ModelAnnotations.METHOD)) {
-            analyzeMethod(javaClass, service);
-        }
+        analyzeMethod(javaClass, service);
     }
 
     private void analyzeMethod(JavaClass javaClass, Service service) {
@@ -337,6 +353,9 @@ public class ModelAnalyzer {
         analyzeName(javaMethod, locator);
         analyzeDocumentation(javaMethod, locator);
 
+        // Analyze the parameters:
+        javaMethod.getParameters().forEach(x -> analyzeLocatorParameter(x, locator));
+
         // Get the referenced service:
         assignServiceReference(javaMethod.getReturns(), locator::setService);
 
@@ -344,6 +363,18 @@ public class ModelAnalyzer {
         service.addLocator(locator);
     }
 
+    private void analyzeLocatorParameter(JavaParameter javaParameter, Locator locator) {
+        // Create the parameter:
+        Parameter parameter = new Parameter();
+        analyzeName(javaParameter, parameter);
+        analyzeDocumentation(javaParameter, parameter);
+
+        // Get the type:
+        assignTypeReference(javaParameter.getJavaClass(), parameter::setType);
+
+        // Add the parameter to the locator:
+        locator.addParameter(parameter);
+    }
 
     private void analyzeModule(JavaClass javaClass, Type type) {
         analyzeModule(javaClass, type::setModule);
@@ -359,10 +390,21 @@ public class ModelAnalyzer {
         Module module = model.getModule(name);
         if (module == null) {
             module = new Module();
+            module.setModel(model);
             module.setName(name);
             model.addModule(module);
         }
         moduleSetter.accept(module);
+    }
+
+    private void analyzeName(JavaClass javaClass, Service service) {
+        // Get the name of the Java class:
+        String javaName = javaClass.getName();
+        javaName = removeSuffix(javaName, SERVICE_SUFFIX);
+
+        // Parse the Java name and assign it to the concept:
+        Name name = NameParser.parseUsingCase(javaName);
+        service.setName(name);
     }
 
     private void analyzeName(JavaClass javaClass, Concept concept) {
@@ -390,6 +432,12 @@ public class ModelAnalyzer {
 
     private void analyzeName(JavaMethod javaMethod, Concept concept) {
         String javaName = javaMethod.getName();
+        Name name = NameParser.parseUsingCase(javaName);
+        concept.setName(name);
+    }
+
+    private void analyzeName(JavaParameter javaParameter, Concept concept) {
+        String javaName = javaParameter.getName();
         Name name = NameParser.parseUsingCase(javaName);
         concept.setName(name);
     }
@@ -435,6 +483,7 @@ public class ModelAnalyzer {
         }
         if (javaClass.isArray()) {
             ListType listType = new ListType();
+            analyzeModule(javaClass, listType);
             assignType(typeName, listType::setElementType);
             typeSetter.accept(listType);
         }

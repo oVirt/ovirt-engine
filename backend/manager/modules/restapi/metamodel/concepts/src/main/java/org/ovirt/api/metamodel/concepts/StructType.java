@@ -16,6 +16,8 @@ limitations under the License.
 
 package org.ovirt.api.metamodel.concepts;
 
+import static java.util.Comparator.comparing;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,37 +26,98 @@ public class StructType extends Type {
     private List<Attribute> attributes = new ArrayList<>();
     private List<Link> links = new ArrayList<>();
 
-
     public Type getBase() {
         return base;
     }
 
-    public void setBase(Type base) {
-        this.base = base;
+    public void setBase(Type newType) {
+        base = newType;
     }
 
+    /**
+     * Check if this type is an extension of the given type.
+     */
+    public boolean isExtension(Type type) {
+        if (type == this) {
+            return true;
+        }
+        if (base != null && base instanceof StructType) {
+            return ((StructType) base).isExtension(type);
+        }
+        return false;
+    }
+
+    /**
+     * Returns all the attributes of this type, including the ones declared in base types. The returned list is a sorted
+     * copy of the one used internally, so it is safe to modify it.
+     */
     public List<Attribute> getAttributes() {
-        return attributes;
+        List<Attribute> result = new ArrayList<>(attributes);
+        if (base != null && base instanceof StructType) {
+            result.addAll(((StructType) base).getAttributes());
+        }
+        result.sort(comparing(Attribute::getName));
+        return result;
     }
 
-    public void addAttribute(Attribute attribute) {
-        attributes.add(attribute);
+    /**
+     * Returns the list of attributes that are declared directly in this type, not including the ones that are declared
+     * in the base types. The returned list is a sorted copy of the one used internally, so it is safe to modify it.
+     */
+    public List<Attribute> getDeclaredAttributes() {
+        return new ArrayList<>(attributes);
     }
 
-    public void addAttributes(List<Attribute> attributes) {
-        this.attributes.addAll(attributes);
+    /**
+     * Adds a new attribute to this type.
+     */
+    public void addAttribute(Attribute newAttribute) {
+        attributes.add(newAttribute);
+        attributes.sort(comparing(Attribute::getName));
     }
 
+    /**
+     * Adds a list of new attributes to this type.
+     */
+    public void addAttributes(List<Attribute> newAttributes) {
+        attributes.addAll(attributes);
+        attributes.sort(comparing(Attribute::getName));
+    }
+
+    /**
+     * Returns all the links of this type, including the ones declared in base types. The returned list is a sorted copy
+     * of the one used internally, so it is safe to modify it.
+     */
     public List<Link> getLinks() {
-        return links;
+        List<Link> result = new ArrayList<>(links);
+        if (base != null && base instanceof StructType) {
+            result.addAll(((StructType) base).getLinks());
+        }
+        result.sort(comparing(Link::getName));
+        return result;
     }
 
-    public void addLink(Link link) {
-        links.add(link);
+    /**
+     * Returns the list of links that are declared directly in this type, not including the ones that are declared
+     * in the base types. The returned list is a sorted copy of the one used internally, so it is safe to modify it.
+     */
+    public List<Link> getDeclaredLinks() {
+        return new ArrayList<>(links);
+    }
+    /**
+     * Adds a new link to this type.
+     */
+    public void addLink(Link newLink) {
+        links.add(newLink);
+        links.sort(comparing(Link::getName));
     }
 
-    public void addLinks(List<Link> links) {
-        this.links.addAll(links);
+    /**
+     * Adds a list of new links to this type.
+     */
+    public void addLinks(List<Link> newLinks) {
+        links.addAll(newLinks);
+        links.sort(comparing(Link::getName));
     }
 }
 

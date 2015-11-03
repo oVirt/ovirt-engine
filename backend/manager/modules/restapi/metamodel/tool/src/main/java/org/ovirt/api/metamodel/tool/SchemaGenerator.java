@@ -16,23 +16,16 @@ limitations under the License.
 
 package org.ovirt.api.metamodel.tool;
 
-import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
-import org.ovirt.api.metamodel.concepts.Attribute;
-import org.ovirt.api.metamodel.concepts.Concept;
-import org.ovirt.api.metamodel.concepts.EnumType;
-import org.ovirt.api.metamodel.concepts.EnumValue;
-import org.ovirt.api.metamodel.concepts.Link;
-import org.ovirt.api.metamodel.concepts.ListType;
-import org.ovirt.api.metamodel.concepts.Model;
-import org.ovirt.api.metamodel.concepts.Name;
-import org.ovirt.api.metamodel.concepts.NameParser;
-import org.ovirt.api.metamodel.concepts.StructType;
-import org.ovirt.api.metamodel.concepts.Type;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.joining;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.xml.parsers.DocumentBuilder;
@@ -50,16 +43,23 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.joining;
+import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
+import org.ovirt.api.metamodel.concepts.Attribute;
+import org.ovirt.api.metamodel.concepts.Concept;
+import org.ovirt.api.metamodel.concepts.EnumType;
+import org.ovirt.api.metamodel.concepts.EnumValue;
+import org.ovirt.api.metamodel.concepts.Link;
+import org.ovirt.api.metamodel.concepts.ListType;
+import org.ovirt.api.metamodel.concepts.Model;
+import org.ovirt.api.metamodel.concepts.Name;
+import org.ovirt.api.metamodel.concepts.NameParser;
+import org.ovirt.api.metamodel.concepts.StructType;
+import org.ovirt.api.metamodel.concepts.Type;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * This class takes a model and an input XML schema file and modifies it adding (at the end) the XML schema elements
@@ -573,19 +573,11 @@ public class SchemaGenerator {
     }
 
     private void writeStructMembers(XMLStreamWriter writer, StructType type) throws XMLStreamException {
-        // Get the attributes and links and sort them by name, so that the order of the generated XML schema will be
-        // predictable:
-        List<Attribute> attributes = new ArrayList<>(type.getAttributes());
-        attributes.sort(comparing(Concept::getName));
-        List<Link> links = new ArrayList<>(type.getLinks());
-        links.sort(comparing(Concept::getName));
-
-        // Write the attributes and then the links:
         writer.writeStartElement(XS_URI, "sequence");
-        for (Attribute attribute : attributes) {
+        for (Attribute attribute : type.getDeclaredAttributes()) {
             writeStructMember(writer, type, attribute.getType(), attribute.getName());
         }
-        for (Link link : links) {
+        for (Link link : type.getDeclaredLinks()) {
             writeStructMember(writer, type, link.getType(), link.getName());
         }
         writer.writeEndElement();

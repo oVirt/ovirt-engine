@@ -26,5 +26,9 @@ public class Type extends Concept {
     public void setModule(Module newModule) {
         module = newModule;
     }
+
+    public Model getModel() {
+        return module.getModel();
+    }
 }
 
