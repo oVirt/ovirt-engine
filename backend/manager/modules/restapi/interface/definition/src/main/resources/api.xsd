@@ -190,6 +190,8 @@
       <xs:element name="removed_labels" type="Labels" minOccurs="0" maxOccurs="1"/>
       <xs:element name="check_connectivity" type="xs:boolean" minOccurs="0"/>
       <xs:element name="connectivity_timeout" type="xs:int" minOccurs="0"/>
+      <!-- For VFsConfig update -->
+      <xs:element name="virtual_functions_configuration" type="HostNicVirtualFunctionsConfiguration" minOccurs="0" maxOccurs="1"/>
       <!-- A VM can be started paused -->
       <xs:element name="pause" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
       <!-- should migration be forced if VM is pinned to host? -->
@@ -4176,11 +4178,23 @@
           <xs:element name="override_configuration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="labels" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="properties" minOccurs="0" maxOccurs="1"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="virtual_functions_configuration" type="HostNicVirtualFunctionsConfiguration"/>
           <xs:element ref="qos" minOccurs="0" maxOccurs="1"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="physical_function" type="HostNIC"/>
           <!-- Also a rel="master" link for bonded nics -->
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="host_nic_virtual_functions_configuration" type="HostNicVirtualFunctionsConfiguration"/>
+
+  <xs:complexType name="HostNicVirtualFunctionsConfiguration">
+    <xs:sequence>
+      <xs:element maxOccurs="1" minOccurs="0" name="max_number_of_virtual_functions" type="xs:int"/>
+      <xs:element maxOccurs="1" minOccurs="0" name="number_of_virtual_functions" type="xs:int"/>
+      <xs:element maxOccurs="1" minOccurs="0" name="all_networks_allowed" type="xs:boolean"/>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:element name="unmanaged_networks" type="UnmanagedNetworks"/>

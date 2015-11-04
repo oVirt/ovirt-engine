@@ -235,6 +235,8 @@ import org.ovirt.engine.api.resource.TemplatesResource;
 import org.ovirt.engine.api.resource.UnmanagedNetworkResource;
 import org.ovirt.engine.api.resource.UnmanagedNetworksResource;
 import org.ovirt.engine.api.resource.UpdatableRoleResource;
+import org.ovirt.engine.api.resource.VirtualFunctionAllowedNetworkResource;
+import org.ovirt.engine.api.resource.VirtualFunctionAllowedNetworksResource;
 import org.ovirt.engine.api.resource.VmApplicationResource;
 import org.ovirt.engine.api.resource.VmApplicationsResource;
 import org.ovirt.engine.api.resource.VmDiskResource;
@@ -424,6 +426,7 @@ public class LinkHelper {
         map = new ParentToCollectionMap(NetworkResource.class, NetworksResource.class);
         map.add(AssignedNetworkResource.class, AssignedNetworksResource.class, Cluster.class);
         map.add(NetworkResource.class, NetworksResource.class, Network.class);
+        map.add(VirtualFunctionAllowedNetworkResource.class, VirtualFunctionAllowedNetworksResource.class, HostNIC.class);
         TYPES.put(Network.class, map);
 
         map = new ParentToCollectionMap(DeviceResource.class, DevicesResource.class);
