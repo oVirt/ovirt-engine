@@ -11,16 +11,22 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.HostNicVirtualFunctionsConfiguration;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.resource.HostNicResource;
 import org.ovirt.engine.api.resource.LabelsResource;
 import org.ovirt.engine.api.resource.NetworkAttachmentsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
+import org.ovirt.engine.api.resource.VirtualFunctionAllowedNetworksResource;
+import org.ovirt.engine.api.restapi.logging.Messages;
+import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.RemoveBondParameters;
+import org.ovirt.engine.core.common.action.UpdateHostNicVfsConfigParameters;
 import org.ovirt.engine.core.common.action.UpdateNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
@@ -83,6 +89,32 @@ public class BackendHostNicResource
     }
 
     @Override
+    public Response updateVirtualFunctionsConfig(Action action) {
+        validateParameters(action, "virtualFunctionsConfiguration.numberOfVirtualFunctions|allNetworksAllowed");
+        final HostNicVfsConfig vfsConfig = parent.findVfsConfig(guid);
+        if (vfsConfig == null) {
+            return notAllowed(localize(Messages.INVALID_OPERATION_ON_NON_SRIOV_NIC), guid.toString());
+        }
+        UpdateHostNicVfsConfigParameters params = prepareUpdateHostNicVfsConfigParameters(action, vfsConfig);
+        return doAction(VdcActionType.UpdateHostNicVfsConfig, params, action);
+    }
+
+    private UpdateHostNicVfsConfigParameters prepareUpdateHostNicVfsConfigParameters(Action action,
+            HostNicVfsConfig vfsConfig) {
+        final Mapper<HostNicVfsConfig, UpdateHostNicVfsConfigParameters> entityMapper =
+                getMapper(HostNicVfsConfig.class, UpdateHostNicVfsConfigParameters.class);
+        UpdateHostNicVfsConfigParameters params = entityMapper.map(vfsConfig, new UpdateHostNicVfsConfigParameters());
+        final Mapper<HostNicVirtualFunctionsConfiguration, UpdateHostNicVfsConfigParameters> userInputMapper =
+                getMapper(HostNicVirtualFunctionsConfiguration.class, UpdateHostNicVfsConfigParameters.class);
+        userInputMapper.map(action.getVirtualFunctionsConfiguration(), params);
+        return params;
+    }
+
+    private Response notAllowed(String reason, String detail) {
+        return Response.status(405).entity(fault(reason, detail)).build();
+    }
+
+    @Override
     public StatisticsResource getStatisticsResource() {
         EntityIdResolver<Guid> resolver = new EntityIdResolver<Guid>() {
             @Override
@@ -91,7 +123,7 @@ public class BackendHostNicResource
             }
         };
         HostNicStatisticalQuery query = new HostNicStatisticalQuery(resolver, newModel(id));
-        return inject(new BackendStatisticsResource<HostNIC, VdsNetworkInterface>(entityType, guid, query));
+        return inject(new BackendStatisticsResource<>(entityType, guid, query));
     }
 
     @Override
@@ -218,5 +250,15 @@ public class BackendHostNicResource
     @Override
     public NetworkAttachmentsResource getNetworkAttachmentsResource() {
         return inject(new BackendHostNicNetworkAttachmentsResource(asGuid(id), asGuid(parent.getHostId())));
+    }
+
+    @Override
+    public LabelsResource getVfAllowedLabelsResource() {
+        return inject(new BackendVirtualFunctionAllowedLabelsResource(guid, parent.getHostId()));
+    }
+
+    @Override
+    public VirtualFunctionAllowedNetworksResource getVfAllowedNetworksResource() {
+        return inject(new BackendVirtualFunctionAllowedNetworksResource(guid, parent.getHostId()));
     }
 }

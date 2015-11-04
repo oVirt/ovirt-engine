@@ -26,4 +26,12 @@ public class UpdateHostNicVfsConfigParameters extends VfsConfigBaseParameters {
     public boolean getAllNetworksAllowed() {
         return allNetworksAllowed;
     }
+
+    public void setNumOfVfs(int numOfVfs) {
+        this.numOfVfs = numOfVfs;
+    }
+
+    public void setAllNetworksAllowed(boolean allNetworksAllowed) {
+        this.allNetworksAllowed = allNetworksAllowed;
+    }
 }

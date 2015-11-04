@@ -37,7 +37,7 @@ public interface HostNicResource extends UpdatableResource<HostNIC>, MeasurableR
     @DELETE
     Response remove();
 
-    @Path("{action: (attach|detach)}/{oid}")
+    @Path("{action: (attach|detach|updatevirtualfunctionsconfiguration)}/{oid}")
     ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @POST
@@ -52,9 +52,37 @@ public interface HostNicResource extends UpdatableResource<HostNIC>, MeasurableR
     @Path("detach")
     Response detach(Action action);
 
+    /**
+     * The action updates virtual function configuration in case the current resource represents an SR-IOV enabled NIC.
+     * The input should be consisted of at least one of the following properties:
+     * <ul>
+     * <li>allNetworksAllowed</li>
+     * <li>numberOfVirtualFunctions</li>
+     * </ul>
+     */
+    @POST
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON})
+    @Actionable
+    @Path("updatevirtualfunctionsconfiguration")
+    Response updateVirtualFunctionsConfig(Action action);
+
     @Path("labels")
     LabelsResource getLabelsResource();
 
     @Path("networkattachments")
     NetworkAttachmentsResource getNetworkAttachmentsResource();
+
+    /**
+     * Retrieves sub-collection resource of network labels that are allowed on an the virtual functions
+     * in case that the current resource represents an SR-IOV physical function NIC.
+     */
+    @Path("virtualfunctionallowedlabels")
+    LabelsResource getVfAllowedLabelsResource();
+
+    /**
+     * Retrieves sub-collection resource of networks that are allowed on an the virtual functions
+     * in case that the current resource represents an SR-IOV physical function NIC.
+     */
+    @Path("virtualfunctionallowednetworks")
+    VirtualFunctionAllowedNetworksResource getVfAllowedNetworksResource();
 }

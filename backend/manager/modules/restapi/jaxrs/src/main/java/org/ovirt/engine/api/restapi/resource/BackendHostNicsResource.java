@@ -4,6 +4,7 @@ import static org.ovirt.engine.core.common.action.VdcActionType.SetupNetworks;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +17,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Bonding;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.HostNicVirtualFunctionsConfiguration;
 import org.ovirt.engine.api.model.HostNics;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.Network;
@@ -25,7 +27,9 @@ import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.HostNicResource;
 import org.ovirt.engine.api.resource.HostNicsResource;
+import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
+import org.ovirt.engine.api.utils.ArrayUtils;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.AddBondParameters;
 import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
@@ -33,16 +37,22 @@ import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 public class BackendHostNicsResource
     extends AbstractBackendCollectionResource<HostNIC, VdsNetworkInterface>
         implements HostNicsResource {
 
-    static final String[] SUB_COLLECTIONS = { "statistics", "labels", "networkattachments" };
+    static final String[] PF_SUB_COLLECTIONS = { "vfallowedlabels", "vfallowednetworks" };
+    static final String[] SUB_COLLECTIONS = ArrayUtils.concat(
+           new String[] { "statistics", "labels", "networkattachments"}, PF_SUB_COLLECTIONS);
+    private static final String UPDATE_VFS_CONFIG_ACTION = "updatevfsconfig";
 
     private String hostId;
 
@@ -75,6 +85,25 @@ public class BackendHostNicsResource
         return addActions(ret);
     }
 
+    @Override
+    protected HostNIC addLinks(HostNIC hostNic, String... subCollectionsToExclude) {
+        if (hostNic.isSetVirtualFunctionsConfiguration()) {
+            return super.addLinks(hostNic, subCollectionsToExclude);
+        }
+        else {
+            final HostNIC resultHostNic = super.addLinks(hostNic,
+                    ArrayUtils.concat(PF_SUB_COLLECTIONS, subCollectionsToExclude));
+            final Iterator<Link> linkIterator = resultHostNic.getActions().getLinks().iterator();
+            while (linkIterator.hasNext()) {
+                final Link link = linkIterator.next();
+                if (link.getRel().equals(UPDATE_VFS_CONFIG_ACTION)) {
+                    linkIterator.remove();
+                }
+            }
+            return resultHostNic;
+        }
+    }
+
     @SuppressWarnings("serial")
     @Override
     public Response add(final HostNIC nic) {
@@ -91,6 +120,60 @@ public class BackendHostNicsResource
     @Override
     public HostNicResource getHostNicSubResource(String id) {
         return inject(new BackendHostNicResource(id, this));
+    }
+
+    public Map<Guid, HostNicVfsConfig> findHostNicVfsConfigs() {
+        final List<HostNicVfsConfig> hostNicVfsConfigs = getBackendCollection(HostNicVfsConfig.class,
+                VdcQueryType.GetAllVfsConfigByHostId,
+                new IdQueryParameters(asGuid(hostId)));
+        return LinqUtils.toMap(hostNicVfsConfigs,
+                new org.ovirt.engine.core.utils.linq.Mapper<HostNicVfsConfig, Guid, HostNicVfsConfig>() {
+                    @Override
+                    public Guid createKey(HostNicVfsConfig hostNicVfsConfig) {
+                        return hostNicVfsConfig.getNicId();
+                    }
+
+                    @Override
+                    public HostNicVfsConfig createValue(HostNicVfsConfig hostNicVfsConfig) {
+                        return hostNicVfsConfig;
+                    }
+                });
+    }
+
+    public Map<Guid, Guid> retriveVfMap() {
+        final VdcQueryReturnValue returnValue =
+                runQuery(VdcQueryType.GetVfToPfMapByHostId, new IdQueryParameters(asGuid(hostId)));
+        return returnValue.getReturnValue();
+    }
+
+    @Override
+    protected HostNIC doPopulate(HostNIC model, VdsNetworkInterface entity) {
+        final HostNIC hostNic = super.doPopulate(model, entity);
+        final Guid nicId = entity.getId();
+        final HostNicVfsConfig hostNicVfsConfig = findVfsConfig(nicId);
+        if (hostNicVfsConfig == null) {
+            final Map<Guid, Guid> vfMap = retriveVfMap();
+            final Guid physicalFunctionNicId = vfMap.get(nicId);
+            if (physicalFunctionNicId != null) {
+                final HostNIC physicalFunction = new HostNIC();
+                physicalFunction.setId(physicalFunctionNicId.toString());
+                hostNic.setPhysicalFunction(physicalFunction);
+            }
+        } else {
+            final Mapper<HostNicVfsConfig, HostNicVirtualFunctionsConfiguration> mapper =
+                    getMapper(HostNicVfsConfig.class,
+                            HostNicVirtualFunctionsConfiguration.class);
+            final HostNicVirtualFunctionsConfiguration vfsConfigModel =
+                    mapper.map(hostNicVfsConfig, new HostNicVirtualFunctionsConfiguration());
+            hostNic.setVirtualFunctionsConfiguration(vfsConfigModel);
+        }
+
+        return hostNic;
+    }
+
+    HostNicVfsConfig findVfsConfig(Guid nicId) {
+        final Map<Guid, HostNicVfsConfig> hostNicVfsConfigs = findHostNicVfsConfigs();
+        return hostNicVfsConfigs.get(nicId);
     }
 
     public HostNIC lookupNic(String id, boolean forcePopulate) {
@@ -161,9 +244,14 @@ public class BackendHostNicsResource
     }
 
     @Override
-    public HostNIC addParents(HostNIC nic) {
-        nic.setHost(new Host());
-        nic.getHost().setId(hostId);
+    public HostNIC addParents(HostNIC hostNic) {
+        final HostNIC nic = super.addParents(hostNic);
+        final Host host = new Host();
+        host.setId(hostId);
+        nic.setHost(host);
+        if (nic.getPhysicalFunction() != null) {
+            nic.getPhysicalFunction().setHost(host);
+        }
         return nic;
     }
 
@@ -237,14 +325,14 @@ public class BackendHostNicsResource
         return nic;
     }
 
-    protected Link masterLink(String id) {
+    private Link masterLink(String id) {
         Link master = new Link();
         master.setRel("master");
         master.setHref(idToHref(id));
         return master;
     }
 
-    protected String idToHref(String id) {
+    private String idToHref(String id) {
         HostNIC master = new HostNIC();
         master.setId(id);
         master.setHost(new Host());
