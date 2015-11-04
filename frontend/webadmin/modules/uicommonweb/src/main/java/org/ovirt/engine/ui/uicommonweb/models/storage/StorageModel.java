@@ -659,7 +659,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
 
         getWarningLowSpaceIndicator().validateEntity(new IValidation[]{
-                new NotEmptyValidation(), new IntegerValidation(0, Integer.valueOf(StorageConstants.LOW_SPACE_THRESHOLD))
+                new NotEmptyValidation(), new IntegerValidation(0, StorageConstants.LOW_SPACE_THRESHOLD)
         });
 
         getCriticalSpaceActionBlocker().validateEntity(new IValidation[] {
