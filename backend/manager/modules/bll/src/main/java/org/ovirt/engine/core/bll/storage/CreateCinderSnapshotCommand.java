@@ -7,6 +7,7 @@ import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -99,7 +100,8 @@ public class CreateCinderSnapshotCommand<T extends ImagesContainterParametersBas
             getDestinationDiskImage().setImageStatus(ImageStatus.OK);
             getImageDao().update(getDestinationDiskImage().getImage());
         }
-        if (!getParameters().isParentHasTasks()) {
+        if (!getParameters().isParentHasTasks() && CommandCoordinatorUtil.getChildCommandIds(
+                getParentParameters(getParameters().getParentCommand()).getCommandId()).size() == 1) {
             getBackend().endAction(getParameters().getParentCommand(),
                     getParameters().getParentParameters(),
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
