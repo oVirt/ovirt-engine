@@ -1119,11 +1119,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
     public void cleanHostParametersFields() {
         getName().setEntity(""); //$NON-NLS-1$
-        getComment().setEntity(""); //$NON-NLS-1$
-        getAuthSshPort().setEntity(Integer.parseInt(constants.defaultHostSSHPort()));
         getHost().setEntity(""); //$NON-NLS-1$
-        getUserPassword().setEntity(""); //$NON-NLS-1$
-        getFetchSshFingerprint().setEntity(""); //$NON-NLS-1$
     }
 
     public static void orderAgents(List<FenceAgent> fenceAgents) {

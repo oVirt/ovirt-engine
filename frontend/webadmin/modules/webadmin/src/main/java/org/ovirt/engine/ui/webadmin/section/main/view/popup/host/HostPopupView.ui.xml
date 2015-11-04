@@ -284,7 +284,7 @@
                                         </b:Row>
                                         <b:Row addStyleNames="{style.generalTabTopDecorator}">
                                             <b:Column size="LG_5">
-                                                <ge:StringEntityModelTextBoxEditor ui:field="providerSearchFilterLabel" addStyleNames="{style.floatLeft}"/>
+                                                <ge:StringEntityModelTextBoxEditor ui:field="providerSearchFilterLabel" addStyleNames="{style.floatLeft}" usePatternFly="true" />
                                                 <d:InfoIcon ui:field="providerSearchInfoIcon" addStyleNames="{style.icon} {style.floatLeft} {style.searchFilterHelpIcon}" />
                                             </b:Column>
                                             <b:Column size="LG_7">

@@ -645,11 +645,13 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
                 if (showForemanProviders && doProvisioning) {
                     object.updateHosts();
+                    object.getIsDiscoveredHosts().setEntity(true);
                 } else {
                     if (doProvisioning) {
                         object.cleanHostParametersFields();
                     }
                     hideProviderWidgets(object);
+                    object.getIsDiscoveredHosts().setEntity(null);
                 }
             }
         });
@@ -657,12 +659,14 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         object.getIsDiscoveredHosts().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (object.getIsDiscoveredHosts().getEntity()) {
-                    rbDiscoveredHost.setValue(true);
-                    showDiscoveredHostsWidgets(true);
-                } else if (!object.getIsDiscoveredHosts().getEntity()) {
-                    rbProvisionedHost.setValue(true);
-                    showProvisionedHostsWidgets(true);
+                if (object.getIsDiscoveredHosts().getEntity() != null) {
+                    if (object.getIsDiscoveredHosts().getEntity()) {
+                        rbDiscoveredHost.setValue(true);
+                        showDiscoveredHostsWidgets(true);
+                    } else if (!object.getIsDiscoveredHosts().getEntity()) {
+                        rbProvisionedHost.setValue(true);
+                        showProvisionedHostsWidgets(true);
+                    }
                 }
             }
         });
