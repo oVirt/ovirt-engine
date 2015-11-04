@@ -2302,6 +2302,15 @@ actions:
           action.force: xs:boolean
         deprecated: true
         description: initiate the command to setup networks for the network interface card of the specified host
+- name: /hosts/{host:id}/nics/{nic:id}/updatevirtualfunctionsconfiguration|rel=updatevirtualfunctionsconfiguration
+  description: update virtual functions configuration on the specified host NIC
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - optionalArguments:
+          action.virtual_functions_configuration.number_of_virtual_functions: xs:int
+          action.virtual_functions_configuration.all_networks_allowed: xs:boolean
 - name: /hosts/{host:id}/nics/{nic:id}/attach|rel=attach
   description: attach the network interface card to the specified host
   request:
@@ -2331,7 +2340,29 @@ actions:
       parameterType: Label
       signatures:
       - mandatoryArguments: {label.id: 'xs:string'}
-        description: add a new label to the interface
+- name: /hosts/{host:id}/nics/{nic:id}/virtualfunctionallowedlabels|rel=get
+  description: get the virtual function allowed labels on the interface
+- name: /hosts/{host:id}/nics/{nic:id}/virtualfunctionallowedlabels|rel=add
+  description: add a new virtual function allowed label on the interface
+  request:
+    body:
+      parameterType: Label
+      signatures:
+      - mandatoryArguments:
+          label.id: xs:string
+- name: /hosts/{host:id}/nics/{nic:id}/virtualfunctionallowedlabels/{label:id}|rel=del
+  description: remove the label from the allowed on the interface virtual functions
+- name: /hosts/{host:id}/nics/{nic:id}/virtualfunctionallowednetworks|rel=get
+  description: get the virtual function allowed networks on the interface
+- name: /hosts/{host:id}/nics/{nic:id}/virtualfunctionallowednetworks|rel=add
+  description: add a new label to the interface
+  request:
+    body:
+      parameterType: Network
+      signatures:
+      - mandatoryArguments: {network.id|name: 'xs:string'}
+- name: /hosts/{host:id}/nics/{nic:id}/virtualfunctionallowednetworks/{network:id}|rel=del
+  description: remove the network from the allowed on the interface virtual functions
 - name: /hosts/{host:id}/nics/{nic:id}/labels/{label:id}|rel=get
   description: get a specific label of an interface
 - name: /hosts/{host:id}/nics/{nic:id}/labels/{label:id}|rel=delete

@@ -100,8 +100,16 @@ public class FeaturesHelper {
             addRefreshLunSize(features);
             addNetworkAttachmentsFeature(features);
             addHostEnrollCertificateFeature(features);
+            addSriovFeature(features);
         }
         return features;
+    }
+
+    private void addSriovFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("SR-IOV");
+        feature.setDescription("Natively support SR-IOV");
+        features.getFeature().add(feature);
     }
 
     private void addCpuProfilesFeature(Features features) {

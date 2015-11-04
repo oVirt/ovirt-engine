@@ -201,6 +201,7 @@ public class BackendHostNicResourceTest
         setUpGetEntityExpectations(2);
         setupGetHostExpectations(2);
         setupGetNetworkExpectations(2);
+        setGetVfToPfMapExpectations(1);
         setupUpdateExpectations();
         verifyUpdate(resource.update(getHostNicModel(1)), 1);
     }
@@ -231,6 +232,7 @@ public class BackendHostNicResourceTest
         setUpVlanQueryExpectations(model1);
         setupGetHostExpectations(1);
         setupGetNetworkExpectations(1);
+        setGetVfToPfMapExpectations(1);
         setupUpdateExpectations();
         HostNic result = resource.update(hostNicModel);
         assertNotNull(result);
@@ -607,6 +609,17 @@ public class BackendHostNicResourceTest
                     new String[] { "Id" },
                     new Object[] { GUIDS[0] },
                     networks);
+        }
+    }
+
+    private void setGetVfToPfMapExpectations(int times) {
+        while (times-- > 0) {
+            setUpEntityQueryExpectations(
+                    VdcQueryType.GetVfToPfMapByHostId,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[0] },
+                    Collections.emptyMap());
         }
     }
 }

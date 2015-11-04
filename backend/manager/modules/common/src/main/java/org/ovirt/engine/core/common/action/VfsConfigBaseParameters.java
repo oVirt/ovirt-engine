@@ -21,4 +21,8 @@ public abstract class VfsConfigBaseParameters extends VdsActionParameters {
     public Guid getNicId() {
         return nicId;
     }
+
+    public void setNicId(Guid nicId) {
+        this.nicId = nicId;
+    }
 }

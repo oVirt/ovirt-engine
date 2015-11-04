@@ -96,6 +96,7 @@ public class BackendHostNicsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpNetworkQueryExpectations(2);
         setUpEntityQueryExpectations(1);
+        setGetVfToPfMapExpectations(1);
 
         setUpCreationExpectations(VdcActionType.AddBond,
                                   AddBondParameters.class,
@@ -459,6 +460,17 @@ public class BackendHostNicsResourceTest
                     new String[] { "Id" },
                     new Object[] { GUIDS[0] },
                     networks);
+        }
+    }
+
+    private void setGetVfToPfMapExpectations(int times) {
+        while (times-- > 0) {
+            setUpEntityQueryExpectations(
+                    VdcQueryType.GetVfToPfMapByHostId,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[0] },
+                    Collections.emptyMap());
         }
     }
 }

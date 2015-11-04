@@ -37,8 +37,17 @@ public interface HostNic {
     Boolean overrideConfiguration();
     Label[] labels();
     Property[] properties();
+    /**
+     * For a SR-IOV physical function NIC describes its virtual functions configuration.
+     */
+    HostNicVirtualFunctionsConfiguration virtualFunctionsConfiguration();
 
     @Link Host host();
     @Link Network network();
     @Link Qos qos();
+
+    /**
+     * For a SR-IOV virtual function NIC references to its physical function NIC.
+     */
+    @Link HostNic physicalFunction();
 }

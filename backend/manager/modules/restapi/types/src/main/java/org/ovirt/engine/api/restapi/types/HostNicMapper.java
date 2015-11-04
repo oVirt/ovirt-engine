@@ -9,6 +9,7 @@ import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Bonding;
 import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.HostNic;
+import org.ovirt.engine.api.model.HostNicVirtualFunctionsConfiguration;
 import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.Mac;
 import org.ovirt.engine.api.model.Network;
@@ -16,8 +17,10 @@ import org.ovirt.engine.api.model.NicStatus;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.action.UpdateHostNicVfsConfigParameters;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
+import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
@@ -266,5 +269,35 @@ public class HostNicMapper {
             }
         }
         return null;
+    }
+
+    @Mapping(from = HostNicVfsConfig.class, to = HostNicVirtualFunctionsConfiguration.class)
+    public static HostNicVirtualFunctionsConfiguration map(HostNicVfsConfig entity,
+            HostNicVirtualFunctionsConfiguration apiModel) {
+        apiModel.setAllNetworksAllowed(entity.isAllNetworksAllowed());
+        apiModel.setMaxNumberOfVirtualFunctions(entity.getMaxNumOfVfs());
+        apiModel.setNumberOfVirtualFunctions(entity.getNumOfVfs());
+        return apiModel;
+    }
+
+    @Mapping(from = HostNicVirtualFunctionsConfiguration.class, to = UpdateHostNicVfsConfigParameters.class)
+    public static UpdateHostNicVfsConfigParameters map(HostNicVirtualFunctionsConfiguration apiModel,
+            UpdateHostNicVfsConfigParameters params) {
+        if (apiModel.isSetAllNetworksAllowed()) {
+            params.setAllNetworksAllowed(apiModel.isAllNetworksAllowed());
+        }
+        if (apiModel.isSetNumberOfVirtualFunctions()) {
+            params.setNumOfVfs(apiModel.getNumberOfVirtualFunctions());
+        }
+        return params;
+    }
+
+    @Mapping(from = HostNicVfsConfig.class, to = UpdateHostNicVfsConfigParameters.class)
+    public static UpdateHostNicVfsConfigParameters map(HostNicVfsConfig entity,
+            UpdateHostNicVfsConfigParameters params) {
+        params.setNicId(entity.getNicId());
+        params.setAllNetworksAllowed(entity.isAllNetworksAllowed());
+        params.setNumOfVfs(entity.getNumOfVfs());
+        return params;
     }
 }

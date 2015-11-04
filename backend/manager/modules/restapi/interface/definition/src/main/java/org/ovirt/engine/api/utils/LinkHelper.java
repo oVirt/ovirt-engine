@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
 import javax.ws.rs.Path;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
@@ -242,6 +243,8 @@ import org.ovirt.engine.api.resource.TemplateWatchdogsResource;
 import org.ovirt.engine.api.resource.TemplatesResource;
 import org.ovirt.engine.api.resource.UnmanagedNetworkResource;
 import org.ovirt.engine.api.resource.UnmanagedNetworksResource;
+import org.ovirt.engine.api.resource.VirtualFunctionAllowedNetworkResource;
+import org.ovirt.engine.api.resource.VirtualFunctionAllowedNetworksResource;
 import org.ovirt.engine.api.resource.VmApplicationResource;
 import org.ovirt.engine.api.resource.VmApplicationsResource;
 import org.ovirt.engine.api.resource.VmCdromResource;
@@ -437,6 +440,7 @@ public class LinkHelper {
         map = new ParentToCollectionMap(NetworkResource.class, NetworksResource.class);
         map.add(AssignedNetworkResource.class, AssignedNetworksResource.class, Cluster.class);
         map.add(NetworkResource.class, NetworksResource.class, Network.class);
+        map.add(VirtualFunctionAllowedNetworkResource.class, VirtualFunctionAllowedNetworksResource.class, HostNic.class);
         TYPES.put(Network.class, map);
 
         map = new ParentToCollectionMap();
