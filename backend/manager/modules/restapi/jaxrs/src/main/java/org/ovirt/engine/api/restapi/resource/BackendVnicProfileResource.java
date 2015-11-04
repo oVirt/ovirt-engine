@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVnicProfileResource extends AbstractBackendVnicProfileResource implements VnicProfileResource {
 
@@ -23,8 +22,10 @@ public class BackendVnicProfileResource extends AbstractBackendVnicProfileResour
 
     @Override
     public VnicProfile update(VnicProfile resource) {
+        validateEnums(VnicProfile.class, resource);
+
         return performUpdate(resource,
-                new QueryIdResolver<Guid>(VdcQueryType.GetVnicProfileById, IdQueryParameters.class),
+                new QueryIdResolver<>(VdcQueryType.GetVnicProfileById, IdQueryParameters.class),
                 VdcActionType.UpdateVnicProfile,
                 new UpdateParametersProvider());
     }

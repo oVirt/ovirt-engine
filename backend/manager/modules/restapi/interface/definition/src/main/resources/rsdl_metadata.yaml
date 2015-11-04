@@ -2668,9 +2668,15 @@ actions:
     body:
       parameterType: VnicProfile
       signatures:
-      - mandatoryArguments: {vnicprofile.name: 'xs:string'}
-        optionalArguments: {vnicprofile.description: 'xs:string', vnicprofile.port_mirroring: 'xs:boolean',
-        vnicprofile.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}}
+      - mandatoryArguments:
+          vnicprofile.name: xs:string
+        optionalArguments:
+          vnicprofile.description: xs:string
+          vnicprofile.port_mirroring: xs:boolean
+          vnicprofile.custom_properties.custom_property--COLLECTION:
+            custom_property.name: xs:string
+            custom_property.value: xs:string
+          vnicprofile.pass_through.mode: xs:string
         description: add a new virtual network interface card profile for the network
 - name: /networks/{network:id}/labels|rel=get
   description: get the labels of a network
@@ -2698,9 +2704,14 @@ actions:
     body:
       parameterType: VnicProfile
       signatures:
-      - mandatoryArguments: {}
-        optionalArguments: {vnicprofile.name: 'xs:string', vnicprofile.description: 'xs:string', vnicprofile.port_mirroring: 'xs:boolean',
-        vnicprofile.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}}
+      - optionalArguments:
+          vnicprofile.name: xs:string
+          vnicprofile.description: xs:string
+          vnicprofile.port_mirroring: xs:boolean
+          vnicprofile.custom_properties.custom_property--COLLECTION:
+            custom_property.name: xs:string
+            custom_property.value: xs:string
+          vnicprofile.pass_through.mode: xs:string
         description: update the specified virtual network interface card profile in the system
 - name: /vnicprofiles|rel=add
   description: add a new virtual network interface card profile to the system
@@ -2708,9 +2719,16 @@ actions:
     body:
       parameterType: VnicProfile
       signatures:
-      - mandatoryArguments: {vnicprofile.network.id: 'xs:string', vnicprofile.name: 'xs:string'}
-        optionalArguments: {vnicprofile.description: 'xs:string', vnicprofile.port_mirroring: 'xs:boolean',
-        vnicprofile.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}}
+      - mandatoryArguments:
+          vnicprofile.network.id: xs:string
+          vnicprofile.name: xs:string
+        optionalArguments:
+          vnicprofile.description: xs:string
+          vnicprofile.port_mirroring: xs:boolean
+          vnicprofile.custom_properties.custom_property--COLLECTION:
+            custom_property.name: xs:string
+            custom_property.value: xs:string
+          vnicprofile.pass_through.mode: xs:string
         description: add a new virtual network interface card profile to the system
 - name: /vnicprofiles/{vnicprofile:id}/permissions|rel=get
   description: get the list of all permissions on the virtual network interface card profile in the system

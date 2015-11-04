@@ -3,6 +3,8 @@ package org.ovirt.engine.api.restapi.types;
 import org.ovirt.engine.api.model.CustomProperties;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Qos;
+import org.ovirt.engine.api.model.VnicPassThrough;
+import org.ovirt.engine.api.model.VnicPassThroughMode;
 import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
@@ -36,6 +38,9 @@ public class VnicProfileMapper {
         if (model.isSetQos() && model.getQos().isSetId()) {
             entity.setNetworkQosId(GuidUtils.asGuid(model.getQos().getId()));
         }
+        if (model.isSetPassThrough() && model.getPassThrough().isSetMode()) {
+            entity.setPassthrough(map(model.getPassThrough().getMode()));
+        }
         return entity;
     }
 
@@ -67,6 +72,18 @@ public class VnicProfileMapper {
             model.setQos(new Qos());
             model.getQos().setId(entity.getNetworkQosId().toString());
         }
+        final VnicPassThrough vnicPassThrough = new VnicPassThrough();
+        vnicPassThrough.setMode(map(entity.isPassthrough()).value());
+        model.setPassThrough(vnicPassThrough);
         return model;
+    }
+
+    private static boolean map(String value) {
+        final VnicPassThroughMode vnicPassThroughMode = VnicPassThroughMode.fromValue(value);
+        return VnicPassThroughMode.ENABLED == vnicPassThroughMode;
+    }
+
+    private static VnicPassThroughMode map(boolean value) {
+        return value ? VnicPassThroughMode.ENABLED : VnicPassThroughMode.DISABLED;
     }
 }

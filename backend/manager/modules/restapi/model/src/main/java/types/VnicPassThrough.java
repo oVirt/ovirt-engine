@@ -16,16 +16,14 @@ limitations under the License.
 
 package types;
 
-import org.ovirt.api.metamodel.annotations.Link;
 import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
-public interface VnicProfile {
-    Boolean portMirroring();
-    CustomProperty[] customProperties();
+public interface VnicPassThrough {
 
-    VnicPassThrough passThrough();
-
-    @Link Network network();
-    @Link Qos qos();
+    /**
+     * Defines if the vNIC to be implemented as a virtual device or as a pass-through to a host device.
+     */
+    // TODO: Create a "PashThroughMode" enum in the model and use it instead of String.
+    String mode();
 }
