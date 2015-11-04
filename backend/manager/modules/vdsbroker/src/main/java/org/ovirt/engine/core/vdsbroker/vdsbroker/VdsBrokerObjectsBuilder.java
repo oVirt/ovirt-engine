@@ -128,7 +128,12 @@ public class VdsBrokerObjectsBuilder {
             vm.getDiskMap().put(Guid.newGuid(), image);
         }
 
-        vm.setClusterArch(parseArchitecture(xmlRpcStruct));
+        try {
+            vm.setClusterArch(parseArchitecture(xmlRpcStruct));
+        } catch (IllegalArgumentException ex) {
+            log.error("Illegal architecture type: %s, replacing with x86_64", xmlRpcStruct.get(VdsProperties.vm_arch));
+            vm.setClusterArch(ArchitectureType.x86_64);
+        }
 
         return vm;
     }
