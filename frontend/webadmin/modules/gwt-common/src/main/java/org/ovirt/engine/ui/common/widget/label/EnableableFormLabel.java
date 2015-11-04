@@ -9,6 +9,13 @@ public class EnableableFormLabel extends FormLabel implements HasEnabled {
 
     private boolean enabled;
 
+    public EnableableFormLabel() {
+    }
+
+    public EnableableFormLabel(String text) {
+        setText(text);
+    }
+
     @Override
     public boolean isEnabled() {
         return enabled;

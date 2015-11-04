@@ -3127,6 +3127,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("UUID")
     String idLibvirtSecret();
 
+    @DefaultStringValue("The provided UUID is auto-generated. It should be entered in the Cinder configuration file. Alternatively, an existing UUID can be specified in the text box.")
+    String idLibvirtSecretHint();
+
     @DefaultStringValue("Value")
     String valueLibvirtSecret();
 
