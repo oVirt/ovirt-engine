@@ -4,18 +4,23 @@ import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecretUsageT
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LibvirtSecretModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ProviderSecretPopupPresenterWidget;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.inject.Inject;
@@ -40,10 +45,14 @@ public class ProviderSecretPopupView extends AbstractModelBoundPopupView<Libvirt
     @WithElementId
     ListModelListBoxEditor<LibvirtSecretUsageType> usageTypeEditor;
 
-    @UiField
     @Path(value = "uuid.entity")
     @WithElementId
-    StringEntityModelTextBoxEditor uuidEditor;
+    StringEntityModelTextBoxOnlyEditor uuidEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    @WithElementId
+    EntityModelWidgetWithInfo uuidEditorWithInfo;
 
     @UiField
     @Path(value = "value.entity")
@@ -71,6 +80,10 @@ public class ProviderSecretPopupView extends AbstractModelBoundPopupView<Libvirt
     @SuppressWarnings({ "unchecked" })
     private void initManualWidgets() {
         usageTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer());
+        uuidEditor = new StringEntityModelTextBoxOnlyEditor();
+        uuidEditorWithInfo = new EntityModelWidgetWithInfo(
+                new EnableableFormLabel(constants.idLibvirtSecret()), uuidEditor);
+        uuidEditorWithInfo.setExplanation(SafeHtmlUtils.fromTrustedString(constants.idLibvirtSecretHint()));
     }
 
     void localize() {
