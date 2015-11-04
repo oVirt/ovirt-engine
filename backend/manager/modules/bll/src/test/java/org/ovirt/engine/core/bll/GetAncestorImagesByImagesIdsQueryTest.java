@@ -10,12 +10,15 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 
+@RunWith(MockitoJUnitRunner.class)
 public class GetAncestorImagesByImagesIdsQueryTest extends
         AbstractUserQueryTest<IdsQueryParameters, GetAncestorImagesByImagesIdsQuery<IdsQueryParameters>> {
 
