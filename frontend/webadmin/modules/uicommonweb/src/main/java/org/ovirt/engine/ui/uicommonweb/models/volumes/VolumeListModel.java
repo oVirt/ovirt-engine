@@ -541,6 +541,9 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                     VolumeStatus status = GlusterVolumeUtils.getVolumeStatus(volume);
                     allowStart = status == VolumeStatus.ALL_BRICKS_DOWN || status == VolumeStatus.SOME_BRICKS_DOWN;
                     allowRemove = false;
+                    if (!volume.getVolumeType().isDistributedType()) {
+                        allowStartRebalance = false;
+                    }
                 }
                 else if (volume.getStatus() == GlusterStatus.DOWN) {
                     allowStop = false;
@@ -550,9 +553,9 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                 GlusterAsyncTask asyncTask = volume.getAsyncTask();
                 if (asyncTask != null) {
                     allowStartRebalance =
-                            allowStartRebalance &&
+                            allowStartRebalance && (
                                     asyncTask.getStatus() == null ? asyncTask.getJobStatus() != JobExecutionStatus.STARTED
-                                    : asyncTask.getStatus() != JobExecutionStatus.STARTED;
+                                    : asyncTask.getStatus() != JobExecutionStatus.STARTED);
                 }
             }
 
