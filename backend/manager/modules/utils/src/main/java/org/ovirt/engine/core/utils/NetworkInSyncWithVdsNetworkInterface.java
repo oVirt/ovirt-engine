@@ -141,6 +141,8 @@ public class NetworkInSyncWithVdsNetworkInterface {
                     iface.getSubnet(), getPrimaryAddress().getNetmask(), isNetworkSubnetInSync());
             result.add(ReportedConfigurationType.IP_ADDRESS,
                     iface.getAddress(), getPrimaryAddress().getAddress());
+            result.add(ReportedConfigurationType.GATEWAY,
+                    iface.getGateway(), getPrimaryAddress().getGateway());
         }
     }
 }
