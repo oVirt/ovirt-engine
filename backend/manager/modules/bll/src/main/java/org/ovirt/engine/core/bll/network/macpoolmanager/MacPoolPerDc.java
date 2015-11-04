@@ -75,6 +75,12 @@ public class MacPoolPerDc {
         }
     }
 
+    public MacPoolManagerStrategy getPoolById(Guid macPoolId) {
+        try (AutoCloseableLock lock = readLockResource()) {
+            return getPoolWithoutLocking(macPoolId);
+        }
+    }
+
     private Guid getMacPoolId(Guid dataCenterId) {
         final StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(dataCenterId);
         return storagePool == null ? null : storagePool.getMacPoolId();
