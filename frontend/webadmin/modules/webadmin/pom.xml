@@ -4,7 +4,7 @@
   <parent>
     <artifactId>webadmin-modules</artifactId>
     <groupId>org.ovirt.engine.ui</groupId>
-    <version>3.5.6.1</version>
+    <version>3.5.6.2</version>
   </parent>
   <artifactId>webadmin</artifactId>
   <packaging>war</packaging>

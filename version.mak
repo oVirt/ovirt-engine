@@ -4,7 +4,7 @@
 
 # Fix release is manually specified,
 # increment after releasing/branching
-FIX_RELEASE=6.1
+FIX_RELEASE=6.2
 
 # Milestone is manually specified,
 # example for ordering:
