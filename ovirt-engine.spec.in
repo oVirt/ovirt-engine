@@ -230,7 +230,8 @@ BuildRequires:	unzip
 Requires:	%{jboss} >= 8.2.1
 Conflicts:	%{jboss} >= 9
 %if %{ovirt_wildfly_overlay}
-Requires:	ovirt-engine-wildfly-overlay >= 002
+Requires:	ovirt-engine-wildfly-overlay >= 8.0.0
+Conflicts:	ovirt-engine-wildfly-overlay >= 10.0.0
 %endif
 
 Requires:	%{name}-backend = %{version}-%{release}
