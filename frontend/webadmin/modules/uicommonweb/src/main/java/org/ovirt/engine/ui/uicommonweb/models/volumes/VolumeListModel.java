@@ -562,6 +562,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                 if (volume.getStatus() == GlusterStatus.UP) {
                     allowStart = false;
                     allowRemove = false;
+                    if (!volume.getVolumeType().isDistributedType()) {
+                        allowStartRebalance = false;
+                    }
                 }
                 else if (volume.getStatus() == GlusterStatus.DOWN) {
                     allowStop = false;
@@ -571,9 +574,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                 GlusterAsyncTask asyncTask = volume.getAsyncTask();
                 if (asyncTask != null) {
                     allowStartRebalance =
-                            allowStartRebalance &&
+                            allowStartRebalance && (
                                     asyncTask.getStatus() == null ? asyncTask.getJobStatus() != JobExecutionStatus.STARTED
-                                    : asyncTask.getStatus() != JobExecutionStatus.STARTED;
+                                    : asyncTask.getStatus() != JobExecutionStatus.STARTED);
                 }
             }
 
