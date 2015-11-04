@@ -2755,6 +2755,7 @@
           <xs:element ref="network" minOccurs="0" maxOccurs="1"/>
           <xs:element name="port_mirroring" type="xs:boolean" minOccurs="0"/>
           <xs:element ref="custom_properties" minOccurs="0"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="pass_through" type="VnicPassThrough"/>
           <xs:element ref="qos" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
@@ -2774,6 +2775,14 @@
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="vnic_pass_through" type="VnicPassThrough"/>
+
+  <xs:complexType name="VnicPassThrough">
+      <xs:sequence>
+          <xs:element maxOccurs="1" minOccurs="0" name="mode" type="xs:string"/>
+      </xs:sequence>
   </xs:complexType>
 
   <!-- Storage Domains -->
