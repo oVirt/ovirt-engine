@@ -91,7 +91,6 @@ public class CreateCinderSnapshotCommand<T extends ImagesContainterParametersBas
         getReturnValue().setActionReturnValue(newCinderVolume.getImageId());
         persistCommand(getParameters().getParentCommand(), true);
         setSucceeded(true);
-        return;
     }
 
     @Override
