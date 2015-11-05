@@ -169,12 +169,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
             if (cmdContext == null) {
                 cmdContext = new CommandContext(new EngineContext()).withExecutionContext(new ExecutionContext());
             }
-            if (CommandsFactory.hasConstructor(cmdEntity.getCommandType(), cmdEntity.getCommandParameters(), cmdContext)) {
-                command = CommandsFactory.createCommand(cmdEntity.getCommandType(), cmdEntity.getCommandParameters(), cmdContext);
-            } else {
-                command = CommandsFactory.createCommand(cmdEntity.getCommandType(), cmdEntity.getCommandParameters());
-            }
-
+            command = CommandsFactory.createCommand(cmdEntity.getCommandType(), cmdEntity.getCommandParameters(), cmdContext);
             command.setCommandStatus(cmdEntity.getCommandStatus(), false);
             if (!Guid.isNullOrEmpty(cmdEntity.getParentCommandId()) &&
                     ! cmdEntity.getParentCommandId().equals(cmdEntity.getId()) &&
