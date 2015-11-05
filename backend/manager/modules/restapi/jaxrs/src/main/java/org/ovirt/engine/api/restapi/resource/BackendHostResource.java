@@ -121,6 +121,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             params.setIsReinstallOrUpgrade(true);
             if (action.isSetImage()) {
                 params.setoVirtIsoFile(action.getImage());
+                return doAction(VdcActionType.UpgradeOvirtNode, params, action);
             }
         }
         return doAction(VdcActionType.UpdateVds,
