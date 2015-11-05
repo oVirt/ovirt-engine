@@ -517,7 +517,10 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         Map<String, VdsNetworkInterface> labelToNic = getLabelToNic(nicsToConfigureByName.values());
         for (String removedLabel : getParameters().getRemovedLabels()) {
             VdsNetworkInterface nicWithLabel = labelToNic.get(removedLabel);
-            nicWithLabel.getLabels().remove(removedLabel);
+
+            if (nicWithLabel != null) {
+                nicWithLabel.getLabels().remove(removedLabel);
+            }
         }
     }
 
