@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.network.vm;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
@@ -31,6 +32,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 
 /**
  * Activate or deactivate a virtual network interface of a VM in case it is in a valid status. If the VM is down, simply
@@ -129,7 +131,8 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     protected void executeVmCommand() {
         // HotPlug in the host is called only if the Vm is UP
         if (hotPlugVmNicRequired(getVm().getStatus())) {
-            boolean externalNetworkIsPlugged = getParameters().getAction() == PlugAction.PLUG
+            boolean isPlugged = getParameters().getAction() == PlugAction.PLUG;
+            boolean externalNetworkIsPlugged = isPlugged
                     && getNetwork() != null
                     && getNetwork().isExternal();
             if (externalNetworkIsPlugged) {
@@ -137,7 +140,10 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             }
 
             try {
-            runVdsCommand(getParameters().getAction().getCommandType(),
+                if (isPlugged){
+                    clearAddressIfPciSlotIsDuplicated(vmDevice);
+                }
+                runVdsCommand(getParameters().getAction().getCommandType(),
                     new VmNicDeviceVDSParameters(getVdsId(),
                             getVm(),
                             getParameters().getNic(),
@@ -153,6 +159,30 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         // In any case, the device is updated
         TransactionSupport.executeInNewTransaction(updateDevice());
         setSucceeded(true);
+    }
+
+    private void clearAddressIfPciSlotIsDuplicated(VmDevice vmDeviceToHotplug) {
+        if (searchForDuplicatesWithExistingVmDevices(vmDeviceToHotplug)){
+            vmDeviceToHotplug.setAddress("");
+        }
+    }
+
+    private boolean searchForDuplicatesWithExistingVmDevices(VmDevice vmDeviceToHotplug){
+        String deviceAddress = vmDeviceToHotplug.getAddress();
+        if (StringUtils.isEmpty(deviceAddress)){
+            return false;
+        }
+        Map<String, String> addressMapToHotplug = XmlRpcStringUtils.string2Map(deviceAddress);
+        List<VmDevice> allVmDevices = getVmDeviceDao().getVmDeviceByVmId(getVm().getId());
+        for (VmDevice vmDevice : allVmDevices) {
+            if (!vmDeviceToHotplug.getId().equals(vmDevice.getId())){
+                Map<String, String> deviceAddressMap = XmlRpcStringUtils.string2Map(vmDevice.getAddress());
+                if(deviceAddressMap.equals(addressMapToHotplug)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void plugToExternalNetwork() {
