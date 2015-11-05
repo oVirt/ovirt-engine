@@ -218,22 +218,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
     private ImportVmCommand<ImportVmParameters> setupDiskSpaceTest(ImportVmParameters parameters) {
         final ImportValidator validator = spy(new ImportValidator(parameters));
-        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(parameters) {
-
-            @Override
-            protected void initUser() {
-            }
-
-            @Override
-            protected ImportValidator getImportValidator() {
-                return validator;
-            }
-
-            @Override
-            public VDSGroup getVdsGroup() {
-                return null;
-            }
-        });
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommandStub(parameters, validator));
+        cmd.poolPerDc = this.macPoolPerDc;
         cmd.postConstruct();
         parameters.setCopyCollapse(true);
         doReturn(true).when(cmd).validateNoDuplicateVm();
@@ -369,17 +355,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
         ImportVmParameters parameters = createParameters();
         parameters.getVm().setName(name);
         parameters.setImportAsNewEntity(isImportAsNewEntity);
-        ImportVmCommand<ImportVmParameters> command = new ImportVmCommand<ImportVmParameters>(parameters) {
-
-            @Override
-            protected void initUser() {
-            }
-
-            @Override
-            public VDSGroup getVdsGroup() {
-                return null;
-            }
-        };
+        ImportVmCommand<ImportVmParameters> command = new ImportVmCommandStub(parameters);
+        command.poolPerDc = macPoolPerDc;
         command.postConstruct();
         Set<ConstraintViolation<ImportVmParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
@@ -398,17 +375,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
                 RandomUtils.instance().nextPropertyString(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE + 1);
         parameters.getVm().setUserDefinedProperties(tooLongString);
         parameters.setImportAsNewEntity(true);
-        ImportVmCommand<ImportVmParameters> command = new ImportVmCommand<ImportVmParameters>(parameters) {
-
-            @Override
-            protected void initUser() {
-            }
-
-            @Override
-            public VDSGroup getVdsGroup() {
-                return null;
-            }
-        };
+        ImportVmCommand<ImportVmParameters> command = new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(parameters);
+        command.poolPerDc = macPoolPerDc;
         command.postConstruct();
         Set<ConstraintViolation<ImportVmParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
@@ -416,17 +384,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
         assertTrue(validate.isEmpty());
         parameters.getVm().setUserDefinedProperties(tooLongString);
         parameters.setImportAsNewEntity(false);
-        command = new ImportVmCommand<ImportVmParameters>(parameters) {
-
-            @Override
-            protected void initUser() {
-            }
-
-            @Override
-            public VDSGroup getVdsGroup() {
-                return null;
-            }
-        };
+        command = new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(parameters);
+        command.poolPerDc = macPoolPerDc;
         command.postConstruct();
         validate =
                 ValidationUtils.getValidator().validate(parameters,
@@ -440,17 +399,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
     @Test
     public void testManagedDeviceSyncWithNewDiskId() {
         ImportVmParameters parameters = createParameters();
-        ImportVmCommand<ImportVmParameters> command = new ImportVmCommand<ImportVmParameters>(parameters) {
-
-            @Override
-            protected void initUser() {
-            }
-
-            @Override
-            public VDSGroup getVdsGroup() {
-                return null;
-            }
-        };
+        ImportVmCommand<ImportVmParameters> command = new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(parameters);
+        command.poolPerDc = macPoolPerDc;
         command.postConstruct();
         List<DiskImage> diskList = new ArrayList<>();
         DiskImage diskImage = new DiskImage();
@@ -481,17 +431,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
     public void testAliasGenerationByAddVmImagesAndSnapshotsWithCollapse() {
         ImportVmParameters params = createParameters();
         params.setCopyCollapse(true);
-        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params) {
-
-            @Override
-            protected void initUser() {
-            }
-
-            @Override
-            public VDSGroup getVdsGroup() {
-                return null;
-            }
-        });
+        ImportVmCommand<ImportVmParameters> cmd = spy(new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(params));
+        cmd.poolPerDc = macPoolPerDc;
         cmd.postConstruct();
 
         DiskImage collapsedDisk = params.getVm().getImages().get(1);
@@ -512,17 +453,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
         params.setCopyCollapse(Boolean.TRUE);
         DiskImage diskImage = params.getVm().getImages().get(0);
         diskImage.setVmSnapshotId(Guid.Empty);
-        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params) {
-
-            @Override
-            protected void initUser() {
-            }
-
-            @Override
-            public VDSGroup getVdsGroup() {
-                return null;
-            }
-        });
+        ImportVmCommand<ImportVmParameters> cmd = spy(new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(params));
+        cmd.poolPerDc = macPoolPerDc;
         cmd.postConstruct();
         doReturn(true).when(cmd).validateNoDuplicateVm();
         doReturn(true).when(cmd).validateVdsCluster();
@@ -551,17 +483,9 @@ public class ImportVmCommandTest extends BaseCommandTest {
     public void testAliasGenerationByAddVmImagesAndSnapshotsWithoutCollapse() {
         ImportVmParameters params = createParameters();
         params.setCopyCollapse(false);
-        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params) {
-
-            @Override
-            protected void initUser() {
-            }
-
-            @Override
-            public VDSGroup getVdsGroup() {
-                return null;
-            }
-        });
+        ImportVmCommand<ImportVmParameters> cmd = spy(new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(
+                params));
+        cmd.poolPerDc = macPoolPerDc;
         cmd.postConstruct();
 
         for (DiskImage image : params.getVm().getImages()) {
@@ -587,17 +511,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
                 new ImportVmParameters(v, Guid.newGuid(), Guid.newGuid(), Guid.newGuid(), Guid.newGuid());
 
         params.setCopyCollapse(false);
-        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params) {
-
-            @Override
-            protected void initUser() {
-            }
-
-            @Override
-            public VDSGroup getVdsGroup() {
-                return null;
-            }
-        });
+        ImportVmCommand<ImportVmParameters> cmd = spy(new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(params));
+        cmd.poolPerDc = macPoolPerDc;
         cmd.postConstruct();
 
         DiskImage activeDisk = params.getVm().getImages().get(0);
@@ -619,5 +534,33 @@ public class ImportVmCommandTest extends BaseCommandTest {
         cmd.initEffectiveCompatibilityVersion();
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+    }
+
+    private static class ImportVmCommandStub extends ImportVmCommand<ImportVmParameters> {
+
+        private final ImportValidator validator;
+
+        public ImportVmCommandStub(ImportVmParameters parameters) {
+            this(parameters, null);
+        }
+
+        public ImportVmCommandStub(ImportVmParameters parameters, ImportValidator validator) {
+            super(parameters);
+            this.validator = validator;
+        }
+
+        @Override
+        protected void initUser() {
+        }
+
+        @Override
+        public VDSGroup getVdsGroup() {
+            return null;
+        }
+
+        @Override
+        protected ImportValidator getImportValidator() {
+            return validator != null ? validator : super.getImportValidator();
+        }
     }
 }
