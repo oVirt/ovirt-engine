@@ -27,7 +27,7 @@ public interface Disk extends Device {
     Integer actualSize();
     Status status();
     String _interface();
-    String format();
+    DiskFormat format();
     Boolean sparse();
     Boolean bootable();
     Boolean shareable();

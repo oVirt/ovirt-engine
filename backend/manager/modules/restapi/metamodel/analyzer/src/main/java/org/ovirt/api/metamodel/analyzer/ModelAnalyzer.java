@@ -477,19 +477,23 @@ public class ModelAnalyzer {
     private void assignTypeReference(JavaClass javaClass, TypeSetter typeSetter) {
         String javaTypeName = javaClass.getName();
         Name typeName;
-        switch (javaTypeName) {
-        case "Boolean":
-        case "bool":
-            typeName = model.getBooleanType().getName();
-            break;
-        case "Double":
-        case "Float":
-        case "double":
-        case "float":
-            typeName = model.getDecimalType().getName();
-            break;
-        default:
-            typeName = NameParser.parseUsingCase(javaTypeName);
+        if (javaClass.isEnum()) {
+            typeName=model.getStringType().getName();
+        } else {
+             switch (javaTypeName) {
+             case "Boolean":
+             case "bool":
+                 typeName = model.getBooleanType().getName();
+                 break;
+             case "Double":
+             case "Float":
+             case "double":
+             case "float":
+                 typeName = model.getDecimalType().getName();
+                 break;
+             default:
+                 typeName = NameParser.parseUsingCase(javaTypeName);
+             }
         }
         if (javaClass.isArray()) {
             ListType listType = listTypes.get(typeName);

@@ -19,13 +19,17 @@ package org.ovirt.api.metamodel.tool;
 import static java.util.stream.Collectors.joining;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.ovirt.api.metamodel.concepts.ListType;
 import org.ovirt.api.metamodel.concepts.Model;
 import org.ovirt.api.metamodel.concepts.Name;
+import org.ovirt.api.metamodel.concepts.NameParser;
 import org.ovirt.api.metamodel.concepts.PrimitiveType;
 import org.ovirt.api.metamodel.concepts.StructType;
 import org.ovirt.api.metamodel.concepts.Type;
@@ -79,6 +83,14 @@ public class SchemaNames {
         TAG_NAME_EXCEPTIONS.put("transparent_huge_pages", "transparent_hugepages");
         TAG_NAME_EXCEPTIONS.put("virtual_numa_node", "vm_numa_node");
         TAG_NAME_EXCEPTIONS.put("virtual_numa_nodes", "vm_numa_nodes");
+    }
+
+    private static final Set<Name> SCHEMA_ENUMS = new HashSet<>();
+
+    static {
+        SCHEMA_ENUMS.add(NameParser.parseUsingCase("StatisticUnit"));
+        SCHEMA_ENUMS.add(NameParser.parseUsingCase("StatisticKind"));
+        SCHEMA_ENUMS.add(NameParser.parseUsingCase("ValueType"));
     }
 
     // References to the objects used to compute names:
@@ -187,6 +199,15 @@ public class SchemaNames {
             result = exception;
         }
         return result;
+    }
+
+    /**
+     * Only specific enums should be added to the schema; most enums in the
+     * model should not. This method returns true for enums that should be
+     * added to the schema, and false for enums that should not.
+     */
+    public boolean isSchemaEnum(Type type) {
+        return SCHEMA_ENUMS.contains(type.getName());
     }
 }
 

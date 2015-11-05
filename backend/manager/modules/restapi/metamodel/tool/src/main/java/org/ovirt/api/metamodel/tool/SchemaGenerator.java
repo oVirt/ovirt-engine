@@ -290,7 +290,7 @@ public class SchemaGenerator {
             if (type instanceof StructType && type != identifiedType) {
                 structTypes.add((StructType) type);
             }
-            if (type instanceof EnumType) {
+            if (type instanceof EnumType && schemaNames.isSchemaEnum(type)) {
                 enumTypes.add((EnumType) type);
             }
         }

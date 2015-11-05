@@ -42,6 +42,7 @@ public class Tool {
     @Inject private JsonDescriptionGenerator jsonDescriptionGenerator;
     @Inject private SchemaGenerator schemaGenerator;
     @Inject private JaxrsGenerator jaxrsGenerator;
+    @Inject private EnumGenerator enumGenerator;
 
     // The names of the command line options:
     private static final String MODEL_OPTION = "model";
@@ -206,6 +207,9 @@ public class Tool {
             FileUtils.forceMkdir(javaDir);
             jaxrsGenerator.setOutDir(javaDir);
             jaxrsGenerator.generate(model);
+         // Generate the enums
+            enumGenerator.setOutDir(javaDir);
+            enumGenerator.generate(model);
         }
     }
 }

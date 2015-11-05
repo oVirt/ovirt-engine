@@ -59,6 +59,10 @@ public class JavaClassBuffer {
         className = newClassName;
     }
 
+    public JavaClassName getClassName() {
+        return className;
+    }
+
     /**
      * Adds an import for the given class name.
      *
