@@ -92,26 +92,23 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected boolean isDetachAllowed(final boolean isRemoveLast) {
-        boolean returnValue = true;
+
         if (getStoragePoolIsoMap() == null) {
-            returnValue = false;
-            addCanDoActionMessage(EngineMessage.STORAGE_DOMAIN_NOT_ATTACHED_TO_STORAGE_POOL);
-        } else if (!isRemoveLast && isMaster()) {
-            returnValue = false;
-            addCanDoActionMessage(EngineMessage.ERROR_CANNOT_DETACH_LAST_STORAGE_DOMAIN);
+            return failCanDoAction(EngineMessage.STORAGE_DOMAIN_NOT_ATTACHED_TO_STORAGE_POOL);
         }
-        return returnValue;
+        if (!isRemoveLast && isMaster()) {
+            return failCanDoAction(EngineMessage.ERROR_CANNOT_DETACH_LAST_STORAGE_DOMAIN);
+        }
+        return true;
     }
 
     protected boolean isNotLocalData(final boolean isInternal) {
-        boolean returnValue = true;
         if (this.getStoragePool().isLocal()
                 && getStorageDomain().getStorageDomainType() == StorageDomainType.Data
                 && !isInternal) {
-            returnValue = false;
-            addCanDoActionMessage(EngineMessage.VDS_GROUP_CANNOT_DETACH_DATA_DOMAIN_FROM_LOCAL_STORAGE);
+            return failCanDoAction(EngineMessage.VDS_GROUP_CANNOT_DETACH_DATA_DOMAIN_FROM_LOCAL_STORAGE);
         }
-        return returnValue;
+        return true;
     }
 
     private StoragePoolIsoMap getStoragePoolIsoMap() {
@@ -177,16 +174,14 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected boolean checkMasterDomainIsUp() {
-        boolean returnValue = true;
         boolean hasUpMaster =
                 !getStorageDomainDao().getStorageDomains
                         (getStoragePool().getId(), StorageDomainType.Master, StorageDomainStatus.Active).isEmpty();
 
         if (!hasUpMaster) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_MASTER_STORAGE_DOMAIN_NOT_ACTIVE);
-            returnValue = false;
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MASTER_STORAGE_DOMAIN_NOT_ACTIVE);
         }
-        return returnValue;
+        return true;
     }
 
     protected void setStorageDomainStatus(StorageDomainStatus status, CompensationContext context) {
