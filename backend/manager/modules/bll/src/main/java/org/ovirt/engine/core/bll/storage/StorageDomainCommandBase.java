@@ -47,8 +47,6 @@ import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -98,23 +96,9 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         if (getStoragePoolIsoMap() == null) {
             returnValue = false;
             addCanDoActionMessage(EngineMessage.STORAGE_DOMAIN_NOT_ATTACHED_TO_STORAGE_POOL);
-        } else if (!isRemoveLast
-                && isMaster()) {
-
-            StorageDomain storage_domains =
-                    LinqUtils.firstOrNull(getStorageDomainDao().getAllForStoragePool
-                            (getStorageDomain().getStoragePoolId()),
-                            new Predicate<StorageDomain>() {
-                                @Override
-                                public boolean eval(StorageDomain a) {
-                                    return a.getId().equals(getStorageDomain().getId())
-                                            && a.getStatus() == StorageDomainStatus.Active;
-                                }
-                            });
-            if (storage_domains == null) {
-                returnValue = false;
-                addCanDoActionMessage(EngineMessage.ERROR_CANNOT_DETACH_LAST_STORAGE_DOMAIN);
-            }
+        } else if (!isRemoveLast && isMaster()) {
+            returnValue = false;
+            addCanDoActionMessage(EngineMessage.ERROR_CANNOT_DETACH_LAST_STORAGE_DOMAIN);
         }
         return returnValue;
     }
