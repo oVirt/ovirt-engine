@@ -203,22 +203,20 @@ DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS
 DEV_REBUILD [1]
     Disable if only packaging components were modified.
 
+WILDFLY_OVERLAY_MODULES [/usr/share/ovirt-engine-wildfly-overlay/modules]
+    Change location of WildFly overlay modules. If you want to disable WildFly
+    overlay configuration completely, please set to empty string.
+
 SETUP
 
 To setup the product use the following command:
 
-$ "${PREFIX}/bin/engine-setup" --jboss-home=/opt/jboss-eap-6.4
+$ "${PREFIX}/bin/engine-setup"
 
 JBOSS
 
-If Wildfly is to be used, install the ovirt overlay package
-ovirt-engine-wildfly-overlay and execute the following to apply.
-
-$ echo 'ENGINE_JAVA_MODULEPATH="/usr/share/ovirt-engine-wildfly-overlay/modules:${ENGINE_JAVA_MODULEPATH}" \
-     > "${PREFIX}/etc/ovirt-engine/engine.conf.d/20-setup-jboss-overlay.conf"
-
-Specify Wildfly at --jboss-home= parameter of setup. Note that jboss-eap will
-not be able to operate if the overlay is applied.
+If you want to use different WildFly/EAP installation, specify it at
+--jboss-home= parameter of setup.
 
 ENVIRONMENT
 
