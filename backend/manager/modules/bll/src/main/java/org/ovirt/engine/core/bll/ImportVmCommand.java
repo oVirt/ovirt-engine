@@ -873,24 +873,16 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
      * @return The generated snapshot
      */
     protected Snapshot addActiveSnapshot(Guid snapshotId) {
-        return snapshotsManager.addActiveSnapshot(snapshotId, getVm(),
-                getMemoryVolumeForNewActiveSnapshot(), getCompensationContext());
-    }
-
-    private String getMemoryVolumeForNewActiveSnapshot() {
-        return getParameters().isImportAsNewEntity() ?
-                // We currently don't support using memory that was
-                // saved when a snapshot was taken for VM with different id
-                StringUtils.EMPTY
-                : getMemoryVolumeFromActiveSnapshotInExportDomain();
-    }
-
-    private String getMemoryVolumeFromActiveSnapshotInExportDomain() {
         Snapshot activeSnapshot = getActiveSnapshot();
-        if (activeSnapshot != null) {
-            return activeSnapshot.getMemoryVolume();
-        }
-        return StringUtils.EMPTY;
+        // We currently don't support using memory from a
+        // snapshot that was taken for VM with different id
+        String memoryVolume = activeSnapshot != null && !getParameters().isImportAsNewEntity() ?
+                activeSnapshot.getMemoryVolume() : StringUtils.EMPTY;
+        return snapshotsManager.addActiveSnapshot(
+                snapshotId,
+                getVm(),
+                memoryVolume,
+                getCompensationContext());
     }
 
     @Override
