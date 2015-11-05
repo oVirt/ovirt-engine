@@ -125,6 +125,7 @@
         }
 
         .radioButton {
+            padding: 0px;
         }
 
         .radioButtonSpecificHost {
@@ -174,7 +175,12 @@
 		.refreshButtonOffset {
 			margin-right: 20px;
 		}
-	</ui:style>
+
+        .inlineBlock {
+            display: inline-block;
+            margin-right: 5px;
+        }
+    </ui:style>
 
 	<g:FlowPanel>
 		<g:DisclosurePanel ui:field="generalBootOptionsPanel" label="{constants.runOncePopupBootOptionsLabel}" addStyleNames="{style.panelStyle}">
@@ -257,11 +263,11 @@
                 <g:Label addStyleNames="{style.sectionLabel}" text="{constants.runOnVmPopup}" />
                 <g:VerticalPanel addStyleNames="{style.runHostPanel}" verticalAlignment='ALIGN_MIDDLE'>
                     <ge:EntityModelRadioButtonEditor ui:field="isAutoAssignEditor" addStyleNames="{style.radioButton}" />
-                    <g:HorizontalPanel verticalAlignment='ALIGN_MIDDLE'>
-                        <g:RadioButton ui:field="specificHost" addStyleNames="{style.radioButtonSpecificHost}" />
-                        <g:Label text="{constants.specificVmPopup}" />
-                        <e:ListModelListBoxEditor ui:field="defaultHostEditor" />
-                    </g:HorizontalPanel>
+                    <g:FlowPanel>
+                        <g:RadioButton ui:field="specificHost" addStyleNames="{style.radioButtonSpecificHost} {style.inlineBlock}" />
+                        <g:Label text="{constants.specificVmPopup}" addStyleNames="{style.inlineBlock}"/>
+                        <e:ListModelListBoxEditor ui:field="defaultHostEditor" addStyleNames="{style.inlineBlock}"/>
+                    </g:FlowPanel>
                 </g:VerticalPanel>
             </g:FlowPanel>
         </g:DisclosurePanel>
