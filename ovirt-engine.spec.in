@@ -108,6 +108,12 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %global ovirt_create_user_vdsm \
 %_ovirt_create_user %{vdsm_user} %{vdsm_uid} %{vdsm_group} %{vdsm_gid} "%{vdsm_description}" /var/lib/vdsm
 
+%if %{ovirt_wildfly_overlay}
+%global wildfly_overlay_modules "/usr/share/ovirt-engine-wildfly-overlay/modules"
+%else
+%global wildfly_overlay_modules ""
+%endif
+
 %global make_common_opts \\\
 	-j1 \\\
 	BUILD_GWT=%{ovirt_build_gwt} \\\
@@ -143,6 +149,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	PKG_STATE_DIR=%{engine_state} \\\
 	PKG_USER=%{engine_user} \\\
 	PKG_GROUP=%{engine_group} \\\
+	WILDFLY_OVERLAY_MODULES=%{wildfly_overlay_modules} \\\
 	%{?EXTRA_BUILD_FLAGS:EXTRA_BUILD_FLAGS="%{EXTRA_BUILD_FLAGS}"}
 
 Name:		@PACKAGE_NAME@
@@ -765,12 +772,6 @@ cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-jboss.c
 [environment:default]
 OVESETUP_CONFIG/jbossHome=str:/usr/share/ovirt-engine-wildfly
 OVESETUP_RPMDISTRO/jbossPackages=str:${OVIRT_JBOSS_PACKAGES}
-__EOF__
-%endif
-
-%if %{ovirt_wildfly_overlay}
-cat > "%{buildroot}%{engine_etc}/engine.conf.d/20-setup-jboss-overlay.conf" << __EOF__
-ENGINE_JAVA_MODULEPATH="/usr/share/ovirt-engine-wildfly-overlay/modules:\${ENGINE_JAVA_MODULEPATH}"
 __EOF__
 %endif
 

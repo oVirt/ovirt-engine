@@ -71,6 +71,7 @@ PYTHON_DIR=$(PYTHON_SYS_DIR)
 DEV_PYTHON_DIR=
 PKG_USER=ovirt
 PKG_GROUP=ovirt
+WILDFLY_OVERLAY_MODULES=/usr/share/ovirt-engine-wildfly-overlay/modules
 #
 # CUSTOMIZATION-END
 #
@@ -404,6 +405,10 @@ install-packaging-files: \
 	$(MAKE) copy-recursive SOURCEDIR=packaging/dbscripts TARGETDIR="$(DESTDIR)$(DATA_DIR)/dbscripts" \
 		EXCLUDE_GEN="$(GENERATED)" \
 		EXCLUDE="$$(echo $$(find packaging/dbscripts \( -name '*.scripts.md5' -or -name '*.schema' -or -name '*.log' \)))"
+
+	if [ -n "$(WILDFLY_OVERLAY_MODULES)" ]; then \
+		echo "ENGINE_JAVA_MODULEPATH=\"$(WILDFLY_OVERLAY_MODULES):\$${ENGINE_JAVA_MODULEPATH}\"" > "$(DESTDIR)$(PKG_SYSCONF_DIR)/engine.conf.d/20-setup-jboss-overlay.conf"; \
+	fi
 
 install-gwt-symbols:
 	install -d -m 0755 "$(DESTDIR)$(DATA_DIR)/gwt-symbols"
