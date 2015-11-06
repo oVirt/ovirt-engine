@@ -53,12 +53,15 @@ public class GetClusterEditWarningsQuery<P extends ClusterEditParameters> extend
             }
         });
 
-        List<ClusterEditWarnings.Warning> vmWarnings = getProblematicEntities(oldCluster, newCluster, vmCheckers, new ClusterEntityResolver<VM>() {
-            @Override
-            public List<VM> getClusterEntities(VDSGroup cluster) {
-                return vmDao.getAllForVdsGroup(cluster.getId());
-            }
-        });
+        List<ClusterEditWarnings.Warning> vmWarnings = new ArrayList<>();
+        if (oldCluster.supportsVirtService() && newCluster.supportsVirtService()) {
+            vmWarnings = getProblematicEntities(oldCluster, newCluster, vmCheckers, new ClusterEntityResolver<VM>() {
+                @Override
+                public List<VM> getClusterEntities(VDSGroup cluster) {
+                    return vmDao.getAllForVdsGroup(cluster.getId());
+                }
+            });
+        }
 
         setReturnValue(new ClusterEditWarnings(hostWarnings, vmWarnings));
     }
