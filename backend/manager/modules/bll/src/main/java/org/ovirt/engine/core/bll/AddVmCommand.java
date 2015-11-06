@@ -91,7 +91,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
@@ -1530,8 +1529,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             // set vm disks source to be the image type, vm disks are taken from it
             vmDisksSource = (VmTemplate)imageType;
         }
-
-        OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
         // Choose a proper default OS according to the cluster architecture
         if (getParameters().getVmStaticData().getOsId() == OsRepository.AUTO_SELECT_OS) {

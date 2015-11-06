@@ -39,9 +39,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -190,7 +188,6 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             return true;
         }
 
-        OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
         if (!osRepository.isBalloonEnabled(getVm().getStaticData().getOsId(),
                 getVdsGroup().getCompatibilityVersion())) {
             addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());

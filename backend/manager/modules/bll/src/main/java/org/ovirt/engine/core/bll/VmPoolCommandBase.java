@@ -25,14 +25,11 @@ import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmPoolDao;
 
 public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends CommandBase<T> {
-    private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
     private VmPool vmPool;
 
     protected VmPool getVmPool() {

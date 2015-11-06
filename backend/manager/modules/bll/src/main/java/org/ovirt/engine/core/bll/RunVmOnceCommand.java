@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDao;
-import org.ovirt.engine.core.utils.OsRepositoryImpl;
 
 @NonTransactiveCommandAttribute
 public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T> implements QuotaStorageDependent {
@@ -71,7 +70,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         }
 
         if (getParameters().getVmInit() != null) {
-            if (!OsRepositoryImpl.INSTANCE.isWindows(getVm().getOs()) &&
+            if (!osRepository.isWindows(getVm().getOs()) &&
                     !FeatureSupported.cloudInit(getVm().getVdsGroupCompatibilityVersion())) {
                 return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLOUD_INIT_IS_NOT_SUPPORTED);
             }
