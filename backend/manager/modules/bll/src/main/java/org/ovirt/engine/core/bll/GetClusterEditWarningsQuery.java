@@ -52,9 +52,12 @@ public class GetClusterEditWarningsQuery<P extends ClusterEditParameters> extend
         List<ClusterEditWarnings.Warning> hostWarnings = getProblematicEntities(oldCluster, newCluster, hostCheckers,
                 cluster -> vdsDao.getAllForVdsGroup(cluster.getId()));
 
-        List<ClusterEditWarnings.Warning> vmWarnings = getProblematicEntities(oldCluster, newCluster, vmCheckers,
-                cluster -> vmDao.getAllForVdsGroup(cluster.getId()));
+        List<ClusterEditWarnings.Warning> vmWarnings =  new ArrayList<>();
 
+        if (oldCluster.supportsVirtService() && newCluster.supportsVirtService()) {
+            vmWarnings = getProblematicEntities(oldCluster, newCluster, vmCheckers,
+                    cluster -> vmDao.getAllForVdsGroup(cluster.getId()));
+        }
         setReturnValue(new ClusterEditWarnings(hostWarnings, vmWarnings));
     }
 
