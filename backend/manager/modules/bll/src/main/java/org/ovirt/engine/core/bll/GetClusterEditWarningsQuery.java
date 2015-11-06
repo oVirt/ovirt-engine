@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.StreamSupport.stream;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,19 +49,11 @@ public class GetClusterEditWarningsQuery<P extends ClusterEditParameters> extend
         final VDSGroup oldCluster = backend.runQuery(VdcQueryType.GetVdsGroupById, getParameters()).getReturnValue();
         VDSGroup newCluster = getParameters().getNewCluster();
 
-        List<ClusterEditWarnings.Warning> hostWarnings = getProblematicEntities(oldCluster, newCluster, hostCheckers, new ClusterEntityResolver<VDS>() {
-            @Override
-            public List<VDS> getClusterEntities(VDSGroup cluster) {
-                return vdsDao.getAllForVdsGroup(cluster.getId());
-            }
-        });
+        List<ClusterEditWarnings.Warning> hostWarnings = getProblematicEntities(oldCluster, newCluster, hostCheckers,
+                cluster -> vdsDao.getAllForVdsGroup(cluster.getId()));
 
-        List<ClusterEditWarnings.Warning> vmWarnings = getProblematicEntities(oldCluster, newCluster, vmCheckers, new ClusterEntityResolver<VM>() {
-            @Override
-            public List<VM> getClusterEntities(VDSGroup cluster) {
-                return vmDao.getAllForVdsGroup(cluster.getId());
-            }
-        });
+        List<ClusterEditWarnings.Warning> vmWarnings = getProblematicEntities(oldCluster, newCluster, vmCheckers,
+                cluster -> vmDao.getAllForVdsGroup(cluster.getId()));
 
         setReturnValue(new ClusterEditWarnings(hostWarnings, vmWarnings));
     }
@@ -71,16 +66,16 @@ public class GetClusterEditWarningsQuery<P extends ClusterEditParameters> extend
 
         List<ClusterEditWarnings.Warning> warnings = new ArrayList<>();
 
-        List<ClusterEditChecker<T>> checks = getApplicableChecks(oldCluster, newCluster, checkers);
-        if (!checks.isEmpty()) {
+        List<ClusterEditChecker<T>> applicableChecks = stream(checkers.spliterator(), false)
+                .filter(checker -> checker.isApplicable(oldCluster, newCluster))
+                .collect(toList());
+
+        if (!applicableChecks.isEmpty()) {
             List<T> entities = entityResolver.getClusterEntities(oldCluster);
-            for (ClusterEditChecker<T> checker : checks) {
+            for (ClusterEditChecker<T> checker : applicableChecks) {
                 ClusterEditWarnings.Warning warning = new ClusterEditWarnings.Warning(checker.getMainMessage());
-                for (T entity : entities) {
-                    if (!checker.check(entity)) {
-                        warning.getDetailsByName().put(entity.getName(), checker.getDetailMessage(entity));
-                    }
-                }
+                entities.stream().filter(entity -> !checker.check(entity)).forEach(entity ->
+                        warning.getDetailsByName().put(entity.getName(), checker.getDetailMessage(entity)));
                 if (!warning.isEmpty()) {
                     warnings.add(warning);
                 }
@@ -90,21 +85,7 @@ public class GetClusterEditWarningsQuery<P extends ClusterEditParameters> extend
         return warnings;
     }
 
-    private static <T> List<ClusterEditChecker<T>> getApplicableChecks(
-            VDSGroup oldCluster,
-            VDSGroup newCluster,
-            Iterable<ClusterEditChecker<T>> checkers) {
-
-        List<ClusterEditChecker<T>> result = new ArrayList<>();
-        for (ClusterEditChecker<T> checker : checkers) {
-            if (checker.isApplicable(oldCluster, newCluster)) {
-                result.add(checker);
-            }
-        }
-
-        return result;
-    }
-
+    @FunctionalInterface
     private interface ClusterEntityResolver<T> {
         List<T> getClusterEntities(VDSGroup cluster);
     }
