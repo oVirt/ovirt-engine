@@ -21,6 +21,8 @@ public interface CommandCRUDOperations {
 
     List<Guid> getChildCommandIds(Guid commandId);
 
+    List<Guid> getChildCommandIds(Guid commandId, VdcActionType childActionType, CommandStatus status);
+
     CommandEntity getCommandEntity(Guid commandId);
 
     CommandStatus getCommandStatus(Guid commandId);

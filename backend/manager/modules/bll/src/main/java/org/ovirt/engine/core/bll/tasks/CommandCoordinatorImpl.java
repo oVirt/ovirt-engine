@@ -244,6 +244,19 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return Collections.emptyList();
     }
 
+    public List<Guid> getChildCommandIds(Guid cmdId, VdcActionType childActionType, CommandStatus status) {
+        List<Guid> childCmdIds = new ArrayList<>();
+        for (Guid childCmdId : getChildCommandIds(cmdId)) {
+            CommandEntity childCmdEntity = getCommandEntity(childCmdId);
+            if (childCmdEntity != null &&
+                    childCmdEntity.getCommandType().equals(childActionType) &&
+                    (status == null || status.equals(childCmdEntity.getCommandStatus()))) {
+                childCmdIds.add(childCmdId);
+            }
+        }
+        return childCmdIds;
+    }
+
     public List<CommandEntity> getChildCmdsByRootCmdId(Guid cmdId) {
         return commandsCache.getChildCmdsByParentCmdId(cmdId);
     }

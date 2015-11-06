@@ -271,6 +271,18 @@ public class CommandCoordinatorUtil {
     }
 
     /**
+     * Return the child command ids for the parent command identified by commandId with the given action type and
+     * status.
+     * @param commandId The id of the parent command
+     * @param childActionType The action type of the child command
+     * @param status The status of the child command, can be null
+     * @return
+     */
+    public static List<Guid> getChildCommandIds(Guid commandId, VdcActionType childActionType, CommandStatus status) {
+        return coco.getChildCommandIds(commandId, childActionType, status);
+    }
+
+    /**
      * Get the command entity for the command identified by the commandId
      * @param commandId The id of the command
      * @return The command entity for the command id
