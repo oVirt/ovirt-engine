@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
@@ -21,7 +22,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -50,6 +50,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.NewInstanceTypeM
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+
 import com.google.inject.Inject;
 
 public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, InstanceType> {
@@ -361,17 +362,17 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
 
         if (command == getNewInstanceTypeCommand()) {
             newInstanceType();
-        } else if (ObjectUtils.objectsEqual(command.getName(), "OnNewInstanceType")) { //$NON-NLS-1$
+        } else if (Objects.equals(command.getName(), "OnNewInstanceType")) { //$NON-NLS-1$
             onNewInstanceType();
         } else if (command == getEditInstanceTypeCommand()) {
             editInstanceType();
-        } else if (ObjectUtils.objectsEqual(command.getName(), "OnEditInstanceType")) { //$NON-NLS-1$
+        } else if (Objects.equals(command.getName(), "OnEditInstanceType")) { //$NON-NLS-1$
             onEditInstanceType();
         } else if (command == getDeleteInstanceTypeCommand()) {
             deleteInstanceType();
-        } else if (ObjectUtils.objectsEqual(command.getName(), "OnDeleteInstanceType")) { //$NON-NLS-1$
+        } else if (Objects.equals(command.getName(), "OnDeleteInstanceType")) { //$NON-NLS-1$
             onDeleteInstanceType();
-        } else if (ObjectUtils.objectsEqual(command.getName(), "Cancel")) { //$NON-NLS-1$
+        } else if (Objects.equals(command.getName(), "Cancel")) { //$NON-NLS-1$
             cancel();
         }
     }

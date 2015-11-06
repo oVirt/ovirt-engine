@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.autocomplete;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SyntaxChecker;
@@ -134,7 +134,7 @@ public class SearchSuggestModel extends SearchableListModel {
                 if (getFilter() != null) {
                     boolean skipItem = false;
                     for (String value : getFilter()) {
-                        if (ObjectUtils.objectsEqual(value.toLowerCase(), item.toLowerCase())) {
+                        if (Objects.equals(value.toLowerCase(), item.toLowerCase())) {
                             skipItem = true;
                             break;
                         }

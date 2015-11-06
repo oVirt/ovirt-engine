@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class Permission implements IVdcQueryable, BusinessEntity<Guid> {
@@ -174,11 +175,11 @@ public class Permission implements IVdcQueryable, BusinessEntity<Guid> {
         }
         Permission other = (Permission) obj;
         return (creationDate != ((Permission) obj).creationDate
-                && ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(adElementId, other.adElementId)
-                && ObjectUtils.objectsEqual(objectId, other.objectId)
+                && Objects.equals(id, other.id)
+                && Objects.equals(adElementId, other.adElementId)
+                && Objects.equals(objectId, other.objectId)
                 && objectType == other.objectType
-                && ObjectUtils.objectsEqual(roleId, other.roleId));
+                && Objects.equals(roleId, other.roleId));
     }
 
 

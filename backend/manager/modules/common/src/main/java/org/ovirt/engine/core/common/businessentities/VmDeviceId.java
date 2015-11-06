@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -41,8 +41,8 @@ public class VmDeviceId implements Serializable, Comparable<VmDeviceId> {
             return false;
         }
         VmDeviceId other = (VmDeviceId) obj;
-        return (ObjectUtils.objectsEqual(deviceId, other.deviceId)
-                && ObjectUtils.objectsEqual(vmId, other.vmId));
+        return (Objects.equals(deviceId, other.deviceId)
+                && Objects.equals(vmId, other.vmId));
     }
 
     @Override

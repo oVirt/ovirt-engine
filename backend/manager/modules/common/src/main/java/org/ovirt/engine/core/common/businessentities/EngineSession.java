@@ -3,11 +3,11 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class EngineSession implements IVdcQueryable {
@@ -116,8 +116,8 @@ public class EngineSession implements IVdcQueryable {
             return false;
         }
         EngineSession other = (EngineSession) obj;
-        return  ObjectUtils.objectsEqual(engineSessionId, other.engineSessionId)
-                && ObjectUtils.objectsEqual(userId, other.userId);
+        return  Objects.equals(engineSessionId, other.engineSessionId)
+                && Objects.equals(userId, other.userId);
     }
 
     public long getId() {

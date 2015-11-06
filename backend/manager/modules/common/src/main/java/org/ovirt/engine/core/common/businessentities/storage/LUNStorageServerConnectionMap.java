@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 
 public class LUNStorageServerConnectionMap implements Serializable, BusinessEntity<LUNStorageServerConnectionMapId> {
     private static final long serialVersionUID = -4203034156149786569L;
@@ -68,7 +68,7 @@ public class LUNStorageServerConnectionMap implements Serializable, BusinessEnti
             return false;
         }
         LUNStorageServerConnectionMap other = (LUNStorageServerConnectionMap) obj;
-        return (ObjectUtils.objectsEqual(id.lunId, other.id.lunId)
-                && ObjectUtils.objectsEqual(id.storageServerConnection, other.id.storageServerConnection));
+        return (Objects.equals(id.lunId, other.id.lunId)
+                && Objects.equals(id.storageServerConnection, other.id.storageServerConnection));
     }
 }

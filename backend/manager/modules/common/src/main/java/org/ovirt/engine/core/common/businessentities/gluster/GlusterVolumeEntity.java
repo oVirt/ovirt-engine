@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -18,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.utils.ListUtils;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.common.validation.group.gluster.CreateReplicatedVolume;
@@ -480,10 +480,10 @@ public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithSta
         if (!(name.equals(volume.getName())
                 && volumeType == volume.getVolumeType()
                 && status == volume.getStatus()
-                && ObjectUtils.objectsEqual(replicaCount, volume.getReplicaCount())
-                && ObjectUtils.objectsEqual(stripeCount, volume.getStripeCount())
-                && ObjectUtils.objectsEqual(disperseCount, volume.getDisperseCount())
-                && ObjectUtils.objectsEqual(redundancyCount, volume.getRedundancyCount()))) {
+                && Objects.equals(replicaCount, volume.getReplicaCount())
+                && Objects.equals(stripeCount, volume.getStripeCount())
+                && Objects.equals(disperseCount, volume.getDisperseCount())
+                && Objects.equals(redundancyCount, volume.getRedundancyCount()))) {
             return false;
         }
 
@@ -503,23 +503,23 @@ public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithSta
             return false;
         }
 
-        if (!ObjectUtils.objectsEqual(getAsyncTask(), volume.getAsyncTask())) {
+        if (!Objects.equals(getAsyncTask(), volume.getAsyncTask())) {
             return false;
         }
 
-        if (!ObjectUtils.objectsEqual(getAdvancedDetails(), volume.getAdvancedDetails())) {
+        if (!Objects.equals(getAdvancedDetails(), volume.getAdvancedDetails())) {
             return false;
         }
 
-        if (!ObjectUtils.objectsEqual(snapshotsCount, volume.getSnapshotsCount())) {
+        if (!Objects.equals(snapshotsCount, volume.getSnapshotsCount())) {
             return false;
         }
 
-        if (!ObjectUtils.objectsEqual(snapMaxLimit, volume.getSnapMaxLimit())) {
+        if (!Objects.equals(snapMaxLimit, volume.getSnapMaxLimit())) {
             return false;
         }
 
-        if (!ObjectUtils.objectsEqual(snapshotScheduled, volume.getSnapshotScheduled())) {
+        if (!Objects.equals(snapshotScheduled, volume.getSnapshotScheduled())) {
             return false;
         }
 

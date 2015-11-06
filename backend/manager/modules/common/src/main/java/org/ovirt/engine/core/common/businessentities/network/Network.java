@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
+import java.util.Objects;
+
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -11,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Commented;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.MTU;
@@ -342,7 +343,7 @@ public class Network implements IVdcQueryable, BusinessEntity<Guid>, Nameable, C
                 return false;
         } else if (!label.equals(other.label))
             return false;
-        if (!ObjectUtils.objectsEqual(qosId, other.qosId)) {
+        if (!Objects.equals(qosId, other.qosId)) {
             return false;
         }
         return true;

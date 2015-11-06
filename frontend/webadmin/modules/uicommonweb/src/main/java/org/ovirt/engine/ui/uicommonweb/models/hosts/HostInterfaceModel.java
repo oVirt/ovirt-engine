@@ -2,11 +2,11 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -327,7 +327,7 @@ public class HostInterfaceModel extends EntityModel {
 
         if (getNetworks() != null) {
             for (VdsNetworkInterface item : getNetworks()) {
-                if (ObjectUtils.objectsEqual(item.getNetworkName(), network.getName())) {
+                if (Objects.equals(item.getNetworkName(), network.getName())) {
                     getAddress().setEntity(StringHelper.isNullOrEmpty(item.getAddress()) ? null : item.getAddress());
                     getSubnet().setEntity(StringHelper.isNullOrEmpty(item.getSubnet()) ? null : item.getSubnet());
                     setBootProtocol(!getNoneBootProtocolAvailable()

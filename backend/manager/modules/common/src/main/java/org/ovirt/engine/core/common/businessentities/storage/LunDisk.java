@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
+import java.util.Objects;
 
 /**
  * A type of disk that is stored directly on a LUN ({@link LUNs}). This disk will contain the LUN details.
@@ -68,7 +68,7 @@ public class LunDisk extends Disk {
             return false;
         }
         LunDisk other = (LunDisk) obj;
-        return (ObjectUtils.objectsEqual(lun, other.lun)
-                && ObjectUtils.objectsEqual(usingScsiReservation, other.usingScsiReservation));
+        return (Objects.equals(lun, other.lun)
+                && Objects.equals(usingScsiReservation, other.usingScsiReservation));
     }
 }

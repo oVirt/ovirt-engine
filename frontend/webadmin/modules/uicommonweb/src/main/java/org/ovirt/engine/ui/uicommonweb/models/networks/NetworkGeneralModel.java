@@ -1,8 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -63,7 +64,7 @@ public class NetworkGeneralModel extends EntityModel<NetworkView> {
     }
 
     public void setName(String value) {
-        if (!ObjectUtils.objectsEqual(name, value)) {
+        if (!Objects.equals(name, value)) {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
@@ -110,7 +111,7 @@ public class NetworkGeneralModel extends EntityModel<NetworkView> {
     }
 
     public void setDescription(String value) {
-        if (!ObjectUtils.objectsEqual(description, value)) {
+        if (!Objects.equals(description, value)) {
             description = value;
             onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
@@ -132,7 +133,7 @@ public class NetworkGeneralModel extends EntityModel<NetworkView> {
     }
 
     public void setExternalId(String value) {
-        if (!ObjectUtils.objectsEqual(externalId, value)) {
+        if (!Objects.equals(externalId, value)) {
             externalId = value;
             onPropertyChanged(new PropertyChangedEventArgs("External Id")); //$NON-NLS-1$
         }

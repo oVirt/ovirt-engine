@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
+import java.util.Objects;
+
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmBlockJob extends VmJob {
@@ -75,11 +76,11 @@ public class VmBlockJob extends VmJob {
         }
         VmBlockJob other = (VmBlockJob) obj;
         return (super.equals(other)
-                && ObjectUtils.objectsEqual(bandwidth, other.bandwidth)
+                && Objects.equals(bandwidth, other.bandwidth)
                 && blockJobType == other.blockJobType
-                && ObjectUtils.objectsEqual(cursorCur, other.cursorCur)
-                && ObjectUtils.objectsEqual(cursorEnd, other.cursorEnd)
-                && ObjectUtils.objectsEqual(imageGroupId, other.imageGroupId));
+                && Objects.equals(cursorCur, other.cursorCur)
+                && Objects.equals(cursorEnd, other.cursorEnd)
+                && Objects.equals(imageGroupId, other.imageGroupId));
     }
 
     @Override

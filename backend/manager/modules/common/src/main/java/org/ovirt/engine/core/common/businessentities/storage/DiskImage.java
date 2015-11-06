@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.IImage;
@@ -532,22 +533,22 @@ public class DiskImage extends DiskImageBase implements IImage {
             return false;
         }
         DiskImage other = (DiskImage) obj;
-        return (ObjectUtils.objectsEqual(getImage(), other.getImage())
-                && ObjectUtils.objectsEqual(snapshots, other.snapshots)
+        return (Objects.equals(getImage(), other.getImage())
+                && Objects.equals(snapshots, other.snapshots)
                 && actualSizeInBytes == other.actualSizeInBytes
-                && ObjectUtils.objectsEqual(appList, other.appList)
-                && ObjectUtils.objectsEqual(description, other.description)
+                && Objects.equals(appList, other.appList)
+                && Objects.equals(description, other.description)
                 && readRateKbPerSec == other.readRateKbPerSec
                 && writeRateKbPerSec == other.writeRateKbPerSec
-                && ObjectUtils.objectsEqual(storagePath, other.storagePath)
+                && Objects.equals(storagePath, other.storagePath)
                 && readRateFromDiskImageDynamic == other.readRateFromDiskImageDynamic
-                && ObjectUtils.objectsEqual(storageIds, other.storageIds)
-                && ObjectUtils.objectsEqual(storagePoolId, other.storagePoolId)
-                && ObjectUtils.objectsEqual(storagesNames, other.storagesNames)
+                && Objects.equals(storageIds, other.storageIds)
+                && Objects.equals(storagePoolId, other.storagePoolId)
+                && Objects.equals(storagesNames, other.storagesNames)
                 && writeRateFromDiskImageDynamic == other.writeRateFromDiskImageDynamic
-                && ObjectUtils.objectsEqual(readLatency, other.readLatency)
-                && ObjectUtils.objectsEqual(writeLatency, other.writeLatency)
-                && ObjectUtils.objectsEqual(flushLatency, other.flushLatency)
+                && Objects.equals(readLatency, other.readLatency)
+                && Objects.equals(writeLatency, other.writeLatency)
+                && Objects.equals(flushLatency, other.flushLatency)
                 && ObjectUtils.haveSameElements(diskProfileIds, other.diskProfileIds)
                 && ObjectUtils.haveSameElements(diskProfileNames, other.diskProfileNames));
     }

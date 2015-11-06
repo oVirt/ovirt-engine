@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.InstanceType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -124,11 +124,11 @@ public class InstanceTypeAttachDetachManager implements IEventListener<EventArgs
     private boolean checkAllFieldsAttached() {
         for (Map.Entry<Model, Object> entry : modelToProperValue.entrySet()) {
             if (entry.getKey() instanceof ListModel) {
-                if (!ObjectUtils.objectsEqual(((ListModel) entry.getKey()).getSelectedItem(), entry.getValue())) {
+                if (!Objects.equals(((ListModel) entry.getKey()).getSelectedItem(), entry.getValue())) {
                     return false;
                 }
             } else if (entry.getKey() instanceof EntityModel) {
-                if (!ObjectUtils.objectsEqual(((EntityModel) entry.getKey()).getEntity(), entry.getValue())) {
+                if (!Objects.equals(((EntityModel) entry.getKey()).getEntity(), entry.getValue())) {
                     return false;
                 }
             }

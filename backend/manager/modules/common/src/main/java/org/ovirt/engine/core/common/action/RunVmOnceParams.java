@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.common.action;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.NullOrStringContainedInConfigValueList;
 import org.ovirt.engine.core.common.validation.group.StartEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -68,13 +68,13 @@ public class RunVmOnceParams extends RunVmParams {
 
         RunVmOnceParams other = (RunVmOnceParams) obj;
         return super.equals(obj)
-                && ObjectUtils.objectsEqual(sysPrepDomainName, other.sysPrepDomainName)
-                && ObjectUtils.objectsEqual(sysPrepUserName, other.sysPrepUserName)
-                && ObjectUtils.objectsEqual(sysPrepPassword, other.sysPrepPassword)
-                && ObjectUtils.objectsEqual(vmInit, other.vmInit)
-                && ObjectUtils.objectsEqual(destinationVdsId, other.destinationVdsId)
-                && ObjectUtils.objectsEqual(customEmulatedMachine, other.customEmulatedMachine)
-                && ObjectUtils.objectsEqual(customCpuName, other.customCpuName);
+                && Objects.equals(sysPrepDomainName, other.sysPrepDomainName)
+                && Objects.equals(sysPrepUserName, other.sysPrepUserName)
+                && Objects.equals(sysPrepPassword, other.sysPrepPassword)
+                && Objects.equals(vmInit, other.vmInit)
+                && Objects.equals(destinationVdsId, other.destinationVdsId)
+                && Objects.equals(customEmulatedMachine, other.customEmulatedMachine)
+                && Objects.equals(customCpuName, other.customCpuName);
     }
 
     public void setSysPrepDomainName(String sysPrepDomainName) {

@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterServerHook implements Serializable {
@@ -104,11 +104,11 @@ public class GlusterServerHook implements Serializable {
         }
         GlusterServerHook serverHook = (GlusterServerHook) obj;
 
-        return ObjectUtils.objectsEqual(getHookId(), serverHook.getHookId())
-                && ObjectUtils.objectsEqual(getServerId(), serverHook.getServerId())
-                && ObjectUtils.objectsEqual(getStatus(), serverHook.getStatus())
-                && ObjectUtils.objectsEqual(getContentType(), serverHook.getContentType())
-                && ObjectUtils.objectsEqual(getChecksum(), serverHook.getChecksum());
+        return Objects.equals(getHookId(), serverHook.getHookId())
+                && Objects.equals(getServerId(), serverHook.getServerId())
+                && Objects.equals(getStatus(), serverHook.getStatus())
+                && Objects.equals(getContentType(), serverHook.getContentType())
+                && Objects.equals(getChecksum(), serverHook.getChecksum());
     }
 
 }

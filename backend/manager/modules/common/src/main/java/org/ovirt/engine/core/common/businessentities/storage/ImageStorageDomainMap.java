@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ImageStorageDomainMap implements BusinessEntity<ImageStorageDomainMapId> {
@@ -77,9 +78,9 @@ public class ImageStorageDomainMap implements BusinessEntity<ImageStorageDomainM
             return false;
         }
         ImageStorageDomainMap other = (ImageStorageDomainMap) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(quotaId, other.quotaId)
-                && ObjectUtils.objectsEqual(diskProfileId, other.diskProfileId));
+        return (Objects.equals(id, other.id)
+                && Objects.equals(quotaId, other.quotaId)
+                && Objects.equals(diskProfileId, other.diskProfileId));
     }
 
     @Override

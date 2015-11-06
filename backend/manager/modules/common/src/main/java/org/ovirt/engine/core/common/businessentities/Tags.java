@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -72,12 +72,12 @@ public class Tags implements Serializable {
             return false;
         }
         Tags other = (Tags) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(_children, other._children)
-                && ObjectUtils.objectsEqual(description, other.description)
-                && ObjectUtils.objectsEqual(parent, other.parent)
-                && ObjectUtils.objectsEqual(readonly, other.readonly)
-                && ObjectUtils.objectsEqual(name, other.name)
+        return (Objects.equals(id, other.id)
+                && Objects.equals(_children, other._children)
+                && Objects.equals(description, other.description)
+                && Objects.equals(parent, other.parent)
+                && Objects.equals(readonly, other.readonly)
+                && Objects.equals(name, other.name)
                 && type == other.type);
     }
 

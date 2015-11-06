@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
@@ -10,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -78,7 +79,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
         DataCenterModel dataCenterModel = configureModel.getDataCenter();
         String dataCenterName = dataCenterModel.getName().getEntity();
 
-        if (candidate == null || !ObjectUtils.objectsEqual(candidate.getName(), dataCenterName)) {
+        if (candidate == null || !Objects.equals(candidate.getName(), dataCenterName)) {
 
             // Try to find existing data center with the specified name.
             StoragePool dataCenter = context.dataCenterFoundByName;

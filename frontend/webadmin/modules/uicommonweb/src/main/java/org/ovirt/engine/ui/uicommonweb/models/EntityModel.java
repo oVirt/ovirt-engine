@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IProvidePropertyChangedEvent;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ProvidePropertyChangedEvent;
+
 import com.google.gwt.event.shared.HasHandlers;
 
 public class EntityModel<T> extends Model implements HasHandlers, HasEntity<T> {

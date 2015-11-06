@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class TagsTemplateMap implements Serializable {
@@ -69,8 +69,8 @@ public class TagsTemplateMap implements Serializable {
             return false;
         }
         TagsTemplateMap other = (TagsTemplateMap) obj;
-        return (ObjectUtils.objectsEqual(id.tagId, other.id.tagId)
-                && ObjectUtils.objectsEqual(id.templateId, other.id.templateId)
-                && ObjectUtils.objectsEqual(defaultDisplayType, other.defaultDisplayType));
+        return (Objects.equals(id.tagId, other.id.tagId)
+                && Objects.equals(id.templateId, other.id.templateId)
+                && Objects.equals(defaultDisplayType, other.defaultDisplayType));
     }
 }

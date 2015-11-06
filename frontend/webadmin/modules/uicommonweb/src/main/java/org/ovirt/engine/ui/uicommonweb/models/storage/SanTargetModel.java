@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -43,7 +43,7 @@ public class SanTargetModel extends EntityModel<StorageServerConnections> {
     }
 
     public void setAddress(String value) {
-        if (!ObjectUtils.objectsEqual(address, value)) {
+        if (!Objects.equals(address, value)) {
             address = value;
             onPropertyChanged(new PropertyChangedEventArgs("Address")); //$NON-NLS-1$
         }
@@ -56,7 +56,7 @@ public class SanTargetModel extends EntityModel<StorageServerConnections> {
     }
 
     public void setPort(String value) {
-        if (!ObjectUtils.objectsEqual(port, value)) {
+        if (!Objects.equals(port, value)) {
             port = value;
             onPropertyChanged(new PropertyChangedEventArgs("Port")); //$NON-NLS-1$
         }
@@ -69,7 +69,7 @@ public class SanTargetModel extends EntityModel<StorageServerConnections> {
     }
 
     public void setName(String value) {
-        if (!ObjectUtils.objectsEqual(name, value)) {
+        if (!Objects.equals(name, value)) {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }

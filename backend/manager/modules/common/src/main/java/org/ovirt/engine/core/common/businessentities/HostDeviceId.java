@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -44,8 +44,8 @@ public final class HostDeviceId implements Serializable, Comparable<HostDeviceId
             return false;
         }
         HostDeviceId other = (HostDeviceId) o;
-        return ObjectUtils.objectsEqual(hostId, other.hostId) &&
-                ObjectUtils.objectsEqual(deviceName, other.deviceName);
+        return Objects.equals(hostId, other.hostId) &&
+                Objects.equals(deviceName, other.deviceName);
     }
 
     @Override

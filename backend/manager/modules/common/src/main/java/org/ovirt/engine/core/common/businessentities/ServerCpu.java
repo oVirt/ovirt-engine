@@ -2,8 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 import java.util.HashSet;
-
-import org.ovirt.engine.core.common.utils.ObjectUtils;
+import java.util.Objects;
 
 public class ServerCpu implements Serializable {
     private static final long serialVersionUID = -267863982363067020L;
@@ -89,11 +88,11 @@ public class ServerCpu implements Serializable {
             return false;
         }
         ServerCpu other = (ServerCpu) obj;
-        return ObjectUtils.objectsEqual(privateArchitecture, other.privateArchitecture)
-                && ObjectUtils.objectsEqual(privateCpuName, other.privateCpuName)
-                && ObjectUtils.objectsEqual(privateFlags, other.privateFlags)
+        return Objects.equals(privateArchitecture, other.privateArchitecture)
+                && Objects.equals(privateCpuName, other.privateCpuName)
+                && Objects.equals(privateFlags, other.privateFlags)
                 && privateLevel == other.privateLevel
-                && ObjectUtils.objectsEqual(privateVdsVerbData, other.privateVdsVerbData);
+                && Objects.equals(privateVdsVerbData, other.privateVdsVerbData);
     }
 
 }

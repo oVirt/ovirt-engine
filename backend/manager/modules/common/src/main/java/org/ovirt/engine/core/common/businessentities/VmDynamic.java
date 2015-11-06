@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.utils.EnumUtils;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comparable<VmDynamic> {
@@ -157,56 +157,56 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
             return false;
         }
         VmDynamic other = (VmDynamic) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(acpiEnabled, other.acpiEnabled)
-                && ObjectUtils.objectsEqual(appList, other.appList)
+        return (Objects.equals(id, other.id)
+                && Objects.equals(acpiEnabled, other.acpiEnabled)
+                && Objects.equals(appList, other.appList)
                 && bootSequence == other.bootSequence
-                && ObjectUtils.objectsEqual(clientIp, other.clientIp)
-                && ObjectUtils.objectsEqual(vncKeyboardLayout, other.vncKeyboardLayout)
-                && ObjectUtils.objectsEqual(consoleCurrentUserName, other.consoleCurrentUserName)
-                && ObjectUtils.objectsEqual(guestCurUserName, other.guestCurUserName)
-                && ObjectUtils.objectsEqual(consoleUserId, other.consoleUserId)
-                && ObjectUtils.objectsEqual(guestOs, other.guestOs)
-                && ObjectUtils.objectsEqual(guestRequestedMemory, other.guestRequestedMemory)
-                && ObjectUtils.objectsEqual(kvmEnable, other.kvmEnable)
-                && ObjectUtils.objectsEqual(lastVdsRunOn, other.lastVdsRunOn)
-                && ObjectUtils.objectsEqual(disks, other.disks)
-                && ObjectUtils.objectsEqual(exitMessage, other.exitMessage)
+                && Objects.equals(clientIp, other.clientIp)
+                && Objects.equals(vncKeyboardLayout, other.vncKeyboardLayout)
+                && Objects.equals(consoleCurrentUserName, other.consoleCurrentUserName)
+                && Objects.equals(guestCurUserName, other.guestCurUserName)
+                && Objects.equals(consoleUserId, other.consoleUserId)
+                && Objects.equals(guestOs, other.guestOs)
+                && Objects.equals(guestRequestedMemory, other.guestRequestedMemory)
+                && Objects.equals(kvmEnable, other.kvmEnable)
+                && Objects.equals(lastVdsRunOn, other.lastVdsRunOn)
+                && Objects.equals(disks, other.disks)
+                && Objects.equals(exitMessage, other.exitMessage)
                 && exitStatus == other.exitStatus
                 && win2kHackEnabled == other.win2kHackEnabled
-                && ObjectUtils.objectsEqual(migratingToVds, other.migratingToVds)
+                && Objects.equals(migratingToVds, other.migratingToVds)
                 && pauseStatus == other.pauseStatus
-                && ObjectUtils.objectsEqual(runOnVds, other.runOnVds)
+                && Objects.equals(runOnVds, other.runOnVds)
                 && session == other.session
                 && status == other.status
-                && ObjectUtils.objectsEqual(utcDiff, other.utcDiff)
-                && ObjectUtils.objectsEqual(vmHost, other.vmHost)
-                && ObjectUtils.objectsEqual(vmIp, other.vmIp)
-                && ObjectUtils.objectsEqual(vmFQDN, other.vmFQDN)
-                && ObjectUtils.objectsEqual(lastStartTime, other.lastStartTime)
-                && ObjectUtils.objectsEqual(lastStopTime, other.lastStopTime)
-                && ObjectUtils.objectsEqual(vmPid, other.vmPid)
-                && ObjectUtils.objectsEqual(lastWatchdogEvent, other.lastWatchdogEvent)
-                && ObjectUtils.objectsEqual(lastWatchdogAction, other.lastWatchdogAction)
+                && Objects.equals(utcDiff, other.utcDiff)
+                && Objects.equals(vmHost, other.vmHost)
+                && Objects.equals(vmIp, other.vmIp)
+                && Objects.equals(vmFQDN, other.vmFQDN)
+                && Objects.equals(lastStartTime, other.lastStartTime)
+                && Objects.equals(lastStopTime, other.lastStopTime)
+                && Objects.equals(vmPid, other.vmPid)
+                && Objects.equals(lastWatchdogEvent, other.lastWatchdogEvent)
+                && Objects.equals(lastWatchdogAction, other.lastWatchdogAction)
                 && runOnce == other.runOnce
-                && ObjectUtils.objectsEqual(cpuName, other.cpuName)
-                && ObjectUtils.objectsEqual(guestAgentStatus, other.guestAgentStatus)
-                && ObjectUtils.objectsEqual(currentCd, other.currentCd)
-                && ObjectUtils.objectsEqual(stopReason, other.stopReason)
+                && Objects.equals(cpuName, other.cpuName)
+                && Objects.equals(guestAgentStatus, other.guestAgentStatus)
+                && Objects.equals(currentCd, other.currentCd)
+                && Objects.equals(stopReason, other.stopReason)
                 && exitReason == other.exitReason
-                && ObjectUtils.objectsEqual(emulatedMachine, other.emulatedMachine))
-                && ObjectUtils.objectsEqual(graphicsInfos, other.getGraphicsInfos())
-                && ObjectUtils.objectsEqual(guestMemoryBuffered, other.guestMemoryBuffered)
-                && ObjectUtils.objectsEqual(guestMemoryCached, other.guestMemoryCached)
-                && ObjectUtils.objectsEqual(guestMemoryFree, other.guestMemoryFree)
-                && ObjectUtils.objectsEqual(guestOsTimezoneName, other.guestOsTimezoneName)
+                && Objects.equals(emulatedMachine, other.emulatedMachine))
+                && Objects.equals(graphicsInfos, other.getGraphicsInfos())
+                && Objects.equals(guestMemoryBuffered, other.guestMemoryBuffered)
+                && Objects.equals(guestMemoryCached, other.guestMemoryCached)
+                && Objects.equals(guestMemoryFree, other.guestMemoryFree)
+                && Objects.equals(guestOsTimezoneName, other.guestOsTimezoneName)
                 && guestOsTimezoneOffset == other.guestOsTimezoneOffset
-                && ObjectUtils.objectsEqual(guestOsVersion, other.guestOsVersion)
-                && ObjectUtils.objectsEqual(guestOsDistribution, other.guestOsDistribution)
-                && ObjectUtils.objectsEqual(guestOsCodename, other.guestOsCodename)
-                && ObjectUtils.objectsEqual(guestOsKernelVersion, other.guestOsKernelVersion)
-                && ObjectUtils.objectsEqual(guestOsArch, other.guestOsArch)
-                && ObjectUtils.objectsEqual(guestOsType, other.guestOsType);
+                && Objects.equals(guestOsVersion, other.guestOsVersion)
+                && Objects.equals(guestOsDistribution, other.guestOsDistribution)
+                && Objects.equals(guestOsCodename, other.guestOsCodename)
+                && Objects.equals(guestOsKernelVersion, other.guestOsKernelVersion)
+                && Objects.equals(guestOsArch, other.guestOsArch)
+                && Objects.equals(guestOsType, other.guestOsType);
     }
 
     public String getExitMessage() {

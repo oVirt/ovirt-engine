@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.validation.constraints.Pattern;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.Mask;
@@ -496,7 +496,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         if (bootProtocol != other.bootProtocol) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(networkName, other.networkName)) {
+        if (!Objects.equals(networkName, other.networkName)) {
             return false;
         }
         if (bridged != other.bridged) {
@@ -540,10 +540,10 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         } else if (!vlanId.equals(other.vlanId)) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(qos, other.qos)) {
+        if (!Objects.equals(qos, other.qos)) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(labels, other.labels)) {
+        if (!Objects.equals(labels, other.labels)) {
             return false;
         }
 

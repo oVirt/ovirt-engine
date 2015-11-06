@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmPoolMap implements Serializable {
@@ -58,7 +58,7 @@ public class VmPoolMap implements Serializable {
             return false;
         }
         VmPoolMap other = (VmPoolMap) obj;
-        return (ObjectUtils.objectsEqual(vmId, other.vmId)
-                && ObjectUtils.objectsEqual(vmPoolId, other.vmPoolId));
+        return (Objects.equals(vmId, other.vmId)
+                && Objects.equals(vmPoolId, other.vmPoolId));
     }
 }

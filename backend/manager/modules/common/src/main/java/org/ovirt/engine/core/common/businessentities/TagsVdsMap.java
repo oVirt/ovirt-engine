@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class TagsVdsMap implements Serializable {
@@ -57,7 +57,7 @@ public class TagsVdsMap implements Serializable {
             return false;
         }
         TagsVdsMap other = (TagsVdsMap) obj;
-        return (ObjectUtils.objectsEqual(id.tagId, other.id.tagId)
-                && ObjectUtils.objectsEqual(id.vdsId, other.id.vdsId));
+        return (Objects.equals(id.tagId, other.id.tagId)
+                && Objects.equals(id.vdsId, other.id.vdsId));
     }
 }

@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.util.Date;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterVolumeSnapshotEntity implements IVdcQueryable, BusinessEntityWithStatus<Guid, GlusterSnapshotStatus> {
@@ -107,23 +107,23 @@ public class GlusterVolumeSnapshotEntity implements IVdcQueryable, BusinessEntit
 
         GlusterVolumeSnapshotEntity snapshot = (GlusterVolumeSnapshotEntity) obj;
 
-        if (!(ObjectUtils.objectsEqual(snapshotId, snapshot.getSnapshotId()))) {
+        if (!(Objects.equals(snapshotId, snapshot.getSnapshotId()))) {
             return false;
         }
 
-        if (!(ObjectUtils.objectsEqual(clusterId, snapshot.getClusterId()))) {
+        if (!(Objects.equals(clusterId, snapshot.getClusterId()))) {
             return false;
         }
 
-        if (!(ObjectUtils.objectsEqual(volumeId, snapshot.getVolumeId()))) {
+        if (!(Objects.equals(volumeId, snapshot.getVolumeId()))) {
             return false;
         }
 
-        if (!(ObjectUtils.objectsEqual(snapshotName, snapshot.getSnapshotName()))) {
+        if (!(Objects.equals(snapshotName, snapshot.getSnapshotName()))) {
             return false;
         }
 
-        if (!(ObjectUtils.objectsEqual(description, snapshot.getDescription()))) {
+        if (!(Objects.equals(description, snapshot.getDescription()))) {
             return false;
         }
 

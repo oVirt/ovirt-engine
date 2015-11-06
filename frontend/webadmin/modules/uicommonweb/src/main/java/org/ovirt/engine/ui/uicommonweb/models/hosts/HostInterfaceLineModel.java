@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -40,7 +40,7 @@ public class HostInterfaceLineModel extends Model {
     }
 
     public void setBondName(String value) {
-        if (!ObjectUtils.objectsEqual(bondName, value)) {
+        if (!Objects.equals(bondName, value)) {
             bondName = value;
             onPropertyChanged(new PropertyChangedEventArgs("BondName")); //$NON-NLS-1$
         }
@@ -53,7 +53,7 @@ public class HostInterfaceLineModel extends Model {
     }
 
     public void setAddress(String value) {
-        if (!ObjectUtils.objectsEqual(address, value)) {
+        if (!Objects.equals(address, value)) {
             address = value;
             onPropertyChanged(new PropertyChangedEventArgs("Address")); //$NON-NLS-1$
         }
@@ -96,7 +96,7 @@ public class HostInterfaceLineModel extends Model {
     }
 
     public void setNetworkName(String value) {
-        if (!ObjectUtils.objectsEqual(networkName, value)) {
+        if (!Objects.equals(networkName, value)) {
             networkName = value;
             onPropertyChanged(new PropertyChangedEventArgs("NetworkName")); //$NON-NLS-1$
         }

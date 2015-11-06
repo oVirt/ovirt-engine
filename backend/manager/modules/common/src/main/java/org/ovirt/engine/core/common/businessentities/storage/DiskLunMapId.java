@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DiskLunMapId implements Serializable {
@@ -58,8 +58,8 @@ public class DiskLunMapId implements Serializable {
             return false;
         }
         DiskLunMapId other = (DiskLunMapId) obj;
-        return (ObjectUtils.objectsEqual(diskId, other.diskId)
-                && ObjectUtils.objectsEqual(lunId, other.lunId));
+        return (Objects.equals(diskId, other.diskId)
+                && Objects.equals(lunId, other.lunId));
     }
 
 }

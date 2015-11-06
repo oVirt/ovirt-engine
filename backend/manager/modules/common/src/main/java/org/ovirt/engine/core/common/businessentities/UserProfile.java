@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
+import java.util.Objects;
+
 import org.ovirt.engine.core.compat.Guid;
 
 public class UserProfile  implements IVdcQueryable {
@@ -92,10 +93,10 @@ public class UserProfile  implements IVdcQueryable {
             return false;
         }
         UserProfile other = (UserProfile) obj;
-        return  ObjectUtils.objectsEqual(sshPublicKeyId, other.sshPublicKeyId)
-             && ObjectUtils.objectsEqual(sshPublicKey, other.sshPublicKey)
-             && ObjectUtils.objectsEqual(isUserPortalVmLoginAutomatically(), other.isUserPortalVmLoginAutomatically())
-             && ObjectUtils.objectsEqual(loginName, other.loginName);
+        return  Objects.equals(sshPublicKeyId, other.sshPublicKeyId)
+             && Objects.equals(sshPublicKey, other.sshPublicKey)
+             && Objects.equals(isUserPortalVmLoginAutomatically(), other.isUserPortalVmLoginAutomatically())
+             && Objects.equals(loginName, other.loginName);
     }
 
     public Boolean isUserPortalVmLoginAutomatically() {

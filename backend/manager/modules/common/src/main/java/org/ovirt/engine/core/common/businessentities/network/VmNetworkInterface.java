@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 /**
@@ -154,22 +155,22 @@ public class VmNetworkInterface extends VmNic {
             return false;
         }
         VmNetworkInterface other = (VmNetworkInterface) obj;
-        if (!ObjectUtils.objectsEqual(getNetworkName(), other.getNetworkName())) {
+        if (!Objects.equals(getNetworkName(), other.getNetworkName())) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(getVnicProfileName(), other.getVnicProfileName())) {
+        if (!Objects.equals(getVnicProfileName(), other.getVnicProfileName())) {
             return false;
         }
         if (isPortMirroring() != other.isPortMirroring()) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(getVmName(), other.getVmName())) {
+        if (!Objects.equals(getVmName(), other.getVmName())) {
             return false;
         }
         if (isPlugged() != other.isPlugged()) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(getQosName(), other.getQosName())) {
+        if (!Objects.equals(getQosName(), other.getQosName())) {
             return false;
         }
 

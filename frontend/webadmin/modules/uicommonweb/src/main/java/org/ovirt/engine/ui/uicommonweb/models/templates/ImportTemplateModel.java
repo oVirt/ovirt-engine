@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportInterfaceListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+
 import com.google.inject.Inject;
 
 public class ImportTemplateModel extends ImportVmFromExportDomainModel {

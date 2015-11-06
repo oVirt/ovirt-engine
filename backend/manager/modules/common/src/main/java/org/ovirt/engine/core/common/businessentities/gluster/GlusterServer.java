@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterServer implements BusinessEntity<Guid> {
@@ -69,8 +69,8 @@ public class GlusterServer implements BusinessEntity<Guid> {
         }
 
         GlusterServer entity = (GlusterServer) obj;
-        return ObjectUtils.objectsEqual(getId(), entity.getId())
-                && ObjectUtils.objectsEqual(getGlusterServerUuid(), entity.getGlusterServerUuid())
-                && ObjectUtils.objectsEqual(getKnownAddresses(), entity.getKnownAddresses());
+        return Objects.equals(getId(), entity.getId())
+                && Objects.equals(getGlusterServerUuid(), entity.getGlusterServerUuid())
+                && Objects.equals(getKnownAddresses(), entity.getKnownAddresses());
     }
 }

@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.List;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class HostDeviceView extends HostDevice {
@@ -59,10 +59,10 @@ public class HostDeviceView extends HostDevice {
 
         HostDeviceView other = (HostDeviceView) o;
 
-        return ObjectUtils.objectsEqual(configuredVmId, other.configuredVmId) &&
-                ObjectUtils.objectsEqual(attachedVmNames, other.attachedVmNames) &&
-                ObjectUtils.objectsEqual(runningVmName, other.runningVmName) &&
-                ObjectUtils.objectsEqual(iommuPlaceholder, other.iommuPlaceholder);
+        return Objects.equals(configuredVmId, other.configuredVmId) &&
+                Objects.equals(attachedVmNames, other.attachedVmNames) &&
+                Objects.equals(runningVmName, other.runningVmName) &&
+                Objects.equals(iommuPlaceholder, other.iommuPlaceholder);
     }
 
     @Override

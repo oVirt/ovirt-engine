@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.VmHostDeviceListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 

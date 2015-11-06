@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 /**
  * Validates a that Pair of two fields are equal
@@ -22,7 +22,7 @@ public class MatchFieldsValidator implements IValidation {
         ValidationResult rs = new ValidationResult();
         rs.setSuccess(false);
 
-        if (!ObjectUtils.objectsEqual(first, second)) {
+        if (!Objects.equals(first, second)) {
             ArrayList<String> reasons = new ArrayList<String>();
             reasons.add(ConstantsManager.getInstance().getConstants().cloudInitRootPasswordMatchMessage());
             rs.setReasons(reasons);

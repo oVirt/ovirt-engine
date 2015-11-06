@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Objects;
+
 import org.hibernate.validator.constraints.Email;
 import org.ovirt.engine.core.common.EventNotificationMethod;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringFormat;
 
@@ -39,11 +40,11 @@ public class event_subscriber implements IVdcQueryable {
             return false;
         }
         event_subscriber other = (event_subscriber) obj;
-        return (ObjectUtils.objectsEqual(id.eventUpName, other.id.eventUpName)
-                && ObjectUtils.objectsEqual(methodAddress, other.methodAddress)
-                && ObjectUtils.objectsEqual(id.eventNotificationMethod, other.id.eventNotificationMethod)
-                && ObjectUtils.objectsEqual(id.subscriberId, other.id.subscriberId)
-                && ObjectUtils.objectsEqual(id.tagName, other.id.tagName));
+        return (Objects.equals(id.eventUpName, other.id.eventUpName)
+                && Objects.equals(methodAddress, other.methodAddress)
+                && Objects.equals(id.eventNotificationMethod, other.id.eventNotificationMethod)
+                && Objects.equals(id.subscriberId, other.id.subscriberId)
+                && Objects.equals(id.tagName, other.id.tagName));
     }
 
     public event_subscriber(String event_up_name, EventNotificationMethod eventNotificationMethod,

@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RunVmParams extends VmOperationParameterBase {
@@ -53,27 +54,27 @@ public class RunVmParams extends VmOperationParameterBase {
 
         RunVmParams other = (RunVmParams) obj;
         return bootSequence == other.bootSequence
-                && ObjectUtils.objectsEqual(getVmId(), other.getVmId())
-                && ObjectUtils.objectsEqual(diskPath, other.diskPath)
+                && Objects.equals(getVmId(), other.getVmId())
+                && Objects.equals(diskPath, other.diskPath)
                 && kvmEnable == other.kvmEnable
-                && ObjectUtils.objectsEqual(runAndPause, other.runAndPause)
+                && Objects.equals(runAndPause, other.runAndPause)
                 && acpiEnable == other.acpiEnable
-                && ObjectUtils.objectsEqual(win2kHackEnable, other.win2kHackEnable)
-                && ObjectUtils.objectsEqual(customProperties, other.customProperties)
-                && ObjectUtils.objectsEqual(floppyPath, other.floppyPath)
-                && ObjectUtils.objectsEqual(clientIp, other.clientIp)
-                && ObjectUtils.objectsEqual(requestingUser, other.requestingUser)
+                && Objects.equals(win2kHackEnable, other.win2kHackEnable)
+                && Objects.equals(customProperties, other.customProperties)
+                && Objects.equals(floppyPath, other.floppyPath)
+                && Objects.equals(clientIp, other.clientIp)
+                && Objects.equals(requestingUser, other.requestingUser)
                 && initializationType == other.initializationType
-                && ObjectUtils.objectsEqual(runAsStateless, other.runAsStateless)
-                && ObjectUtils.objectsEqual(initrdUrl, other.initrdUrl)
-                && ObjectUtils.objectsEqual(kernelUrl, other.kernelUrl)
-                && ObjectUtils.objectsEqual(kernelParams, other.kernelParams)
-                && ObjectUtils.objectsEqual(payload, other.payload)
+                && Objects.equals(runAsStateless, other.runAsStateless)
+                && Objects.equals(initrdUrl, other.initrdUrl)
+                && Objects.equals(kernelUrl, other.kernelUrl)
+                && Objects.equals(kernelParams, other.kernelParams)
+                && Objects.equals(payload, other.payload)
                 && balloonEnabled == other.balloonEnabled
                 && cpuShares == other.cpuShares
-                && ObjectUtils.objectsEqual(bootMenuEnabled, other.bootMenuEnabled)
-                && ObjectUtils.objectsEqual(spiceFileTransferEnabled, other.spiceFileTransferEnabled)
-                && ObjectUtils.objectsEqual(spiceCopyPasteEnabled, other.spiceCopyPasteEnabled);
+                && Objects.equals(bootMenuEnabled, other.bootMenuEnabled)
+                && Objects.equals(spiceFileTransferEnabled, other.spiceFileTransferEnabled)
+                && Objects.equals(spiceCopyPasteEnabled, other.spiceCopyPasteEnabled);
     }
 
     @Override

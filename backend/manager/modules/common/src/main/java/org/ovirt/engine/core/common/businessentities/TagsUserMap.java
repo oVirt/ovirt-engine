@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class TagsUserMap implements Serializable {
@@ -57,7 +57,7 @@ public class TagsUserMap implements Serializable {
             return false;
         }
         TagsUserMap other = (TagsUserMap) obj;
-        return (ObjectUtils.objectsEqual(tagId, other.tagId)
-                && ObjectUtils.objectsEqual(userId, other.userId));
+        return (Objects.equals(tagId, other.tagId)
+                && Objects.equals(userId, other.userId));
     }
 }

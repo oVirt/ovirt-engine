@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.common.businessentities.aaa;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DbGroup implements IVdcQueryable {
@@ -125,11 +125,11 @@ public class DbGroup implements IVdcQueryable {
             return false;
         }
         DbGroup other = (DbGroup) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(externalId, other.externalId)
-                && ObjectUtils.objectsEqual(domain, other.domain)
-                && ObjectUtils.objectsEqual(name, other.name)
-                && ObjectUtils.objectsEqual(distinguishedName, other.distinguishedName)
-                && ObjectUtils.objectsEqual(memberOf, other.memberOf));
+        return (Objects.equals(id, other.id)
+                && Objects.equals(externalId, other.externalId)
+                && Objects.equals(domain, other.domain)
+                && Objects.equals(name, other.name)
+                && Objects.equals(distinguishedName, other.distinguishedName)
+                && Objects.equals(memberOf, other.memberOf));
     }
 }

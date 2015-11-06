@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+
 import com.google.inject.Inject;
 
 public class HostDeviceListModel extends HostDeviceListModelBase<VDS> {

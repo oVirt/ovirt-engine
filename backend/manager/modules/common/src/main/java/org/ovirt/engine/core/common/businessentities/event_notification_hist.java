@@ -2,8 +2,8 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class event_notification_hist implements Serializable {
@@ -111,11 +111,11 @@ public class event_notification_hist implements Serializable {
         }
         event_notification_hist other = (event_notification_hist) obj;
         return (auditLogId == other.auditLogId
-                && ObjectUtils.objectsEqual(subscriberId, other.subscriberId)
-                && ObjectUtils.objectsEqual(eventName, other.eventName)
-                && ObjectUtils.objectsEqual(methodType, other.methodType)
-                && ObjectUtils.objectsEqual(reason, other.reason)
-                && ObjectUtils.objectsEqual(sentAt, other.sentAt)
+                && Objects.equals(subscriberId, other.subscriberId)
+                && Objects.equals(eventName, other.eventName)
+                && Objects.equals(methodType, other.methodType)
+                && Objects.equals(reason, other.reason)
+                && Objects.equals(sentAt, other.sentAt)
                 && status == other.status);
     }
 }

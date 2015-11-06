@@ -2,10 +2,10 @@ package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 
 /**
  * The disk is contains data from the {@link BaseDisk} and the storage specific details for the disk, which are
@@ -106,11 +106,11 @@ public abstract class Disk extends BaseDisk {
             return false;
         }
         Disk other = (Disk) obj;
-        return (ObjectUtils.objectsEqual(plugged, other.plugged)
-                && ObjectUtils.objectsEqual(readOnly, other.readOnly)
-                && ObjectUtils.objectsEqual(vmNames, other.vmNames)
-                && ObjectUtils.objectsEqual(templateVersionNames, other.templateVersionNames)
-                && ObjectUtils.objectsEqual(logicalName, other.logicalName)
+        return (Objects.equals(plugged, other.plugged)
+                && Objects.equals(readOnly, other.readOnly)
+                && Objects.equals(vmNames, other.vmNames)
+                && Objects.equals(templateVersionNames, other.templateVersionNames)
+                && Objects.equals(logicalName, other.logicalName)
                 && vmEntityType == other.vmEntityType
                 && numberOfVms == other.numberOfVms);
     }

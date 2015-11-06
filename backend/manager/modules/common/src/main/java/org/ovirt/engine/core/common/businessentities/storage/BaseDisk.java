@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -8,7 +9,6 @@ import javax.validation.constraints.Size;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -241,15 +241,15 @@ public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid> {
             return false;
         }
         BaseDisk other = (BaseDisk) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(diskAlias, other.diskAlias)
-                && ObjectUtils.objectsEqual(diskDescription, other.diskDescription)
+        return (Objects.equals(id, other.id)
+                && Objects.equals(diskAlias, other.diskAlias)
+                && Objects.equals(diskDescription, other.diskDescription)
                 && diskInterface == other.diskInterface
                 && propagateErrors == other.propagateErrors
                 && shareable == other.shareable
                 && isWipeAfterDelete() == other.isWipeAfterDelete()
                 && boot == other.boot)
                 && sgio == other.sgio
-                && ObjectUtils.objectsEqual(cinderVolumeType, other.cinderVolumeType);
+                && Objects.equals(cinderVolumeType, other.cinderVolumeType);
     }
 }

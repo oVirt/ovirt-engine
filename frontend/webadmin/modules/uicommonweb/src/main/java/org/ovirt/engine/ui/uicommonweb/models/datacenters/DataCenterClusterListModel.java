@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.ClusterAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.CpuProfileListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
 import com.google.inject.Inject;
 
 public class DataCenterClusterListModel extends ClusterListModel<StoragePool> {

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -149,18 +150,18 @@ public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, 
             return false;
         }
         HostDevice other = (HostDevice) obj;
-        return ObjectUtils.objectsEqual(getId(), other.getId()) &&
-                ObjectUtils.objectsEqual(parentDeviceName, other.parentDeviceName) &&
-                ObjectUtils.objectsEqual(capability, other.capability) &&
-                ObjectUtils.objectsEqual(iommuGroup, other.iommuGroup) &&
-                ObjectUtils.objectsEqual(productName, other.productName) &&
-                ObjectUtils.objectsEqual(productId, other.productId) &&
-                ObjectUtils.objectsEqual(vendorName, other.vendorName) &&
-                ObjectUtils.objectsEqual(vendorId, other.vendorId) &&
-                ObjectUtils.objectsEqual(parentPhysicalFunction, other.parentPhysicalFunction) &&
-                ObjectUtils.objectsEqual(totalVirtualFunctions, other.totalVirtualFunctions) &&
-                ObjectUtils.objectsEqual(networkInterfaceName, other.networkInterfaceName) &&
-                ObjectUtils.objectsEqual(vmId, other.vmId);
+        return Objects.equals(getId(), other.getId()) &&
+                Objects.equals(parentDeviceName, other.parentDeviceName) &&
+                Objects.equals(capability, other.capability) &&
+                Objects.equals(iommuGroup, other.iommuGroup) &&
+                Objects.equals(productName, other.productName) &&
+                Objects.equals(productId, other.productId) &&
+                Objects.equals(vendorName, other.vendorName) &&
+                Objects.equals(vendorId, other.vendorId) &&
+                Objects.equals(parentPhysicalFunction, other.parentPhysicalFunction) &&
+                Objects.equals(totalVirtualFunctions, other.totalVirtualFunctions) &&
+                Objects.equals(networkInterfaceName, other.networkInterfaceName) &&
+                Objects.equals(vmId, other.vmId);
     }
 
     @Override

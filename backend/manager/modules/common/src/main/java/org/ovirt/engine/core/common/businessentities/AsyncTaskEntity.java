@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AsyncTaskEntity {
@@ -44,9 +45,9 @@ public class AsyncTaskEntity {
             return false;
         }
         AsyncTaskEntity other = (AsyncTaskEntity) obj;
-        return ObjectUtils.objectsEqual(taskId, other.taskId) &&
-                ObjectUtils.objectsEqual(entityId, other.entityId) &&
-                ObjectUtils.objectsEqual(entityType, other.entityType);
+        return Objects.equals(taskId, other.taskId) &&
+                Objects.equals(entityId, other.entityId) &&
+                Objects.equals(entityType, other.entityType);
     }
 
 

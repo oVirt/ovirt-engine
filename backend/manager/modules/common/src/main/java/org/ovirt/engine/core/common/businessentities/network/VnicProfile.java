@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
 import java.util.Map;
+import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -9,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -134,19 +134,19 @@ public class VnicProfile implements IVdcQueryable, BusinessEntity<Guid>, Nameabl
             return false;
         }
         VnicProfile other = (VnicProfile) obj;
-        if (!ObjectUtils.objectsEqual(getCustomProperties(), other.getCustomProperties())) {
+        if (!Objects.equals(getCustomProperties(), other.getCustomProperties())) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(getId(), other.getId())) {
+        if (!Objects.equals(getId(), other.getId())) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(getName(), other.getName())) {
+        if (!Objects.equals(getName(), other.getName())) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(getNetworkId(), other.getNetworkId())) {
+        if (!Objects.equals(getNetworkId(), other.getNetworkId())) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(getNetworkQosId(), other.getNetworkQosId())) {
+        if (!Objects.equals(getNetworkQosId(), other.getNetworkQosId())) {
             return false;
         }
         if (isPortMirroring() != other.isPortMirroring()) {
@@ -155,7 +155,7 @@ public class VnicProfile implements IVdcQueryable, BusinessEntity<Guid>, Nameabl
         if (isPassthrough() != other.isPassthrough()) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(getDescription(), other.getDescription())) {
+        if (!Objects.equals(getDescription(), other.getDescription())) {
             return false;
         }
         return true;

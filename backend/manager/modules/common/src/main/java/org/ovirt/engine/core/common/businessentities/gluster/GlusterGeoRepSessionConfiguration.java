@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterGeoRepSessionConfiguration extends GlusterVolumeOptionInfo implements BusinessEntity<Guid>{
@@ -48,7 +48,7 @@ public class GlusterGeoRepSessionConfiguration extends GlusterVolumeOptionInfo i
         if (!super.equals(obj)) {
             return false;
         }
-        return ObjectUtils.objectsEqual(getId(), ((GlusterGeoRepSessionConfiguration) obj).getId());
+        return Objects.equals(getId(), ((GlusterGeoRepSessionConfiguration) obj).getId());
     }
 
     @Override

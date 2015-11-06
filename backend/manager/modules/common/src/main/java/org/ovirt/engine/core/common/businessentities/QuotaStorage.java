@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Objects;
+
 import javax.validation.constraints.Min;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -153,11 +154,11 @@ public class QuotaStorage implements IVdcQueryable  {
             return false;
         }
         QuotaStorage other = (QuotaStorage) obj;
-        return (ObjectUtils.objectsEqual(quotaId, other.quotaId)
-                && ObjectUtils.objectsEqual(quotaStorageId, other.quotaStorageId)
-                && ObjectUtils.objectsEqual(storageId, other.storageId)
-                && ObjectUtils.objectsEqual(storageLimitGigaByteUsage, other.storageLimitGigaByteUsage)
-                && ObjectUtils.objectsEqual(storageLimitGigaByte, other.storageLimitGigaByte));
+        return (Objects.equals(quotaId, other.quotaId)
+                && Objects.equals(quotaStorageId, other.quotaStorageId)
+                && Objects.equals(storageId, other.storageId)
+                && Objects.equals(storageLimitGigaByteUsage, other.storageLimitGigaByteUsage)
+                && Objects.equals(storageLimitGigaByte, other.storageLimitGigaByte));
     }
 
     /**

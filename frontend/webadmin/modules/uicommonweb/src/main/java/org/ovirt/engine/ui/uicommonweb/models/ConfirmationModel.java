@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
+import java.util.Objects;
+
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -36,7 +37,7 @@ public class ConfirmationModel extends ListModel {
     }
 
     public void setForceLabel(String forceLabel) {
-        if (!ObjectUtils.objectsEqual(getForceLabel(), forceLabel)) {
+        if (!Objects.equals(getForceLabel(), forceLabel)) {
             this.forceLabel = forceLabel;
             onPropertyChanged(new PropertyChangedEventArgs("ForceLabel")); //$NON-NLS-1$
         }
@@ -49,7 +50,7 @@ public class ConfirmationModel extends ListModel {
     }
 
     public void setNote(String value) {
-        if (!ObjectUtils.objectsEqual(note, value)) {
+        if (!Objects.equals(note, value)) {
             note = value;
             onPropertyChanged(new PropertyChangedEventArgs("Note")); //$NON-NLS-1$
         }

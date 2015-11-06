@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskImageDynamic> {
@@ -99,13 +100,13 @@ public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskIm
             return false;
         }
         DiskImageDynamic other = (DiskImageDynamic) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
+        return (Objects.equals(id, other.id)
                 && actualSize == other.actualSize
-                && ObjectUtils.objectsEqual(readRate, other.readRate)
-                && ObjectUtils.objectsEqual(writeRate, other.writeRate)
-                && ObjectUtils.objectsEqual(readLatency, other.readLatency)
-                && ObjectUtils.objectsEqual(writeLatency, other.writeLatency)
-                && ObjectUtils.objectsEqual(flushLatency, other.flushLatency));
+                && Objects.equals(readRate, other.readRate)
+                && Objects.equals(writeRate, other.writeRate)
+                && Objects.equals(readLatency, other.readLatency)
+                && Objects.equals(writeLatency, other.writeLatency)
+                && Objects.equals(flushLatency, other.flushLatency));
     }
 
     @Override

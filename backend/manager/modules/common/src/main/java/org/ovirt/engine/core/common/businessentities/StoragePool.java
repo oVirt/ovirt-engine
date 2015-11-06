@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Objects;
+
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
@@ -211,18 +212,18 @@ public class StoragePool implements IVdcQueryable, BusinessEntityWithStatus<Guid
             return false;
         }
         StoragePool other = (StoragePool) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(LVER, other.LVER)
-                && ObjectUtils.objectsEqual(description, other.description)
-                && ObjectUtils.objectsEqual(comment, other.comment)
-                && ObjectUtils.objectsEqual(getCompatibilityVersion(), other.getCompatibilityVersion())
+        return (Objects.equals(id, other.id)
+                && Objects.equals(LVER, other.LVER)
+                && Objects.equals(description, other.description)
+                && Objects.equals(comment, other.comment)
+                && Objects.equals(getCompatibilityVersion(), other.getCompatibilityVersion())
                 && masterDomainVersion == other.masterDomainVersion
-                && ObjectUtils.objectsEqual(name, other.name)
+                && Objects.equals(name, other.name)
                 && recoveryMode == other.recoveryMode
-                && ObjectUtils.objectsEqual(spmVdsId, other.spmVdsId)
+                && Objects.equals(spmVdsId, other.spmVdsId)
                 && status == other.status
                 && local == other.local
-                && ObjectUtils.objectsEqual(storagePoolFormatType, other.storagePoolFormatType)
+                && Objects.equals(storagePoolFormatType, other.storagePoolFormatType)
                 && quotaEnforcementType == other.quotaEnforcementType);
     }
 

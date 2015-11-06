@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -12,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -120,7 +120,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
     }
 
     public void setOS(String value) {
-        if (!ObjectUtils.objectsEqual(os, value)) {
+        if (!Objects.equals(os, value)) {
             os = value;
             onPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
         }
@@ -133,7 +133,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
     }
 
     public void setKernelVersion(String value) {
-        if (!ObjectUtils.objectsEqual(kernelVersion, value)) {
+        if (!Objects.equals(kernelVersion, value)) {
             kernelVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("KernelVersion")); //$NON-NLS-1$
         }
@@ -146,7 +146,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
     }
 
     public void setKvmVersion(String value) {
-        if (!ObjectUtils.objectsEqual(kvmVersion, value)) {
+        if (!Objects.equals(kvmVersion, value)) {
             kvmVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("KvmVersion")); //$NON-NLS-1$
         }
@@ -159,7 +159,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
     }
 
     public void setLibvirtVersion(RpmVersion value) {
-        if (!ObjectUtils.objectsEqual(libvirtVersion, value)) {
+        if (!Objects.equals(libvirtVersion, value)) {
             libvirtVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("LibvirtVersion")); //$NON-NLS-1$
         }
@@ -172,7 +172,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
     }
 
     public void setVdsmVersion(RpmVersion value) {
-        if (!ObjectUtils.objectsEqual(vdsmVersion, value)) {
+        if (!Objects.equals(vdsmVersion, value)) {
             vdsmVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("VdsmVersion")); //$NON-NLS-1$
         }
@@ -185,7 +185,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
     }
 
     public void setSpiceVersion(String value) {
-        if (!ObjectUtils.objectsEqual(spiceVersion, value)) {
+        if (!Objects.equals(spiceVersion, value)) {
             spiceVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("SpiceVersion")); //$NON-NLS-1$
         }
@@ -198,7 +198,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
     }
 
     public void setGlusterVersion(RpmVersion value) {
-        if (!ObjectUtils.objectsEqual(glusterVersion, value)) {
+        if (!Objects.equals(glusterVersion, value)) {
             glusterVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("glusterVersion")); //$NON-NLS-1$
         }
@@ -211,7 +211,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
     }
 
     public void setLibrbdVersion(RpmVersion value) {
-        if (!ObjectUtils.objectsEqual(librbdVersion, value)) {
+        if (!Objects.equals(librbdVersion, value)) {
             librbdVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("LibrbdVersion")); //$NON-NLS-1$
         }
@@ -224,7 +224,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
     }
 
     public void setIScsiInitiatorName(String value) {
-        if (!ObjectUtils.objectsEqual(iScsiInitiatorName, value)) {
+        if (!Objects.equals(iScsiInitiatorName, value)) {
             iScsiInitiatorName = value;
             onPropertyChanged(new PropertyChangedEventArgs("IScsiInitiatorName")); //$NON-NLS-1$
         }
@@ -505,7 +505,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
     }
 
     public void setKdumpStatus(String value) {
-        if (!ObjectUtils.objectsEqual(kdumpStatus, value)) {
+        if (!Objects.equals(kdumpStatus, value)) {
             kdumpStatus = value;
             onPropertyChanged(new PropertyChangedEventArgs("KdumpStatus")); //$NON-NLS-1$
         }
@@ -725,7 +725,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
     }
 
     public void setSelinuxEnforceMode(String newMode) {
-        if (!ObjectUtils.objectsEqual(selinuxEnforceMode, newMode)) {
+        if (!Objects.equals(selinuxEnforceMode, newMode)) {
             selinuxEnforceMode = newMode;
             onPropertyChanged(new PropertyChangedEventArgs("selinuxEnforceMode")); //$NON-NLS-1$
         }

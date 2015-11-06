@@ -3,8 +3,7 @@ package org.ovirt.engine.core.common.businessentities.network;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.ovirt.engine.core.common.utils.ObjectUtils;
+import java.util.Objects;
 
 /**
  * Reported configuration related to sole network.
@@ -25,7 +24,7 @@ public class ReportedConfigurations implements Serializable {
     }
 
     public <T> ReportedConfigurations add(ReportedConfigurationType type, T actual, T expected) {
-        final boolean inSync = ObjectUtils.objectsEqual(actual, expected);
+        final boolean inSync = Objects.equals(actual, expected);
         return add(type, actual, expected, inSync);
     }
 

@@ -6,7 +6,6 @@ import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
 
 import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField.ExportOption;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
@@ -136,13 +135,13 @@ public class VmStatic extends VmBase {
         }
         VmStatic other = (VmStatic) obj;
         return (initialized == other.initialized
-                && ObjectUtils.objectsEqual(getName(), other.getName())
-                && ObjectUtils.objectsEqual(vmtGuid, other.vmtGuid)
+                && Objects.equals(getName(), other.getName())
+                && Objects.equals(vmtGuid, other.vmtGuid)
                 && useHostCpuFlags == other.useHostCpuFlags
-                && ObjectUtils.objectsEqual(instanceTypeId, other.instanceTypeId)
-                && ObjectUtils.objectsEqual(imageTypeId, other.imageTypeId)
-                && ObjectUtils.objectsEqual(originalTemplateGuid, other.originalTemplateGuid)
-                && ObjectUtils.objectsEqual(originalTemplateName, other.originalTemplateName)
+                && Objects.equals(instanceTypeId, other.instanceTypeId)
+                && Objects.equals(imageTypeId, other.imageTypeId)
+                && Objects.equals(originalTemplateGuid, other.originalTemplateGuid)
+                && Objects.equals(originalTemplateName, other.originalTemplateName)
                 && useLatestVersion == other.useLatestVersion
                 && Objects.equals(providerId, other.providerId));
     }

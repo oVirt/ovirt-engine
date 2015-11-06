@@ -52,7 +52,6 @@ import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVolumeDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -448,9 +447,9 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     private boolean shouldPerformMetadataUpdate() {
-        return ((getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE) && (!ObjectUtils.objectsEqual(getOldDisk().getDiskAlias(),
-                getNewDisk().getDiskAlias()) || !ObjectUtils.objectsEqual(getOldDisk().getDiskDescription(),
-                getNewDisk().getDiskDescription())));
+        return ((getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE) &&
+                (!Objects.equals(getOldDisk().getDiskAlias(), getNewDisk().getDiskAlias()) ||
+                 !Objects.equals(getOldDisk().getDiskDescription(), getNewDisk().getDiskDescription())));
     }
 
     private void updateMetaDataDescription(DiskImage diskImage) {

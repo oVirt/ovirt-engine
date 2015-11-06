@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RoleGroupMap implements Serializable {
@@ -56,6 +56,6 @@ public class RoleGroupMap implements Serializable {
             return false;
         }
         RoleGroupMap other = (RoleGroupMap) obj;
-        return (ObjectUtils.objectsEqual(id, other.id));
+        return (Objects.equals(id, other.id));
     }
 }

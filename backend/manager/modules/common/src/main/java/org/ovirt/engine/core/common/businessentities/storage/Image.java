@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -189,12 +189,12 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
             return false;
         }
         Image other = (Image) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
+        return (Objects.equals(id, other.id)
                 && active == other.active
-                && ObjectUtils.objectsEqual(lastModified, other.lastModified)
-                && ObjectUtils.objectsEqual(parentId, other.parentId)
-                && ObjectUtils.objectsEqual(snapshotId, other.snapshotId)
+                && Objects.equals(lastModified, other.lastModified)
+                && Objects.equals(parentId, other.parentId)
+                && Objects.equals(snapshotId, other.snapshotId)
                 && status == other.status
-                && ObjectUtils.objectsEqual(templateImageId, other.templateImageId));
+                && Objects.equals(templateImageId, other.templateImageId));
     }
 }

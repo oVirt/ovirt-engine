@@ -2,9 +2,9 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.sql.Time;
 import java.util.Date;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterVolumeSnapshotSchedule implements IVdcQueryable {
@@ -152,51 +152,51 @@ public class GlusterVolumeSnapshotSchedule implements IVdcQueryable {
 
         GlusterVolumeSnapshotSchedule schedule = (GlusterVolumeSnapshotSchedule) obj;
 
-        if (!(ObjectUtils.objectsEqual(clusterId, schedule.getClusterId()))) {
+        if (!(Objects.equals(clusterId, schedule.getClusterId()))) {
             return false;
         }
 
-        if (!(ObjectUtils.objectsEqual(volumeId, schedule.getVolumeId()))) {
+        if (!(Objects.equals(volumeId, schedule.getVolumeId()))) {
             return false;
         }
 
-        if (!(ObjectUtils.objectsEqual(jobId, schedule.getJobId()))) {
+        if (!(Objects.equals(jobId, schedule.getJobId()))) {
             return false;
         }
 
-        if (!ObjectUtils.objectsEqual(snapshotNamePrefix, schedule.getSnapshotNamePrefix())) {
+        if (!Objects.equals(snapshotNamePrefix, schedule.getSnapshotNamePrefix())) {
             return false;
         }
 
-        if (!ObjectUtils.objectsEqual(snapshotDescription, schedule.getSnapshotDescription())) {
+        if (!Objects.equals(snapshotDescription, schedule.getSnapshotDescription())) {
             return false;
         }
 
-        if (!(ObjectUtils.objectsEqual(recurrence, schedule.getRecurrence()))) {
+        if (!(Objects.equals(recurrence, schedule.getRecurrence()))) {
             return false;
         }
 
-        if (!ObjectUtils.objectsEqual(timeZone, schedule.getTimeZone())) {
+        if (!Objects.equals(timeZone, schedule.getTimeZone())) {
             return false;
         }
 
-        if (!(ObjectUtils.objectsEqual(interval, schedule.getInterval()))) {
+        if (!(Objects.equals(interval, schedule.getInterval()))) {
             return false;
         }
 
-        if (!(ObjectUtils.objectsEqual(startDate, schedule.getStartDate()))) {
+        if (!(Objects.equals(startDate, schedule.getStartDate()))) {
             return false;
         }
 
-        if (!(ObjectUtils.objectsEqual(executionTime, schedule.getExecutionTime()))) {
+        if (!(Objects.equals(executionTime, schedule.getExecutionTime()))) {
             return false;
         }
 
-        if (!(ObjectUtils.objectsEqual(days, schedule.getDays()))) {
+        if (!(Objects.equals(days, schedule.getDays()))) {
             return false;
         }
 
-        if (!(ObjectUtils.objectsEqual(endByDate, schedule.getEndByDate()))) {
+        if (!(Objects.equals(endByDate, schedule.getEndByDate()))) {
             return false;
         }
 

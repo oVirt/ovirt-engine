@@ -2,8 +2,8 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class TagsVmPoolMap implements Serializable {
@@ -54,7 +54,7 @@ public class TagsVmPoolMap implements Serializable {
             return false;
         }
         TagsVmPoolMap other = (TagsVmPoolMap) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(created, other.created));
+        return (Objects.equals(id, other.id)
+                && Objects.equals(created, other.created));
     }
 }

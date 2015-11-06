@@ -3,8 +3,8 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -150,23 +150,23 @@ public class GlusterVolumeAdvancedDetails implements Serializable {
 
         GlusterVolumeAdvancedDetails otherVolumeAdvancedDetails = (GlusterVolumeAdvancedDetails) obj;
 
-        if (!ObjectUtils.objectsEqual(capacityInfo, otherVolumeAdvancedDetails.getCapacityInfo())) {
+        if (!Objects.equals(capacityInfo, otherVolumeAdvancedDetails.getCapacityInfo())) {
             return false;
         }
 
-        if (!ObjectUtils.objectsEqual(brickDetails, otherVolumeAdvancedDetails.getBrickDetails())) {
+        if (!Objects.equals(brickDetails, otherVolumeAdvancedDetails.getBrickDetails())) {
             return false;
         }
 
-        if (!ObjectUtils.objectsEqual(serviceInfo, otherVolumeAdvancedDetails.getServiceInfo())) {
+        if (!Objects.equals(serviceInfo, otherVolumeAdvancedDetails.getServiceInfo())) {
             return false;
         }
 
-        if (!ObjectUtils.objectsEqual(updatedAt, otherVolumeAdvancedDetails.getUpdatedAt())) {
+        if (!Objects.equals(updatedAt, otherVolumeAdvancedDetails.getUpdatedAt())) {
             return false;
         }
 
-        if (!ObjectUtils.objectsEqual(volumeId, otherVolumeAdvancedDetails.getVolumeId())) {
+        if (!Objects.equals(volumeId, otherVolumeAdvancedDetails.getVolumeId())) {
             return false;
         }
         return true;

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.aaa;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
+import java.util.Objects;
 
 public class DirectoryUser extends DirectoryEntry {
     private static final long serialVersionUID = -5689096270467866486L;
@@ -106,10 +106,10 @@ public class DirectoryUser extends DirectoryEntry {
         }
         DirectoryUser other = (DirectoryUser) obj;
         return
-            ObjectUtils.objectsEqual(firstName, other.firstName) &&
-            ObjectUtils.objectsEqual(lastName, other.lastName) &&
-            ObjectUtils.objectsEqual(title, other.title) &&
-            ObjectUtils.objectsEqual(email, other.email) &&
-            ObjectUtils.objectsEqual(department, other.department);
+            Objects.equals(firstName, other.firstName) &&
+                    Objects.equals(lastName, other.lastName) &&
+                    Objects.equals(title, other.title) &&
+                    Objects.equals(email, other.email) &&
+                    Objects.equals(department, other.department);
     }
 }

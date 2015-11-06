@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.common;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
+import java.util.Objects;
+
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -14,7 +15,7 @@ public class ProgressModel extends Model {
     }
 
     public void setCurrentOperation(String value) {
-        if (!ObjectUtils.objectsEqual(currentOperation, value)) {
+        if (!Objects.equals(currentOperation, value)) {
             currentOperation = value;
             onPropertyChanged(new PropertyChangedEventArgs("CurrentOperation")); //$NON-NLS-1$
         }

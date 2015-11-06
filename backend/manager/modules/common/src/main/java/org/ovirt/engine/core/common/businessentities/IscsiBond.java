@@ -2,11 +2,11 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -129,11 +129,11 @@ public class IscsiBond implements IVdcQueryable, BusinessEntity<Guid>, Nameable 
         }
 
         IscsiBond iscsiBond = (IscsiBond) obj;
-        return ObjectUtils.objectsEqual(id, iscsiBond.getId()) &&
-                ObjectUtils.objectsEqual(name, iscsiBond.getName()) &&
-                ObjectUtils.objectsEqual(description, iscsiBond.getDescription()) &&
-                ObjectUtils.objectsEqual(storagePoolId, iscsiBond.getStoragePoolId()) &&
-                ObjectUtils.objectsEqual(networkIds, iscsiBond.getNetworkIds()) &&
-                ObjectUtils.objectsEqual(storageConnectionIds, iscsiBond.getStorageConnectionIds());
+        return Objects.equals(id, iscsiBond.getId()) &&
+                Objects.equals(name, iscsiBond.getName()) &&
+                Objects.equals(description, iscsiBond.getDescription()) &&
+                Objects.equals(storagePoolId, iscsiBond.getStoragePoolId()) &&
+                Objects.equals(networkIds, iscsiBond.getNetworkIds()) &&
+                Objects.equals(storageConnectionIds, iscsiBond.getStorageConnectionIds());
     }
 }

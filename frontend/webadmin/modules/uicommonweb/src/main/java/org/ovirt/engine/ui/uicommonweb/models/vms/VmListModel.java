@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
@@ -45,7 +46,6 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -1674,13 +1674,13 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             return;
         }
 
-        if (ObjectUtils.objectsEqual(model.getIsoImage().getSelectedItem(), vm.getCurrentCd())) {
+        if (Objects.equals(model.getIsoImage().getSelectedItem(), vm.getCurrentCd())) {
             cancel();
             return;
         }
 
         String isoName =
-                (ObjectUtils.objectsEqual(model.getIsoImage().getSelectedItem(), ConsoleModel.getEjectLabel())) ? "" //$NON-NLS-1$
+                (Objects.equals(model.getIsoImage().getSelectedItem(), ConsoleModel.getEjectLabel())) ? "" //$NON-NLS-1$
                         : model.getIsoImage().getSelectedItem();
 
         model.startProgress();
@@ -1900,7 +1900,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
         // TODO: Patch!
         String isoName = model.getTitle();
-        if (ObjectUtils.objectsEqual(isoName, ConstantsManager.getInstance()
+        if (Objects.equals(isoName, ConstantsManager.getInstance()
                 .getConstants()
                 .noCds())) {
             return;
@@ -1914,7 +1914,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ChangeDisk,
                 new ArrayList<>(Arrays.asList(new VdcActionParametersBase[] { new ChangeDiskCommandParameters(vm.getId(),
-                        ObjectUtils.objectsEqual(isoName, ConsoleModel.getEjectLabel()) ? "" : isoName) })), //$NON-NLS-1$
+                        Objects.equals(isoName, ConsoleModel.getEjectLabel()) ? "" : isoName) })), //$NON-NLS-1$
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {

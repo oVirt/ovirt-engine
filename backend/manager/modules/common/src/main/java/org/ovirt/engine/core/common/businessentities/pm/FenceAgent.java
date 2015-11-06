@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.validation.constraints.Size;
 
@@ -11,7 +12,6 @@ import org.hibernate.validator.constraints.Range;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.EditableField;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.HostnameOrIp;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
@@ -249,16 +249,16 @@ public class FenceAgent implements BusinessEntity<Guid> {
             return false;
         }
         FenceAgent other = (FenceAgent) obj;
-        return ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(hostId, other.hostId)
+        return Objects.equals(id, other.id)
+                && Objects.equals(hostId, other.hostId)
                 && order == other.order
-                && ObjectUtils.objectsEqual(type, other.type)
-                && ObjectUtils.objectsEqual(ip, other.ip)
-                && ObjectUtils.objectsEqual(port, other.port)
-                && ObjectUtils.objectsEqual(user, other.user)
-                && ObjectUtils.objectsEqual(password, other.password)
+                && Objects.equals(type, other.type)
+                && Objects.equals(ip, other.ip)
+                && Objects.equals(port, other.port)
+                && Objects.equals(user, other.user)
+                && Objects.equals(password, other.password)
                 && encryptOptions == other.encryptOptions
-                && ObjectUtils.objectsEqual(options, other.options);
+                && Objects.equals(options, other.options);
     }
 
     @Override

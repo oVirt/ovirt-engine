@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
 import com.google.inject.Inject;
 
 public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase, R extends BusinessEntity<Guid>> extends ListWithSimpleDetailsModel<R, P> {

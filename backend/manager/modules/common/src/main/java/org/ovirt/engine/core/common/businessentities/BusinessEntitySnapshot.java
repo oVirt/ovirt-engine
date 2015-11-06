@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -150,8 +150,8 @@ public class BusinessEntitySnapshot {
             return false;
         }
         BusinessEntitySnapshot other = (BusinessEntitySnapshot) obj;
-        return (ObjectUtils.objectsEqual(commandId, other.commandId)
-                && ObjectUtils.objectsEqual(entityId, other.entityId));
+        return (Objects.equals(commandId, other.commandId)
+                && Objects.equals(entityId, other.entityId));
     }
 
     /**

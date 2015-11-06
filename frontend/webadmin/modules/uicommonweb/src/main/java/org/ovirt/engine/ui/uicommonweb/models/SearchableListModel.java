@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.SortedSet;
 import java.util.logging.Logger;
 
@@ -17,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SyntaxContainer;
@@ -42,6 +42,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -181,7 +182,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     }
 
     public void setSearchString(String value) {
-        if (!ObjectUtils.objectsEqual(searchString, value)) {
+        if (!Objects.equals(searchString, value)) {
             searchString = value;
             pagingSearchString = null;
             searchStringChanged();
@@ -706,7 +707,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
      *            Sort direction, effective only when {@code sortBy} is not {@code null}.
      */
     public void updateSortOptions(String sortBy, boolean sortAscending) {
-        boolean shouldRefresh = !ObjectUtils.objectsEqual(this.sortBy, sortBy)
+        boolean shouldRefresh = !Objects.equals(this.sortBy, sortBy)
                 || this.sortAscending != sortAscending;
 
         this.sortBy = sortBy;
@@ -810,7 +811,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
             }
 
             if (comparator == null || ((value instanceof SortedSet)
-                    && ObjectUtils.objectsEqual(((SortedSet<?>) value).comparator(), comparator))) {
+                    && Objects.equals(((SortedSet<?>) value).comparator(), comparator))) {
                 itemsChanging(value, items);
                 items = value;
             } else {

@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+
 import com.google.inject.Inject;
 
 public class ClusterPolicyListModel extends ListWithSimpleDetailsModel<Object, ClusterPolicy> {

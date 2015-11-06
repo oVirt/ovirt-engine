@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 
 public class ActionVersionMap implements Serializable {
     private static final long serialVersionUID = -212222175662336097L;
@@ -80,7 +80,7 @@ public class ActionVersionMap implements Serializable {
         }
         ActionVersionMap other = (ActionVersionMap) obj;
         return (actionType == other.actionType
-                && ObjectUtils.objectsEqual(clusterMinimalVersion, other.clusterMinimalVersion)
-                && ObjectUtils.objectsEqual(storagePoolMinimalVersion, other.storagePoolMinimalVersion));
+                && Objects.equals(clusterMinimalVersion, other.clusterMinimalVersion)
+                && Objects.equals(storagePoolMinimalVersion, other.storagePoolMinimalVersion));
     }
 }

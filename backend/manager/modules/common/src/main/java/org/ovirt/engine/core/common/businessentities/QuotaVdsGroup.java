@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Objects;
+
 import javax.validation.constraints.Min;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -196,13 +197,13 @@ public class QuotaVdsGroup implements IVdcQueryable {
             return false;
         }
         QuotaVdsGroup other = (QuotaVdsGroup) obj;
-        return (ObjectUtils.objectsEqual(quotaId, other.quotaId)
-                && ObjectUtils.objectsEqual(quotaVdsGroupId, other.quotaVdsGroupId)
-                && ObjectUtils.objectsEqual(vdsGroupId, other.vdsGroupId)
-                && ObjectUtils.objectsEqual(virtualCpu, other.virtualCpu)
-                && ObjectUtils.objectsEqual(virtualCpuUsage, other.virtualCpuUsage)
-                && ObjectUtils.objectsEqual(memSizeMB, other.memSizeMB)
-                && ObjectUtils.objectsEqual(memSizeMBUsage, other.memSizeMBUsage));
+        return (Objects.equals(quotaId, other.quotaId)
+                && Objects.equals(quotaVdsGroupId, other.quotaVdsGroupId)
+                && Objects.equals(vdsGroupId, other.vdsGroupId)
+                && Objects.equals(virtualCpu, other.virtualCpu)
+                && Objects.equals(virtualCpuUsage, other.virtualCpuUsage)
+                && Objects.equals(memSizeMB, other.memSizeMB)
+                && Objects.equals(memSizeMBUsage, other.memSizeMBUsage));
     }
 
     /**

@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.common.businessentities.qos;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ConfiguredRange;
 
 public class CpuQos extends QosBase {
@@ -38,7 +39,7 @@ public class CpuQos extends QosBase {
     }
 
     public boolean equalValues(CpuQos other) {
-        return ObjectUtils.objectsEqual(cpuLimit, other.getCpuLimit());
+        return Objects.equals(cpuLimit, other.getCpuLimit());
     }
 
     @Override

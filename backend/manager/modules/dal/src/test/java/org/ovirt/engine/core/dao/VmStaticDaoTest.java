@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.NotImplementedException;
@@ -24,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -537,7 +537,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
         assertFalse(allByVdsGroup.isEmpty());
         boolean allValues = true;
         for (VmStatic vmStatic : allByVdsGroup) {
-            allValues &= ObjectUtils.objectsEqual(vmStatic.getCpuProfileId(), cpuProfileId);
+            allValues &= Objects.equals(vmStatic.getCpuProfileId(), cpuProfileId);
         }
         assertEquals(isAllNull, allValues);
     }

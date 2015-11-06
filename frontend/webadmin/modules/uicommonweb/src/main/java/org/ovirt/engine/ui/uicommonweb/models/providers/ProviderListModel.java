@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+
 import com.google.inject.Inject;
 
 public class ProviderListModel extends ListWithSimpleDetailsModel<Void, Provider> implements ISupportSystemTreeContext {

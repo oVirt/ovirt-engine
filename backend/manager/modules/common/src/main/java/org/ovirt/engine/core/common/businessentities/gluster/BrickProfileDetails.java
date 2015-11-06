@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
+import java.util.Objects;
+
 import org.ovirt.engine.core.compat.Guid;
 
 public class BrickProfileDetails extends GlusterVolumeProfileStats {
@@ -32,7 +33,7 @@ public class BrickProfileDetails extends GlusterVolumeProfileStats {
         if (brickDetails.getBrickId() == null) {
             return false;
         }
-        if (!(ObjectUtils.objectsEqual(getBrickId(), brickDetails.getBrickId()))) {
+        if (!(Objects.equals(getBrickId(), brickDetails.getBrickId()))) {
             return false;
         }
         return true;

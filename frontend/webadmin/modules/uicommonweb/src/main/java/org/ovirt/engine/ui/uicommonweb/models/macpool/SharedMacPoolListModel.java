@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+
 import com.google.inject.Inject;
 
 public class SharedMacPoolListModel extends ListWithSimpleDetailsModel<Void, MacPool> {

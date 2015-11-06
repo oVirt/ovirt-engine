@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
@@ -29,7 +30,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -1846,7 +1846,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
             isCPUinitialized = true;
             getCPU().setSelectedItem(null);
             for (ServerCpu a : getCPU().getItems()) {
-                if (ObjectUtils.objectsEqual(a.getCpuName(), getEntity().getCpuName())) {
+                if (Objects.equals(a.getCpuName(), getEntity().getCpuName())) {
                     getCPU().setSelectedItem(a);
                     break;
                 }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -88,8 +89,8 @@ public class StoragePoolIsoMap implements BusinessEntityWithStatus<StoragePoolIs
             return false;
         }
         StoragePoolIsoMap other = (StoragePoolIsoMap) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(persistentStorageDomainStatus, other.persistentStorageDomainStatus));
+        return (Objects.equals(id, other.id)
+                && Objects.equals(persistentStorageDomainStatus, other.persistentStorageDomainStatus));
     }
 
     @Override

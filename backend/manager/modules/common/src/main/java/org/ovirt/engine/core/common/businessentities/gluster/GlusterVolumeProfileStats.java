@@ -2,9 +2,9 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.Nameable;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 
 public class GlusterVolumeProfileStats implements Serializable, Nameable {
     private static final long serialVersionUID = 1L;
@@ -35,10 +35,10 @@ public class GlusterVolumeProfileStats implements Serializable, Nameable {
             return false;
         }
         GlusterVolumeProfileStats profileDetails = (GlusterVolumeProfileStats) obj;
-        if(!ObjectUtils.objectsEqual(getName(), profileDetails.getName())) {
+        if(!Objects.equals(getName(), profileDetails.getName())) {
             return false;
         }
-        if(!ObjectUtils.objectsEqual(getProfileStats(), profileDetails.getProfileStats())) {
+        if(!Objects.equals(getProfileStats(), profileDetails.getProfileStats())) {
             return false;
         }
         return true;

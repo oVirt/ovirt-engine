@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class vds_spm_id_map implements Serializable, BusinessEntity<Guid> {
@@ -72,8 +72,8 @@ public class vds_spm_id_map implements Serializable, BusinessEntity<Guid> {
             return false;
         }
         vds_spm_id_map other = (vds_spm_id_map) obj;
-        return (ObjectUtils.objectsEqual(storage_pool_idField, other.storage_pool_idField)
-                && ObjectUtils.objectsEqual(vds_idField, other.vds_idField)
+        return (Objects.equals(storage_pool_idField, other.storage_pool_idField)
+                && Objects.equals(vds_idField, other.vds_idField)
                 && vds_spm_idField == other.vds_spm_idField);
     }
 }

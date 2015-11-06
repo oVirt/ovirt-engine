@@ -6,13 +6,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
@@ -61,6 +61,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -1159,7 +1160,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
     }
 
     public void setSearchStringPrefix(String value) {
-        if (!ObjectUtils.objectsEqual(searchStringPrefix, value)) {
+        if (!Objects.equals(searchStringPrefix, value)) {
             searchStringPrefix = value;
             searchStringPrefixChanged();
             onPropertyChanged(new PropertyChangedEventArgs("SearchStringPrefix")); //$NON-NLS-1$
@@ -1212,7 +1213,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
     }
 
     private void setSearchStringImpl(String value, boolean checkIfNewValue) {
-        if (!checkIfNewValue || !ObjectUtils.objectsEqual(searchString, value)) {
+        if (!checkIfNewValue || !Objects.equals(searchString, value)) {
             searchString = value;
             searchStringChanged();
             onPropertyChanged(new PropertyChangedEventArgs("SearchString")); //$NON-NLS-1$

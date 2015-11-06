@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -28,7 +29,6 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
@@ -63,6 +63,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+
 import com.google.inject.Inject;
 
 public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGroup> implements ISupportSystemTreeContext {
@@ -611,7 +612,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
     private ServerCpu getVdsGroupServerCpu(ClusterModel model, VDSGroup vdsGroup) {
         ServerCpu retVal = null;
         for (ServerCpu cpu : model.getCPU().getItems()) {
-            if (ObjectUtils.objectsEqual(cpu.getCpuName(), vdsGroup.getCpuName())) {
+            if (Objects.equals(cpu.getCpuName(), vdsGroup.getCpuName())) {
                 retVal = cpu;
                 break;
             }

@@ -2,8 +2,8 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -84,9 +84,9 @@ public class StorageDomainOvfInfo implements BusinessEntity<Guid> {
         StorageDomainOvfInfo ovfInfo = (StorageDomainOvfInfo) o;
 
         if (status != ovfInfo.status) return false;
-        if (!ObjectUtils.objectsEqual(ovfDiskId, ovfInfo.ovfDiskId)) return false;
-        if (!ObjectUtils.objectsEqual(storageDomainId, ovfInfo.storageDomainId)) return false;
-        if (!ObjectUtils.objectsEqual(lastUpdated, ovfInfo.lastUpdated)) return false;
+        if (!Objects.equals(ovfDiskId, ovfInfo.ovfDiskId)) return false;
+        if (!Objects.equals(storageDomainId, ovfInfo.storageDomainId)) return false;
+        if (!Objects.equals(lastUpdated, ovfInfo.lastUpdated)) return false;
 
         return true;
     }

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
@@ -9,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -28,7 +28,7 @@ public class AbstractGeneralModel<E> extends EntityModel<E> {
     }
 
     public void setGraphicsType(String graphicsType) {
-        if (!ObjectUtils.objectsEqual(this.graphicsType, graphicsType)) {
+        if (!Objects.equals(this.graphicsType, graphicsType)) {
             this.graphicsType = graphicsType;
             onPropertyChanged(new PropertyChangedEventArgs("GraphicsType")); //$NON-NLS-1$
         }

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VdsCommand;
@@ -19,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -71,7 +71,7 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
             // Check that all the selected devices are of same type. Mixing device types in Brick creation is not
             // allowed
             // for performance reasons.
-            if (!ObjectUtils.objectsEqual(deviceType, device.getDevType())) {
+            if (!Objects.equals(deviceType, device.getDevType())) {
                 addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DIFFERENT_STORAGE_DEVICE_TYPES_SELECTED);
                 return false;
             }

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -103,30 +104,30 @@ public class VdsStatistics implements BusinessEntity<Guid> {
             return false;
         }
         VdsStatistics other = (VdsStatistics) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
+        return (Objects.equals(id, other.id)
                 && ObjectUtils.bigDecimalEqual(cpuIdle, other.cpuIdle)
                 && ObjectUtils.bigDecimalEqual(cpuLoad, other.cpuLoad)
                 && ObjectUtils.bigDecimalEqual(cpuSys, other.cpuSys)
                 && ObjectUtils.bigDecimalEqual(cpuUser, other.cpuUser)
-                && ObjectUtils.objectsEqual(memAvailable, other.memAvailable)
-                && ObjectUtils.objectsEqual(memFree, other.memFree)
-                && ObjectUtils.objectsEqual(memShared, other.memShared)
-                && ObjectUtils.objectsEqual(usageCpuPercent, other.usageCpuPercent)
-                && ObjectUtils.objectsEqual(usageNetworkPercent, other.usageNetworkPercent)
-                && ObjectUtils.objectsEqual(ksmState, other.ksmState)
-                && ObjectUtils.objectsEqual(ksmPages, other.ksmPages)
-                && ObjectUtils.objectsEqual(ksmCpuPercent, other.ksmCpuPercent)
-                && ObjectUtils.objectsEqual(swapTotal, other.swapTotal)
-                && ObjectUtils.objectsEqual(swapFree, other.swapFree)
+                && Objects.equals(memAvailable, other.memAvailable)
+                && Objects.equals(memFree, other.memFree)
+                && Objects.equals(memShared, other.memShared)
+                && Objects.equals(usageCpuPercent, other.usageCpuPercent)
+                && Objects.equals(usageNetworkPercent, other.usageNetworkPercent)
+                && Objects.equals(ksmState, other.ksmState)
+                && Objects.equals(ksmPages, other.ksmPages)
+                && Objects.equals(ksmCpuPercent, other.ksmCpuPercent)
+                && Objects.equals(swapTotal, other.swapTotal)
+                && Objects.equals(swapFree, other.swapFree)
                 && (anonymousHugePages == other.anonymousHugePages)
-                && ObjectUtils.objectsEqual(bootTime, other.bootTime)
+                && Objects.equals(bootTime, other.bootTime)
                 && (highlyAvailableScore == other.highlyAvailableScore)
                 && (highlyAvailableIsConfigured == other.highlyAvailableIsConfigured)
                 && (highlyAvailableIsActive == other.highlyAvailableIsActive)
                 && (highlyAvailableGlobalMaintenance == other.highlyAvailableGlobalMaintenance)
                 && (highlyAvailableLocalMaintenance == other.highlyAvailableLocalMaintenance)
-                && ObjectUtils.objectsEqual(cpuCoreStatistics, other.cpuCoreStatistics)
-                && ObjectUtils.objectsEqual(cpuOverCommitTimeStamp, other.cpuOverCommitTimeStamp));
+                && Objects.equals(cpuCoreStatistics, other.cpuCoreStatistics)
+                && Objects.equals(cpuOverCommitTimeStamp, other.cpuOverCommitTimeStamp));
     }
 
     public int getAnonymousHugePages() {

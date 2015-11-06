@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Objects;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -63,11 +64,11 @@ public class Role implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
             return false;
         }
         Role other = (Role) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(description, other.description)
+        return (Objects.equals(id, other.id)
+                && Objects.equals(description, other.description)
                 && readOnly == other.readOnly
                 && allowsViewingChildren == other.allowsViewingChildren
-                && ObjectUtils.objectsEqual(name, other.name)
+                && Objects.equals(name, other.name)
                 && type == other.type
                 && appMode == other.appMode);
     }

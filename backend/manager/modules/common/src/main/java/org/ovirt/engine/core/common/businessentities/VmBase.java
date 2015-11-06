@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField.ExportOp
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.IntegerContainedInConfigValueList;
 import org.ovirt.engine.core.common.validation.annotation.NullOrStringContainedInConfigValueList;
@@ -997,17 +996,17 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
             return false;
         }
         VmBase other = (VmBase) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
+        return (Objects.equals(id, other.id)
                 && autoStartup == other.autoStartup
                 && cpuPerSocket == other.cpuPerSocket
-                && ObjectUtils.objectsEqual(creationDate, other.creationDate)
+                && Objects.equals(creationDate, other.creationDate)
                 && defaultBootSequence == other.defaultBootSequence
-                && ObjectUtils.objectsEqual(description, other.description)
+                && Objects.equals(description, other.description)
                 && failBack == other.failBack
-                && ObjectUtils.objectsEqual(initrdUrl, other.initrdUrl)
-                && ObjectUtils.objectsEqual(isoPath, other.isoPath)
-                && ObjectUtils.objectsEqual(kernelParams, other.kernelParams)
-                && ObjectUtils.objectsEqual(kernelUrl, other.kernelUrl)
+                && Objects.equals(initrdUrl, other.initrdUrl)
+                && Objects.equals(isoPath, other.isoPath)
+                && Objects.equals(kernelParams, other.kernelParams)
+                && Objects.equals(kernelUrl, other.kernelUrl)
                 && osId == other.osId
                 && memSizeMb == other.memSizeMb
                 && niceLevel == other.niceLevel
@@ -1019,36 +1018,36 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
                 && stateless == other.stateless
                 && smartcardEnabled == other.smartcardEnabled
                 && deleteProtected == other.deleteProtected
-                && ObjectUtils.objectsEqual(timeZone, other.timeZone)
+                && Objects.equals(timeZone, other.timeZone)
                 && usbPolicy == other.usbPolicy
-                && ObjectUtils.objectsEqual(vdsGroupId, other.vdsGroupId)
+                && Objects.equals(vdsGroupId, other.vdsGroupId)
                 && vmType == other.vmType
-                && ObjectUtils.objectsEqual(quotaId, other.quotaId)
+                && Objects.equals(quotaId, other.quotaId)
                 && allowConsoleReconnect == other.allowConsoleReconnect
-                && ObjectUtils.objectsEqual(dedicatedVmForVdsList, other.dedicatedVmForVdsList)
+                && Objects.equals(dedicatedVmForVdsList, other.dedicatedVmForVdsList)
                 && migrationSupport == other.migrationSupport
-                && ObjectUtils.objectsEqual(tunnelMigration, other.tunnelMigration)
-                && ObjectUtils.objectsEqual(vncKeyboardLayout, other.vncKeyboardLayout)
-                && ObjectUtils.objectsEqual(createdByUserId, other.createdByUserId)
+                && Objects.equals(tunnelMigration, other.tunnelMigration)
+                && Objects.equals(vncKeyboardLayout, other.vncKeyboardLayout)
+                && Objects.equals(createdByUserId, other.createdByUserId)
                 && cpuShares == other.cpuShares
-                && ObjectUtils.objectsEqual(migrationDowntime, other.migrationDowntime)
+                && Objects.equals(migrationDowntime, other.migrationDowntime)
                 && serialNumberPolicy == other.serialNumberPolicy
-                && ObjectUtils.objectsEqual(customSerialNumber, other.customSerialNumber)
+                && Objects.equals(customSerialNumber, other.customSerialNumber)
                 && bootMenuEnabled == other.bootMenuEnabled
                 && spiceFileTransferEnabled == other.spiceFileTransferEnabled
                 && spiceCopyPasteEnabled == other.spiceCopyPasteEnabled
-                && ObjectUtils.objectsEqual(cpuProfileId, other.cpuProfileId)
-                && ObjectUtils.objectsEqual(numaTuneMode.getValue(), other.numaTuneMode.getValue())
-                && ObjectUtils.objectsEqual(vNumaNodeList, other.vNumaNodeList))
-                && ObjectUtils.objectsEqual(autoConverge, other.autoConverge)
-                && ObjectUtils.objectsEqual(migrateCompressed, other.migrateCompressed)
-                && ObjectUtils.objectsEqual(predefinedProperties, other.predefinedProperties)
-                && ObjectUtils.objectsEqual(userDefinedProperties, other.userDefinedProperties)
-                && ObjectUtils.objectsEqual(customEmulatedMachine, other.customEmulatedMachine)
-                && ObjectUtils.objectsEqual(customCpuName, other.customCpuName)
+                && Objects.equals(cpuProfileId, other.cpuProfileId)
+                && Objects.equals(numaTuneMode.getValue(), other.numaTuneMode.getValue())
+                && Objects.equals(vNumaNodeList, other.vNumaNodeList))
+                && Objects.equals(autoConverge, other.autoConverge)
+                && Objects.equals(migrateCompressed, other.migrateCompressed)
+                && Objects.equals(predefinedProperties, other.predefinedProperties)
+                && Objects.equals(userDefinedProperties, other.userDefinedProperties)
+                && Objects.equals(customEmulatedMachine, other.customEmulatedMachine)
+                && Objects.equals(customCpuName, other.customCpuName)
                 && Objects.equals(smallIconId, other.smallIconId)
                 && Objects.equals(largeIconId, other.largeIconId)
-                && ObjectUtils.objectsEqual(consoleDisconnectAction, other.consoleDisconnectAction);
+                && Objects.equals(consoleDisconnectAction, other.consoleDisconnectAction);
     }
 
     public Guid getQuotaId() {

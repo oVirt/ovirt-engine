@@ -6,12 +6,12 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
@@ -97,25 +97,25 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
             return false;
         }
         VDS other = (VDS) obj;
-        return (ObjectUtils.objectsEqual(vdsStatic, other.vdsStatic)
-                && ObjectUtils.objectsEqual(cpuName, other.cpuName)
+        return (Objects.equals(vdsStatic, other.vdsStatic)
+                && Objects.equals(cpuName, other.cpuName)
                 && spmStatus == other.spmStatus
-                && ObjectUtils.objectsEqual(imagesLastCheck, other.imagesLastCheck)
-                && ObjectUtils.objectsEqual(imagesLastDelay, other.imagesLastDelay)
-                && ObjectUtils.objectsEqual(interfaces, other.interfaces)
-                && ObjectUtils.objectsEqual(networkNames, other.networkNames)
+                && Objects.equals(imagesLastCheck, other.imagesLastCheck)
+                && Objects.equals(imagesLastDelay, other.imagesLastDelay)
+                && Objects.equals(interfaces, other.interfaces)
+                && Objects.equals(networkNames, other.networkNames)
                 && maxVdsMemoryOverCommit == other.maxVdsMemoryOverCommit
                 && balloonEnabled == other.balloonEnabled
-                && ObjectUtils.objectsEqual(privateDomains, other.privateDomains)
-                && ObjectUtils.objectsEqual(vdsSpmId, other.vdsSpmId)
-                && ObjectUtils.objectsEqual(storagePoolId, other.storagePoolId)
-                && ObjectUtils.objectsEqual(storagePoolName, other.storagePoolName)
-                && ObjectUtils.objectsEqual(vdsGroupCompatibilityVersion, other.vdsGroupCompatibilityVersion)
-                && ObjectUtils.objectsEqual(vdsGroupCpuName, other.vdsGroupCpuName)
-                && ObjectUtils.objectsEqual(vdsGroupDescription, other.vdsGroupDescription)
-                && ObjectUtils.objectsEqual(vdsGroupName, other.vdsGroupName)
-                && ObjectUtils.objectsEqual(vdsGroupVirtService, other.vdsGroupVirtService)
-                && ObjectUtils.objectsEqual(vdsGroupGlusterService, other.vdsGroupGlusterService));
+                && Objects.equals(privateDomains, other.privateDomains)
+                && Objects.equals(vdsSpmId, other.vdsSpmId)
+                && Objects.equals(storagePoolId, other.storagePoolId)
+                && Objects.equals(storagePoolName, other.storagePoolName)
+                && Objects.equals(vdsGroupCompatibilityVersion, other.vdsGroupCompatibilityVersion)
+                && Objects.equals(vdsGroupCpuName, other.vdsGroupCpuName)
+                && Objects.equals(vdsGroupDescription, other.vdsGroupDescription)
+                && Objects.equals(vdsGroupName, other.vdsGroupName)
+                && Objects.equals(vdsGroupVirtService, other.vdsGroupVirtService)
+                && Objects.equals(vdsGroupGlusterService, other.vdsGroupGlusterService));
     }
 
     public VDS clone() {

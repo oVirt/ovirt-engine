@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -130,16 +131,16 @@ public class GlusterServerService implements IVdcQueryable, BusinessEntity<Guid>
         }
 
         GlusterServerService other = (GlusterServerService) obj;
-        if (!(ObjectUtils.objectsEqual(id, other.getId())
-                && ObjectUtils.objectsEqual(serverId, other.getServerId())
-                && ObjectUtils.objectsEqual(serviceId, other.getServiceId())
+        if (!(Objects.equals(id, other.getId())
+                && Objects.equals(serverId, other.getServerId())
+                && Objects.equals(serviceId, other.getServiceId())
                 && status == other.getStatus()
-                && ObjectUtils.objectsEqual(message, other.getMessage())
-                && ObjectUtils.objectsEqual(pid, other.getPid())
+                && Objects.equals(message, other.getMessage())
+                && Objects.equals(pid, other.getPid())
                 && serviceType == other.getServiceType()
-                && ObjectUtils.objectsEqual(hostName, other.getHostName())
-                && ObjectUtils.objectsEqual(port, other.getPort())
-                && ObjectUtils.objectsEqual(rdmaPort, other.getRdmaPort()))) {
+                && Objects.equals(hostName, other.getHostName())
+                && Objects.equals(port, other.getPort())
+                && Objects.equals(rdmaPort, other.getRdmaPort()))) {
             return false;
         }
         return true;

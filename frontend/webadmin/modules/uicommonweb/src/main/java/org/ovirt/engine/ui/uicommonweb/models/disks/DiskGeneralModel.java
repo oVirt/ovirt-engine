@@ -1,16 +1,18 @@
 package org.ovirt.engine.ui.uicommonweb.models.disks;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
+
 import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class DiskGeneralModel extends EntityModel<Disk> {
@@ -21,7 +23,7 @@ public class DiskGeneralModel extends EntityModel<Disk> {
     }
 
     public void setAlias(String value) {
-        if (!ObjectUtils.objectsEqual(privateAlias, value)) {
+        if (!Objects.equals(privateAlias, value)) {
             privateAlias = value;
             onPropertyChanged(new PropertyChangedEventArgs("Alias")); //$NON-NLS-1$
         }
@@ -34,7 +36,7 @@ public class DiskGeneralModel extends EntityModel<Disk> {
     }
 
     public void setDescription(String value) {
-        if (!ObjectUtils.objectsEqual(privateDescription, value)) {
+        if (!Objects.equals(privateDescription, value)) {
             privateDescription = value;
             onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
@@ -47,7 +49,7 @@ public class DiskGeneralModel extends EntityModel<Disk> {
     }
 
     public void setStorageDomain(String value) {
-        if (!ObjectUtils.objectsEqual(privateStorageDomain, value)) {
+        if (!Objects.equals(privateStorageDomain, value)) {
             privateStorageDomain = value;
             onPropertyChanged(new PropertyChangedEventArgs("Storage Domain")); //$NON-NLS-1$
         }
@@ -60,7 +62,7 @@ public class DiskGeneralModel extends EntityModel<Disk> {
     }
 
     public void setDiskId(String value) {
-        if (!ObjectUtils.objectsEqual(diskId, value)) {
+        if (!Objects.equals(diskId, value)) {
             diskId = value;
             onPropertyChanged(new PropertyChangedEventArgs("ID")); //$NON-NLS-1$
         }
@@ -73,7 +75,7 @@ public class DiskGeneralModel extends EntityModel<Disk> {
     }
 
     public void setLunId(String value) {
-        if (!ObjectUtils.objectsEqual(privateLunId, value)) {
+        if (!Objects.equals(privateLunId, value)) {
             privateLunId = value;
             onPropertyChanged(new PropertyChangedEventArgs("LUN ID")); //$NON-NLS-1$
         }
@@ -86,7 +88,7 @@ public class DiskGeneralModel extends EntityModel<Disk> {
     }
 
     public void setAlignment(String value) {
-        if (!ObjectUtils.objectsEqual(privateAlignment, value)) {
+        if (!Objects.equals(privateAlignment, value)) {
             privateAlignment = value;
             onPropertyChanged(new PropertyChangedEventArgs("Alignment")); //$NON-NLS-1$
         }
@@ -112,7 +114,7 @@ public class DiskGeneralModel extends EntityModel<Disk> {
     }
 
     public void setDiskProfileName(String value) {
-        if (!ObjectUtils.objectsEqual(privateDiskProfileName, value)) {
+        if (!Objects.equals(privateDiskProfileName, value)) {
             privateDiskProfileName = value;
             onPropertyChanged(new PropertyChangedEventArgs("DiskProfile Name")); //$NON-NLS-1$
         }
@@ -125,7 +127,7 @@ public class DiskGeneralModel extends EntityModel<Disk> {
     }
 
     public void setQuotaName(String value) {
-        if (!ObjectUtils.objectsEqual(privateQuotaName, value)) {
+        if (!Objects.equals(privateQuotaName, value)) {
             privateQuotaName = value;
             onPropertyChanged(new PropertyChangedEventArgs("Quota Name")); //$NON-NLS-1$
         }

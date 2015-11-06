@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterService implements IVdcQueryable, BusinessEntity<Guid> {
@@ -50,9 +51,9 @@ public class GlusterService implements IVdcQueryable, BusinessEntity<Guid> {
         }
 
         GlusterService other = (GlusterService) obj;
-        if (!(ObjectUtils.objectsEqual(id, other.getId())
+        if (!(Objects.equals(id, other.getId())
                 && serviceType == other.getServiceType()
-                && ObjectUtils.objectsEqual(serviceName, other.getServiceName()))) {
+                && Objects.equals(serviceName, other.getServiceName()))) {
             return false;
         }
         return true;

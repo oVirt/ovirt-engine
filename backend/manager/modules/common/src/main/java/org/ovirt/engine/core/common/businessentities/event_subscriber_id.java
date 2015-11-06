@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.EventNotificationMethod;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class event_subscriber_id implements Serializable {
@@ -37,9 +37,9 @@ public class event_subscriber_id implements Serializable {
             return false;
         }
         event_subscriber_id other = (event_subscriber_id) obj;
-        return (ObjectUtils.objectsEqual(subscriberId, other.subscriberId)
-                && ObjectUtils.objectsEqual(eventUpName, other.eventUpName)
+        return (Objects.equals(subscriberId, other.subscriberId)
+                && Objects.equals(eventUpName, other.eventUpName)
                 && eventNotificationMethod == other.eventNotificationMethod
-                && ObjectUtils.objectsEqual(tagName, other.tagName));
+                && Objects.equals(tagName, other.tagName));
     }
 }

@@ -2,8 +2,8 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -50,13 +50,13 @@ public class GlusterVolumeProfileInfo implements Serializable {
             return false;
         }
         GlusterVolumeProfileInfo profileInfo = (GlusterVolumeProfileInfo) obj;
-        if(!ObjectUtils.objectsEqual(getVolumeId(), profileInfo.getVolumeId())){
+        if(!Objects.equals(getVolumeId(), profileInfo.getVolumeId())){
             return false;
         }
-        if(!ObjectUtils.objectsEqual(getBrickProfileDetails(), profileInfo.getBrickProfileDetails())) {
+        if(!Objects.equals(getBrickProfileDetails(), profileInfo.getBrickProfileDetails())) {
             return false;
         }
-        if(!ObjectUtils.objectsEqual(getNfsProfileDetails(), profileInfo.getNfsProfileDetails())) {
+        if(!Objects.equals(getNfsProfileDetails(), profileInfo.getNfsProfileDetails())) {
             return false;
         }
         return true;

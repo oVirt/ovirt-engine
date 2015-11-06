@@ -4,6 +4,8 @@ import static org.ovirt.engine.core.common.businessentities.network.ReportedConf
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_REAL_TIME;
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
@@ -12,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurations;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 
 public class NetworkInSyncWithVdsNetworkInterface {
 
@@ -88,15 +89,15 @@ public class NetworkInSyncWithVdsNetworkInterface {
     }
 
     private boolean isOutAverageRealTimeInSync() {
-        return ObjectUtils.objectsEqual(getOutAverageRealtime(ifaceQos), getOutAverageRealtime(hostNetworkQos));
+        return Objects.equals(getOutAverageRealtime(ifaceQos), getOutAverageRealtime(hostNetworkQos));
     }
 
     private boolean isOutAverageUpperLimitInSync() {
-        return ObjectUtils.objectsEqual(getOutAverageUpperlimit(ifaceQos), getOutAverageUpperlimit(hostNetworkQos));
+        return Objects.equals(getOutAverageUpperlimit(ifaceQos), getOutAverageUpperlimit(hostNetworkQos));
     }
 
     private boolean isOutAverageLinkShareInSync() {
-        return ObjectUtils.objectsEqual(getOutAverageLinkshare(ifaceQos), getOutAverageLinkshare(hostNetworkQos));
+        return Objects.equals(getOutAverageLinkshare(ifaceQos), getOutAverageLinkshare(hostNetworkQos));
     }
 
     private static Integer getOutAverageRealtime(HostNetworkQos qos) {

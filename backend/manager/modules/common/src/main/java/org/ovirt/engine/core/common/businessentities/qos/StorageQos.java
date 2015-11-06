@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.businessentities.qos;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ConfiguredRange;
 
 public class StorageQos extends QosBase implements Serializable {
@@ -108,12 +108,12 @@ public class StorageQos extends QosBase implements Serializable {
     }
 
     public boolean equalValues(StorageQos other) {
-        return ObjectUtils.objectsEqual(maxThroughput, other.getMaxThroughput())
-                && ObjectUtils.objectsEqual(maxReadThroughput, other.getMaxReadThroughput())
-                && ObjectUtils.objectsEqual(maxWriteThroughput, other.getMaxWriteThroughput())
-                && ObjectUtils.objectsEqual(maxIops, other.getMaxIops())
-                && ObjectUtils.objectsEqual(maxReadIops, other.getMaxReadIops())
-                && ObjectUtils.objectsEqual(maxWriteIops, other.getMaxWriteIops());
+        return Objects.equals(maxThroughput, other.getMaxThroughput())
+                && Objects.equals(maxReadThroughput, other.getMaxReadThroughput())
+                && Objects.equals(maxWriteThroughput, other.getMaxWriteThroughput())
+                && Objects.equals(maxIops, other.getMaxIops())
+                && Objects.equals(maxReadIops, other.getMaxReadIops())
+                && Objects.equals(maxWriteIops, other.getMaxWriteIops());
     }
 
     @Override

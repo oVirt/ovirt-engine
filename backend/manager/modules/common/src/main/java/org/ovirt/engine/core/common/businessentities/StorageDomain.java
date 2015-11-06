@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Objects;
 import java.util.Set;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineError;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
@@ -366,11 +366,11 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
             return false;
         }
         StorageDomain other = (StorageDomain) obj;
-        return ObjectUtils.objectsEqual(getId(), other.getId())
+        return Objects.equals(getId(), other.getId())
                 && committedDiskSize == other.committedDiskSize
                 && storageDomainSharedStatus == other.storageDomainSharedStatus
                 && storageDomainOverCommitPercent == other.storageDomainOverCommitPercent
-                && ObjectUtils.objectsEqual(totalDiskSize, other.totalDiskSize);
+                && Objects.equals(totalDiskSize, other.totalDiskSize);
     }
 
     @Override

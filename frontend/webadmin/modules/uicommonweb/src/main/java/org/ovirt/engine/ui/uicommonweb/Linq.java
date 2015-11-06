@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.AuditLogSeverity;
@@ -57,7 +58,6 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -410,7 +410,7 @@ public final class Linq {
 
     public static NetworkInterface findInterfaceByName(ArrayList<VdsNetworkInterface> items, String name) {
         for (NetworkInterface i : items) {
-            if (ObjectUtils.objectsEqual(i.getName(), name)) {
+            if (Objects.equals(i.getName(), name)) {
                 return i;
             }
         }
@@ -419,7 +419,7 @@ public final class Linq {
 
     public static VdsNetworkInterface findInterfaceByNetworkName(ArrayList<VdsNetworkInterface> items, String name) {
         for (VdsNetworkInterface i : items) {
-            if (ObjectUtils.objectsEqual(i.getNetworkName(), name)) {
+            if (Objects.equals(i.getNetworkName(), name)) {
                 return i;
             }
         }
@@ -485,7 +485,7 @@ public final class Linq {
 
     public static Network findNetworkByName(ArrayList<Network> items, String name) {
         for (Network n : items) {
-            if (ObjectUtils.objectsEqual(n.getName(), name)) {
+            if (Objects.equals(n.getName(), name)) {
                 return n;
             }
         }
@@ -543,7 +543,7 @@ public final class Linq {
     public static VdcReturnValueBase findVdcReturnValueByDescription(ArrayList<VdcReturnValueBase> items,
             String description) {
         for (VdcReturnValueBase i : items) {
-            if (ObjectUtils.objectsEqual(i.getDescription(), description)) {
+            if (Objects.equals(i.getDescription(), description)) {
                 return i;
             }
         }
@@ -887,7 +887,7 @@ public final class Linq {
 
         @Override
         public boolean match(TimeZoneModel source) {
-            return ObjectUtils.objectsEqual(source.getTimeZoneKey(), timeZone);
+            return Objects.equals(source.getTimeZoneKey(), timeZone);
         }
     }
 
@@ -900,7 +900,7 @@ public final class Linq {
 
         @Override
         public boolean match(ServerCpu source) {
-            return ObjectUtils.objectsEqual(source.getCpuName(), cpuName);
+            return Objects.equals(source.getCpuName(), cpuName);
         }
     }
 
@@ -1114,7 +1114,7 @@ public final class Linq {
 
         @Override
         public boolean match(LunModel source) {
-            return ObjectUtils.objectsEqual(source.getLunId(), lun.getLunId());
+            return Objects.equals(source.getLunId(), lun.getLunId());
         }
     }
 
@@ -1127,9 +1127,9 @@ public final class Linq {
 
         @Override
         public boolean match(SanTargetModel source) {
-            return ObjectUtils.objectsEqual(source.getName(), target.getName())
-                    && ObjectUtils.objectsEqual(source.getAddress(), target.getAddress())
-                    && ObjectUtils.objectsEqual(source.getPort(), target.getPort());
+            return Objects.equals(source.getName(), target.getName())
+                    && Objects.equals(source.getAddress(), target.getAddress())
+                    && Objects.equals(source.getPort(), target.getPort());
         }
     }
 
@@ -1146,7 +1146,7 @@ public final class Linq {
             if (!StringHelper.isNullOrEmpty(targetName)) {
                 targetName = targetName.toLowerCase();
             }
-            return ObjectUtils.objectsEqual(source.getDomain(), target.getDomain())
+            return Objects.equals(source.getDomain(), target.getDomain())
                     && (StringHelper.isNullOrEmpty(target.getLoginName())
                     || "*".equals(target.getLoginName()) //$NON-NLS-1$
                     || source.getLoginName().toLowerCase().startsWith(targetName));
@@ -1173,7 +1173,7 @@ public final class Linq {
             if (lastIndex != -1) {
                 groupName = groupName.substring(lastIndex+1);
             }
-            return ObjectUtils.objectsEqual(source.getDomain(), target.getDomain())
+            return Objects.equals(source.getDomain(), target.getDomain())
                     && (StringHelper.isNullOrEmpty(target.getName())
                     || "*".equals(target.getName()) //$NON-NLS-1$
                     || groupName.startsWith(targetName))

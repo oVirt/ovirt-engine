@@ -2,11 +2,11 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractGeneralModel;
@@ -42,7 +42,7 @@ public class TemplateGeneralModel extends AbstractGeneralModel {
     }
 
     public void setName(String value) {
-        if (!ObjectUtils.objectsEqual(name, value)) {
+        if (!Objects.equals(name, value)) {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
@@ -55,7 +55,7 @@ public class TemplateGeneralModel extends AbstractGeneralModel {
     }
 
     public void setDescription(String value) {
-        if (!ObjectUtils.objectsEqual(description, value)) {
+        if (!Objects.equals(description, value)) {
             description = value;
             onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
@@ -88,7 +88,7 @@ public class TemplateGeneralModel extends AbstractGeneralModel {
     }
 
     public void setHostCluster(String value) {
-        if (!ObjectUtils.objectsEqual(hostCluster, value)) {
+        if (!Objects.equals(hostCluster, value)) {
             hostCluster = value;
             onPropertyChanged(new PropertyChangedEventArgs("HostCluster")); //$NON-NLS-1$
         }
@@ -101,7 +101,7 @@ public class TemplateGeneralModel extends AbstractGeneralModel {
     }
 
     public void setDefinedMemory(String value) {
-        if (!ObjectUtils.objectsEqual(definedMemory, value)) {
+        if (!Objects.equals(definedMemory, value)) {
             definedMemory = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefinedMemory")); //$NON-NLS-1$
         }
@@ -114,7 +114,7 @@ public class TemplateGeneralModel extends AbstractGeneralModel {
     }
 
     public void setCpuInfo(String value) {
-        if (!ObjectUtils.objectsEqual(cpuInfo, value)) {
+        if (!Objects.equals(cpuInfo, value)) {
             cpuInfo = value;
             onPropertyChanged(new PropertyChangedEventArgs("CpuInfo")); //$NON-NLS-1$
         }
@@ -127,7 +127,7 @@ public class TemplateGeneralModel extends AbstractGeneralModel {
     }
 
     public void setOS(String value) {
-        if (!ObjectUtils.objectsEqual(os, value)) {
+        if (!Objects.equals(os, value)) {
             os = value;
             onPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
         }
@@ -140,7 +140,7 @@ public class TemplateGeneralModel extends AbstractGeneralModel {
     }
 
     public void setDefaultDisplayType(String value) {
-        if (!ObjectUtils.objectsEqual(defaultDisplayType, value)) {
+        if (!Objects.equals(defaultDisplayType, value)) {
             defaultDisplayType = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefaultDisplayType")); //$NON-NLS-1$
         }
@@ -153,7 +153,7 @@ public class TemplateGeneralModel extends AbstractGeneralModel {
     }
 
     public void setOrigin(String value) {
-        if (!ObjectUtils.objectsEqual(origin, value)) {
+        if (!Objects.equals(origin, value)) {
             origin = value;
             onPropertyChanged(new PropertyChangedEventArgs("Origin")); //$NON-NLS-1$
         }
@@ -179,7 +179,7 @@ public class TemplateGeneralModel extends AbstractGeneralModel {
     }
 
     public void setPriority(String value) {
-        if (!ObjectUtils.objectsEqual(priority, value)) {
+        if (!Objects.equals(priority, value)) {
             priority = value;
             onPropertyChanged(new PropertyChangedEventArgs("Priority")); //$NON-NLS-1$
         }
@@ -257,7 +257,7 @@ public class TemplateGeneralModel extends AbstractGeneralModel {
     }
 
     public void setDomain(String value) {
-        if (!ObjectUtils.objectsEqual(domain, value)) {
+        if (!Objects.equals(domain, value)) {
             domain = value;
             onPropertyChanged(new PropertyChangedEventArgs("Domain")); //$NON-NLS-1$
         }
@@ -270,7 +270,7 @@ public class TemplateGeneralModel extends AbstractGeneralModel {
     }
 
     public void setTimeZone(String value) {
-        if (!ObjectUtils.objectsEqual(timeZone, value)) {
+        if (!Objects.equals(timeZone, value)) {
             timeZone = value;
             onPropertyChanged(new PropertyChangedEventArgs("TimeZone")); //$NON-NLS-1$
         }
@@ -296,7 +296,7 @@ public class TemplateGeneralModel extends AbstractGeneralModel {
     }
 
     public void setUsbPolicy(String value) {
-        if (!ObjectUtils.objectsEqual(usbPolicy, value)) {
+        if (!Objects.equals(usbPolicy, value)) {
             usbPolicy = value;
             onPropertyChanged(new PropertyChangedEventArgs("UsbPolicy")); //$NON-NLS-1$
         }

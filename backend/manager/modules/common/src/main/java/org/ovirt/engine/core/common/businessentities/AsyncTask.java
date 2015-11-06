@@ -2,11 +2,11 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -225,16 +225,16 @@ public class AsyncTask implements Serializable {
             return false;
         }
         AsyncTask other = (AsyncTask) obj;
-        return (ObjectUtils.objectsEqual(vdsmTaskId, other.vdsmTaskId)
-                && ObjectUtils.objectsEqual(taskId, other.taskId)
-                && ObjectUtils.objectsEqual(stepId, other.stepId)
-                && ObjectUtils.objectsEqual(commandId, other.commandId)
-                && ObjectUtils.objectsEqual(rootCommandId, other.rootCommandId)
+        return (Objects.equals(vdsmTaskId, other.vdsmTaskId)
+                && Objects.equals(taskId, other.taskId)
+                && Objects.equals(stepId, other.stepId)
+                && Objects.equals(commandId, other.commandId)
+                && Objects.equals(rootCommandId, other.rootCommandId)
                 && result == other.result
                 && status == other.status
-                && ObjectUtils.objectsEqual(startTime, other.startTime)
-                && ObjectUtils.objectsEqual(storagePoolId, other.storagePoolId)
-                && ObjectUtils.objectsEqual(taskType, other.taskType));
+                && Objects.equals(startTime, other.startTime)
+                && Objects.equals(storagePoolId, other.storagePoolId)
+                && Objects.equals(taskType, other.taskType));
     }
 
     public CommandEntity getRootCmdEntity() {

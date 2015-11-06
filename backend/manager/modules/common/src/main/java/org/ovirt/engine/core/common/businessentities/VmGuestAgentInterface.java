@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.List;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -104,11 +104,11 @@ public class VmGuestAgentInterface implements IVdcQueryable {
             return false;
         }
         VmGuestAgentInterface other = (VmGuestAgentInterface) obj;
-        return (ObjectUtils.objectsEqual(getInterfaceName(), other.getInterfaceName())
-                && ObjectUtils.objectsEqual(getIpv4Addresses(), other.getIpv4Addresses())
-                && ObjectUtils.objectsEqual(getIpv6Addresses(), other.getIpv6Addresses())
-                && ObjectUtils.objectsEqual(getMacAddress(), other.getMacAddress())
-                && ObjectUtils.objectsEqual(getVmId(), other.getVmId()));
+        return (Objects.equals(getInterfaceName(), other.getInterfaceName())
+                && Objects.equals(getIpv4Addresses(), other.getIpv4Addresses())
+                && Objects.equals(getIpv6Addresses(), other.getIpv6Addresses())
+                && Objects.equals(getMacAddress(), other.getMacAddress())
+                && Objects.equals(getVmId(), other.getVmId()));
     }
 
     @Override

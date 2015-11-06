@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterGeoRepSession implements IVdcQueryable, BusinessEntityWithStatus<Guid, GeoRepSessionStatus>{
@@ -140,15 +140,15 @@ public class GlusterGeoRepSession implements IVdcQueryable, BusinessEntityWithSt
     public boolean equals(Object obj) {
         if ((obj != null) && (obj instanceof GlusterGeoRepSession)) {
             GlusterGeoRepSession session = (GlusterGeoRepSession) obj;
-            if (ObjectUtils.objectsEqual(getId(), session.getId())
-                    && (ObjectUtils.objectsEqual(getMasterVolumeId(), session.getMasterVolumeId()))
-                    && (ObjectUtils.objectsEqual(getSessionKey(), session.getSessionKey()))
-                    && (ObjectUtils.objectsEqual(getSlaveHostName(), session.getSlaveHostName()))
-                    && (ObjectUtils.objectsEqual(getSlaveNodeUuid(), session.getSlaveNodeUuid()))
-                    && (ObjectUtils.objectsEqual(getSlaveVolumeId(), session.getSlaveVolumeId()))
-                    && (ObjectUtils.objectsEqual(getSlaveVolumeName(), session.getSlaveVolumeName()))
-                    && (ObjectUtils.objectsEqual(getUserName(), session.getUserName()))
-                    && (ObjectUtils.objectsEqual(getStatus(), session.getStatus()))) {
+            if (Objects.equals(getId(), session.getId())
+                    && (Objects.equals(getMasterVolumeId(), session.getMasterVolumeId()))
+                    && (Objects.equals(getSessionKey(), session.getSessionKey()))
+                    && (Objects.equals(getSlaveHostName(), session.getSlaveHostName()))
+                    && (Objects.equals(getSlaveNodeUuid(), session.getSlaveNodeUuid()))
+                    && (Objects.equals(getSlaveVolumeId(), session.getSlaveVolumeId()))
+                    && (Objects.equals(getSlaveVolumeName(), session.getSlaveVolumeName()))
+                    && (Objects.equals(getUserName(), session.getUserName()))
+                    && (Objects.equals(getStatus(), session.getStatus()))) {
                 return true;
             }
         }

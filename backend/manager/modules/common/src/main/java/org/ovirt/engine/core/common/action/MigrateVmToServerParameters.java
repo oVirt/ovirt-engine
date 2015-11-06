@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
+import java.util.Objects;
+
 import org.ovirt.engine.core.compat.Guid;
 
 public class MigrateVmToServerParameters extends MigrateVmParameters {
@@ -43,6 +44,6 @@ public class MigrateVmToServerParameters extends MigrateVmParameters {
 
         MigrateVmToServerParameters other = (MigrateVmToServerParameters) obj;
         return super.equals(obj)
-                && ObjectUtils.objectsEqual(vdsId, other.vdsId);
+                && Objects.equals(vdsId, other.vdsId);
     }
 }

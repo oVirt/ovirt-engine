@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -160,7 +161,6 @@ import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetails
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeGeoRepEligibilityParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeProfileParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
@@ -2945,7 +2945,7 @@ public class AsyncDataProvider {
                         // --> We want to add 'eth0' and and 'eth1' as optional Interfaces
                         // (note that choosing one of them will break the bond):
                         for (VdsNetworkInterface i : interfaceList) {
-                            if (ObjectUtils.objectsEqual(i.getBondName(), originalInterface.getName())) {
+                            if (Objects.equals(i.getBondName(), originalInterface.getName())) {
                                 ifacesOptions.add(i);
                             }
                         }
@@ -2989,7 +2989,7 @@ public class AsyncDataProvider {
                                             // ifacesOptions.AddRange(interfaceList.Where(a => a.bond_name ==
                                             // vlanParent.name).ToList());
                                             for (VdsNetworkInterface i : interfaceList) {
-                                                if (ObjectUtils.objectsEqual(i.getBondName(), vlanParent.getName())) {
+                                                if (Objects.equals(i.getBondName(), vlanParent.getName())) {
                                                     ifacesOptions.add(i);
                                                 }
                                             }

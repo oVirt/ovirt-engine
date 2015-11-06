@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
@@ -40,7 +41,6 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -367,7 +367,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     public void setCPUNotification(String value) {
-        if (!ObjectUtils.objectsEqual(cpuNotification, value)) {
+        if (!Objects.equals(cpuNotification, value)) {
             cpuNotification = value;
             onPropertyChanged(new PropertyChangedEventArgs("CPUNotification")); //$NON-NLS-1$
         }
@@ -2924,7 +2924,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     public void setPrestartedVmsHint(String value) {
-        if (!ObjectUtils.objectsEqual(prestartedVmsHint, value)) {
+        if (!Objects.equals(prestartedVmsHint, value)) {
             prestartedVmsHint = value;
             onPropertyChanged(new PropertyChangedEventArgs("PrestartedVmsHint")); //$NON-NLS-1$
         }

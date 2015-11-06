@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 
 import javax.validation.constraints.Size;
 
@@ -11,7 +12,6 @@ import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DbUser implements IVdcQueryable {
@@ -237,15 +237,15 @@ public class DbUser implements IVdcQueryable {
             return false;
         }
         DbUser other = (DbUser) obj;
-        return  ObjectUtils.objectsEqual(externalId, other.externalId)
-                && ObjectUtils.objectsEqual(department, other.department)
-                && ObjectUtils.objectsEqual(domain, other.domain)
-                && ObjectUtils.objectsEqual(namespace, other.namespace)
-                && ObjectUtils.objectsEqual(email, other.email)
-                && ObjectUtils.objectsEqual(firstName, other.firstName)
-                && ObjectUtils.objectsEqual(note, other.note)
-                && ObjectUtils.objectsEqual(lastName, other.lastName)
-                && ObjectUtils.objectsEqual(loginName, other.loginName);
+        return  Objects.equals(externalId, other.externalId)
+                && Objects.equals(department, other.department)
+                && Objects.equals(domain, other.domain)
+                && Objects.equals(namespace, other.namespace)
+                && Objects.equals(email, other.email)
+                && Objects.equals(firstName, other.firstName)
+                && Objects.equals(note, other.note)
+                && Objects.equals(lastName, other.lastName)
+                && Objects.equals(loginName, other.loginName);
 
     }
 

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -23,7 +24,6 @@ import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameter
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -656,7 +656,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     public void setExportPath(String exportPath) {
-        if (!ObjectUtils.objectsEqual(this.exportPath, exportPath)) {
+        if (!Objects.equals(this.exportPath, exportPath)) {
             this.exportPath = exportPath;
             onPropertyChanged(new PropertyChangedEventArgs("ExportPath")); //$NON-NLS-1$
         }
@@ -667,7 +667,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     public void setExportName(String exportName) {
-        if (!ObjectUtils.objectsEqual(this.exportName, exportName)) {
+        if (!Objects.equals(this.exportName, exportName)) {
             this.exportName = exportName;
             onPropertyChanged(new PropertyChangedEventArgs("ExportName")); //$NON-NLS-1$
         }
@@ -678,7 +678,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     public void setExportDescription(String exportDescription) {
-        if (!ObjectUtils.objectsEqual(this.exportDescription, exportDescription)) {
+        if (!Objects.equals(this.exportDescription, exportDescription)) {
             this.exportDescription = exportDescription;
             onPropertyChanged(new PropertyChangedEventArgs("ExportDescription")); //$NON-NLS-1$
         }

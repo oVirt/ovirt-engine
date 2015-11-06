@@ -1,12 +1,13 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
+import java.util.Objects;
+
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.gluster.AddBrick;
 import org.ovirt.engine.core.common.validation.group.gluster.RemoveBrick;
@@ -153,11 +154,11 @@ public class GlusterBrickEntity implements IVdcQueryable, BusinessEntityWithStat
 
         GlusterBrickEntity brick = (GlusterBrickEntity) obj;
         return (getId().equals(brick.getId())
-                && (ObjectUtils.objectsEqual(volumeId, brick.getVolumeId()))
-                && (ObjectUtils.objectsEqual(serverId, brick.getServerId()))
-                && (ObjectUtils.objectsEqual(brickDirectory, brick.getBrickDirectory()))
-                && (ObjectUtils.objectsEqual(brickOrder, brick.getBrickOrder()))
-                && (ObjectUtils.objectsEqual(getAsyncTask(), brick.getAsyncTask()))
+                && (Objects.equals(volumeId, brick.getVolumeId()))
+                && (Objects.equals(serverId, brick.getServerId()))
+                && (Objects.equals(brickDirectory, brick.getBrickDirectory()))
+                && (Objects.equals(brickOrder, brick.getBrickOrder()))
+                && (Objects.equals(getAsyncTask(), brick.getAsyncTask()))
                 && status == brick.getStatus());
     }
 

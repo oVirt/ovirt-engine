@@ -1,7 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -25,7 +26,7 @@ public class HostVLan extends Model {
     }
 
     public void setName(String value) {
-        if (!ObjectUtils.objectsEqual(name, value)) {
+        if (!Objects.equals(name, value)) {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
@@ -38,7 +39,7 @@ public class HostVLan extends Model {
     }
 
     public void setNetworkName(String value) {
-        if (!ObjectUtils.objectsEqual(networkName, value)) {
+        if (!Objects.equals(networkName, value)) {
             networkName = value;
             onPropertyChanged(new PropertyChangedEventArgs("NetworkName")); //$NON-NLS-1$
         }
@@ -51,7 +52,7 @@ public class HostVLan extends Model {
     }
 
     public void setAddress(String value) {
-        if (!ObjectUtils.objectsEqual(address, value)) {
+        if (!Objects.equals(address, value)) {
             address = value;
             onPropertyChanged(new PropertyChangedEventArgs("Address")); //$NON-NLS-1$
         }

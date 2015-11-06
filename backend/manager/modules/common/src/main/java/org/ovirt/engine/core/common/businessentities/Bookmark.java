@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Objects;
+
 import javax.validation.constraints.Size;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class Bookmark implements IVdcQueryable, Serializable {
@@ -58,9 +59,9 @@ public class Bookmark implements IVdcQueryable, Serializable {
             return false;
         }
         Bookmark other = (Bookmark) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(name, other.name)
-                && ObjectUtils.objectsEqual(value, other.value));
+        return (Objects.equals(id, other.id)
+                && Objects.equals(name, other.name)
+                && Objects.equals(value, other.value));
     }
 
 

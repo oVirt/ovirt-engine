@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -78,19 +79,19 @@ public class GlusterVolumeSnapshotConfig implements IVdcQueryable {
 
         GlusterVolumeSnapshotConfig config = (GlusterVolumeSnapshotConfig) obj;
 
-        if (!(ObjectUtils.objectsEqual(clusterId, config.getClusterId()))) {
+        if (!(Objects.equals(clusterId, config.getClusterId()))) {
             return false;
         }
 
-        if (!(ObjectUtils.objectsEqual(volumeId, config.getVolumeId()))) {
+        if (!(Objects.equals(volumeId, config.getVolumeId()))) {
             return false;
         }
 
-        if (!(ObjectUtils.objectsEqual(paramName, config.getParamName()))) {
+        if (!(Objects.equals(paramName, config.getParamName()))) {
             return false;
         }
 
-        if (!(ObjectUtils.objectsEqual(paramValue, config.getParamValue()))) {
+        if (!(Objects.equals(paramValue, config.getParamValue()))) {
             return false;
         }
 

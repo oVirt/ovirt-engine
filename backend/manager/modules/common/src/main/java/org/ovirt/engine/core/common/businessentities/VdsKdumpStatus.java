@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
+import java.util.Objects;
+
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -62,9 +63,9 @@ public class VdsKdumpStatus {
         }
         VdsKdumpStatus other = (VdsKdumpStatus) obj;
 
-        return ObjectUtils.objectsEqual(vdsId, other.getVdsId())
+        return Objects.equals(vdsId, other.getVdsId())
                 && status == other.getStatus()
-                && ObjectUtils.objectsEqual(address, other.getAddress());
+                && Objects.equals(address, other.getAddress());
     }
 
     @Override

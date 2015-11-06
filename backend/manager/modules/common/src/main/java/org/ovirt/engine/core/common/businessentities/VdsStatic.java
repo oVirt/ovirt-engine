@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -10,7 +11,6 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Range;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.HostnameOrIp;
 import org.ovirt.engine.core.common.validation.annotation.ValidNameWithDot;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -399,24 +399,24 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
             return false;
         }
         VdsStatic other = (VdsStatic) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(hostName, other.hostName)
-                && ObjectUtils.objectsEqual(consoleAddress, other.consoleAddress)
-                && ObjectUtils.objectsEqual(name, other.name)
+        return (Objects.equals(id, other.id)
+                && Objects.equals(hostName, other.hostName)
+                && Objects.equals(consoleAddress, other.consoleAddress)
+                && Objects.equals(name, other.name)
                 && otpValidity == other.otpValidity
                 && pmEnabled == other.pmEnabled
                 && pmKdumpDetection == other.isPmKdumpDetection()
                 && port == other.port
                 && protocol == other.protocol
                 && sshPort == other.sshPort
-                && ObjectUtils.objectsEqual(sshUsername, other.sshUsername)
-                && ObjectUtils.objectsEqual(serverSslEnabled, other.serverSslEnabled)
-                && ObjectUtils.objectsEqual(uniqueId, other.uniqueId)
-                && ObjectUtils.objectsEqual(vdsGroupId, other.vdsGroupId)
-                && ObjectUtils.objectsEqual(vdsStrength, other.vdsStrength)
+                && Objects.equals(sshUsername, other.sshUsername)
+                && Objects.equals(serverSslEnabled, other.serverSslEnabled)
+                && Objects.equals(uniqueId, other.uniqueId)
+                && Objects.equals(vdsGroupId, other.vdsGroupId)
+                && Objects.equals(vdsStrength, other.vdsStrength)
                 && vdsType == other.vdsType
-                && ObjectUtils.objectsEqual(sshKeyFingerprint, other.sshKeyFingerprint))
+                && Objects.equals(sshKeyFingerprint, other.sshKeyFingerprint))
                 && disablePowerManagementPolicy == other.disablePowerManagementPolicy
-                && ObjectUtils.objectsEqual(hostProviderId, other.hostProviderId);
+                && Objects.equals(hostProviderId, other.hostProviderId);
     }
 }

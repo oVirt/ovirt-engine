@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -303,10 +304,10 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
                 return false;
         } else if (!getReceiveRate().equals(other.getReceiveRate()))
             return false;
-        if (!ObjectUtils.objectsEqual(getReceivedBytes(), other.getReceivedBytes())) {
+        if (!Objects.equals(getReceivedBytes(), other.getReceivedBytes())) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(getReceivedBytesOffset(), other.getReceivedBytesOffset())) {
+        if (!Objects.equals(getReceivedBytesOffset(), other.getReceivedBytesOffset())) {
             return false;
         }
         if (getStatus() != other.getStatus())
@@ -321,13 +322,13 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
                 return false;
         } else if (!getTransmitRate().equals(other.getTransmitRate()))
             return false;
-        if (!ObjectUtils.objectsEqual(getTransmittedBytes(), other.getTransmittedBytes())) {
+        if (!Objects.equals(getTransmittedBytes(), other.getTransmittedBytes())) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(getTransmittedBytesOffset(), other.getTransmittedBytesOffset())) {
+        if (!Objects.equals(getTransmittedBytesOffset(), other.getTransmittedBytesOffset())) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(getSampleTime(), other.getSampleTime())) {
+        if (!Objects.equals(getSampleTime(), other.getSampleTime())) {
             return false;
         }
         return true;

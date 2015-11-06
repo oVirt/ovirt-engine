@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -42,8 +42,8 @@ public class StoragePoolIsoMapId implements Serializable {
             return false;
         }
         StoragePoolIsoMapId other = (StoragePoolIsoMapId) obj;
-        return (ObjectUtils.objectsEqual(storageId, other.storageId)
-                && ObjectUtils.objectsEqual(storagePoolId, other.storagePoolId));
+        return (Objects.equals(storageId, other.storageId)
+                && Objects.equals(storagePoolId, other.storagePoolId));
     }
 
     @Override

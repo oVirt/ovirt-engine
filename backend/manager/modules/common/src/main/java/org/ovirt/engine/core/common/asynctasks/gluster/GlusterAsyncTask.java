@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.asynctasks.gluster;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -107,12 +107,12 @@ public class GlusterAsyncTask implements Serializable{
             return false;
         }
         GlusterAsyncTask other = (GlusterAsyncTask) obj;
-        return (ObjectUtils.objectsEqual(message, other.message)
-                && ObjectUtils.objectsEqual(taskId, other.taskId)
+        return (Objects.equals(message, other.message)
+                && Objects.equals(taskId, other.taskId)
                 && type == other.type
                 && status == other.status
-                && ObjectUtils.objectsEqual(stepId, other.stepId)
-                && ObjectUtils.objectsEqual(jobId, other.jobId)
+                && Objects.equals(stepId, other.stepId)
+                && Objects.equals(jobId, other.jobId)
                 && jobStatus == other.jobStatus);
     }
 

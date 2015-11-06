@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -305,19 +305,19 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
             return false;
         }
         VmDevice other = (VmDevice) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
+        return (Objects.equals(id, other.id)
                 && device.equals(other.device)
                 && type.equals(other.type)
                 && address.equals(other.address)
                 && bootOrder == other.bootOrder
-                && ObjectUtils.objectsEqual(specParams, other.specParams)
+                && Objects.equals(specParams, other.specParams)
                 && isManaged == other.isManaged
                 && getIsPlugged().equals(other.getIsPlugged())
                 && getIsReadOnly().equals(other.getIsReadOnly())
                 && alias.equals(other.alias)
-                && ObjectUtils.objectsEqual(customProperties, other.customProperties)
-                && ObjectUtils.objectsEqual(snapshotId, other.snapshotId)
-                && ObjectUtils.objectsEqual(logicalName, other.logicalName)
+                && Objects.equals(customProperties, other.customProperties)
+                && Objects.equals(snapshotId, other.snapshotId)
+                && Objects.equals(logicalName, other.logicalName)
                 && usingScsiReservation == other.usingScsiReservation);
     }
 

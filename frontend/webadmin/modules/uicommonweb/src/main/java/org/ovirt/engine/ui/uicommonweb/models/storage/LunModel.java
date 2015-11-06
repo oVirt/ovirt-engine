@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunStatus;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -19,7 +19,7 @@ public class LunModel extends EntityModel<LUNs> {
     }
 
     public void setLunId(String value) {
-        if (!ObjectUtils.objectsEqual(lunId, value)) {
+        if (!Objects.equals(lunId, value)) {
             lunId = value;
             onPropertyChanged(new PropertyChangedEventArgs("LunId")); //$NON-NLS-1$
         }
@@ -32,7 +32,7 @@ public class LunModel extends EntityModel<LUNs> {
     }
 
     public void setVendorId(String value) {
-        if (!ObjectUtils.objectsEqual(vendorId, value)) {
+        if (!Objects.equals(vendorId, value)) {
             vendorId = value;
             onPropertyChanged(new PropertyChangedEventArgs("VendorId")); //$NON-NLS-1$
         }
@@ -45,7 +45,7 @@ public class LunModel extends EntityModel<LUNs> {
     }
 
     public void setProductId(String value) {
-        if (!ObjectUtils.objectsEqual(productId, value)) {
+        if (!Objects.equals(productId, value)) {
             productId = value;
             onPropertyChanged(new PropertyChangedEventArgs("ProductId")); //$NON-NLS-1$
         }
@@ -58,7 +58,7 @@ public class LunModel extends EntityModel<LUNs> {
     }
 
     public void setSerial(String value) {
-        if (!ObjectUtils.objectsEqual(serial, value)) {
+        if (!Objects.equals(serial, value)) {
             serial = value;
             onPropertyChanged(new PropertyChangedEventArgs("Serial")); //$NON-NLS-1$
         }

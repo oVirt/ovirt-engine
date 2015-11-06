@@ -2,13 +2,13 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.common.validation.annotation.ValidSerialNumberPolicy;
 import org.ovirt.engine.core.common.validation.annotation.ValidUri;
@@ -518,42 +518,42 @@ public class VDSGroup implements IVdcQueryable, BusinessEntity<Guid>, HasStorage
         VDSGroup other = (VDSGroup) obj;
         // *ATTENTION* when adding fields to this, please make sure that equals still works, if not this will
         // cause all kinds of havoc in the UI when clusters are refreshed.
-        return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(compatVersion, other.compatVersion)
-                && ObjectUtils.objectsEqual(compatibilityVersion, other.compatibilityVersion)
-                && ObjectUtils.objectsEqual(cpuName, other.cpuName)
-                && ObjectUtils.objectsEqual(description, other.description)
+        return (Objects.equals(id, other.id)
+                && Objects.equals(compatVersion, other.compatVersion)
+                && Objects.equals(compatibilityVersion, other.compatibilityVersion)
+                && Objects.equals(cpuName, other.cpuName)
+                && Objects.equals(description, other.description)
                 && maxVdsMemoryOverCommit == other.maxVdsMemoryOverCommit
                 && countThreadsAsCores == other.countThreadsAsCores
                 && migrateOnError == other.migrateOnError
-                && ObjectUtils.objectsEqual(name, other.name)
-                && ObjectUtils.objectsEqual(storagePoolId, other.storagePoolId)
-                && ObjectUtils.objectsEqual(storagePoolName, other.storagePoolName)
+                && Objects.equals(name, other.name)
+                && Objects.equals(storagePoolId, other.storagePoolId)
+                && Objects.equals(storagePoolName, other.storagePoolName)
                 && transparentHugepages == other.transparentHugepages
                 && virtService == other.virtService
                 && glusterService == other.glusterService
                 && glusterCliBasedSchedulingOn == other.glusterCliBasedSchedulingOn
                 && tunnelMigration == other.tunnelMigration
-                && ObjectUtils.objectsEqual(emulatedMachine, other.emulatedMachine)
+                && Objects.equals(emulatedMachine, other.emulatedMachine)
                 && trustedService == other.trustedService
                 && haReservation == other.haReservation
-                && ObjectUtils.objectsEqual(clusterPolicyId, other.clusterPolicyId)
-                && ObjectUtils.objectsEqual(clusterPolicyName, other.clusterPolicyName)
-                && ObjectUtils.objectsEqual(clusterPolicyProperties, other.clusterPolicyProperties)
+                && Objects.equals(clusterPolicyId, other.clusterPolicyId)
+                && Objects.equals(clusterPolicyName, other.clusterPolicyName)
+                && Objects.equals(clusterPolicyProperties, other.clusterPolicyProperties)
                 && enableKsm == other.enableKsm
                 && enableBallooning == other.enableBallooning
                 && detectEmulatedMachine == other.detectEmulatedMachine
                 && optimizationType == other.optimizationType)
                 && serialNumberPolicy == other.serialNumberPolicy
-                && ObjectUtils.objectsEqual(customSerialNumber, other.customSerialNumber)
-                && ObjectUtils.objectsEqual(groupHostsAndVms, other.groupHostsAndVms)
-                && ObjectUtils.objectsEqual(requiredRngSources, other.requiredRngSources)
-                && ObjectUtils.objectsEqual(fencingPolicy, other.fencingPolicy)
-                && ObjectUtils.objectsEqual(autoConverge, other.autoConverge)
-                && ObjectUtils.objectsEqual(migrateCompressed, other.migrateCompressed)
-                && ObjectUtils.objectsEqual(glusterTunedProfile, other.glusterTunedProfile)
-                && ObjectUtils.objectsEqual(maintenanceReasonRequired, other.maintenanceReasonRequired)
-                && ObjectUtils.objectsEqual(addtionalFeaturesSupported, other.addtionalFeaturesSupported)
+                && Objects.equals(customSerialNumber, other.customSerialNumber)
+                && Objects.equals(groupHostsAndVms, other.groupHostsAndVms)
+                && Objects.equals(requiredRngSources, other.requiredRngSources)
+                && Objects.equals(fencingPolicy, other.fencingPolicy)
+                && Objects.equals(autoConverge, other.autoConverge)
+                && Objects.equals(migrateCompressed, other.migrateCompressed)
+                && Objects.equals(glusterTunedProfile, other.glusterTunedProfile)
+                && Objects.equals(maintenanceReasonRequired, other.maintenanceReasonRequired)
+                && Objects.equals(addtionalFeaturesSupported, other.addtionalFeaturesSupported)
                 && ksmMergeAcrossNumaNodes == other.ksmMergeAcrossNumaNodes;
     }
 

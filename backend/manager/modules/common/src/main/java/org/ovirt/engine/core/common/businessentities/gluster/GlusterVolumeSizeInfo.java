@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterVolumeSizeInfo implements Serializable {
@@ -75,19 +75,19 @@ public class GlusterVolumeSizeInfo implements Serializable {
         }
         GlusterVolumeSizeInfo sizeInfo = (GlusterVolumeSizeInfo) obj;
 
-        if (!ObjectUtils.objectsEqual(volumeId, sizeInfo.getVolumeId())) {
+        if (!Objects.equals(volumeId, sizeInfo.getVolumeId())) {
             return false;
         }
 
-        if (!ObjectUtils.objectsEqual(totalSize, sizeInfo.getTotalSize())) {
+        if (!Objects.equals(totalSize, sizeInfo.getTotalSize())) {
             return false;
         }
 
-        if (!ObjectUtils.objectsEqual(freeSize, sizeInfo.getFreeSize())) {
+        if (!Objects.equals(freeSize, sizeInfo.getFreeSize())) {
             return false;
         }
 
-        if (!ObjectUtils.objectsEqual(usedSize, sizeInfo.getUsedSize())) {
+        if (!Objects.equals(usedSize, sizeInfo.getUsedSize())) {
             return false;
         }
 

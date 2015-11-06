@@ -2,8 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.ovirt.engine.core.common.utils.ObjectUtils;
+import java.util.Objects;
 
 /**
  * A {@link ListModel} that allows temporarily hide some of its items.
@@ -32,7 +31,7 @@ public class FilteredListModel<T> extends ListModel<T> {
      */
     public void filterItems(Filter<T> filter) {
         if (filter == null) {
-            if (ObjectUtils.objectsEqual(this.allItems, getItems())) {
+            if (Objects.equals(this.allItems, getItems())) {
                 return;
             }
             setItemsSelectionAware(this.allItems);

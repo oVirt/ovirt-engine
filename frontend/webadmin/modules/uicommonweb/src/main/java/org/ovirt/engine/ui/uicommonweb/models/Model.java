@@ -3,11 +3,11 @@ package org.ovirt.engine.ui.uicommonweb.models;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.uicompat.IProvidePropertyChangedEvent;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ProvidePropertyChangedEvent;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -212,7 +213,7 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
     }
 
     public Model setTitle(String value) {
-        if (!ObjectUtils.objectsEqual(title, value)) {
+        if (!Objects.equals(title, value)) {
             title = value;
             onPropertyChanged(new PropertyChangedEventArgs("Title")); //$NON-NLS-1$
         }
@@ -316,7 +317,7 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
     }
 
     public void setChangeProhibitionReason(String value) {
-        if (!ObjectUtils.objectsEqual(changeProhibitionReason, value)) {
+        if (!Objects.equals(changeProhibitionReason, value)) {
             changeProhibitionReason = value;
             onPropertyChanged(new PropertyChangedEventArgs("ChangeProhibitionReason")); //$NON-NLS-1$
         }
@@ -412,7 +413,7 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
     }
 
     public void setMessage(String value) {
-        if (!ObjectUtils.objectsEqual(message, value)) {
+        if (!Objects.equals(message, value)) {
             message = value;
             onPropertyChanged(new PropertyChangedEventArgs("Message")); //$NON-NLS-1$
         }

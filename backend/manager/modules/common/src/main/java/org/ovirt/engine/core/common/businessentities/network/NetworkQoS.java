@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ConfiguredRange;
 
 public class NetworkQoS extends QosBase {
@@ -88,12 +89,12 @@ public class NetworkQoS extends QosBase {
     }
 
     public boolean equalValues(NetworkQoS other) {
-        return ObjectUtils.objectsEqual(getInboundAverage(), other.getInboundAverage())
-                && ObjectUtils.objectsEqual(getInboundPeak(), other.getInboundPeak())
-                && ObjectUtils.objectsEqual(getInboundBurst(), other.getInboundBurst())
-                && ObjectUtils.objectsEqual(getOutboundAverage(), other.getOutboundAverage())
-                && ObjectUtils.objectsEqual(getOutboundPeak(), other.getOutboundPeak())
-                && ObjectUtils.objectsEqual(getOutboundBurst(), other.getOutboundBurst());
+        return Objects.equals(getInboundAverage(), other.getInboundAverage())
+                && Objects.equals(getInboundPeak(), other.getInboundPeak())
+                && Objects.equals(getInboundBurst(), other.getInboundBurst())
+                && Objects.equals(getOutboundAverage(), other.getOutboundAverage())
+                && Objects.equals(getOutboundPeak(), other.getOutboundPeak())
+                && Objects.equals(getOutboundBurst(), other.getOutboundBurst());
     }
 
     @Override

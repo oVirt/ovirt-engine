@@ -1,7 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -22,7 +23,7 @@ public class UserGeneralModel extends EntityModel<DbUser> {
     }
 
     public void setDomain(String value) {
-        if (!ObjectUtils.objectsEqual(domain, value)) {
+        if (!Objects.equals(domain, value)) {
             domain = value;
             onPropertyChanged(new PropertyChangedEventArgs("Domain")); //$NON-NLS-1$
         }
@@ -35,7 +36,7 @@ public class UserGeneralModel extends EntityModel<DbUser> {
     }
 
     public void setEmail(String value) {
-        if (!ObjectUtils.objectsEqual(email, value)) {
+        if (!Objects.equals(email, value)) {
             email = value;
             onPropertyChanged(new PropertyChangedEventArgs("Email")); //$NON-NLS-1$
         }

@@ -1,8 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -57,7 +58,7 @@ public class ProviderGeneralModel extends EntityModel<Provider> {
     }
 
     public void setName(String value) {
-        if (!ObjectUtils.objectsEqual(name, value)) {
+        if (!Objects.equals(name, value)) {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs(PROPERTY_NAME));
         }
@@ -79,7 +80,7 @@ public class ProviderGeneralModel extends EntityModel<Provider> {
     }
 
     public void setDescription(String value) {
-        if (!ObjectUtils.objectsEqual(description, value)) {
+        if (!Objects.equals(description, value)) {
             description = value;
             onPropertyChanged(new PropertyChangedEventArgs(PROPERTY_DESCRIPTION));
         }
@@ -90,7 +91,7 @@ public class ProviderGeneralModel extends EntityModel<Provider> {
     }
 
     public void setUrl(String value) {
-        if (!ObjectUtils.objectsEqual(url, value)) {
+        if (!Objects.equals(url, value)) {
             url = value;
             onPropertyChanged(new PropertyChangedEventArgs(PROPERTY_URL));
         }

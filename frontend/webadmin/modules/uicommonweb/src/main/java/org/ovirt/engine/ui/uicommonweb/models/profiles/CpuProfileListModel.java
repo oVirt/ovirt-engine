@@ -9,6 +9,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+
 import com.google.inject.Inject;
 
 public class CpuProfileListModel extends ProfileListModel<CpuProfile, CpuQos, VDSGroup> {

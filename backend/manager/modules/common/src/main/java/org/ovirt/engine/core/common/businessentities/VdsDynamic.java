@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.validation.constraints.Size;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringFormat;
@@ -857,70 +857,70 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
             return false;
         }
         VdsDynamic other = (VdsDynamic) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(getSupportedClusterVersionsSet(), other.getSupportedClusterVersionsSet())
-                && ObjectUtils.objectsEqual(supportedEngineVersionsSet, other.supportedEngineVersionsSet)
-                && ObjectUtils.objectsEqual(buildName, other.buildName)
-                && ObjectUtils.objectsEqual(cpuCores, other.cpuCores)
-                && ObjectUtils.objectsEqual(cpuThreads, other.cpuThreads)
-                && ObjectUtils.objectsEqual(cpuFlags, other.cpuFlags)
-                && ObjectUtils.objectsEqual(cpuModel, other.cpuModel)
-                && ObjectUtils.objectsEqual(cpuSockets, other.cpuSockets)
-                && ObjectUtils.objectsEqual(cpuSpeedMh, other.cpuSpeedMh)
-                && ObjectUtils.objectsEqual(onlineCpus, other.onlineCpus)
-                && ObjectUtils.objectsEqual(guestOverhead, other.guestOverhead)
-                && ObjectUtils.objectsEqual(hooksStr, other.hooksStr)
-                && ObjectUtils.objectsEqual(hostOs, other.hostOs)
-                && ObjectUtils.objectsEqual(iScsiInitiatorName, other.iScsiInitiatorName)
-                && ObjectUtils.objectsEqual(ifTotalSpeed, other.ifTotalSpeed)
-                && ObjectUtils.objectsEqual(kernelVersion, other.kernelVersion)
-                && ObjectUtils.objectsEqual(kvmEnabled, other.kvmEnabled)
-                && ObjectUtils.objectsEqual(kvmVersion, other.kvmVersion)
-                && ObjectUtils.objectsEqual(libvirtVersion, other.libvirtVersion)
-                && ObjectUtils.objectsEqual(rpmVersion, other.rpmVersion)
-                && ObjectUtils.objectsEqual(memCommited, other.memCommited)
-                && ObjectUtils.objectsEqual(netConfigDirty, other.netConfigDirty)
+        return (Objects.equals(id, other.id)
+                && Objects.equals(getSupportedClusterVersionsSet(), other.getSupportedClusterVersionsSet())
+                && Objects.equals(supportedEngineVersionsSet, other.supportedEngineVersionsSet)
+                && Objects.equals(buildName, other.buildName)
+                && Objects.equals(cpuCores, other.cpuCores)
+                && Objects.equals(cpuThreads, other.cpuThreads)
+                && Objects.equals(cpuFlags, other.cpuFlags)
+                && Objects.equals(cpuModel, other.cpuModel)
+                && Objects.equals(cpuSockets, other.cpuSockets)
+                && Objects.equals(cpuSpeedMh, other.cpuSpeedMh)
+                && Objects.equals(onlineCpus, other.onlineCpus)
+                && Objects.equals(guestOverhead, other.guestOverhead)
+                && Objects.equals(hooksStr, other.hooksStr)
+                && Objects.equals(hostOs, other.hostOs)
+                && Objects.equals(iScsiInitiatorName, other.iScsiInitiatorName)
+                && Objects.equals(ifTotalSpeed, other.ifTotalSpeed)
+                && Objects.equals(kernelVersion, other.kernelVersion)
+                && Objects.equals(kvmEnabled, other.kvmEnabled)
+                && Objects.equals(kvmVersion, other.kvmVersion)
+                && Objects.equals(libvirtVersion, other.libvirtVersion)
+                && Objects.equals(rpmVersion, other.rpmVersion)
+                && Objects.equals(memCommited, other.memCommited)
+                && Objects.equals(netConfigDirty, other.netConfigDirty)
                 && nonOperationalReason == other.nonOperationalReason
-                && ObjectUtils.objectsEqual(pendingVcpusCount, other.pendingVcpusCount)
-                && ObjectUtils.objectsEqual(pendingVmemSize, other.pendingVmemSize)
-                && ObjectUtils.objectsEqual(physicalMemMb, other.physicalMemMb)
+                && Objects.equals(pendingVcpusCount, other.pendingVcpusCount)
+                && Objects.equals(pendingVmemSize, other.pendingVmemSize)
+                && Objects.equals(physicalMemMb, other.physicalMemMb)
                 && previousStatus == other.previousStatus
-                && ObjectUtils.objectsEqual(reservedMem, other.reservedMem)
-                && ObjectUtils.objectsEqual(getSoftwareVersion(), other.getSoftwareVersion())
-                && ObjectUtils.objectsEqual(spiceVersion, other.spiceVersion)
-                && ObjectUtils.objectsEqual(glusterVersion, other.glusterVersion)
+                && Objects.equals(reservedMem, other.reservedMem)
+                && Objects.equals(getSoftwareVersion(), other.getSoftwareVersion())
+                && Objects.equals(spiceVersion, other.spiceVersion)
+                && Objects.equals(glusterVersion, other.glusterVersion)
                 && status == other.status
-                && ObjectUtils.objectsEqual(supportedClusterLevels, other.supportedClusterLevels)
-                && ObjectUtils.objectsEqual(supportedEngines, other.supportedEngines)
+                && Objects.equals(supportedClusterLevels, other.supportedClusterLevels)
+                && Objects.equals(supportedEngines, other.supportedEngines)
                 && transparentHugePagesState == other.transparentHugePagesState
-                && ObjectUtils.objectsEqual(versionName, other.versionName)
-                && ObjectUtils.objectsEqual(vmActive, other.vmActive)
+                && Objects.equals(versionName, other.versionName)
+                && Objects.equals(vmActive, other.vmActive)
                 && vmCount == other.vmCount
-                && ObjectUtils.objectsEqual(vmMigrating, other.vmMigrating)
+                && Objects.equals(vmMigrating, other.vmMigrating)
                 && incomingMigrations == other.incomingMigrations
                 && outgoingMigrations == other.outgoingMigrations
-                && ObjectUtils.objectsEqual(vmsCoresCount, other.vmsCoresCount)
-                && ObjectUtils.objectsEqual(hwManufacturer, other.hwManufacturer)
-                && ObjectUtils.objectsEqual(hwProductName, other.hwProductName)
-                && ObjectUtils.objectsEqual(hwVersion, other.hwVersion)
-                && ObjectUtils.objectsEqual(hwSerialNumber, other.hwSerialNumber)
-                && ObjectUtils.objectsEqual(hwUUID, other.hwUUID)
-                && ObjectUtils.objectsEqual(hwFamily, other.hwFamily)
-                && ObjectUtils.objectsEqual(HBAs, other.HBAs)
+                && Objects.equals(vmsCoresCount, other.vmsCoresCount)
+                && Objects.equals(hwManufacturer, other.hwManufacturer)
+                && Objects.equals(hwProductName, other.hwProductName)
+                && Objects.equals(hwVersion, other.hwVersion)
+                && Objects.equals(hwSerialNumber, other.hwSerialNumber)
+                && Objects.equals(hwUUID, other.hwUUID)
+                && Objects.equals(hwFamily, other.hwFamily)
+                && Objects.equals(HBAs, other.HBAs)
                 && powerManagementControlledByPolicy == other.powerManagementControlledByPolicy
                 && kdumpStatus == other.kdumpStatus
-                && ObjectUtils.objectsEqual(selinuxEnforceMode, other.selinuxEnforceMode)
-                && ObjectUtils.objectsEqual(numaNodeList, other.numaNodeList)
+                && Objects.equals(selinuxEnforceMode, other.selinuxEnforceMode)
+                && Objects.equals(numaNodeList, other.numaNodeList)
                 && autoNumaBalancing.getValue() == other.autoNumaBalancing.getValue()
                 && numaSupport == other.numaSupport)
-                && ObjectUtils.objectsEqual(supportedEmulatedMachines, other.supportedEmulatedMachines)
+                && Objects.equals(supportedEmulatedMachines, other.supportedEmulatedMachines)
                 && powerManagementControlledByPolicy == other.powerManagementControlledByPolicy
-                && ObjectUtils.objectsEqual(supportedRngSources, other.supportedRngSources)
+                && Objects.equals(supportedRngSources, other.supportedRngSources)
                 && liveSnapshotSupport == other.liveSnapshotSupport
                 && liveMergeSupport == other.liveMergeSupport
-                && ObjectUtils.objectsEqual(maintenanceReason, other.maintenanceReason)
+                && Objects.equals(maintenanceReason, other.maintenanceReason)
                 && updateAvailable == other.updateAvailable
-                && ObjectUtils.objectsEqual(additionalFeatures, other.additionalFeatures)
-                && ObjectUtils.objectsEqual(hostDevicePassthroughEnabled, other.hostDevicePassthroughEnabled);
+                && Objects.equals(additionalFeatures, other.additionalFeatures)
+                && Objects.equals(hostDevicePassthroughEnabled, other.hostDevicePassthroughEnabled);
     }
 }

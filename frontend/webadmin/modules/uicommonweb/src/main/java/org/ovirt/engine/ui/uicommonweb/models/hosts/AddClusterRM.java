@@ -1,11 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -74,7 +75,7 @@ public class AddClusterRM extends IEnlistmentNotification {
         ClusterModel clusterModel = configureModel.getCluster();
         String clusterName = clusterModel.getName().getEntity();
 
-        if (candidate == null || !ObjectUtils.objectsEqual(candidate.getName(), clusterName)) {
+        if (candidate == null || !Objects.equals(candidate.getName(), clusterName)) {
 
             // Try to find existing cluster with the specified name.
             VDSGroup cluster = context.clusterFoundByName;

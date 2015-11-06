@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
+import java.util.Objects;
+
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmJob implements BusinessEntity<Guid> {
@@ -64,8 +65,8 @@ public class VmJob implements BusinessEntity<Guid> {
             return false;
         }
         VmJob other = (VmJob) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(vmId, other.vmId)
+        return (Objects.equals(id, other.id)
+                && Objects.equals(vmId, other.vmId)
                 && jobType == other.jobType);
     }
 

@@ -5,8 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import org.ovirt.engine.core.common.utils.ObjectUtils;
+import java.util.Objects;
 
 public class SortedListModel<T> extends ListModel<T> {
 
@@ -35,7 +34,7 @@ public class SortedListModel<T> extends ListModel<T> {
                 return false;
             }
             SortSensitiveComparator<?> other = (SortSensitiveComparator<?>) obj;
-            if (!ObjectUtils.objectsEqual(other.comparator, comparator)) {
+            if (!Objects.equals(other.comparator, comparator)) {
                 return false;
             }
             if (other.sortAscending != sortAscending) {

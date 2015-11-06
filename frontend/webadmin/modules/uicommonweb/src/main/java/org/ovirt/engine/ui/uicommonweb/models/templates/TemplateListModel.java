@@ -59,6 +59,7 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
 import com.google.inject.Inject;
 
 public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> implements ISupportSystemTreeContext {

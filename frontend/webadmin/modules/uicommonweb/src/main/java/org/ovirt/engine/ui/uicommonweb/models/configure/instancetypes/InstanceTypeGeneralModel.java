@@ -1,7 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.configure.instancetypes;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.InstanceType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -17,7 +18,7 @@ public class InstanceTypeGeneralModel extends EntityModel<InstanceType> {
     }
 
     public void setName(String value) {
-        if (!ObjectUtils.objectsEqual(name, value)) {
+        if (!Objects.equals(name, value)) {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
@@ -28,7 +29,7 @@ public class InstanceTypeGeneralModel extends EntityModel<InstanceType> {
     }
 
     public void setDescription(String value) {
-        if (!ObjectUtils.objectsEqual(description, value)) {
+        if (!Objects.equals(description, value)) {
             this.description = value;
             onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }

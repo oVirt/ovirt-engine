@@ -2,12 +2,12 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -373,16 +373,16 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
             return false;
         }
         Quota other = (Quota) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(description, other.description)
-                && ObjectUtils.objectsEqual(globalQuotaStorage, other.globalQuotaStorage)
-                && ObjectUtils.objectsEqual(globalQuotaVdsGroup, other.globalQuotaVdsGroup)
+        return (Objects.equals(id, other.id)
+                && Objects.equals(description, other.description)
+                && Objects.equals(globalQuotaStorage, other.globalQuotaStorage)
+                && Objects.equals(globalQuotaVdsGroup, other.globalQuotaVdsGroup)
                 && graceStoragePercentage == other.graceStoragePercentage
                 && graceVdsGroupPercentage == other.graceVdsGroupPercentage
-                && ObjectUtils.objectsEqual(quotaName, other.quotaName)
-                && ObjectUtils.objectsEqual(quotaStorageList, other.quotaStorageList)
-                && ObjectUtils.objectsEqual(quotaVdsGroupList, other.quotaVdsGroupList)
-                && ObjectUtils.objectsEqual(storagePoolId, other.storagePoolId)
+                && Objects.equals(quotaName, other.quotaName)
+                && Objects.equals(quotaStorageList, other.quotaStorageList)
+                && Objects.equals(quotaVdsGroupList, other.quotaVdsGroupList)
+                && Objects.equals(storagePoolId, other.storagePoolId)
                 && thresholdStoragePercentage == other.thresholdStoragePercentage
                 && thresholdVdsGroupPercentage == other.thresholdVdsGroupPercentage);
     }

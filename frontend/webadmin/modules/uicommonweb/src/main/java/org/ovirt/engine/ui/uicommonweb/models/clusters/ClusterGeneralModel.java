@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -23,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -81,7 +81,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
     }
 
     public void setNumberOfVms(Integer numberOfVms) {
-        if (!ObjectUtils.objectsEqual(this.numberOfVms, numberOfVms)) {
+        if (!Objects.equals(this.numberOfVms, numberOfVms)) {
             this.numberOfVms = numberOfVms;
             onPropertyChanged(new PropertyChangedEventArgs("numberOfVms")); //$NON-NLS-1$
         }

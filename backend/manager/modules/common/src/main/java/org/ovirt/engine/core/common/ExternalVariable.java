@@ -1,8 +1,7 @@
 package org.ovirt.engine.core.common;
 
 import java.util.Date;
-
-import org.ovirt.engine.core.common.utils.ObjectUtils;
+import java.util.Objects;
 
 /**
  * Holder to exchange data with external systems using db
@@ -63,8 +62,8 @@ public class ExternalVariable {
         }
 
         ExternalVariable other = (ExternalVariable) obj;
-        return ObjectUtils.objectsEqual(name, other.getName())
-                && ObjectUtils.objectsEqual(value, other.getValue());
+        return Objects.equals(name, other.getName())
+                && Objects.equals(value, other.getValue());
     }
 
     @Override

@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.ConfiguredRange;
 
@@ -82,9 +83,9 @@ public class HostNetworkQos extends QosBase {
             return false;
 
         HostNetworkQos other = (HostNetworkQos) obj;
-        return ObjectUtils.objectsEqual(getOutAverageLinkshare(), other.getOutAverageLinkshare())
-                && ObjectUtils.objectsEqual(getOutAverageUpperlimit(), other.getOutAverageUpperlimit())
-                && ObjectUtils.objectsEqual(getOutAverageRealtime(), other.getOutAverageRealtime());
+        return Objects.equals(getOutAverageLinkshare(), other.getOutAverageLinkshare())
+                && Objects.equals(getOutAverageUpperlimit(), other.getOutAverageUpperlimit())
+                && Objects.equals(getOutAverageRealtime(), other.getOutAverageRealtime());
     }
 
 }

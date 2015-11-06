@@ -2,8 +2,8 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -63,8 +63,8 @@ public class MigrateVmParameters extends VmOperationParameterBase {
 
         MigrateVmParameters other = (MigrateVmParameters) obj;
         return forceMigrationForNonMigratableVm == other.forceMigrationForNonMigratableVm
-                && ObjectUtils.objectsEqual(getVmId(), other.getVmId())
-                && ObjectUtils.objectsEqual(targetVdsGroupId, other.targetVdsGroupId);
+                && Objects.equals(getVmId(), other.getVmId())
+                && Objects.equals(targetVdsGroupId, other.targetVdsGroupId);
     }
 
     public boolean isForceMigrationForNonMigratableVm() {

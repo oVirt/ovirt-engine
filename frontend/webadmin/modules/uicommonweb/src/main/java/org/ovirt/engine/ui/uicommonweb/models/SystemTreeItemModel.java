@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.TreeNodeInfo;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -106,8 +106,8 @@ public class SystemTreeItemModel extends EntityModel implements TreeNodeInfo {
         boolean result = true;
 
         // Compare item's attributes
-        if (!ObjectUtils.objectsEqual(getType(), otherModel.getType())
-                || !ObjectUtils.objectsEqual(getEntity(), otherModel.getEntity())) {
+        if (!Objects.equals(getType(), otherModel.getType())
+                || !Objects.equals(getEntity(), otherModel.getEntity())) {
             result = false;
         }
 

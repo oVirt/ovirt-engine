@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.common;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -15,7 +15,7 @@ public class SelectionTreeNodeModel extends EntityModel {
     }
 
     public void setDescription(String value) {
-        if (!ObjectUtils.objectsEqual(description, value)) {
+        if (!Objects.equals(description, value)) {
             description = value;
             onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
@@ -97,7 +97,7 @@ public class SelectionTreeNodeModel extends EntityModel {
     }
 
     public void setTooltip(String value) {
-        if (!ObjectUtils.objectsEqual(tooltip, value)) {
+        if (!Objects.equals(tooltip, value)) {
             tooltip = value;
             onPropertyChanged(new PropertyChangedEventArgs("Tooltip")); //$NON-NLS-1$
         }

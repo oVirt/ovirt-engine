@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.AddBondParameters;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
@@ -27,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.network.Vlan;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.RefObject;
@@ -682,7 +682,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                 Network selectedNetwork = null;
                 if (item.getVlanId() != null) {
                     for (Network network : networksByCluster) {
-                        if (ObjectUtils.objectsEqual(network.getName(), item.getNetworkName())) {
+                        if (Objects.equals(network.getName(), item.getNetworkName())) {
                             networksToAdd.add(network);
                             if (selectedNetwork == null) {
                                 selectedNetwork = network;
@@ -794,14 +794,14 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                     boolean containsSelectBondingOpt = false;
                     hostInterfaceModel.getBondingOptions().setItems(list);
                     for (int i = 0; i < list.size(); i++) {
-                        if (ObjectUtils.objectsEqual(list.get(i).getKey(), item.getBondOptions())) {
+                        if (Objects.equals(list.get(i).getKey(), item.getBondOptions())) {
                             selectBondingOpt = list.get(i);
                             containsSelectBondingOpt = true;
                             break;
                         }
                     }
                     if (containsSelectBondingOpt == false) {
-                        if (ObjectUtils.objectsEqual(item.getBondOptions(), AsyncDataProvider.getInstance().getDefaultBondingOption())) {
+                        if (Objects.equals(item.getBondOptions(), AsyncDataProvider.getInstance().getDefaultBondingOption())) {
                             selectBondingOpt = defaultItem;
                         }
                         else {
@@ -920,15 +920,14 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                             boolean containsSelectBondingOpt = false;
                             managementModel.getBondingOptions().setItems(list);
                             for (int i = 0; i < list.size(); i++) {
-                                if (ObjectUtils.objectsEqual(list.get(i).getKey(), item.getBondOptions())) {
+                                if (Objects.equals(list.get(i).getKey(), item.getBondOptions())) {
                                     selectBondingOpt = list.get(i);
                                     containsSelectBondingOpt = true;
                                     break;
                                 }
                             }
                             if (containsSelectBondingOpt == false) {
-                                if (ObjectUtils.objectsEqual(item.getBondOptions(),
-                                                             AsyncDataProvider.getInstance().getDefaultBondingOption())) {
+                                if (Objects.equals(item.getBondOptions(), AsyncDataProvider.getInstance().getDefaultBondingOption())) {
                                     selectBondingOpt = defaultItem;
                                 }
                                 else {
@@ -1656,7 +1655,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                         if (item.getVLans() != null && item.getVLans().size() > 0) {
                             bondWithVlans = true;
                             for (HostVLan vLan : item.getVLans()) {
-                                if (ObjectUtils.objectsEqual(network.getName(), vLan.getNetworkName())) {
+                                if (Objects.equals(network.getName(), vLan.getNetworkName())) {
                                     vLanAttached = true;
                                     break;
                                 }
@@ -1668,7 +1667,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
             }
             else {
                 for (VdsNetworkInterface item : getSelectedItemsWithVlans()) {
-                    if (item.getVlanId() != null && ObjectUtils.objectsEqual(item.getNetworkName(), network.getName())) {
+                    if (item.getVlanId() != null && Objects.equals(item.getNetworkName(), network.getName())) {
                         isUpdateVlan = true;
                         break;
                     }

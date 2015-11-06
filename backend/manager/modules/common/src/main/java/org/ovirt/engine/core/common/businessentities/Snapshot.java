@@ -3,9 +3,9 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -251,16 +251,16 @@ public class Snapshot implements IVdcQueryable, BusinessEntityWithStatus<Guid, S
             return false;
         }
         Snapshot other = (Snapshot) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(appList, other.appList)
-                && ObjectUtils.objectsEqual(creationDate, other.creationDate)
-                && ObjectUtils.objectsEqual(description, other.description)
-                && ObjectUtils.objectsEqual(memoryVolume, other.memoryVolume)
+        return (Objects.equals(id, other.id)
+                && Objects.equals(appList, other.appList)
+                && Objects.equals(creationDate, other.creationDate)
+                && Objects.equals(description, other.description)
+                && Objects.equals(memoryVolume, other.memoryVolume)
                 && status == other.status
                 && type == other.type
-                && ObjectUtils.objectsEqual(vmConfiguration, other.vmConfiguration)
-                && ObjectUtils.objectsEqual(vmId, other.vmId)
-                && ObjectUtils.objectsEqual(diskImages, other.diskImages));
+                && Objects.equals(vmConfiguration, other.vmConfiguration)
+                && Objects.equals(vmId, other.vmId)
+                && Objects.equals(diskImages, other.diskImages));
     }
 
     public enum SnapshotStatus {

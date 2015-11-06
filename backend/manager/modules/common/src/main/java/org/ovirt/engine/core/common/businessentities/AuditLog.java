@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Date;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AuditLog implements IVdcQueryable {
@@ -527,27 +527,27 @@ public class AuditLog implements IVdcQueryable {
         }
         AuditLog other = (AuditLog) obj;
         return (auditLogId == other.auditLogId
-                && ObjectUtils.objectsEqual(logTime, other.logTime)
+                && Objects.equals(logTime, other.logTime)
                 && logType == other.logType
-                && ObjectUtils.objectsEqual(message, other.message)
-                && ObjectUtils.objectsEqual(storageDomainId, other.storageDomainId)
-                && ObjectUtils.objectsEqual(storagePoolId, other.storagePoolId)
+                && Objects.equals(message, other.message)
+                && Objects.equals(storageDomainId, other.storageDomainId)
+                && Objects.equals(storagePoolId, other.storagePoolId)
                 && severity == other.severity
-                && ObjectUtils.objectsEqual(userId, other.userId)
-                && ObjectUtils.objectsEqual(vdsId, other.vdsId)
-                && ObjectUtils.objectsEqual(quotaId, other.quotaId)
-                && ObjectUtils.objectsEqual(vmId, other.vmId)
-                && ObjectUtils.objectsEqual(vmTemplateId, other.vmTemplateId)
+                && Objects.equals(userId, other.userId)
+                && Objects.equals(vdsId, other.vdsId)
+                && Objects.equals(quotaId, other.quotaId)
+                && Objects.equals(vmId, other.vmId)
+                && Objects.equals(vmTemplateId, other.vmTemplateId)
                 && processed == other.processed
-                && ObjectUtils.objectsEqual(correlationId, other.correlationId)
-                && ObjectUtils.objectsEqual(jobId, other.jobId)
-                && ObjectUtils.objectsEqual(origin, other.origin)
+                && Objects.equals(correlationId, other.correlationId)
+                && Objects.equals(jobId, other.jobId)
+                && Objects.equals(origin, other.origin)
                 && customEventId == other.customEventId
                 && eventFloodInSec == other.eventFloodInSec
-                && ObjectUtils.objectsEqual(customData, other.customData)
+                && Objects.equals(customData, other.customData)
                 && external == other.external
                 && deleted == other.deleted
-                && ObjectUtils.objectsEqual(callStack, other.callStack));
+                && Objects.equals(callStack, other.callStack));
     }
 
     public String toStringForLogging() {

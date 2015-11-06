@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
+import java.util.Objects;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.ovirt.engine.core.common.utils.MacAddressValidationPatterns;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.ValidNameWithDot;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -149,13 +150,13 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
             return false;
         }
         VmNic other = (VmNic) obj;
-        if (!ObjectUtils.objectsEqual(getVmId(), other.getVmId())) {
+        if (!Objects.equals(getVmId(), other.getVmId())) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(getVnicProfileId(), other.getVnicProfileId())) {
+        if (!Objects.equals(getVnicProfileId(), other.getVnicProfileId())) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(getVmTemplateId(), other.getVmTemplateId())) {
+        if (!Objects.equals(getVmTemplateId(), other.getVmTemplateId())) {
             return false;
         }
         return true;

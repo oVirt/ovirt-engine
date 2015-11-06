@@ -2,8 +2,7 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.io.Serializable;
 import java.util.Map;
-
-import org.ovirt.engine.core.common.utils.ObjectUtils;
+import java.util.Objects;
 
 public class GlusterSnapshotConfigInfo implements Serializable {
     private static final long serialVersionUID = -768822766895441288L;
@@ -33,10 +32,10 @@ public class GlusterSnapshotConfigInfo implements Serializable {
             return false;
         }
         GlusterSnapshotConfigInfo configInfo = (GlusterSnapshotConfigInfo) obj;
-        if (!ObjectUtils.objectsEqual(getClusterConfigOptions(), configInfo.getClusterConfigOptions())) {
+        if (!Objects.equals(getClusterConfigOptions(), configInfo.getClusterConfigOptions())) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(getVolumeConfigOptions(), configInfo.getVolumeConfigOptions())) {
+        if (!Objects.equals(getVolumeConfigOptions(), configInfo.getVolumeConfigOptions())) {
             return false;
         }
         return true;

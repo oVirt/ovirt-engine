@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.Backend;
@@ -19,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerCon
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineFault;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -199,7 +199,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         List<StorageServerConnections> connections =
                 DbFacade.getInstance().getStorageServerConnectionDao().getAllForConnection(connection);
         for (StorageServerConnections dbConnection : connections) {
-            if (ObjectUtils.objectsEqual(dbConnection.getpassword(), connection.getpassword())) {
+            if (Objects.equals(dbConnection.getpassword(), connection.getpassword())) {
                 return dbConnection;
             }
         }

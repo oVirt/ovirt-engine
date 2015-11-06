@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageDomainDynamic implements BusinessEntity<Guid> {
@@ -101,9 +100,9 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
             return false;
         }
         StorageDomainDynamic other = (StorageDomainDynamic) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(availableDiskSize, other.availableDiskSize)
-                && ObjectUtils.objectsEqual(usedDiskSize, other.usedDiskSize)
+        return (Objects.equals(id, other.id)
+                && Objects.equals(availableDiskSize, other.availableDiskSize)
+                && Objects.equals(usedDiskSize, other.usedDiskSize)
                 && Objects.equals(externalStatus, other.externalStatus))
                 && containsUnregisteredEntities == other.containsUnregisteredEntities;
     }

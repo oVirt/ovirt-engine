@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatistics> {
@@ -67,21 +67,21 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
             return false;
         }
         VmStatistics other = (VmStatistics) obj;
-        return (ObjectUtils.objectsEqual(cpu_sysField, other.cpu_sysField)
-                && ObjectUtils.objectsEqual(cpu_userField, other.cpu_userField)
-                && ObjectUtils.objectsEqual(elapsed_timeField, other.elapsed_timeField)
-                && ObjectUtils.objectsEqual(interfaceStatisticsField, other.interfaceStatisticsField)
-                && ObjectUtils.objectsEqual(roundedElapsedTimeField, other.roundedElapsedTimeField)
-                && ObjectUtils.objectsEqual(usage_cpu_percentField, other.usage_cpu_percentField)
-                && ObjectUtils.objectsEqual(usage_mem_percentField, other.usage_mem_percentField)
-                && ObjectUtils.objectsEqual(migrationProgressPercent, other.migrationProgressPercent)
-                && ObjectUtils.objectsEqual(usage_network_percentField, other.usage_network_percentField)
-                && ObjectUtils.objectsEqual(disksUsage, other.disksUsage)
-                && ObjectUtils.objectsEqual(vm_guidField, other.vm_guidField)
-                && ObjectUtils.objectsEqual(cpuUsageHistory, other.cpuUsageHistory)
-                && ObjectUtils.objectsEqual(networkUsageHistory, other.networkUsageHistory)
-                && ObjectUtils.objectsEqual(memoryUsageHistory, other.memoryUsageHistory)
-                && ObjectUtils.objectsEqual(vNumaNodeStatisticsList, other.vNumaNodeStatisticsList));
+        return (Objects.equals(cpu_sysField, other.cpu_sysField)
+                && Objects.equals(cpu_userField, other.cpu_userField)
+                && Objects.equals(elapsed_timeField, other.elapsed_timeField)
+                && Objects.equals(interfaceStatisticsField, other.interfaceStatisticsField)
+                && Objects.equals(roundedElapsedTimeField, other.roundedElapsedTimeField)
+                && Objects.equals(usage_cpu_percentField, other.usage_cpu_percentField)
+                && Objects.equals(usage_mem_percentField, other.usage_mem_percentField)
+                && Objects.equals(migrationProgressPercent, other.migrationProgressPercent)
+                && Objects.equals(usage_network_percentField, other.usage_network_percentField)
+                && Objects.equals(disksUsage, other.disksUsage)
+                && Objects.equals(vm_guidField, other.vm_guidField)
+                && Objects.equals(cpuUsageHistory, other.cpuUsageHistory)
+                && Objects.equals(networkUsageHistory, other.networkUsageHistory)
+                && Objects.equals(memoryUsageHistory, other.memoryUsageHistory)
+                && Objects.equals(vNumaNodeStatisticsList, other.vNumaNodeStatisticsList));
     }
 
     public Double getcpu_sys() {

@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -154,19 +155,19 @@ public class StorageDevice implements IVdcQueryable, BusinessEntity<Guid> {
     public boolean equals(Object obj) {
         if ((obj != null) && (obj instanceof StorageDevice)) {
             StorageDevice storageDevice = (StorageDevice) obj;
-            if (ObjectUtils.objectsEqual(getId(), storageDevice.getId())
+            if (Objects.equals(getId(), storageDevice.getId())
                     && canCreateBrick == storageDevice.canCreateBrick
                     && isGlusterBrick == storageDevice.isGlusterBrick
-                    && (ObjectUtils.objectsEqual(getDescription(), storageDevice.getDescription()))
-                    && (ObjectUtils.objectsEqual(getDevPath(), storageDevice.getDevPath()))
-                    && (ObjectUtils.objectsEqual(getDevType(), storageDevice.getDevType()))
-                    && (ObjectUtils.objectsEqual(getDevUuid(), storageDevice.getDevUuid()))
-                    && (ObjectUtils.objectsEqual(getFsType(), storageDevice.getFsType()))
-                    && (ObjectUtils.objectsEqual(getFsUuid(), storageDevice.getFsUuid()))
-                    && (ObjectUtils.objectsEqual(getMountPoint(), storageDevice.getMountPoint()))
-                    && (ObjectUtils.objectsEqual(getName(), storageDevice.getName()))
+                    && (Objects.equals(getDescription(), storageDevice.getDescription()))
+                    && (Objects.equals(getDevPath(), storageDevice.getDevPath()))
+                    && (Objects.equals(getDevType(), storageDevice.getDevType()))
+                    && (Objects.equals(getDevUuid(), storageDevice.getDevUuid()))
+                    && (Objects.equals(getFsType(), storageDevice.getFsType()))
+                    && (Objects.equals(getFsUuid(), storageDevice.getFsUuid()))
+                    && (Objects.equals(getMountPoint(), storageDevice.getMountPoint()))
+                    && (Objects.equals(getName(), storageDevice.getName()))
                     && size == storageDevice.size
-                    && (ObjectUtils.objectsEqual(getVdsId(), storageDevice.getVdsId()))) {
+                    && (Objects.equals(getVdsId(), storageDevice.getVdsId()))) {
                 return true;
             }
         }

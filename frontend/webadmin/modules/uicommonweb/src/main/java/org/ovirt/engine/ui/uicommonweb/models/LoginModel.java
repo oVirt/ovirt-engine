@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -135,7 +135,7 @@ public class LoginModel extends Model {
     }
 
     public void setMessages(List<String> value) {
-        if (!ObjectUtils.objectsEqual(messages, value)) {
+        if (!Objects.equals(messages, value)) {
             messages = value;
             onPropertyChanged(new PropertyChangedEventArgs("Message")); //$NON-NLS-1$
         }

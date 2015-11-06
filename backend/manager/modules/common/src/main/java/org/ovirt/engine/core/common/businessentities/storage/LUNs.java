@@ -2,13 +2,13 @@ package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -111,25 +111,25 @@ public class LUNs implements BusinessEntity<String> {
             return false;
         }
         LUNs other = (LUNs) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(_lunConnections, other._lunConnections)
-                && ObjectUtils.objectsEqual(lunMapping, other.lunMapping)
-                && ObjectUtils.objectsEqual(physicalVolumeId, other.physicalVolumeId)
+        return (Objects.equals(id, other.id)
+                && Objects.equals(_lunConnections, other._lunConnections)
+                && Objects.equals(lunMapping, other.lunMapping)
+                && Objects.equals(physicalVolumeId, other.physicalVolumeId)
                 && deviceSize == other.deviceSize
                 && pvSize == other.pvSize
                 && lunType == other.lunType
-                && ObjectUtils.objectsEqual(pathsDictionary, other.pathsDictionary)
-                && ObjectUtils.objectsEqual(pathsCapacity, other.pathsCapacity)
-                && ObjectUtils.objectsEqual(vendorName, other.vendorName)
-                && ObjectUtils.objectsEqual(productId, other.productId)
-                && ObjectUtils.objectsEqual(serial, other.serial)
-                && ObjectUtils.objectsEqual(vendorId, other.vendorId)
-                && ObjectUtils.objectsEqual(volumeGroupId, other.volumeGroupId)
-                && ObjectUtils.objectsEqual(status, other.status)
-                && ObjectUtils.objectsEqual(diskId, other.diskId)
-                && ObjectUtils.objectsEqual(diskAlias, other.diskAlias)
-                && ObjectUtils.objectsEqual(storageDomainId, other.storageDomainId)
-                && ObjectUtils.objectsEqual(storageDomainName, other.storageDomainName));
+                && Objects.equals(pathsDictionary, other.pathsDictionary)
+                && Objects.equals(pathsCapacity, other.pathsCapacity)
+                && Objects.equals(vendorName, other.vendorName)
+                && Objects.equals(productId, other.productId)
+                && Objects.equals(serial, other.serial)
+                && Objects.equals(vendorId, other.vendorId)
+                && Objects.equals(volumeGroupId, other.volumeGroupId)
+                && Objects.equals(status, other.status)
+                && Objects.equals(diskId, other.diskId)
+                && Objects.equals(diskAlias, other.diskAlias)
+                && Objects.equals(storageDomainId, other.storageDomainId)
+                && Objects.equals(storageDomainName, other.storageDomainName));
     }
 
     public String getLUN_id() {

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -28,7 +28,7 @@ public class HostHardwareGeneralModel extends EntityModel<VDS> {
     }
 
     public void setHardwareManufacturer(String value) {
-        if (!ObjectUtils.objectsEqual(hardwareManufacturer, value)) {
+        if (!Objects.equals(hardwareManufacturer, value)) {
             hardwareManufacturer = value;
             onPropertyChanged(new PropertyChangedEventArgs("manufacturer")); //$NON-NLS-1$
         }
@@ -41,7 +41,7 @@ public class HostHardwareGeneralModel extends EntityModel<VDS> {
     }
 
     public void setHardwareProductName(String value) {
-        if (!ObjectUtils.objectsEqual(hardwareProductName, value)) {
+        if (!Objects.equals(hardwareProductName, value)) {
             hardwareProductName = value;
             onPropertyChanged(new PropertyChangedEventArgs("productName")); //$NON-NLS-1$
         }
@@ -54,7 +54,7 @@ public class HostHardwareGeneralModel extends EntityModel<VDS> {
     }
 
     public void setHardwareSerialNumber(String value) {
-        if (!ObjectUtils.objectsEqual(hardwareSerialNumber, value)) {
+        if (!Objects.equals(hardwareSerialNumber, value)) {
             hardwareSerialNumber = value;
             onPropertyChanged(new PropertyChangedEventArgs("serialNumber")); //$NON-NLS-1$
         }
@@ -67,7 +67,7 @@ public class HostHardwareGeneralModel extends EntityModel<VDS> {
     }
 
     public void setHardwareVersion(String value) {
-        if (!ObjectUtils.objectsEqual(hardwareVersion, value)) {
+        if (!Objects.equals(hardwareVersion, value)) {
             hardwareVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("hardwareVersion")); //$NON-NLS-1$
         }
@@ -80,7 +80,7 @@ public class HostHardwareGeneralModel extends EntityModel<VDS> {
     }
 
     public void setHardwareUUID(String value) {
-        if (!ObjectUtils.objectsEqual(hardwareUUID, value)) {
+        if (!Objects.equals(hardwareUUID, value)) {
             hardwareUUID = value;
             onPropertyChanged(new PropertyChangedEventArgs("uuid")); //$NON-NLS-1$
         }
@@ -94,7 +94,7 @@ public class HostHardwareGeneralModel extends EntityModel<VDS> {
 
     @SuppressWarnings("deprecation")
     public void setHardwareFamily(String value) {
-        if (!ObjectUtils.objectsEqual(hardwareFamily, value)) {
+        if (!Objects.equals(hardwareFamily, value)) {
             hardwareFamily = value;
             onPropertyChanged(new PropertyChangedEventArgs("family")); //$NON-NLS-1$
         }
@@ -108,7 +108,7 @@ public class HostHardwareGeneralModel extends EntityModel<VDS> {
     }
 
     public void setCpuType(String value) {
-        if (!ObjectUtils.objectsEqual(cpuType, value)) {
+        if (!Objects.equals(cpuType, value)) {
             cpuType = value;
             onPropertyChanged(new PropertyChangedEventArgs("CpuType")); //$NON-NLS-1$
         }
@@ -121,7 +121,7 @@ public class HostHardwareGeneralModel extends EntityModel<VDS> {
     }
 
     public void setCpuModel(String value) {
-        if (!ObjectUtils.objectsEqual(cpuModel, value)) {
+        if (!Objects.equals(cpuModel, value)) {
             cpuModel = value;
             onPropertyChanged(new PropertyChangedEventArgs("CpuModel")); //$NON-NLS-1$
         }

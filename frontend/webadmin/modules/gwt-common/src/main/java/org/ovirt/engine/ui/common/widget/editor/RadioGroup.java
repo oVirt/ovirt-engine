@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.common.widget.editor;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -131,7 +131,7 @@ public class RadioGroup<K> extends Composite implements TakesValue<K>, HasConstr
                 if (accessKey != 0) {
                     radioButton.setAccessKey(accessKey);
                 }
-            } else if (ObjectUtils.objectsEqual(oldSelectedValue, entry.getKey())) {
+            } else if (Objects.equals(oldSelectedValue, entry.getKey())) {
                 radioButton.setTabIndex(-1);
                 radioButton.getElement().removeAttribute("accessKey"); //$NON-NLS-1$
             }

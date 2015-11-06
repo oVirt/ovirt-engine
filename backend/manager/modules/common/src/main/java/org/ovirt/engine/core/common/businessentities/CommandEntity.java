@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Date;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -52,10 +52,10 @@ public class CommandEntity implements BusinessEntity<Guid> {
         if (getClass() != obj.getClass())
             return false;
         CommandEntity other = (CommandEntity) obj;
-        return ObjectUtils.objectsEqual(commandId, other.commandId)
+        return Objects.equals(commandId, other.commandId)
                 && commandType == other.commandType
-                && ObjectUtils.objectsEqual(getGuid(parentCommandId), getGuid(other.parentCommandId))
-                && ObjectUtils.objectsEqual(getGuid(rootCommandId), getGuid(other.rootCommandId));
+                && Objects.equals(getGuid(parentCommandId), getGuid(other.parentCommandId))
+                && Objects.equals(getGuid(rootCommandId), getGuid(other.rootCommandId));
     }
 
     private Guid getGuid(Guid guid) {

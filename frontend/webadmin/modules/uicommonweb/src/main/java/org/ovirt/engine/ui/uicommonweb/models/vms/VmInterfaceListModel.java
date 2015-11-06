@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -12,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -242,8 +242,7 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
         List<VmGuestAgentInterface> selectionInterfaces = new ArrayList<VmGuestAgentInterface>();
 
         for (VmGuestAgentInterface guestInterface : getGuestAgentData()) {
-            if (ObjectUtils.objectsEqual(guestInterface.getMacAddress(),
-                    selectedItem.getMacAddress())) {
+            if (Objects.equals(guestInterface.getMacAddress(), selectedItem.getMacAddress())) {
                 selectionInterfaces.add(guestInterface);
             }
         }

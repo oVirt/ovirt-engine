@@ -6,10 +6,10 @@ import static org.ovirt.engine.core.common.businessentities.gluster.GlusterHookC
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -235,14 +235,14 @@ public class GlusterHookEntity implements IVdcQueryable, BusinessEntity<Guid> {
         }
         GlusterHookEntity hook = (GlusterHookEntity) obj;
 
-        if (!(ObjectUtils.objectsEqual(getId(), hook.getId())
-                && ObjectUtils.objectsEqual(clusterId, hook.getClusterId())
-                && ObjectUtils.objectsEqual(glusterCommand, hook.getGlusterCommand())
+        if (!(Objects.equals(getId(), hook.getId())
+                && Objects.equals(clusterId, hook.getClusterId())
+                && Objects.equals(glusterCommand, hook.getGlusterCommand())
                 && stage == hook.getStage()
-                && ObjectUtils.objectsEqual(name, hook.getName())
+                && Objects.equals(name, hook.getName())
                 && contentType == hook.getContentType()
-                && ObjectUtils.objectsEqual(conflictStatus, hook.getConflictStatus())
-                && ObjectUtils.objectsEqual(checksum, hook.getChecksum())
+                && Objects.equals(conflictStatus, hook.getConflictStatus())
+                && Objects.equals(checksum, hook.getChecksum())
                 && status == hook.getStatus())) {
             return false;
         }

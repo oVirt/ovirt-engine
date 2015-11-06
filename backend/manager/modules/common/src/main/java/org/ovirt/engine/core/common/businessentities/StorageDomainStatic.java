@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Objects;
+
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
@@ -226,19 +227,19 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
             return false;
         }
         StorageDomainStatic other = (StorageDomainStatic) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
+        return (Objects.equals(id, other.id)
                 && autoRecoverable == other.autoRecoverable
-                && ObjectUtils.objectsEqual(connection, other.connection)
-                && ObjectUtils.objectsEqual(name, other.name)
-                && ObjectUtils.objectsEqual(storage, other.storage)
+                && Objects.equals(connection, other.connection)
+                && Objects.equals(name, other.name)
+                && Objects.equals(storage, other.storage)
                 && storageFormat == other.storageFormat
                 && storagePoolType == other.storagePoolType
                 && storageType == other.storageType
                 && sanState == other.sanState
-                && ObjectUtils.objectsEqual(wipeAfterDelete, other.wipeAfterDelete)
-                && ObjectUtils.objectsEqual(description, other.description))
-                && ObjectUtils.objectsEqual(warningLowSpaceIndicator, other.warningLowSpaceIndicator)
-                && ObjectUtils.objectsEqual(criticalSpaceActionBlocker, other.criticalSpaceActionBlocker);
+                && Objects.equals(wipeAfterDelete, other.wipeAfterDelete)
+                && Objects.equals(description, other.description))
+                && Objects.equals(warningLowSpaceIndicator, other.warningLowSpaceIndicator)
+                && Objects.equals(criticalSpaceActionBlocker, other.criticalSpaceActionBlocker);
     }
 
     @Override

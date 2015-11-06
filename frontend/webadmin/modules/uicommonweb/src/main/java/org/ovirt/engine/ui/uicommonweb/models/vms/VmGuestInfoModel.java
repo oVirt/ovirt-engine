@@ -1,15 +1,17 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
+
 import com.google.gwt.i18n.client.NumberFormat;
 
 public class VmGuestInfoModel extends EntityModel<VM> {
@@ -69,7 +71,7 @@ public class VmGuestInfoModel extends EntityModel<VM> {
     }
 
     public void setClientIp(String clientIp) {
-        if (!ObjectUtils.objectsEqual(clientIp, clientIp)) {
+        if (!Objects.equals(clientIp, clientIp)) {
             this.clientIp = clientIp;
             onPropertyChanged(new PropertyChangedEventArgs("ClientIp")); //$NON-NLS-1$
         }
@@ -80,7 +82,7 @@ public class VmGuestInfoModel extends EntityModel<VM> {
     }
 
     public void setConsoleUserName(String consoleUserName) {
-        if (!ObjectUtils.objectsEqual(consoleUserName, consoleUserName)) {
+        if (!Objects.equals(consoleUserName, consoleUserName)) {
             this.consoleUserName = consoleUserName;
             onPropertyChanged(new PropertyChangedEventArgs("ConsoleUserName")); //$NON-NLS-1$
         }
@@ -128,7 +130,7 @@ public class VmGuestInfoModel extends EntityModel<VM> {
     }
 
     public void setGuestOs(String guestOs) {
-        if (!ObjectUtils.objectsEqual(this.guestOs, guestOs)) {
+        if (!Objects.equals(this.guestOs, guestOs)) {
             this.guestOs = guestOs;
             onPropertyChanged(new PropertyChangedEventArgs("GuestOs")); //$NON-NLS-1$
         }
@@ -143,7 +145,7 @@ public class VmGuestInfoModel extends EntityModel<VM> {
     }
 
     public void setGuestUserName(String guestUserName) {
-        if (!ObjectUtils.objectsEqual(this.guestUserName, guestUserName)) {
+        if (!Objects.equals(this.guestUserName, guestUserName)) {
             this.guestUserName = guestUserName;
             onPropertyChanged(new PropertyChangedEventArgs("GuestUserName")); //$NON-NLS-1$
         }
@@ -154,7 +156,7 @@ public class VmGuestInfoModel extends EntityModel<VM> {
     }
 
     public void setGuestOsType(OsType guestOsType) {
-        if (!ObjectUtils.objectsEqual(this.guestOsType, guestOsType)) {
+        if (!Objects.equals(this.guestOsType, guestOsType)) {
             this.guestOsType = guestOsType;
             onPropertyChanged(new PropertyChangedEventArgs("GuestOsType")); //$NON-NLS-1$
         }
@@ -165,7 +167,7 @@ public class VmGuestInfoModel extends EntityModel<VM> {
     }
 
     public void setGuestOsArch(ArchitectureType guestOsArch) {
-        if (!ObjectUtils.objectsEqual(this.guestOsArch, guestOsArch)) {
+        if (!Objects.equals(this.guestOsArch, guestOsArch)) {
             this.guestOsArch = guestOsArch;
             onPropertyChanged(new PropertyChangedEventArgs("GuestOsArch")); //$NON-NLS-1$
         }
@@ -176,7 +178,7 @@ public class VmGuestInfoModel extends EntityModel<VM> {
     }
 
     public void setGuestOsCodename(String guestOsCodename) {
-        if (!ObjectUtils.objectsEqual(this.guestOsCodename, guestOsCodename)) {
+        if (!Objects.equals(this.guestOsCodename, guestOsCodename)) {
             this.guestOsCodename = guestOsCodename;
             onPropertyChanged(new PropertyChangedEventArgs("GuestOsCodename")); //$NON-NLS-1$
         }
@@ -187,7 +189,7 @@ public class VmGuestInfoModel extends EntityModel<VM> {
     }
 
     public void setGuestOsDistribution(String guestOsDistribution) {
-        if (!ObjectUtils.objectsEqual(this.guestOsDistribution, guestOsDistribution)) {
+        if (!Objects.equals(this.guestOsDistribution, guestOsDistribution)) {
             this.guestOsDistribution = guestOsDistribution;
             onPropertyChanged(new PropertyChangedEventArgs("GuestOsDistribution")); //$NON-NLS-1$
         }
@@ -198,7 +200,7 @@ public class VmGuestInfoModel extends EntityModel<VM> {
     }
 
     public void setGuestOsKernelVersion(String guestOsKernelVersion) {
-        if (!ObjectUtils.objectsEqual(this.guestOsKernelVersion, guestOsKernelVersion)) {
+        if (!Objects.equals(this.guestOsKernelVersion, guestOsKernelVersion)) {
             this.guestOsKernelVersion = guestOsKernelVersion;
             onPropertyChanged(new PropertyChangedEventArgs("GuestOsKernelVersion")); //$NON-NLS-1$
         }
@@ -209,7 +211,7 @@ public class VmGuestInfoModel extends EntityModel<VM> {
     }
 
     public void setGuestOsVersion(String guestOsVersion) {
-        if (!ObjectUtils.objectsEqual(this.guestOsVersion, guestOsVersion)) {
+        if (!Objects.equals(this.guestOsVersion, guestOsVersion)) {
             this.guestOsVersion = guestOsVersion;
             onPropertyChanged(new PropertyChangedEventArgs("GuestOsVersion")); //$NON-NLS-1$
         }
@@ -220,7 +222,7 @@ public class VmGuestInfoModel extends EntityModel<VM> {
     }
 
     public void setGuestOsTimezoneName(String guestOsTimezoneName) {
-        if (!ObjectUtils.objectsEqual(this.guestOsTimezoneName, guestOsTimezoneName)) {
+        if (!Objects.equals(this.guestOsTimezoneName, guestOsTimezoneName)) {
             this.guestOsTimezoneName = guestOsTimezoneName;
             onPropertyChanged(new PropertyChangedEventArgs("TimezoneName")); //$NON-NLS-1$
         }
@@ -231,7 +233,7 @@ public class VmGuestInfoModel extends EntityModel<VM> {
     }
 
     public void setGuestOsTimezoneOffset(Integer guestOsTimezoneOffset) {
-        if (!ObjectUtils.objectsEqual(this.guestOsTimezoneOffset, guestOsTimezoneOffset)) {
+        if (!Objects.equals(this.guestOsTimezoneOffset, guestOsTimezoneOffset)) {
             this.guestOsTimezoneOffset = guestOsTimezoneOffset;
             onPropertyChanged(new PropertyChangedEventArgs("TimezoneOffset")); //$NON-NLS-1$
         }

@@ -10,16 +10,6 @@ import org.junit.Test;
 public class ObjectUtilsTest {
 
     @Test
-    public void testObjectsEqual() {
-        Integer ten = Integer.valueOf(10);
-        assertFalse(ObjectUtils.objectsEqual(ten, Integer.valueOf(20)));
-        assertTrue(ObjectUtils.objectsEqual(ten, Integer.valueOf(10)));
-        assertTrue(ObjectUtils.objectsEqual(null, null));
-        assertFalse(ObjectUtils.objectsEqual(ten, null));
-        assertFalse(ObjectUtils.objectsEqual(null, ten));
-    }
-
-    @Test
     public void testBigDecimalEqual() {
         assertTrue(ObjectUtils.bigDecimalEqual(new BigDecimal("0"), new BigDecimal("0.0")));
         assertTrue(ObjectUtils.bigDecimalEqual(new BigDecimal("0.0"), new BigDecimal("0.00")));

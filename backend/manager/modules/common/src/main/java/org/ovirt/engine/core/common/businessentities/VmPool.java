@@ -1,12 +1,13 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Objects;
+
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidUri;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -105,15 +106,15 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         VmPool other = (VmPool) obj;
         // Don't use defaultStartTime and defaultEndTime in equals method
         // as they will never match because of how they are initialized.
-        return (ObjectUtils.objectsEqual(id, other.id)
+        return (Objects.equals(id, other.id)
                 && defaultTimeInDays == other.defaultTimeInDays
-                && ObjectUtils.objectsEqual(parameters, other.parameters)
-                && ObjectUtils.objectsEqual(vdsGroupId, other.vdsGroupId)
-                && ObjectUtils.objectsEqual(description, other.description)
-                && ObjectUtils.objectsEqual(name, other.name)
-                && ObjectUtils.objectsEqual(type, other.type)
+                && Objects.equals(parameters, other.parameters)
+                && Objects.equals(vdsGroupId, other.vdsGroupId)
+                && Objects.equals(description, other.description)
+                && Objects.equals(name, other.name)
+                && Objects.equals(type, other.type)
                 && maxAssignedVmsPerUser == other.maxAssignedVmsPerUser
-                && ObjectUtils.objectsEqual(spiceProxy, other.spiceProxy));
+                && Objects.equals(spiceProxy, other.spiceProxy));
     }
 
     @Override

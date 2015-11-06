@@ -2,9 +2,9 @@ package org.ovirt.engine.core.aaa;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 
 public class DirectoryEntry implements IVdcQueryable {
     private static final long serialVersionUID = -5689096270467866486L;
@@ -115,10 +115,10 @@ public class DirectoryEntry implements IVdcQueryable {
         }
         DirectoryEntry other = (DirectoryEntry) obj;
         return (
-                ObjectUtils.objectsEqual(id, other.id) &&
-                ObjectUtils.objectsEqual(name, other.name) &&
-                ObjectUtils.objectsEqual(status, other.status) &&
-                ObjectUtils.objectsEqual(directoryName, other.directoryName)
+                Objects.equals(id, other.id) &&
+                        Objects.equals(name, other.name) &&
+                        Objects.equals(status, other.status) &&
+                        Objects.equals(directoryName, other.directoryName)
                );
     }
 

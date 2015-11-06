@@ -42,6 +42,7 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
+
 import com.google.inject.Inject;
 
 public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> implements ISupportSystemTreeContext {

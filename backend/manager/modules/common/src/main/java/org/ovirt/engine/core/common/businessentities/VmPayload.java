@@ -3,10 +3,10 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -121,7 +121,7 @@ public class VmPayload extends VmDevice implements Serializable {
         }
         VmPayload other = (VmPayload) obj;
         return (super.equals(obj)
-                && ObjectUtils.objectsEqual(volumeId, other.volumeId)
-                && ObjectUtils.objectsEqual(files, other.files));
+                && Objects.equals(volumeId, other.volumeId)
+                && Objects.equals(files, other.files));
     }
 }
