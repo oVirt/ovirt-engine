@@ -31,14 +31,13 @@ Install the following system components:
 Maven-3 is required, download and extract if not installed using
 distribution package management, and add to PATH.
 
-JBoss EAP is required, download[1] and extract into /opt, wildfly can also
-be used but it requires ovirt-overlay to be usable. Easier to use jboss-eap
-for now.
+WildFly 10 is required along with ovirt-engine-wildfly-overlay. Preferred way
+is to install following packages:
 
-[1] http://www.jboss.org/products/eap/download/
+  ovirt-engine-wildfly
+  ovirt-engine-wildfly-overlay
 
-Both application servers can be installed from ovirt-master-snapshot-static
-repository:
+Both packages can be installed from ovirt-master-snapshot-static repository:
 
   [ovirt-master-snapshot-static]
   name=Latest oVirt master additional nightly snapshot
