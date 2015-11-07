@@ -2275,6 +2275,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     ImportVmFromExternalProviderSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    AutoImportHostedEngine,
+
     Invalid
 
 }

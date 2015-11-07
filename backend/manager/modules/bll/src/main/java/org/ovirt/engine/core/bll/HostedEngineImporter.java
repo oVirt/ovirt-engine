@@ -18,6 +18,8 @@ import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -27,8 +29,10 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
@@ -56,6 +60,8 @@ public class HostedEngineImporter {
     private VdsGroupDao vdsGroupDAO;
     @Inject
     private VmStaticDao vmStaticDAO;
+    @Inject
+    private StoragePoolDao storagePoolDao;
 
     /**
      * Import the VM into ovirt engine by removing the old, un-managed VM
@@ -64,11 +70,18 @@ public class HostedEngineImporter {
      * @param vm         the VM to import
      */
     public void doImport(VM vm) {
+        StoragePool storagePool = storagePoolDao.getForVdsGroup(vm.getVdsGroupId());
+        VDSGroup vdsGroup = vdsGroupDAO.get(vm.getVdsGroupId());
+        if (!importSupported(storagePool.getCompatibilityVersion(), vdsGroup.getCompatibilityVersion())) {
+            return;
+        }
         VdcReturnValueBase heVmImported;
         // get the special sd of hosted engine
         StorageDomain sd = getHEStorageDomain(vm);
         // no point in trying this without the SD
-        if (sd != null && (sd.getStatus() == StorageDomainStatus.Active)) {
+        if (sd != null
+                && (sd.getStatus() == StorageDomainStatus.Active)
+                && storagePool.getStatus() == StoragePoolStatus.Up) {
             log.info("Try to import the Hosted Engine VM '{}'", vm);
             if (vmStaticDAO.get(vm.getId()) == null || removedHEVM(vm)) {
 
@@ -93,6 +106,11 @@ public class HostedEngineImporter {
             }
         }
 
+    }
+
+    private boolean importSupported(Version spVersion, Version vdsGroupVersion) {
+        return Version.v3_5.compareTo(spVersion) >= 0 && Version.v3_6.compareTo(vdsGroupVersion) >= 0
+                && Config.<Boolean> getValue(ConfigValues.AutoImportHostedEngine);
     }
 
     private boolean removedHEVM(VM vm) {
