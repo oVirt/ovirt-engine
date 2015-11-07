@@ -217,10 +217,8 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
         final CinderDisk cinderVolume =
                 getParameters().getChildCommandsParameters().get(removedVolumeIndex).getRemovedVolume();
         getImageDao().updateStatusOfImagesByImageGroupId(getDisk().getId(), ImageStatus.ILLEGAL);
-        if (getParameters().getShouldBeLogged()) {
-            addCustomValue("imageId", cinderVolume.getImageId().toString());
-            new AuditLogDirector().log(this, AuditLogType.USER_FINISHED_FAILED_REMOVE_CINDER_DISK);
-        }
+        addCustomValue("imageId", cinderVolume.getImageId().toString());
+        new AuditLogDirector().log(this, AuditLogType.USER_FINISHED_FAILED_REMOVE_CINDER_DISK);
         setSucceeded(true);
     }
 
