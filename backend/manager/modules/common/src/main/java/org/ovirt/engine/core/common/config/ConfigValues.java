@@ -2218,6 +2218,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     MultipleGraphicsSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    AutoImportHostedEngine,
+
     Invalid
 
 }
