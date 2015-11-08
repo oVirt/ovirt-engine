@@ -1546,7 +1546,7 @@ actions:
           cluster.management_network.id|name: xs:string
           cluster.memory_policy.overcommit.percent: xs:double
           cluster.memory_policy.transparent_hugepages.enabled: xs:boolean
-          cluster.scheduling_policy.id: xs:string
+          cluster.scheduling_policy.id|name: xs:string
           cluster.threads_as_cores: xs:boolean
           cluster.trusted_service: xs:boolean
           cluster.tunnel_migration: xs:boolean
