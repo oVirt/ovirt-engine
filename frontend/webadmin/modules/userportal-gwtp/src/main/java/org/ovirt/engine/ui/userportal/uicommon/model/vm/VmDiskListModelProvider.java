@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
@@ -20,16 +21,19 @@ public class VmDiskListModelProvider extends UserPortalSearchableDetailModelProv
 
     private final Provider<VmDiskPopupPresenterWidget> diskPopupProvider;
     private final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider;
+    private Provider<VmDiskAttachPopupPresenterWidget> attachPopupProvider;
 
     @Inject
     public VmDiskListModelProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             CurrentUser user,
             Provider<VmDiskPopupPresenterWidget> diskPopupProvider,
-            Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider) {
+            Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider,
+            Provider<VmDiskAttachPopupPresenterWidget> attachPopupProvider) {
         super(eventBus, defaultConfirmPopupProvider, user);
         this.diskPopupProvider = diskPopupProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
+        this.attachPopupProvider = attachPopupProvider;
     }
 
     @Override
@@ -37,7 +41,10 @@ public class VmDiskListModelProvider extends UserPortalSearchableDetailModelProv
             UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand == getModel().getNewCommand() || lastExecutedCommand == getModel().getEditCommand()) {
             return diskPopupProvider.get();
-        } else {
+        } else if(lastExecutedCommand == getModel().getAttachCommand()) {
+            return attachPopupProvider.get();
+        }
+        else {
             return super.getModelPopup(source, lastExecutedCommand, windowModel);
         }
     }
