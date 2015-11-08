@@ -92,7 +92,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
     @Override
     protected boolean canDoAction() {
         // This check is done here to handle a race in which the returned domain from
-        // getStorageDomain() is with LOCKED status. Having this domain with LOCKED status might
+        // getStorageDomains() is with LOCKED status. Having this domain with LOCKED status might
         // cause to the command to apply the compensation data and leave the domain as LOCKED.
         if (!validate(createStorageDomainValidator().isInProcess())) {
             return false;

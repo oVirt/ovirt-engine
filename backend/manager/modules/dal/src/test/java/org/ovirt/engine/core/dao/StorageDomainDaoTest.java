@@ -57,64 +57,61 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetstorage_domain_by_type_for_storagePoolId() {
-        StorageDomain result = dao.getStorageDomain(new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"),
+        List<StorageDomain> result = dao.getStorageDomains(new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"),
                 StorageDomainType.Master);
 
-        assertNotNull(result);
-        assertGetResult(result);
+        assertGetResult(result.get(0));
     }
 
     @Test
     public void testGetStorageDomainWithStatusForExistingPool() {
-        StorageDomain result = dao.getStorageDomain(FixturesTool.DATA_CENTER,
+        List<StorageDomain> result = dao.getStorageDomains(FixturesTool.DATA_CENTER,
                 existingDomain.getStorageDomainType(), StorageDomainStatus.Active);
 
-        assertGetResult(result);
+        assertGetResult(result.get(0));
     }
 
     @Test
     public void testGetStorageDomainWithStatusForInvalidPool() {
-        StorageDomain result = dao.getStorageDomain(Guid.newGuid(),
+        List<StorageDomain> result = dao.getStorageDomains(Guid.newGuid(),
                 existingDomain.getStorageDomainType(), existingDomain.getStatus());
 
-        assertNull(result);
+        assertTrue(result.isEmpty());
     }
 
     @Test
     public void testGetStorageDomainWithCorrectStatus() {
-        StorageDomain result = dao.getStorageDomain(FixturesTool.STORAGE_POOL_NFS_INACTIVE_ISO,
+        List<StorageDomain> result = dao.getStorageDomains(FixturesTool.STORAGE_POOL_NFS_INACTIVE_ISO,
                 StorageDomainType.ISO, StorageDomainStatus.Inactive);
 
-        assertNotNull(result);
-        assertEquals(FixturesTool.STORAGE_DOMAIN_NFS_INACTIVE_ISO, result.getId());
+        assertEquals(FixturesTool.STORAGE_DOMAIN_NFS_INACTIVE_ISO, result.get(0).getId());
     }
 
     @Test
     public void testGetStorageDomainWithWrongStatus() {
-        StorageDomain result = dao.getStorageDomain(FixturesTool.STORAGE_POOL_NFS_INACTIVE_ISO,
+        List<StorageDomain> result = dao.getStorageDomains(FixturesTool.STORAGE_POOL_NFS_INACTIVE_ISO,
                 StorageDomainType.ISO, StorageDomainStatus.Active);
 
-        assertNull(result);
+        assertTrue(result.isEmpty());
     }
 
     @Test
     public void testGetStorageDomainWithNoStatus() {
-        StorageDomain result = dao.getStorageDomain(FixturesTool.STORAGE_POOL_NFS_INACTIVE_ISO,
+        List<StorageDomain> result = dao.getStorageDomains(FixturesTool.STORAGE_POOL_NFS_INACTIVE_ISO,
                 StorageDomainType.ISO, null);
 
-        assertNotNull(result);
-        assertEquals(FixturesTool.STORAGE_DOMAIN_NFS_INACTIVE_ISO, result.getId());
+        assertEquals(FixturesTool.STORAGE_DOMAIN_NFS_INACTIVE_ISO, result.get(0).getId());
     }
 
     @Test
     public void testGetStorageDomainsWithAndWithoutStatusAreEqual() {
-        StorageDomain resultWithoutStatus = dao.getStorageDomain(FixturesTool.STORAGE_POOL_NFS_INACTIVE_ISO,
+        List<StorageDomain> resultWithoutStatus = dao.getStorageDomains(FixturesTool.STORAGE_POOL_NFS_INACTIVE_ISO,
                 StorageDomainType.ISO);
-        StorageDomain resultWithStatus = dao.getStorageDomain(FixturesTool.STORAGE_POOL_NFS_INACTIVE_ISO,
+        List<StorageDomain >resultWithStatus = dao.getStorageDomains(FixturesTool.STORAGE_POOL_NFS_INACTIVE_ISO,
                 StorageDomainType.ISO, null);
 
-        assertNotNull(resultWithoutStatus);
-        assertNotNull(resultWithStatus);
+        assertFalse(resultWithoutStatus.isEmpty());
+        assertFalse(resultWithStatus.isEmpty());
         assertEquals(resultWithoutStatus, resultWithStatus);
     }
 

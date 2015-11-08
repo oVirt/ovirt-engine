@@ -33,13 +33,14 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
     }
 
     @Override
-    public StorageDomain getStorageDomain(Guid poolId, StorageDomainType type) {
-        return getStorageDomain(poolId, type, null);
+    public List<StorageDomain> getStorageDomains(Guid poolId, StorageDomainType type) {
+        return getStorageDomains(poolId, type, null);
     }
 
-    public StorageDomain getStorageDomain(Guid poolId, StorageDomainType type, StorageDomainStatus status) {
+    @Override
+    public List<StorageDomain> getStorageDomains(Guid poolId, StorageDomainType type, StorageDomainStatus status) {
         Integer statusNum = status == null ? null : status.getValue();
-        return getCallsHandler().executeRead("Getstorage_domain_by_type_storagePoolId_and_status",
+        return getCallsHandler().executeReadList("Getstorage_domain_by_type_storagePoolId_and_status",
                 StorageDomainRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("storage_pool_id", poolId)
@@ -241,6 +242,7 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
 
     /**
      * Gets the storage domain id of the given type for the given storage pool id, type and status.
+     * It implicitly assumes there can be only one domain of this type.
      *
      * @param poolId The storage pool id,
      * @param type The storage domain type.
@@ -248,9 +250,9 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
      */
     private Guid getStorageDomainId(Guid poolId, StorageDomainType type, StorageDomainStatus status) {
         Guid returnValue = Guid.Empty;
-        StorageDomain domain = getStorageDomain(poolId, type, status);
-        if (domain != null) {
-            returnValue = domain.getId();
+        List<StorageDomain> domains = getStorageDomains(poolId, type, status);
+        if (!domains.isEmpty()) {
+            returnValue = domains.get(0).getId();
         }
         return returnValue;
     }

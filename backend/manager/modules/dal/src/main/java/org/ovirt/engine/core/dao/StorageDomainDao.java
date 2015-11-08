@@ -32,7 +32,7 @@ public interface StorageDomainDao extends Dao, SearchDao<StorageDomain>, AutoRec
      *            the storage domain type
      * @return the master storage domain
      */
-    StorageDomain getStorageDomain(Guid poolId, StorageDomainType type);
+    List<StorageDomain> getStorageDomains(Guid poolId, StorageDomainType type);
 
     /**
      * Retrieves the storage domain for the specified pool, type and status.
@@ -42,7 +42,7 @@ public interface StorageDomainDao extends Dao, SearchDao<StorageDomain>, AutoRec
      * @param status The storage domain status.
      * @return the storage domain for the specified pool, type and status.
      */
-    StorageDomain getStorageDomain(Guid storagePoolId, StorageDomainType type, StorageDomainStatus status);
+    List<StorageDomain> getStorageDomains(Guid storagePoolId, StorageDomainType type, StorageDomainStatus status);
 
     /**
      * Retrieves the master storage domain for the specified pool.
