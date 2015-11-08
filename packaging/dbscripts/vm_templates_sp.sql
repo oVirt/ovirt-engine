@@ -220,13 +220,19 @@ BEGIN
         v_large_icon_id);
     -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
     DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vmt_guid;
-    INSERT INTO vm_ovf_generations(vm_guid, storage_pool_id)
-    VALUES (v_vmt_guid, (SELECT storage_pool_id
-                         FROM vds_groups vg
-                         WHERE vg.vds_group_id = v_vds_group_id));
+    INSERT INTO vm_ovf_generations(
+        vm_guid,
+        storage_pool_id)
+    VALUES (
+        v_vmt_guid,
+        (SELECT storage_pool_id
+         FROM vds_groups vg
+         WHERE vg.vds_group_id = v_vds_group_id));
 
     -- add connections to dedicated hosts
-    PERFORM InsertDedicatedHostsToVm(v_vmt_guid, v_dedicated_vm_for_vds);
+    PERFORM InsertDedicatedHostsToVm(
+        v_vmt_guid,
+        v_dedicated_vm_for_vds);
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -303,41 +309,76 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE vm_static
-      SET child_count = v_child_count,creation_date = v_creation_date,description = v_description, free_text_comment = v_free_text_comment,
-      mem_size_mb = v_mem_size_mb, num_of_io_threads = v_num_of_io_threads, vm_name = v_name,num_of_sockets = v_num_of_sockets,
-      cpu_per_socket = v_cpu_per_socket,os = v_os,
-      vds_group_id = v_vds_group_id,num_of_monitors = v_num_of_monitors,
-      single_qxl_pci = v_single_qxl_pci, allow_console_reconnect = v_allow_console_reconnect,
-      template_status = v_status,usb_policy = v_usb_policy,time_zone = v_time_zone,
+      SET child_count = v_child_count,
+      creation_date = v_creation_date,
+      description = v_description,
+      free_text_comment = v_free_text_comment,
+      mem_size_mb = v_mem_size_mb,
+      num_of_io_threads = v_num_of_io_threads,
+      vm_name = v_name,
+      num_of_sockets = v_num_of_sockets,
+      cpu_per_socket = v_cpu_per_socket,
+      os = v_os,
+      vds_group_id = v_vds_group_id,
+      num_of_monitors = v_num_of_monitors,
+      single_qxl_pci = v_single_qxl_pci,
+      allow_console_reconnect = v_allow_console_reconnect,
+      template_status = v_status,
+      usb_policy = v_usb_policy,
+      time_zone = v_time_zone,
       fail_back = v_fail_back,
       vm_type = v_vm_type,
       nice_level = v_nice_level,
-      cpu_shares = v_cpu_shares, default_boot_sequence = v_default_boot_sequence,
+      cpu_shares = v_cpu_shares,
+      default_boot_sequence = v_default_boot_sequence,
       default_display_type = v_default_display_type,
-      priority = v_priority,auto_startup = v_auto_startup,is_stateless = v_is_stateless,
-      iso_path = v_iso_path,origin = v_origin,initrd_url = v_initrd_url,
-      kernel_url = v_kernel_url,kernel_params = v_kernel_params, _update_date = CURRENT_TIMESTAMP, quota_id = v_quota_id,
-      migration_support = v_migration_support, dedicated_vm_for_vds = v_dedicated_vm_for_vds, is_smartcard_enabled = v_is_smartcard_enabled,
-      is_delete_protected = v_is_delete_protected, sso_method = v_sso_method, is_disabled = v_is_disabled, tunnel_migration = v_tunnel_migration,
-      vnc_keyboard_layout = v_vnc_keyboard_layout, min_allocated_mem = v_min_allocated_mem, is_run_and_pause = v_is_run_and_pause, created_by_user_id = v_created_by_user_id,
+      priority = v_priority,
+      auto_startup = v_auto_startup,
+      is_stateless = v_is_stateless,
+      iso_path = v_iso_path,
+      origin = v_origin,
+      initrd_url = v_initrd_url,
+      kernel_url = v_kernel_url,
+      kernel_params = v_kernel_params,
+      _update_date = CURRENT_TIMESTAMP,
+      quota_id = v_quota_id,
+      migration_support = v_migration_support,
+      dedicated_vm_for_vds = v_dedicated_vm_for_vds,
+      is_smartcard_enabled = v_is_smartcard_enabled,
+      is_delete_protected = v_is_delete_protected,
+      sso_method = v_sso_method,
+      is_disabled = v_is_disabled,
+      tunnel_migration = v_tunnel_migration,
+      vnc_keyboard_layout = v_vnc_keyboard_layout,
+      min_allocated_mem = v_min_allocated_mem,
+      is_run_and_pause = v_is_run_and_pause,
+      created_by_user_id = v_created_by_user_id,
       migration_downtime = v_migration_downtime,
       template_version_name = v_template_version_name,
-      serial_number_policy = v_serial_number_policy, custom_serial_number = v_custom_serial_number,
+      serial_number_policy = v_serial_number_policy,
+      custom_serial_number = v_custom_serial_number,
       is_boot_menu_enabled = v_is_boot_menu_enabled,
-      is_spice_file_transfer_enabled = v_is_spice_file_transfer_enabled, is_spice_copy_paste_enabled = v_is_spice_copy_paste_enabled, cpu_profile_id = v_cpu_profile_id,
+      is_spice_file_transfer_enabled = v_is_spice_file_transfer_enabled,
+      is_spice_copy_paste_enabled = v_is_spice_copy_paste_enabled,
+      cpu_profile_id = v_cpu_profile_id,
       numatune_mode = v_numatune_mode,
-      is_auto_converge = v_is_auto_converge, is_migrate_compressed = v_is_migrate_compressed,
-      predefined_properties = v_predefined_properties,userdefined_properties = v_userdefined_properties,
-      custom_emulated_machine = v_custom_emulated_machine, custom_cpu_name = v_custom_cpu_name,
+      is_auto_converge = v_is_auto_converge,
+      is_migrate_compressed = v_is_migrate_compressed,
+      predefined_properties = v_predefined_properties,
+      userdefined_properties = v_userdefined_properties,
+      custom_emulated_machine = v_custom_emulated_machine,
+      custom_cpu_name = v_custom_cpu_name,
       small_icon_id = v_small_icon_id,
       large_icon_id = v_large_icon_id
       WHERE vm_guid = v_vmt_guid
-      AND   entity_type = v_template_type;
+          AND entity_type = v_template_type;
 
       -- update template versions to new name
-      update vm_static
-        set vm_name = v_name
-      where vm_guid <> v_vmt_guid and vmt_guid = v_vmt_guid and entity_type = v_template_type;
+      UPDATE vm_static
+        SET vm_name = v_name
+      WHERE vm_guid <> v_vmt_guid
+          AND vmt_guid = v_vmt_guid
+          AND entity_type = v_template_type;
 
       -- Update connections to dedicated hosts
       PERFORM UpdateDedicatedHostsToVm(v_vmt_guid, v_dedicated_vm_for_vds);
@@ -387,12 +428,17 @@ RETURNS VOID
    v_val  UUID;
 BEGIN
         -- Get (and keep) a shared lock with "right to upgrade to exclusive"
-		-- in order to force locking parent before children
-      select   vm_guid INTO v_val FROM vm_static  WHERE vm_guid = v_vmt_guid FOR UPDATE;
+        -- in order to force locking parent before children
+      SELECT   vm_guid INTO v_val
+      FROM vm_static
+      WHERE vm_guid = v_vmt_guid
+      FOR UPDATE;
+
       DELETE FROM vm_static
       WHERE vm_guid = v_vmt_guid;
-		-- delete Template permissions --
-      DELETE FROM permissions where object_id = v_vmt_guid;
+      -- delete Template permissions --
+      DELETE FROM permissions
+      WHERE object_id = v_vmt_guid;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -403,12 +449,14 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION GetAllFromVmTemplates(v_user_id UUID, v_is_filtered boolean, v_entity_type VARCHAR(32)) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
-      RETURN QUERY SELECT vm_templates.*
+      RETURN QUERY
+      SELECT vm_templates.*
       FROM vm_templates_view vm_templates
       WHERE entity_type = v_entity_type
-      AND (NOT v_is_filtered OR EXISTS (SELECT 1
-                                          FROM   user_vm_template_permissions_view
-                                          WHERE  user_id = v_user_id AND entity_id = vmt_guid))
+          AND (NOT v_is_filtered OR EXISTS (SELECT 1
+              FROM   user_vm_template_permissions_view
+              WHERE  user_id = v_user_id
+                  AND entity_id = vmt_guid))
       ORDER BY name;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -419,7 +467,8 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION GetVmTemplatesWithoutIcon() RETURNS SETOF vm_templates_view STABLE
 AS $procedure$
 BEGIN
-RETURN QUERY SELECT vm_template.*
+RETURN QUERY
+   SELECT vm_template.*
    FROM vm_templates_view AS vm_template
    WHERE entity_type = 'TEMPLATE'
       AND (small_icon_id IS NULL OR large_icon_id IS NULL);
@@ -433,7 +482,8 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION GetTemplateCount() RETURNS SETOF BIGINT STABLE
    AS $procedure$
 BEGIN
-      RETURN QUERY SELECT count (vm_templates.*)
+      RETURN QUERY
+      SELECT count (vm_templates.*)
       FROM vm_templates_view vm_templates;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -446,7 +496,8 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION GetVmTemplatesByIds(v_vm_templates_ids VARCHAR(5000)) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
-RETURN QUERY SELECT vm_templates.*
+RETURN QUERY
+   SELECT vm_templates.*
    FROM vm_templates_view vm_templates
    WHERE vm_templates.vmt_guid IN (SELECT * FROM fnSplitterUuid(v_vm_templates_ids));
 END; $procedure$
@@ -461,7 +512,8 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION getAllVmTemplatesRelatedToQuotaId(v_quota_id UUID) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
-	RETURN QUERY SELECT vm_templates.*
+      RETURN QUERY
+      SELECT vm_templates.*
       FROM vm_templates_view vm_templates
       WHERE quota_id = v_quota_id
       UNION
@@ -478,12 +530,15 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION GetVmTemplateByVmtGuid(v_vmt_guid UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
-      RETURN QUERY SELECT vm_templates.*
+      RETURN QUERY
+      SELECT vm_templates.*
       FROM vm_templates_view vm_templates
       WHERE vmt_guid = v_vmt_guid
-      AND (NOT v_is_filtered OR EXISTS (SELECT 1
-                                        FROM   user_vm_template_permissions_view
-                                        WHERE  user_id = v_user_id AND entity_id = v_vmt_guid));
+          AND (NOT v_is_filtered OR EXISTS (
+              SELECT 1
+              FROM   user_vm_template_permissions_view
+              WHERE  user_id = v_user_id
+                  AND entity_id = v_vmt_guid));
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -491,13 +546,16 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION GetVmTemplateByVmtName(v_storage_pool_id UUID, v_vmt_name VARCHAR(255), v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
-      RETURN QUERY SELECT vm_templates.*
+      RETURN QUERY
+      SELECT vm_templates.*
       FROM vm_templates_view vm_templates
       WHERE name = v_vmt_name
-      AND   (v_storage_pool_id is null OR storage_pool_id = v_storage_pool_id OR storage_pool_id is null)
-      AND (NOT v_is_filtered OR EXISTS (SELECT 1
-                                        FROM   user_vm_template_permissions_view
-                                        WHERE  user_id = v_user_id AND entity_id = vmt_guid));
+          AND   (v_storage_pool_id is null OR storage_pool_id = v_storage_pool_id OR storage_pool_id is null)
+          AND (NOT v_is_filtered OR EXISTS (
+              SELECT 1
+              FROM   user_vm_template_permissions_view
+              WHERE  user_id = v_user_id
+                  AND entity_id = vmt_guid));
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -509,7 +567,8 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION GetVmTemplateByVdsGroupId(v_vds_group_id UUID) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
-      RETURN QUERY SELECT vm_templates.*
+      RETURN QUERY
+      SELECT vm_templates.*
       FROM vm_templates_view vm_templates
       WHERE vds_group_id = v_vds_group_id;
 END; $procedure$
@@ -521,9 +580,10 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION GetVmTemplatesByStoragePoolId(v_storage_pool_id UUID) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
-      RETURN QUERY SELECT DISTINCT vm_templates.*
+      RETURN QUERY
+      SELECT DISTINCT vm_templates.*
       FROM vm_templates_view vm_templates
-      where vm_templates.storage_pool_id = v_storage_pool_id;
+      WHERE vm_templates.storage_pool_id = v_storage_pool_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -534,7 +594,8 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION GetVmTemplatesByImageId(v_image_guid UUID) RETURNS SETOF vm_templates_with_plug_info STABLE
    AS $procedure$
 BEGIN
-      RETURN QUERY SELECT *
+      RETURN QUERY
+      SELECT *
       FROM vm_templates_with_plug_info t
       WHERE t.image_guid = v_image_guid;
 END; $procedure$
@@ -544,14 +605,20 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION GetVmTemplatesByStorageDomainId(v_storage_domain_id UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
-      RETURN QUERY SELECT DISTINCT vm_templates.*
+      RETURN QUERY
+      SELECT DISTINCT vm_templates.*
       FROM vm_templates_view vm_templates
       INNER JOIN vm_device vd ON vd.vm_id = vm_templates.vmt_guid
       INNER JOIN images i ON i.image_group_id = vd.device_id AND i.active = TRUE
-      where i.image_guid in(select image_id from image_storage_domain_map where storage_domain_id = v_storage_domain_id)
-      AND (NOT v_is_filtered OR EXISTS (SELECT 1
-                                      FROM   user_vm_template_permissions_view
-                                      WHERE  user_id = v_user_id AND entity_id = vm_templates.vmt_guid));
+      WHERE i.image_guid in(
+          SELECT image_id
+          FROM image_storage_domain_map
+          WHERE storage_domain_id = v_storage_domain_id)
+              AND (NOT v_is_filtered OR EXISTS (
+                  SELECT 1
+                  FROM   user_vm_template_permissions_view
+                  WHERE  user_id = v_user_id
+                      AND entity_id = vm_templates.vmt_guid));
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -562,9 +629,13 @@ Create or replace FUNCTION fn_perms_get_templates_with_permitted_action(v_user_i
 BEGIN
       RETURN QUERY SELECT vm_templates_view.*
       FROM vm_templates_view, user_vm_template_permissions_view
-      WHERE vm_templates_view.vmt_guid = user_vm_template_permissions_view.entity_id AND
-            user_vm_template_permissions_view.user_id = v_user_id AND
-            (SELECT get_entity_permissions(v_user_id, v_action_group_id, vm_templates_view.vmt_guid, 4) IS NOT NULL);
+      WHERE vm_templates_view.vmt_guid = user_vm_template_permissions_view.entity_id
+          AND user_vm_template_permissions_view.user_id = v_user_id
+          AND (SELECT get_entity_permissions(
+              v_user_id,
+              v_action_group_id,
+              vm_templates_view.vmt_guid,
+              4) IS NOT NULL);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -580,14 +651,15 @@ BEGIN
       INNER JOIN vnic_profiles
       ON vnic_profiles.id = vm_interface.vnic_profile_id
       WHERE vnic_profiles.network_id = v_network_id
-      AND vm_interface.vmt_guid = vm_templates_view.vmt_guid);
+          AND vm_interface.vmt_guid = vm_templates_view.vmt_guid);
 END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetVmTemplatesByVnicProfileId(v_vnic_profile_id UUID) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
-   RETURN QUERY SELECT *
+   RETURN QUERY
+   SELECT *
    FROM vm_templates_view
    WHERE EXISTS (
       SELECT 1
@@ -601,10 +673,12 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION GetTemplateVersionsForBaseTemplate(v_base_template_id UUID) RETURNS SETOF vm_templates_view STABLE
 AS $procedure$
 BEGIN
-   RETURN QUERY SELECT *
-   from vm_templates_view
-   where base_template_id = v_base_template_id and vmt_guid != v_base_template_id
-   order by template_version_number desc;
+   RETURN QUERY
+   SELECT *
+   FROM vm_templates_view
+   WHERE base_template_id = v_base_template_id
+       AND vmt_guid != v_base_template_id
+   ORDER BY template_version_number desc;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -612,12 +686,15 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION GetTemplateWithLatestVersionInChain(v_template_id UUID) RETURNS SETOF vm_templates_view STABLE
 AS $procedure$
 BEGIN
-   RETURN QUERY SELECT *
-   from vm_templates_view
-   where base_template_id =
-      (select vmt_guid from vm_static where vm_guid = v_template_id)
-   order by template_version_number desc
-   limit 1;
+   RETURN QUERY
+   SELECT *
+   FROM vm_templates_view
+   WHERE base_template_id =
+      (SELECT vmt_guid
+       FROM vm_static
+       WHERE vm_guid = v_template_id)
+   ORDER BY template_version_number DESC
+   LIMIT 1;
 END; $procedure$
 LANGUAGE plpgsql;
 

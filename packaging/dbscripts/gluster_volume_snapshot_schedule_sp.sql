@@ -1,72 +1,96 @@
+
+
 /* ----------------------------------------------------------------
  Stored procedures for database operations on Gluster Volume Snapshot
  related tables:
       - gluster_volume_snapshot_schedules
 ----------------------------------------------------------------*/
-
-Create or replace FUNCTION InsertGlusterVolumeSnapshotSchedule(v_volume_id UUID,
-                                                               v_job_id VARCHAR(256),
-                                                               v_snapshot_name_prefix VARCHAR(128),
-                                                               v_snapshot_description VARCHAR(1024),
-                                                               v_recurrence VARCHAR(128),
-                                                               v_time_zone VARCHAR(128),
-                                                               v_interval INTEGER,
-                                                               v_start_date TIMESTAMP WITH TIME ZONE,
-                                                               v_execution_time TIME,
-                                                               v_days VARCHAR(256),
-                                                               v_end_by TIMESTAMP WITH TIME ZONE)
-    RETURNS VOID
-    AS $procedure$
+CREATE OR REPLACE FUNCTION InsertGlusterVolumeSnapshotSchedule (
+    v_volume_id UUID,
+    v_job_id VARCHAR(256),
+    v_snapshot_name_prefix VARCHAR(128),
+    v_snapshot_description VARCHAR(1024),
+    v_recurrence VARCHAR(128),
+    v_time_zone VARCHAR(128),
+    v_interval INT,
+    v_start_date TIMESTAMP WITH TIME ZONE,
+    v_execution_time TIME,
+    v_days VARCHAR(256),
+    v_end_by TIMESTAMP WITH TIME ZONE
+    )
+RETURNS VOID AS $PROCEDURE$
 BEGIN
-    INSERT INTO gluster_volume_snapshot_schedules (volume_id, job_id, snapshot_name_prefix,
-        snapshot_description, recurrence, time_zone, interval,
-        start_date, execution_time, days, end_by)
-    VALUES (v_volume_id, v_job_id, v_snapshot_name_prefix,
-        v_snapshot_description, v_recurrence, v_time_zone, v_interval,
-        v_start_date, v_execution_time, v_days, v_end_by);
+    INSERT INTO gluster_volume_snapshot_schedules (
+        volume_id,
+        job_id,
+        snapshot_name_prefix,
+        snapshot_description,
+        recurrence,
+        time_zone,
+        interval,
+        start_date,
+        execution_time,
+        days,
+        end_by
+        )
+    VALUES (
+        v_volume_id,
+        v_job_id,
+        v_snapshot_name_prefix,
+        v_snapshot_description,
+        v_recurrence,
+        v_time_zone,
+        v_interval,
+        v_start_date,
+        v_execution_time,
+        v_days,
+        v_end_by
+        );
 
     UPDATE gluster_volumes
     SET snapshot_scheduled = true
     WHERE id = v_volume_id;
-END; $procedure$
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetGlusterVolumeSnapshotScheduleByVolumeId(v_volume_id UUID)
-    RETURNS SETOF gluster_volume_snapshot_schedules_view STABLE
-    AS $procedure$
+CREATE OR REPLACE FUNCTION GetGlusterVolumeSnapshotScheduleByVolumeId (v_volume_id UUID)
+RETURNS SETOF gluster_volume_snapshot_schedules_view STABLE AS $PROCEDURE$
 BEGIN
-    RETURN QUERY SELECT *
+    RETURN QUERY
+
+    SELECT *
     FROM gluster_volume_snapshot_schedules_view
     WHERE volume_id = v_volume_id;
-END; $procedure$
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION DeleteGlusterVolumeSnapshotScheduleByVolumeId(v_volume_id UUID)
-    RETURNS VOID
-    AS $procedure$
+CREATE OR REPLACE FUNCTION DeleteGlusterVolumeSnapshotScheduleByVolumeId (v_volume_id UUID)
+RETURNS VOID AS $PROCEDURE$
 BEGIN
-    DELETE FROM gluster_volume_snapshot_schedules
+    DELETE
+    FROM gluster_volume_snapshot_schedules
     WHERE volume_id = v_volume_id;
 
     UPDATE gluster_volumes
     SET snapshot_scheduled = false
     WHERE id = v_volume_id;
-END; $procedure$
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION UpdateGlusterVolumeSnapshotScheduleByVolumeId(v_volume_id UUID,
-                                                                v_job_id VARCHAR(256),
-                                                                v_snapshot_name_prefix VARCHAR(128),
-                                                                v_snapshot_description VARCHAR(1024),
-                                                                v_recurrence VARCHAR(128),
-                                                                v_time_zone VARCHAR(128),
-                                                                v_interval INTEGER,
-                                                                v_start_date TIMESTAMP WITH TIME ZONE,
-                                                                v_execution_time TIME,
-                                                                v_days VARCHAR(256),
-                                                                v_end_by TIMESTAMP WITH TIME ZONE)
-    RETURNS VOID
-    AS $procedure$
+CREATE OR REPLACE FUNCTION UpdateGlusterVolumeSnapshotScheduleByVolumeId (
+    v_volume_id UUID,
+    v_job_id VARCHAR(256),
+    v_snapshot_name_prefix VARCHAR(128),
+    v_snapshot_description VARCHAR(1024),
+    v_recurrence VARCHAR(128),
+    v_time_zone VARCHAR(128),
+    v_interval INT,
+    v_start_date TIMESTAMP WITH TIME ZONE,
+    v_execution_time TIME,
+    v_days VARCHAR(256),
+    v_end_by TIMESTAMP WITH TIME ZONE
+    )
+RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE gluster_volume_snapshot_schedules
     SET job_id = v_job_id,
@@ -85,5 +109,7 @@ BEGIN
     UPDATE gluster_volumes
     SET snapshot_scheduled = true
     WHERE id = v_volume_id;
-END; $procedure$
+END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+

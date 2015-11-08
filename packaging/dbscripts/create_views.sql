@@ -1,37 +1,35 @@
+
+
 -- ----------------------------------------------------------------------
 -- Views
 -- ----------------------------------------------------------------------
 CREATE OR REPLACE VIEW domains_with_unregistered_entities_view AS
-SELECT
-    DISTINCT storage_domain_id
-FROM
-    unregistered_ovf_of_entities;
 
-CREATE
-OR REPLACE VIEW vms_for_disk_view AS
-SELECT
-    array_agg ( vm_name ) AS array_vm_names,
+SELECT DISTINCT storage_domain_id
+FROM unregistered_ovf_of_entities;
+
+CREATE OR REPLACE VIEW vms_for_disk_view AS
+
+SELECT array_agg(vm_name) AS array_vm_names,
     device_id,
     entity_type,
-    array_agg ( template_version_name ) AS array_template_version_name
-FROM
-    vm_static
-    JOIN vm_device ON vm_static.vm_guid = vm_device.vm_id
-WHERE
-    device = 'disk'
-GROUP BY
-    device_id,
+    array_agg(template_version_name) AS array_template_version_name
+FROM vm_static
+INNER JOIN vm_device
+    ON vm_static.vm_guid = vm_device.vm_id
+WHERE device = 'disk'
+GROUP BY device_id,
     entity_type;
-CREATE
-OR REPLACE VIEW memory_and_disk_images_storage_domain_view AS
-SELECT
-    images.image_guid AS image_guid,
+
+CREATE OR REPLACE VIEW memory_and_disk_images_storage_domain_view AS
+
+SELECT images.image_guid AS image_guid,
     storage_domain_static.storage_name AS storage_name,
     storage_domain_static.storage AS storage_path,
     storage_pool_iso_map.storage_pool_id AS storage_pool_id,
     storage_domain_static.storage_type AS storage_type,
     images.creation_date AS creation_date,
-    images.size AS SIZE,
+    images.size AS size,
     images.it_guid AS it_guid,
     snapshots.description AS description,
     images.ParentId AS ParentId,
@@ -46,13 +44,9 @@ SELECT
     images.active,
     images.volume_classification,
     vms_for_disk_view.entity_type AS entity_type,
-    array_to_string ( vms_for_disk_view.array_vm_names,
-        ',' ) AS vm_names,
-    COALESCE ( array_upper ( vms_for_disk_view.array_vm_names,
-            1 ),
-        0 ) AS number_of_vms,
-    array_to_string ( vms_for_disk_view.array_template_version_name,
-         ',' ) AS template_version_names,
+    array_to_string(vms_for_disk_view.array_vm_names, ',') AS vm_names,
+    COALESCE(array_upper(vms_for_disk_view.array_vm_names, 1), 0) AS number_of_vms,
+    array_to_string(vms_for_disk_view.array_template_version_name, ',') AS template_version_names,
     base_disks.disk_id,
     base_disks.disk_alias AS disk_alias,
     base_disks.disk_description AS disk_description,
@@ -74,128 +68,99 @@ SELECT
     disk_image_dynamic.write_latency_seconds AS write_latency_seconds,
     disk_image_dynamic.flush_latency_seconds AS flush_latency_seconds,
     base_disks.alignment AS alignment,
-    base_disks.disk_storage_type as disk_storage_type,
-    base_disks.cinder_volume_type as cinder_volume_type,
+    base_disks.disk_storage_type AS disk_storage_type,
+    base_disks.cinder_volume_type AS cinder_volume_type,
     base_disks.last_alignment_scan AS last_alignment_scan,
     EXISTS (
-        SELECT
-            1
-        FROM
-            storage_domains_ovf_info
-        WHERE
-            images.image_group_id = storage_domains_ovf_info.ovf_disk_id ) AS ovf_store,
+        SELECT 1
+        FROM storage_domains_ovf_info
+        WHERE images.image_group_id = storage_domains_ovf_info.ovf_disk_id
+        ) AS ovf_store,
     EXISTS (
-        SELECT
-	    1
-	FROM
-	    snapshots
-	WHERE
-	    images.image_group_id IN (snapshots.memory_metadata_disk_id, snapshots.memory_dump_disk_id))
-        as memory_image
-FROM
-    images
-LEFT
-OUTER
-    JOIN disk_image_dynamic ON images.image_guid = disk_image_dynamic.image_id
-LEFT
-OUTER JOIN base_disks ON images.image_group_id = base_disks.disk_id
-LEFT
-OUTER JOIN vms_for_disk_view ON vms_for_disk_view.device_id = images.image_group_id
-LEFT JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
-LEFT
-OUTER JOIN storage_domain_static ON image_storage_domain_map.storage_domain_id = storage_domain_static.id
-LEFT
-OUTER JOIN snapshots ON images.vm_snapshot_id = snapshots.snapshot_id
-LEFT
-OUTER JOIN quota ON image_storage_domain_map.quota_id = quota.id
-LEFT
-OUTER JOIN disk_profiles ON image_storage_domain_map.disk_profile_id = disk_profiles.id
-LEFT
-OUTER JOIN storage_pool_iso_map ON storage_pool_iso_map.storage_id = storage_domain_static.id
-LEFT
-OUTER JOIN storage_pool ON storage_pool.id = storage_pool_iso_map.storage_pool_id
-WHERE
-    images.image_guid != '00000000-0000-0000-0000-000000000000';
-CREATE
-OR REPLACE VIEW images_storage_domain_view AS -- TODO: Change code to treat disks values directly instead of through this view.
-SELECT
-    *
-FROM
-    memory_and_disk_images_storage_domain_view
-WHERE
-    memory_image = FALSE;
-CREATE
-OR REPLACE VIEW storage_domain_file_repos AS
-SELECT
-    storage_domain_static.id AS storage_domain_id,
+        SELECT 1
+        FROM snapshots
+        WHERE images.image_group_id IN (
+                snapshots.memory_metadata_disk_id,
+                snapshots.memory_dump_disk_id
+                )
+        ) AS memory_image
+FROM images
+LEFT JOIN disk_image_dynamic
+    ON images.image_guid = disk_image_dynamic.image_id
+LEFT JOIN base_disks
+    ON images.image_group_id = base_disks.disk_id
+LEFT JOIN vms_for_disk_view
+    ON vms_for_disk_view.device_id = images.image_group_id
+LEFT JOIN image_storage_domain_map
+    ON image_storage_domain_map.image_id = images.image_guid
+LEFT JOIN storage_domain_static
+    ON image_storage_domain_map.storage_domain_id = storage_domain_static.id
+LEFT JOIN snapshots
+    ON images.vm_snapshot_id = snapshots.snapshot_id
+LEFT JOIN quota
+    ON image_storage_domain_map.quota_id = quota.id
+LEFT JOIN disk_profiles
+    ON image_storage_domain_map.disk_profile_id = disk_profiles.id
+LEFT JOIN storage_pool_iso_map
+    ON storage_pool_iso_map.storage_id = storage_domain_static.id
+LEFT JOIN storage_pool
+    ON storage_pool.id = storage_pool_iso_map.storage_pool_id
+WHERE images.image_guid != '00000000-0000-0000-0000-000000000000';
+
+CREATE OR REPLACE VIEW images_storage_domain_view AS -- TODO: Change code to treat disks values directly instead of through this view.
+
+SELECT *
+FROM memory_and_disk_images_storage_domain_view
+WHERE memory_image = FALSE;
+
+CREATE OR REPLACE VIEW storage_domain_file_repos AS
+
+SELECT storage_domain_static.id AS storage_domain_id,
     storage_domain_static.storage_domain_type AS storage_domain_type,
     storage_pool_iso_map.storage_pool_id AS storage_pool_id,
     storage_pool_iso_map.status AS storage_domain_status,
     repo_file_meta_data.repo_image_id AS repo_image_id,
-    repo_file_meta_data.size AS SIZE,
+    repo_file_meta_data.size AS size,
     repo_file_meta_data.date_created AS date_created,
     repo_file_meta_data.last_refreshed AS last_refreshed,
     repo_file_meta_data.file_type AS file_type,
     vds_dynamic.status AS vds_status,
     storage_pool.status AS storage_pool_status
-FROM
-    storage_domain_static
-INNER JOIN storage_pool_iso_map ON storage_domain_static.id = storage_pool_iso_map.storage_id
-INNER JOIN storage_pool ON storage_pool.id = storage_pool_iso_map.storage_pool_id
-INNER JOIN vds_dynamic ON vds_dynamic.vds_id = storage_pool.spm_vds_id
-LEFT
-OUTER JOIN repo_file_meta_data ON storage_pool_iso_map.storage_id = repo_file_meta_data.repo_domain_id;
-CREATE
-OR REPLACE VIEW storage_for_image_view AS
-SELECT
-    images.image_guid AS image_id,
-    array_to_string ( array_agg ( storage_domain_static.storage )
-,
-        ',' ) AS storage_path,
-    array_to_string ( array_agg ( storage_domain_static.id )
-,
-        ',' )
-    storage_id,
-    array_to_string ( array_agg ( storage_domain_static.storage_type )
-,
-        ',' )
-    storage_type,
-    array_to_string ( array_agg ( storage_domain_static.storage_name )
-,
-        ',' ) AS storage_name,
-    array_to_string ( array_agg ( COALESCE ( CAST ( quota.id AS VARCHAR )
-,
-                '' ) )
-,
-        ',' ) AS quota_id,
-    array_to_string ( array_agg ( COALESCE ( quota.quota_name,
-                '' ) )
-,
-        ',' ) AS quota_name,
-    array_to_string ( array_agg ( COALESCE ( CAST ( disk_profiles.id AS VARCHAR )
-,
-                '' ) )
-,
-        ',' ) AS disk_profile_id,
-    array_to_string ( array_agg ( COALESCE ( disk_profiles.name,
-                '' ) )
-,
-        ',' ) AS disk_profile_name
-FROM
-    images
-LEFT JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
-LEFT
-OUTER JOIN storage_domain_static ON image_storage_domain_map.storage_domain_id = storage_domain_static.id
-LEFT
-OUTER JOIN quota ON image_storage_domain_map.quota_id = quota.id
-LEFT
-OUTER JOIN disk_profiles ON image_storage_domain_map.disk_profile_id = disk_profiles.id
-GROUP BY
-    images.image_guid;
-CREATE
-OR REPLACE VIEW vm_images_view AS
-SELECT
-    storage_for_image_view.storage_id AS storage_id,
+FROM storage_domain_static
+INNER JOIN storage_pool_iso_map
+    ON storage_domain_static.id = storage_pool_iso_map.storage_id
+INNER JOIN storage_pool
+    ON storage_pool.id = storage_pool_iso_map.storage_pool_id
+INNER JOIN vds_dynamic
+    ON vds_dynamic.vds_id = storage_pool.spm_vds_id
+LEFT JOIN repo_file_meta_data
+    ON storage_pool_iso_map.storage_id = repo_file_meta_data.repo_domain_id;
+
+CREATE OR REPLACE VIEW storage_for_image_view AS
+
+SELECT images.image_guid AS image_id,
+    array_to_string(array_agg(storage_domain_static.storage), ',') AS storage_path,
+    array_to_string(array_agg(storage_domain_static.id), ',') storage_id,
+    array_to_string(array_agg(storage_domain_static.storage_type), ',') storage_type,
+    array_to_string(array_agg(storage_domain_static.storage_name), ',') AS storage_name,
+    array_to_string(array_agg(COALESCE(CAST(quota.id AS VARCHAR), '')), ',') AS quota_id,
+    array_to_string(array_agg(COALESCE(quota.quota_name, '')), ',') AS quota_name,
+    array_to_string(array_agg(COALESCE(CAST(disk_profiles.id AS VARCHAR), '')), ',') AS disk_profile_id,
+    array_to_string(array_agg(COALESCE(disk_profiles.name, '')), ',') AS disk_profile_name
+FROM images
+LEFT JOIN image_storage_domain_map
+    ON image_storage_domain_map.image_id = images.image_guid
+LEFT JOIN storage_domain_static
+    ON image_storage_domain_map.storage_domain_id = storage_domain_static.id
+LEFT JOIN quota
+    ON image_storage_domain_map.quota_id = quota.id
+LEFT JOIN disk_profiles
+    ON image_storage_domain_map.disk_profile_id = disk_profiles.id
+GROUP BY images.image_guid;
+
+CREATE OR REPLACE VIEW vm_images_view AS
+
+SELECT storage_for_image_view.storage_id AS storage_id,
     storage_for_image_view.storage_path AS storage_path,
     storage_for_image_view.storage_name AS storage_name,
     storage_for_image_view.storage_type,
@@ -208,7 +173,7 @@ SELECT
     disk_image_dynamic.write_latency_seconds AS write_latency_seconds,
     disk_image_dynamic.flush_latency_seconds AS flush_latency_seconds,
     disk_image_dynamic.write_rate AS write_rate,
-    images_storage_domain_view.size AS SIZE,
+    images_storage_domain_view.size AS size,
     images_storage_domain_view.it_guid AS it_guid,
     images_storage_domain_view.description AS description,
     images_storage_domain_view.ParentId AS ParentId,
@@ -242,18 +207,18 @@ SELECT
     images_storage_domain_view.alignment AS alignment,
     images_storage_domain_view.last_alignment_scan AS last_alignment_scan,
     images_storage_domain_view.ovf_store AS ovf_store,
-    images_storage_domain_view.disk_storage_type as disk_storage_type,
-    images_storage_domain_view.cinder_volume_type as cinder_volume_type
-FROM
-    images_storage_domain_view
-INNER JOIN disk_image_dynamic ON images_storage_domain_view.image_guid = disk_image_dynamic.image_id
-INNER JOIN storage_for_image_view ON images_storage_domain_view.image_guid = storage_for_image_view.image_id
-WHERE
-    images_storage_domain_view.active = TRUE;
-CREATE
-OR REPLACE VIEW all_disks_including_snapshots AS
-SELECT
-    storage_impl.*,
+    images_storage_domain_view.disk_storage_type AS disk_storage_type,
+    images_storage_domain_view.cinder_volume_type AS cinder_volume_type
+FROM images_storage_domain_view
+INNER JOIN disk_image_dynamic
+    ON images_storage_domain_view.image_guid = disk_image_dynamic.image_id
+INNER JOIN storage_for_image_view
+    ON images_storage_domain_view.image_guid = storage_for_image_view.image_id
+WHERE images_storage_domain_view.active = TRUE;
+
+CREATE OR REPLACE VIEW all_disks_including_snapshots AS
+
+SELECT storage_impl.*,
     bd.disk_id,
     -- Disk fields
     bd.disk_interface,
@@ -269,169 +234,165 @@ SELECT
     bd.disk_storage_type,
     bd.cinder_volume_type
 FROM (
-        SELECT
-            storage_for_image_view.storage_id AS storage_id,
-            -- Storage fields
-            storage_for_image_view.storage_path AS storage_path,
-            storage_for_image_view.storage_name AS storage_name,
-            storage_for_image_view.storage_type AS storage_type,
-            storage_pool_id,
-            image_guid,
-            -- Image fields
-            creation_date,
-            actual_size,
-            read_rate,
-            write_rate,
-            read_latency_seconds,
-            write_latency_seconds,
-            flush_latency_seconds,
-            SIZE,
-            it_guid,
-            imageStatus,
-            lastModified,
-            volume_type,
-            volume_format,
-            image_group_id,
-            description,
-            -- Snapshot fields
-            ParentId,
-            app_list,
-            vm_snapshot_id,
-            active,
-            volume_classification,
-            entity_type,
-            number_of_vms,
-            vm_names,
-            template_version_names,
-            storage_for_image_view.quota_id AS quota_id,
-            -- Quota fields
-            storage_for_image_view.quota_name AS quota_name,
-            quota_enforcement_type,
-            ovf_store,
-            storage_for_image_view.disk_profile_id AS disk_profile_id,
-            -- disk profile fields
-            storage_for_image_view.disk_profile_name AS disk_profile_name,
-            NULL AS lun_id,
-            -- LUN fields
-            NULL AS physical_volume_id,
-            NULL AS volume_group_id,
-            NULL AS serial,
-            NULL AS lun_mapping,
-            NULL AS vendor_id,
-            NULL AS product_id,
-            NULL AS device_size
-        FROM
-            images_storage_domain_view
-        INNER JOIN storage_for_image_view ON images_storage_domain_view.image_guid = storage_for_image_view.image_id
-        GROUP BY
-            storage_for_image_view.storage_id,
-            storage_for_image_view.storage_path,
-            storage_for_image_view.storage_name,
-            storage_for_image_view.storage_type,
-            storage_pool_id,
-            image_guid,
-            -- Image fields
-            creation_date,
-            actual_size,
-            read_rate,
-            write_rate,
-            read_latency_seconds,
-            write_latency_seconds,
-            flush_latency_seconds,
-            SIZE,
-            it_guid,
-            imageStatus,
-            lastModified,
-            volume_type,
-            volume_format,
-            image_group_id,
-            description,
-            -- Snapshot fields
-            ParentId,
-            app_list,
-            vm_snapshot_id,
-            active,
-            volume_classification,
-            entity_type,
-            number_of_vms,
-            vm_names,
-            template_version_names,
-            storage_for_image_view.quota_id,
-            storage_for_image_view.quota_name,
-            quota_enforcement_type,
-            ovf_store,
-            storage_for_image_view.disk_profile_id,
-            storage_for_image_view.disk_profile_name
-        UNION
-            ALL
-        SELECT
-            NULL AS storage_id,
-            -- Storage domain fields
-            NULL AS storage_path,
-            NULL AS storage_name,
-            NULL AS storage_type,
-            NULL AS storage_pool_id,
-            NULL AS image_guid,
-            -- Image fields
-            NULL AS creation_date,
-            NULL AS actual_size,
-            NULL AS read_rate,
-            NULL AS write_rate,
-            NULL AS read_latency_seconds,
-            NULL AS write_latency_seconds,
-            NULL AS flush_latency_seconds,
-            NULL AS SIZE,
-            NULL AS it_guid,
-            NULL AS imageStatus,
-            NULL AS lastModified,
-            NULL AS volume_type,
-            NULL AS volume_format,
-            dlm.disk_id AS image_group_id,
-            NULL AS description,
-            -- Snapshot fields
-            NULL AS ParentId,
-            NULL AS app_list,
-            NULL AS vm_snapshot_id,
-            NULL AS active,
-            NULL AS volume_classification,
-            vms_for_disk_view.entity_type,
-            COALESCE ( array_upper ( vms_for_disk_view.array_vm_names,
-                    1 )
-,
-                0 ) AS number_of_vms,
-            array_to_string ( vms_for_disk_view.array_vm_names,
-                ',' ) AS vm_names,
-            array_to_string ( vms_for_disk_view.array_template_version_name,
-                ',' ) AS template_version_names,
-            NULL AS quota_id,
-            -- Quota fields
-            NULL AS quota_name,
-            NULL AS quota_enforcement_type,
-            FALSE AS ovf_store,
-            NULL AS disk_profile_id,
-            -- disk profile fields
-            NULL AS disk_profile_name,
-            l.lun_id,
-            -- LUN fields
-            l.physical_volume_id,
-            l.volume_group_id,
-            l.serial,
-            l.lun_mapping,
-            l.vendor_id,
-            l.product_id,
-            l.device_size
-        FROM
-            disk_lun_map dlm
-            JOIN luns l ON l.lun_id = dlm.lun_id
-        LEFT JOIN vms_for_disk_view ON vms_for_disk_view.device_id = dlm.disk_id ) AS storage_impl
-    JOIN base_disks bd ON bd.disk_id = storage_impl.image_group_id;
+    SELECT storage_for_image_view.storage_id AS storage_id,
+        -- Storage fields
+        storage_for_image_view.storage_path AS storage_path,
+        storage_for_image_view.storage_name AS storage_name,
+        storage_for_image_view.storage_type AS storage_type,
+        storage_pool_id,
+        image_guid,
+        -- Image fields
+        creation_date,
+        actual_size,
+        read_rate,
+        write_rate,
+        read_latency_seconds,
+        write_latency_seconds,
+        flush_latency_seconds,
+        size,
+        it_guid,
+        imageStatus,
+        lastModified,
+        volume_type,
+        volume_format,
+        image_group_id,
+        description,
+        -- Snapshot fields
+        ParentId,
+        app_list,
+        vm_snapshot_id,
+        active,
+        volume_classification,
+        entity_type,
+        number_of_vms,
+        vm_names,
+        template_version_names,
+        storage_for_image_view.quota_id AS quota_id,
+        -- Quota fields
+        storage_for_image_view.quota_name AS quota_name,
+        quota_enforcement_type,
+        ovf_store,
+        storage_for_image_view.disk_profile_id AS disk_profile_id,
+        -- disk profile fields
+        storage_for_image_view.disk_profile_name AS disk_profile_name,
+        NULL AS lun_id,
+        -- LUN fields
+        NULL AS physical_volume_id,
+        NULL AS volume_group_id,
+        NULL AS serial,
+        NULL AS lun_mapping,
+        NULL AS vendor_id,
+        NULL AS product_id,
+        NULL AS device_size
+    FROM images_storage_domain_view
+    INNER JOIN storage_for_image_view
+        ON images_storage_domain_view.image_guid = storage_for_image_view.image_id
+    GROUP BY storage_for_image_view.storage_id,
+        storage_for_image_view.storage_path,
+        storage_for_image_view.storage_name,
+        storage_for_image_view.storage_type,
+        storage_pool_id,
+        image_guid,
+        -- Image fields
+        creation_date,
+        actual_size,
+        read_rate,
+        write_rate,
+        read_latency_seconds,
+        write_latency_seconds,
+        flush_latency_seconds,
+        size,
+        it_guid,
+        imageStatus,
+        lastModified,
+        volume_type,
+        volume_format,
+        image_group_id,
+        description,
+        -- Snapshot fields
+        ParentId,
+        app_list,
+        vm_snapshot_id,
+        active,
+        volume_classification,
+        entity_type,
+        number_of_vms,
+        vm_names,
+        template_version_names,
+        storage_for_image_view.quota_id,
+        storage_for_image_view.quota_name,
+        quota_enforcement_type,
+        ovf_store,
+        storage_for_image_view.disk_profile_id,
+        storage_for_image_view.disk_profile_name
+
+    UNION ALL
+
+    SELECT NULL AS storage_id,
+        -- Storage domain fields
+        NULL AS storage_path,
+        NULL AS storage_name,
+        NULL AS storage_type,
+        NULL AS storage_pool_id,
+        NULL AS image_guid,
+        -- Image fields
+        NULL AS creation_date,
+        NULL AS actual_size,
+        NULL AS read_rate,
+        NULL AS write_rate,
+        NULL AS read_latency_seconds,
+        NULL AS write_latency_seconds,
+        NULL AS flush_latency_seconds,
+        NULL AS size,
+        NULL AS it_guid,
+        NULL AS imageStatus,
+        NULL AS lastModified,
+        NULL AS volume_type,
+        NULL AS volume_format,
+        dlm.disk_id AS image_group_id,
+        NULL AS description,
+        -- Snapshot fields
+        NULL AS ParentId,
+        NULL AS app_list,
+        NULL AS vm_snapshot_id,
+        NULL AS active,
+        NULL AS volume_classification,
+        vms_for_disk_view.entity_type,
+        COALESCE(array_upper(vms_for_disk_view.array_vm_names, 1), 0) AS number_of_vms,
+        array_to_string(vms_for_disk_view.array_vm_names, ',') AS vm_names,
+        array_to_string(vms_for_disk_view.array_template_version_name, ',') AS template_version_names,
+        NULL AS quota_id,
+        -- Quota fields
+        NULL AS quota_name,
+        NULL AS quota_enforcement_type,
+        FALSE AS ovf_store,
+        NULL AS disk_profile_id,
+        -- disk profile fields
+        NULL AS disk_profile_name,
+        l.lun_id,
+        -- LUN fields
+        l.physical_volume_id,
+        l.volume_group_id,
+        l.serial,
+        l.lun_mapping,
+        l.vendor_id,
+        l.product_id,
+        l.device_size
+    FROM disk_lun_map dlm
+    INNER JOIN luns l
+        ON l.lun_id = dlm.lun_id
+    LEFT JOIN vms_for_disk_view
+        ON vms_for_disk_view.device_id = dlm.disk_id
+    ) AS storage_impl
+INNER JOIN base_disks bd
+    ON bd.disk_id = storage_impl.image_group_id;
+
 -- The following view is mostly a copy-paste of all_disks_including_snapshots but it uses
 -- memory_and_disk_images_storage_domain_view to get memory disks as well
 -- TODO: when memory disks are handled correctly this view should be deleted
-CREATE
-OR REPLACE VIEW all_disks_including_snapshots_and_memory AS
-SELECT
-    storage_impl.*,
+CREATE OR REPLACE VIEW all_disks_including_snapshots_and_memory AS
+
+SELECT storage_impl.*,
     bd.disk_id,
     -- Disk fields
     bd.disk_interface,
@@ -447,203 +408,199 @@ SELECT
     bd.disk_storage_type,
     bd.cinder_volume_type
 FROM (
-        SELECT
-            storage_for_image_view.storage_id AS storage_id,
-            -- Storage fields
-            storage_for_image_view.storage_path AS storage_path,
-            storage_for_image_view.storage_name AS storage_name,
-            storage_for_image_view.storage_type AS storage_type,
-            storage_pool_id,
-            image_guid,
-            -- Image fields
-            creation_date,
-            actual_size,
-            read_rate,
-            write_rate,
-            read_latency_seconds,
-            write_latency_seconds,
-            flush_latency_seconds,
-            SIZE,
-            it_guid,
-            imageStatus,
-            lastModified,
-            volume_type,
-            volume_format,
-            image_group_id,
-            description,
-            -- Snapshot fields
-            ParentId,
-            app_list,
-            vm_snapshot_id,
-            active,
-            volume_classification,
-            entity_type,
-            number_of_vms,
-            vm_names,
-            template_version_names,
-            storage_for_image_view.quota_id AS quota_id,
-            -- Quota fields
-            storage_for_image_view.quota_name AS quota_name,
-            quota_enforcement_type,
-            ovf_store,
-            storage_for_image_view.disk_profile_id AS disk_profile_id,
-            -- disk profile fields
-            storage_for_image_view.disk_profile_name AS disk_profile_name,
-	    memory_image,
-            NULL AS lun_id,
-            -- LUN fields
-            NULL AS physical_volume_id,
-            NULL AS volume_group_id,
-            NULL AS serial,
-            NULL AS lun_mapping,
-            NULL AS vendor_id,
-            NULL AS product_id,
-            NULL AS device_size
-        FROM
-            memory_and_disk_images_storage_domain_view
-        INNER JOIN storage_for_image_view ON memory_and_disk_images_storage_domain_view.image_guid = storage_for_image_view.image_id
-        GROUP BY
-            storage_for_image_view.storage_id,
-            storage_for_image_view.storage_path,
-            storage_for_image_view.storage_name,
-            storage_for_image_view.storage_type,
-            storage_pool_id,
-            image_guid,
-            -- Image fields
-            creation_date,
-            actual_size,
-            read_rate,
-            write_rate,
-            read_latency_seconds,
-            write_latency_seconds,
-            flush_latency_seconds,
-            SIZE,
-            it_guid,
-            imageStatus,
-            lastModified,
-            volume_type,
-            volume_format,
-            image_group_id,
-            description,
-            -- Snapshot fields
-            ParentId,
-            app_list,
-            vm_snapshot_id,
-            active,
-            volume_classification,
-            entity_type,
-            number_of_vms,
-            vm_names,
-            template_version_names,
-            storage_for_image_view.quota_id,
-            storage_for_image_view.quota_name,
-            quota_enforcement_type,
-            ovf_store,
-            storage_for_image_view.disk_profile_id,
-            storage_for_image_view.disk_profile_name,
-            memory_image
-        UNION
-            ALL
-        SELECT
-            NULL AS storage_id,
-            -- Storage domain fields
-            NULL AS storage_path,
-            NULL AS storage_name,
-            NULL AS storage_type,
-            NULL AS storage_pool_id,
-            NULL AS image_guid,
-            -- Image fields
-            NULL AS creation_date,
-            NULL AS actual_size,
-            NULL AS read_rate,
-            NULL AS write_rate,
-            NULL AS read_latency_seconds,
-            NULL AS write_latency_seconds,
-            NULL AS flush_latency_seconds,
-            NULL AS SIZE,
-            NULL AS it_guid,
-            NULL AS imageStatus,
-            NULL AS lastModified,
-            NULL AS volume_type,
-            NULL AS volume_format,
-            dlm.disk_id AS image_group_id,
-            NULL AS description,
-            -- Snapshot fields
-            NULL AS ParentId,
-            NULL AS app_list,
-            NULL AS vm_snapshot_id,
-            NULL AS active,
-            NULL AS volume_classification,
-            vms_for_disk_view.entity_type,
-            COALESCE ( array_upper ( vms_for_disk_view.array_vm_names,
-                    1 )
-,
-                0 ) AS number_of_vms,
-            array_to_string ( vms_for_disk_view.array_vm_names,
-                ',' ) AS vm_names,
-            array_to_string ( vms_for_disk_view.array_template_version_name,
-                ',' ) AS template_version_names,
-            NULL AS quota_id,
-            -- Quota fields
-            NULL AS quota_name,
-            NULL AS quota_enforcement_type,
-            FALSE AS ovf_store,
-            NULL AS disk_profile_id,
-            -- disk profile fields
-            NULL AS disk_profile_name,
-	    FALSE AS memory_image,
-            l.lun_id,
-            -- LUN fields
-            l.physical_volume_id,
-            l.volume_group_id,
-            l.serial,
-            l.lun_mapping,
-            l.vendor_id,
-            l.product_id,
-            l.device_size
-        FROM
-            disk_lun_map dlm
-            JOIN luns l ON l.lun_id = dlm.lun_id
-        LEFT JOIN vms_for_disk_view ON vms_for_disk_view.device_id = dlm.disk_id ) AS storage_impl
-    JOIN base_disks bd ON bd.disk_id = storage_impl.image_group_id;
-CREATE
-OR REPLACE VIEW all_disks AS
-SELECT
-    *
-FROM
-    all_disks_including_snapshots
-WHERE
-    active IS NULL
+    SELECT storage_for_image_view.storage_id AS storage_id,
+        -- Storage fields
+        storage_for_image_view.storage_path AS storage_path,
+        storage_for_image_view.storage_name AS storage_name,
+        storage_for_image_view.storage_type AS storage_type,
+        storage_pool_id,
+        image_guid,
+        -- Image fields
+        creation_date,
+        actual_size,
+        read_rate,
+        write_rate,
+        read_latency_seconds,
+        write_latency_seconds,
+        flush_latency_seconds,
+        size,
+        it_guid,
+        imageStatus,
+        lastModified,
+        volume_type,
+        volume_format,
+        image_group_id,
+        description,
+        -- Snapshot fields
+        ParentId,
+        app_list,
+        vm_snapshot_id,
+        active,
+        volume_classification,
+        entity_type,
+        number_of_vms,
+        vm_names,
+        template_version_names,
+        storage_for_image_view.quota_id AS quota_id,
+        -- Quota fields
+        storage_for_image_view.quota_name AS quota_name,
+        quota_enforcement_type,
+        ovf_store,
+        storage_for_image_view.disk_profile_id AS disk_profile_id,
+        -- disk profile fields
+        storage_for_image_view.disk_profile_name AS disk_profile_name,
+        memory_image,
+        NULL AS lun_id,
+        -- LUN fields
+        NULL AS physical_volume_id,
+        NULL AS volume_group_id,
+        NULL AS serial,
+        NULL AS lun_mapping,
+        NULL AS vendor_id,
+        NULL AS product_id,
+        NULL AS device_size
+    FROM memory_and_disk_images_storage_domain_view
+    INNER JOIN storage_for_image_view
+        ON memory_and_disk_images_storage_domain_view.image_guid = storage_for_image_view.image_id
+    GROUP BY storage_for_image_view.storage_id,
+        storage_for_image_view.storage_path,
+        storage_for_image_view.storage_name,
+        storage_for_image_view.storage_type,
+        storage_pool_id,
+        image_guid,
+        -- Image fields
+        creation_date,
+        actual_size,
+        read_rate,
+        write_rate,
+        read_latency_seconds,
+        write_latency_seconds,
+        flush_latency_seconds,
+        size,
+        it_guid,
+        imageStatus,
+        lastModified,
+        volume_type,
+        volume_format,
+        image_group_id,
+        description,
+        -- Snapshot fields
+        ParentId,
+        app_list,
+        vm_snapshot_id,
+        active,
+        volume_classification,
+        entity_type,
+        number_of_vms,
+        vm_names,
+        template_version_names,
+        storage_for_image_view.quota_id,
+        storage_for_image_view.quota_name,
+        quota_enforcement_type,
+        ovf_store,
+        storage_for_image_view.disk_profile_id,
+        storage_for_image_view.disk_profile_name,
+        memory_image
+
+    UNION ALL
+
+    SELECT NULL AS storage_id,
+        -- Storage domain fields
+        NULL AS storage_path,
+        NULL AS storage_name,
+        NULL AS storage_type,
+        NULL AS storage_pool_id,
+        NULL AS image_guid,
+        -- Image fields
+        NULL AS creation_date,
+        NULL AS actual_size,
+        NULL AS read_rate,
+        NULL AS write_rate,
+        NULL AS read_latency_seconds,
+        NULL AS write_latency_seconds,
+        NULL AS flush_latency_seconds,
+        NULL AS size,
+        NULL AS it_guid,
+        NULL AS imageStatus,
+        NULL AS lastModified,
+        NULL AS volume_type,
+        NULL AS volume_format,
+        dlm.disk_id AS image_group_id,
+        NULL AS description,
+        -- Snapshot fields
+        NULL AS ParentId,
+        NULL AS app_list,
+        NULL AS vm_snapshot_id,
+        NULL AS active,
+        NULL AS volume_classification,
+        vms_for_disk_view.entity_type,
+        COALESCE(array_upper(vms_for_disk_view.array_vm_names, 1), 0) AS number_of_vms,
+        array_to_string(vms_for_disk_view.array_vm_names, ',') AS vm_names,
+        array_to_string(vms_for_disk_view.array_template_version_name, ',') AS template_version_names,
+        NULL AS quota_id,
+        -- Quota fields
+        NULL AS quota_name,
+        NULL AS quota_enforcement_type,
+        FALSE AS ovf_store,
+        NULL AS disk_profile_id,
+        -- disk profile fields
+        NULL AS disk_profile_name,
+        FALSE AS memory_image,
+        l.lun_id,
+        -- LUN fields
+        l.physical_volume_id,
+        l.volume_group_id,
+        l.serial,
+        l.lun_mapping,
+        l.vendor_id,
+        l.product_id,
+        l.device_size
+    FROM disk_lun_map dlm
+    INNER JOIN luns l
+        ON l.lun_id = dlm.lun_id
+    LEFT JOIN vms_for_disk_view
+        ON vms_for_disk_view.device_id = dlm.disk_id
+    ) AS storage_impl
+INNER JOIN base_disks bd
+    ON bd.disk_id = storage_impl.image_group_id;
+
+CREATE OR REPLACE VIEW all_disks AS
+
+SELECT *
+FROM all_disks_including_snapshots
+WHERE active IS NULL
     OR active = TRUE;
-CREATE
-OR REPLACE VIEW all_disks_including_memory AS
-SELECT
-    *
-FROM
-    all_disks_including_snapshots_and_memory
-WHERE
-    active IS NULL
+
+CREATE OR REPLACE VIEW all_disks_including_memory AS
+
+SELECT *
+FROM all_disks_including_snapshots_and_memory
+WHERE active IS NULL
     OR active = TRUE
     OR memory_image = TRUE;
-CREATE
-OR REPLACE VIEW all_disks_for_vms AS
-SELECT
-    all_disks_including_snapshots.*,
+
+CREATE OR REPLACE VIEW all_disks_for_vms AS
+
+SELECT all_disks_including_snapshots.*,
     vm_device.is_plugged,
     vm_device.is_readonly,
     vm_device.logical_name,
     vm_device.vm_id,
     vm_device.is_using_scsi_reservation
-FROM
-    all_disks_including_snapshots
-    JOIN vm_device ON vm_device.device_id = all_disks_including_snapshots.image_group_id
-WHERE ( ( vm_device.snapshot_id IS NULL
-        AND all_disks_including_snapshots.active IS NOT FALSE )
-    OR vm_device.snapshot_id = all_disks_including_snapshots.vm_snapshot_id );
-CREATE
-OR REPLACE VIEW storage_domains AS
-SELECT
-    storage_domain_static.id AS id,
+FROM all_disks_including_snapshots
+INNER JOIN vm_device
+    ON vm_device.device_id = all_disks_including_snapshots.image_group_id
+WHERE (
+        (
+            vm_device.snapshot_id IS NULL
+            AND all_disks_including_snapshots.active IS NOT FALSE
+            )
+        OR vm_device.snapshot_id = all_disks_including_snapshots.vm_snapshot_id
+        );
+
+CREATE OR REPLACE VIEW storage_domains AS
+
+SELECT storage_domain_static.id AS id,
     storage_domain_static.storage AS storage,
     storage_domain_static.storage_name AS storage_name,
     storage_domain_static.storage_description AS storage_description,
@@ -651,8 +608,8 @@ SELECT
     storage_pool_iso_map.storage_pool_id AS storage_pool_id,
     storage_domain_dynamic.available_disk_size AS available_disk_size,
     storage_domain_dynamic.used_disk_size AS used_disk_size,
-    fn_get_disk_commited_value_by_storage ( storage_domain_static.id ) AS commited_disk_size,
-    fn_get_actual_images_size_by_storage ( storage_domain_static.id ) AS actual_images_size,
+    fn_get_disk_commited_value_by_storage(storage_domain_static.id) AS commited_disk_size,
+    fn_get_actual_images_size_by_storage(storage_domain_static.id) AS actual_images_size,
     storage_pool_iso_map.status AS status,
     storage_pool.name AS storage_pool_name,
     storage_domain_static.storage_type AS storage_type,
@@ -660,29 +617,25 @@ SELECT
     storage_domain_static.storage_domain_format_type AS storage_domain_format_type,
     storage_domain_static.last_time_used_as_master AS last_time_used_as_master,
     storage_domain_static.wipe_after_delete AS wipe_after_delete,
-    fn_get_storage_domain_shared_status_by_domain_id ( storage_domain_static.id,
-        storage_pool_iso_map.status,
-        storage_domain_static.storage_domain_type ) AS storage_domain_shared_status,
+    fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id, storage_pool_iso_map.status, storage_domain_static.storage_domain_type) AS storage_domain_shared_status,
     storage_domain_static.recoverable AS recoverable,
     domains_with_unregistered_entities_view.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
-    storage_domain_static.warning_low_space_indicator as warning_low_space_indicator,
-    storage_domain_static.critical_space_action_blocker as critical_space_action_blocker,
-    storage_domain_dynamic.external_status as external_status
-FROM
-    storage_domain_static
-INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id
-LEFT
-OUTER JOIN storage_pool_iso_map ON storage_domain_static.id = storage_pool_iso_map.storage_id
-LEFT
-OUTER JOIN storage_pool ON storage_pool_iso_map.storage_pool_id = storage_pool.id
-LEFT
-OUTER JOIN domains_with_unregistered_entities_view ON
-    domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id;
+    storage_domain_static.warning_low_space_indicator AS warning_low_space_indicator,
+    storage_domain_static.critical_space_action_blocker AS critical_space_action_blocker,
+    storage_domain_dynamic.external_status AS external_status
+FROM storage_domain_static
+INNER JOIN storage_domain_dynamic
+    ON storage_domain_static.id = storage_domain_dynamic.id
+LEFT JOIN storage_pool_iso_map
+    ON storage_domain_static.id = storage_pool_iso_map.storage_id
+LEFT JOIN storage_pool
+    ON storage_pool_iso_map.storage_pool_id = storage_pool.id
+LEFT JOIN domains_with_unregistered_entities_view
+    ON domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id;
 
-CREATE
-OR REPLACE VIEW storage_domains_without_storage_pools AS
-SELECT
-    DISTINCT storage_domain_static.id AS id,
+CREATE OR REPLACE VIEW storage_domains_without_storage_pools AS
+
+SELECT DISTINCT storage_domain_static.id AS id,
     storage_domain_static.storage AS storage,
     storage_domain_static.storage_name AS storage_name,
     storage_domain_static.storage_description AS storage_description,
@@ -696,30 +649,26 @@ SELECT
     NULL AS storage_pool_name,
     storage_domain_dynamic.available_disk_size AS available_disk_size,
     storage_domain_dynamic.used_disk_size AS used_disk_size,
-    fn_get_disk_commited_value_by_storage ( storage_domain_static.id ) AS commited_disk_size,
-    fn_get_actual_images_size_by_storage ( storage_domain_static.id ) AS actual_images_size,
+    fn_get_disk_commited_value_by_storage(storage_domain_static.id) AS commited_disk_size,
+    fn_get_actual_images_size_by_storage(storage_domain_static.id) AS actual_images_size,
     NULL AS status,
-    fn_get_storage_domain_shared_status_by_domain_id ( storage_domain_static.id,
-        storage_pool_iso_map.status,
-        storage_domain_static.storage_domain_type ) AS storage_domain_shared_status,
+    fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id, storage_pool_iso_map.status, storage_domain_static.storage_domain_type) AS storage_domain_shared_status,
     storage_domain_static.recoverable AS recoverable,
     domains_with_unregistered_entities_view.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
-    storage_domain_static.warning_low_space_indicator as warning_low_space_indicator,
-    storage_domain_static.critical_space_action_blocker as critical_space_action_blocker,
-    storage_domain_dynamic.external_status as external_status
-FROM
-    storage_domain_static
-INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id
-LEFT
-OUTER JOIN storage_pool_iso_map ON storage_domain_static.id = storage_pool_iso_map.storage_id
-LEFT
-OUTER JOIN domains_with_unregistered_entities_view ON
-    domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id;
+    storage_domain_static.warning_low_space_indicator AS warning_low_space_indicator,
+    storage_domain_static.critical_space_action_blocker AS critical_space_action_blocker,
+    storage_domain_dynamic.external_status AS external_status
+FROM storage_domain_static
+INNER JOIN storage_domain_dynamic
+    ON storage_domain_static.id = storage_domain_dynamic.id
+LEFT JOIN storage_pool_iso_map
+    ON storage_domain_static.id = storage_pool_iso_map.storage_id
+LEFT JOIN domains_with_unregistered_entities_view
+    ON domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id;
 
-CREATE
-OR REPLACE VIEW storage_domains_for_search AS
-SELECT
-    storage_domain_static.id AS id,
+CREATE OR REPLACE VIEW storage_domains_for_search AS
+
+SELECT storage_domain_static.id AS id,
     storage_domain_static.storage AS storage,
     storage_domain_static.storage_name AS storage_name,
     storage_domain_static.storage_description AS storage_description,
@@ -730,75 +679,67 @@ SELECT
     storage_domain_static.last_time_used_as_master AS last_time_used_as_master,
     storage_domain_static.wipe_after_delete AS wipe_after_delete,
     CASE
-        WHEN status_table.is_multi_domain THEN NULL
-        WHEN status_table.status IS NULL THEN 2 -- in case domain is unattached
+        WHEN status_table.is_multi_domain
+            THEN NULL
+        WHEN status_table.status IS NULL
+            THEN 2 -- in case domain is unattached
         ELSE status_table.status
-    END AS status,
+        END AS status,
     status_table.storage_pool_ids [ 1 ] AS storage_pool_id,
     status_table.pool_names AS storage_pool_name,
     storage_domain_dynamic.available_disk_size AS available_disk_size,
     storage_domain_dynamic.used_disk_size AS used_disk_size,
-    fn_get_disk_commited_value_by_storage ( storage_domain_static.id ) AS commited_disk_size,
-    fn_get_actual_images_size_by_storage ( storage_domain_static.id ) AS actual_images_size,
-    fn_get_storage_domain_shared_status_by_domain_id ( storage_domain_static.id,
-        status_table.status,
-        storage_domain_static.storage_domain_type ) AS storage_domain_shared_status,
+    fn_get_disk_commited_value_by_storage(storage_domain_static.id) AS commited_disk_size,
+    fn_get_actual_images_size_by_storage(storage_domain_static.id) AS actual_images_size,
+    fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id, status_table.status, storage_domain_static.storage_domain_type) AS storage_domain_shared_status,
     storage_domain_static.recoverable AS recoverable,
     domains_with_unregistered_entities_view.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
-    storage_domain_static.warning_low_space_indicator as warning_low_space_indicator,
-    storage_domain_static.critical_space_action_blocker as critical_space_action_blocker,
-    storage_domain_dynamic.external_status as external_status
-FROM
-    storage_domain_static
-INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id
-LEFT
-OUTER JOIN (
-        SELECT
-            storage_id,
-            COUNT ( storage_id )
-            > 1 AS is_multi_domain,
-            MAX ( storage_pool_iso_map.status ) AS status,
-            array_to_string ( array_agg ( storage_pool.name )
-,
-                ',' ) AS pool_names,
-            CASE
-                WHEN COUNT ( DISTINCT storage_pool.id )
-                = 1 THEN array_agg ( storage_pool.id )
-                ELSE NULL
+    storage_domain_static.warning_low_space_indicator AS warning_low_space_indicator,
+    storage_domain_static.critical_space_action_blocker AS critical_space_action_blocker,
+    storage_domain_dynamic.external_status AS external_status
+FROM storage_domain_static
+INNER JOIN storage_domain_dynamic
+    ON storage_domain_static.id = storage_domain_dynamic.id
+LEFT JOIN (
+    SELECT storage_id,
+        COUNT(storage_id) > 1 AS is_multi_domain,
+        MAX(storage_pool_iso_map.status) AS status,
+        array_to_string(array_agg(storage_pool.name), ',') AS pool_names,
+        CASE
+            WHEN COUNT(DISTINCT storage_pool.id) = 1
+                THEN array_agg(storage_pool.id)
+            ELSE NULL
             END AS storage_pool_ids
-        FROM
-            storage_pool_iso_map
-            JOIN storage_pool ON storage_pool_iso_map.storage_pool_id = storage_pool.id
-        GROUP BY
-            storage_id ) AS status_table ON storage_domain_static.id = status_table.storage_id
-LEFT
-OUTER JOIN domains_with_unregistered_entities_view ON
-    domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id;
+    FROM storage_pool_iso_map
+    INNER JOIN storage_pool
+        ON storage_pool_iso_map.storage_pool_id = storage_pool.id
+    GROUP BY storage_id
+    ) AS status_table
+    ON storage_domain_static.id = status_table.storage_id
+LEFT JOIN domains_with_unregistered_entities_view
+    ON domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id;
 
-CREATE
-OR REPLACE VIEW luns_view AS
-SELECT
-    luns.*,
+CREATE OR REPLACE VIEW luns_view AS
+
+SELECT luns.*,
     storage_domain_static.id AS storage_id,
     storage_domain_static.storage_name AS storage_name,
     disk_lun_map.disk_id AS disk_id,
     all_disks.disk_alias AS disk_alias
-FROM
-    luns
-LEFT
-OUTER JOIN storage_domain_static ON luns.volume_group_id = storage_domain_static.storage
-LEFT
-OUTER JOIN disk_lun_map ON luns.lun_id = disk_lun_map.lun_id
-LEFT
-OUTER JOIN all_disks ON disk_lun_map.disk_id = all_disks.disk_id;
+FROM luns
+LEFT JOIN storage_domain_static
+    ON luns.volume_group_id = storage_domain_static.storage
+LEFT JOIN disk_lun_map
+    ON luns.lun_id = disk_lun_map.lun_id
+LEFT JOIN all_disks
+    ON disk_lun_map.disk_id = all_disks.disk_id;
 
-CREATE
-OR REPLACE VIEW vm_templates_view AS
-SELECT
-    vm_templates.vm_guid AS vmt_guid,
+CREATE OR REPLACE VIEW vm_templates_view AS
+
+SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.vm_name AS name,
     vm_templates.mem_size_mb AS mem_size_mb,
-    vm_templates.num_of_io_threads as num_of_io_threads,
+    vm_templates.num_of_io_threads AS num_of_io_threads,
     vm_templates.os AS os,
     vm_templates.creation_date AS creation_date,
     vm_templates.child_count AS child_count,
@@ -868,37 +809,34 @@ SELECT
     vm_templates.custom_cpu_name AS custom_cpu_name,
     vm_templates.small_icon_id AS small_icon_id,
     vm_templates.large_icon_id AS large_icon_id,
-    vm_templates.console_disconnect_action as console_disconnect_action
-FROM
-    vm_static AS vm_templates
-LEFT
-OUTER JOIN vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id
-LEFT
-OUTER
-    JOIN storage_pool ON storage_pool.id = vds_groups.storage_pool_id
-LEFT
-OUTER
-    JOIN quota ON vm_templates.quota_id = quota.id
-WHERE
-    entity_type = 'TEMPLATE'
+    vm_templates.console_disconnect_action AS console_disconnect_action
+FROM vm_static AS vm_templates
+LEFT JOIN vds_groups
+    ON vm_templates.vds_group_id = vds_groups.vds_group_id
+LEFT JOIN storage_pool
+    ON storage_pool.id = vds_groups.storage_pool_id
+LEFT JOIN quota
+    ON vm_templates.quota_id = quota.id
+WHERE entity_type = 'TEMPLATE'
     OR entity_type = 'INSTANCE_TYPE'
     OR entity_type = 'IMAGE_TYPE';
-CREATE
-OR REPLACE VIEW vm_templates_with_plug_info AS
-SELECT
-    vm_templates_view.*,
+
+CREATE OR REPLACE VIEW vm_templates_with_plug_info AS
+
+SELECT vm_templates_view.*,
     image_guid,
     image_group_id,
     is_plugged
-FROM
-    vm_templates_view
-INNER JOIN vm_device vd ON vd.vm_id = vm_templates_view.vmt_guid
-INNER JOIN images ON images.image_group_id = vd.device_id
-    AND images.active = TRUE;
-CREATE
-OR REPLACE VIEW vm_templates_storage_domain AS
-SELECT
-    vm_templates.vm_guid AS vmt_guid,
+FROM vm_templates_view
+INNER JOIN vm_device vd
+    ON vd.vm_id = vm_templates_view.vmt_guid
+INNER JOIN images
+    ON images.image_group_id = vd.device_id
+        AND images.active = TRUE;
+
+CREATE OR REPLACE VIEW vm_templates_storage_domain AS
+
+SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.vm_name AS name,
     vm_templates.mem_size_mb,
     vm_templates.num_of_io_threads,
@@ -957,24 +895,26 @@ SELECT
     vm_templates.is_migrate_compressed AS is_migrate_compressed,
     vm_templates.predefined_properties AS predefined_properties,
     vm_templates.userdefined_properties AS userdefined_properties
-FROM
-    vm_static AS vm_templates
-LEFT
-OUTER JOIN vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id
-LEFT
-OUTER JOIN storage_pool ON storage_pool.id = vds_groups.storage_pool_id
-INNER JOIN vm_device ON vm_device.vm_id = vm_templates.vm_guid
-LEFT JOIN images ON images.image_group_id = vm_device.device_id
-LEFT JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
-LEFT
-OUTER JOIN quota quota ON quota.id = vm_templates.quota_id
-WHERE
-    entity_type = 'TEMPLATE'
+FROM vm_static AS vm_templates
+LEFT JOIN vds_groups
+    ON vm_templates.vds_group_id = vds_groups.vds_group_id
+LEFT JOIN storage_pool
+    ON storage_pool.id = vds_groups.storage_pool_id
+INNER JOIN vm_device
+    ON vm_device.vm_id = vm_templates.vm_guid
+LEFT JOIN images
+    ON images.image_group_id = vm_device.device_id
+LEFT JOIN image_storage_domain_map
+    ON image_storage_domain_map.image_id = images.image_guid
+LEFT JOIN quota quota
+    ON quota.id = vm_templates.quota_id
+WHERE entity_type = 'TEMPLATE'
     OR entity_type = 'INSTANCE_TYPE'
     OR entity_type = 'IMAGE_TYPE'
+
 UNION
-SELECT
-    vm_templates_1.vm_guid AS vmt_guid,
+
+SELECT vm_templates_1.vm_guid AS vmt_guid,
     vm_templates_1.vm_name AS name,
     vm_templates_1.mem_size_mb,
     vm_templates_1.num_of_io_threads,
@@ -1033,129 +973,122 @@ SELECT
     vm_templates_1.is_migrate_compressed AS is_migrate_compressed,
     vm_templates_1.predefined_properties AS predefined_properties,
     vm_templates_1.userdefined_properties AS userdefined_properties
-FROM
-    vm_static AS vm_templates_1
-LEFT
-OUTER JOIN vds_groups AS vds_groups_1 ON vm_templates_1.vds_group_id = vds_groups_1.vds_group_id
-LEFT
-OUTER JOIN storage_pool AS storage_pool_1 ON storage_pool_1.id = vds_groups_1.storage_pool_id
-INNER JOIN vm_device AS vm_device_1 ON vm_device_1.vm_id = vm_templates_1.vm_guid
-INNER JOIN images AS images_1 ON images_1.image_group_id = vm_device_1.device_id
-INNER JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images_1.image_guid
-LEFT
-OUTER JOIN quota quota ON quota.id = vm_templates_1.quota_id
-WHERE
-    entity_type = 'TEMPLATE'
+FROM vm_static AS vm_templates_1
+LEFT JOIN vds_groups AS vds_groups_1
+    ON vm_templates_1.vds_group_id = vds_groups_1.vds_group_id
+LEFT JOIN storage_pool AS storage_pool_1
+    ON storage_pool_1.id = vds_groups_1.storage_pool_id
+INNER JOIN vm_device AS vm_device_1
+    ON vm_device_1.vm_id = vm_templates_1.vm_guid
+INNER JOIN images AS images_1
+    ON images_1.image_group_id = vm_device_1.device_id
+INNER JOIN image_storage_domain_map
+    ON image_storage_domain_map.image_id = images_1.image_guid
+LEFT JOIN quota quota
+    ON quota.id = vm_templates_1.quota_id
+WHERE entity_type = 'TEMPLATE'
     OR entity_type = 'INSTANCE_TYPE'
     OR entity_type = 'IMAGE_TYPE';
-CREATE
-OR REPLACE VIEW instance_types_view AS
-SELECT
-    *
-FROM
-    vm_templates_view
-WHERE
-    entity_type = 'INSTANCE_TYPE';
-CREATE
-OR REPLACE VIEW instance_types_storage_domain AS
-SELECT
-    *
-FROM
-    vm_templates_storage_domain
-WHERE
-    entity_type = 'INSTANCE_TYPE';
-CREATE
-OR REPLACE VIEW image_types_view AS
-SELECT
-    *
-FROM
-    vm_templates_view
-WHERE
-    entity_type = 'IMAGE_TYPE';
-CREATE
-OR REPLACE VIEW image_types_storage_domain AS
-SELECT
-    *
-FROM
-    vm_templates_storage_domain
-WHERE
-    entity_type = 'IMAGE_TYPE';
-CREATE
-OR REPLACE VIEW vm_pool_map_view AS
-SELECT
-    vm_pool_map.vm_guid AS vm_guid,
+
+CREATE OR REPLACE VIEW instance_types_view AS
+
+SELECT *
+FROM vm_templates_view
+WHERE entity_type = 'INSTANCE_TYPE';
+
+CREATE OR REPLACE VIEW instance_types_storage_domain AS
+
+SELECT *
+FROM vm_templates_storage_domain
+WHERE entity_type = 'INSTANCE_TYPE';
+
+CREATE OR REPLACE VIEW image_types_view AS
+
+SELECT *
+FROM vm_templates_view
+WHERE entity_type = 'IMAGE_TYPE';
+
+CREATE OR REPLACE VIEW image_types_storage_domain AS
+
+SELECT *
+FROM vm_templates_storage_domain
+WHERE entity_type = 'IMAGE_TYPE';
+
+CREATE OR REPLACE VIEW vm_pool_map_view AS
+
+SELECT vm_pool_map.vm_guid AS vm_guid,
     vm_pool_map.vm_pool_id AS vm_pool_id,
     vm_pools.vm_pool_name AS vm_pool_name,
     vm_pools.spice_proxy AS vm_pool_spice_proxy
-FROM
-    vm_pool_map
-INNER JOIN vm_pools ON vm_pool_map.vm_pool_id = vm_pools.vm_pool_id;
-CREATE
-OR REPLACE VIEW tags_vm_pool_map_view AS
-SELECT
-    tags.tag_id AS tag_id,
+FROM vm_pool_map
+INNER JOIN vm_pools
+    ON vm_pool_map.vm_pool_id = vm_pools.vm_pool_id;
+
+CREATE OR REPLACE VIEW tags_vm_pool_map_view AS
+
+SELECT tags.tag_id AS tag_id,
     tags.tag_name AS tag_name,
     tags.parent_id AS parent_id,
     tags.readonly AS readonly,
     tags.type AS type,
     tags_vm_pool_map.vm_pool_id AS vm_pool_id
-FROM
-    tags
-INNER JOIN tags_vm_pool_map ON tags.tag_id = tags_vm_pool_map.tag_id;
-CREATE
-OR REPLACE VIEW tags_vm_map_view AS
-SELECT
-    tags.tag_id AS tag_id,
+FROM tags
+INNER JOIN tags_vm_pool_map
+    ON tags.tag_id = tags_vm_pool_map.tag_id;
+
+CREATE OR REPLACE VIEW tags_vm_map_view AS
+
+SELECT tags.tag_id AS tag_id,
     tags.tag_name AS tag_name,
     tags.parent_id AS parent_id,
     tags.readonly AS readonly,
     tags.type AS type,
     tags_vm_map.vm_id AS vm_id
-FROM
-    tags
-INNER JOIN tags_vm_map ON tags.tag_id = tags_vm_map.tag_id;
-CREATE
-OR REPLACE VIEW tags_vds_map_view AS
-SELECT
-    tags.tag_id AS tag_id,
+FROM tags
+INNER JOIN tags_vm_map
+    ON tags.tag_id = tags_vm_map.tag_id;
+
+CREATE OR REPLACE VIEW tags_vds_map_view AS
+
+SELECT tags.tag_id AS tag_id,
     tags.tag_name AS tag_name,
     tags.parent_id AS parent_id,
     tags.readonly AS readonly,
     tags.type AS type,
     tags_vds_map.vds_id AS vds_id
-FROM
-    tags
-INNER JOIN tags_vds_map ON tags.tag_id = tags_vds_map.tag_id;
-CREATE
-OR REPLACE VIEW tags_user_map_view AS
-SELECT
-    tags.tag_id AS tag_id,
+FROM tags
+INNER JOIN tags_vds_map
+    ON tags.tag_id = tags_vds_map.tag_id;
+
+CREATE OR REPLACE VIEW tags_user_map_view AS
+
+SELECT tags.tag_id AS tag_id,
     tags.tag_name AS tag_name,
     tags.parent_id AS parent_id,
     tags.readonly AS readonly,
     tags.type AS type,
     tags_user_map.user_id AS user_id
-FROM
-    tags
-INNER JOIN tags_user_map ON tags.tag_id = tags_user_map.tag_id;
-CREATE
-OR REPLACE VIEW tags_user_group_map_view AS
-SELECT
-    tags.tag_id AS tag_id,
+FROM tags
+INNER JOIN tags_user_map
+    ON tags.tag_id = tags_user_map.tag_id;
+
+CREATE OR REPLACE VIEW tags_user_group_map_view AS
+
+SELECT tags.tag_id AS tag_id,
     tags.tag_name AS tag_name,
     tags.parent_id AS parent_id,
     tags.readonly AS readonly,
     tags.type AS type,
     tags_user_group_map.group_id AS group_id
-FROM
-    tags_user_group_map
-INNER JOIN tags ON tags_user_group_map.tag_id = tags.tag_id;
-CREATE
-OR REPLACE VIEW vms AS
-SELECT
-    vm_static.vm_name AS vm_name,
+FROM tags_user_group_map
+INNER JOIN tags
+    ON tags_user_group_map.tag_id = tags.tag_id;
+
+CREATE OR REPLACE VIEW vms AS
+
+SELECT vm_static.vm_name AS vm_name,
     vm_static.mem_size_mb AS mem_size_mb,
-    vm_static.num_of_io_threads as num_of_io_threads,
+    vm_static.num_of_io_threads AS num_of_io_threads,
     vm_static.nice_level AS nice_level,
     vm_static.cpu_shares AS cpu_shares,
     vm_static.vmt_guid AS vmt_guid,
@@ -1192,7 +1125,7 @@ SELECT
     vm_templates.description AS vmt_description,
     vm_dynamic.status AS status,
     vm_dynamic.vm_ip AS vm_ip,
-    fn_get_comparable_ip_list(vm_ip) as vm_ip_inet_array,
+    fn_get_comparable_ip_list(vm_ip) AS vm_ip_inet_array,
     vm_dynamic.vm_host AS vm_host,
     vm_dynamic.vm_pid AS vm_pid,
     vm_dynamic.last_start_time AS last_start_time,
@@ -1255,7 +1188,7 @@ SELECT
     vm_static.predefined_properties AS predefined_properties,
     vm_static.userdefined_properties AS userdefined_properties,
     vm_static.min_allocated_mem AS min_allocated_mem,
-    vm_dynamic.hash AS hash,
+    vm_dynamic.HASH AS HASH,
     vm_static.cpu_pinning AS cpu_pinning,
     vm_static.db_generation AS db_generation,
     vm_static.host_cpu_flags AS host_cpu_flags,
@@ -1300,49 +1233,58 @@ SELECT
     vm_dynamic.vnc_port AS vnc_port,
     vm_dynamic.vnc_ip AS vnc_ip,
     vm_dynamic.guest_agent_status AS guest_agent_status,
-    vm_dynamic.guest_mem_buffered as guest_mem_buffered,
-	vm_dynamic.guest_mem_cached as guest_mem_cached,
-	vm_dynamic.guest_mem_free as guest_mem_free,
-    vm_static.small_icon_id as small_icon_id,
-    vm_static.large_icon_id as large_icon_id,
-    vm_static.provider_id as provider_id,
-    vm_static.console_disconnect_action as console_disconnect_action,
-    vm_dynamic.guest_timezone_offset as guest_timezone_offset,
-    vm_dynamic.guest_timezone_name as guest_timezone_name,
-    vm_dynamic.guestos_arch as guestos_arch,
-    vm_dynamic.guestos_codename as guestos_codename,
-    vm_dynamic.guestos_distribution as guestos_distribution,
-    vm_dynamic.guestos_kernel_version as guestos_kernel_version,
-    vm_dynamic.guestos_type as guestos_type,
-    vm_dynamic.guestos_version as guestos_version
-FROM
-    vm_static
-INNER JOIN vm_dynamic ON vm_static.vm_guid = vm_dynamic.vm_guid
-INNER JOIN vm_static AS vm_templates ON vm_static.vmt_guid = vm_templates.vm_guid
-INNER JOIN vm_statistics ON vm_static.vm_guid = vm_statistics.vm_guid
-INNER JOIN vds_groups ON vm_static.vds_group_id = vds_groups.vds_group_id
-LEFT
-OUTER JOIN storage_pool ON vm_static.vds_group_id = vds_groups.vds_group_id
-    AND vds_groups.storage_pool_id = storage_pool.id
-LEFT
-OUTER JOIN quota ON vm_static.quota_id = quota.id
-LEFT
-OUTER JOIN vds_static ON vm_dynamic.run_on_vds = vds_static.vds_id
-LEFT
-OUTER JOIN vm_pool_map_view ON vm_static.vm_guid = vm_pool_map_view.vm_guid
-LEFT
-OUTER JOIN (SELECT vm_id,
-                   COUNT(CASE snapshot_type WHEN 'NEXT_RUN' THEN 1 END) > 0 AS next_run_config_exists,
-                   COUNT(CASE snapshot_type WHEN 'PREVIEW' THEN 1 END) > 0 AS is_previewing_snapshot
-            FROM snapshots
-            GROUP BY vm_id) vm_snapshots
-      ON vm_static.vm_guid = vm_snapshots.vm_id
-WHERE
-    vm_static.entity_type = 'VM';
-CREATE
-OR REPLACE VIEW vms_with_tags AS
-SELECT
-    vms.vm_name,
+    vm_dynamic.guest_mem_buffered AS guest_mem_buffered,
+    vm_dynamic.guest_mem_cached AS guest_mem_cached,
+    vm_dynamic.guest_mem_free AS guest_mem_free,
+    vm_static.small_icon_id AS small_icon_id,
+    vm_static.large_icon_id AS large_icon_id,
+    vm_static.provider_id AS provider_id,
+    vm_static.console_disconnect_action AS console_disconnect_action,
+    vm_dynamic.guest_timezone_offset AS guest_timezone_offset,
+    vm_dynamic.guest_timezone_name AS guest_timezone_name,
+    vm_dynamic.guestos_arch AS guestos_arch,
+    vm_dynamic.guestos_codename AS guestos_codename,
+    vm_dynamic.guestos_distribution AS guestos_distribution,
+    vm_dynamic.guestos_kernel_version AS guestos_kernel_version,
+    vm_dynamic.guestos_type AS guestos_type,
+    vm_dynamic.guestos_version AS guestos_version
+FROM vm_static
+INNER JOIN vm_dynamic
+    ON vm_static.vm_guid = vm_dynamic.vm_guid
+INNER JOIN vm_static AS vm_templates
+    ON vm_static.vmt_guid = vm_templates.vm_guid
+INNER JOIN vm_statistics
+    ON vm_static.vm_guid = vm_statistics.vm_guid
+INNER JOIN vds_groups
+    ON vm_static.vds_group_id = vds_groups.vds_group_id
+LEFT JOIN storage_pool
+    ON vm_static.vds_group_id = vds_groups.vds_group_id
+        AND vds_groups.storage_pool_id = storage_pool.id
+LEFT JOIN quota
+    ON vm_static.quota_id = quota.id
+LEFT JOIN vds_static
+    ON vm_dynamic.run_on_vds = vds_static.vds_id
+LEFT JOIN vm_pool_map_view
+    ON vm_static.vm_guid = vm_pool_map_view.vm_guid
+LEFT JOIN (
+    SELECT vm_id,
+        COUNT(CASE snapshot_type
+                WHEN 'NEXT_RUN'
+                    THEN 1
+                END) > 0 AS next_run_config_exists,
+        COUNT(CASE snapshot_type
+                WHEN 'PREVIEW'
+                    THEN 1
+                END) > 0 AS is_previewing_snapshot
+    FROM snapshots
+    GROUP BY vm_id
+    ) vm_snapshots
+    ON vm_static.vm_guid = vm_snapshots.vm_id
+WHERE vm_static.entity_type = 'VM';
+
+CREATE OR REPLACE VIEW vms_with_tags AS
+
+SELECT vms.vm_name,
     vms.mem_size_mb,
     vms.num_of_io_threads,
     vms.nice_level,
@@ -1473,62 +1415,56 @@ SELECT
     vms.vnc_port,
     vms.vnc_ip,
     vms.guest_agent_status,
-    vms.guest_mem_buffered as guest_mem_buffered,
-    vms.guest_mem_cached as guest_mem_cached,
-    vms.guest_mem_free as guest_mem_free,
-    vms.small_icon_id as small_icon_id,
-    vms.large_icon_id as large_icon_id,
+    vms.guest_mem_buffered AS guest_mem_buffered,
+    vms.guest_mem_cached AS guest_mem_cached,
+    vms.guest_mem_free AS guest_mem_free,
+    vms.small_icon_id AS small_icon_id,
+    vms.large_icon_id AS large_icon_id,
     vms.console_disconnect_action,
-    vms.guest_timezone_offset as guest_timezone_offset,
-    vms.guest_timezone_name as guest_timezone_name,
-    vms.guestos_arch as guestos_arch,
-    vms.guestos_codename as guestos_codename,
-    vms.guestos_distribution as guestos_distribution,
-    vms.guestos_kernel_version as guestos_kernel_version,
-    vms.guestos_type as guestos_type,
-    vms.guestos_version as guestos_version
-FROM
-    vms
-LEFT
-OUTER JOIN tags_vm_map_view ON vms.vm_guid = tags_vm_map_view.vm_id
-LEFT
-OUTER JOIN vm_device ON vm_device.vm_id = vms.vm_guid
-LEFT
-OUTER JOIN images ON images.image_group_id = vm_device.device_id
-LEFT
-OUTER JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
-LEFT
-OUTER JOIN storage_domain_static ON storage_domain_static.id = image_storage_domain_map.storage_domain_id
-WHERE
-    images.active IS NULL
+    vms.guest_timezone_offset AS guest_timezone_offset,
+    vms.guest_timezone_name AS guest_timezone_name,
+    vms.guestos_arch AS guestos_arch,
+    vms.guestos_codename AS guestos_codename,
+    vms.guestos_distribution AS guestos_distribution,
+    vms.guestos_kernel_version AS guestos_kernel_version,
+    vms.guestos_type AS guestos_type,
+    vms.guestos_version AS guestos_version
+FROM vms
+LEFT JOIN tags_vm_map_view
+    ON vms.vm_guid = tags_vm_map_view.vm_id
+LEFT JOIN vm_device
+    ON vm_device.vm_id = vms.vm_guid
+LEFT JOIN images
+    ON images.image_group_id = vm_device.device_id
+LEFT JOIN image_storage_domain_map
+    ON image_storage_domain_map.image_id = images.image_guid
+LEFT JOIN storage_domain_static
+    ON storage_domain_static.id = image_storage_domain_map.storage_domain_id
+WHERE images.active IS NULL
     OR images.active = TRUE;
-CREATE
-OR REPLACE VIEW server_vms AS
-SELECT
-    *
-FROM
-    vms
-WHERE
-    vm_type = '1';
-CREATE
-OR REPLACE VIEW vms_with_plug_info AS
-SELECT
-    *
-FROM
-    vms
-INNER JOIN vm_device vd ON vd.vm_id = vms.vm_guid;
-CREATE
-OR REPLACE VIEW desktop_vms AS
-SELECT
-    *
-FROM
-    vms
-WHERE
-    vm_type = '0';
-CREATE
-OR REPLACE VIEW vds AS
-SELECT
-    vds_groups.vds_group_id AS vds_group_id,
+
+CREATE OR REPLACE VIEW server_vms AS
+
+SELECT *
+FROM vms
+WHERE vm_type = '1';
+
+CREATE OR REPLACE VIEW vms_with_plug_info AS
+
+SELECT *
+FROM vms
+INNER JOIN vm_device vd
+    ON vd.vm_id = vms.vm_guid;
+
+CREATE OR REPLACE VIEW desktop_vms AS
+
+SELECT *
+FROM vms
+WHERE vm_type = '0';
+
+CREATE OR REPLACE VIEW vds AS
+
+SELECT vds_groups.vds_group_id AS vds_group_id,
     vds_groups.name AS vds_group_name,
     vds_groups.description AS vds_group_description,
     vds_groups.architecture AS architecture,
@@ -1599,12 +1535,14 @@ SELECT
     vds_spm_id_map.vds_spm_id AS vds_spm_id,
     vds_static.otp_validity AS otp_validity,
     CASE
-        WHEN storage_pool.spm_vds_id = vds_static.vds_id THEN CASE
-            WHEN storage_pool.status = 5 THEN 1
-            ELSE 2
-        END
+        WHEN storage_pool.spm_vds_id = vds_static.vds_id
+            THEN CASE
+                    WHEN storage_pool.status = 5
+                        THEN 1
+                    ELSE 2
+                    END
         ELSE 0
-    END AS spm_status,
+        END AS spm_status,
     vds_dynamic.supported_cluster_levels AS supported_cluster_levels,
     vds_dynamic.supported_engines AS supported_engines,
     vds_groups.compatibility_version AS vds_group_compatibility_version,
@@ -1665,21 +1603,23 @@ SELECT
     fence_agents.encrypt_options AS agent_encrypt_options,
     vds_dynamic.is_update_available AS is_update_available,
     vds_dynamic.is_hostdev_enabled AS is_hostdev_enabled
-FROM
-    vds_groups
-INNER JOIN vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id
-INNER JOIN vds_dynamic ON vds_static.vds_id = vds_dynamic.vds_id
-INNER JOIN vds_statistics ON vds_static.vds_id = vds_statistics.vds_id
-LEFT
-OUTER JOIN storage_pool ON vds_groups.storage_pool_id = storage_pool.id
-LEFT
-OUTER JOIN fence_agents ON vds_static.vds_id = fence_agents.vds_id
-LEFT
-OUTER JOIN vds_spm_id_map ON vds_static.vds_id = vds_spm_id_map.vds_id;
-CREATE
-OR REPLACE VIEW vds_with_tags AS
-SELECT
-    vds_groups.vds_group_id,
+FROM vds_groups
+INNER JOIN vds_static
+    ON vds_groups.vds_group_id = vds_static.vds_group_id
+INNER JOIN vds_dynamic
+    ON vds_static.vds_id = vds_dynamic.vds_id
+INNER JOIN vds_statistics
+    ON vds_static.vds_id = vds_statistics.vds_id
+LEFT JOIN storage_pool
+    ON vds_groups.storage_pool_id = storage_pool.id
+LEFT JOIN fence_agents
+    ON vds_static.vds_id = fence_agents.vds_id
+LEFT JOIN vds_spm_id_map
+    ON vds_static.vds_id = vds_spm_id_map.vds_id;
+
+CREATE OR REPLACE VIEW vds_with_tags AS
+
+SELECT vds_groups.vds_group_id,
     vds_groups.name AS vds_group_name,
     vds_groups.description AS vds_group_description,
     vds_groups.architecture AS architecture,
@@ -1756,12 +1696,14 @@ SELECT
     vds_static.otp_validity AS otp_validity,
     vds_static.console_address AS console_address,
     CASE
-        WHEN storage_pool.spm_vds_id = vds_static.vds_id THEN CASE
-            WHEN storage_pool.status = 5 THEN 1
-            ELSE 2
-        END
+        WHEN storage_pool.spm_vds_id = vds_static.vds_id
+            THEN CASE
+                    WHEN storage_pool.status = 5
+                        THEN 1
+                    ELSE 2
+                    END
         ELSE 0
-    END AS spm_status,
+        END AS spm_status,
     vds_dynamic.supported_cluster_levels,
     vds_dynamic.supported_engines,
     vds_groups.compatibility_version AS vds_group_compatibility_version,
@@ -1808,34 +1750,36 @@ SELECT
     vds_dynamic.maintenance_reason AS maintenance_reason,
     vds_dynamic.is_update_available AS is_update_available,
     vds_dynamic.is_hostdev_enabled AS is_hostdev_enabled
-FROM
-    vds_groups
-INNER JOIN vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id
-INNER JOIN vds_dynamic ON vds_static.vds_id = vds_dynamic.vds_id
-INNER JOIN vds_statistics ON vds_static.vds_id = vds_statistics.vds_id
-LEFT
-OUTER JOIN storage_pool ON vds_groups.storage_pool_id = storage_pool.id
-LEFT
-OUTER JOIN tags_vds_map_view ON vds_static.vds_id = tags_vds_map_view.vds_id
-LEFT
-OUTER JOIN fence_agents ON vds_static.vds_id = fence_agents.vds_id
-LEFT
-OUTER JOIN vds_spm_id_map ON vds_static.vds_id = vds_spm_id_map.vds_id
-LEFT
-OUTER JOIN storage_pool_iso_map ON storage_pool_iso_map.storage_pool_id = storage_pool.id;
-CREATE
-OR REPLACE VIEW users_and_groups_to_vm_pool_map_view AS
-SELECT
-    p.vm_pool_id AS vm_pool_id,
+FROM vds_groups
+INNER JOIN vds_static
+    ON vds_groups.vds_group_id = vds_static.vds_group_id
+INNER JOIN vds_dynamic
+    ON vds_static.vds_id = vds_dynamic.vds_id
+INNER JOIN vds_statistics
+    ON vds_static.vds_id = vds_statistics.vds_id
+LEFT JOIN storage_pool
+    ON vds_groups.storage_pool_id = storage_pool.id
+LEFT JOIN tags_vds_map_view
+    ON vds_static.vds_id = tags_vds_map_view.vds_id
+LEFT JOIN fence_agents
+    ON vds_static.vds_id = fence_agents.vds_id
+LEFT JOIN vds_spm_id_map
+    ON vds_static.vds_id = vds_spm_id_map.vds_id
+LEFT JOIN storage_pool_iso_map
+    ON storage_pool_iso_map.storage_pool_id = storage_pool.id;
+
+CREATE OR REPLACE VIEW users_and_groups_to_vm_pool_map_view AS
+
+SELECT p.vm_pool_id AS vm_pool_id,
     p.vm_pool_name AS vm_pool_name,
     per.ad_element_id AS user_id
-FROM
-    vm_pools AS p
-INNER JOIN permissions AS per ON per.object_id = p.vm_pool_id;
-CREATE
-OR REPLACE VIEW vdc_users AS
-SELECT
-    'user' AS user_group,
+FROM vm_pools AS p
+INNER JOIN permissions AS per
+    ON per.object_id = p.vm_pool_id;
+
+CREATE OR REPLACE VIEW vdc_users AS
+
+SELECT 'user' AS user_group,
     users_1.name AS name,
     users_1.user_id AS user_id,
     users_1.surname AS surname,
@@ -1848,11 +1792,11 @@ SELECT
     users_1.last_admin_check_status AS last_admin_check_status,
     users_1.external_id AS external_id,
     users_1.namespace AS namespace
-FROM
-    users AS users_1
+FROM users AS users_1
+
 UNION
-SELECT
-    'group' AS user_group,
+
+SELECT 'group' AS user_group,
     ad_groups.name AS name,
     ad_groups.id AS id,
     '' AS surname,
@@ -1865,13 +1809,12 @@ SELECT
     NULL AS last_admin_check_status,
     ad_groups.external_id AS external_id,
     ad_groups.namespace AS namespace
-FROM
-    ad_groups;
+FROM ad_groups;
+
 -- create the new vdc_users_with_tags view with no use of the tag_permission_map
-CREATE
-OR REPLACE VIEW vdc_users_with_tags AS
-SELECT
-    users_1.user_group AS user_group,
+CREATE OR REPLACE VIEW vdc_users_with_tags AS
+
+SELECT users_1.user_group AS user_group,
     users_1.name AS name,
     permissions.object_id AS vm_guid,
     users_1.user_id AS user_id,
@@ -1887,22 +1830,22 @@ SELECT
     tags_user_map_view_1.tag_id AS tag_id,
     users_1.last_admin_check_status AS last_admin_check_status,
     pools.vm_pool_name AS vm_pool_name
-FROM
-    vdc_users AS users_1
-LEFT
-OUTER JOIN users_and_groups_to_vm_pool_map_view AS pools ON users_1.user_id = pools.user_id
-LEFT
-OUTER JOIN permissions ON users_1.user_id = permissions.ad_element_id
-LEFT
-OUTER JOIN tags ON tags.type = 1
-LEFT
-OUTER JOIN tags_user_map_view AS tags_user_map_view_1 ON users_1.user_id = tags_user_map_view_1.user_id
-LEFT
-OUTER JOIN roles AS roles1 ON roles1.id = permissions.role_id
-WHERE ( users_1.user_group = 'user' )
+FROM vdc_users AS users_1
+LEFT JOIN users_and_groups_to_vm_pool_map_view AS pools
+    ON users_1.user_id = pools.user_id
+LEFT JOIN permissions
+    ON users_1.user_id = permissions.ad_element_id
+LEFT JOIN tags
+    ON tags.type = 1
+LEFT JOIN tags_user_map_view AS tags_user_map_view_1
+    ON users_1.user_id = tags_user_map_view_1.user_id
+LEFT JOIN roles AS roles1
+    ON roles1.id = permissions.role_id
+WHERE (users_1.user_group = 'user')
+
 UNION
-SELECT
-    users_2.user_group AS user_group,
+
+SELECT users_2.user_group AS user_group,
     users_2.name AS name,
     permissions_1.object_id AS vm_guid,
     users_2.user_id AS user_id,
@@ -1918,23 +1861,22 @@ SELECT
     tags_user_group_map_view.tag_id AS tag_id,
     users_2.last_admin_check_status AS last_admin_check_status,
     pools1.vm_pool_name AS vm_pool_name
-FROM
-    vdc_users AS users_2
-LEFT
-OUTER JOIN users_and_groups_to_vm_pool_map_view AS pools1 ON users_2.user_id = pools1.user_id
-LEFT
-OUTER JOIN permissions AS permissions_1 ON users_2.user_id = permissions_1.ad_element_id
-LEFT
-OUTER JOIN tags AS tags_1 ON tags_1.type = 1
-LEFT
-OUTER JOIN tags_user_group_map_view ON users_2.user_id = tags_user_group_map_view.group_id
-LEFT
-OUTER JOIN roles AS roles2 ON roles2.id = permissions_1.role_id
-WHERE ( users_2.user_group = 'group' );
-CREATE
-OR REPLACE VIEW vm_pools_view AS
-SELECT
-    vm_pools.vm_pool_id,
+FROM vdc_users AS users_2
+LEFT JOIN users_and_groups_to_vm_pool_map_view AS pools1
+    ON users_2.user_id = pools1.user_id
+LEFT JOIN permissions AS permissions_1
+    ON users_2.user_id = permissions_1.ad_element_id
+LEFT JOIN tags AS tags_1
+    ON tags_1.type = 1
+LEFT JOIN tags_user_group_map_view
+    ON users_2.user_id = tags_user_group_map_view.group_id
+LEFT JOIN roles AS roles2
+    ON roles2.id = permissions_1.role_id
+WHERE (users_2.user_group = 'group');
+
+CREATE OR REPLACE VIEW vm_pools_view AS
+
+SELECT vm_pools.vm_pool_id,
     vm_pools.vm_pool_name,
     vm_pools.vm_pool_description,
     vm_pools.vm_pool_comment,
@@ -1949,14 +1891,15 @@ SELECT
     vm_pools.max_assigned_vms_per_user AS max_assigned_vms_per_user,
     vm_pools.spice_proxy AS spice_proxy,
     vm_pools.is_being_destroyed AS is_being_destroyed
-FROM
-    vm_pools
-    JOIN vds_groups ON vm_pools.vds_group_id = vds_groups.vds_group_id
-LEFT JOIN storage_pool ON storage_pool.id = vds_groups.storage_pool_id;
-CREATE
-OR REPLACE VIEW vm_pools_full_view AS
-SELECT
-    vmp.vm_pool_id,
+FROM vm_pools
+INNER JOIN vds_groups
+    ON vm_pools.vds_group_id = vds_groups.vds_group_id
+LEFT JOIN storage_pool
+    ON storage_pool.id = vds_groups.storage_pool_id;
+
+CREATE OR REPLACE VIEW vm_pools_full_view AS
+
+SELECT vmp.vm_pool_id,
     vmp.vm_pool_name,
     vmp.vm_pool_description,
     vmp.vm_pool_comment,
@@ -1969,34 +1912,34 @@ SELECT
     vmp.max_assigned_vms_per_user,
     vmp.spice_proxy AS spice_proxy,
     (
-        SELECT
-            COUNT ( vm_pool_map.vm_pool_id ) AS expr1
-        FROM
-            vm_pools_view v1
-        LEFT JOIN vm_pool_map ON v1.vm_pool_id = vm_pool_map.vm_pool_id
-            AND v1.vm_pool_id = vmp.vm_pool_id ) AS assigned_vm_count,
+        SELECT COUNT(vm_pool_map.vm_pool_id) AS expr1
+        FROM vm_pools_view v1
+        LEFT JOIN vm_pool_map
+            ON v1.vm_pool_id = vm_pool_map.vm_pool_id
+                AND v1.vm_pool_id = vmp.vm_pool_id
+        ) AS assigned_vm_count,
     (
-        SELECT
-            COUNT ( v2.vm_pool_id ) AS expr1
-        FROM
-            vm_pools v2
-        LEFT JOIN vm_pool_map vm_pool_map_1 ON v2.vm_pool_id = vm_pool_map_1.vm_pool_id
-            AND v2.vm_pool_id = vmp.vm_pool_id
-        LEFT JOIN vm_dynamic ON vm_pool_map_1.vm_guid = vm_dynamic.vm_guid
-        WHERE
-            vm_dynamic.status <> ALL ( ARRAY [ 0,
-                15 ] )
-        GROUP BY
-            v2.vm_pool_id ) AS vm_running_count,
+        SELECT COUNT(v2.vm_pool_id) AS expr1
+        FROM vm_pools v2
+        LEFT JOIN vm_pool_map vm_pool_map_1
+            ON v2.vm_pool_id = vm_pool_map_1.vm_pool_id
+                AND v2.vm_pool_id = vmp.vm_pool_id
+        LEFT JOIN vm_dynamic
+            ON vm_pool_map_1.vm_guid = vm_dynamic.vm_guid
+        WHERE vm_dynamic.status <> ALL (
+                ARRAY [ 0,
+                15 ]
+                )
+        GROUP BY v2.vm_pool_id
+        ) AS vm_running_count,
     vmp.storage_pool_name,
     vmp.storage_pool_id,
     vmp.is_being_destroyed
-FROM
-    vm_pools_view vmp;
-CREATE
-OR REPLACE VIEW permissions_view AS
-SELECT
-    permissions.id AS id,
+FROM vm_pools_view vmp;
+
+CREATE OR REPLACE VIEW permissions_view AS
+
+SELECT permissions.id AS id,
     permissions.role_id AS role_id,
     permissions.ad_element_id AS ad_element_id,
     permissions.object_id AS object_id,
@@ -2005,22 +1948,18 @@ SELECT
     roles.role_type AS role_type,
     roles.allows_viewing_children AS allows_viewing_children,
     roles.app_mode AS app_mode,
-    fn_get_entity_name ( permissions.object_id,
-        permissions.object_type_id ) AS object_name,
-    ( fn_authz_entry_info ( permissions.ad_element_id ) )
-.name AS owner_name,
-    ( fn_authz_entry_info ( permissions.ad_element_id ) )
-.namespace AS namespace,
-    ( fn_authz_entry_info ( permissions.ad_element_id ) )
-.authz AS authz,
+    fn_get_entity_name(permissions.object_id, permissions.object_type_id) AS object_name,
+    (fn_authz_entry_info(permissions.ad_element_id)).name AS owner_name,
+    (fn_authz_entry_info(permissions.ad_element_id)).namespace AS namespace,
+    (fn_authz_entry_info(permissions.ad_element_id)).authz AS authz,
     permissions.creation_date AS creation_date
-FROM
-    permissions
-INNER JOIN roles ON permissions.role_id = roles.id;
-CREATE
-OR REPLACE VIEW internal_permissions_view AS
-SELECT
-    permissions.id AS id,
+FROM permissions
+INNER JOIN roles
+    ON permissions.role_id = roles.id;
+
+CREATE OR REPLACE VIEW internal_permissions_view AS
+
+SELECT permissions.id AS id,
     permissions.role_id AS role_id,
     permissions.ad_element_id AS ad_element_id,
     permissions.object_id AS object_id,
@@ -2028,9 +1967,10 @@ SELECT
     roles.name AS role_name,
     roles.role_type AS role_type,
     roles.allows_viewing_children AS allows_viewing_children
-FROM
-    permissions
-INNER JOIN roles ON permissions.role_id = roles.id;
+FROM permissions
+INNER JOIN roles
+    ON permissions.role_id = roles.id;
+
 --
 --SELECT     storages.id, storages.storage, storages.storage_pool_id, storages.storage_type, storage_pool.name,
 --                      storage_pool.storage_pool_type
@@ -2040,10 +1980,9 @@ INNER JOIN roles ON permissions.role_id = roles.id;
 /*************************************************
         vds/vm/ interface view
 *************************************************/
-CREATE
-OR REPLACE VIEW vds_interface_view AS
-SELECT
-    vds_interface_statistics.rx_rate,
+CREATE OR REPLACE VIEW vds_interface_view AS
+
+SELECT vds_interface_statistics.rx_rate,
     vds_interface_statistics.tx_rate,
     vds_interface_statistics.rx_drop,
     vds_interface_statistics.tx_drop,
@@ -2077,14 +2016,15 @@ SELECT
     vds_interface.qos_overridden AS qos_overridden,
     vds_interface.labels AS labels,
     vds_static.vds_group_id AS vds_group_id
-FROM
-    vds_interface_statistics
-    JOIN vds_interface ON vds_interface_statistics.id = vds_interface.id
-    JOIN vds_static ON vds_interface.vds_id = vds_static.vds_id;
-CREATE
-OR REPLACE VIEW vm_interface_view AS
-SELECT
-    vm_interface_statistics.rx_rate,
+FROM vds_interface_statistics
+INNER JOIN vds_interface
+    ON vds_interface_statistics.id = vds_interface.id
+INNER JOIN vds_static
+    ON vds_interface.vds_id = vds_static.vds_id;
+
+CREATE OR REPLACE VIEW vm_interface_view AS
+
+SELECT vm_interface_statistics.rx_rate,
     vm_interface_statistics.tx_rate,
     vm_interface_statistics.rx_drop,
     vm_interface_statistics.tx_drop,
@@ -2114,19 +2054,26 @@ SELECT
     vm_static.entity_type AS vm_entity_type,
     vnic_profiles.name AS vnic_profile_name,
     qos.name AS qos_name
-FROM
-    vm_interface_statistics
-    JOIN vm_interface ON vm_interface_statistics.id = vm_interface.id
-    JOIN vm_static ON vm_interface.vm_guid = vm_static.vm_guid
-    JOIN vm_device ON vm_interface.vm_guid = vm_device.vm_id
-    AND vm_interface.id = vm_device.device_id
-LEFT JOIN ( ( vnic_profiles
-            JOIN network ON network.id = vnic_profiles.network_id )
-    LEFT JOIN qos ON vnic_profiles.network_qos_id = qos.id )
+FROM vm_interface_statistics
+INNER JOIN vm_interface
+    ON vm_interface_statistics.id = vm_interface.id
+INNER JOIN vm_static
+    ON vm_interface.vm_guid = vm_static.vm_guid
+INNER JOIN vm_device
+    ON vm_interface.vm_guid = vm_device.vm_id
+        AND vm_interface.id = vm_device.device_id
+LEFT JOIN (
+    (
+        vnic_profiles INNER JOIN network
+            ON network.id = vnic_profiles.network_id
+        ) LEFT JOIN qos
+        ON vnic_profiles.network_qos_id = qos.id
+    )
     ON vnic_profiles.id = vm_interface.vnic_profile_id
+
 UNION
-SELECT
-    vm_interface_statistics.rx_rate,
+
+SELECT vm_interface_statistics.rx_rate,
     vm_interface_statistics.tx_rate,
     vm_interface_statistics.rx_drop,
     vm_interface_statistics.tx_drop,
@@ -2156,23 +2103,29 @@ SELECT
     vm_templates.entity_type AS vm_entity_type,
     vnic_profiles.name AS vnic_profile_name,
     qos.name AS qos_name
-FROM
-    vm_interface_statistics
-RIGHT JOIN vm_interface ON vm_interface_statistics.id = vm_interface.id
-    JOIN vm_static AS vm_templates ON vm_interface.vmt_guid = vm_templates.vm_guid
-    JOIN vm_device ON vm_interface.vmt_guid = vm_device.vm_id
-    AND vm_interface.id = vm_device.device_id
-LEFT JOIN ( ( vnic_profiles
-            JOIN network ON network.id = vnic_profiles.network_id )
-    LEFT JOIN qos ON vnic_profiles.network_qos_id = qos.id )
+FROM vm_interface_statistics
+RIGHT JOIN vm_interface
+    ON vm_interface_statistics.id = vm_interface.id
+INNER JOIN vm_static AS vm_templates
+    ON vm_interface.vmt_guid = vm_templates.vm_guid
+INNER JOIN vm_device
+    ON vm_interface.vmt_guid = vm_device.vm_id
+        AND vm_interface.id = vm_device.device_id
+LEFT JOIN (
+    (
+        vnic_profiles INNER JOIN network
+            ON network.id = vnic_profiles.network_id
+        ) LEFT JOIN qos
+        ON vnic_profiles.network_qos_id = qos.id
+    )
     ON vnic_profiles.id = vm_interface.vnic_profile_id;
+
 ----------------------------------------------
 -- Storage Pool
 ----------------------------------------------
-CREATE
-OR REPLACE VIEW storage_pool_with_storage_domain AS
-SELECT
-    storage_pool.id AS id,
+CREATE OR REPLACE VIEW storage_pool_with_storage_domain AS
+
+SELECT storage_pool.id AS id,
     storage_pool.name AS name,
     storage_pool.description AS description,
     storage_pool.free_text_comment AS free_text_comment,
@@ -2191,19 +2144,18 @@ SELECT
     storage_domain_static.storage_name AS storage_name,
     storage_domain_static.storage AS storage,
     storage_domain_static.last_time_used_as_master AS last_time_used_as_master
-FROM
-    storage_pool
-LEFT
-OUTER JOIN storage_pool_iso_map ON storage_pool.id = storage_pool_iso_map.storage_pool_id
-LEFT
-OUTER JOIN storage_domain_static ON storage_pool_iso_map.storage_id = storage_domain_static.id;
+FROM storage_pool
+LEFT JOIN storage_pool_iso_map
+    ON storage_pool.id = storage_pool_iso_map.storage_pool_id
+LEFT JOIN storage_domain_static
+    ON storage_pool_iso_map.storage_id = storage_domain_static.id;
+
 ----------------------------------------------
 -- Clusters
 ----------------------------------------------
-CREATE
-OR REPLACE VIEW vds_groups_storage_domain AS
-SELECT
-    vds_groups.vds_group_id,
+CREATE OR REPLACE VIEW vds_groups_storage_domain AS
+
+SELECT vds_groups.vds_group_id,
     vds_groups.name,
     vds_groups.description,
     vds_groups.free_text_comment,
@@ -2219,60 +2171,60 @@ SELECT
     vds_groups.architecture,
     storage_pool_iso_map.storage_id,
     storage_pool.name AS storage_pool_name
-FROM
-    vds_groups
-LEFT JOIN storage_pool_iso_map ON vds_groups.storage_pool_id = storage_pool_iso_map.storage_pool_id
-LEFT JOIN storage_pool ON vds_groups.storage_pool_id = storage_pool.id;
-CREATE
-OR REPLACE VIEW vds_groups_view AS
-SELECT
-    vds_groups.*,
+FROM vds_groups
+LEFT JOIN storage_pool_iso_map
+    ON vds_groups.storage_pool_id = storage_pool_iso_map.storage_pool_id
+LEFT JOIN storage_pool
+    ON vds_groups.storage_pool_id = storage_pool.id;
+
+CREATE OR REPLACE VIEW vds_groups_view AS
+
+SELECT vds_groups.*,
     storage_pool.name AS storage_pool_name,
     cluster_policies.name AS cluster_policy_name
-FROM
-    vds_groups
-LEFT JOIN storage_pool ON vds_groups.storage_pool_id = storage_pool.id
-LEFT JOIN cluster_policies ON vds_groups.cluster_policy_id = cluster_policies.id;
-CREATE
-OR REPLACE VIEW storage_domains_with_hosts_view AS
-SELECT
-    storage_domain_static.id,
+FROM vds_groups
+LEFT JOIN storage_pool
+    ON vds_groups.storage_pool_id = storage_pool.id
+LEFT JOIN cluster_policies
+    ON vds_groups.cluster_policy_id = cluster_policies.id;
+
+CREATE OR REPLACE VIEW storage_domains_with_hosts_view AS
+
+SELECT storage_domain_static.id,
     storage_domain_static.storage,
     storage_domain_static.storage_name,
     storage_domain_static.storage_description AS storage_description,
     storage_domain_static.storage_comment AS storage_comment,
     storage_domain_dynamic.available_disk_size,
     storage_domain_dynamic.used_disk_size,
-    fn_get_disk_commited_value_by_storage ( storage_domain_static.id ) AS commited_disk_size,
-    fn_get_actual_images_size_by_storage ( storage_domain_static.id ) AS actual_images_size,
+    fn_get_disk_commited_value_by_storage(storage_domain_static.id) AS commited_disk_size,
+    fn_get_actual_images_size_by_storage(storage_domain_static.id) AS actual_images_size,
     storage_pool.name AS storage_pool_name,
     storage_domain_static.storage_type,
     storage_domain_static.storage_domain_type,
     storage_domain_static.storage_domain_format_type,
     storage_domain_static.last_time_used_as_master AS last_time_used_as_master,
     storage_domain_static.wipe_after_delete AS wipe_after_delete,
-    fn_get_storage_domain_shared_status_by_domain_id ( storage_domain_static.id,
-        storage_pool_iso_map.status,
-        storage_domain_static.storage_domain_type ) AS storage_domain_shared_status,
+    fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id, storage_pool_iso_map.status, storage_domain_static.storage_domain_type) AS storage_domain_shared_status,
     vds_groups.vds_group_id,
     vds_static.vds_id,
     storage_pool_iso_map.storage_pool_id,
     vds_static.recoverable
-FROM
-    storage_domain_static
-INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id
-LEFT
-OUTER JOIN storage_pool_iso_map ON storage_domain_static.id = storage_pool_iso_map.storage_id
-LEFT
-OUTER JOIN storage_pool ON storage_pool_iso_map.storage_pool_id = storage_pool.id
-LEFT
-OUTER JOIN vds_groups ON storage_pool_iso_map.storage_pool_id = vds_groups.storage_pool_id
-LEFT
-OUTER JOIN vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id;
-CREATE
-OR REPLACE VIEW vm_images_storage_domains_view AS
-SELECT
-    vm_images_view.storage_id,
+FROM storage_domain_static
+INNER JOIN storage_domain_dynamic
+    ON storage_domain_static.id = storage_domain_dynamic.id
+LEFT JOIN storage_pool_iso_map
+    ON storage_domain_static.id = storage_pool_iso_map.storage_id
+LEFT JOIN storage_pool
+    ON storage_pool_iso_map.storage_pool_id = storage_pool.id
+LEFT JOIN vds_groups
+    ON storage_pool_iso_map.storage_pool_id = vds_groups.storage_pool_id
+LEFT JOIN vds_static
+    ON vds_groups.vds_group_id = vds_static.vds_group_id;
+
+CREATE OR REPLACE VIEW vm_images_storage_domains_view AS
+
+SELECT vm_images_view.storage_id,
     vm_images_view.storage_path,
     vm_images_view.storage_pool_id,
     vm_images_view.image_guid,
@@ -2323,17 +2275,18 @@ SELECT
     storage_domains_with_hosts_view.recoverable,
     storage_domains_with_hosts_view.storage_pool_name,
     storage_domains_with_hosts_view.storage_name AS name
-FROM
-    vm_images_view
-INNER JOIN images_storage_domain_view ON vm_images_view.image_guid = images_storage_domain_view.image_guid
-INNER JOIN storage_domains_with_hosts_view ON storage_domains_with_hosts_view.id = images_storage_domain_view.storage_id;
+FROM vm_images_view
+INNER JOIN images_storage_domain_view
+    ON vm_images_view.image_guid = images_storage_domain_view.image_guid
+INNER JOIN storage_domains_with_hosts_view
+    ON storage_domains_with_hosts_view.id = images_storage_domain_view.storage_id;
+
 ----------------------------------------------
 -- Quota
 ----------------------------------------------
-CREATE
-OR REPLACE VIEW quota_view AS
-SELECT
-    q.id AS quota_id,
+CREATE OR REPLACE VIEW quota_view AS
+
+SELECT q.id AS quota_id,
     q.storage_pool_id AS storage_pool_id,
     storage_pool.name AS storage_pool_name,
     q.quota_name AS quota_name,
@@ -2343,15 +2296,13 @@ SELECT
     q.grace_vds_group_percentage AS grace_vds_group_percentage,
     q.grace_storage_percentage AS grace_storage_percentage,
     storage_pool.quota_enforcement_type AS quota_enforcement_type
-FROM
-    storage_pool,
+FROM storage_pool,
     quota q
-WHERE
-    storage_pool.id = q.storage_pool_id;
-CREATE
-OR REPLACE VIEW quota_global_view AS
-SELECT
-    q_limit.quota_id AS quota_id,
+WHERE storage_pool.id = q.storage_pool_id;
+
+CREATE OR REPLACE VIEW quota_global_view AS
+
+SELECT q_limit.quota_id AS quota_id,
     q.storage_pool_id AS storage_pool_id,
     storage_pool.name AS storage_pool_name,
     q.quota_name AS quota_name,
@@ -2361,30 +2312,23 @@ SELECT
     q.grace_vds_group_percentage AS grace_vds_group_percentage,
     q.grace_storage_percentage AS grace_storage_percentage,
     virtual_cpu,
-    ( CalculateVdsGroupUsage ( quota_id,
-            NULL ) )
-.virtual_cpu_usage,
+    (CalculateVdsGroupUsage(quota_id, NULL)).virtual_cpu_usage,
     mem_size_mb,
-    ( CalculateVdsGroupUsage ( quota_id,
-            NULL ) )
-.mem_size_mb_usage,
+    (CalculateVdsGroupUsage(quota_id, NULL)).mem_size_mb_usage,
     storage_size_gb,
-    CalculateStorageUsage ( quota_id,
-        NULL ) AS storage_size_gb_usage,
+    CalculateStorageUsage(quota_id, NULL) AS storage_size_gb_usage,
     storage_pool.quota_enforcement_type AS quota_enforcement_type
-FROM
-    storage_pool,
+FROM storage_pool,
     quota q
-LEFT
-OUTER JOIN quota_limitation q_limit ON q_limit.quota_id = q.id
-WHERE
-    storage_pool.id = q.storage_pool_id
+LEFT JOIN quota_limitation q_limit
+    ON q_limit.quota_id = q.id
+WHERE storage_pool.id = q.storage_pool_id
     AND q_limit.vds_group_id IS NULL
     AND q_limit.storage_id IS NULL;
-CREATE
-OR REPLACE VIEW quota_limitations_view AS
-SELECT
-    q_limit.quota_id AS quota_id,
+
+CREATE OR REPLACE VIEW quota_limitations_view AS
+
+SELECT q_limit.quota_id AS quota_id,
     q.storage_pool_id AS storage_pool_id,
     storage_pool.name AS storage_pool_name,
     q.quota_name AS quota_name,
@@ -2399,68 +2343,54 @@ SELECT
     storage_pool.quota_enforcement_type AS quota_enforcement_type,
     vds_group_id,
     storage_id,
-    ( COALESCE ( vds_group_id,
-            storage_id )
-        IS NULL ) AS is_global,
-    ( COALESCE ( virtual_cpu,
-            mem_size_mb,
-            storage_size_gb )
-        IS NULL ) AS is_empty
-FROM
-    quota q
-INNER JOIN storage_pool ON storage_pool.id = q.storage_pool_id
-LEFT
-OUTER JOIN quota_limitation q_limit ON q_limit.quota_id = q.id;
-CREATE
-OR REPLACE VIEW quota_storage_view AS
-SELECT
-    q_limit.id AS quota_storage_id,
+    (COALESCE(vds_group_id, storage_id) IS NULL) AS is_global,
+    (COALESCE(virtual_cpu, mem_size_mb, storage_size_gb) IS NULL) AS is_empty
+FROM quota q
+INNER JOIN storage_pool
+    ON storage_pool.id = q.storage_pool_id
+LEFT JOIN quota_limitation q_limit
+    ON q_limit.quota_id = q.id;
+
+CREATE OR REPLACE VIEW quota_storage_view AS
+
+SELECT q_limit.id AS quota_storage_id,
     q_limit.quota_id AS quota_id,
     storage_id,
     storage_domain_static.storage_name AS storage_name,
     storage_size_gb,
-    CalculateStorageUsage ( quota_id,
-        storage_id ) AS storage_size_gb_usage
-FROM
-    quota_limitation q_limit,
+    CalculateStorageUsage(quota_id, storage_id) AS storage_size_gb_usage
+FROM quota_limitation q_limit,
     quota q,
     storage_domain_static
-WHERE
-    q_limit.quota_id = q.id
+WHERE q_limit.quota_id = q.id
     AND q_limit.vds_group_id IS NULL
     AND q_limit.storage_id IS NOT NULL
     AND storage_domain_static.id = q_limit.storage_id;
-CREATE
-OR REPLACE VIEW quota_vds_group_view AS
-SELECT
-    q_limit.id AS quota_vds_group_id,
+
+CREATE OR REPLACE VIEW quota_vds_group_view AS
+
+SELECT q_limit.id AS quota_vds_group_id,
     q_limit.quota_id AS quota_id,
     q_limit.vds_group_id,
     vds_groups.name AS vds_group_name,
     virtual_cpu,
-    ( CalculateVdsGroupUsage ( quota_id,
-            q_limit.vds_group_id ) )
-.virtual_cpu_usage AS virtual_cpu_usage,
+    (CalculateVdsGroupUsage(quota_id, q_limit.vds_group_id)).virtual_cpu_usage AS virtual_cpu_usage,
     mem_size_mb,
-    ( CalculateVdsGroupUsage ( quota_id,
-            q_limit.vds_group_id ) )
-.mem_size_mb_usage AS mem_size_mb_usage
-FROM
-    quota_limitation q_limit,
+    (CalculateVdsGroupUsage(quota_id, q_limit.vds_group_id)).mem_size_mb_usage AS mem_size_mb_usage
+FROM quota_limitation q_limit,
     quota q,
     vds_groups
-WHERE
-    q_limit.quota_id = q.id
+WHERE q_limit.quota_id = q.id
     AND q_limit.vds_group_id IS NOT NULL
     AND q_limit.storage_id IS NULL
     AND vds_groups.vds_group_id = q_limit.vds_group_id;
+
 ----------------------------------------------
 -- Network
 ----------------------------------------------
-CREATE
-OR REPLACE VIEW network_cluster_view AS
-SELECT
-    network_cluster.cluster_id AS cluster_id,
+CREATE OR REPLACE VIEW network_cluster_view AS
+
+SELECT network_cluster.cluster_id AS cluster_id,
     network_cluster.network_id AS network_id,
     network.name AS network_name,
     network_cluster.status AS status,
@@ -2468,27 +2398,29 @@ SELECT
     network_cluster.is_display AS is_display,
     network_cluster.migration AS migration,
     vds_groups.name AS cluster_name
-FROM
-    network_cluster
-INNER JOIN network ON network_cluster.network_id = network.id
-INNER JOIN vds_groups ON network_cluster.cluster_id = vds_groups.vds_group_id;
-CREATE
-OR REPLACE VIEW network_vds_view AS
-SELECT
-    network.id AS network_id,
+FROM network_cluster
+INNER JOIN network
+    ON network_cluster.network_id = network.id
+INNER JOIN vds_groups
+    ON network_cluster.cluster_id = vds_groups.vds_group_id;
+
+CREATE OR REPLACE VIEW network_vds_view AS
+
+SELECT network.id AS network_id,
     network.name AS network_name,
     vds_static.vds_name AS vds_name
-FROM
-    vds_interface
-INNER JOIN vds_static ON vds_interface.vds_id = vds_static.vds_id
-INNER JOIN network ON vds_interface.network_name = network.name
-INNER JOIN network_cluster ON network_cluster.network_id = network.id
-WHERE
-    network_cluster.cluster_id = vds_static.vds_group_id;
-CREATE
-OR REPLACE VIEW network_view AS
-SELECT
-    network.id AS id,
+FROM vds_interface
+INNER JOIN vds_static
+    ON vds_interface.vds_id = vds_static.vds_id
+INNER JOIN network
+    ON vds_interface.network_name = network.name
+INNER JOIN network_cluster
+    ON network_cluster.network_id = network.id
+WHERE network_cluster.cluster_id = vds_static.vds_group_id;
+
+CREATE OR REPLACE VIEW network_view AS
+
+SELECT network.id AS id,
     network.name AS name,
     network.description AS description,
     network.free_text_comment AS free_text_comment,
@@ -2509,20 +2441,22 @@ SELECT
     storage_pool.compatibility_version AS compatibility_version,
     providers.name AS provider_name,
     qos.name AS qos_name
-FROM
-    network
-INNER JOIN storage_pool ON network.storage_pool_id = storage_pool.id
-LEFT JOIN providers ON network.provider_network_provider_id = providers.id
-LEFT JOIN qos ON qos.id = network.qos_id;
-CREATE
-OR REPLACE VIEW vnic_profiles_view AS
-SELECT
-    vnic_profiles.id AS id,
+FROM network
+INNER JOIN storage_pool
+    ON network.storage_pool_id = storage_pool.id
+LEFT JOIN providers
+    ON network.provider_network_provider_id = providers.id
+LEFT JOIN qos
+    ON qos.id = network.qos_id;
+
+CREATE OR REPLACE VIEW vnic_profiles_view AS
+
+SELECT vnic_profiles.id AS id,
     vnic_profiles.name AS name,
     vnic_profiles.network_id AS network_id,
     vnic_profiles.network_qos_id AS network_qos_id,
     vnic_profiles.port_mirroring AS port_mirroring,
-    vnic_profiles.passthrough as passthrough,
+    vnic_profiles.passthrough AS passthrough,
     vnic_profiles.custom_properties AS custom_properties,
     vnic_profiles.description AS description,
     network.name AS network_name,
@@ -2530,583 +2464,592 @@ SELECT
     storage_pool.name AS data_center_name,
     storage_pool.compatibility_version AS compatibility_version,
     storage_pool.id AS data_center_id
-FROM
-    vnic_profiles
-INNER JOIN network ON vnic_profiles.network_id = network.id
-LEFT JOIN qos ON vnic_profiles.network_qos_id = qos.id
-INNER JOIN storage_pool ON network.storage_pool_id = storage_pool.id;
+FROM vnic_profiles
+INNER JOIN network
+    ON vnic_profiles.network_id = network.id
+LEFT JOIN qos
+    ON vnic_profiles.network_qos_id = qos.id
+INNER JOIN storage_pool
+    ON network.storage_pool_id = storage_pool.id;
+
 ----------------------------------------------
 -- Query Permissions
 ----------------------------------------------
 -- Flatten all the objects a user can get permissions on them
-CREATE
-OR REPLACE VIEW engine_session_user_flat_groups AS
-SELECT
-    id AS engine_session_seq_id,
+CREATE OR REPLACE VIEW engine_session_user_flat_groups AS
+
+SELECT id AS engine_session_seq_id,
     user_id AS user_id,
-    fnSplitterUuid ( engine_sessions.group_ids ) AS granted_id
-FROM
-    engine_sessions
-UNION
-    ALL -- The user itself
-SELECT
-    id,
+    fnSplitterUuid(engine_sessions.group_ids) AS granted_id
+FROM engine_sessions
+
+UNION ALL -- The user itself
+
+SELECT id,
     user_id,
     user_id
-FROM
-    engine_sessions
-UNION
-    ALL -- user is also member of 'Everyone'
-SELECT
-    id,
+FROM engine_sessions
+
+UNION ALL -- user is also member of 'Everyone'
+
+SELECT id,
     user_id,
     'EEE00000-0000-0000-0000-123456789EEE'
-FROM
-    engine_sessions;
+FROM engine_sessions;
+
 -- Permissions view for Clusters
 -- The user has permissions on a cluster
-CREATE
-OR REPLACE VIEW user_vds_groups_permissions_view_base ( entity_id,
-    granted_id ) AS
-SELECT
-    object_id,
+CREATE OR REPLACE VIEW user_vds_groups_permissions_view_base (
+    entity_id,
+    granted_id
+    ) AS
+
+SELECT object_id,
     ad_element_id
-FROM
-    internal_permissions_view
-WHERE
-    object_type_id = 9
+FROM internal_permissions_view
+WHERE object_type_id = 9
     AND role_type = 2 -- Or the object is a VM or Template in the cluster
-UNION
-    ALL
-SELECT
-    DISTINCT vds_group_id,
+
+UNION ALL
+
+SELECT DISTINCT vds_group_id,
     ad_element_id
-FROM
-    vm_static
-INNER JOIN internal_permissions_view ON object_id = vm_guid
-    AND ( object_type_id = 2
-        OR object_type_id = 4 )
-    AND role_type = 2
-    AND vds_group_id IS NOT NULL -- Or the object is the Data Center containing the Cluster
-UNION
-    ALL
-SELECT
-    vds_group_id,
+FROM vm_static
+INNER JOIN internal_permissions_view
+    ON object_id = vm_guid
+        AND (
+            object_type_id = 2
+            OR object_type_id = 4
+            )
+        AND role_type = 2
+        AND vds_group_id IS NOT NULL -- Or the object is the Data Center containing the Cluster
+
+UNION ALL
+
+SELECT vds_group_id,
     ad_element_id
-FROM
-    vds_groups
-INNER JOIN internal_permissions_view ON object_id = vds_groups.storage_pool_id
-    AND object_type_id = 14
-    AND role_type = 2 -- Or the user has permissions on system;
-UNION
-    ALL
-SELECT
-    vds_group_id,
+FROM vds_groups
+INNER JOIN internal_permissions_view
+    ON object_id = vds_groups.storage_pool_id
+        AND object_type_id = 14
+        AND role_type = 2 -- Or the user has permissions on system;
+
+UNION ALL
+
+SELECT vds_group_id,
     ad_element_id
-FROM
-    internal_permissions_view
+FROM internal_permissions_view
 CROSS JOIN vds_groups
-WHERE
-    object_type_id = 1
+WHERE object_type_id = 1
     AND role_type = 2;
-CREATE
-OR REPLACE VIEW user_vds_groups_permissions_view ( entity_id,
-    user_id ) AS
-SELECT
-    DISTINCT entity_id,
+
+CREATE OR REPLACE VIEW user_vds_groups_permissions_view (
+    entity_id,
     user_id
-FROM
-    user_vds_groups_permissions_view_base NATURAL
-    JOIN engine_session_user_flat_groups;
+    ) AS
+
+SELECT DISTINCT entity_id,
+    user_id
+FROM user_vds_groups_permissions_view_base NATURAL
+INNER JOIN engine_session_user_flat_groups;
+
 -- Permissions view for Data Center
 -- The user has permissions on a data center
-CREATE
-OR REPLACE VIEW user_storage_pool_permissions_view_base ( entity_id,
-    granted_id ) AS
-SELECT
-    object_id,
+CREATE OR REPLACE VIEW user_storage_pool_permissions_view_base (
+    entity_id,
+    granted_id
+    ) AS
+
+SELECT object_id,
     ad_element_id
-FROM
-    internal_permissions_view
-WHERE
-    object_type_id = 14
+FROM internal_permissions_view
+WHERE object_type_id = 14
     AND role_type = 2 -- Or the object is a cluster in the data center
-UNION
-    ALL
-SELECT
-    storage_pool_id,
+
+UNION ALL
+
+SELECT storage_pool_id,
     ad_element_id
-FROM
-    vds_groups
-INNER JOIN internal_permissions_view ON object_id = vds_groups.vds_group_id
-    AND object_type_id = 9
-    AND role_type = 2 -- Or the object is vm pool in the data center
-UNION
-    ALL
-SELECT
-    storage_pool_id,
+FROM vds_groups
+INNER JOIN internal_permissions_view
+    ON object_id = vds_groups.vds_group_id
+        AND object_type_id = 9
+        AND role_type = 2 -- Or the object is vm pool in the data center
+
+UNION ALL
+
+SELECT storage_pool_id,
     ad_element_id
-FROM
-    vds_groups
-INNER JOIN vm_pools ON vds_groups.vds_group_id = vm_pools.vds_group_id
-INNER JOIN internal_permissions_view ON object_id = vm_pools.vm_pool_id
-    AND object_type_id = 5
-    AND role_type = 2 -- Or the object is a VM in the data center
-UNION
-    ALL
-SELECT
-    storage_pool_id,
+FROM vds_groups
+INNER JOIN vm_pools
+    ON vds_groups.vds_group_id = vm_pools.vds_group_id
+INNER JOIN internal_permissions_view
+    ON object_id = vm_pools.vm_pool_id
+        AND object_type_id = 5
+        AND role_type = 2 -- Or the object is a VM in the data center
+
+UNION ALL
+
+SELECT storage_pool_id,
     ad_element_id
-FROM
-    vm_static
-INNER JOIN vds_groups ON vds_groups.vds_group_id = vm_static.vds_group_id
-INNER JOIN internal_permissions_view ON object_id = vm_guid
-    AND object_type_id = 2
-    AND role_type = 2 -- Or the user has permission on system
-UNION
-    ALL
-SELECT
-    storage_pool.id,
+FROM vm_static
+INNER JOIN vds_groups
+    ON vds_groups.vds_group_id = vm_static.vds_group_id
+INNER JOIN internal_permissions_view
+    ON object_id = vm_guid
+        AND object_type_id = 2
+        AND role_type = 2 -- Or the user has permission on system
+
+UNION ALL
+
+SELECT storage_pool.id,
     ad_element_id
-FROM
-    internal_permissions_view
+FROM internal_permissions_view
 CROSS JOIN storage_pool
-WHERE
-    object_type_id = 1
+WHERE object_type_id = 1
     AND role_type = 2;
-CREATE
-OR REPLACE VIEW user_storage_pool_permissions_view ( entity_id,
-    user_id ) AS
-SELECT
-    DISTINCT entity_id,
+
+CREATE OR REPLACE VIEW user_storage_pool_permissions_view (
+    entity_id,
     user_id
-FROM
-    user_storage_pool_permissions_view_base NATURAL
-    JOIN engine_session_user_flat_groups;
+    ) AS
+
+SELECT DISTINCT entity_id,
+    user_id
+FROM user_storage_pool_permissions_view_base NATURAL
+INNER JOIN engine_session_user_flat_groups;
+
 -- Permissions for Storage Domains
 -- The user has permissions on a storage domain
-CREATE
-OR REPLACE VIEW user_storage_domain_permissions_view_base ( entity_id,
-    granted_id ) AS
-SELECT
-    object_id,
+CREATE OR REPLACE VIEW user_storage_domain_permissions_view_base (
+    entity_id,
+    granted_id
+    ) AS
+
+SELECT object_id,
     ad_element_id
-FROM
-    internal_permissions_view
-WHERE
-    object_type_id = 11
+FROM internal_permissions_view
+WHERE object_type_id = 11
     AND role_type = 2 -- Or the user has permissions on a VM in the storage domain
-UNION
-    ALL
-SELECT
-    storage_domains.id,
+
+UNION ALL
+
+SELECT storage_domains.id,
     ad_element_id
-FROM
-    storage_domains
-INNER JOIN vds_groups ON vds_groups.storage_pool_id = storage_domains.storage_pool_id
-INNER JOIN vm_static ON vds_groups.vds_group_id = vm_static.vds_group_id
-INNER JOIN internal_permissions_view ON object_id = vm_static.vm_guid
-    AND object_type_id = 2
-    AND role_type = 2 -- Or the user has permissions on a template in the storage domain
-UNION
-    ALL
-SELECT
-    storage_id,
+FROM storage_domains
+INNER JOIN vds_groups
+    ON vds_groups.storage_pool_id = storage_domains.storage_pool_id
+INNER JOIN vm_static
+    ON vds_groups.vds_group_id = vm_static.vds_group_id
+INNER JOIN internal_permissions_view
+    ON object_id = vm_static.vm_guid
+        AND object_type_id = 2
+        AND role_type = 2 -- Or the user has permissions on a template in the storage domain
+
+UNION ALL
+
+SELECT storage_id,
     ad_element_id
-FROM
-    vm_templates_storage_domain
-INNER JOIN internal_permissions_view ON vmt_guid = internal_permissions_view.object_id
-    AND object_type_id = 4
-    AND role_type = 2 -- Or the user has permissions on a VM created from a template in the storage domain
-UNION
-    ALL
-SELECT
-    storage_id,
+FROM vm_templates_storage_domain
+INNER JOIN internal_permissions_view
+    ON vmt_guid = internal_permissions_view.object_id
+        AND object_type_id = 4
+        AND role_type = 2 -- Or the user has permissions on a VM created from a template in the storage domain
+
+UNION ALL
+
+SELECT storage_id,
     ad_element_id
-FROM
-    vm_static
-INNER JOIN vm_templates_storage_domain ON vm_static.vmt_guid = vm_templates_storage_domain.vmt_guid
-INNER JOIN internal_permissions_view ON vm_static.vm_guid = object_id
-    AND objecT_type_id = 2
-    AND role_type = 2 -- Or the user has permissions on the Data Center containing the storage domain
-UNION
-    ALL
-SELECT
-    storage_domains.id,
+FROM vm_static
+INNER JOIN vm_templates_storage_domain
+    ON vm_static.vmt_guid = vm_templates_storage_domain.vmt_guid
+INNER JOIN internal_permissions_view
+    ON vm_static.vm_guid = object_id
+        AND objecT_type_id = 2
+        AND role_type = 2 -- Or the user has permissions on the Data Center containing the storage domain
+
+UNION ALL
+
+SELECT storage_domains.id,
     ad_element_id
-FROM
-    storage_domains
-INNER JOIN internal_permissions_view ON object_id = storage_domains.storage_pool_id
-    AND object_type_id = 14
-    AND role_type = 2 -- Or the user has permissions on System
-UNION
-    ALL
-SELECT
-    storage_domains.id,
+FROM storage_domains
+INNER JOIN internal_permissions_view
+    ON object_id = storage_domains.storage_pool_id
+        AND object_type_id = 14
+        AND role_type = 2 -- Or the user has permissions on System
+
+UNION ALL
+
+SELECT storage_domains.id,
     ad_element_id
-FROM
-    internal_permissions_view
+FROM internal_permissions_view
 CROSS JOIN storage_domains
-WHERE
-    object_type_id = 1
+WHERE object_type_id = 1
     AND role_type = 2;
-CREATE
-OR REPLACE VIEW user_storage_domain_permissions_view ( entity_id,
-    user_id ) AS
-SELECT
-    DISTINCT entity_id,
+
+CREATE OR REPLACE VIEW user_storage_domain_permissions_view (
+    entity_id,
     user_id
-FROM
-    user_storage_domain_permissions_view_base NATURAL
-    JOIN engine_session_user_flat_groups;
+    ) AS
+
+SELECT DISTINCT entity_id,
+    user_id
+FROM user_storage_domain_permissions_view_base NATURAL
+INNER JOIN engine_session_user_flat_groups;
+
 -- Permissions on Hosts
 -- The user has permissions on a host
-CREATE
-OR REPLACE VIEW user_vds_permissions_view_base ( entity_id,
-    granted_id ) AS
-SELECT
-    object_id,
+CREATE OR REPLACE VIEW user_vds_permissions_view_base (
+    entity_id,
+    granted_id
+    ) AS
+
+SELECT object_id,
     ad_element_id
-FROM
-    internal_permissions_view
-WHERE
-    object_type_id = 3
+FROM internal_permissions_view
+WHERE object_type_id = 3
     AND role_type = 2 -- Or the user has permissions on a VM in the cluster or Data Center that contains the host
-UNION
-    ALL
-SELECT
-    vds_id,
+
+UNION ALL
+
+SELECT vds_id,
     ad_element_id
-FROM
-    vds
-INNER JOIN internal_permissions_view ON ( object_id = vds_group_id
-        AND object_type_id = 9 )
-    OR ( object_id = storage_pool_id
-        AND object_type_id = 14 )
-    AND role_type = 2 -- Or the user has permissions on System
-UNION
-    ALL
-SELECT
-    vds_id,
+FROM vds
+INNER JOIN internal_permissions_view
+    ON (
+            object_id = vds_group_id
+            AND object_type_id = 9
+            )
+        OR (
+            object_id = storage_pool_id
+            AND object_type_id = 14
+            )
+        AND role_type = 2 -- Or the user has permissions on System
+
+UNION ALL
+
+SELECT vds_id,
     ad_element_id
-FROM
-    internal_permissions_view
+FROM internal_permissions_view
 CROSS JOIN vds
-WHERE
-    object_type_id = 1
+WHERE object_type_id = 1
     AND role_type = 2;
-CREATE
-OR REPLACE VIEW user_vds_permissions_view ( entity_id,
-    user_id ) AS
-SELECT
-    DISTINCT entity_id,
+
+CREATE OR REPLACE VIEW user_vds_permissions_view (
+    entity_id,
     user_id
-FROM
-    user_vds_permissions_view_base NATURAL
-    JOIN engine_session_user_flat_groups;
+    ) AS
+
+SELECT DISTINCT entity_id,
+    user_id
+FROM user_vds_permissions_view_base NATURAL
+INNER JOIN engine_session_user_flat_groups;
+
 -- Permissions on VM Pools
 -- The user has permissions on the pool
-CREATE
-OR REPLACE VIEW user_vm_pool_permissions_view_base ( entity_id,
-    granted_id ) AS
-SELECT
-    object_id,
+CREATE OR REPLACE VIEW user_vm_pool_permissions_view_base (
+    entity_id,
+    granted_id
+    ) AS
+
+SELECT object_id,
     ad_element_id
-FROM
-    internal_permissions_view
-WHERE
-    object_type_id = 5
+FROM internal_permissions_view
+WHERE object_type_id = 5
     AND role_type = 2 -- Or the user has permissions on a VM from the pool
-UNION
-    ALL
-SELECT
-    vm_pool_id,
+
+UNION ALL
+
+SELECT vm_pool_id,
     ad_element_id
-FROM
-    vm_pool_map
-INNER JOIN internal_permissions_view ON object_id = vm_guid
-    AND object_type_id = 2
-    AND role_type = 2 -- Or the user has permissions on the cluster containing the pool
-UNION
-    ALL
-SELECT
-    vm_pool_id,
+FROM vm_pool_map
+INNER JOIN internal_permissions_view
+    ON object_id = vm_guid
+        AND object_type_id = 2
+        AND role_type = 2 -- Or the user has permissions on the cluster containing the pool
+
+UNION ALL
+
+SELECT vm_pool_id,
     ad_element_id
-FROM
-    vm_pools
-INNER JOIN internal_permissions_view ON object_id = vds_group_id
-    AND object_type_id = 9
-    AND allows_viewing_children
-    AND role_type = 2 -- Or the user has permission on the data center containing the VM pool
-UNION
-    ALL
-SELECT
-    vm_pool_id,
+FROM vm_pools
+INNER JOIN internal_permissions_view
+    ON object_id = vds_group_id
+        AND object_type_id = 9
+        AND allows_viewing_children
+        AND role_type = 2 -- Or the user has permission on the data center containing the VM pool
+
+UNION ALL
+
+SELECT vm_pool_id,
     ad_element_id
-FROM
-    vm_pools
-INNER JOIN vds_groups ON vm_pools.vds_group_id = vds_groups.vds_group_id
-INNER JOIN internal_permissions_view ON object_id = storage_pool_id
-    AND object_type_id = 14
-    AND allows_viewing_children
-    AND role_type = 2 -- Or the user has permissions on System
-UNION
-    ALL
-SELECT
-    vm_pool_id,
+FROM vm_pools
+INNER JOIN vds_groups
+    ON vm_pools.vds_group_id = vds_groups.vds_group_id
+INNER JOIN internal_permissions_view
+    ON object_id = storage_pool_id
+        AND object_type_id = 14
+        AND allows_viewing_children
+        AND role_type = 2 -- Or the user has permissions on System
+
+UNION ALL
+
+SELECT vm_pool_id,
     ad_element_id
-FROM
-    internal_permissions_view
+FROM internal_permissions_view
 CROSS JOIN vm_pools
-WHERE
-    object_type_id = 1
+WHERE object_type_id = 1
     AND allows_viewing_children
     AND role_type = 2;
-CREATE
-OR REPLACE VIEW user_vm_pool_permissions_view ( entity_id,
-    user_id ) AS
-SELECT
-    DISTINCT entity_id,
+
+CREATE OR REPLACE VIEW user_vm_pool_permissions_view (
+    entity_id,
     user_id
-FROM
-    user_vm_pool_permissions_view_base NATURAL
-    JOIN engine_session_user_flat_groups;
+    ) AS
+
+SELECT DISTINCT entity_id,
+    user_id
+FROM user_vm_pool_permissions_view_base NATURAL
+INNER JOIN engine_session_user_flat_groups;
+
 -- Permissions on Templates
 -- The user has permissions on the template
-CREATE
-OR REPLACE VIEW user_vm_template_permissions_view_base ( entity_id,
-    granted_id ) AS
-SELECT
-    object_id,
+CREATE OR REPLACE VIEW user_vm_template_permissions_view_base (
+    entity_id,
+    granted_id
+    ) AS
+
+SELECT object_id,
     ad_element_id
-FROM
-    internal_permissions_view
-WHERE
-    object_type_id = 4
+FROM internal_permissions_view
+WHERE object_type_id = 4
     AND role_type = 2 -- Or the user has permissions on a VM created from the tempalate
-UNION
-    ALL
-SELECT
-    vmt_guid,
+
+UNION ALL
+
+SELECT vmt_guid,
     ad_element_id
-FROM
-    vm_static
-INNER JOIN internal_permissions_view ON object_id = vm_static.vm_guid
-    AND object_type_id = 2
-    AND role_type = 2 -- Or the user has permissions on the data center containing the template
-UNION
-    ALL
-SELECT
-    vm_guid,
+FROM vm_static
+INNER JOIN internal_permissions_view
+    ON object_id = vm_static.vm_guid
+        AND object_type_id = 2
+        AND role_type = 2 -- Or the user has permissions on the data center containing the template
+
+UNION ALL
+
+SELECT vm_guid,
     ad_element_id
-FROM
-    vm_static
-INNER JOIN vds_groups ON vds_groups.vds_group_id = vm_static.vds_group_id
-INNER JOIN internal_permissions_view ON object_id = storage_pool_id
-    AND object_type_id = 14
-    AND allows_viewing_children
-    AND role_type = 2
-    AND vm_static.entity_type ::text = 'TEMPLATE' ::text -- Or the user has permissions on system
-UNION
-    ALL
-SELECT
-    vm_guid,
+FROM vm_static
+INNER JOIN vds_groups
+    ON vds_groups.vds_group_id = vm_static.vds_group_id
+INNER JOIN internal_permissions_view
+    ON object_id = storage_pool_id
+        AND object_type_id = 14
+        AND allows_viewing_children
+        AND role_type = 2
+        AND vm_static.entity_type::TEXT = 'TEMPLATE'::TEXT -- Or the user has permissions on system
+
+UNION ALL
+
+SELECT vm_guid,
     ad_element_id
-FROM
-    internal_permissions_view
+FROM internal_permissions_view
 CROSS JOIN vm_static
-WHERE
-    object_type_id = 1
+WHERE object_type_id = 1
     AND allows_viewing_children
     AND role_type = 2
-    AND ( vm_static.entity_type ::text = 'TEMPLATE' ::text
-        OR vm_static.entity_type ::text = 'INSTANCE_TYPE' ::text
-        OR vm_static.entity_type ::text = 'IMAGE_TYPE' ::text );
-CREATE
-OR REPLACE VIEW user_vm_template_permissions_view ( entity_id,
-    user_id ) AS
-SELECT
-    DISTINCT entity_id,
+    AND (
+        vm_static.entity_type::TEXT = 'TEMPLATE'::TEXT
+        OR vm_static.entity_type::TEXT = 'INSTANCE_TYPE'::TEXT
+        OR vm_static.entity_type::TEXT = 'IMAGE_TYPE'::TEXT
+        );
+
+CREATE OR REPLACE VIEW user_vm_template_permissions_view (
+    entity_id,
     user_id
-FROM
-    user_vm_template_permissions_view_base NATURAL
-    JOIN engine_session_user_flat_groups;
+    ) AS
+
+SELECT DISTINCT entity_id,
+    user_id
+FROM user_vm_template_permissions_view_base NATURAL
+INNER JOIN engine_session_user_flat_groups;
+
 -- Permissions on VMs
 -- The user has permission on the VM
-CREATE
-OR REPLACE VIEW user_vm_permissions_view_base ( entity_id,
-    granted_id ) AS
-SELECT
-    object_id,
+CREATE OR REPLACE VIEW user_vm_permissions_view_base (
+    entity_id,
+    granted_id
+    ) AS
+
+SELECT object_id,
     ad_element_id
-FROM
-    internal_permissions_view
-WHERE
-    object_type_id = 2
+FROM internal_permissions_view
+WHERE object_type_id = 2
     AND role_type = 2 -- Or the user has permissions on the cluster containing the VM
-UNION
-    ALL
-SELECT
-    vm_guid,
+
+UNION ALL
+
+SELECT vm_guid,
     ad_element_id
-FROM
-    vm_static
-INNER JOIN internal_permissions_view ON object_id = vds_group_id
-    AND object_type_id = 9
-    AND allows_viewing_children
-    AND role_type = 2 -- Or the user has permissions on the data center containing the VM
-UNION
-    ALL
-SELECT
-    vm_guid,
+FROM vm_static
+INNER JOIN internal_permissions_view
+    ON object_id = vds_group_id
+        AND object_type_id = 9
+        AND allows_viewing_children
+        AND role_type = 2 -- Or the user has permissions on the data center containing the VM
+
+UNION ALL
+
+SELECT vm_guid,
     ad_element_id
-FROM
-    vm_static
-INNER JOIN vds_groups ON vds_groups.vds_group_id = vm_static.vds_group_id
-INNER JOIN internal_permissions_view ON object_id = storage_pool_id
-    AND object_type_id = 14
-    AND allows_viewing_children
-    AND role_type = 2 -- Or the user has permissions on system
-UNION
-    ALL
-SELECT
-    vm_guid,
+FROM vm_static
+INNER JOIN vds_groups
+    ON vds_groups.vds_group_id = vm_static.vds_group_id
+INNER JOIN internal_permissions_view
+    ON object_id = storage_pool_id
+        AND object_type_id = 14
+        AND allows_viewing_children
+        AND role_type = 2 -- Or the user has permissions on system
+
+UNION ALL
+
+SELECT vm_guid,
     ad_element_id
-FROM
-    internal_permissions_view
+FROM internal_permissions_view
 CROSS JOIN vm_static
-WHERE
-    object_type_id = 1
+WHERE object_type_id = 1
     AND allows_viewing_children
     AND role_type = 2;
-CREATE
-OR REPLACE VIEW user_vm_permissions_view ( entity_id,
-    user_id ) AS
-SELECT
-    DISTINCT entity_id,
+
+CREATE OR REPLACE VIEW user_vm_permissions_view (
+    entity_id,
     user_id
-FROM
-    user_vm_permissions_view_base NATURAL
-    JOIN engine_session_user_flat_groups;
+    ) AS
+
+SELECT DISTINCT entity_id,
+    user_id
+FROM user_vm_permissions_view_base NATURAL
+INNER JOIN engine_session_user_flat_groups;
+
 -- Permissions on disk
 -- The user has permissions on the disk directly
-CREATE
-OR REPLACE VIEW user_disk_permissions_view_base ( entity_id,
-    granted_id ) AS
-SELECT
-    object_id,
+CREATE OR REPLACE VIEW user_disk_permissions_view_base (
+    entity_id,
+    granted_id
+    ) AS
+
+SELECT object_id,
     ad_element_id
-FROM
-    internal_permissions_view
-WHERE
-    object_type_id = 19
+FROM internal_permissions_view
+WHERE object_type_id = 19
     AND role_type = 2 -- Or the user has permissions on the VM the disk is attached to
-UNION
-    ALL
-SELECT
-    device_id,
+
+UNION ALL
+
+SELECT device_id,
     user_vm_permissions_view.user_id AS ad_element_id
-FROM
-    vm_device
-INNER JOIN user_vm_permissions_view ON user_vm_permissions_view.entity_id = vm_device.vm_id
-WHERE
-    vm_device.type = 'disk'
+FROM vm_device
+INNER JOIN user_vm_permissions_view
+    ON user_vm_permissions_view.entity_id = vm_device.vm_id
+WHERE vm_device.type = 'disk'
     AND vm_device.device = 'disk' -- Or the user has permissions on the template the disk is attached to
-UNION
-    ALL
-SELECT
-    device_id,
+
+UNION ALL
+
+SELECT device_id,
     user_vm_template_permissions_view.user_id AS ad_element_id
-FROM
-    vm_device
-INNER JOIN user_vm_template_permissions_view ON user_vm_template_permissions_view.entity_id = vm_device.vm_id
-WHERE
-    type = 'disk'
+FROM vm_device
+INNER JOIN user_vm_template_permissions_view
+    ON user_vm_template_permissions_view.entity_id = vm_device.vm_id
+WHERE type = 'disk'
     AND device = 'disk' -- Or the user has permissions on the storage domain containing the disk
-UNION
-    ALL
-SELECT
-    images.image_group_id,
+
+UNION ALL
+
+SELECT images.image_group_id,
     ad_element_id
-FROM
-    image_storage_domain_map
-INNER JOIN images ON images.image_guid = image_storage_domain_map.image_id
-INNER JOIN internal_permissions_view ON object_id = storage_domain_id
-    AND object_type_id = 11
-    AND allows_viewing_children
-    AND role_type = 2 -- Or the user has permissions on the data center containing the storage pool constaining the disk
-UNION
-    ALL
-SELECT
-    images.image_group_id,
+FROM image_storage_domain_map
+INNER JOIN images
+    ON images.image_guid = image_storage_domain_map.image_id
+INNER JOIN internal_permissions_view
+    ON object_id = storage_domain_id
+        AND object_type_id = 11
+        AND allows_viewing_children
+        AND role_type = 2 -- Or the user has permissions on the data center containing the storage pool constaining the disk
+
+UNION ALL
+
+SELECT images.image_group_id,
     ad_element_id
-FROM
-    image_storage_domain_map
-INNER JOIN storage_pool_iso_map ON image_storage_domain_map.storage_domain_id = storage_pool_iso_map.storage_id
-INNER JOIN images ON images.image_guid = image_storage_domain_map.image_id
-INNER JOIN internal_permissions_view ON object_id = storage_pool_id
-    AND object_type_id = 14
-    AND allows_viewing_children
-    AND role_type = 2 -- Or the user has permissions on system
-UNION
-    ALL
-SELECT
-    device_id,
+FROM image_storage_domain_map
+INNER JOIN storage_pool_iso_map
+    ON image_storage_domain_map.storage_domain_id = storage_pool_iso_map.storage_id
+INNER JOIN images
+    ON images.image_guid = image_storage_domain_map.image_id
+INNER JOIN internal_permissions_view
+    ON object_id = storage_pool_id
+        AND object_type_id = 14
+        AND allows_viewing_children
+        AND role_type = 2 -- Or the user has permissions on system
+
+UNION ALL
+
+SELECT device_id,
     ad_element_id
-FROM
-    internal_permissions_view
+FROM internal_permissions_view
 CROSS JOIN vm_device
-WHERE
-    object_type_id = 1
+WHERE object_type_id = 1
     AND allows_viewing_children
     AND role_type = 2;
-CREATE
-OR REPLACE VIEW user_disk_permissions_view ( entity_id,
-    user_id ) AS
-SELECT
-    DISTINCT entity_id,
+
+CREATE OR REPLACE VIEW user_disk_permissions_view (
+    entity_id,
     user_id
-FROM
-    user_disk_permissions_view_base NATURAL
-    JOIN engine_session_user_flat_groups;
+    ) AS
+
+SELECT DISTINCT entity_id,
+    user_id
+FROM user_disk_permissions_view_base NATURAL
+INNER JOIN engine_session_user_flat_groups;
+
 -- Permissions on permissions
-CREATE
-OR REPLACE VIEW user_permissions_permissions_view ( entity_id,
-    user_id ) AS
-SELECT
-    DISTINCT id,
+CREATE OR REPLACE VIEW user_permissions_permissions_view (
+    entity_id,
     user_id
-FROM
-    internal_permissions_view
-    JOIN engine_session_user_flat_groups ON granted_id = ad_element_id;
+    ) AS
+
+SELECT DISTINCT id,
+    user_id
+FROM internal_permissions_view
+INNER JOIN engine_session_user_flat_groups
+    ON granted_id = ad_element_id;
+
 -- Direct permissions assigned to user
-CREATE
-OR REPLACE VIEW user_object_permissions_view AS
-SELECT
-    DISTINCT permissions.object_id AS entity_id,
+CREATE OR REPLACE VIEW user_object_permissions_view AS
+
+SELECT DISTINCT permissions.object_id AS entity_id,
     engine_session_user_flat_groups.user_id
-FROM
-    permissions
-    JOIN roles ON permissions.role_id = roles.id
-    JOIN engine_session_user_flat_groups ON engine_session_user_flat_groups.granted_id = permissions.ad_element_id
-WHERE
-    permissions.ad_element_id != getGlobalIds ( 'everyone' );
+FROM permissions
+INNER JOIN roles
+    ON permissions.role_id = roles.id
+INNER JOIN engine_session_user_flat_groups
+    ON engine_session_user_flat_groups.granted_id = permissions.ad_element_id
+WHERE permissions.ad_element_id != getGlobalIds('everyone');
+
 -- Permissions to view users in db
-CREATE
-OR REPLACE VIEW user_db_users_permissions_view AS
-SELECT
-    DISTINCT permissions.ad_element_id,
+CREATE OR REPLACE VIEW user_db_users_permissions_view AS
+
+SELECT DISTINCT permissions.ad_element_id,
     roles_groups.role_id,
     roles_groups.action_group_id
-FROM
-    permissions
-    JOIN roles_groups ON permissions.role_id = roles_groups.role_id
-WHERE
-    roles_groups.action_group_id = 502;
-CREATE
-OR REPLACE VIEW vm_device_view AS
-SELECT
-    device_id,
+FROM permissions
+INNER JOIN roles_groups
+    ON permissions.role_id = roles_groups.role_id
+WHERE roles_groups.action_group_id = 502;
+
+CREATE OR REPLACE VIEW vm_device_view AS
+
+SELECT device_id,
     vm_id,
     type,
     device,
@@ -3121,200 +3064,209 @@ SELECT
     snapshot_id,
     logical_name,
     is_using_scsi_reservation
-FROM
-    vm_device;
+FROM vm_device;
+
 -- Permissions on VNIC Profiles
 -- The user has permissions on the Profile directly
-CREATE
-OR REPLACE VIEW user_vnic_profile_permissions_view_base ( entity_id,
-    granted_id ) AS
-SELECT
-    object_id,
+CREATE OR REPLACE VIEW user_vnic_profile_permissions_view_base (
+    entity_id,
+    granted_id
+    ) AS
+
+SELECT object_id,
     ad_element_id
-FROM
-    internal_permissions_view
-WHERE
-    object_type_id = 27
+FROM internal_permissions_view
+WHERE object_type_id = 27
     AND role_type = 2 -- Or the user has permissions on the Network in which the profile belongs to
-UNION
-    ALL
-SELECT
-    vnic_profiles.id,
+
+UNION ALL
+
+SELECT vnic_profiles.id,
     ad_element_id
-FROM
-    vnic_profiles
-INNER JOIN internal_permissions_view ON object_id = network_id
-WHERE
-    object_type_id = 20
+FROM vnic_profiles
+INNER JOIN internal_permissions_view
+    ON object_id = network_id
+WHERE object_type_id = 20
     AND allows_viewing_children
     AND role_type = 2 -- Or the user has permissions on the Profile-Network's Data-Center directly
-UNION
-    ALL
-SELECT
-    vnic_profiles.id,
+
+UNION ALL
+
+SELECT vnic_profiles.id,
     ad_element_id
-FROM
-    vnic_profiles
-INNER JOIN network ON network.id = network_id
-INNER JOIN internal_permissions_view ON object_id = network.storage_pool_id
-WHERE
-    object_type_id = 14
+FROM vnic_profiles
+INNER JOIN network
+    ON network.id = network_id
+INNER JOIN internal_permissions_view
+    ON object_id = network.storage_pool_id
+WHERE object_type_id = 14
     AND role_type = 2
     AND allows_viewing_children -- Or the user has permissions on the Cluster the networks are assigned to
-UNION
-    ALL
-SELECT
-    vnic_profiles.id,
+
+UNION ALL
+
+SELECT vnic_profiles.id,
     ad_element_id
-FROM
-    vnic_profiles
-INNER JOIN network_cluster ON network_cluster.network_id = vnic_profiles.network_id
-INNER JOIN internal_permissions_view ON object_id = network_cluster.cluster_id
-WHERE
-    object_type_id = 9
+FROM vnic_profiles
+INNER JOIN network_cluster
+    ON network_cluster.network_id = vnic_profiles.network_id
+INNER JOIN internal_permissions_view
+    ON object_id = network_cluster.cluster_id
+WHERE object_type_id = 9
     AND role_type = 2
     AND allows_viewing_children --Or the user has permissions on the VM with this profile
-UNION
-    ALL
-SELECT
-    DISTINCT vnic_profile_id,
+
+UNION ALL
+
+SELECT DISTINCT vnic_profile_id,
     ad_element_id
-FROM
-    vm_interface
-INNER JOIN internal_permissions_view ON object_id = vm_guid
-WHERE
-    object_type_id = 2
+FROM vm_interface
+INNER JOIN internal_permissions_view
+    ON object_id = vm_guid
+WHERE object_type_id = 2
     AND role_type = 2 -- Or the user has permissions on the Template with the profile
-UNION
-    ALL
-SELECT
-    DISTINCT vnic_profile_id,
+
+UNION ALL
+
+SELECT DISTINCT vnic_profile_id,
     ad_element_id
-FROM
-    vm_interface
-INNER JOIN internal_permissions_view ON object_id = vmt_guid
-WHERE
-    object_type_id = 4
+FROM vm_interface
+INNER JOIN internal_permissions_view
+    ON object_id = vmt_guid
+WHERE object_type_id = 4
     AND role_type = 2 -- Or the user has permissions on system
-UNION
-    ALL
-SELECT
-    vnic_profiles.id,
+
+UNION ALL
+
+SELECT vnic_profiles.id,
     ad_element_id
-FROM
-    internal_permissions_view
+FROM internal_permissions_view
 CROSS JOIN vnic_profiles
-WHERE
-    object_type_id = 1
+WHERE object_type_id = 1
     AND allows_viewing_children
     AND role_type = 2;
-CREATE
-OR REPLACE VIEW user_vnic_profile_permissions_view ( entity_id,
-    user_id ) AS
-SELECT
-    DISTINCT entity_id,
+
+CREATE OR REPLACE VIEW user_vnic_profile_permissions_view (
+    entity_id,
     user_id
-FROM
-    user_vnic_profile_permissions_view_base NATURAL
-    JOIN engine_session_user_flat_groups;
+    ) AS
+
+SELECT DISTINCT entity_id,
+    user_id
+FROM user_vnic_profile_permissions_view_base NATURAL
+INNER JOIN engine_session_user_flat_groups;
+
 -- Permissions on Networks
-CREATE
-OR REPLACE VIEW user_network_permissions_view_base ( entity_id,
-    granted_id ) AS -- Or the user has permissions on one of the Network's VNIC Profiles
-SELECT
-    network.id,
+CREATE OR REPLACE VIEW user_network_permissions_view_base (
+    entity_id,
+    granted_id
+    ) AS -- Or the user has permissions on one of the Network's VNIC Profiles
+
+SELECT network.id,
     user_id
-FROM
-    network
-INNER JOIN vnic_profiles ON network_id = network.id
-INNER JOIN user_vnic_profile_permissions_view ON entity_id = vnic_profiles.id;
-CREATE
-OR REPLACE VIEW user_network_permissions_view ( entity_id,
-    user_id ) AS
-SELECT
-    DISTINCT entity_id,
+FROM network
+INNER JOIN vnic_profiles
+    ON network_id = network.id
+INNER JOIN user_vnic_profile_permissions_view
+    ON entity_id = vnic_profiles.id;
+
+CREATE OR REPLACE VIEW user_network_permissions_view (
+    entity_id,
     user_id
-FROM
-    user_network_permissions_view_base NATURAL
-    JOIN engine_session_user_flat_groups;
+    ) AS
+
+SELECT DISTINCT entity_id,
+    user_id
+FROM user_network_permissions_view_base NATURAL
+INNER JOIN engine_session_user_flat_groups;
+
 -- Permissions on disk profiles
 -- The user has permissions on the disk profile directly
-CREATE
-OR REPLACE VIEW user_disk_profile_permissions_view_base ( entity_id,
-    granted_id ) AS
-SELECT
-    object_id,
+CREATE OR REPLACE VIEW user_disk_profile_permissions_view_base (
+    entity_id,
+    granted_id
+    ) AS
+
+SELECT object_id,
     ad_element_id
-FROM
-    internal_permissions_view
-WHERE
-    object_type_id = 29
+FROM internal_permissions_view
+WHERE object_type_id = 29
     AND role_type = 2;
-CREATE
-OR REPLACE VIEW user_disk_profile_permissions_view ( entity_id,
-    user_id ) AS
-SELECT
-    DISTINCT entity_id,
+
+CREATE OR REPLACE VIEW user_disk_profile_permissions_view (
+    entity_id,
     user_id
-FROM
-    user_disk_profile_permissions_view_base NATURAL
-    JOIN engine_session_user_flat_groups;
+    ) AS
 
-CREATE
-OR REPLACE VIEW gluster_volumes_view AS
-SELECT
-    gluster_volumes.*,
+SELECT DISTINCT entity_id,
+    user_id
+FROM user_disk_profile_permissions_view_base NATURAL
+INNER JOIN engine_session_user_flat_groups;
+
+CREATE OR REPLACE VIEW gluster_volumes_view AS
+
+SELECT gluster_volumes.*,
     vds_groups.name AS vds_group_name,
-    CASE WHEN EXISTS (SELECT session_id FROM gluster_georep_session
-                      WHERE master_volume_id = gluster_volumes.id)
-         THEN true
-         ELSE false END
-         as is_master,
-    (SELECT vol.vol_name || '|' || cluster.name
-     FROM gluster_georep_session
-     INNER JOIN gluster_volumes vol ON master_volume_id = vol.id
-     INNER JOIN vds_groups cluster ON cluster.vds_group_id = vol.cluster_id
-     WHERE slave_volume_id = gluster_volumes.id) as master_vol_cluster
-FROM
-    gluster_volumes
-INNER JOIN vds_groups ON gluster_volumes.cluster_id = vds_groups.vds_group_id;
+    CASE
+        WHEN EXISTS (
+                SELECT session_id
+                FROM gluster_georep_session
+                WHERE master_volume_id = gluster_volumes.id
+                )
+            THEN true
+        ELSE false
+        END AS is_master,
+    (
+        SELECT vol.vol_name || '|' || cluster.name
+        FROM gluster_georep_session
+        INNER JOIN gluster_volumes vol
+            ON master_volume_id = vol.id
+        INNER JOIN vds_groups cluster
+            ON cluster.vds_group_id = vol.cluster_id
+        WHERE slave_volume_id = gluster_volumes.id
+        ) AS master_vol_cluster
+FROM gluster_volumes
+INNER JOIN vds_groups
+    ON gluster_volumes.cluster_id = vds_groups.vds_group_id;
 
-CREATE
-OR REPLACE VIEW gluster_volume_snapshots_view AS
-SELECT
-    gluster_volume_snapshots.*,
+CREATE OR REPLACE VIEW gluster_volume_snapshots_view AS
+
+SELECT gluster_volume_snapshots.*,
     gluster_volumes.cluster_id AS cluster_id,
     gluster_volumes.vol_name AS volume_name
-FROM
-    gluster_volume_snapshots
-INNER JOIN gluster_volumes ON gluster_volume_snapshots.volume_id = gluster_volumes.id;
-CREATE
-OR REPLACE VIEW gluster_volume_snapshot_schedules_view AS
-SELECT
-    gluster_volume_snapshot_schedules.*,
+FROM gluster_volume_snapshots
+INNER JOIN gluster_volumes
+    ON gluster_volume_snapshots.volume_id = gluster_volumes.id;
+
+CREATE OR REPLACE VIEW gluster_volume_snapshot_schedules_view AS
+
+SELECT gluster_volume_snapshot_schedules.*,
     gluster_volumes.cluster_id AS cluster_id
-FROM
-    gluster_volume_snapshot_schedules
-INNER JOIN gluster_volumes ON gluster_volume_snapshot_schedules.volume_id = gluster_volumes.id;
+FROM gluster_volume_snapshot_schedules
+INNER JOIN gluster_volumes
+    ON gluster_volume_snapshot_schedules.volume_id = gluster_volumes.id;
 
-CREATE OR REPLACE VIEW gluster_volume_bricks_view
-AS
+CREATE OR REPLACE VIEW gluster_volume_bricks_view AS
+
 SELECT gluster_volume_bricks.*,
-       vds_static.host_name AS vds_name,
-       gluster_volumes.vol_name AS volume_name,
-       vds_interface.addr as interface_address,
-       gluster_volumes.cluster_id as cluster_id
+    vds_static.host_name AS vds_name,
+    gluster_volumes.vol_name AS volume_name,
+    vds_interface.addr AS interface_address,
+    gluster_volumes.cluster_id AS cluster_id
 FROM gluster_volume_bricks
-INNER JOIN vds_static ON vds_static.vds_id = gluster_volume_bricks.server_id
-INNER JOIN gluster_volumes ON gluster_volumes.id = gluster_volume_bricks.volume_id
-LEFT OUTER JOIN network on  network.id = gluster_volume_bricks.network_id
-LEFT OUTER JOIN vds_interface ON vds_interface.vds_id = gluster_volume_bricks.server_id
-AND vds_interface.network_name = network.name;
+INNER JOIN vds_static
+    ON vds_static.vds_id = gluster_volume_bricks.server_id
+INNER JOIN gluster_volumes
+    ON gluster_volumes.id = gluster_volume_bricks.volume_id
+LEFT JOIN network
+    ON network.id = gluster_volume_bricks.network_id
+LEFT JOIN vds_interface
+    ON vds_interface.vds_id = gluster_volume_bricks.server_id
+        AND vds_interface.network_name = network.name;
 
-CREATE
-OR REPLACE VIEW gluster_volume_task_steps AS
-SELECT
-    step.*,
+CREATE OR REPLACE VIEW gluster_volume_task_steps AS
+
+SELECT step.*,
     gluster_volumes.id AS volume_id,
     job.job_id AS job_job_id,
     job.action_type,
@@ -3322,39 +3274,43 @@ SELECT
     job.status AS job_status,
     job.start_time AS job_start_time,
     job.end_time AS job_end_time
-FROM
-    gluster_volumes
-INNER JOIN job_subject_entity js ON js.entity_id = gluster_volumes.id
-INNER JOIN job ON job.job_id = js.job_id
-    AND job.action_type IN ( 'StartRebalanceGlusterVolume',
-        'StartRemoveGlusterVolumeBricks' )
-LEFT
-OUTER JOIN step ON step.external_id = gluster_volumes.task_id
-    AND step.external_system_type = 'GLUSTER'
-    AND step.job_id = js.job_id;
-CREATE
-OR REPLACE VIEW gluster_server_services_view AS
-SELECT
-    gluster_server_services.*,
+FROM gluster_volumes
+INNER JOIN job_subject_entity js
+    ON js.entity_id = gluster_volumes.id
+INNER JOIN job
+    ON job.job_id = js.job_id
+        AND job.action_type IN (
+            'StartRebalanceGlusterVolume',
+            'StartRemoveGlusterVolumeBricks'
+            )
+LEFT JOIN step
+    ON step.external_id = gluster_volumes.task_id
+        AND step.external_system_type = 'GLUSTER'
+        AND step.job_id = js.job_id;
+
+CREATE OR REPLACE VIEW gluster_server_services_view AS
+
+SELECT gluster_server_services.*,
     gluster_services.service_name,
     gluster_services.service_type,
     vds_static.vds_name
-FROM
-    gluster_server_services
-INNER JOIN gluster_services ON gluster_server_services.service_id = gluster_services.id
-INNER JOIN vds_static ON gluster_server_services.server_id = vds_static.vds_id;
-CREATE
-OR REPLACE VIEW gluster_server_hooks_view AS
-SELECT
-    gluster_server_hooks.*,
+FROM gluster_server_services
+INNER JOIN gluster_services
+    ON gluster_server_services.service_id = gluster_services.id
+INNER JOIN vds_static
+    ON gluster_server_services.server_id = vds_static.vds_id;
+
+CREATE OR REPLACE VIEW gluster_server_hooks_view AS
+
+SELECT gluster_server_hooks.*,
     vds_static.vds_name AS server_name
-FROM
-    gluster_server_hooks
-INNER JOIN vds_static ON gluster_server_hooks.server_id = vds_static.vds_id;
-CREATE
-OR REPLACE VIEW gluster_georep_sessions_view AS
-SELECT
-    session_id,
+FROM gluster_server_hooks
+INNER JOIN vds_static
+    ON gluster_server_hooks.server_id = vds_static.vds_id;
+
+CREATE OR REPLACE VIEW gluster_georep_sessions_view AS
+
+SELECT session_id,
     master_volume_id,
     session_key,
     slave_host_uuid,
@@ -3367,41 +3323,44 @@ SELECT
     gluster_volumes.vol_name AS master_volume_name,
     gluster_volumes.cluster_id AS cluster_id,
     georep.user_name
-FROM
-    gluster_georep_session georep
-INNER JOIN gluster_volumes ON gluster_volumes.id = georep.master_volume_id;
+FROM gluster_georep_session georep
+INNER JOIN gluster_volumes
+    ON gluster_volumes.id = georep.master_volume_id;
 
-CREATE OR REPLACE VIEW gluster_geo_rep_config_view
-AS
-SELECT session_id, georepConfig.config_key, config_value, config_description, config_possible_values, _update_date
-FROM  gluster_georep_config georepConfig
-LEFT OUTER JOIN gluster_config_master ON gluster_config_master.config_key = georepConfig.config_key AND gluster_config_master.config_feature='geo_replication';
+CREATE OR REPLACE VIEW gluster_geo_rep_config_view AS
 
-CREATE OR REPLACE VIEW supported_cluster_features_view
-AS
+SELECT session_id,
+    georepConfig.config_key,
+    config_value,
+    config_description,
+    config_possible_values,
+    _update_date
+FROM gluster_georep_config georepConfig
+LEFT JOIN gluster_config_master
+    ON gluster_config_master.config_key = georepConfig.config_key
+        AND gluster_config_master.config_feature = 'geo_replication';
+
+CREATE OR REPLACE VIEW supported_cluster_features_view AS
+
 SELECT cluster_features.*,
-supported_cluster_features.cluster_id,
-supported_cluster_features.is_enabled
+    supported_cluster_features.cluster_id,
+    supported_cluster_features.is_enabled
 FROM cluster_features
-INNER JOIN supported_cluster_features ON supported_cluster_features.feature_id = cluster_features.feature_id;
+INNER JOIN supported_cluster_features
+    ON supported_cluster_features.feature_id = cluster_features.feature_id;
 
 -- Affinity Groups view, including members
-CREATE
-OR REPLACE VIEW affinity_groups_view AS
-SELECT
-    affinity_groups.*,
-    array_to_string ( array_agg ( affinity_group_members.vm_id )
-,
-        ',' ) AS vm_ids,
-    array_to_string ( array_agg ( vm_static.vm_name )
-,
-        ',' ) AS vm_names
-FROM
-    affinity_groups
-LEFT JOIN affinity_group_members ON affinity_group_members.affinity_group_id = affinity_groups.id
-LEFT JOIN vm_static ON vm_static.vm_guid = affinity_group_members.vm_id -- postgres 8.X issue, need to group by all fields.
-GROUP BY
-    affinity_groups.id,
+CREATE OR REPLACE VIEW affinity_groups_view AS
+
+SELECT affinity_groups.*,
+    array_to_string(array_agg(affinity_group_members.vm_id), ',') AS vm_ids,
+    array_to_string(array_agg(vm_static.vm_name), ',') AS vm_names
+FROM affinity_groups
+LEFT JOIN affinity_group_members
+    ON affinity_group_members.affinity_group_id = affinity_groups.id
+LEFT JOIN vm_static
+    ON vm_static.vm_guid = affinity_group_members.vm_id -- postgres 8.X issue, need to group by all fields.
+GROUP BY affinity_groups.id,
     affinity_groups.name,
     affinity_groups.description,
     affinity_groups.cluster_id,
@@ -3409,22 +3368,22 @@ GROUP BY
     affinity_groups.enforcing,
     affinity_groups._create_date,
     affinity_groups._update_date;
+
 -- Numa node cpus view
-CREATE
-OR REPLACE VIEW numa_node_cpus_view AS
-SELECT
-    numa_node.numa_node_id,
+CREATE OR REPLACE VIEW numa_node_cpus_view AS
+
+SELECT numa_node.numa_node_id,
     numa_node.vds_id,
     numa_node.vm_id,
     numa_node_cpu_map.cpu_core_id
-FROM
-    numa_node
-INNER JOIN numa_node_cpu_map ON numa_node.numa_node_id = numa_node_cpu_map.numa_node_id;
+FROM numa_node
+INNER JOIN numa_node_cpu_map
+    ON numa_node.numa_node_id = numa_node_cpu_map.numa_node_id;
+
 -- Numa node assignment view
-CREATE
-OR REPLACE VIEW numa_node_assignment_view AS
-SELECT
-    vm_vds_numa_node_map.vm_numa_node_id AS assigned_vm_numa_node_id,
+CREATE OR REPLACE VIEW numa_node_assignment_view AS
+
+SELECT vm_vds_numa_node_map.vm_numa_node_id AS assigned_vm_numa_node_id,
     vm_vds_numa_node_map.is_pinned AS is_pinned,
     vm_vds_numa_node_map.vds_numa_node_index AS last_run_in_vds_numa_node_index,
     vm_numa_node.vm_id AS vm_numa_node_vm_id,
@@ -3450,17 +3409,16 @@ SELECT
     run_in_vds_numa_node.cpu_idle AS run_in_vds_numa_node_cpu_idle,
     run_in_vds_numa_node.usage_cpu_percent AS run_in_vds_numa_node_usage_cpu_percent,
     run_in_vds_numa_node.distance AS run_in_vds_numa_node_distance
-FROM
-    vm_vds_numa_node_map
-LEFT
-OUTER JOIN numa_node AS vm_numa_node ON vm_vds_numa_node_map.vm_numa_node_id = vm_numa_node.numa_node_id
-LEFT
-OUTER JOIN numa_node AS run_in_vds_numa_node ON vm_vds_numa_node_map.vds_numa_node_id = run_in_vds_numa_node.numa_node_id;
+FROM vm_vds_numa_node_map
+LEFT JOIN numa_node AS vm_numa_node
+    ON vm_vds_numa_node_map.vm_numa_node_id = vm_numa_node.numa_node_id
+LEFT JOIN numa_node AS run_in_vds_numa_node
+    ON vm_vds_numa_node_map.vds_numa_node_id = run_in_vds_numa_node.numa_node_id;
+
 -- Numa node with vds group view
-CREATE
-OR REPLACE VIEW numa_node_with_vds_group_view AS
-SELECT
-    vm_numa_node.numa_node_id AS vm_numa_node_id,
+CREATE OR REPLACE VIEW numa_node_with_vds_group_view AS
+
+SELECT vm_numa_node.numa_node_id AS vm_numa_node_id,
     vm_numa_node.vm_id AS vm_numa_node_vm_id,
     vm_numa_node.numa_node_index AS vm_numa_node_index,
     vm_numa_node.mem_total AS vm_numa_node_mem_total,
@@ -3473,42 +3431,69 @@ SELECT
     vm_numa_node.usage_cpu_percent AS vm_numa_node_usage_cpu_percent,
     vm_numa_node.distance AS vm_numa_node_distance,
     vm_static.vds_group_id
-FROM
-    numa_node AS vm_numa_node
-LEFT
-OUTER JOIN vm_static ON vm_numa_node.vm_id = vm_static.vm_guid;
+FROM numa_node AS vm_numa_node
+LEFT JOIN vm_static
+    ON vm_numa_node.vm_id = vm_static.vm_guid;
 
 CREATE OR REPLACE VIEW vm_host_pinning_view AS
-SELECT host.vds_name, vm.vm_name, vm_vds.*
+
+SELECT host.vds_name,
+    vm.vm_name,
+    vm_vds.*
 FROM vm_host_pinning_map AS vm_vds
-INNER JOIN vm_static  AS vm   ON vm_vds.vm_id  = vm.vm_guid
-INNER JOIN vds_static AS host ON vm_vds.vds_id = host.vds_id;
+INNER JOIN vm_static AS vm
+    ON vm_vds.vm_id = vm.vm_guid
+INNER JOIN vds_static AS host
+    ON vm_vds.vds_id = host.vds_id;
 
 CREATE OR REPLACE VIEW host_device_view AS
+
 SELECT host_device.*,
     NULL::UUID AS configured_vm_id,
     NULL::VARCHAR AS spec_params,
-    (SELECT array_to_string(array_agg(vm_host_pinning_view.vm_name), ',')
-     FROM   vm_device
-     INNER JOIN vm_host_pinning_view ON vm_device.vm_id = vm_host_pinning_view.vm_id
-     WHERE  vm_device.device = host_device.device_name
-     AND    vm_host_pinning_view.vds_id = host_device.host_id) AS attached_vm_names,
-    (SELECT vm_name FROM vm_static WHERE vm_static.vm_guid = host_device.vm_id) AS running_vm_name
-FROM   host_device;
+    (
+        SELECT array_to_string(array_agg(vm_host_pinning_view.vm_name), ',')
+        FROM vm_device
+        INNER JOIN vm_host_pinning_view
+            ON vm_device.vm_id = vm_host_pinning_view.vm_id
+        WHERE vm_device.device = host_device.device_name
+            AND vm_host_pinning_view.vds_id = host_device.host_id
+        ) AS attached_vm_names,
+    (
+        SELECT vm_name
+        FROM vm_static
+        WHERE vm_static.vm_guid = host_device.vm_id
+        ) AS running_vm_name
+FROM host_device;
 
 CREATE OR REPLACE VIEW vm_host_device_view AS
+
 SELECT host_device.*,
     vm_device.vm_id AS configured_vm_id,
     vm_device.spec_params AS spec_params,
-    array_to_string(array_agg(vm_host_pinning_view.vm_name) OVER (PARTITION BY host_id, device_name), ',') AS attached_vm_names,
-    (SELECT vm_name FROM vm_static WHERE vm_static.vm_guid = host_device.vm_id) AS running_vm_name
+    array_to_string(array_agg(vm_host_pinning_view.vm_name) OVER (
+            PARTITION BY host_id,
+            device_name
+            ), ',') AS attached_vm_names,
+    (
+        SELECT vm_name
+        FROM vm_static
+        WHERE vm_static.vm_guid = host_device.vm_id
+        ) AS running_vm_name
 FROM vm_device
-INNER JOIN vm_host_pinning_view ON vm_device.vm_id = vm_host_pinning_view.vm_id
-INNER JOIN host_device ON host_device.device_name = vm_device.device
-    AND vm_host_pinning_view.vds_id = host_device.host_id
+INNER JOIN vm_host_pinning_view
+    ON vm_device.vm_id = vm_host_pinning_view.vm_id
+INNER JOIN host_device
+    ON host_device.device_name = vm_device.device
+        AND vm_host_pinning_view.vds_id = host_device.host_id
 WHERE vm_device.type = 'hostdev';
 
 CREATE OR REPLACE VIEW user_profiles_view AS
-SELECT user_profiles.*, users.username || '@' || users.domain AS login_name
+
+SELECT user_profiles.*,
+    users.username || '@' || users.domain AS login_name
 FROM user_profiles
-INNER JOIN users ON user_profiles.user_id = users.user_id;
+INNER JOIN users
+    ON user_profiles.user_id = users.user_id;
+
+

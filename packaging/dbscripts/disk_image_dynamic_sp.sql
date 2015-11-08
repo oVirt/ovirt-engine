@@ -3,124 +3,155 @@
 ----------------------------------------------------------------
 -- [disk_image_dynamic] Table
 --
+CREATE OR REPLACE FUNCTION Insertdisk_image_dynamic (
+    v_image_id UUID,
+    v_read_rate INT,
+    v_write_rate INT,
+    v_actual_size BIGINT,
+    v_read_latency_seconds NUMERIC(18, 9),
+    v_write_latency_seconds NUMERIC(18, 9),
+    v_flush_latency_seconds NUMERIC(18, 9)
+    )
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    INSERT INTO disk_image_dynamic (
+        image_id,
+        read_rate,
+        write_rate,
+        actual_size,
+        read_latency_seconds,
+        write_latency_seconds,
+        flush_latency_seconds
+        )
+    VALUES (
+        v_image_id,
+        v_read_rate,
+        v_write_rate,
+        v_actual_size,
+        v_read_latency_seconds,
+        v_write_latency_seconds,
+        v_flush_latency_seconds
+        );
+END;$PROCEDURE$
+LANGUAGE plpgsql;
 
-
-
-
-Create or replace FUNCTION Insertdisk_image_dynamic(v_image_id UUID,
-	v_read_rate INTEGER ,
-	v_write_rate INTEGER ,
-	v_actual_size BIGINT,
-	v_read_latency_seconds numeric(18,9),
-	v_write_latency_seconds numeric(18,9),
-	v_flush_latency_seconds numeric(18,9)
-)
+CREATE OR REPLACE FUNCTION Updatedisk_image_dynamic (
+    v_image_id UUID,
+    v_read_rate INT,
+    v_write_rate INT,
+    v_actual_size BIGINT,
+    v_read_latency_seconds NUMERIC(18, 9),
+    v_write_latency_seconds NUMERIC(18, 9),
+    v_flush_latency_seconds NUMERIC(18, 9)
+    )
 RETURNS VOID
-   AS $procedure$
+    --The [disk_image_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
+    AS $PROCEDURE$
 BEGIN
-INSERT INTO disk_image_dynamic(image_id, read_rate, write_rate, actual_size, read_latency_seconds, write_latency_seconds, flush_latency_seconds)
-	VALUES(v_image_id, v_read_rate, v_write_rate, v_actual_size, v_read_latency_seconds, v_write_latency_seconds, v_flush_latency_seconds);
-END; $procedure$
+    UPDATE disk_image_dynamic
+    SET read_rate = v_read_rate,
+        write_rate = v_write_rate,
+        actual_size = v_actual_size,
+        read_latency_seconds = v_read_latency_seconds,
+        write_latency_seconds = v_write_latency_seconds,
+        flush_latency_seconds = v_flush_latency_seconds,
+        _update_date = LOCALTIMESTAMP
+    WHERE image_id = v_image_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-
-
-Create or replace FUNCTION Updatedisk_image_dynamic(v_image_id UUID,
-	v_read_rate INTEGER ,
-	v_write_rate INTEGER ,
-	v_actual_size BIGINT ,
-	v_read_latency_seconds numeric(18,9) ,
-	v_write_latency_seconds numeric(18,9) ,
-	v_flush_latency_seconds numeric(18,9))
+CREATE OR REPLACE FUNCTION Updatedisk_image_dynamic_by_disk_id_and_vm_id (
+    v_image_group_id UUID,
+    v_vm_id UUID,
+    v_read_rate INT,
+    v_write_rate INT,
+    v_actual_size BIGINT,
+    v_read_latency_seconds NUMERIC(18, 9),
+    v_write_latency_seconds NUMERIC(18, 9),
+    v_flush_latency_seconds NUMERIC(18, 9)
+    )
 RETURNS VOID
-
-	--The [disk_image_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-   AS $procedure$
+    --The [disk_image_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
+    AS $PROCEDURE$
 BEGIN
-      UPDATE disk_image_dynamic
-      SET read_rate = v_read_rate,write_rate = v_write_rate,actual_size = v_actual_size,read_latency_seconds = v_read_latency_seconds,write_latency_seconds = v_write_latency_seconds,flush_latency_seconds = v_flush_latency_seconds, _update_date = LOCALTIMESTAMP
-      WHERE image_id = v_image_id;
-END; $procedure$
+    UPDATE disk_image_dynamic
+    SET read_rate = v_read_rate,
+        write_rate = v_write_rate,
+        actual_size = v_actual_size,
+        read_latency_seconds = v_read_latency_seconds,
+        write_latency_seconds = v_write_latency_seconds,
+        flush_latency_seconds = v_flush_latency_seconds,
+        _update_date = LOCALTIMESTAMP
+    WHERE image_id IN (
+            SELECT DISTINCT image_guid
+            FROM images
+            WHERE image_group_id = v_image_group_id
+                AND active = true
+            )
+        AND EXISTS (
+            SELECT 1
+            FROM vm_device vmd
+            WHERE vmd.vm_id = v_vm_id
+                AND vmd.device_id = v_image_group_id
+                AND vmd.snapshot_id IS NULL
+            );
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-Create or replace FUNCTION Updatedisk_image_dynamic_by_disk_id_and_vm_id(v_image_group_id UUID,
-  v_vm_id UUID,
-	v_read_rate INTEGER ,
-	v_write_rate INTEGER ,
-	v_actual_size BIGINT ,
-	v_read_latency_seconds numeric(18,9) ,
-	v_write_latency_seconds numeric(18,9) ,
-	v_flush_latency_seconds numeric(18,9))
-RETURNS VOID
-
-	--The [disk_image_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-   AS $procedure$
+CREATE OR REPLACE FUNCTION Deletedisk_image_dynamic (v_image_id UUID)
+RETURNS VOID AS $PROCEDURE$
 BEGIN
-      UPDATE disk_image_dynamic
-      SET read_rate = v_read_rate,write_rate = v_write_rate,actual_size = v_actual_size,read_latency_seconds = v_read_latency_seconds,write_latency_seconds = v_write_latency_seconds,flush_latency_seconds = v_flush_latency_seconds, _update_date = LOCALTIMESTAMP
-      WHERE image_id in (SELECT distinct image_guid
-    		FROM   images
-    		WHERE  image_group_id = v_image_group_id and active = true)
-    		AND EXISTS (SELECT 1 FROM vm_device vmd
-    		            WHERE vmd.vm_id = v_vm_id AND vmd.device_id = v_image_group_id AND vmd.snapshot_id is NULL);
-END; $procedure$
+    DELETE
+    FROM disk_image_dynamic
+    WHERE image_id = v_image_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-Create or replace FUNCTION Deletedisk_image_dynamic(v_image_id UUID)
-RETURNS VOID
-   AS $procedure$
+CREATE OR REPLACE FUNCTION GetAllFromdisk_image_dynamic ()
+RETURNS SETOF disk_image_dynamic STABLE AS $PROCEDURE$
 BEGIN
+    RETURN QUERY
 
-   DELETE FROM disk_image_dynamic
-   WHERE image_id = v_image_id;
-
-END; $procedure$
+    SELECT *
+    FROM disk_image_dynamic;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-
-
-Create or replace FUNCTION GetAllFromdisk_image_dynamic() RETURNS SETOF disk_image_dynamic STABLE
-   AS $procedure$
+CREATE OR REPLACE FUNCTION Getdisk_image_dynamicByimage_id (v_image_id UUID)
+RETURNS SETOF disk_image_dynamic STABLE AS $PROCEDURE$
 BEGIN
-   RETURN QUERY SELECT *
-   FROM disk_image_dynamic;
+    RETURN QUERY
 
-END; $procedure$
+    SELECT *
+    FROM disk_image_dynamic
+    WHERE image_id = v_image_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+DROP TRIGGER
 
+IF EXISTS delete_disk_image_dynamic_for_image
+    ON images;
+    CREATE
+        OR REPLACE FUNCTION fn_image_deleted ()
+    RETURNS TRIGGER AS $$
 
-
-
-Create or replace FUNCTION Getdisk_image_dynamicByimage_id(v_image_id UUID)
-RETURNS SETOF disk_image_dynamic STABLE
-   AS $procedure$
 BEGIN
-   RETURN QUERY SELECT *
-   FROM disk_image_dynamic
-   WHERE image_id = v_image_id;
+    DELETE
+    FROM disk_image_dynamic dim
+    WHERE DIM.image_id = OLD.image_guid;
 
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
-
-DROP TRIGGER IF EXISTS delete_disk_image_dynamic_for_image ON images;
-
-CREATE OR REPLACE FUNCTION fn_image_deleted() RETURNS TRIGGER AS $$
-BEGIN
-    DELETE FROM disk_image_dynamic dim WHERE DIM.image_id = OLD.image_guid;
     RETURN OLD;
-END;
-$$ LANGUAGE plpgsql;
+END;$$
 
-CREATE TRIGGER delete_disk_image_dynamic_for_image BEFORE DELETE ON IMAGES FOR EACH ROW
+LANGUAGE plpgsql;
+
+CREATE TRIGGER delete_disk_image_dynamic_for_image BEFORE
+
+DELETE
+    ON IMAGES
+FOR EACH ROW
+
 EXECUTE PROCEDURE fn_image_deleted();
+
+

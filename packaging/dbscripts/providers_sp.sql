@@ -3,11 +3,7 @@
 ----------------------------------------------------------------
 -- [providers] Table
 --
-
-
-
-
-Create or replace FUNCTION InsertProvider(
+CREATE OR REPLACE FUNCTION InsertProvider (
     v_id UUID,
     v_name VARCHAR(128),
     v_description VARCHAR(4000),
@@ -21,11 +17,11 @@ Create or replace FUNCTION InsertProvider(
     v_plugin_type VARCHAR DEFAULT NULL,
     v_agent_configuration TEXT DEFAULT NULL,
     v_additional_properties TEXT DEFAULT NULL,
-    v_auth_url TEXT DEFAULT NULL)
-RETURNS VOID
-AS $procedure$
+    v_auth_url TEXT DEFAULT NULL
+    )
+RETURNS VOID AS $PROCEDURE$
 BEGIN
-    INSERT INTO providers(
+    INSERT INTO providers (
         id,
         name,
         description,
@@ -39,8 +35,9 @@ BEGIN
         plugin_type,
         agent_configuration,
         additional_properties,
-        auth_url)
-    VALUES(
+        auth_url
+        )
+    VALUES (
         v_id,
         v_name,
         v_description,
@@ -54,15 +51,12 @@ BEGIN
         v_plugin_type,
         v_agent_configuration,
         v_additional_properties,
-        v_auth_url);
-END; $procedure$
+        v_auth_url
+        );
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-
-
-Create or replace FUNCTION UpdateProvider(
+CREATE OR REPLACE FUNCTION UpdateProvider (
     v_id UUID,
     v_name VARCHAR(128),
     v_description VARCHAR(4000),
@@ -76,94 +70,79 @@ Create or replace FUNCTION UpdateProvider(
     v_plugin_type VARCHAR DEFAULT NULL,
     v_agent_configuration TEXT DEFAULT NULL,
     v_additional_properties TEXT DEFAULT NULL,
-    v_auth_url TEXT DEFAULT NULL)
-RETURNS VOID
-AS $procedure$
+    v_auth_url TEXT DEFAULT NULL
+    )
+RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE providers
-    SET    name = v_name,
-           description = v_description,
-           url = v_url,
-           provider_type = v_provider_type,
-           auth_required = v_auth_required,
-           auth_username = v_auth_username,
-           auth_password = v_auth_password,
-           custom_properties = v_custom_properties,
-           tenant_name = v_tenant_name,
-           plugin_type = v_plugin_type,
-           _update_date = NOW(),
-           agent_configuration = v_agent_configuration,
-           additional_properties = v_additional_properties,
-           auth_url = v_auth_url
-    WHERE  id = v_id;
-END; $procedure$
+    SET name = v_name,
+        description = v_description,
+        url = v_url,
+        provider_type = v_provider_type,
+        auth_required = v_auth_required,
+        auth_username = v_auth_username,
+        auth_password = v_auth_password,
+        custom_properties = v_custom_properties,
+        tenant_name = v_tenant_name,
+        plugin_type = v_plugin_type,
+        _update_date = NOW(),
+        agent_configuration = v_agent_configuration,
+        additional_properties = v_additional_properties,
+        auth_url = v_auth_url
+    WHERE id = v_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-
-
-
-Create or replace FUNCTION DeleteProvider(v_id UUID)
-RETURNS VOID
-AS $procedure$
+CREATE OR REPLACE FUNCTION DeleteProvider (v_id UUID)
+RETURNS VOID AS $PROCEDURE$
 BEGIN
     DELETE
-    FROM   providers
-    WHERE  id = v_id;
-END; $procedure$
+    FROM providers
+    WHERE id = v_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-
-
-Create or replace FUNCTION GetAllFromProviders() RETURNS SETOF providers STABLE
-AS $procedure$
+CREATE OR REPLACE FUNCTION GetAllFromProviders ()
+RETURNS SETOF providers STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
+
     SELECT *
-    FROM   providers;
-END; $procedure$
+    FROM providers;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-Create or replace FUNCTION GetAllFromProvidersByType(v_provider_type varchar(32)) RETURNS SETOF providers STABLE
-AS $procedure$
+CREATE OR REPLACE FUNCTION GetAllFromProvidersByType (v_provider_type VARCHAR(32))
+RETURNS SETOF providers STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
+
     SELECT *
-    FROM   providers
+    FROM providers
     WHERE provider_type = v_provider_type;
-END; $procedure$
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-Create or replace FUNCTION GetProviderByProviderId(v_id UUID)
-RETURNS SETOF providers STABLE
-AS $procedure$
+CREATE OR REPLACE FUNCTION GetProviderByProviderId (v_id UUID)
+RETURNS SETOF providers STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
+
     SELECT *
-    FROM   providers
-    WHERE  id = v_id;
-END; $procedure$
+    FROM providers
+    WHERE id = v_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-
-
-Create or replace FUNCTION GetProviderByName(v_name VARCHAR)
-RETURNS SETOF providers STABLE
-AS $procedure$
+CREATE OR REPLACE FUNCTION GetProviderByName (v_name VARCHAR)
+RETURNS SETOF providers STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
+
     SELECT *
-    FROM   providers
-    WHERE  name = v_name;
-END; $procedure$
+    FROM providers
+    WHERE name = v_name;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
+
 

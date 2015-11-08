@@ -1,94 +1,92 @@
 
 
+
 ----------------------------------------------------------------
 -- [vdc_options] Table
 --
-
-
-
-
-Create or replace FUNCTION InsertVdcOption(v_option_name VARCHAR(50),
-	v_option_value VARCHAR(50),
-	v_version VARCHAR(40),
-	INOUT v_option_id INTEGER)
-   AS $procedure$
+CREATE OR REPLACE FUNCTION InsertVdcOption (
+    v_option_name VARCHAR(50),
+    v_option_value VARCHAR(50),
+    v_version VARCHAR(40),
+    INOUT v_option_id INT
+    ) AS $PROCEDURE$
 BEGIN
-INSERT INTO vdc_options(OPTION_NAME, option_value, version)
-	VALUES(v_option_name, v_option_value, v_version);
+    INSERT INTO vdc_options (
+        OPTION_name,
+        option_value,
+        version
+        )
+    VALUES (
+        v_option_name,
+        v_option_value,
+        v_version
+        );
 
-      v_option_id := CURRVAL('vdc_options_seq');
-END; $procedure$
+    v_option_id := CURRVAL('vdc_options_seq');
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-
-
-Create or replace FUNCTION UpdateVdcOption(v_option_name VARCHAR(50),
-	v_option_value VARCHAR(50),
-	v_option_id INTEGER,
-	v_version VARCHAR(40))
+CREATE OR REPLACE FUNCTION UpdateVdcOption (
+    v_option_name VARCHAR(50),
+    v_option_value VARCHAR(50),
+    v_option_id INT,
+    v_version VARCHAR(40)
+    )
 RETURNS VOID
-
-	--The [vdc_options] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-   AS $procedure$
+    --The [vdc_options] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
+    AS $PROCEDURE$
 BEGIN
-      UPDATE vdc_options
-      SET OPTION_NAME = v_option_name,option_value = v_option_value,version = v_version
-      WHERE option_id = v_option_id;
-END; $procedure$
+    UPDATE vdc_options
+    SET OPTION_name = v_option_name,
+        option_value = v_option_value,
+        version = v_version
+    WHERE option_id = v_option_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-
-
-Create or replace FUNCTION DeleteVdcOption(v_option_id INTEGER)
-RETURNS VOID
-   AS $procedure$
+CREATE OR REPLACE FUNCTION DeleteVdcOption (v_option_id INT)
+RETURNS VOID AS $PROCEDURE$
 BEGIN
-      DELETE FROM vdc_options
-      WHERE option_id = v_option_id;
-END; $procedure$
+    DELETE
+    FROM vdc_options
+    WHERE option_id = v_option_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-
-
-Create or replace FUNCTION GetAllFromVdcOption() RETURNS SETOF vdc_options STABLE
-   AS $procedure$
+CREATE OR REPLACE FUNCTION GetAllFromVdcOption ()
+RETURNS SETOF vdc_options STABLE AS $PROCEDURE$
 BEGIN
-      RETURN QUERY SELECT vdc_options.*
-      FROM vdc_options;
-END; $procedure$
+    RETURN QUERY
+
+    SELECT vdc_options.*
+    FROM vdc_options;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-
-
-Create or replace FUNCTION GetVdcOptionById(v_option_id INTEGER) RETURNS SETOF vdc_options STABLE
-   AS $procedure$
+CREATE OR REPLACE FUNCTION GetVdcOptionById (v_option_id INT)
+RETURNS SETOF vdc_options STABLE AS $PROCEDURE$
 BEGIN
-      RETURN QUERY SELECT vdc_options.*
-      FROM vdc_options
-      WHERE option_id = v_option_id;
-END; $procedure$
+    RETURN QUERY
+
+    SELECT vdc_options.*
+    FROM vdc_options
+    WHERE option_id = v_option_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-
-
-Create or replace FUNCTION GetVdcOptionByName(v_option_name VARCHAR(50),
-	v_version VARCHAR(40)) RETURNS SETOF vdc_options STABLE
-   AS $procedure$
+CREATE OR REPLACE FUNCTION GetVdcOptionByName (
+    v_option_name VARCHAR(50),
+    v_version VARCHAR(40)
+    )
+RETURNS SETOF vdc_options STABLE AS $PROCEDURE$
 BEGIN
-      RETURN QUERY SELECT vdc_options.*
-      FROM vdc_options
-      WHERE OPTION_NAME = v_option_name and version = v_version;
-END; $procedure$
+    RETURN QUERY
+
+    SELECT vdc_options.*
+    FROM vdc_options
+    WHERE OPTION_name = v_option_name
+        AND version = v_version;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 

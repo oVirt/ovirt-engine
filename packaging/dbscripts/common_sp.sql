@@ -1,565 +1,1102 @@
+
+
 --------------------------------------------------
 -- DB helper functions
 --------------------------------------------------
-
 -- Creates a column in the given table (if not exists)
-Create or replace FUNCTION fn_db_add_column(v_table varchar(128), v_column varchar(128), v_column_def text)
-returns void
-AS $procedure$
-declare
-v_sql text;
+CREATE OR REPLACE FUNCTION fn_db_add_column (
+    v_table VARCHAR(128),
+    v_column VARCHAR(128),
+    v_column_def TEXT
+    )
+RETURNS void AS $PROCEDURE$
+DECLARE v_sql TEXT;
 
-begin
-	if (not exists (select 1 from information_schema.columns where table_schema = 'public' and table_name ilike v_table and column_name ilike v_column)) then
-	    begin
-		v_sql := 'ALTER TABLE ' || v_table || ' ADD COLUMN ' || v_column || ' ' || v_column_def;
-		EXECUTE v_sql;
-            end;
-	end if;
-END; $procedure$
-LANGUAGE plpgsql;
+BEGIN
+    IF (
+            NOT EXISTS (
+                SELECT 1
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                    AND table_name ilike v_table
+                    AND column_name ilike v_column
+                )
+            ) THEN
+    BEGIN
+        v_sql := 'ALTER TABLE ' || v_table || ' ADD COLUMN ' || v_column || ' ' || v_column_def;
+
+        EXECUTE v_sql;
+    END;
+END
+
+IF ;END;$PROCEDURE$
+    LANGUAGE plpgsql;
 
 -- delete a column from a table and all its dependencied
-Create or replace FUNCTION fn_db_drop_column(v_table varchar(128), v_column varchar(128))
-returns void
-AS $procedure$
-declare
-v_sql text;
-begin
-        if (exists (select 1 from information_schema.columns where table_schema = 'public' and table_name ilike v_table and column_name ilike v_column)) then
-            begin
-                v_sql := 'ALTER TABLE ' || v_table || ' DROP COLUMN ' || v_column;
-                EXECUTE v_sql;
-            end;
-        else
-            RAISE EXCEPTION 'Table % or Column % does not exist.', v_table, v_column;
-        end if;
-end;$procedure$
+CREATE OR REPLACE FUNCTION fn_db_drop_column (
+    v_table VARCHAR(128),
+    v_column VARCHAR(128)
+    )
+RETURNS void AS $PROCEDURE$
+DECLARE v_sql TEXT;
+
+BEGIN
+    IF (
+            EXISTS (
+                SELECT 1
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                    AND table_name ilike v_table
+                    AND column_name ilike v_column
+                )
+            ) THEN
+    BEGIN
+        v_sql := 'ALTER TABLE ' || v_table || ' DROP COLUMN ' || v_column;
+
+        EXECUTE v_sql;
+    END;
+    ELSE
+        RAISE EXCEPTION 'Table % or Column % does not exist.',
+            v_table,
+            v_column;
+    END IF;
+
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 -- Changes a column data type (if value conversion is supported)
-Create or replace FUNCTION fn_db_change_column_type(v_table varchar(128), v_column varchar(128),
-                                                    v_type varchar(128), v_new_type varchar(128))
-returns void
-AS $procedure$
-declare
-v_sql text;
+CREATE OR REPLACE FUNCTION fn_db_change_column_type (
+    v_table VARCHAR(128),
+    v_column VARCHAR(128),
+    v_type VARCHAR(128),
+    v_new_type VARCHAR(128)
+    )
+RETURNS void AS $PROCEDURE$
+DECLARE v_sql TEXT;
 
-begin
-	if (exists (select 1 from information_schema.columns where table_schema = 'public' and table_name ilike v_table and column_name ilike v_column and (udt_name ilike v_type or data_type ilike v_type))) then
-	    begin
-		v_sql := 'ALTER TABLE ' || v_table || ' ALTER COLUMN ' || v_column || ' TYPE ' || v_new_type;
-		EXECUTE v_sql;
-            end;
-            --- ignore operation if requested type is already there
-        elsif (not exists (select 1 from information_schema.columns where table_schema = 'public' and table_name ilike v_table and column_name ilike v_column and
-                (udt_name ilike v_new_type or data_type ilike v_new_type))) then
-            RAISE EXCEPTION 'Table % or Column % does not exist.', v_table, v_column;
-	end if;
-END; $procedure$
+BEGIN
+    IF (
+            EXISTS (
+                SELECT 1
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                    AND table_name ilike v_table
+                    AND column_name ilike v_column
+                    AND (
+                        udt_name ilike v_type
+                        OR data_type ilike v_type
+                        )
+                )
+            ) THEN
+    BEGIN
+        v_sql := 'ALTER TABLE ' || v_table || ' ALTER COLUMN ' || v_column || ' TYPE ' || v_new_type;
+
+        EXECUTE v_sql;
+    END;
+
+    --- ignore operation if requested type is already there
+    ELSIF(NOT EXISTS (
+                SELECT 1
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                    AND table_name ilike v_table
+                    AND column_name ilike v_column
+                    AND (
+                        udt_name ilike v_new_type
+                        OR data_type ilike v_new_type
+                        )
+                )) THEN
+                    RAISE EXCEPTION 'Table % or Column % does not exist.', v_table, v_column;
+    END IF;
+
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 -- rename a column for a given table
-Create or replace FUNCTION fn_db_rename_column(v_table varchar(128), v_column varchar(128), v_new_name varchar(128))
-returns void
-AS $procedure$
-declare
-v_sql text;
+CREATE OR REPLACE FUNCTION fn_db_rename_column (
+    v_table VARCHAR(128),
+    v_column VARCHAR(128),
+    v_new_name VARCHAR(128)
+    )
+RETURNS void AS $PROCEDURE$
+DECLARE v_sql TEXT;
 
-begin
-	if (exists (select 1 from information_schema.columns where table_schema = 'public' and table_name ilike v_table and column_name ilike v_column)) then
-	    begin
-		v_sql := 'ALTER TABLE ' || v_table || ' RENAME COLUMN ' || v_column || ' TO ' || v_new_name;
-		EXECUTE v_sql;
-            end;
-        else
-            RAISE EXCEPTION 'Table % or Column % does not exist.', v_table, v_column;
-	end if;
-END; $procedure$
-LANGUAGE plpgsql;
+BEGIN
+    IF (
+            EXISTS (
+                SELECT 1
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                    AND table_name ilike v_table
+                    AND column_name ilike v_column
+                )
+            ) THEN
+    BEGIN
+        v_sql := 'ALTER TABLE ' || v_table || ' RENAME COLUMN ' || v_column || ' TO ' || v_new_name;
 
+        EXECUTE v_sql;
+    END;
+    ELSE
+        RAISE EXCEPTION 'Table % or Column % does not exist.',
+            v_table,
+            v_column;
+END
 
+IF ;END;$PROCEDURE$
+    LANGUAGE plpgsql;
 
 -- Adds a value to vdc_options (if not exists)
-create or replace FUNCTION fn_db_add_config_value(v_option_name varchar(100), v_option_value varchar(4000),
-                                                  v_version varchar(40))
-returns void
-AS $procedure$
-begin
-    if (not exists (select 1 from vdc_options where option_name ilike v_option_name and version = v_version)) then
-        begin
-            insert into vdc_options (option_name, option_value, version) values (v_option_name, v_option_value, v_version);
-        end;
-    end if;
-END; $procedure$
+CREATE OR REPLACE FUNCTION fn_db_add_config_value (
+    v_option_name VARCHAR(100),
+    v_option_value VARCHAR(4000),
+    v_version VARCHAR(40)
+    )
+RETURNS void AS $PROCEDURE$
+BEGIN
+    IF (
+            NOT EXISTS (
+                SELECT 1
+                FROM vdc_options
+                WHERE option_name ilike v_option_name
+                    AND version = v_version
+                )
+            ) THEN
+        BEGIN
+            INSERT INTO vdc_options (
+                option_name,
+                option_value,
+                version
+                )
+            VALUES (
+                v_option_name,
+                v_option_value,
+                v_version
+                );
+        END;
+    END IF;
+
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 -- Deletes a key from vdc_options if exists, for all its versions
-create or replace FUNCTION fn_db_delete_config_value_all_versions(v_option_name varchar(100))
-returns void
-AS $procedure$
-begin
-    if (exists (select 1 from vdc_options where option_name ilike v_option_name)) then
-        begin
-            delete from vdc_options where option_name ilike v_option_name;
-        end;
-    end if;
-END; $procedure$
+CREATE OR REPLACE FUNCTION fn_db_delete_config_value_all_versions (v_option_name VARCHAR(100))
+RETURNS void AS $PROCEDURE$
+BEGIN
+    IF (
+            EXISTS (
+                SELECT 1
+                FROM vdc_options
+                WHERE option_name ilike v_option_name
+                )
+            ) THEN
+        BEGIN
+            DELETE
+            FROM vdc_options
+            WHERE option_name ilike v_option_name;
+        END;
+    END IF;
+
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 -- Deletes a key from vdc_options (if exists)
-create or replace FUNCTION fn_db_delete_config_value(v_option_name varchar(100), v_version text)
-returns void
-AS $procedure$
-begin
-    if (exists (select 1 from vdc_options where option_name ilike v_option_name and version in (select ID from fnSplitter(v_version)))) then
-        begin
-            delete from vdc_options where option_name ilike v_option_name and version in (select ID from fnSplitter(v_version));
-        end;
-    end if;
-END; $procedure$
+CREATE OR REPLACE FUNCTION fn_db_delete_config_value (
+    v_option_name VARCHAR(100),
+    v_version TEXT
+    )
+RETURNS void AS $PROCEDURE$
+BEGIN
+    IF (
+            EXISTS (
+                SELECT 1
+                FROM vdc_options
+                WHERE option_name ilike v_option_name
+                    AND version IN (
+                        SELECT ID
+                        FROM fnSplitter(v_version)
+                        )
+                )
+            ) THEN
+        BEGIN
+            DELETE
+            FROM vdc_options
+            WHERE option_name ilike v_option_name
+                AND version IN (
+                    SELECT ID
+                    FROM fnSplitter(v_version)
+                    );
+        END;
+    END IF;
+
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 -- Deletes a key from vdc_options by version/versions(comma separated)
-create or replace FUNCTION fn_db_delete_config_for_version(v_version text)
-returns void
-AS $procedure$
+CREATE OR REPLACE FUNCTION fn_db_delete_config_for_version (v_version TEXT)
+RETURNS void AS $PROCEDURE$
 BEGIN
-     delete from vdc_options where version in (select ID from fnSplitter(v_version));
-END; $procedure$
+    DELETE
+    FROM vdc_options
+    WHERE version IN (
+            SELECT ID
+            FROM fnSplitter(v_version)
+            );
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 -- Updates a value in vdc_options (if exists)
-create or replace FUNCTION fn_db_update_config_value(v_option_name varchar(100), v_option_value varchar(4000),
-                                                  v_version varchar(40))
-returns void
-AS $procedure$
-begin
-    if (exists (select 1 from vdc_options where option_name ilike v_option_name and version = v_version)) then
-        begin
-            update  vdc_options set option_value = v_option_value
-            where option_name ilike v_option_name and version = v_version;
-        end;
-    end if;
-END; $procedure$
+CREATE OR REPLACE FUNCTION fn_db_update_config_value (
+    v_option_name VARCHAR(100),
+    v_option_value VARCHAR(4000),
+    v_version VARCHAR(40)
+    )
+RETURNS void AS $PROCEDURE$
+BEGIN
+    IF (
+            EXISTS (
+                SELECT 1
+                FROM vdc_options
+                WHERE option_name ilike v_option_name
+                    AND version = v_version
+                )
+            ) THEN
+        BEGIN
+            UPDATE vdc_options
+            SET option_value = v_option_value
+            WHERE option_name ilike v_option_name
+                AND version = v_version;
+        END;
+    END IF;
+
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 -- Updates a value in vdc_options (if exists) if default value wasn't changed
-create or replace FUNCTION fn_db_update_default_config_value(v_option_name varchar(100),v_default_option_value varchar(4000),v_option_value varchar(4000),v_version varchar(40),v_ignore_default_value_case boolean)
-returns void
-AS $procedure$
-begin
-    if (exists (select 1 from vdc_options where option_name ilike v_option_name and version = v_version)) then
-        begin
-            if (v_ignore_default_value_case)
-            then
-               update  vdc_options set option_value = v_option_value
-               where option_name ilike v_option_name and option_value ilike v_default_option_value and version = v_version;
-            else
-               update  vdc_options set option_value = v_option_value
-               where option_name ilike v_option_name and option_value = v_default_option_value and version = v_version;
-            end if;
-        end;
-    end if;
-END; $procedure$
-LANGUAGE plpgsql;
-
---renames an existing config key name, custome option_value modifications are preserved
-create or replace FUNCTION fn_db_rename_config_key(v_old_option_name varchar(100),v_new_option_name varchar(100),v_version varchar(40))
-returns void
-AS $procedure$
-DECLARE
-    v_current_option_value varchar(4000);
-begin
-    if (exists (select 1 from vdc_options where option_name ilike v_old_option_name and version = v_version)) then
-       v_current_option_value:=option_value from vdc_options where option_name ilike v_old_option_name and version = v_version;
-       update vdc_options set option_name = v_new_option_name, option_value = v_current_option_value
-           where  option_name ilike v_old_option_name and version = v_version;
-    end if;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-create or replace function fn_db_create_constraint (
-    v_table varchar(128), v_constraint varchar(128), v_constraint_sql text)
-returns void
-AS $procedure$
-begin
-    if  NOT EXISTS (SELECT 1 from pg_constraint where conname ilike v_constraint) then
-        execute 'ALTER TABLE ' || v_table ||  ' ADD CONSTRAINT ' || v_constraint || ' ' || v_constraint_sql;
-    end if;
-END; $procedure$
-LANGUAGE plpgsql;
-
-create or replace function fn_db_drop_constraint (
-    v_table varchar(128), v_constraint varchar(128))
-returns void
-AS $procedure$
-begin
-    if  EXISTS (SELECT 1 from pg_constraint where conname ilike v_constraint) then
-        execute 'ALTER TABLE ' || v_table ||  ' DROP CONSTRAINT ' || v_constraint || ' CASCADE';
-    end if;
-END; $procedure$
-LANGUAGE plpgsql;
-
---------------------------------------------------
--- End of DB helper functions
---------------------------------------------------
-
-Create or replace FUNCTION CheckDBConnection() RETURNS SETOF integer IMMUTABLE
-   AS $procedure$
+CREATE OR REPLACE FUNCTION fn_db_update_default_config_value (
+    v_option_name VARCHAR(100),
+    v_default_option_value VARCHAR(4000),
+    v_option_value VARCHAR(4000),
+    v_version VARCHAR(40),
+    v_ignore_default_value_case boolean
+    )
+RETURNS void AS $PROCEDURE$
 BEGIN
-    RETURN QUERY SELECT 1;
-END; $procedure$
+    IF (
+            EXISTS (
+                SELECT 1
+                FROM vdc_options
+                WHERE option_name ilike v_option_name
+                    AND version = v_version
+                )
+            ) THEN
+    BEGIN
+        IF (v_ignore_default_value_case) THEN
+            UPDATE vdc_options
+            SET option_value = v_option_value
+            WHERE option_name ilike v_option_name
+                AND option_value ilike v_default_option_value
+                AND version = v_version;
+        ELSE
+            UPDATE vdc_options
+            SET option_value = v_option_value
+            WHERE option_name ilike v_option_name
+                AND option_value = v_default_option_value
+                AND version = v_version;
+        END IF;
+
+    END;
+    END IF;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION generate_drop_all_functions_syntax() RETURNS SETOF text STABLE
-   AS $procedure$
-BEGIN
-RETURN QUERY select 'drop function if exists ' || ns.nspname || '.' || proname || '(' || oidvectortypes(proargtypes) || ') cascade;' from pg_proc inner join pg_namespace ns on (pg_proc.pronamespace=ns.oid) where ns.nspname = 'public' order by proname;
-END; $procedure$
-LANGUAGE plpgsql;
+    --renames an existing config key name, custome option_value modifications are preserved
+    CREATE
+        OR replace FUNCTION fn_db_rename_config_key (
+        v_old_option_name VARCHAR(100),
+        v_new_option_name VARCHAR(100),
+        v_version VARCHAR(40)
+        )
+    RETURNS void AS $PROCEDURE$
 
-Create or replace FUNCTION generate_drop_all_views_syntax() RETURNS SETOF text STABLE
-   AS $procedure$
-BEGIN
-RETURN QUERY select 'DROP VIEW if exists ' || table_name || ' CASCADE;' from information_schema.views where table_schema = 'public' order by table_name;
-END; $procedure$
-LANGUAGE plpgsql;
+    DECLARE v_current_option_value VARCHAR(4000);
 
-Create or replace FUNCTION generate_drop_all_tables_syntax() RETURNS SETOF text STABLE
-   AS $procedure$
-BEGIN
-RETURN QUERY select 'DROP TABLE if exists ' || table_name || ' CASCADE;' from information_schema.tables where table_schema = 'public' and table_type = 'BASE TABLE' order by table_name;
-END; $procedure$
-LANGUAGE plpgsql;
+    BEGIN
+        IF (
+                EXISTS (
+                    SELECT 1
+                    FROM vdc_options
+                    WHERE option_name ilike v_old_option_name
+                        AND version = v_version
+                    )
+                ) THEN
+            v_current_option_value:= option_value
+            FROM vdc_options
+            WHERE option_name ilike v_old_option_name
+                AND version = v_version;
 
-Create or replace FUNCTION generate_drop_all_seq_syntax() RETURNS SETOF text STABLE
-   AS $procedure$
-BEGIN
-RETURN QUERY select 'DROP SEQUENCE if exists ' || sequence_name || ' CASCADE;' from information_schema.sequences  where sequence_schema = 'public' order by sequence_name;
-END; $procedure$
-LANGUAGE plpgsql;
+            UPDATE vdc_options
+            SET option_name = v_new_option_name,
+                option_value = v_current_option_value
+                WHERE option_name ilike v_old_option_name
+                    AND version = v_version;
+        END IF;
 
-Create or replace FUNCTION generate_drop_all_user_types_syntax() RETURNS SETOF text STABLE
-   AS $procedure$
-BEGIN
-RETURN QUERY SELECT 'DROP TYPE if exists ' || c.relname::information_schema.sql_identifier || ' CASCADE;'
-   FROM pg_namespace n, pg_class c, pg_type t
-   WHERE n.oid = c.relnamespace and t.typrelid = c.oid and c.relkind = 'c'::"char" and
-   n.nspname = 'public'
-   ORDER BY  c.relname::information_schema.sql_identifier;
-END; $procedure$
-LANGUAGE plpgsql;
+    END;$PROCEDURE$
+    LANGUAGE plpgsql;
 
-Create or replace FUNCTION fn_get_column_size( v_table varchar(64), v_column varchar(64)) returns integer STABLE
-   AS $procedure$
-   declare
-   retvalue  integer;
-BEGIN
-   retvalue := character_maximum_length from information_schema.columns
-    where
-    table_schema = 'public' and
-    table_name ilike v_table and column_name ilike v_column and
-    table_schema = 'public' and udt_name in ('char','varchar');
-   return retvalue;
-END; $procedure$
-LANGUAGE plpgsql;
+    CREATE
+        OR replace FUNCTION fn_db_create_constraint (
+        v_table VARCHAR(128),
+        v_constraint VARCHAR(128),
+        v_constraint_sql TEXT
+        )
+    RETURNS void AS $PROCEDURE$
 
-CREATE OR REPLACE FUNCTION attach_user_to_role (
-    v_user_name VARCHAR(255),
-    v_domain VARCHAR(255),
-    v_namespace VARCHAR(255),
-    v_domain_entry_id text,
-    v_role_name VARCHAR(255)
-)
-RETURNS void AS
-$BODY$
-DECLARE
-   selected_user_id uuid;
-   input_role_id uuid;
-BEGIN
-   select roles.id into input_role_id from roles where roles.name = v_role_name;
-   -- The external identifier is the user identifier converted to an array of
-   -- bytes:
-   insert into users(user_id,external_id, namespace,name,domain,username,last_admin_check_status) select uuid_generate_v1(), v_domain_entry_id, v_namespace, v_user_name, v_domain, v_user_name,true where not exists (select 1 from users where domain = v_domain and external_id = v_domain_entry_id);
-   select user_id from users where domain = v_domain and external_id = v_domain_entry_id into selected_user_id;
-   insert into permissions(id,role_id,ad_element_id,object_id,object_type_id) select uuid_generate_v1(), input_role_id, selected_user_id, getGlobalIds('system'), 1 where not exists(select role_id,ad_element_id,object_id,object_type_id from permissions where role_id = input_role_id and ad_element_id = selected_user_id and object_id= getGlobalIds('system') and object_type_id = 1);
-END; $BODY$
-LANGUAGE plpgsql;
+    BEGIN
+        IF NOT EXISTS (
+                SELECT 1
+                FROM pg_constraint
+                WHERE conname ilike v_constraint
+                ) THEN
+            EXECUTE 'ALTER TABLE ' || v_table || ' ADD CONSTRAINT ' || v_constraint || ' ' || v_constraint_sql;
+        END IF;
 
--- a method for adding an action group to a role if doesn't exist
-CREATE OR REPLACE FUNCTION fn_db_add_action_group_to_role(v_role_id UUID, v_action_group_id INTEGER)
-RETURNS VOID
-AS $procedure$
-BEGIN
-       INSERT INTO roles_groups(role_id,action_group_id)
-       SELECT v_role_id, v_action_group_id
-       WHERE NOT EXISTS (SELECT 1
-                         FROM roles_groups
-                         WHERE role_id = v_role_id
-                         AND action_group_id = v_action_group_id);
-RETURN;
-END; $procedure$
-LANGUAGE plpgsql;
+    END;$PROCEDURE$
+    LANGUAGE plpgsql;
 
+    CREATE
+        OR replace FUNCTION fn_db_drop_constraint (
+        v_table VARCHAR(128),
+        v_constraint VARCHAR(128)
+        )
+    RETURNS void AS $PROCEDURE$
 
--- This function splits a config value: given a config value with one row for 'general', it creates new options
--- with the old value, for each version, except the v_update_from_version version and beyond, which gets the input value
-CREATE OR REPLACE FUNCTION fn_db_split_config_value(v_option_name character varying, v_old_option_value character varying, v_new_option_value character varying, v_update_from_version character varying)
-  RETURNS void AS
-$BODY$
-declare
-v_old_value varchar(4000);
-v_cur cursor for select distinct version from vdc_options where version <> 'general' order by version;
-v_version varchar(40);
-v_index integer;
-v_count integer;
-v_total_count integer;
-v_version_count integer;
-begin
-    v_total_count := count(version) from vdc_options where option_name = v_option_name;
-    v_old_value := option_value from vdc_options where option_name = v_option_name and version = 'general';
-    v_version_count := count(distinct version) from vdc_options where version <> 'general';
-    if (v_total_count <= v_version_count) then
-        begin
-            if (v_old_value IS NULL) then
+    BEGIN
+        IF EXISTS (
+                SELECT 1
+                FROM pg_constraint
+                WHERE conname ilike v_constraint
+                ) THEN
+            EXECUTE 'ALTER TABLE ' || v_table || ' DROP CONSTRAINT ' || v_constraint || ' CASCADE';
+        END IF;
+
+    END;$PROCEDURE$
+    LANGUAGE plpgsql;
+
+    --------------------------------------------------
+    -- End of DB helper functions
+    --------------------------------------------------
+    CREATE
+        OR replace FUNCTION CheckDBConnection ()
+    RETURNS SETOF INT IMMUTABLE AS $PROCEDURE$
+
+    BEGIN
+        RETURN QUERY
+
+        SELECT 1;
+    END;$PROCEDURE$
+
+    LANGUAGE plpgsql;
+
+    CREATE
+        OR replace FUNCTION generate_drop_all_functions_syntax ()
+    RETURNS SETOF TEXT STABLE AS $PROCEDURE$
+
+    BEGIN
+        RETURN QUERY
+
+        SELECT 'drop function if exists ' || ns.nspname || '.' || proname || '(' || oidvectortypes(proargtypes) || ') cascade;'
+        FROM pg_proc
+        INNER JOIN pg_namespace ns
+            ON (pg_proc.pronamespace = ns.oid)
+        WHERE ns.nspname = 'public'
+        ORDER BY proname;
+    END;$PROCEDURE$
+
+    LANGUAGE plpgsql;
+
+    CREATE
+        OR replace FUNCTION generate_drop_all_views_syntax ()
+    RETURNS SETOF TEXT STABLE AS $PROCEDURE$
+
+    BEGIN
+        RETURN QUERY
+
+        SELECT 'DROP VIEW if exists ' || table_name || ' CASCADE;'
+        FROM information_schema.VIEWS
+        WHERE table_schema = 'public'
+        ORDER BY table_name;
+    END;$PROCEDURE$
+
+    LANGUAGE plpgsql;
+
+    CREATE
+        OR replace FUNCTION generate_drop_all_tables_syntax ()
+    RETURNS SETOF TEXT STABLE AS $PROCEDURE$
+
+    BEGIN
+        RETURN QUERY
+
+        SELECT 'DROP TABLE if exists ' || table_name || ' CASCADE;'
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+            AND table_type = 'BASE TABLE'
+        ORDER BY table_name;
+    END;$PROCEDURE$
+
+    LANGUAGE plpgsql;
+
+    CREATE
+        OR replace FUNCTION generate_drop_all_seq_syntax ()
+    RETURNS SETOF TEXT STABLE AS $PROCEDURE$
+
+    BEGIN
+        RETURN QUERY
+
+        SELECT 'DROP SEQUENCE if exists ' || sequence_name || ' CASCADE;'
+        FROM information_schema.sequences
+        WHERE sequence_schema = 'public'
+        ORDER BY sequence_name;
+    END;$PROCEDURE$
+
+    LANGUAGE plpgsql;
+
+    CREATE
+        OR replace FUNCTION generate_drop_all_user_types_syntax ()
+    RETURNS SETOF TEXT STABLE AS $PROCEDURE$
+
+    BEGIN
+        RETURN QUERY
+
+        SELECT 'DROP TYPE if exists ' || c.relname::information_schema.sql_identifier || ' CASCADE;'
+        FROM pg_namespace n,
+            pg_class c,
+            pg_type t
+        WHERE n.oid = c.relnamespace
+            AND t.typrelid = c.oid
+            AND c.relkind = 'c'::"char"
+            AND n.nspname = 'public'
+        ORDER BY c.relname::information_schema.sql_identifier;
+    END;$PROCEDURE$
+
+    LANGUAGE plpgsql;
+
+    CREATE
+        OR replace FUNCTION fn_get_column_size (
+        v_table VARCHAR(64),
+        v_column VARCHAR(64)
+        )
+    RETURNS INT STABLE AS $PROCEDURE$
+
+    DECLARE retvalue INT;
+
+    BEGIN
+        retvalue := character_maximum_length
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+            AND table_name ilike v_table
+            AND column_name ilike v_column
+            AND table_schema = 'public'
+            AND udt_name IN (
+                'char',
+                'varchar'
+                );
+
+        RETURN retvalue;
+    END;$PROCEDURE$
+
+    LANGUAGE plpgsql;
+
+    CREATE
+        OR REPLACE FUNCTION attach_user_to_role (
+        v_user_name VARCHAR(255),
+        v_domain VARCHAR(255),
+        v_namespace VARCHAR(255),
+        v_domain_entry_id TEXT,
+        v_role_name VARCHAR(255)
+        )
+    RETURNS void AS $BODY$
+
+    DECLARE selected_user_id uuid;
+
+    input_role_id uuid;
+
+    BEGIN
+        SELECT roles.id
+        INTO input_role_id
+        FROM roles
+        WHERE roles.name = v_role_name;
+
+        -- The external identifier is the user identifier converted to an array of
+        -- bytes:
+        INSERT INTO users (
+            user_id,
+            external_id,
+            namespace,
+            name,
+            domain,
+            username,
+            last_admin_check_status
+            )
+        SELECT uuid_generate_v1(),
+            v_domain_entry_id,
+            v_namespace,
+            v_user_name,
+            v_domain,
+            v_user_name,
+            true
+        WHERE NOT EXISTS (
+                SELECT 1
+                FROM users
+                WHERE domain = v_domain
+                    AND external_id = v_domain_entry_id
+                );
+
+        SELECT user_id
+        FROM users
+        WHERE domain = v_domain
+            AND external_id = v_domain_entry_id
+        INTO selected_user_id;
+
+        INSERT INTO permissions (
+            id,
+            role_id,
+            ad_element_id,
+            object_id,
+            object_type_id
+            )
+        SELECT uuid_generate_v1(),
+            input_role_id,
+            selected_user_id,
+            getGlobalIds('system'),
+            1
+        WHERE NOT EXISTS (
+                SELECT role_id,
+                    ad_element_id,
+                    object_id,
+                    object_type_id
+                FROM permissions
+                WHERE role_id = input_role_id
+                    AND ad_element_id = selected_user_id
+                    AND object_id = getGlobalIds('system')
+                    AND object_type_id = 1
+                );
+    END;$BODY$
+
+    LANGUAGE plpgsql;
+
+    -- a method for adding an action group to a role if doesn't exist
+    CREATE
+        OR REPLACE FUNCTION fn_db_add_action_group_to_role (
+        v_role_id UUID,
+        v_action_group_id INT
+        )
+    RETURNS VOID AS $PROCEDURE$
+
+    BEGIN
+        INSERT INTO roles_groups (
+            role_id,
+            action_group_id
+            )
+        SELECT v_role_id,
+            v_action_group_id
+        WHERE NOT EXISTS (
+                SELECT 1
+                FROM roles_groups
+                WHERE role_id = v_role_id
+                    AND action_group_id = v_action_group_id
+                );
+
+        RETURN;
+    END;$PROCEDURE$
+
+    LANGUAGE plpgsql;
+
+    -- This function splits a config value: given a config value with one row for 'general', it creates new options
+    -- with the old value, for each version, except the v_update_from_version version and beyond, which gets the input value
+    CREATE
+        OR REPLACE FUNCTION fn_db_split_config_value (
+        v_option_name VARCHAR,
+        v_old_option_value VARCHAR,
+        v_new_option_value VARCHAR,
+        v_update_from_version VARCHAR
+        )
+    RETURNS void AS $BODY$
+
+    DECLARE v_old_value VARCHAR(4000);
+
+    v_cur CURSOR
+    FOR
+
+    SELECT DISTINCT version
+    FROM vdc_options
+    WHERE version <> 'general'
+    ORDER BY version;
+
+    v_version VARCHAR(40);
+
+    v_index INT;
+
+    v_count INT;
+
+    v_total_count INT;
+
+    v_version_count INT;
+
+    BEGIN
+        v_total_count := count(version)
+        FROM vdc_options
+        WHERE option_name = v_option_name;
+
+        v_old_value := option_value
+        FROM vdc_options
+        WHERE option_name = v_option_name
+            AND version = 'general';
+
+        v_version_count := count(DISTINCT version)
+        FROM vdc_options
+        WHERE version <> 'general';
+
+        IF (v_total_count <= v_version_count) THEN
+        BEGIN
+            IF (v_old_value IS NULL) THEN
                 v_old_value := v_old_option_value;
-            end if;
-            v_count := count(distinct version) from vdc_options where version <> 'general';
-            v_index := 1;
-        open v_cur;
-        loop
-            fetch v_cur into v_version;
-            exit when not found;
+        END IF;
+        v_count := count(DISTINCT version)
+        FROM vdc_options
+        WHERE version <> 'general';
+
+        v_index := 1;
+
+        OPEN v_cur;
+
+        LOOP
+
+            FETCH v_cur
+            INTO v_version;
+
+            EXIT when NOT found;
+
             -- We shouldn't update if already exists
-            if (not exists (select 1 from vdc_options where option_name = v_option_name and version = v_version)) then
+            IF (
+                    NOT EXISTS (
+                        SELECT 1
+                        FROM vdc_options
+                        WHERE option_name = v_option_name
+                            AND version = v_version
+                        )
+                    ) THEN
                 -- Might not work well for versions such as 3.10, but we currently don't have any
-                if (v_version >= v_update_from_version) then
-                    insert into vdc_options (option_name, option_value, version) values (v_option_name, v_new_option_value, v_version);
-                else
-                    insert into vdc_options (option_name, option_value, version) values (v_option_name, v_old_value, v_version);
-                end if;
-            end if;
-            v_index := v_index +1;
-        end loop;
-        close v_cur;
-        delete from vdc_options where option_name = v_option_name and version = 'general';
-        end;
-    end if;
-END; $BODY$
-LANGUAGE plpgsql;
+                IF (v_version >= v_update_from_version) THEN
+                    INSERT INTO vdc_options (
+                        option_name,
+                        option_value,
+                        version
+                        )
+                    VALUES (
+                        v_option_name,
+                        v_new_option_value,
+                        v_version
+                        );
+                ELSE
+                    INSERT INTO vdc_options (
+                        option_name,
+                        option_value,
+                        version
+                        )
+                    VALUES (
+                        v_option_name,
+                        v_old_value,
+                        v_version
+                        );
+                END IF;
+
+            END IF;
+            v_index := v_index + 1;
+        END LOOP;
+
+    CLOSE v_cur;
+
+    DELETE
+    FROM vdc_options
+    WHERE option_name = v_option_name
+        AND version = 'general';
+    END;
+END IF;
+
+END;$BODY$
+    LANGUAGE plpgsql;
 
 -- Function: fn_db_grant_action_group_to_all_roles(integer)
 -- This function adds the input v_action_group_id to all the existing roles (both pre-defined and custom), besides the
 -- input roles to filter.
-CREATE OR REPLACE FUNCTION fn_db_grant_action_group_to_all_roles_filter(v_action_group_id integer, uuid[])
-  RETURNS void AS
-$BODY$
-declare
-v_role_id_to_filter alias for $2;
-begin
-    insert into roles_groups (role_id, action_group_id)
-    select distinct role_id, v_action_group_id
-    from roles_groups rg
-    where not ARRAY [role_id] <@ v_role_id_to_filter and not exists (select 1 from roles_groups where role_id = rg.role_id and action_group_id = v_action_group_id);
-END; $BODY$
+CREATE OR REPLACE FUNCTION fn_db_grant_action_group_to_all_roles_filter (
+    v_action_group_id INT,
+    uuid []
+    )
+RETURNS void AS $BODY$
+
+DECLARE v_role_id_to_filter alias
+FOR $2;
+
+BEGIN
+    INSERT INTO roles_groups (
+        role_id,
+        action_group_id
+        )
+    SELECT DISTINCT role_id,
+        v_action_group_id
+    FROM roles_groups rg
+    WHERE NOT ARRAY [role_id] <@ v_role_id_to_filter
+        AND NOT EXISTS (
+            SELECT 1
+            FROM roles_groups
+            WHERE role_id = rg.role_id
+                AND action_group_id = v_action_group_id
+            );
+END;$BODY$
+
 LANGUAGE plpgsql;
 
 -- The following function accepts a table or view object
 -- Values of columns not matching the ones stored for this object in object_column_white_list table
 -- will be masked with an empty value.
-CREATE OR REPLACE FUNCTION fn_db_mask_object(v_object regclass) RETURNS setof record as
-$BODY$
-DECLARE
-    v_sql TEXT;
-    v_table record;
-    v_table_name TEXT;
-    temprec record;
+CREATE OR REPLACE FUNCTION fn_db_mask_object (v_object regclass)
+RETURNS setof record AS $BODY$
+
+DECLARE v_sql TEXT;
+
+v_table record;
+
+v_table_name TEXT;
+
+temprec record;
+
 BEGIN
     -- get full table/view name from v_object (i.e <namespace>.<name>)
-    select c.relname, n.nspname INTO v_table
-        FROM pg_class c join pg_namespace n on c.relnamespace = n.oid WHERE c.oid = v_object;
+    SELECT c.relname,
+        n.nspname
+    INTO v_table
+    FROM pg_class c
+    INNER JOIN pg_namespace n
+        ON c.relnamespace = n.oid
+    WHERE c.oid = v_object;
+
     -- try to get filtered query syntax from previous execution
-    if exists (select 1 from object_column_white_list_sql where object_name = v_table.relname) then
-	select sql into v_sql from object_column_white_list_sql where object_name = v_table.relname;
-    else
-        v_table_name := quote_ident( v_table.nspname ) || '.' || quote_ident( v_table.relname );
+    IF EXISTS (
+            SELECT 1
+            FROM object_column_white_list_sql
+            WHERE object_name = v_table.relname
+            ) THEN
+        SELECT sql
+        INTO v_sql
+        FROM object_column_white_list_sql
+        WHERE object_name = v_table.relname;
+    ELSE
+        v_table_name := quote_ident(v_table.nspname) || '.' || quote_ident(v_table.relname);
         -- compose sql statement while skipping values for columns not defined in object_column_white_list for this table.
-        for temprec in select a.attname, t.typname
-                       FROM pg_attribute a join pg_type t on a.atttypid = t.oid
-                       WHERE a.attrelid = v_object AND a.attnum > 0 AND NOT a.attisdropped ORDER BY a.attnum
-        loop
-            v_sql := coalesce( v_sql || ', ', 'SELECT ' );
-            if exists(select 1 from object_column_white_list
-               where object_name = v_table.relname and column_name = temprec.attname) then
-               v_sql := v_sql || quote_ident( temprec.attname );
-            ELSE
-               v_sql := v_sql || 'NULL::' || quote_ident( temprec.typname ) || ' as ' || quote_ident( temprec.attname );
-            END IF;
-        END LOOP;
-        v_sql := v_sql || ' FROM ' || v_table_name;
-        v_sql := 'SELECT x::' || v_table_name || ' as rec FROM (' || v_sql || ') as x';
-        -- save generated query for further use
-        insert into object_column_white_list_sql(object_name,sql) values (v_table.relname, v_sql);
-    end if;
-    RETURN QUERY EXECUTE v_sql;
-END; $BODY$
+    FOR temprec IN
+    SELECT a.attname,
+        t.typname
+    FROM pg_attribute a
+    INNER JOIN pg_type t
+        ON a.atttypid = t.oid
+    WHERE a.attrelid = v_object
+        AND a.attnum > 0
+        AND NOT a.attisdropped
+    ORDER BY a.attnum LOOP v_sql := coalesce(v_sql || ', ', 'SELECT ');
+
+        IF EXISTS (
+            SELECT 1
+            FROM object_column_white_list
+            WHERE object_name = v_table.relname
+                AND column_name = temprec.attname
+            ) THEN v_sql := v_sql || quote_ident(temprec.attname);
+        ELSE
+            v_sql := v_sql || 'NULL::' || quote_ident(temprec.typname) || ' as ' || quote_ident(temprec.attname);
+        END IF;
+
+    END LOOP;
+
+    v_sql := v_sql || ' FROM ' || v_table_name;
+
+    v_sql := 'SELECT x::' || v_table_name || ' as rec FROM (' || v_sql || ') as x';
+
+    -- save generated query for further use
+    INSERT INTO object_column_white_list_sql (
+        object_name,
+        sql
+        )
+    VALUES (
+        v_table.relname,
+        v_sql
+        );
+    END IF;
+
+    RETURN QUERY
+
+    EXECUTE v_sql;
+END;$BODY$
 LANGUAGE plpgsql;
 
 -- Adds a table/view new added column to the white list
-create or replace FUNCTION fn_db_add_column_to_object_white_list(v_object_name varchar(128), v_column_name varchar(128))
-returns void
-AS $procedure$
-begin
-    if (not exists (select 1 from object_column_white_list
-                    where object_name = v_object_name and column_name = v_column_name)) then
-        begin
-            -- verify that there is such object in db
-            if exists (select 1 from information_schema.columns
-                       where table_schema = 'public' and table_name = v_object_name and column_name = v_column_name) then
-                insert into object_column_white_list (object_name, column_name) values (v_object_name, v_column_name);
-            end if;
-        end;
-    end if;
-END; $procedure$
-LANGUAGE plpgsql;
-
--- Checks if a table given by its name exists in DB
-CREATE OR REPLACE FUNCTION fn_db_is_table_exists (v_table varchar(64)) returns boolean STABLE
-   AS $procedure$
-   declare
-   retvalue  boolean;
+CREATE OR REPLACE FUNCTION fn_db_add_column_to_object_white_list (
+    v_object_name VARCHAR(128),
+    v_column_name VARCHAR(128)
+    )
+RETURNS void AS $PROCEDURE$
 BEGIN
-   retvalue := EXISTS (
-        SELECT * FROM information_schema.tables WHERE table_schema = 'public' AND table_name ILIKE v_table
-   );
-   return retvalue;
-END; $procedure$
-LANGUAGE plpgsql;
+    IF (
+            NOT EXISTS (
+                SELECT 1
+                FROM object_column_white_list
+                WHERE object_name = v_object_name
+                    AND column_name = v_column_name
+                )
+            ) THEN
+    BEGIN
+        -- verify that there is such object in db
+        IF EXISTS (
+                SELECT 1
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                    AND table_name = v_object_name
+                    AND column_name = v_column_name
+                ) THEN
+            INSERT INTO object_column_white_list (
+                object_name,
+                column_name
+                )
+            VALUES (
+                v_object_name,
+                v_column_name
+                );
+        END IF;
 
-
--- Creates an index on an existing table, if there is no WHERE condition, the last argument should be empty ('')
--- Example : Table T with columns a,b and c
--- fn_db_create_index('T_INDEX', 'T', 'a,b', ''); ==> Creates an index named T_INDEX on table T (a,b)
-create or replace FUNCTION fn_db_create_index(v_index_name varchar(128), v_table_name varchar(128), v_column_names text, v_where_predicate text)
-returns void
-AS $procedure$
-DECLARE
-    v_sql TEXT;
-BEGIN
-    v_sql := 'DROP INDEX ' || ' IF EXISTS ' || v_index_name || '; CREATE INDEX ' || v_index_name || ' ON ' || v_table_name || '(' || v_column_names || ')';
-    IF v_where_predicate = '' THEN
-        v_sql := v_sql || ';';
-    ELSE
-        v_sql := v_sql || ' WHERE ' || v_where_predicate || ';';
+    END;
     END IF;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+    -- Checks if a table given by its name exists in DB
+    CREATE
+        OR REPLACE FUNCTION fn_db_is_table_exists (v_table VARCHAR(64))
+    RETURNS boolean STABLE AS $PROCEDURE$
+
+    DECLARE retvalue boolean;
+
+    BEGIN
+        retvalue := EXISTS (
+                SELECT *
+                FROM information_schema.tables
+                WHERE table_schema = 'public'
+                    AND table_name ILIKE v_table
+                );
+
+        RETURN retvalue;
+    END;$PROCEDURE$
+
+    LANGUAGE plpgsql;
+
+    -- Creates an index on an existing table, if there is no WHERE condition, the last argument should be empty ('')
+    -- Example : Table T with columns a,b and c
+    -- fn_db_create_index('T_INDEX', 'T', 'a,b', ''); ==> Creates an index named T_INDEX on table T (a,b)
+    CREATE
+        OR replace FUNCTION fn_db_create_index (
+        v_index_name VARCHAR(128),
+        v_table_name VARCHAR(128),
+        v_column_names TEXT,
+        v_where_predicate TEXT
+        )
+    RETURNS void AS $PROCEDURE$
+
+    DECLARE v_sql TEXT;
+
+    BEGIN
+        v_sql := 'DROP INDEX ' || ' IF EXISTS ' || v_index_name || '; CREATE INDEX ' || v_index_name || ' ON ' || v_table_name || '(' || v_column_names || ')';
+
+        IF v_where_predicate = '' THEN v_sql := v_sql || ';';ELSE
+            v_sql := v_sql || ' WHERE ' || v_where_predicate || ';';
+    END IF;
+
     EXECUTE v_sql;
-END; $procedure$
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 -- Unlocks a specific disk
-create or replace FUNCTION fn_db_unlock_disk(v_id UUID)
-returns void
-AS $procedure$
-declare
-    OK integer;
-    LOCKED integer;
-begin
-    OK:=1;
-    LOCKED:=2;
-    update images set imagestatus = OK where imagestatus = LOCKED and
-    image_group_id = v_id;
-END; $procedure$
+CREATE OR REPLACE FUNCTION fn_db_unlock_disk (v_id UUID)
+RETURNS void AS $PROCEDURE$
+DECLARE OK INT;
+
+LOCKED INT;
+
+BEGIN
+    OK:= 1;
+
+    LOCKED:= 2;
+
+    UPDATE images
+    SET imagestatus = OK
+    WHERE imagestatus = LOCKED
+        AND image_group_id = v_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 -- Unlocks a specific snapshot
-create or replace FUNCTION fn_db_unlock_snapshot(v_id UUID)
-returns void
-AS $procedure$
-declare
-    OK varchar;
-    LOCKED varchar;
-begin
-    OK:='OK';
-    LOCKED:='LOCKED';
-    update snapshots set status = OK where status = LOCKED and snapshot_id = v_id;
-END; $procedure$
+CREATE OR REPLACE FUNCTION fn_db_unlock_snapshot (v_id UUID)
+RETURNS void AS $PROCEDURE$
+DECLARE OK VARCHAR;
+
+LOCKED VARCHAR;
+
+BEGIN
+    OK:= 'OK';
+
+    LOCKED:= 'LOCKED';
+
+    UPDATE snapshots
+    SET status = OK
+    WHERE status = LOCKED
+        AND snapshot_id = v_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
 -- Unlocks all VM/Template disks
-create or replace FUNCTION fn_db_unlock_entity(v_object_type varchar(10), v_name varchar(255), v_recursive boolean)
-returns void
-AS $procedure$
-declare
-    DOWN integer;
-    OK integer;
-    LOCKED integer;
-    TEMPLATE_OK integer;
-    TEMPLATE_LOCKED integer;
-    IMAGE_LOCKED integer;
-    SNAPSHOT_OK varchar;
-    SNAPSHOT_LOCKED varchar;
-    v_id UUID;
-begin
-    DOWN:=0;
-    OK:=1;
-    LOCKED:=2;
-    TEMPLATE_OK:=0;
-    TEMPLATE_LOCKED:=1;
-    IMAGE_LOCKED:=15;
-    SNAPSHOT_OK:='OK';
-    SNAPSHOT_LOCKED:='LOCKED';
-    v_id := vm_guid from vm_static where vm_name = v_name and entity_type ilike v_object_type;
-    -- set VM status to DOWN
-    if (v_object_type = 'vm') then
-        update vm_dynamic set status = DOWN where status = IMAGE_LOCKED and vm_guid  = v_id;
-    -- set Template status to OK
-    else
-        if (v_object_type = 'template') then
-            update vm_static set template_status = TEMPLATE_OK where template_status = TEMPLATE_LOCKED and vm_guid  = v_id;
-        end if;
-    end if;
-    --unlock images and snapshots  if recursive flag is set
-    if (v_recursive) then
-        update images set imagestatus = OK where imagestatus = LOCKED and
-        image_group_id in (select device_id from vm_device where vm_id = v_id and is_plugged);
+CREATE OR REPLACE FUNCTION fn_db_unlock_entity (
+    v_object_type VARCHAR(10),
+    v_name VARCHAR(255),
+    v_recursive boolean
+    )
+RETURNS void AS $PROCEDURE$
+DECLARE DOWN INT;
 
-        update snapshots set status = SNAPSHOT_OK where status ilike SNAPSHOT_LOCKED and vm_id = v_id;
-    end if;
-END; $procedure$
+OK INT;
+
+LOCKED INT;
+
+TEMPLATE_OK INT;
+
+TEMPLATE_LOCKED INT;
+
+IMAGE_LOCKED INT;
+
+SNAPSHOT_OK VARCHAR;
+
+SNAPSHOT_LOCKED VARCHAR;
+
+v_id UUID;
+
+BEGIN
+    DOWN:= 0;
+
+    OK:= 1;
+
+    LOCKED:= 2;
+
+    TEMPLATE_OK:= 0;
+
+    TEMPLATE_LOCKED:= 1;
+
+    IMAGE_LOCKED:= 15;
+
+    SNAPSHOT_OK:= 'OK';
+
+    SNAPSHOT_LOCKED:= 'LOCKED';
+
+    v_id := vm_guid
+    FROM vm_static
+    WHERE vm_name = v_name
+        AND entity_type ilike v_object_type;
+
+    -- set VM status to DOWN
+    IF (v_object_type = 'vm') THEN
+        UPDATE vm_dynamic
+        SET status = DOWN
+        WHERE status = IMAGE_LOCKED
+            AND vm_guid = v_id;
+            -- set Template status to OK
+    ELSE IF (v_object_type = 'template') THEN
+        UPDATE vm_static
+        SET template_status = TEMPLATE_OK
+        WHERE template_status = TEMPLATE_LOCKED
+            AND vm_guid = v_id;
+    END IF;
+
+END IF;
+ --unlock images and snapshots  if recursive flag is set
+IF (v_recursive) THEN
+    UPDATE images
+    SET imagestatus = OK
+    WHERE imagestatus = LOCKED
+        AND image_group_id IN (
+            SELECT device_id
+            FROM vm_device
+            WHERE vm_id = v_id
+                AND is_plugged
+            );
+
+    UPDATE snapshots
+    SET status = SNAPSHOT_OK
+    WHERE status ilike SNAPSHOT_LOCKED
+        AND vm_id = v_id;
+END IF;
+
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 -- Unlocks all locked entities
-create or replace FUNCTION fn_db_unlock_all()
-returns void
-AS $procedure$
-declare
-    DOWN integer;
-    OK integer;
-    LOCKED integer;
-    TEMPLATE_OK integer;
-    TEMPLATE_LOCKED integer;
-    IMAGE_LOCKED integer;
-    SNAPSHOT_OK varchar;
-    SNAPSHOT_LOCKED varchar;
-BEGIN
-    DOWN:=0;
-    OK:=1;
-    LOCKED:=2;
-    TEMPLATE_OK:=0;
-    TEMPLATE_LOCKED:=1;
-    IMAGE_LOCKED:=15;
-    SNAPSHOT_OK:='OK';
-    SNAPSHOT_LOCKED:='LOCKED';
-    update vm_static set template_status = TEMPLATE_OK where template_status = TEMPLATE_LOCKED;
-    update vm_dynamic set status = DOWN where status = IMAGE_LOCKED;
-    update images set imagestatus = OK where imagestatus = LOCKED;
-    update snapshots set status = SNAPSHOT_OK where status ilike SNAPSHOT_LOCKED;
-END; $procedure$
-LANGUAGE plpgsql;
+CREATE OR REPLACE FUNCTION fn_db_unlock_all ()
+RETURNS void AS $PROCEDURE$
+DECLARE DOWN INT;
 
+OK INT;
+
+LOCKED INT;
+
+TEMPLATE_OK INT;
+
+TEMPLATE_LOCKED INT;
+
+IMAGE_LOCKED INT;
+
+SNAPSHOT_OK VARCHAR;
+
+SNAPSHOT_LOCKED VARCHAR;
+
+BEGIN
+    DOWN:= 0;
+
+    OK:= 1;
+
+    LOCKED:= 2;
+
+    TEMPLATE_OK:= 0;
+
+    TEMPLATE_LOCKED:= 1;
+
+    IMAGE_LOCKED:= 15;
+
+    SNAPSHOT_OK:= 'OK';
+
+    SNAPSHOT_LOCKED:= 'LOCKED';
+
+    UPDATE vm_static
+    SET template_status = TEMPLATE_OK
+    WHERE template_status = TEMPLATE_LOCKED;
+
+    UPDATE vm_dynamic
+    SET status = DOWN
+    WHERE status = IMAGE_LOCKED;
+
+    UPDATE images
+    SET imagestatus = OK
+    WHERE imagestatus = LOCKED;
+
+    UPDATE snapshots
+    SET status = SNAPSHOT_OK
+    WHERE status ilike SNAPSHOT_LOCKED;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
 
 /* Displays DC id , DC name, SPM Host id , SPM Host name and number of async tasks awaiting.
 
@@ -577,121 +1114,168 @@ LANGUAGE plpgsql;
 
 4) return set of generated records
 */
-
 DROP TYPE IF EXISTS async_tasks_info_rs CASCADE;
 CREATE TYPE async_tasks_info_rs AS (
         dc_id uuid,
-        dc_name character varying,
+        dc_name VARCHAR,
         spm_host_id uuid,
-        spm_host_name character varying,
-        task_count integer
-);
+        spm_host_name VARCHAR,
+        task_count INT
+        );
 
+CREATE OR REPLACE FUNCTION fn_db_get_async_tasks ()
+RETURNS SETOF async_tasks_info_rs STABLE AS $PROCEDURE$
+DECLARE v_record async_tasks_info_rs;
 
-create or replace FUNCTION fn_db_get_async_tasks()
-returns SETOF async_tasks_info_rs STABLE
-AS $procedure$
-DECLARE
-    v_record async_tasks_info_rs;
+-- selects storage_pool_id uuid found in async_tasks
+v_tasks_cursor CURSOR
+FOR
 
-    -- selects storage_pool_id uuid found in async_tasks
-    v_tasks_cursor cursor for select distinct storage_pool_id from async_tasks;
-begin
+SELECT DISTINCT storage_pool_id
+FROM async_tasks;
 
+BEGIN
     OPEN v_tasks_cursor;
-    FETCH v_tasks_cursor into v_record.dc_id;
-    WHILE FOUND LOOP
+
+    FETCH v_tasks_cursor
+    INTO v_record.dc_id;
+
+    WHILE FOUND
+    LOOP
         -- get dc_name and SPM Host id
-        v_record.dc_name := name from storage_pool where id = v_record.dc_id;
-        v_record.spm_host_id :=
-            spm_vds_id from storage_pool where id = v_record.dc_id;
+        v_record.dc_name := name FROM storage_pool WHERE id = v_record.dc_id;
+        v_record.spm_host_id := spm_vds_id
+        FROM storage_pool
+        WHERE id = v_record.dc_id;
+
         -- get Host name if we have non NULL SPM Host
-        if (v_record.spm_host_id IS NOT NULL) then
-            v_record.spm_host_name :=
-                vds_name from vds_static where vds_id = v_record.spm_host_id;
-        else
-            v_record.spm_host_name:='';
-        end if;
+        IF (v_record.spm_host_id IS NOT NULL) THEN
+            v_record.spm_host_name := vds_name
+            FROM vds_static
+            WHERE vds_id = v_record.spm_host_id;
+        ELSE
+            v_record.spm_host_name:= '';
+        END IF;
         -- get tasks count for this DC
-        v_record.task_count := count(*) from async_tasks
-            where position (cast(v_record.dc_id as varchar) in action_parameters) > 0;
+        v_record.task_count := count(*)
+        FROM async_tasks
+        WHERE position(cast(v_record.dc_id AS VARCHAR) IN action_parameters) > 0;
+
         -- return the record
         RETURN NEXT v_record;
-        FETCH v_tasks_cursor into v_record.dc_id;
+
+        FETCH v_tasks_cursor
+    INTO v_record.dc_id;
+
     END LOOP;
-    CLOSE v_tasks_cursor;
-    -- return full set of generated records
-    RETURN;
-END; $procedure$
+
+CLOSE v_tasks_cursor;
+
+-- return full set of generated records
+RETURN;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 -- Remove a value from a CSV string in vdc_options
-Create or replace FUNCTION fn_db_remove_csv_config_value(v_option_name varchar(100), v_value varchar(4000), v_version varchar(40))
-returns void
-AS $procedure$
-DECLARE
-v varchar[];
-e varchar;
-v_result varchar;
-v_sep varchar(1);
+CREATE OR REPLACE FUNCTION fn_db_remove_csv_config_value (
+    v_option_name VARCHAR(100),
+    v_value VARCHAR(4000),
+    v_version VARCHAR(40)
+    )
+RETURNS void AS $PROCEDURE$
+DECLARE v VARCHAR [];
+
+e VARCHAR;
+
+v_result VARCHAR;
+
+v_sep VARCHAR(1);
+
 BEGIN
-v_result := '';
-v_sep := '';
-    v := string_to_array(option_value, ',') from vdc_options where option_name = v_option_name and version = v_version;
-    FOR e in select unnest(v)
-    LOOP
-        IF (e != v_value) THEN
-            v_result := v_result || v_sep || e;
-            v_sep := ',';
-        END IF;
-    END LOOP;
-    UPDATE vdc_options set option_value = v_result where option_name = v_option_name and version = v_version;
-END; $procedure$
+    v_result := '';
+
+    v_sep := '';
+
+    v := string_to_array(option_value, ',')
+    FROM vdc_options
+    WHERE option_name = v_option_name
+        AND version = v_version;
+    FOR
+
+    e IN
+
+    SELECT unnest(v) LOOP
+
+    IF (e != v_value) THEN v_result := v_result || v_sep || e;
+        v_sep := ',';
+    END IF;
+
+END
+LOOP;
+
+    UPDATE vdc_options
+    SET option_value = v_result
+    WHERE option_name = v_option_name
+        AND version = v_version;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 -- sets the v_val value for v_option_name in vdc_options for all versions before and up to v_version including v_version
-
 -- Remove a UUID value from a CSV string input, returns null on empty string
-Create or replace FUNCTION fn_db_remove_uuid_from_csv(v_csv_text text, v_uuid uuid)
-returns text STABLE
-AS $procedure$
-DECLARE
-v uuid[];
+CREATE OR REPLACE FUNCTION fn_db_remove_uuid_from_csv (
+    v_csv_text TEXT,
+    v_uuid uuid
+    )
+RETURNS TEXT STABLE AS $PROCEDURE$
+DECLARE v uuid [];
+
 e uuid;
-v_result text;
-v_sep varchar(1);
+
+v_result TEXT;
+
+v_sep VARCHAR(1);
+
 BEGIN
-v_result := '';
-v_sep := '';
+    v_result := '';
+
+    v_sep := '';
+
     v := string_to_array(v_csv_text, ',');
-    FOR e in select unnest(v)
-    LOOP
-        IF (e != v_uuid) THEN
-            v_result := v_result || v_sep || e;
-            v_sep := ',';
-        END IF;
-    END LOOP;
-    IF (v_result = '') THEN
-        v_result := null;
+    FOR
+
+    e IN
+
+    SELECT unnest(v) LOOP
+
+    IF (e != v_uuid) THEN v_result := v_result || v_sep || e;
+        v_sep := ',';
     END IF;
-    return v_result;
-END; $procedure$
+
+    END LOOP;
+
+    IF (v_result = '') THEN v_result := NULL;
+    END IF;
+    RETURN v_result;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 -- please note that versions must be insync with  org.ovirt.engine.core.compat.Version
-create or replace FUNCTION  fn_db_add_config_value_for_versions_up_to(v_option_name varchar(100), v_val varchar(4000), v_version varchar(40))
-returns void
-AS $procedure$
-declare
-    i   int;
-    arr varchar[] := array['3.0', '3.1', '3.2', '3.3', '3.4', '3.5', '3.6'];
-begin
-    FOR i IN array_lower(arr, 1) .. array_upper(arr, 1)
-    LOOP
-        PERFORM fn_db_add_config_value(v_option_name, v_val, arr[i]);
-        EXIT WHEN  arr[i] = v_version;
+CREATE OR REPLACE FUNCTION fn_db_add_config_value_for_versions_up_to (
+    v_option_name VARCHAR(100),
+    v_val VARCHAR(4000),
+    v_version VARCHAR(40)
+    )
+RETURNS void AS $PROCEDURE$
+DECLARE i INT;
+
+arr VARCHAR [] := array ['3.0', '3.1', '3.2', '3.3', '3.4', '3.5', '3.6'];
+
+BEGIN
+    FOR i IN array_lower(arr, 1)..array_upper(arr, 1) LOOP PERFORM fn_db_add_config_value(v_option_name, v_val, arr [i]);
+        EXIT WHEN arr [i] = v_version;
     END LOOP;
-END; $procedure$
+
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 

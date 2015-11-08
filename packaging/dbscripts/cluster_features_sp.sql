@@ -1,35 +1,51 @@
+
+
 /* ----------------------------------------------------------------
  Stored procedures for database operations on Cluster Features
  related tables: cluster_features, supported_cluster_features, supported_host_features
 ----------------------------------------------------------------*/
-Create or replace function InsertClusterFeature(v_feature_id UUID,
-                                                v_feature_name VARCHAR(256),
-                                                v_version VARCHAR(40),
-                                                v_category INTEGER,
-                                                v_description TEXT)
-RETURNS VOID
-AS $procedure$
+CREATE OR REPLACE FUNCTION InsertClusterFeature (
+    v_feature_id UUID,
+    v_feature_name VARCHAR(256),
+    v_version VARCHAR(40),
+    v_category INT,
+    v_description TEXT
+    )
+RETURNS VOID AS $PROCEDURE$
 BEGIN
-    INSERT INTO cluster_features(feature_id, feature_name, version, category, description)
-    VALUES(v_feature_id, v_feature_name, v_version, v_category, v_description);
-END; $procedure$
+    INSERT INTO cluster_features (
+        feature_id,
+        feature_name,
+        version,
+        category,
+        description
+        )
+    VALUES (
+        v_feature_id,
+        v_feature_name,
+        v_version,
+        v_category,
+        v_description
+        );
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-Create or replace function UpdateClusterFeature(v_feature_id UUID,
-                                                v_feature_name VARCHAR(256),
-                                                v_version VARCHAR(40),
-                                                v_category INTEGER,
-                                                v_description TEXT)
-RETURNS VOID
-AS $procedure$
+CREATE OR REPLACE FUNCTION UpdateClusterFeature (
+    v_feature_id UUID,
+    v_feature_name VARCHAR(256),
+    v_version VARCHAR(40),
+    v_category INT,
+    v_description TEXT
+    )
+RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE cluster_features
     SET feature_name = v_feature_name,
-    version = v_version,
-    description = v_description,
-    category = v_category
-    where feature_id = v_feature_id;
-END; $procedure$
+        version = v_version,
+        description = v_description,
+        category = v_category
+    WHERE feature_id = v_feature_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 -- The logic to get the applicable set of features for a given category is as below-
@@ -51,76 +67,105 @@ LANGUAGE plpgsql;
 -- 1 & 2 (0000 0001 & 0000 0010) = 0000 0000 = 0            Features with this category would NOT be listed
 -- 2 & 2 (0000 0010 & 0000 0010) = 0000 0010 = 2 > 0        Features with this category would be listed
 -- 255 & 2 (1111 1111 & 0000 0010) = 0000 0010 = 2 > 0      Features with this category would be listed
-
-Create or replace FUNCTION GetClusterFeaturesByVersionAndCategory(v_version VARCHAR(256), v_category INTEGER)
-RETURNS SETOF cluster_features STABLE
-AS $procedure$
+CREATE OR REPLACE FUNCTION GetClusterFeaturesByVersionAndCategory (
+    v_version VARCHAR(256),
+    v_category INT
+    )
+RETURNS SETOF cluster_features STABLE AS $PROCEDURE$
 BEGIN
-    RETURN QUERY SELECT *
-    FROM  cluster_features
-    WHERE cluster_features.version = v_version and (cluster_features.category & v_category) > 0;
-END; $procedure$
+    RETURN QUERY
+
+    SELECT *
+    FROM cluster_features
+    WHERE cluster_features.version = v_version
+        AND (cluster_features.category & v_category) > 0;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-Create or replace function InsertSupportedClusterFeature(v_feature_id UUID,
-                                                         v_cluster_id UUID,
-                                                         v_is_enabled BOOLEAN)
-RETURNS VOID
-AS $procedure$
+CREATE OR REPLACE FUNCTION InsertSupportedClusterFeature (
+    v_feature_id UUID,
+    v_cluster_id UUID,
+    v_is_enabled BOOLEAN
+    )
+RETURNS VOID AS $PROCEDURE$
 BEGIN
-    INSERT INTO supported_cluster_features(cluster_id, feature_id, is_enabled)
-    VALUES(v_cluster_id, v_feature_id, v_is_enabled);
-END; $procedure$
+    INSERT INTO supported_cluster_features (
+        cluster_id,
+        feature_id,
+        is_enabled
+        )
+    VALUES (
+        v_cluster_id,
+        v_feature_id,
+        v_is_enabled
+        );
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-Create or replace function UpdateSupportedClusterFeature(v_feature_id UUID,
-                                                         v_cluster_id UUID,
-                                                         v_is_enabled BOOLEAN)
-RETURNS VOID
-AS $procedure$
+CREATE OR REPLACE FUNCTION UpdateSupportedClusterFeature (
+    v_feature_id UUID,
+    v_cluster_id UUID,
+    v_is_enabled BOOLEAN
+    )
+RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE supported_cluster_features
     SET is_enabled = v_is_enabled
-    where cluster_id = v_cluster_id and feature_id = v_feature_id;
-END; $procedure$
+    WHERE cluster_id = v_cluster_id
+        AND feature_id = v_feature_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetSupportedClusterFeaturesByClusterId(v_cluster_id UUID)
-RETURNS SETOF supported_cluster_features_view STABLE
-AS $procedure$
+CREATE OR REPLACE FUNCTION GetSupportedClusterFeaturesByClusterId (v_cluster_id UUID)
+RETURNS SETOF supported_cluster_features_view STABLE AS $PROCEDURE$
 BEGIN
-    RETURN QUERY SELECT *
-    FROM  supported_cluster_features_view
+    RETURN QUERY
+
+    SELECT *
+    FROM supported_cluster_features_view
     WHERE cluster_id = v_cluster_id;
-END; $procedure$
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-Create or replace function InsertSupportedHostFeature(v_host_id UUID,
-                                                      v_feature_name VARCHAR(256))
-RETURNS VOID
-AS $procedure$
+CREATE OR REPLACE FUNCTION InsertSupportedHostFeature (
+    v_host_id UUID,
+    v_feature_name VARCHAR(256)
+    )
+RETURNS VOID AS $PROCEDURE$
 BEGIN
-    INSERT INTO supported_host_features(host_id, feature_name)
-    VALUES(v_host_id, v_feature_name);
-END; $procedure$
+    INSERT INTO supported_host_features (
+        host_id,
+        feature_name
+        )
+    VALUES (
+        v_host_id,
+        v_feature_name
+        );
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetSupportedHostFeaturesByHostId(v_host_id UUID)
-RETURNS SETOF supported_host_features STABLE
-AS $procedure$
+CREATE OR REPLACE FUNCTION GetSupportedHostFeaturesByHostId (v_host_id UUID)
+RETURNS SETOF supported_host_features STABLE AS $PROCEDURE$
 BEGIN
-    RETURN QUERY SELECT *
-    FROM  supported_host_features
+    RETURN QUERY
+
+    SELECT *
+    FROM supported_host_features
     WHERE host_id = v_host_id;
-END; $procedure$
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-Create or replace function RemoveSupportedHostFeature(v_host_id UUID,
-                                                      v_feature_name VARCHAR(256))
-RETURNS VOID
-AS $procedure$
+CREATE OR REPLACE FUNCTION RemoveSupportedHostFeature (
+    v_host_id UUID,
+    v_feature_name VARCHAR(256)
+    )
+RETURNS VOID AS $PROCEDURE$
 BEGIN
-    DELETE FROM supported_host_features WHERE host_id = v_host_id and feature_name = v_feature_name;
-END; $procedure$
+    DELETE
+    FROM supported_host_features
+    WHERE host_id = v_host_id
+        AND feature_name = v_feature_name;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+

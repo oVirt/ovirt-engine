@@ -3,11 +3,7 @@
 ----------------------------------------------------------------
 -- [base_disks] Table
 --
-
-
-
-
-Create or replace FUNCTION InsertBaseDisk(
+CREATE OR REPLACE FUNCTION InsertBaseDisk (
     v_disk_id UUID,
     v_disk_interface VARCHAR(32),
     v_wipe_after_delete BOOLEAN,
@@ -16,15 +12,15 @@ Create or replace FUNCTION InsertBaseDisk(
     v_disk_description VARCHAR(500),
     v_shareable BOOLEAN,
     v_boot BOOLEAN,
-    v_sgio INTEGER,
+    v_sgio INT,
     v_alignment SMALLINT,
     v_last_alignment_scan TIMESTAMP WITH TIME ZONE,
     v_disk_storage_type SMALLINT,
-    v_cinder_volume_type VARCHAR(255))
-RETURNS VOID
-AS $procedure$
+    v_cinder_volume_type VARCHAR(255)
+    )
+RETURNS VOID AS $PROCEDURE$
 BEGIN
-    INSERT INTO base_disks(
+    INSERT INTO base_disks (
         disk_id,
         disk_interface,
         wipe_after_delete,
@@ -37,8 +33,9 @@ BEGIN
         alignment,
         last_alignment_scan,
         disk_storage_type,
-        cinder_volume_type)
-    VALUES(
+        cinder_volume_type
+        )
+    VALUES (
         v_disk_id,
         v_disk_interface,
         v_wipe_after_delete,
@@ -51,15 +48,12 @@ BEGIN
         v_alignment,
         v_last_alignment_scan,
         v_disk_storage_type,
-        v_cinder_volume_type);
-END; $procedure$
+        v_cinder_volume_type
+        );
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-
-
-Create or replace FUNCTION UpdateBaseDisk(
+CREATE OR REPLACE FUNCTION UpdateBaseDisk (
     v_disk_id UUID,
     v_disk_interface VARCHAR(32),
     v_wipe_after_delete BOOLEAN,
@@ -68,76 +62,66 @@ Create or replace FUNCTION UpdateBaseDisk(
     v_disk_description VARCHAR(500),
     v_shareable BOOLEAN,
     v_boot BOOLEAN,
-    v_sgio INTEGER,
+    v_sgio INT,
     v_alignment SMALLINT,
     v_last_alignment_scan TIMESTAMP WITH TIME ZONE,
     v_disk_storage_type SMALLINT,
-    v_cinder_volume_type VARCHAR(255))
-RETURNS VOID
-AS $procedure$
+    v_cinder_volume_type VARCHAR(255)
+    )
+RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE base_disks
-    SET    disk_interface = v_disk_interface,
-           wipe_after_delete = v_wipe_after_delete,
-           propagate_errors = v_propagate_errors,
-           disk_alias = v_disk_alias,
-           disk_description = v_disk_description,
-           shareable = v_shareable,
-           boot = v_boot,
-           sgio = v_sgio,
-           alignment = v_alignment,
-           last_alignment_scan = v_last_alignment_scan,
-           disk_storage_type = v_disk_storage_type,
-           cinder_volume_type = v_cinder_volume_type
-    WHERE  disk_id = v_disk_id;
-END; $procedure$
+    SET disk_interface = v_disk_interface,
+        wipe_after_delete = v_wipe_after_delete,
+        propagate_errors = v_propagate_errors,
+        disk_alias = v_disk_alias,
+        disk_description = v_disk_description,
+        shareable = v_shareable,
+        boot = v_boot,
+        sgio = v_sgio,
+        alignment = v_alignment,
+        last_alignment_scan = v_last_alignment_scan,
+        disk_storage_type = v_disk_storage_type,
+        cinder_volume_type = v_cinder_volume_type
+    WHERE disk_id = v_disk_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION DeleteBaseDisk (v_disk_id UUID)
+RETURNS VOID AS $PROCEDURE$
+DECLARE v_val UUID;
 
-
-
-
-Create or replace FUNCTION DeleteBaseDisk(v_disk_id UUID)
-RETURNS VOID
-AS $procedure$
-DECLARE
-    v_val  UUID;
 BEGIN
     DELETE
-    FROM   base_disks
-    WHERE  disk_id = v_disk_id;
+    FROM base_disks
+    WHERE disk_id = v_disk_id;
 
     -- Delete the disk's permissions
-   DELETE FROM permissions WHERE object_id = v_disk_id;
-END; $procedure$
+    DELETE
+    FROM permissions
+    WHERE object_id = v_disk_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-
-
-Create or replace FUNCTION GetAllFromBaseDisks() RETURNS SETOF base_disks STABLE
-AS $procedure$
+CREATE OR REPLACE FUNCTION GetAllFromBaseDisks ()
+RETURNS SETOF base_disks STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
+
     SELECT *
-    FROM   base_disks;
-END; $procedure$
+    FROM base_disks;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-
-
-Create or replace FUNCTION GetBaseDiskByBaseDiskId(v_disk_id UUID)
-RETURNS SETOF base_disks STABLE
-AS $procedure$
+CREATE OR REPLACE FUNCTION GetBaseDiskByBaseDiskId (v_disk_id UUID)
+RETURNS SETOF base_disks STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
+
     SELECT *
-    FROM   base_disks
-    WHERE  disk_id = v_disk_id;
-END; $procedure$
+    FROM base_disks
+    WHERE disk_id = v_disk_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 

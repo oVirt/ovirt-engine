@@ -3,107 +3,93 @@
 ----------------------------------------------------------------
 -- [vds_spm_id_map] Table
 --
-
-
-
-
-
-Create or replace FUNCTION Insertvds_spm_id_map(v_storage_pool_id UUID,
- v_vds_id UUID,
- v_vds_spm_id INTEGER)
-RETURNS VOID
-   AS $procedure$
+CREATE OR REPLACE FUNCTION Insertvds_spm_id_map (
+    v_storage_pool_id UUID,
+    v_vds_id UUID,
+    v_vds_spm_id INT
+    )
+RETURNS VOID AS $PROCEDURE$
 BEGIN
-INSERT INTO vds_spm_id_map(storage_pool_id, vds_id, vds_spm_id)
-	VALUES(v_storage_pool_id, v_vds_id, v_vds_spm_id);
-END; $procedure$
+    INSERT INTO vds_spm_id_map (
+        storage_pool_id,
+        vds_id,
+        vds_spm_id
+        )
+    VALUES (
+        v_storage_pool_id,
+        v_vds_id,
+        v_vds_spm_id
+        );
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-
-
-Create or replace FUNCTION Deletevds_spm_id_map(v_vds_id UUID)
-RETURNS VOID
-   AS $procedure$
+CREATE OR REPLACE FUNCTION Deletevds_spm_id_map (v_vds_id UUID)
+RETURNS VOID AS $PROCEDURE$
 BEGIN
-
-   DELETE FROM vds_spm_id_map
-   WHERE vds_id = v_vds_id;
-
-END; $procedure$
+    DELETE
+    FROM vds_spm_id_map
+    WHERE vds_id = v_vds_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-
-
-Create or replace FUNCTION DeleteByPoolvds_spm_id_map(v_vds_id UUID, v_storage_pool_id UUID)
-RETURNS VOID
-   AS $procedure$
+CREATE OR REPLACE FUNCTION DeleteByPoolvds_spm_id_map (
+    v_vds_id UUID,
+    v_storage_pool_id UUID
+    )
+RETURNS VOID AS $PROCEDURE$
 BEGIN
-
-   DELETE FROM vds_spm_id_map
-   WHERE vds_id = v_vds_id AND storage_pool_id = v_storage_pool_id;
-
-END; $procedure$
+    DELETE
+    FROM vds_spm_id_map
+    WHERE vds_id = v_vds_id
+        AND storage_pool_id = v_storage_pool_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-
-
-Create or replace FUNCTION GetAllFromvds_spm_id_map() RETURNS SETOF vds_spm_id_map STABLE
-   AS $procedure$
+CREATE OR REPLACE FUNCTION GetAllFromvds_spm_id_map ()
+RETURNS SETOF vds_spm_id_map STABLE AS $PROCEDURE$
 BEGIN
-RETURN QUERY SELECT vds_spm_id_map.*
-   FROM vds_spm_id_map;
+    RETURN QUERY
 
-END; $procedure$
+    SELECT vds_spm_id_map.*
+    FROM vds_spm_id_map;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-
-
-Create or replace FUNCTION Getvds_spm_id_mapBystorage_pool_idAndByvds_spm_id(v_storage_pool_id UUID,
- v_vds_spm_id INTEGER) RETURNS SETOF vds_spm_id_map STABLE
-   AS $procedure$
+CREATE OR REPLACE FUNCTION Getvds_spm_id_mapBystorage_pool_idAndByvds_spm_id (
+    v_storage_pool_id UUID,
+    v_vds_spm_id INT
+    )
+RETURNS SETOF vds_spm_id_map STABLE AS $PROCEDURE$
 BEGIN
-RETURN QUERY SELECT vds_spm_id_map.*
-   FROM vds_spm_id_map
-   WHERE storage_pool_id = v_storage_pool_id AND vds_spm_id = v_vds_spm_id;
+    RETURN QUERY
 
-END; $procedure$
+    SELECT vds_spm_id_map.*
+    FROM vds_spm_id_map
+    WHERE storage_pool_id = v_storage_pool_id
+        AND vds_spm_id = v_vds_spm_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-
-
-
-Create or replace FUNCTION Getvds_spm_id_mapBystorage_pool_id(v_storage_pool_id UUID) RETURNS SETOF vds_spm_id_map STABLE
-   AS $procedure$
+CREATE OR REPLACE FUNCTION Getvds_spm_id_mapBystorage_pool_id (v_storage_pool_id UUID)
+RETURNS SETOF vds_spm_id_map STABLE AS $PROCEDURE$
 BEGIN
-RETURN QUERY SELECT vds_spm_id_map.*
-   FROM vds_spm_id_map
-   WHERE storage_pool_id = v_storage_pool_id;
+    RETURN QUERY
 
-END; $procedure$
+    SELECT vds_spm_id_map.*
+    FROM vds_spm_id_map
+    WHERE storage_pool_id = v_storage_pool_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
-
-
-
-Create or replace FUNCTION Getvds_spm_id_mapByvds_id(v_vds_id UUID) RETURNS SETOF vds_spm_id_map STABLE
-   AS $procedure$
+CREATE OR REPLACE FUNCTION Getvds_spm_id_mapByvds_id (v_vds_id UUID)
+RETURNS SETOF vds_spm_id_map STABLE AS $PROCEDURE$
 BEGIN
-RETURN QUERY SELECT vds_spm_id_map.*
-   FROM vds_spm_id_map
-   WHERE vds_id = v_vds_id;
+    RETURN QUERY
 
-END; $procedure$
+    SELECT vds_spm_id_map.*
+    FROM vds_spm_id_map
+    WHERE vds_id = v_vds_id;
+END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 
