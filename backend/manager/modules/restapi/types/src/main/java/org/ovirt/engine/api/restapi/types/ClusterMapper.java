@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import static org.ovirt.engine.api.restapi.utils.VersionUtils.greaterOrEqual;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Architecture;
@@ -230,11 +231,13 @@ public class ClusterMapper {
         if (model.isSetId()) {
             entity.setClusterPolicyId(GuidUtils.asGuid(model.getId()));
         }
+
+        if (entity.getClusterPolicyProperties() == null && (model.isSetThresholds() || model.isSetProperties())) {
+            entity.setClusterPolicyProperties(new LinkedHashMap<String, String>());
+        }
+
         if (model.isSetThresholds()) {
             SchedulingPolicyThresholds thresholds = model.getThresholds();
-            if (entity.getClusterPolicyProperties() == null) {
-                entity.setClusterPolicyProperties(new LinkedHashMap<String, String>());
-            }
             if (thresholds.getLow() != null) {
                 entity.getClusterPolicyProperties().put(LOW_UTILIZATION, thresholds.getLow().toString());
             }
@@ -248,7 +251,8 @@ public class ClusterMapper {
         }
         // properties will override thresholds
         if (model.isSetProperties()) {
-            entity.setClusterPolicyProperties(CustomPropertiesParser.toMap(model.getProperties()));
+            Map<String, String> properties = CustomPropertiesParser.toMap(model.getProperties());
+            entity.getClusterPolicyProperties().putAll(properties);
         }
         return entity;
     }
