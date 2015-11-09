@@ -60,6 +60,9 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
     StringEntityModelTextBoxEditor mountOptionsEditor;
 
     @UiField
+    Label message;
+
+    @UiField
     Image nfsPosixAlertIcon;
 
     private final Driver driver = GWT.create(Driver.class);
