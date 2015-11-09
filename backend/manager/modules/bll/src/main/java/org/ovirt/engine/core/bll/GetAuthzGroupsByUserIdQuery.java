@@ -39,7 +39,7 @@ public class GetAuthzGroupsByUserIdQuery<P extends IdQueryParameters> extends Qu
         if (!principalRecords.isEmpty()) {
             ExtMap principalRecord = principalRecords.iterator().next();
             DirectoryUtils.flatGroups(principalRecord);
-            for (ExtMap group : principalRecord.get(PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
+            for (ExtMap group : principalRecord.<Collection<ExtMap>>get(PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
                 groups.add(new AuthzGroup(dbUser.getDomain(), group.<String>get(GroupRecord.NAMESPACE), group.<String>get(GroupRecord.NAME)));
             }
         }

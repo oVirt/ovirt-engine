@@ -310,7 +310,7 @@ public class AAAServiceImpl implements ModuleService {
                     ExtMap filter = createQueryFilter(entity, module.argMap);
                     Dump.QUERY_FILTER_RECORD.dump(module, filter, "");
 
-                    Collection<String> namespaces = authzExtension.getContext().get(
+                    Collection<String> namespaces = authzExtension.getContext().<Collection<String>>get(
                         Authz.ContextKeys.AVAILABLE_NAMESPACES,
                         Collections.<String>emptyList()
                     );
@@ -447,7 +447,7 @@ public class AAAServiceImpl implements ModuleService {
                     if (map != null) {
                         log.info("{}--- Begin PrincipalRecord ---", indent);
                         dumpRecord(module, map, Arrays.asList(Authz.PrincipalRecord.GROUPS), "PrincipalRecord", indent);
-                        for (ExtMap group : map.get(Authz.PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
+                        for (ExtMap group : map.<Collection<ExtMap>>get(Authz.PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
                             GROUP_RECORD.dump(module, group, indent + "  ");
                         }
                         log.info("{}--- End   PrincipalRecord ---", indent);
@@ -462,7 +462,7 @@ public class AAAServiceImpl implements ModuleService {
                     if (map != null) {
                         log.info("{}--- Begin GroupRecord ---", indent);
                         dumpRecord(module, map, Arrays.asList(Authz.GroupRecord.GROUPS), "GroupRecord", indent);
-                        for (ExtMap group : map.get(Authz.GroupRecord.GROUPS, Collections.<ExtMap> emptyList())) {
+                        for (ExtMap group : map.<Collection<ExtMap>>get(Authz.GroupRecord.GROUPS, Collections.<ExtMap> emptyList())) {
                             dump(module, group, indent + "  ");
                         }
                         log.info("{}--- End   GroupRecord ---", indent);
@@ -477,7 +477,7 @@ public class AAAServiceImpl implements ModuleService {
                     if (map != null) {
                         log.info("{}--- Begin QueryFilterRecord ---", indent);
                         dumpRecord(module, map, Arrays.asList(Authz.QueryFilterRecord.FILTER), "QueryFilterRecord", indent);
-                        for (ExtMap filter : map.get(Authz.QueryFilterRecord.FILTER, Collections.<ExtMap> emptyList())) {
+                        for (ExtMap filter : map.<Collection<ExtMap>>get(Authz.QueryFilterRecord.FILTER, Collections.<ExtMap> emptyList())) {
                             dump(module, filter, indent + "  ");
                         }
                         log.info("{}--- End QueryFilterRecord ---", indent);

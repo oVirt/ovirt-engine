@@ -393,7 +393,8 @@ public class ExtMap implements ConcurrentMap<ExtKey, Object>, Cloneable, Seriali
      * @param <T> type of return and default value, inferred
      * @return Value.
      */
-    public <T> T get(ExtKey key, T defaultValue) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(ExtKey key, Object defaultValue) {
         if (defaultValue != null && !key.getType().isAssignableFrom(defaultValue.getClass())) {
             throw new IllegalArgumentException(
                 String.format(
@@ -403,11 +404,11 @@ public class ExtMap implements ConcurrentMap<ExtKey, Object>, Cloneable, Seriali
                 )
             );
         }
-        T value = get(key);
+        Object value = get(key);
         if (value == null) {
             value = defaultValue;
         }
-        return value;
+        return (T)value;
     }
 
     /**

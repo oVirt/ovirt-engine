@@ -36,7 +36,7 @@ public class DirectoryUtils {
         DbGroupDao dao = DbFacade.getInstance().getDbGroupDao();
         Set<Guid> groupIds = new HashSet<>();
         Set<String> groupsNames = new HashSet<>();
-        for (ExtMap group : principal.get(PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
+        for (ExtMap group : principal.<Collection<ExtMap>>get(PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
             DbGroup dbGroup = dao.getByExternalId(authz, group.<String> get(GroupRecord.ID));
             if (dbGroup != null) {
                 groupIds.add(dbGroup.getId());
@@ -197,7 +197,7 @@ public class DirectoryUtils {
     }
 
     private static List<ExtMap> flatGroups(ExtMap entity, ExtKey key, List<ExtMap> accumulator) {
-        for (ExtMap group : entity.get(key, Collections.<ExtMap> emptyList())) {
+        for (ExtMap group : entity.<Collection<ExtMap>>get(key, Collections.<ExtMap> emptyList())) {
             accumulator.add(group);
             flatGroups(group, GroupRecord.GROUPS, accumulator);
         }
