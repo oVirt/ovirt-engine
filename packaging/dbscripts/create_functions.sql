@@ -814,34 +814,23 @@ LANGUAGE plpgsql;
 
 
 -- Summarize the storage usage for all the disks in the quota
--- For active disks, we summarize the full size and for snapshots and other disks, we summarize only the actual size.
+-- We calculate the actual size for the read only disks such as snapshots and template disks,
+-- and also the virtual size of the active disks, since their potential size is their virtual size.
 -- If v_storage_id is null, then return only the global usage of the quota, other wise return only the summarize in the specific storage.
 CREATE OR REPLACE FUNCTION CalculateStorageUsage(v_quota_id UUID, v_storage_id UUID)
 RETURNS double precision STABLE
 AS $function$
 DECLARE
-	v_virtual_size double precision;
-	v_actual_size double precision;
+  v_retVal double precision;
 BEGIN
-	-- Summarize size of all disks that are active.
-    SELECT COALESCE(sum(size) / (1024 * 1024 * 1024),0) INTO v_virtual_size
-	FROM disk_image_dynamic, images_storage_domain_view
-	WHERE image_guid = disk_image_dynamic.image_id
-    AND image_guid in (SELECT image_guid FROM  images WHERE  active = TRUE)
-	AND quota_id = v_quota_id
-    AND (v_storage_id = images_storage_domain_view.storage_id or v_storage_id IS NULL);
-
-	-- Summarize the actual size of all the rest disks that are read only disks such as snapshots, not active, template disks.
-	SELECT COALESCE(sum(disk_image_dynamic.actual_size) / (1024 * 1024 * 1024),0) INTO v_actual_size
-	FROM disk_image_dynamic, images_storage_domain_view
-	WHERE image_guid = disk_image_dynamic.image_id
-    AND image_guid not in (SELECT image_guid FROM images i WHERE  active = TRUE)
-	AND quota_id = v_quota_id
-	AND (v_storage_id = images_storage_domain_view.storage_id or v_storage_id IS NULL);
-	RETURN v_actual_size + v_virtual_size;
+  SELECT COALESCE(sum(CASE active WHEN TRUE THEN size ELSE actual_size END) / (1024 * 1024 * 1024),0)
+  INTO v_retVal
+  FROM images_storage_domain_view
+  WHERE quota_id = v_quota_id
+    AND (v_storage_id IS NULL or v_storage_id = storage_id);
+  RETURN v_retVal;
 END; $function$
 LANGUAGE plpgsql;
-
 
 --
 -- Create the sequence used to generate UUIDs:
