@@ -44,6 +44,12 @@ public class DisconnectHostFromStoragePoolServersCommand extends
                 auditLogDirector.log(new AuditLogableBase(getParameters().getVdsId()), result.getSecond());
             }
         }
+
+        // Unregister libvirt secrets when required (for Cinder storage domains).
+        CINDERStorageHelper CINDERStorageHelper = new CINDERStorageHelper();
+        if (CINDERStorageHelper.isActiveCinderDomainAvailable(getStoragePool().getId())) {
+            unregisterLibvirtSecrets();
+        }
     }
 
     private void disconnectStorageByType(StorageType storageType, List<StorageServerConnections> connections) {

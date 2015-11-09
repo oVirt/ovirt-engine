@@ -46,6 +46,6 @@ public class RegisterLibvirtSecretsVDSParameters extends VdsIdVDSCommandParamete
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
                 .append("libvirtSecrets", getLibvirtSecrets())
-                .append("clearUnusedSecrets", getLibvirtSecrets());
+                .append("clearUnusedSecrets", isClearUnusedSecrets());
     }
 }
