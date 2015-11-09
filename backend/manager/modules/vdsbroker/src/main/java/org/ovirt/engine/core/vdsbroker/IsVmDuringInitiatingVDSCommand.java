@@ -10,7 +10,6 @@ extends VDSCommandBase<P> {
 
     @Override
     protected void executeVDSCommand() {
-        getVDSReturnValue().setReturnValue(ResourceManager.getInstance()
-                .isVmDuringInitiating(getParameters().getVmId()));
+        getVDSReturnValue().setReturnValue(resourceManager.isVmDuringInitiating(getParameters().getVmId()));
     }
 }

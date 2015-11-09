@@ -3,7 +3,6 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +19,7 @@ public class SPMGetAllTasksInfoVDSCommand<P extends IrsBaseVDSCommandParameters>
                 "-- executeIrsBrokerCommand: Attempting on storage pool '{}'",
                 getParameters().getStoragePoolId());
 
-        setReturnValue(ResourceManager
-                .getInstance()
+        setReturnValue(resourceManager
                 .runVdsCommand(VDSCommandType.HSMGetAllTasksInfo,
                         new VdsIdVDSCommandParametersBase(getCurrentIrsProxyData().getCurrentVdsId()))
                 .getReturnValue());

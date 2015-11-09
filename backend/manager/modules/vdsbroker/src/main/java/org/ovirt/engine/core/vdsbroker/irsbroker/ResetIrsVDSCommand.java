@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.vdscommands.SpmStopVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class ResetIrsVDSCommand<P extends ResetIrsVDSCommandParameters> extends IrsBrokerCommand<P> {
     public ResetIrsVDSCommand(P parameters) {
@@ -21,8 +20,7 @@ public class ResetIrsVDSCommand<P extends ResetIrsVDSCommandParameters> extends 
         P parameters = getParameters();
         Guid vdsId = parameters.getVdsId();
         if (getParameters().isVdsAlreadyRebooted() ||
-                ResourceManager
-                .getInstance()
+                resourceManager
                 .runVdsCommand(VDSCommandType.SpmStop,
                         new SpmStopVDSCommandParameters(vdsId, parameters.getStoragePoolId())).getSucceeded()
                 || parameters.getIgnoreStopFailed()) {
@@ -38,8 +36,7 @@ public class ResetIrsVDSCommand<P extends ResetIrsVDSCommandParameters> extends 
 
             StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(parameters.getStoragePoolId());
             if (pool != null && (pool.getStatus() == StoragePoolStatus.NotOperational)) {
-                ResourceManager
-                        .getInstance()
+                resourceManager
                         .getEventListener()
                         .storagePoolStatusChange(parameters.getStoragePoolId(), StoragePoolStatus.NonResponsive,
                                 AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_RESET_IRS, EngineError.ENGINE);

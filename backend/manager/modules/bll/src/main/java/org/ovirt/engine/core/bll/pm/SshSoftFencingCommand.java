@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.pm;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -20,6 +22,10 @@ import org.ovirt.engine.core.vdsbroker.VdsManager;
  */
 @NonTransactiveCommandAttribute
 public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCommand<T> {
+
+    @Inject
+    private ResourceManager resourceManager;
+
     /**
      * Creates an instance with specified parameters
      *
@@ -134,7 +140,6 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
     }
 
     public ResourceManager getResourceManager() {
-        // TODO: fix when ResourceManager could be injected
-        return ResourceManager.getInstance();
+        return resourceManager;
     }
 }

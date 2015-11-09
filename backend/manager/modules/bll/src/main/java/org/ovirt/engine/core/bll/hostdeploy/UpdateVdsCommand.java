@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -39,6 +41,9 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsCommand<T>  implements RenamedEntityInfoProvider{
+
+    @Inject
+    private ResourceManager resourceManager;
 
     private VDS oldHost;
     private static final List<String> UPDATE_FIELDS_VDS_BROKER = Arrays.asList("host_name", "ip", "vds_unique_id", "port", "vds_group_id");
@@ -168,7 +173,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
         }
 
         if (oldHost.getProtocol() != getParameters().getVdsStaticData().getProtocol()) {
-            ResourceManager.getInstance().reestablishConnection(oldHost.getId());
+            resourceManager.reestablishConnection(oldHost.getId());
         }
 
         // set clusters network to be operational (if needed)

@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
@@ -20,6 +22,9 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @Singleton
 public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
+
+    @Inject
+    private Instance<ResourceManager> resourceManager;
 
     private Map<Guid, IVdsAsyncCommand> _asyncRunningCommands = new HashMap<>();
 
@@ -95,6 +100,6 @@ public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
     }
 
     private ResourceManager getResourceManager() {
-        return ResourceManager.getInstance();
+        return resourceManager.get();
     }
 }

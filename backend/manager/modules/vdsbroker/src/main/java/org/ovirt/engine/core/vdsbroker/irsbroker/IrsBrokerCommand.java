@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
-import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -35,7 +34,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.utils.log.LoggedUtils;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.BrokerCommandBase;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
@@ -54,6 +52,9 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
     @Inject
     private AuditLogDirector auditLogDirector;
+
+    @Inject
+    private IVdsEventListener eventListener;
 
     /**
      * process received domain monitoring information from a given vds if necessary (according to it's status
@@ -272,17 +273,11 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             final Guid masterDomainId = masterDomain.getId();
             eventQueue.submitEventAsync(new Event(getParameters().getStoragePoolId(),
                             masterDomainId, null, EventType.RECONSTRUCT, "IrsBrokerCommand.startReconstruct()"),
-                    new Callable<EventResult>() {
-                        @Override
-                        public EventResult call() {
-                            return ResourceManager.getInstance()
-                                    .getEventListener().masterDomainNotOperational(
-                                            masterDomainId, getParameters().getStoragePoolId(), true,
-                                            getVDSReturnValue().getVdsError() != null
-                                                    && getVDSReturnValue().getVdsError().getCode()
-                                                    == EngineError.StoragePoolWrongMaster);
-                        }
-                    });
+                    () -> eventListener.masterDomainNotOperational(
+                                masterDomainId, getParameters().getStoragePoolId(), true,
+                                getVDSReturnValue().getVdsError() != null
+                                        && getVDSReturnValue().getVdsError().getCode()
+                                        == EngineError.StoragePoolWrongMaster));
         } else {
             log.error(
                     "IrsBroker::IRSNoMasterDomainException:: Could not find master domain for pool '{}'",

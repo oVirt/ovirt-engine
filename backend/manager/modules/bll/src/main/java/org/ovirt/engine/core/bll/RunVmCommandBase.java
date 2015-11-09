@@ -62,6 +62,9 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     @Inject
     protected SchedulingManager schedulingManager;
 
+    @Inject
+    private ResourceManager resourceManager;
+
     protected RunVmCommandBase(Guid commandId) {
         super(commandId);
     }
@@ -318,7 +321,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             // time out waiting for an update is the highest between the refresh rate and the last update elapsed time
             // but still no higher than a configurable max to prevent very long updates to stall command.
             long t = Math.max(
-                    ResourceManager.getInstance().getVdsManager(vdsId).getLastUpdateElapsed(),
+                    resourceManager.getVdsManager(vdsId).getLastUpdateElapsed(),
                     TimeUnit.SECONDS.toMillis(Config.<Integer> getValue(VdsRefreshRate)));
             t = Math.max(Config.<Integer> getValue(ConfigValues.ThrottlerMaxWaitForVdsUpdateInMillis), t);
 
@@ -340,7 +343,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
      * @return {@link org.ovirt.engine.core.vdsbroker.VdsMonitor} for signaling on thread actions
      */
     private VdsMonitor getMonitor(Guid vdsId) {
-        return ResourceManager.getInstance().getVdsManager(vdsId).getVdsMonitor();
+        return resourceManager.getVdsManager(vdsId).getVdsMonitor();
     }
 
     @Override

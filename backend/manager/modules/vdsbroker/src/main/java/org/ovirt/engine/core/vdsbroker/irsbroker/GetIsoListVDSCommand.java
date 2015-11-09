@@ -3,7 +3,6 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 import org.ovirt.engine.core.common.vdscommands.HSMGetIsoListParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class GetIsoListVDSCommand<P extends IrsBaseVDSCommandParameters> extends IrsBrokerCommand<P> {
     public GetIsoListVDSCommand(P parameters) {
@@ -12,8 +11,7 @@ public class GetIsoListVDSCommand<P extends IrsBaseVDSCommandParameters> extends
 
     @Override
     protected void executeIrsBrokerCommand() {
-        setReturnValue(ResourceManager
-                .getInstance()
+        setReturnValue(resourceManager
                 .runVdsCommand(
                         VDSCommandType.HsmGetIsoList,
                         new HSMGetIsoListParameters(getCurrentIrsProxyData().getCurrentVdsId(),

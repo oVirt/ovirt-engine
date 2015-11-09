@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -46,6 +48,9 @@ import org.slf4j.LoggerFactory;
 @NonTransactiveCommandAttribute
 public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T> {
     private static final Logger log = LoggerFactory.getLogger(ConvertVmCommand.class);
+
+    @Inject
+    private ResourceManager resourceManager;
 
     private ConvertVmCallback cachedCallback;
 
@@ -281,7 +286,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     }
 
     protected ResourceManager getResourceManager() {
-        return ResourceManager.getInstance();
+        return resourceManager;
     }
 
     private CommandExecutionStatus getCommandExecutionStatus() {

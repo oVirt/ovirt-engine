@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -44,6 +46,9 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
      * use this member to determine if fence failed but vms moved to unknown mode (for the audit log type)
      */
     private static final String RESTART = "Restart";
+
+    @Inject
+    private ResourceManager resourceManager;
 
     public VdsNotRespondingTreatmentCommand(T parameters) {
         this(parameters, null);
@@ -246,8 +251,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     }
 
     public ResourceManager getResourceManager() {
-        // TODO: fix when ResourceManager could be injected
-        return ResourceManager.getInstance();
+        return resourceManager;
     }
 
     private void waitUntilSkipFencingIfSDActiveAllowed(boolean skipFencingIfSDActive) {

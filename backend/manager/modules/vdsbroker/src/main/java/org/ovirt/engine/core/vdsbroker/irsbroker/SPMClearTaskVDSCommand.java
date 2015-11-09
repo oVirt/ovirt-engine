@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.vdscommands.HSMTaskGuidBaseVDSCommandParamet
 import org.ovirt.engine.core.common.vdscommands.SPMTaskGuidBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class SPMClearTaskVDSCommand<P extends SPMTaskGuidBaseVDSCommandParameters>
         extends IrsBrokerCommand<P> {
@@ -14,7 +13,7 @@ public class SPMClearTaskVDSCommand<P extends SPMTaskGuidBaseVDSCommandParameter
 
     @Override
     protected void executeIrsBrokerCommand() {
-        VDSReturnValue returnValue = ResourceManager.getInstance().runVdsCommand(
+        VDSReturnValue returnValue = resourceManager.runVdsCommand(
                 VDSCommandType.HSMClearTask,
                 new HSMTaskGuidBaseVDSCommandParameters(getCurrentIrsProxyData().getCurrentVdsId(),
                         getParameters().getTaskId()));

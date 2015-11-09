@@ -13,6 +13,6 @@ public class RemoveVdsVDSCommand<P extends RemoveVdsVDSCommandParameters> extend
 
     @Override
     protected void executeVdsIdCommand() {
-        ResourceManager.getInstance().removeVds(getVdsId(), parameters.isNewHost());
+        resourceManager.removeVds(getVdsId(), parameters.isNewHost());
     }
 }
