@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.validator.storage;
 import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -12,7 +11,6 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.replacements;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -214,32 +212,6 @@ public class DiskValidatorTest {
 
         lunDisk.setDiskInterface(DiskInterface.IDE);
         assertThat(lunValidator.isReadOnlyPropertyCompatibleWithInterface(), isValid());
-    }
-
-    public void lunDiskValid() {
-        VDS vds = createVds();
-        setupForLun();
-
-        List<LUNs> luns = Collections.singletonList(lunDisk.getLun());
-        doReturn(luns).when(lunValidator).executeGetDeviceList(any(Guid.class),
-                any(StorageType.class),
-                any(String.class));
-
-        assertThat(lunValidator.isLunDiskVisible(lunDisk.getLun(), vds), isValid());
-    }
-
-    @Test
-    public void lunDiskInvalid() {
-        VDS vds = createVds();
-        setupForLun();
-
-        List<LUNs> luns = Collections.emptyList();
-        doReturn(luns).when(lunValidator).executeGetDeviceList(any(Guid.class),
-                any(StorageType.class),
-                any(String.class));
-
-        assertThat(lunValidator.isLunDiskVisible(lunDisk.getLun(), vds),
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_INVALID));
     }
 
     @Test

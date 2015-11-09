@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
@@ -38,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -56,6 +59,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
+import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
@@ -67,6 +72,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmCommand<T>
         implements QuotaStorageDependent {
+
+    private LUNs lunFromStorage;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -186,8 +193,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return false;
         }
 
-        if (getVds() != null && !validate(diskValidator.isLunDiskVisible(lun, getVds()))) {
-            return false;
+        if (getVds() != null) {
+            lunFromStorage = getLunDisk(lun, getVds());
+            if (lunFromStorage == null) {
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_INVALID);
+            }
         }
 
         if (!validate(diskValidator.isUsingScsiReservationValid(getVm(), lunDisk))) {
@@ -195,6 +205,37 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
 
         return true;
+    }
+
+    /**
+     * Retrieves the specified LUN if it's visible to the specified host, or null otherwise.
+     *
+     * @param lun the LUN to examine.
+     * @param vds the host to query from.
+     *
+     * @return the specified LUN if it's visible to the specified host, or null otherwise.
+     */
+    protected LUNs getLunDisk(final LUNs lun, VDS vds) {
+        List<LUNs> luns = executeGetDeviceList(vds.getId(), lun.getLunType(), lun.getLUN_id());
+
+        /*
+        TODO Once we stop supporting 3.5 DCs and earlier, we can replace the below by:
+        "return luns.isEmpty() ? null : luns.get(0);"
+         */
+
+        // Retrieve LUN from the device list.
+        return (LUNs) CollectionUtils.find(luns, new Predicate() {
+            @Override
+            public boolean evaluate(Object o) {
+                return ((LUNs) o).getId().equals(lun.getId());
+            }
+        });
+    }
+
+    protected List<LUNs> executeGetDeviceList(Guid vdsId, StorageType storageType, String lunId) {
+        GetDeviceListVDSCommandParameters parameters =
+                new GetDeviceListVDSCommandParameters(vdsId, storageType, false, Arrays.asList(lunId));
+        return (List<LUNs>) runVdsCommand(VDSCommandType.GetDeviceList, parameters).getReturnValue();
     }
 
     protected boolean checkIfImageDiskCanBeAdded(VM vm, DiskValidator diskValidator) {
@@ -401,7 +442,12 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     private void createDiskBasedOnLun() {
-        final LUNs lun = ((LunDisk) getParameters().getDiskInfo()).getLun();
+        final LUNs lun;
+        if (lunFromStorage == null) {
+            lun = ((LunDisk) getParameters().getDiskInfo()).getLun();
+        } else {
+            lun = lunFromStorage;
+        }
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {

@@ -3,32 +3,25 @@ package org.ovirt.engine.core.bll.validator.storage;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
-import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
@@ -151,31 +144,6 @@ public class DiskValidator {
         return ValidationResult.VALID;
     }
 
-    /**
-     * Determines whether the specified LUN is visible to the specified host.
-     *
-     * @param lun the LUN to examine.
-     * @param vds the host to query from.
-     *
-     * @return whether the specified lun is visible.
-     */
-    public ValidationResult isLunDiskVisible(final LUNs lun, VDS vds) {
-        List<LUNs> luns = executeGetDeviceList(vds.getId(), lun.getLunType(), lun.getLUN_id());
-
-        //TODO Once we stop supporting 3.5 DCs and earlier, we can replace the below by "return !luns.isempty()"
-
-        // Search LUN in the device list
-        boolean lunExists = CollectionUtils.exists(luns, new Predicate() {
-            @Override
-            public boolean evaluate(Object o) {
-                return ((LUNs) o).getId().equals(lun.getId());
-            }
-        });
-
-        return lunExists ? ValidationResult.VALID :
-                new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_INVALID);
-    }
-
     public ValidationResult validateUnsupportedDiskStorageType(DiskStorageType... diskStorageTypes) {
         List<DiskStorageType> diskStorageTypeList = Arrays.asList(diskStorageTypes);
         if (diskStorageTypeList.contains(disk.getDiskStorageType())) {
@@ -183,13 +151,6 @@ public class DiskValidator {
                     String.format("$diskStorageType %s", disk.getDiskStorageType()));
         }
         return ValidationResult.VALID;
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<LUNs> executeGetDeviceList(Guid vdsId, StorageType storageType, String lunId) {
-        GetDeviceListVDSCommandParameters parameters =
-                new GetDeviceListVDSCommandParameters(vdsId, storageType, false, Arrays.asList(lunId));
-        return (List<LUNs>) getVdsBroker().RunVdsCommand(VDSCommandType.GetDeviceList, parameters).getReturnValue();
     }
 
     protected VDSBrokerFrontend getVdsBroker() {
