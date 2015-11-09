@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -733,11 +735,21 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockInterfaceList();
 
         List<LUNs> luns = Collections.singletonList(disk.getLun());
-        DiskValidator diskValidator = spyDiskValidator(disk);
-        doReturn(luns).when(diskValidator).executeGetDeviceList(any(Guid.class),
+        doReturn(luns).when(command).executeGetDeviceList(any(Guid.class),
                 any(StorageType.class),
                 (any(String.class)));
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
+    @Test
+    public void testGetLunDiskSucceeds() {
+        VDS vds = mockVds();
+        LunDisk disk = createISCSILunDisk();
+        List<LUNs> luns = Collections.singletonList(disk.getLun());
+        initializeCommand(Guid.newGuid());
+
+        doReturn(luns).when(command).executeGetDeviceList(any(Guid.class), any(StorageType.class), any(String.class));
+        assertEquals(disk.getLun(), command.getLunDisk(disk.getLun(), vds));
     }
 
     @Test
@@ -757,12 +769,22 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockInterfaceList();
 
         List<LUNs> luns = Collections.emptyList();
-        DiskValidator diskValidator = spyDiskValidator(disk);
-        doReturn(luns).when(diskValidator).executeGetDeviceList(any(Guid.class),
+        doReturn(luns).when(command).executeGetDeviceList(any(Guid.class),
                 any(StorageType.class),
                 any(String.class));
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_INVALID);
+    }
+
+    @Test
+    public void testGetLunDiskFails() {
+        VDS vds = mockVds();
+        LunDisk disk = createISCSILunDisk();
+        List<LUNs> luns = Collections.emptyList();
+        initializeCommand(Guid.newGuid());
+
+        doReturn(luns).when(command).executeGetDeviceList(any(Guid.class), any(StorageType.class), any(String.class));
+        assertNull(command.getLunDisk(disk.getLun(), vds));
     }
 
     @Test
