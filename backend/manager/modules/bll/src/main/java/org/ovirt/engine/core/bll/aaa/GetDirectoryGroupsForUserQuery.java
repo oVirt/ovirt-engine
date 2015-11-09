@@ -38,7 +38,7 @@ public class GetDirectoryGroupsForUserQuery<P extends VdcQueryParametersBase> ex
         if (!principalRecords.isEmpty()) {
             ExtMap principalRecord = principalRecords.iterator().next();
             DirectoryUtils.flatGroups(principalRecord);
-            for (ExtMap group : principalRecord.get(PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
+            for (ExtMap group : principalRecord.<Collection<ExtMap>>get(PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
                 groups.add(DirectoryUtils.mapGroupRecordToDirectoryGroup(dbUser.getDomain(), group));
             }
         }
