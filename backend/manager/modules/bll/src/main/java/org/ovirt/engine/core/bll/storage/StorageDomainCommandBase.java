@@ -194,15 +194,11 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected boolean checkMasterDomainIsUp() {
         boolean returnValue = true;
-        List<StorageDomain> storageDomains = getStorageDomainDao().getAllForStoragePool(getStoragePool().getId());
-        storageDomains = LinqUtils.filter(storageDomains, new Predicate<StorageDomain>() {
-            @Override
-            public boolean eval(StorageDomain a) {
-                return a.getStorageDomainType() == StorageDomainType.Master
-                        && a.getStatus() == StorageDomainStatus.Active;
-            }
-        });
-        if (storageDomains.isEmpty()) {
+        boolean hasUpMaster =
+                !getStorageDomainDao().getStorageDomains
+                        (getStoragePool().getId(), StorageDomainType.Master, StorageDomainStatus.Active).isEmpty();
+
+        if (!hasUpMaster) {
             addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_MASTER_STORAGE_DOMAIN_NOT_ACTIVE);
             returnValue = false;
         }
