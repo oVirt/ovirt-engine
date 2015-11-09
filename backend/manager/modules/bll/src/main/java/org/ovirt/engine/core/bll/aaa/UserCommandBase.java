@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.aaa;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public abstract class UserCommandBase<T extends IdParameters> extends CommandBas
                 throw new EngineException(EngineError.USER_FAILED_POPULATE_DATA);
             }
             boolean foundUser = false;
-            for (String namespace : authz.getContext().<List<String>>get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
+            for (String namespace : authz.getContext().<Collection<String>>get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
                 DirectoryUser directoryUser = DirectoryUtils.findDirectoryUserById(authz, namespace, id, false, false);
                 if (directoryUser != null) {
                     dbUser = new DbUser(directoryUser);
