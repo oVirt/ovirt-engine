@@ -806,7 +806,7 @@ public abstract class RunOnceModel extends Model
 
                         if (AsyncDataProvider.isWindowsOsType(selectedVM.getVmOsId())) {
                             // Add a pseudo floppy disk image used for Windows' sysprep.
-                            if (!selectedVM.isInitialized()) {
+                            if (!selectedVM.isInitialized() && vm.getVmInit() != null) {
                                 images.add(0, "[sysprep]"); //$NON-NLS-1$
                                 getAttachFloppy().setEntity(true);
                             } else {
