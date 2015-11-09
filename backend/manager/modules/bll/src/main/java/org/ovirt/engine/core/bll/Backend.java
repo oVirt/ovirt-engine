@@ -118,6 +118,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private Instance<BackendService> services;
     @Inject
     private SessionDataContainer sessionDataContainer;
+    @Inject
+    private VDSBrokerFrontend resourceManger;
 
     public static BackendInternal getInstance() {
         return Injector.get(BackendInternal.class);
@@ -132,12 +134,10 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         log.info("Completed initializing handlers");
     }
 
-    private VDSBrokerFrontend _resourceManger;
-
     @Override
     @ExcludeClassInterceptors
     public VDSBrokerFrontend getResourceManager() {
-        return _resourceManger;
+        return resourceManger;
     }
 
     /**
@@ -224,7 +224,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         }
 
         log.info("Running ovirt-engine {}", Config.<String>getValue(ConfigValues.ProductRPMVersion));
-        _resourceManger = new VDSBrokerFrontendImpl();
 
         loadService(CpuFlagsManagerHandler.class);
 

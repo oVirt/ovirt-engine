@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
@@ -16,6 +18,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
+@Singleton
 public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
 
     private Map<Guid, IVdsAsyncCommand> _asyncRunningCommands = new HashMap<>();
