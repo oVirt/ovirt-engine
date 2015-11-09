@@ -61,7 +61,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
                                 storagePool.getId(),
                                 storageDomainId,
                                 vmConfImageGroupId,
-                                MemoryUtils.META_DATA_SIZE_IN_BYTES,
+                                MemoryUtils.METADATA_SIZE_IN_BYTES,
                                 VolumeType.Sparse,
                                 VolumeFormat.COW,
                                 vmConfVolumeId,

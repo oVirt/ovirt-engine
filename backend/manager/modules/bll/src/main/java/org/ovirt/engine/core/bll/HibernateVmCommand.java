@@ -73,7 +73,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         if (cachedStorageDomainId == null) {
             List<DiskImage> diskDummiesForMemSize = MemoryUtils.createDiskDummies(
                     getVm().getTotalMemorySizeInBytes(),
-                    MemoryUtils.META_DATA_SIZE_IN_BYTES);
+                    MemoryUtils.METADATA_SIZE_IN_BYTES);
             StorageDomain storageDomain = MemoryStorageHandler.getInstance().findStorageDomainForMemory(
                     getStoragePoolId(), diskDummiesForMemSize,
                     ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getVmId()), false, false, false), getVm());
@@ -92,12 +92,12 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     }
 
     private void addMetadataDisk() {
-        DiskImage metaDataDisk = MemoryUtils.createMetadataDiskForVm(getVm());
+        DiskImage metaDataDisk = MemoryUtils.createHibernationMetadataDisk(getVm());
         addDisk(metaDataDisk);
     }
 
     private void addMemoryDisk() {
-        DiskImage memoryDisk = MemoryUtils.createMemoryDiskForVm(getVm(), getStorageDomain().getStorageType());
+        DiskImage memoryDisk = MemoryUtils.createHibernationMemoryDisk(getVm(), getStorageDomain().getStorageType());
         addDisk(memoryDisk);
     }
 
@@ -244,7 +244,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     private DiskImage getMemoryDumpDisk(List<VdcReturnValueBase> returnValues) {
         for (VdcReturnValueBase returnValue : returnValues) {
             DiskImage disk = returnValue.getActionReturnValue();
-            if (disk.getSize() != MemoryUtils.META_DATA_SIZE_IN_BYTES) {
+            if (disk.getSize() != MemoryUtils.METADATA_SIZE_IN_BYTES) {
                 return disk;
             }
         }
@@ -255,7 +255,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     private DiskImage getMemoryMetadataDisk(List<VdcReturnValueBase> returnValues) {
         for (VdcReturnValueBase returnValue : returnValues) {
             DiskImage disk = returnValue.getActionReturnValue();
-            if (disk.getSize() == MemoryUtils.META_DATA_SIZE_IN_BYTES) {
+            if (disk.getSize() == MemoryUtils.METADATA_SIZE_IN_BYTES) {
                 return disk;
             }
         }

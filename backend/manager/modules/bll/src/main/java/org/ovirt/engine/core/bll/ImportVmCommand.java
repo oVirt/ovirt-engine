@@ -507,7 +507,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     private StorageDomain updateStorageDomainInMemoryVolumes(List<DiskImage> disksList) {
         List<DiskImage> memoryDisksList =
-                MemoryUtils.createDiskDummies(getVm().getTotalMemorySizeInBytes(), MemoryUtils.META_DATA_SIZE_IN_BYTES);
+                MemoryUtils.createDiskDummies(getVm().getTotalMemorySizeInBytes(), MemoryUtils.METADATA_SIZE_IN_BYTES);
         StorageDomain storageDomain = MemoryStorageHandler.getInstance().findStorageDomainForMemory(
                 getParameters().getStoragePoolId(), memoryDisksList, getVmDisksDummies(), getVm());
         disksList.addAll(memoryDisksList);

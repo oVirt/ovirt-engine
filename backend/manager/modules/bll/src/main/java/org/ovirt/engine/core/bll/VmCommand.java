@@ -399,16 +399,16 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected boolean removeHibernationDisks(String memory) {
-        String[] guids = memory.split(",");
+        List<Guid> guids = GuidUtils.getGuidListFromString(memory);
 
-        RemoveDiskParameters removeMemoryDumpDiskParameters = new RemoveDiskParameters(new Guid(guids[2]));
+        RemoveDiskParameters removeMemoryDumpDiskParameters = new RemoveDiskParameters(guids.get(2));
         removeMemoryDumpDiskParameters.setShouldBeLogged(false);
         VdcReturnValueBase retVal = runInternalAction(VdcActionType.RemoveDisk, removeMemoryDumpDiskParameters);
         if (!retVal.getSucceeded()) {
             return false;
         }
 
-        RemoveDiskParameters removeMemoryMetadataDiskParameters = new RemoveDiskParameters(new Guid(guids[4]));
+        RemoveDiskParameters removeMemoryMetadataDiskParameters = new RemoveDiskParameters(guids.get(4));
         removeMemoryMetadataDiskParameters.setShouldBeLogged(false);
         retVal = runInternalAction(VdcActionType.RemoveDisk, removeMemoryMetadataDiskParameters);
         if (!retVal.getSucceeded()) {

@@ -176,7 +176,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
         List<DiskImage> memoryDisksList = null;
         if (getParameters().isSaveMemory()) {
-            memoryDisksList = MemoryUtils.createDiskDummies(getVm().getTotalMemorySizeInBytes(), MemoryUtils.META_DATA_SIZE_IN_BYTES);
+            memoryDisksList = MemoryUtils.createDiskDummies(getVm().getTotalMemorySizeInBytes(), MemoryUtils.METADATA_SIZE_IN_BYTES);
             if (Guid.Empty.equals(getStorageDomainIdForVmMemory(memoryDisksList))) {
                 return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
             }

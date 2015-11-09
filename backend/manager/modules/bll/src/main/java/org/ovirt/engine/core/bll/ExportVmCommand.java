@@ -190,7 +190,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     private List<DiskImage> getMemoryVolumes() {
         int numOfSnapshots = snapshotsWithMemory.size();
         long memorySize = numOfSnapshots * getVm().getTotalMemorySizeInBytes();
-        long metadataSize = numOfSnapshots * MemoryUtils.META_DATA_SIZE_IN_BYTES;
+        long metadataSize = numOfSnapshots * MemoryUtils.METADATA_SIZE_IN_BYTES;
         List<DiskImage> memoryDisksList = MemoryUtils.createDiskDummies(memorySize, metadataSize);
 
         //Set target domain in memory disks

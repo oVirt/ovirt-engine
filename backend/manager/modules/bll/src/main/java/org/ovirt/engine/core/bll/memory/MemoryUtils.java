@@ -20,12 +20,12 @@ public class MemoryUtils {
 
     /** The size for the snapshot's meta data which is vm related properties at the
      *  time the snapshot was taken */
-    public static final long META_DATA_SIZE_IN_BYTES = 10 * 1024;
+    public static final long METADATA_SIZE_IN_BYTES = 10 * 1024;
 
-    private static final String VM_META_DATA_DISK_DESCRIPTION = "meta-data for hibernated VM";
-    private static final String VM_MEMORY_DISK_DESCRIPTION = "memory dump for hibernated VM";
-    private static final String VM_META_DATA_DISK_ALIAS_PATTERN = "%s_hibernation_metadata";
-    private static final String VM_MEMORY_DATA_DISK_ALIAS_PATTERN = "%s_hibernation_memory";
+    private static final String VM_HIBERNATION_METADATA_DISK_DESCRIPTION = "meta-data for hibernated VM";
+    private static final String VM_HIBERNATION_MEMORY_DISK_DESCRIPTION = "memory dump for hibernated VM";
+    private static final String VM_HIBERNATION_METADATA_DISK_ALIAS_PATTERN = "%s_hibernation_metadata";
+    private static final String VM_HIBERNATION_MEMORY_DISK_ALIAS_PATTERN = "%s_hibernation_memory";
 
     /**
      * Modified the given memory volume String representation to have the given storage
@@ -78,25 +78,35 @@ public class MemoryUtils {
         return Arrays.asList(memoryVolume, dataVolume);
     }
 
-    public static DiskImage createMetadataDiskForVm(VM vm) {
+    public static DiskImage createHibernationMetadataDisk(VM vm) {
+        DiskImage image = createMetadataDisk();
+        image.setDiskAlias(generateHibernationMetadataDiskAlias(vm.getName()));
+        image.setDescription(VM_HIBERNATION_METADATA_DISK_DESCRIPTION);
+        return image;
+    }
+
+    public static DiskImage createMetadataDisk() {
         DiskImage image = new DiskImage();
-        image.setDiskAlias(generateMetaDataDiskAlias(vm.getName()));
-        image.setDescription(VM_META_DATA_DISK_DESCRIPTION);
-        image.setSize(MemoryUtils.META_DATA_SIZE_IN_BYTES);
+        image.setSize(MemoryUtils.METADATA_SIZE_IN_BYTES);
         image.setVolumeType(VolumeType.Sparse);
         image.setvolumeFormat(VolumeFormat.COW);
         image.setDiskInterface(DiskInterface.VirtIO);
         return image;
     }
 
-    private static String generateMetaDataDiskAlias(String vmName) {
-        return String.format(VM_META_DATA_DISK_ALIAS_PATTERN, vmName);
+    private static String generateHibernationMetadataDiskAlias(String vmName) {
+        return String.format(VM_HIBERNATION_METADATA_DISK_ALIAS_PATTERN, vmName);
     }
 
-    public static DiskImage createMemoryDiskForVm(VM vm, StorageType storageType) {
+    public static DiskImage createHibernationMemoryDisk(VM vm, StorageType storageType) {
+        DiskImage image = createMemoryDisk(vm, storageType);
+        image.setDiskAlias(generateHibernationMemoryDiskAlias(vm.getName()));
+        image.setDescription(VM_HIBERNATION_MEMORY_DISK_DESCRIPTION);
+        return image;
+    }
+
+    public static DiskImage createMemoryDisk(VM vm, StorageType storageType) {
         DiskImage image = new DiskImage();
-        image.setDiskAlias(generateMemoryDiskAlias(vm.getName()));
-        image.setDescription(VM_MEMORY_DISK_DESCRIPTION);
         image.setSize(vm.getTotalMemorySizeInBytes());
         image.setVolumeType(storageTypeToMemoryVolumeType(storageType));
         image.setvolumeFormat(VolumeFormat.RAW);
@@ -104,8 +114,8 @@ public class MemoryUtils {
         return image;
     }
 
-    private static String generateMemoryDiskAlias(String vmName) {
-        return String.format(VM_MEMORY_DATA_DISK_ALIAS_PATTERN, vmName);
+    private static String generateHibernationMemoryDiskAlias(String vmName) {
+        return String.format(VM_HIBERNATION_MEMORY_DISK_ALIAS_PATTERN, vmName);
     }
 
     /**
