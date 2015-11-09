@@ -35,7 +35,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -131,7 +131,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
 
     protected void mockOsRepository() {
         injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
-        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         VmHandler.init();
         when(osRepository.isWindows(0)).thenReturn(true);
         when(osRepository.getMinimumRam(vm.getVmOsId(), Version.v3_2)).thenReturn(0);

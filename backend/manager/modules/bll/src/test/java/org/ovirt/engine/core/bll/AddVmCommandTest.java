@@ -62,7 +62,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -149,7 +149,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     public void InitTest() {
         mockCpuFlagsManagerHandler();
         mockOsRepository();
-        SimpleDependecyInjector.getInstance().bind(DbFacade.class, dbFacade);
+        SimpleDependencyInjector.getInstance().bind(DbFacade.class, dbFacade);
     }
 
     @Test
@@ -202,7 +202,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     }
 
     protected void mockOsRepository() {
-        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         VmHandler.init();
         when(osRepository.isWindows(0)).thenReturn(true);
         when(osRepository.isCpuSupported(anyInt(), any(Version.class), anyString())).thenReturn(true);
@@ -369,7 +369,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     }
 
     private void mockMaxPciSlots() {
-        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         doReturn(MAX_PCI_SLOTS).when(osRepository).getMaxPciDevices(anyInt(), any(Version.class));
     }
 

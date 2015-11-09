@@ -2,11 +2,11 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.OsQueryParameters;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 
 public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesCommandBase<P> {
 
-    private OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+    private OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
     public OsRepositoryQuery(P parameters) {
         super(parameters);

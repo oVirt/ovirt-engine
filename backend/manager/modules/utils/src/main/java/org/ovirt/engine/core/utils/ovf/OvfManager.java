@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 public class OvfManager {
 
     private Logger log = LoggerFactory.getLogger(OvfManager.class);
-    private OvfVmIconDefaultsProvider iconDefaultsProvider = SimpleDependecyInjector.getInstance().get(
+    private OvfVmIconDefaultsProvider iconDefaultsProvider = SimpleDependencyInjector.getInstance().get(
             OvfVmIconDefaultsProvider.class);
 
     public String exportVm(VM vm, ArrayList<DiskImage> images, Version version) {

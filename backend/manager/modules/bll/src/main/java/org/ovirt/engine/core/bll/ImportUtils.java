@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -61,7 +61,7 @@ public class ImportUtils {
         GraphicsDevice graphicsDevice = null;
         GraphicsType compatibleType = null;
 
-        OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+        OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
         for (Pair<GraphicsType, DisplayType> graphicsDisplayPair : osRepository.getGraphicsAndDisplays(vmBase.getOsId(), clusterVersion)) {
             if (graphicsDisplayPair.getSecond().getDefaultVmDeviceType() == videoDeviceType) {
                 compatibleType = graphicsDisplayPair.getFirst();

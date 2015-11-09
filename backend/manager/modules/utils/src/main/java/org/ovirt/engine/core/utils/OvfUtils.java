@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.archivers.tar.TarInMemoryExport;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
@@ -118,7 +118,7 @@ public class OvfUtils {
         XmlNode content = xmlDocument.selectSingleNode("//*/Content");
         XmlNodeList nodeList = content.selectNodes("Section");
         XmlNode selectedSection = null;
-        OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+        OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
         if (nodeList != null) {
             for (XmlNode section : nodeList) {
                 String value = section.attributes.get("xsi:type").getValue();

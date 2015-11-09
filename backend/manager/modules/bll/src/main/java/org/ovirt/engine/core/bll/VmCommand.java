@@ -38,7 +38,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
@@ -66,7 +66,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     @Inject
     protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
-    protected final OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+    protected final OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
     private Boolean skipCommandExecution;
 
     public VmCommand(T parameters, CommandContext cmdContext) {
@@ -200,7 +200,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         // Sound device controller requires one PCI slot
         pciInUse += isSoundDeviceEnabled ? 1 : 0;
 
-        OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+        OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
         int maxPciSlots = osRepository.getMaxPciDevices(osId, clusterVersion);
 

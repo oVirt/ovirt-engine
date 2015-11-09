@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VmIconDefault;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetVmIconDefaultParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOperatingSystemResource
@@ -35,7 +35,7 @@ public class BackendOperatingSystemResource
 
     @Override
     public OperatingSystemInfo get() {
-        OsRepository repository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+        OsRepository repository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
         OperatingSystemInfo model = new OperatingSystemInfo();
         model.setId(id);
         Integer key = Integer.valueOf(id);

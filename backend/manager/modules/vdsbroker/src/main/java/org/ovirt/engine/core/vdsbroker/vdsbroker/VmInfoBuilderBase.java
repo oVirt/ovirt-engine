@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
@@ -48,7 +48,7 @@ public abstract class VmInfoBuilderBase {
     // IDE supports only 4 slots , slot 2 is preserved by VDSM to the CDROM
     protected int[] ideIndexSlots = new int[] { 0, 1, 3 };
 
-    protected OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+    protected OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
     private VDSGroup vdsGroup;
 
     private static class DiskImageByBootAndSnapshotComparator implements Comparator<Disk>, Serializable {

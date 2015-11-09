@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -61,8 +61,8 @@ public class OvfManagerTest {
 
     @Before
     public void setUp() throws Exception {
-        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
-        SimpleDependecyInjector.getInstance().bind(OvfVmIconDefaultsProvider.class, iconDefaultsProvider);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
+        SimpleDependencyInjector.getInstance().bind(OvfVmIconDefaultsProvider.class, iconDefaultsProvider);
         manager = new OvfManager();
         final HashMap<Integer, String> osIdsToNames = new HashMap<Integer, String>(){{
             put(DEFAULT_OS_ID, "os_name_a");

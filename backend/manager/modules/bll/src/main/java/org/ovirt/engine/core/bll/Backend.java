@@ -64,7 +64,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
@@ -211,7 +211,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         initOsRepository();
 
         //TODO temporal solution DbFacade in Utils
-        SimpleDependecyInjector.getInstance().bind(dbFacade);
+        SimpleDependencyInjector.getInstance().bind(dbFacade);
 
         // When getting a proxy to this bean using JBoss embedded, the initialize method is called for each method
         // invocation on the proxy, as it is called by setup method which is @PostConstruct - the initialized flag
@@ -307,7 +307,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
                 return queryReturnValue.getReturnValue();
             }
         };
-        SimpleDependecyInjector.getInstance().bind(OvfVmIconDefaultsProvider.class, ovfVmIconDefaultsProvider);
+        SimpleDependencyInjector.getInstance().bind(OvfVmIconDefaultsProvider.class, ovfVmIconDefaultsProvider);
     }
 
     private void initAttestation() {
@@ -346,8 +346,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     private void initSearchDependencies() {
-        SimpleDependecyInjector.getInstance().bind(new OsValueAutoCompleter(
-                SimpleDependecyInjector.getInstance().get(OsRepository.class).getUniqueOsNames()));
+        SimpleDependencyInjector.getInstance().bind(new OsValueAutoCompleter(
+                SimpleDependencyInjector.getInstance().get(OsRepository.class).getUniqueOsNames()));
     }
 
     private void initJobRepository() {
@@ -697,14 +697,14 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     private void initVmPropertiesUtils() {
         VmPropertiesUtils vmPropertiesUtils = VmPropertiesUtils.getInstance();
-        SimpleDependecyInjector.getInstance().bind(VmPropertiesUtils.class, vmPropertiesUtils);
+        SimpleDependencyInjector.getInstance().bind(VmPropertiesUtils.class, vmPropertiesUtils);
     }
 
     private void initOsRepository() {
         OsInfoPreferencesLoader.INSTANCE.init(FileSystems.getDefault().getPath(EngineLocalConfig.getInstance().getEtcDir().getAbsolutePath(), Config.<String>getValue(ConfigValues.OsRepositoryConfDir)));
         OsRepositoryImpl.INSTANCE.init(OsInfoPreferencesLoader.INSTANCE.getPreferences());
         OsRepository osRepository = OsRepositoryImpl.INSTANCE;
-        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         dbFacade.populateDwhOsInfo(osRepository.getOsNames());
     }
 

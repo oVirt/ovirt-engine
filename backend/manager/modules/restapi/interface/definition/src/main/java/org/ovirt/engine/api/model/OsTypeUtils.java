@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 
 /**
  * This class is intended to hold the merged values of OsType and OsRepository
@@ -15,7 +15,7 @@ public final class OsTypeUtils {
 
     static {
         // merge the backend list of oss with the OsType enum
-        OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+        OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
         for (String uniqueName : osRepository.getUniqueOsNames().values()) {
             osTypeValues.add(uniqueName);
         }

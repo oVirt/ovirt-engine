@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
@@ -64,7 +64,7 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
     public void setUp() throws Exception {
         super.setUpSessionDataContainer();
 
-        SimpleDependecyInjector.getInstance().bind(DbFacade.class, dbFacade);
+        SimpleDependencyInjector.getInstance().bind(DbFacade.class, dbFacade);
 
         vdsNumaNode = new VdsNumaNode();
         vdsNumaNode.setIndex(1);

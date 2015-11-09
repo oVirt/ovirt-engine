@@ -8,7 +8,7 @@ import org.easymock.EasyMock;
 import org.easymock.IMocksControl;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 
 public class OsTypeMockUtils {
 
@@ -23,7 +23,7 @@ public class OsTypeMockUtils {
         defaultOSes.put(ArchitectureType.x86_64, 0);
         expect(osRepositoryMock.getDefaultOSes()).andReturn(defaultOSes);
 
-        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepositoryMock);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepositoryMock);
         control.replay();
     }
 }

@@ -79,7 +79,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -277,7 +277,7 @@ public class VmMapper extends VmBaseMapper {
         if (OsType.UNASSIGNED.name().equalsIgnoreCase(type)) {
             type = OsType.OTHER.name();
         }
-        return SimpleDependecyInjector.getInstance().get(OsRepository.class).getOsIdByUniqueName(type);
+        return SimpleDependencyInjector.getInstance().get(OsRepository.class).getOsIdByUniqueName(type);
     }
 
     @Mapping(from = VmAffinity.class, to = MigrationSupport.class)
@@ -352,7 +352,7 @@ public class VmMapper extends VmBaseMapper {
             entity.getKernelParams() != null) {
             OperatingSystem os = new OperatingSystem();
 
-            os.setType(SimpleDependecyInjector.getInstance().get(OsRepository.class).getUniqueOsNames().get(entity.getVmOsId()));
+            os.setType(SimpleDependencyInjector.getInstance().get(OsRepository.class).getUniqueOsNames().get(entity.getVmOsId()));
 
             os.setKernel(entity.getKernelUrl());
             os.setInitrd(entity.getInitrdUrl());

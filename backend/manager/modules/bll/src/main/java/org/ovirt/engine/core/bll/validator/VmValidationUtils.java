@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Version;
 
 public class VmValidationUtils {
@@ -101,6 +101,6 @@ public class VmValidationUtils {
     }
 
     private static OsRepository getOsRepository() {
-        return SimpleDependecyInjector.getInstance().get(OsRepository.class);
+        return SimpleDependencyInjector.getInstance().get(OsRepository.class);
     }
 }

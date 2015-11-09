@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -20,7 +20,7 @@ import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
 
 public class OvfTemplateReader extends OvfReader {
     protected VmTemplate _vmTemplate;
-    private final OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+    private final OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
     public OvfTemplateReader(XmlDocument document,
             VmTemplate vmTemplate,

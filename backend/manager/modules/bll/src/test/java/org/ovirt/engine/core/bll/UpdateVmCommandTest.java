@@ -49,7 +49,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -133,8 +133,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         final Version version = Version.v3_0;
 
         injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
-        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
-        SimpleDependecyInjector.getInstance().bind(DbFacade.class, dbFacade);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
+        SimpleDependencyInjector.getInstance().bind(DbFacade.class, dbFacade);
 
         when(cpuFlagsManagerHandler.getCpuId(anyString(), any(Version.class))).thenReturn(CPU_ID);
 

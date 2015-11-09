@@ -43,7 +43,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -185,7 +185,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     private static OsRepository getOsRepository() {
-        return SimpleDependecyInjector.getInstance().get(OsRepository.class);
+        return SimpleDependencyInjector.getInstance().get(OsRepository.class);
     }
 
     @Override

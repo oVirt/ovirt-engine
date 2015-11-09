@@ -38,7 +38,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -52,7 +52,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     private VmTemplate oldTemplate;
     private List<GraphicsDevice> cachedGraphics;
 
-    protected final OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+    protected final OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
     public UpdateVmTemplateCommand(T parameters) {
         super(parameters);

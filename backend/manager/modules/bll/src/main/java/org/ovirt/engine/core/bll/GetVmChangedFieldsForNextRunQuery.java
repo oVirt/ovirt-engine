@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.queries.GetVmChangedFieldsForNextRunParameters;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 
@@ -32,7 +32,7 @@ public class GetVmChangedFieldsForNextRunQuery<P extends GetVmChangedFieldsForNe
         dstStatic.setUnmanagedDeviceList(srcStatic.getUnmanagedDeviceList());
         dstStatic.setOvfVersion(srcStatic.getOvfVersion());
 
-        VmPropertiesUtils vmPropertiesUtils = SimpleDependecyInjector.getInstance().get(VmPropertiesUtils.class);
+        VmPropertiesUtils vmPropertiesUtils = SimpleDependencyInjector.getInstance().get(VmPropertiesUtils.class);
 
         vmPropertiesUtils.separateCustomPropertiesToUserAndPredefined(
                 srcVm.getVdsGroupCompatibilityVersion(), srcStatic);

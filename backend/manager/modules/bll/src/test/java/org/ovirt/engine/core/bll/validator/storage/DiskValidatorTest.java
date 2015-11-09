@@ -34,7 +34,7 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 
@@ -86,7 +86,7 @@ public class DiskValidatorTest {
         when(osRepository.getDiskInterfaces(1, null)).thenReturn(supportedDiskInterfaces);
         when(osRepository.getDiskInterfaces(2, null)).thenReturn(new ArrayList<String>());
         // init the injector with the osRepository instance
-        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
 
     @Before

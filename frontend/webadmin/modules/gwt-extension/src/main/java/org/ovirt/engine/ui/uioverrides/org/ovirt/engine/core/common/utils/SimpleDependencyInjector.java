@@ -4,35 +4,35 @@ import java.util.Map;
 import java.util.HashMap;
 
 /**
- * This class is needed to de-couple the searchbackend dependencies without introducing any DI frameworks or convulated
- * reference passing. Its a lightweight instance factory to solve situation where UI searchbackend needs diferent
- * instances than Backend.
+ * This class is needed to decouple the searchbackend dependencies without introducing any DI frameworks or convulated
+ * reference passing. It's a lightweight instance factory to solve situations where UI searchbackend needs different
+ * instances than backend.
  * <p/>
- * Sense searchbackend code is shared by UI and backend there is no way to reach other projects, which are specific to
- * each-other, such as dal or uicommonweb.
+ * Since searchbackend code is shared by UI and backend there is no way to reach other projects, that are specific to
+ * each other, such as dal or uicommonweb.
  * <p/>
- * The first use-case is that searchbackend relay on Enums as value completion. If we want a completion object which
- * have values populated by a code which is only accessible by both UI and backend we better have the object dependency
- * managed outside, by the SyntaxChecker initiator.
+ * The first use case is searchbackend relying on Enums for value completion. If we want a completion object that
+ * has values populated by code that is only accessible by both UI and backend we should better have the object
+ * dependency managed outside, by the SyntaxChecker initiator.
  *
  * @see SyntaxChecker
  */
-public class SimpleDependecyInjector {
+public class SimpleDependencyInjector {
 
-    private static final SimpleDependecyInjector instance = new SimpleDependecyInjector();
+    private static final SimpleDependencyInjector instance = new SimpleDependencyInjector();
 
     private Map<String, Object> map = new HashMap<String, Object>();
 
-    public static SimpleDependecyInjector getInstance() {
+    public static SimpleDependencyInjector getInstance() {
         return instance;
     }
 
-    private SimpleDependecyInjector() {
+    private SimpleDependencyInjector() {
         // hide ctr
     }
 
     /**
-     * save an instance to the injector. this instance can be later fetched by the {@code SimpleDependecyInjector#get}
+     * save an instance to the injector. this instance can be later fetched by the {@code SimpleDependencyInjector#get}
      * method. note: only one instance binded to a Class type
      *
      * @param type

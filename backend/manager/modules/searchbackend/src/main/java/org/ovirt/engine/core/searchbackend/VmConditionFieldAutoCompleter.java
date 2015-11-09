@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeSpan;
@@ -170,7 +170,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         if (OS.equals(fieldName)) {
-            return SimpleDependecyInjector.getInstance().get(OsValueAutoCompleter.class);
+            return SimpleDependencyInjector.getInstance().get(OsValueAutoCompleter.class);
         } else if (STATUS.equals(fieldName)) {
             return new EnumValueAutoCompleter(VMStatus.class);
         } else if (TYPE.equals(fieldName)) {

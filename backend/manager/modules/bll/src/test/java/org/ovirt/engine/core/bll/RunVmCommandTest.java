@@ -56,7 +56,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -341,7 +341,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         when(osRepository.isWindows(Mockito.anyInt())).thenReturn(false);
         when(osRepository.isCpuSupported(Mockito.anyInt(), Mockito.any(Version.class), Mockito.anyString()))
                 .thenReturn(true);
-        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         updateVmHandler();
 
         RunVmParams param = new RunVmParams(Guid.newGuid());

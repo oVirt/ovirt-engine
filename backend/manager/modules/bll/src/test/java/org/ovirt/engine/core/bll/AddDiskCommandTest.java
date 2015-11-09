@@ -49,7 +49,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
@@ -366,7 +366,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         doReturn(false).when(command).isBalloonEnabled(any(Guid.class));
         doReturn(false).when(command).isSoundDeviceEnabled(any(Guid.class));
         doReturn(true).when(command).setAndValidateDiskProfiles();
-        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
 
     /**
@@ -390,7 +390,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     }
 
     protected void mockInterfaceList() {
-        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
 
         ArrayList<String> diskInterfaces = new ArrayList<String>(
                 Arrays.asList(new String[] {
@@ -448,7 +448,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     }
 
     private void mockMaxPciSlots() {
-        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         doReturn(MAX_PCI_SLOTS).when(osRepository).getMaxPciDevices(anyInt(), any(Version.class));
     }
 

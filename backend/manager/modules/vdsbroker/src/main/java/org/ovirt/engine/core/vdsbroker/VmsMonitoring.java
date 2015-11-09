@@ -39,7 +39,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
@@ -375,13 +375,13 @@ public class VmsMonitoring {
     }
 
     private int getDefaultOsId(ArchitectureType architecture) {
-        OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+        OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
         Integer defaultArchOsId = osRepository.getDefaultOSes().get(architecture);
         return (defaultArchOsId == null) ? 0 : defaultArchOsId;
     }
 
     private DisplayType getDefaultDisplayType(int osId, Version clusterVersion) {
-        OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+        OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
         List<Pair<GraphicsType, DisplayType>> pairs = osRepository.getGraphicsAndDisplays(osId, clusterVersion);
 
         if (!pairs.isEmpty()) {

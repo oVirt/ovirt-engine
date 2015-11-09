@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
@@ -158,7 +158,7 @@ public class DiskValidator {
     }
 
     private static OsRepository getOsRepository() {
-        return SimpleDependecyInjector.getInstance().get(OsRepository.class);
+        return SimpleDependencyInjector.getInstance().get(OsRepository.class);
     }
 
     public ValidationResult validateNotHostedEngineDisk() {

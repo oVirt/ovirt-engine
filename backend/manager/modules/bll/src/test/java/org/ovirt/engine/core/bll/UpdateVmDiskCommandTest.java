@@ -57,7 +57,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.SetVolumeDescriptionVDSCommandParameters;
@@ -608,7 +608,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         when(diskValidator.isDiskUsedAsOvfStore()).thenReturn(ValidationResult.VALID);
         doReturn(true).when(command).setAndValidateDiskProfiles();
 
-        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
 
         mockVds();
         mockVmsStoragePoolInfo(vms);

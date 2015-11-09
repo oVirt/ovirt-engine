@@ -10,12 +10,12 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Version;
 
 public class OvfTemplateWriter extends OvfWriter {
     protected VmTemplate _vmTemplate;
-    private OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+    private OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
     public OvfTemplateWriter(VmTemplate vmTemplate, List<DiskImage> images, Version version) {
         super(vmTemplate, images, version);

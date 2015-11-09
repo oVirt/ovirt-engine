@@ -29,7 +29,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 
 public class BackendOperatingSystemsResource
         extends AbstractBackendCollectionResource<OperatingSystemInfo, Integer>
@@ -40,7 +40,7 @@ public class BackendOperatingSystemsResource
 
     @Override
     public OperatingSystemInfos list() {
-        OsRepository repository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+        OsRepository repository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
         final Map<Integer, VmIconIdSizePair> iconDefaults = getIconDefaults();
         ArrayList<Integer> ids = repository.getOsIds();
         HashMap<Integer, String> uniqueNames = repository.getUniqueOsNames();

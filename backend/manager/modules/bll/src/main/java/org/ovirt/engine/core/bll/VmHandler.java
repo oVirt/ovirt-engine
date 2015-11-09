@@ -69,7 +69,7 @@ import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
 import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
@@ -122,7 +122,7 @@ public class VmHandler {
 
         cpuFlagsManagerHandler = Injector.get(CpuFlagsManagerHandler.class);
 
-        osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+        osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
         updateVmsStatic =
                 new ObjectIdentityChecker(VmHandler.class, Arrays.asList(inspectedClassNames));

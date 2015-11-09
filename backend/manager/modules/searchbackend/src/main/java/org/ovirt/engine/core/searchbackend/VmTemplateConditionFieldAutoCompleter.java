@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DateEnumForSearch;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 
 public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
 
@@ -95,7 +95,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         if (OS.equals(fieldName)) {
-            return SimpleDependecyInjector.getInstance().get(OsValueAutoCompleter.class);
+            return SimpleDependencyInjector.getInstance().get(OsValueAutoCompleter.class);
         } else if (CREATIONDATE.equals(fieldName)) {
             return new DateEnumValueAutoCompleter(DateEnumForSearch.class);
         } else if (STATUS.equals(fieldName)) {

@@ -47,7 +47,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.vdscommands.IsVmDuringInitiatingVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -80,7 +80,7 @@ public class RunVmValidator {
         this.runVmParam = rumVmParam;
         this.isInternalExecution = isInternalExecution;
         this.activeIsoDomainId = activeIsoDomainId;
-        this.osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+        this.osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
     }
 
     /**

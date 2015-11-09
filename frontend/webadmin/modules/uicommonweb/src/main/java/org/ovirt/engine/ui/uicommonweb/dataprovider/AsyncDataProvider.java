@@ -162,7 +162,7 @@ import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeGeoRepEligibili
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeProfileParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
@@ -3479,7 +3479,7 @@ public class AsyncDataProvider {
             public void onSuccess(Object model, Object returnValue) {
                 uniqueOsNames = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 // Initialize specific UI dependencies for search
-                SimpleDependecyInjector.getInstance().bind(new OsValueAutoCompleter(uniqueOsNames));
+                SimpleDependencyInjector.getInstance().bind(new OsValueAutoCompleter(uniqueOsNames));
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetUniqueOsNames), callback);

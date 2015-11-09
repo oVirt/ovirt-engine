@@ -34,7 +34,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
@@ -55,8 +55,8 @@ public class VmDeviceUtils {
     private final static int VNC_MIN_MONITORS = 1;
     private final static int SINGLE_QXL_MONITORS = 1;
     public final static Map<String, Object> EMPTY_SPEC_PARAMS = Collections.emptyMap();
-    private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
-    private static DbFacade dbFacade = SimpleDependecyInjector.getInstance().get(DbFacade.class);
+    private static OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
+    private static DbFacade dbFacade = SimpleDependencyInjector.getInstance().get(DbFacade.class);
     private static VmDeviceDao dao = dbFacade.getVmDeviceDao();
 
     /*

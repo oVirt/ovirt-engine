@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -95,7 +95,7 @@ public class VmInterfaceManager {
     }
 
     public OsRepository getOsRepository() {
-        return SimpleDependecyInjector.getInstance().get(OsRepository.class);
+        return SimpleDependencyInjector.getInstance().get(OsRepository.class);
     }
 
     public void auditLogMacInUse(final VmNic iface) {

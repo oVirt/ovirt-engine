@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendSnapshotsResourceTest
@@ -244,6 +244,6 @@ public class BackendSnapshotsResourceTest
     private void mockOsRepository() {
         OsRepository mockOsRepository = control.createMock(OsRepository.class);
         expect(mockOsRepository.getUniqueOsNames()).andReturn(new HashMap<Integer, String>()).anyTimes();
-        SimpleDependecyInjector.getInstance().bind(OsRepository.class, mockOsRepository);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, mockOsRepository);
     }
 }

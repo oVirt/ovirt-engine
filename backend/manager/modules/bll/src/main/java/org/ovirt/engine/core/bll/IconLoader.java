@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmStaticDao;
@@ -54,7 +54,7 @@ public class IconLoader {
 
     private void loadIconsToDatabase() {
         final HashMap<Integer, String> osIdToOsNameMap =
-                SimpleDependecyInjector.getInstance().get(OsRepository.class).getUniqueOsNames();
+                SimpleDependencyInjector.getInstance().get(OsRepository.class).getUniqueOsNames();
         for (Map.Entry<Integer, String> entry : osIdToOsNameMap.entrySet()) {
             final VmIconIdSizePair iconIdPair = ensureIconsInDatabase(entry.getValue());
             if (iconIdPair != null) {

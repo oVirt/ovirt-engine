@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.queries.GetVmChangedFieldsForNextRunParameters;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Version;
 
@@ -49,7 +49,7 @@ public class GetVmChangedFieldsForNextRunQueryTest
     }
 
     private void mockVmPropertiesUtils() {
-        SimpleDependecyInjector.getInstance().bind(VmPropertiesUtils.class, vmPropertiesUtils);
+        SimpleDependencyInjector.getInstance().bind(VmPropertiesUtils.class, vmPropertiesUtils);
     }
 
     private VM createEmptyVm() {

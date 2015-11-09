@@ -88,7 +88,7 @@ import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmsResource extends
@@ -390,7 +390,7 @@ public class BackendVmsResource extends
 
         if (vm.isSetMemoryPolicy()) {
             params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());
-        } else if (shouldCopyDevice(SimpleDependecyInjector.getInstance().get(OsRepository.class).isBalloonEnabled(osId, cluster.getCompatibilityVersion()), templateId, instanceTypeId)) {
+        } else if (shouldCopyDevice(SimpleDependencyInjector.getInstance().get(OsRepository.class).isBalloonEnabled(osId, cluster.getCompatibilityVersion()), templateId, instanceTypeId)) {
             // it is not defined on the template
             params.setBalloonEnabled(instanceTypeId != null ? !VmHelper.isMemoryBalloonEnabledForEntity(this, instanceTypeId) : null);
         }

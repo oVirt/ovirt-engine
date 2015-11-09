@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.locks.LockInfo;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -1236,13 +1236,13 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
 
     public boolean isSysprepUsed() {
         return getInitializationType() == InitializationType.Sysprep
-                && SimpleDependecyInjector.getInstance().get(OsRepository.class).isWindows(getVmOsId())
+                && SimpleDependencyInjector.getInstance().get(OsRepository.class).isWindows(getVmOsId())
                 && (getFloppyPath() == null || "".equals(getFloppyPath()));
     }
 
     public boolean isCloudInitUsed() {
         return getInitializationType() == InitializationType.CloudInit
-                && !SimpleDependecyInjector.getInstance().get(OsRepository.class).isWindows(getVmOsId());
+                && !SimpleDependencyInjector.getInstance().get(OsRepository.class).isWindows(getVmOsId());
     }
 
     private double _actualDiskWithSnapthotsSize;

@@ -37,7 +37,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
@@ -55,7 +55,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public abstract class OvfReader implements IOvfBuilder {
-    protected OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+    protected OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
     protected ArrayList<DiskImage> _images;
     protected ArrayList<VmNetworkInterface> interfaces;
     protected XmlDocument _document;

@@ -13,14 +13,14 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigUtil;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.utils.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class SysprepHandler {
     private static final Map<String, Integer> timeZoneIndex = new HashMap<String, Integer>();
-    private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+    private static OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
     private static final Logger log = LoggerFactory.getLogger(SysprepHandler.class);
 

@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Version;
 
 /**
@@ -61,7 +61,7 @@ public class VmWatchdogValidator {
         }
 
         public OsRepository getOsRepository() {
-            return SimpleDependecyInjector.getInstance().get(OsRepository.class);
+            return SimpleDependencyInjector.getInstance().get(OsRepository.class);
         }
     }
 

@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Match;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
@@ -22,7 +22,7 @@ import org.ovirt.engine.core.compat.Version;
 
 public class OvfVmWriter extends OvfWriter {
     private static final String EXPORT_ONLY_PREFIX = "exportonly_";
-    private OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+    private OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
     public OvfVmWriter(VM vm, List<DiskImage> images, Version version) {
         super(vm.getStaticData(), images, version);

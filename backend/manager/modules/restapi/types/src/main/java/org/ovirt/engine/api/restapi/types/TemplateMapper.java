@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -97,7 +97,7 @@ public class TemplateMapper extends VmBaseMapper {
             entity.getKernelParams() != null) {
             OperatingSystem os = new OperatingSystem();
 
-            os.setType(SimpleDependecyInjector.getInstance().get(OsRepository.class).getUniqueOsNames().get(entity.getOsId()));
+            os.setType(SimpleDependencyInjector.getInstance().get(OsRepository.class).getUniqueOsNames().get(entity.getOsId()));
 
             if (entity.getDefaultBootSequence() != null) {
                 Boot boot = VmMapper.map(entity.getDefaultBootSequence(), null);
