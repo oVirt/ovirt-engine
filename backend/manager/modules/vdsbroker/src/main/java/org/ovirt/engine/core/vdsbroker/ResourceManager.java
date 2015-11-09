@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.inject.Inject;
@@ -65,9 +65,6 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class ResourceManager implements BackendService {
 
-    //We can't inject event listener due to Jboss 7.1 bug. using programatic lookup instead.
-    private volatile IVdsEventListener eventListener;
-
     private static ResourceManager instance;
     private final Map<Guid, HashSet<Guid>> vdsAndVmsList = new ConcurrentHashMap<>();
     private final Map<Guid, VdsManager> vdsManagersDict = new ConcurrentHashMap<>();
@@ -79,6 +76,9 @@ public class ResourceManager implements BackendService {
 
     private static final Logger log = LoggerFactory.getLogger(ResourceManager.class);
     private int parallelism;
+
+    @Inject
+    private Instance<IVdsEventListener> eventListener;
 
     @Inject
     private BeanManager beanManager;
@@ -203,13 +203,7 @@ public class ResourceManager implements BackendService {
     }
 
     public IVdsEventListener getEventListener() {
-        if (eventListener == null) {
-            Bean<?> bean = beanManager.getBeans(IVdsEventListener.class).iterator().next();
-            eventListener = (IVdsEventListener) beanManager.getReference(
-                    bean,
-                    bean.getBeanClass(), beanManager.createCreationalContext(bean));
-        }
-        return eventListener;
+        return eventListener.get();
     }
 
     public void reestablishConnection(Guid vdsId) {
