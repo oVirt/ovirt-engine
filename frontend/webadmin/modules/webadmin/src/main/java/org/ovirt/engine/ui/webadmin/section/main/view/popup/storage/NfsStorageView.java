@@ -88,6 +88,9 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     @WithElementId
     StringEntityModelTextBoxEditor mountOptionsEditor;
 
+    @UiField
+    Label message;
+
     private final Driver driver = GWT.create(Driver.class);
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();

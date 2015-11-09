@@ -65,6 +65,7 @@
             <ge:ShortEntityModelTextBoxEditor ui:field="timeoutEditor"/>
             <ge:StringEntityModelTextBoxEditor ui:field="mountOptionsEditor"/>
         </g:VerticalPanel>
+        <g:Label ui:field="message" addStyleNames="{style.errorLabel}"/>
     </g:VerticalPanel>
 
 </ui:UiBinder>

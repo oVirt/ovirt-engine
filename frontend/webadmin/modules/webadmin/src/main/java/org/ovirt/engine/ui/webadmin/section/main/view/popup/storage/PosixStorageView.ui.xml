@@ -53,6 +53,7 @@
         <g:HorizontalPanel>
             <ge:StringEntityModelTextBoxEditor ui:field="mountOptionsEditor"/>
         </g:HorizontalPanel>
+        <g:Label ui:field="message" addStyleNames="{style.errorLabel}"/>
     </g:VerticalPanel>
 
 </ui:UiBinder>
