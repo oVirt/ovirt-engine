@@ -249,7 +249,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 String memoryVolume = getSnapshotDao().get(snapshotId).getMemoryVolume();
                 if (!memoryVolume.isEmpty() &&
                         getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 1) {
-                    boolean succeed = removeMemoryVolumes(memoryVolume, getActionType(), false);
+                    boolean succeed = removeMemoryDisks(memoryVolume);
                     if (!succeed) {
                         log.error("Failed to remove memory '{}' of snapshot '{}'",
                                 memoryVolume, snapshotId);

@@ -12,7 +12,9 @@ CREATE OR REPLACE FUNCTION InsertSnapshot (
     v_creation_date TIMESTAMP WITH TIME ZONE,
     v_app_list TEXT,
     v_vm_configuration TEXT,
-    v_memory_volume VARCHAR(255)
+    v_memory_volume VARCHAR(255),
+    v_memory_dump_disk_id UUID,
+    v_memory_metadata_disk_id UUID
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -25,9 +27,11 @@ BEGIN
         creation_date,
         app_list,
         vm_configuration,
-        memory_volume
+        memory_volume,
+        memory_dump_disk_id,
+        memory_metadata_disk_id
         )
-    VALUES (
+    VALUES(
         v_snapshot_id,
         v_status,
         v_vm_id,
@@ -36,9 +40,11 @@ BEGIN
         v_creation_date,
         v_app_list,
         v_vm_configuration,
-        v_memory_volume
+        v_memory_volume,
+        v_memory_dump_disk_id,
+        v_memory_metadata_disk_id
         );
-END;$PROCEDURE$
+END; $PROCEDURE$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateSnapshot (
@@ -197,6 +203,8 @@ CREATE TYPE GetAllFromSnapshotsByVmId_rs AS (
         creation_date TIMESTAMP WITH TIME ZONE,
         app_list TEXT,
         memory_volume VARCHAR(255),
+        v_memory_dump_disk_id UUID,
+        v_memory_metadata_disk_id UUID,
         vm_configuration TEXT,
         vm_configuration_available BOOLEAN
         );
@@ -219,6 +227,8 @@ BEGIN
         creation_date,
         app_list,
         memory_volume,
+        memory_dump_disk_id,
+        memory_metadata_disk_id,
         CASE
             WHEN v_fill_configuration = TRUE
                 THEN vm_configuration

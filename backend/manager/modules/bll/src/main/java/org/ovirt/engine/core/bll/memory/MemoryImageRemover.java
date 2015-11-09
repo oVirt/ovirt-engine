@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.Backend;
-import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -25,6 +24,8 @@ import org.slf4j.LoggerFactory;
 public abstract class MemoryImageRemover {
     private static final Logger log = LoggerFactory.getLogger(MemoryImageRemover.class);
     private static final int NUM_OF_UUIDS_IN_MEMORY_STATE = 6;
+    public static final String DELETE_PRIMARY_IMAGE_TASK_KEY = "DELETE_PRIMARY_IMAGE_TASK_KEY";
+    public static final String DELETE_SECONDARY_IMAGES_TASK_KEY = "DELETE_SECONDARY_IMAGES_TASK_KEY";
 
     protected final TaskHandlerCommand<?> enclosingCommand;
     private boolean startPollingTasks;
@@ -109,13 +110,13 @@ public abstract class MemoryImageRemover {
 
     protected Guid removeMemoryImage(List<Guid> guids) {
         return removeImage(
-                VmCommand.DELETE_PRIMARY_IMAGE_TASK_KEY,
+                DELETE_PRIMARY_IMAGE_TASK_KEY,
                 buildDeleteMemoryImageParams(guids));
     }
 
     protected Guid removeConfImage(List<Guid> guids) {
         return removeImage(
-                VmCommand.DELETE_SECONDARY_IMAGES_TASK_KEY,
+                DELETE_SECONDARY_IMAGES_TASK_KEY,
                 buildDeleteMemoryConfParams(guids));
     }
 

@@ -1194,13 +1194,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         getSnapshotDao().removeMemoryFromActiveSnapshot(getVmId());
-
-        if (getFlow() == RunVmFlow.RESUME_HIBERNATE) {
-            removeHibernationDisks(memory);
-        }
         // If the memory volumes are not used by any other snapshot, we can remove them
-        else if (getSnapshotDao().getNumOfSnapshotsByMemory(memory) == 0) {
-            removeMemoryVolumes(memory, getActionType(), true);
+        if (getSnapshotDao().getNumOfSnapshotsByMemory(memory) == 0) {
+            removeMemoryDisks(memory);
         }
     }
 

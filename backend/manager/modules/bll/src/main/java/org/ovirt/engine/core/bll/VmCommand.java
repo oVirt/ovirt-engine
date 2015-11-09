@@ -9,8 +9,6 @@ import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
-import org.ovirt.engine.core.bll.storage.domain.PostZeroHandler;
-import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -29,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.config.Config;
@@ -38,17 +35,12 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.GuidUtils;
 
 public abstract class VmCommand<T extends VmOperationParameterBase> extends CommandBase<T> {
 
-    public static final String DELETE_PRIMARY_IMAGE_TASK_KEY = "DELETE_PRIMARY_IMAGE_TASK_KEY";
-    public static final String DELETE_SECONDARY_IMAGES_TASK_KEY = "DELETE_SECONDARY_IMAGES_TASK_KEY";
     private static final int Kb = 1024;
 
     @Inject
@@ -314,60 +306,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return VdcActionType.Unknown;
     }
 
-    protected boolean removeMemoryVolumes(String memVols, VdcActionType parentCommand, boolean startPollingTasks) {
-        // this is temp code until it will be implemented in SPM
-        List<Guid> guids = GuidUtils.getGuidListFromString(memVols);
-
-        if (guids.size() == 6) {
-            // get all vm disks in order to check post zero - if one of the
-            // disks is marked with wipe_after_delete
-            boolean postZero = getDiskDao().getAllForVm(getVm().getId()).stream().anyMatch(BaseDisk::isWipeAfterDelete);
-
-            Guid taskId1 = persistAsyncTaskPlaceHolder(parentCommand, DELETE_PRIMARY_IMAGE_TASK_KEY);
-
-            // delete first image
-            // the next 'DeleteImageGroup' command should also take care of the image removal:
-            VDSReturnValue vdsRetValue = runVdsCommand(VDSCommandType.DeleteImageGroup,
-                    PostZeroHandler.fixParametersWithPostZero(
-                            new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(2),
-                                    postZero, false)));
-
-            if (!vdsRetValue.getSucceeded()) {
-                return false;
-            }
-
-            Guid guid1 =
-                    createTask(taskId1, vdsRetValue.getCreationInfo(), parentCommand, VdcObjectType.Storage, guids.get(0));
-            getTaskIdList().add(guid1);
-
-            Guid taskId2 = persistAsyncTaskPlaceHolder(parentCommand, DELETE_SECONDARY_IMAGES_TASK_KEY);
-            // delete second image
-            // the next 'DeleteImageGroup' command should also take care of the image removal:
-            vdsRetValue = runVdsCommand(VDSCommandType.DeleteImageGroup,
-                    PostZeroHandler.fixParametersWithPostZero(
-                            new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(4),
-                                    postZero, false)));
-
-            if (!vdsRetValue.getSucceeded()) {
-                if (startPollingTasks) {
-                    CommandCoordinatorUtil.startPollingTask(guid1);
-                }
-                return false;
-            }
-
-            Guid guid2 = createTask(taskId2, vdsRetValue.getCreationInfo(), parentCommand);
-            getTaskIdList().add(guid2);
-
-            if (startPollingTasks) {
-                CommandCoordinatorUtil.startPollingTask(guid1);
-                CommandCoordinatorUtil.startPollingTask(guid2);
-            }
-        }
-
-        return true;
-    }
-
-    protected boolean removeHibernationDisks(String memory) {
+    protected boolean removeMemoryDisks(String memory) {
         List<Guid> guids = GuidUtils.getGuidListFromString(memory);
 
         RemoveDiskParameters removeMemoryDumpDiskParameters = new RemoveDiskParameters(guids.get(2));

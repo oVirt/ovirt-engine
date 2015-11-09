@@ -44,7 +44,9 @@ public class SnapshotDaoImpl extends DefaultGenericDao<Snapshot, Guid> implement
                 .addValue("creation_date", entity.getCreationDate())
                 .addValue("app_list", entity.getAppList())
                 .addValue("vm_configuration", entity.getVmConfiguration())
-                .addValue("memory_volume", getNullableRepresentation(entity.getMemoryVolume()));
+                .addValue("memory_volume", getNullableRepresentation(entity.getMemoryVolume()))
+                .addValue("memory_dump_disk_id", entity.getMemoryDiskId())
+                .addValue("memory_metadata_disk_id", entity.getMetadataDiskId());
     }
 
     @Override

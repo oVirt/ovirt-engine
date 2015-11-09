@@ -354,7 +354,9 @@ public class SnapshotsManager {
                 description,
                 new Date(),
                 vm.getAppList(),
-                memoryVolume);
+                memoryVolume,
+                MemoryUtils.getMemoryDiskId(memoryVolume),
+                MemoryUtils.getMetadataDiskId(memoryVolume));
 
         getSnapshotDao().save(snapshot);
         compensationContext.snapshotNewEntity(snapshot);

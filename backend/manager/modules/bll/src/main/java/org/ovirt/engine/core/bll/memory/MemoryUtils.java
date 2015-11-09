@@ -27,6 +27,11 @@ public class MemoryUtils {
     private static final String VM_HIBERNATION_METADATA_DISK_ALIAS_PATTERN = "%s_hibernation_metadata";
     private static final String VM_HIBERNATION_MEMORY_DISK_ALIAS_PATTERN = "%s_hibernation_memory";
 
+    private static final String VM_SNAPSHOT_METADATA_DISK_DESCRIPTION = "metadata for VM snapshot";
+    private static final String VM_SNAPSHOT_MEMORY_DISK_DESCRIPTION = "memory dump for VM snapshot";
+    private static final String VM_SNAPSHOT_METADATA_DISK_ALIAS = "snapshot_metadata";
+    private static final String VM_SNAPSHOT_MEMORY_DISK_ALIAS = "snapshot_memory";
+
     /**
      * Modified the given memory volume String representation to have the given storage
      * pool and storage domain
@@ -78,6 +83,13 @@ public class MemoryUtils {
         return Arrays.asList(memoryVolume, dataVolume);
     }
 
+    public static DiskImage createSnapshotMetadataDisk() {
+        DiskImage image = createMetadataDisk();
+        image.setDiskAlias(VM_SNAPSHOT_METADATA_DISK_ALIAS);
+        image.setDescription(VM_SNAPSHOT_METADATA_DISK_DESCRIPTION);
+        return image;
+    }
+
     public static DiskImage createHibernationMetadataDisk(VM vm) {
         DiskImage image = createMetadataDisk();
         image.setDiskAlias(generateHibernationMetadataDiskAlias(vm.getName()));
@@ -96,6 +108,13 @@ public class MemoryUtils {
 
     private static String generateHibernationMetadataDiskAlias(String vmName) {
         return String.format(VM_HIBERNATION_METADATA_DISK_ALIAS_PATTERN, vmName);
+    }
+
+    public static DiskImage createSnapshotMemoryDisk(VM vm, StorageType storageType) {
+        DiskImage image = createMemoryDisk(vm, storageType);
+        image.setDiskAlias(VM_SNAPSHOT_MEMORY_DISK_ALIAS);
+        image.setDescription(VM_SNAPSHOT_MEMORY_DISK_DESCRIPTION);
+        return image;
     }
 
     public static DiskImage createHibernationMemoryDisk(VM vm, StorageType storageType) {
@@ -126,5 +145,15 @@ public class MemoryUtils {
      */
     public static VolumeType storageTypeToMemoryVolumeType(StorageType storageType) {
         return storageType.isFileDomain() ? VolumeType.Sparse : VolumeType.Preallocated;
+    }
+
+    public static Guid getMemoryDiskId(String memoryVolume) {
+        return StringUtils.isEmpty(memoryVolume) ? null
+                : GuidUtils.getGuidListFromString(memoryVolume).get(2);
+    }
+
+    public static Guid getMetadataDiskId(String memoryVolume) {
+        return StringUtils.isEmpty(memoryVolume) ? null
+                : GuidUtils.getGuidListFromString(memoryVolume).get(4);
     }
 }

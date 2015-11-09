@@ -102,7 +102,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
 
     private void removeMemoryDisksIfNeeded(String hiberVol) {
         if (StringUtils.isNotEmpty(hiberVol)) {
-            removeHibernationDisks(hiberVol);
+            removeMemoryDisks(hiberVol);
         }
     }
 

@@ -1,37 +1,32 @@
 package org.ovirt.engine.core.bll.memory;
 
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
-import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.action.AddDiskParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 
 /**
  * This builder creates the memory images for live snapshots with memory operation
  */
 public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
-    private static final String CREATE_IMAGE_FOR_VM_TASK_KEY = "CREATE_IMAGE_FOR_VM_TASK_KEY";
-    private static final String CREATE_IMAGE_FOR_MEMORY_DUMP_TASK_KEY = "CREATE_IMAGE_FOR_MEMORY_DUMP_TASK_KEY";
 
     private Guid storageDomainId;
-    private Guid memoryDumpImageGroupId;
-    private Guid memoryDumpVolumeId;
-    private Guid vmConfImageGroupId;
-    private Guid vmConfVolumeId;
+    private DiskImage memoryDisk;
+    private DiskImage metadataDisk;
     private VM vm;
     private TaskHandlerCommand<?> enclosingCommand;
     private StoragePool storagePool;
-    private VolumeType volumeTypeForDomain;
 
     public LiveSnapshotMemoryImageBuilder(VM vm, Guid storageDomainId,
             StoragePool storagePool, TaskHandlerCommand<?> enclosingCommand) {
@@ -39,99 +34,91 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
         this.enclosingCommand = enclosingCommand;
         this.storageDomainId = storageDomainId;
         this.storagePool = storagePool;
-        this.memoryDumpImageGroupId = Guid.newGuid();
-        this.memoryDumpVolumeId = Guid.newGuid();
-        this.vmConfImageGroupId = Guid.newGuid();
-        this.vmConfVolumeId = Guid.newGuid();
     }
 
     public void build() {
-        createImageForVmMetaData();
-        createImageForMemoryDump();
+        Guid memoryDiskId = addMemoryDisk();
+        Guid metadataDiskId = addMetadataDisk();
+        // Have to query for the disks in order to get its imageId
+        memoryDisk = getDisk(memoryDiskId);
+        metadataDisk = getDisk(metadataDiskId);
     }
 
-    private void createImageForVmMetaData() {
-        VDSReturnValue retVal =
-                Backend
-                .getInstance()
-                .getResourceManager()
-                .runVdsCommand(
-                        VDSCommandType.CreateImage,
-                        new CreateImageVDSCommandParameters(
-                                storagePool.getId(),
-                                storageDomainId,
-                                vmConfImageGroupId,
-                                MemoryUtils.METADATA_SIZE_IN_BYTES,
-                                VolumeType.Preallocated,
-                                VolumeFormat.RAW,
-                                vmConfVolumeId,
-                                ""));
+    private Guid addMemoryDisk() {
+        DiskImage memoryDisk = MemoryUtils.createSnapshotMemoryDisk(vm, getStorageType());
+        return addDisk(memoryDisk);
+    }
 
-        if (!retVal.getSucceeded()) {
-            throw new EngineException(EngineError.VolumeCreationError,
-                    "Failed to create image for vm configuration!");
+    private Guid addMetadataDisk() {
+        DiskImage metadataDisk = MemoryUtils.createSnapshotMetadataDisk();
+        return addDisk(metadataDisk);
+    }
+
+    private Guid addDisk(DiskImage disk) {
+        VdcReturnValueBase returnValue = getBackend().runInternalAction(
+                VdcActionType.AddDisk,
+                buildAddDiskParameters(disk),
+                enclosingCommand.getContext().clone());
+
+        if (!returnValue.getSucceeded()) {
+            throw new EngineException(returnValue.getFault().getError(),
+                    String.format("Failed to create disk! %s", disk.getDiskAlias()));
         }
 
-        Guid taskId = enclosingCommand.persistAsyncTaskPlaceHolder(CREATE_IMAGE_FOR_VM_TASK_KEY);
-        Guid guid = enclosingCommand.createTask(
-                taskId,
-                retVal.getCreationInfo(),
-                enclosingCommand.getActionType());
-        enclosingCommand.getTaskIdList().add(guid);
+        enclosingCommand.getTaskIdList().addAll(returnValue.getInternalVdsmTaskIdList());
+        return returnValue.getActionReturnValue();
     }
 
-    private void createImageForMemoryDump() {
-        VDSReturnValue retVal =
-                Backend
-                .getInstance()
-                .getResourceManager()
-                .runVdsCommand(
-                        VDSCommandType.CreateImage,
-                        new CreateImageVDSCommandParameters(
-                                storagePool.getId(),
-                                storageDomainId,
-                                memoryDumpImageGroupId,
-                                vm.getTotalMemorySizeInBytes(),
-                                getVolumeTypeForDomain(),
-                                VolumeFormat.RAW,
-                                memoryDumpVolumeId,
-                                ""));
-
-        if (!retVal.getSucceeded()) {
-            throw new EngineException(EngineError.VolumeCreationError,
-                    "Failed to create image for memory!");
-        }
-
-        Guid taskId = enclosingCommand.persistAsyncTaskPlaceHolder(CREATE_IMAGE_FOR_MEMORY_DUMP_TASK_KEY);
-        Guid guid =
-                enclosingCommand.createTask(taskId,
-                        retVal.getCreationInfo(),
-                        enclosingCommand.getActionType(),
-                        VdcObjectType.Storage,
-                        storageDomainId);
-        enclosingCommand.getTaskIdList().add(guid);
+    private DiskImage getDisk(Guid diskId) {
+        return (DiskImage) getDiskDao().get(diskId);
     }
 
-    private VolumeType getVolumeTypeForDomain() {
-        if (volumeTypeForDomain == null) {
-            StorageDomainStatic sdStatic = DbFacade.getInstance().getStorageDomainStaticDao().get(storageDomainId);
-            volumeTypeForDomain = MemoryUtils.storageTypeToMemoryVolumeType(sdStatic.getStorageType());
-        }
-        return volumeTypeForDomain;
+    protected DiskDao getDiskDao() {
+        return DbFacade.getInstance().getDiskDao();
     }
 
+    private AddDiskParameters buildAddDiskParameters(DiskImage disk) {
+        AddDiskParameters parameters = new AddDiskParameters(Guid.Empty, disk);
+        parameters.setStorageDomainId(storageDomainId);
+        parameters.setParentCommand(enclosingCommand.getActionType());
+        parameters.setParentParameters(enclosingCommand.getParameters());
+        parameters.setShouldBeLogged(false);
+        return parameters;
+    }
+
+    private BackendInternal getBackend() {
+        return Backend.getInstance();
+    }
+
+    private StorageType getStorageType() {
+        return getStorageDomainStaticDao().get(storageDomainId).getStorageType();
+    }
+
+    protected StorageDomainStaticDao getStorageDomainStaticDao() {
+        return DbFacade.getInstance().getStorageDomainStaticDao();
+    }
 
     public String getVolumeStringRepresentation() {
         return MemoryUtils.createMemoryStateString(
                 storageDomainId,
                 storagePool.getId(),
-                memoryDumpImageGroupId,
-                memoryDumpVolumeId,
-                vmConfImageGroupId,
-                vmConfVolumeId);
+                memoryDisk.getId(),
+                memoryDisk.getImageId(),
+                metadataDisk.getId(),
+                metadataDisk.getImageId());
     }
 
     public boolean isCreateTasks() {
         return true;
+    }
+
+    @Override
+    public Guid getMemoryDiskId() {
+        return memoryDisk.getId();
+    }
+
+    @Override
+    public Guid getMetadataDiskId() {
+        return metadataDisk.getId();
     }
 }

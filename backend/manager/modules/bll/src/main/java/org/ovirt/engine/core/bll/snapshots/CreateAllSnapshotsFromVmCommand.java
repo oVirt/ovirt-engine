@@ -236,9 +236,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         MemoryImageBuilder memoryImageBuilder = getMemoryImageBuilder();
         freezeVm();
         createSnapshotsForDisks();
+        memoryImageBuilder.build();
         addSnapshotToDB(createdSnapshotId, memoryImageBuilder);
         fastForwardDisksToActiveSnapshot();
-        memoryImageBuilder.build();
 
         // means that there are no asynchronous tasks to execute and that we can
         // end the command synchronously

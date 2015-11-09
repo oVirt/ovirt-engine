@@ -78,6 +78,12 @@ public class Snapshot implements IVdcQueryable, BusinessEntityWithStatus<Guid, S
      */
     private String memoryVolume;
 
+    /** The ID of the disk that contains the memory dump */
+    private Guid memoryDiskId;
+
+    /** The ID of the disk that contains the VM metadata */
+    private Guid metadataDiskId;
+
     /**
      * Disk images of the snapshots
      */
@@ -120,9 +126,13 @@ public class Snapshot implements IVdcQueryable, BusinessEntityWithStatus<Guid, S
             String description,
             Date creationDate,
             String appList,
-            String memoryVolume) {
+            String memoryVolume,
+            Guid memoryDiskId,
+            Guid metadataDiskId) {
         this(id, status, vmId, vmConfiguration, type, description, creationDate, appList);
         setMemoryVolume(memoryVolume);
+        setMemoryDiskId(memoryDiskId);
+        setMetadataDiskId(metadataDiskId);
     }
 
     @Override
@@ -212,6 +222,22 @@ public class Snapshot implements IVdcQueryable, BusinessEntityWithStatus<Guid, S
 
     public void setMemoryVolume(String memoryVolume) {
         this.memoryVolume = memoryVolume == null ? "" : memoryVolume;
+    }
+
+    public Guid getMemoryDiskId() {
+        return memoryDiskId;
+    }
+
+    public void setMemoryDiskId(Guid memoryDiskId) {
+        this.memoryDiskId = memoryDiskId;
+    }
+
+    public Guid getMetadataDiskId() {
+        return metadataDiskId;
+    }
+
+    public void setMetadataDiskId(Guid metadataDiskId) {
+        this.metadataDiskId = metadataDiskId;
     }
 
     public List<DiskImage> getDiskImages() {
