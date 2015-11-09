@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.aaa;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.aaa.DirectoryUser;
@@ -24,7 +24,7 @@ public class GetDirectoryUserByIdQuery<P extends DirectoryIdQueryParameters> ext
         if (authz == null) {
             getQueryReturnValue().setSucceeded(false);
         } else {
-            for (String namespace : getParameters().constainsNamespace() ? Arrays.asList(getParameters().getNamespace()) : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
+            for (String namespace : getParameters().constainsNamespace() ? Arrays.asList(getParameters().getNamespace()) : authz.getContext().<Collection<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
                 DirectoryUser user = DirectoryUtils.findDirectoryUserById(authz, namespace, id, false, false);
                 if (user != null) {
                     getQueryReturnValue().setReturnValue(user);
