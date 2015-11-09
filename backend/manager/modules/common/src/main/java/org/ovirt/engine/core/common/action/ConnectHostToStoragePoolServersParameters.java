@@ -15,8 +15,9 @@ public class ConnectHostToStoragePoolServersParameters extends HostStoragePoolPa
         connectToInactiveDomains = true;
     }
 
-    public ConnectHostToStoragePoolServersParameters(VDS vds, boolean connectToInactiveDomains) {
-        super(vds);
+    public ConnectHostToStoragePoolServersParameters(StoragePool storagePool, VDS vds,
+            boolean connectToInactiveDomains) {
+        super(storagePool, vds);
         this.connectToInactiveDomains = connectToInactiveDomains;
     }
 

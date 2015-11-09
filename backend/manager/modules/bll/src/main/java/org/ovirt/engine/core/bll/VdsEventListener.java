@@ -76,6 +76,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.linq.Function;
@@ -102,6 +103,8 @@ public class VdsEventListener implements IVdsEventListener {
     AutoStartVmsRunner autoStartVmsRunner;
     @Inject
     private VdsDao vdsDao;
+    @Inject
+    private StoragePoolDao storagePoolDao;
     @Inject
     private BackendInternal backend;
     @Inject
@@ -340,7 +343,9 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public boolean connectHostToDomainsInActiveOrUnknownStatus(VDS vds) {
-        ConnectHostToStoragePoolServersParameters params = new ConnectHostToStoragePoolServersParameters(vds, false);
+        StoragePool sp = storagePoolDao.get(vds.getStoragePoolId());
+        ConnectHostToStoragePoolServersParameters params =
+                new ConnectHostToStoragePoolServersParameters(sp, vds, false);
         return backend
                 .runInternalAction(VdcActionType.ConnectHostToStoragePoolServers, params)
                 .getSucceeded();
