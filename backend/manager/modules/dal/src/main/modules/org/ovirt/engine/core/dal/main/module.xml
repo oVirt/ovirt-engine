@@ -20,13 +20,6 @@
     <module name="org.ovirt.engine.core.utils"/>
     <module name="org.slf4j"/>
     <module name="org.springframework"/>
-
-    <!--
-         Following modules should be removed when we replace legacy weld:scan CDI 1.0 extension with standard CDI 1.1+
-         scan extension
-    -->
-    <module name="org.jboss.weld.core"/>
-    <module name="org.jboss.weld.spi"/>
   </dependencies>
 
 </module>

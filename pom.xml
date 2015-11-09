@@ -107,7 +107,7 @@
     <maven-ejb-plugin.version>2.3</maven-ejb-plugin.version>
     <!-- https://jira.codehaus.org/browse/MGWT-350 -->
     <gwt-maven-plugin.workingRefresh.version>2.4.0</gwt-maven-plugin.workingRefresh.version>
-    <cdi.api.version>1.0-SP4</cdi.api.version>
+    <cdi.api.version>1.2</cdi.api.version>
     <javacc.version>2.6</javacc.version>
     <hamcrest.version>1.3</hamcrest.version>
     <reflections.version>0.9.9</reflections.version>

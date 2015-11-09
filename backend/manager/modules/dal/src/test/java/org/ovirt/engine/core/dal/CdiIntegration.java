@@ -78,6 +78,10 @@ class CdiIntegration implements BeanDefinitionRegistryPostProcessor {
         public boolean isAmbiguous() {
             return false;
         }
+
+        @Override
+        public void destroy(Dao dao) {
+        }
     }
 }
 
