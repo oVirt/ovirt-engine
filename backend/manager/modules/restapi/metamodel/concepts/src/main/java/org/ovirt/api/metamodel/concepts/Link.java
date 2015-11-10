@@ -18,29 +18,41 @@ package org.ovirt.api.metamodel.concepts;
 
 public class Link extends Concept {
     /**
-     * Reference to the type that declared this attribute.
+     * Reference to the type that declared this link.
      */
     private StructType declaringType;
 
     /**
-     * Reference to the type of the values of this attribute.
+     * Reference to the type of the values of this link.
      */
     private Type type;
 
+    /**
+     * Returns tye type where this link is directly declared.
+     */
     public StructType getDeclaringType() {
       return declaringType;
     }
 
+    /**
+     * Sets the type that directly declares this link.
+     */
     public void setDeclaringType(StructType newDeclaringType) {
       declaringType = newDeclaringType;
     }
 
+    /**
+     * Returns tht type of this link.
+     */
     public Type getType() {
       return type;
     }
 
+    /**
+     * Sets the tyep of this attribute.
+     */
     public void setType(Type newType) {
-      type = newType;
+        type = newType;
     }
 }
 

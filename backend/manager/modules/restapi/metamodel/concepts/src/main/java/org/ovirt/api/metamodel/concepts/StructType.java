@@ -16,20 +16,33 @@ limitations under the License.
 
 package org.ovirt.api.metamodel.concepts;
 
-import static java.util.Comparator.comparing;
+import static java.util.stream.Stream.concat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 
 public class StructType extends Type {
+    // Reference to the base of this type:
     private Type base;
+
+    // The list of attributes declared by this type directly:
     private List<Attribute> attributes = new ArrayList<>();
+
+    // The list of links declared by this type directly:
     private List<Link> links = new ArrayList<>();
 
+    /**
+     * Returns the base of this type, or {@code null} if this type doesn't have a base type.
+     */
     public Type getBase() {
         return base;
     }
 
+    /**
+     * Sets the base of this type.
+     */
     public void setBase(Type newType) {
         base = newType;
     }
@@ -48,24 +61,44 @@ public class StructType extends Type {
     }
 
     /**
-     * Returns all the attributes of this type, including the ones declared in base types. The returned list is a sorted
-     * copy of the one used internally, so it is safe to modify it.
+     * Returns all the attributes of this type, including the ones declared in base types. The returned list is a copy
+     * of the one used internally, so it is safe to modify it. If you aren't going to modify the list consider using the
+     * {@link #attributes()} method instead.
      */
     public List<Attribute> getAttributes() {
         List<Attribute> result = new ArrayList<>(attributes);
         if (base != null && base instanceof StructType) {
             result.addAll(((StructType) base).getAttributes());
         }
-        result.sort(comparing(Attribute::getName));
+        return result;
+    }
+
+    /**
+     * Returns a stream that delivers all the attributes of this type, including the ones declared in base types.
+     */
+    public Stream<Attribute> attributes() {
+        Stream<Attribute> result = declaredAttributes();
+        if (base != null && base instanceof StructType) {
+            result = concat(result, ((StructType) base).attributes());
+        }
         return result;
     }
 
     /**
      * Returns the list of attributes that are declared directly in this type, not including the ones that are declared
-     * in the base types. The returned list is a sorted copy of the one used internally, so it is safe to modify it.
+     * in the base types. The returned list is a copy of the one used internally, so it is safe to modify it. If you
+     * aren't going to modify the list consider using the {@link #declaredAttributes()} method instead.
      */
     public List<Attribute> getDeclaredAttributes() {
-        return new ArrayList<>(attributes);
+        return new CopyOnWriteArrayList<>(attributes);
+    }
+
+    /**
+     * Returns a stream that delivers the attributes that are declared directly in this type, not including the ones
+     * that are declared in the base types.
+     */
+    public Stream<Attribute> declaredAttributes() {
+        return attributes.stream();
     }
 
     /**
@@ -73,7 +106,6 @@ public class StructType extends Type {
      */
     public void addAttribute(Attribute newAttribute) {
         attributes.add(newAttribute);
-        attributes.sort(comparing(Attribute::getName));
     }
 
     /**
@@ -81,35 +113,54 @@ public class StructType extends Type {
      */
     public void addAttributes(List<Attribute> newAttributes) {
         attributes.addAll(attributes);
-        attributes.sort(comparing(Attribute::getName));
     }
 
     /**
-     * Returns all the links of this type, including the ones declared in base types. The returned list is a sorted copy
-     * of the one used internally, so it is safe to modify it.
+     * Returns all the links of this type, including the ones declared in base types. The returned list is a copy of the
+     * one used internally, so it is safe to modify it. If you aren't going to modify the list consider using the
+     * {@link #links()} method instead.
      */
     public List<Link> getLinks() {
         List<Link> result = new ArrayList<>(links);
         if (base != null && base instanceof StructType) {
             result.addAll(((StructType) base).getLinks());
         }
-        result.sort(comparing(Link::getName));
+        return result;
+    }
+
+    /**
+     * Returns a stream that delivers all the links of this type, including the ones declared in base types.
+     */
+    public Stream<Link> links() {
+        Stream<Link> result = declaredLinks();
+        if (base != null && base instanceof StructType) {
+            result = concat(((StructType) base).links(), result);
+        }
         return result;
     }
 
     /**
      * Returns the list of links that are declared directly in this type, not including the ones that are declared
-     * in the base types. The returned list is a sorted copy of the one used internally, so it is safe to modify it.
+     * in the base types. The returned list is a copy of the one used internally, so it is safe to modify it. If you
+     * aren't going to modify the list consider using the {@link #declaredLinks()} method instead.
      */
     public List<Link> getDeclaredLinks() {
-        return new ArrayList<>(links);
+        return new CopyOnWriteArrayList<>(links);
     }
+
+    /**
+     * Returns a stream that delivers the links that are declared directly in this type, not including the ones that are
+     * declared in the base types.
+     */
+    public Stream<Link> declaredLinks() {
+        return links.stream();
+    }
+
     /**
      * Adds a new link to this type.
      */
     public void addLink(Link newLink) {
         links.add(newLink);
-        links.sort(comparing(Link::getName));
     }
 
     /**
@@ -117,7 +168,6 @@ public class StructType extends Type {
      */
     public void addLinks(List<Link> newLinks) {
         links.addAll(newLinks);
-        links.sort(comparing(Link::getName));
     }
 }
 

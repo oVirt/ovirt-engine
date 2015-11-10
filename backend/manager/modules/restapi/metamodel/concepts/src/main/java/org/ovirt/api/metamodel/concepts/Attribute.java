@@ -27,18 +27,30 @@ public class Attribute extends Concept {
      */
     private Type type;
 
+    /**
+     * Returns the type where this attribute is directly declared.
+     */
     public StructType getDeclaringType() {
         return declaringType;
     }
 
+    /**
+     * Sets the type that directly declares this attribute.
+     */
     public void setDeclaringType(StructType newDeclaringType) {
         declaringType = newDeclaringType;
     }
 
+    /**
+     * Returns the type of this attribute.
+     */
     public Type getType() {
         return type;
     }
 
+    /**
+     * Sets the type of this attribute.
+     */
     public void setType(Type newType) {
         type = newType;
     }

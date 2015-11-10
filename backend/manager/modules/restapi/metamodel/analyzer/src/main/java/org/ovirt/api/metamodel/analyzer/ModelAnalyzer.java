@@ -316,6 +316,7 @@ public class ModelAnalyzer {
         javaClass.getMethods().forEach(x -> analyzeParameter(x, method));
 
         // Add the member to the service:
+        method.setDeclaringService(service);
         service.addMethod(method);
     }
 
