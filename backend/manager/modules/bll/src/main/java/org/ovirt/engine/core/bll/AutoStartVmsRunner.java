@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
@@ -25,13 +26,12 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.lock.LockManagerFactory;
+import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * This class represent a job which is responsible for running HA VMs
  */
 @Singleton
-public class AutoStartVmsRunner implements BackendService{
+public class AutoStartVmsRunner implements BackendService {
 
     private static final Logger log = LoggerFactory.getLogger(AutoStartVmsRunner.class);
     /** How long to wait before rerun HA VM that failed to start (not because of lock acquisition) */
@@ -51,11 +51,38 @@ public class AutoStartVmsRunner implements BackendService{
     private AuditLogDirector auditLogDirector;
     @Inject
     private SchedulerUtilQuartzImpl schedulerUtil;
+    @Inject
+    private LockManager lockManager;
+    @Inject
+    private BackendInternal backend;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
+    @Inject
+    private VmDao vmDao;
 
     /** Records of HA VMs that need to be restarted */
     private CopyOnWriteArraySet<AutoStartVmToRestart> autoStartVmsToRestart;
 
     private AutoStartVmsRunner() {
+    }
+
+    @PostConstruct
+    private void init() {
+        initAutoStartVmsToRestart();
+
+        int autoStartVmsRunnerIntervalInSeconds =
+                Config.<Integer>getValue(ConfigValues.AutoStartVmsRunnerIntervalInSeconds);
+        schedulerUtil.scheduleAFixedDelayJob(
+                this,
+                "startFailedAutoStartVms",
+                new Class[] {},
+                new Object[] {},
+                autoStartVmsRunnerIntervalInSeconds,
+                autoStartVmsRunnerIntervalInSeconds,
+                TimeUnit.SECONDS);
+    }
+
+    private void initAutoStartVmsToRestart() {
         // There might be HA VMs which went down just before the engine stopped, we detected
         // the failure and updated the DB but didn't made it to rerun the VM. So here we'll
         // take all the HA VMs which are down because of an error and add them to the set
@@ -67,20 +94,6 @@ public class AutoStartVmsRunner implements BackendService{
             initialFailedVms.add(new AutoStartVmToRestart(vm.getId()));
         }
         autoStartVmsToRestart = new CopyOnWriteArraySet<>(initialFailedVms);
-    }
-
-    @PostConstruct
-    private void init() {
-        int autoStartVmsRunnerIntervalInSeconds =
-                Config.<Integer>getValue(ConfigValues.AutoStartVmsRunnerIntervalInSeconds);
-        schedulerUtil.scheduleAFixedDelayJob(
-                this,
-                "startFailedAutoStartVms",
-                new Class[] {},
-                new Object[] {},
-                autoStartVmsRunnerIntervalInSeconds,
-                autoStartVmsRunnerIntervalInSeconds,
-                TimeUnit.SECONDS);
     }
 
     /**
@@ -149,11 +162,11 @@ public class AutoStartVmsRunner implements BackendService{
     }
 
     private boolean acquireLock(EngineLock lock) {
-        return LockManagerFactory.getLockManager().acquireLock(lock).getFirst();
+        return lockManager.acquireLock(lock).getFirst();
     }
 
     private void releaseLock(EngineLock lock) {
-        LockManagerFactory.getLockManager().releaseLock(lock);
+        lockManager.releaseLock(lock);
     }
 
     private void logFailedAttemptToRestartHighlyAvailableVm(Guid vmId) {
@@ -185,15 +198,15 @@ public class AutoStartVmsRunner implements BackendService{
     }
 
     protected VmDynamicDao getVmDynamicDao() {
-        return DbFacade.getInstance().getVmDynamicDao();
+        return vmDynamicDao;
     }
 
     protected VmDao getVmDao() {
-        return DbFacade.getInstance().getVmDao();
+        return vmDao;
     }
 
     private boolean runVm(Guid vmId, EngineLock lock) {
-        return Backend.getInstance().runInternalAction(
+        return backend.runInternalAction(
                 VdcActionType.RunVm,
                 new RunVmParams(vmId),
                 ExecutionHandler.createInternalJobContext(lock)).getSucceeded();
