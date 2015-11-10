@@ -234,7 +234,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     protected List<LUNs> executeGetDeviceList(Guid vdsId, StorageType storageType, String lunId) {
         GetDeviceListVDSCommandParameters parameters =
-                new GetDeviceListVDSCommandParameters(vdsId, storageType, false, Arrays.asList(lunId));
+                new GetDeviceListVDSCommandParameters(vdsId, storageType, false, Collections.singletonList(lunId));
         return (List<LUNs>) runVdsCommand(VDSCommandType.GetDeviceList, parameters).getReturnValue();
     }
 
