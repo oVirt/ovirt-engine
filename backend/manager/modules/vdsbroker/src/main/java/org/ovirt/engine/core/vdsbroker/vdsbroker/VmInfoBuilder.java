@@ -813,6 +813,12 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             specParams.put(VdsProperties.VLAN_ID, network.getVlanId());
         }
         struct.put(VdsProperties.SpecParams, specParams);
+
+        addCustomPropertiesForDevice(struct,
+                vm,
+                vmDevice,
+                vm.getVdsGroupCompatibilityVersion(),
+                getVnicCustomProperties(vnicProfile));
     }
 
     public static void addProfileDataToNic(Map<String, Object> struct,
