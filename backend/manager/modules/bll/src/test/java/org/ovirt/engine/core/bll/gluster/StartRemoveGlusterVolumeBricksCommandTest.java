@@ -105,6 +105,7 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
         doReturn(null).when(volumeDao).getById(null);
         doReturn(SUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
         doReturn(vdsGroup).when(command).getVdsGroup();
+        doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
     }
 
     private VDS getVds(VDSStatus status) {
@@ -144,7 +145,6 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
 
     private void mockBackend(boolean succeeded, EngineError errorCode) {
         doReturn(backend).when(cmd).getBackend();
-        when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
         doNothing().when(cmd).startSubStep();
         doReturn(asyncTaskToBeReturned).when(cmd).handleTaskReturn(asyncTaskToBeReturned);
         doNothing().when(cmd).updateBricksWithTaskID(asyncTaskToBeReturned);

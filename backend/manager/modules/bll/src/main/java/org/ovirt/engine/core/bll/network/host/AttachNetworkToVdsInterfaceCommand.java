@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -78,11 +77,8 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
 
         if (retVal.getSucceeded()) {
             // update vds network data
-            retVal = Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
-                            new CollectHostNetworkDataVdsCommandParameters(getVds()));
+            retVal = runVdsCommand(VDSCommandType.CollectVdsNetworkData,
+                    new CollectHostNetworkDataVdsCommandParameters(getVds()));
 
             if (retVal.getSucceeded()) {
                 Guid groupId = getVdsDao().get(params.getVdsId()).getVdsGroupId();

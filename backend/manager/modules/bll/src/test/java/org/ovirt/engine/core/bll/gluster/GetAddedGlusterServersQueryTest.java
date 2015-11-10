@@ -130,7 +130,7 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
         dbUtils = mock(GlusterDBUtils.class);
         backendInternal = mock(BackendInternal.class);
 
-        doReturn(vdsBrokerFrontend).when(getQuery()).getResourceManager();
+        doReturn(vdsBrokerFrontend).when(getQuery()).getVdsBroker();
         doReturn(clusterUtils).when(getQuery()).getClusterUtils();
         doReturn(dbUtils).when(getQuery()).getDbUtils();
         doReturn(getVds(VDSStatus.Up)).when(clusterUtils).getUpServer(CLUSTER_ID);

@@ -69,6 +69,7 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -131,6 +132,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     @Inject
     private BackendInternal backendInternal;
+
+    @Inject
+    private VDSBrokerFrontend vdsBroker;
 
     /** Indicates whether the acquired locks should be released after the execute method or not */
     private boolean releaseLocksAtEndOfExecute = true;
@@ -2112,7 +2116,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters)
             throws EngineException {
-        return getBackend().getResourceManager().RunVdsCommand(commandType, parameters);
+        return getVdsBroker().RunVdsCommand(commandType, parameters);
     }
 
     /**
@@ -2411,6 +2415,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected SessionDataContainer getSessionDataContainer() {
         return sessionDataContainer;
+    }
+
+    public VDSBrokerFrontend getVdsBroker() {
+        return vdsBroker;
     }
 
     protected long getEngineSessionSeqId() {

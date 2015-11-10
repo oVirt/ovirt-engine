@@ -84,6 +84,7 @@ public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends G
         when(vdsGroupDao.get(CLUSTER_ID)).thenReturn(getVdsGroup());
         doReturn(vdsGroupDao).when(cmd).getVdsGroupDao();
         doReturn(getGlusterServers().get(0)).when(cmd).getUpServer();
+        doReturn(vdsBrokerFrontend).when(cmd).getVdsBroker();
     }
 
     protected void mockBackendStatusChange(T cmd, boolean succeeded) {
@@ -100,7 +101,6 @@ public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends G
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
         }
         when(vdsBrokerFrontend.RunVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class))).thenReturn(vdsReturnValue);
-        when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
     }
 
 

@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -26,7 +25,6 @@ public class GetUnregisteredDisksQuery<P extends GetUnregisteredDisksQueryParame
 
     @Override
     protected void executeQueryCommand() {
-        VDSBrokerFrontend vdsBroker = getVdsBroker();
         StorageDomain storageDomain = getDbFacade().getStorageDomainDao().get(getStorageDomainId());
         if (storageDomain == null) {
             getQueryReturnValue().setExceptionString(EngineMessage.STORAGE_DOMAIN_DOES_NOT_EXIST.toString());
@@ -43,7 +41,7 @@ public class GetUnregisteredDisksQuery<P extends GetUnregisteredDisksQueryParame
 
         // first, run getImagesList query into vdsm to get all of the images on the storage domain - then store in
         // imagesList
-        VDSReturnValue imagesListResult = vdsBroker.RunVdsCommand(VDSCommandType.GetImagesList,
+        VDSReturnValue imagesListResult = runVdsCommand(VDSCommandType.GetImagesList,
                 new GetImagesListVDSCommandParameters(getStorageDomainId(), getStoragePoolId()));
         @SuppressWarnings("unchecked")
         List<Guid> imagesList = (List<Guid>) imagesListResult.getReturnValue();
@@ -69,10 +67,6 @@ public class GetUnregisteredDisksQuery<P extends GetUnregisteredDisksQueryParame
             }
         }
         getQueryReturnValue().setReturnValue(unregisteredDisks);
-    }
-
-    protected VDSBrokerFrontend getVdsBroker() {
-        return Backend.getInstance().getResourceManager();
     }
 
     protected Guid getStorageDomainId() {

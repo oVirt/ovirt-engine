@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
@@ -20,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredBlockStorageDomainsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -35,6 +33,7 @@ import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 
 public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBlockStorageDomainsParameters> extends QueriesCommandBase<P> {
+
     public GetUnregisteredBlockStorageDomainsQuery(P parameters) {
         super(parameters);
     }
@@ -265,10 +264,6 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
         return storageDomain;
     }
 
-    protected VDSBrokerFrontend getVdsBroker() {
-        return Backend.getInstance().getResourceManager();
-    }
-
     protected BackendInternal getBackend() {
         return super.getBackend();
     }
@@ -292,10 +287,10 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
     }
 
     protected VDSReturnValue executeGetVGInfo(GetVGInfoVDSCommandParameters parameters) {
-        return getVdsBroker().RunVdsCommand(VDSCommandType.GetVGInfo, parameters);
+        return runVdsCommand(VDSCommandType.GetVGInfo, parameters);
     }
 
     protected VDSReturnValue executeHSMGetStorageDomainInfo(HSMGetStorageDomainInfoVDSCommandParameters parameters) {
-        return getVdsBroker().RunVdsCommand(VDSCommandType.HSMGetStorageDomainInfo, parameters);
+        return runVdsCommand(VDSCommandType.HSMGetStorageDomainInfo, parameters);
     }
 }

@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -93,11 +92,9 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
             return lunsMap;
         }
 
-        VDSBrokerFrontend vdsBrokerFrontend = getVdsBroker();
         GetDeviceListVDSCommandParameters parameters = new GetDeviceListVDSCommandParameters(
                 getParameters().getId(), storageType);
-        List<LUNs> lunsList = (List<LUNs>) vdsBrokerFrontend.RunVdsCommand(
-                VDSCommandType.GetDeviceList, parameters).getReturnValue();
+        List<LUNs> lunsList = (List<LUNs>) runVdsCommand(VDSCommandType.GetDeviceList, parameters).getReturnValue();
 
         for (LUNs lun : lunsList) {
             lunsMap.put(lun.getLUN_id(), lun);
@@ -119,9 +116,5 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
             lun.setLunConnections(new ArrayList<StorageServerConnections>());
         }
         lun.getLunConnections().add(cnx);
-    }
-
-    protected VDSBrokerFrontend getVdsBroker() {
-        return getBackend().getResourceManager();
     }
 }

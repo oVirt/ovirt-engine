@@ -297,8 +297,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private FutureVDSCall<VDSReturnValue> invokeSetupNetworksCommand(int timeout) {
         final HostSetupNetworksVdsCommandParameters parameters = createSetupNetworksParameters(timeout);
         FutureVDSCall<VDSReturnValue> setupNetworksTask =
-            getBackend().getResourceManager().runFutureVdsCommand(FutureVDSCommandType.HostSetupNetworks,
-                parameters);
+            getVdsBroker().runFutureVdsCommand(FutureVDSCommandType.HostSetupNetworks, parameters);
 
         if (parameters.isRollbackOnFailure()) {
             HostSetupNetworkPoller poller = new HostSetupNetworkPoller();

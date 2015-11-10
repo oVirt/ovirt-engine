@@ -93,7 +93,6 @@ public class RestoreAllSnapshotCommandTest extends BaseCommandTest {
 
     protected void mockBackend() {
         doReturn(backend).when(spyCommand).getBackend();
-        when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
     }
 
     @Test
@@ -146,7 +145,8 @@ public class RestoreAllSnapshotCommandTest extends BaseCommandTest {
         parameters.setImages(diskImageList);
         doReturn(ValidationResult.VALID).when(storageValidator).allDomainsExistAndActive();
         doReturn(ValidationResult.VALID).when(storageValidator).allDomainsWithinThresholds();
-        spyCommand = spy(new RestoreAllSnapshotsCommand<RestoreAllSnapshotsParameters>(parameters));
+        spyCommand = spy(new RestoreAllSnapshotsCommand<>(parameters));
+        doReturn(vdsBrokerFrontend).when(spyCommand).getVdsBroker();
         doReturn(true).when(spyCommand).performImagesChecks();
         doReturn(storageValidator).when(spyCommand).createStorageDomainValidator();
         doReturn(vmValidator).when(spyCommand).createVmValidator(any(VM.class));

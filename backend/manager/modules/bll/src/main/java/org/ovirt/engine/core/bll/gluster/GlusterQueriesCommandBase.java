@@ -1,12 +1,10 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -25,6 +23,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotScheduleDao;
 
 public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+
     protected GlusterQueriesCommandBase(P parameters) {
         super(parameters);
     }
@@ -56,10 +55,6 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
 
     protected String getGlusterVolumeName(Guid volumeId) {
         return getGlusterVolumeDao().getById(volumeId).getName();
-    }
-
-    private VDSBrokerFrontend getBackendResourceManager() {
-        return Backend.getInstance().getResourceManager();
     }
 
     protected ClusterUtils getClusterUtils() {
@@ -102,9 +97,10 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
         return vds.getId();
     }
 
+    @Override
     protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters)
             throws EngineException {
-        VDSReturnValue returnValue = getBackendResourceManager().RunVdsCommand(commandType, parameters);
+        VDSReturnValue returnValue = super.runVdsCommand(commandType, parameters);
         if (!returnValue.getSucceeded()) {
             throw new EngineException(returnValue.getVdsError().getCode(), returnValue.getVdsError()
                     .getMessage());

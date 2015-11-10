@@ -75,6 +75,7 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
         doReturn(serverServiceDao).when(command).getGlusterServerServiceDao();
         doReturn(serviceDao).when(command).getGlusterServiceDao();
         doReturn(clusterUtils).when(command).getClusterUtils();
+        doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
         doReturn(getUpServers()).when(clusterUtils).getAllUpServers(any(Guid.class));
         doReturn(null).when(serverServiceDao).getByServerIdAndServiceType(null, null);
         doReturn(null).when(serviceDao).getByServiceType(null);
@@ -102,7 +103,6 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
 
     private void mockBackend(boolean succeeded, EngineError errorCode, GlusterServiceStatus status) {
         doReturn(backend).when(cmd).getBackend();
-        when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
 
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
         vdsReturnValue.setSucceeded(succeeded);

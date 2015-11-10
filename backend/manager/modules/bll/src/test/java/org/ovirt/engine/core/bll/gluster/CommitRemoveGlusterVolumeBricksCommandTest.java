@@ -74,6 +74,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
         doReturn(null).when(volumeDao).getById(null);
         doReturn(SUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
         doReturn(vdsGroup).when(command).getVdsGroup();
+        doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
     }
 
     private Object getVolumeWithRemoveBricksTaskNull(Guid volumeId) {
@@ -101,7 +102,6 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
     @SuppressWarnings("unchecked")
     private void mockBackend(boolean succeeded, EngineError errorCode) {
         doReturn(backend).when(cmd).getBackend();
-        when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
         doNothing().when(cmd).endStepJobCommitted();
         doNothing().when(cmd).releaseVolumeLock();
 

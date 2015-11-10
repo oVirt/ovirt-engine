@@ -142,7 +142,7 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
         VdsSpmStatus spmStatus = getDbFacade().getVdsDao().get(getVds().getId()).getSpmStatus();
         // try to stop SPM if action is Restart or Stop and the vds is SPM
         if (spmStatus != VdsSpmStatus.None) {
-            getBackend().getResourceManager().RunVdsCommand(
+            runVdsCommand(
                     VDSCommandType.SpmStop,
                     new SpmStopVDSCommandParameters(getVds().getId(), getVds().getStoragePoolId()));
         }

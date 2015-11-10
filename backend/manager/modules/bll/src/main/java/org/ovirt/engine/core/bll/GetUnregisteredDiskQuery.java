@@ -52,8 +52,7 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
         // Now get the list of volumes for each new image.
         StoragePoolDomainAndGroupIdBaseVDSCommandParameters getVolumesParameters = new StoragePoolDomainAndGroupIdBaseVDSCommandParameters(
                 storagePoolId, storageDomainId, diskId);
-        VDSReturnValue volumesListReturn = getBackend().getResourceManager().RunVdsCommand(VDSCommandType.GetVolumesList,
-                getVolumesParameters);
+        VDSReturnValue volumesListReturn = runVdsCommand(VDSCommandType.GetVolumesList, getVolumesParameters);
         if (!volumesListReturn.getSucceeded()) {
             getQueryReturnValue().setExceptionString(volumesListReturn.getExceptionString());
             getQueryReturnValue().setSucceeded(false);
@@ -75,8 +74,7 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
         // Get the information about the volume from VDSM.
         GetImageInfoVDSCommandParameters imageInfoParameters = new GetImageInfoVDSCommandParameters(
                 storagePoolId, storageDomainId, diskId, volumeId);
-        VDSReturnValue imageInfoReturn = getBackend().getResourceManager().RunVdsCommand(
-                VDSCommandType.GetImageInfo, imageInfoParameters);
+        VDSReturnValue imageInfoReturn = runVdsCommand(VDSCommandType.GetImageInfo, imageInfoParameters);
 
         if (!imageInfoReturn.getSucceeded()) {
             getQueryReturnValue().setExceptionString(imageInfoReturn.getExceptionString());

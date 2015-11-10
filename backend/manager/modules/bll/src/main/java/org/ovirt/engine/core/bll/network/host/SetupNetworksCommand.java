@@ -10,7 +10,6 @@ import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
@@ -283,8 +282,6 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
     }
 
     private FutureVDSCall<VDSReturnValue> createFutureTask(final SetupNetworksVdsCommandParameters vdsCmdParams) {
-        return Backend.getInstance()
-                .getResourceManager()
-                .runFutureVdsCommand(FutureVDSCommandType.SetupNetworks, vdsCmdParams);
+        return getVdsBroker().runFutureVdsCommand(FutureVDSCommandType.SetupNetworks, vdsCmdParams);
     }
 }

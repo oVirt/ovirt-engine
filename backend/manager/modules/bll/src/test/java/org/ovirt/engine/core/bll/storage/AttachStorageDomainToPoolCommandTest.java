@@ -87,6 +87,7 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
         doReturn(vdsDao).when(cmd).getVdsDao();
         doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         doReturn(storageDomainStaticDao).when(cmd).getStorageDomainStaticDao();
+        doReturn(vdsBrokerFrontend).when(cmd).getVdsBroker();
 
         StoragePool pool = new StoragePool();
         pool.setId(poolId);
@@ -97,7 +98,6 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
         when(storageDomainStaticDao.get(any(Guid.class))).thenReturn(new StorageDomainStatic());
         doReturn(pool.getId()).when(cmd).getStoragePoolIdFromVds();
         doReturn(backendInternal).when(cmd).getBackend();
-        when(backendInternal.getResourceManager()).thenReturn(vdsBrokerFrontend);
         VdcReturnValueBase vdcReturnValue = new VdcReturnValueBase();
         vdcReturnValue.setSucceeded(true);
         when(backendInternal.runInternalAction(any(VdcActionType.class),

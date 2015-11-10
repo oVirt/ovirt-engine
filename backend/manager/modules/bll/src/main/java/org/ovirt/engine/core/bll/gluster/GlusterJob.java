@@ -55,11 +55,7 @@ public abstract class GlusterJob {
 
     @SuppressWarnings("unchecked")
     protected List<GlusterServerInfo> fetchServers(VDS upServer) {
-        VDSReturnValue result =
-                Backend.getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(VDSCommandType.GlusterServersList,
-                                new VdsIdVDSCommandParametersBase(upServer.getId()));
+        VDSReturnValue result = runVdsCommand(VDSCommandType.GlusterServersList, new VdsIdVDSCommandParametersBase(upServer.getId()));
 
         return result.getSucceeded() ? (List<GlusterServerInfo>) result.getReturnValue() : null;
     }

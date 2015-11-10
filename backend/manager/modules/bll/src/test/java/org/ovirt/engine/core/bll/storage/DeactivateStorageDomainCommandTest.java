@@ -97,13 +97,13 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
         doReturn(isoMapDao).when(cmd).getStoragePoolIsoMapDao();
         doReturn(vdsDao).when(cmd).getVdsDao();
         doReturn(asyncTaskDao).when(cmd).getAsyncTaskDao();
+        doReturn(vdsBrokerFrontend).when(cmd).getVdsBroker();
         when(storagePoolDao.get(any(Guid.class))).thenReturn(new StoragePool());
         when(isoMapDao.get(any(StoragePoolIsoMapId.class))).thenReturn(map);
         when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new StorageDomain());
 
         doReturn(backendInternal).when(cmd).getBackend();
         doReturn(Collections.<VDS>emptyList()).when(cmd).getAllRunningVdssInPool();
-        when(backendInternal.getResourceManager()).thenReturn(vdsBrokerFrontend);
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
         when(vdsBrokerFrontend.RunVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class)))

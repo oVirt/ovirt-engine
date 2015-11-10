@@ -63,6 +63,7 @@ import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.qualifiers.MomPolicyUpdate;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -118,6 +119,8 @@ public class VdsEventListener implements IVdsEventListener {
     private AuditLogDirector auditLogDirector;
     @Inject
     private GlusterBrickDao glusterBrickDao;
+    @Inject
+    private VDSBrokerFrontend vdsBroker;
 
     private static final Logger log = LoggerFactory.getLogger(VdsEventListener.class);
 
@@ -148,11 +151,10 @@ public class VdsEventListener implements IVdsEventListener {
                 StoragePool storage_pool = storagePoolDao.get(vds.getStoragePoolId());
                 if (StoragePoolStatus.Uninitialized != storage_pool
                         .getStatus()) {
-                    backend.getResourceManager()
-                            .RunVdsCommand(
-                                    VDSCommandType.DisconnectStoragePool,
-                                    new DisconnectStoragePoolVDSCommandParameters(vds.getId(),
-                                            vds.getStoragePoolId(), vds.getVdsSpmId()));
+                    vdsBroker.RunVdsCommand(
+                                VDSCommandType.DisconnectStoragePool,
+                                new DisconnectStoragePoolVDSCommandParameters(vds.getId(),
+                                        vds.getStoragePoolId(), vds.getVdsSpmId()));
                     HostStoragePoolParametersBase params =
                             new HostStoragePoolParametersBase(storage_pool, vds);
                     backend.runInternalAction(VdcActionType.DisconnectHostFromStoragePoolServers, params);
@@ -426,7 +428,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void processOnVmPoweringUp(Guid vmId) {
-        IVdsAsyncCommand command = backend.getResourceManager().GetAsyncCommandForVm(vmId);
+        IVdsAsyncCommand command = vdsBroker.GetAsyncCommandForVm(vmId);
 
         if (command != null) {
             command.onPowerringUp();
@@ -499,7 +501,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void rerun(Guid vmId) {
-        final IVdsAsyncCommand command = backend.getResourceManager().GetAsyncCommandForVm(vmId);
+        final IVdsAsyncCommand command = vdsBroker.GetAsyncCommandForVm(vmId);
         if (command != null) {
             // The command will be invoked in a different VDS in its rerun method, so we're calling
             // its rerun method from a new thread so that it won't be executed within our current VDSM lock
@@ -514,7 +516,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void runningSucceded(Guid vmId) {
-        IVdsAsyncCommand command = backend.getResourceManager().GetAsyncCommandForVm(vmId);
+        IVdsAsyncCommand command = vdsBroker.GetAsyncCommandForVm(vmId);
         if (command != null) {
             command.runningSucceded();
         }
@@ -522,7 +524,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void removeAsyncRunningCommand(Guid vmId) {
-        IVdsAsyncCommand command = backend.getResourceManager().RemoveAsyncRunningCommand(vmId);
+        IVdsAsyncCommand command = vdsBroker.RemoveAsyncRunningCommand(vmId);
         if (command != null) {
             command.reportCompleted();
         }

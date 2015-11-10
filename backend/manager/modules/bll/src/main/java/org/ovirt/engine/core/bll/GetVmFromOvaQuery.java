@@ -21,9 +21,7 @@ public class GetVmFromOvaQuery<T extends GetVmFromOvaQueryParameters> extends Qu
     }
 
     private Object getVmInfoFromOvaFile() {
-        return Backend.getInstance().getResourceManager().RunVdsCommand(
-                VDSCommandType.GetOvaInfo,
-                buildGetOvaInfoParameters()).getReturnValue();
+        return runVdsCommand(VDSCommandType.GetOvaInfo, buildGetOvaInfoParameters()).getReturnValue();
     }
 
     private GetOvaInfoParameters buildGetOvaInfoParameters() {

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -20,8 +19,8 @@ import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 
 @Logged(executionLevel = LogLevel.INFO)
-public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomainListParameters>
-        extends QueriesCommandBase<P> {
+public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomainListParameters> extends QueriesCommandBase<P> {
+
     public GetExistingStorageDomainListQuery(P parameters) {
         super(parameters);
     }
@@ -29,14 +28,12 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
     @Override
     protected void executeQueryCommand() {
         ArrayList<StorageDomain> returnValue = new ArrayList<>();
-        VDSReturnValue vdsReturnValue = Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(
-                        VDSCommandType.HSMGetStorageDomainsList,
-                        new HSMGetStorageDomainsListVDSCommandParameters(getParameters()
-                                .getId(), Guid.Empty, null, getParameters()
-                                .getStorageDomainType(), getParameters().getPath()));
+        VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.HSMGetStorageDomainsList,
+                new HSMGetStorageDomainsListVDSCommandParameters(getParameters().getId(),
+                        Guid.Empty,
+                        null,
+                        getParameters().getStorageDomainType(),
+                        getParameters().getPath()));
         if (vdsReturnValue.getSucceeded()) {
             ArrayList<Guid> guidsFromIrs = (ArrayList<Guid>) vdsReturnValue.getReturnValue();
             HashSet<Guid> guidsFromDb = new HashSet<>();
@@ -48,13 +45,10 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
                 for (Guid domainId : guidsFromIrs) {
                     if (!guidsFromDb.contains(domainId)) {
                         Pair<StorageDomainStatic, Guid> domainFromIrs =
-                                (Pair<StorageDomainStatic, Guid>) Backend
-                                        .getInstance()
-                                        .getResourceManager()
-                                        .RunVdsCommand(
-                                                VDSCommandType.HSMGetStorageDomainInfo,
-                                                new HSMGetStorageDomainInfoVDSCommandParameters(
-                                                        getParameters().getId(), domainId))
+                                (Pair<StorageDomainStatic, Guid>) runVdsCommand(
+                                        VDSCommandType.HSMGetStorageDomainInfo,
+                                        new HSMGetStorageDomainInfoVDSCommandParameters(
+                                                getParameters().getId(), domainId))
                                         .getReturnValue();
                         StorageDomain domain = new StorageDomain();
                         domain.setStorageStaticData(domainFromIrs.getFirst());

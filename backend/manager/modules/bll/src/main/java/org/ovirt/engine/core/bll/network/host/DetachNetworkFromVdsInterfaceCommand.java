@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
@@ -66,11 +65,8 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
         VDSReturnValue retVal = runVdsCommand(VDSCommandType.RemoveNetwork, parameters);
         if (retVal.getSucceeded()) {
             // update vds network data
-            retVal = Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
-                            new CollectHostNetworkDataVdsCommandParameters(getVds()));
+            retVal = runVdsCommand(VDSCommandType.CollectVdsNetworkData,
+                    new CollectHostNetworkDataVdsCommandParameters(getVds()));
 
             if (retVal.getSucceeded()) {
                 setSucceeded(true);

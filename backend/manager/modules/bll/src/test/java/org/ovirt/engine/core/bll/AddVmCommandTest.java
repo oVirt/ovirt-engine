@@ -483,7 +483,6 @@ public class AddVmCommandTest extends BaseCommandTest {
     }
 
     private void mockBackend(AddVmCommand<?> cmd) {
-        when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
         doReturn(backend).when(cmd).getBackend();
     }
 

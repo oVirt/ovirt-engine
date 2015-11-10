@@ -125,7 +125,6 @@ public class RunVmCommandTest extends BaseCommandTest {
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
         vdsReturnValue.setReturnValue(true);
         when(vdsBrokerFrontend.RunVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class))).thenReturn(vdsReturnValue);
-        when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
 
         // Set Valid Iso Prefix
         setIsoPrefixVDSMethod(ACTIVE_ISO_PREFIX);
@@ -140,7 +139,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     private void setCreateVmVDSMethod() {
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setReturnValue(VMStatus.Up);
-        when(backend.getResourceManager().RunAsyncVdsCommand(eq(VDSCommandType.CreateVm),
+        when(vdsBrokerFrontend.RunAsyncVdsCommand(eq(VDSCommandType.CreateVm),
                 any(VdsAndVmIDVDSParametersBase.class),
                 any(IVdsAsyncCommand.class))).thenReturn(returnValue);
     }
@@ -325,6 +324,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         doReturn(vmDao).when(command).getVmDao();
         when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
         doReturn(new VDSGroup()).when(command).getVdsGroup();
+        doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
         // Avoid referencing the unmockable static VmHandler.updateCurrentCd
         doNothing().when(command).updateCurrentCd(any(String.class));
         return vm;

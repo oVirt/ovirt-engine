@@ -29,8 +29,7 @@ public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProvide
 
     private Object getVmsFromExternalProvider() {
         try {
-            return Backend.getInstance().getResourceManager().RunVdsCommand(
-                    VDSCommandType.GetVmsFromExternalProvider,
+            return runVdsCommand(VDSCommandType.GetVmsFromExternalProvider,
                     buildGetRemoteVmsInfoParameters()).getReturnValue();
         } catch (RuntimeException e) {
             if (!(e instanceof IllegalArgumentException)) {

@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -71,13 +70,10 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
     }
 
     private String createVG() {
-        VDSReturnValue returnValue = Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(
-                        VDSCommandType.CreateVG,
-                        new CreateVGVDSCommandParameters(getVds().getId(), getStorageDomain().getId(),
-                                getParameters().getLunIds(), getParameters().isForce()));
+        VDSReturnValue returnValue = runVdsCommand(
+                VDSCommandType.CreateVG,
+                new CreateVGVDSCommandParameters(getVds().getId(), getStorageDomain().getId(),
+                        getParameters().getLunIds(), getParameters().isForce()));
         String volumeGroupId = (String) ((returnValue.getReturnValue() instanceof String) ? returnValue
                 .getReturnValue() : null);
         return volumeGroupId;

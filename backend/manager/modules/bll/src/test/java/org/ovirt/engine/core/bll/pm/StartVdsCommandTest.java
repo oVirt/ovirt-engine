@@ -139,7 +139,6 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     }
 
     private void mockBackend() {
-        when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
         doReturn(backend).when(command).getBackend();
     }
 
@@ -150,6 +149,7 @@ public class StartVdsCommandTest extends DbDependentTestBase {
         command.setAuditLogDirector(auditLogDirector);
         command = spy(command);
         doReturn(executor).when(command).createHostFenceActionExecutor(any(VDS.class), any(FencingPolicy.class));
+        doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
         command.setVdsGroupId(FENCECD_HOST_CLUSTER_ID);
     }
 

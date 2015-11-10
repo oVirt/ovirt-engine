@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -56,8 +55,7 @@ public abstract class GetAllFromExportDomainQuery <T, P extends GetAllFromExport
 
     private VDSReturnValue executeVerb(StorageDomainStatic storage) {
         try {
-            return Backend.getInstance().getResourceManager()
-                    .RunVdsCommand(VDSCommandType.GetVmsInfo, buildGetVmsInfoParameters(storage));
+            return runVdsCommand(VDSCommandType.GetVmsInfo, buildGetVmsInfoParameters(storage));
         } catch (RuntimeException e) {
             AuditLogableBase logable = new AuditLogableBase();
             logable.addCustomValue("StorageDomainName", storage.getStorageName());

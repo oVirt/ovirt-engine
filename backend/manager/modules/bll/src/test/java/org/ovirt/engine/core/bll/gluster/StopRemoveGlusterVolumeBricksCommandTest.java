@@ -66,6 +66,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
         doReturn(null).when(volumeDao).getById(null);
         doReturn(SUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
         doReturn(vdsGroup).when(command).getVdsGroup();
+        doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
     }
 
     private Object getVolumeWithRemoveBricksTaskCompleted(Guid volumeId) {
@@ -86,7 +87,6 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
 
     private void mockBackend(boolean succeeded, EngineError errorCode) {
         doReturn(backend).when(cmd).getBackend();
-        when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
         doNothing().when(cmd).endStepJobAborted(any(String.class));
         doNothing().when(cmd).releaseVolumeLock();
 

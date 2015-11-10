@@ -134,6 +134,11 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         log.info("Completed initializing handlers");
     }
 
+    /**
+     * TODO remove this after moving all places to use CDI.
+     * kept for backward compatibility.
+     */
+    @Deprecated
     @Override
     @ExcludeClassInterceptors
     public VDSBrokerFrontend getResourceManager() {

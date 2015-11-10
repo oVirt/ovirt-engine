@@ -143,7 +143,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     protected void runningFailed() {
         try {
             decreasePendingVm();
-            Backend.getInstance().getResourceManager().RemoveAsyncRunningCommand(getVmId());
+            getVdsBroker().RemoveAsyncRunningCommand(getVmId());
             setCommandShouldBeLogged(false);
             _isRerun = false;
             setSucceeded(false);
@@ -205,8 +205,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                 public void run() {
                     for (Guid vdsId : getRunVdssList()) {
                         if (!vdsId.equals(getCurrentVdsId())) {
-                            Backend.getInstance().getResourceManager()
-                                    .RunVdsCommand(VDSCommandType.FailedToRunVm, new FailedToRunVmVDSCommandParameters(vdsId));
+                            runVdsCommand(VDSCommandType.FailedToRunVm, new FailedToRunVmVDSCommandParameters(vdsId));
                         }
                     }
                 }

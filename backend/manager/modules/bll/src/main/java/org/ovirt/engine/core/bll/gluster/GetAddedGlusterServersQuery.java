@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
-import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.ServerParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -29,6 +28,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
  * Query to get Added Gluster Servers with/without server ssh key fingerprint
  */
 public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters> extends QueriesCommandBase<P> {
+
     public GetAddedGlusterServersQuery(P params) {
         super(params);
     }
@@ -40,8 +40,8 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
         VDS upServer = getClusterUtils().getUpServer(getParameters().getClusterId());
 
         if(upServer != null ) {
-            VDSReturnValue returnValue = getResourceManager().RunVdsCommand(VDSCommandType.GlusterServersList,
-                            new VdsIdVDSCommandParametersBase(upServer.getId()));
+            VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GlusterServersList,
+                    new VdsIdVDSCommandParametersBase(upServer.getId()));
             glusterServers = getAddedGlusterServers((List<GlusterServerInfo>) returnValue.getReturnValue());
         }
 
@@ -84,12 +84,6 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
 
     public ClusterUtils getClusterUtils() {
         return ClusterUtils.getInstance();
-    }
-
-
-    public VDSBrokerFrontend getResourceManager() {
-        return Backend.getInstance()
-                .getResourceManager();
     }
 
     public VdsGroupDao getVdsGroupDao() {

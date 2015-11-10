@@ -116,7 +116,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         doReturn(vdsGroup).when(vdsGroupDao).get(Mockito.any(Guid.class));
         doReturn(clusterUtils).when(command).getClusterUtils();
         doReturn(backend).when(command).getBackend();
-        doReturn(vdsBrokerFrontend).when(backend).getResourceManager();
+        doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
         doReturn(vdsStaticDao).when(command).getVdsStaticDao();
         doReturn(vdsStatisticsDao).when(command).getVdsStatisticsDao();
         when(clusterUtils.getUpServer(clusterId)).thenReturn(getVds(VDSStatus.Up));

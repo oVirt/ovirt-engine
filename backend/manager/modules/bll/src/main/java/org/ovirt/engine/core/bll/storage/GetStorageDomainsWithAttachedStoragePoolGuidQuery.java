@@ -13,13 +13,10 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -133,15 +130,6 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Storage
             }
         }
         return storageDomainsWithAttachedStoragePoolId;
-    }
-
-    protected VDSBrokerFrontend getVdsBroker() {
-        return getBackend().getResourceManager();
-    }
-
-    protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters)
-            throws EngineException {
-        return getVdsBroker().RunVdsCommand(commandType, parameters);
     }
 
     protected boolean connectStorageDomain(StorageDomain storageDomain) {

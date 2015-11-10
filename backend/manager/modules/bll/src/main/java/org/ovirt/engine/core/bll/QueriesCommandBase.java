@@ -13,9 +13,13 @@ import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcCommandBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -43,9 +47,11 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     @Inject
     protected AuditLogDirector auditLogDirector;
 
-
     @Inject
     private SessionDataContainer sessionDataContainer;
+
+    @Inject
+    private VDSBrokerFrontend vdsBroker;
 
     public QueriesCommandBase(P parameters) {
         this(parameters, null);
@@ -239,4 +245,12 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         return getBackend().runInternalQuery(actionType, parameters, getEngineContext());
     }
 
+    public VDSBrokerFrontend getVdsBroker() {
+        return vdsBroker;
+    }
+
+    protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters)
+            throws EngineException {
+        return getVdsBroker().RunVdsCommand(commandType, parameters);
+    }
 }

@@ -5,13 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -30,15 +28,13 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
                 vds.getVdsGroupCompatibilityVersion().getValue());
 
         // Get Device List
-        VDSBrokerFrontend vdsBrokerFrontend = getVdsBroker();
         GetDeviceListVDSCommandParameters parameters =
                 new GetDeviceListVDSCommandParameters(
                         getParameters().getId(),
                         getParameters().getStorageType(),
                         getParameters().isCheckStatus(),
                         getParameters().getLunIds());
-        List<LUNs> luns = (List<LUNs>) vdsBrokerFrontend.RunVdsCommand(
-                VDSCommandType.GetDeviceList, parameters).getReturnValue();
+        List<LUNs> luns = (List<LUNs>) runVdsCommand(VDSCommandType.GetDeviceList, parameters).getReturnValue();
 
         // Get LUNs from DB
         List<LUNs> lunsFromDb = getDbFacade().getLunDao().getAll();
@@ -75,9 +71,5 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
         }
 
         getQueryReturnValue().setReturnValue(returnValue);
-    }
-
-    protected VDSBrokerFrontend getVdsBroker() {
-        return Backend.getInstance().getResourceManager();
     }
 }
