@@ -1,5 +1,7 @@
 package org.ovirt.engine.extensions.aaa.builtin.tools;
 
+import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ARG_DOMAIN;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,7 +73,7 @@ public class ManageDomainsExecutor {
             }
             parser.parse(cmdArgs);
             argMap = parser.getParsedArgs();
-            ManageDomains util = new ManageDomains(action, argMap);
+            ManageDomains util = new ManageDomains(action, convertArgs(argMap));
             if(!util.isValidAction()) {
                 throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ACTION, action);
             }
@@ -102,6 +104,19 @@ public class ManageDomainsExecutor {
             logger.debug(t.getMessage(), t);
             System.exit(1);
         }
+    }
+
+    private static Map<String, Object> convertArgs(Map<String, Object> args) {
+        Map<String, Object> newArgs = new HashMap<>();
+        newArgs.putAll(args);
+
+        String domain = (String) args.get(ARG_DOMAIN);
+        if (StringUtils.isNotEmpty(domain)) {
+            // manage domains requires domain in lowercase
+            newArgs.put(ARG_DOMAIN, domain.toLowerCase());
+        }
+
+        return newArgs;
     }
 
     private static void setupLogger() {
