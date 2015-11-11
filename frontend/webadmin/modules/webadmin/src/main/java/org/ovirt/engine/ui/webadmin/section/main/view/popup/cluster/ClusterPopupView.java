@@ -55,8 +55,10 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.Cluster
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.text.client.NumberFormatRenderer;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -630,7 +632,12 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         hostsWithBrokenConnectivityThresholdEditor = new ListModelListBoxEditor<Integer>(new NullSafeRenderer<Integer>() {
             @Override
             public String renderNullSafe(Integer object) {
-                return object.toString() + "%"; //$NON-NLS-1$
+                if (object == null) {
+                    return "";
+                }
+                NumberFormatRenderer renderer = new NumberFormatRenderer(NumberFormat.getPercentFormat());
+                //Since this is a percentage renderer, you need to divide by 100 to get the right values to show.
+                return renderer.render(object.doubleValue() / 100);
             }
         });
 
