@@ -145,9 +145,7 @@ public class VdsEventListener implements IVdsEventListener {
                 LockManagerFactory.getLockManager().acquireLockWait(lock);
                 clearDomainCache(vds);
                 stopGlusterServices(vds);
-                StoragePool storage_pool = DbFacade.getInstance()
-                        .getStoragePoolDao()
-                        .get(vds.getStoragePoolId());
+                StoragePool storage_pool = storagePoolDao.get(vds.getStoragePoolId());
                 if (StoragePoolStatus.Uninitialized != storage_pool
                         .getStatus()) {
                     backend.getResourceManager()
