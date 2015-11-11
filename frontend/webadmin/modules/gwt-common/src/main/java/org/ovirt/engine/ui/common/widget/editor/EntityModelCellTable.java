@@ -58,20 +58,28 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         CellTableValidation cellTableValidation();
     }
 
-    public static enum SelectionMode {
+    public enum SelectionMode {
         NONE,
         SINGLE,
         MULTIPLE
     }
 
     private static final CellTableResources cellTableResources = GWT.create(CellTableResources.class);
+
     private static final int DEFAULT_PAGESIZE = 1000;
     private static final int CHECK_COLUMN_WIDTH = 27;
+
+    /**
+     * Index of selection (check box) column, if {@linkplain #isSelectionColumnPresent present}.
+     */
+    public static final int SELECTION_COLUMN_INDEX = 0;
 
     private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private final CellTableValidation style;
     private final HasDataListModelEditorAdapter<M, EntityModel> editorAdapter;
+
+    private boolean selectionColumnPresent = false;
 
     /**
      * Create a new {@link EntityModelCellTable} with single selection mode.
@@ -259,10 +267,10 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
     }
 
     private void addCheckBoxColumn(boolean hideCheckbox, boolean showSelectAllCheckbox) {
-
         if (!hideCheckbox) {
             // Add selection column
             Column<EntityModel, Boolean> checkColumn = null;
+
             if (getSelectionModel() instanceof SingleSelectionModel) {
                 checkColumn = new Column<EntityModel, Boolean>(
                         new RadioboxCell(true, false)) {
@@ -306,6 +314,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
 
             if (checkColumn != null) {
                 setColumnWidth(checkColumn, CHECK_COLUMN_WIDTH, Unit.PX);
+                selectionColumnPresent = true;
             }
 
             addCellPreviewHandler(new CellPreviewEvent.Handler<EntityModel>() {
@@ -330,6 +339,10 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                 }
             });
         }
+    }
+
+    public boolean isSelectionColumnPresent() {
+        return selectionColumnPresent;
     }
 
     M getListModel() {
@@ -432,4 +445,5 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
     public void setLoadingState(LoadingState state) {
         super.onLoadingStateChanged(state);
     }
+
 }

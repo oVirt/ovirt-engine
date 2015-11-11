@@ -145,16 +145,27 @@ public abstract class SplitTable<M extends ListModel<T>, T> extends Composite {
             @Override
             public void onCellPreview(CellPreviewEvent<EntityModel> event) {
                 T clickedItem = (T) event.getDisplay().getVisibleItem(event.getIndex());
-                includeItems(Collections.singletonList(clickedItem), false);
+
+                if (canMoveItemOnDoubleClick(excludedTable, event.getColumn())) {
+                    includeItems(Collections.singletonList(clickedItem), false);
+                }
             }
         });
         includedTable.addSimulatedDoubleClickHandler(new CellPreviewEvent.Handler<EntityModel>() {
             @Override
             public void onCellPreview(CellPreviewEvent<EntityModel> event) {
                 T clickedItem = (T) event.getDisplay().getVisibleItem(event.getIndex());
-                excludeItems(Collections.singletonList(clickedItem), false);
+
+                if (canMoveItemOnDoubleClick(includedTable, event.getColumn())) {
+                    excludeItems(Collections.singletonList(clickedItem), false);
+                }
             }
         });
+    }
+
+    private boolean canMoveItemOnDoubleClick(EntityModelCellTable<M> table, int columnIndex) {
+        // Ignore double-click events on selection column
+        return !(table.isSelectionColumnPresent() && columnIndex == EntityModelCellTable.SELECTION_COLUMN_INDEX);
     }
 
     private void includeItems(Collection<T> itemsToInclude, boolean clearSelectionModels) {
