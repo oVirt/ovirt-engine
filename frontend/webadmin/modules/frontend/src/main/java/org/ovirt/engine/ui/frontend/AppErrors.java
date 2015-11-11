@@ -1675,6 +1675,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot import Storage Domain. Internal Error: The connection data is illegal.")
     String ERROR_CANNOT_ADD_EXISTING_STORAGE_DOMAIN_CONNECTION_DATA_ILLEGAL();
 
+    @DefaultStringValue("MAC Address is already in use")
+    String NETWORK_MAC_ADDRESS_IN_USE();
+
     @DefaultStringValue("Cannot get Storage Domains list.")
     String ERROR_GET_STORAGE_DOMAIN_LIST();
 
