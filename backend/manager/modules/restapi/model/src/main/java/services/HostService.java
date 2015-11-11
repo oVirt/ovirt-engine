@@ -20,7 +20,15 @@ import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import services.externalhostproviders.KatelloErrataService;
+import types.Cluster;
 import types.Host;
+import types.HostNic;
+import types.IscsiDetails;
+import types.Label;
+import types.NetworkAttachment;
+import types.PowerManagement;
+import types.Ssh;
+import types.StorageDomain;
 
 @Service
 public interface HostService extends MeasurableService {
@@ -28,18 +36,22 @@ public interface HostService extends MeasurableService {
     }
 
     interface Approve {
+        @In Cluster cluster();
     }
 
     interface CommitNetConfig {
     }
 
     interface Deactivate {
+        @In String reason();
     }
 
     interface EnrollCertificate {
     }
 
     interface Fence {
+        @In String fenceType();
+        @Out PowerManagement powerManagement();
     }
 
     interface ForceSelectSpm {
@@ -50,15 +62,40 @@ public interface HostService extends MeasurableService {
     }
 
     interface Install {
+        /**
+         * The password of of the `root` user, used to connect to the host via SSH.
+         */
+        @In String rootPassword();
+
+        /**
+         * The SSH details used to connect to the host.
+         */
+        @In Ssh ssh();
+
+        /**
+         * This `override_iptables` property is used to indicate if the firewall configuration should be
+         * replaced by the default one.
+         */
+        @In Host host();
+
+        /**
+         * When installing an oVirt node a image ISO file is needed.
+         */
+        @In String image();
     }
 
     interface IscsiDiscover {
+        @In IscsiDetails iscsi();
+        @Out String[] iscsiTargets();
     }
 
     interface IscsiLogin {
+        @In IscsiDetails iscsi();
     }
 
     interface UnregisteredStorageDomainsDiscover {
+        @In IscsiDetails iscsi();
+        @Out StorageDomain[] storageDomains();
     }
 
     interface Update {
@@ -75,6 +112,15 @@ public interface HostService extends MeasurableService {
     }
 
     interface SetupNetworks {
+        @In NetworkAttachment[] modifiedNetworkAttachments();
+        @In NetworkAttachment[] removedNetworkAttachments();
+        @In NetworkAttachment[] synchronizedNetworkAttachments();
+        @In HostNic[] modifiedBonds();
+        @In HostNic[] removedBonds();
+        @In Label[] modifiedLabels();
+        @In Label[] removedLabels();
+        @In Boolean checkConnectivity();
+        @In Integer connectivityTimeout();
     }
 
     @Service AssignedPermissionsService permissions();

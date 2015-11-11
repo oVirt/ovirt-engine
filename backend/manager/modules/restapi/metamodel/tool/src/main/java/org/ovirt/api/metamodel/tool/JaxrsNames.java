@@ -22,7 +22,6 @@ import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.ovirt.api.metamodel.concepts.Method;
 import org.ovirt.api.metamodel.concepts.Name;
 import org.ovirt.api.metamodel.concepts.Service;
 
@@ -67,6 +66,22 @@ public class JaxrsNames {
             result = "do" + words.capitalize(result);
         }
         return result;
+    }
+
+    /**
+     * Checks if the given name corresponds to an action method.
+     */
+    public boolean isActionName(Name name) {
+        switch (name.toString()) {
+        case "add":
+        case "get":
+        case "list":
+        case "remove":
+        case "update":
+            return false;
+        default:
+            return true;
+        }
     }
 
     /**

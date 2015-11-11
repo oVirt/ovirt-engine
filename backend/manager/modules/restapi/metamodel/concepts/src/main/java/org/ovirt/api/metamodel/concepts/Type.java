@@ -16,7 +16,7 @@ limitations under the License.
 
 package org.ovirt.api.metamodel.concepts;
 
-public class Type extends Concept {
+public abstract class Type extends Concept {
     private Module module;
 
     public Module getModule() {

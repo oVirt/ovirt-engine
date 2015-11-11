@@ -17,10 +17,32 @@ limitations under the License.
 package org.ovirt.api.metamodel.concepts;
 
 public class Parameter extends Concept {
+    // The method that declared this parameter:
+    private Method declaringMethod;
+
+    // The direction of this parameter:
     private boolean in = false;
     private boolean out = false;
+
+    // The type of this parameter:
     private Type type;
+
+    // The default value of this parameter:
     private Expression defaultValue;
+
+    /**
+     * Returns the method where this parameter is declared.
+     */
+    public Method getDeclaringMethod() {
+        return declaringMethod;
+    }
+
+    /**
+     * Sets the method that declared this parameter.
+     */
+    public void setDeclaringMethod(Method newDeclaringMethod) {
+        declaringMethod = newDeclaringMethod;
+    }
 
     public boolean isIn() {
         return in;
@@ -52,6 +74,17 @@ public class Parameter extends Concept {
 
     public void setDefaultValue(Expression value) {
         this.defaultValue = value;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder buffer = new StringBuilder();
+        if (declaringMethod != null) {
+            buffer.append(declaringMethod);
+            buffer.append(":");
+        }
+        buffer.append(getName());
+        return buffer.toString();
     }
 }
 

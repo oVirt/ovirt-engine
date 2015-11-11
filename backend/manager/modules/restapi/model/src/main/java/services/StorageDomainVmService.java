@@ -16,8 +16,11 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
+import types.Cluster;
+import types.StorageDomain;
 import types.Vm;
 
 @Service
@@ -27,9 +30,16 @@ public interface StorageDomainVmService {
     }
 
     interface Import {
+        @In Boolean clone();
+        @In Cluster cluster();
+        @In StorageDomain storageDomain();
+        @In Vm vm();
     }
 
     interface Register {
+        @In Boolean clone();
+        @In Cluster cluster();
+        @In Vm vm();
     }
 
     interface Remove {

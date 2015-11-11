@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -50,9 +51,12 @@ import org.ovirt.api.metamodel.concepts.EnumType;
 import org.ovirt.api.metamodel.concepts.EnumValue;
 import org.ovirt.api.metamodel.concepts.Link;
 import org.ovirt.api.metamodel.concepts.ListType;
+import org.ovirt.api.metamodel.concepts.Method;
 import org.ovirt.api.metamodel.concepts.Model;
 import org.ovirt.api.metamodel.concepts.Name;
 import org.ovirt.api.metamodel.concepts.NameParser;
+import org.ovirt.api.metamodel.concepts.Parameter;
+import org.ovirt.api.metamodel.concepts.Service;
 import org.ovirt.api.metamodel.concepts.StructType;
 import org.ovirt.api.metamodel.concepts.Type;
 import org.w3c.dom.Document;
@@ -77,6 +81,9 @@ public class SchemaGenerator {
     // Reference to the object used to calculate XML schema names:
     @Inject private Names names;
     @Inject private SchemaNames schemaNames;
+
+    // Reference to the object used to calculate JAX-RS names:
+    @Inject private JaxrsNames jaxrsNames;
 
     // The type of the model used to represent types that have an identifier, thus they need to extends
     // the "BaseResource" complex type:
@@ -272,6 +279,9 @@ public class SchemaGenerator {
         // Header:
         writer.writeStartElement(XS_URI, "schema");
         writer.writeAttribute("version", "1.0");
+
+        // Generate the action types:
+        writeActionTypes(writer);
 
         // Find the struct and enum types:
         List<StructType> structTypes = new ArrayList<>();
@@ -538,6 +548,228 @@ public class SchemaGenerator {
         writer.writeEndElement();
         writer.writeEndElement();
         writeLine(writer);
+    }
+
+    private void writeActionTypes(XMLStreamWriter writer) throws XMLStreamException {
+        // Write the "GracePeriod" complex type:
+        writer.writeStartElement(XS_URI, "complexType");
+        writer.writeAttribute("name", "GracePeriod");
+        writer.writeStartElement(XS_URI, "sequence");
+        writer.writeStartElement(XS_URI, "element");
+        writer.writeAttribute("name", "expiry");
+        writer.writeAttribute("type", "xs:long");
+        writer.writeEndElement();
+        writer.writeEndElement();
+        writer.writeEndElement();
+        writeLine(writer);
+
+        // Write the "Action" element:
+        writer.writeStartElement(XS_URI, "element");
+        writer.writeAttribute("name", "action");
+        writer.writeAttribute("type", "Action");
+        writer.writeEndElement();
+        writeLine(writer);
+
+        // Write the "Action" complex type:
+        writer.writeStartElement(XS_URI, "complexType");
+        writer.writeAttribute("name", "Action");
+        writer.writeStartElement(XS_URI, "complexContent");
+        writer.writeStartElement(XS_URI, "extension");
+        writer.writeAttribute("base", "BaseResource");
+        writer.writeStartElement(XS_URI, "sequence");
+        writer.writeStartElement(XS_URI, "element");
+        writer.writeAttribute("name", "async");
+        writer.writeAttribute("type", "xs:boolean");
+        writer.writeAttribute("minOccurs", "0");
+        writer.writeAttribute("maxOccurs", "1");
+        writer.writeEndElement();
+        writer.writeStartElement(XS_URI, "group");
+        writer.writeAttribute("ref", "ActionParameterGroup");
+        writer.writeEndElement();
+        writer.writeStartElement(XS_URI, "element");
+        writer.writeAttribute("ref", "status");
+        writer.writeAttribute("minOccurs", "0");
+        writer.writeAttribute("maxOccurs", "1");
+        writer.writeEndElement();
+        writer.writeStartElement(XS_URI, "element");
+        writer.writeAttribute("ref", "fault");
+        writer.writeAttribute("minOccurs", "0");
+        writer.writeAttribute("maxOccurs", "1");
+        writer.writeEndElement();
+        writer.writeStartElement(XS_URI, "group");
+        writer.writeAttribute("ref", "ActionResponseGroup");
+        writer.writeEndElement();
+        writer.writeEndElement();
+        writer.writeEndElement();
+        writer.writeEndElement();
+        writer.writeEndElement();
+        writeLine(writer);
+
+        // Write the "Actions" complex type:
+        writer.writeStartElement(XS_URI, "complexType");
+        writer.writeAttribute("name", "Actions");
+        writer.writeStartElement(XS_URI, "sequence");
+        writer.writeStartElement(XS_URI, "element");
+        writer.writeAttribute("ref", "link");
+        writer.writeAttribute("minOccurs", "0");
+        writer.writeAttribute("maxOccurs", "unbounded");
+        writeJaxbCustomization(writer, "property", "name", "Links");
+        writer.writeEndElement();
+        writer.writeEndElement();
+        writer.writeEndElement();
+        writeLine(writer);
+
+        // Write the parameter groups:
+        writeActionParameterGroup(writer);
+        writeActionResponseGroup(writer);
+    }
+
+    /**
+     * The XML schema {@code ActionParameterGroup} group contains the parameters used by all the action methods.
+     */
+    private void writeActionParameterGroup(XMLStreamWriter writer) throws XMLStreamException {
+        // Find the distinct input parameters of all the action methods, and check that there aren't two parameters
+        // with the same name but different types:
+        Map<Name, Parameter> parameters = new HashMap<>();
+        for (Service service : model.getServices()) {
+            for (Method method : service.getMethods()) {
+                if (jaxrsNames.isActionName(method.getName())) {
+                    for (Parameter parameter : method.getParameters()) {
+                        if (parameter.isIn()) {
+                            Name name = parameter.getName();
+                            Parameter existing = parameters.get(name);
+                            if (existing != null) {
+                                if (!Objects.equals(parameter.getType(), existing.getType())) {
+                                    reportIncompatibleParameterTypes(parameter, existing);
+                                }
+                            }
+                            else {
+                                parameters.put(parameter.getName(), parameter);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Generate the group containing all the input parameters:
+        writer.writeStartElement(XS_URI, "group");
+        writer.writeAttribute("name", "ActionParameterGroup");
+        writer.writeStartElement(XS_URI, "sequence");
+        List<Parameter> list = new ArrayList<>(parameters.values());
+        list.sort(comparing(Parameter::getName));
+        for (Parameter parameter : list) {
+            writeActionParameter(writer, parameter);
+        }
+        writer.writeStartElement(XS_URI, "element");
+        writer.writeAttribute("name", "grace_period");
+        writer.writeAttribute("type", "GracePeriod");
+        writer.writeAttribute("minOccurs", "0");
+        writer.writeAttribute("maxOccurs", "1");
+        writer.writeEndElement();
+        writer.writeStartElement(XS_URI, "element");
+        writer.writeAttribute("name", "job");
+        writer.writeAttribute("type", "Job");
+        writer.writeAttribute("minOccurs", "0");
+        writer.writeAttribute("maxOccurs", "1");
+        writer.writeEndElement();
+        writer.writeEndElement();
+        writer.writeEndElement();
+        writeLine(writer);
+    }
+
+    /**
+     * The XML schema {@code ActionResponseGroup} group contains the parameters used by all the action methods.
+     */
+    private void writeActionResponseGroup(XMLStreamWriter writer) throws XMLStreamException {
+        // Find the distinct output parameters of all the action methods, excluding those that are also input
+        // parameters, and check that there aren't two parameters with the same name but different types:
+        Map<Name, Parameter> parameters = new HashMap<>();
+        for (Service service : model.getServices()) {
+            for (Method method : service.getMethods()) {
+                if (jaxrsNames.isActionName(method.getName())) {
+                    for (Parameter parameter : method.getParameters()) {
+                        if (parameter.isOut() && !parameter.isIn()) {
+                            Name name = parameter.getName();
+                            Parameter existing = parameters.get(name);
+                            if (existing != null) {
+                                if (!Objects.equals(parameter.getType(), existing.getType())) {
+                                    reportIncompatibleParameterTypes(parameter, existing);
+                                }
+                            }
+                            else {
+                                parameters.put(parameter.getName(), parameter);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Generate the group containing all the output parameters:
+        writer.writeStartElement(XS_URI, "group");
+        writer.writeAttribute("name", "ActionResponseGroup");
+        writer.writeStartElement(XS_URI, "sequence");
+        List<Parameter> list = new ArrayList<>(parameters.values());
+        list.sort(comparing(Parameter::getName));
+        for (Parameter parameter : list) {
+            writeActionParameter(writer, parameter);
+        }
+        writer.writeEndElement();
+        writer.writeEndElement();
+        writeLine(writer);
+    }
+
+    private void writeActionParameter(XMLStreamWriter writer, Parameter parameter) throws XMLStreamException {
+        Name name = parameter.getName();
+        Type type = parameter.getType();
+        writer.writeStartElement(XS_URI, "element");
+        writer.writeAttribute("name", schemaNames.getSchemaTagName(name));
+        writer.writeAttribute("minOccurs", "0");
+        writer.writeAttribute("maxOccurs", "1");
+        if (type instanceof ListType) {
+            ListType listType = (ListType) type;
+            Type elementType = listType.getElementType();
+            String elementTypeName = getSchemaTypeName(elementType);
+            if (elementTypeName.startsWith("xs:")) {
+                writer.writeStartElement(XS_URI, "complexType");
+                writeJaxbClass(writer, schemaNames.getSchemaTypeName(name) + "List");
+                writer.writeStartElement(XS_URI, "sequence");
+                writer.writeStartElement(XS_URI, "element");
+                writer.writeAttribute("name", schemaNames.getSchemaTagName(names.getSingular(name)));
+                writer.writeAttribute("type", elementTypeName);
+                writer.writeAttribute("minOccurs", "0");
+                writer.writeAttribute("maxOccurs", "unbounded");
+                writeJaxbProperty(writer, schemaNames.getSchemaTypeName(name));
+                writer.writeEndElement();
+                writer.writeEndElement();
+                writer.writeEndElement();
+            }
+            else {
+                writer.writeAttribute("name", schemaNames.getSchemaTagName(name));
+                writer.writeAttribute("type", schemaNames.getSchemaTypeName(names.getPlural(elementType.getName())));
+                writer.writeAttribute("minOccurs", "0");
+                writer.writeAttribute("maxOccurs", "1");
+            }
+        }
+        else {
+            writer.writeAttribute("name", schemaNames.getSchemaTagName(name));
+            writer.writeAttribute("type", getSchemaTypeName(type));
+            writer.writeAttribute("minOccurs", "0");
+            writer.writeAttribute("maxOccurs", "1");
+        }
+        writer.writeEndElement();
+    }
+
+    private void reportIncompatibleParameterTypes(Parameter offending, Parameter existing) {
+        String message = String.format(
+            "The type \"%s\" of parameter \"%s\" isn't compatible with the type \"%s\" of existing parameter \"%s\"",
+            offending.getType(),
+            offending,
+            existing.getType(),
+            existing
+        );
+        throw new IllegalArgumentException(message);
     }
 
     private void writeJaxbClass(XMLStreamWriter writer, String value) throws XMLStreamException {

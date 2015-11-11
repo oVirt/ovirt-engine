@@ -16,6 +16,7 @@ limitations under the License.
 
 package services.gluster;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import services.MeasurableService;
@@ -38,5 +39,6 @@ public interface GlusterBrickService extends MeasurableService {
      */
     @Deprecated
     interface Replace {
+        @In Boolean force();
     }
 }

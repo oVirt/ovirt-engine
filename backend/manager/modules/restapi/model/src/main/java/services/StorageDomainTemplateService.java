@@ -19,8 +19,10 @@ package services;
 import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
-import types.Bookmark;
+import types.Cluster;
+import types.StorageDomain;
 import types.Template;
+import types.Vm;
 
 @Service
 public interface StorageDomainTemplateService {
@@ -29,9 +31,19 @@ public interface StorageDomainTemplateService {
     }
 
     interface Import {
+        @In Boolean clone();
+        @In Cluster cluster();
+        @In Boolean exclusive();
+        @In StorageDomain storageDomain();
+        @In Template template();
+        @In Vm vm();
     }
 
     interface Register {
+        @In Boolean clone();
+        @In Cluster cluster();
+        @In Boolean exclusive();
+        @In Template template();
     }
 
     interface Remove {

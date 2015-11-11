@@ -24,7 +24,9 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
@@ -81,6 +83,12 @@ public class ModelAnalyzer {
      * be * used to change them.
      */
     private List<ServiceUsage> undefinedServiceUsages = new ArrayList<>();
+
+    /**
+     * In order to avoid creating multiple anonymous list types for the same element type we keep this index, where
+     * the keys are the names of the element types and the values are the list types that have been created.
+     */
+    private Map<Name, ListType> listTypes = new HashMap<>();
 
     /**
      * Sets the model that will be populated by this analyzer.
@@ -345,6 +353,7 @@ public class ModelAnalyzer {
         }
 
         // Add the parameter to the method:
+        parameter.setDeclaringMethod(method);
         method.addParameter(parameter);
     }
 
@@ -483,9 +492,12 @@ public class ModelAnalyzer {
             typeName = NameParser.parseUsingCase(javaTypeName);
         }
         if (javaClass.isArray()) {
-            ListType listType = new ListType();
-            analyzeModule(javaClass, listType);
-            assignType(typeName, listType::setElementType);
+            ListType listType = listTypes.get(typeName);
+            if (listType == null) {
+                listType = new ListType();
+                assignType(typeName, listType::setElementType);
+                listTypes.put(typeName, listType);
+            }
             typeSetter.accept(listType);
         }
         else {

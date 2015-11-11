@@ -16,8 +16,10 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
+import types.Disk;
 import types.Snapshot;
 
 @Service
@@ -30,6 +32,8 @@ public interface SnapshotService {
     }
 
     interface Restore {
+        @In Disk[] disks();
+        @In Boolean restoreMemory();
     }
 
     @Service SnapshotCdromsService cdroms();

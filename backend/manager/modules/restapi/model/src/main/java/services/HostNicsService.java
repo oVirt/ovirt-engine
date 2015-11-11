@@ -32,6 +32,10 @@ public interface HostNicsService {
     }
 
     interface SetupNetworks {
+        @In Boolean checkConnectivity();
+        @In Integer connectivityTimeout();
+        @In Boolean force();
+        @In HostNic[] hostNics();
     }
 
     @Service HostNicService nic(String id);

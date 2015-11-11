@@ -20,7 +20,11 @@ import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import services.externalhostproviders.KatelloErrataService;
-import types.Bookmark;
+import types.Cluster;
+import types.Disk;
+import types.Host;
+import types.Snapshot;
+import types.StorageDomain;
 import types.Vm;
 
 @Service
@@ -32,12 +36,16 @@ public interface VmService extends MeasurableService {
     }
 
     interface Clone {
+        @In Vm vm();
     }
 
     interface Detach {
     }
 
     interface Export {
+        @In Boolean discardSnapshots();
+        @In Boolean exclusive();
+        @In StorageDomain storageDomain();
     }
 
     interface FreezeFilesystems {
@@ -51,15 +59,28 @@ public interface VmService extends MeasurableService {
     }
 
     interface Maintenance {
+        @In Boolean maintenanceEnabled();
     }
 
     interface Migrate {
+        @In Cluster cluster();
+        @In Boolean force();
+        @In Host host();
     }
 
+    /**
+     * This action is deprecated, use the `move` operation of the disks instead.
+     */
+    @Deprecated
     interface Move {
+        @In StorageDomain storageDomain();
     }
 
     interface PreviewSnapshot {
+        @In Disk[] disks();
+        @In Boolean restoreMemory();
+        @In Snapshot snapshot();
+        @In Vm vm();
     }
 
     interface Update {
@@ -79,6 +100,10 @@ public interface VmService extends MeasurableService {
     }
 
     interface Start {
+        @In Boolean pause();
+        @In Vm vm();
+        @In Boolean useCloudInit();
+        @In Boolean useSysprep();
     }
 
     interface Stop {
@@ -91,6 +116,7 @@ public interface VmService extends MeasurableService {
     }
 
     interface Ticket {
+        @In @Out Ticket ticket();
     }
 
     interface UndoSnapshot {

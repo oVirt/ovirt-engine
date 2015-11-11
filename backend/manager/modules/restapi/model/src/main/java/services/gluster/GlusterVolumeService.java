@@ -22,6 +22,7 @@ import org.ovirt.api.metamodel.annotations.Service;
 import services.MeasurableService;
 import types.GlusterVolume;
 import types.GlusterVolumeProfileDetails;
+import types.Option;
 
 @Service
 public interface GlusterVolumeService extends MeasurableService {
@@ -35,6 +36,8 @@ public interface GlusterVolumeService extends MeasurableService {
     }
 
     interface Rebalance {
+        @In Boolean fixLayout();
+        @In Boolean force();
     }
 
     interface Remove {
@@ -44,18 +47,23 @@ public interface GlusterVolumeService extends MeasurableService {
     }
 
     interface ResetOption {
+        @In Boolean force();
+        @In Option option();
     }
 
     interface SetOption {
+        @In Option option();
     }
 
     interface Start {
+        @In Boolean force();
     }
 
     interface StartProfile {
     }
 
     interface Stop {
+        @In Boolean force();
     }
 
     interface StopProfile {

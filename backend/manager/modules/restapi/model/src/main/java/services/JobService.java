@@ -19,7 +19,6 @@ package services;
 import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
-import types.Bookmark;
 import types.Job;
 
 @Service
@@ -28,6 +27,7 @@ public interface JobService {
     }
 
     interface End {
+        @In Boolean force();
     }
 
     interface Get {

@@ -16,9 +16,11 @@ limitations under the License.
 
 package services.gluster;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.GlusterHook;
+import types.Host;
 
 @Service
 public interface GlusterHookService {
@@ -58,5 +60,7 @@ public interface GlusterHookService {
      * in cluster.
      */
     interface Resolve {
+        @In Host host();
+        @In String resolutionType();
     }
 }

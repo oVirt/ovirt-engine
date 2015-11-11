@@ -19,12 +19,14 @@ package services;
 import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
-import types.Bookmark;
+import types.StorageDomain;
 import types.Template;
 
 @Service
 public interface TemplateService {
     interface Export {
+        @In Boolean exclussive();
+        @In StorageDomain storageDomain();
     }
 
     interface Get {

@@ -24,6 +24,7 @@ import types.GlusterBrick;
 @Service
 public interface GlusterBricksService {
     interface Activate {
+        @In GlusterBrick[] bricks();
     }
 
     /**
@@ -42,6 +43,7 @@ public interface GlusterBricksService {
     }
 
     interface Migrate {
+        @In GlusterBrick[] bricks();
     }
 
     /**
@@ -55,6 +57,7 @@ public interface GlusterBricksService {
     }
 
     interface StopMigrate {
+        @In GlusterBrick[] bricks();
     }
 
     @Service GlusterBrick brick(String id);

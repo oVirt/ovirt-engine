@@ -19,6 +19,8 @@ package services;
 import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
+import types.Host;
+import types.LogicalUnit;
 import types.StorageDomain;
 
 @Service
@@ -28,6 +30,8 @@ public interface StorageDomainService {
     }
 
     interface IsAttached {
+        @In Host host();
+        @Out Boolean isAttached();
     }
 
     interface Update {
@@ -35,6 +39,7 @@ public interface StorageDomainService {
     }
 
     interface RefreshLuns {
+        @In LogicalUnit[] logicalUnits();
     }
 
     interface Remove {

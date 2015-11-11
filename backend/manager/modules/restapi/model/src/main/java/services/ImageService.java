@@ -16,8 +16,11 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
+import types.Cluster;
+import types.Disk;
 import types.Image;
 
 @Service
@@ -27,5 +30,8 @@ public interface ImageService {
     }
 
     interface Import {
+        @In Cluster cluster();
+        @In Disk disk();
+        @In Boolean importAsTemplate();
     }
 }

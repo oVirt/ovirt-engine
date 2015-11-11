@@ -54,5 +54,16 @@ public class Attribute extends Concept {
     public void setType(Type newType) {
         type = newType;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder buffer = new StringBuilder();
+        if (declaringType != null) {
+            buffer.append(declaringType);
+            buffer.append(":");
+        }
+        buffer.append(getName());
+        return buffer.toString();
+    }
 }
 

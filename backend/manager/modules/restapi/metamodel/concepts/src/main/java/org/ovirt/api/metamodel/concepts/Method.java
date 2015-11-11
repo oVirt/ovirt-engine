@@ -42,7 +42,7 @@ public class Method extends Concept {
     }
 
     /**
-     * Sets the service that directly declares this service.
+     * Sets the service that directly declares this method.
      */
     public void setDeclaringService(Service newDeclaringService) {
         declaringService = newDeclaringService;
@@ -120,6 +120,17 @@ public class Method extends Concept {
      */
     public void addConstraints(List<Constraint> constraints) {
         this.constraints.addAll(constraints);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder buffer = new StringBuilder();
+        if (declaringService != null) {
+            buffer.append(declaringService);
+            buffer.append(":");
+        }
+        buffer.append(getName());
+        return buffer.toString();
     }
 }
 

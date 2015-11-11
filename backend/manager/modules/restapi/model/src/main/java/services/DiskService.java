@@ -16,16 +16,21 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.Disk;
+import types.StorageDomain;
 
 @Service
 public interface DiskService extends MeasurableService {
     interface Copy {
+        @In Disk disk();
+        @In StorageDomain storageDomain();
     }
 
     interface Export {
+        @In StorageDomain storageDomain();
     }
 
     interface Get {
@@ -33,6 +38,7 @@ public interface DiskService extends MeasurableService {
     }
 
     interface Move {
+        @In StorageDomain storageDomain();
     }
 
     interface Remove {

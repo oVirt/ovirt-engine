@@ -430,12 +430,15 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         getEntity();
         List<StorageServerConnections> storageServerConnections = new ArrayList<>();
         if (storageType == StorageType.ISCSI) {
-            for (String iscsiTarget : action.getIscsiTargets()) {
-                StorageServerConnections connectionDetails = getInitializedConnectionIscsiDetails(action);
-                connectionDetails.setiqn(iscsiTarget);
-                storageServerConnections.add(connectionDetails);
+            Action.IscsiTargetsList iscsiTargets = action.getIscsiTargets();
+            if (iscsiTargets != null) {
+                for (String iscsiTarget : iscsiTargets.getIscsiTargets()) {
+                    StorageServerConnections connectionDetails = getInitializedConnectionIscsiDetails(action);
+                    connectionDetails.setiqn(iscsiTarget);
+                    storageServerConnections.add(connectionDetails);
+                }
             }
-        } else {
+       } else {
             // For FC we don't need to do anything.
         }
         GetUnregisteredBlockStorageDomainsParameters unregisteredBlockStorageDomainsParameters =
@@ -467,9 +470,11 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     private Action mapTargets(Action action, List<StorageServerConnections> targets) {
         if (targets != null) {
+            Action.IscsiTargetsList iscsiTargets = new Action.IscsiTargetsList();
             for (StorageServerConnections cnx : targets) {
-                action.getIscsiTargets().add(map(cnx).getTarget());
+                iscsiTargets.getIscsiTargets().add(map(cnx).getTarget());
             }
+            action.setIscsiTargets(iscsiTargets);
         }
         return action;
     }

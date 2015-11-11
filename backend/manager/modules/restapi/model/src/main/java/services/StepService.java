@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.Step;
@@ -23,6 +24,8 @@ import types.Step;
 @Service
 public interface StepService extends MeasurableService {
     interface End {
+        @In Boolean force();
+        @In Boolean succeeded();
     }
 
     interface Get {

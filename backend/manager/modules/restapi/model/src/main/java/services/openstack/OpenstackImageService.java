@@ -16,9 +16,13 @@ limitations under the License.
 
 package services.openstack;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
+import types.Disk;
 import types.OpenStackImage;
+import types.StorageDomain;
+import types.Template;
 
 @Service
 public interface OpenstackImageService {
@@ -27,5 +31,9 @@ public interface OpenstackImageService {
     }
 
     interface Import {
+        @In Disk disk();
+        @In Boolean importAsTemplate();
+        @In StorageDomain storageDomain();
+        @In Template template();
     }
 }

@@ -20,10 +20,13 @@ import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.HostNic;
+import types.HostNicVirtualFunctionsConfiguration;
+import types.Network;
 
 @Service
 public interface HostNicService extends MeasurableService {
     interface Attach {
+        @In Network network();
     }
 
     interface Detach {
@@ -50,6 +53,7 @@ public interface HostNicService extends MeasurableService {
      * Please see the `HostNicVirtualFunctionsConfiguration` type for the meaning of the properties.
      */
     interface UpdateVirtualFunctionsConfiguration {
+        @In HostNicVirtualFunctionsConfiguration virtualFunctionsConfiguration();
     }
 
     @Service LabelsService labels();
