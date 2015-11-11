@@ -322,6 +322,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
         boolean isStorageNameEditable = model.isStorageActive() || model.isNewStorage();
         boolean isStoragePropertiesEditable = model.isStorageNotLocked() || model.isNewStorage();
+        boolean isStorageInMaintenance = !model.isNewStorage() &&
+                model.getStorage().getStatus() == StorageDomainStatus.Maintenance;
         model.getHost().setIsChangeable(false);
         model.getName().setIsChangeable(isStorageNameEditable);
         model.getDescription().setIsChangeable(isStoragePropertiesEditable);
@@ -330,7 +332,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         //set the field domain type to non editable
         model.getAvailableStorageTypeItems().setIsChangeable(false);
         model.getAvailableStorageDomainTypeItems().setIsChangeable(false);
-        model.setIsChangeable(isStorageNameEditable || isStoragePropertiesEditable);
+        model.setIsChangeable((isStorageNameEditable || isStoragePropertiesEditable) && !isStorageInMaintenance);
 
         model.getWarningLowSpaceIndicator().setEntity(storage.getWarningLowSpaceIndicator());
         model.getWarningLowSpaceSize().setEntity(
