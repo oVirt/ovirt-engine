@@ -1436,6 +1436,7 @@ public class VmDeviceUtils {
                     if (!isConsoleEnabled) {
                         continue;
                     }
+                    specParams.putAll(device.getSpecParams());
                     hasConsole = true;
                     break;
 
