@@ -386,7 +386,9 @@ RETURNS VOID
 AS $procedure$
 BEGIN
     UPDATE snapshots
-    SET    memory_volume = NULL
+    SET    memory_volume = NULL,
+           memory_dump_disk_id = NULL,
+           memory_metadata_disk_id = NULL
     WHERE  vm_id = v_vm_id
     AND    snapshot_type = v_snapshot_type;
 END; $procedure$
@@ -398,7 +400,9 @@ RETURNS VOID
 AS $procedure$
 BEGIN
     UPDATE snapshots
-    SET    memory_volume = NULL
+    SET    memory_volume = NULL,
+           memory_dump_disk_id = NULL,
+           memory_metadata_disk_id = NULL
     WHERE  snapshot_id = v_snapshot_id;
 END; $procedure$
 LANGUAGE plpgsql;
