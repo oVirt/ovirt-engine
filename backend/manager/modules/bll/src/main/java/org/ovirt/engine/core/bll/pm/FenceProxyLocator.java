@@ -66,7 +66,7 @@ public class FenceProxyLocator {
                 log.warn("Attempt {} to find fence proxy for host '{}' failed...",
                         ++count,
                         fencedHost.getHostName());
-                ThreadUtils.sleep((int) delayInMs);
+                ThreadUtils.sleep(delayInMs);
                 proxyHost = selectBestProxy(fenceProxySource, excludedHostId);
             }
             if (proxyHost != null) {

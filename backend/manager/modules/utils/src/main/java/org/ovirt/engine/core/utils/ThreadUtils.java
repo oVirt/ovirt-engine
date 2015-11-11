@@ -7,7 +7,7 @@ public class ThreadUtils {
 
     private static final Logger log = LoggerFactory.getLogger(ThreadUtils.class);
 
-    public static void sleep(int milliseconds) {
+    public static void sleep(long milliseconds) {
         try {
             Thread.sleep(milliseconds);
         } catch (InterruptedException e) {

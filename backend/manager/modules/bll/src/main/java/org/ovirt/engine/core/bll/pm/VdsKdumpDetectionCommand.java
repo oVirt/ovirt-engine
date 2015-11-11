@@ -108,7 +108,7 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
 
     private KdumpDetectionResult detectHostKdumping() {
         VdsKdumpStatus kdumpStatus;
-        int messageInterval = Config.<Integer>getValue(ConfigValues.FenceKdumpMessageInterval) * 1000;
+        long messageInterval = Config.<Integer>getValue(ConfigValues.FenceKdumpMessageInterval) * 1000;
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.SECOND, Config.<Integer>getValue(ConfigValues.KdumpStartedTimeout));

@@ -37,7 +37,7 @@ public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends 
         log.info("spmStart polling started: taskId '{}'", taskId);
         do {
             // TODO: make configurable
-            ThreadUtils.sleep(1000);
+            ThreadUtils.sleep(1000L);
             taskStatus = (AsyncTaskStatus) ResourceManager
                     .getInstance()
                     .runVdsCommand(VDSCommandType.HSMGetTaskStatus,

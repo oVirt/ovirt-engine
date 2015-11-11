@@ -182,7 +182,7 @@ public class SingleAgentFenceActionExecutor implements FenceActionExecutor{
                     if (unknownStatusReceived < getUnknownResultLimit()
                             && statusRetries < allowedWaitForStatusRetries) {
                         // unknown power status received, wait a while and retry
-                        ThreadUtils.sleep((int) delayBetweenRetries);
+                        ThreadUtils.sleep(delayBetweenRetries);
                         statusRetries++;
                         unknownStatusReceived++;
                     } else {
@@ -204,7 +204,7 @@ public class SingleAgentFenceActionExecutor implements FenceActionExecutor{
                     // host is still not in requested power status
                     statusRetries++;
                     if (statusRetries < allowedWaitForStatusRetries) {
-                        ThreadUtils.sleep((int) delayBetweenRetries);
+                        ThreadUtils.sleep(delayBetweenRetries);
                     }
                 }
             } else {
