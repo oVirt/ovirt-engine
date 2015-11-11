@@ -152,7 +152,7 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
     }
 
     public void addColumn(Column<T, ?> column, String headerText) {
-        Header<?> header = new SafeHtmlHeader(SafeHtmlUtils.fromString(headerText));
+        Header<?> header = new SafeHtmlHeader(SafeHtmlUtils.fromTrustedString(headerText));
         addColumn(column, header);
     }
 
@@ -196,7 +196,7 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
      * Ensures that the given column is added (or removed), unless it's already present (or absent).
      */
     public void ensureColumnPresent(Column<T, ?> column, String headerText, boolean present) {
-        ensureColumnPresent(column, SafeHtmlUtils.fromString(headerText), present);
+        ensureColumnPresent(column, SafeHtmlUtils.fromTrustedString(headerText), present);
     }
 
     /**
@@ -210,7 +210,7 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
      * Ensures that the given column is added (or removed), unless it's already present (or absent).
      */
     public void ensureColumnPresent(Column<T, ?> column, String headerText, boolean present, String width) {
-        ensureColumnPresent(column, SafeHtmlUtils.fromString(headerText), present, width);
+        ensureColumnPresent(column, SafeHtmlUtils.fromTrustedString(headerText), present, width);
     }
 
     /**
