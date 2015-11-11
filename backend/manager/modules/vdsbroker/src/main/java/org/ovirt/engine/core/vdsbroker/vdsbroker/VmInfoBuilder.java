@@ -52,6 +52,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.vdsbroker.architecture.CreateAdditionalControllers;
+import org.ovirt.engine.core.vdsbroker.architecture.GetBootableDiskIndex;
 import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 
@@ -67,6 +68,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private List<VmDevice> managedDevices = null;
     private final boolean hasNonDefaultBootOrder;
     private Guid vdsId;
+    private int numOfReservedScsiIndexes = 0;
 
     public VmInfoBuilder(VM vm, Guid vdsId, Map createInfo) {
         this.vm = vm;
@@ -243,6 +245,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 addDevice(struct, vmDevice, cdPath == null ? "" : cdPath);
             }
         }
+        numOfReservedScsiIndexes++;
     }
 
     @Override
@@ -387,7 +390,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 // Insure that boot disk is created first
                 if (!bootDiskFound && disk.isBoot()) {
                     bootDiskFound = true;
-                    struct.put(VdsProperties.Index, 0);
+                    struct.put(VdsProperties.Index, getBootableDiskIndex(disk));
                 }
                 addAddress(vmDevice, struct);
                 switch (disk.getDiskStorageType()) {
@@ -428,6 +431,13 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         }
 
         ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new CreateAdditionalControllers(devices));
+    }
+
+    private int getBootableDiskIndex(Disk disk) {
+        int index = ArchStrategyFactory.getStrategy(vm.getClusterArch()).
+                run(new GetBootableDiskIndex(numOfReservedScsiIndexes)).returnValue();
+        log.info("Bootable disk '{}' set to index '{}'", disk.getId(), index);
+        return index;
     }
 
     public static void buildCinderDisk(CinderDisk cinderDisk, Map<String, Object> struct) {
