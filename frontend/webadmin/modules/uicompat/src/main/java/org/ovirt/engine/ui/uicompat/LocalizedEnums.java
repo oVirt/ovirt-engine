@@ -134,6 +134,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ActionGroup___EDIT_ADMIN_VM_PROPERTIES();
 
+    String ActionGroup___CONNECT_TO_SERIAL_CONSOLE();
+
     String ActionGroup___IMPORT_EXPORT_VM();
 
     String ActionGroup___CONFIGURE_VM_NETWORK();
