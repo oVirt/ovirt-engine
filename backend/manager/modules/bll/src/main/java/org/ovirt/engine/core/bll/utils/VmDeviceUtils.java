@@ -1456,6 +1456,10 @@ public class VmDeviceUtils {
                     }
                     break;
 
+                case HOSTDEV:
+                    specParams.putAll(device.getSpecParams());
+                    break;
+
                 default:
                     break;
             }
