@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 
+import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
@@ -30,7 +31,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
-import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -1239,8 +1239,19 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         result.setRemovedNetworkAttachments(
             new HashSet<>(Entities.getIds(hostSetupNetworksParametersData.removedNetworkAttachments)));
 
-        NetworkCommonUtils.fillBondSlaves(allNics);
-        result.setBonds(hostSetupNetworksParametersData.newOrModifiedBonds);
+        /*when bond is created, bonding is marked on nics, but slaves are not noted in slaves. So nics knows about bond,
+         but they're not sent anywhere, and bond which is sent to bll, does not know about it's slaves.
+         So we have to loop over created bonds and all nics, pairing them here.
+         */
+        for (Bond newOrModifiedBond : hostSetupNetworksParametersData.newOrModifiedBonds) {
+            for (VdsNetworkInterface nic : allNics) {
+                if (nic.isPartOfBond(newOrModifiedBond.getName())) {
+                    newOrModifiedBond.getSlaves().add(nic.getName());
+                }
+            }
+        }
+
+        result.setCreateOrUpdateBonds(CreateOrUpdateBond.fromBonds(hostSetupNetworksParametersData.newOrModifiedBonds));
         result.setRemovedBonds(new HashSet<>(Entities.getIds(hostSetupNetworksParametersData.removedBonds)));
         result.setRemovedUnmanagedNetworks(hostSetupNetworksParametersData.removedUnmanagedNetworks);
         result.setLabels(hostSetupNetworksParametersData.addedLabels);

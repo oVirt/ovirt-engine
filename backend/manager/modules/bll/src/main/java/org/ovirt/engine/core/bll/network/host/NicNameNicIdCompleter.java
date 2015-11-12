@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll.network.host;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
-import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -13,7 +13,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * Network interface can be provided as a parameter and identified either by ID or by name.<br>
  * Class {@code NetworkAttachmentCompleter} populates the interface name or id if it was omitted from the
- * {@link NetworkAttachment} entity or from {@link Bond} entity. If both were set, their coherence is verified.
+ * {@link NetworkAttachment} entity or from {@link org.ovirt.engine.core.common.businessentities.network.Bond} entity. If both were set, their coherence is verified.
  */
 public class NicNameNicIdCompleter {
 
@@ -30,10 +30,10 @@ public class NicNameNicIdCompleter {
         }
     }
 
-    public void completeBonds(List<Bond> bonds) {
-        NicNameAndNicIdAccessors.FromBond accessors = new NicNameAndNicIdAccessors.FromBond();
-        for (Bond bond : bonds) {
-            complete(accessors.setBond(bond));
+    public void completeBonds(List<CreateOrUpdateBond> bonds) {
+        NicNameAndNicIdAccessors.FromCreateOrUpdateBondData accessors = new NicNameAndNicIdAccessors.FromCreateOrUpdateBondData();
+        for (CreateOrUpdateBond bond : bonds) {
+            complete(accessors.setCreateOrUpdateBond(bond));
         }
     }
 
@@ -49,15 +49,16 @@ public class NicNameNicIdCompleter {
     }
 
     /**
-     * Fills either missing {@link Bond#id} or {@link Bond#name}. Missing datum is get
+     * Fills either missing {@link org.ovirt.engine.core.common.businessentities.network.Bond#id} or
+     * {@link org.ovirt.engine.core.common.businessentities.network.Bond#name}. Missing datum is get
      * from instance located using other datum. If both data are provided, their coherence is verified.
      *
      * @param bond bond to complete.
      *
      * @throws IllegalArgumentException when both id and name are provided but are incoherent.
      */
-    public void completeBond(Bond bond) {
-        complete(new NicNameAndNicIdAccessors.FromBond(bond));
+    public void completeCreateOrUpdateBondData(CreateOrUpdateBond bond) {
+        complete(new NicNameAndNicIdAccessors.FromCreateOrUpdateBondData(bond));
     }
 
     public void completeLabels(Set<NicLabel> labels) {
@@ -98,40 +99,40 @@ public class NicNameNicIdCompleter {
 
         NicNameAndNicIdAccessors setId(Guid id);
 
-        class FromBond implements NicNameAndNicIdAccessors {
-            private Bond bond;
+        class FromCreateOrUpdateBondData implements NicNameAndNicIdAccessors {
+            private CreateOrUpdateBond createOrUpdateBond;
 
-            public FromBond() {
+            public FromCreateOrUpdateBondData() {
             }
 
-            public FromBond(Bond bond) {
-                this.bond = bond;
+            public FromCreateOrUpdateBondData(CreateOrUpdateBond createOrUpdateBond) {
+                this.createOrUpdateBond = createOrUpdateBond;
             }
 
             @Override
             public String getName() {
-                return bond.getName();
+                return createOrUpdateBond.getName();
             }
 
             @Override
             public NicNameAndNicIdAccessors setName(String name) {
-                bond.setName(name);
+                createOrUpdateBond.setName(name);
                 return this;
             }
 
             @Override
             public Guid getId() {
-                return bond.getId();
+                return createOrUpdateBond.getId();
             }
 
             @Override
             public NicNameAndNicIdAccessors setId(Guid id) {
-                bond.setId(id);
+                createOrUpdateBond.setId(id);
                 return this;
             }
 
-            public FromBond setBond(Bond bond) {
-                this.bond = bond;
+            public FromCreateOrUpdateBondData setCreateOrUpdateBond(CreateOrUpdateBond createOrUpdateBond) {
+                this.createOrUpdateBond = createOrUpdateBond;
                 return this;
             }
         }

@@ -24,6 +24,7 @@ import org.ovirt.engine.core.bll.validator.network.NetworkAttachmentIpConfigurat
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
@@ -88,7 +89,7 @@ public class HostSetupNetworksValidator {
     private final NetworkClusterDao networkClusterDao;
     private final NetworkDao networkDao;
     private final VdsDao vdsDao;
-    private final BusinessEntityMap<Bond> bondsMap;
+    private final BusinessEntityMap<CreateOrUpdateBond> createOrUpdateBondBusinessEntityMap;
     private final VmDao vmDao;
     private Map<Guid, NetworkAttachment> networkAttachmentsByNetworkId;
     private Map<String, NicLabel> nicLabelByLabel;
@@ -136,7 +137,7 @@ public class HostSetupNetworksValidator {
                 networkExclusivenessValidatorResolver.resolveNetworkExclusivenessValidator(host.getSupportedClusterVersionsSet());
 
         attachmentsById = Entities.businessEntitiesById(existingAttachments);
-        bondsMap = new BusinessEntityMap<>(params.getBonds());
+        createOrUpdateBondBusinessEntityMap = new BusinessEntityMap<>(params.getCreateOrUpdateBonds());
         networkAttachmentsByNetworkId = new MapNetworkAttachments(params.getNetworkAttachments()).byNetworkId();
 
         nicLabelByLabel = Entities.entitiesByName(params.getLabels());
@@ -163,7 +164,8 @@ public class HostSetupNetworksValidator {
         Collection<NetworkAttachment> attachmentsToConfigure = getAttachmentsToConfigure();
 
         ValidationResult vr = ValidationResult.VALID;
-        vr = skipValidation(vr) ? vr : new NicLabelValidator(params, existingInterfacesMap, bondsMap, hostSetupNetworksValidatorHelper).validate();
+        vr = skipValidation(vr) ? vr : new NicLabelValidator(params, existingInterfacesMap,
+                createOrUpdateBondBusinessEntityMap, hostSetupNetworksValidatorHelper).validate();
         vr = skipValidation(vr) ? vr : validNewOrModifiedNetworkAttachments();
         vr = skipValidation(vr) ? vr : validRemovedNetworkAttachments();
         vr = skipValidation(vr) ? vr : validNewOrModifiedBonds();
@@ -190,14 +192,14 @@ public class HostSetupNetworksValidator {
             if (!mustAttachementBeCheckedForBondMode(attachment, hostInterfacesByNetworkName)){
                 continue;
             }
-            Bond bondToCheck = bondsMap.get(attachment.getNicName());
+            CreateOrUpdateBond bondToCheck = createOrUpdateBondBusinessEntityMap.get(attachment.getNicName());
 
             if (bondToCheck == null){
                 VdsNetworkInterface existingNetworkInterfaceForAttachement = existingInterfacesMap.get(attachment.getNicName());
                 if(existingNetworkInterfaceForAttachement == null || !existingNetworkInterfaceForAttachement.isBond()){
                     continue;
                 }
-                bondToCheck = (Bond) existingNetworkInterfaceForAttachement;
+                bondToCheck = CreateOrUpdateBond.fromBond((Bond) existingNetworkInterfaceForAttachement);
             }
 
             String networkLabel = networkBusinessEntityMap.get(attachment.getNetworkName()).getLabel();
@@ -209,20 +211,20 @@ public class HostSetupNetworksValidator {
         return ValidationResult.VALID;
     }
 
-    private ValidationResult checkBondMode(Bond bondTocheck, String networkLabel, String networkName) {
-        if (BondMode.isBondModeValidForVmNetwork(bondTocheck.getBondOptions())){
+    private ValidationResult checkBondMode(CreateOrUpdateBond createOrUpdateBond, String networkLabel, String networkName) {
+        if (BondMode.isBondModeValidForVmNetwork(createOrUpdateBond.getBondOptions())){
             return ValidationResult.VALID;
         }
 
-        if (networkLabel != null && isNicToConfigureContainTheLabel(bondTocheck.getName(), networkLabel)){
+        if (networkLabel != null && isNicToConfigureContainTheLabel(createOrUpdateBond.getName(), networkLabel)){
             return new ValidationResult(EngineMessage.INVALID_BOND_MODE_FOR_BOND_WITH_LABELED_VM_NETWORK,
-                    ReplacementUtils.createSetVariableString(VAR_BOND_NAME, bondTocheck.getName()),
+                    ReplacementUtils.createSetVariableString(VAR_BOND_NAME, createOrUpdateBond.getName()),
                     ReplacementUtils.createSetVariableString(VAR_LABEL, networkLabel),
                     ReplacementUtils.createSetVariableString(VAR_NETWORK_NAME, networkName));
         }
 
         return new ValidationResult(EngineMessage.INVALID_BOND_MODE_FOR_BOND_WITH_VM_NETWORK,
-                ReplacementUtils.createSetVariableString(VAR_BOND_NAME, bondTocheck.getName()),
+                ReplacementUtils.createSetVariableString(VAR_BOND_NAME, createOrUpdateBond.getName()),
                 ReplacementUtils.createSetVariableString(VAR_NETWORK_NAME, networkName));
     }
 
@@ -409,11 +411,7 @@ public class HostSetupNetworksValidator {
     private Map<String, List<Guid>> getIdsOfNetworkAttachmentsRelatedToInterfaceNames(Collection<NetworkAttachment> networkAttachments) {
         Map<String, List<Guid>> map = new HashMap<>();
         for (NetworkAttachment attachment : networkAttachments) {
-            MultiValueMapUtils.addToMap(attachment.getNicName(),
-                attachment.getId(),
-                map,
-                new ListCreator<>());
-
+            MultiValueMapUtils.addToMap(attachment.getNicName(), attachment.getId(), map, new ListCreator<>());
         }
 
         return map;
@@ -454,7 +452,7 @@ public class HostSetupNetworksValidator {
     }
 
     ValidationResult validNewOrModifiedBonds() {
-        for (Bond modifiedOrNewBond : params.getBonds()) {
+        for (CreateOrUpdateBond modifiedOrNewBond : params.getCreateOrUpdateBonds()) {
             String bondName = modifiedOrNewBond.getName();
             Guid bondId = modifiedOrNewBond.getId();
 
@@ -525,7 +523,7 @@ public class HostSetupNetworksValidator {
         return ValidationResult.VALID;
     }
 
-    ValidationResult validateModifiedBondSlaves(Bond modifiedOrNewBond) {
+    ValidationResult validateModifiedBondSlaves(CreateOrUpdateBond modifiedOrNewBond) {
 
         for (String slaveName : modifiedOrNewBond.getSlaves()) {
             VdsNetworkInterface potentialSlave = existingInterfacesMap.get(slaveName);
@@ -629,8 +627,8 @@ public class HostSetupNetworksValidator {
 
     private boolean slaveUsedMultipleTimesInDifferentBonds(String potentiallyDuplicateSlaveName) {
         int count = 0;
-        for (Bond bond : params.getBonds()) {
-            for (String slaveName : bond.getSlaves()) {
+        for (CreateOrUpdateBond createOrUpdateBond : params.getCreateOrUpdateBonds()) {
+            for (String slaveName : createOrUpdateBond.getSlaves()) {
                 if (slaveName.equals(potentiallyDuplicateSlaveName)) {
                     count++;
                 }
@@ -653,8 +651,8 @@ public class HostSetupNetworksValidator {
      * @return true if bond specified by name is present in request and does not contain given slave.
      */
     private boolean bondIsUpdatedAndDoesNotContainCertainSlave(String slaveName, String bondName) {
-        Bond bond = this.bondsMap.get(bondName);
-        return bond != null && !bond.getSlaves().contains(slaveName);
+        CreateOrUpdateBond createOrUpdateBond = this.createOrUpdateBondBusinessEntityMap.get(bondName);
+        return createOrUpdateBond != null && !createOrUpdateBond.getSlaves().contains(slaveName);
     }
 
     /**
@@ -749,12 +747,11 @@ public class HostSetupNetworksValidator {
                 EngineMessage.NETWORK_ATTACHMENT_REFERENCES_NICS_INCOHERENTLY, existingInterfacesMap);
     }
 
-    private ValidationResult validateCoherentNicIdentification(Bond bond) {
-        Guid nicId = bond.getId();
-        String nicName = bond.getName();
+    private ValidationResult validateCoherentNicIdentification(CreateOrUpdateBond createOrUpdateBond) {
+        Guid nicId = createOrUpdateBond.getId();
+        String nicName = createOrUpdateBond.getName();
         EngineMessage message = EngineMessage.BOND_REFERENCES_NICS_INCOHERENTLY;
         return hostSetupNetworksValidatorHelper.validateCoherentIdentification(nicName, nicId, nicName, message, existingInterfacesMap);
-
     }
 
     private ValidationResult modifiedAttachmentExists(Guid networkAttachmentId) {
@@ -807,7 +804,8 @@ public class HostSetupNetworksValidator {
     }
 
     private boolean isNicActuallyExistsOrReferencesNewBond(String nicName, Guid nicId) {
-        return hostSetupNetworksValidatorHelper.isNicActuallyExistsOrReferencesNewBond(existingInterfacesMap, bondsMap, nicName, nicId);
+        return hostSetupNetworksValidatorHelper.isNicActuallyExistsOrReferencesNewBond(existingInterfacesMap,
+                createOrUpdateBondBusinessEntityMap, nicName, nicId);
     }
 
     private ValidationResult validRemovedNetworkAttachments() {

@@ -371,7 +371,7 @@ public enum NetworkOperation {
 
                     boolean bondIsAlreadyBeingUpdated = bondsMap.containsKey(bondName);
                     if (!bondIsAlreadyBeingUpdated) {
-                        dataFromHostSetupNetworksModel.newOrModifiedBonds.add(bond);
+                        addBondToParams(dataFromHostSetupNetworksModel, bond);
                     }
                 }
             };
@@ -445,9 +445,8 @@ public enum NetworkOperation {
                         Map<String, Bond> bondsMap = Entities.entitiesByName(dataFromHostSetupNetworksModel.newOrModifiedBonds);
                         boolean bondWasAlreadyUpdated = bondsMap.containsKey(bondName);
                         if (!bondWasAlreadyUpdated) {
-                            dataFromHostSetupNetworksModel.newOrModifiedBonds.add(bond);
+                            addBondToParams(dataFromHostSetupNetworksModel, bond);
                         }
-
                     }
                 }
             };
@@ -1075,10 +1074,10 @@ public enum NetworkOperation {
     }
 
     public static void addBondToParams(DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel, Bond bond) {
-        for (Iterator<Bond> iter = dataFromHostSetupNetworksModel.removedBonds.iterator(); iter.hasNext();) {
-            Bond removedBond = iter.next();
+        for (Iterator<Bond> iterator = dataFromHostSetupNetworksModel.removedBonds.iterator(); iterator.hasNext();) {
+            Bond removedBond = iterator.next();
             if (removedBond.getName().equals(bond.getName())) {
-                iter.remove();
+                iterator.remove();
                 break;
             }
         }

@@ -30,6 +30,7 @@ import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.validator.network.NetworkAttachmentIpConfigurationValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -191,7 +192,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
         completeMissingDataInParameters();
         boolean requestValid = validateEntitiesFromRequest(getParameters().getNetworkAttachments()) &&
-                validateEntitiesFromRequest(getParameters().getBonds());
+                validateEntitiesFromRequest(getParameters().getCreateOrUpdateBonds());
 
         if (!requestValid) {
             return requestValid;
@@ -220,7 +221,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private void completeMissingDataInParameters() {
         NicNameNicIdCompleter nicNameNicIdCompleter = new NicNameNicIdCompleter(getExistingNics());
         nicNameNicIdCompleter.completeNetworkAttachments(getParameters().getNetworkAttachments());
-        nicNameNicIdCompleter.completeBonds(getParameters().getBonds());
+        nicNameNicIdCompleter.completeBonds(getParameters().getCreateOrUpdateBonds());
         nicNameNicIdCompleter.completeNetworkAttachments(getExistingAttachments());
         nicNameNicIdCompleter.completeLabels(getParameters().getLabels());
 
@@ -320,28 +321,18 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private void removeUnchangedBonds(List<VdsNetworkInterface> existingNics) {
         Map<Guid, VdsNetworkInterface> nicsById = Entities.businessEntitiesById(existingNics);
 
-        for (Iterator<Bond> iterator = getParameters().getBonds().iterator(); iterator.hasNext();) {
-            Bond bondFromRequest =  iterator.next();
+        List<CreateOrUpdateBond> createOrUpdateBonds = getParameters().getCreateOrUpdateBonds();
+        for (Iterator<CreateOrUpdateBond> iterator = createOrUpdateBonds.iterator(); iterator.hasNext();) {
+            CreateOrUpdateBond bondFromRequest =  iterator.next();
             Guid idOfBondFromRequest = bondFromRequest.getId();
 
             boolean bondFromRequestIsNewBond = idOfBondFromRequest == null;
             if (!bondFromRequestIsNewBond) {
-                if (bondFromRequestIsEqualToAlreadyExistingNic(bondFromRequest, nicsById.get(idOfBondFromRequest))) {
+                if (bondFromRequest.equalToBond((Bond) nicsById.get(idOfBondFromRequest))) {
                     iterator.remove();
                 }
             }
         }
-    }
-
-    // TODO MM: The bonds in the parameters shouldn't contain the whole VdsNetworkInterface. 0nly the id, name, bondOptions and slaves.
-    private boolean bondFromRequestIsEqualToAlreadyExistingNic(Bond bondFromRequest, VdsNetworkInterface existingNic) {
-        return existingNic != null
-                && existingNic instanceof Bond
-                && Objects.equals(bondFromRequest.getId(), existingNic.getId())
-                && Objects.equals(bondFromRequest.getName(), existingNic.getName())
-                && Objects.equals(bondFromRequest.getBondOptions(), existingNic.getBondOptions())
-                && bondsHasSameSlaves(bondFromRequest, (Bond) existingNic);
-
     }
 
     /**
@@ -359,20 +350,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 && Objects.equals(networkAttachmentFromRequest.getNicName(), existingNetworkAttachment.getNicName())
                 && Objects.equals(networkAttachmentFromRequest.getIpConfiguration(), existingNetworkAttachment.getIpConfiguration())
                 && Objects.equals(networkAttachmentFromRequest.getProperties(), existingNetworkAttachment.getProperties());
-    }
-
-    private boolean bondsHasSameSlaves(Bond bondFromRequest, Bond existingNic) {
-        List<String> slavesOfBondFromRequest = replaceNullWithEmptyList(bondFromRequest.getSlaves());
-        List<String> slavesOfExistingBond = replaceNullWithEmptyList(existingNic.getSlaves());
-
-        //bonds can be in any order, and I don't want to change this order during this check.
-        return slavesOfBondFromRequest.size() == slavesOfExistingBond.size()
-                && slavesOfBondFromRequest.containsAll(slavesOfExistingBond);
-
-    }
-
-    private List<String> replaceNullWithEmptyList(List<String> list) {
-        return list == null ? Collections.emptyList() : list;
     }
 
     private void removeUnchangedAttachments(List<NetworkAttachment> existingAttachments) {
@@ -396,9 +373,9 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     }
 
     private void fillInUnsetBondingOptions() {
-        for (Bond bond : getParameters().getBonds()) {
-            if (StringUtils.isEmpty(bond.getBondOptions())) {
-                bond.setBondOptions(DEFAULT_BOND_OPTIONS);
+        for (CreateOrUpdateBond createOrUpdateBond : getParameters().getCreateOrUpdateBonds()) {
+            if (StringUtils.isEmpty(createOrUpdateBond.getBondOptions())) {
+                createOrUpdateBond.setBondOptions(DEFAULT_BOND_OPTIONS);
             }
         }
     }
@@ -464,7 +441,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             getVds(),
             getNetworksToConfigure(),
             getAllNetworksToRemove(),
-            getParameters().getBonds(),
+            getParameters().getCreateOrUpdateBonds(),
             getRemovedBondNames());
         hostCmdParams.setRollbackOnFailure(getParameters().rollbackOnFailure());
         hostCmdParams.setConnectivityTimeout(timeout);
@@ -628,7 +605,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     }
 
     private boolean isBonding(NetworkAttachment attachment, BusinessEntityMap<VdsNetworkInterface> nics) {
-        for (Bond bond : getParameters().getBonds()) {
+        for (CreateOrUpdateBond bond : getParameters().getCreateOrUpdateBonds()) {
             if (bond.getName() != null && bond.getName().equals(attachment.getNicName())) {
                 return true;
             }
@@ -725,10 +702,9 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
         nicsToConfigure.addAll(interfaceDao.getAllInterfacesForVds(getVdsId()));
 
-        // TODO MM: The bonds in the parameters shouldn't contain the whole VdsNetworkInterface. 0nly the id, name, bondOptions and slaves.
-        for (Bond bond : getParameters().getBonds()) {
-            if (bond.getId() == null) {
-                Bond newBond = new Bond(bond.getName());
+        for (CreateOrUpdateBond createOrUpdateBond : getParameters().getCreateOrUpdateBonds()) {
+            if (createOrUpdateBond.getId() == null) {
+                Bond newBond = new Bond(createOrUpdateBond.getName());
                 nicsToConfigure.add(newBond);
             }
         }
@@ -809,11 +785,11 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 return true;
             }
         }
-        for (Bond bond : getParameters().getBonds()) {
+        for (CreateOrUpdateBond createOrUpdateBond : getParameters().getCreateOrUpdateBonds()) {
             // We are only interested in existing bonds, whose bonding options/slave have changed, so it
             // enough to check existing bonds. New bonds which have the management network
             // are covered by network attachments
-            VdsNetworkInterface bondNic = getExistingNicsBusinessEntityMap().get(bond.getId());
+            VdsNetworkInterface bondNic = getExistingNicsBusinessEntityMap().get(createOrUpdateBond.getId());
             if (bondNic != null && mgmtNetworkName.equals(bondNic.getNetworkName())) {
                 return true;
             }

@@ -17,7 +17,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.ovirt.engine.core.bll.network.host.NicNameNicIdCompleter.NicNameAndNicIdAccessors;
-import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -57,17 +57,18 @@ public class NicNameNicIdCompleterTest {
 
     @Test
     public void testProperBondBindingToNicNameAndNicIdAccessors() {
-        Bond bond = new Bond("nic name");
-        bond.setId(Guid.newGuid());
+        CreateOrUpdateBond createOrUpdateBond = new CreateOrUpdateBond();
+        createOrUpdateBond.setName("nic name");
+        createOrUpdateBond.setId(Guid.newGuid());
 
-        NicNameAndNicIdAccessors accessors = new NicNameAndNicIdAccessors.FromBond(bond);
-        assertThat(accessors.getId(), is(bond.getId()));
-        assertThat(accessors.getName(), is(bond.getName()));
+        NicNameAndNicIdAccessors accessors = new NicNameAndNicIdAccessors.FromCreateOrUpdateBondData(createOrUpdateBond);
+        assertThat(accessors.getId(), is(createOrUpdateBond.getId()));
+        assertThat(accessors.getName(), is(createOrUpdateBond.getName()));
 
         accessors.setId(Guid.newGuid());
         accessors.setName("another name");
-        assertThat(bond.getId(), is(accessors.getId()));
-        assertThat(bond.getName(), is(accessors.getName()));
+        assertThat(createOrUpdateBond.getId(), is(accessors.getId()));
+        assertThat(createOrUpdateBond.getName(), is(accessors.getName()));
     }
 
     @Test

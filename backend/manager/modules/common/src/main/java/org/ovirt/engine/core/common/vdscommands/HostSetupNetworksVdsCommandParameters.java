@@ -5,15 +5,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 public class HostSetupNetworksVdsCommandParameters extends VdsIdAndVdsVDSCommandParametersBase {
     private List<HostNetwork> networks;
     private Set<String> removedNetworks;
-    private List<Bond> bonds;
+    private List<CreateOrUpdateBond> createOrUpdateBond;
     private Set<String> removedBonds;
     private boolean rollbackOnFailure;
     private int connectivityTimeout;
@@ -23,12 +23,13 @@ public class HostSetupNetworksVdsCommandParameters extends VdsIdAndVdsVDSCommand
     public HostSetupNetworksVdsCommandParameters(VDS host,
             List<HostNetwork> networks,
             Set<String> removedNetworks,
-            List<Bond> bonds,
+            List<CreateOrUpdateBond> createOrUpdateBond,
             Set<String> removedBonds) {
         super(host);
         this.networks = (networks == null) ? new ArrayList<HostNetwork>() : networks;
         this.removedNetworks = (removedNetworks == null) ? new HashSet<String>() : removedNetworks;
-        this.bonds = (bonds == null) ? new ArrayList<Bond>() : bonds;
+        this.createOrUpdateBond = (createOrUpdateBond
+                == null) ? new ArrayList<CreateOrUpdateBond>() : createOrUpdateBond;
         this.removedBonds = (removedBonds == null) ? new HashSet<String>() : removedBonds;
     }
 
@@ -51,12 +52,12 @@ public class HostSetupNetworksVdsCommandParameters extends VdsIdAndVdsVDSCommand
         this.removedNetworks = removedNetworks;
     }
 
-    public List<Bond> getBonds() {
-        return bonds;
+    public List<CreateOrUpdateBond> getCreateOrUpdateBonds() {
+        return createOrUpdateBond;
     }
 
-    public void setBonds(List<Bond> bonds) {
-        this.bonds = bonds;
+    public void setCreateOrUpdateBonds(List<CreateOrUpdateBond> createOrUpdateBond) {
+        this.createOrUpdateBond = createOrUpdateBond;
     }
 
     public Set<String> getRemovedBonds() {
@@ -99,8 +100,8 @@ public class HostSetupNetworksVdsCommandParameters extends VdsIdAndVdsVDSCommand
                 .append("hostNetworkQosSupported", getHostNetworkQosSupported())
                 .append("networks", Entities.collectionToString(getNetworks(), "\t\t"))
                 .append("removedNetworks", getRemovedNetworks())
-                .append("bonds", Entities.collectionToString(getBonds(), "\t\t"))
-                .append("removedBonds", getBonds());
+                .append("bonds", Entities.collectionToString(getCreateOrUpdateBonds(), "\t\t"))
+                .append("removedBonds", getRemovedBonds());
     }
 
     public boolean isManagementNetworkChanged() {

@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
+import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
@@ -22,16 +23,16 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
 public class NicLabelValidator {
     private HostSetupNetworksParameters params;
     private BusinessEntityMap<VdsNetworkInterface> existingInterfacesMap;
-    private BusinessEntityMap<Bond> bondsMap;
+    private BusinessEntityMap<CreateOrUpdateBond> createOrUpdateBondBusinessEntityMap;
     private HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper;
 
     public NicLabelValidator(HostSetupNetworksParameters params,
             BusinessEntityMap<VdsNetworkInterface> existingInterfacesMap,
-            BusinessEntityMap<Bond> bondsMap,
+            BusinessEntityMap<CreateOrUpdateBond> createOrUpdateBondBusinessEntityMap,
             HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper) {
         this.params = params;
         this.existingInterfacesMap = existingInterfacesMap;
-        this.bondsMap = bondsMap;
+        this.createOrUpdateBondBusinessEntityMap = createOrUpdateBondBusinessEntityMap;
 
         this.hostSetupNetworksValidatorHelper = hostSetupNetworksValidatorHelper;
     }
@@ -82,9 +83,7 @@ public class NicLabelValidator {
     ValidationResult nicActuallyExistsOrReferencesNewBond(NicLabel nicLabel) {
         if (nicLabel.getNicName() != null) {
             boolean nicActuallyExistsOrReferencesNewBond =
-                    isNicActuallyExistsOrReferencesNewBond(existingInterfacesMap, bondsMap,
-                            nicLabel.getNicName(),
-                            nicLabel.getNicId());
+                    isNicActuallyExistsOrReferencesNewBond(nicLabel.getNicName(), nicLabel.getNicId());
 
             boolean nicIsBeingRemoved =
                     nicLabel.getNicId() != null && params.getRemovedBonds().contains(nicLabel.getNicId());
@@ -101,12 +100,9 @@ public class NicLabelValidator {
                         nicLabel.getNicName() != null ? nicLabel.getNicName() : nicLabel.getNicId()));
     }
 
-    boolean isNicActuallyExistsOrReferencesNewBond(BusinessEntityMap<VdsNetworkInterface> existingInterfacesMap,
-            BusinessEntityMap<Bond> bondsMap,
-            String nicName,
-            Guid nicId) {
+    boolean isNicActuallyExistsOrReferencesNewBond(String nicName, Guid nicId) {
         return hostSetupNetworksValidatorHelper.isNicActuallyExistsOrReferencesNewBond(existingInterfacesMap,
-                bondsMap,
+                createOrUpdateBondBusinessEntityMap,
                 nicName,
                 nicId);
     }
@@ -178,8 +174,8 @@ public class NicLabelValidator {
 
     private boolean shouldBeConfigureAsBondSlave(String interfaceName) {
         // Check if the interface was updated to be a bond's slave
-        for (Bond bond : params.getBonds()) {
-            if (bond.getSlaves().contains(interfaceName)) {
+        for (CreateOrUpdateBond createOrUpdateBond : params.getCreateOrUpdateBonds()) {
+            if (createOrUpdateBond.getSlaves().contains(interfaceName)) {
                 return true;
             }
         }
@@ -196,8 +192,8 @@ public class NicLabelValidator {
             VdsNetworkInterface bond = existingInterfacesMap.get(bondName);
             boolean bondWasRemoved = params.getRemovedBonds().contains(bond.getId());
             boolean slaveWasRemovedFromBond =
-                    bondsMap.containsKey(bondName) ? !bondsMap.get(bondName).getSlaves().contains(interfaceName)
-                            : false;
+                    createOrUpdateBondBusinessEntityMap.containsKey(bondName)
+                            && !createOrUpdateBondBusinessEntityMap.get(bondName).getSlaves().contains(interfaceName);
 
             return !bondWasRemoved && !slaveWasRemovedFromBond;
         }
@@ -210,13 +206,15 @@ public class NicLabelValidator {
         VdsNetworkInterface nic = existingInterfacesMap.get(interfaceName);
 
         if (nic instanceof Bond) {
-            Bond bond = bondsMap.containsKey(interfaceName) ? bondsMap.get(interfaceName) : (Bond) nic;
+            CreateOrUpdateBond createOrUpdateBond = createOrUpdateBondBusinessEntityMap.containsKey(interfaceName)
+                    ? createOrUpdateBondBusinessEntityMap.get(interfaceName)
+                    : CreateOrUpdateBond.fromBond((Bond) nic);
 
-            if (bond.getSlaves().size() < 2) {
+            if (createOrUpdateBond.getSlaves().size() < 2) {
                 return new ValidationResult(EngineMessage.IMPROPER_BOND_IS_LABELED,
                         ReplacementUtils.createSetVariableString(
                                 HostInterfaceValidator.VAR_BOND_NAME,
-                                bond.getName()));
+                                createOrUpdateBond.getName()));
             }
 
         }

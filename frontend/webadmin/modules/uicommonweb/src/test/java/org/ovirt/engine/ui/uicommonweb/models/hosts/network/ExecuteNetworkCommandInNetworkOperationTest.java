@@ -371,9 +371,8 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
                 newlyCreatedBond.getId());
 
         assertThat(dataFromHostSetupNetworksModel.newOrModifiedBonds.size(), is(1));
-        assertBond(dataFromHostSetupNetworksModel.newOrModifiedBonds.iterator().next(),
-                null,
-                Arrays.asList(nicA, nicB));
+        Bond newOrModifiedBond = dataFromHostSetupNetworksModel.newOrModifiedBonds.iterator().next();
+        assertBond(newOrModifiedBond, null, Arrays.asList(nicA, nicB));
         assertThat(dataFromHostSetupNetworksModel.removedBonds.size(), is(0));
     }
 
@@ -398,9 +397,8 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
         assertThat(dataFromHostSetupNetworksModel.removedNetworkAttachments.size(), is(0));
 
         assertThat(dataFromHostSetupNetworksModel.newOrModifiedBonds.size(), is(1));
-        assertBond(dataFromHostSetupNetworksModel.newOrModifiedBonds.iterator().next(),
-                existingBondId,
-                Arrays.asList(nicA, nicB));
+        Bond newOrModifiedBond = dataFromHostSetupNetworksModel.newOrModifiedBonds.iterator().next();
+        assertBond(newOrModifiedBond, existingBondId, Arrays.asList(nicA, nicB));
         assertThat(dataFromHostSetupNetworksModel.removedBonds.size(), is(0));
     }
 
@@ -446,9 +444,8 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
         assertThat(dataFromHostSetupNetworksModel.removedNetworkAttachments.size(), is(0));
 
         assertThat(dataFromHostSetupNetworksModel.newOrModifiedBonds.size(), is(1));
-        assertBond(dataFromHostSetupNetworksModel.newOrModifiedBonds.iterator().next(),
-                existingBondId,
-                Arrays.asList(nicA, nicB, nicC));
+        Bond newOrModifiedBond = dataFromHostSetupNetworksModel.newOrModifiedBonds.iterator().next();
+        assertBond(newOrModifiedBond, existingBondId, Arrays.asList(nicA, nicB, nicC));
         assertThat(dataFromHostSetupNetworksModel.removedBonds.size(), is(0));
     }
 
@@ -490,9 +487,8 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
         assertThat(dataFromHostSetupNetworksModel.removedNetworkAttachments.size(), is(0));
 
         assertThat(dataFromHostSetupNetworksModel.newOrModifiedBonds.size(), is(1));
-        assertBond(dataFromHostSetupNetworksModel.newOrModifiedBonds.iterator().next(),
-                existingBondId,
-                Arrays.asList(nicB, nicC));
+        Bond newOrModifiedBond = dataFromHostSetupNetworksModel.newOrModifiedBonds.iterator().next();
+        assertBond(newOrModifiedBond, existingBondId, Arrays.asList(nicB, nicC));
         assertThat(dataFromHostSetupNetworksModel.removedBonds.size(), is(0));
     }
 
@@ -541,9 +537,8 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
 
 
         assertThat(dataFromHostSetupNetworksModel.newOrModifiedBonds.size(), is(1));
-        assertBond(dataFromHostSetupNetworksModel.newOrModifiedBonds.iterator().next(),
-                null,
-                Arrays.asList(nicA, nicB, nicC, nicD));
+        Bond newOrModifiedBond = dataFromHostSetupNetworksModel.newOrModifiedBonds.iterator().next();
+        assertBond(newOrModifiedBond, null, Arrays.asList(nicA, nicB, nicC, nicD));
         assertThat(dataFromHostSetupNetworksModel.removedBonds.size(), is(2));
 
         Iterator<Bond> removedBondsIterator = dataFromHostSetupNetworksModel.removedBonds.iterator();

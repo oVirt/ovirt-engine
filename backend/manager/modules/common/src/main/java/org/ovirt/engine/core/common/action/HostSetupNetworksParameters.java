@@ -7,7 +7,6 @@ import java.util.Set;
 
 import javax.validation.Valid;
 
-import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -27,7 +26,7 @@ public class HostSetupNetworksParameters extends VdsActionParameters {
 
     private Set<Guid> removedNetworkAttachments;
 
-    private List<Bond> bonds;
+    private List<CreateOrUpdateBond> createOrUpdateBonds;
 
     private Set<Guid> removedBonds;
 
@@ -51,7 +50,7 @@ public class HostSetupNetworksParameters extends VdsActionParameters {
         super(hostId);
         setNetworkAttachments(new ArrayList<NetworkAttachment>());
         setRemovedNetworkAttachments(new HashSet<Guid>());
-        setBonds(new ArrayList<Bond>());
+        setCreateOrUpdateBonds(new ArrayList<CreateOrUpdateBond>());
         setRemovedBonds(new HashSet<Guid>());
         setRemovedUnmanagedNetworks(new HashSet<String>());
         setLabels(new HashSet<NicLabel>());
@@ -61,7 +60,7 @@ public class HostSetupNetworksParameters extends VdsActionParameters {
     public boolean isEmptyRequest() {
         return networkAttachments.isEmpty() &&
             removedNetworkAttachments.isEmpty() &&
-            bonds.isEmpty() &&
+            createOrUpdateBonds.isEmpty() &&
             removedBonds.isEmpty() &&
             removedUnmanagedNetworks.isEmpty() &&
             labels.isEmpty() &&
@@ -100,12 +99,12 @@ public class HostSetupNetworksParameters extends VdsActionParameters {
         this.removedNetworkAttachments = removedNetworkAttachments;
     }
 
-    public List<Bond> getBonds() {
-        return bonds;
+    public List<CreateOrUpdateBond> getCreateOrUpdateBonds() {
+        return createOrUpdateBonds;
     }
 
-    public void setBonds(List<Bond> bonds) {
-        this.bonds = bonds;
+    public void setCreateOrUpdateBonds(List<CreateOrUpdateBond> createOrUpdateBonds) {
+        this.createOrUpdateBonds = createOrUpdateBonds;
     }
 
     public Set<Guid> getRemovedBonds() {

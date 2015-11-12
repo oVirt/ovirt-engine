@@ -40,6 +40,7 @@ import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendHostKa
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
+import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
 import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
@@ -271,7 +272,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             BusinessEntityMap<VdsNetworkInterface> nicsFromBackend = getBackendNics();
             for (HostNic bond : action.getModifiedBonds().getHostNics()) {
                 completeSlaveNames(nicsFromBackend, bond);
-                parameters.getBonds().add(mapBonds(bonds, bond));
+                parameters.getCreateOrUpdateBonds().add(mapBonds(bonds, bond));
             }
         }
 
@@ -339,7 +340,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         return attachment;
     }
 
-    public Bond mapBonds(BusinessEntityMap<Bond> bonds, HostNic model) {
+    public CreateOrUpdateBond mapBonds(BusinessEntityMap<Bond> bonds, HostNic model) {
         Mapper<HostNic, Bond> hostNicMapper = getMapper(HostNic.class, Bond.class);
         Bond bond;
         if (model.isSetId()) {
@@ -350,7 +351,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             bond = hostNicMapper.map(model, template);
         }
 
-        return bond;
+        return CreateOrUpdateBond.fromBond(bond);
     }
 
     private Host setCluster(Host host, org.ovirt.engine.api.model.Cluster cluster) {

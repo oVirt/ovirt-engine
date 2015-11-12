@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.validation.MaskValidator;
 import org.ovirt.engine.core.common.vdscommands.HostNetwork;
 import org.ovirt.engine.core.common.vdscommands.HostSetupNetworksVdsCommandParameters;
@@ -108,7 +108,7 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
     private Map<String, Object> generateBonds() {
         Map<String, Object> bonds = new HashMap<>();
 
-        for (Bond bond : getParameters().getBonds()) {
+        for (CreateOrUpdateBond bond : getParameters().getCreateOrUpdateBonds()) {
             Map<String, Object> attributes = new HashMap<>();
             attributes.put(SLAVES, bond.getSlaves());
             putIfNotEmpty(attributes, BONDING_OPTIONS, bond.getBondOptions());
