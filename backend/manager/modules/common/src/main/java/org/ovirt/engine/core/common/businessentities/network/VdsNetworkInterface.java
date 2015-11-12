@@ -293,7 +293,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     }
 
     public boolean isPartOfBond(String bondName) {
-        return getBondName().equals(bondName);
+        return isPartOfBond() && getBondName().equals(bondName);
     }
 
     /**

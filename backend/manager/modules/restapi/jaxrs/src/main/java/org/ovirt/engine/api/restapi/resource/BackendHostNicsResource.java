@@ -290,15 +290,11 @@ public class BackendHostNicsResource
         if(nic.getBonding() == null) nic.setBonding(new Bonding());
         nic.getBonding().setSlaves(new HostNics());
         for (VdsNetworkInterface i : ifaces) {
-            if (isSlave(i, nic.getName())) {
+            if (i.isPartOfBond(nic.getName())) {
                 nic.getBonding().getSlaves().getHostNics().add(slave(i.getId().toString()));
             }
         }
         return nic;
-    }
-
-    protected boolean isSlave(VdsNetworkInterface iface, String masterName) {
-        return iface.getBondName() != null && iface.getBondName().equals(masterName);
     }
 
     protected HostNic slave(String id) {
