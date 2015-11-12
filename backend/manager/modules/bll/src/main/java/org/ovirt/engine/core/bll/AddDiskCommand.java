@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
@@ -218,18 +216,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     protected LUNs getLunDisk(final LUNs lun, VDS vds) {
         List<LUNs> luns = executeGetDeviceList(vds.getId(), lun.getLunType(), lun.getLUN_id());
 
-        /*
-        TODO Once we stop supporting 3.5 DCs and earlier, we can replace the below by:
-        "return luns.isEmpty() ? null : luns.get(0);"
-         */
+        // TODO Once we stop supporting 3.5 DCs and earlier, we can remove the filter call.
 
         // Retrieve LUN from the device list.
-        return (LUNs) CollectionUtils.find(luns, new Predicate() {
-            @Override
-            public boolean evaluate(Object o) {
-                return ((LUNs) o).getId().equals(lun.getId());
-            }
-        });
+        return luns.stream().filter(o -> o.getId().equals(lun.getId())).findFirst().orElse(null);
     }
 
     protected List<LUNs> executeGetDeviceList(Guid vdsId, StorageType storageType, String lunId) {
