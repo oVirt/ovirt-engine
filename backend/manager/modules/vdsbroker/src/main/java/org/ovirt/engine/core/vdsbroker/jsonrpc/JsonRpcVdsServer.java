@@ -60,7 +60,6 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.TaskInfoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.TaskStatusListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.TaskStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSInfoReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VGListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VMInfoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VMListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -776,15 +775,6 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");
         return new OneUuidReturnForXmlRpc(response);
-    }
-
-    @Override
-    public VGListReturnForXmlRpc getVGList() {
-        JsonRpcRequest request = new RequestBuilder("Host.getLVMVolumeGroups").build();
-        Map<String, Object> response =
-                new FutureMap(this.client, request).withResponseKey("vglist")
-                        .withResponseType(Object[].class);
-        return new VGListReturnForXmlRpc(response);
     }
 
     @Override

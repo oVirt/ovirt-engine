@@ -642,18 +642,6 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public VGListReturnForXmlRpc getVGList() {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.getVGList();
-            VGListReturnForXmlRpc wrapper = new VGListReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-
-    }
-
-    @Override
     public OneVGReturnForXmlRpc getVGInfo(String vgUUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getVGInfo(vgUUID);

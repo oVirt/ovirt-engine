@@ -156,8 +156,6 @@ public interface IVdsServer {
 
     OneUuidReturnForXmlRpc createVG(String sdUUID, String[] deviceList, boolean force);
 
-    VGListReturnForXmlRpc getVGList();
-
     OneVGReturnForXmlRpc getVGInfo(String vgUUID);
 
     LUNListReturnForXmlRpc getDeviceList(int storageType);

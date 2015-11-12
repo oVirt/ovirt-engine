@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendHostStorageResource
@@ -39,11 +38,6 @@ public class BackendHostStorageResource
             }
             ret.getHostStorages().add(addLinks(storage));
         }
-
-        for (org.ovirt.engine.core.common.businessentities.StorageDomain vg : getVolumeGroups()) {
-            ret.getHostStorages().add(addLinks(map(vg)));
-        }
-
         return ret;
     }
 
@@ -57,11 +51,6 @@ public class BackendHostStorageResource
                 return addLinks(map(lun));
             }
         }
-        for (org.ovirt.engine.core.common.businessentities.StorageDomain vg : getVolumeGroups()) {
-            if (vg.getStorage().equals(id)) {
-                return addLinks(map(vg));
-            }
-        }
         return notFound();
     }
 
@@ -70,12 +59,6 @@ public class BackendHostStorageResource
         // populated as before. We should deprecate in the future or add an option to pass false
         return getBackendCollection(VdcQueryType.GetDeviceList,
                 new GetDeviceListQueryParameters(asGuid(hostId), StorageType.UNKNOWN, true, null));
-    }
-
-    protected List<org.ovirt.engine.core.common.businessentities.StorageDomain> getVolumeGroups() {
-        return getBackendCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
-                                    VdcQueryType.GetVgList,
-                                    new IdQueryParameters(asGuid(hostId)));
     }
 
     protected HostStorage map(org.ovirt.engine.core.common.businessentities.StorageDomain entity) {

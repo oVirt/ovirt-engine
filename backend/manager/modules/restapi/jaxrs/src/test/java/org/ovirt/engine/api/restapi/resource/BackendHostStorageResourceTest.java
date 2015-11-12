@@ -12,7 +12,6 @@ import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.resource.StorageResource;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -21,7 +20,6 @@ public class BackendHostStorageResourceTest
 
     private static final Guid HOST_GUID = GUIDS[0];
     private static final int SINGLE_STORAGE_IDX = GUIDS.length - 2;
-    private static final String VG_ID_PREFIX = "vg";
 
     public BackendHostStorageResourceTest() {
         super(new BackendHostStorageResource(HOST_GUID.toString()), null, null);
@@ -51,27 +49,13 @@ public class BackendHostStorageResourceTest
         StorageResource subresource = collection.getStorageResource(GUIDS[SINGLE_STORAGE_IDX].toString());
 
         setUriInfo(setUpBasicUriExpectations());
-        setUpQueryExpectations("", null, false);
-
-        verifyModel(subresource.get(), SINGLE_STORAGE_IDX);
-    }
-
-    @Test
-    public void testGetVg() throws Exception {
-        StorageResource subresource = collection.getStorageResource(VG_ID_PREFIX + GUIDS[SINGLE_STORAGE_IDX].toString());
-
-        setUriInfo(setUpBasicUriExpectations());
-        setUpQueryExpectations("");
+        setUpQueryExpectations("", null);
 
         verifyModel(subresource.get(), SINGLE_STORAGE_IDX);
     }
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        setUpQueryExpectations(query, failure, true);
-    }
-
-    protected void setUpQueryExpectations(String query, Object failure, boolean vgs_query) throws Exception {
         assertEquals("", query);
 
         setUpEntityQueryExpectations(VdcQueryType.GetDeviceList,
@@ -80,15 +64,6 @@ public class BackendHostStorageResourceTest
                                      new Object[] { HOST_GUID },
                                      setUpLuns(),
                                      failure);
-        if (vgs_query && failure == null) {
-            setUpEntityQueryExpectations(VdcQueryType.GetVgList,
-                                         IdQueryParameters.class,
-                                         new String[] { "Id" },
-                                         new Object[] { HOST_GUID },
-                                         setUpVgs(),
-                                         failure);
-        }
-
         control.replay();
     }
 
@@ -100,14 +75,6 @@ public class BackendHostStorageResourceTest
         return luns;
     }
 
-    private List<org.ovirt.engine.core.common.businessentities.StorageDomain> setUpVgs() {
-        List<org.ovirt.engine.core.common.businessentities.StorageDomain> vgs = new ArrayList<org.ovirt.engine.core.common.businessentities.StorageDomain>();
-        for (int i = 0; i < NAMES.length; i++) {
-            vgs.add(getVgEntity(i));
-        }
-        return vgs;
-    }
-
     @Override
     protected LUNs getEntity(int index) {
         LUNs entity = new LUNs();
@@ -116,32 +83,20 @@ public class BackendHostStorageResourceTest
         return entity;
     }
 
-    protected org.ovirt.engine.core.common.businessentities.StorageDomain getVgEntity(int index) {
-        org.ovirt.engine.core.common.businessentities.StorageDomain entity = new org.ovirt.engine.core.common.businessentities.StorageDomain();
-        entity.setStorage(VG_ID_PREFIX + GUIDS[index].toString());
-        entity.setStorageType(org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI);
-        return entity;
-    }
-
     @Override
     protected void verifyModel(HostStorage model, int index) {
         assertEquals(StorageType.ISCSI.value(), model.getType());
-        if (!model.isSetVolumeGroup()) {
-            assertEquals(GUIDS[index].toString(), model.getId());
-            assertEquals(1, model.getLogicalUnits().getLogicalUnits().size());
-            assertEquals(GUIDS[index].toString(), model.getLogicalUnits().getLogicalUnits().get(0).getId());
-        } else {
-            assertEquals(VG_ID_PREFIX + GUIDS[index].toString(), model.getId());
-            assertEquals(VG_ID_PREFIX + GUIDS[index].toString(), model.getVolumeGroup().getId());
-        }
+        assertEquals(GUIDS[index].toString(), model.getId());
+        assertEquals(1, model.getLogicalUnits().getLogicalUnits().size());
+        assertEquals(GUIDS[index].toString(), model.getLogicalUnits().getLogicalUnits().get(0).getId());
         verifyLinks(model);
     }
 
     @Override
     protected void verifyCollection(List<HostStorage> collection) throws Exception {
         assertNotNull(collection);
-        assertEquals(NAMES.length * 2, collection.size());
-        for (int i = 0; i < (NAMES.length * 2); i++) {
+        assertEquals(NAMES.length, collection.size());
+        for (int i = 0; i < (NAMES.length); i++) {
             verifyModel(collection.get(i), i % NAMES.length);
         }
     }
