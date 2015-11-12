@@ -17,6 +17,7 @@ public class RemoveDiskSnapshotsParameters extends ImagesContainterParametersBas
     private boolean imageIdsSorted;
     private boolean isLiveMerge;
     private List<Guid> childImageIds;
+    private List<String> snapshotNames;
 
     public RemoveDiskSnapshotsParameters(Guid imageId) {
         this(new ArrayList<>(Arrays.asList(imageId)));
@@ -59,5 +60,13 @@ public class RemoveDiskSnapshotsParameters extends ImagesContainterParametersBas
 
     public void setChildImageIds(List<Guid> childImageIds) {
         this.childImageIds = childImageIds;
+    }
+
+    public List<String> getSnapshotNames() {
+        return snapshotNames;
+    }
+
+    public void setSnapshotNames(List<String> snapshotNames) {
+        this.snapshotNames = snapshotNames;
     }
 }
