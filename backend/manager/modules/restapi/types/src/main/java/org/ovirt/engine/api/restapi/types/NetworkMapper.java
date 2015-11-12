@@ -72,8 +72,8 @@ public class NetworkMapper {
             entity.getCluster().setRequired(model.isRequired());
         }
 
-        if (model.isSetQos() && model.getQos().isSetId()) {
-            entity.setQosId(GuidUtils.asGuid(model.getQos().getId()));
+        if (model.isSetQos()) {
+            entity.setQosId(Guid.createGuidFromString(model.getQos().getId()));
         }
 
         return entity;
