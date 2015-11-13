@@ -26,6 +26,8 @@ import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.DragDropEventBase;
 import com.google.gwt.event.dom.client.DragStartEvent;
 import com.google.gwt.event.dom.client.DragStartHandler;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
@@ -94,6 +96,19 @@ public abstract class NetworkItemPanel<T extends NetworkItemModel<?>> extends Fo
             @Override
             public void onMouseOut(MouseOutEvent event) {
                 NetworkItemPanel.this.onMouseOut();
+            }
+        });
+
+        //
+        // add mousedown handler for hiding the InfoItemPopup tooltip.
+        // This is important because we have drag-and-drop targets in this dialog,
+        // and on mousedown to initiate a drag, tooltips must be hidden
+        // so they're not in the way of drop targets.
+
+        addMouseDownHandler(new MouseDownHandler() {
+            @Override
+            public void onMouseDown(MouseDownEvent event) {
+                NetworkItemPanel.this.tooltip.hide();
             }
         });
     }
