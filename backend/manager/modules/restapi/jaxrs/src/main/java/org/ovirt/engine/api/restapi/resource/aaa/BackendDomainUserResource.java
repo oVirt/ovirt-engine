@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.resource.aaa;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.aaa.DomainUserResource;
@@ -24,7 +27,7 @@ public class BackendDomainUserResource
     private BackendDomainUsersResource parent;
 
     public BackendDomainUserResource(String id, BackendDomainUsersResource parent) {
-        super(DirectoryEntryIdUtils.decode(id), User.class, DirectoryUser.class);
+        super(id, User.class, DirectoryUser.class);
         this.parent = parent;
     }
 
@@ -38,8 +41,15 @@ public class BackendDomainUserResource
 
     @Override
     public User get() {
+        String directoryId;
+        try {
+            directoryId = DirectoryEntryIdUtils.decode(id);
+        }
+        catch (IllegalArgumentException exception) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
         String directory = parent.getDirectory().getName();
-        DirectoryIdQueryParameters parameters = new DirectoryIdQueryParameters(directory, id);
+        DirectoryIdQueryParameters parameters = new DirectoryIdQueryParameters(directory, directoryId);
         return performGet(VdcQueryType.GetDirectoryUserById, parameters, BaseResource.class);
     }
 

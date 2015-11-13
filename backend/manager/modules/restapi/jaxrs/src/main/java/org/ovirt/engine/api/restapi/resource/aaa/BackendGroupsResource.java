@@ -186,7 +186,12 @@ public class BackendGroupsResource
     }
 
     private DirectoryGroup getGroupById(String directoryName, String namespace, String groupId) {
-        groupId = DirectoryEntryIdUtils.decode(groupId);
+        try {
+            groupId = DirectoryEntryIdUtils.decode(groupId);
+        }
+        catch (IllegalArgumentException exception) {
+            return null;
+        }
         return getEntity(
                 DirectoryGroup.class,
                 VdcQueryType.GetDirectoryGroupById,
