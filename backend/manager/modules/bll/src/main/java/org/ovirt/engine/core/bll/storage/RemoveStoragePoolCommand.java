@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -37,8 +38,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 import org.ovirt.engine.core.utils.SyncronizeNumberOfAsyncOperations;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameters;
@@ -150,13 +149,8 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
     private boolean regularRemoveStorageDomains(List<StorageDomain> storageDomains) {
         boolean retVal = true;
-        List<StorageDomain> temp = LinqUtils.filter(storageDomains, new Predicate<StorageDomain>() {
-            @Override
-            public boolean eval(StorageDomain storage_domain) {
-                return storage_domain.getStorageDomainType() == StorageDomainType.Master;
-            }
-        });
-        final StorageDomain masterDomain = LinqUtils.first(temp);
+        final StorageDomain masterDomain =
+                storageDomains.stream().filter(s ->  s.getStorageDomainType() == StorageDomainType.Master).findFirst().orElse(null);
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
             @Override
@@ -353,13 +347,9 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
     }
 
     protected List<StorageDomain> getActiveOrLockedDomainList(List<StorageDomain> domainsList) {
-        domainsList = LinqUtils.filter(domainsList, new Predicate<StorageDomain>() {
-            @Override
-            public boolean eval(StorageDomain dom) {
-                return (dom.getStatus() == StorageDomainStatus.Active || dom.getStatus().isStorageDomainInProcess());
-            }
-        });
-        return domainsList;
+        return domainsList.stream()
+                .filter(d -> d.getStatus() == StorageDomainStatus.Active || d.getStatus().isStorageDomainInProcess())
+                .collect(Collectors.toList());
     }
 
     @Override
