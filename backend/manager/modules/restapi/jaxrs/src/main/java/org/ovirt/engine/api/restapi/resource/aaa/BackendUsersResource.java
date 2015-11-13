@@ -208,7 +208,12 @@ public class BackendUsersResource
 
     private DirectoryUser getUserById(String directoryName, String namespace, String userId) {
         DirectoryUser result;
-        userId = DirectoryEntryIdUtils.decode(userId);
+        try {
+            userId = DirectoryEntryIdUtils.decode(userId);
+        }
+        catch (IllegalArgumentException exception) {
+            return null;
+        }
         result = getEntity(
                 DirectoryUser.class,
                 VdcQueryType.GetDirectoryUserById,

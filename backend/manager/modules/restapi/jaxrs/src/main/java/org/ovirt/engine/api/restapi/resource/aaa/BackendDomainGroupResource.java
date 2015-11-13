@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.resource.aaa;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.resource.aaa.DomainGroupResource;
@@ -22,7 +25,7 @@ public class BackendDomainGroupResource
     private BackendDomainGroupsResource parent;
 
     public BackendDomainGroupResource(String id, BackendDomainGroupsResource parent) {
-        super(DirectoryEntryIdUtils.decode(id), Group.class, DirectoryGroup.class);
+        super(id, Group.class, DirectoryGroup.class);
         this.parent = parent;
     }
 
@@ -36,8 +39,15 @@ public class BackendDomainGroupResource
 
     @Override
     public Group get() {
+        String directoryId;
+        try {
+            directoryId = DirectoryEntryIdUtils.decode(id);
+        }
+        catch (IllegalArgumentException exception) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
         String directory = parent.getDirectory().getName();
-        DirectoryIdQueryParameters parameters = new DirectoryIdQueryParameters(directory, id);
+        DirectoryIdQueryParameters parameters = new DirectoryIdQueryParameters(directory, directoryId);
         return performGet(VdcQueryType.GetDirectoryGroupById, parameters, BaseResource.class);
     }
 
