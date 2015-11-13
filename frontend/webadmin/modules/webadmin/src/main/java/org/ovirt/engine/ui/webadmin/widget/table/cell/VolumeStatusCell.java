@@ -8,10 +8,10 @@ import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils;
 import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils.VolumeStatus;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
@@ -26,7 +26,6 @@ public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> {
 
     private final static ApplicationTemplates templates = AssetProvider.getTemplates();
     private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
     private UICommand onClickCommand = null;
 
     protected ImageResource downImage = resources.downImage();
@@ -91,9 +90,9 @@ public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> {
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(statusImage).getHTML());
         if (status == VolumeStatus.ALL_BRICKS_DOWN || status == VolumeStatus.SOME_BRICKS_DOWN) {
             SafeHtml alertImageHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.alertImage()).getHTML());
-            sb.append(templates.statusWithAlertTemplate(statusImageHtml, alertImageHtml, id));
+            sb.append(templates.statusWithAlertTemplate(statusImageHtml, alertImageHtml, id, status.toString()));
         } else {
-            sb.append(templates.statusTemplate(statusImageHtml, id));
+            sb.append(templates.statusTemplate(statusImageHtml, id, status.toString()));
         }
     }
 }

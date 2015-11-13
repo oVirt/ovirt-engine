@@ -9,11 +9,10 @@ import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicompat.EnumTranslator;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -23,7 +22,6 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 public class VmStatusCell extends AbstractCell<VM> {
 
     private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
     private final static ApplicationTemplates templates = AssetProvider.getTemplates();
 
     @Override
@@ -105,9 +103,9 @@ public class VmStatusCell extends AbstractCell<VM> {
         SafeHtml alertImageHtml = getResourceImage(vm);
 
         if (alertImageHtml != null) {
-            sb.append(templates.statusWithAlertTemplate(statusImageHtml, alertImageHtml, id));
+            sb.append(templates.statusWithAlertTemplate(statusImageHtml, alertImageHtml, id, status.toString()));
         } else {
-            sb.append(templates.statusTemplate(statusImageHtml, id));
+            sb.append(templates.statusTemplate(statusImageHtml, id, status.toString()));
         }
 
     }
@@ -127,30 +125,6 @@ public class VmStatusCell extends AbstractCell<VM> {
             // Get the image html
             AbstractImagePrototype imagePrototype = AbstractImagePrototype.create(alertImageResource);
             String html = imagePrototype.getHTML();
-
-            // Append tooltip
-            EnumTranslator translator = EnumTranslator.getInstance();
-            String toolTip = ""; //$NON-NLS-1$
-            if(updateNeeded) {
-               toolTip = constants.newtools();
-            } else if(vm.getStatus() != VMStatus.Up) {
-               toolTip = translator.translate(vm.getVmPauseStatus());
-            }
-            if(timezoneDiffers) {
-                if(toolTip.length() > 0) {
-                    toolTip += " | "; //$NON-NLS-1$
-                }
-                toolTip += constants.guestTimezoneDiffers();
-            }
-            if(osTypeDiffers) {
-                if(toolTip.length() > 0) {
-                    toolTip += " | "; //$NON-NLS-1$
-                }
-                toolTip += constants.guestOSDiffers();
-            }
-
-            html = html.replaceFirst("img", "img " + "title='" + toolTip + "' "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-
             return SafeHtmlUtils.fromTrustedString(html);
         }
     }

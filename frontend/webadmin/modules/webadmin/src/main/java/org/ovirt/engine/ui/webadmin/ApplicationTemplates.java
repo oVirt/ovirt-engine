@@ -99,11 +99,11 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     SafeHtml alertEventButton(SafeHtml image, String text, String start, String stretch,
             String end, String contentStyleName);
 
-    @Template("<div id=\"{2}\" style=\"text-align: center;\">{0}{1}</div>")
-    SafeHtml statusWithAlertTemplate(SafeHtml statusImage, SafeHtml alertImage, String id);
+    @Template("<div id=\"{2}\" style=\"text-align: center;\" data-status=\"{3}\">{0}{1}</div>")
+    SafeHtml statusWithAlertTemplate(SafeHtml statusImage, SafeHtml alertImage, String id, String status);
 
-    @Template("<div id=\"{1}\" style=\"text-align: center;\">{0}</div>")
-    SafeHtml statusTemplate(SafeHtml statusImage, String id);
+    @Template("<div id=\"{1}\" style=\"text-align: center;\" data-status=\"{2}\">{0}</div>")
+    SafeHtml statusTemplate(SafeHtml statusImage, String id, String status);
 
     @Template("<div title='{1}' id=\"{2}\" style=\"text-align: center;\">{0}</div>")
     SafeHtml imageWithHoverTextAndContainerId(SafeHtml statusImage, String hoverText, String id);

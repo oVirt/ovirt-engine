@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -25,7 +26,7 @@ public class StorageDeviceStatusCell extends AbstractCell<StorageDevice> {
         // Place a lock image to say that device is already in use and can't be used again
         SafeHtml statusImageHtml =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.lockImage()).getHTML());
-        sb.append(templates.statusTemplate(statusImageHtml, id));
+        sb.append(templates.statusTemplate(statusImageHtml, id, ""));
     }
 
 }
