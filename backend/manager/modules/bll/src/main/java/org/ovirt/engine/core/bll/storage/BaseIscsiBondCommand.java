@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -20,8 +21,6 @@ import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagemen
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class BaseIscsiBondCommand<T extends VdcActionParametersBase> extends CommandBase<T> {
@@ -57,12 +56,9 @@ public abstract class BaseIscsiBondCommand<T extends VdcActionParametersBase> ex
                                 new StorageServerConnectionManagementVDSParameters(host.getId(), Guid.Empty, StorageType.ISCSI, conns)
                         );
                         final Map<String, String> iscsiMap = (Map<String, String>) returnValue.getReturnValue();
-                        List<String> failedConnectionsList = LinqUtils.filter(iscsiMap.keySet(), new Predicate<String>() {
-                            @Override
-                            public boolean eval(String a) {
-                                return !"0".equals(iscsiMap.get(a));
-                            }
-                        });
+                        List<String> failedConnectionsList = iscsiMap.entrySet().stream()
+                                .filter(e -> !"0".equals(e.getValue())).map(Map.Entry::getKey)
+                                .collect(Collectors.toList());
                         if (!failedConnectionsList.isEmpty()) {
                             log.error("Host '{}' - '{}' encounter problems to connect to the iSCSI Storage"
                                             + " Server. The following connections were problematic"+ "" +
