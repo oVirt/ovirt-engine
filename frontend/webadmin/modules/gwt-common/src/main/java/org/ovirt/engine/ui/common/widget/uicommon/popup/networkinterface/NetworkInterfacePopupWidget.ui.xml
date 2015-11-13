@@ -32,6 +32,7 @@
 		}
 
 		.statusPanel {
+			float: left;
 			width: 100%;
 			table-layout: fixed;
 		}
@@ -53,8 +54,8 @@
 		.contentWidget {
 			float: right;
 			line-height: 30px;
-			padding: 0 5px;
-			width: 170px;
+			padding: 0 95px 0 0;
+			width: 245px;
 		}
 	</ui:style>
 
