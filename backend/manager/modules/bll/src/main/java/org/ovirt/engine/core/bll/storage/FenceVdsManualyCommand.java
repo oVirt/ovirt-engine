@@ -70,25 +70,24 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = true;
         // check problematic vds status
         if (IsLegalStatus(_problematicVds.getStatus())) {
             if (_problematicVds.getSpmStatus() == VdsSpmStatus.SPM) {
                 if(!getStoragePool().isLocal()) {
-                    returnValue = returnValue && initializeVds();
+                    if (!initializeVds()) {
+                        return false;
+                    }
                 }
-                if (returnValue && getStoragePool().getStatus() != StoragePoolStatus.NotOperational
+                if (getStoragePool().getStatus() != StoragePoolStatus.NotOperational
                         && getStoragePool().getStatus() != StoragePoolStatus.NonResponsive
                         && getStoragePool().getStatus() != StoragePoolStatus.Maintenance) {
-                    returnValue = false;
-                    addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
+                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
                 }
             }
         } else {
-            returnValue = false;
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VDS_NOT_MATCH_VALID_STATUS);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VDS_NOT_MATCH_VALID_STATUS);
         }
-        return returnValue;
+        return true;
     }
 
     @Override
