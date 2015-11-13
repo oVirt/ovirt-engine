@@ -28,8 +28,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 /**
  * Confirm a host has been rebooted, clear spm flag, its VMs(optional) and alerts.
@@ -154,14 +152,8 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
     }
 
     private void activateDataCenter() {
-        StorageDomain masterDomain = LinqUtils.firstOrNull(
-                DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(getStoragePool().getId()),
-                new Predicate<StorageDomain>() {
-                    @Override
-                    public boolean eval(StorageDomain a) {
-                        return a.getStorageDomainType() == StorageDomainType.Master;
-                    }
-                });
+        StorageDomain masterDomain =
+                getStorageDomainDao().getStorageDomains(getStoragePool().getId(), StorageDomainType.Master).stream().findFirst().orElse(null);
         calcStoragePoolStatusByDomainsStatus();
 
         // fence spm if moving from not operational and master domain is active
