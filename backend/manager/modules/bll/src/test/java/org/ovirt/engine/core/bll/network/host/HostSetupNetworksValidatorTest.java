@@ -1502,37 +1502,49 @@ public class HostSetupNetworksValidatorTest {
 
     @Test
     public void testValidateBondOptionsForNewAttachementWithVmNetwork() {
-        validateValidBonds(false, true, true, false);
+        validateValidBondsForAllBondModes(false, true, true, false);
     }
 
     @Test
     public void testValidateBondOptionsForNewAttachementWithNonVmNetwork() {
-        validateValidBonds(true, false, true, false);
+        validateValidBondsForAllBondModes(true, false, true, false);
     }
 
     @Test
     public void validateBondOptionsForNewAttachementWithOutOfSyncVmNetworkNotOverridden() {
-        validateValidBonds(true, true, false, false);
+        validateValidBondsForAllBondModes(true, true, false, false);
     }
 
     @Test
     public void validateBondOptionsForNewAttachementWithOutOfSyncVmNetworOverridden() {
-        validateValidBonds(false, true, false, true);
+        validateValidBondsForAllBondModes(false, true, false, true);
     }
 
-    private void validateValidBonds(boolean isValidForAllModes,
+    private void validateValidBondsForAllBondModes(boolean isValidForAllModes,
             boolean isVmNetwork,
             boolean isInSync,
             boolean isOverriddenConfiguration) {
 
+        for (BondMode bondMode : BondMode.values()) {
+            validateValidBondsForBondMode(isValidForAllModes, isVmNetwork, isInSync, isOverriddenConfiguration, bondMode);
+        }
+    }
+
+    private void validateValidBondsForBondMode(boolean isValidForAllModes,
+            boolean isVmNetwork,
+            boolean isInSync,
+            boolean isOverriddenConfiguration,
+            BondMode bondMode) {
         String networkName = "network";
         String bondName = "bondName";
 
         Network network = createNetworkWithName(networkName);
         network.setVmNetwork(isVmNetwork);
 
-        Bond bond = createBond(bondName, networkName, null);
         NetworkImplementationDetails networkImplementationDetails = new NetworkImplementationDetails(isInSync, true);
+
+        Bond bond = createBond(bondName, networkName, null);
+        bond.setBondOptions(bondMode.getConfigurationValue());
         bond.setNetworkImplementationDetails(networkImplementationDetails);
 
         NetworkAttachment networkAttachment = createNetworkAttachment(network, bond);
@@ -1544,19 +1556,16 @@ public class HostSetupNetworksValidatorTest {
                 .addExistingInterfaces(bond)
                 .build();
 
-        for (BondMode bondMode : BondMode.values()) {
-            boolean expectValidValidationResult = isValidForAllModes || bondMode.isBondModeValidForVmNetwork();
-            bond.setBondOptions(bondMode.getConfigurationValue());
-            List<NetworkAttachment> attachmentsToConfigure = Collections.singletonList(networkAttachment);
-            ValidationResult result = validator.validateBondModeVsNetworksAttachedToIt(attachmentsToConfigure);
-            if (expectValidValidationResult) {
-                assertThat(result, isValid());
-            } else {
-                assertThat(result, failsWith(EngineMessage.INVALID_BOND_MODE_FOR_BOND_WITH_VM_NETWORK,
-                        ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_BOND_NAME, bondName),
-                        ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME, networkName)
-                ));
-            }
+        boolean expectValidValidationResult = isValidForAllModes || bondMode.isBondModeValidForVmNetwork();
+        List<NetworkAttachment> attachmentsToConfigure = Collections.singletonList(networkAttachment);
+        ValidationResult result = validator.validateBondModeVsNetworksAttachedToIt(attachmentsToConfigure);
+        if (expectValidValidationResult) {
+            collector.checkThat(result, isValid());
+        } else {
+            collector.checkThat(result, failsWith(EngineMessage.INVALID_BOND_MODE_FOR_BOND_WITH_VM_NETWORK,
+                    ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_BOND_NAME, bondName),
+                    ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME, networkName)
+            ));
         }
     }
 
