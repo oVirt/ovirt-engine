@@ -65,14 +65,14 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
 
-        if (!checkLunsInStorageDomain(getParameters().getLunIds(), getStorageDomain())) {
+        if (!checkLunsInStorageDomain(getParameters().getLunIds())) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_LUNS_NOT_PART_OF_STORAGE_DOMAIN);
         }
 
         return true;
     }
 
-    private boolean checkLunsInStorageDomain(List<String> lunIds, StorageDomain storageDomain) {
+    private boolean checkLunsInStorageDomain(List<String> lunIds) {
         // Get LUNs from DB
         List<LUNs> lunsFromDb = getLunDao().getAllForVolumeGroup(getStorageDomain().getStorage());
         Set<String> lunsSet = new HashSet<>(lunIds);
