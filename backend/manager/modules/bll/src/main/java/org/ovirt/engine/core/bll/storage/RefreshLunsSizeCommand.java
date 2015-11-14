@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -30,7 +31,6 @@ import org.ovirt.engine.core.common.vdscommands.ResizeStorageDomainPVVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -195,12 +195,12 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
     }
 
     protected VDSReturnValue getStatsForDomain() {
-        VDS vds = LinqUtils.first(getAllRunningVdssInPool());
-        if (vds == null) {
+        Optional<VDS> vds = getAllRunningVdssInPool().stream().findFirst();
+        if (!vds.isPresent()) {
             return null;
         }
         return runVdsCommand(VDSCommandType.GetStorageDomainStats,
-                new GetStorageDomainStatsVDSCommandParameters(vds.getId(), getParameters().getStorageDomainId()));
+                new GetStorageDomainStatsVDSCommandParameters(vds.get().getId(), getParameters().getStorageDomainId()));
     }
 
     protected void updateStorageDomain(final StorageDomain storageDomainToUpdate) {
