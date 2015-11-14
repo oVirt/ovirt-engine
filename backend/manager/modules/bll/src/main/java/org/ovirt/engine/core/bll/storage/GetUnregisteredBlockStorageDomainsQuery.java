@@ -217,7 +217,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
         List<String> existingLunIds = Entities.getIds(getLunDao().getAll());
 
         for (String vgID : vgIDs) {
-            VDSReturnValue returnValue = null;
+            VDSReturnValue returnValue;
             try {
                 returnValue = executeGetVGInfo(
                         new GetVGInfoVDSCommandParameters(getParameters().getVdsId(), vgID));
@@ -256,7 +256,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
      */
     @SuppressWarnings("unchecked")
     protected StorageDomain getStorageDomainById(Guid storageDomainId) {
-        VDSReturnValue returnValue = null;
+        VDSReturnValue returnValue;
 
         try {
             returnValue = executeHSMGetStorageDomainInfo(
