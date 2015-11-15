@@ -87,6 +87,10 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
                 addCanDoActionMessage(EngineMessage.ACTIVATE_DEACTIVATE_NETWORK_NOT_IN_VDS);
                 return false;
             }
+
+            if (failPassthroughVnicHotPlug()) {
+                return false;
+            }
         }
 
         vmDevice = getVmDeviceDao().get(new VmDeviceId(getParameters().getNic().getId(), getParameters().getVmId()));
@@ -95,7 +99,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             return false;
         }
 
-        if (getParameters().getAction() == PlugAction.PLUG && !validate(macAvailable())) {
+        if (!validate(macAvailable())) {
             return false;
         }
 
@@ -234,5 +238,13 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         } else {
             return new ValidationResult(EngineMessage.NETWORK_MAC_ADDRESS_IN_USE);
         }
+    }
+
+    protected boolean failPassthroughVnicHotPlug() {
+        if (VmInterfaceType.pciPassthrough == VmInterfaceType.forValue(getParameters().getNic().getType())) {
+            addCanDoActionMessage(EngineMessage.HOT_PLUG_UNPLUG_PASSTHROUGH_VNIC_NOT_SUPPORTED);
+            return true;
+        }
+        return false;
     }
 }

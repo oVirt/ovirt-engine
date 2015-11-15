@@ -128,6 +128,15 @@ public class VfSchedulerImplTest {
     }
 
     @Test
+    public void validVnicNotPlugged() {
+        VmNetworkInterface vnic = mockVnic(true);
+        when(vnic.isPlugged()).thenReturn(false);
+        initHostWithOneVfsConfig(Collections.singletonList(vnic), 0, true, false, false, false);
+
+        assertHostValid(Collections.singletonList(vnic));
+    }
+
+    @Test
     public void multipleVnicsValid() {
         multipleVnicCommonTest(true);
     }
@@ -248,6 +257,7 @@ public class VfSchedulerImplTest {
         when(vnic.isPassthrough()).thenReturn(passthrough);
         Network network = createNetwork(networkName);
         when(vnic.getNetworkName()).thenReturn(network.getName());
+        when(vnic.isPlugged()).thenReturn(true);
         return vnic;
     }
 
@@ -257,12 +267,18 @@ public class VfSchedulerImplTest {
 
     private void assertHostNotValid(List<VmNetworkInterface> vnics, List<String> exceptedProblematicVnics) {
         validateVnics(vnics, exceptedProblematicVnics);
-        assertEquals(expectedVnicToVfMap, vfScheduler.getVnicToVfMap(vmId, hostId));
+        validateVnicToVfMap();
     }
 
     private void assertHostValid(List<VmNetworkInterface> vnics) {
         validateVnics(vnics, new ArrayList<String>());
-        assertEquals(expectedVnicToVfMap, vfScheduler.getVnicToVfMap(vmId, hostId));
+        validateVnicToVfMap();
+    }
+
+    private void validateVnicToVfMap() {
+        Map<Guid, String> vnicToVfMap = vfScheduler.getVnicToVfMap(vmId, hostId);
+        vnicToVfMap = vnicToVfMap == null ? new HashMap<Guid, String>() : vnicToVfMap;
+        assertEquals(expectedVnicToVfMap, vnicToVfMap);
     }
 
     private HostDevice updateVfsConfig(HostNicVfsConfig hostNicVfsConfig, VmNetworkInterface vnic,
