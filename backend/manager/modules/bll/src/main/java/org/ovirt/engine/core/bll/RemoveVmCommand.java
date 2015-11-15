@@ -77,14 +77,18 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     public RemoveVmCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
-        if (getVm() != null) {
-            setStoragePoolId(getVm().getStoragePoolId());
-        }
     }
 
     public RemoveVmCommand(T parameters) {
         this(parameters, null);
+    }
+
+    @Override
+    protected void init() {
+        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
+        if (getVm() != null) {
+            setStoragePoolId(getVm().getStoragePoolId());
+        }
     }
 
     @Override
