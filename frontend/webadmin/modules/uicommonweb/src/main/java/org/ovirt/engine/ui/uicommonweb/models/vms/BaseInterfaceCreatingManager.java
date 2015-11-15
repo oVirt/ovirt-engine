@@ -10,6 +10,7 @@ import java.util.Set;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -64,18 +65,17 @@ public abstract class BaseInterfaceCreatingManager {
                     VmNetworkInterface editedVnic = vnicWithProfile.getNetworkInterface();
                     String vnicName = editedVnic.getName();
                     VmNetworkInterface existingVnic = existingVnicForName.get(vnicName);
+
+                    VnicProfileView profile = vnicWithProfile.getSelectedItem();
+
+                    updateVnicType(profile, existingVnic, editedVnic);
+
                     if (existingVnic == null) {
-                        editedVnic.setType(defaultType == null ? null : defaultType.getValue());
                         createVnicParameters.add(createAddInterfaceParameter(vmId, editedVnic));
                     } else {
                         vnicsEncountered.add(vnicName);
                         Guid existingProfileId = existingVnic.getVnicProfileId();
                         Guid editedProfileId = editedVnic.getVnicProfileId();
-                        if (supportedInterfaceTypes != null && !supportedInterfaceTypes.contains(VmInterfaceType.forValue(existingVnic.getType()))) {
-                            existingVnic.setType(defaultType == null ? null : defaultType.getValue());
-                        } else if (supportedInterfaceTypes == null) {
-                            existingVnic.setType(defaultType == null ? null : defaultType.getValue());
-                        }
 
                         if ((editedProfileId == null && existingProfileId != null)
                                 || (editedProfileId != null && !editedProfileId.equals(existingProfileId))) {
@@ -99,6 +99,31 @@ public abstract class BaseInterfaceCreatingManager {
         };
 
         getNics(getNicsQuery, vmId, unitVmModel);
+    }
+
+    private void updateVnicType(VnicProfileView profile, VmNetworkInterface existingVnic, VmNetworkInterface editedVnic) {
+        boolean shouldBePciPassthroughType = profile != null && profile.isPassthrough()
+                && supportedInterfaceTypes != null && supportedInterfaceTypes.contains(VmInterfaceType.pciPassthrough);
+        if (existingVnic == null) {
+            if (shouldBePciPassthroughType) {
+                editedVnic.setType(VmInterfaceType.pciPassthrough.getValue());
+            } else {
+                editedVnic.setType(defaultType == null ? null : defaultType.getValue());
+            }
+        } else {
+            VmInterfaceType existingInterfaceType = VmInterfaceType.forValue(existingVnic.getType());
+            boolean shouldRestoreToDefault =
+                    profile != null && !profile.isPassthrough()
+                            && VmInterfaceType.pciPassthrough.equals(existingInterfaceType);
+
+            if (shouldBePciPassthroughType) {
+                existingVnic.setType(VmInterfaceType.pciPassthrough.getValue());
+            } else if (shouldRestoreToDefault
+                    || supportedInterfaceTypes == null
+                    || !supportedInterfaceTypes.contains(existingInterfaceType)) {
+                existingVnic.setType(defaultType == null ? null : defaultType.getValue());
+            }
+        }
     }
 
     protected abstract VdcActionParametersBase createAddInterfaceParameter(Guid id, VmNetworkInterface editedVnic);

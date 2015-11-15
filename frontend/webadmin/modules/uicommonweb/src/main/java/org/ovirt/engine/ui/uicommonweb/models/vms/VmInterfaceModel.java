@@ -90,13 +90,7 @@ public abstract class VmInterfaceModel extends Model {
                         clusterCompatibilityVersion.toString());
 
         setName(new EntityModel<String>());
-        setProfile(new ListModel<VnicProfileView>() {
-            @Override
-            public void setSelectedItem(VnicProfileView value) {
-                super.setSelectedItem(value);
-                updateLinkChangability();
-            }
-        });
+
         setNicType(new ListModel<VmInterfaceType>() {
             @Override
             public void setSelectedItem(VmInterfaceType value) {
@@ -104,6 +98,18 @@ public abstract class VmInterfaceModel extends Model {
                 updateLinkChangability();
             }
         });
+
+        setProfile(new ListModel<VnicProfileView>() {
+            @Override
+            public void setSelectedItem(VnicProfileView value) {
+                super.setSelectedItem(value);
+                if (value != null && value.isPassthrough()) {
+                    getNicType().setSelectedItem(VmInterfaceType.pciPassthrough);
+                }
+                updateLinkChangability();
+            }
+        });
+
         setMAC(new EntityModel<String>());
         setEnableMac(new EntityModel<Boolean>() {
             @Override
