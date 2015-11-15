@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
+import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -168,7 +169,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
                 return constants.unknown();
             }
         }, constants.typeIso(), "100px"); //$NON-NLS-1$
-        imageList.addColumn(new AbstractDiskSizeColumn<EntityModel>() {
+        imageList.addColumn(new AbstractDiskSizeColumn<EntityModel>(SizeConverter.SizeUnit.GiB) {
             @Override
             protected Long getRawValue(EntityModel object) {
                 if (object.getEntity() instanceof RepoImage) {
