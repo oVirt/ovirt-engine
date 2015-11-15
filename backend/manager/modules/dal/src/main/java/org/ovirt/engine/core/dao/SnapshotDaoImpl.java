@@ -186,6 +186,8 @@ public class SnapshotDaoImpl extends DefaultGenericDao<Snapshot, Guid> implement
             snapshot.setAppList(rs.getString("app_list"));
             snapshot.setVmConfiguration(rs.getString("vm_configuration"));
             snapshot.setMemoryVolume(rs.getString("memory_volume"));
+            snapshot.setMemoryDiskId(getGuid(rs, "memory_dump_disk_id"));
+            snapshot.setMetadataDiskId(getGuid(rs, "memory_metadata_disk_id"));
 
             return snapshot;
         }

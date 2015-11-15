@@ -22,6 +22,7 @@ import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -609,6 +610,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             @Override
             public Void runInTransaction() {
                 addVmImagesAndSnapshots();
+                addMemoryImages();
                 updateSnapshotsFromExport();
                 if (useCopyImages) {
                     moveOrCopyAllImageGroups();
@@ -879,12 +881,65 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         for (Snapshot snapshot : getVm().getSnapshots()) {
+            if (!StringUtils.isEmpty(snapshot.getMemoryVolume())) {
+                updateMemoryDisks(snapshot);
+            }
+
             if (getSnapshotDao().exists(getVm().getId(), snapshot.getId())) {
                 getSnapshotDao().update(snapshot);
             } else {
                 getSnapshotDao().save(snapshot);
             }
         }
+    }
+
+    private void updateMemoryDisks(Snapshot snapshot) {
+        List<Guid> guids = GuidUtils.getGuidListFromString(snapshot.getMemoryVolume());
+        snapshot.setMemoryDiskId(guids.get(2));
+        snapshot.setMetadataDiskId(guids.get(4));
+    }
+
+    private void addMemoryImages() {
+        getVm().getSnapshots().stream()
+        .filter(snapshot -> !StringUtils.isEmpty(snapshot.getMemoryVolume()))
+        .forEach(snapshot -> {
+            addDisk(createMemoryDisk(snapshot));
+            addDisk(createMetadaaDisk(snapshot));
+        });
+    }
+
+    private DiskImage createMemoryDisk(Snapshot snapshot) {
+        List<Guid> guids = GuidUtils.getGuidListFromString(snapshot.getMemoryVolume());
+        SnapshotVmConfigurationHelper snapshotVmConfigurationHelper = new SnapshotVmConfigurationHelper();
+        VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(
+                snapshot.getVmConfiguration(),
+                snapshot.getVmId(), snapshot.getId());
+        DiskImage memoryDisk = MemoryUtils.createMemoryDisk(
+                vm,
+                getStorageDomainStaticDao().get(guids.get(0)).getStorageType());
+        memoryDisk.setId(guids.get(2));
+        memoryDisk.setImageId(guids.get(3));
+        memoryDisk.setStorageIds(new ArrayList<Guid>(Collections.singletonList(guids.get(0))));
+        memoryDisk.setStoragePoolId(guids.get(1));
+        memoryDisk.setCreationDate(snapshot.getCreationDate());
+        return memoryDisk;
+    }
+
+    private DiskImage createMetadaaDisk(Snapshot snapshot) {
+        List<Guid> guids = GuidUtils.getGuidListFromString(snapshot.getMemoryVolume());
+        DiskImage memoryDisk = MemoryUtils.createMetadataDisk();
+        memoryDisk.setId(guids.get(4));
+        memoryDisk.setImageId(guids.get(5));
+        memoryDisk.setStorageIds(new ArrayList<Guid>(Collections.singletonList(guids.get(0))));
+        memoryDisk.setStoragePoolId(guids.get(1));
+        memoryDisk.setCreationDate(snapshot.getCreationDate());
+        return memoryDisk;
+    }
+
+    private void addDisk(DiskImage disk) {
+        saveImage(disk);
+        saveBaseDisk(disk);
+        saveDiskImageDynamic(disk);
     }
 
     /**

@@ -56,7 +56,9 @@ CREATE OR REPLACE FUNCTION UpdateSnapshot (
     v_creation_date TIMESTAMP WITH TIME ZONE,
     v_app_list TEXT,
     v_vm_configuration TEXT,
-    v_memory_volume VARCHAR(255)
+    v_memory_volume VARCHAR(255),
+    v_memory_dump_disk_id UUID,
+    v_memory_metadata_disk_id UUID
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -69,6 +71,8 @@ BEGIN
         app_list = v_app_list,
         vm_configuration = v_vm_configuration,
         memory_volume = v_memory_volume,
+        memory_dump_disk_id = v_memory_dump_disk_id,
+        memory_metadata_disk_id = v_memory_metadata_disk_id,
         _update_date = NOW()
     WHERE snapshot_id = v_snapshot_id;
 END;$PROCEDURE$
@@ -203,8 +207,8 @@ CREATE TYPE GetAllFromSnapshotsByVmId_rs AS (
         creation_date TIMESTAMP WITH TIME ZONE,
         app_list TEXT,
         memory_volume VARCHAR(255),
-        v_memory_dump_disk_id UUID,
-        v_memory_metadata_disk_id UUID,
+        memory_dump_disk_id UUID,
+        memory_metadata_disk_id UUID,
         vm_configuration TEXT,
         vm_configuration_available BOOLEAN
         );
