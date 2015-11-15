@@ -74,7 +74,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             return validate(diskValidator.validateUnsupportedDiskStorageType(
                     DiskStorageType.LUN, DiskStorageType.CINDER));
         }
-        return false;
+        return true;
     }
 
     @Override
