@@ -144,8 +144,8 @@ FAILURE_NOTIFIED=
 cleanup() {
 	ec="$?"
 	if [ -n "${ENGINE_DB_USER}" -a "${ec}" = '1' -a "${MODE}" = "backup" -a -z "${FAILURE_NOTIFIED}" ]; then
-		notify_engine "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" -1 "Failed"
 		FAILURE_NOTIFIED=1
+		notify_engine "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" -1 "Failed"
 	fi
 
 	[ -n "${TEMP_FOLDER}" ] && rm -rf "${TEMP_FOLDER}"
@@ -1408,9 +1408,9 @@ log() {
 logdie() {
 	local m="$1"
 	log "FATAL: ${m}"
-	if [ -n "${ENGINE_DB_USER}" -a "${MODE}" = "backup" ]; then
-		notify_engine "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" -1 "${m}"
+	if [ -n "${ENGINE_DB_USER}" -a "${MODE}" = "backup" -a -z "${FAILURE_NOTIFIED}" ]; then
 		FAILURE_NOTIFIED=1
+		notify_engine "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" -1 "${m}"
 	fi
 	die "${m}"
 }
