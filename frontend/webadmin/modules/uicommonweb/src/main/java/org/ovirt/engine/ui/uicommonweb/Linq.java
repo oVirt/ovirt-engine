@@ -923,19 +923,15 @@ public final class Linq {
 
     public final static class DataCenterWithClusterAccordingClusterPredicate implements IPredicate<DataCenterWithCluster> {
 
-        private final Guid clusterId;
+        private IdPredicate<Guid> idPredicate;
 
         public DataCenterWithClusterAccordingClusterPredicate(Guid clusterId) {
-            this.clusterId = clusterId;
+            this.idPredicate = new IdPredicate<>(clusterId);
         }
 
         @Override
         public boolean match(DataCenterWithCluster source) {
-            if (source.getCluster() == null) {
-                return false;
-            }
-
-            return source.getCluster().getId().equals(clusterId);
+            return idPredicate.match(source.getCluster());
         }
 
     }
