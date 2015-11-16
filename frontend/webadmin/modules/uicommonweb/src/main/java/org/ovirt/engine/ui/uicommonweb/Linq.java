@@ -977,15 +977,16 @@ public final class Linq {
     }
 
     public final static class DataCenterNotStatusPredicate implements IPredicate<StoragePool> {
-        private StoragePoolStatus status = StoragePoolStatus.values()[0];
+
+        private DataCenterStatusPredicate predicate;
 
         public DataCenterNotStatusPredicate(StoragePoolStatus status) {
-            this.status = status;
+            this.predicate = new DataCenterStatusPredicate(status);
         }
 
         @Override
         public boolean match(StoragePool source) {
-            return source.getStatus() != status;
+            return !predicate.match(source);
         }
     }
 
