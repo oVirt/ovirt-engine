@@ -797,7 +797,13 @@ dobackup() {
 createtar() {
 	local dir="$1"
 	local file="$2"
-	tar -C "${dir}" -cpSs"${ARCHIVE_COMPRESS_OPTION}"f "${file}" . || logdie "Cannot create '${file}'"
+	local tar_log="${TEMP_FOLDER}/createtar.log"
+	tar -C "${dir}" -cpSs"${ARCHIVE_COMPRESS_OPTION}"f "${file}" . >> "${tar_log}" 2>&1
+	if [ "$?" != 0 ]; then
+		cat "${tar_log}" >> "${LOG}"
+		cat "${tar_log}"
+		logdie "Cannot create '${file}'"
+	fi
 }
 
 createmd5() {
