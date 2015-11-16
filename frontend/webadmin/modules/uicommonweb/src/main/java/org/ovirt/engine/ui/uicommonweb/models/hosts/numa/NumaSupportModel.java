@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -108,35 +109,47 @@ public class NumaSupportModel extends Model {
     protected void initVNumaNodes() {
         unassignedVNodeModelList = new ArrayList<VNodeModel>();
         p2vNumaNodesMap = new HashMap<Integer, List<VNodeModel>>();
+        final Set<Integer> hostIndices = new HashSet<>();
+        for (VdsNumaNode numaNode : numaNodeList){
+            hostIndices.add(numaNode.getIndex());
+        }
 
-        for (VM vm : getVmsWithvNumaNodeList()) {
+        for (final VM vm : getVmsWithvNumaNodeList()) {
             if (vm.getvNumaNodeList() != null) {
                 for (VmNumaNode vmNumaNode : vm.getvNumaNodeList()) {
                     VNodeModel vNodeModel = new VNodeModel(this, vm, vmNumaNode, false);
                     if (vmNumaNode.getVdsNumaNodeList() != null && !vmNumaNode.getVdsNumaNodeList().isEmpty()) {
                         for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {
-                            if (!pair.getSecond().getFirst()) {
-                                unassignedVNodeModelList.add(vNodeModel);
-                                break;
-                            } else {
-                                vNodeModel.setPinned(true);
-                                Integer nodeIdx = pair.getSecond().getSecond();
-                                assignVNumaToPhysicalNuma(vNodeModel, nodeIdx);
+                            Integer hostIndex = pair.getSecond().getSecond();
+                            boolean pinned = pair.getSecond().getFirst();
+                            if (pinned) {
+                                if (!hostIndices.contains(hostIndex)) {
+                                    vNodeModel.setPinned(false);
+                                } else {
+                                    vNodeModel.setPinned(true);
+                                    assignVNumaToPhysicalNuma(vNodeModel, hostIndex);
+                                }
+                                break; //Stop on mapping error and on valid pinning
                             }
                         }
-                    } else {
+                    }
+                    if (!vNodeModel.isPinned()){
                         unassignedVNodeModelList.add(vNodeModel);
+                        if (vmNumaNode.getVdsNumaNodeList() != null) {
+                            // Reset vdsNumaNodeList since the model says that the node should not be pinned
+                            vmNumaNode.getVdsNumaNodeList().clear();
+                        }
                     }
                 }
             }
         }
     }
 
-    private void assignVNumaToPhysicalNuma(VNodeModel vNodeModel, Integer nodeIdx) {
-        if (!p2vNumaNodesMap.containsKey(nodeIdx)) {
-            p2vNumaNodesMap.put(nodeIdx, new ArrayList<VNodeModel>());
+    private void assignVNumaToPhysicalNuma(VNodeModel vNodeModel, Integer hostNodeIndex) {
+        if (!p2vNumaNodesMap.containsKey(hostNodeIndex)) {
+            p2vNumaNodesMap.put(hostNodeIndex, new ArrayList<VNodeModel>());
         }
-        p2vNumaNodesMap.get(nodeIdx)
+        p2vNumaNodesMap.get(hostNodeIndex)
                 .add(vNodeModel);
     }
 
@@ -215,6 +228,14 @@ public class NumaSupportModel extends Model {
     }
 
     public void setVmsWithvNumaNodeList(List<VM> vmsWithvNumaNodeList) {
+        for (Iterator<VM> vmIterator = vmsWithvNumaNodeList.iterator(); vmIterator.hasNext(); ) {
+            final VM vm = vmIterator.next();
+            if (vm.getDedicatedVmForVdsList().isEmpty()
+                    || !vm.getDedicatedVmForVdsList().get(0).equals(getHosts().getSelectedItem().getId())
+                    || vm.getvNumaNodeList() == null) {
+                vmIterator.remove();
+            }
+        }
         this.vmsWithvNumaNodeList = vmsWithvNumaNodeList;
     }
 
@@ -259,25 +280,14 @@ public class NumaSupportModel extends Model {
             if (vm.getId().equals(sourceVMGuid)) {
                 for (VmNumaNode vmNumaNode : vm.getvNumaNodeList()) {
                     if (vmNumaNode.getIndex() == sourceVNumaIndex) {
-                        breakFlag = true;
-                        if (vmNumaNode.getVdsNumaNodeList().isEmpty()) {
+                        vmNumaNode.setVdsNumaNodeList(new ArrayList<Pair<Guid, Pair<Boolean, Integer>>>());
+                        if (targetPNumaNodeIndex != -1) {
                             Pair<Guid, Pair<Boolean, Integer>> pair = new Pair<Guid, Pair<Boolean, Integer>>();
                             pair.setFirst(getNodeByIndex(targetPNumaNodeIndex).getId());
                             pair.setSecond(new Pair<Boolean, Integer>());
                             pair.getSecond().setFirst(true);
                             pair.getSecond().setSecond(targetPNumaNodeIndex);
                             vmNumaNode.getVdsNumaNodeList().add(pair);
-                        } else {
-                            for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {
-                                if (targetPNumaNodeIndex == -1) {
-                                    pair.setFirst(null);
-                                    pair.getSecond().setFirst(false);
-                                } else {
-                                    pair.setFirst(getNodeByIndex(targetPNumaNodeIndex).getId());
-                                    pair.getSecond().setFirst(true);
-                                    pair.getSecond().setSecond(targetPNumaNodeIndex);
-                                }
-                            }
                         }
                         break;
                     }
