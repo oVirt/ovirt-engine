@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.functors.EqualPredicate;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -33,8 +33,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBlockStorageDomainsParameters> extends QueriesCommandBase<P> {
     public GetUnregisteredBlockStorageDomainsQuery(P parameters) {
@@ -138,17 +136,10 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
 
         // For iSCSI domains, filter LUNs by the specified targets
         final Set<String> targetIQNs = Entities.connectionsByIQN(targets).keySet();
-        return LinqUtils.filter(luns, new Predicate<LUNs>() {
-            @Override
-            public boolean eval(LUNs lun) {
-                for (StorageServerConnections connection : lun.getLunConnections()) {
-                    if (CollectionUtils.exists(targetIQNs, new EqualPredicate(connection.getiqn()))) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
+
+        return luns.stream()
+                .filter(lun -> lun.getLunConnections().stream().anyMatch(c -> targetIQNs.contains(c.getiqn())))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -162,12 +153,8 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
         List<StorageDomain> existingStorageDomains = getStorageDomainDao().getAll();
         final List<Guid> existingStorageDomainIDs = Entities.getIds(existingStorageDomains);
 
-        return LinqUtils.filter(luns, new Predicate<LUNs>() {
-            @Override
-            public boolean eval(LUNs lun) {
-                return !existingStorageDomainIDs.contains(lun.getStorageDomainId());
-            }
-        });
+        return luns.stream().filter(lun -> !existingStorageDomainIDs.contains(lun.getStorageDomainId()))
+                .collect(Collectors.toList());
     }
 
     /**
