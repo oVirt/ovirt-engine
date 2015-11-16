@@ -1445,10 +1445,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
         VM vm = getVmWithNuma();
+        final VDS host = getModel().getDefaultHost().getSelectedItems().get(0);
         NumaSupportModel model =
-                new VmNumaSupportModel((List<VDS>) getModel().getDefaultHost().getItems(), getModel().getDefaultHost()
-                        .getSelectedItem(), getModel(), vm);
-
+                new VmNumaSupportModel((List<VDS>) getModel().getDefaultHost().getItems(), host , getModel(), vm);
         getModel().setWindow(model);
     }
 

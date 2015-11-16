@@ -18,6 +18,7 @@ public class VmNumaSupportModel extends NumaSupportModel {
 
     @Override
     public void setVmsWithvNumaNodeList(List<VM> vmsWithvNumaNodeList) {
+        super.setVmsWithvNumaNodeList(vmsWithvNumaNodeList);
         if (Guid.isNullOrEmpty(vm.getId())) {
             vmsWithvNumaNodeList.add(vm);
         } else {
@@ -31,7 +32,6 @@ public class VmNumaSupportModel extends NumaSupportModel {
             vmsWithvNumaNodeList.remove(removeVm);
             vmsWithvNumaNodeList.add(vm);
         }
-        super.setVmsWithvNumaNodeList(vmsWithvNumaNodeList);
     }
 
     @Override
