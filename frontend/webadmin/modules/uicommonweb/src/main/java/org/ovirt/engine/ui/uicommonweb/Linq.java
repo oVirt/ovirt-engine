@@ -1089,9 +1089,8 @@ public final class Linq {
             this.id = id;
         }
 
-        @Override
         public boolean match(BusinessEntity<T> entity) {
-            return id.equals(entity.getId());
+            return entity != null && Objects.equals(entity.getId(), id);
         }
     }
 
