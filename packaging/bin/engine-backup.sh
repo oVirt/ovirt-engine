@@ -468,26 +468,26 @@ parseArgs() {
 			;;
 			--archive-compressor=*)
 				ARCHIVE_COMPRESS_OPTION=$(compressor_to_tar_option "${v}")
-				[ $? != 0 ] && logdie "failed parsing compressor"
+				[ $? != 0 ] && die "failed parsing compressor"
 			;;
 			--files-compressor=*)
 				FILES_COMPRESS_OPTION=$(compressor_to_tar_option "${v}")
-				[ $? != 0 ] && logdie "failed parsing compressor"
+				[ $? != 0 ] && die "failed parsing compressor"
 			;;
 			--keep-temporary-data)
 				KEEP_TEMPORARY_DATA=1
 			;;
 			--db-compressor=*)
 				DB_DUMP_COMPRESSOR=$(compressor_to_command "${v}")
-				[ $? != 0 ] && logdie "failed parsing compressor"
+				[ $? != 0 ] && die "failed parsing compressor"
 			;;
 			--db-dump-format=*)
 				DB_DUMP_FORMAT=$(parse_dump_format "${v}")
-				[ $? != 0 ] && logdie "failed parsing dump format"
+				[ $? != 0 ] && die "failed parsing dump format"
 			;;
 			--db-restore-jobs=*)
 				DB_RESTORE_JOBS=$(parse_jobs "${v}")
-				[ $? != 0 ] && logdie "failed parsing jobs"
+				[ $? != 0 ] && die "failed parsing jobs"
 			;;
 			--provision-db)
 				PROVISION_DB=1
@@ -529,15 +529,15 @@ parseArgs() {
 			;;
 			--dwh-db-compressor=*)
 				DWH_DB_DUMP_COMPRESSOR=$(compressor_to_command "${v}")
-				[ $? != 0 ] && logdie "failed parsing compressor"
+				[ $? != 0 ] && die "failed parsing compressor"
 			;;
 			--dwh-db-dump-format=*)
 				DWH_DB_DUMP_FORMAT=$(parse_dump_format "${v}")
-				[ $? != 0 ] && logdie "failed parsing dump format"
+				[ $? != 0 ] && die "failed parsing dump format"
 			;;
 			--dwh-db-restore-jobs=*)
 				DWH_DB_RESTORE_JOBS=$(parse_jobs "${v}")
-				[ $? != 0 ] && logdie "failed parsing jobs"
+				[ $? != 0 ] && die "failed parsing jobs"
 			;;
 			--provision-dwh-db)
 				PROVISION_DWH_DB=1
@@ -579,15 +579,15 @@ parseArgs() {
 			;;
 			--reports-db-compressor=*)
 				REPORTS_DB_DUMP_COMPRESSOR=$(compressor_to_command "${v}")
-				[ $? != 0 ] && logdie "failed parsing compressor"
+				[ $? != 0 ] && die "failed parsing compressor"
 			;;
 			--reports-db-dump-format=*)
 				REPORTS_DB_DUMP_FORMAT=$(parse_dump_format "${v}")
-				[ $? != 0 ] && logdie "failed parsing dump format"
+				[ $? != 0 ] && die "failed parsing dump format"
 			;;
 			--reports-db-restore-jobs=*)
 				REPORTS_DB_RESTORE_JOBS=$(parse_jobs "${v}")
-				[ $? != 0 ] && logdie "failed parsing jobs"
+				[ $? != 0 ] && die "failed parsing jobs"
 			;;
 			--provision-reports-db)
 				PROVISION_REPORTS_DB=1
@@ -1281,7 +1281,7 @@ changeEngineDBConf() {
 
 	local backup="${conf}.$(date +"%Y%m%d%H%M%S")"
 	log "Backing up ${conf} to ${backup}"
-	cp -a "${conf}" "${backup}" || die "Failed to backup ${conf}"
+	cp -a "${conf}" "${backup}" || logdie "Failed to backup ${conf}"
 	output "Rewriting ${conf}"
 	printf "%s\n" "${MY_DB_CREDS}" > "${conf}"
 }
@@ -1292,7 +1292,7 @@ changeDwhDBConf() {
 
 	local backup="${conf}.$(date +"%Y%m%d%H%M%S")"
 	log "Backing up ${conf} to ${backup}"
-	cp -a "${conf}" "${backup}" || die "Failed to backup ${conf}"
+	cp -a "${conf}" "${backup}" || logdie "Failed to backup ${conf}"
 	output "Rewriting ${conf}"
 	if [ -z "${MY_DB_CREDS}" ]; then
 		MY_DB_HOST="${ENGINE_DB_HOST}"
@@ -1324,7 +1324,7 @@ changeReportsDBConf() {
 
 	local backup="${conf}.$(date +"%Y%m%d%H%M%S")"
 	log "Backing up ${conf} to ${backup}"
-	cp -a "${conf}" "${backup}" || die "Failed to backup ${conf}"
+	cp -a "${conf}" "${backup}" || logdie "Failed to backup ${conf}"
 	output "Rewriting ${conf}"
 	cat << __EOF__ > "${conf}"
 # File locations
