@@ -451,7 +451,6 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     protected Map<String, Pair<String, String>> getSharedLocks() {
         StorageDomain storageDomain = getStorageDomain();
         if (storageDomain != null && storageDomain.getStorageDomainType() == StorageDomainType.Data
-                && storageDomain.getStorageDomainType() != StorageDomainType.Master
                 && storageDomain.getStoragePoolId() != null) {
             return Collections.singletonMap(storageDomain.getStoragePoolId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.POOL, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
