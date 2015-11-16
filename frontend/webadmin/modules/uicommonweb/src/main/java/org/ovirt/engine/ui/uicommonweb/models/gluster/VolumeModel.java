@@ -517,7 +517,7 @@ public class VolumeModel extends Model {
 
                         if (oldCluster != null) {
                             VDSGroup newSelectedItem =
-                                    Linq.firstOrNull(clusters, new Linq.ClusterPredicate(oldCluster.getId()));
+                                    Linq.firstOrNull(clusters, new Linq.IdPredicate<>(oldCluster.getId()));
                             if (newSelectedItem != null) {
                                 volumeModel.getCluster().setSelectedItem(newSelectedItem);
                             }

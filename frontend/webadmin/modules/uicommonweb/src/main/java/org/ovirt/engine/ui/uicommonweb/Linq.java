@@ -998,19 +998,6 @@ public final class Linq {
         }
     }
 
-    public final static class ClusterPredicate implements IPredicate<VDSGroup> {
-        private Guid id = Guid.Empty;
-
-        public ClusterPredicate(Guid id) {
-            this.id = id;
-        }
-
-        @Override
-        public boolean match(VDSGroup source) {
-            return id.equals(source.getId());
-        }
-    }
-
     public final static class HostPredicate implements IPredicate<VDS> {
         private Guid id = Guid.Empty;
 

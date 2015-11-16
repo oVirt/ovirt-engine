@@ -988,7 +988,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
             VDSGroup cluster = (VDSGroup) getSystemTreeSelectedItem().getEntity();
 
             setSelectedItem(Linq.firstOrNull(Linq.<VDSGroup> cast(getItems()),
-                    new Linq.ClusterPredicate(cluster.getId())));
+                    new Linq.IdPredicate<>(cluster.getId())));
         }
     }
 

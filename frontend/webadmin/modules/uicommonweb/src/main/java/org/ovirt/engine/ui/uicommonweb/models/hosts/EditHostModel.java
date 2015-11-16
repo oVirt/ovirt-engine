@@ -79,7 +79,7 @@ public class EditHostModel extends HostModel {
     protected void updateModelClusterFromVds(ArrayList<VDSGroup> clusters, VDS vds) {
         if (clusters != null) {
             getCluster().setSelectedItem(Linq.firstOrNull(clusters,
-                    new Linq.ClusterPredicate(vds.getVdsGroupId())));
+                    new Linq.IdPredicate<>(vds.getVdsGroupId())));
         }
     }
 

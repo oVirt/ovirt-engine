@@ -287,7 +287,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
 
                     cluster =
                             Linq.firstOrNull(context.clusterList,
-                                    new Linq.ClusterPredicate(getCluster().getClusterId()));
+                                    new Linq.IdPredicate<>(getCluster().getClusterId()));
                     if (cluster != null) {
 
                         ServerCpu cpu = new ServerCpu();

@@ -868,7 +868,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
         if (oldCluster != null) {
             VDSGroup newSelectedItem =
-                    Linq.firstOrNull(filteredClusters, new Linq.ClusterPredicate(oldCluster.getId()));
+                    Linq.firstOrNull(filteredClusters, new Linq.IdPredicate<>(oldCluster.getId()));
             if (newSelectedItem != null) {
                 hostModel.getCluster().setSelectedItem(newSelectedItem);
             }
