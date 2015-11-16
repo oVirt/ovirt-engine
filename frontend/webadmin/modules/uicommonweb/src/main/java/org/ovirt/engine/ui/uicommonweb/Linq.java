@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -594,6 +595,11 @@ public final class Linq {
     }
 
     public static <TSource> TSource firstOrNull(Iterable<TSource> source, IPredicate<? super TSource> predicate) {
+        return firstOrDefault(source, predicate, null);
+    }
+
+    public static <TSource> TSource firstOrDefault(Iterable<TSource> source, IPredicate<? super TSource> predicate,
+            TSource defaultValue) {
         if (source != null) {
             for (TSource item : source) {
                 if (predicate.match(item)) {
@@ -602,7 +608,7 @@ public final class Linq {
             }
         }
 
-        return null;
+        return defaultValue;
     }
 
     public static <TSource> boolean all(Iterable<TSource> source, IPredicate<? super TSource> predicate) {
@@ -1085,6 +1091,20 @@ public final class Linq {
         @Override
         public boolean match(StorageDomain source) {
             return id.equals(source.getId());
+        }
+    }
+
+    public static class IdsPredicate<T extends Serializable> implements IPredicate<BusinessEntity<T>> {
+
+        private Set<T> ids;
+
+        public IdsPredicate(Collection<T> ids) {
+            this.ids = new HashSet<>(ids);
+        }
+
+        @Override
+        public boolean match(BusinessEntity<T> entity) {
+            return ids.contains(entity.getId());
         }
     }
 

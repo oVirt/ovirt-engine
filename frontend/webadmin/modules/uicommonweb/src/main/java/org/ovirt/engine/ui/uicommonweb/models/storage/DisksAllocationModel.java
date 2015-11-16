@@ -88,9 +88,10 @@ public class DisksAllocationModel extends EntityModel {
                     DiskImage disk = (DiskImage) diskModel.getDisk();
                     if (diskModel.getStorageDomain().getItems() != null && disk.getStorageIds() != null
                             && !disk.getStorageIds().isEmpty()) {
-                        diskModel.getStorageDomain()
-                                .setSelectedItem(Linq.firstOrNull(diskModel.getStorageDomain().getItems(),
-                                        new Linq.StoragePredicate(disk.getStorageIds().iterator().next())));
+                        diskModel.getStorageDomain().setSelectedItem(Linq.firstOrDefault(
+                                diskModel.getStorageDomain().getItems(),
+                                new Linq.IdsPredicate<>(disk.getStorageIds()),
+                                diskModel.getStorageDomain().getItems().iterator().next()));
                     }
                 }
             });
