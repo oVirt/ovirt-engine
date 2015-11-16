@@ -513,7 +513,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         // Initialize a new ArrayList with all the ovfDisks in the specified Storage Domain,
         // so the entities can be removed from the list every time we register the latest OVF disk and we can keep the
         // ovfDisks cache list updated.
-        List<DiskImage> ovfStoreDiskImages = new ArrayList(getAllOVFDisks(storageDomainId, storagePoolId));
+        List<DiskImage> ovfStoreDiskImages = new ArrayList<>(getAllOVFDisks(storageDomainId, storagePoolId));
         if (!ovfStoreDiskImages.isEmpty()) {
             if (!FeatureSupported.ovfStoreOnAnyDomain(getStoragePool().getCompatibilityVersion())) {
                 auditLogDirector.log(this, AuditLogType.RETRIEVE_UNREGISTERED_ENTITIES_NOT_SUPPORTED_IN_DC_VERSION);
