@@ -618,7 +618,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
 
                 if (schedule.getRecurrence() != GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN) {
                     Map<String, String> timeZones = TimeZoneType.GENERAL_TIMEZONE.getTimeZoneList();
-                    snapshotModel.getTimeZones().setSelectedItem(Linq.firstOrDefault(timeZones.entrySet(),
+                    snapshotModel.getTimeZones().setSelectedItem(Linq.firstOrNull(timeZones.entrySet(),
                             new IPredicate<Map.Entry<String, String>>() {
                                 @Override
                                 public boolean match(Map.Entry<String, String> item) {

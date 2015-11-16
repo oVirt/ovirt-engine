@@ -589,11 +589,11 @@ public final class Linq {
         return result;
     }
 
-    public static <TSource> TSource firstOrDefault(Iterable<TSource> source) {
-        return firstOrDefault(source, new TruePredicate<TSource>());
+    public static <TSource> TSource firstOrNull(Iterable<TSource> source) {
+        return firstOrNull(source, new TruePredicate<TSource>());
     }
 
-    public static <TSource> TSource firstOrDefault(Iterable<TSource> source, IPredicate<? super TSource> predicate) {
+    public static <TSource> TSource firstOrNull(Iterable<TSource> source, IPredicate<? super TSource> predicate) {
         if (source != null) {
             for (TSource item : source) {
                 if (predicate.match(item)) {
@@ -630,7 +630,7 @@ public final class Linq {
     }
 
     public static Version selectHighestVersion(ArrayList<Version> versions) {
-        Version retVersion = firstOrDefault(versions);
+        Version retVersion = firstOrNull(versions);
         for (Version version : versions) {
             if (version.compareTo(retVersion) > 0) {
                 retVersion = version;
@@ -640,7 +640,7 @@ public final class Linq {
     }
 
     public static <T> boolean contains(Iterable<T> source, IPredicate<? super T> predicate) {
-        return firstOrDefault(source, predicate) == null ? false : true;
+        return firstOrNull(source, predicate) == null ? false : true;
     }
     /**
      * Returns a new instance of list containing all items of the provided source.

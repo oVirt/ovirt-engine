@@ -190,7 +190,7 @@ public class MigrateModel extends Model {
                             }
                         }
 
-                        clusters.setItems(onlyVirt, selected != null ? selected : Linq.firstOrDefault(onlyVirt));
+                        clusters.setItems(onlyVirt, selected != null ? selected : Linq.firstOrNull(onlyVirt));
                     }
                 }),
                 vm.getStoragePoolId());
@@ -251,7 +251,7 @@ public class MigrateModel extends Model {
                 getCommands().add(tempVar);
             }
         } else {
-            getHosts().setItems(hosts, Linq.firstOrDefault(hosts));
+            getHosts().setItems(hosts, Linq.firstOrNull(hosts));
             getCommands().add(UICommand.createDefaultOkUiCommand("OnMigrate", parentModel)); //$NON-NLS-1$
             getCommands().add(UICommand.createCancelUiCommand("Cancel", parentModel)); //$NON-NLS-1$
         }

@@ -829,7 +829,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
                 && getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter) {
             StoragePool dataCenter = (StoragePool) getSystemTreeSelectedItem().getEntity();
 
-            setSelectedItem(Linq.firstOrDefault(Linq.<StoragePool> cast(getItems()),
+            setSelectedItem(Linq.firstOrNull(Linq.<StoragePool> cast(getItems()),
                     new Linq.DataCenterPredicate(dataCenter.getId())));
         }
     }

@@ -231,7 +231,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
 
                                 if (vm != null) {
                                     model.getDataCenterWithClustersList().setSelectedItem(null);
-                                    model.getDataCenterWithClustersList().setSelectedItem(Linq.firstOrDefault(model.getDataCenterWithClustersList()
+                                    model.getDataCenterWithClustersList().setSelectedItem(Linq.firstOrNull(model.getDataCenterWithClustersList()
                                             .getItems(),
                                             new Linq.DataCenterWithClusterPredicate(vm.getStoragePoolId(), vm.getVdsGroupId())));
 
@@ -241,7 +241,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
                                 }
                                 else {
                                     model.getDataCenterWithClustersList()
-                                            .setSelectedItem(Linq.firstOrDefault(model.getDataCenterWithClustersList().getItems()));
+                                            .setSelectedItem(Linq.firstOrNull(model.getDataCenterWithClustersList().getItems()));
                                 }
 
                                 model.getDataCenterWithClustersList().setIsChangeable(vm == null);

@@ -1363,7 +1363,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                         ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
 
                         moveHostModel.getCluster().setItems(clusters);
-                        moveHostModel.getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
+                        moveHostModel.getCluster().setSelectedItem(Linq.firstOrNull(clusters));
 
                         UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSelectHost", dataCenterGuideModel); //$NON-NLS-1$
                         moveHostModel.getCommands().add(tempVar);

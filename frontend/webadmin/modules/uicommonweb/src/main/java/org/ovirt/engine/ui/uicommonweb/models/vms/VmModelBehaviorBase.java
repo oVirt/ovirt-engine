@@ -272,7 +272,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         if (previousTemplateId == null) {
             return computeNewTemplateWithVersionToSelect(newItems);
         }
-        TemplateWithVersion oldTemplateToSelect = Linq.firstOrDefault(
+        TemplateWithVersion oldTemplateToSelect = Linq.firstOrNull(
                 newItems,
                 new Linq.TemplateWithVersionPredicate(previousTemplateId, useLatest));
         return oldTemplateToSelect != null
@@ -370,7 +370,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         String oldCdImage = model.getCdImage().getSelectedItem();
         model.getCdImage().setItems(images);
         model.getCdImage().setSelectedItem((oldCdImage != null) ? oldCdImage
-                : Linq.firstOrDefault(images));
+                : Linq.firstOrNull(images));
     }
 
     public void refreshCdImages() {
@@ -417,7 +417,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     private void doUpdateTimeZone(final String selectedTimeZone) {
         final Collection<TimeZoneModel> timeZones = TimeZoneModel.getTimeZones(getTimeZoneType());
         getModel().getTimeZone().setItems(timeZones);
-        getModel().getTimeZone().setSelectedItem(Linq.firstOrDefault(timeZones,
+        getModel().getTimeZone().setSelectedItem(Linq.firstOrNull(timeZones,
                 new Linq.TimeZonePredicate(selectedTimeZone)));
     }
 
@@ -738,7 +738,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         // Filter according to system tree selection.
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
             StorageDomain selectStorage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
-            StorageDomain sd = Linq.firstOrDefault(list, new Linq.StoragePredicate(selectStorage.getId()));
+            StorageDomain sd = Linq.firstOrNull(list, new Linq.StoragePredicate(selectStorage.getId()));
             list = new ArrayList<StorageDomain>(Arrays.asList(new StorageDomain[] { sd }));
         }
 

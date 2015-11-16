@@ -135,7 +135,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
     private void postExportGetStorageDomainList(List<StorageDomain> storageDomains) {
         ExportVmModel model = (ExportVmModel) getWindow();
         model.getStorage().setItems(storageDomains);
-        model.getStorage().setSelectedItem(Linq.firstOrDefault(storageDomains));
+        model.getStorage().setSelectedItem(Linq.firstOrNull(storageDomains));
 
         boolean noActiveStorage = true;
         for (StorageDomain a : storageDomains) {

@@ -116,10 +116,10 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
                            List<VDSGroup> filteredClusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters,
                                    targetArch);
                            getCluster().setItems(filteredClusters);
-                           getCluster().setSelectedItem(Linq.firstOrDefault(filteredClusters));
+                           getCluster().setSelectedItem(Linq.firstOrNull(filteredClusters));
                        } else {
                            getCluster().setItems(clusters);
-                           getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
+                           getCluster().setSelectedItem(Linq.firstOrNull(clusters));
                        }
 
                        getStorage().setItems(null);

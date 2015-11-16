@@ -22,7 +22,7 @@ public class AddProviderModel extends ProviderModel {
         setHelpTag(HelpTag.add_provider);
         setHashName("add_provider"); //$NON-NLS-1$
 
-        getType().setSelectedItem(Linq.firstOrDefault((Iterable<ProviderType>) getType().getItems()));
+        getType().setSelectedItem(Linq.firstOrNull((Iterable<ProviderType>) getType().getItems()));
 
         getNeutronAgentModel().init(provider); // this is okay because AdditionalProperties == null at this point
     }

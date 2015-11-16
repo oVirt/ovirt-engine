@@ -517,14 +517,14 @@ public class VolumeModel extends Model {
 
                         if (oldCluster != null) {
                             VDSGroup newSelectedItem =
-                                    Linq.firstOrDefault(clusters, new Linq.ClusterPredicate(oldCluster.getId()));
+                                    Linq.firstOrNull(clusters, new Linq.ClusterPredicate(oldCluster.getId()));
                             if (newSelectedItem != null) {
                                 volumeModel.getCluster().setSelectedItem(newSelectedItem);
                             }
                         }
 
                         if (volumeModel.getCluster().getSelectedItem() == null) {
-                            volumeModel.getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
+                            volumeModel.getCluster().setSelectedItem(Linq.firstOrNull(clusters));
                         }
                     }
                 }

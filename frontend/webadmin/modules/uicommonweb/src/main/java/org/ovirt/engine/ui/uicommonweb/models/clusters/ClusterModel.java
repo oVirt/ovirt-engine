@@ -1798,7 +1798,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         initSupportedArchitectures(clusterModel);
 
         clusterModel.getCPU().setSelectedItem(oldSelectedCpu != null ?
-                Linq.firstOrDefault(cpus, new Linq.ServerCpuPredicate(oldSelectedCpu.getCpuName())) : null);
+                Linq.firstOrNull(cpus, new Linq.ServerCpuPredicate(oldSelectedCpu.getCpuName())) : null);
 
         if (clusterModel.getCPU().getSelectedItem() == null || !isCPUinitialized) {
             initCPU();
@@ -1900,7 +1900,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                     }
                 }
                 else if (clusterModel.getIsEdit()) {
-                    clusterModel.getVersion().setSelectedItem(Linq.firstOrDefault(versions,
+                    clusterModel.getVersion().setSelectedItem(Linq.firstOrNull(versions,
                             new Linq.VersionPredicate(clusterModel.getEntity().getCompatibilityVersion())));
                 }
                 else {

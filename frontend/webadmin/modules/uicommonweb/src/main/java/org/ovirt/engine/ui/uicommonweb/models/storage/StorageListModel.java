@@ -554,7 +554,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                 RemoveStorageModel removeStorageModel = (RemoveStorageModel) array[1];
                 List<VDS> hosts = (List<VDS>) returnValue;
                 removeStorageModel.getHostList().setItems(hosts);
-                removeStorageModel.getHostList().setSelectedItem(Linq.firstOrDefault(hosts));
+                removeStorageModel.getHostList().setSelectedItem(Linq.firstOrNull(hosts));
 
                 if (hosts.isEmpty()) {
                     UICommand tempVar = createCancelCommand("Cancel"); //$NON-NLS-1$
@@ -828,7 +828,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
             StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
 
-            setSelectedItem(Linq.firstOrDefault(Linq.<StorageDomain> cast(getItems()),
+            setSelectedItem(Linq.firstOrNull(Linq.<StorageDomain> cast(getItems()),
                     new Linq.StoragePredicate(storage.getId())));
         }
     }
@@ -1774,7 +1774,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     }
 
     public void addExistingFileStorageDomain() {
-        StorageDomain sdToAdd = Linq.firstOrDefault(storageDomainsToAdd);
+        StorageDomain sdToAdd = Linq.firstOrNull(storageDomainsToAdd);
         StorageDomainStatic sdsToAdd = sdToAdd.getStorageStaticData();
         saveDefaultedStorageProperties((StorageModel) getWindow(), sdsToAdd);
 

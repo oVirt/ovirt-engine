@@ -150,7 +150,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
                     clusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters, targetArch);
                 }
                 getCluster().setItems(clusters);
-                getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
+                getCluster().setSelectedItem(Linq.firstOrNull(clusters));
 
                 // get storage domains
                 AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(ImportVmFromExternalProviderModel.this,

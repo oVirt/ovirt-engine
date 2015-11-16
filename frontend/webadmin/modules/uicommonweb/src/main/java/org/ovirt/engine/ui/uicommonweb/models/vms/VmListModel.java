@@ -1630,7 +1630,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                         .getConstants()
                         .noCds() }));
         attachCdModel.getIsoImage().setItems(images1);
-        attachCdModel.getIsoImage().setSelectedItem(Linq.firstOrDefault(images1));
+        attachCdModel.getIsoImage().setSelectedItem(Linq.firstOrNull(images1));
 
         AsyncQuery getIrsImageListCallback = new AsyncQuery();
         getIrsImageListCallback.setModel(this);
@@ -1644,7 +1644,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 images.add(0, ConsoleModel.getEjectLabel());
                 _attachCdModel.getIsoImage().setItems(images);
                 if (_attachCdModel.getIsoImage().getIsChangable()) {
-                    String selectedIso = Linq.firstOrDefault(images, new Linq.IPredicate<String>() {
+                    String selectedIso = Linq.firstOrNull(images, new Linq.IPredicate<String>() {
                         @Override
                         public boolean match(String s) {
                             return vm.getCurrentCd().equals(s);

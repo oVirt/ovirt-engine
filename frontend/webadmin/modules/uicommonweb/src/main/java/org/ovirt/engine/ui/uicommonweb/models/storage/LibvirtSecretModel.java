@@ -42,7 +42,7 @@ public class LibvirtSecretModel extends EntityModel<LibvirtSecret> {
 
         ArrayList<LibvirtSecretUsageType> libvirtSecretUsageTypeList =
                 AsyncDataProvider.getInstance().getLibvirtSecretUsageTypeList();
-        getUsageType().setItems(libvirtSecretUsageTypeList, Linq.firstOrDefault(libvirtSecretUsageTypeList));
+        getUsageType().setItems(libvirtSecretUsageTypeList, Linq.firstOrNull(libvirtSecretUsageTypeList));
     }
 
     @Override

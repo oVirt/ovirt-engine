@@ -2428,7 +2428,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         EntityModel<BootSequence> firstBootDevice = null;
         for (EntityModel<BootSequence> item : getFirstBootDevice().getItems()) {
-            if (item.getEntity() == Linq.firstOrDefault(items)) {
+            if (item.getEntity() == Linq.firstOrNull(items)) {
                 firstBootDevice = item;
             }
         }
@@ -2528,8 +2528,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     protected void selectDataCenterWithCluster(Guid selectedCluster, List<DataCenterWithCluster> dataCentersWithClusters) {
         DataCenterWithCluster selectedDataCenterWithCluster =
-                (selectedCluster == null) ? Linq.firstOrDefault(dataCentersWithClusters)
-                        : Linq.firstOrDefault(dataCentersWithClusters,
+                (selectedCluster == null) ? Linq.firstOrNull(dataCentersWithClusters)
+                        : Linq.firstOrNull(dataCentersWithClusters,
                                 new Linq.DataCenterWithClusterAccordingClusterPredicate(selectedCluster));
         getDataCenterWithClustersList().setItems(dataCentersWithClusters, selectedDataCenterWithCluster);
     }

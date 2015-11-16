@@ -549,7 +549,7 @@ public class VmInitModel extends Model {
 
         Map<String, String> timezones = TimeZoneType.GENERAL_TIMEZONE.getTimeZoneList();
         getTimeZoneList().setItems(timezones.entrySet());
-        getTimeZoneList().setSelectedItem(Linq.firstOrDefault(timezones.entrySet(),
+        getTimeZoneList().setSelectedItem(Linq.firstOrNull(timezones.entrySet(),
                 new IPredicate<Map.Entry<String, String>>() {
                     @Override
                     public boolean match(Map.Entry<String, String> item) {
@@ -559,7 +559,7 @@ public class VmInitModel extends Model {
 
         Map<String, String> windowsTimezones = TimeZoneType.WINDOWS_TIMEZONE.getTimeZoneList();
         getWindowsSysprepTimeZone().setItems(windowsTimezones.entrySet());
-        getWindowsSysprepTimeZone().setSelectedItem(Linq.firstOrDefault(windowsTimezones.entrySet(),
+        getWindowsSysprepTimeZone().setSelectedItem(Linq.firstOrNull(windowsTimezones.entrySet(),
                 new IPredicate<Map.Entry<String, String>>() {
                     @Override
                     public boolean match(Map.Entry<String, String> item) {
@@ -695,7 +695,7 @@ public class VmInitModel extends Model {
 
 
     private void selectTimeZone(ListModel<Map.Entry<String, String>> specificTimeZoneModel, Map<String, String> timezones, final String tz) {
-        specificTimeZoneModel.setSelectedItem(Linq.firstOrDefault(timezones.entrySet(),
+        specificTimeZoneModel.setSelectedItem(Linq.firstOrNull(timezones.entrySet(),
                 new IPredicate<Map.Entry<String, String>>() {
                     @Override
                     public boolean match(Map.Entry<String, String> item) {
@@ -1018,7 +1018,7 @@ public class VmInitModel extends Model {
     private void removeNetwork() {
         networkMap.remove(getNetworkList().getSelectedItem());
         getNetworkList().setItems(new ArrayList<String>(networkMap.keySet()));
-        getNetworkList().setSelectedItem(Linq.firstOrDefault(networkMap.keySet()));
+        getNetworkList().setSelectedItem(Linq.firstOrNull(networkMap.keySet()));
     }
 
     /* Save displayed network properties */

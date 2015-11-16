@@ -65,12 +65,12 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
 
         Iterable<DataCenterWithCluster> dataCenterWithClusters = getModel().getDataCenterWithClustersList().getItems();
         DataCenterWithCluster selectDataCenterWithCluster =
-                Linq.firstOrDefault(dataCenterWithClusters,
+                Linq.firstOrNull(dataCenterWithClusters,
                         new Linq.DataCenterWithClusterPredicate(pool.getStoragePoolId(), pool.getVdsGroupId()));
 
         getModel().getDataCenterWithClustersList()
                 .setSelectedItem((selectDataCenterWithCluster != null) ? selectDataCenterWithCluster
-                        : Linq.firstOrDefault(dataCenterWithClusters));
+                        : Linq.firstOrNull(dataCenterWithClusters));
         getModel().getCpuSharesAmount().setEntity(pool.getCpuShares());
         updateCpuSharesSelection();
         initTemplate();
