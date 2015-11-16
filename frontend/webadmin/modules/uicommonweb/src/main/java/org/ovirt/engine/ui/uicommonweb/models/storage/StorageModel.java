@@ -529,7 +529,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
 
         // Try to select previously selected host.
         if (oldSelectedItem != null) {
-            selectedItem = Linq.firstOrNull(hosts, new Linq.HostPredicate(oldSelectedItem.getId()));
+            selectedItem = Linq.firstOrNull(hosts, new Linq.IdPredicate<>(oldSelectedItem.getId()));
         }
 
         // Select a default - if there's a SPM choose it, otherwise choose the first host in the list.

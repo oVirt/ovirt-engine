@@ -1735,7 +1735,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host) {
             VDS host = (VDS) getSystemTreeSelectedItem().getEntity();
 
-            setSelectedItem(Linq.firstOrNull(Linq.<VDS> cast(getItems()), new Linq.HostPredicate(host.getId())));
+            setSelectedItem(Linq.firstOrNull(Linq.<VDS> cast(getItems()), new Linq.IdPredicate<>(host.getId())));
         }
     }
 

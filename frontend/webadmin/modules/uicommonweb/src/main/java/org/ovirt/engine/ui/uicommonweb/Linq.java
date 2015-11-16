@@ -998,19 +998,6 @@ public final class Linq {
         }
     }
 
-    public final static class HostPredicate implements IPredicate<VDS> {
-        private Guid id = Guid.Empty;
-
-        public HostPredicate(Guid id) {
-            this.id = id;
-        }
-
-        @Override
-        public boolean match(VDS source) {
-            return source.getId().equals(id);
-        }
-    }
-
     public final static class HostStatusPredicate implements IPredicate<VDS> {
         private VDSStatus status = VDSStatus.values()[0];
 
