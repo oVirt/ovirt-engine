@@ -18,6 +18,7 @@ package org.ovirt.api.metamodel.concepts;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.lang.String.join;
@@ -114,8 +115,22 @@ public class Name implements Comparable<Name> {
         return words.hashCode();
     }
 
+    /**
+     * Compares two names lexicographically.
+     */
     @Override
     public int compareTo(Name that) {
-        return this.toString().compareTo(that.toString());
+        int thisLength = this.words.size();
+        int thatLength = that.words.size();
+        int minLength = Math.min(thisLength, thatLength);
+        for (int i = 0; i < minLength; i++) {
+            String thisWord = this.words.get(i);
+            String thatWord = that.words.get(i);
+            int result = thisWord.compareTo(thatWord);
+            if (result != 0) {
+                return result;
+            }
+        }
+        return Integer.compare(thisLength, thatLength);
     }
 }
