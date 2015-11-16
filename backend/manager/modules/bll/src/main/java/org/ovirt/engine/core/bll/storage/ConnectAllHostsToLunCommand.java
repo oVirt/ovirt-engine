@@ -19,8 +19,6 @@ import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameter
 import org.ovirt.engine.core.common.vdscommands.GetDevicesVisibilityVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,12 +69,8 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
 
     @Override
     protected void executeCommand() {
-        VDS spmVds = LinqUtils.first(LinqUtils.filter(getAllRunningVdssInPool(), new Predicate<VDS>() {
-            @Override
-            public boolean eval(VDS vds) {
-                return vds.getSpmStatus() == VdsSpmStatus.SPM;
-            }
-        }));
+        VDS spmVds = getAllRunningVdssInPool().stream()
+                .filter(vds -> vds.getSpmStatus() == VdsSpmStatus.SPM).findFirst().orElse(null);
 
         final List<LUNs> luns = getHostLuns(spmVds);
         final Map<String, LUNs> lunsMap = new HashMap<>();
