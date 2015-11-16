@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -42,8 +43,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameters;
 import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
@@ -109,23 +108,15 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
             List<StorageDomain> activeDomains = filterDomainsByStatus(domains, StorageDomainStatus.Active);
 
-            List<StorageDomain> dataDomains = LinqUtils.filter(activeDomains, new Predicate<StorageDomain>() {
-                @Override
-                public boolean eval(StorageDomain a) {
-                    return a.getStorageDomainType() == StorageDomainType.Data;
-                }
-            });
+            List<StorageDomain> dataDomains = activeDomains.stream()
+                    .filter(d -> d.getStorageDomainType() == StorageDomainType.Data).collect(Collectors.toList());
 
             if (!activeDomains.isEmpty() && dataDomains.isEmpty()) {
                 return failCanDoAction(EngineMessage.ERROR_CANNOT_DEACTIVATE_MASTER_WITH_NON_DATA_DOMAINS);
             }
 
-            List<StorageDomain> busyDomains = LinqUtils.filter(domains, new Predicate<StorageDomain>() {
-                @Override
-                public boolean eval(StorageDomain storageDomain) {
-                    return storageDomain.getStatus().isStorageDomainInProcess();
-                }
-            });
+            List<StorageDomain> busyDomains = domains.stream()
+                    .filter(d -> d.getStatus().isStorageDomainInProcess()).collect(Collectors.toList());
 
             if (!busyDomains.isEmpty()) {
                 return failCanDoAction(EngineMessage.ERROR_CANNOT_DEACTIVATE_MASTER_WITH_LOCKED_DOMAINS);
@@ -190,13 +181,9 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
      */
     private List<StorageDomain> filterDomainsByStatus(List<StorageDomain> domains,
             final StorageDomainStatus domainStatus) {
-        List<StorageDomain> activeDomains = LinqUtils.filter(domains, new Predicate<StorageDomain>() {
-            @Override
-            public boolean eval(StorageDomain a) {
-                return a.getStatus() == domainStatus && !a.getId().equals(getStorageDomain().getId());
-            }
-        });
-        return activeDomains;
+        return domains.stream()
+                .filter(d -> d.getStatus() == domainStatus && !d.getId().equals(getStorageDomain().getId()))
+                .collect(Collectors.toList());
     }
 
     @Override
