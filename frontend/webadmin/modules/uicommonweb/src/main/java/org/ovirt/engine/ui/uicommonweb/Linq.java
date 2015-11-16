@@ -1082,16 +1082,16 @@ public final class Linq {
         }
     }
 
-    public final static class StoragePredicate implements IPredicate<StorageDomain> {
-        private Guid id = Guid.Empty;
+    public final static class IdPredicate<T extends Serializable> implements IPredicate<BusinessEntity<T>> {
+        private T id;
 
-        public StoragePredicate(Guid id) {
+        public IdPredicate(T id) {
             this.id = id;
         }
 
         @Override
-        public boolean match(StorageDomain source) {
-            return id.equals(source.getId());
+        public boolean match(BusinessEntity<T> entity) {
+            return id.equals(entity.getId());
         }
     }
 

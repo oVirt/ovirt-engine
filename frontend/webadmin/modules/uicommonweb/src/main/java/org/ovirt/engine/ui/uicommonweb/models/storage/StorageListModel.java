@@ -829,7 +829,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
 
             setSelectedItem(Linq.firstOrNull(Linq.<StorageDomain> cast(getItems()),
-                    new Linq.StoragePredicate(storage.getId())));
+                    new Linq.IdPredicate<>(storage.getId())));
         }
     }
 

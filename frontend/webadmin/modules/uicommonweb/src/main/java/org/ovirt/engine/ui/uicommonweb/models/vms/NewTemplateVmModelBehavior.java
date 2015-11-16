@@ -397,7 +397,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                         (StorageDomain) getSystemTreeSelectedItem().getEntity();
                                 StorageDomain s =
                                         Linq.firstOrNull(activeStorageDomainList,
-                                                new Linq.StoragePredicate(selectStorage.getId()));
+                                                new Linq.IdPredicate<>(selectStorage.getId()));
                                 activeStorageDomainList =
                                         new ArrayList<StorageDomain>(Arrays.asList(new StorageDomain[] { s }));
 

@@ -738,7 +738,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         // Filter according to system tree selection.
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
             StorageDomain selectStorage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
-            StorageDomain sd = Linq.firstOrNull(list, new Linq.StoragePredicate(selectStorage.getId()));
+            StorageDomain sd = Linq.firstOrNull(list, new Linq.IdPredicate<>(selectStorage.getId()));
             list = new ArrayList<StorageDomain>(Arrays.asList(new StorageDomain[] { sd }));
         }
 
