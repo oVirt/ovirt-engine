@@ -90,7 +90,7 @@ public class PriorityUtil {
             }
         }
         else {
-            model.getPriority().setSelectedItem(Linq.firstOrDefault(items));
+            model.getPriority().setSelectedItem(Linq.firstOrNull(items));
         }
 
         after(callbacks);

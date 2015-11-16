@@ -169,7 +169,7 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
                             findDc(networkModel.getNetwork().getDataCenterId(), dataCenters);
                     networkModel.getDataCenters().setSelectedItem(currentDc);
                 } else {
-                    networkModel.getDataCenters().setSelectedItem(Linq.firstOrDefault(dataCenters));
+                    networkModel.getDataCenters().setSelectedItem(Linq.firstOrNull(dataCenters));
                 }
             }
         }));

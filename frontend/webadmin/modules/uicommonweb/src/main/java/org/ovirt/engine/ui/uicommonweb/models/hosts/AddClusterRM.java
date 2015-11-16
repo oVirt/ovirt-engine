@@ -53,7 +53,7 @@ public class AddClusterRM extends IEnlistmentNotification {
                         @Override
                         public void onSuccess(Object model, Object returnValue) {
 
-                            context.clusterFoundByName = Linq.firstOrDefault((Iterable<VDSGroup>) returnValue);
+                            context.clusterFoundByName = Linq.firstOrNull((Iterable<VDSGroup>) returnValue);
                             prepare2();
                         }
                     }),

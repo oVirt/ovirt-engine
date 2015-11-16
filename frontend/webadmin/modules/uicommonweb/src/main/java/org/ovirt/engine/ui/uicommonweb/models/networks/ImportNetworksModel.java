@@ -173,7 +173,7 @@ public class ImportNetworksModel extends Model {
                     externalNetwork.getDataCenters().setItems(availableDataCenters);
                     externalNetwork.getDataCenters().setSelectedItem(treeSelectedDc != null
                             && availableDataCenters.contains(treeSelectedDc) ? treeSelectedDc
-                            : Linq.firstOrDefault(availableDataCenters));
+                            : Linq.firstOrNull(availableDataCenters));
 
                     items.add(externalNetwork);
                 }

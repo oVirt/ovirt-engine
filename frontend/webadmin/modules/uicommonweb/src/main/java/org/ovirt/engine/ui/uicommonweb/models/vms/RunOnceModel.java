@@ -824,7 +824,7 @@ public abstract class RunOnceModel extends Model {
 
                         if (getFloppyImage().getIsChangable()
                                 && getFloppyImage().getSelectedItem() == null) {
-                            getFloppyImage().setSelectedItem(Linq.firstOrDefault(images));
+                            getFloppyImage().setSelectedItem(Linq.firstOrNull(images));
                         }
                     }
                 }),
@@ -958,7 +958,7 @@ public abstract class RunOnceModel extends Model {
                             if (lastSelectedIso != null && images.contains(lastSelectedIso)) {
                                 getIsoImage().setSelectedItem(lastSelectedIso);
                             } else {
-                                getIsoImage().setSelectedItem(Linq.firstOrDefault(images));
+                                getIsoImage().setSelectedItem(Linq.firstOrNull(images));
                             }
                         }
                     }
@@ -978,7 +978,7 @@ public abstract class RunOnceModel extends Model {
                                                                                       domains.add(0, oldDomain);
                                                                                   }
                                                                                   getSysPrepDomainName().setItems(domains);
-                                                                                  String selectedDomain = (oldDomain != null) ? oldDomain : Linq.firstOrDefault(domains);
+                                                                                  String selectedDomain = (oldDomain != null) ? oldDomain : Linq.firstOrNull(domains);
                                                                                   if (!StringHelper.isNullOrEmpty(selectedDomain)) {
                                                                                       getSysPrepDomainName().setSelectedItem(selectedDomain);
                                                                                   }

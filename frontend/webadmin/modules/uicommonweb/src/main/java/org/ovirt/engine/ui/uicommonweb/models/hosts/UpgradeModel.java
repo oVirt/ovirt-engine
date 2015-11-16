@@ -57,7 +57,7 @@ public class UpgradeModel extends InstallModel {
                             }
                         });
                         model.getOVirtISO().setItems(isos);
-                        model.getOVirtISO().setSelectedItem(Linq.firstOrDefault(isos));
+                        model.getOVirtISO().setSelectedItem(Linq.firstOrNull(isos));
                         model.getOVirtISO().setIsAvailable(true);
                         model.getOVirtISO().setIsChangeable(!isos.isEmpty());
                         model.getHostVersion().setIsAvailable(true);

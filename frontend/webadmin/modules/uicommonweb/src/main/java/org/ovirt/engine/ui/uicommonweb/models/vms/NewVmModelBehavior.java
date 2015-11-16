@@ -267,7 +267,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
                                             List<VmTemplate> templatesByStorage = (List<VmTemplate>) returnValue2;
                                             VmTemplate blankTemplate =
-                                                    Linq.firstOrDefault(templatesByDataCenter,
+                                                    Linq.firstOrNull(templatesByDataCenter,
                                                             new Linq.TemplatePredicate(Guid.Empty));
                                             if (blankTemplate != null) {
                                                 templatesByStorage.add(0, blankTemplate);

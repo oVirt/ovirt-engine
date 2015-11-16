@@ -200,13 +200,13 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
 
     protected void populateProfiles(List<ProfileEntry> profiles) {
         getProfile().setItems(profiles);
-        getProfile().setSelectedItem(Linq.firstOrDefault(getProfile().getItems()));
+        getProfile().setSelectedItem(Linq.firstOrNull(getProfile().getItems()));
     }
 
     public void populateNamespaces() {
         if (namespacesMap != null) {
             getNamespace().setItems(getAuthzNamespaces());
-            getNamespace().setSelectedItem(Linq.firstOrDefault(getNamespace().getItems()));
+            getNamespace().setSelectedItem(Linq.firstOrNull(getNamespace().getItems()));
 
         }
     }

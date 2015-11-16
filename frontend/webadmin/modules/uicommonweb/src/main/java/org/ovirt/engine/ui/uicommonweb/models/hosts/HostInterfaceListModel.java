@@ -637,7 +637,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
             }
 
             if (!found) {
-                setSelectedItem(Linq.firstOrDefault(getSelectedItems()));
+                setSelectedItem(Linq.firstOrNull(getSelectedItems()));
             }
         }
 
@@ -1213,7 +1213,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                             }
                             bModel.getBond().setItems(bondNames);
                             // ((List<Interface>)model.Bond.Options).Sort(a => a.name);
-                            bModel.getBond().setSelectedItem(Linq.firstOrDefault(bondNames));
+                            bModel.getBond().setSelectedItem(Linq.firstOrNull(bondNames));
                             boolean hasManagement = false;
                             for (VdsNetworkInterface innerItem : innerHostInterfaceListModel.getSelectedItemsWithVlans()) {
                                 if (innerItem.getIsManagement()) {

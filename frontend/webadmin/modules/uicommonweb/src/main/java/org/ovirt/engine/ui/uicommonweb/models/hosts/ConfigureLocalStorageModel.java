@@ -154,7 +154,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
         getFormattedStorageName().validateEntity(new IValidation[] { validation });
 
         if (getFormattedStorageName().getEntity() != null
-                && Linq.firstOrDefault(context.storageList,
+                && Linq.firstOrNull(context.storageList,
                         new Linq.StorageNamePredicate(getFormattedStorageName().getEntity())) != null) {
 
             getFormattedStorageName().setIsValid(false);
@@ -279,14 +279,14 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
                 } else {
 
                     // Use the DC cluster.
-                    VDSGroup cluster = Linq.firstOrDefault(clusters);
+                    VDSGroup cluster = Linq.firstOrNull(clusters);
 
                     getCluster().setClusterId(cluster.getId());
                     getCluster().getName().setEntity(cluster.getName());
                     getCluster().getDescription().setEntity(cluster.getDescription());
 
                     cluster =
-                            Linq.firstOrDefault(context.clusterList,
+                            Linq.firstOrNull(context.clusterList,
                                     new Linq.ClusterPredicate(getCluster().getClusterId()));
                     if (cluster != null) {
 
@@ -347,7 +347,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
         // Choose default CPU name to match host.
         List<ServerCpu> serverCpus = (List<ServerCpu>) getCluster().getCPU().getItems();
         if (host.getCpuName() != null) {
-            getCluster().getCPU().setSelectedItem(Linq.firstOrDefault(
+            getCluster().getCPU().setSelectedItem(Linq.firstOrNull(
                     serverCpus, new Linq.ServerCpuPredicate(host.getCpuName().getCpuName())));
         }
         else {

@@ -157,7 +157,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                             ArrayList<VmTemplate> templatesByStorage =
                                                     (ArrayList<VmTemplate>) returnValue2;
                                             VmTemplate blankTemplate =
-                                                    Linq.firstOrDefault(templatesByDataCenter,
+                                                    Linq.firstOrNull(templatesByDataCenter,
                                                             new Linq.TemplatePredicate(Guid.Empty));
                                             if (blankTemplate != null) {
                                                 templatesByStorage.add(0, blankTemplate);
@@ -207,12 +207,12 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
         getModel().getIsSubTemplate().setIsChangeable(true);
 
-        VmTemplate currentTemplate = Linq.firstOrDefault(templates,
+        VmTemplate currentTemplate = Linq.firstOrNull(templates,
                 new Linq.TemplatePredicate(vm.getVmtGuid()));
 
         getModel().getBaseTemplate().setItems(baseWithoutBlank);
 
-        getModel().getBaseTemplate().setSelectedItem(Linq.firstOrDefault(baseWithoutBlank,
+        getModel().getBaseTemplate().setSelectedItem(Linq.firstOrNull(baseWithoutBlank,
                 new Linq.TemplatePredicate(currentTemplate.getBaseTemplateId())));
     }
 
@@ -396,7 +396,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                 StorageDomain selectStorage =
                                         (StorageDomain) getSystemTreeSelectedItem().getEntity();
                                 StorageDomain s =
-                                        Linq.firstOrDefault(activeStorageDomainList,
+                                        Linq.firstOrNull(activeStorageDomainList,
                                                 new Linq.StoragePredicate(selectStorage.getId()));
                                 activeStorageDomainList =
                                         new ArrayList<StorageDomain>(Arrays.asList(new StorageDomain[] { s }));

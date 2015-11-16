@@ -193,7 +193,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
                         StoragePool selectDataCenter =
                                 (StoragePool) quotaListModel.getSystemTreeSelectedItem().getEntity();
 
-                        quotaModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenterList,
+                        quotaModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenterList,
                                 new Linq.DataCenterPredicate(selectDataCenter.getId())));
                         quotaModel.getDataCenter().setIsChangeable(false);
                     }

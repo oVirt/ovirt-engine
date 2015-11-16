@@ -78,7 +78,7 @@ public class EditNetworkModel extends NetworkModel {
     @Override
     protected void selectExternalProvider() {
         final Network network = getNetwork();
-        getExternalProviders().setSelectedItem(Linq.firstOrDefault(getExternalProviders().getItems(),
+        getExternalProviders().setSelectedItem(Linq.firstOrNull(getExternalProviders().getItems(),
                 new Linq.NetworkSameProviderPredicate(network)));
     }
 

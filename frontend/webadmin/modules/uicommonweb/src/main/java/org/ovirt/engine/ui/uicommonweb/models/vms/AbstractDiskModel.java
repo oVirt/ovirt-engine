@@ -379,7 +379,7 @@ public abstract class AbstractDiskModel extends DiskModel {
                 filteredStorageDomains = (ArrayList<StorageDomain>) Linq.filterStorageDomainsByStorageStatus(
                         filteredStorageDomains, StorageDomainStatus.Active);
                 Collections.sort(filteredStorageDomains, new NameableComparator());
-                StorageDomain storage = Linq.firstOrDefault(filteredStorageDomains);
+                StorageDomain storage = Linq.firstOrNull(filteredStorageDomains);
                 diskModel.getStorageDomain().setItems(filteredStorageDomains, storage);
                 if (storage == null) {
                     switch (getDiskStorageType().getEntity()) {
@@ -431,7 +431,7 @@ public abstract class AbstractDiskModel extends DiskModel {
                         dataCenters.add(dataCenter);
                     }
 
-                    diskModel.getDataCenter().setItems(dataCenters, Linq.firstOrDefault(dataCenters));
+                    diskModel.getDataCenter().setItems(dataCenters, Linq.firstOrNull(dataCenters));
 
                     if (dataCenters.isEmpty()) {
                         diskModel.setMessage(constants.relevantDCnotActive());

@@ -868,14 +868,14 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
         if (oldCluster != null) {
             VDSGroup newSelectedItem =
-                    Linq.firstOrDefault(filteredClusters, new Linq.ClusterPredicate(oldCluster.getId()));
+                    Linq.firstOrNull(filteredClusters, new Linq.ClusterPredicate(oldCluster.getId()));
             if (newSelectedItem != null) {
                 hostModel.getCluster().setSelectedItem(newSelectedItem);
             }
         }
 
         if (hostModel.getCluster().getSelectedItem() == null) {
-            hostModel.getCluster().setSelectedItem(Linq.firstOrDefault(filteredClusters));
+            hostModel.getCluster().setSelectedItem(Linq.firstOrNull(filteredClusters));
         }
 
     }
@@ -1152,7 +1152,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 }
                 if (providersListModel.getItems() == null || providersListModel.getItems().isEmpty()
                         || providersListModel.getSelectedItem() == null) {
-                    providersListModel.setItems(providers, Linq.firstOrDefault(providers));
+                    providersListModel.setItems(providers, Linq.firstOrNull(providers));
                 }
                 providersListModel.setIsChangeable(true);
                 getIsDiscoveredHosts().setEntity(null);

@@ -326,13 +326,13 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                     SystemTreeItemModel treeSelectedDc = SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, treeSelectedItem);
                     StoragePool selectDataCenter = (StoragePool) treeSelectedDc.getEntity();
 
-                    final StoragePool selectedDataCenter = Linq.firstOrDefault(dataCenters,
+                    final StoragePool selectedDataCenter = Linq.firstOrNull(dataCenters,
                             new DataCenterPredicate(selectDataCenter.getId()));
                     cModel.getDataCenter().setItems(dataCenters, selectedDataCenter);
                     cModel.getDataCenter().setIsChangeable(false);
                 }
                 else {
-                    cModel.getDataCenter().setItems(dataCenters, Linq.firstOrDefault(dataCenters));
+                    cModel.getDataCenter().setItems(dataCenters, Linq.firstOrNull(dataCenters));
                 }
 
                 UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSave", clModel); //$NON-NLS-1$
@@ -988,7 +988,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster) {
             VDSGroup cluster = (VDSGroup) getSystemTreeSelectedItem().getEntity();
 
-            setSelectedItem(Linq.firstOrDefault(Linq.<VDSGroup> cast(getItems()),
+            setSelectedItem(Linq.firstOrNull(Linq.<VDSGroup> cast(getItems()),
                     new Linq.ClusterPredicate(cluster.getId())));
         }
     }
