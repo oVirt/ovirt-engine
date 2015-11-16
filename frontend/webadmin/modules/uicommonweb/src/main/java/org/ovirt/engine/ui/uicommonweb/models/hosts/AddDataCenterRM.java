@@ -57,7 +57,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
                         @Override
                         public void onSuccess(Object model, Object returnValue) {
 
-                            context.dataCenterFoundByName = Linq.firstOrDefault((Iterable<StoragePool>) returnValue);
+                            context.dataCenterFoundByName = Linq.firstOrNull((Iterable<StoragePool>) returnValue);
                             prepare2();
                         }
                     }),

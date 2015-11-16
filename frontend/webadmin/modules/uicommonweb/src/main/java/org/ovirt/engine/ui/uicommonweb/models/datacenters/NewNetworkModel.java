@@ -96,7 +96,7 @@ public class NewNetworkModel extends NetworkModel {
 
     @Override
     protected void selectExternalProvider() {
-        getExternalProviders().setSelectedItem(Linq.firstOrDefault(getExternalProviders().getItems()));
+        getExternalProviders().setSelectedItem(Linq.firstOrNull(getExternalProviders().getItems()));
     }
 
     @Override

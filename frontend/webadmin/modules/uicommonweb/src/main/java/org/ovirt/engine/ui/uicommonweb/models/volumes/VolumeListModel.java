@@ -387,13 +387,13 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                         break;
                     default:
                         innerVolumeModel.getDataCenter().setItems(dataCenters);
-                        innerVolumeModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters));
+                        innerVolumeModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
                         break;
                     }
                 }
                 else {
                     innerVolumeModel.getDataCenter().setItems(dataCenters);
-                    innerVolumeModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters));
+                    innerVolumeModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
                 }
 
                 UICommand command = UICommand.createDefaultOkUiCommand("onCreateVolume", volumeListModel); //$NON-NLS-1$

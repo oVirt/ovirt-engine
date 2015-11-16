@@ -90,7 +90,7 @@ public abstract class RegisterEntityPopupView<E> extends AbstractModelBoundPopup
         createEntityTable(model);
         createInfoPanel(model);
         entityTable.asEditor().edit(model.getEntities());
-        model.getEntities().setSelectedItem(Linq.firstOrDefault(model.getEntities().getItems()));
+        model.getEntities().setSelectedItem(Linq.firstOrNull(model.getEntities().getItems()));
     }
 
     private void refreshEntityTable() {

@@ -743,13 +743,13 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                         break;
                     default:
                         innerHostModel.getDataCenter().setItems(dataCenters);
-                        innerHostModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters));
+                        innerHostModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
                         break;
                     }
                 }
                 else {
                     innerHostModel.getDataCenter().setItems(dataCenters);
-                    innerHostModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters));
+                    innerHostModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
                 }
 
 
@@ -1741,7 +1741,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host) {
             VDS host = (VDS) getSystemTreeSelectedItem().getEntity();
 
-            setSelectedItem(Linq.firstOrDefault(Linq.<VDS> cast(getItems()), new Linq.HostPredicate(host.getId())));
+            setSelectedItem(Linq.firstOrNull(Linq.<VDS> cast(getItems()), new Linq.HostPredicate(host.getId())));
         }
     }
 

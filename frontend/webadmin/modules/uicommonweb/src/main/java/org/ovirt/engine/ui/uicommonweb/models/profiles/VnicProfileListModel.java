@@ -163,7 +163,7 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
                         profileModel.getNetwork().setSelectedItem(currentNetwork);
                         profileModel.getNetwork().setIsChangeable(false);
                     } else {
-                        profileModel.getNetwork().setSelectedItem(Linq.firstOrDefault(networks));
+                        profileModel.getNetwork().setSelectedItem(Linq.firstOrNull(networks));
                     }
 
                     profileModel.stopProgress();

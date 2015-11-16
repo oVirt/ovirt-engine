@@ -98,12 +98,12 @@ public class UserPortalNewTemplateVmModelBehavior extends NewTemplateVmModelBeha
         }
         getModel().getIsSubTemplate().setIsChangeable(true);
 
-        VmTemplate currentTemplate = Linq.firstOrDefault(templates,
+        VmTemplate currentTemplate = Linq.firstOrNull(templates,
                 new Linq.TemplatePredicate(getVm().getVmtGuid()));
 
         getModel().getBaseTemplate().setItems(filteredTemplates);
 
-        getModel().getBaseTemplate().setSelectedItem(Linq.firstOrDefault(filteredTemplates,
+        getModel().getBaseTemplate().setSelectedItem(Linq.firstOrNull(filteredTemplates,
                 new Linq.TemplatePredicate(currentTemplate.getBaseTemplateId())));
     }
 }

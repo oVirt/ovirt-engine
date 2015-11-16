@@ -28,10 +28,10 @@ public class EditHostModel extends HostModel {
     protected void updateModelDataCenterFromVds(ArrayList<StoragePool> dataCenters, VDS vds) {
         if (dataCenters != null) {
             getDataCenter().setItems(dataCenters);
-            getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters,
+            getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters,
                     new Linq.DataCenterPredicate(vds.getStoragePoolId())));
             if (getDataCenter().getSelectedItem() == null) {
-                getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters));
+                getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
             }
         }
     }
@@ -78,7 +78,7 @@ public class EditHostModel extends HostModel {
     @Override
     protected void updateModelClusterFromVds(ArrayList<VDSGroup> clusters, VDS vds) {
         if (clusters != null) {
-            getCluster().setSelectedItem(Linq.firstOrDefault(clusters,
+            getCluster().setSelectedItem(Linq.firstOrNull(clusters,
                     new Linq.ClusterPredicate(vds.getVdsGroupId())));
         }
     }
@@ -109,7 +109,7 @@ public class EditHostModel extends HostModel {
         clusters = (ArrayList<VDSGroup>) getCluster().getItems();
         updateModelClusterFromVds(clusters, host);
         if (getCluster().getSelectedItem() == null) {
-            getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
+            getCluster().setSelectedItem(Linq.firstOrNull(clusters));
         }
     }
 }

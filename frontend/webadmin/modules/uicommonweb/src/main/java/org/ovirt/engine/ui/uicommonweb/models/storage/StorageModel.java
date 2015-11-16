@@ -431,12 +431,12 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                                                                                                  storageModel.getDataCenter().getSelectedItem();
                                                                                          storageModel.getDataCenter().setItems(dataCenters);
                                                                                          if (oldSelectedItem != null) {
-                                                                                             storageModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters,
+                                                                                             storageModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters,
                                                                                                                                                               new Linq.DataCenterPredicate(oldSelectedItem.getId())));
                                                                                          } else {
                                                                                              storageModel.getDataCenter()
-                                                                                                     .setSelectedItem(getStorage() == null ? Linq.firstOrDefault(dataCenters)
-                                                                                                                              : Linq.firstOrDefault(dataCenters,
+                                                                                                     .setSelectedItem(getStorage() == null ? Linq.firstOrNull(dataCenters)
+                                                                                                                              : Linq.firstOrNull(dataCenters,
                                                                                                                                                     new Linq.DataCenterPredicate(UnassignedDataCenterId)));
                                                                                          }
 
@@ -462,7 +462,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                                             new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dataCentersWithStorage.get(0) }));
                                 }
                                 storageModel.getDataCenter().setItems(dataCenters);
-                                storageModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters));
+                                storageModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
 
                             }
                         }),
@@ -529,13 +529,13 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
 
         // Try to select previously selected host.
         if (oldSelectedItem != null) {
-            selectedItem = Linq.firstOrDefault(hosts, new Linq.HostPredicate(oldSelectedItem.getId()));
+            selectedItem = Linq.firstOrNull(hosts, new Linq.HostPredicate(oldSelectedItem.getId()));
         }
 
         // Select a default - if there's a SPM choose it, otherwise choose the first host in the list.
         if (selectedItem == null) {
             VDS spm = getSPM(hosts);
-            selectedItem = spm == null ? Linq.firstOrDefault(hosts) : spm;
+            selectedItem = spm == null ? Linq.firstOrNull(hosts) : spm;
         }
 
         getHost().setItems(hosts, selectedItem);

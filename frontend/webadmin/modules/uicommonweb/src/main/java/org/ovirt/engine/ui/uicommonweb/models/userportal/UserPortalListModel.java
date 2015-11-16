@@ -862,7 +862,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                         .getConstants()
                         .noCds() }));
         model.getIsoImage().setItems(defaultImages);
-        model.getIsoImage().setSelectedItem(Linq.firstOrDefault(defaultImages));
+        model.getIsoImage().setSelectedItem(Linq.firstOrNull(defaultImages));
 
         AsyncQuery getImagesQuery = new AsyncQuery();
         getImagesQuery.setModel(this);
@@ -876,7 +876,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                 images.add(0, ConsoleModel.getEjectLabel());
                 _attachCdModel.getIsoImage().setItems(images);
                 if (_attachCdModel.getIsoImage().getIsChangable()) {
-                    String selectedIso = Linq.firstOrDefault(images, new Linq.IPredicate<String>() {
+                    String selectedIso = Linq.firstOrNull(images, new Linq.IPredicate<String>() {
                         @Override
                         public boolean match(String s) {
                             return vm.getCurrentCd().equals(s);
@@ -1264,7 +1264,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             VM vm = (VM) selectedItem.getEntity();
 
             if (!StringHelper.isNullOrEmpty(vm.getTimeZone())) {
-                model.getTimeZone().setSelectedItem(Linq.firstOrDefault(model.getTimeZone().getItems(),
+                model.getTimeZone().setSelectedItem(Linq.firstOrNull(model.getTimeZone().getItems(),
                         new Linq.TimeZonePredicate(vm.getTimeZone())));
             }
         }

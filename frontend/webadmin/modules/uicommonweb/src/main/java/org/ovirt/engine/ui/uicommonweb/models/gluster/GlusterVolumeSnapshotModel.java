@@ -164,7 +164,7 @@ public class GlusterVolumeSnapshotModel extends Model {
     private void initTimeZones() {
         Map<String, String> timeZones = TimeZoneType.GENERAL_TIMEZONE.getTimeZoneList();
         getTimeZones().setItems(timeZones.entrySet());
-        getTimeZones().setSelectedItem(Linq.firstOrDefault(timeZones.entrySet(),
+        getTimeZones().setSelectedItem(Linq.firstOrNull(timeZones.entrySet(),
                 new IPredicate<Map.Entry<String, String>>() {
                     @Override
                     public boolean match(Map.Entry<String, String> item) {

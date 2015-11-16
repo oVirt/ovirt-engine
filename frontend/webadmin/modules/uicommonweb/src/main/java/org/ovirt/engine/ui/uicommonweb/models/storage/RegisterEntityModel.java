@@ -83,11 +83,11 @@ public abstract class RegisterEntityModel<T> extends Model {
                         for (ImportEntityData<T> entityData : entities.getItems()) {
                             List<VDSGroup> filteredClusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters, entityData.getArchType());
                             entityData.getCluster().setItems(filteredClusters);
-                            entityData.getCluster().setSelectedItem(Linq.firstOrDefault(filteredClusters));
+                            entityData.getCluster().setSelectedItem(Linq.firstOrNull(filteredClusters));
                         }
 
                         getCluster().setItems(clusters);
-                        getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
+                        getCluster().setSelectedItem(Linq.firstOrNull(clusters));
 
                         updateClusterQuota(clusters);
                         updateStorageQuota();
@@ -109,7 +109,7 @@ public abstract class RegisterEntityModel<T> extends Model {
                     public void onSuccess(Object innerModel, Object innerReturnValue) {
                         ArrayList<Quota> quotas = ((VdcQueryReturnValue) innerReturnValue).getReturnValue();
                         getStorageQuota().setItems(quotas);
-                        getStorageQuota().setSelectedItem(Linq.firstOrDefault(quotas));
+                        getStorageQuota().setSelectedItem(Linq.firstOrNull(quotas));
                     }
                 }));
     }

@@ -170,7 +170,7 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
                     RefreshActiveModelEvent.fire(EventListModel.this, false);
                 }
                 EventListModel.this.setItems(newEvents);
-                EventListModel.this.setLastEvent(Linq.firstOrDefault(newEvents));
+                EventListModel.this.setLastEvent(Linq.firstOrNull(newEvents));
             }
         });
 

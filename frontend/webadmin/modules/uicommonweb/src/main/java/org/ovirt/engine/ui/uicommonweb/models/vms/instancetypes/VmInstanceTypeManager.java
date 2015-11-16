@@ -81,7 +81,7 @@ public abstract class VmInstanceTypeManager extends InstanceTypeManager {
 
                 getModel().getNicsWithLogicalNetworks().getVnicProfiles().setItems(profiles);
                 getModel().getNicsWithLogicalNetworks().setItems(vnicInstanceTypes);
-                getModel().getNicsWithLogicalNetworks().setSelectedItem(Linq.firstOrDefault(vnicInstanceTypes));
+                getModel().getNicsWithLogicalNetworks().setSelectedItem(Linq.firstOrNull(vnicInstanceTypes));
             }
         });
 
