@@ -62,8 +62,6 @@ import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.OvfUtils;
 import org.ovirt.engine.core.utils.SyncronizeNumberOfAsyncOperations;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
 import org.ovirt.engine.core.utils.ovf.OvfParser;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -324,15 +322,9 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     protected void calcStoragePoolStatusByDomainsStatus() {
-        List<StorageDomain> domains = getStorageDomainDao().getAllForStoragePool(getStoragePool().getId());
-
-        // set masterDomain to the first element of domains with type=master, or null if non have this type.
-        StorageDomain masterDomain = LinqUtils.firstOrNull(domains, new Predicate<StorageDomain>() {
-            @Override
-            public boolean eval(StorageDomain a) {
-                return a.getStorageDomainType() == StorageDomainType.Master;
-            }
-        });
+        StorageDomain masterDomain =
+                getStorageDomainDao().getStorageDomains(getStoragePool().getId(), StorageDomainType.Master)
+                        .stream().findFirst().orElse(null);
 
         // if no master then Uninitialized
         // if master not active maintenance
