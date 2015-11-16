@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -592,10 +593,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     private boolean isDomainExistsInDiskDescription(Map<String, Object> map, Guid storageDomainId) {
-        if (map.get(OvfInfoFileConstants.Domains) == null) {
-            return false;
-        }
-        return map.get(OvfInfoFileConstants.Domains).toString().contains(storageDomainId.toString());
+        return Objects.toString(map.get(OvfInfoFileConstants.Domains), "").contains(storageDomainId.toString());
     }
 
     protected String getJsonDiskDescription(Disk disk) {
