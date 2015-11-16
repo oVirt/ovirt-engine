@@ -1011,19 +1011,6 @@ public final class Linq {
         }
     }
 
-    public final static class TemplatePredicate implements IPredicate<VmTemplate> {
-        private Guid id = Guid.Empty;
-
-        public TemplatePredicate(Guid id) {
-            this.id = id;
-        }
-
-        @Override
-        public boolean match(VmTemplate source) {
-            return source.getId().equals(id);
-        }
-    }
-
     public final static class TemplateWithVersionPredicate implements IPredicate<TemplateWithVersion> {
         private final Guid id;
         private boolean useLatest;

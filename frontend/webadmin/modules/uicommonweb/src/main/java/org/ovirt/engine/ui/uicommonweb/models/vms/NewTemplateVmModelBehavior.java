@@ -158,7 +158,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                                     (ArrayList<VmTemplate>) returnValue2;
                                             VmTemplate blankTemplate =
                                                     Linq.firstOrNull(templatesByDataCenter,
-                                                            new Linq.TemplatePredicate(Guid.Empty));
+                                                            new Linq.IdPredicate<>(Guid.Empty));
                                             if (blankTemplate != null) {
                                                 templatesByStorage.add(0, blankTemplate);
                                             }
@@ -208,12 +208,12 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getIsSubTemplate().setIsChangeable(true);
 
         VmTemplate currentTemplate = Linq.firstOrNull(templates,
-                new Linq.TemplatePredicate(vm.getVmtGuid()));
+                new Linq.IdPredicate<>(vm.getVmtGuid()));
 
         getModel().getBaseTemplate().setItems(baseWithoutBlank);
 
         getModel().getBaseTemplate().setSelectedItem(Linq.firstOrNull(baseWithoutBlank,
-                new Linq.TemplatePredicate(currentTemplate.getBaseTemplateId())));
+                new Linq.IdPredicate<>(currentTemplate.getBaseTemplateId())));
     }
 
     private List<VmTemplate> filterOutBlank(List<VmTemplate> templates) {
