@@ -798,7 +798,7 @@ createtar() {
 	local dir="$1"
 	local file="$2"
 	local tar_log="${TEMP_FOLDER}/createtar.log"
-	tar -C "${dir}" -cpSs"${ARCHIVE_COMPRESS_OPTION}"f "${file}" . >> "${tar_log}" 2>&1
+	tar -C "${dir}" -cpS"${ARCHIVE_COMPRESS_OPTION}"f "${file}" . >> "${tar_log}" 2>&1
 	if [ "$?" != 0 ]; then
 		cat "${tar_log}" >> "${LOG}"
 		cat "${tar_log}"
@@ -828,7 +828,7 @@ backupFiles() {
 			[ -e "${path}" ] && echo "${path}"
 		done | \
 		sed 's;^/;;' | \
-		tar -C / --files-from - -cpSs"${FILES_COMPRESS_OPTION}"f "${target}" || logdie "Failed backing up ${paths}"
+		tar -C / --files-from - -cpS"${FILES_COMPRESS_OPTION}"f "${target}" || logdie "Failed backing up ${paths}"
 }
 
 backupDB() {
