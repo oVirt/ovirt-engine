@@ -598,6 +598,16 @@ public final class Linq {
         return null;
     }
 
+    public static <TSource> TSource firstOrDefault(Iterable<TSource> source, IPredicate<? super TSource> predicate) {
+        for (TSource item : source) {
+            if (predicate.match(item)) {
+                return item;
+            }
+        }
+
+        return null;
+    }
+
     public static <TSource> boolean all(Iterable<TSource> source, IPredicate<? super TSource> predicate) {
 
         for (TSource item : source) {
@@ -630,16 +640,6 @@ public final class Linq {
             }
         }
         return retVersion;
-    }
-
-    public static <TSource> TSource firstOrDefault(Iterable<TSource> source, IPredicate<? super TSource> predicate) {
-        for (TSource item : source) {
-            if (predicate.match(item)) {
-                return item;
-            }
-        }
-
-        return null;
     }
 
     public static <T> boolean contains(Iterable<T> source, IPredicate<? super T> predicate) {
