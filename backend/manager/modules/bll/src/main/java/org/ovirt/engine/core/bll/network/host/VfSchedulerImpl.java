@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.host;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.linq.Predicate;
 
 @Singleton
 public class VfSchedulerImpl implements VfScheduler {
@@ -47,6 +50,12 @@ public class VfSchedulerImpl implements VfScheduler {
     public List<String> validatePassthroughVnics(Guid vmId, Guid hostId,
             List<VmNetworkInterface> vnics) {
 
+        List<VmNetworkInterface> pluggedPassthroughVnics = getPluggedPassthroughVnics(vnics);
+
+        if (pluggedPassthroughVnics.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         Map<Guid, Map<Guid, String>> hostToVnicToVfMap = vmToHostToVnicToVfMap.get(vmId);
         if (hostToVnicToVfMap == null) {
             hostToVnicToVfMap = new HashMap<>();
@@ -62,22 +71,30 @@ public class VfSchedulerImpl implements VfScheduler {
         Map<Guid, String> vnicToVfMap = new HashMap<>();
         hostToVnicToVfMap.put(hostId, vnicToVfMap);
 
-        for (final VmNetworkInterface vnic : vnics) {
+        for (final VmNetworkInterface vnic : pluggedPassthroughVnics) {
             String freeVf = null;
-            if (vnic.isPassthrough()) {
-                freeVf = findFreeVfForVnic(vfsConfigs, vnic, nicToUsedVfs, fetchedNics);
-                if (freeVf == null) {
-                    problematicVnics.add(vnic.getName());
-                } else {
-                    vnicToVfMap.put(vnic.getId(), freeVf);
-                }
+            freeVf = findFreeVfForVnic(vfsConfigs, vnic, nicToUsedVfs, fetchedNics);
+            if (freeVf == null) {
+                problematicVnics.add(vnic.getName());
+            } else {
+                vnicToVfMap.put(vnic.getId(), freeVf);
             }
         }
 
         return problematicVnics;
     }
 
-    private String findFreeVfForVnic(List<HostNicVfsConfig> vfsConfigs,
+    private List<VmNetworkInterface> getPluggedPassthroughVnics(List<VmNetworkInterface> vnics) {
+        return LinqUtils.filter(vnics, new Predicate<VmNetworkInterface>() {
+
+            @Override
+            public boolean eval(VmNetworkInterface vnic) {
+                return vnic.isPassthrough() && vnic.isPlugged();
+            }
+        });
+    }
+
+   private String findFreeVfForVnic(List<HostNicVfsConfig> vfsConfigs,
             final VmNetworkInterface vnic,
             Map<Guid, List<String>> nicToUsedVfs,
             Map<Guid, VdsNetworkInterface> fetchedNics) {

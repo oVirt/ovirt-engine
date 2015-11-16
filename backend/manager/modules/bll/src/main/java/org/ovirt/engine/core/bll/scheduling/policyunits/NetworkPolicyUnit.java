@@ -227,7 +227,7 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
         if (!problematicVnics.isEmpty()) {
             String vnicsString = StringUtils.join(problematicVnics, ", ");
             log.warn("host {} doesn't contain suitable virtual functions for VM nics {}",
-                    host.getName(), vnics);
+                    host.getName(), vnicsString);
             return new ValidationResult(EngineMessage.VAR__DETAIL__NO_SUITABLE_VF,
                     String.format("$vnicNames %1$s", vnicsString));
         }
