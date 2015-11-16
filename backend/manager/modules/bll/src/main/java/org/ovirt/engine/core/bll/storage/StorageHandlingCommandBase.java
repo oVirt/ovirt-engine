@@ -533,7 +533,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
                         getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
                         if (vdcReturnValue.getSucceeded()) {
-                            return OvfUtils.getOvfEntities((byte[]) vdcReturnValue.getActionReturnValue(),
+                            return OvfUtils.getOvfEntities(vdcReturnValue.getActionReturnValue(),
                                     storageDomainId);
                         } else {
                             log.error("Image data could not be retrieved for disk id '{}' in storage domain id '{}'",
