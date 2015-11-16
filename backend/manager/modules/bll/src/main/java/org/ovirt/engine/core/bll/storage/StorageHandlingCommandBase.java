@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
@@ -38,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -168,13 +170,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         }
 
         SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
-        List<String> vmsInPreview = new ArrayList<>();
         List<VM> vmRelatedToDomain = getVmDao().getAllForStorageDomain(storageDomain.getId());
-        for (VM vm : vmRelatedToDomain) {
-            if (!snapshotsValidator.vmNotInPreview(vm.getId()).isValid()) {
-                vmsInPreview.add(vm.getName());
-            }
-        }
+        List<String> vmsInPreview = vmRelatedToDomain.stream().filter(vm -> !snapshotsValidator.vmNotInPreview(vm.getId()).isValid()).map(VM::getName).collect(Collectors.toList());
 
         List<VM> vmsWithDisksOnMultipleStorageDomain = getDbFacade().getVmDao().getAllVMsWithDisksOnOtherStorageDomain(storageDomain.getId());
         vmRelatedToDomain.removeAll(vmsWithDisksOnMultipleStorageDomain);
@@ -194,11 +191,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                 getVmTemplateDao().getAllTemplatesWithDisksOnOtherStorageDomain(storageDomain.getId());
         templatesRelatedToDomain.removeAll(vmTemplatesWithDisksOnMultipleStorageDomain);
 
-        for (VmTemplate vmTemplate : templatesRelatedToDomain) {
-            if (vmTemplate.isDeleteProtected()) {
-                entitiesDeleteProtected.add(vmTemplate.getName());
-            }
-        }
+        entitiesDeleteProtected.addAll(templatesRelatedToDomain.stream().filter(VmBase::isDeleteProtected).map(VmTemplate::getName).collect(Collectors.toList()));
 
         boolean succeeded = true;
         if (!entitiesDeleteProtected.isEmpty()) {
