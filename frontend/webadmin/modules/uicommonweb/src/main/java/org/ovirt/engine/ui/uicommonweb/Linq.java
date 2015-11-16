@@ -908,16 +908,16 @@ public final class Linq {
         }
     }
 
-    public final static class VersionPredicate implements IPredicate<Version> {
-        private final Version version;
+    public final static class EqualsPredicate implements IPredicate<Object> {
+        private final Object object;
 
-        public VersionPredicate(Version version) {
-            this.version = version;
+        public EqualsPredicate(Object object) {
+            this.object = object;
         }
 
         @Override
-        public boolean match(Version source) {
-            return source.equals(version);
+        public boolean match(Object source) {
+            return source.equals(object);
         }
     }
 

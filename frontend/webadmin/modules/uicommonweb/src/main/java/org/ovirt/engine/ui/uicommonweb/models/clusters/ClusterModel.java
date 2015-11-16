@@ -1901,7 +1901,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                 }
                 else if (clusterModel.getIsEdit()) {
                     clusterModel.getVersion().setSelectedItem(Linq.firstOrNull(versions,
-                            new Linq.VersionPredicate(clusterModel.getEntity().getCompatibilityVersion())));
+                            new Linq.EqualsPredicate(clusterModel.getEntity().getCompatibilityVersion())));
                 }
                 else {
                     clusterModel.getVersion().setSelectedItem(selectedVersion);
