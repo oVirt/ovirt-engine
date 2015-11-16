@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
@@ -183,5 +184,12 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
                     + " The import command can not proceed without this info");
         }
         return false;
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        return getSucceeded()
+                ? AuditLogType.HOSTED_ENGINE_DOMAIN_IMPORT_SUCCEEDED
+                : AuditLogType.HOSTED_ENGINE_DOMAIN_IMPORT_FAILED;
     }
 }
