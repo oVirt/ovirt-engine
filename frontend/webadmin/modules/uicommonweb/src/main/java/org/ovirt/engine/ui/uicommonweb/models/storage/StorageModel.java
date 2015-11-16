@@ -432,12 +432,12 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                                                                                          storageModel.getDataCenter().setItems(dataCenters);
                                                                                          if (oldSelectedItem != null) {
                                                                                              storageModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters,
-                                                                                                                                                              new Linq.DataCenterPredicate(oldSelectedItem.getId())));
+                                                                                                                                                              new Linq.IdPredicate<>(oldSelectedItem.getId())));
                                                                                          } else {
                                                                                              storageModel.getDataCenter()
                                                                                                      .setSelectedItem(getStorage() == null ? Linq.firstOrNull(dataCenters)
                                                                                                                               : Linq.firstOrNull(dataCenters,
-                                                                                                                                                    new Linq.DataCenterPredicate(UnassignedDataCenterId)));
+                                                                                                                                                    new Linq.IdPredicate<>(UnassignedDataCenterId)));
                                                                                          }
 
                                                                                      }

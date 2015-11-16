@@ -29,7 +29,7 @@ public class EditHostModel extends HostModel {
         if (dataCenters != null) {
             getDataCenter().setItems(dataCenters);
             getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters,
-                    new Linq.DataCenterPredicate(vds.getStoragePoolId())));
+                    new Linq.IdPredicate<>(vds.getStoragePoolId())));
             if (getDataCenter().getSelectedItem() == null) {
                 getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
             }

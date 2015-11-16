@@ -37,7 +37,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.Linq.DataCenterPredicate;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -328,7 +327,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                     StoragePool selectDataCenter = (StoragePool) treeSelectedDc.getEntity();
 
                     final StoragePool selectedDataCenter = Linq.firstOrNull(dataCenters,
-                            new DataCenterPredicate(selectDataCenter.getId()));
+                            new Linq.IdPredicate<>(selectDataCenter.getId()));
                     cModel.getDataCenter().setItems(dataCenters, selectedDataCenter);
                     cModel.getDataCenter().setIsChangeable(false);
                 }

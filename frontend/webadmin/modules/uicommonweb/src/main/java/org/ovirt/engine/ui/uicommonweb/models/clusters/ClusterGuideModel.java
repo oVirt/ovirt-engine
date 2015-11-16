@@ -539,7 +539,7 @@ public class ClusterGuideModel extends GuideModel {
                      model.getDataCenter().setItems(dataCenters);
                      if (getEntity().getStoragePoolId() != null) {
                          model.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters,
-                               new Linq.DataCenterPredicate(clusterGuideModel.getEntity().getStoragePoolId())));
+                               new Linq.IdPredicate<>(clusterGuideModel.getEntity().getStoragePoolId())));
                      }
                      model.getDataCenter().setIsChangeable(false);
 

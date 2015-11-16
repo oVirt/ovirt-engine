@@ -963,19 +963,6 @@ public final class Linq {
 
     }
 
-    public final static class DataCenterPredicate implements IPredicate<StoragePool> {
-        private Guid id = Guid.Empty;
-
-        public DataCenterPredicate(Guid id) {
-            this.id = id;
-        }
-
-        @Override
-        public boolean match(StoragePool source) {
-            return id.equals(source.getId());
-        }
-    }
-
     public final static class DataCenterStatusPredicate implements IPredicate<StoragePool> {
         private StoragePoolStatus status = StoragePoolStatus.values()[0];
 
