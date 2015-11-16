@@ -77,6 +77,31 @@ public abstract class Concept {
     }
 
     /**
+     * Checks if the given object is equal to this concept. Only the name is taken into account in this comparison, the
+     * documentation and the source are ignored.
+     */
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof Concept) {
+            Concept that = (Concept) object;
+            return Objects.equals(this.name, that.name);
+        }
+        return false;
+    }
+
+    /**
+     * Computes a hash code for this concept. Only the name is taken into account for this computation, the
+     * documentation and the source are ignored.
+     */
+    @Override
+    public int hashCode() {
+        if (name != null) {
+            return name.hashCode();
+        }
+        return super.hashCode();
+    }
+
+    /**
      * This method creates a predicate useful for filtering streams of concepts and keeping only the ones that have a
      * given name. For example, if you need to find the a parameter of a method that has a given name you can do the
      * following:
