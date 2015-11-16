@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 import org.ovirt.engine.core.common.businessentities.MacPool;
+import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.Role;
@@ -1108,17 +1109,17 @@ public final class Linq {
         }
     }
 
-    public final static class StorageNamePredicate implements IPredicate<StorageDomain> {
+    public final static class NamePredicate implements IPredicate<Nameable> {
 
         private final String name;
 
-        public StorageNamePredicate(String name) {
+        public NamePredicate(String name) {
             this.name = name;
         }
 
         @Override
-        public boolean match(StorageDomain source) {
-            return name.equals(source.getStorageName());
+        public boolean match(Nameable entity) {
+            return name.equals(entity.getName());
         }
     }
 

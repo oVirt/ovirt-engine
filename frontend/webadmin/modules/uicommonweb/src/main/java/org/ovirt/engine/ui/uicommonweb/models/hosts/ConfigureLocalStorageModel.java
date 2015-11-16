@@ -155,7 +155,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
 
         if (getFormattedStorageName().getEntity() != null
                 && Linq.firstOrNull(context.storageList,
-                        new Linq.StorageNamePredicate(getFormattedStorageName().getEntity())) != null) {
+                        new Linq.NamePredicate(getFormattedStorageName().getEntity())) != null) {
 
             getFormattedStorageName().setIsValid(false);
             getFormattedStorageName().getInvalidityReasons().add(ConstantsManager.getInstance()
