@@ -590,18 +590,15 @@ public final class Linq {
     }
 
     public static <TSource> TSource firstOrDefault(Iterable<TSource> source) {
-        if (source != null) {
-            for (TSource item : source) {
-                return item;
-            }
-        }
-        return null;
+        return firstOrDefault(source, new TruePredicate<TSource>());
     }
 
     public static <TSource> TSource firstOrDefault(Iterable<TSource> source, IPredicate<? super TSource> predicate) {
-        for (TSource item : source) {
-            if (predicate.match(item)) {
-                return item;
+        if (source != null) {
+            for (TSource item : source) {
+                if (predicate.match(item)) {
+                    return item;
+                }
             }
         }
 
@@ -1198,6 +1195,13 @@ public final class Linq {
 
     public interface IPredicate<TSource> {
         boolean match(TSource source);
+    }
+
+    private static class TruePredicate<TSource> implements IPredicate<TSource> {
+        @Override
+        public boolean match(TSource tSource) {
+            return true;
+        }
     }
 
     public final static class RoleNameComparer implements Comparator<Role>, Serializable {
