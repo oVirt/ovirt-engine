@@ -1222,10 +1222,10 @@ AS $PROCEDURE$
 BEGIN
     CASE
         WHEN ($1 IS NULL)
-        OR ($1 ~ E '^\\s*$')
+        OR ($1 ~ E'^\\s*$')
             THEN RETURN NULL;
         ELSE
-            RETURN regexp_split_to_array(trim(both FROM $1), E '\\s+')::inet [];
+            RETURN regexp_split_to_array(trim(both FROM $1), E'\\s+')::inet [];
     END CASE ;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
