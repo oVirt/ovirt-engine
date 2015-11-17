@@ -69,6 +69,22 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
         setDestinationImageId(destImageId);
     }
 
+    public MoveOrCopyImageGroupParameters(MoveOrCopyImageGroupParameters other) {
+        super(other);
+        this.operation = other.operation;
+        this.useCopyCollapse = other.useCopyCollapse;
+        this.volumeFormat = other.volumeFormat;
+        this.volumeType = other.volumeType;
+        this.copyVolumeType = other.copyVolumeType;
+        this.addImageDomainMapping = other.addImageDomainMapping;
+        this.forceOverride = other.forceOverride;
+        this.sourceDomainId = other.sourceDomainId;
+        this.destImageGroupId = other.destImageGroupId;
+        this.revertDbOperationScope = other.revertDbOperationScope;
+        this.shouldLockImageOnRevert = other.shouldLockImageOnRevert;
+        this.newAlias = other.newAlias;
+    }
+
     public Guid getDestImageGroupId() {
         return destImageGroupId;
     }

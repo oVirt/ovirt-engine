@@ -273,10 +273,10 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected void executeCommand() {
-        overrideParameters();
+        MoveOrCopyImageGroupParameters p = prepareChildParameters();
         VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
                 getImagesActionType(),
-                getParameters());
+                p);
         if (!vdcRetValue.getSucceeded()) {
             setSucceeded(false);
             getReturnValue().setFault(vdcRetValue.getFault());
@@ -291,9 +291,11 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     private void endCommandActions() {
-        getBackend().endAction(getImagesActionType(),
-                getParameters(),
-                getContext().clone().withoutCompensationContext().withoutLock());
+        if (!getParameters().getImagesParameters().isEmpty()) {
+            getBackend().endAction(getImagesActionType(),
+                    getParameters().getImagesParameters().get(0),
+                    getContext().clone().withoutCompensationContext().withoutLock());
+        }
         setSucceeded(true);
     }
 
@@ -354,41 +356,40 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         return cachedPermsList;
     }
 
-    /**
-     * The following method will override a parameters which are not relevant for the MoveOrCopyDiskCommand to the
-     * correct values for these scenario in order to be used at parent class
-     */
-    private void overrideParameters() {
-        if (getParameters().getOperation() == ImageOperation.Copy) {
-            getParameters().setUseCopyCollapse(true);
-            getParameters().setAddImageDomainMapping(true);
+    private MoveOrCopyImageGroupParameters prepareChildParameters() {
+        MoveOrCopyImageGroupParameters parameters = new MoveOrCopyImageGroupParameters(getParameters());
+        if (parameters.getOperation() == ImageOperation.Copy) {
+            parameters.setUseCopyCollapse(true);
+            parameters.setAddImageDomainMapping(true);
+            parameters.setShouldLockImageOnRevert(false);
 
             if (!isTemplate()) {
-                prepareCopyNotTemplate();
+                prepareCopyNotTemplate(parameters);
             }
         } else {
-            getParameters().setUseCopyCollapse(false);
+            parameters.setUseCopyCollapse(false);
         }
 
-        if (getParameters().getOperation() == ImageOperation.Move || isTemplate()) {
-            getParameters().setDestinationImageId(getImageId());
-            getParameters().setImageGroupID(getImageGroupId());
-            getParameters().setDestImageGroupId(getImageGroupId());
+        if (parameters.getOperation() == ImageOperation.Move || isTemplate()) {
+            parameters.setDestinationImageId(getImageId());
+            parameters.setImageGroupID(getImageGroupId());
+            parameters.setDestImageGroupId(getImageGroupId());
         }
 
-        getParameters().setVolumeFormat(getDiskImage().getVolumeFormat());
-        getParameters().setVolumeType(getDiskImage().getVolumeType());
-        getParameters().setCopyVolumeType(CopyVolumeType.SharedVol);
-        getParameters().setParentCommand(getActionType());
-        getParameters().setParentParameters(getParameters());
-        getParameters().setDiskProfileId(getImage().getDiskProfileId());
+        parameters.setVolumeFormat(getDiskImage().getVolumeFormat());
+        parameters.setVolumeType(getDiskImage().getVolumeType());
+        parameters.setCopyVolumeType(CopyVolumeType.SharedVol);
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+        parameters.setDiskProfileId(getImage().getDiskProfileId());
+        return parameters;
     }
 
     /**
      * Prepares the copy of the VM disks and floating disks
      */
-    private void prepareCopyNotTemplate() {
-        getParameters().setAddImageDomainMapping(false);
+    private void prepareCopyNotTemplate(MoveOrCopyImageGroupParameters parameters) {
+        parameters.setAddImageDomainMapping(false);
 
         Guid newImageId = Guid.newGuid();
         Guid newId = Guid.newGuid();
@@ -403,8 +404,8 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         image.setQuotaId(getParameters().getQuotaId());
         image.setDiskProfileId(getParameters().getDiskProfileId());
 
-        getParameters().setDestinationImageId(newImageId);
-        getParameters().setDestImageGroupId(newId);
+        parameters.setDestinationImageId(newImageId);
+        parameters.setDestImageGroupId(newId);
     }
 
     private boolean isTemplate() {

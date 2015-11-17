@@ -22,6 +22,12 @@ public class StoragePoolParametersBase extends VdcActionParametersBase {
         this.vdsId = vdsId;
     }
 
+    public StoragePoolParametersBase(StoragePoolParametersBase other) {
+        this.vdsId = other.vdsId;
+        this.storagePoolId = other.storagePoolId;
+        this.forceDelete = other.forceDelete;
+    }
+
     public Guid getVdsId() {
         return vdsId;
     }
