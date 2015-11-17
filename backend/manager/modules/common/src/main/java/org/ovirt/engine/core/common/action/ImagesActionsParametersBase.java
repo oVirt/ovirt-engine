@@ -33,6 +33,19 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
         imageGroupID = Guid.Empty;
     }
 
+    public ImagesActionsParametersBase(ImagesActionsParametersBase other) {
+        super(other);
+        this.imageId = other.imageId;
+        this.destinationImageId = other.destinationImageId;
+        this.diskAlias = other.diskAlias;
+        this.description = other.description;
+        this.oldLastModifiedValue = other.oldLastModifiedValue;
+        this.vmSnapshotId = other.vmSnapshotId;
+        this.imageGroupID = other.imageGroupID;
+        this.importEntity = other.importEntity;
+        this.leaveLocked = other.leaveLocked;
+    }
+
     public Guid getImageId() {
         return imageId;
     }

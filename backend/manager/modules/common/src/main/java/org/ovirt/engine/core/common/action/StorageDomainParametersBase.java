@@ -24,6 +24,14 @@ public class StorageDomainParametersBase extends StoragePoolParametersBase {
         setStorageDomainId(storageDomainId);
     }
 
+    public StorageDomainParametersBase(StorageDomainParametersBase other) {
+        super(other);
+        this.storageDomainId = other.storageDomainId;
+        this.isInternal = other.isInternal;
+        this.quotaId = other.quotaId;
+        this.diskProfileId = other.diskProfileId;
+    }
+
     public Guid getStorageDomainId() {
         return storageDomainId;
     }
