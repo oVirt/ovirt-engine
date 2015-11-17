@@ -22,6 +22,13 @@ public class ImagesContainterParametersBase extends ImagesActionsParametersBase 
         containerid = containerId;
     }
 
+    public ImagesContainterParametersBase(ImagesContainterParametersBase other) {
+        super(other);
+        this.wipeAfterDelete = other.wipeAfterDelete;
+        this.containerid = other.containerid;
+        this.parentHasTasks = other.parentHasTasks;
+    }
+
     public Guid getContainerId() {
         return containerid;
     }
