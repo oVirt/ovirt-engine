@@ -47,7 +47,7 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
     @Inject
     private HostedEngineHelper hostedEngineHelper;
     private StorageDomain heStorageDomain;
-    public static final StorageType[] SUPPORTED_DOMAIN_TYPES =
+    static final StorageType[] SUPPORTED_DOMAIN_TYPES =
             { StorageType.NFS, StorageType.FCP, StorageType.GLUSTERFS, StorageType.ISCSI };
 
     public ImportHostedEngineStorageDomainCommand(T parameters) {
