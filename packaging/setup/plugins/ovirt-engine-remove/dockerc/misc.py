@@ -55,6 +55,8 @@ class Plugin(plugin.PluginBase):
     def _setup(self):
         self._enabled = not self.environment[
             osetupcons.CoreEnv.DEVELOPER_MODE
+        ] and self.environment[
+            odockerccons.RemoveEnv.REMOVE_DCLIST
         ]
 
     @plugin.event(
