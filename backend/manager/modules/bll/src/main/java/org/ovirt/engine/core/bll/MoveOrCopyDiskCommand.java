@@ -308,6 +308,11 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     private void incrementDbGenerationForRelatedEntities() {
         if (getParameters().getOperation() == ImageOperation.Copy) {
+            // When copying a non template disk the copy is to a new
+            // floating disk, so no need to increment any generations.
+            if (!isTemplate()) {
+                return;
+            }
             getVmStaticDao().incrementDbGeneration(getVmTemplateId());
         } else {
             List<Pair<VM, VmDevice>> vmsForDisk = getVmsWithVmDeviceInfoForDiskId();
