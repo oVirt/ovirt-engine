@@ -249,43 +249,49 @@ public class NetworkDeviceHelperImplTest {
 
     @Test
     public void areAllVfsFreeTrueNoVfs() {
-        freeVfCommon(0, 0, 0, 0, 0);
+        freeVfCommon(0, 0, 0, 0, 0, 0);
         assertTrue(networkDeviceHelper.areAllVfsFree(nic));
     }
 
     @Test
     public void areAllVfsFreeFalseAttachedToVm() {
-        freeVfCommon(7, 3, 0, 0, 0);
+        freeVfCommon(7, 3, 0, 0, 0, 0);
         assertFalse(networkDeviceHelper.areAllVfsFree(nic));
     }
 
     @Test
     public void areAllVfsFreeFalseNoNic() {
-        freeVfCommon(6, 0, 1, 0, 0);
+        freeVfCommon(6, 0, 1, 0, 0, 0);
         assertFalse(networkDeviceHelper.areAllVfsFree(nic));
     }
 
     @Test
     public void areAllVfsFreeFalseHasNetwork() {
-        freeVfCommon(2, 0, 0, 3, 0);
+        freeVfCommon(2, 0, 0, 3, 0, 0);
         assertFalse(networkDeviceHelper.areAllVfsFree(nic));
     }
 
     @Test
     public void areAllVfsFreeFalseHasVlanDevice() {
-        freeVfCommon(4, 0, 0, 0, 3);
+        freeVfCommon(4, 0, 0, 0, 3, 0);
         assertFalse(networkDeviceHelper.areAllVfsFree(nic));
     }
 
     @Test
     public void areAllVfsFreeTrue() {
-        freeVfCommon(5, 0, 0, 0, 0);
+        freeVfCommon(5, 0, 0, 0, 0, 0);
         assertTrue(networkDeviceHelper.areAllVfsFree(nic));
     }
 
     @Test
     public void areAllVfsFreeFalseMix() {
-        freeVfCommon(1, 2, 3, 4, 5);
+        freeVfCommon(1, 2, 3, 4, 5, 6);
+        assertFalse(networkDeviceHelper.areAllVfsFree(nic));
+    }
+
+    @Test
+    public void areAllVfsFreeFalseHasVfPartOfBond() {
+        freeVfCommon(4, 0, 0, 0, 0, 1);
         assertFalse(networkDeviceHelper.areAllVfsFree(nic));
     }
 
@@ -293,7 +299,8 @@ public class NetworkDeviceHelperImplTest {
             int numOfVfsAttachedToVm,
             int numOfVfsHasNoNic,
             int numOfVfsHasNetworkAttached,
-            int numOfVfsHasVlanDeviceAttached) {
+            int numOfVfsHasVlanDeviceAttached,
+            int numOfVfsArePartOfBond) {
         networkDeviceHelper =
                 spy(new NetworkDeviceHelperImpl(interfaceDao, hostDeviceDao, hostNicVfsConfigDao, vdsDao));
 
@@ -302,7 +309,7 @@ public class NetworkDeviceHelperImplTest {
 
         int numOfVfs =
                 numOfFreeVfs + numOfVfsAttachedToVm + numOfVfsHasNoNic + numOfVfsHasNetworkAttached
-                        + numOfVfsHasVlanDeviceAttached;
+                        + numOfVfsHasVlanDeviceAttached + numOfVfsArePartOfBond;
         List<HostDevice> vfs = mockVfsOnNetDevice(numOfVfs);
         List<VdsNetworkInterface> nics = new ArrayList<>();
         devices.addAll(vfs);
@@ -326,6 +333,9 @@ public class NetworkDeviceHelperImplTest {
                     --numOfVfsHasVlanDeviceAttached;
                     doReturn(true).when(networkDeviceHelper)
                             .isVlanDeviceAttached(vfNic);
+                } else if (numOfVfsArePartOfBond != 0) {
+                    --numOfVfsArePartOfBond;
+                    vfNic.setBondName("bondName");
                 } else {
                     doReturn(false).when(networkDeviceHelper)
                             .isVlanDeviceAttached(vfNic);
@@ -348,33 +358,33 @@ public class NetworkDeviceHelperImplTest {
 
     @Test
     public void getFreeVfNoVfs() {
-        freeVfCommon(0, 0, 0, 0, 0);
+        freeVfCommon(0, 0, 0, 0, 0, 0);
         assertNull(networkDeviceHelper.getFreeVf(nic, null));
     }
 
     @Test
     public void getFreeVfNoFreeVf() {
-        freeVfCommon(0, 1, 2, 3, 4);
+        freeVfCommon(0, 1, 2, 3, 4, 5);
         assertNull(networkDeviceHelper.getFreeVf(nic, null));
     }
 
     @Test
     public void getFreeVfOneFreeVf() {
-        List<HostDevice> freeVfs = freeVfCommon(1, 4, 3, 2, 1);
+        List<HostDevice> freeVfs = freeVfCommon(1, 4, 3, 2, 1, 1);
         assertEquals(1, freeVfs.size());
         assertTrue(freeVfs.contains(networkDeviceHelper.getFreeVf(nic, null)));
     }
 
     @Test
     public void getFreeVfMoreThanOneFreeVf() {
-        List<HostDevice> freeVfs = freeVfCommon(5, 2, 2, 2, 2);
+        List<HostDevice> freeVfs = freeVfCommon(5, 2, 2, 2, 2, 2);
         assertEquals(5, freeVfs.size());
         assertTrue(freeVfs.contains(networkDeviceHelper.getFreeVf(nic, null)));
     }
 
     @Test
     public void getFreeVfWithExcludedVfs() {
-        List<HostDevice> freeVfs = freeVfCommon(5, 2, 2, 2, 2);
+        List<HostDevice> freeVfs = freeVfCommon(5, 2, 2, 2, 2, 2);
         assertEquals(5, freeVfs.size());
         List<String> excludedVfs = new ArrayList<>();
         excludedVfs.add(freeVfs.get(0).getDeviceName());
@@ -393,15 +403,29 @@ public class NetworkDeviceHelperImplTest {
     }
 
     @Test
+    public void noNicDeviceNonNetworkFree() {
+        freeVfCommon(0, 0, 1, 0, 0, 0);
+        HostDevice hostDevice = getSingleMockedNonFreeDevice();
+        assertFalse(networkDeviceHelper.isDeviceNetworkFree(hostDevice));
+    }
+
+    @Test
     public void isNetworkDeviceNonNetworkFree() {
-        freeVfCommon(0, 0, 0, 1, 0);
+        freeVfCommon(0, 0, 0, 1, 0, 0);
         HostDevice hostDevice = getSingleMockedNonFreeDevice();
         assertFalse(networkDeviceHelper.isDeviceNetworkFree(hostDevice));
     }
 
     @Test
     public void isVlanDeviceNonNetworkFree() {
-        freeVfCommon(0, 0, 0, 0, 1);
+        freeVfCommon(0, 0, 0, 0, 1, 0);
+        HostDevice hostDevice = getSingleMockedNonFreeDevice();
+        assertFalse(networkDeviceHelper.isDeviceNetworkFree(hostDevice));
+    }
+
+    @Test
+    public void slaveDeviceNonNetworkFree() {
+        freeVfCommon(0, 0, 0, 0, 0, 1);
         HostDevice hostDevice = getSingleMockedNonFreeDevice();
         assertFalse(networkDeviceHelper.isDeviceNetworkFree(hostDevice));
     }

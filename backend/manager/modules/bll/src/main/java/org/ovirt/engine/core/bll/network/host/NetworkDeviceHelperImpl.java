@@ -227,7 +227,7 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
         // nics with macvtap attached are not reported via the getVdsCaps
         VdsNetworkInterface vfNic = getNicByPciDevice(networkDevice);
 
-        return vfNic != null && !isNetworkAttached(vfNic) && !isVlanDeviceAttached(vfNic);
+        return vfNic != null && !isNetworkAttached(vfNic) && !isVlanDeviceAttached(vfNic) && !vfNic.isPartOfBond();
     }
 
     @Override
