@@ -646,9 +646,6 @@ public final class Linq {
         return retVersion;
     }
 
-    public static <T> boolean contains(Iterable<T> source, IPredicate<? super T> predicate) {
-        return firstOrNull(source, predicate) == null ? false : true;
-    }
     /**
      * Returns a new instance of list containing all items of the provided source.
      */
