@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -365,6 +366,8 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
             if (!isTemplate()) {
                 prepareCopyNotTemplate(parameters);
+                parameters.setShouldLockImageOnRevert(true);
+                parameters.setRevertDbOperationScope(ImageDbOperationScope.IMAGE);
             }
         } else {
             parameters.setUseCopyCollapse(false);
