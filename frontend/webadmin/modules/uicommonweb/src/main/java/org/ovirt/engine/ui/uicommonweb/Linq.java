@@ -879,7 +879,7 @@ public final class Linq {
         return null;
     }
 
-    public final static class TimeZonePredicate implements IPredicate<TimeZoneModel> {
+    public static class TimeZonePredicate implements IPredicate<TimeZoneModel> {
         private final String timeZone;
 
         public TimeZonePredicate(String timeZone) {
@@ -892,7 +892,7 @@ public final class Linq {
         }
     }
 
-    public final static class ServerCpuPredicate implements IPredicate<ServerCpu> {
+    public static class ServerCpuPredicate implements IPredicate<ServerCpu> {
         private final String cpuName;
 
         public ServerCpuPredicate(String cpuName) {
@@ -905,7 +905,7 @@ public final class Linq {
         }
     }
 
-    public final static class EqualsPredicate implements IPredicate<Object> {
+    public static class EqualsPredicate implements IPredicate<Object> {
         private final Object object;
 
         public EqualsPredicate(Object object) {
@@ -918,7 +918,7 @@ public final class Linq {
         }
     }
 
-    public final static class DataCenterWithClusterAccordingClusterPredicate implements IPredicate<DataCenterWithCluster> {
+    public static class DataCenterWithClusterAccordingClusterPredicate implements IPredicate<DataCenterWithCluster> {
 
         private IdPredicate<Guid> idPredicate;
 
@@ -933,7 +933,7 @@ public final class Linq {
 
     }
 
-    public final static class DataCenterWithClusterPredicate implements IPredicate<DataCenterWithCluster> {
+    public static class DataCenterWithClusterPredicate implements IPredicate<DataCenterWithCluster> {
 
         private final Guid dataCenterId;
 
@@ -956,7 +956,7 @@ public final class Linq {
 
     }
 
-    public final static class DataCenterStatusPredicate implements IPredicate<StoragePool> {
+    public static class DataCenterStatusPredicate implements IPredicate<StoragePool> {
         private StoragePoolStatus status = StoragePoolStatus.values()[0];
 
         public DataCenterStatusPredicate(StoragePoolStatus status) {
@@ -969,7 +969,7 @@ public final class Linq {
         }
     }
 
-    public final static class DataCenterNotStatusPredicate implements IPredicate<StoragePool> {
+    public static class DataCenterNotStatusPredicate implements IPredicate<StoragePool> {
 
         private DataCenterStatusPredicate predicate;
 
@@ -983,7 +983,7 @@ public final class Linq {
         }
     }
 
-    public final static class CanDoActionSucceedPredicate implements IPredicate<VdcReturnValueBase> {
+    public static class CanDoActionSucceedPredicate implements IPredicate<VdcReturnValueBase> {
 
         @Override
         public boolean match(VdcReturnValueBase source) {
@@ -991,7 +991,7 @@ public final class Linq {
         }
     }
 
-    public final static class HostStatusPredicate implements IPredicate<VDS> {
+    public static class HostStatusPredicate implements IPredicate<VDS> {
         private VDSStatus status = VDSStatus.values()[0];
 
         public HostStatusPredicate(VDSStatus status) {
@@ -1004,7 +1004,7 @@ public final class Linq {
         }
     }
 
-    public final static class TemplateWithVersionPredicate implements IPredicate<TemplateWithVersion> {
+    public static class TemplateWithVersionPredicate implements IPredicate<TemplateWithVersion> {
         private final Guid id;
         private boolean useLatest;
 
@@ -1024,7 +1024,7 @@ public final class Linq {
         }
     }
 
-    public final static class IdPredicate<T extends Serializable> implements IPredicate<BusinessEntity<T>> {
+    public static class IdPredicate<T extends Serializable> implements IPredicate<BusinessEntity<T>> {
         private T id;
 
         public IdPredicate(T id) {
@@ -1050,7 +1050,7 @@ public final class Linq {
         }
     }
 
-    public final static class NamePredicate implements IPredicate<Nameable> {
+    public static class NamePredicate implements IPredicate<Nameable> {
 
         private final String name;
 
@@ -1064,7 +1064,7 @@ public final class Linq {
         }
     }
 
-    public final static class LunPredicate implements IPredicate<LunModel> {
+    public static class LunPredicate implements IPredicate<LunModel> {
         private final LunModel lun;
 
         public LunPredicate(LunModel lun) {
@@ -1077,7 +1077,7 @@ public final class Linq {
         }
     }
 
-    public final static class TargetPredicate implements IPredicate<SanTargetModel> {
+    public static class TargetPredicate implements IPredicate<SanTargetModel> {
         private final SanTargetModel target;
 
         public TargetPredicate(SanTargetModel target) {
@@ -1092,7 +1092,7 @@ public final class Linq {
         }
     }
 
-    public final static class DbUserPredicate implements IPredicate<DbUser> {
+    public static class DbUserPredicate implements IPredicate<DbUser> {
         private final DbUser target;
 
         public DbUserPredicate(DbUser target) {
@@ -1112,7 +1112,7 @@ public final class Linq {
         }
     }
 
-    public final static class DbGroupPredicate implements IPredicate<DbGroup> {
+    public static class DbGroupPredicate implements IPredicate<DbGroup> {
         private final DbGroup target;
 
         public DbGroupPredicate(DbGroup target) {
@@ -1140,7 +1140,7 @@ public final class Linq {
         }
     }
 
-    public final static class NetworkSameProviderPredicate implements IPredicate<Provider> {
+    public static class NetworkSameProviderPredicate implements IPredicate<Provider> {
 
         private final Network network;
 
