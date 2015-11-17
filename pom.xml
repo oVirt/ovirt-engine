@@ -612,24 +612,15 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>findbugs-maven-plugin</artifactId>
-          <version>2.5.2</version>
+          <version>3.0.3</version>
           <configuration>
             <xmlOutput>true</xmlOutput>
             <xmlOutputDirectory>target/site</xmlOutputDirectory>
           </configuration>
           <dependencies>
 
-            <!-- Whenever the findbugs plugin is used we need to force it to
-                 use version 3.x of findbugs, as version 2.x doesn't support
-                 Java 8: -->
-            <dependency>
-              <groupId>com.google.code.findbugs</groupId>
-              <artifactId>findbugs</artifactId>
-              <version>3.0.1</version>
-            </dependency>
-
-            <!-- We also want to have the .jar that contains the shared
-                 filters available in the classpath: -->
+            <!-- Whenever the findbugs plugin is used we want to have the .jar
+                 that contains the shared filters available in the classpath: -->
             <dependency>
               <groupId>org.ovirt.engine</groupId>
               <artifactId>ovirt-findbugs-filters</artifactId>
