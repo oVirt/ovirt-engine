@@ -315,20 +315,6 @@ class FileLocations(object):
         'extensions.d'
     )
 
-    AIO_VDSM_PATH = os.path.join(
-        DATADIR,
-        'vdsm',
-    )
-    AIO_STORAGE_DOMAIN_DEFAULT_DIR = os.path.join(
-        LOCALSTATEDIR,
-        'lib',
-        'images',
-    )
-    AIO_POST_INSTALL_CONFIG = os.path.join(
-        '%s.d' % osetupcons.FileLocations.OVIRT_OVIRT_SETUP_CONFIG_FILE,
-        '20-setup-aio.conf'
-    )
-
     AAA_JDBC_DB_SCHMA_TOOL = os.path.join(
         config.AAA_JDBC_DATADIR,
         'dbscripts',
@@ -383,12 +369,6 @@ class Stages(object):
     CONFIG_AAA_ADMIN_USER_SETUP = 'osetup.config.aaa.adminuser.setup'
 
     CORE_ENABLE = 'osetup.engine.core.enable'
-
-    AIO_CONFIG_AVAILABLE = 'osetup.aio.config.available'
-    AIO_CONFIG_NOT_AVAILABLE = 'osetup.aio.config.not.available'
-    AIO_CONFIG_STORAGE = 'osetup.aio.config.storage'
-    AIO_CONFIG_SSH = 'osetup.aio.config.ssh'
-    AIO_CONFIG_VDSM = 'osetup.aio.config.vdsm'
 
     MEMORY_CHECK = 'osetup.memory.check'
 
@@ -769,64 +749,6 @@ class RPMDistroEnv(object):
     ENGINE_PACKAGES = 'OVESETUP_RPMDISTRO/enginePackages'
     ENGINE_SETUP_PACKAGES = 'OVESETUP_RPMDISTRO/engineSetupPackages'
     UPGRADE_YUM_GROUP = 'OVESETUP_RPMDISTRO/upgradeYumGroup'
-
-
-@util.export
-@util.codegen
-@osetupattrsclass
-class AIOEnv(object):
-    ENABLE = 'OVESETUP_AIO/enable'
-    CONTINUE_WITHOUT_AIO = 'OVESETUP_AIO/continueWithoutAIO'
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('Configure VDSM on this host'),
-    )
-    def CONFIGURE(self):
-        return 'OVESETUP_AIO/configure'
-
-    LOCAL_DATA_CENTER = 'OVESETUP_AIO/localDataCenter'
-    LOCAL_CLUSTER = 'OVESETUP_AIO/localCluster'
-    LOCAL_HOST = 'OVESETUP_AIO/localHost'
-    VDSM_CPU = 'OVESETUP_AIO/vdsmCpu'
-    SUPPORTED = 'OVESETUP_AIO/supported'
-
-    STORAGE_DOMAIN_SD_UUID = 'OVESETUP_AIO/storageDomainSdUuid'
-    STORAGE_DOMAIN_DEFAULT_DIR = 'OVESETUP_AIO/storageDomainDefaultDir'
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('Local storage domain directory'),
-    )
-    def STORAGE_DOMAIN_DIR(self):
-        return 'OVESETUP_AIO/storageDomainDir'
-
-    @osetupattrs(
-        answerfile=True,
-        summary=False,
-        description=_('Local storage domain name'),
-    )
-    def STORAGE_DOMAIN_NAME(self):
-        return 'OVESETUP_AIO/storageDomainName'
-
-    SSHD_PORT = 'OVESETUP_AIO/sshdPort'
-    DEFAULT_SSH_PORT = 22
-
-
-@util.export
-class AIODefaults(object):
-    DEFAULT_LOCAL_DATA_CENTER = 'local_datacenter'
-    DEFAULT_LOCAL_CLUSTER = 'local_cluster'
-    DEFAULT_LOCAL_HOST = 'local_host'
-    DEFAULT_STORAGE_DOMAIN_NAME = 'local_storage'
-
-
-@util.export
-@util.codegen
-class AIOConst(object):
-    MINIMUM_SPACE_STORAGEDOMAIN_MB = 10240
 
 
 @util.export

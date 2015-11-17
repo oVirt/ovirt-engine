@@ -54,7 +54,6 @@
 %global jboss ovirt-engine-wildfly
 %global ovirt_wildfly_overlay 1
 %global ovirt_wildfly_fixup 1
-%global ovirt_with_aio 1
 %global ovirt_with_docker 1
 
 %global ovirt_product_name oVirt Engine
@@ -508,21 +507,6 @@ Requires:	openssh
 %description setup-plugin-vmconsole-proxy-helper
 Setup and upgrade specific plugins for vmconsole-proxy-helper
 
-%if %{ovirt_with_aio}
-%package setup-plugin-allinone
-Summary:	All-in-one plugin for %{ovirt_product_name_short}'s setup
-Group:		%{ovirt_product_group}
-Requires:	%{name}-sdk-python >= 3.6.0.0
-Requires:	%{name}-setup-plugin-ovirt-engine = %{version}-%{release}
-Requires:	openssh-server
-Requires:	ovirt-host-deploy >= 1.4.0
-Requires:	ovirt-host-deploy-offline >= 1.4.0
-Requires:	vdsm-jsonrpc-java >= 1.1.4
-
-%description setup-plugin-allinone
-All-in-one plugin for %{ovirt_product_name_short}'s setup
-%endif
-
 %if %{ovirt_with_docker}
 %package setup-plugin-dockerc
 Summary:	Docker container plugin for %{ovirt_product_name_short}'s setup
@@ -761,19 +745,6 @@ cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf" <
 [environment:default]
 OVESETUP_APACHE/configureRootRedirectionDefault=bool:True
 __EOF__
-%if %{ovirt_with_aio}
-cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-aio.conf" << __EOF__
-[environment:default]
-OVESETUP_AIO/enable=bool:True
-__EOF__
-install -d "%{buildroot}%{_sysconfdir}/ovirt-host-deploy.conf.d"
-cat > "%{buildroot}%{_sysconfdir}/ovirt-host-deploy.conf.d/10-packaging-aio.conf" << __EOF__
-[environment:default]
-VDSM/disableNetworkManager=bool:False
-__EOF__
-%else
-rm -rf "%{buildroot}%{engine_data}/firewalld/aio"
-%endif
 
 %if ! %{ovirt_with_docker}
 rm -rf "%{buildroot}%{engine_data}/firewalld/dockerc"
@@ -1027,14 +998,6 @@ fi
 %{engine_data}/firewalld/vmconsole-proxy/
 %{engine_data}/setup/ovirt_engine_setup/vmconsole_proxy_helper/
 %{engine_data}/setup/plugins/*/vmconsole_proxy_helper/
-
-%if %{ovirt_with_aio}
-%files setup-plugin-allinone
-
-%config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-aio.conf
-%config %{_sysconfdir}/ovirt-host-deploy.conf.d/10-packaging-aio.conf
-%{engine_data}/firewalld/aio/
-%endif
 
 %if %{ovirt_with_docker}
 %files setup-plugin-dockerc

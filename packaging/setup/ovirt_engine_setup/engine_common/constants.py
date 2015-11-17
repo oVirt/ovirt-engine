@@ -169,11 +169,9 @@ class Stages(object):
     NETWORK_OWNERS_CONFIG_CUSTOMIZED = \
         'osetup.network.owners.config.customized'
 
-    DIALOG_TITLES_S_ALLINONE = 'osetup.dialog.titles.allinone.start'
     DIALOG_TITLES_S_APACHE = 'osetup.dialog.titles.apache.start'
     DIALOG_TITLES_S_DATABASE = 'osetup.dialog.titles.database.start'
     DIALOG_TITLES_S_PKI = 'osetup.dialog.titles.pki.start'
-    DIALOG_TITLES_E_ALLINONE = 'osetup.dialog.titles.allinone.end'
     DIALOG_TITLES_E_APACHE = 'osetup.dialog.titles.apache.end'
     DIALOG_TITLES_E_DATABASE = 'osetup.dialog.titles.database.end'
     DIALOG_TITLES_E_PKI = 'osetup.dialog.titles.pki.end'
