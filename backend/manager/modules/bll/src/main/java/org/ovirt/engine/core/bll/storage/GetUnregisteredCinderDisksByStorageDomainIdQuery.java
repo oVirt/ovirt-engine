@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -8,8 +10,6 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import com.woorea.openstack.cinder.model.Volume;
 
 public class GetUnregisteredCinderDisksByStorageDomainIdQuery<P extends IdQueryParameters> extends CinderQueryBase<P> {
@@ -29,18 +29,10 @@ public class GetUnregisteredCinderDisksByStorageDomainIdQuery<P extends IdQueryP
                 getDbFacade().getDiskDao().getAllFromDisksByDiskStorageType(DiskStorageType.CINDER,
                         getUserID(),
                         getParameters().isFiltered());
+        Set<String> registeredIDs = registeredDisks.stream().map(d -> d.getId().toString()).collect(Collectors.toSet());
 
-        List<Volume> unregisteredVolumes = LinqUtils.filter(allVolumes, new Predicate<Volume>() {
-            @Override
-            public boolean eval(Volume volume) {
-                for (Disk registeredDisk : registeredDisks) {
-                    if (volume.getId().equals(registeredDisk.getId().toString())) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        });
+        List<Volume> unregisteredVolumes =
+                allVolumes.stream().filter(v -> !registeredIDs.contains(v.getId())).collect(Collectors.toList());
 
         Guid storageDomainId = getParameters().getId();
         List<CinderDisk> unregisteredDisks = CinderBroker.volumesToCinderDisks(unregisteredVolumes, storageDomainId);
