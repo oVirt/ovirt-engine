@@ -64,8 +64,7 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
             return false;
         }
 
-        if (vmNumaNodes == null || vmNumaNodes.size() == 0) {
-            // if VM do not contain any NUMA node, skip checking
+        if (vmNumaNodes.isEmpty()) {
             return true;
         }
 
