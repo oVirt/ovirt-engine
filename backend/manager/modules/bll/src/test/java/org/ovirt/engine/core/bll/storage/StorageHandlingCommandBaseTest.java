@@ -49,17 +49,20 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
             mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_4, true),
             mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_5, true),
             mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_6, true),
+            mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v4_0, true),
             mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_0, false),
             mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_4, true),
             mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_5, true),
             mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_6, true),
+            mockConfig(ConfigValues.PosixStorageEnabled, Version.v4_0, true),
             mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_0, false),
             mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_1, false),
             mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_2, false),
             mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_3, false),
             mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_4, true),
             mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_5, true),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_6, true)
+            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_6, true),
+            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v4_0, true)
     );
 
     @Before

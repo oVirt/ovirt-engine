@@ -1268,7 +1268,7 @@ CREATE OR REPLACE FUNCTION fn_db_add_config_value_for_versions_up_to (
 RETURNS void AS $PROCEDURE$
 DECLARE i INT;
 
-arr VARCHAR [] := array ['3.0', '3.1', '3.2', '3.3', '3.4', '3.5', '3.6'];
+arr VARCHAR [] := array ['3.0', '3.1', '3.2', '3.3', '3.4', '3.5', '3.6', '4.0'];
 
 BEGIN
     FOR i IN array_lower(arr, 1)..array_upper(arr, 1) LOOP PERFORM fn_db_add_config_value(v_option_name, v_val, arr [i]);

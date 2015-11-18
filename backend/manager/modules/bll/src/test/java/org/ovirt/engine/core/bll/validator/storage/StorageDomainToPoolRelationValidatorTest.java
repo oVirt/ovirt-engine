@@ -92,6 +92,7 @@ public class StorageDomainToPoolRelationValidatorTest {
             mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_4, true),
             mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_5, true),
             mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_6, true),
+            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v4_0, true),
             mockConfig(ConfigValues.PosixStorageEnabled, UNSUPPORTED_VERSION.toString(), false),
             mockConfig(ConfigValues.PosixStorageEnabled, SUPPORTED_VERSION.toString(), true),
             mockConfig(ConfigValues.GlusterFsStorageEnabled, UNSUPPORTED_VERSION.toString(), false),

@@ -60,6 +60,7 @@ public class VersionStorageFormatUtil {
         versionToFormat.put(Version.v3_4, new ConstantStorageFormatTypeMapper(StorageFormatType.V3));
         versionToFormat.put(Version.v3_5, new ConstantStorageFormatTypeMapper(StorageFormatType.V3));
         versionToFormat.put(Version.v3_6, new ConstantStorageFormatTypeMapper(StorageFormatType.V3));
+        versionToFormat.put(Version.v4_0, new ConstantStorageFormatTypeMapper(StorageFormatType.V3));
     };
 
     private static final Map<StorageFormatType, Version> earliestVersionSupported = new TreeMap<>();
