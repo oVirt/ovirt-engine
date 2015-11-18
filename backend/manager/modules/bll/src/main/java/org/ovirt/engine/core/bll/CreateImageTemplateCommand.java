@@ -164,7 +164,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         p.setParentParameters(p);
         p.setParentCommand(VdcActionType.RemoveImage);
         VdcReturnValueBase returnValue =
-                checkAndPerformRollbackUsingCommand(VdcActionType.RemoveImage, p);
+                checkAndPerformRollbackUsingCommand(VdcActionType.RemoveImage, p, null);
         if (returnValue.getSucceeded()) {
             startPollingAsyncTasks(returnValue.getInternalVdsmTaskIdList());
         }
