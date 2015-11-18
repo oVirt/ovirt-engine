@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker.predicates;
 
+import java.util.function.Predicate;
+
 import org.apache.commons.lang.Validate;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public final class IsNetworkOnInterfacePredicate implements Predicate<VdsNetworkInterface> {
     private final String networkName;
@@ -13,7 +14,7 @@ public final class IsNetworkOnInterfacePredicate implements Predicate<VdsNetwork
     }
 
     @Override
-    public boolean eval(VdsNetworkInterface vdsNetworkInterface) {
+    public boolean test(VdsNetworkInterface vdsNetworkInterface) {
         return networkName.equals(vdsNetworkInterface.getNetworkName());
     }
 }

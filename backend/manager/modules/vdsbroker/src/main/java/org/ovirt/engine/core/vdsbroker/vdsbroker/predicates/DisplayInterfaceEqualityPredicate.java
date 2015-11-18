@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker.predicates;
 
+import java.util.function.Predicate;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public final class DisplayInterfaceEqualityPredicate implements Predicate<VdsNetworkInterface> {
     private final VdsNetworkInterface iface;
@@ -12,7 +13,7 @@ public final class DisplayInterfaceEqualityPredicate implements Predicate<VdsNet
     }
 
     @Override
-    public boolean eval(VdsNetworkInterface otherIface) {
+    public boolean test(VdsNetworkInterface otherIface) {
         if (iface == otherIface) {
             return true;
         }

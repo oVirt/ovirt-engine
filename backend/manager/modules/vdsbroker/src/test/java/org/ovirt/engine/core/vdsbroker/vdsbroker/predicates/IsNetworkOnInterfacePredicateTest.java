@@ -21,7 +21,7 @@ public class IsNetworkOnInterfacePredicateTest {
 
         final IsNetworkOnInterfacePredicate underTest = new IsNetworkOnInterfacePredicate(TEST_NETWORK_NAME);
 
-        Assert.assertTrue(underTest.eval(mockVdsNetworkInterface));
+        Assert.assertTrue(underTest.test(mockVdsNetworkInterface));
     }
 
     @Test
@@ -30,6 +30,6 @@ public class IsNetworkOnInterfacePredicateTest {
 
         final IsNetworkOnInterfacePredicate underTest = new IsNetworkOnInterfacePredicate(TEST_NETWORK_NAME);
 
-        Assert.assertFalse(underTest.eval(mockVdsNetworkInterface));
+        Assert.assertFalse(underTest.test(mockVdsNetworkInterface));
     }
 }

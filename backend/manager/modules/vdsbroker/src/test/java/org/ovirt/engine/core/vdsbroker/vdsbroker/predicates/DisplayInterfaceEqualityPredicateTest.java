@@ -33,7 +33,7 @@ public class DisplayInterfaceEqualityPredicateTest {
         Mockito.when(mockOtherIface.getName()).thenReturn(TEST_INTERFACE_NAME);
         Mockito.when(mockOtherIface.getAddress()).thenReturn(TEST_INTERFACE_ADDRESS);
 
-        Assert.assertTrue(underTest.eval(mockOtherIface));
+        Assert.assertTrue(underTest.test(mockOtherIface));
     }
 
     @Test
@@ -41,7 +41,7 @@ public class DisplayInterfaceEqualityPredicateTest {
         Mockito.when(mockOtherIface.getName()).thenReturn("not" + TEST_INTERFACE_NAME);
         Mockito.when(mockOtherIface.getAddress()).thenReturn(TEST_INTERFACE_ADDRESS);
 
-        Assert.assertFalse(underTest.eval(mockOtherIface));
+        Assert.assertFalse(underTest.test(mockOtherIface));
     }
 
     @Test
@@ -49,7 +49,7 @@ public class DisplayInterfaceEqualityPredicateTest {
         Mockito.when(mockOtherIface.getName()).thenReturn(TEST_INTERFACE_NAME);
         Mockito.when(mockOtherIface.getAddress()).thenReturn("not" + TEST_INTERFACE_ADDRESS);
 
-        Assert.assertFalse(underTest.eval(mockOtherIface));
+        Assert.assertFalse(underTest.test(mockOtherIface));
     }
 
 }

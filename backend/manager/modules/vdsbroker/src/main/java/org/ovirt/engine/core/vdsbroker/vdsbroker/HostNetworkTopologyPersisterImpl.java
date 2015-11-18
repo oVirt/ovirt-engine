@@ -31,7 +31,6 @@ import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.predicates.DisplayInterfaceEqualityPredicate;
@@ -172,16 +171,14 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
 
             final IsNetworkOnInterfacePredicate isNetworkOnInterfacePredicate =
                     new IsNetworkOnInterfacePredicate(engineDisplayNetwork.getName());
-            final VdsNetworkInterface vdsmDisplayInterface = LinqUtils.firstOrNull(
-                    host.getInterfaces(),
-                    isNetworkOnInterfacePredicate);
-            final VdsNetworkInterface engineDisplayInterface = LinqUtils.firstOrNull(
-                    engineInterfaces,
-                    isNetworkOnInterfacePredicate);
+            final VdsNetworkInterface vdsmDisplayInterface =
+                    host.getInterfaces().stream().filter(isNetworkOnInterfacePredicate).findFirst().orElse(null);
+            final VdsNetworkInterface engineDisplayInterface =
+                    engineInterfaces.stream().filter(isNetworkOnInterfacePredicate).findFirst().orElse(null);
             final DisplayInterfaceEqualityPredicate displayIneterfaceEqualityPredicate =
                     new DisplayInterfaceEqualityPredicate(engineDisplayInterface);
             if (vdsmDisplayInterface == null // the display interface is't on host anymore
-                || !displayIneterfaceEqualityPredicate.eval(vdsmDisplayInterface)) {
+                || !displayIneterfaceEqualityPredicate.test(vdsmDisplayInterface)) {
                 final AuditLogableBase loggable = new AuditLogableBase(host.getId());
                 auditLogDirector.log(loggable, AuditLogType.NETWORK_UPDATE_DISPLAY_FOR_HOST_WITH_ACTIVE_VM);
             }
