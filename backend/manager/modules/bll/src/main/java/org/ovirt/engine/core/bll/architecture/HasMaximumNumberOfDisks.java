@@ -8,8 +8,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.archstrategy.ArchCommand;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 
 public class HasMaximumNumberOfDisks implements ArchCommand {
@@ -21,12 +19,7 @@ public class HasMaximumNumberOfDisks implements ArchCommand {
     }
 
     private int countDisks(final DiskInterface diskType) {
-        return LinqUtils.filter(allDisks, new Predicate<Disk>() {
-            @Override
-            public boolean eval(Disk a) {
-                return a.getDiskInterface() == diskType;
-            }
-        }).size();
+        return (int) allDisks.stream().filter(a -> a.getDiskInterface() == diskType).count();
     }
 
     @Override
