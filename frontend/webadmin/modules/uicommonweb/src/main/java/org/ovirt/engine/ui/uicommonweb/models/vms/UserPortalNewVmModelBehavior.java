@@ -75,7 +75,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                                     }),
                                     actionGroup, true, false);
                         } else {
-                            getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoUpDC());
+                            getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoUpDCWithClusterWithPermissions());
                         }
                     }
                 }), actionGroup, true, false);

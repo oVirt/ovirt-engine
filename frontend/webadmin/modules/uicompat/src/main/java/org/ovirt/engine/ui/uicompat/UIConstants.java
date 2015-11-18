@@ -2528,6 +2528,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Not available when no Data Center is up.")
     String notAvailableWithNoUpDC();
 
+    @DefaultStringValue("There is no Cluster on which you can create a VM. Please check Data Center status and Cluster permissions.")
+    String notAvailableWithNoUpDCWithClusterWithPermissions();
+
     @DefaultStringValue("Some VMs are running in the external system and therefore have been filtered")
     String runningVmsWereFilteredOnImportVm();
 
