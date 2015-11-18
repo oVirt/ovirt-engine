@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -142,7 +143,7 @@ public class ErrataTableView extends ResizeComposite {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void initErrataGrid(HasColumns grid) {
         grid.enableColumnResizing();
-        grid.addColumn(new AbstractImageResourceColumn<Erratum>() {
+        AbstractImageResourceColumn<Erratum> errataTypeColumn = new AbstractImageResourceColumn<Erratum>() {
             @Override
             public ImageResource getValue(Erratum erratum) {
                 if (erratum.getType() == ErrataType.BUGFIX) {
@@ -156,9 +157,11 @@ public class ErrataTableView extends ResizeComposite {
                 }
                 return null;
             }
-        }, "", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
+        };
+        errataTypeColumn.makeSortable(new ErrataTypeComparator());
+        grid.addColumn(errataTypeColumn, "", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        grid.addColumn(new AbstractTextColumn<Erratum>() {
+        AbstractTextColumn errataTypeTextColumn = new AbstractTextColumn<Erratum>() {
             @Override
             public String getValue(Erratum erratum) {
                 if (erratum.getType() == ErrataType.BUGFIX) {
@@ -172,9 +175,11 @@ public class ErrataTableView extends ResizeComposite {
                 }
                 return constants.unknown();
             }
-        }, constants.errataType(), "150px"); //$NON-NLS-1$
+        };
+        errataTypeTextColumn.makeSortable();
+        grid.addColumn(errataTypeTextColumn, constants.errataType(), "150px"); //$NON-NLS-1$
 
-        grid.addColumn(new AbstractTextColumn<Erratum>() {
+        AbstractTextColumn<Erratum> errataSeverityColumn = new AbstractTextColumn<Erratum>() {
             @Override
             public String getValue(Erratum erratum) {
                 if (erratum.getSeverity() == ErrataSeverity.CRITICAL) {
@@ -188,29 +193,37 @@ public class ErrataTableView extends ResizeComposite {
                 }
                 return constants.unknown();
             }
-        }, constants.errataSeverity(), "150px"); //$NON-NLS-1$
+        };
+        errataSeverityColumn.makeSortable();
+        grid.addColumn(errataSeverityColumn, constants.errataSeverity(), "150px"); //$NON-NLS-1$
 
-        grid.addColumn(new AbstractFullDateTimeColumn<Erratum>(false) {
+        AbstractFullDateTimeColumn<Erratum> dateIssuedColumn = new AbstractFullDateTimeColumn<Erratum>(false) {
             @Override
             protected Date getRawValue(Erratum erratum) {
                 return erratum.getIssued();
             }
-        }, constants.errataDateIssued(), "100px"); //$NON-NLS-1$
+        };
+        dateIssuedColumn.makeSortable();
+        grid.addColumn(dateIssuedColumn, constants.errataDateIssued(), "100px"); //$NON-NLS-1$
 
-        grid.addColumn(new AbstractTextColumn<Erratum>() {
+        AbstractTextColumn<Erratum> errataIdColumn = new AbstractTextColumn<Erratum>() {
 
             @Override
             public String getValue(Erratum erratum) {
                 return erratum.getId();
             }
-        }, constants.errataId(), "115px"); //$NON-NLS-1$
-        grid.addColumn(new AbstractTextColumn<Erratum>() {
+        };
+        errataIdColumn.makeSortable();
+        grid.addColumn(errataIdColumn, constants.errataId(), "115px"); //$NON-NLS-1$
+        AbstractTextColumn<Erratum> titleColumn = new AbstractTextColumn<Erratum>() {
 
             @Override
             public String getValue(Erratum erratum) {
                 return erratum.getTitle();
             }
-        }, constants.errataTitle(), "290px"); //$NON-NLS-1$
+        };
+        titleColumn.makeSortable();
+        grid.addColumn(titleColumn, constants.errataTitle(), "290px"); //$NON-NLS-1$
 
     }
 
@@ -250,5 +263,13 @@ public class ErrataTableView extends ResizeComposite {
 
     public EntityModelCellTable<AbstractErrataListModel> getErrataTable() {
         return errataTable;
+    }
+
+    private static class ErrataTypeComparator implements Comparator<Erratum> {
+
+        @Override
+        public int compare(Erratum erratum0, Erratum erratum1) {
+            return erratum0.getType().compareTo(erratum1.getType());
+        }
     }
 }
