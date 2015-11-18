@@ -63,8 +63,8 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
                                 storageDomainId,
                                 vmConfImageGroupId,
                                 MemoryUtils.META_DATA_SIZE_IN_BYTES,
-                                VolumeType.Sparse,
-                                VolumeFormat.COW,
+                                VolumeType.Preallocated,
+                                VolumeFormat.RAW,
                                 vmConfVolumeId,
                                 ""));
 
