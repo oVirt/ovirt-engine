@@ -234,8 +234,11 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     graphicsTypes.add(GraphicsType.fromString(graphicsVmDev.getDevice()));
                 }
 
-                if (graphicsTypes.size() == 2
-                        && graphicsTypes.containsAll(Arrays.asList(GraphicsType.SPICE, GraphicsType.VNC))) {
+                boolean hasSpiceAndVnc = graphicsTypes.size() == 2
+                        && graphicsTypes.containsAll(Arrays.asList(GraphicsType.SPICE, GraphicsType.VNC));
+                boolean canBeSelected = getModel().getGraphicsType().getItems().contains(UnitVmModel.GraphicsTypes.SPICE_AND_VNC);
+
+                if (hasSpiceAndVnc && canBeSelected) {
                     getModel().getGraphicsType().setSelectedItem(UnitVmModel.GraphicsTypes.SPICE_AND_VNC);
                 } else if (graphicsVmDevs.size() == 1) {
                     GraphicsType type = GraphicsType.fromString(graphicsVmDevs.get(0).getDevice());

@@ -165,6 +165,7 @@ public enum ConfigurationValues {
     HostDevicePassthroughCapabilities,
     LiveStorageMigrationBetweenDifferentStorageTypes,
     MaxIoThreadsPerVm(ConfigAuthType.User),
+    MultipleGraphicsSupported(ConfigAuthType.User),
     RefreshLunSupported;
 
     public static enum ConfigAuthType {

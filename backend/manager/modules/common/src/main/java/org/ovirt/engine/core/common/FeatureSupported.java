@@ -651,4 +651,12 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.ImportVmFromExternalProviderSupported, version);
     }
 
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> the VM can have more than one graphics (e.g. SPICE and VNC) in this version
+     */
+    public static boolean multipleGraphicsSupported(Version version) {
+        return supportedInConfig(ConfigValues.MultipleGraphicsSupported, version);
+    }
 }

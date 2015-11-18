@@ -1981,6 +1981,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Selected display type is not supported by the operating system.")
     String ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. In this cluster version only one graphics is supported")
+    String ACTION_TYPE_FAILED_ONLY_ONE_GRAPHICS_SUPPORTED_IN_THIS_CLUSTER_LEVEL();
+
     @DefaultStringValue("Cannot ${action} ${type}. Floppy devices are not supported by the operating system.")
     String ACTION_TYPE_FAILED_ILLEGAL_FLOPPY_IS_NOT_SUPPORTED_BY_OS();
 

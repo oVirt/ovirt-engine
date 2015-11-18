@@ -117,6 +117,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
 
     protected void mockAsyncDataProvider(UnitVmModel model) {
         when(adp.supportedForUnitVmModel(ConfigurationValues.BootMenuSupported, model)).thenReturn(true);
+        when(adp.supportedForUnitVmModel(ConfigurationValues.MultipleGraphicsSupported, model)).thenReturn(true);
         when(adp.supportedForUnitVmModel(ConfigurationValues.SpiceFileTransferToggleSupported, model)).thenReturn(true);
         when(adp.supportedForUnitVmModel(ConfigurationValues.SpiceCopyPasteToggleSupported, model)).thenReturn(true);
         when(adp.supportedForUnitVmModel(ConfigurationValues.AutoConvergenceSupported, model)).thenReturn(true);

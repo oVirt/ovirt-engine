@@ -2214,6 +2214,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     ImportVmFromExternalProviderSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    MultipleGraphicsSupported,
+
     Invalid
 
 }

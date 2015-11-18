@@ -570,6 +570,12 @@ public class VmHandler {
         if (!result) {
             reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS.name());
         }
+
+        if (graphics.size() > 1 && !FeatureSupported.multipleGraphicsSupported(clusterVersion)) {
+            reasons.add(EngineMessage.ACTION_TYPE_FAILED_ONLY_ONE_GRAPHICS_SUPPORTED_IN_THIS_CLUSTER_LEVEL.name());
+            result = false;
+        }
+
         return result;
     }
 
