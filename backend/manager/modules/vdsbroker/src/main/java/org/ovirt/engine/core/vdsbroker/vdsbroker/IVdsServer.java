@@ -113,7 +113,8 @@ public interface IVdsServer {
 
     Future<Map<String, Object>> setupNetworks(Map networks,
             Map bonding,
-            Map options);
+            Map options,
+            boolean isPolicyReset);
 
     StatusOnlyReturnForXmlRpc setSafeNetworkConfig();
 
