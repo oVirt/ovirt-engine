@@ -78,15 +78,22 @@ public class SubTabHostGeneralSoftwareView extends AbstractSubTabFormView<VDS, H
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 1, 8);
-        formBuilder.setRelativeColumnWidth(0, 3);
-        formBuilder.addFormItem(new FormItem(constants.osVersionHostGeneral(), oS, 0).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.kernelVersionHostGeneral(), kernelVersion, 0).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.kvmVersionHostGeneral(), kvmVersion, 0, virtSupported).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.libvirtVersionHostGeneral(), libvirtVersion, 0, virtSupported).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.vdsmVersionHostGeneral(), vdsmVersion, 0).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.spiceVersionHostGeneral(), spiceVersion, 0, virtSupported).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.glusterVersionHostGeneral(), glusterVersion, 0, glusterSupported).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.cephVersionHostGeneral(), librbdVersion, 0, virtSupported).withAutoPlacement());
+        formBuilder.setRelativeColumnWidth(0, 12);
+        formBuilder.addFormItem(new FormItem(constants.osVersionHostGeneral(), oS, 0).withAutoPlacement(), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.kernelVersionHostGeneral(), kernelVersion,
+                0).withAutoPlacement(), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.kvmVersionHostGeneral(), kvmVersion, 0,
+                virtSupported).withAutoPlacement(), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.libvirtVersionHostGeneral(), libvirtVersion, 0,
+                virtSupported).withAutoPlacement(), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.vdsmVersionHostGeneral(), vdsmVersion,
+                0).withAutoPlacement(), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.spiceVersionHostGeneral(), spiceVersion, 0,
+                virtSupported).withAutoPlacement(), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.glusterVersionHostGeneral(), glusterVersion, 0,
+                glusterSupported).withAutoPlacement(), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.cephVersionHostGeneral(), librbdVersion, 0,
+                virtSupported).withAutoPlacement(), 2, 10);
     }
 
     @Override
