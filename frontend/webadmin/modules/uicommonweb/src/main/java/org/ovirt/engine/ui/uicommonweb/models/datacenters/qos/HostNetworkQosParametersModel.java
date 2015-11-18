@@ -64,7 +64,7 @@ public class HostNetworkQosParametersModel extends QosParametersModel<HostNetwor
         getOutAverageLinkshare().validateEntity(outLinkshareValidations.toArray(new IValidation[outLinkshareValidations.size()]));
 
         IValidation[] rateRangeValidation =
-                new IValidation[] { new IntegerValidation(0, (Integer) AsyncDataProvider.getInstance()
+                new IValidation[] { new IntegerValidation(1, (Integer) AsyncDataProvider.getInstance()
                         .getConfigValuePreConverted(ConfigurationValues.MaxAverageNetworkQoSValue)) };
         getOutAverageUpperlimit().validateEntity(rateRangeValidation);
         getOutAverageRealtime().validateEntity(rateRangeValidation);
