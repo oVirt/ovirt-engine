@@ -69,7 +69,8 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_custom_emulated_machine VARCHAR(40),
  v_custom_cpu_name VARCHAR(40),
  v_small_icon_id UUID,
- v_large_icon_id UUID)
+ v_large_icon_id UUID,
+ v_console_disconnect_action VARCHAR(64))
 
 RETURNS VOID
    AS $procedure$
@@ -152,7 +153,8 @@ BEGIN
         custom_emulated_machine,
         custom_cpu_name,
         small_icon_id,
-        large_icon_id)
+        large_icon_id,
+        console_disconnect_action)
     VALUES(
         v_child_count,
         v_creation_date,
@@ -217,7 +219,8 @@ BEGIN
         v_custom_emulated_machine,
         v_custom_cpu_name,
         v_small_icon_id,
-        v_large_icon_id);
+        v_large_icon_id,
+        v_console_disconnect_action);
     -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
     DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vmt_guid;
     INSERT INTO vm_ovf_generations(
@@ -302,7 +305,8 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_custom_emulated_machine VARCHAR(40),
  v_custom_cpu_name VARCHAR(40),
  v_small_icon_id UUID,
- v_large_icon_id UUID)
+ v_large_icon_id UUID,
+ v_console_disconnect_action VARCHAR(64))
 RETURNS VOID
 
 	--The [vm_templates] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -369,7 +373,8 @@ BEGIN
       custom_emulated_machine = v_custom_emulated_machine,
       custom_cpu_name = v_custom_cpu_name,
       small_icon_id = v_small_icon_id,
-      large_icon_id = v_large_icon_id
+      large_icon_id = v_large_icon_id,
+      console_disconnect_action = v_console_disconnect_action
       WHERE vm_guid = v_vmt_guid
           AND entity_type = v_template_type;
 
