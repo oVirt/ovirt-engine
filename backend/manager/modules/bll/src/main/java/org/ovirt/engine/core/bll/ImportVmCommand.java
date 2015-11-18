@@ -199,7 +199,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         if (!isImagesAlreadyOnTarget() && getParameters().isImportAsNewEntity()
-                && isCopyCollapseDisabledWithSnapshots()) {
+                && isCopyCollapseDisabledWithSnapshotsOrWithTemplate()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_IMPORT_CLONE_NOT_COLLAPSED,
                     String.format("$VmName %1$s", getVmName()));
         }
@@ -228,14 +228,18 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return true;
     }
 
-    private boolean isCopyCollapseDisabledWithSnapshots() {
+    private boolean isCopyCollapseDisabledWithSnapshotsOrWithTemplate() {
         // If there are no snapshots we may not care if copyCollapse = false
         // There's always at least one snapshot (Active).
-        return getParameters().getVm().getSnapshots().size() > 1 && !getParameters().getCopyCollapse();
+        // In case the VM is based on a template, we need to take copyCollapse in account
+        return ((getParameters().getVm().getSnapshots().size() > 1) ||
+                (!VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVm().getVmtGuid())
+                        && getVmTemplate() != null))
+                && !getParameters().getCopyCollapse();
     }
 
     private boolean isCopyCollapseOrNoSnapshots() {
-        return !isCopyCollapseDisabledWithSnapshots();
+        return !isCopyCollapseDisabledWithSnapshotsOrWithTemplate();
     }
 
     protected boolean validateAndSetVmFromExportDomain() {
@@ -725,7 +729,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 disk.getImageId(),
                 destinationDomain, ImageOperation.Copy);
         params.setParentCommand(getActionType());
-        params.setUseCopyCollapse(getParameters().getCopyCollapse());
+        params.setUseCopyCollapse(isCopyCollapseOrNoSnapshots());
         params.setCopyVolumeType(CopyVolumeType.LeafVol);
         params.setForceOverride(getParameters().getForceOverride());
         params.setSourceDomainId(getParameters().getSourceDomainId());
