@@ -310,6 +310,8 @@ select fn_db_add_config_value('RemapCtrlAltDelDefault','true','general');
 
 select fn_db_add_config_value_for_versions_up_to('IoThreadsSupported', 'false', '3.5');
 
+select fn_db_add_config_value_for_versions_up_to('MultipleGraphicsSupported', 'false', '3.5');
+
 select fn_db_add_config_value_for_versions_up_to('VirtioSerialConsoleSupported', 'false', '3.5');
 
 --Handling Install virtualization software on Add Host
