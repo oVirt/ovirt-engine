@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,7 +15,7 @@ public class VmNumaNodeOperationParameters extends VmOperationParameterBase {
 
     private static final long serialVersionUID = -1955959985341097257L;
 
-    private List<VmNumaNode> vmNumaNodeList;
+    private List<VmNumaNode> vmNumaNodeList = new ArrayList<>();
 
     private NumaTuneMode numaTuneMode;
     private List<Guid> dedicatedHostList;
@@ -24,14 +25,14 @@ public class VmNumaNodeOperationParameters extends VmOperationParameterBase {
     }
 
     public VmNumaNodeOperationParameters(Guid vmId, VmNumaNode vmNumaNode) {
-        super(vmId);
-        vmNumaNodeList = new ArrayList<VmNumaNode>();
-        vmNumaNodeList.add(vmNumaNode);
+        this(vmId, Arrays.asList(vmNumaNode));
     }
 
     public VmNumaNodeOperationParameters(Guid vmId, List<VmNumaNode> vmNumaNodes) {
         super(vmId);
-        vmNumaNodeList = vmNumaNodes;
+        if (vmNumaNodes != null){
+            vmNumaNodeList = vmNumaNodes;
+        }
     }
 
     public List<VmNumaNode> getVmNumaNodeList() {
