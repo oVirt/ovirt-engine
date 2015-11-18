@@ -105,5 +105,9 @@ public class StorageDomainOvfInfoDaoTest extends BaseGenericDaoTestCase<Guid, St
         ovfInfo = dao.get(ovfInfo.getOvfDiskId());
         assertEquals(ovfIds.size(), ovfInfo.getStoredOvfIds().size());
         assertTrue(ovfInfo.getStoredOvfIds().containsAll(ovfIds));
+
+        List<Guid> loadedStorageDomainIds = dao.loadStorageDomainIdsForOvfIds(ovfIds);
+        assertEquals(1, loadedStorageDomainIds.size());
+        assertEquals(ovfInfo.getStorageDomainId(), loadedStorageDomainIds.get(0));
     }
 }
