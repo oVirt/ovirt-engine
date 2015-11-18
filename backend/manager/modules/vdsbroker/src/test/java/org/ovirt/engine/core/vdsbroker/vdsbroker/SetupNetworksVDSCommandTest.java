@@ -106,7 +106,8 @@ public class SetupNetworksVDSCommandTest {
             Collections.singletonList(nic),
             Collections.<String> emptySet(),
             Arrays.asList(nic, vlan),
-            new CustomPropertiesForVdsNetworkInterface());
+            new CustomPropertiesForVdsNetworkInterface(),
+            true);
 
         createCommand(parameters).execute();
         verifyMethodPassedToHost();
@@ -132,7 +133,8 @@ public class SetupNetworksVDSCommandTest {
             Collections.singletonList(bond),
             Collections.<String> emptySet(),
             ifaces,
-            new CustomPropertiesForVdsNetworkInterface());
+            new CustomPropertiesForVdsNetworkInterface(),
+            true);
 
         createCommand(parameters).execute();
         verifyMethodPassedToHost();
@@ -153,7 +155,8 @@ public class SetupNetworksVDSCommandTest {
             Collections.<VdsNetworkInterface> emptyList(),
             Collections.<String> emptySet(),
             Collections.singletonList(nic),
-            new CustomPropertiesForVdsNetworkInterface());
+            new CustomPropertiesForVdsNetworkInterface(),
+            true);
 
         createCommand(parameters).execute();
         verifyMethodPassedToHost();
@@ -177,7 +180,8 @@ public class SetupNetworksVDSCommandTest {
             Collections.singletonList(bond),
             Collections.<String> emptySet(),
             ifaces,
-            new CustomPropertiesForVdsNetworkInterface());
+            new CustomPropertiesForVdsNetworkInterface(),
+            true);
 
         createCommand(parameters).execute();
         verifyMethodPassedToHost();
@@ -198,7 +202,8 @@ public class SetupNetworksVDSCommandTest {
             Collections.<VdsNetworkInterface> emptyList(),
             Collections.<String> emptySet(),
             Collections.singletonList(iface),
-            new CustomPropertiesForVdsNetworkInterface());
+            new CustomPropertiesForVdsNetworkInterface(),
+            true);
 
         createCommand(parameters).execute();
 
@@ -287,7 +292,7 @@ public class SetupNetworksVDSCommandTest {
      * Verify that the method on the host was called, capturing the sent arguments for tests done later.
      */
     private void verifyMethodPassedToHost() {
-        verify(server).setupNetworks(networksCaptor.capture(), bondingCaptor.capture(), any(HashMap.class));
+        verify(server).setupNetworks(networksCaptor.capture(), bondingCaptor.capture(), any(HashMap.class), any(Boolean.class));
     }
 
     /**

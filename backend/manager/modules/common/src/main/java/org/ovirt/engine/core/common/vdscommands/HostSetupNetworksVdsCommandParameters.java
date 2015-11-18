@@ -18,6 +18,7 @@ public class HostSetupNetworksVdsCommandParameters extends VdsIdAndVdsVDSCommand
     private boolean rollbackOnFailure;
     private int conectivityTimeout;
     private boolean hostNetworkQosSupported;
+    private boolean managementNetworkChanged;
 
     public HostSetupNetworksVdsCommandParameters(VDS host,
             List<HostNetwork> networks,
@@ -100,5 +101,13 @@ public class HostSetupNetworksVdsCommandParameters extends VdsIdAndVdsVDSCommand
                 .append("removedNetworks", getRemovedNetworks())
                 .append("bonds", Entities.collectionToString(getBonds(), "\t\t"))
                 .append("removedBonds", getBonds());
+    }
+
+    public boolean isManagementNetworkChanged() {
+        return managementNetworkChanged;
+    }
+
+    public void setManagementNetworkChanged(boolean isManagementNetworkChanged) {
+        this.managementNetworkChanged = isManagementNetworkChanged;
     }
 }

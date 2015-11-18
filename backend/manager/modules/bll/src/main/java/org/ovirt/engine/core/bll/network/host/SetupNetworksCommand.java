@@ -161,7 +161,8 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
                 getBonds(),
                 getRemovedBonds().keySet(),
                 getInterfaces(),
-                getParameters().getCustomProperties());
+                getParameters().getCustomProperties(),
+                isManagementNetworkChanged());
         vdsCmdParams.setForce(bckndCmdParams.isForce());
         vdsCmdParams.setCheckConnectivity(bckndCmdParams.isCheckConnectivity());
 
@@ -286,5 +287,20 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
         return Backend.getInstance()
                 .getResourceManager()
                 .runFutureVdsCommand(FutureVDSCommandType.SetupNetworks, vdsCmdParams);
+    }
+
+    private boolean isManagementNetworkChanged(){
+        String mgmtNetworkName = managementNetworkUtil.getManagementNetwork(getVds().getVdsGroupId()).getName();
+        for (Network netowrk : getNetworks()) {
+            if (mgmtNetworkName.equals(netowrk.getName())){
+                return true;
+            }
+        }
+        for (VdsNetworkInterface bond : getBonds()) {
+            if (mgmtNetworkName.equals(bond.getNetworkName())){
+                return true;
+            }
+        }
+        return false;
     }
 }

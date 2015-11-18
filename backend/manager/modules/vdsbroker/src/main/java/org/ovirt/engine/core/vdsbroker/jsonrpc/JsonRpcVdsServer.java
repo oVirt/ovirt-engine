@@ -493,17 +493,18 @@ public class JsonRpcVdsServer implements IVdsServer {
 
     @SuppressWarnings("rawtypes")
     @Override
-    public Future<Map<String, Object>> setupNetworks(Map networks, Map bonding, Map options) {
+    public Future<Map<String, Object>> setupNetworks(Map networks, Map bonding, Map options, final boolean isPolicyReset) {
         final JsonRpcRequest request =
                 new RequestBuilder("Host.setupNetworks").withParameter("networks", networks)
                         .withParameter("bondings", bonding)
                         .withParameter("options", options)
                         .build();
-        final ClientPolicy policy = client.getClientRetryPolicy();
         final FutureCallable callable = new FutureCallable(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                updateHeartbeatPolicy(policy.clone(), false);
+                if (isPolicyReset) {
+                    updateHeartbeatPolicy(client.getClientRetryPolicy().clone(), false);
+                }
                 return new FutureMap(client, request).withResponseKey("status");
             }
         });
@@ -512,7 +513,9 @@ public class JsonRpcVdsServer implements IVdsServer {
                     @Override
                     public boolean isDone() {
                         if (callable.isDone()) {
-                            updateHeartbeatPolicy(policy, true);
+                            if (isPolicyReset) {
+                                updateHeartbeatPolicy(client.getClientRetryPolicy(), true);
+                            }
                             return true;
                         }
                         return false;
