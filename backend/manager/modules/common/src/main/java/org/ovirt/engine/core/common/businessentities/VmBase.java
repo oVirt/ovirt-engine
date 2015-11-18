@@ -1271,7 +1271,11 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     }
 
     public void setvNumaNodeList(List<VmNumaNode> vNumaNodeList) {
-        this.vNumaNodeList = vNumaNodeList;
+        if (vNumaNodeList != null){
+            this.vNumaNodeList = vNumaNodeList;
+        } else {
+            this.vNumaNodeList = new ArrayList<>();
+        }
     }
 
     public Boolean getAutoConverge() {
