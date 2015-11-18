@@ -414,7 +414,7 @@ BEGIN
 
     SELECT ovf.storage_domain_id
     FROM storage_domains_ovf_info ovf
-    WHERE string_to_array(ovf.stored_ovfs_ids, ',') & & string_to_array(v_ovfs_ids, ',');
+    WHERE string_to_array(ovf.stored_ovfs_ids, ',') && string_to_array(v_ovfs_ids, ',');
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
