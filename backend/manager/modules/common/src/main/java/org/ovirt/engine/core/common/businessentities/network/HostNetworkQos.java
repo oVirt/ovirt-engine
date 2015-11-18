@@ -16,11 +16,11 @@ public class HostNetworkQos extends QosBase {
             message = "ACTION_TYPE_FAILED_NETWORK_QOS_OUT_OF_RANGE_VALUES")
     private Integer outAverageLinkshare;
 
-    @ConfiguredRange(min = 0, maxConfigValue = ConfigValues.MaxAverageNetworkQoSValue,
+    @ConfiguredRange(min = 1, maxConfigValue = ConfigValues.MaxAverageNetworkQoSValue,
             message = "ACTION_TYPE_FAILED_NETWORK_QOS_OUT_OF_RANGE_VALUES")
     private Integer outAverageUpperlimit;
 
-    @ConfiguredRange(min = 0, maxConfigValue = ConfigValues.MaxAverageNetworkQoSValue,
+    @ConfiguredRange(min = 1, maxConfigValue = ConfigValues.MaxAverageNetworkQoSValue,
             message = "ACTION_TYPE_FAILED_NETWORK_QOS_OUT_OF_RANGE_VALUES")
     private Integer outAverageRealtime;
 
