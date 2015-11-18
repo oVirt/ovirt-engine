@@ -33,9 +33,6 @@ public class LoginOnBehalfCommand<T extends LoginOnBehalfParameters> extends Com
     private String logInfo;
 
     @Inject
-    private SessionDataContainer sessionDataContainer;
-
-    @Inject
     private DbUserDao dbUserDao;
 
     public LoginOnBehalfCommand(T parameters) {
@@ -123,9 +120,9 @@ public class LoginOnBehalfCommand<T extends LoginOnBehalfParameters> extends Com
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-        sessionDataContainer.setUser(engineSessionId, dbUser);
-        sessionDataContainer.refresh(engineSessionId);
-        sessionDataContainer.setPrincipalRecord(engineSessionId, principalRecord);
+        SessionDataContainer.getInstance().setUser(engineSessionId, dbUser);
+        SessionDataContainer.getInstance().refresh(engineSessionId);
+        SessionDataContainer.getInstance().setPrincipalRecord(engineSessionId, principalRecord);
         return engineSessionId;
     }
 
