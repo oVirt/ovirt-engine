@@ -249,7 +249,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             removeImageParams.setEntityInfo(new EntityInfo(VdcObjectType.Disk, getDestinationImageId()));
             // Setting the image as the monitored entity, so there will not be dependency
             VdcReturnValueBase returnValue =
-                    checkAndPerformRollbackUsingCommand(VdcActionType.RemoveImage, removeImageParams);
+                    checkAndPerformRollbackUsingCommand(VdcActionType.RemoveImage, removeImageParams, null);
             if (returnValue.getSucceeded()) {
                 // Starting to monitor the the tasks - RemoveImage is an internal command
                 // which adds the taskId on the internal task ID list

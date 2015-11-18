@@ -268,14 +268,16 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            command type for the rollback
      * @param params
      *            parameters for the rollback
+     * @param context
+     *            context for the rollback
      * @return result of the command execution
      */
     protected VdcReturnValueBase attemptRollback(VdcActionType commandType,
-            VdcActionParametersBase params) {
+            VdcActionParametersBase params, CommandContext context) {
         if (canPerformRollbackUsingCommand(commandType, params)) {
             params.setExecutionReason(CommandExecutionReason.ROLLBACK_FLOW);
             params.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-            return getBackend().runInternalAction(commandType, params, context.clone());
+            return getBackend().runInternalAction(commandType, params, context);
         }
         return new VdcReturnValueBase();
     }
@@ -291,11 +293,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            command type for the rollback
      * @param params
      *            parameters for the rollback
+     * @param context
+     *            context for the rollback
      * @return result of the command execution
      */
     protected VdcReturnValueBase checkAndPerformRollbackUsingCommand(VdcActionType commandType,
-            VdcActionParametersBase params) {
-        return attemptRollback(commandType, params);
+            VdcActionParametersBase params, CommandContext context) {
+        return attemptRollback(commandType, params, context);
     }
 
     /**
