@@ -13,8 +13,8 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 
 public class HasMaximumNumberOfDisks implements ArchCommand {
-    boolean hasMaximum;
-    List<Disk> allDisks;
+    private boolean hasMaximum;
+    private List<Disk> allDisks;
 
     public HasMaximumNumberOfDisks(Guid vmId) {
         allDisks = DbFacade.getInstance().getDiskDao().getAllForVm(vmId);
