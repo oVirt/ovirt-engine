@@ -22,10 +22,10 @@ public class UpdateBookmarkCommand<T extends BookmarksOperationParameters>
             addInvalidIdErrorMessages(EngineMessage.VAR__ACTION__UPDATE);
         } else {
             Bookmark current = DbFacade.getInstance().getBookmarkDao()
-                    .getByName(updated.getbookmark_name());
+                    .getByName(updated.getName());
 
-            if (!(current == null || current.getbookmark_id().equals(
-                    updated.getbookmark_id()))) {
+            if (!(current == null || current.getId().equals(
+                    updated.getId()))) {
                 addErrorMessages(
                         EngineMessage.VAR__ACTION__UPDATE,
                         EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);

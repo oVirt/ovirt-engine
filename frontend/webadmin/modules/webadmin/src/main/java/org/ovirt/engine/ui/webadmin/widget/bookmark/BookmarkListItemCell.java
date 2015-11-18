@@ -28,8 +28,8 @@ public class BookmarkListItemCell extends AbstractCell<Bookmark> implements HasE
     @Override
     public void render(Context context, Bookmark value, SafeHtmlBuilder sb) {
         sb.append(templates.bookmarkItem(
-                ElementIdUtils.createElementId(elementId, value.getbookmark_name()),
-                value.getbookmark_name()));
+                ElementIdUtils.createElementId(elementId, value.getName()),
+                value.getName()));
     }
 
     @Override

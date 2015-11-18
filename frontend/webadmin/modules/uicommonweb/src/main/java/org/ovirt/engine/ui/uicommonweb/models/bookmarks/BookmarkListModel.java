@@ -36,8 +36,8 @@ public class BookmarkListModel extends SearchableListModel {
 
         @Override
         public int compare(Bookmark o1, Bookmark o2) {
-            String name1 = o1.getbookmark_name();
-            String name2 = o2.getbookmark_name();
+            String name1 = o1.getName();
+            String name2 = o2.getName();
             if (name1 == null || name2 == null) {
                 throw new IllegalArgumentException("Bookmark name cannot be null"); //$NON-NLS-1$
             }
@@ -176,7 +176,7 @@ public class BookmarkListModel extends SearchableListModel {
         for (Object item : getSelectedItems()) {
             org.ovirt.engine.core.common.businessentities.Bookmark i =
                     (org.ovirt.engine.core.common.businessentities.Bookmark) item;
-            list.add(i.getbookmark_name());
+            list.add(i.getName());
         }
         model.setItems(list);
 
@@ -189,7 +189,7 @@ public class BookmarkListModel extends SearchableListModel {
     public void onRemove() {
 
         Bookmark selectedBookmark = (Bookmark) getSelectedItem();
-        BookmarksParametersBase parameters = new BookmarksParametersBase(selectedBookmark.getbookmark_id());
+        BookmarksParametersBase parameters = new BookmarksParametersBase(selectedBookmark.getId());
 
         IFrontendActionAsyncCallback async = new IFrontendActionAsyncCallback() {
             @Override
@@ -217,8 +217,8 @@ public class BookmarkListModel extends SearchableListModel {
         model.setHelpTag(HelpTag.edit_bookmark);
         model.setHashName("edit_bookmark"); //$NON-NLS-1$
         model.setIsNew(false);
-        model.getName().setEntity(bookmark.getbookmark_name());
-        model.getSearchString().setEntity(bookmark.getbookmark_value());
+        model.getName().setEntity(bookmark.getName());
+        model.getSearchString().setEntity(bookmark.getValue());
 
         UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
@@ -258,10 +258,10 @@ public class BookmarkListModel extends SearchableListModel {
 
         org.ovirt.engine.core.common.businessentities.Bookmark tempVar =
                 new org.ovirt.engine.core.common.businessentities.Bookmark();
-        tempVar.setbookmark_id(model.getIsNew() ? Guid.Empty
-                : ((org.ovirt.engine.core.common.businessentities.Bookmark) getSelectedItem()).getbookmark_id());
-        tempVar.setbookmark_name(model.getName().getEntity());
-        tempVar.setbookmark_value(model.getSearchString().getEntity());
+        tempVar.setId(model.getIsNew() ? Guid.Empty
+                : ((org.ovirt.engine.core.common.businessentities.Bookmark) getSelectedItem()).getId());
+        tempVar.setName(model.getName().getEntity());
+        tempVar.setValue(model.getSearchString().getEntity());
         org.ovirt.engine.core.common.businessentities.Bookmark bookmark = tempVar;
 
         model.startProgress();

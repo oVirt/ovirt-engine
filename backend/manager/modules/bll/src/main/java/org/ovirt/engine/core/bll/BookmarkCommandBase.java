@@ -32,12 +32,12 @@ public abstract class BookmarkCommandBase<T extends BookmarksParametersBase> ext
     }
 
     public String getBookmarkValue() {
-        return getBookmark() != null ? getBookmark().getbookmark_value() : null;
+        return getBookmark() != null ? getBookmark().getValue() : null;
     }
 
     public String getBookmarkName() {
         if (bookmarkName == null && getBookmark() != null) {
-            bookmarkName = getBookmark().getbookmark_name();
+            bookmarkName = getBookmark().getName();
         }
         return bookmarkName;
     }

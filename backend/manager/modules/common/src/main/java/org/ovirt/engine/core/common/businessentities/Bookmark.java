@@ -20,20 +20,19 @@ public class Bookmark implements IVdcQueryable, Serializable {
     private String value;
 
 
-    public String getbookmark_name() {
+    public String getName() {
         return name;
     }
 
-    public String getbookmark_value() {
+    public String getValue() {
         return value;
     }
 
-    public void setbookmark_value(String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
-
-    public void setbookmark_name(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -65,16 +64,16 @@ public class Bookmark implements IVdcQueryable, Serializable {
     }
 
 
-    public Guid getbookmark_id() {
+    public Guid getId() {
         return id;
     }
 
-    public void setbookmark_id(Guid id) {
+    public void setId(Guid id) {
         this.id = id;
     }
 
     @Override
     public Object getQueryableId() {
-        return getbookmark_id();
+        return getId();
     }
 }

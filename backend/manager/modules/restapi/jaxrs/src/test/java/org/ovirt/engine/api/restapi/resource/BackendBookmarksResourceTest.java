@@ -36,7 +36,7 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
     public void testAddBookmark() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(VdcActionType.AddBookmark, BookmarksOperationParameters.class,
-                new String[] { "Bookmark.bookmark_name", "Bookmark.bookmark_value" },
+                new String[] { "Bookmark.Name", "Bookmark.Value" },
                 new Object[] { NAMES[0], VALUES[0] }, true, true, null, VdcQueryType.GetBookmarkByBookmarkName,
                 NameQueryParameters.class, new String[] { "Name" }, new Object[] { NAMES[0] }, getEntity(0));
 
@@ -74,7 +74,7 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
 
     private void doTestBadAddBookmark(boolean canDo, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddBookmark, BookmarksOperationParameters.class,
-                new String[] { "Bookmark.bookmark_name", "Bookmark.bookmark_value" },
+                new String[] { "Bookmark.Name", "Bookmark.Value" },
                 new Object[] { NAMES[0], VALUES[0] }, canDo, success));
         try {
             collection.add(getModel(0));
@@ -99,9 +99,9 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
     protected org.ovirt.engine.core.common.businessentities.Bookmark getEntity(int index) {
         org.ovirt.engine.core.common.businessentities.Bookmark bookmark =
                 new org.ovirt.engine.core.common.businessentities.Bookmark();
-        bookmark.setbookmark_id(GUIDS[index]);
-        bookmark.setbookmark_name(NAMES[index]);
-        bookmark.setbookmark_value(VALUES[index]);
+        bookmark.setId(GUIDS[index]);
+        bookmark.setName(NAMES[index]);
+        bookmark.setValue(VALUES[index]);
         return bookmark;
     }
 
@@ -122,9 +122,9 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
         for (int i = 0; i < NAMES.length; i++) {
             org.ovirt.engine.core.common.businessentities.Bookmark bookmark =
                     new org.ovirt.engine.core.common.businessentities.Bookmark();
-            bookmark.setbookmark_id(GUIDS[i]);
-            bookmark.setbookmark_name(NAMES[i]);
-            bookmark.setbookmark_value(VALUES[i]);
+            bookmark.setId(GUIDS[i]);
+            bookmark.setName(NAMES[i]);
+            bookmark.setValue(VALUES[i]);
             bookmarks.add(bookmark);
         }
         return bookmarks;

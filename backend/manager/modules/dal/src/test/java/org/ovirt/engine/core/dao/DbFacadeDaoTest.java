@@ -225,7 +225,7 @@ public class DbFacadeDaoTest extends BaseDaoTestCase {
     public void testGetEntityNameByIdAndTypeForBookmark() {
         Bookmark bookmark = dbFacade.getBookmarkDao().get(BOOKMARK_ID);
         assertNotNull(bookmark);
-        String name = bookmark.getbookmark_name();
+        String name = bookmark.getName();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(BOOKMARK_ID, VdcObjectType.Bookmarks)));
     }
 

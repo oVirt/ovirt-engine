@@ -10,7 +10,7 @@ public class BookmarksOperationParameters extends BookmarksParametersBase {
     private Bookmark _bookmark;
 
     public BookmarksOperationParameters(Bookmark bookmark) {
-        super(bookmark.getbookmark_id());
+        super(bookmark.getId());
         _bookmark = bookmark;
     }
 

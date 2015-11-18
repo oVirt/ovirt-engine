@@ -26,9 +26,9 @@ public class BookmarkDaoImpl extends BaseDao implements BookmarkDao {
         @Override
         public Bookmark mapRow(ResultSet rs, int rowNum) throws SQLException {
             Bookmark entity = new Bookmark();
-            entity.setbookmark_id(getGuid(rs, "bookmark_id"));
-            entity.setbookmark_name(rs.getString("bookmark_name"));
-            entity.setbookmark_value(rs.getString("bookmark_value"));
+            entity.setId(getGuid(rs, "bookmark_id"));
+            entity.setName(rs.getString("bookmark_name"));
+            entity.setValue(rs.getString("bookmark_value"));
             return entity;
         }
     }
@@ -37,9 +37,9 @@ public class BookmarkDaoImpl extends BaseDao implements BookmarkDao {
             CustomMapSqlParameterSource {
         public BookmarkSqlParameterSource(Bookmark bookmark) {
             super(getDialect());
-            addValue("bookmark_id", bookmark.getbookmark_id());
-            addValue("bookmark_name", bookmark.getbookmark_name());
-            addValue("bookmark_value", bookmark.getbookmark_value());
+            addValue("bookmark_id", bookmark.getId());
+            addValue("bookmark_name", bookmark.getName());
+            addValue("bookmark_value", bookmark.getValue());
         }
 
         public BookmarkSqlParameterSource() {
@@ -80,10 +80,10 @@ public class BookmarkDaoImpl extends BaseDao implements BookmarkDao {
 
     @Override
     public void save(Bookmark bookmark) {
-        Guid id = bookmark.getbookmark_id();
+        Guid id = bookmark.getId();
         if (Guid.isNullOrEmpty(id)) {
             id = Guid.newGuid();
-            bookmark.setbookmark_id(id);
+            bookmark.setId(id);
         }
         MapSqlParameterSource parameterSource = new BookmarkSqlParameterSource(
                 bookmark);

@@ -13,7 +13,7 @@ public class AddBookmarkCommand<T extends BookmarksOperationParameters> extends 
     @Override
     protected boolean canDoAction() {
         if (DbFacade.getInstance().getBookmarkDao()
-                .getByName(getBookmark().getbookmark_name()) != null) {
+                .getByName(getBookmark().getName()) != null) {
             addErrorMessages(
                     EngineMessage.VAR__ACTION__ADD,
                     EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);

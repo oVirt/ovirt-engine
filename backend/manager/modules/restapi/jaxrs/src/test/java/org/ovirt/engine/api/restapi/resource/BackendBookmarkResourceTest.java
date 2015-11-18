@@ -76,7 +76,7 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
         setUpGetEntityExpectations(0);
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateBookmark, BookmarksOperationParameters.class,
-                new String[] { "Bookmark.bookmark_id", "Bookmark.bookmark_name", "Bookmark.bookmark_value" },
+                new String[] { "Bookmark.Id", "Bookmark.Name", "Bookmark.Value" },
                 new Object[] { GUIDS[0], NAMES[0], VALUES[0] }, true, true));
 
         verifyModel(resource.update(getModel(0)), 0);

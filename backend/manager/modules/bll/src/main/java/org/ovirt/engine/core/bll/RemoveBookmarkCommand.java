@@ -23,7 +23,7 @@ public class RemoveBookmarkCommand<T extends BookmarksParametersBase> extends Bo
     @Override
     protected void executeCommand() {
         DbFacade.getInstance().getBookmarkDao()
-                .remove(getBookmark().getbookmark_id());
+                .remove(getBookmark().getId());
         setSucceeded(true);
     }
 

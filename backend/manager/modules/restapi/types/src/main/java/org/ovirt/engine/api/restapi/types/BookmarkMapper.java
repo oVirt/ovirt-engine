@@ -16,13 +16,13 @@ public class BookmarkMapper {
         org.ovirt.engine.core.common.businessentities.Bookmark entity =
                 template != null ? template : new org.ovirt.engine.core.common.businessentities.Bookmark();
         if (model.isSetId()) {
-            entity.setbookmark_id(GuidUtils.asGuid(model.getId()));
+            entity.setId(GuidUtils.asGuid(model.getId()));
         }
         if (model.isSetValue()) {
-            entity.setbookmark_value(model.getValue());
+            entity.setValue(model.getValue());
         }
         if (model.isSetName()) {
-            entity.setbookmark_name(model.getName());
+            entity.setName(model.getName());
         }
         return entity;
     }
@@ -36,9 +36,9 @@ public class BookmarkMapper {
     @Mapping(from = org.ovirt.engine.core.common.businessentities.Bookmark.class, to = Bookmark.class)
     public static Bookmark map(org.ovirt.engine.core.common.businessentities.Bookmark entity, Bookmark template) {
         Bookmark model = template != null ? template : new Bookmark();
-        model.setId(entity.getbookmark_id().toString());
-        model.setName(entity.getbookmark_name());
-        model.setValue(entity.getbookmark_value());
+        model.setId(entity.getId().toString());
+        model.setName(entity.getName());
+        model.setValue(entity.getValue());
         return model;
     }
 }

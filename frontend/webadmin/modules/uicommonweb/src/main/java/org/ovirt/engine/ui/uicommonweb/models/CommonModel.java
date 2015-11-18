@@ -319,7 +319,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
         updateAvailability(SystemTreeItemType.System, null);
 
         setSearchStringPrefix(""); //$NON-NLS-1$
-        setSearchString(e.getBookmark().getbookmark_value());
+        setSearchString(e.getBookmark().getValue());
         getSearchCommand().execute();
     }
 
