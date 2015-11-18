@@ -16,54 +16,8 @@ limitations under the License.
 
 package org.ovirt.api.metamodel.concepts;
 
-public class Attribute extends Concept {
-    /**
-     * Reference to the type that declared this attribute.
-     */
-    private StructType declaringType;
-
-    /**
-     * Reference to the type of the values of this attribute.
-     */
-    private Type type;
-
-    /**
-     * Returns the type where this attribute is directly declared.
-     */
-    public StructType getDeclaringType() {
-        return declaringType;
-    }
-
-    /**
-     * Sets the type that directly declares this attribute.
-     */
-    public void setDeclaringType(StructType newDeclaringType) {
-        declaringType = newDeclaringType;
-    }
-
-    /**
-     * Returns the type of this attribute.
-     */
-    public Type getType() {
-        return type;
-    }
-
-    /**
-     * Sets the type of this attribute.
-     */
-    public void setType(Type newType) {
-        type = newType;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-        if (declaringType != null) {
-            buffer.append(declaringType);
-            buffer.append(":");
-        }
-        buffer.append(getName());
-        return buffer.toString();
-    }
+public class Attribute extends StructMember {
+    // Attributes and links are mostly identical at the moment, but we want to keep the two concepts separate, thus
+    // this empty class.
 }
 

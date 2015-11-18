@@ -24,66 +24,9 @@ import java.util.stream.Stream;
 /**
  * This class represents a method of a service.
  */
-public class Method extends Concept {
-    // The service that declared this method:
-    private Service declaringService;
-
-    // The parameters of this method:
-    private List<Parameter> parameters = new ArrayList<>();
-
+public class Method extends ServiceMember {
     // The constraints that apply to this method:
     private List<Constraint> constraints = new ArrayList<>();
-
-    /**
-     * Returns the service where this method is directly declared.
-     */
-    public Service getDeclaringService() {
-        return declaringService;
-    }
-
-    /**
-     * Sets the service that directly declares this method.
-     */
-    public void setDeclaringService(Service newDeclaringService) {
-        declaringService = newDeclaringService;
-    }
-
-    /**
-     * Returns the list of parameters of this method. The returned list is a copy of the one used internally, so it is
-     * safe to modify it in any way. If you aren't going to modify the list consider using the {@link #parameters()}
-     * method instead.
-     */
-    public List<Parameter> getParameters() {
-        return new CopyOnWriteArrayList<>(parameters);
-    }
-
-    /**
-     * Returns a stream that delivers the parameters of this method.
-     */
-    public Stream<Parameter> parameters() {
-        return parameters.stream();
-    }
-
-    /**
-     * Returns the parameter that has the given name, or {@code null} if there is no such parameter.
-     */
-    public Parameter getParameter(Name name) {
-        return parameters.stream().filter(named(name)).findFirst().orElse(null);
-    }
-
-    /**
-     * Adds a new parameter to this method.
-     */
-    public void addParameter(Parameter newParameter) {
-        parameters.add(newParameter);
-    }
-
-    /**
-     * Adds a list of new parameters to this method.
-     */
-    public void addParameters(List<Parameter> newParameters) {
-        parameters.addAll(newParameters);
-    }
 
     /**
      * Returns the list of constraints that apply to this method. The returned list is a copy of the one used
@@ -120,17 +63,6 @@ public class Method extends Concept {
      */
     public void addConstraints(List<Constraint> constraints) {
         this.constraints.addAll(constraints);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-        if (declaringService != null) {
-            buffer.append(declaringService);
-            buffer.append(":");
-        }
-        buffer.append(getName());
-        return buffer.toString();
     }
 }
 
