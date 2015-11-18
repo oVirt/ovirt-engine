@@ -307,7 +307,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             for (VM vm : getVms()) {
                 if (vm.isRunningOrPaused()) {
                     for (VmNetworkInterface nic : vnicsByVmId.get(vm.getId())) {
-                        if (VmNetworkCanBeUpdatedPredicate.getInstance().eval(nic)) {
+                        if (VmNetworkCanBeUpdatedPredicate.getInstance().test(nic)) {
                             runningVms.add(vm);
                             break;
                         }

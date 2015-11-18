@@ -19,7 +19,7 @@ public class VmNetworkCanBeUpdatedPredicateTest {
 
         Mockito.when(mockVmNetworkInterface.isPlugged()).thenReturn(true);
 
-        Assert.assertTrue(VmNetworkCanBeUpdatedPredicate.getInstance().eval(mockVmNetworkInterface));
+        Assert.assertTrue(VmNetworkCanBeUpdatedPredicate.getInstance().test(mockVmNetworkInterface));
 
         Mockito.verify(mockVmNetworkInterface).isPlugged();
         Mockito.verify(mockVmNetworkInterface, Mockito.never()).isLinked();
@@ -30,7 +30,7 @@ public class VmNetworkCanBeUpdatedPredicateTest {
 
         Mockito.when(mockVmNetworkInterface.isPlugged()).thenReturn(false);
 
-        Assert.assertFalse(VmNetworkCanBeUpdatedPredicate.getInstance().eval(mockVmNetworkInterface));
+        Assert.assertFalse(VmNetworkCanBeUpdatedPredicate.getInstance().test(mockVmNetworkInterface));
 
         Mockito.verify(mockVmNetworkInterface).isPlugged();
         Mockito.verify(mockVmNetworkInterface, Mockito.never()).isLinked();

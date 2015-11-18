@@ -32,7 +32,7 @@ public class RunningVmPredicateTest {
 
         when(mockVm.isRunning()).thenReturn(expectedResult);
 
-        final boolean actual = underTest.eval(mockVm);
+        final boolean actual = underTest.test(mockVm);
 
         verify(mockVm).isRunning();
 

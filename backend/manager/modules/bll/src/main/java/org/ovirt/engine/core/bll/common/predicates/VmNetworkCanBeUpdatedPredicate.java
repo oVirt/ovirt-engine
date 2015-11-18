@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.bll.common.predicates;
 
+import java.util.function.Predicate;
+
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public final class VmNetworkCanBeUpdatedPredicate implements Predicate<VmNetworkInterface> {
 
@@ -12,7 +13,7 @@ public final class VmNetworkCanBeUpdatedPredicate implements Predicate<VmNetwork
     }
 
     @Override
-    public boolean eval(VmNetworkInterface vNic) {
+    public boolean test(VmNetworkInterface vNic) {
         return vNic.isPlugged();
     }
 }

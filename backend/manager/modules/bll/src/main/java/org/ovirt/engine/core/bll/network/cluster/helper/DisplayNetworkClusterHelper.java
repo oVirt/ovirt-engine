@@ -44,7 +44,7 @@ public final class DisplayNetworkClusterHelper {
     }
 
     public void warnOnActiveVm() {
-        if (activeVmAttachedToClusterPredicate.eval(networkCluster.getClusterId())) {
+        if (activeVmAttachedToClusterPredicate.test(networkCluster.getClusterId())) {
             AuditLogableBase loggable = createLoggable();
             auditLogDirector.log(loggable, AuditLogType.NETWORK_UPDATE_DISPLAY_FOR_CLUSTER_WITH_ACTIVE_VM);
         }
