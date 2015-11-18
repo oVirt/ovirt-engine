@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -145,9 +146,12 @@ public class JaxrsGenerator extends JavaGenerator {
         }
         String extendsClause = extendsList.isEmpty()? "": "extends " + String.join(", ", extendsList);
 
+        // Check if this is the root of the tree of services:
+        boolean isRoot = service == service.getModel().getRoot();
+
         // Generate the interface declaration:
         generateDoc(service);
-        if (service == service.getModel().getRoot()) {
+        if (isRoot) {
             javaBuffer.addImport(Path.class);
             javaBuffer.addLine("@Path(\"/\")");
         }
@@ -157,6 +161,21 @@ public class JaxrsGenerator extends JavaGenerator {
             interfaceName.getSimpleName(),
             extendsClause
         );
+
+        // The root service needs these two additional methods that can't be represented in the model:
+        if (isRoot) {
+            javaBuffer.addImport(GET.class);
+            javaBuffer.addImport(Response.class);
+            javaBuffer.addLine("@GET");
+            javaBuffer.addLine("Response get();");
+            javaBuffer.addLine();
+
+            javaBuffer.addImport(HEAD.class);
+            javaBuffer.addImport(Response.class);
+            javaBuffer.addLine("@HEAD");
+            javaBuffer.addLine("Response head();");
+            javaBuffer.addLine();
+        }
 
         // Generate the methods:
         List<Method> methods = service.getDeclaredMethods();

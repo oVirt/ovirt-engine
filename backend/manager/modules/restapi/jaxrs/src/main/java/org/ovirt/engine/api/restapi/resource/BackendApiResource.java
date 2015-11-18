@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -251,7 +250,7 @@ public class BackendApiResource
         return responseBuilder;
     }
 
-    @HEAD
+    @Override
     public Response head() {
         appMode = getCurrent().getApplicationMode();
         Api api = null;
@@ -264,7 +263,7 @@ public class BackendApiResource
         return getResponseBuilder(api).build();
     }
 
-    @GET
+    @Override
     public Response get() {
         appMode = getCurrent().getApplicationMode();
         if (QueryHelper.hasConstraint(getUriInfo(), RSDL_CONSTRAINT_PARAMETER)) {
