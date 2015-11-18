@@ -8,9 +8,12 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
@@ -27,11 +30,14 @@ public class CommandEntityDaoTest extends BaseGenericDaoTestCase<Guid, CommandEn
     @Override
     protected CommandEntity generateNewEntity() {
 
+        Map<String, Serializable> data = new HashMap<>();
+        data.put("NEXT_COMMAND_TYPE", VdcActionType.DestroyImage);
         CommandEntity commandEntity = new CommandEntity();
         commandEntity.setCommandType(VdcActionType.AddBond);
         commandEntity.setCreatedAt(new Date(System.currentTimeMillis()));
         commandEntity.setId(Guid.newGuid());
         commandEntity.setCommandStatus(CommandStatus.ACTIVE);
+        commandEntity.setData(data);
         VdcActionParametersBase params = new VdcActionParametersBase();
         commandEntity.setCommandParameters(params);
         return commandEntity;

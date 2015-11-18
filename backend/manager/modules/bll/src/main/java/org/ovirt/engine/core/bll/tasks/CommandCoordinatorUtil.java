@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll.tasks;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -333,6 +335,23 @@ public class CommandCoordinatorUtil {
         CommandEntity cmdEntity = coco.getCommandEntity(commandId);
         return cmdEntity == null ? CommandExecutionStatus.UNKNOWN :
                 cmdEntity.isExecuted() ? CommandExecutionStatus.EXECUTED : CommandExecutionStatus.NOT_EXECUTED;
+    }
+
+    /**
+     * Returns the command entity's data for the command identified by the command id.
+     * @param commandId The id of the command
+     */
+    public static Map<String, Serializable> getCommandData(Guid commandId) {
+        CommandEntity cmdEntity = coco.getCommandEntity(commandId);
+        return cmdEntity == null ? new HashMap<>() : cmdEntity.getData();
+    }
+
+    /**
+     * Set the command entity's data for the command identified by the command id.
+     * @param commandId The id of the command
+     */
+    public static void updateCommandData(Guid commandId, Map<String, Serializable> data) {
+        coco.updateCommandData(commandId, data);
     }
 
     /**

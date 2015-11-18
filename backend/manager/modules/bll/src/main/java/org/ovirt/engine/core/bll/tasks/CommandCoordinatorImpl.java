@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.tasks;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -171,6 +172,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
             }
             command = CommandsFactory.createCommand(cmdEntity.getCommandType(), cmdEntity.getCommandParameters(), cmdContext);
             command.setCommandStatus(cmdEntity.getCommandStatus(), false);
+            command.setCommandData(cmdEntity.getData());
             if (!Guid.isNullOrEmpty(cmdEntity.getParentCommandId()) &&
                     ! cmdEntity.getParentCommandId().equals(cmdEntity.getId()) &&
                     command.getParameters().getParentParameters() == null) {
@@ -209,6 +211,10 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         synchronized(LOCK) {
             childHierarchyInitialized = false;
         }
+    }
+
+    public void updateCommandData(final Guid commandId, final Map<String, Serializable> data) {
+        commandsCache.updateCommandData(commandId, data);
     }
 
     public void updateCommandStatus(final Guid commandId, final CommandStatus status) {

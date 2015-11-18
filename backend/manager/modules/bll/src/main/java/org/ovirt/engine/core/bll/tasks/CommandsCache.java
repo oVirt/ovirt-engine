@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll.tasks;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
@@ -27,6 +29,8 @@ public interface CommandsCache {
     List<Guid> getCommandIdsByEntityId(Guid entityId);
 
     void removeAllCommandsBeforeDate(DateTime cutoff);
+
+    void updateCommandData(Guid commandId, Map<String, Serializable> data);
 
     void updateCommandStatus(Guid commandId, CommandStatus status);
 

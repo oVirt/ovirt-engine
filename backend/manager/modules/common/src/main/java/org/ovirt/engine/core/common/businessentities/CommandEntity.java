@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -26,10 +29,12 @@ public class CommandEntity implements BusinessEntity<Guid> {
     private boolean callbackEnabled;
     private boolean callbackNotified;
     private boolean executed;
+    private Map<String, Serializable> data;
 
     public CommandEntity() {
         commandStatus = CommandStatus.UNKNOWN;
         createdAt = new Date();
+        data = new HashMap<>();
     }
 
     @Override
@@ -38,7 +43,8 @@ public class CommandEntity implements BusinessEntity<Guid> {
                 commandId,
                 commandType,
                 parentCommandId,
-                rootCommandId
+                rootCommandId,
+                data
         );
     }
 
@@ -54,7 +60,8 @@ public class CommandEntity implements BusinessEntity<Guid> {
         return Objects.equals(commandId, other.commandId)
                 && commandType == other.commandType
                 && Objects.equals(getGuid(parentCommandId), getGuid(other.parentCommandId))
-                && Objects.equals(getGuid(rootCommandId), getGuid(other.rootCommandId));
+                && Objects.equals(getGuid(rootCommandId), getGuid(other.rootCommandId))
+                && Objects.equals(data, other.data);
     }
 
     private Guid getGuid(Guid guid) {
@@ -133,6 +140,14 @@ public class CommandEntity implements BusinessEntity<Guid> {
         this.callbackNotified = callbackNotified;
     }
 
+    public void setData(Map<String, Serializable> data) {
+        this.data = data;
+    }
+
+    public Map<String, Serializable> getData() {
+        return data;
+    }
+
     public static CommandEntity buildCommandEntity(Guid userId,
                                                    Guid commandId,
                                                    Guid parentCommandId,
@@ -143,7 +158,8 @@ public class CommandEntity implements BusinessEntity<Guid> {
                                                    VdcActionParametersBase params,
                                                    CommandStatus status,
                                                    boolean callbackEnabled,
-                                                   VdcReturnValueBase returnValue) {
+                                                   VdcReturnValueBase returnValue,
+                                                   Map<String, Serializable> data) {
         CommandEntity entity = new CommandEntity();
         entity.setUserId(userId);
         entity.setId(commandId);
@@ -156,6 +172,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
         entity.setCommandStatus(status);
         entity.setCallbackEnabled(callbackEnabled);
         entity.setReturnValue(returnValue);
+        entity.setData(data);
         return entity;
     }
 

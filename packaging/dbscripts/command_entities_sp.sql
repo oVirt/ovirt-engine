@@ -1,6 +1,3 @@
-
-
---WARNING! ERRORS ENCOUNTERED DURING SQL PARSING!
 CREATE OR REPLACE FUNCTION InsertCommandEntity (
     v_user_id uuid,
     v_command_id uuid,
@@ -16,7 +13,8 @@ CREATE OR REPLACE FUNCTION InsertCommandEntity (
     v_executed boolean,
     v_callback_enabled boolean,
     v_return_value TEXT,
-    v_return_value_class VARCHAR(256)
+    v_return_value_class VARCHAR(256),
+    v_data TEXT
     )
 RETURNS VOID AS $PROCEDURE$
 
@@ -36,7 +34,8 @@ BEGIN
         executed,
         callback_enabled,
         return_value,
-        return_value_class
+        return_value_class,
+        data
         )
     VALUES (
         v_user_id,
@@ -53,7 +52,8 @@ BEGIN
         v_executed,
         v_callback_enabled,
         v_return_value,
-        v_return_value_class
+        v_return_value_class,
+        v_data
         );
 END;$PROCEDURE$
 
@@ -73,7 +73,8 @@ CREATE OR REPLACE FUNCTION UpdateCommandEntity (
     v_executed boolean,
     v_callback_enabled boolean,
     v_return_value TEXT,
-    v_return_value_class VARCHAR(256)
+    v_return_value_class VARCHAR(256),
+    v_data TEXT
     )
 RETURNS VOID AS $PROCEDURE$
 
@@ -91,7 +92,8 @@ BEGIN
         executed = v_executed,
         callback_enabled = v_callback_enabled,
         return_value = v_return_value,
-        return_value_class = v_return_value_class
+        return_value_class = v_return_value_class,
+        data = v_data
     WHERE command_id = v_command_id;
 END;$PROCEDURE$
 
@@ -154,7 +156,8 @@ CREATE OR REPLACE FUNCTION InsertOrUpdateCommandEntity (
     v_executed boolean,
     v_callback_enabled boolean,
     v_return_value TEXT,
-    v_return_value_class VARCHAR(256)
+    v_return_value_class VARCHAR(256),
+    v_data TEXT
     )
 RETURNS VOID AS $PROCEDURE$
 
@@ -179,7 +182,8 @@ BEGIN
                       v_executed,
                       v_callback_enabled,
                       v_return_value,
-                      v_return_value_class);
+                      v_return_value_class,
+                      v_data);
              ELSE
                  PERFORM UpdateCommandEntity(
                      v_user_id,
@@ -194,7 +198,8 @@ BEGIN
                      v_executed,
                      v_callback_enabled,
                      v_return_value,
-                     v_return_value_class);
+                     v_return_value_class,
+                     v_data);
     END IF;
 
 END;$PROCEDURE$

@@ -1,14 +1,18 @@
 package org.ovirt.engine.core.utils.serialization.json;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
+import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.SerializationException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 
 /**
  * Tests for {@link JsonObjectDeserializer}.
@@ -107,6 +111,17 @@ public class JsonObjectDeserializerTest {
     public void testEnumDeserialization() {
         Color color = new JsonObjectDeserializer().deserialize("\"RED\"", Color.class);
         assertEquals(Color.RED, color);
+    }
+
+    @Test
+    public void testParameterMapDeserialization() {
+        StringBuilder buf = new StringBuilder("");
+        buf.append("{");
+        buf.append("\"NEXT_COMMAND_TYPE\" : [ \"org.ovirt.engine.core.common.action.VdcActionType\", \"DestroyImage\" ]");
+        buf.append("}");
+        Map<String, Serializable> data = new JsonObjectDeserializer().deserialize(buf.toString(), HashMap.class);
+        assertNotNull(data);
+        assertEquals(data.get("NEXT_COMMAND_TYPE"), VdcActionType.DestroyImage);
     }
 
     @Test

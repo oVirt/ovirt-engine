@@ -302,6 +302,8 @@
         <!-- Sadly because VdcQueryParametersBase / VdcActionParametersBase :/ -->
         <include name="common/queries/*.java" />
         <include name="common/action/*.java" />
+        <include name="common/utils/*PersistentMap*.java" />
+        <include name="common/utils/*DataMap*.java" />
 
         <!-- Most custom field serializers match the two previous rules, but some
             dont, we need to include them explicitly: -->

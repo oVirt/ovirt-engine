@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll.tasks.interfaces;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -46,6 +48,8 @@ public interface CommandCRUDOperations {
     void removeAllCommandsInHierarchy(Guid commandId);
 
     void removeAllCommandsBeforeDate(DateTime cutoff);
+
+    void updateCommandData(Guid commandId, Map<String, Serializable> data);
 
     void updateCommandStatus(Guid commandId, CommandStatus status);
 

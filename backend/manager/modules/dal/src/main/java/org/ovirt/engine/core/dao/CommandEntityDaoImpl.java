@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Named;
@@ -74,6 +75,7 @@ public class CommandEntityDaoImpl extends DefaultGenericDao<CommandEntity, Guid>
             result.setExecuted(resultSet.getBoolean("executed"));
             result.setCallbackEnabled(resultSet.getBoolean("callback_enabled"));
             result.setCallbackNotified(resultSet.getBoolean("callback_notified"));
+            result.setData(SerializationFactory.getDeserializer().deserialize(resultSet.getString("data"), HashMap.class));
             return result;
         }
     };
@@ -120,7 +122,8 @@ public class CommandEntityDaoImpl extends DefaultGenericDao<CommandEntity, Guid>
                 .addValue("executed", entity.isExecuted())
                 .addValue("callback_enabled", entity.isCallbackEnabled())
                 .addValue("return_value", serializeReturnValue(entity.getReturnValue()))
-                .addValue("return_value_class", entity.getReturnValue() == null ? null : entity.getReturnValue().getClass().getName());
+                .addValue("return_value_class", entity.getReturnValue() == null ? null : entity.getReturnValue().getClass().getName())
+                .addValue("data", SerializationFactory.getSerializer().serialize(entity.getData()));
     }
 
     private String serializeReturnValue(VdcReturnValueBase retVal) {

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.tasks;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -73,6 +74,14 @@ public class CommandsCacheImpl implements CommandsCache {
         final CommandEntity cmdEntity = get(commandId);
         if (cmdEntity != null) {
             cmdEntity.setCommandStatus(status);
+            saveOrUpdateWithoutTransaction(cmdEntity);
+        }
+    }
+
+    public void updateCommandData(Guid commandId, Map<String, Serializable> data) {
+        final CommandEntity cmdEntity = get(commandId);
+        if (cmdEntity != null) {
+            cmdEntity.setData(data);
             saveOrUpdateWithoutTransaction(cmdEntity);
         }
     }
