@@ -422,6 +422,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         hostCmdParams.setConectivityTimeout(timeout);
         boolean hostNetworkQosSupported = FeatureSupported.hostNetworkQos(getVds().getVdsGroupCompatibilityVersion());
         hostCmdParams.setHostNetworkQosSupported(hostNetworkQosSupported);
+        hostCmdParams.setManagementNetworkChanged(isManagementNetworkChanged());
         return hostCmdParams;
     }
 
@@ -756,6 +757,25 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             clusterNetworks = getNetworkDao().getAllForCluster(getVdsGroupId());
         }
         return clusterNetworks;
+    }
+
+    private boolean isManagementNetworkChanged(){
+        String mgmtNetworkName = managementNetworkUtil.getManagementNetwork(getVds().getVdsGroupId()).getName();
+        for (HostNetwork network : getNetworksToConfigure()) {
+            if (mgmtNetworkName.equals(network.getNetworkName())){
+                return true;
+            }
+        }
+        for (Bond bond : getParameters().getBonds()) {
+            // We are only interested in existing bonds, whose bonding options/slave have changed, so it
+            // enough to check existing bonds. New bonds which have the management network
+            // are covered by network attachments
+            VdsNetworkInterface bondNic = getExistingNicsBusinessEntityMap().get(bond.getId());
+            if (bondNic != null && mgmtNetworkName.equals(bondNic.getNetworkName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

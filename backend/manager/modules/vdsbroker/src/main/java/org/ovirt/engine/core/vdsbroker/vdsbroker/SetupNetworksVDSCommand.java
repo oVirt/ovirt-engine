@@ -61,7 +61,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
 
     @Override
     protected void executeVdsBrokerCommand() {
-        httpTask = getBroker().setupNetworks(generateNetworks(), generateBonds(), generateOptions());
+        httpTask = getBroker().setupNetworks(generateNetworks(), generateBonds(), generateOptions(), getParameters().isManagementNetworkChanged());
     }
 
     private Map<String, Object> generateNetworks() {

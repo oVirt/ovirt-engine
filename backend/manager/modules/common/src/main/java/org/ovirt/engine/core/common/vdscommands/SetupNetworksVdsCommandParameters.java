@@ -27,6 +27,7 @@ public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParameters
     private boolean force;
     private boolean checkConnectivity;
     private int conectivityTimeout;
+    private boolean managementNetworkChanged;
 
     /**
      * @param vds
@@ -48,7 +49,8 @@ public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParameters
         List<VdsNetworkInterface> bonds,
         Set<String> removedBonds,
         List<VdsNetworkInterface> interfaces,
-        CustomPropertiesForVdsNetworkInterface customProperties) {
+        CustomPropertiesForVdsNetworkInterface customProperties,
+        boolean isManagementNetworkChanged) {
         super(vds.getId());
 
         this.vds = vds;
@@ -60,6 +62,7 @@ public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParameters
         this.customProperties = customProperties == null
             ? new CustomPropertiesForVdsNetworkInterface()
             : customProperties;
+        this.managementNetworkChanged = isManagementNetworkChanged;
     }
 
     public SetupNetworksVdsCommandParameters() {
@@ -139,6 +142,10 @@ public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParameters
 
     public void setCustomProperties(CustomPropertiesForVdsNetworkInterface customProperties) {
         this.customProperties = customProperties;
+    }
+
+    public boolean isManagementNetworkChanged() {
+        return managementNetworkChanged;
     }
 
     @Override

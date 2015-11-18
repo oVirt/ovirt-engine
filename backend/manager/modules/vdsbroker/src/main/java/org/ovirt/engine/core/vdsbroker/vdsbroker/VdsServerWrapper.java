@@ -880,7 +880,8 @@ public class VdsServerWrapper implements IVdsServer {
     @Override
     public Future<Map<String, Object>> setupNetworks(Map networks,
             Map bonds,
-            Map options) {
+            Map options,
+            boolean isPolicyReset) {
         return vdsServer.futureSetupNetworks(networks, bonds, options);
     }
 
