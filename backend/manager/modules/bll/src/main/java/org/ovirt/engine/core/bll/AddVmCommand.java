@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -1280,22 +1281,39 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         for (PermissionSubject permSubject : permSubjects) {
-            // if user is using instance type, then create_instance on the cluster is enough
-            if (permSubject.getObjectType() == VdcObjectType.VdsGroups && getInstanceTypeId() != null) {
-                permSubject.setActionGroup(ActionGroup.CREATE_INSTANCE);
-                if (checkSinglePermission(permSubject, getReturnValue().getCanDoActionMessages())) {
-                    continue;
-                }
-
-                // create_vm is overriding in case no create_instance, try again with it
-                permSubject.setActionGroup(getActionType().getActionGroup());
+            // if user is using instance type, then create_instance may be sufficient
+            if (getInstanceTypeId() != null && checkCreateInstancePermission(permSubject)) {
+                continue;
             }
 
+            // create_vm is overriding in case no create_instance, try again with it
             if (!checkSinglePermission(permSubject, getReturnValue().getCanDoActionMessages())) {
                 return false;
             }
         }
         return true;
+    }
+
+    /**
+     * To create a vm either {@link ActionGroup#CREATE_VM} or {@link ActionGroup#CREATE_INSTANCE} permissions is
+     * required for selected {@link VdcObjectType}s. However {@link #getPermissionCheckSubjects()} returns only
+     * {@link ActionGroup#CREATE_VM} based permissions subjects. This method helps to mitigate this problem.
+     * @param permSubject permission subject
+     * @return true if {@link ActionGroup#CREATE_INSTANCE} based permission is sufficient, false otherwise
+     */
+    private boolean checkCreateInstancePermission(PermissionSubject permSubject) {
+        final List<VdcObjectType> overriddenPermissionObjectTypes = Arrays.asList(
+                VdcObjectType.VdsGroups,
+                VdcObjectType.VmTemplate);
+        final boolean instanceCreateObjectType = overriddenPermissionObjectTypes.contains(permSubject.getObjectType());
+        if (!instanceCreateObjectType) {
+            return false;
+        }
+        final PermissionSubject alteredPermissionSubject = new PermissionSubject(permSubject.getObjectId(),
+                permSubject.getObjectType(),
+                ActionGroup.CREATE_INSTANCE,
+                permSubject.getMessage());
+        return checkSinglePermission(alteredPermissionSubject, getReturnValue().getCanDoActionMessages());
     }
 
     /**
