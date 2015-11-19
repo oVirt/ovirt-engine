@@ -68,20 +68,9 @@ public class TransactionSupport {
     /**
      * Attaches rollback handler to current transaction
      */
-    public static void registerRollbackHandler(final RollbackHandler rollbackHandler) {
+    public static void registerRollbackHandler(final TransactionCompletionListener transactionCompletionListener) {
         try {
-            current().registerSynchronization(new Synchronization() {
-                @Override
-                public void beforeCompletion() {
-                }
-
-                @Override
-                public void afterCompletion(int status) {
-                    if (!needToRollback(status))
-                        return;
-                    rollbackHandler.rollback();
-                }
-            });
+            current().registerSynchronization(new RollbackHandlerSynchronization(transactionCompletionListener));
         } catch (Exception e) {
             throw new RuntimeException("Unable to register synchronization to current transaction", e);
         }
@@ -98,7 +87,7 @@ public class TransactionSupport {
     public static <T> T executeInScope(TransactionScopeOption scope, TransactionMethod<T> code) {
         // check if we are already in rollback
 
-        TransactionManager tm = null;
+        TransactionManager tm;
         try {
             tm = findTransactionManager();
             if (needToRollback(tm.getStatus())) {
@@ -158,7 +147,7 @@ public class TransactionSupport {
     }
 
     /**
-     * Forces "SUPRESS" and executes the code in that scope
+     * Forces "SUPPRESS" and executes the code in that scope
      */
     private static <T> T executeInSuppressed(TransactionManager tm, TransactionMethod<T> code) {
         T result = null;
@@ -254,6 +243,27 @@ public class TransactionSupport {
             }
         } catch (SystemException e) {
             throw new RuntimeException("Failed to mark transaction for rollback", e);
+        }
+    }
+
+    private static class RollbackHandlerSynchronization implements Synchronization {
+        private final TransactionCompletionListener transactionCompletionListener;
+
+        public RollbackHandlerSynchronization(TransactionCompletionListener transactionCompletionListener) {
+            this.transactionCompletionListener = transactionCompletionListener;
+        }
+
+        @Override
+        public void beforeCompletion() {
+        }
+
+        @Override
+        public void afterCompletion(int status) {
+            if (needToRollback(status)) {
+                transactionCompletionListener.onRollback();
+            } else {
+                transactionCompletionListener.onSuccess();
+            }
         }
     }
 }
