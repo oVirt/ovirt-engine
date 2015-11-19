@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.Objects;
+
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;
@@ -56,26 +58,19 @@ public class ApplySearchStringEvent extends GwtEvent<ApplySearchStringEvent.Appl
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-        return true;
-    if (obj == null)
-        return false;
-    if (getClass() != obj.getClass())
-        return false;
-    ApplySearchStringEvent other = (ApplySearchStringEvent) obj;
-    if (searchString == null) {
-      if (other.searchString != null)
-        return false;
-    } else if (!searchString.equals(other.searchString))
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof ApplySearchStringEvent)) {
       return false;
-    return true;
+    }
+    ApplySearchStringEvent other = (ApplySearchStringEvent) obj;
+    return Objects.equals(searchString, other.searchString);
   }
 
   @Override
   public int hashCode() {
-    int hashCode = 23;
-    hashCode = (hashCode * 37) + (searchString == null ? 1 : searchString.hashCode());
-    return hashCode;
+    return Objects.hashCode(searchString);
   }
 
   @Override

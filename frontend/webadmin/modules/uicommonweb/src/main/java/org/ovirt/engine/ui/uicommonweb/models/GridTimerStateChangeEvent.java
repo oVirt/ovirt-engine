@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.Objects;
+
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;
@@ -58,23 +60,16 @@ public class GridTimerStateChangeEvent extends GwtEvent<GridTimerStateChangeEven
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof GridTimerStateChangeEvent)) {
             return false;
         }
         GridTimerStateChangeEvent other = (GridTimerStateChangeEvent) obj;
-        if (refreshRate != other.refreshRate)
-            return false;
-        return true;
+        return refreshRate == other.refreshRate;
     }
 
     @Override
     public int hashCode() {
-        int hashCode = 23;
-        hashCode = (hashCode * 37) + Integer.valueOf(refreshRate).hashCode();
-        return hashCode;
+        return Objects.hashCode(refreshRate);
     }
 
     @Override

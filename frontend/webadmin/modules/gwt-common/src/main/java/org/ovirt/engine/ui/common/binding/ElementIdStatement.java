@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.binding;
 
+import java.util.Objects;
+
 /**
  * Represents a Java statement that sets the generated DOM element ID into the corresponding field.
  */
@@ -60,27 +62,19 @@ public class ElementIdStatement {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((elementId == null) ? 0 : elementId.hashCode());
-        return result;
+        return Objects.hashCode(elementId);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof ElementIdStatement)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         ElementIdStatement other = (ElementIdStatement) obj;
-        if (elementId == null) {
-            if (other.elementId != null)
-                return false;
-        } else if (!elementId.equals(other.elementId))
-            return false;
-        return true;
+        return Objects.equals(elementId, other.elementId);
     }
 
 }

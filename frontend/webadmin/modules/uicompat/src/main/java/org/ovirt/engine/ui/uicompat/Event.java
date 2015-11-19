@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+import java.util.Objects;
 
 /**
  * <p>
@@ -136,33 +136,23 @@ public class Event<T extends EventArgs> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((privateName == null) ? 0 : privateName.hashCode());
-        result = prime * result + ((privateOwnerType == null) ? 0 : privateOwnerType.hashCode());
-        return result;
+        return Objects.hash(
+                privateName,
+                privateOwnerType
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof Event)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         Event<?> other = (Event<?>) obj;
-        if (privateName == null) {
-            if (other.privateName != null)
-                return false;
-        } else if (!privateName.equals(other.privateName))
-            return false;
-        if (privateOwnerType == null) {
-            if (other.privateOwnerType != null)
-                return false;
-        } else if (!privateOwnerType.equals(other.privateOwnerType))
-            return false;
-        return true;
+        return Objects.equals(privateName, other.privateName)
+                && Objects.equals(privateOwnerType, other.privateOwnerType);
     }
 
     public boolean matchesDefinition(EventDefinition other) {

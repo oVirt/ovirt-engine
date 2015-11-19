@@ -30,26 +30,20 @@ public class SortedListModel<T> extends ListModel<T> {
             if (obj == this) {
                 return true;
             }
-            if (obj == null || obj.getClass() != getClass()) {
+            if (!(obj instanceof SortSensitiveComparator)) {
                 return false;
             }
             SortSensitiveComparator<?> other = (SortSensitiveComparator<?>) obj;
-            if (!Objects.equals(other.comparator, comparator)) {
-                return false;
-            }
-            if (other.sortAscending != sortAscending) {
-                return false;
-            }
-            return true;
+            return Objects.equals(comparator, other.comparator)
+                    && sortAscending == other.sortAscending;
         }
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((comparator == null) ? 0 : comparator.hashCode());
-            result = prime * result + (sortAscending ? 1231 : 1237);
-            return result;
+            return Objects.hash(
+                    comparator,
+                    sortAscending
+            );
         }
 
     }

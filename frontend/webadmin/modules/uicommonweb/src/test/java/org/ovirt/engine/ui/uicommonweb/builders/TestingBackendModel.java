@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.builders;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -35,33 +37,23 @@ class TestingBackendModel implements BusinessEntity<Guid> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((property1 == null) ? 0 : property1.hashCode());
-        result = prime * result + ((property2 == null) ? 0 : property2.hashCode());
-        return result;
+        return Objects.hash(
+                property1,
+                property2
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof TestingBackendModel)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         TestingBackendModel other = (TestingBackendModel) obj;
-        if (property1 == null) {
-            if (other.property1 != null)
-                return false;
-        } else if (!property1.equals(other.property1))
-            return false;
-        if (property2 == null) {
-            if (other.property2 != null)
-                return false;
-        } else if (!property2.equals(other.property2))
-            return false;
-        return true;
+        return Objects.equals(property1, other.property1)
+                && Objects.equals(property2, other.property2);
     }
 
     @Override

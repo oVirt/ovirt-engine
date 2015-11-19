@@ -54,19 +54,21 @@ public final class ValidationResult {
 
     @Override
     public int hashCode() {
-        return Objects.hash(privateSuccess, privateReasons);
+        return Objects.hash(
+                privateSuccess,
+                privateReasons);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(obj instanceof ValidationResult)) {
             return false;
         }
-        ValidationResult that = (ValidationResult) o;
-        return Objects.equals(privateSuccess, that.privateSuccess)
-                && Objects.equals(privateReasons, that.privateReasons);
+        ValidationResult other = (ValidationResult) obj;
+        return Objects.equals(privateSuccess, other.privateSuccess)
+                && Objects.equals(privateReasons, other.privateReasons);
     }
 }

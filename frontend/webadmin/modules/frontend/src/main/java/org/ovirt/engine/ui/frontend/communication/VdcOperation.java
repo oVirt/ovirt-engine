@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.frontend.communication;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -189,30 +191,24 @@ public class VdcOperation<T, P> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((operationType == null) ? 0 : operationType.hashCode());
-        result = prime * result + ((parameter == null) ? 0 : parameter.hashCode());
-        return result;
+        return Objects.hash(
+                operationType,
+                parameter
+        );
     }
 
     @Override
-    public boolean equals(final Object other) {
-        if (this == other) {
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (other == null) {
+        if (!(obj instanceof VdcOperation)) {
             return false;
         }
-        if (getClass() != other.getClass()) {
-            return false;
-        }
-        boolean result = false;
         @SuppressWarnings("unchecked")
-        VdcOperation<T, P> otherOperation = (VdcOperation<T, P>) other;
-        result = operationType.equals(otherOperation.getOperation())
-                    && parameter.equals(otherOperation.getParameter());
-        return result;
+        VdcOperation<T, P> other = (VdcOperation<T, P>) obj;
+        return Objects.equals(operationType, other.operationType)
+                && Objects.equals(parameter, other.parameter);
     }
 
     public boolean isFromList() {

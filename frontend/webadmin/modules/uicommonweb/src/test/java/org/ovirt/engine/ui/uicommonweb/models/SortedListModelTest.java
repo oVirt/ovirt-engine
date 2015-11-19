@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -31,11 +32,10 @@ public class SortedListModelTest {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + value;
-            result = prime * result + salt;
-            return result;
+            return Objects.hash(
+                    value,
+                    salt
+            );
         }
 
         @Override
@@ -43,20 +43,12 @@ public class SortedListModelTest {
             if (this == obj) {
                 return true;
             }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
+            if (!(obj instanceof TestItem)) {
                 return false;
             }
             TestItem other = (TestItem) obj;
-            if (salt != other.salt) {
-                return false;
-            }
-            if (value != other.value) {
-                return false;
-            }
-            return true;
+            return salt == other.salt
+                    && value == other.value;
         }
 
     }

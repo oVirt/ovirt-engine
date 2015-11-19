@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.Objects;
+
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;
@@ -59,28 +61,16 @@ public class MainModelSelectionChangeEvent extends GwtEvent<MainModelSelectionCh
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof MainModelSelectionChangeEvent)) {
             return false;
         }
         MainModelSelectionChangeEvent other = (MainModelSelectionChangeEvent) obj;
-        if (mainModel == null) {
-            if (other.mainModel != null) {
-                return false;
-            }
-        } else if (!mainModel.equals(other.mainModel)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(mainModel, other.mainModel);
     }
 
     @Override
     public int hashCode() {
-        int hashCode = 23;
-        hashCode = (hashCode * 37) + (mainModel == null ? 1 : mainModel.hashCode());
-        return hashCode;
+        return Objects.hashCode(mainModel);
     }
 
     @Override

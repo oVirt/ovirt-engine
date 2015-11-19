@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.frontend.server.gwt.plugin;
 
+import java.util.Objects;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
@@ -193,22 +195,18 @@ public class PluginData implements Comparable<PluginData> {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (obj == null) {
-            return false;
-        } else if (this.getClass() != obj.getClass()) {
+        }
+        if (!(obj instanceof PluginData)) {
             return false;
         }
 
         PluginData other = (PluginData) obj;
-        return this.getOrder() == other.getOrder();
+        return Objects.equals(getOrder(), other.getOrder());
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + getOrder();
-        return result;
+        return Objects.hashCode(getOrder());
     }
 
     @Override
