@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 
 /**
  * Template
@@ -32,6 +33,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
     private VmTemplateStatus status;
 
     private String vdsGroupName;
+
+    private Version vdsGroupCompatibilityVersion;
 
     private Guid storagePoolId;
 
@@ -95,7 +98,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                       Guid smallIconId,
                       Guid largeIconId,
                       int numOfIoThreads,
-                      ConsoleDisconnectAction consoleDisconnectAction) {
+                      ConsoleDisconnectAction consoleDisconnectAction,
+                      Version customCompatibilityVersion) {
         super(name,
                 vmtGuid,
                 vdsGroupId,
@@ -156,7 +160,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 smallIconId,
                 largeIconId,
                 numOfIoThreads,
-                consoleDisconnectAction);
+                consoleDisconnectAction,
+                customCompatibilityVersion);
 
         diskTemplateMap = new HashMap<>();
         diskImageMap = new HashMap<>();
@@ -216,6 +221,18 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     public void setVdsGroupName(String value) {
         vdsGroupName = value;
+    }
+
+    public Version getVdsGroupCompatibilityVersion() {
+        return this.vdsGroupCompatibilityVersion;
+    }
+
+    public void setVdsGroupCompatibilityVersion(Version value) {
+        this.vdsGroupCompatibilityVersion = value;
+    }
+
+    public Version getCompatibilityVersion() {
+        return getCustomCompatibilityVersion() != null ? getCustomCompatibilityVersion() : getVdsGroupCompatibilityVersion();
     }
 
     public void setTrustedService(boolean trustedService) {

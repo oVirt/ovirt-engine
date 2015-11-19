@@ -68,6 +68,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -712,12 +713,11 @@ public class VmHandler {
      * @return
      */
     public static boolean isUsbPolicyLegal(UsbPolicy usbPolicy,
-            int osId,
-            VDSGroup vdsGroup,
+            int osId, Version compatibilityVersion,
             List<String> messages) {
         boolean retVal = true;
         if (UsbPolicy.ENABLED_NATIVE.equals(usbPolicy)) {
-            if (!Config.<Boolean> getValue(ConfigValues.NativeUSBEnabled, vdsGroup.getCompatibilityVersion()
+            if (!Config.<Boolean> getValue(ConfigValues.NativeUSBEnabled, compatibilityVersion
                     .getValue())) {
                 messages.add(EngineMessage.USB_NATIVE_SUPPORT_ONLY_AVAILABLE_ON_CLUSTER_LEVEL.toString());
                 retVal = false;
@@ -1086,8 +1086,7 @@ public class VmHandler {
 
     public static void autoSelectUsbPolicy(VmBase fromParams, VDSGroup cluster) {
         if (fromParams.getUsbPolicy() == null) {
-            Version compatibilityVersion = cluster != null ? cluster.getCompatibilityVersion() : Version.getLast();
-
+            Version compatibilityVersion = CompatibilityVersionUtils.getEffective(fromParams, cluster);
             UsbPolicy usbPolicy = compatibilityVersion.compareTo(Version.v3_1) >= 0 ?
                     UsbPolicy.ENABLED_NATIVE : UsbPolicy.ENABLED_LEGACY;
             fromParams.setUsbPolicy(usbPolicy);
@@ -1112,8 +1111,7 @@ public class VmHandler {
         DisplayType defaultDisplayType = DisplayType.qxl;
         List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = osRepository.getGraphicsAndDisplays(
                 parametersStaticData.getOsId(),
-                // cluster == null for the non cluster entities (e.g. Blank template and instance types)
-                cluster != null ? cluster.getCompatibilityVersion() : Version.getLast());
+                CompatibilityVersionUtils.getEffective(parametersStaticData, cluster));
 
         // map holding display type -> set of supported graphics types for this display type
         Map<DisplayType, Set<GraphicsType>> displayGraphicsSupport = new HashMap<>();

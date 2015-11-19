@@ -67,7 +67,7 @@ public class ChangeVmClusterValidator {
             }
 
             // Check that the USB policy is legal
-            if (!VmHandler.isUsbPolicyLegal(vm.getUsbPolicy(), vm.getOs(), targetCluster, parentCommand.getReturnValue().getCanDoActionMessages())) {
+            if (!VmHandler.isUsbPolicyLegal(vm.getUsbPolicy(), vm.getOs(), targetCluster.getCompatibilityVersion(), parentCommand.getReturnValue().getCanDoActionMessages())) {
                 return false;
             }
 

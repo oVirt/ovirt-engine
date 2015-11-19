@@ -56,6 +56,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -79,6 +80,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     private VmDao vmDao;
     @Mock
     private VdsDao vdsDao;
+    @Mock
+    private VdsGroupDao vdsGroupDao;
     @Mock
     private DiskDao diskDao;
     @Mock
@@ -212,6 +215,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         prepareVmToPassCanDoAction();
         mockVmValidator();
 
+        command.initEffectiveCompatibilityVersion();
         boolean c = command.canDoAction();
         assertTrue("canDoAction should have passed.", c);
     }
@@ -231,6 +235,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         vm.setName("vm1");
         mockSameNameQuery(true);
         mockVmValidator();
+        command.initEffectiveCompatibilityVersion();
 
         assertTrue("canDoAction should have passed.", command.canDoAction());
     }
@@ -260,6 +265,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         doReturn(true).when(command).isDedicatedVdsExistOnSameCluster(any(VmBase.class), any(ArrayList.class));
         vmStatic.setDedicatedVmForVdsList(Guid.newGuid());
 
+        command.initEffectiveCompatibilityVersion();
         assertTrue("canDoAction should have passed.", command.canDoAction());
     }
 
@@ -304,7 +310,11 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     @Test
     public void testChangeClusterForbidden() {
         prepareVmToPassCanDoAction();
-        vmStatic.setVdsGroupId(Guid.newGuid());
+        VDSGroup newGroup = new VDSGroup();
+        newGroup.setId(Guid.newGuid());
+        newGroup.setCompatibilityVersion(Version.v3_0);
+        vmStatic.setVdsGroupId(newGroup.getId());
+        doReturn(vdsGroupDao).when(command).getVdsGroupDao();
 
         assertFalse("canDoAction should have failed with can't change cluster.", command.canDoAction());
         assertCanDoActionMessage(EngineMessage.VM_CANNOT_UPDATE_CLUSTER);
@@ -322,6 +332,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         mockDiskDaoGetAllForVm(Collections.singletonList(disk), true);
         mockVmValidator();
 
+        command.initEffectiveCompatibilityVersion();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 EngineMessage.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS);
     }
@@ -336,6 +347,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         doReturn(vmDeviceDao).when(command).getVmDeviceDao();
         doReturn(true).when(command).areUpdatedFieldsLegal();
 
+        command.initEffectiveCompatibilityVersion();
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
@@ -352,6 +364,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         when(osRepository.isCpuSupported(0, Version.v3_0, CPU_ID)).thenReturn(false);
         when(osRepository.getUnsupportedCpus()).thenReturn(unsupported);
 
+        command.initEffectiveCompatibilityVersion();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(
                 command,
                 EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS);
@@ -379,6 +392,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         mockVmDevice(device);
         mockVmValidator();
 
+        command.initEffectiveCompatibilityVersion();
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 

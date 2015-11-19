@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
@@ -66,7 +67,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     : Guid.Empty);
         }
 
-        Version compatibilityVersion = isBlankTemplate() || isInstanceType() ? Version.getLast() : getVdsGroup().getCompatibilityVersion();
+        Version compatibilityVersion = isBlankTemplate() || isInstanceType()
+                ? Version.getLast() : CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getVdsGroup);
         if (getVdsGroup() != null || isBlankTemplate()) {
             getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(compatibilityVersion,
                     parameters.getVmTemplateData());
@@ -174,7 +176,11 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         // Check that the USB policy is legal
-        boolean returnValue = VmHandler.isUsbPolicyLegal(getParameters().getVmTemplateData().getUsbPolicy(), getParameters().getVmTemplateData().getOsId(), getVdsGroup(), getReturnValue().getCanDoActionMessages());
+        boolean returnValue = VmHandler.isUsbPolicyLegal(
+                getParameters().getVmTemplateData().getUsbPolicy(),
+                getParameters().getVmTemplateData().getOsId(),
+                getVmTemplate().getCompatibilityVersion(),
+                getReturnValue().getCanDoActionMessages());
 
         // Check if the OS type is supported
         if (returnValue) {
@@ -188,7 +194,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (returnValue && getParameters().getWatchdog() != null) {
             returnValue = validate((new VmWatchdogValidator.VmWatchdogClusterDependentValidator(getParameters().getVmTemplateData().getOsId(),
                     getParameters().getWatchdog(),
-                    getVdsGroup().getCompatibilityVersion())).isValid());
+                    getVmTemplate().getCompatibilityVersion())).isValid());
         }
 
         // Check if the display type is supported
@@ -197,21 +203,23 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(getVmTemplateId()), getParameters().getGraphicsDevices()),
                     getParameters().getVmTemplateData().getDefaultDisplayType(),
                     getReturnValue().getCanDoActionMessages(),
-                    getVdsGroup().getCompatibilityVersion());
+                    getVmTemplate().getCompatibilityVersion());
         }
 
         if (returnValue) {
-            returnValue = AddVmCommand.checkCpuSockets(getParameters().getVmTemplateData().getNumOfSockets(),
+            returnValue = AddVmCommand.checkCpuSockets(
+                    getParameters().getVmTemplateData().getNumOfSockets(),
                     getParameters().getVmTemplateData().getCpuPerSocket(),
-                    getParameters().getVmTemplateData().getThreadsPerCpu(), getVdsGroup().getCompatibilityVersion()
-                    .toString(), getReturnValue().getCanDoActionMessages());
+                    getParameters().getVmTemplateData().getThreadsPerCpu(),
+                    getVmTemplate().getCompatibilityVersion().toString(),
+                    getReturnValue().getCanDoActionMessages());
         }
 
         if (returnValue && getParameters().getVmTemplateData().getSingleQxlPci() &&
                 !VmHandler.isSingleQxlDeviceLegal(getParameters().getVmTemplateData().getDefaultDisplayType(),
                         getParameters().getVmTemplateData().getOsId(),
                         getReturnValue().getCanDoActionMessages(),
-                        getVdsGroup().getCompatibilityVersion())) {
+                        getVmTemplate().getCompatibilityVersion())) {
             returnValue = false;
         }
 
@@ -221,7 +229,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             List<VmNic> interfaces = getVmNicDao().getAllForTemplate(getParameters().getVmTemplateData().getId());
 
             if (!VmCommand.checkPciAndIdeLimit(getParameters().getVmTemplateData().getOsId(),
-                    getVdsGroup().getCompatibilityVersion(),
+                    getVmTemplate().getCompatibilityVersion(),
                     getParameters().getVmTemplateData().getNumOfMonitors(),
                     interfaces,
                     new ArrayList<DiskImageBase>(getParameters().getVmTemplateData().getDiskList()),
@@ -239,7 +247,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         if (!getVmPropertiesUtils().validateVmProperties(
-                getVdsGroup().getCompatibilityVersion(),
+                getVmTemplate().getCompatibilityVersion(),
                 getParameters().getVmTemplateData().getCustomProperties(),
                 getReturnValue().getCanDoActionMessages())) {
             return false;
@@ -248,7 +256,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (returnValue) {
             boolean balloonEnabled = Boolean.TRUE.equals(getParameters().isBalloonEnabled());
             if (balloonEnabled && !osRepository.isBalloonEnabled(getParameters().getVmTemplateData().getOsId(),
-                    getVdsGroup().getCompatibilityVersion())) {
+                    getVmTemplate().getCompatibilityVersion())) {
                 addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
                 return failCanDoAction(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
             }
@@ -256,7 +264,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         boolean soundDeviceEnabled = Boolean.TRUE.equals(getParameters().isSoundDeviceEnabled());
         if (soundDeviceEnabled && !osRepository.isSoundDeviceEnabled(getParameters().getVmTemplateData().getOsId(),
-                getVdsGroup().getCompatibilityVersion())) {
+                getVmTemplate().getCompatibilityVersion())) {
             addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
             return failCanDoAction(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
@@ -287,7 +295,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     protected void executeCommand() {
         if (!isInstanceType() && !isBlankTemplate()) {
             VmHandler.warnMemorySizeLegal(getParameters().getVmTemplateData(),
-                    getVdsGroup().getCompatibilityVersion());
+                    getVmTemplate().getCompatibilityVersion());
         }
 
         getVmStaticDao().incrementDbGeneration(getVmTemplate().getId());
@@ -357,7 +365,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         // update audio device
         VmDeviceUtils.updateSoundDevice(oldTemplate,
                 getVmTemplate(),
-                getVdsGroup() != null ? getVdsGroup().getCompatibilityVersion() : null,
+                getVmTemplate().getCompatibilityVersion(),
                 getParameters().isSoundDeviceEnabled());
 
         VmDeviceUtils.updateConsoleDevice(getVmTemplateId(), getParameters().isConsoleEnabled());
@@ -449,7 +457,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(),
-                getVdsGroup().getCompatibilityVersion()));
+                getVmTemplate().getCompatibilityVersion()));
     }
 
     private boolean isInstanceType() {

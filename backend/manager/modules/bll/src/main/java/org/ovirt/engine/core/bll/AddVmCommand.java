@@ -146,6 +146,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     @Override
     protected void init() {
+        super.init();
+
         T parameters = getParameters();
         if (parameters.getVmStaticData() != null) {
             Guid templateIdToUse = getParameters().getVmStaticData().getVmtGuid();
@@ -358,7 +360,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (getVdsGroup() != null) {
             boolean isMigrationSupported =
                     FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(),
-                            getVdsGroup().getCompatibilityVersion());
+                            getEffectiveCompatibilityVersion());
 
             MigrationSupport migrationSupport =
                     isMigrationSupported ? MigrationSupport.MIGRATABLE : MigrationSupport.PINNED_TO_HOST;
@@ -380,7 +382,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         returnValue =
                 returnValue
                         && checkPciAndIdeLimit(getParameters().getVm().getOs(),
-                                getVdsGroup().getCompatibilityVersion(),
+                                getEffectiveCompatibilityVersion(),
                                 getParameters().getVmStaticData().getNumOfMonitors(),
                                 getVmInterfaces(),
                                 getVmDisks(),
@@ -434,7 +436,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return (VmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
                         getParameters().getVm().getOs(),
                         getReturnValue().getCanDoActionMessages(),
-                        getVdsGroup().getCompatibilityVersion()));
+                        getEffectiveCompatibilityVersion()));
     }
 
     protected boolean hostToRunExist() {
@@ -540,13 +542,13 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         if (isBalloonEnabled() && !osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(),
-                getVdsGroup().getCompatibilityVersion())) {
+                getEffectiveCompatibilityVersion())) {
             addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
             return failCanDoAction(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
         if (isSoundDeviceEnabled() && !osRepository.isSoundDeviceEnabled(getParameters().getVmStaticData().getOsId(),
-                getVdsGroup().getCompatibilityVersion())) {
+                getEffectiveCompatibilityVersion())) {
             addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
             return failCanDoAction(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
@@ -594,14 +596,14 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (getParameters().getWatchdog() != null) {
             if (!validate((new VmWatchdogValidator(vmFromParams.getOs(),
                     getParameters().getWatchdog(),
-                    getVdsGroup().getCompatibilityVersion())).isValid())) {
+                    getEffectiveCompatibilityVersion())).isValid())) {
                 return false;
             }
         }
 
         // Check that the USB policy is legal
         if (!VmHandler.isUsbPolicyLegal(vmFromParams.getUsbPolicy(), vmFromParams.getOs(),
-                getVdsGroup(), getReturnValue().getCanDoActionMessages())) {
+                getEffectiveCompatibilityVersion(), getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 
@@ -613,7 +615,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         if (!VmHandler.isCpuSupported(
                 vmFromParams.getVmOsId(),
-                getVdsGroup().getCompatibilityVersion(),
+                getEffectiveCompatibilityVersion(),
                 getVdsGroup().getCpuName(),
                 getReturnValue().getCanDoActionMessages())) {
             return false;
@@ -624,11 +626,11 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(getVmTemplateId()), getParameters().getGraphicsDevices()),
                 vmFromParams.getDefaultDisplayType(),
                 getReturnValue().getCanDoActionMessages(),
-                getVdsGroup().getCompatibilityVersion())) {
+                getEffectiveCompatibilityVersion())) {
             return false;
         }
 
-        if (!FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(), getVdsGroup().getCompatibilityVersion())
+        if (!FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(), getEffectiveCompatibilityVersion())
                 && vmFromParams.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
             return failCanDoAction(EngineMessage.VM_MIGRATION_IS_NOT_SUPPORTED);
         }
@@ -663,12 +665,12 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled())) {
             // Verify cluster compatibility
-            if (!FeatureSupported.virtIoScsi(getVdsGroup().getCompatibilityVersion())) {
+            if (!FeatureSupported.virtIoScsi(getEffectiveCompatibilityVersion())) {
                 return failCanDoAction(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
             }
 
             // Verify OS compatibility
-            if (!VmHandler.isOsTypeSupportedForVirtioScsi(vmFromParams.getOs(), getVdsGroup().getCompatibilityVersion(),
+            if (!VmHandler.isOsTypeSupportedForVirtioScsi(vmFromParams.getOs(), getEffectiveCompatibilityVersion(),
                     getReturnValue().getCanDoActionMessages())) {
                 return false;
             }
@@ -764,7 +766,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected boolean checkCpuSockets() {
         return AddVmCommand.checkCpuSockets(getParameters().getVmStaticData().getNumOfSockets(),
                 getParameters().getVmStaticData().getCpuPerSocket(), getParameters().getVmStaticData().getThreadsPerCpu(),
-                getVdsGroup().getCompatibilityVersion().toString(), getReturnValue().getCanDoActionMessages());
+                getEffectiveCompatibilityVersion().toString(), getReturnValue().getCanDoActionMessages());
     }
 
     protected boolean buildAndCheckDestStorageDomains() {
@@ -891,7 +893,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     @Override
     protected void executeVmCommand() {
-        VmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getVdsGroup().getCompatibilityVersion());
+        VmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getEffectiveCompatibilityVersion());
 
         ArrayList<String> errorMessages = new ArrayList<>();
         if (canAddVm(errorMessages, destStorages.values())) {
@@ -1108,7 +1110,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         // Parses the custom properties field that was filled by frontend to
         // predefined and user defined fields
         VmPropertiesUtils.getInstance().separateCustomPropertiesToUserAndPredefined(
-                getVdsGroup().getCompatibilityVersion(), vmStatic);
+                getEffectiveCompatibilityVersion(), vmStatic);
 
         updateOriginalTemplate(vmStatic);
 
@@ -1491,24 +1493,24 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected boolean isVirtioScsiEnabled() {
         Boolean virtioScsiEnabled = getParameters().isVirtioScsiEnabled();
         boolean isOsSupportedForVirtIoScsi = VmValidationUtils.isDiskInterfaceSupportedByOs(
-                getParameters().getVm().getOs(), getVdsGroup().getCompatibilityVersion(), DiskInterface.VirtIO_SCSI);
+                getParameters().getVm().getOs(), getEffectiveCompatibilityVersion(), DiskInterface.VirtIO_SCSI);
 
         return virtioScsiEnabled != null ? virtioScsiEnabled :
-                FeatureSupported.virtIoScsi(getVdsGroup().getCompatibilityVersion()) && isOsSupportedForVirtIoScsi;
+                FeatureSupported.virtIoScsi(getEffectiveCompatibilityVersion()) && isOsSupportedForVirtIoScsi;
     }
 
     protected boolean isBalloonEnabled() {
         Boolean balloonEnabled = getParameters().isBalloonEnabled();
         return balloonEnabled != null ? balloonEnabled :
             osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(),
-                    getVdsGroup().getCompatibilityVersion());
+                    getEffectiveCompatibilityVersion());
     }
 
     protected boolean isSoundDeviceEnabled() {
         Boolean soundDeviceEnabled = getParameters().isSoundDeviceEnabled();
         return soundDeviceEnabled != null ? soundDeviceEnabled :
                 osRepository.isSoundDeviceEnabled(getParameters().getVmStaticData().getOsId(),
-                        getVdsGroup().getCompatibilityVersion());
+                        getEffectiveCompatibilityVersion());
     }
 
     protected boolean hasWatchdog() {
@@ -1569,14 +1571,14 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             DisplayType defaultDisplayType = getParameters().getVmStaticData().getDefaultDisplayType();
 
             int osId = getParameters().getVmStaticData().getOsId();
-            Version clusterVersion = getVdsGroup().getCompatibilityVersion();
+            Version compatibilityVersion = getEffectiveCompatibilityVersion();
 
             List<GraphicsType> templateGraphics = VmDeviceUtils.getGraphicsTypesOfEntity(vmDevicesSourceId);
             // if the template graphics device is supported then use it
             // otherwise choose the first supported graphics device
-            if (!VmValidationUtils.isGraphicsAndDisplaySupported(osId, clusterVersion, templateGraphics, defaultDisplayType)) {
+            if (!VmValidationUtils.isGraphicsAndDisplaySupported(osId, compatibilityVersion, templateGraphics, defaultDisplayType)) {
                 GraphicsType defaultGraphicsType = null;
-                List<Pair<GraphicsType, DisplayType>> pairs = osRepository.getGraphicsAndDisplays(osId, clusterVersion);
+                List<Pair<GraphicsType, DisplayType>> pairs = osRepository.getGraphicsAndDisplays(osId, compatibilityVersion);
                 for (Pair<GraphicsType, DisplayType> pair : pairs) {
                     if (pair.getSecond().equals(defaultDisplayType)) {
                         defaultGraphicsType = pair.getFirst();

@@ -43,7 +43,9 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
+import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.utils.NameForVmInPoolGenerator;
@@ -73,6 +75,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
      */
     private boolean vmsAdded = false;
     private NameForVmInPoolGenerator nameForVmInPoolGenerator;
+    private Version effectiveCompatibilityVersion;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -94,6 +97,9 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         if (getParameters() == null) {
             return;
         }
+
+        setEffectiveCompatibilityVersion(
+                CompatibilityVersionUtils.getEffective(getParameters().getVmStaticData(), this::getVdsGroup));
 
         Guid templateIdToUse = getParameters().getVmStaticData().getVmtGuid();
         // if set to use latest version, get it from db and use it as template
@@ -128,6 +134,14 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     protected abstract Guid getPoolId();
 
+    protected Version getEffectiveCompatibilityVersion() {
+        return effectiveCompatibilityVersion;
+    }
+
+    protected void setEffectiveCompatibilityVersion(Version effectiveCompatibilityVersion) {
+        this.effectiveCompatibilityVersion = effectiveCompatibilityVersion;
+    }
+
     /**
      * This operation may take much time so the inner commands have fine-grained TX handling which
      * means they aim to make all calls to Vds commands (i.e VDSM calls) out of TX.
@@ -135,7 +149,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     @Override
     protected void executeCommand() {
         updateVmInitPassword();
-        VmHandler.warnMemorySizeLegal(getParameters().getVmStaticData(), getVdsGroup().getCompatibilityVersion());
+        VmHandler.warnMemorySizeLegal(getParameters().getVmStaticData(), getEffectiveCompatibilityVersion());
 
         // Free exclusive VM_POOL lock, if taken. Further AddVmAndAttachToPool commands
         // require shared VM_POOL locks only.
@@ -337,7 +351,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         }
 
         if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) &&
-                !FeatureSupported.virtIoScsi(getVdsGroup().getCompatibilityVersion())) {
+                !FeatureSupported.virtIoScsi(getEffectiveCompatibilityVersion())) {
             return failCanDoAction(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
         }
         if (!setAndValidateDiskProfiles()) {
@@ -467,7 +481,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     protected boolean setAndValidateCpuProfile() {
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getVmStaticData(),
-                getVdsGroup().getCompatibilityVersion()));
+                getEffectiveCompatibilityVersion()));
     }
 
     @Override
@@ -496,4 +510,5 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     public String getVmsCount() {
         return String.valueOf(getParameters().getVmsCount());
     }
+
 }

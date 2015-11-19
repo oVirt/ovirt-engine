@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.GuidUtils;
 import org.springframework.jdbc.core.RowMapper;
@@ -90,7 +91,8 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
                 .addValue("custom_cpu_name", entity.getCustomCpuName())
                 .addValue(SMALL_ICON_ID_COLUMN, entity.getSmallIconId())
                 .addValue(LARGE_ICON_ID_COLUMN, entity.getLargeIconId())
-                .addValue("console_disconnect_action", entity.getConsoleDisconnectAction().toString());
+                .addValue("console_disconnect_action", entity.getConsoleDisconnectAction().toString())
+                .addValue("custom_compatibility_version", entity.getCustomCompatibilityVersion());
     }
 
     /**
@@ -161,6 +163,9 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
             entity.setSmallIconId(getGuid(rs, SMALL_ICON_ID_COLUMN));
             entity.setLargeIconId(getGuid(rs, LARGE_ICON_ID_COLUMN));
             entity.setConsoleDisconnectAction(ConsoleDisconnectAction.fromDbString(rs.getString("console_disconnect_action")));
+            entity.setCustomCompatibilityVersion(rs.getString("custom_compatibility_version") != null
+                    ? new Version(rs.getString("custom_compatibility_version")) : null);
         }
     }
+
 }

@@ -171,7 +171,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             // Parses the custom properties field that was filled by frontend to
             // predefined and user defined fields
             VmPropertiesUtils.getInstance().separateCustomPropertiesToUserAndPredefined(
-                    getVdsGroup().getCompatibilityVersion(), parameterMasterVm);
+                    getVm().getCompatibilityVersion(), parameterMasterVm);
         }
     }
 
@@ -354,7 +354,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         });
 
         if (getParameters().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
-            VmHandler.warnMemorySizeLegal(getVmTemplate(), getVdsGroup().getCompatibilityVersion());
+            VmHandler.warnMemorySizeLegal(getVmTemplate(), getVm().getCompatibilityVersion());
         }
 
         // means that there are no asynchronous tasks to execute and that we can
@@ -395,7 +395,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // Check that the USB policy is legal
         if (!VmHandler.isUsbPolicyLegal(getParameters().getVm().getUsbPolicy(),
                 getParameters().getVm().getOs(),
-                getVdsGroup(),
+                getVm().getCompatibilityVersion(),
                 getReturnValue().getCanDoActionMessages())) {
             return false;
         }
@@ -403,10 +403,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // Check if the display type is supported
         Guid srcId = isVmInDb ? getVmId() : VmTemplateHandler.BLANK_VM_TEMPLATE_ID;
         if (!VmHandler.isGraphicsAndDisplaySupported(getParameters().getMasterVm().getOsId(),
-                VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(srcId), getParameters().getGraphicsDevices()),
+                VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(srcId),
+                        getParameters().getGraphicsDevices()),
                 getParameters().getMasterVm().getDefaultDisplayType(),
                 getReturnValue().getCanDoActionMessages(),
-                getVdsGroup().getCompatibilityVersion())) {
+                getVm().getCompatibilityVersion())) {
             return false;
         }
 
@@ -414,12 +415,12 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 !VmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
                         getParameters().getVm().getOs(),
                         getReturnValue().getCanDoActionMessages(),
-                        getVdsGroup().getCompatibilityVersion())) {
+                        getVm().getCompatibilityVersion())) {
             return false;
         }
 
         if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) &&
-                !FeatureSupported.virtIoScsi(getVdsGroup().getCompatibilityVersion())) {
+                !FeatureSupported.virtIoScsi(getVm().getCompatibilityVersion())) {
             return failCanDoAction(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
         }
 
@@ -427,7 +428,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (getParameters().getWatchdog() != null) {
             if (!validate((new VmWatchdogValidator.VmWatchdogClusterDependentValidator(getParameters().getMasterVm().getOsId(),
                     getParameters().getWatchdog(),
-                    getVdsGroup().getCompatibilityVersion())).isValid())) {
+                    getVm().getCompatibilityVersion())).isValid())) {
                 return false;
             }
         }
@@ -439,7 +440,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
 
         if (!VmPropertiesUtils.getInstance().validateVmProperties(
-                getVdsGroup().getCompatibilityVersion(),
+                getVm().getCompatibilityVersion(),
                 getParameters().getMasterVm().getCustomProperties(),
                 getReturnValue().getCanDoActionMessages())) {
             return false;
@@ -447,7 +448,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         return imagesRelatedChecks() && AddVmCommand.checkCpuSockets(getParameters().getMasterVm().getNumOfSockets(),
                 getParameters().getMasterVm().getCpuPerSocket(), getParameters().getMasterVm().getThreadsPerCpu(),
-                getVdsGroup().getCompatibilityVersion().toString(), getReturnValue().getCanDoActionMessages());
+                getVm().getCompatibilityVersion().toString(), getReturnValue().getCanDoActionMessages());
     }
 
     @Override
@@ -750,7 +751,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getSmallIconId(),
                         getParameters().getMasterVm().getLargeIconId(),
                         getParameters().getMasterVm().getNumOfIoThreads(),
-                        getParameters().getMasterVm().getConsoleDisconnectAction()));
+                        getParameters().getMasterVm().getConsoleDisconnectAction(),
+                        getParameters().getMasterVm().getCustomCompatibilityVersion()));
         updateVmIcons();
         DbFacade.getInstance().getVmTemplateDao().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
@@ -1090,7 +1092,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return true;
         }
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getMasterVm(),
-                getVdsGroup().getCompatibilityVersion()));
+                getVm().getCompatibilityVersion()));
     }
 
     private Guid getVmSnapshotId() {
@@ -1103,4 +1105,5 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     private SchedulerUtil getSchedulUtil() {
         return schedulerUtil;
     }
+
 }

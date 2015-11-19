@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -273,6 +274,7 @@ public class VmTemplateDaoImpl extends VmBaseDao<VmTemplate> implements VmTempla
             entity.setVdsGroupId(getGuid(rs, "vds_group_id"));
             entity.setStatus(VmTemplateStatus.forValue(rs.getInt("status")));
             entity.setVdsGroupName(rs.getString("vds_group_name"));
+            entity.setVdsGroupCompatibilityVersion(new Version(rs.getString("vds_group_compatibility_version")));
             entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
             entity.setStoragePoolName(rs.getString("storage_pool_name"));
             entity.setQuotaName(rs.getString("quota_name"));

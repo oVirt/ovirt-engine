@@ -21,7 +21,10 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
+import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 
 public class VmManagementCommandBase<T extends VmManagementParametersBase> extends VmCommand<T> {
 
@@ -32,6 +35,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
     public static final int MAXIMUM_CPU_SHARES = 262144;
 
     private InstanceType instanceType;
+    private Version effectiveCompatibilityVersion;
 
     public VmManagementCommandBase(T parameters) {
         super(parameters, null);
@@ -49,6 +53,17 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
         }
     }
 
+    @Override
+    protected void init() {
+        super.init();
+        initEffectiveCompatibilityVersion();
+    }
+
+    protected void initEffectiveCompatibilityVersion() {
+        setEffectiveCompatibilityVersion(
+                CompatibilityVersionUtils.getEffective(getParameters().getVmStaticData(), this::getVdsGroup));
+    }
+
     protected Guid getInstanceTypeId() {
         if (getParameters().getVmStaticData() != null) {
             return getParameters().getVmStaticData().getInstanceTypeId();
@@ -61,6 +76,14 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             instanceType = getVmTemplateDao().getInstanceType(getInstanceTypeId());
         }
         return instanceType;
+    }
+
+    protected Version getEffectiveCompatibilityVersion() {
+        return effectiveCompatibilityVersion;
+    }
+
+    protected void setEffectiveCompatibilityVersion(Version effectiveCompatibilityVersion) {
+        this.effectiveCompatibilityVersion = effectiveCompatibilityVersion;
     }
 
     private final static Pattern cpuPinningPattern =
@@ -183,6 +206,13 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
         }
     }
 
+    protected boolean validateCustomProperties(VmStatic vmStaticFromParams, List<String> reasons) {
+        return VmPropertiesUtils.getInstance().validateVmProperties(
+                getEffectiveCompatibilityVersion(),
+                vmStaticFromParams.getCustomProperties(),
+                reasons);
+    }
+
     static boolean validatePinningAndMigration(List<String> reasons, VmStatic vmStaticData, String cpuPinning) {
         final boolean cpuPinMigrationEnabled = Boolean.TRUE.equals(Config.<Boolean> getValue(ConfigValues.CpuPinMigrationEnabled));
         if (!cpuPinMigrationEnabled
@@ -214,7 +244,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
     protected boolean setAndValidateCpuProfile() {
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getVm().getStaticData(),
-                getVdsGroup().getCompatibilityVersion()));
+                getEffectiveCompatibilityVersion()));
     }
 
     protected void updateParametersVmFromInstanceType() {
@@ -227,11 +257,11 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             vmStatic.setThreadsPerCpu(instanceType.getThreadsPerCpu());
             vmStatic.setAutoStartup(instanceType.isAutoStartup());
 
-            if (FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(), getVdsGroup().getCompatibilityVersion())) {
+            if (FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(), getEffectiveCompatibilityVersion())) {
                 vmStatic.setMigrationSupport(instanceType.getMigrationSupport());
             }
 
-            if (FeatureSupported.isIoThreadsSupported(getVdsGroup().getCompatibilityVersion())) {
+            if (FeatureSupported.isIoThreadsSupported(getEffectiveCompatibilityVersion())) {
                 vmStatic.setNumOfIoThreads(instanceType.getNumOfIoThreads());
             }
 
@@ -243,9 +273,10 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             vmStatic.setMinAllocatedMem(instanceType.getMinAllocatedMem());
             if (vmDevices.isEmpty()) {
                 getParameters().setBalloonEnabled(false);
-            } else if (osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(), getVdsGroup().getCompatibilityVersion())) {
+            } else if (osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(), getEffectiveCompatibilityVersion())) {
                 getParameters().setBalloonEnabled(true);
             }
         }
     }
+
 }

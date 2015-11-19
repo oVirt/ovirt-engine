@@ -1062,6 +1062,35 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         this.vdsGroupCompatibilityVersion = value;
     }
 
+    /**
+     * Get custom compatibility version, if set for this VM or null otherwise.
+     *
+     * <b>Note:</b> In most cases {@link #getCompatibilityVersion()} must be used instead.
+     * Use this method only if you're interested in the custom compatibility version
+     * set for this particular VM.
+     *
+     * @return the custom compatibility version
+     */
+    public Version getCustomCompatibilityVersion() {
+        return this.vmStatic.getCustomCompatibilityVersion();
+    }
+
+    public void setCustomCompatibilityVersion(Version value) {
+        this.vmStatic.setCustomCompatibilityVersion(value);
+    }
+
+    /**
+     * Get compatibility version for this VM.
+     *
+     * This method returns the custom compatibility version, if set for this VM or
+     * cluster's compatibility version otherwise.
+     *
+     * @return the compatibility version
+     */
+    public Version getCompatibilityVersion() {
+        return getCustomCompatibilityVersion() != null ? getCustomCompatibilityVersion() : getVdsGroupCompatibilityVersion();
+    }
+
     private String vdsGroupName;
 
     public String getVdsGroupName() {

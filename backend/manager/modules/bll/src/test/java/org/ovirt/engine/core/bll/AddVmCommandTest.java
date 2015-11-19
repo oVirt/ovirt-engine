@@ -247,6 +247,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         VM vm = createVm();
         AddVmFromTemplateCommand<AddVmParameters> cmd = createVmFromTemplateCommand(vm);
         vdsGroup = createVdsGroup();
+        vm.setVdsGroupId(vdsGroup.getId());
 
         mockStorageDomainDaoGetForStoragePool();
         mockVmTemplateDaoReturnVmTemplate();
@@ -267,6 +268,8 @@ public class AddVmCommandTest extends BaseCommandTest {
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
                 new ArrayList<>(Collections.singletonList("VirtIO")));
         mockGetAllSnapshots(cmd);
+
+        cmd.initEffectiveCompatibilityVersion();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI);
     }
@@ -274,7 +277,10 @@ public class AddVmCommandTest extends BaseCommandTest {
     @Test
     public void isVirtioScsiEnabledDefaultedToTrue() {
         AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(0);
-        doReturn(createVdsGroup()).when(cmd).getVdsGroup();
+        VDSGroup vdsGroup = createVdsGroup();
+        doReturn(vdsGroup).when(cmd).getVdsGroup();
+        cmd.getParameters().getVm().setVdsGroupId(vdsGroup.getId());
+        cmd.initEffectiveCompatibilityVersion();
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
                 new ArrayList<>(Collections.singletonList("VirtIO_SCSI")));
         assertTrue("isVirtioScsiEnabled hasn't been defaulted to true on cluster >= 3.3.", cmd.isVirtioScsiEnabled());
@@ -318,6 +324,8 @@ public class AddVmCommandTest extends BaseCommandTest {
         VM vm = createVm();
         vm.setVmOs(OsRepository.DEFAULT_X86_OS);
         vdsGroup = createVdsGroup();
+        vm.setVdsGroupId(vdsGroup.getId());
+        when(vdsGroupDao.get(vdsGroup.getId())).thenReturn(vdsGroup);
 
         AddVmFromTemplateCommand<AddVmParameters> cmd = createVmFromTemplateCommand(vm);
 
@@ -484,6 +492,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         doReturn(vmTemplateDao).when(cmd).getVmTemplateDao();
         doReturn(vdsGroupDao).when(cmd).getVdsGroupDao();
         doReturn(deviceDao).when(cmd).getVmDeviceDao();
+
     }
 
     private void mockStorageDomainDaoGetForStoragePool(int domainSpaceGB) {

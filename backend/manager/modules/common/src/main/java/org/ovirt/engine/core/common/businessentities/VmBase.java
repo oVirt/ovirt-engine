@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.validation.group.StartEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateVm;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 
 @ValidTimeZone(groups = {CreateEntity.class, UpdateEntity.class, ImportEntity.class, StartEntity.class})
 @ValidSerialNumberPolicy(groups = {CreateEntity.class, UpdateEntity.class, ImportEntity.class, StartEntity.class})
@@ -301,6 +302,11 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @EditableField
     private ConsoleDisconnectAction consoleDisconnectAction;
 
+    @CopyOnNewVersion
+    @EditableOnVmStatusField
+    @EditableOnTemplate
+    private Version customCompatibilityVersion;
+
     public VmBase() {
         name = "";
         interfaces = new ArrayList<>();
@@ -487,7 +493,8 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
                 vmBase.getSmallIconId(),
                 vmBase.getLargeIconId(),
                 vmBase.getNumOfIoThreads(),
-                vmBase.getConsoleDisconnectAction());
+                vmBase.getConsoleDisconnectAction(),
+                vmBase.getCustomCompatibilityVersion());
     }
 
     public VmBase(
@@ -551,7 +558,8 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
             Guid smallIconId,
             Guid largeIconId,
             int numOfIoThreads,
-            ConsoleDisconnectAction consoleDisconnectAction) {
+            ConsoleDisconnectAction consoleDisconnectAction,
+            Version customCompatibilityVersion) {
         this();
         this.name = name;
         this.id = id;
@@ -614,6 +622,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         this.largeIconId = largeIconId;
         this.numOfIoThreads = numOfIoThreads;
         this.consoleDisconnectAction = consoleDisconnectAction;
+        this.customCompatibilityVersion = customCompatibilityVersion;
     }
 
     @Override
@@ -1002,7 +1011,8 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
                 customCpuName,
                 smallIconId,
                 largeIconId,
-                consoleDisconnectAction
+                consoleDisconnectAction,
+                customCompatibilityVersion
         );
     }
 
@@ -1067,7 +1077,8 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
                 && Objects.equals(customCpuName, other.customCpuName)
                 && Objects.equals(smallIconId, other.smallIconId)
                 && Objects.equals(largeIconId, other.largeIconId)
-                && Objects.equals(consoleDisconnectAction, other.consoleDisconnectAction);
+                && Objects.equals(consoleDisconnectAction, other.consoleDisconnectAction)
+                && Objects.equals(customCompatibilityVersion, other.customCompatibilityVersion);
     }
 
     public Guid getQuotaId() {
@@ -1352,5 +1363,13 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     public void setCustomCpuName(String customCpuName) {
         this.customCpuName = ((customCpuName==null || customCpuName.trim().isEmpty()) ? null : customCpuName);
+    }
+
+    public void setCustomCompatibilityVersion(Version customCompatibilityVersion) {
+        this.customCompatibilityVersion = customCompatibilityVersion;
+    }
+
+    public Version getCustomCompatibilityVersion() {
+        return customCompatibilityVersion;
     }
 }

@@ -432,6 +432,7 @@ public final class Cloner {
         obj.setUsbPolicy(instance.getUsbPolicy());
         obj.setVdsGroupId(instance.getVdsGroupId());
         obj.setVdsGroupName(instance.getVdsGroupName());
+        obj.setVdsGroupCompatibilityVersion(instance.getVdsGroupCompatibilityVersion());
         obj.setVmType(instance.getVmType());
         obj.setId(instance.getId());
         obj.setDiskList(instance.getDiskList());

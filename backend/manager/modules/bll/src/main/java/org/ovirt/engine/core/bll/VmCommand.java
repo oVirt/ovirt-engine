@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
@@ -38,7 +37,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -397,13 +395,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return permissionList;
     }
 
-    protected boolean validateCustomProperties(VmStatic vmStaticFromParams, List<String> reasons) {
-        return VmPropertiesUtils.getInstance().validateVmProperties(
-                getVdsGroup().getCompatibilityVersion(),
-                vmStaticFromParams.getCustomProperties(),
-                reasons);
-    }
-
     /**
      * Checks if VM name has valid length (check that it's too long). This is used for validation by descending
      * commands.
@@ -562,4 +553,5 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     protected boolean failVmStatusIllegal() {
         return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(getVm().getStatus()));
     }
+
 }

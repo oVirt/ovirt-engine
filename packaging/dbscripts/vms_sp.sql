@@ -697,7 +697,8 @@ CREATE OR REPLACE FUNCTION InsertVmStatic (
     v_custom_cpu_name VARCHAR(40),
     v_small_icon_id UUID,
     v_large_icon_id UUID,
-    v_console_disconnect_action VARCHAR(64))
+    v_console_disconnect_action VARCHAR(64),
+    v_custom_compatibility_version VARCHAR(40))
   RETURNS VOID
    AS $procedure$
 DECLARE
@@ -774,7 +775,8 @@ INSERT INTO vm_static(description,
                       custom_cpu_name,
                       small_icon_id,
                       large_icon_id,
-                      console_disconnect_action)
+                      console_disconnect_action,
+                      custom_compatibility_version)
     VALUES(v_description,
            v_free_text_comment,
            v_mem_size_mb,
@@ -843,7 +845,8 @@ INSERT INTO vm_static(description,
            v_custom_cpu_name,
            v_small_icon_id,
            v_large_icon_id,
-           v_console_disconnect_action);
+           v_console_disconnect_action,
+           v_custom_compatibility_version);
 
     -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
     DELETE
@@ -1025,7 +1028,8 @@ v_custom_cpu_name VARCHAR(40),
 v_small_icon_id UUID,
 v_large_icon_id UUID,
 v_provider_id UUID,
-v_console_disconnect_action VARCHAR(64))
+v_console_disconnect_action VARCHAR(64),
+v_custom_compatibility_version VARCHAR(40))
 
 RETURNS VOID
 
@@ -1101,7 +1105,8 @@ BEGIN
      small_icon_id = v_small_icon_id,
      large_icon_id = v_large_icon_id,
      provider_id = v_provider_id,
-     console_disconnect_action = v_console_disconnect_action
+     console_disconnect_action = v_console_disconnect_action,
+     custom_compatibility_version=v_custom_compatibility_version
      WHERE vm_guid = v_vm_guid
          AND entity_type = 'VM';
 

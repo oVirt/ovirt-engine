@@ -758,6 +758,7 @@ SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.time_zone AS time_zone,
     vm_templates.fail_back AS fail_back,
     vds_groups.name AS vds_group_name,
+    vds_groups.compatibility_version AS vds_group_compatibility_version,
     vds_groups.trusted_service AS trusted_service,
     vm_templates.vm_type AS vm_type,
     vm_templates.nice_level AS nice_level,
@@ -810,7 +811,8 @@ SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.custom_cpu_name AS custom_cpu_name,
     vm_templates.small_icon_id AS small_icon_id,
     vm_templates.large_icon_id AS large_icon_id,
-    vm_templates.console_disconnect_action AS console_disconnect_action
+    vm_templates.console_disconnect_action AS console_disconnect_action,
+    vm_templates.custom_compatibility_version as custom_compatibility_version
 FROM vm_static AS vm_templates
 LEFT JOIN vds_groups
     ON vm_templates.vds_group_id = vds_groups.vds_group_id
@@ -1252,7 +1254,8 @@ SELECT vm_static.vm_name AS vm_name,
     vm_dynamic.guestos_distribution AS guestos_distribution,
     vm_dynamic.guestos_kernel_version AS guestos_kernel_version,
     vm_dynamic.guestos_type AS guestos_type,
-    vm_dynamic.guestos_version AS guestos_version
+    vm_dynamic.guestos_version AS guestos_version,
+    vm_static.custom_compatibility_version as custom_compatibility_version
 FROM vm_static
 INNER JOIN vm_dynamic
     ON vm_static.vm_guid = vm_dynamic.vm_guid
@@ -1434,7 +1437,8 @@ SELECT vms.vm_name,
     vms.guestos_distribution AS guestos_distribution,
     vms.guestos_kernel_version AS guestos_kernel_version,
     vms.guestos_type AS guestos_type,
-    vms.guestos_version AS guestos_version
+    vms.guestos_version AS guestos_version,
+    vms.custom_compatibility_version as custom_compatibility_version
 FROM vms
 LEFT JOIN tags_vm_map_view
     ON vms.vm_guid = tags_vm_map_view.vm_id

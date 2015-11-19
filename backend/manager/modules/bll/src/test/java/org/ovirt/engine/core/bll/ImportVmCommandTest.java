@@ -60,6 +60,7 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
@@ -79,6 +80,9 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
     @Mock
     private MacPoolManagerStrategy macPoolManagerStrategy;
+
+    @Mock
+    private VdsGroupDao vdsGroupDao;
 
     @Before
     public void setUp() {
@@ -181,12 +185,16 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
         c.getParameters().getVm().setClusterArch(ArchitectureType.x86_64);
         VDSGroup cluster = new VDSGroup();
+        cluster.setId(Guid.newGuid());
         cluster.setArchitecture(ArchitectureType.x86_64);
         cluster.setCompatibilityVersion(Version.getLast());
         doReturn(cluster).when(c).getVdsGroup();
+        c.setVdsGroupId(cluster.getId());
+        c.getParameters().setVdsGroupId(cluster.getId());
         osRepository.getGraphicsAndDisplays().get(0).put(Version.getLast(),
                 Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
         when(osRepository.isBalloonEnabled(c.getParameters().getVm().getVmOsId(), cluster.getCompatibilityVersion())).thenReturn(true);
+        c.initEffectiveCompatibilityVersion();
         assertTrue(c.validateBallonDevice());
     }
 
@@ -234,7 +242,10 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(parameters.getVm()).when(cmd).getVmFromExportDomain(any(Guid.class));
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
         doReturn(new StoragePool()).when(cmd).getStoragePool();
-        doReturn(new VDSGroup()).when(cmd).getVdsGroup();
+        doReturn(vdsGroupDao).when(cmd).getVdsGroupDao();
+        VDSGroup vdsGroup = new VDSGroup();
+        vdsGroup.setVdsGroupId(parameters.getVdsGroupId());
+        doReturn(vdsGroup).when(cmd).getVdsGroup();
         doReturn(macPoolManagerStrategy).when(cmd).getMacPool();
 
         ArrayList<Guid> sdIds = new ArrayList<>(Collections.singletonList(Guid.newGuid()));
@@ -248,9 +259,11 @@ public class ImportVmCommandTest extends BaseCommandTest {
     }
 
     protected ImportVmParameters createParameters() {
-        final VM v = createVmWithSnapshots();
-        v.setName("testVm");
-        return new ImportVmParameters(v, Guid.newGuid(), Guid.newGuid(), Guid.newGuid(), Guid.newGuid());
+        final VM vm = createVmWithSnapshots();
+        vm.setName("testVm");
+        Guid vdsGroupId = Guid.newGuid();
+        vm.setVdsGroupId(vdsGroupId);
+        return new ImportVmParameters(vm, Guid.newGuid(), Guid.newGuid(), Guid.newGuid(), vdsGroupId);
     }
 
     protected VM createVmWithSnapshots() {
@@ -514,7 +527,9 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(params.getVm()).when(cmd).getVmFromExportDomain(any(Guid.class));
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
         doReturn(new StoragePool()).when(cmd).getStoragePool();
-        doReturn(new VDSGroup()).when(cmd).getVdsGroup();
+        VDSGroup vdsGroup = new VDSGroup();
+        vdsGroup.setId(params.getVdsGroupId());
+        doReturn(vdsGroup).when(cmd).getVdsGroup();
 
         assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue()
@@ -591,6 +606,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(true).when(cmd).validateImages(any(Map.class));
         cmd.getParameters().getVm().getDiskMap().values().iterator().next().setDiskInterface(DiskInterface.VirtIO_SCSI);
         cmd.getVdsGroup().setCompatibilityVersion(Version.v3_2);
+        cmd.initEffectiveCompatibilityVersion();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
     }

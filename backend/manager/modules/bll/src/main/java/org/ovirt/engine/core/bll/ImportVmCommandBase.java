@@ -40,10 +40,12 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ovf.OvfLogEventHandler;
 import org.ovirt.engine.core.utils.ovf.VMStaticOvfLogHandler;
@@ -57,6 +59,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     private Guid sourceDomainId = Guid.Empty;
     private StorageDomain sourceDomain;
     private ImportValidator importValidator;
+    private Version effectiveCompatibilityVersion;
 
     private final List<String> macsAdded = new ArrayList<>();
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
@@ -82,6 +85,14 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
 
         return true;
+    }
+
+    protected Version getEffectiveCompatibilityVersion() {
+        return effectiveCompatibilityVersion;
+    }
+
+    protected void setEffectiveCompatibilityVersion(Version effectiveCompatibilityVersion) {
+        this.effectiveCompatibilityVersion = effectiveCompatibilityVersion;
     }
 
     protected ImportValidator getImportValidator() {
@@ -139,7 +150,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         VmHandler.updateImportedVmUsbPolicy(vm.getStaticData());
         return VmHandler.isUsbPolicyLegal(vm.getUsbPolicy(),
                 vm.getOs(),
-                getVdsGroup(),
+                getEffectiveCompatibilityVersion(),
                 getReturnValue().getCanDoActionMessages());
     }
 
@@ -148,7 +159,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
                 getGraphicsTypesForVm(),
                 getParameters().getVm().getDefaultDisplayType(),
                 getReturnValue().getCanDoActionMessages(),
-                getVdsGroup().getCompatibilityVersion());
+                getEffectiveCompatibilityVersion());
     }
 
     Set<GraphicsType> getGraphicsTypesForVm() {
@@ -178,7 +189,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         getVm().getStaticData().setVdsGroupId(getVdsGroupId());
         getVm().getStaticData().setCpuProfileId(getParameters().getCpuProfileId());
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getVm().getStaticData(),
-                getVdsGroup().getCompatibilityVersion()));
+                getEffectiveCompatibilityVersion()));
     }
 
     protected boolean validateBallonDevice() {
@@ -187,7 +198,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
 
         if (!osRepository.isBalloonEnabled(getVm().getStaticData().getOsId(),
-                getVdsGroup().getCompatibilityVersion())) {
+                getEffectiveCompatibilityVersion())) {
             addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
             return failCanDoAction(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
@@ -201,7 +212,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
 
         if (!osRepository.isSoundDeviceEnabled(getVm().getStaticData().getOsId(),
-                getVdsGroup().getCompatibilityVersion())) {
+                getEffectiveCompatibilityVersion())) {
             addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
             return failCanDoAction(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
@@ -253,6 +264,12 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
         setVdsGroupId(parameters.getVdsGroupId());
         setVm(parameters.getVm());
+        initEffectiveCompatibilityVersion();
+    }
+
+    protected void initEffectiveCompatibilityVersion() {
+        setEffectiveCompatibilityVersion(
+                CompatibilityVersionUtils.getEffective(getParameters().getVm(), this::getVdsGroup));
     }
 
     /**
@@ -461,7 +478,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         VnicProfileHelper vnicProfileHelper =
                 new VnicProfileHelper(getVdsGroupId(),
                         getStoragePoolId(),
-                        getVdsGroup().getCompatibilityVersion(),
+                        getEffectiveCompatibilityVersion(),
                         AuditLogType.IMPORTEXPORT_IMPORT_VM_INVALID_INTERFACES);
 
         List<VmNetworkInterface> nics = getVm().getInterfaces();
@@ -484,7 +501,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
                                    getCompensationContext(),
                                    !getParameters().isImportAsNewEntity(),
                                    getVm().getOs(),
-                                   getVdsGroup().getCompatibilityVersion());
+                                   getEffectiveCompatibilityVersion());
             macsAdded.add(iface.getMacAddress());
         }
 
@@ -568,4 +585,5 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
         return jobProperties;
     }
+
 }

@@ -320,7 +320,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     private void initGraphicsData() {
-        ImportUtils.updateGraphicsDevices(getVm().getStaticData(), getVdsGroup().getCompatibilityVersion());
+        ImportUtils.updateGraphicsDevices(getVm().getStaticData(), getEffectiveCompatibilityVersion());
     }
 
     protected DiskImage getActiveVolumeDisk(List<DiskImage> diskList) {
@@ -525,7 +525,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     protected boolean validateDiskInterface(Iterable<DiskImage> images) {
         for (DiskImage diskImage : images) {
             if (diskImage.getDiskInterface() == DiskInterface.VirtIO_SCSI &&
-                    !FeatureSupported.virtIoScsi(getVdsGroup().getCompatibilityVersion())) {
+                    !FeatureSupported.virtIoScsi(getEffectiveCompatibilityVersion())) {
                 return failCanDoAction(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
             }
         }
