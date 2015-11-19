@@ -660,7 +660,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     } else {
                         return AuditLogType.VDS_INITIATED_RUN_VM;
                     }
-
                 }
 
                 return AuditLogType.VDS_INITIATED_RUN_VM_FAILED;
@@ -674,10 +673,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                                                : AuditLogType.USER_RUN_VM)
                                 : _isRerun ?
                                         AuditLogType.VDS_INITIATED_RUN_VM
-                                        : getTaskIdList().size() > 0 ?
-                                                AuditLogType.USER_INITIATED_RUN_VM
-                                                : getVm().isRunAndPause() ? AuditLogType.USER_INITIATED_RUN_VM_AND_PAUSE
-                                                        : AuditLogType.USER_STARTED_VM
+                                        : getVm().isRunAndPause() ?
+                                                AuditLogType.USER_INITIATED_RUN_VM_AND_PAUSE
+                                                : getTaskIdList().isEmpty() ?
+                                                        AuditLogType.USER_STARTED_VM
+                                                        : AuditLogType.USER_INITIATED_RUN_VM
                         : _isRerun ? AuditLogType.USER_INITIATED_RUN_VM_FAILED : AuditLogType.USER_FAILED_RUN_VM;
             }
 
