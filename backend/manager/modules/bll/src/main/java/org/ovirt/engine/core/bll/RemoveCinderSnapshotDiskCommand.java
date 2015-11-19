@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.transaction.NoOpTransactionCompletionListener;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -25,6 +26,8 @@ public class RemoveCinderSnapshotDiskCommand<T extends ImagesContainterParameter
 
     @Override
     protected void executeCommand() {
+        registerRollbackHandler(new CustomTransactionCompletionListener());
+
         deleteSnapshot();
         persistCommand(getParameters().getParentCommand(), true);
         getReturnValue().setActionReturnValue(getImageId());
@@ -57,25 +60,27 @@ public class RemoveCinderSnapshotDiskCommand<T extends ImagesContainterParameter
     }
 
     @Override
-    public void rollback() {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
-            @Override
-            public Object runInTransaction() {
-                if (!getParameters().isLeaveLocked()) {
-                    DiskImage diskImage = getImage();
-                    if (diskImage != null) {
-                        getImageDao().updateStatus(diskImage.getImage().getId(), ImageStatus.OK);
-                    }
-                    unLockImage();
-                }
-                return null;
-            }
-        });
-    }
-
-    @Override
     public CommandCallback getCallback() {
         return new RemoveCinderSnapshotCommandCallback();
+    }
+
+    private class CustomTransactionCompletionListener extends NoOpTransactionCompletionListener {
+        @Override
+        public void onRollback() {
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
+                @Override
+                public Object runInTransaction() {
+                    if (!getParameters().isLeaveLocked()) {
+                        DiskImage diskImage = getImage();
+                        if (diskImage != null) {
+                            getImageDao().updateStatus(diskImage.getImage().getId(), ImageStatus.OK);
+                        }
+                        unLockImage();
+                    }
+                    return null;
+                }
+            });
+        }
     }
 
 }

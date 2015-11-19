@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import javax.inject.Inject;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.dal.VdcCommandBase;
+import org.ovirt.engine.core.utils.transaction.TransactionCompletionListener;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 
 public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCommandBase {
@@ -14,6 +17,12 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
 
     @Inject
     protected ResourceManager resourceManager;
+
+    protected void registerRollbackHandler(TransactionCompletionListener transactionCompletionListener) {
+        if (TransactionSupport.current() != null) {
+            TransactionSupport.registerRollbackHandler(transactionCompletionListener);
+        }
+    }
 
     public P getParameters() {
         return _parameters;

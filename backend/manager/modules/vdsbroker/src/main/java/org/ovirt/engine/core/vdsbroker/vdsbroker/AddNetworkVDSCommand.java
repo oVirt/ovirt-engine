@@ -8,19 +8,17 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.transaction.RollbackHandler;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.utils.transaction.NoOpTransactionCompletionListener;
 
-public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> extends VdsBrokerCommand<P> implements RollbackHandler {
+public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> extends VdsBrokerCommand<P> {
     public AddNetworkVDSCommand(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeVdsBrokerCommand() {
-        if (TransactionSupport.current() != null) {
-            TransactionSupport.registerRollbackHandler(this);
-        }
+        registerRollbackHandler(new CustomTransactionCompletionListener());
+
         String networkName = (getParameters().getNetworkName() == null) ? "" : getParameters()
                 .getNetworkName();
         String vlanId = (getParameters().getVlanId() != null) ? getParameters().getVlanId().toString()
@@ -72,31 +70,29 @@ public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ext
         proceedProxyReturnValue();
     }
 
-    @Override
-    public void rollback() {
-        try {
-            // We check for "Done" status because we want to be sure that we made the net change, or in case of empty
-            // response (which means the call to VDSM failed on timeout).
-            // 1. If we failed VDSM revert the change so we don't need to do anything.
-            // 2. If we are in transaction first command was AddNetworkCommand (end successfully), second command fails,
-            // we want to revert the network change (that is why we check for Done).
-            // 3. If the call to VDSM timeout out we assume it had succeeded and try to remove the network.
-            // 3.1. If the timeout was a failure to call the VDSM in the first place, then probably the call to delete
-            // the network will timeout also.
-            if (getReturnValueFromBroker() == null ||
-                    EngineError.Done == getReturnValueFromStatus(getReturnStatus())) {
-                String network = (getParameters().getNetworkName() == null) ? "" : getParameters()
-                        .getNetworkName();
-                String vlanId = (getParameters().getVlanId() != null) ? getParameters().getVlanId()
-                        .toString() : "";
-                String bond = (getParameters().getBondName() == null) ? "" : getParameters()
-                        .getBondName();
-                String[] nics = (getParameters().getNics() == null) ? new String[] {} : getParameters()
-                        .getNics();
-                status = getBroker().delNetwork(network, vlanId, bond, nics);
+    private class CustomTransactionCompletionListener extends NoOpTransactionCompletionListener {
+        @Override
+        public void onRollback() {
+            try {
+                // We check for "Done" status because we want to be sure that we made the net change, or in case of empty
+                // response (which means the call to VDSM failed on timeout).
+                // 1. If we failed VDSM revert the change so we don't need to do anything.
+                // 2. If we are in transaction first command was AddNetworkCommand (end successfully), second command fails,
+                // we want to revert the network change (that is why we check for Done).
+                // 3. If the call to VDSM timeout out we assume it had succeeded and try to remove the network.
+                // 3.1. If the timeout was a failure to call the VDSM in the first place, then probably the call to delete
+                // the network will timeout also.
+                if (getReturnValueFromBroker() == null || EngineError.Done == getReturnValueFromStatus(getReturnStatus())) {
+                    P parameters = getParameters();
+                    String network = (parameters.getNetworkName() == null) ? "" : parameters.getNetworkName();
+                    String vlanId = (parameters.getVlanId() != null) ? parameters.getVlanId().toString() : "";
+                    String bond = (parameters.getBondName() == null) ? "" : parameters.getBondName();
+                    String[] nics = (parameters.getNics() == null) ? new String[] {} : parameters.getNics();
+                    status = getBroker().delNetwork(network, vlanId, bond, nics);
+                }
+            } catch (RuntimeException ex) {
+                log.error("Exception in Rollback executeVdsBrokerCommand", ex);
             }
-        } catch (RuntimeException ex) {
-            log.error("Exception in Rollback executeVdsBrokerCommand", ex);
         }
     }
 }
