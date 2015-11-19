@@ -26,10 +26,10 @@ public class MigrateVmToServerParameters extends MigrateVmParameters {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((vdsId == null) ? 0 : vdsId.hashCode());
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                vdsId
+        );
     }
 
     @Override

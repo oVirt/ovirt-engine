@@ -950,61 +950,60 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + (autoStartup ? 1231 : 1237);
-        result = prime * result + cpuPerSocket;
-        result = prime * result + threadsPerCpu;
-        result = prime * result + ((creationDate == null) ? 0 : creationDate.hashCode());
-        result = prime * result + ((defaultBootSequence == null) ? 0 : defaultBootSequence.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + (failBack ? 1231 : 1237);
-        result = prime * result + ((initrdUrl == null) ? 0 : initrdUrl.hashCode());
-        result = prime * result + ((isoPath == null) ? 0 : isoPath.hashCode());
-        result = prime * result + ((kernelParams == null) ? 0 : kernelParams.hashCode());
-        result = prime * result + ((kernelUrl == null) ? 0 : kernelUrl.hashCode());
-        result = prime * result + osId;
-        result = prime * result + memSizeMb;
-        result = prime * result + niceLevel;
-        result = prime * result + cpuShares;
-        result = prime * result + numOfSockets;
-        result = prime * result + numOfMonitors;
-        result = prime * result + ((origin == null) ? 0 : origin.hashCode());
-        result = prime * result + priority;
-        result = prime * result + (stateless ? 1231 : 1237);
-        result = prime * result + (smartcardEnabled ? 1231 : 1237);
-        result = prime * result + ((timeZone == null) ? 0 : timeZone.hashCode());
-        result = prime * result + ((usbPolicy == null) ? 0 : usbPolicy.hashCode());
-        result = prime * result + ((vdsGroupId == null) ? 0 : vdsGroupId.hashCode());
-        result = prime * result + ((vmType == null) ? 0 : vmType.hashCode());
-        result = prime * result + ((quotaId == null) ? 0 : quotaId.hashCode());
-        result = prime * result + (allowConsoleReconnect ? 1231 : 1237);
-        result = prime * result + ((dedicatedVmForVdsList == null) ? 0 : dedicatedVmForVdsList.hashCode());
-        result = prime * result + ((migrationSupport == null) ? 0 : migrationSupport.hashCode());
-        result = prime * result + ((tunnelMigration == null) ? 0 : tunnelMigration.hashCode());
-        result = prime * result + ((vncKeyboardLayout == null) ? 0 : vncKeyboardLayout.hashCode());
-        result = prime * result + ((createdByUserId == null) ? 0 : createdByUserId.hashCode());
-        result = prime * result + ((defaultDisplayType == null) ? 0 : defaultDisplayType.hashCode());
-        result = prime * result + ((migrationDowntime == null) ? 0 : migrationDowntime.hashCode());
-        result = prime * result + ((serialNumberPolicy == null) ? 0 : serialNumberPolicy.hashCode());
-        result = prime * result + ((customSerialNumber == null) ? 0 : customSerialNumber.hashCode());
-        result = prime * result + (bootMenuEnabled ? 1231 : 1237);
-        result = prime * result + (spiceFileTransferEnabled ? 1231 : 1237);
-        result = prime * result + (spiceCopyPasteEnabled ? 1231 : 1237);
-        result = prime * result + ((cpuProfileId == null) ? 0 : cpuProfileId.hashCode());
-        result = prime * result + ((numaTuneMode == null) ? 0 : numaTuneMode.getValue().hashCode());
-        result = prime * result + ((vNumaNodeList == null) ? 0 : vNumaNodeList.hashCode());
-        result = prime * result + (autoConverge == null ? 0 : autoConverge.hashCode());
-        result = prime * result + (migrateCompressed == null ? 0 : migrateCompressed.hashCode());
-        result = prime * result + ((predefinedProperties == null) ? 0 : predefinedProperties.hashCode());
-        result = prime * result + ((userDefinedProperties == null) ? 0 : userDefinedProperties.hashCode());
-        result = prime * result + ((customEmulatedMachine == null) ? 0 : customEmulatedMachine.hashCode());
-        result = prime * result + ((customCpuName== null) ? 0 : customCpuName.hashCode());
-        result = prime * result + ((smallIconId == null) ? 0 : smallIconId.hashCode());
-        result = prime * result + ((largeIconId == null) ? 0 : largeIconId.hashCode());
-        result = prime * result + ((consoleDisconnectAction == null) ? 0 : consoleDisconnectAction.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                autoStartup,
+                cpuPerSocket,
+                threadsPerCpu,
+                creationDate,
+                defaultBootSequence,
+                description,
+                failBack,
+                initrdUrl,
+                isoPath,
+                kernelParams,
+                kernelUrl,
+                osId,
+                memSizeMb,
+                niceLevel,
+                cpuShares,
+                numOfSockets,
+                numOfMonitors,
+                origin,
+                priority,
+                stateless,
+                smartcardEnabled,
+                timeZone,
+                usbPolicy,
+                vdsGroupId,
+                vmType,
+                quotaId,
+                allowConsoleReconnect,
+                dedicatedVmForVdsList,
+                migrationSupport,
+                tunnelMigration,
+                vncKeyboardLayout,
+                createdByUserId,
+                defaultDisplayType,
+                migrationDowntime,
+                serialNumberPolicy,
+                customSerialNumber,
+                bootMenuEnabled,
+                spiceFileTransferEnabled,
+                spiceCopyPasteEnabled,
+                cpuProfileId,
+                numaTuneMode,
+                vNumaNodeList,
+                autoConverge,
+                migrateCompressed,
+                predefinedProperties,
+                userDefinedProperties,
+                customEmulatedMachine,
+                customCpuName,
+                smallIconId,
+                largeIconId,
+                consoleDisconnectAction
+        );
     }
 
     @Override
@@ -1012,14 +1011,11 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
         if (!(obj instanceof VmBase)) {
             return false;
         }
         VmBase other = (VmBase) obj;
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && autoStartup == other.autoStartup
                 && cpuPerSocket == other.cpuPerSocket
                 && Objects.equals(creationDate, other.creationDate)
@@ -1062,7 +1058,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
                 && spiceCopyPasteEnabled == other.spiceCopyPasteEnabled
                 && Objects.equals(cpuProfileId, other.cpuProfileId)
                 && Objects.equals(numaTuneMode.getValue(), other.numaTuneMode.getValue())
-                && Objects.equals(vNumaNodeList, other.vNumaNodeList))
+                && Objects.equals(vNumaNodeList, other.vNumaNodeList)
                 && Objects.equals(autoConverge, other.autoConverge)
                 && Objects.equals(migrateCompressed, other.migrateCompressed)
                 && Objects.equals(predefinedProperties, other.predefinedProperties)

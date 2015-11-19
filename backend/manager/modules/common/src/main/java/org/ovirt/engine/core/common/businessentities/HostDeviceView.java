@@ -53,25 +53,29 @@ public class HostDeviceView extends HostDevice {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof HostDeviceView)) {
+            return false;
+        }
 
         HostDeviceView other = (HostDeviceView) o;
-
-        return Objects.equals(configuredVmId, other.configuredVmId) &&
-                Objects.equals(attachedVmNames, other.attachedVmNames) &&
-                Objects.equals(runningVmName, other.runningVmName) &&
-                Objects.equals(iommuPlaceholder, other.iommuPlaceholder);
+        return super.equals(other)
+                && Objects.equals(configuredVmId, other.configuredVmId)
+                && Objects.equals(attachedVmNames, other.attachedVmNames)
+                && Objects.equals(runningVmName, other.runningVmName)
+                && Objects.equals(iommuPlaceholder, other.iommuPlaceholder);
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (configuredVmId != null ? configuredVmId.hashCode() : 0);
-        result = 31 * result + (attachedVmNames != null ? attachedVmNames.hashCode() : 0);
-        result = 31 * result + (runningVmName != null ? runningVmName.hashCode() : 0);
-        result = 31 * result + (iommuPlaceholder ? 1 : 0);
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                configuredVmId,
+                attachedVmNames,
+                runningVmName,
+                iommuPlaceholder
+        );
     }
 }

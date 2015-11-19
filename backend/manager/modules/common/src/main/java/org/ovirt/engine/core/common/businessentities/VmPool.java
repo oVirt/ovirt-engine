@@ -78,18 +78,17 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + defaultTimeInDays;
-        result = prime * result + ((parameters == null) ? 0 : parameters.hashCode());
-        result = prime * result + ((vdsGroupId == null) ? 0 : vdsGroupId.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        result = prime * result + maxAssignedVmsPerUser;
-        result = prime * result + ((spiceProxy == null) ? 0 : spiceProxy.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                defaultTimeInDays,
+                parameters,
+                vdsGroupId,
+                description,
+                name,
+                type,
+                maxAssignedVmsPerUser,
+                spiceProxy
+        );
     }
 
     @Override
@@ -97,16 +96,13 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof VmPool)) {
             return false;
         }
         VmPool other = (VmPool) obj;
         // Don't use defaultStartTime and defaultEndTime in equals method
         // as they will never match because of how they are initialized.
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && defaultTimeInDays == other.defaultTimeInDays
                 && Objects.equals(parameters, other.parameters)
                 && Objects.equals(vdsGroupId, other.vdsGroupId)
@@ -114,7 +110,7 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
                 && Objects.equals(name, other.name)
                 && Objects.equals(type, other.type)
                 && maxAssignedVmsPerUser == other.maxAssignedVmsPerUser
-                && Objects.equals(spiceProxy, other.spiceProxy));
+                && Objects.equals(spiceProxy, other.spiceProxy);
     }
 
     @Override

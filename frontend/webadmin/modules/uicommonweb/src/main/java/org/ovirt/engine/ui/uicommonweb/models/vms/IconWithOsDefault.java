@@ -83,21 +83,28 @@ public class IconWithOsDefault {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (!(obj instanceof IconWithOsDefault)) {
             return false;
-        IconWithOsDefault that = (IconWithOsDefault) o;
-        return Objects.equals(icon, that.icon) &&
-                Objects.equals(osDefaultIcon, that.osDefaultIcon) &&
-                Objects.equals(smallIconId, that.smallIconId) &&
-                Objects.equals(validationResult, that.validationResult);
+        }
+        IconWithOsDefault other = (IconWithOsDefault) obj;
+        return Objects.equals(icon, other.icon)
+                && Objects.equals(osDefaultIcon, other.osDefaultIcon)
+                && Objects.equals(smallIconId, other.smallIconId)
+                && Objects.equals(validationResult, other.validationResult);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(icon, osDefaultIcon, smallIconId, validationResult);
+        return Objects.hash(
+                icon,
+                osDefaultIcon,
+                smallIconId,
+                validationResult
+        );
     }
 
     public String getIcon() {

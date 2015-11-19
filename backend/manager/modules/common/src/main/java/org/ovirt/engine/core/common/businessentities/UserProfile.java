@@ -72,13 +72,12 @@ public class UserProfile  implements IVdcQueryable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((sshPublicKeyId == null) ? 0 : sshPublicKeyId.hashCode());
-        result = prime * result + ((sshPublicKey == null) ? 0 : sshPublicKey.hashCode());
-        result = prime * result + ((Boolean) userPortalVmLoginAutomatically).hashCode();
-        result = prime * result + ((loginName == null) ? 0 : loginName.hashCode());
-        return result;
+        return Objects.hash(
+                sshPublicKeyId,
+                sshPublicKey,
+                userPortalVmLoginAutomatically,
+                loginName
+        );
     }
 
     @Override
@@ -86,17 +85,14 @@ public class UserProfile  implements IVdcQueryable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof UserProfile)) {
             return false;
         }
         UserProfile other = (UserProfile) obj;
         return  Objects.equals(sshPublicKeyId, other.sshPublicKeyId)
-             && Objects.equals(sshPublicKey, other.sshPublicKey)
-             && Objects.equals(isUserPortalVmLoginAutomatically(), other.isUserPortalVmLoginAutomatically())
-             && Objects.equals(loginName, other.loginName);
+                && Objects.equals(sshPublicKey, other.sshPublicKey)
+                && Objects.equals(userPortalVmLoginAutomatically, other.userPortalVmLoginAutomatically)
+                && Objects.equals(loginName, other.loginName);
     }
 
     public Boolean isUserPortalVmLoginAutomatically() {

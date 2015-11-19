@@ -40,21 +40,20 @@ public final class HostDeviceId implements Serializable, Comparable<HostDeviceId
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof HostDeviceId)) {
             return false;
         }
         HostDeviceId other = (HostDeviceId) o;
-        return Objects.equals(hostId, other.hostId) &&
-                Objects.equals(deviceName, other.deviceName);
+        return Objects.equals(hostId, other.hostId)
+                && Objects.equals(deviceName, other.deviceName);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((hostId == null) ? 0 : hostId.hashCode());
-        result = prime * result + ((deviceName == null) ? 0 : deviceName.hashCode());
-        return result;
+        return Objects.hash(
+                hostId,
+                deviceName
+        );
     }
 
     @Override

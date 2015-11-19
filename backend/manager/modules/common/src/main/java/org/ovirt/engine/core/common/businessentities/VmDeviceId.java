@@ -22,11 +22,10 @@ public class VmDeviceId implements Serializable, Comparable<VmDeviceId> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((deviceId == null) ? 0 : deviceId.hashCode());
-        result = prime * result + ((vmId == null) ? 0 : vmId.hashCode());
-        return result;
+        return Objects.hash(
+                deviceId,
+                vmId
+        );
     }
 
     @Override
@@ -34,15 +33,12 @@ public class VmDeviceId implements Serializable, Comparable<VmDeviceId> {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof VmDeviceId)) {
             return false;
         }
         VmDeviceId other = (VmDeviceId) obj;
-        return (Objects.equals(deviceId, other.deviceId)
-                && Objects.equals(vmId, other.vmId));
+        return Objects.equals(deviceId, other.deviceId)
+                && Objects.equals(vmId, other.vmId);
     }
 
     @Override

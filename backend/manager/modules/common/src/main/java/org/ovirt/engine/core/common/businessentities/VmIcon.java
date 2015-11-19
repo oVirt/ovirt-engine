@@ -97,15 +97,22 @@ public class VmIcon implements BusinessEntity<Guid> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof VmIcon)) {
+            return false;
+        }
         VmIcon vmIcon = (VmIcon) o;
-        return Objects.equals(id, vmIcon.id) &&
-                Objects.equals(dataUrl, vmIcon.dataUrl);
+        return Objects.equals(id, vmIcon.id)
+                && Objects.equals(dataUrl, vmIcon.dataUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, dataUrl);
+        return Objects.hash(
+                id,
+                dataUrl
+        );
     }
 }

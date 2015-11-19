@@ -70,17 +70,26 @@ public class VmIconDefault implements BusinessEntity<Guid> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof VmIconDefault)) {
+            return false;
+        }
         VmIconDefault that = (VmIconDefault) o;
-        return Objects.equals(osId, that.osId) &&
-                Objects.equals(id, that.id) &&
-                Objects.equals(smallIconId, that.smallIconId) &&
-                Objects.equals(largeIconId, that.largeIconId);
+        return Objects.equals(osId, that.osId)
+                && Objects.equals(id, that.id)
+                && Objects.equals(smallIconId, that.smallIconId)
+                && Objects.equals(largeIconId, that.largeIconId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, osId, smallIconId, largeIconId);
+        return Objects.hash(
+                id,
+                osId,
+                smallIconId,
+                largeIconId
+        );
     }
 }

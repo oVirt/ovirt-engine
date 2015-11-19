@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.compat.Guid;
 
 public class V2VJobInfo implements BusinessEntity<Guid> {
@@ -57,15 +59,19 @@ public class V2VJobInfo implements BusinessEntity<Guid> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof V2VJobInfo) {
-            return vmId.equals(((V2VJobInfo) obj).vmId);
+        if (this == obj) {
+            return true;
         }
-        return false;
+        if (!(obj instanceof V2VJobInfo)) {
+            return false;
+        }
+        V2VJobInfo other = (V2VJobInfo)obj;
+        return Objects.equals(vmId, other.vmId);
     }
 
     @Override
     public int hashCode() {
-        return vmId.hashCode();
+        return Objects.hashCode(vmId);
     }
 
     public String getDescription() {

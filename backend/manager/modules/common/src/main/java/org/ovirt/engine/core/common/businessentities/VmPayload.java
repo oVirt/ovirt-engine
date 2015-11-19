@@ -100,12 +100,11 @@ public class VmPayload extends VmDevice implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + super.hashCode();
-        result = prime * result + ((volumeId == null) ? 0 : volumeId.hashCode());
-        result = prime * result + ((files == null) ? 0 : files.hashCode());
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                volumeId,
+                files
+        );
     }
 
     @Override
@@ -113,15 +112,12 @@ public class VmPayload extends VmDevice implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
         if (!(obj instanceof VmDevice)) {
             return false;
         }
         VmPayload other = (VmPayload) obj;
-        return (super.equals(obj)
+        return super.equals(obj)
                 && Objects.equals(volumeId, other.volumeId)
-                && Objects.equals(files, other.files));
+                && Objects.equals(files, other.files);
     }
 }

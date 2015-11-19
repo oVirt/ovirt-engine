@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker.entities;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
@@ -78,13 +79,12 @@ public class VmInternalData {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((vmDynamic == null) ? 0 : vmDynamic.hashCode());
-        result = prime * result + ((vmGuestAgentInterfaces == null) ? 0 : vmGuestAgentInterfaces.hashCode());
-        result = prime * result + ((vmStatistics == null) ? 0 : vmStatistics.hashCode());
-        result = prime * result + ((lunsMap == null) ? 0 : lunsMap.hashCode());
-        return result;
+        return Objects.hash(
+                vmDynamic,
+                vmGuestAgentInterfaces,
+                vmStatistics,
+                lunsMap
+        );
     }
 
     @Override
@@ -92,42 +92,14 @@ public class VmInternalData {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof VmInternalData)) {
             return false;
         }
         VmInternalData other = (VmInternalData) obj;
-        if (vmDynamic == null) {
-            if (other.vmDynamic != null) {
-                return false;
-            }
-        } else if (!vmDynamic.equals(other.vmDynamic)) {
-            return false;
-        }
-        if (vmGuestAgentInterfaces == null) {
-            if (other.vmGuestAgentInterfaces != null) {
-                return false;
-            }
-        } else if (!vmGuestAgentInterfaces.equals(other.vmGuestAgentInterfaces)) {
-            return false;
-        }
-        if (vmStatistics == null) {
-            if (other.vmStatistics != null) {
-                return false;
-            }
-        } else if (!vmStatistics.equals(other.vmStatistics)) {
-            return false;
-        }
-        if (lunsMap == null) {
-            if (other.lunsMap != null) {
-                return false;
-            }
-        } else if (!lunsMap.equals(other.lunsMap)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(vmDynamic, other.vmDynamic)
+                && Objects.equals(vmGuestAgentInterfaces, other.vmGuestAgentInterfaces)
+                && Objects.equals(vmStatistics, other.vmStatistics)
+                && Objects.equals(lunsMap, other.lunsMap);
     }
 
     public Double getTimestamp() {

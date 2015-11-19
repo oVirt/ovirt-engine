@@ -39,11 +39,10 @@ public class VmPoolMap implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((vmId == null) ? 0 : vmId.hashCode());
-        result = prime * result + ((vmPoolId == null) ? 0 : vmPoolId.hashCode());
-        return result;
+        return Objects.hash(
+                vmId,
+                vmPoolId
+        );
     }
 
     @Override
@@ -51,14 +50,11 @@ public class VmPoolMap implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof VmPoolMap)) {
             return false;
         }
         VmPoolMap other = (VmPoolMap) obj;
-        return (Objects.equals(vmId, other.vmId)
-                && Objects.equals(vmPoolId, other.vmPoolId));
+        return Objects.equals(vmId, other.vmId)
+                && Objects.equals(vmPoolId, other.vmPoolId);
     }
 }

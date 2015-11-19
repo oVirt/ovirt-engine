@@ -107,19 +107,19 @@ public class VmStatic extends VmBase {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + (initialized ? 1231 : 1237);
-        result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-        result = prime * result + ((vmtGuid == null) ? 0 : vmtGuid.hashCode());
-        result = prime * result + (useHostCpuFlags ? 1231 : 1237);
-        result = prime * result + ((instanceTypeId == null) ? 0 : instanceTypeId.hashCode());
-        result = prime * result + ((imageTypeId == null) ? 0 : imageTypeId.hashCode());
-        result = prime * result + ((originalTemplateGuid == null) ? 0 : originalTemplateGuid.hashCode());
-        result = prime * result + ((originalTemplateName == null) ? 0 : originalTemplateName.hashCode());
-        result = prime * result + (useLatestVersion ? 1249 : 1259);
-        result = prime * result + Objects.hashCode(providerId);
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                initialized,
+                getName(),
+                vmtGuid,
+                useHostCpuFlags,
+                instanceTypeId,
+                imageTypeId,
+                originalTemplateGuid,
+                originalTemplateName,
+                useLatestVersion,
+                providerId
+        );
     }
 
     @Override
@@ -127,14 +127,12 @@ public class VmStatic extends VmBase {
         if (this == obj) {
             return true;
         }
-        if (!super.equals(obj)) {
-            return false;
-        }
         if (!(obj instanceof VmStatic)) {
             return false;
         }
         VmStatic other = (VmStatic) obj;
-        return (initialized == other.initialized
+        return super.equals(obj)
+                && initialized == other.initialized
                 && Objects.equals(getName(), other.getName())
                 && Objects.equals(vmtGuid, other.vmtGuid)
                 && useHostCpuFlags == other.useHostCpuFlags
@@ -143,7 +141,7 @@ public class VmStatic extends VmBase {
                 && Objects.equals(originalTemplateGuid, other.originalTemplateGuid)
                 && Objects.equals(originalTemplateName, other.originalTemplateName)
                 && useLatestVersion == other.useLatestVersion
-                && Objects.equals(providerId, other.providerId));
+                && Objects.equals(providerId, other.providerId);
     }
 
     public boolean isUseHostCpuFlags() {

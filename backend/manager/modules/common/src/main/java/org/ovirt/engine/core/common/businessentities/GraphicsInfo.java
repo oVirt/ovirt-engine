@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class GraphicsInfo implements Serializable {
 
@@ -42,24 +43,26 @@ public class GraphicsInfo implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof GraphicsInfo)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof GraphicsInfo)) {
+            return false;
+        }
 
-        GraphicsInfo that = (GraphicsInfo) o;
-
-        if (ip != null ? !ip.equals(that.ip) : that.ip != null) return false;
-        if (port != null ? !port.equals(that.port) : that.port != null) return false;
-        if (tlsPort != null ? !tlsPort.equals(that.tlsPort) : that.tlsPort != null) return false;
-
-        return true;
+        GraphicsInfo other = (GraphicsInfo) o;
+        return Objects.equals(ip, other.ip)
+                && Objects.equals(port, other.port)
+                && Objects.equals(tlsPort, other.tlsPort);
     }
 
     @Override
     public int hashCode() {
-        int result = ip != null ? ip.hashCode() : 0;
-        result = 31 * result + (port != null ? port.hashCode() : 0);
-        result = 31 * result + (tlsPort != null ? tlsPort.hashCode() : 0);
-        return result;
+        return Objects.hash(
+                ip,
+                port,
+                tlsPort
+        );
     }
 
 }

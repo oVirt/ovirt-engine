@@ -152,41 +152,40 @@ public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, 
         if (this == obj) {
             return true;
         }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (!(obj instanceof HostDevice)) {
             return false;
         }
         HostDevice other = (HostDevice) obj;
-        return Objects.equals(getId(), other.getId()) &&
-                Objects.equals(parentDeviceName, other.parentDeviceName) &&
-                Objects.equals(capability, other.capability) &&
-                Objects.equals(iommuGroup, other.iommuGroup) &&
-                Objects.equals(productName, other.productName) &&
-                Objects.equals(productId, other.productId) &&
-                Objects.equals(vendorName, other.vendorName) &&
-                Objects.equals(vendorId, other.vendorId) &&
-                Objects.equals(parentPhysicalFunction, other.parentPhysicalFunction) &&
-                Objects.equals(totalVirtualFunctions, other.totalVirtualFunctions) &&
-                Objects.equals(networkInterfaceName, other.networkInterfaceName) &&
-                Objects.equals(vmId, other.vmId);
+        return Objects.equals(getId(), other.getId())
+                && Objects.equals(parentDeviceName, other.parentDeviceName)
+                && Objects.equals(capability, other.capability)
+                && Objects.equals(iommuGroup, other.iommuGroup)
+                && Objects.equals(productName, other.productName)
+                && Objects.equals(productId, other.productId)
+                && Objects.equals(vendorName, other.vendorName)
+                && Objects.equals(vendorId, other.vendorId)
+                && Objects.equals(parentPhysicalFunction, other.parentPhysicalFunction)
+                && Objects.equals(totalVirtualFunctions, other.totalVirtualFunctions)
+                && Objects.equals(networkInterfaceName, other.networkInterfaceName)
+                && Objects.equals(vmId, other.vmId);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + getId().hashCode();
-        result = prime * result + (parentDeviceName == null ? 0 : parentDeviceName.hashCode());
-        result = prime * result + (capability == null ? 0 : capability.hashCode());
-        result = prime * result + (iommuGroup == null ? 0 : iommuGroup.hashCode());
-        result = prime * result + (productName == null ? 0 : productName.hashCode());
-        result = prime * result + (productId == null ? 0 : productId.hashCode());
-        result = prime * result + (vendorName == null ? 0 : vendorName.hashCode());
-        result = prime * result + (vendorId == null ? 0 : vendorId.hashCode());
-        result = prime * result + (parentPhysicalFunction == null ? 0 : parentPhysicalFunction.hashCode());
-        result = prime * result + (totalVirtualFunctions == null ? 0 : totalVirtualFunctions.hashCode());
-        result = prime * result + (networkInterfaceName == null ? 0 : networkInterfaceName.hashCode());
-        result = prime * result + (vmId == null ? 0 :  vmId.hashCode());
-        return result;
+        return Objects.hash(
+                getId(),
+                parentDeviceName,
+                capability,
+                iommuGroup,
+                productName,
+                productId,
+                vendorName,
+                vendorId,
+                parentPhysicalFunction,
+                totalVirtualFunctions,
+                networkInterfaceName,
+                vmId
+        );
     }
 
     @Override

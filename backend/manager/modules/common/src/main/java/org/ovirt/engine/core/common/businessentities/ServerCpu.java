@@ -66,14 +66,13 @@ public class ServerCpu implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((privateArchitecture == null) ? 0 : privateArchitecture.hashCode());
-        result = prime * result + ((privateCpuName == null) ? 0 : privateCpuName.hashCode());
-        result = prime * result + ((privateFlags == null) ? 0 : privateFlags.hashCode());
-        result = prime * result + privateLevel;
-        result = prime * result + ((privateVdsVerbData == null) ? 0 : privateVdsVerbData.hashCode());
-        return result;
+        return Objects.hash(
+                privateArchitecture,
+                privateCpuName,
+                privateFlags,
+                privateLevel,
+                privateVdsVerbData
+        );
     }
 
     @Override
@@ -81,10 +80,7 @@ public class ServerCpu implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof ServerCpu)) {
             return false;
         }
         ServerCpu other = (ServerCpu) obj;

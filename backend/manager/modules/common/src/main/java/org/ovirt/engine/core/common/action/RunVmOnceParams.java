@@ -44,16 +44,16 @@ public class RunVmOnceParams extends RunVmParams {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((sysPrepDomainName == null) ? 0 : sysPrepDomainName.hashCode());
-        result = prime * result + ((sysPrepUserName == null) ? 0 : sysPrepUserName.hashCode());
-        result = prime * result + ((sysPrepPassword == null) ? 0 : sysPrepPassword.hashCode());
-        result = prime * result + ((vmInit == null) ? 0 : vmInit.hashCode());
-        result = prime * result + ((destinationVdsId == null) ? 0 : destinationVdsId.hashCode());
-        result = prime * result + ((customEmulatedMachine == null) ? 0 : customEmulatedMachine.hashCode());
-        result = prime * result + ((customCpuName == null) ? 0 : customCpuName.hashCode());
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                sysPrepDomainName,
+                sysPrepUserName,
+                sysPrepPassword,
+                vmInit,
+                destinationVdsId,
+                customEmulatedMachine,
+                customCpuName
+        );
     }
 
     @Override

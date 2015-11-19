@@ -35,24 +35,23 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((cpu_sysField == null) ? 0 : cpu_sysField.hashCode());
-        result = prime * result + ((cpu_userField == null) ? 0 : cpu_userField.hashCode());
-        result = prime * result + ((elapsed_timeField == null) ? 0 : elapsed_timeField.hashCode());
-        result = prime * result + ((interfaceStatisticsField == null) ? 0 : interfaceStatisticsField.hashCode());
-        result = prime * result + ((roundedElapsedTimeField == null) ? 0 : roundedElapsedTimeField.hashCode());
-        result = prime * result + ((usage_cpu_percentField == null) ? 0 : usage_cpu_percentField.hashCode());
-        result = prime * result + ((usage_mem_percentField == null) ? 0 : usage_mem_percentField.hashCode());
-        result = prime * result + ((usage_network_percentField == null) ? 0 : usage_network_percentField.hashCode());
-        result = prime * result + ((migrationProgressPercent == null) ? 0 : migrationProgressPercent.hashCode());
-        result = prime * result + ((disksUsage == null) ? 0 : disksUsage.hashCode());
-        result = prime * result + ((vm_guidField == null) ? 0 : vm_guidField.hashCode());
-        result = prime * result + ((cpuUsageHistory == null) ? 0 : cpuUsageHistory.hashCode());
-        result = prime * result + ((networkUsageHistory == null) ? 0 : networkUsageHistory.hashCode());
-        result = prime * result + ((memoryUsageHistory == null) ? 0 : memoryUsageHistory.hashCode());
-        result = prime * result + ((vNumaNodeStatisticsList == null) ? 0 : vNumaNodeStatisticsList.hashCode());
-        return result;
+        return Objects.hash(
+                cpu_sysField,
+                cpu_userField,
+                elapsed_timeField,
+                interfaceStatisticsField,
+                roundedElapsedTimeField,
+                usage_cpu_percentField,
+                usage_mem_percentField,
+                usage_network_percentField,
+                migrationProgressPercent,
+                disksUsage,
+                vm_guidField,
+                cpuUsageHistory,
+                networkUsageHistory,
+                memoryUsageHistory,
+                vNumaNodeStatisticsList
+        );
     }
 
     @Override
@@ -60,14 +59,11 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof VmStatistics)) {
             return false;
         }
         VmStatistics other = (VmStatistics) obj;
-        return (Objects.equals(cpu_sysField, other.cpu_sysField)
+        return Objects.equals(cpu_sysField, other.cpu_sysField)
                 && Objects.equals(cpu_userField, other.cpu_userField)
                 && Objects.equals(elapsed_timeField, other.elapsed_timeField)
                 && Objects.equals(interfaceStatisticsField, other.interfaceStatisticsField)
@@ -81,7 +77,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
                 && Objects.equals(cpuUsageHistory, other.cpuUsageHistory)
                 && Objects.equals(networkUsageHistory, other.networkUsageHistory)
                 && Objects.equals(memoryUsageHistory, other.memoryUsageHistory)
-                && Objects.equals(vNumaNodeStatisticsList, other.vNumaNodeStatisticsList));
+                && Objects.equals(vNumaNodeStatisticsList, other.vNumaNodeStatisticsList);
     }
 
     public Double getcpu_sys() {

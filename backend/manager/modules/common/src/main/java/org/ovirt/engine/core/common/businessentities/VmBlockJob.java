@@ -68,30 +68,27 @@ public class VmBlockJob extends VmJob {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof VmBlockJob)) {
             return false;
         }
         VmBlockJob other = (VmBlockJob) obj;
-        return (super.equals(other)
+        return super.equals(other)
                 && Objects.equals(bandwidth, other.bandwidth)
                 && blockJobType == other.blockJobType
                 && Objects.equals(cursorCur, other.cursorCur)
                 && Objects.equals(cursorEnd, other.cursorEnd)
-                && Objects.equals(imageGroupId, other.imageGroupId));
+                && Objects.equals(imageGroupId, other.imageGroupId);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (blockJobType == null ? 0 : blockJobType.hashCode());
-        result = prime * result + (bandwidth == null ? 0 : bandwidth.hashCode());
-        result = prime * result + (cursorCur == null ? 0 : cursorCur.hashCode());
-        result = prime * result + (cursorEnd == null ? 0 : cursorEnd.hashCode());
-        result = prime * result + (imageGroupId == null ? 0 : imageGroupId.hashCode());
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                blockJobType,
+                bandwidth,
+                cursorCur,
+                cursorEnd,
+                imageGroupId
+        );
     }
 }

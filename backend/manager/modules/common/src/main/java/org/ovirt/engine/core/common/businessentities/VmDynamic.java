@@ -90,59 +90,58 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((acpiEnabled == null) ? 0 : acpiEnabled.hashCode());
-        result = prime * result + ((appList == null) ? 0 : appList.hashCode());
-        result = prime * result + bootSequence.hashCode();
-        result = prime * result + ((clientIp == null) ? 0 : clientIp.hashCode());
-        result = prime * result + ((vncKeyboardLayout == null) ? 0 : vncKeyboardLayout.hashCode());
-        result = prime * result + ((consoleCurrentUserName == null) ? 0 : consoleCurrentUserName.hashCode());
-        result = prime * result + ((guestCurUserName == null) ? 0 : guestCurUserName.hashCode());
-        result = prime * result + ((consoleUserId == null) ? 0 : consoleUserId.hashCode());
-        result = prime * result + ((guestOs == null) ? 0 : guestOs.hashCode());
-        result = prime * result + ((guestRequestedMemory == null) ? 0 : guestRequestedMemory.hashCode());
-        result = prime * result + ((kvmEnable == null) ? 0 : kvmEnable.hashCode());
-        result = prime * result + ((lastVdsRunOn == null) ? 0 : lastVdsRunOn.hashCode());
-        result = prime * result + ((disks == null) ? 0 : disks.hashCode());
-        result = prime * result + ((exitMessage == null) ? 0 : exitMessage.hashCode());
-        result = prime * result + exitStatus.hashCode();
-        result = prime * result + (win2kHackEnabled ? 1231 : 1237);
-        result = prime * result + ((migratingToVds == null) ? 0 : migratingToVds.hashCode());
-        result = prime * result + ((pauseStatus == null) ? 0 : pauseStatus.hashCode());
-        result = prime * result + ((runOnVds == null) ? 0 : runOnVds.hashCode());
-        result = prime * result + session.hashCode();
-        result = prime * result + status.hashCode();
-        result = prime * result + ((utcDiff == null) ? 0 : utcDiff.hashCode());
-        result = prime * result + ((vmHost == null) ? 0 : vmHost.hashCode());
-        result = prime * result + ((vmIp == null) ? 0 : vmIp.hashCode());
-        result = prime * result + ((vmFQDN == null) ? 0 : vmFQDN.hashCode());
-        result = prime * result + ((lastStartTime == null) ? 0 : lastStartTime.hashCode());
-        result = prime * result + ((lastStopTime == null) ? 0 : lastStopTime.hashCode());
-        result = prime * result + ((vmPid == null) ? 0 : vmPid.hashCode());
-        result = prime * result + (lastWatchdogEvent == null ? 0 : lastWatchdogEvent.hashCode());
-        result = prime * result + (lastWatchdogAction == null ? 0 : lastWatchdogAction.hashCode());
-        result = prime * result + (runOnce ? 1231 : 1237);
-        result = prime * result + (cpuName == null ? 0 : cpuName.hashCode());
-        result = prime * result + (guestAgentStatus == null ? 0 : guestAgentStatus.hashCode());
-        result = prime * result + (currentCd == null ? 0 : currentCd.hashCode());
-        result = prime * result + (stopReason == null ? 0 : stopReason.hashCode());
-        result = prime * result + exitReason.hashCode();
-        result = prime * result + (emulatedMachine == null ? 0 : emulatedMachine.hashCode());
-        result = prime * result + graphicsInfos.hashCode();
-        result = prime * result + (guestMemoryFree == null ? 0 : guestMemoryFree.hashCode());
-        result = prime * result + (guestMemoryBuffered == null ? 0 : guestMemoryBuffered.hashCode());
-        result = prime * result + (guestMemoryCached == null ? 0 : guestMemoryCached.hashCode());
-        result = prime * result + (guestOsTimezoneName == null ? 0 : guestOsTimezoneName.hashCode());
-        result = prime * result + guestOsTimezoneOffset;
-        result = prime * result + guestOsArch.hashCode();
-        result = prime * result + (guestOsCodename == null ? 0 : guestOsCodename.hashCode());
-        result = prime * result + (guestOsDistribution == null ? 0 : guestOsDistribution.hashCode());
-        result = prime * result + (guestOsKernelVersion == null ? 0 : guestOsKernelVersion.hashCode());
-        result = prime * result + (guestOsVersion == null ? 0 : guestOsVersion.hashCode());
-        result = prime * result + guestOsType.hashCode();
-        return result;
+        return Objects.hash(
+                id,
+                acpiEnabled,
+                appList,
+                bootSequence,
+                clientIp,
+                vncKeyboardLayout,
+                consoleCurrentUserName,
+                guestCurUserName,
+                consoleUserId,
+                guestOs,
+                guestRequestedMemory,
+                kvmEnable,
+                lastVdsRunOn,
+                disks,
+                exitMessage,
+                exitStatus,
+                win2kHackEnabled,
+                migratingToVds,
+                pauseStatus,
+                runOnVds,
+                session,
+                status,
+                utcDiff,
+                vmHost,
+                vmIp,
+                vmFQDN,
+                lastStartTime,
+                lastStopTime,
+                vmPid,
+                lastWatchdogEvent,
+                lastWatchdogAction,
+                runOnce,
+                cpuName,
+                guestAgentStatus,
+                currentCd,
+                stopReason,
+                exitReason,
+                emulatedMachine,
+                graphicsInfos,
+                guestMemoryFree,
+                guestMemoryBuffered,
+                guestMemoryCached,
+                guestOsTimezoneName,
+                guestOsTimezoneOffset,
+                guestOsArch,
+                guestOsCodename,
+                guestOsDistribution,
+                guestOsKernelVersion,
+                guestOsVersion,
+                guestOsType
+        );
     }
 
     @Override
@@ -150,14 +149,11 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof VmDynamic)) {
             return false;
         }
         VmDynamic other = (VmDynamic) obj;
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && Objects.equals(acpiEnabled, other.acpiEnabled)
                 && Objects.equals(appList, other.appList)
                 && bootSequence == other.bootSequence
@@ -194,7 +190,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && Objects.equals(currentCd, other.currentCd)
                 && Objects.equals(stopReason, other.stopReason)
                 && exitReason == other.exitReason
-                && Objects.equals(emulatedMachine, other.emulatedMachine))
+                && Objects.equals(emulatedMachine, other.emulatedMachine)
                 && Objects.equals(graphicsInfos, other.getGraphicsInfos())
                 && Objects.equals(guestMemoryBuffered, other.guestMemoryBuffered)
                 && Objects.equals(guestMemoryCached, other.guestMemoryCached)

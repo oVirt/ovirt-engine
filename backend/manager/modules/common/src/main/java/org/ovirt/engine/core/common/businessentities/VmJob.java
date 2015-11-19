@@ -58,25 +58,21 @@ public class VmJob implements BusinessEntity<Guid> {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof VmJob)) {
             return false;
         }
         VmJob other = (VmJob) obj;
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && Objects.equals(vmId, other.vmId)
-                && jobType == other.jobType);
+                && jobType == other.jobType;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (id == null ? 0 : id.hashCode());
-        result = prime * result + (vmId == null ? 0 : vmId.hashCode());
-        result = prime * result + (jobType == null ? 0 : jobType.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                vmId,
+                jobType
+        );
     }
 }
