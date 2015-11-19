@@ -25,8 +25,6 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 
 public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParameters> extends VmCommand<P> {
 
-    private static final String CAPABILITY_PCI = "pci";
-
     @Inject
     private VmDeviceDao vmDeviceDao;
 
@@ -116,7 +114,7 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
 
     protected boolean hasIommu(HostDevice hostDevice) {
         // iommu group restriction only applicable to 'pci' devices
-        return CAPABILITY_PCI.equals(hostDevice.getCapability()) && hostDevice.getIommuGroup() != null;
+        return hostDevice.isPci() && hostDevice.getIommuGroup() != null;
     }
 
     private HostDevice fetchHostDevice(String deviceName) {
