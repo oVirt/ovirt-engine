@@ -13,6 +13,8 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -25,6 +27,7 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
+@RunWith(MockitoJUnitRunner.class)
 public class VirtMonitoringStrategyTest {
 
     @ClassRule
@@ -34,7 +37,8 @@ public class VirtMonitoringStrategyTest {
 
     public VirtMonitoringStrategyTest() {
         virtStrategy = spy(new VirtMonitoringStrategy(mockVdsGroup(), mockVdsDao()));
-        doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class), any(NonOperationalReason.class), any(Map.class));
+        doNothing().when(virtStrategy)
+                .vdsNonOperational(any(VDS.class), any(NonOperationalReason.class), any(Map.class));
     }
 
     private VirtMonitoringStrategy virtStrategy;

@@ -3536,6 +3536,15 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$detailMessage its CPU level ${hostCPULevel} is lower than the VM requires ${vmCPULevel}")
     String VAR__DETAIL__LOW_CPU_LEVEL();
 
+    @DefaultStringValue("$detailMessage its OS identifier is invalid or incomplete. Found ${os}.")
+    String VAR__DETAIL__INVALID_OS();
+
+    @DefaultStringValue("$detailMessage its OS is different from what is expected. Expected ${expected}, found ${found}")
+    String VAR__DETAIL__WRONG_OS();
+
+    @DefaultStringValue("$detailMessage its OS version is too old, found ${found}")
+    String VAR__DETAIL__OLD_OS();
+
     @DefaultStringValue("$detailMessage it doesn't support the emulated machine '${vmEmulatedMachine}' which is required by the VM. Host supported emulated machines are: ${hostEmulatedMachines}.")
     String VAR__DETAIL__UNSUPPORTED_EMULATED_MACHINE();
 

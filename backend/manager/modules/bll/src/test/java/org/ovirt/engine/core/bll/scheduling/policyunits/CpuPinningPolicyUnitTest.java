@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-public class CpuPinningPolicyUnitTest {
+public class CpuPinningPolicyUnitTest extends AbstractPolicyUnitTest {
 
     @ClassRule
     public static MockConfigRule configRule =
