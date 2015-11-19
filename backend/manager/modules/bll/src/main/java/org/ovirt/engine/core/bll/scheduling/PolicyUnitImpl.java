@@ -8,10 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
@@ -19,6 +22,7 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +34,9 @@ public abstract class PolicyUnitImpl {
     private final PolicyUnit policyUnit;
     protected VdsFreeMemoryChecker memoryChecker;
     protected PendingResourceManager pendingResourceManager;
+
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
 
     public PolicyUnitImpl(PolicyUnit policyUnit, PendingResourceManager pendingResourceManager) {
         if (policyUnit != null) {
@@ -120,4 +127,12 @@ public abstract class PolicyUnitImpl {
             return EnumSet.copyOf(Arrays.asList(unit.parameters()));
         }
     }
+
+    protected VdsDynamic getLastHost(final VM vm) {
+        if (vm.getRunOnVds() == null) {
+            return null;
+        }
+        return vdsDynamicDao.get(vm.getRunOnVds());
+    }
+
 }

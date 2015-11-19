@@ -1,0 +1,159 @@
+package org.ovirt.engine.core.bll.scheduling.policyunits;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeWeightPolicyUnit.BAD_WEIGHT;
+import static org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeWeightPolicyUnit.BEST_WEIGHT;
+import static org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeWeightPolicyUnit.BETTER_WEIGHT;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
+
+import junit.framework.TestCase;
+
+@RunWith(MockitoJUnitRunner.class)
+public class InClusterUpgradeWeightPolicyUnitTest extends TestCase {
+
+    @ClassRule
+    public static MockConfigRule configRule = new MockConfigRule(
+            MockConfigRule.mockConfig(ConfigValues.MaxSchedulerWeight, Integer.MAX_VALUE)
+    );
+
+    @Mock
+    private VdsDynamicDao vdsDynamicDao;
+
+    @InjectMocks
+    private final InClusterUpgradeWeightPolicyUnit inClusterUpgradeWeightPolicyUnit = new
+            InClusterUpgradeWeightPolicyUnit(null, null);
+
+    private VM runningVm;
+
+    private VDS newEnoughHost;
+    private VDS tooOldHost;
+    private VDS currentHost;
+
+    @Before
+    public void setUp() {
+        newEnoughHost = newHost("RHEL - 7.2 - 1.el7");
+        tooOldHost = newHost("RHEL - 5.0 - 1.el5");
+        currentHost = newHost("RHEL - 6.1 - 1.el6");
+
+        runningVm = new VM();
+        runningVm.setRunOnVds(currentHost.getId());
+        when(vdsDynamicDao.get(eq(currentHost.getId()))).thenReturn(currentHost.getDynamicData());
+    }
+
+    @Test
+    public void shouldFilterTooOldHost() {
+        final VDS additionalNewHost = newHost("RHEL - 7.2 - 1.el7");
+        assertThat(filter(runningVm, tooOldHost, newEnoughHost, additionalNewHost)).containsExactly(
+                weight(tooOldHost, BAD_WEIGHT),
+                weight(newEnoughHost, BEST_WEIGHT),
+                weight(additionalNewHost, BEST_WEIGHT)
+        );
+    }
+
+    @Test
+    public void shouldKeepCurrentOsVersionHosts() {
+        assertThat(filter(runningVm, newEnoughHost, currentHost)).containsExactly(
+                weight(newEnoughHost, BEST_WEIGHT),
+                weight(currentHost, BETTER_WEIGHT)
+        );
+    }
+
+    @Test
+    public void shouldKeepSameMajorWithOlderMinor() {
+        newEnoughHost.setHostOs("RHEL - 6.0 - 1.el6");
+        assertThat(filter(runningVm, newEnoughHost, currentHost)).containsExactly(
+                weight(newEnoughHost, BETTER_WEIGHT),
+                weight(currentHost, BETTER_WEIGHT)
+        );
+    }
+
+    @Test
+    public void shouldKeepSameMajorWithNewerMinor() {
+        newEnoughHost.setHostOs("RHEL - 6.3 - 1.el6");
+        assertThat(filter(runningVm, newEnoughHost, currentHost)).containsExactly(
+                weight(newEnoughHost, BETTER_WEIGHT),
+                weight(currentHost, BETTER_WEIGHT)
+        );
+    }
+
+    @Test
+    public void shouldDetectNeverStartedVM() {
+        final VM newVM = new VM();
+        assertThat(filter(newVM, tooOldHost, newEnoughHost)).containsExactly(
+                weight(tooOldHost, BEST_WEIGHT),
+                weight(newEnoughHost, BEST_WEIGHT)
+        );
+    }
+
+    @Test
+    public void shouldDetectMissingCurrentOsInformation() {
+        currentHost.setHostOs(null);
+        assertThat(filter(runningVm, tooOldHost, newEnoughHost)).containsExactly(
+                weight(tooOldHost, BEST_WEIGHT),
+                weight(newEnoughHost, BEST_WEIGHT)
+        );
+    }
+
+    @Test
+    public void shouldDetectMissingOsOnTargetHosts() {
+        newEnoughHost.setHostOs(null);
+        assertThat(filter(runningVm, tooOldHost, newEnoughHost)).containsExactly(
+                weight(tooOldHost, BAD_WEIGHT),
+                weight(newEnoughHost, BAD_WEIGHT)
+        );
+    }
+
+    @Test
+    public void shouldDetectInvalidOsOnTargetHosts() {
+        newEnoughHost.setHostOs("7.3");
+        assertThat(filter(runningVm, tooOldHost, newEnoughHost)).containsExactly(
+                weight(tooOldHost, BAD_WEIGHT),
+                weight(newEnoughHost, BAD_WEIGHT)
+        );
+    }
+
+    @Test
+    public void shouldDetectDifferentOS() {
+        newEnoughHost.setHostOs("Fedora - 23 - 1.f23");
+        assertThat(filter(runningVm, tooOldHost, newEnoughHost)).containsExactly(
+                weight(tooOldHost, BAD_WEIGHT),
+                weight(newEnoughHost, BAD_WEIGHT)
+        );
+    }
+
+    private VDS newHost(String version) {
+        VDS host = new VDS();
+        host.setId(Guid.newGuid());
+        host.setHostOs(version);
+        return host;
+    }
+
+    private List<Pair<Guid, Integer>> filter(final VM vm, final VDS... hosts) {
+        return inClusterUpgradeWeightPolicyUnit.score(Arrays.asList(hosts),
+                vm,
+                null);
+    }
+
+    private static Pair<Guid, Integer> weight(final VDS host, int weight) {
+        return new Pair<>(host.getId(), weight);
+    }
+}
