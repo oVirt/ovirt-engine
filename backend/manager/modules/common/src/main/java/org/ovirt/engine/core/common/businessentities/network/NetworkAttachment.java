@@ -173,18 +173,23 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (!(o instanceof NetworkAttachment))
+        }
+        if (!(o instanceof NetworkAttachment)) {
             return false;
-        NetworkAttachment that = (NetworkAttachment) o;
-        return Objects.equals(getNetworkId(), that.getNetworkId()) &&
-                Objects.equals(getNicId(), that.getNicId());
+        }
+        NetworkAttachment other = (NetworkAttachment) o;
+        return Objects.equals(networkId, other.networkId)
+                && Objects.equals(nicId, other.nicId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getNetworkId(), getNicId());
+        return Objects.hash(
+                networkId,
+                nicId
+        );
     }
 
     @Override

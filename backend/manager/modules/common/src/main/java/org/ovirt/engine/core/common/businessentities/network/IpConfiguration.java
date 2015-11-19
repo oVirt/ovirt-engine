@@ -48,17 +48,19 @@ public class IpConfiguration implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (!(o instanceof IpConfiguration))
+        }
+        if (!(o instanceof IpConfiguration)) {
             return false;
-        IpConfiguration that = (IpConfiguration) o;
-        return Objects.equals(getIPv4Addresses(), that.getIPv4Addresses());
+        }
+        IpConfiguration other = (IpConfiguration) o;
+        return Objects.equals(iPv4Addresses, other.iPv4Addresses);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIPv4Addresses());
+        return Objects.hashCode(iPv4Addresses);
     }
 
     @Override

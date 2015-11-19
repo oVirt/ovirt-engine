@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.compat.Version;
 
 public class VnicProfileView extends VnicProfile {
@@ -46,13 +48,13 @@ public class VnicProfileView extends VnicProfile {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((getCompatibilityVersion() == null) ? 0 : getCompatibilityVersion().hashCode());
-        result = prime * result + ((getDataCenterName() == null) ? 0 : getDataCenterName().hashCode());
-        result = prime * result + ((getNetworkName() == null) ? 0 : getNetworkName().hashCode());
-        result = prime * result + ((getNetworkQosName() == null) ? 0 : getNetworkQosName().hashCode());
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                compatibilityVersion,
+                dataCenterName,
+                networkName,
+                networkQosName
+        );
     }
 
     @Override
@@ -60,41 +62,14 @@ public class VnicProfileView extends VnicProfile {
         if (this == obj) {
             return true;
         }
-        if (!super.equals(obj)) {
-            return false;
-        }
         if (!(obj instanceof VnicProfileView)) {
             return false;
         }
         VnicProfileView other = (VnicProfileView) obj;
-        if (getCompatibilityVersion() == null) {
-            if (other.getCompatibilityVersion() != null) {
-                return false;
-            }
-        } else if (!getCompatibilityVersion().equals(other.getCompatibilityVersion())) {
-            return false;
-        }
-        if (getDataCenterName() == null) {
-            if (other.getDataCenterName() != null) {
-                return false;
-            }
-        } else if (!getDataCenterName().equals(other.getDataCenterName())) {
-            return false;
-        }
-        if (getNetworkName() == null) {
-            if (other.getNetworkName() != null) {
-                return false;
-            }
-        } else if (!getNetworkName().equals(other.getNetworkName())) {
-            return false;
-        }
-        if (getNetworkQosName() == null) {
-            if (other.getNetworkQosName() != null) {
-                return false;
-            }
-        } else if (!getNetworkQosName().equals(other.getNetworkQosName())) {
-            return false;
-        }
-        return true;
+        return super.equals(obj)
+                && Objects.equals(compatibilityVersion, other.compatibilityVersion)
+                && Objects.equals(dataCenterName, other.dataCenterName)
+                && Objects.equals(networkName, other.networkName)
+                && Objects.equals(networkQosName, other.networkQosName);
     }
 }

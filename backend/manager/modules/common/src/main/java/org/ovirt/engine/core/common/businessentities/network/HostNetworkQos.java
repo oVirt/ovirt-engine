@@ -67,25 +67,27 @@ public class HostNetworkQos extends QosBase {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((outAverageLinkshare == null) ? 0 : outAverageLinkshare.hashCode());
-        result = prime * result + ((outAverageRealtime == null) ? 0 : outAverageRealtime.hashCode());
-        result = prime * result + ((outAverageUpperlimit == null) ? 0 : outAverageUpperlimit.hashCode());
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                outAverageLinkshare,
+                outAverageRealtime,
+                outAverageUpperlimit
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
+        }
+        if (!(obj instanceof HostNetworkQos)) {
             return false;
-
+        }
         HostNetworkQos other = (HostNetworkQos) obj;
-        return Objects.equals(getOutAverageLinkshare(), other.getOutAverageLinkshare())
-                && Objects.equals(getOutAverageUpperlimit(), other.getOutAverageUpperlimit())
-                && Objects.equals(getOutAverageRealtime(), other.getOutAverageRealtime());
+        return super.equals(obj)
+                && Objects.equals(outAverageLinkshare, other.outAverageLinkshare)
+                && Objects.equals(outAverageUpperlimit, other.outAverageUpperlimit)
+                && Objects.equals(outAverageRealtime, other.outAverageRealtime);
     }
 
 }

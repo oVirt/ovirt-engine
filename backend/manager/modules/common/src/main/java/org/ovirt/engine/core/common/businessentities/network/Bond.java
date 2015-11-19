@@ -55,19 +55,23 @@ public class Bond extends VdsNetworkInterface {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
-        if (!(o instanceof Bond))
+        }
+        if (!(obj instanceof Bond)) {
             return false;
-        if (!super.equals(o))
-            return false;
-        Bond bond = (Bond) o;
-        return Objects.equals(getSlaves(), bond.getSlaves());
+        }
+        Bond other = (Bond) obj;
+        return super.equals(obj)
+                && Objects.equals(slaves, other.slaves);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getSlaves());
+        return Objects.hash(
+                super.hashCode(),
+                getSlaves()
+        );
     }
 }

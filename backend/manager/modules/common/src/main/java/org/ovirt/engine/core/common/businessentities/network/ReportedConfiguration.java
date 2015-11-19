@@ -67,15 +67,20 @@ public class ReportedConfiguration implements Serializable {
         if (!(o instanceof ReportedConfiguration)) {
             return false;
         }
-        ReportedConfiguration that = (ReportedConfiguration) o;
-        return Objects.equals(isInSync(), that.isInSync()) &&
-            Objects.equals(getType(), that.getType()) &&
-            Objects.equals(getActualValue(), that.getActualValue()) &&
-            Objects.equals(getExpectedValue(), that.getExpectedValue());
+        ReportedConfiguration other = (ReportedConfiguration) o;
+        return inSync == other.inSync
+                && type == other.type
+                && Objects.equals(actualValue, other.actualValue)
+                && Objects.equals(expectedValue, other.expectedValue);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getType(), getActualValue(), getExpectedValue(), isInSync());
+        return Objects.hash(
+                type,
+                actualValue,
+                expectedValue,
+                inSync
+        );
     }
 }

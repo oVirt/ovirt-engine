@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
+import java.util.Objects;
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -164,14 +165,13 @@ public abstract class NetworkInterface<T extends NetworkStatistics>
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((macAddress == null) ? 0 : macAddress.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((speed == null) ? 0 : speed.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                macAddress,
+                name,
+                speed,
+                type
+        );
     }
 
     @Override
@@ -179,48 +179,14 @@ public abstract class NetworkInterface<T extends NetworkStatistics>
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
         if (!(obj instanceof NetworkInterface)) {
             return false;
         }
         NetworkInterface<?> other = (NetworkInterface<?>) obj;
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        if (macAddress == null) {
-            if (other.macAddress != null) {
-                return false;
-            }
-        } else if (!macAddress.equals(other.macAddress)) {
-            return false;
-        }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (speed == null) {
-            if (other.speed != null) {
-                return false;
-            }
-        } else if (!speed.equals(other.speed)) {
-            return false;
-        }
-        if (type == null) {
-            if (other.type != null) {
-                return false;
-            }
-        } else if (!type.equals(other.type)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(id, other.id)
+                && Objects.equals(macAddress, other.macAddress)
+                && Objects.equals(name, other.name)
+                && Objects.equals(speed, other.speed)
+                && Objects.equals(type, other.type);
     }
 }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
@@ -39,11 +40,10 @@ public class NetworkClusterId implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((clusterId == null) ? 0 : clusterId.hashCode());
-        result = prime * result + ((networkId == null) ? 0 : networkId.hashCode());
-        return result;
+        return Objects.hash(
+                clusterId,
+                networkId
+        );
     }
 
     @Override
@@ -51,28 +51,12 @@ public class NetworkClusterId implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
         if (!(obj instanceof NetworkClusterId)) {
             return false;
         }
         NetworkClusterId other = (NetworkClusterId) obj;
-        if (clusterId == null) {
-            if (other.clusterId != null) {
-                return false;
-            }
-        } else if (!clusterId.equals(other.clusterId)) {
-            return false;
-        }
-        if (networkId == null) {
-            if (other.networkId != null) {
-                return false;
-            }
-        } else if (!networkId.equals(other.networkId)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(clusterId, other.clusterId)
+                && Objects.equals(networkId, other.networkId);
     }
 
     @Override

@@ -82,14 +82,13 @@ public class VmGuestAgentInterface implements IVdcQueryable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getInterfaceName() == null) ? 0 : getInterfaceName().hashCode());
-        result = prime * result + ((getIpv4Addresses() == null) ? 0 : getIpv4Addresses().hashCode());
-        result = prime * result + ((getIpv6Addresses() == null) ? 0 : getIpv6Addresses().hashCode());
-        result = prime * result + ((getMacAddress() == null) ? 0 : getMacAddress().hashCode());
-        result = prime * result + ((getVmId() == null) ? 0 : getVmId().hashCode());
-        return result;
+        return Objects.hash(
+                interfaceName,
+                ipv4Addresses,
+                ipv6Addresses,
+                macAddress,
+                vmId
+        );
     }
 
     @Override
@@ -97,18 +96,15 @@ public class VmGuestAgentInterface implements IVdcQueryable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
         if (!(obj instanceof VmGuestAgentInterface)) {
             return false;
         }
         VmGuestAgentInterface other = (VmGuestAgentInterface) obj;
-        return (Objects.equals(getInterfaceName(), other.getInterfaceName())
-                && Objects.equals(getIpv4Addresses(), other.getIpv4Addresses())
-                && Objects.equals(getIpv6Addresses(), other.getIpv6Addresses())
-                && Objects.equals(getMacAddress(), other.getMacAddress())
-                && Objects.equals(getVmId(), other.getVmId()));
+        return Objects.equals(interfaceName, other.interfaceName)
+                && Objects.equals(ipv4Addresses, other.ipv4Addresses)
+                && Objects.equals(ipv6Addresses, other.ipv6Addresses)
+                && Objects.equals(macAddress, other.macAddress)
+                && Objects.equals(vmId, other.vmId);
     }
 
     @Override

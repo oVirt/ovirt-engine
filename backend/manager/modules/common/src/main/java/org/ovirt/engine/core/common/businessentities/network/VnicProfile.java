@@ -109,17 +109,16 @@ public class VnicProfile implements IVdcQueryable, BusinessEntity<Guid>, Nameabl
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getCustomProperties() == null) ? 0 : getCustomProperties().hashCode());
-        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-        result = prime * result + ((getNetworkId() == null) ? 0 : getNetworkId().hashCode());
-        result = prime * result + ((getNetworkQosId() == null) ? 0 : getNetworkQosId().hashCode());
-        result = prime * result + (isPortMirroring() ? 1231 : 1237);
-        result = prime * result + (isPassthrough() ? 1231 : 1237);
-        result = prime * result + ((getDescription() == null) ? 0 : getDescription().hashCode());
-        return result;
+        return Objects.hash(
+                customProperties,
+                id,
+                name,
+                networkId,
+                networkQosId,
+                portMirroring,
+                passthrough,
+                description
+        );
     }
 
     @Override
@@ -127,38 +126,18 @@ public class VnicProfile implements IVdcQueryable, BusinessEntity<Guid>, Nameabl
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
         if (!(obj instanceof VnicProfile)) {
             return false;
         }
         VnicProfile other = (VnicProfile) obj;
-        if (!Objects.equals(getCustomProperties(), other.getCustomProperties())) {
-            return false;
-        }
-        if (!Objects.equals(getId(), other.getId())) {
-            return false;
-        }
-        if (!Objects.equals(getName(), other.getName())) {
-            return false;
-        }
-        if (!Objects.equals(getNetworkId(), other.getNetworkId())) {
-            return false;
-        }
-        if (!Objects.equals(getNetworkQosId(), other.getNetworkQosId())) {
-            return false;
-        }
-        if (isPortMirroring() != other.isPortMirroring()) {
-            return false;
-        }
-        if (isPassthrough() != other.isPassthrough()) {
-            return false;
-        }
-        if (!Objects.equals(getDescription(), other.getDescription())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(customProperties, other.customProperties)
+                && Objects.equals(id, other.id)
+                && Objects.equals(name, other.name)
+                && Objects.equals(networkId, other.networkId)
+                && Objects.equals(networkQosId, other.networkQosId)
+                && portMirroring == other.portMirroring
+                && passthrough == other.passthrough
+                && Objects.equals(description, other.description);
     }
 
     @Override

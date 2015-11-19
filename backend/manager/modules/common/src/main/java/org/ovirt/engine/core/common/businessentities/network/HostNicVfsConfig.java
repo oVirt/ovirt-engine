@@ -120,19 +120,19 @@ public class HostNicVfsConfig implements IVdcQueryable, BusinessEntity<Guid> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(nicId);
+        return Objects.hashCode(nicId);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof HostNicVfsConfig)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         HostNicVfsConfig other = (HostNicVfsConfig) obj;
-        return Objects.equals(nicId, other.getNicId());
+        return Objects.equals(nicId, other.nicId);
     }
 
     @Override

@@ -132,15 +132,15 @@ public class VmNetworkInterface extends VmNic {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((getNetworkName() == null) ? 0 : getNetworkName().hashCode());
-        result = prime * result + ((getVnicProfileName() == null) ? 0 : getVnicProfileName().hashCode());
-        result = prime * result + (isPortMirroring() ? 1231 : 1237);
-        result = prime * result + ((getVmName() == null) ? 0 : getVmName().hashCode());
-        result = prime * result + (isPlugged() ? 1231 : 1237);
-        result = prime * result + ((getQosName() == null) ? 0 :getQosName().hashCode());
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                networkName,
+                vnicProfileName,
+                portMirroring,
+                vmName,
+                plugged,
+                qosName
+        );
     }
 
     @Override
@@ -148,32 +148,16 @@ public class VmNetworkInterface extends VmNic {
         if (this == obj) {
             return true;
         }
-        if (!super.equals(obj)) {
-            return false;
-        }
         if (!(obj instanceof VmNetworkInterface)) {
             return false;
         }
         VmNetworkInterface other = (VmNetworkInterface) obj;
-        if (!Objects.equals(getNetworkName(), other.getNetworkName())) {
-            return false;
-        }
-        if (!Objects.equals(getVnicProfileName(), other.getVnicProfileName())) {
-            return false;
-        }
-        if (isPortMirroring() != other.isPortMirroring()) {
-            return false;
-        }
-        if (!Objects.equals(getVmName(), other.getVmName())) {
-            return false;
-        }
-        if (isPlugged() != other.isPlugged()) {
-            return false;
-        }
-        if (!Objects.equals(getQosName(), other.getQosName())) {
-            return false;
-        }
-
-        return true;
+        return super.equals(obj)
+                && Objects.equals(networkName, other.networkName)
+                && Objects.equals(vnicProfileName, other.vnicProfileName)
+                && portMirroring == other.portMirroring
+                && Objects.equals(vmName, other.vmName)
+                && plugged == other.plugged
+                && Objects.equals(qosName, other.qosName);
     }
 }

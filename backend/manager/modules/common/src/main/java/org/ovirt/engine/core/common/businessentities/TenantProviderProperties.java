@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperties;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
@@ -26,10 +28,7 @@ public class TenantProviderProperties implements AdditionalProperties {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getTenantName() == null) ? 0 : getTenantName().hashCode());
-        return result;
+        return Objects.hashCode(tenantName);
     }
 
     @Override
@@ -37,21 +36,11 @@ public class TenantProviderProperties implements AdditionalProperties {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
         if (!(obj instanceof TenantProviderProperties)) {
             return false;
         }
         TenantProviderProperties other = (TenantProviderProperties) obj;
-        if (getTenantName() == null) {
-            if (other.getTenantName() != null) {
-                return false;
-            }
-        } else if (!getTenantName().equals(other.getTenantName())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(tenantName, other.tenantName);
     }
 
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {

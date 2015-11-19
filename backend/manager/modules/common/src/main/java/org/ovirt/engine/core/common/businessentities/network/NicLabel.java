@@ -63,15 +63,19 @@ public class NicLabel implements Serializable, Nameable {
             return false;
         }
 
-        NicLabel that = (NicLabel) o;
-        return Objects.equals(getNicId(), that.getNicId()) &&
-                Objects.equals(getNicName(), that.getNicName()) &&
-                Objects.equals(getLabel(), that.getLabel());
+        NicLabel other = (NicLabel) o;
+        return Objects.equals(nicId, other.nicId)
+                && Objects.equals(nicName, other.nicName)
+                && Objects.equals(label, other.label);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getNicId(), getNicName(), getLabel());
+        return Objects.hash(
+                nicId,
+                nicName,
+                label
+        );
     }
 
     @Override

@@ -129,13 +129,13 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + (isLinked() ? 1231 : 1237);
-        result = prime * result + ((getVmId() == null) ? 0 : getVmId().hashCode());
-        result = prime * result + ((getVnicProfileId() == null) ? 0 : getVnicProfileId().hashCode());
-        result = prime * result + ((getVmTemplateId() == null) ? 0 : getVmTemplateId().hashCode());
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                linked,
+                vmId,
+                vnicProfileId,
+                vmTemplateId
+        );
     }
 
     @Override
@@ -143,23 +143,14 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
         if (this == obj) {
             return true;
         }
-        if (!super.equals(obj)) {
-            return false;
-        }
         if (!(obj instanceof VmNic)) {
             return false;
         }
         VmNic other = (VmNic) obj;
-        if (!Objects.equals(getVmId(), other.getVmId())) {
-            return false;
-        }
-        if (!Objects.equals(getVnicProfileId(), other.getVnicProfileId())) {
-            return false;
-        }
-        if (!Objects.equals(getVmTemplateId(), other.getVmTemplateId())) {
-            return false;
-        }
-        return true;
+        return super.equals(obj)
+                && Objects.equals(vmId, other.vmId)
+                && Objects.equals(vnicProfileId, other.vnicProfileId)
+                && Objects.equals(vmTemplateId, other.vmTemplateId);
     }
 
     public boolean isPassthrough() {

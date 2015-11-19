@@ -240,113 +240,53 @@ public class Network implements IVdcQueryable, BusinessEntity<Guid>, Nameable, C
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((addr == null) ? 0 : addr.hashCode());
-        //FIXME: remove cluster from hashCode calculation - breaks the tests when working in JDBC template mode
-        /*
-        result = prime * result + ((cluster == null) ? 0 : cluster.hashCode());
-        */
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((gateway == null) ? 0 : gateway.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((dataCenterId == null) ? 0 : dataCenterId.hashCode());
-        result = prime * result + (stp ? 1231 : 1237);
-        result = prime * result + ((subnet == null) ? 0 : subnet.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        result = prime * result + ((vlanId == null) ? 0 : vlanId.hashCode());
-        result = prime * result + (mtu);
-        result = prime * result + ((vmNetwork) ? 11 : 13);
-        result = prime * result + ((providedBy == null) ? 0 : providedBy.hashCode());
-        result = prime * result + ((label == null) ? 0 : label.hashCode());
-        result = prime * result + ((qosId == null) ? 0 : qosId.hashCode());
-        return result;
+        return Objects.hash(
+                addr,
+                // FIXME: remove cluster from hashCode calculation - breaks the tests when working in JDBC template mode
+                // cluster,
+                description,
+                gateway,
+                id,
+                name,
+                dataCenterId,
+                stp,
+                subnet,
+                type,
+                vlanId,
+                mtu,
+                vmNetwork,
+                providedBy,
+                label,
+                qosId
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof Network)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         Network other = (Network) obj;
-        if (addr == null) {
-            if (other.addr != null)
-                return false;
-        } else if (!addr.equals(other.addr))
-            return false;
-        //FIXME: currently removing cluster from equals, tests are failing
-        /*
-        if (cluster == null) {
-            if (other.cluster != null)
-                return false;
-        } else if (!cluster.equals(other.cluster))
-            return false;
-            */
-        if (description == null) {
-            if (other.description != null)
-                return false;
-        } else if (!description.equals(other.description))
-            return false;
-        if (gateway == null) {
-            if (other.gateway != null)
-                return false;
-        } else if (!gateway.equals(other.gateway))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (dataCenterId == null) {
-            if (other.dataCenterId != null)
-                return false;
-        } else if (!dataCenterId.equals(other.dataCenterId))
-            return false;
-        if (stp != other.stp)
-            return false;
-        if (subnet == null) {
-            if (other.subnet != null)
-                return false;
-        } else if (!subnet.equals(other.subnet))
-            return false;
-        if (type == null) {
-            if (other.type != null)
-                return false;
-        } else if (!type.equals(other.type))
-            return false;
-        if (vlanId == null) {
-            if (other.vlanId != null)
-                return false;
-        } else if (!vlanId.equals(other.vlanId))
-            return false;
-        if (mtu != other.mtu)
-            return false;
-        if (vmNetwork != other.vmNetwork) {
-            return false;
-        }
-        if (providedBy == null) {
-            if (other.providedBy != null)
-                return false;
-        } else if (!providedBy.equals(other.providedBy))
-            return false;
-        if (label == null) {
-            if (other.label != null)
-                return false;
-        } else if (!label.equals(other.label))
-            return false;
-        if (!Objects.equals(qosId, other.qosId)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(addr, other.addr)
+                // FIXME: currently removing cluster from equals, tests are failing
+                // && Objects.equals(cluster, other.cluster)
+                && Objects.equals(description, other.description)
+                && Objects.equals(gateway, other.gateway)
+                && Objects.equals(id, other.id)
+                && Objects.equals(name, other.name)
+                && Objects.equals(dataCenterId, other.dataCenterId)
+                && stp == other.stp
+                && Objects.equals(subnet, other.subnet)
+                && Objects.equals(type, other.type)
+                && Objects.equals(vlanId, other.vlanId)
+                && mtu == other.mtu
+                && vmNetwork == other.vmNetwork
+                && Objects.equals(providedBy, other.providedBy)
+                && Objects.equals(label, other.label)
+                && Objects.equals(qosId, other.qosId);
     }
 
     public int getMtu() {

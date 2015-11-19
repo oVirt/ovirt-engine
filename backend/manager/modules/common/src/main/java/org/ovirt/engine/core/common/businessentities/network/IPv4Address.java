@@ -61,20 +61,27 @@ public class IPv4Address implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (!(o instanceof IPv4Address))
+        }
+        if (!(o instanceof IPv4Address)) {
             return false;
-        IPv4Address that = (IPv4Address) o;
-        return Objects.equals(getAddress(), that.getAddress())
-                && Objects.equals(getNetmask(), that.getNetmask())
-                && Objects.equals(getGateway(), that.getGateway())
-                && Objects.equals(getBootProtocol(), that.getBootProtocol());
+        }
+        IPv4Address other = (IPv4Address) o;
+        return Objects.equals(address, other.address)
+                && Objects.equals(netmask, other.netmask)
+                && Objects.equals(gateway, other.gateway)
+                && Objects.equals(bootProtocol, other.bootProtocol);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getAddress(), getNetmask(), getGateway(), getBootProtocol());
+        return Objects.hash(
+                address,
+                netmask,
+                gateway,
+                bootProtocol
+        );
     }
 
     @Override

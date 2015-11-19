@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
@@ -39,33 +40,23 @@ public class ProviderNetwork implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getExternalId() == null) ? 0 : getExternalId().hashCode());
-        result = prime * result + ((getProviderId() == null) ? 0 : getProviderId().hashCode());
-        return result;
+        return Objects.hash(
+                externalId,
+                providerId
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof ProviderNetwork)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         ProviderNetwork other = (ProviderNetwork) obj;
-        if (getExternalId() == null) {
-            if (other.getExternalId() != null)
-                return false;
-        } else if (!getExternalId().equals(other.getExternalId()))
-            return false;
-        if (getProviderId() == null) {
-            if (other.getProviderId() != null)
-                return false;
-        } else if (!getProviderId().equals(other.getProviderId()))
-            return false;
-        return true;
+        return Objects.equals(externalId, other.externalId)
+                && Objects.equals(providerId, other.providerId);
     }
 
     @Override

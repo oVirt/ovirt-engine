@@ -425,25 +425,25 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((address == null) ? 0 : address.hashCode());
-        result = prime * result + ((bondName == null) ? 0 : bondName.hashCode());
-        result = prime * result + ((bondOptions == null) ? 0 : bondOptions.hashCode());
-        result = prime * result + ((bondType == null) ? 0 : bondType.hashCode());
-        result = prime * result + ((bonded == null) ? 0 : bonded.hashCode());
-        result = prime * result + ((bootProtocol == null) ? 0 : bootProtocol.hashCode());
-        result = prime * result + ((networkName == null) ? 0 : networkName.hashCode());
-        result = prime * result + (bridged ? 1231 : 1237);
-        result = prime * result + ((gateway == null) ? 0 : gateway.hashCode());
-        result = prime * result + mtu;
-        result = prime * result + ((subnet == null) ? 0 : subnet.hashCode());
-        result = prime * result + ((vdsId == null) ? 0 : vdsId.hashCode());
-        result = prime * result + ((baseInterface == null) ? 0 : baseInterface.hashCode());
-        result = prime * result + ((vlanId == null) ? 0 : vlanId.hashCode());
-        result = prime * result + ((qos == null) ? 0 : qos.hashCode());
-        result = prime * result + ((labels == null) ? 0 : labels.hashCode());
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                address,
+                bondName,
+                bondOptions,
+                bondType,
+                bonded,
+                bootProtocol,
+                networkName,
+                bridged,
+                gateway,
+                mtu,
+                subnet,
+                vdsId,
+                baseInterface,
+                vlanId,
+                qos,
+                labels
+        );
     }
 
     @Override
@@ -451,103 +451,27 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         if (this == obj) {
             return true;
         }
-        if (!super.equals(obj)) {
-            return false;
-        }
         if (!(obj instanceof VdsNetworkInterface)) {
             return false;
         }
         VdsNetworkInterface other = (VdsNetworkInterface) obj;
-        if (address == null) {
-            if (other.address != null) {
-                return false;
-            }
-        } else if (!address.equals(other.address)) {
-            return false;
-        }
-        if (bondName == null) {
-            if (other.bondName != null) {
-                return false;
-            }
-        } else if (!bondName.equals(other.bondName)) {
-            return false;
-        }
-        if (bondOptions == null) {
-            if (other.bondOptions != null) {
-                return false;
-            }
-        } else if (!bondOptions.equals(other.bondOptions)) {
-            return false;
-        }
-        if (bondType == null) {
-            if (other.bondType != null) {
-                return false;
-            }
-        } else if (!bondType.equals(other.bondType)) {
-            return false;
-        }
-        if (bonded == null) {
-            if (other.bonded != null) {
-                return false;
-            }
-        } else if (!bonded.equals(other.bonded)) {
-            return false;
-        }
-        if (bootProtocol != other.bootProtocol) {
-            return false;
-        }
-        if (!Objects.equals(networkName, other.networkName)) {
-            return false;
-        }
-        if (bridged != other.bridged) {
-            return false;
-        }
-        if (gateway == null) {
-            if (other.gateway != null) {
-                return false;
-            }
-        } else if (!gateway.equals(other.gateway)) {
-            return false;
-        }
-        if (mtu != other.mtu) {
-            return false;
-        }
-        if (subnet == null) {
-            if (other.subnet != null) {
-                return false;
-            }
-        } else if (!subnet.equals(other.subnet)) {
-            return false;
-        }
-        if (vdsId == null) {
-            if (other.vdsId != null) {
-                return false;
-            }
-        } else if (!vdsId.equals(other.vdsId)) {
-            return false;
-        }
-        if (baseInterface == null) {
-            if (other.baseInterface != null) {
-                return false;
-            }
-        } else if (!baseInterface.equals(other.baseInterface)) {
-            return false;
-        }
-        if (vlanId == null) {
-            if (other.vlanId != null) {
-                return false;
-            }
-        } else if (!vlanId.equals(other.vlanId)) {
-            return false;
-        }
-        if (!Objects.equals(qos, other.qos)) {
-            return false;
-        }
-        if (!Objects.equals(labels, other.labels)) {
-            return false;
-        }
-
-        return true;
+        return super.equals(obj)
+                && Objects.equals(address, other.address)
+                && Objects.equals(bondName, other.bondName)
+                && Objects.equals(bondOptions, other.bondOptions)
+                && Objects.equals(bondType, other.bondType)
+                && Objects.equals(bonded, other.bonded)
+                && bootProtocol == other.bootProtocol
+                && Objects.equals(networkName, other.networkName)
+                && bridged == other.bridged
+                && Objects.equals(gateway, other.gateway)
+                && mtu == other.mtu
+                && Objects.equals(subnet, other.subnet)
+                && Objects.equals(vdsId, other.vdsId)
+                && Objects.equals(baseInterface, other.baseInterface)
+                && Objects.equals(vlanId, other.vlanId)
+                && Objects.equals(qos, other.qos)
+                && Objects.equals(labels, other.labels);
     }
 
     /**

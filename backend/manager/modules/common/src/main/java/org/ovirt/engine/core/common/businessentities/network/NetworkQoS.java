@@ -88,19 +88,22 @@ public class NetworkQoS extends QosBase {
         this.outboundBurst = outboundBurst;
     }
 
-    public boolean equalValues(NetworkQoS other) {
-        return Objects.equals(getInboundAverage(), other.getInboundAverage())
-                && Objects.equals(getInboundPeak(), other.getInboundPeak())
-                && Objects.equals(getInboundBurst(), other.getInboundBurst())
-                && Objects.equals(getOutboundAverage(), other.getOutboundAverage())
-                && Objects.equals(getOutboundPeak(), other.getOutboundPeak())
-                && Objects.equals(getOutboundBurst(), other.getOutboundBurst());
-    }
-
     @Override
-    public boolean equals(Object o) {
-        return super.equals(o) &&
-                equalValues((NetworkQoS) o);
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof NetworkQoS)) {
+            return false;
+        }
+        NetworkQoS other = (NetworkQoS) obj;
+        return super.equals(obj)
+                && Objects.equals(inboundAverage, other.inboundAverage)
+                && Objects.equals(inboundPeak, other.inboundPeak)
+                && Objects.equals(inboundBurst, other.inboundBurst)
+                && Objects.equals(outboundAverage, other.outboundAverage)
+                && Objects.equals(outboundPeak, other.outboundPeak)
+                && Objects.equals(outboundBurst, other.outboundBurst);
     }
 
     @Override
@@ -136,15 +139,15 @@ public class NetworkQoS extends QosBase {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((inboundAverage == null) ? 0 : inboundAverage.hashCode());
-        result = prime * result + ((inboundPeak == null) ? 0 : inboundPeak.hashCode());
-        result = prime * result + ((inboundBurst == null) ? 0 : inboundBurst.hashCode());
-        result = prime * result + ((outboundAverage == null) ? 0 : outboundAverage.hashCode());
-        result = prime * result + ((outboundPeak == null) ? 0 : outboundPeak.hashCode());
-        result = prime * result + ((outboundBurst == null) ? 0 : outboundBurst.hashCode());
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                inboundAverage,
+                inboundPeak,
+                inboundBurst,
+                outboundAverage,
+                outboundPeak,
+                outboundBurst
+        );
     }
 
 }

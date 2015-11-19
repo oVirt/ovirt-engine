@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
@@ -109,16 +110,15 @@ public class ExternalSubnet implements IVdcQueryable, Nameable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getCidr() == null) ? 0 : getCidr().hashCode());
-        result = prime * result + ((getExternalNetwork() == null) ? 0 : getExternalNetwork().hashCode());
-        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result = prime * result + ((getIpVersion() == null) ? 0 : getIpVersion().hashCode());
-        result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-        result = prime * result + ((getGateway() == null) ? 0 : getGateway().hashCode());
-        result = prime * result + ((getDnsServers() == null) ? 0 : getDnsServers().hashCode());
-        return result;
+        return Objects.hash(
+                cidr,
+                externalNetwork,
+                id,
+                ipVersion,
+                name,
+                gateway,
+                dnsServers
+        );
     }
 
     @Override
@@ -126,59 +126,17 @@ public class ExternalSubnet implements IVdcQueryable, Nameable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
         if (!(obj instanceof ExternalSubnet)) {
             return false;
         }
         ExternalSubnet other = (ExternalSubnet) obj;
-        if (getCidr() == null) {
-            if (other.getCidr() != null) {
-                return false;
-            }
-        } else if (!getCidr().equals(other.getCidr())) {
-            return false;
-        }
-        if (getExternalNetwork() == null) {
-            if (other.getExternalNetwork() != null) {
-                return false;
-            }
-        } else if (!getExternalNetwork().equals(other.getExternalNetwork())) {
-            return false;
-        }
-        if (getId() == null) {
-            if (other.getId() != null) {
-                return false;
-            }
-        } else if (!getId().equals(other.getId())) {
-            return false;
-        }
-        if (getIpVersion() != other.getIpVersion()) {
-            return false;
-        }
-        if (getName() == null) {
-            if (other.getName() != null) {
-                return false;
-            }
-        } else if (!getName().equals(other.getName())) {
-            return false;
-        }
-        if (getGateway() == null) {
-            if (other.getGateway() != null) {
-                return false;
-            }
-        } else if (!getGateway().equals(other.getGateway())) {
-            return false;
-        }
-        if (getDnsServers() == null) {
-            if (other.getDnsServers() != null) {
-                return false;
-            }
-        } else if (!getDnsServers().equals(other.getDnsServers())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(cidr, other.cidr)
+                && Objects.equals(externalNetwork, other.externalNetwork)
+                && Objects.equals(id, other.id)
+                && ipVersion == other.ipVersion
+                && Objects.equals(name, other.name)
+                && Objects.equals(gateway, other.gateway)
+                && Objects.equals(dnsServers, other.dnsServers);
     }
 
     public enum IpVersion {

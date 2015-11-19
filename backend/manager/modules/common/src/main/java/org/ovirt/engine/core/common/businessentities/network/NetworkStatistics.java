@@ -264,73 +264,40 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result = prime * result + ((getReceiveDropRate() == null) ? 0 : getReceiveDropRate().hashCode());
-        result = prime * result + ((getReceiveRate() == null) ? 0 : getReceiveRate().hashCode());
-        result = prime * result + ((getReceivedBytes() == null) ? 0 : getReceivedBytes().hashCode());
-        result = prime * result + ((getReceivedBytesOffset() == null) ? 0 : getReceivedBytesOffset().hashCode());
-        result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
-        result = prime * result + ((getTransmitDropRate() == null) ? 0 : getTransmitDropRate().hashCode());
-        result = prime * result + ((getTransmitRate() == null) ? 0 : getTransmitRate().hashCode());
-        result = prime * result + ((getTransmittedBytes() == null) ? 0 : getTransmittedBytes().hashCode());
-        result = prime * result + ((getTransmittedBytesOffset() == null) ? 0 : getTransmittedBytesOffset().hashCode());
-        result = prime * result + ((getSampleTime() == null) ? 0 : getSampleTime().hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                receiveDropRate,
+                receiveRate,
+                receivedBytes,
+                receivedBytesOffset,
+                status,
+                transmitDropRate,
+                transmitRate,
+                transmittedBytes,
+                transmittedBytesOffset,
+                sampleTime
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof NetworkStatistics)) {
             return false;
-        if (!(obj instanceof NetworkStatistics))
-            return false;
+        }
         NetworkStatistics other = (NetworkStatistics) obj;
-        if (getId() == null) {
-            if (other.getId() != null)
-                return false;
-        } else if (!getId().equals(other.getId()))
-            return false;
-        if (getReceiveDropRate() == null) {
-            if (other.getReceiveDropRate() != null)
-                return false;
-        } else if (!getReceiveDropRate().equals(other.getReceiveDropRate()))
-            return false;
-        if (getReceiveRate() == null) {
-            if (other.getReceiveRate() != null)
-                return false;
-        } else if (!getReceiveRate().equals(other.getReceiveRate()))
-            return false;
-        if (!Objects.equals(getReceivedBytes(), other.getReceivedBytes())) {
-            return false;
-        }
-        if (!Objects.equals(getReceivedBytesOffset(), other.getReceivedBytesOffset())) {
-            return false;
-        }
-        if (getStatus() != other.getStatus())
-            return false;
-        if (getTransmitDropRate() == null) {
-            if (other.getTransmitDropRate() != null)
-                return false;
-        } else if (!getTransmitDropRate().equals(other.getTransmitDropRate()))
-            return false;
-        if (getTransmitRate() == null) {
-            if (other.getTransmitRate() != null)
-                return false;
-        } else if (!getTransmitRate().equals(other.getTransmitRate()))
-            return false;
-        if (!Objects.equals(getTransmittedBytes(), other.getTransmittedBytes())) {
-            return false;
-        }
-        if (!Objects.equals(getTransmittedBytesOffset(), other.getTransmittedBytesOffset())) {
-            return false;
-        }
-        if (!Objects.equals(getSampleTime(), other.getSampleTime())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(id, other.id)
+                && Objects.equals(receiveDropRate, other.receiveDropRate)
+                && Objects.equals(receiveRate, other.receiveRate)
+                && Objects.equals(receivedBytes, other.receivedBytes)
+                && Objects.equals(receivedBytesOffset, other.receivedBytesOffset)
+                && Objects.equals(status, other.status)
+                && Objects.equals(transmitDropRate, other.transmitDropRate)
+                && Objects.equals(transmitRate, other.transmitRate)
+                && Objects.equals(transmittedBytes, other.transmittedBytes)
+                && Objects.equals(transmittedBytesOffset, other.transmittedBytesOffset)
+                && Objects.equals(sampleTime, other.sampleTime);
     }
 }

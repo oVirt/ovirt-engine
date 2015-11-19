@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -46,26 +48,22 @@ public class VmNetworkStatistics extends NetworkStatistics implements Comparable
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((getVmId() == null) ? 0 : getVmId().hashCode());
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                vmId
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
+        }
+        if (!(obj instanceof VmNetworkStatistics)) {
             return false;
-        if (!(obj instanceof VmNetworkStatistics))
-            return false;
+        }
         VmNetworkStatistics other = (VmNetworkStatistics) obj;
-        if (getVmId() == null) {
-            if (other.getVmId() != null)
-                return false;
-        } else if (!getVmId().equals(other.getVmId()))
-            return false;
-        return true;
+        return super.equals(obj)
+                && Objects.equals(vmId, other.vmId);
     }
 }
