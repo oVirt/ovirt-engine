@@ -443,87 +443,54 @@ public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithSta
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((clusterId == null) ? 0 : clusterId.hashCode());
-        result = prime * result + ((volumeType == null) ? 0 : volumeType.hashCode());
-        result = prime * result + ((transportTypes == null) ? 0 : transportTypes.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
-        result = prime * result + ((replicaCount == null) ? 0 : replicaCount.hashCode());
-        result = prime * result + ((stripeCount == null) ? 0 : stripeCount.hashCode());
-        result = prime * result + ((disperseCount == null) ? 0 : disperseCount.hashCode());
-        result = prime * result + ((redundancyCount == null) ? 0 : redundancyCount.hashCode());
-        result = prime * result + ((options == null) ? 0 : options.hashCode());
-        result = prime * result + ((accessProtocols == null) ? 0 : accessProtocols.hashCode());
-        result = prime * result + ((bricks == null) ? 0 : bricks.hashCode());
-        result = prime * result + ((asyncTask == null) ? 0 : asyncTask.hashCode());
-        result = prime * result + ((advancedDetails == null) ? 0 : advancedDetails.hashCode());
-        result = prime * result + ((snapshotsCount == null) ? 0 : snapshotsCount.hashCode());
-        result = prime * result + ((snapMaxLimit == null) ? 0 : snapMaxLimit.hashCode());
-        result = prime * result + ((snapshotScheduled == null) ? 0 : snapshotScheduled.hashCode());
-        return result;
+        return Objects.hash(
+                name,
+                clusterId,
+                volumeType,
+                status,
+                replicaCount,
+                stripeCount,
+                disperseCount,
+                redundancyCount,
+                options,
+                accessProtocols,
+                transportTypes,
+                bricks,
+                asyncTask,
+                advancedDetails,
+                snapshotsCount,
+                snapMaxLimit,
+                snapshotScheduled
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (!(obj instanceof GlusterVolumeEntity)) {
             return false;
         }
 
-        GlusterVolumeEntity volume = (GlusterVolumeEntity) obj;
-
-        if (!(clusterId.equals(volume.getClusterId()))) {
-            return false;
-        }
-
-        if (!(name.equals(volume.getName())
-                && volumeType == volume.getVolumeType()
-                && status == volume.getStatus()
-                && Objects.equals(replicaCount, volume.getReplicaCount())
-                && Objects.equals(stripeCount, volume.getStripeCount())
-                && Objects.equals(disperseCount, volume.getDisperseCount())
-                && Objects.equals(redundancyCount, volume.getRedundancyCount()))) {
-            return false;
-        }
-
-        if (!ListUtils.listsEqual(getOptions(), volume.getOptions())) {
-            return false;
-        }
-
-        if (!ListUtils.listsEqual(accessProtocols, volume.getAccessProtocols())) {
-            return false;
-        }
-
-        if (!ListUtils.listsEqual(transportTypes, volume.getTransportTypes())) {
-            return false;
-        }
-
-        if (!ListUtils.listsEqual(bricks, volume.getBricks())) {
-            return false;
-        }
-
-        if (!Objects.equals(getAsyncTask(), volume.getAsyncTask())) {
-            return false;
-        }
-
-        if (!Objects.equals(getAdvancedDetails(), volume.getAdvancedDetails())) {
-            return false;
-        }
-
-        if (!Objects.equals(snapshotsCount, volume.getSnapshotsCount())) {
-            return false;
-        }
-
-        if (!Objects.equals(snapMaxLimit, volume.getSnapMaxLimit())) {
-            return false;
-        }
-
-        if (!Objects.equals(snapshotScheduled, volume.getSnapshotScheduled())) {
-            return false;
-        }
-
-        return true;
+        GlusterVolumeEntity other = (GlusterVolumeEntity) obj;
+        return Objects.equals(name, other.getName())
+                && Objects.equals(clusterId, other.clusterId)
+                && volumeType == other.volumeType
+                && status == other.status
+                && Objects.equals(replicaCount, other.replicaCount)
+                && Objects.equals(stripeCount, other.stripeCount)
+                && Objects.equals(disperseCount, other.disperseCount)
+                && Objects.equals(redundancyCount, other.redundancyCount)
+                && ListUtils.listsEqual(getOptions(), other.getOptions())
+                && ListUtils.listsEqual(accessProtocols, other.accessProtocols)
+                && ListUtils.listsEqual(transportTypes, other.transportTypes)
+                && ListUtils.listsEqual(bricks, other.bricks)
+                && Objects.equals(asyncTask, other.asyncTask)
+                && Objects.equals(advancedDetails, other.advancedDetails)
+                && Objects.equals(snapshotsCount, other.snapshotsCount)
+                && Objects.equals(snapMaxLimit, other.snapMaxLimit)
+                && Objects.equals(snapshotScheduled, other.snapshotScheduled);
     }
 
     public GlusterBrickEntity getBrickWithId(Guid brickId) {

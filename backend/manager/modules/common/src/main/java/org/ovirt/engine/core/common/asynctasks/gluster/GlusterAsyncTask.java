@@ -83,37 +83,33 @@ public class GlusterAsyncTask implements Serializable{
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((message == null) ? 0 : message.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
-        result = prime * result + ((taskId == null) ? 0 : taskId.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        result = prime * result + ((stepId == null) ? 0 : stepId.hashCode());
-        result = prime * result + ((jobId == null) ? 0 : jobId.hashCode());
-        result = prime * result + ((jobStatus == null) ? 0 : jobStatus.hashCode());
-        return result;
+        return Objects.hash(
+                message,
+                status,
+                taskId,
+                type,
+                stepId,
+                jobId,
+                jobStatus
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj){
+        if (this == obj) {
             return true;
         }
-        if (obj == null){
-            return false;
-        }
-        if (getClass() != obj.getClass()){
+        if (!(obj instanceof GlusterAsyncTask)) {
             return false;
         }
         GlusterAsyncTask other = (GlusterAsyncTask) obj;
-        return (Objects.equals(message, other.message)
+        return Objects.equals(message, other.message)
                 && Objects.equals(taskId, other.taskId)
                 && type == other.type
                 && status == other.status
                 && Objects.equals(stepId, other.stepId)
                 && Objects.equals(jobId, other.jobId)
-                && jobStatus == other.jobStatus);
+                && jobStatus == other.jobStatus;
     }
 
     @Override

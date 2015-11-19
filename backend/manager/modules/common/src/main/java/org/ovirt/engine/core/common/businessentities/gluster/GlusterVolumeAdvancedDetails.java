@@ -129,47 +129,28 @@ public class GlusterVolumeAdvancedDetails implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((capacityInfo == null) ? 0 : capacityInfo.hashCode());
-        result = prime * result + ((serviceInfo == null) ? 0 : serviceInfo.hashCode());
-        result = prime * result + ((brickDetails == null) ? 0 : brickDetails.hashCode());
-        result = prime * result + ((volumeId == null) ? 0 : volumeId.hashCode());
-        result = prime * result + ((updatedAt == null) ? 0 : updatedAt.hashCode());
-        return result;
+        return Objects.hash(
+                capacityInfo,
+                serviceInfo,
+                brickDetails,
+                volumeId,
+                updatedAt
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (!(obj instanceof GlusterVolumeAdvancedDetails)) {
             return false;
         }
-
-        if (this == obj)
-            return true;
-
-        GlusterVolumeAdvancedDetails otherVolumeAdvancedDetails = (GlusterVolumeAdvancedDetails) obj;
-
-        if (!Objects.equals(capacityInfo, otherVolumeAdvancedDetails.getCapacityInfo())) {
-            return false;
-        }
-
-        if (!Objects.equals(brickDetails, otherVolumeAdvancedDetails.getBrickDetails())) {
-            return false;
-        }
-
-        if (!Objects.equals(serviceInfo, otherVolumeAdvancedDetails.getServiceInfo())) {
-            return false;
-        }
-
-        if (!Objects.equals(updatedAt, otherVolumeAdvancedDetails.getUpdatedAt())) {
-            return false;
-        }
-
-        if (!Objects.equals(volumeId, otherVolumeAdvancedDetails.getVolumeId())) {
-            return false;
-        }
-        return true;
+        GlusterVolumeAdvancedDetails other = (GlusterVolumeAdvancedDetails) obj;
+        return Objects.equals(capacityInfo, other.capacityInfo)
+                && Objects.equals(brickDetails, other.brickDetails)
+                && Objects.equals(serviceInfo, other.serviceInfo)
+                && Objects.equals(updatedAt, other.updatedAt)
+                && Objects.equals(volumeId, other.volumeId);
     }
-
 }

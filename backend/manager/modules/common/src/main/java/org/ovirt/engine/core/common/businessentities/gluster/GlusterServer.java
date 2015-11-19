@@ -54,23 +54,25 @@ public class GlusterServer implements BusinessEntity<Guid> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + getId().hashCode();
-        result = prime * result + ((getGlusterServerUuid() == null) ? 0 : getGlusterServerUuid().hashCode());
-        result = prime * result + ((getKnownAddresses() == null) ? 0 : getKnownAddresses().hashCode());
-        return result;
+        return Objects.hash(
+                serverId,
+                glusterServerUuid,
+                knownAddresses
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (!(obj instanceof GlusterServer)) {
             return false;
         }
 
         GlusterServer entity = (GlusterServer) obj;
-        return Objects.equals(getId(), entity.getId())
-                && Objects.equals(getGlusterServerUuid(), entity.getGlusterServerUuid())
-                && Objects.equals(getKnownAddresses(), entity.getKnownAddresses());
+        return Objects.equals(serverId, entity.serverId)
+                && Objects.equals(glusterServerUuid, entity.glusterServerUuid)
+                && Objects.equals(knownAddresses, entity.knownAddresses);
     }
 }

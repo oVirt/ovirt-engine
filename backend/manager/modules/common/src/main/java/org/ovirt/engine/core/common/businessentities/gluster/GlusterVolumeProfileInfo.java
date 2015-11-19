@@ -46,29 +46,24 @@ public class GlusterVolumeProfileInfo implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if(!(obj instanceof GlusterVolumeProfileInfo)) {
             return false;
         }
-        GlusterVolumeProfileInfo profileInfo = (GlusterVolumeProfileInfo) obj;
-        if(!Objects.equals(getVolumeId(), profileInfo.getVolumeId())){
-            return false;
-        }
-        if(!Objects.equals(getBrickProfileDetails(), profileInfo.getBrickProfileDetails())) {
-            return false;
-        }
-        if(!Objects.equals(getNfsProfileDetails(), profileInfo.getNfsProfileDetails())) {
-            return false;
-        }
-        return true;
+        GlusterVolumeProfileInfo other = (GlusterVolumeProfileInfo) obj;
+        return Objects.equals(volumeId, other.volumeId)
+                && Objects.equals(brickProfileDetails, other.brickProfileDetails)
+                && Objects.equals(nfsProfileDetails, other.nfsProfileDetails);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getVolumeId() == null) ? 0 : getVolumeId().hashCode());
-        result = prime * result + ((getBrickProfileDetails() == null) ? 0 : getBrickProfileDetails().hashCode());
-        result = prime * result + ((getNfsProfileDetails() == null) ? 0 : getNfsProfileDetails().hashCode());
-        return result;
+        return Objects.hash(
+                volumeId,
+                brickProfileDetails,
+                nfsProfileDetails
+        );
     }
 }

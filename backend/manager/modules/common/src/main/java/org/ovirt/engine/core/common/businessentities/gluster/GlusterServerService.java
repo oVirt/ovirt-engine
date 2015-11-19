@@ -126,41 +126,40 @@ public class GlusterServerService implements IVdcQueryable, BusinessEntity<Guid>
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (!(obj instanceof GlusterServerService)) {
             return false;
         }
 
         GlusterServerService other = (GlusterServerService) obj;
-        if (!(Objects.equals(id, other.getId())
-                && Objects.equals(serverId, other.getServerId())
-                && Objects.equals(serviceId, other.getServiceId())
-                && status == other.getStatus()
-                && Objects.equals(message, other.getMessage())
-                && Objects.equals(pid, other.getPid())
-                && serviceType == other.getServiceType()
-                && Objects.equals(hostName, other.getHostName())
-                && Objects.equals(port, other.getPort())
-                && Objects.equals(rdmaPort, other.getRdmaPort()))) {
-            return false;
-        }
-        return true;
+        return Objects.equals(id, other.id)
+                && Objects.equals(serverId, other.serverId)
+                && Objects.equals(serviceId, other.serviceId)
+                && status == other.status
+                && Objects.equals(message, other.message)
+                && Objects.equals(pid, other.pid)
+                && serviceType == other.serviceType
+                && Objects.equals(hostName, other.hostName)
+                && Objects.equals(port, other.port)
+                && Objects.equals(rdmaPort, other.rdmaPort);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((serverId == null) ? 0 : serverId.hashCode());
-        result = prime * result + ((serviceId == null) ? 0 : serviceId.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
-        result = prime * result + ((message == null) ? 0 : message.hashCode());
-        result = prime * result + ((pid == null) ? 0 : pid.hashCode());
-        result = prime * result + ((serviceType == null) ? 0 : serviceType.hashCode());
-        result = prime * result + ((hostName == null) ? 0 : hostName.hashCode());
-        result = prime * result + ((port == null) ? 0 : port.hashCode());
-        result = prime * result + ((rdmaPort == null) ? 0 : rdmaPort.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                serverId,
+                serviceId,
+                status,
+                message,
+                pid,
+                serviceType,
+                hostName,
+                port,
+                rdmaPort
+        );
     }
 
     @Override

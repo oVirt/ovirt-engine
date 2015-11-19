@@ -125,81 +125,43 @@ public class GlusterVolumeSnapshotSchedule implements IVdcQueryable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-
-        result = prime * result + (clusterId == null ? 0 : clusterId.hashCode());
-        result = prime * result + (volumeId == null ? 0 : volumeId.hashCode());
-        result = prime * result + (jobId == null ? 0 : jobId.hashCode());
-        result = prime * result + (snapshotNamePrefix == null ? 0 : snapshotNamePrefix.hashCode());
-        result = prime * result + (snapshotDescription == null ? 0 : snapshotDescription.hashCode());
-        result = prime * result + (recurrence == null ? 0 : recurrence.hashCode());
-        result = prime * result + (timeZone == null ? 0 : timeZone.hashCode());
-        result = prime * result + (interval == null ? 0 : interval.hashCode());
-        result = prime * result + (startDate == null ? 0 : startDate.hashCode());
-        result = prime * result + (executionTime == null ? 0 : executionTime.hashCode());
-        result = prime * result + (days == null ? 0 : days.hashCode());
-        result = prime * result + (endByDate == null ? 0 : endByDate.hashCode());
-
-        return result;
+        return Objects.hash(
+                clusterId,
+                volumeId,
+                jobId,
+                snapshotNamePrefix,
+                snapshotDescription,
+                recurrence,
+                timeZone,
+                interval,
+                startDate,
+                executionTime,
+                days,
+                endByDate
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof GlusterVolumeSnapshotSchedule)) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof GlusterVolumeSnapshotSchedule)) {
             return false;
         }
 
         GlusterVolumeSnapshotSchedule schedule = (GlusterVolumeSnapshotSchedule) obj;
-
-        if (!(Objects.equals(clusterId, schedule.getClusterId()))) {
-            return false;
-        }
-
-        if (!(Objects.equals(volumeId, schedule.getVolumeId()))) {
-            return false;
-        }
-
-        if (!(Objects.equals(jobId, schedule.getJobId()))) {
-            return false;
-        }
-
-        if (!Objects.equals(snapshotNamePrefix, schedule.getSnapshotNamePrefix())) {
-            return false;
-        }
-
-        if (!Objects.equals(snapshotDescription, schedule.getSnapshotDescription())) {
-            return false;
-        }
-
-        if (!(Objects.equals(recurrence, schedule.getRecurrence()))) {
-            return false;
-        }
-
-        if (!Objects.equals(timeZone, schedule.getTimeZone())) {
-            return false;
-        }
-
-        if (!(Objects.equals(interval, schedule.getInterval()))) {
-            return false;
-        }
-
-        if (!(Objects.equals(startDate, schedule.getStartDate()))) {
-            return false;
-        }
-
-        if (!(Objects.equals(executionTime, schedule.getExecutionTime()))) {
-            return false;
-        }
-
-        if (!(Objects.equals(days, schedule.getDays()))) {
-            return false;
-        }
-
-        if (!(Objects.equals(endByDate, schedule.getEndByDate()))) {
-            return false;
-        }
-
-        return true;
+        return Objects.equals(clusterId, schedule.clusterId)
+                && Objects.equals(volumeId, schedule.volumeId)
+                && Objects.equals(jobId, schedule.jobId)
+                && Objects.equals(snapshotNamePrefix, schedule.snapshotNamePrefix)
+                && Objects.equals(snapshotDescription, schedule.snapshotDescription)
+                && Objects.equals(recurrence, schedule.recurrence)
+                && Objects.equals(timeZone, schedule.timeZone)
+                && Objects.equals(interval, schedule.interval)
+                && Objects.equals(startDate, schedule.startDate)
+                && Objects.equals(executionTime, schedule.executionTime)
+                && Objects.equals(days, schedule.days)
+                && Objects.equals(endByDate, schedule.endByDate);
     }
 }

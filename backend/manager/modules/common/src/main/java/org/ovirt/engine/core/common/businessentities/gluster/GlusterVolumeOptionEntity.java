@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
+import java.util.Objects;
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -66,13 +67,12 @@ public class GlusterVolumeOptionEntity implements IVdcQueryable, BusinessEntity<
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + getId().hashCode();
-        result = prime * result + ((volumeId == null) ? 0 : volumeId.hashCode());
-        result = prime * result + ((key == null) ? 0 : key.hashCode());
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                volumeId,
+                key,
+                value
+        );
     }
 
     @Override
@@ -82,15 +82,18 @@ public class GlusterVolumeOptionEntity implements IVdcQueryable, BusinessEntity<
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (!(obj instanceof GlusterVolumeOptionEntity)) {
             return false;
         }
 
-        GlusterVolumeOptionEntity option = (GlusterVolumeOptionEntity) obj;
-        return (getId().equals(option.getId())
-                && (volumeId != null && volumeId.equals(option.getVolumeId()))
-                && key.equals(option.getKey())
-                && value.equals(option.getValue()));
+        GlusterVolumeOptionEntity other = (GlusterVolumeOptionEntity) obj;
+        return Objects.equals(id, other.id)
+                && Objects.equals(volumeId, other.volumeId)
+                && Objects.equals(key, other.key)
+                && Objects.equals(value, other.value);
     }
 
     /**

@@ -28,26 +28,22 @@ public class GlusterSnapshotConfigInfo implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (!(obj instanceof GlusterSnapshotConfigInfo)) {
             return false;
         }
-        GlusterSnapshotConfigInfo configInfo = (GlusterSnapshotConfigInfo) obj;
-        if (!Objects.equals(getClusterConfigOptions(), configInfo.getClusterConfigOptions())) {
-            return false;
-        }
-        if (!Objects.equals(getVolumeConfigOptions(), configInfo.getVolumeConfigOptions())) {
-            return false;
-        }
-        return true;
+        GlusterSnapshotConfigInfo other = (GlusterSnapshotConfigInfo) obj;
+        return Objects.equals(clusterConfigOptions, other.clusterConfigOptions)
+                && Objects.equals(volumeConfigOptions, other.volumeConfigOptions);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getClusterConfigOptions() == null) ? 0 : getClusterConfigOptions().hashCode());
-        result =
-                prime * result + ((getVolumeConfigOptions() == null) ? 0 : getVolumeConfigOptions().hashCode());
-        return result;
+        return Objects.hash(
+                clusterConfigOptions,
+                volumeConfigOptions
+        );
     }
 }

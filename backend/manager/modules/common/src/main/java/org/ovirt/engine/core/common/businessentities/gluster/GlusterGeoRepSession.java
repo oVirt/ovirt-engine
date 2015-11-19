@@ -122,36 +122,36 @@ public class GlusterGeoRepSession implements IVdcQueryable, BusinessEntityWithSt
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((masterVolumeId == null) ? 0 : masterVolumeId.hashCode());
-        result = prime * result + ((sessionId == null) ? 0 : sessionId.hashCode());
-        result = prime * result + ((sessionKey == null) ? 0 : sessionKey.hashCode());
-        result = prime * result + ((slaveHostName == null) ? 0 : slaveHostName.hashCode());
-        result = prime * result + ((slaveNodeUuid == null) ? 0 : slaveNodeUuid.hashCode());
-        result = prime * result + ((slaveVolumeId == null) ? 0 : slaveVolumeId.hashCode());
-        result = prime * result + ((slaveVolumeName == null) ? 0 : slaveVolumeName.hashCode());
-        result = prime * result + ((userName == null) ? 0 : userName.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
-        return result;
+        return Objects.hash(
+                sessionId,
+                masterVolumeId,
+                sessionKey,
+                slaveHostName,
+                slaveNodeUuid,
+                slaveVolumeId,
+                slaveVolumeName,
+                userName,
+                status
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if ((obj != null) && (obj instanceof GlusterGeoRepSession)) {
-            GlusterGeoRepSession session = (GlusterGeoRepSession) obj;
-            if (Objects.equals(getId(), session.getId())
-                    && (Objects.equals(getMasterVolumeId(), session.getMasterVolumeId()))
-                    && (Objects.equals(getSessionKey(), session.getSessionKey()))
-                    && (Objects.equals(getSlaveHostName(), session.getSlaveHostName()))
-                    && (Objects.equals(getSlaveNodeUuid(), session.getSlaveNodeUuid()))
-                    && (Objects.equals(getSlaveVolumeId(), session.getSlaveVolumeId()))
-                    && (Objects.equals(getSlaveVolumeName(), session.getSlaveVolumeName()))
-                    && (Objects.equals(getUserName(), session.getUserName()))
-                    && (Objects.equals(getStatus(), session.getStatus()))) {
-                return true;
-            }
+        if (this == obj) {
+            return true;
         }
-        return false;
+        if (!(obj instanceof GlusterGeoRepSession)) {
+            return false;
+        }
+        GlusterGeoRepSession other = (GlusterGeoRepSession) obj;
+        return Objects.equals(sessionId, sessionId)
+                && Objects.equals(masterVolumeId, other.masterVolumeId)
+                && Objects.equals(sessionKey, other.sessionKey)
+                && Objects.equals(slaveHostName, other.slaveHostName)
+                && Objects.equals(slaveNodeUuid, other.slaveNodeUuid)
+                && Objects.equals(slaveVolumeId, other.slaveVolumeId)
+                && Objects.equals(slaveVolumeName, other.slaveVolumeName)
+                && Objects.equals(userName, other.userName)
+                && Objects.equals(status, other.status);
     }
 }

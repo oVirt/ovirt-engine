@@ -59,38 +59,26 @@ public class GlusterVolumeSizeInfo implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((volumeId == null) ? 0 : volumeId.hashCode());
-        result = prime * result + ((totalSize == null) ? 0 : totalSize.hashCode());
-        result = prime * result + ((freeSize == null) ? 0 : freeSize.hashCode());
-        result = prime * result + ((usedSize == null) ? 0 : usedSize.hashCode());
-        return result;
+        return Objects.hash(
+                volumeId,
+                totalSize,
+                freeSize,
+                usedSize
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (!(obj instanceof GlusterVolumeSizeInfo)) {
             return false;
         }
-        GlusterVolumeSizeInfo sizeInfo = (GlusterVolumeSizeInfo) obj;
-
-        if (!Objects.equals(volumeId, sizeInfo.getVolumeId())) {
-            return false;
-        }
-
-        if (!Objects.equals(totalSize, sizeInfo.getTotalSize())) {
-            return false;
-        }
-
-        if (!Objects.equals(freeSize, sizeInfo.getFreeSize())) {
-            return false;
-        }
-
-        if (!Objects.equals(usedSize, sizeInfo.getUsedSize())) {
-            return false;
-        }
-
-        return true;
+        GlusterVolumeSizeInfo other = (GlusterVolumeSizeInfo) obj;
+        return Objects.equals(volumeId, other.volumeId)
+                && Objects.equals(totalSize, other.totalSize)
+                && Objects.equals(freeSize, other.freeSize)
+                && Objects.equals(usedSize, other.usedSize);
     }
 }

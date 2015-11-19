@@ -166,51 +166,52 @@ public class GlusterGeoRepSessionDetails implements Serializable{
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof GlusterGeoRepSessionDetails)) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof GlusterGeoRepSessionDetails)) {
             return false;
         }
-
         GlusterGeoRepSessionDetails geoRep = (GlusterGeoRepSessionDetails) obj;
-        return Objects.equals(getSessionId(), geoRep.getSessionId()) &&
-                Objects.equals(getMasterBrickId(), geoRep.getMasterBrickId()) &&
-                Objects.equals(getSlaveNodeUuid(), geoRep.getSlaveNodeUuid()) &&
-                Objects.equals(getSlaveHostName(), geoRep.getSlaveHostName()) &&
-                Objects.equals(getStatus(), geoRep.getStatus()) &&
-                Objects.equals(getCheckPointStatus(), geoRep.getCheckPointStatus()) &&
-                Objects.equals(getCrawlStatus(), geoRep.getCrawlStatus()) &&
-                Objects.equals(getDataOpsPending(), geoRep.getDataOpsPending()) &&
-                Objects.equals(getMetaOpsPending(), geoRep.getMetaOpsPending()) &&
-                Objects.equals(getEntryOpsPending(), geoRep.getEntryOpsPending()) &&
-                Objects.equals(getCheckPointCompletedAt(), geoRep.getCheckPointCompletedAt()) &&
-                Objects.equals(getCheckPointTime(), geoRep.getCheckPointTime()) &&
-                Objects.equals(getLastSyncedAt(), geoRep.getLastSyncedAt()) &&
-                Objects.equals(getUpdatedAt(), geoRep.getUpdatedAt()) &&
-                Objects.equals(getFailures(), geoRep.getFailures()) &&
-                Objects.equals(getMasterBrickHostName(), geoRep.getMasterBrickHostName()) &&
-                isCheckpointCompleted() == geoRep.isCheckpointCompleted();
+        return Objects.equals(sessionId, geoRep.sessionId) &&
+                Objects.equals(masterBrickId, geoRep.masterBrickId) &&
+                Objects.equals(slaveNodeUuid, geoRep.slaveNodeUuid) &&
+                Objects.equals(slaveHostName, geoRep.slaveHostName) &&
+                Objects.equals(status, geoRep.status) &&
+                Objects.equals(checkPointStatus, geoRep.checkPointStatus) &&
+                Objects.equals(crawlStatus, geoRep.crawlStatus) &&
+                Objects.equals(dataOpsPending, geoRep.dataOpsPending) &&
+                Objects.equals(metaOpsPending, geoRep.metaOpsPending) &&
+                Objects.equals(entryOpsPending, geoRep.entryOpsPending) &&
+                Objects.equals(checkPointCompletedAt, geoRep.checkPointCompletedAt) &&
+                Objects.equals(checkPointTime, geoRep.checkPointTime) &&
+                Objects.equals(lastSyncedAt, geoRep.lastSyncedAt) &&
+                Objects.equals(updatedAt, geoRep.updatedAt) &&
+                Objects.equals(failures, geoRep.failures) &&
+                Objects.equals(masterBrickHostName, geoRep.masterBrickHostName) &&
+                checkpointCompleted == geoRep.checkpointCompleted;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((sessionId == null) ? 0 : sessionId.hashCode());
-        result = prime * result + ((masterBrickId == null) ? 0 : masterBrickId.hashCode());
-        result = prime * result + ((slaveNodeUuid == null) ? 0 : slaveNodeUuid.hashCode());
-        result = prime * result + ((slaveHostName == null) ? 0 : slaveHostName.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
-        result = prime * result + ((checkPointStatus == null) ? 0 : checkPointStatus.hashCode());
-        result = prime * result + ((crawlStatus == null) ? 0 : crawlStatus.hashCode());
-        result = prime * result + ((dataOpsPending == null) ? 0 : dataOpsPending.hashCode());
-        result = prime * result + ((metaOpsPending == null) ? 0 : metaOpsPending.hashCode());
-        result = prime * result + ((entryOpsPending == null) ? 0 : entryOpsPending.hashCode());
-        result = prime * result + ((checkPointCompletedAt == null) ? 0 : checkPointCompletedAt.hashCode());
-        result = prime * result + ((checkPointTime == null) ? 0 : checkPointTime.hashCode());
-        result = prime * result + (checkpointCompleted ? 1 : 0);
-        result = prime * result + ((lastSyncedAt == null) ? 0 : lastSyncedAt.hashCode());
-        result = prime * result + ((failures == null) ? 0 : failures.hashCode());
-        result = prime * result + ((updatedAt == null) ? 0 : updatedAt.hashCode());
-        result = prime * result + ((masterBrickHostName == null) ? 0 : masterBrickHostName.hashCode());
-        return result;
+        return Objects.hash(
+                sessionId,
+                masterBrickId,
+                slaveNodeUuid,
+                slaveHostName,
+                status,
+                checkPointStatus,
+                crawlStatus,
+                dataOpsPending,
+                metaOpsPending,
+                entryOpsPending,
+                checkPointCompletedAt,
+                checkPointTime,
+                checkpointCompleted,
+                lastSyncedAt,
+                failures,
+                updatedAt,
+                masterBrickHostName
+        );
     }
 }

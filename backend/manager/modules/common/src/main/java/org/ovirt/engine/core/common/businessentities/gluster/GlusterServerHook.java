@@ -87,28 +87,29 @@ public class GlusterServerHook implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + hookId.hashCode();
-        result = prime * result + ((serverId == null) ? 0 : serverId.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
-        result = prime * result + ((contentType == null) ? 0 : contentType.hashCode());
-        result = prime * result + ((checksum == null) ? 0 : checksum.hashCode());
-        return result;
+        return Objects.hash(
+                hookId,
+                serverId,
+                status,
+                contentType,
+                checksum
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (!(obj instanceof GlusterServerHook)) {
             return false;
         }
         GlusterServerHook serverHook = (GlusterServerHook) obj;
-
-        return Objects.equals(getHookId(), serverHook.getHookId())
-                && Objects.equals(getServerId(), serverHook.getServerId())
-                && Objects.equals(getStatus(), serverHook.getStatus())
-                && Objects.equals(getContentType(), serverHook.getContentType())
-                && Objects.equals(getChecksum(), serverHook.getChecksum());
+        return Objects.equals(hookId, serverHook.hookId)
+                && Objects.equals(serverId, serverHook.serverId)
+                && Objects.equals(status, serverHook.status)
+                && Objects.equals(contentType, serverHook.contentType)
+                && Objects.equals(checksum, serverHook.checksum);
     }
 
 }

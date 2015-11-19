@@ -47,24 +47,26 @@ public class GlusterServerInfo {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getUuid() == null) ? 0 : getUuid().hashCode());
-        result = prime * result + ((getHostnameOrIp() == null) ? 0 : getHostnameOrIp().hashCode());
-        result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
-        return result;
+        return Objects.hash(
+                uuid,
+                hostnameOrIp,
+                status
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (!(obj instanceof GlusterServerInfo)) {
             return false;
         }
 
         GlusterServerInfo host = (GlusterServerInfo) obj;
-        return (Objects.equals(getUuid(), host.getUuid())
-                && (Objects.equals(getHostnameOrIp(), host.getHostnameOrIp()))
-                && (Objects.equals(getStatus(), host.getStatus())));
+        return Objects.equals(uuid, host.uuid)
+                && Objects.equals(hostnameOrIp, host.hostnameOrIp)
+                && Objects.equals(status, host.status);
     }
 
     @Override

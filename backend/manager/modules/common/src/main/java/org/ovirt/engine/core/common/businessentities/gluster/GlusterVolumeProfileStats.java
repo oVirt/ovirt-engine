@@ -31,26 +31,23 @@ public class GlusterVolumeProfileStats implements Serializable, Nameable {
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if(!(obj instanceof GlusterVolumeProfileStats)) {
             return false;
         }
-        GlusterVolumeProfileStats profileDetails = (GlusterVolumeProfileStats) obj;
-        if(!Objects.equals(getName(), profileDetails.getName())) {
-            return false;
-        }
-        if(!Objects.equals(getProfileStats(), profileDetails.getProfileStats())) {
-            return false;
-        }
-        return true;
+        GlusterVolumeProfileStats other = (GlusterVolumeProfileStats) obj;
+        return Objects.equals(name, other.name)
+                && Objects.equals(profileStats, other.profileStats);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-        result = prime * result + ((getProfileStats() == null) ? 0 : getProfileStats().hashCode());
-        return result;
+        return Objects.hash(
+                name,
+                profileStats
+        );
     }
 
 }

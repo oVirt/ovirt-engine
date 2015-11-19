@@ -50,22 +50,24 @@ public class GlusterVolumeOptionInfo implements Serializable, Comparable<Gluster
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((key == null) ? 0 : key.hashCode());
-        result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
-        return result;
+        return Objects.hash(
+                key,
+                defaultValue
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (!(obj instanceof GlusterVolumeOptionInfo)) {
             return false;
         }
 
-        GlusterVolumeOptionInfo option = (GlusterVolumeOptionInfo) obj;
-        return Objects.equals(option.getKey(), key)
-                && Objects.equals(option.getDefaultValue(), defaultValue);
+        GlusterVolumeOptionInfo other = (GlusterVolumeOptionInfo) obj;
+        return Objects.equals(other.key, key)
+                && Objects.equals(other.defaultValue, defaultValue);
     }
 
     @Override

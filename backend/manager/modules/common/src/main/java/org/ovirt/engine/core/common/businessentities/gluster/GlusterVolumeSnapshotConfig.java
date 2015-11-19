@@ -62,40 +62,28 @@ public class GlusterVolumeSnapshotConfig implements IVdcQueryable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (clusterId == null ? 0 : clusterId.hashCode());
-        result = prime * result + (volumeId == null ? 0 : volumeId.hashCode());
-        result = prime * result + (paramName == null ? 0 : paramName.hashCode());
-        result = prime * result + (paramValue == null ? 0 : paramValue.hashCode());
-        return result;
+        return Objects.hash(
+                clusterId,
+                volumeId,
+                paramName,
+                paramValue
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof GlusterVolumeSnapshotConfig)) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof GlusterVolumeSnapshotConfig)) {
             return false;
         }
 
-        GlusterVolumeSnapshotConfig config = (GlusterVolumeSnapshotConfig) obj;
-
-        if (!(Objects.equals(clusterId, config.getClusterId()))) {
-            return false;
-        }
-
-        if (!(Objects.equals(volumeId, config.getVolumeId()))) {
-            return false;
-        }
-
-        if (!(Objects.equals(paramName, config.getParamName()))) {
-            return false;
-        }
-
-        if (!(Objects.equals(paramValue, config.getParamValue()))) {
-            return false;
-        }
-
-        return true;
+        GlusterVolumeSnapshotConfig other = (GlusterVolumeSnapshotConfig) obj;
+        return Objects.equals(clusterId, other.clusterId)
+                && Objects.equals(volumeId, other.volumeId)
+                && Objects.equals(paramName, other.paramName)
+                && Objects.equals(paramValue, other.paramValue);
     }
 
     @Override

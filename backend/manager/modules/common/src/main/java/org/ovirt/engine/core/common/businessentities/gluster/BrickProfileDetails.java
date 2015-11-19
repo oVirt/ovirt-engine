@@ -23,27 +23,22 @@ public class BrickProfileDetails extends GlusterVolumeProfileStats {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof BrickProfileDetails)) {
             return false;
         }
-        if(!super.equals(obj)) {
-            return false;
-        }
-        BrickProfileDetails brickDetails = (BrickProfileDetails) obj;
-        if (brickDetails.getBrickId() == null) {
-            return false;
-        }
-        if (!(Objects.equals(getBrickId(), brickDetails.getBrickId()))) {
-            return false;
-        }
-        return true;
+        BrickProfileDetails other = (BrickProfileDetails) obj;
+        return super.equals(obj)
+                && Objects.equals(brickId, other.brickId);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * super.hashCode() + ((getBrickId() == null) ? 0 : getBrickId().hashCode());
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                brickId
+        );
     }
 }

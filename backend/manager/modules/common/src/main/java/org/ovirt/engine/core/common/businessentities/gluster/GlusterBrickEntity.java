@@ -134,32 +134,34 @@ public class GlusterBrickEntity implements IVdcQueryable, BusinessEntityWithStat
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + getId().hashCode();
-        result = prime * result + ((volumeId == null) ? 0 : volumeId.hashCode());
-        result = prime * result + ((serverId == null) ? 0 : serverId.hashCode());
-        result = prime * result + ((brickDirectory == null) ? 0 : brickDirectory.hashCode());
-        result = prime * result + ((brickOrder == null) ? 0 : brickOrder.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
-        result = prime * result + ((asyncTask == null) ? 0 : asyncTask.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                volumeId,
+                serverId,
+                brickDirectory,
+                brickOrder,
+                status,
+                asyncTask
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (!(obj instanceof GlusterBrickEntity)) {
             return false;
         }
 
-        GlusterBrickEntity brick = (GlusterBrickEntity) obj;
-        return (getId().equals(brick.getId())
-                && (Objects.equals(volumeId, brick.getVolumeId()))
-                && (Objects.equals(serverId, brick.getServerId()))
-                && (Objects.equals(brickDirectory, brick.getBrickDirectory()))
-                && (Objects.equals(brickOrder, brick.getBrickOrder()))
-                && (Objects.equals(getAsyncTask(), brick.getAsyncTask()))
-                && status == brick.getStatus());
+        GlusterBrickEntity other = (GlusterBrickEntity) obj;
+        return Objects.equals(id, other.id)
+                && (Objects.equals(volumeId, other.volumeId))
+                && (Objects.equals(serverId, other.serverId))
+                && (Objects.equals(brickDirectory, other.brickDirectory))
+                && (Objects.equals(brickOrder, other.brickOrder))
+                && (Objects.equals(asyncTask, other.asyncTask))
+                && status == other.status;
     }
 
     public void copyFrom(GlusterBrickEntity brick) {

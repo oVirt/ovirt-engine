@@ -46,26 +46,25 @@ public class GlusterService implements IVdcQueryable, BusinessEntity<Guid> {
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (!(obj instanceof GlusterService)) {
             return false;
         }
 
         GlusterService other = (GlusterService) obj;
-        if (!(Objects.equals(id, other.getId())
-                && serviceType == other.getServiceType()
-                && Objects.equals(serviceName, other.getServiceName()))) {
-            return false;
-        }
-        return true;
+        return Objects.equals(id, other.id)
+                && serviceType == other.serviceType
+                && Objects.equals(serviceName, other.serviceName);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + getId().hashCode();
-        result = prime * result + ((serviceType == null) ? 0 : serviceType.hashCode());
-        result = prime * result + ((serviceName == null) ? 0 : serviceName.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                serviceType,
+                serviceName
+        );
     }
 }

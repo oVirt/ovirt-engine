@@ -133,45 +133,45 @@ public class StorageDevice implements IVdcQueryable, BusinessEntity<Guid> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (canCreateBrick ? 0 : 1);
-        result = prime * result + (isGlusterBrick ? 0 : 1);
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((devPath == null) ? 0 : devPath.hashCode());
-        result = prime * result + ((devType == null) ? 0 : devType.hashCode());
-        result = prime * result + ((devUuid == null) ? 0 : devUuid.hashCode());
-        result = prime * result + ((fsType == null) ? 0 : fsType.hashCode());
-        result = prime * result + ((fsUuid == null) ? 0 : fsUuid.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((mountPoint == null) ? 0 : mountPoint.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + (int) (size ^ (size >>> 32));
-        result = prime * result + ((vdsId == null) ? 0 : vdsId.hashCode());
-        return result;
+        return Objects.hash(
+                canCreateBrick,
+                isGlusterBrick,
+                description,
+                devPath,
+                devType,
+                devUuid,
+                fsType,
+                fsUuid,
+                id,
+                mountPoint,
+                name,
+                size,
+                vdsId
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if ((obj != null) && (obj instanceof StorageDevice)) {
-            StorageDevice storageDevice = (StorageDevice) obj;
-            if (Objects.equals(getId(), storageDevice.getId())
-                    && canCreateBrick == storageDevice.canCreateBrick
-                    && isGlusterBrick == storageDevice.isGlusterBrick
-                    && (Objects.equals(getDescription(), storageDevice.getDescription()))
-                    && (Objects.equals(getDevPath(), storageDevice.getDevPath()))
-                    && (Objects.equals(getDevType(), storageDevice.getDevType()))
-                    && (Objects.equals(getDevUuid(), storageDevice.getDevUuid()))
-                    && (Objects.equals(getFsType(), storageDevice.getFsType()))
-                    && (Objects.equals(getFsUuid(), storageDevice.getFsUuid()))
-                    && (Objects.equals(getMountPoint(), storageDevice.getMountPoint()))
-                    && (Objects.equals(getName(), storageDevice.getName()))
-                    && size == storageDevice.size
-                    && (Objects.equals(getVdsId(), storageDevice.getVdsId()))) {
-                return true;
-            }
+        if (this == obj) {
+            return true;
         }
-        return false;
+        if (!(obj instanceof StorageDevice)) {
+            return false;
+        }
+        StorageDevice storageDevice = (StorageDevice) obj;
+        return Objects.equals(id, storageDevice.id)
+                && canCreateBrick == storageDevice.canCreateBrick
+                && isGlusterBrick == storageDevice.isGlusterBrick
+                && Objects.equals(description, storageDevice.description)
+                && Objects.equals(devPath, storageDevice.devPath)
+                && Objects.equals(devType, storageDevice.devType)
+                && Objects.equals(devUuid, storageDevice.devUuid)
+                && Objects.equals(fsType, storageDevice.fsType)
+                && Objects.equals(fsUuid, storageDevice.fsUuid)
+                && Objects.equals(mountPoint, storageDevice.mountPoint)
+                && Objects.equals(name, storageDevice.name)
+                && size == storageDevice.size
+                && Objects.equals(vdsId, storageDevice.vdsId);
     }
 
     public boolean isGlusterBrick() {

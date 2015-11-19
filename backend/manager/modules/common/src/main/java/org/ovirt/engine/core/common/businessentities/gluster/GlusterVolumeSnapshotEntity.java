@@ -87,51 +87,32 @@ public class GlusterVolumeSnapshotEntity implements IVdcQueryable, BusinessEntit
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((snapshotId == null) ? 0 : snapshotId.hashCode());
-        result = prime * result + ((clusterId == null) ? 0 : clusterId.hashCode());
-        result = prime * result + ((volumeId == null) ? 0 : volumeId.hashCode());
-        result = prime * result + ((snapshotName == null) ? 0 : snapshotName.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
-        return result;
+        return Objects.hash(
+                snapshotId,
+                clusterId,
+                volumeId,
+                snapshotName,
+                description,
+                status
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof GlusterVolumeSnapshotEntity)) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof GlusterVolumeSnapshotEntity)) {
             return false;
         }
 
-        GlusterVolumeSnapshotEntity snapshot = (GlusterVolumeSnapshotEntity) obj;
-
-        if (!(Objects.equals(snapshotId, snapshot.getSnapshotId()))) {
-            return false;
-        }
-
-        if (!(Objects.equals(clusterId, snapshot.getClusterId()))) {
-            return false;
-        }
-
-        if (!(Objects.equals(volumeId, snapshot.getVolumeId()))) {
-            return false;
-        }
-
-        if (!(Objects.equals(snapshotName, snapshot.getSnapshotName()))) {
-            return false;
-        }
-
-        if (!(Objects.equals(description, snapshot.getDescription()))) {
-            return false;
-        }
-
-        if (status != snapshot.getStatus()) {
-            return false;
-        }
-
-        return true;
+        GlusterVolumeSnapshotEntity other = (GlusterVolumeSnapshotEntity) obj;
+        return Objects.equals(snapshotId, other.snapshotId)
+                && Objects.equals(clusterId, other.clusterId)
+                && Objects.equals(volumeId, other.volumeId)
+                && Objects.equals(snapshotName, other.snapshotName)
+                && Objects.equals(description, other.description)
+                && status == other.status;
     }
 
     @Override

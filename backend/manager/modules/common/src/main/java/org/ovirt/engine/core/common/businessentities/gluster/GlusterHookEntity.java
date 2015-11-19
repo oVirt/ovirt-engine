@@ -214,39 +214,37 @@ public class GlusterHookEntity implements IVdcQueryable, BusinessEntity<Guid> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + getId().hashCode();
-        result = prime * result + ((clusterId == null) ? 0 : clusterId.hashCode());
-        result = prime * result + ((glusterCommand == null) ? 0 : glusterCommand.hashCode());
-        result = prime * result + ((stage == null) ? 0 : stage.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((contentType == null) ? 0 : contentType.hashCode());
-        result = prime * result + ((conflictStatus == null) ? 0 : conflictStatus.hashCode());
-        result = prime * result + ((checksum == null) ? 0 : checksum.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                clusterId,
+                glusterCommand,
+                stage,
+                name,
+                contentType,
+                conflictStatus,
+                checksum,
+                status
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (!(obj instanceof GlusterHookEntity)) {
             return false;
         }
         GlusterHookEntity hook = (GlusterHookEntity) obj;
-
-        if (!(Objects.equals(getId(), hook.getId())
-                && Objects.equals(clusterId, hook.getClusterId())
-                && Objects.equals(glusterCommand, hook.getGlusterCommand())
-                && stage == hook.getStage()
-                && Objects.equals(name, hook.getName())
-                && contentType == hook.getContentType()
-                && Objects.equals(conflictStatus, hook.getConflictStatus())
-                && Objects.equals(checksum, hook.getChecksum())
-                && status == hook.getStatus())) {
-            return false;
-        }
-        return true;
+        return  Objects.equals(id, hook.id)
+                && Objects.equals(clusterId, hook.clusterId)
+                && Objects.equals(glusterCommand, hook.glusterCommand)
+                && stage == hook.stage
+                && Objects.equals(name, hook.name)
+                && contentType == hook.contentType
+                && Objects.equals(conflictStatus, hook.conflictStatus)
+                && Objects.equals(checksum, hook.checksum)
+                && status == hook.status;
     }
 
     @Override
