@@ -82,16 +82,16 @@ public abstract class Disk extends BaseDisk {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((plugged == null) ? 0 : plugged.hashCode());
-        result = prime * result + ((readOnly == null) ? 0 : readOnly.hashCode());
-        result = prime * result + ((vmNames == null) ? 0 : vmNames.hashCode());
-        result = prime * result + ((templateVersionNames == null) ? 0 : templateVersionNames.hashCode());
-        result = prime * result + ((vmEntityType == null) ? 0 : vmEntityType.hashCode());
-        result = prime * result + numberOfVms;
-        result = prime * result + ((logicalName == null) ? 0 : logicalName.hashCode());
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                plugged,
+                readOnly,
+                vmNames,
+                templateVersionNames,
+                vmEntityType,
+                numberOfVms,
+                logicalName
+        );
     }
 
     @Override
@@ -99,20 +99,18 @@ public abstract class Disk extends BaseDisk {
         if (this == obj) {
             return true;
         }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Disk)) {
             return false;
         }
         Disk other = (Disk) obj;
-        return (Objects.equals(plugged, other.plugged)
+        return super.equals(obj)
+                && Objects.equals(plugged, other.plugged)
                 && Objects.equals(readOnly, other.readOnly)
                 && Objects.equals(vmNames, other.vmNames)
                 && Objects.equals(templateVersionNames, other.templateVersionNames)
                 && Objects.equals(logicalName, other.logicalName)
                 && vmEntityType == other.vmEntityType
-                && numberOfVms == other.numberOfVms);
+                && numberOfVms == other.numberOfVms;
     }
 
     public int getNumberOfVms() {

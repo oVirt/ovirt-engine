@@ -77,15 +77,13 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((availableDiskSize == null) ? 0 : availableDiskSize.hashCode());
-        result = prime * result + ((usedDiskSize == null) ? 0 : usedDiskSize.hashCode());
-        result = prime * result
-                + ((externalStatus == null) ? 0 : Objects.hashCode(externalStatus));
-        result = prime * result + (containsUnregisteredEntities ? 0 : 1);
-        return result;
+        return Objects.hash(
+                id,
+                availableDiskSize,
+                usedDiskSize,
+                externalStatus,
+                containsUnregisteredEntities
+        );
     }
 
     @Override
@@ -93,17 +91,14 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof StorageDomainDynamic)) {
             return false;
         }
         StorageDomainDynamic other = (StorageDomainDynamic) obj;
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && Objects.equals(availableDiskSize, other.availableDiskSize)
                 && Objects.equals(usedDiskSize, other.usedDiskSize)
-                && Objects.equals(externalStatus, other.externalStatus))
+                && Objects.equals(externalStatus, other.externalStatus)
                 && containsUnregisteredEntities == other.containsUnregisteredEntities;
     }
 }

@@ -58,12 +58,11 @@ public class ImageStorageDomainMap implements BusinessEntity<ImageStorageDomainM
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((quotaId == null) ? 0 : quotaId.hashCode());
-        result = prime * result + ((diskProfileId == null) ? 0 : diskProfileId.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                quotaId,
+                diskProfileId
+        );
     }
 
     @Override
@@ -71,16 +70,13 @@ public class ImageStorageDomainMap implements BusinessEntity<ImageStorageDomainM
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
         if (!(obj instanceof ImageStorageDomainMap)) {
             return false;
         }
         ImageStorageDomainMap other = (ImageStorageDomainMap) obj;
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && Objects.equals(quotaId, other.quotaId)
-                && Objects.equals(diskProfileId, other.diskProfileId));
+                && Objects.equals(diskProfileId, other.diskProfileId);
     }
 
     @Override

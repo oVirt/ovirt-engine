@@ -341,17 +341,16 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (getId() == null ? 0 : getId().hashCode());
-        result = prime * result + committedDiskSize;
-        result = prime * result + (dynamicData == null ? 0 : dynamicData.hashCode());
-        result = prime * result + (staticData == null ? 0 : staticData.hashCode());
-        result = prime * result + (storageDomainSharedStatus == null ? 0 : storageDomainSharedStatus.hashCode());
-        result = prime * result + storageDomainOverCommitPercent;
-        result = prime * result + (storagePoolIsoMapData == null ? 0 : storagePoolIsoMapData.hashCode());
-        result = prime * result + (totalDiskSize == null ? 0 : totalDiskSize.hashCode());
-        return result;
+        return Objects.hash(
+                getId(),
+                committedDiskSize,
+                dynamicData,
+                staticData,
+                storageDomainSharedStatus,
+                storageDomainOverCommitPercent,
+                storagePoolIsoMapData,
+                totalDiskSize
+        );
     }
 
     @Override
@@ -359,10 +358,7 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof StorageDomain)) {
             return false;
         }
         StorageDomain other = (StorageDomain) obj;

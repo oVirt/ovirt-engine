@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.validation.constraints.Pattern;
 
@@ -75,35 +76,31 @@ public class LibvirtSecret implements IVdcQueryable, BusinessEntity<Guid> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (!(obj instanceof LibvirtSecret)) {
             return false;
-
-        LibvirtSecret that = (LibvirtSecret) o;
-
-        if (id != null ? !id.equals(that.id) : that.id != null)
-            return false;
-        if (value != null ? !value.equals(that.value) : that.value != null)
-            return false;
-        if (usageType != that.usageType)
-            return false;
-        if (description != null ? !description.equals(that.description) : that.description != null)
-            return false;
-        if (providerId != null ? !providerId.equals(that.providerId) : that.providerId != null)
-            return false;
-        return !(creationDate != null ? !creationDate.equals(that.creationDate) : that.creationDate != null);
+        }
+        LibvirtSecret other = (LibvirtSecret) obj;
+        return Objects.equals(id, other.id)
+                && Objects.equals(value, other.value)
+                && usageType == other.usageType
+                && Objects.equals(description, other.description)
+                && Objects.equals(providerId, other.providerId)
+                && Objects.equals(creationDate, other.creationDate);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (value != null ? value.hashCode() : 0);
-        result = 31 * result + (usageType != null ? usageType.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (providerId != null ? providerId.hashCode() : 0);
-        result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
-        return result;
+        return Objects.hash(
+                id,
+                value,
+                usageType,
+                description,
+                providerId,
+                creationDate
+        );
     }
 }

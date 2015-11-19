@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.TenantProviderProperties;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -25,23 +27,23 @@ public class OpenStackVolumeProviderProperties extends TenantProviderProperties 
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-
-        OpenStackVolumeProviderProperties that = (OpenStackVolumeProviderProperties) o;
-
-        if (storagePoolId != null ? !storagePoolId.equals(that.storagePoolId) : that.storagePoolId != null)
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof OpenStackVolumeProviderProperties)) {
             return false;
-
-        return true;
+        }
+        OpenStackVolumeProviderProperties other = (OpenStackVolumeProviderProperties) obj;
+        return super.equals(obj)
+                && Objects.equals(storagePoolId, other.storagePoolId);
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (storagePoolId != null ? storagePoolId.hashCode() : 0);
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                storagePoolId
+        );
     }
 }

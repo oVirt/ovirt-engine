@@ -23,11 +23,10 @@ public class StoragePoolIsoMapId implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((storageId == null) ? 0 : storageId.hashCode());
-        result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
-        return result;
+        return Objects.hash(
+                storageId,
+                storagePoolId
+        );
     }
 
     @Override
@@ -35,15 +34,12 @@ public class StoragePoolIsoMapId implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof StoragePoolIsoMapId)) {
             return false;
         }
         StoragePoolIsoMapId other = (StoragePoolIsoMapId) obj;
-        return (Objects.equals(storageId, other.storageId)
-                && Objects.equals(storagePoolId, other.storagePoolId));
+        return Objects.equals(storageId, other.storageId)
+                && Objects.equals(storagePoolId, other.storagePoolId);
     }
 
     @Override

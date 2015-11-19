@@ -76,16 +76,15 @@ public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskIm
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + (int) (actualSize ^ (actualSize >>> 32));
-        result = prime * result + ((readRate == null) ? 0 : readRate.hashCode());
-        result = prime * result + ((writeRate == null) ? 0 : writeRate.hashCode());
-        result = prime * result + ((readLatency == null) ? 0 : readLatency.hashCode());
-        result = prime * result + ((writeLatency == null) ? 0 : writeLatency.hashCode());
-        result = prime * result + ((flushLatency == null) ? 0 : flushLatency.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                actualSize,
+                readRate,
+                writeRate,
+                readLatency,
+                writeLatency,
+                flushLatency
+        );
     }
 
     @Override
@@ -93,20 +92,17 @@ public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskIm
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof DiskImageDynamic)) {
             return false;
         }
         DiskImageDynamic other = (DiskImageDynamic) obj;
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && actualSize == other.actualSize
                 && Objects.equals(readRate, other.readRate)
                 && Objects.equals(writeRate, other.writeRate)
                 && Objects.equals(readLatency, other.readLatency)
                 && Objects.equals(writeLatency, other.writeLatency)
-                && Objects.equals(flushLatency, other.flushLatency));
+                && Objects.equals(flushLatency, other.flushLatency);
     }
 
     @Override

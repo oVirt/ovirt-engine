@@ -52,12 +52,11 @@ public class vds_spm_id_map implements Serializable, BusinessEntity<Guid> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((storage_pool_idField == null) ? 0 : storage_pool_idField.hashCode());
-        result = prime * result + ((vds_idField == null) ? 0 : vds_idField.hashCode());
-        result = prime * result + vds_spm_idField;
-        return result;
+        return Objects.hash(
+                storage_pool_idField,
+                vds_idField,
+                vds_spm_idField
+        );
     }
 
     @Override
@@ -65,15 +64,12 @@ public class vds_spm_id_map implements Serializable, BusinessEntity<Guid> {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof vds_spm_id_map)) {
             return false;
         }
         vds_spm_id_map other = (vds_spm_id_map) obj;
-        return (Objects.equals(storage_pool_idField, other.storage_pool_idField)
+        return Objects.equals(storage_pool_idField, other.storage_pool_idField)
                 && Objects.equals(vds_idField, other.vds_idField)
-                && vds_spm_idField == other.vds_spm_idField);
+                && vds_spm_idField == other.vds_spm_idField;
     }
 }

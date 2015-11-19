@@ -75,28 +75,27 @@ public class LUNs implements BusinessEntity<String> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((_lunConnections == null) ? 0 : _lunConnections.hashCode());
-        result = prime * result + ((lunMapping == null) ? 0 : lunMapping.hashCode());
-        result = prime * result + ((physicalVolumeId == null) ? 0 : physicalVolumeId.hashCode());
-        result = prime * result + deviceSize;
-        result = prime * result + pvSize;
-        result = prime * result + ((lunType == null) ? 0 : lunType.hashCode());
-        result = prime * result + ((pathsDictionary == null) ? 0 : pathsDictionary.hashCode());
-        result = prime * result + ((pathsCapacity == null) ? 0 : pathsCapacity.hashCode());
-        result = prime * result + ((vendorName == null) ? 0 : vendorName.hashCode());
-        result = prime * result + ((productId == null) ? 0 : productId.hashCode());
-        result = prime * result + ((serial == null) ? 0 : serial.hashCode());
-        result = prime * result + ((vendorId == null) ? 0 : vendorId.hashCode());
-        result = prime * result + ((volumeGroupId == null) ? 0 : volumeGroupId.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
-        result = prime * result + ((diskId == null) ? 0 : diskId.hashCode());
-        result = prime * result + ((diskAlias == null) ? 0 : diskAlias.hashCode());
-        result = prime * result + ((storageDomainId == null) ? 0 : storageDomainId.hashCode());
-        result = prime * result + ((storageDomainName == null) ? 0 : storageDomainName.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                _lunConnections,
+                lunMapping,
+                physicalVolumeId,
+                deviceSize,
+                pvSize,
+                lunType,
+                pathsDictionary,
+                pathsCapacity,
+                vendorName,
+                productId,
+                serial,
+                vendorId,
+                volumeGroupId,
+                status,
+                diskId,
+                diskAlias,
+                storageDomainId,
+                storageDomainName
+        );
     }
 
     @Override
@@ -104,14 +103,11 @@ public class LUNs implements BusinessEntity<String> {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof LUNs)) {
             return false;
         }
         LUNs other = (LUNs) obj;
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && Objects.equals(_lunConnections, other._lunConnections)
                 && Objects.equals(lunMapping, other.lunMapping)
                 && Objects.equals(physicalVolumeId, other.physicalVolumeId)
@@ -129,7 +125,7 @@ public class LUNs implements BusinessEntity<String> {
                 && Objects.equals(diskId, other.diskId)
                 && Objects.equals(diskAlias, other.diskAlias)
                 && Objects.equals(storageDomainId, other.storageDomainId)
-                && Objects.equals(storageDomainName, other.storageDomainName));
+                && Objects.equals(storageDomainName, other.storageDomainName);
     }
 
     public String getLUN_id() {

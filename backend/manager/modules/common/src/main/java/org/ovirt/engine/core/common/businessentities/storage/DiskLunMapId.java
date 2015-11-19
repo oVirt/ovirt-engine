@@ -39,11 +39,10 @@ public class DiskLunMapId implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 17;
-        int result = 1;
-        result = prime * result + ((diskId == null) ? 0 : diskId.hashCode());
-        result = prime * result + ((lunId == null) ? 0 : lunId.hashCode());
-        return result;
+        return Objects.hash(
+                diskId,
+                lunId
+        );
     }
 
     @Override
@@ -51,15 +50,12 @@ public class DiskLunMapId implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof DiskLunMapId)) {
             return false;
         }
         DiskLunMapId other = (DiskLunMapId) obj;
-        return (Objects.equals(diskId, other.diskId)
-                && Objects.equals(lunId, other.lunId));
+        return Objects.equals(diskId, other.diskId)
+                && Objects.equals(lunId, other.lunId);
     }
 
 }

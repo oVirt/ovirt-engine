@@ -49,11 +49,11 @@ public class LunDisk extends Disk {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((usingScsiReservation == null) ? 0 : usingScsiReservation.hashCode());
-        result = prime * result + ((lun == null) ? 0 : lun.hashCode());
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                usingScsiReservation,
+                lun
+        );
     }
 
     @Override
@@ -61,14 +61,12 @@ public class LunDisk extends Disk {
         if (this == obj) {
             return true;
         }
-        if (!super.equals(obj)) {
-            return false;
-        }
         if (!(obj instanceof LunDisk)) {
             return false;
         }
         LunDisk other = (LunDisk) obj;
-        return (Objects.equals(lun, other.lun)
-                && Objects.equals(usingScsiReservation, other.usingScsiReservation));
+        return super.equals(obj)
+                && Objects.equals(lun, other.lun)
+                && Objects.equals(usingScsiReservation, other.usingScsiReservation);
     }
 }

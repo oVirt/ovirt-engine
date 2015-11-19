@@ -48,12 +48,10 @@ public class LUNStorageServerConnectionMap implements Serializable, BusinessEnti
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id.lunId == null) ? 0 : id.lunId.hashCode());
-        result = prime * result
-                + ((id.storageServerConnection == null) ? 0 : id.storageServerConnection.hashCode());
-        return result;
+        return Objects.hash(
+                id.lunId,
+                id.storageServerConnection
+        );
     }
 
     @Override
@@ -61,14 +59,11 @@ public class LUNStorageServerConnectionMap implements Serializable, BusinessEnti
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof LUNStorageServerConnectionMap)) {
             return false;
         }
         LUNStorageServerConnectionMap other = (LUNStorageServerConnectionMap) obj;
-        return (Objects.equals(id.lunId, other.id.lunId)
-                && Objects.equals(id.storageServerConnection, other.id.storageServerConnection));
+        return Objects.equals(id.lunId, other.id.lunId)
+                && Objects.equals(id.storageServerConnection, other.id.storageServerConnection);
     }
 }

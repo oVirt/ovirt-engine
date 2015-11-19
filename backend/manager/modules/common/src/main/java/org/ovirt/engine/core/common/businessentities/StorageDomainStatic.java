@@ -197,22 +197,21 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + (autoRecoverable ? 0 : 1);
-        result = prime * result + ((connection == null) ? 0 : connection.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((storage == null) ? 0 : storage.hashCode());
-        result = prime * result + ((storageFormat == null) ? 0 : storageFormat.hashCode());
-        result = prime * result + ((storagePoolType == null) ? 0 : storagePoolType.hashCode());
-        result = prime * result + ((storageType == null) ? 0 : storageType.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((sanState == null) ? 0 : sanState.hashCode());
-        result = prime * result + ((wipeAfterDelete == null) ? 0 : wipeAfterDelete.hashCode());
-        result = prime * result + ((warningLowSpaceIndicator == null) ? 0 : warningLowSpaceIndicator.hashCode());
-        result = prime * result + ((criticalSpaceActionBlocker == null) ? 0 : criticalSpaceActionBlocker.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                autoRecoverable,
+                connection,
+                name,
+                storage,
+                storageFormat,
+                storagePoolType,
+                storageType,
+                description,
+                sanState,
+                wipeAfterDelete,
+                warningLowSpaceIndicator,
+                criticalSpaceActionBlocker
+        );
     }
 
     @Override
@@ -220,14 +219,11 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof StorageDomainStatic)) {
             return false;
         }
         StorageDomainStatic other = (StorageDomainStatic) obj;
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && autoRecoverable == other.autoRecoverable
                 && Objects.equals(connection, other.connection)
                 && Objects.equals(name, other.name)
@@ -237,7 +233,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
                 && storageType == other.storageType
                 && sanState == other.sanState
                 && Objects.equals(wipeAfterDelete, other.wipeAfterDelete)
-                && Objects.equals(description, other.description))
+                && Objects.equals(description, other.description)
                 && Objects.equals(warningLowSpaceIndicator, other.warningLowSpaceIndicator)
                 && Objects.equals(criticalSpaceActionBlocker, other.criticalSpaceActionBlocker);
     }

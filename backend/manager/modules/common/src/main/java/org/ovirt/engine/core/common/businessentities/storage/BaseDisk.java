@@ -214,19 +214,18 @@ public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((diskAlias == null) ? 0 : diskAlias.hashCode());
-        result = prime * result + ((diskDescription == null) ? 0 : diskDescription.hashCode());
-        result = prime * result + ((diskInterface == null) ? 0 : diskInterface.hashCode());
-        result = prime * result + ((propagateErrors == null) ? 0 : propagateErrors.hashCode());
-        result = prime * result + (shareable ? 1231 : 1237);
-        result = prime * result + (isWipeAfterDelete() ? 1231 : 1237);
-        result = prime * result + (boot ? 1231 : 1237);
-        result = prime * result + ((sgio == null) ? 0 : sgio.hashCode());
-        result = prime * result + ((cinderVolumeType == null) ? 0 : cinderVolumeType.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                diskAlias,
+                diskDescription,
+                diskInterface,
+                propagateErrors,
+                shareable,
+                wipeAfterDelete,
+                boot,
+                sgio,
+                cinderVolumeType
+        );
     }
 
     @Override
@@ -234,21 +233,18 @@ public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid> {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof BaseDisk)) {
             return false;
         }
         BaseDisk other = (BaseDisk) obj;
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && Objects.equals(diskAlias, other.diskAlias)
                 && Objects.equals(diskDescription, other.diskDescription)
                 && diskInterface == other.diskInterface
                 && propagateErrors == other.propagateErrors
                 && shareable == other.shareable
                 && isWipeAfterDelete() == other.isWipeAfterDelete()
-                && boot == other.boot)
+                && boot == other.boot
                 && sgio == other.sgio
                 && Objects.equals(cinderVolumeType, other.cinderVolumeType);
     }

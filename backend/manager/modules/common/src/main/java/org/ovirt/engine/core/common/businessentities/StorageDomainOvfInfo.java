@@ -78,26 +78,28 @@ public class StorageDomainOvfInfo implements BusinessEntity<Guid> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof StorageDomainOvfInfo)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof StorageDomainOvfInfo)) {
+            return false;
+        }
 
         StorageDomainOvfInfo ovfInfo = (StorageDomainOvfInfo) o;
-
-        if (status != ovfInfo.status) return false;
-        if (!Objects.equals(ovfDiskId, ovfInfo.ovfDiskId)) return false;
-        if (!Objects.equals(storageDomainId, ovfInfo.storageDomainId)) return false;
-        if (!Objects.equals(lastUpdated, ovfInfo.lastUpdated)) return false;
-
-        return true;
+        return status == ovfInfo.status
+                && Objects.equals(ovfDiskId, ovfInfo.ovfDiskId)
+                && Objects.equals(storageDomainId, ovfInfo.storageDomainId)
+                && Objects.equals(lastUpdated, ovfInfo.lastUpdated);
     }
 
     @Override
     public int hashCode() {
-        int result = storageDomainId != null ? storageDomainId.hashCode() : 0;
-        result = 31 * result + (ovfDiskId != null ? ovfDiskId.hashCode() : 0);
-        result = 31 * result + (status != null ? status.hashCode() : 0);
-        result = 31 * result + (lastUpdated != null ? lastUpdated.hashCode() : 0);
-        return result;
+        return Objects.hash(
+                storageDomainId,
+                ovfDiskId,
+                status,
+                lastUpdated
+        );
     }
 
     @Override

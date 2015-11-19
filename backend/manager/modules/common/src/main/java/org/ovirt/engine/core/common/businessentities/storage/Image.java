@@ -165,16 +165,15 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + (active ? 1231 : 1237);
-        result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
-        result = prime * result + ((parentId == null) ? 0 : parentId.hashCode());
-        result = prime * result + ((snapshotId == null) ? 0 : snapshotId.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
-        result = prime * result + ((templateImageId == null) ? 0 : templateImageId.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                active,
+                lastModified,
+                parentId,
+                snapshotId,
+                status,
+                templateImageId
+        );
     }
 
     @Override
@@ -182,19 +181,16 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
         if (!(obj instanceof Image)) {
             return false;
         }
         Image other = (Image) obj;
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && active == other.active
                 && Objects.equals(lastModified, other.lastModified)
                 && Objects.equals(parentId, other.parentId)
                 && Objects.equals(snapshotId, other.snapshotId)
                 && status == other.status
-                && Objects.equals(templateImageId, other.templateImageId));
+                && Objects.equals(templateImageId, other.templateImageId);
     }
 }

@@ -106,16 +106,14 @@ public class IscsiBond implements IVdcQueryable, BusinessEntity<Guid>, Nameable 
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
-        result = prime * result + ((networkIds == null) ? 0 : networkIds.hashCode());
-        result = prime * result + ((storageConnectionIds == null) ? 0 : storageConnectionIds.hashCode());
-
-        return result;
+        return Objects.hash(
+                id,
+                name,
+                description,
+                storagePoolId,
+                networkIds,
+                storageConnectionIds
+        );
     }
 
     @Override
@@ -124,16 +122,16 @@ public class IscsiBond implements IVdcQueryable, BusinessEntity<Guid>, Nameable 
             return true;
         }
 
-        if (obj == null || !(obj instanceof IscsiBond)) {
+        if (!(obj instanceof IscsiBond)) {
             return false;
         }
 
-        IscsiBond iscsiBond = (IscsiBond) obj;
-        return Objects.equals(id, iscsiBond.getId()) &&
-                Objects.equals(name, iscsiBond.getName()) &&
-                Objects.equals(description, iscsiBond.getDescription()) &&
-                Objects.equals(storagePoolId, iscsiBond.getStoragePoolId()) &&
-                Objects.equals(networkIds, iscsiBond.getNetworkIds()) &&
-                Objects.equals(storageConnectionIds, iscsiBond.getStorageConnectionIds());
+        IscsiBond other = (IscsiBond) obj;
+        return Objects.equals(id, other.id)
+                && Objects.equals(name, other.name)
+                && Objects.equals(description, other.description)
+                && Objects.equals(storagePoolId, other.storagePoolId)
+                && Objects.equals(networkIds, other.networkIds)
+                && Objects.equals(storageConnectionIds, other.storageConnectionIds);
     }
 }

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
+import java.util.Objects;
+
 public class CinderDisk extends DiskImage {
 
     CinderConnectionInfo cinderConnectionInfo;
@@ -18,21 +20,24 @@ public class CinderDisk extends DiskImage {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-
-        CinderDisk that = (CinderDisk) o;
-
-        return !(cinderConnectionInfo != null ? !cinderConnectionInfo.equals(that.cinderConnectionInfo) : that.cinderConnectionInfo != null);
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof CinderDisk)) {
+            return false;
+        }
+        CinderDisk other = (CinderDisk) obj;
+        return super.equals(obj)
+                && Objects.equals(cinderConnectionInfo, other.cinderConnectionInfo);
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (cinderConnectionInfo != null ? cinderConnectionInfo.hashCode() : 0);
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                cinderConnectionInfo
+        );
     }
 
     @Override

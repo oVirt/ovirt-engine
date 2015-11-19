@@ -8,11 +8,10 @@ import org.ovirt.engine.core.compat.Guid;
 public class ImageStorageDomainMapId implements Serializable {
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
-        result = prime * result + ((storageDomainId == null) ? 0 : storageDomainId.hashCode());
-        return result;
+        return Objects.hash(
+                imageId,
+                storageDomainId
+        );
     }
 
     @Override
@@ -20,15 +19,12 @@ public class ImageStorageDomainMapId implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof ImageStorageDomainMapId)) {
             return false;
         }
         ImageStorageDomainMapId other = (ImageStorageDomainMapId) obj;
-        return (Objects.equals(imageId, other.imageId)
-        && Objects.equals(storageDomainId, other.storageDomainId));
+        return Objects.equals(imageId, other.imageId)
+                && Objects.equals(storageDomainId, other.storageDomainId);
     }
 
     private static final long serialVersionUID = -5870880575903017188L;

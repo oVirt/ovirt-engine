@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Objects;
 
 public class CinderConnectionInfo implements Serializable {
 
@@ -47,23 +48,25 @@ public class CinderConnectionInfo implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        CinderConnectionInfo that = (CinderConnectionInfo) o;
-
-        if (driverVolumeType != null ? !driverVolumeType.equals(that.driverVolumeType) : that.driverVolumeType != null)
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof CinderConnectionInfo)) {
             return false;
-        return !(data != null ? !data.equals(that.data) : that.data != null);
+        }
 
+        CinderConnectionInfo other = (CinderConnectionInfo) obj;
+        return Objects.equals(driverVolumeType, other.driverVolumeType)
+                && Objects.equals(data, other.data);
     }
 
     @Override
     public int hashCode() {
-        int result = driverVolumeType != null ? driverVolumeType.hashCode() : 0;
-        result = 31 * result + (data != null ? data.hashCode() : 0);
-        return result;
+        return Objects.hash(
+                driverVolumeType,
+                data
+        );
     }
 }
 

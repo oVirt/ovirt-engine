@@ -185,22 +185,21 @@ public class StoragePool implements IVdcQueryable, BusinessEntityWithStatus<Guid
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (id == null ? 0 : id.hashCode());
-        result = prime * result + (LVER == null ? 0 : LVER.hashCode());
-        result = prime * result + (description == null ? 0 : description.hashCode());
-        result = prime * result + (comment == null ? 0 : comment.hashCode());
-        result = prime * result + (compatibilityVersion == null ? 0 : compatibilityVersion.hashCode());
-        result = prime * result + masterDomainVersion;
-        result = prime * result + (name == null ? 0 : name.hashCode());
-        result = prime * result + (recoveryMode == null ? 0 : recoveryMode.hashCode());
-        result = prime * result + (spmVdsId == null ? 0 : spmVdsId.hashCode());
-        result = prime * result + (status == null ? 0 : status.hashCode());
-        result = prime * result + (local ? 1231 : 1237);
-        result = prime * result + (storagePoolFormatType == null ? 0 : storagePoolFormatType.hashCode());
-        result = prime * result + (quotaEnforcementType == null ? 0 : quotaEnforcementType.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                LVER,
+                description,
+                comment,
+                compatibilityVersion,
+                masterDomainVersion,
+                name,
+                recoveryMode,
+                spmVdsId,
+                status,
+                local,
+                storagePoolFormatType,
+                quotaEnforcementType
+        );
     }
 
     @Override
@@ -212,7 +211,7 @@ public class StoragePool implements IVdcQueryable, BusinessEntityWithStatus<Guid
             return false;
         }
         StoragePool other = (StoragePool) obj;
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && Objects.equals(LVER, other.LVER)
                 && Objects.equals(description, other.description)
                 && Objects.equals(comment, other.comment)
@@ -224,7 +223,7 @@ public class StoragePool implements IVdcQueryable, BusinessEntityWithStatus<Guid
                 && status == other.status
                 && local == other.local
                 && Objects.equals(storagePoolFormatType, other.storagePoolFormatType)
-                && quotaEnforcementType == other.quotaEnforcementType);
+                && quotaEnforcementType == other.quotaEnforcementType;
     }
 
     public QuotaEnforcementTypeEnum getQuotaEnforcementType() {

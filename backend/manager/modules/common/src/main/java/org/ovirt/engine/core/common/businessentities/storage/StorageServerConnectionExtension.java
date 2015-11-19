@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
+import java.util.Objects;
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -68,25 +69,29 @@ public class StorageServerConnectionExtension implements BusinessEntity<Guid> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof StorageServerConnectionExtension) {
-            StorageServerConnectionExtension that = (StorageServerConnectionExtension) obj;
-            return getId().equals(that.getId()) &&
-                    getIqn().equals(that.getIqn()) &&
-                    getHostId().equals(that.getHostId()) &&
-                    getPassword().equals(that.getPassword()) &&
-                    getUserName().equals(that.getUserName());
+        if (this == obj) {
+            return true;
         }
-        return false;
+        if (!(obj instanceof StorageServerConnectionExtension)) {
+            return false;
+        }
+        StorageServerConnectionExtension other = (StorageServerConnectionExtension) obj;
+        return Objects.equals(id, other.id)
+                && Objects.equals(iqn, other.iqn)
+                && Objects.equals(hostId, other.hostId)
+                && Objects.equals(password, other.password)
+                && Objects.equals(userName, other.userName);
     }
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + hostId.hashCode();
-        result = 31 * result + iqn.hashCode();
-        result = 31 * result + userName.hashCode();
-        result = 31 * result + password.hashCode();
-        return result;
+        return Objects.hash(
+                id,
+                hostId,
+                iqn,
+                userName,
+                password
+        );
     }
 
     @Override

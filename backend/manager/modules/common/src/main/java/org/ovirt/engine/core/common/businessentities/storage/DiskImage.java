@@ -497,28 +497,27 @@ public class DiskImage extends DiskImageBase implements IImage {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((getImage() == null) ? 0 : getImage().hashCode());
-        result = prime * result + ((snapshots == null) ? 0 : snapshots.hashCode());
-        result = prime * result + (int) (actualSizeInBytes ^ (actualSizeInBytes >>> 32));
-        result = prime * result + ((appList == null) ? 0 : appList.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + readRateKbPerSec;
-        result = prime * result + writeRateKbPerSec;
-        result = prime * result + ((storagePath == null) ? 0 : storagePath.hashCode());
-        result = prime * result + readRateFromDiskImageDynamic;
-        result = prime * result + ((storageIds == null) ? 0 : storageIds.hashCode());
-        result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
-        result = prime * result + ((storagesNames == null) ? 0 : storagesNames.hashCode());
-        result = prime * result + writeRateFromDiskImageDynamic;
-        result = prime * result + ((readLatency == null) ? 0 : readLatency.hashCode());
-        result = prime * result + ((writeLatency == null) ? 0 : writeLatency.hashCode());
-        result = prime * result + ((flushLatency == null) ? 0 : flushLatency.hashCode());
-        result = prime * result + ((diskProfileIds == null) ? 0 : diskProfileIds.hashCode());
-        result = prime * result + ((diskProfileNames == null) ? 0 : diskProfileNames.hashCode());
-
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                getImage(),
+                snapshots,
+                actualSizeInBytes,
+                appList,
+                description,
+                readRateKbPerSec,
+                writeRateKbPerSec,
+                storagePath,
+                readRateFromDiskImageDynamic,
+                storageIds,
+                storagePoolId,
+                storagesNames,
+                writeRateFromDiskImageDynamic,
+                readLatency,
+                writeLatency,
+                flushLatency,
+                diskProfileIds,
+                diskProfileNames
+        );
     }
 
     @Override
@@ -526,14 +525,12 @@ public class DiskImage extends DiskImageBase implements IImage {
         if (this == obj) {
             return true;
         }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof DiskImage)) {
             return false;
         }
         DiskImage other = (DiskImage) obj;
-        return (Objects.equals(getImage(), other.getImage())
+        return super.equals(obj)
+                && Objects.equals(getImage(), other.getImage())
                 && Objects.equals(snapshots, other.snapshots)
                 && actualSizeInBytes == other.actualSizeInBytes
                 && Objects.equals(appList, other.appList)
@@ -550,7 +547,7 @@ public class DiskImage extends DiskImageBase implements IImage {
                 && Objects.equals(writeLatency, other.writeLatency)
                 && Objects.equals(flushLatency, other.flushLatency)
                 && ObjectUtils.haveSameElements(diskProfileIds, other.diskProfileIds)
-                && ObjectUtils.haveSameElements(diskProfileNames, other.diskProfileNames));
+                && ObjectUtils.haveSameElements(diskProfileNames, other.diskProfileNames);
     }
 
 }
