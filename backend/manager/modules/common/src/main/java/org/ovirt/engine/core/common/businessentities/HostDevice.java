@@ -7,6 +7,8 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, Nameable {
 
+    private static final String CAPABILITY_PCI = "pci";
+
     private Guid hostId;
     private String deviceName;
     private String parentDeviceName;
@@ -139,6 +141,10 @@ public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, 
     public void setId(HostDeviceId id) {
         setHostId(id.getHostId());
         setDeviceName(id.getDeviceName());
+    }
+
+    public boolean isPci() {
+        return CAPABILITY_PCI.equals(getCapability());
     }
 
     @Override
