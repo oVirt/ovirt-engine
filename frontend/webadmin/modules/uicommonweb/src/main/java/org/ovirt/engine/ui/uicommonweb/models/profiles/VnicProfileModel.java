@@ -26,6 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkQoSModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -310,7 +311,7 @@ public abstract class VnicProfileModel extends Model {
                             .getConstants()
                             .networkQosNotChangedIfPassthrough());
                     getNetworkQoS().setIsChangeable(false);
-                    getNetworkQoS().setSelectedItem(defaultQos);
+                    getNetworkQoS().setSelectedItem(NetworkQoSModel.EMPTY_QOS);
                 } else {
                     getPortMirroring().setIsChangeable(true);
                     getNetworkQoS().setIsChangeable(true);
