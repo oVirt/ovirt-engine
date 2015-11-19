@@ -175,14 +175,13 @@ public class QuotaVdsGroup implements IVdcQueryable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((quotaId == null) ? 0 : quotaId.hashCode());
-        result = prime * result + ((quotaVdsGroupId == null) ? 0 : quotaVdsGroupId.hashCode());
-        result = prime * result + ((vdsGroupId == null) ? 0 : vdsGroupId.hashCode());
-        result = prime * result + ((virtualCpu == null) ? 0 : virtualCpu.hashCode());
-        result = prime * result + ((memSizeMB == null) ? 0 : memSizeMB.hashCode());
-        return result;
+        return Objects.hash(
+                quotaId,
+                quotaVdsGroupId,
+                vdsGroupId,
+                virtualCpu,
+                memSizeMB
+        );
     }
 
     @Override
@@ -190,20 +189,17 @@ public class QuotaVdsGroup implements IVdcQueryable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof QuotaVdsGroup)) {
             return false;
         }
         QuotaVdsGroup other = (QuotaVdsGroup) obj;
-        return (Objects.equals(quotaId, other.quotaId)
+        return Objects.equals(quotaId, other.quotaId)
                 && Objects.equals(quotaVdsGroupId, other.quotaVdsGroupId)
                 && Objects.equals(vdsGroupId, other.vdsGroupId)
                 && Objects.equals(virtualCpu, other.virtualCpu)
                 && Objects.equals(virtualCpuUsage, other.virtualCpuUsage)
                 && Objects.equals(memSizeMB, other.memSizeMB)
-                && Objects.equals(memSizeMBUsage, other.memSizeMBUsage));
+                && Objects.equals(memSizeMBUsage, other.memSizeMBUsage);
     }
 
     /**

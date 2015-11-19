@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.profiles;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
@@ -29,27 +30,23 @@ public class DiskProfile extends ProfileBase implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((storageDomainId == null) ? 0 : storageDomainId.hashCode());
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                storageDomainId
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
+        }
+        if (!(obj instanceof DiskProfile)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         DiskProfile other = (DiskProfile) obj;
-        if (storageDomainId == null) {
-            if (other.storageDomainId != null)
-                return false;
-        } else if (!storageDomainId.equals(other.storageDomainId))
-            return false;
-        return true;
+        return super.equals(obj)
+                && Objects.equals(storageDomainId, other.storageDomainId);
     }
 
     @Override

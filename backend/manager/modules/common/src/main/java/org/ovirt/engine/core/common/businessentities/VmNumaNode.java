@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -34,28 +35,23 @@ public class VmNumaNode extends VdsNumaNode {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result
-                + ((vdsNumaNodeList == null) ? 0 : vdsNumaNodeList.hashCode());
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                vdsNumaNodeList
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
+        }
+        if (!(obj instanceof VmNumaNode)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         VmNumaNode other = (VmNumaNode) obj;
-        if (vdsNumaNodeList == null) {
-            if (other.vdsNumaNodeList != null)
-                return false;
-        } else if (!vdsNumaNodeList.equals(other.vdsNumaNodeList))
-            return false;
-        return true;
+        return super.equals(obj)
+                && Objects.equals(vdsNumaNodeList, other.vdsNumaNodeList);
     }
 
 }

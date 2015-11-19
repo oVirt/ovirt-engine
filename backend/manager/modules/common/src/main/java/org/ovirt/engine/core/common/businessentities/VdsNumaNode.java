@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.compat.Guid;
 
@@ -87,51 +88,31 @@ public class VdsNumaNode implements IVdcQueryable, BusinessEntity<Guid> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((cpuIds == null) ? 0 : cpuIds.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + index;
-        result = prime * result + (int) (memTotal ^ (memTotal >>> 32));
-        result = prime * result + ((numaNodeDistances == null) ? 0 : numaNodeDistances.hashCode());
-        result = prime * result + ((numaNodeStatistics == null) ? 0 : numaNodeStatistics.hashCode());
-        return result;
+        return Objects.hash(
+                cpuIds,
+                id,
+                index,
+                memTotal,
+                numaNodeDistances,
+                numaNodeStatistics
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof VdsNumaNode)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         VdsNumaNode other = (VdsNumaNode) obj;
-        if (cpuIds == null) {
-            if (other.cpuIds != null)
-                return false;
-        } else if (!cpuIds.equals(other.cpuIds))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (index != other.index)
-            return false;
-        if (memTotal != other.memTotal)
-            return false;
-        if (numaNodeDistances == null) {
-            if (other.numaNodeDistances != null)
-                return false;
-        } else if (!numaNodeDistances.equals(other.numaNodeDistances))
-            return false;
-        if (numaNodeStatistics == null) {
-            if (other.numaNodeStatistics != null)
-                return false;
-        } else if (!numaNodeStatistics.equals(other.numaNodeStatistics))
-            return false;
-        return true;
+        return Objects.equals(cpuIds, other.cpuIds)
+                && Objects.equals(id, other.id)
+                && index == other.index
+                && memTotal == other.memTotal
+                && Objects.equals(numaNodeDistances, other.numaNodeDistances)
+                && Objects.equals(numaNodeStatistics, numaNodeStatistics);
     }
 
     @Override

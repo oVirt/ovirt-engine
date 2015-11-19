@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.scheduling;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -149,75 +150,39 @@ public class ClusterPolicy implements BusinessEntity<Guid>, IVdcQueryable, Namea
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((balance == null) ? 0 : balance.hashCode());
-        result = prime * result + (defaultPolicy ? 1231 : 1237);
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((filterPositionMap == null) ? 0 : filterPositionMap.hashCode());
-        result = prime * result + ((filters == null) ? 0 : filters.hashCode());
-        result = prime * result + ((functions == null) ? 0 : functions.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + (locked ? 1231 : 1237);
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((parameterMap == null) ? 0 : parameterMap.hashCode());
-        return result;
+        return Objects.hash(
+                balance,
+                defaultPolicy,
+                description,
+                filterPositionMap,
+                filters,
+                functions,
+                id,
+                locked,
+                name,
+                parameterMap
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof ClusterPolicy)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         ClusterPolicy other = (ClusterPolicy) obj;
-        if (balance == null) {
-            if (other.balance != null)
-                return false;
-        } else if (!balance.equals(other.balance))
-            return false;
-        if (defaultPolicy != other.defaultPolicy)
-            return false;
-        if (description == null) {
-            if (other.description != null)
-                return false;
-        } else if (!description.equals(other.description))
-            return false;
-        if (filterPositionMap == null) {
-            if (other.filterPositionMap != null)
-                return false;
-        } else if (!filterPositionMap.equals(other.filterPositionMap))
-            return false;
-        if (filters == null) {
-            if (other.filters != null)
-                return false;
-        } else if (!filters.equals(other.filters))
-            return false;
-        if (functions == null) {
-            if (other.functions != null)
-                return false;
-        } else if (!functions.equals(other.functions))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (locked != other.locked)
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (parameterMap == null) {
-            if (other.parameterMap != null)
-                return false;
-        } else if (!parameterMap.equals(other.parameterMap))
-            return false;
-        return true;
+        return Objects.equals(balance, other.balance)
+                && defaultPolicy == other.defaultPolicy
+                && Objects.equals(description, other.description)
+                && Objects.equals(filterPositionMap, other.filterPositionMap)
+                && Objects.equals(filters, other.filters)
+                && Objects.equals(functions, other.functions)
+                && Objects.equals(id, other.id)
+                && locked == other.locked
+                && Objects.equals(name, other.name)
+                && Objects.equals(parameterMap, other.parameterMap);
     }
 
 }

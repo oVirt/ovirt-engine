@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.scheduling;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -149,62 +150,34 @@ public class AffinityGroup implements BusinessEntity<Guid>, IVdcQueryable, Namea
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((clusterId == null) ? 0 : clusterId.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + (enforcing ? 1231 : 1237);
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + (positive ? 1231 : 1237);
-        result = prime * result + ((entityIds == null) ? 0 : entityIds.hashCode());
-        result = prime * result + ((entityNames == null) ? 0 : entityNames.hashCode());
-        return result;
+        return Objects.hash(
+                clusterId,
+                description,
+                enforcing,
+                id,
+                name,
+                positive,
+                entityIds,
+                entityNames
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof AffinityGroup)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         AffinityGroup other = (AffinityGroup) obj;
-        if (clusterId == null) {
-            if (other.clusterId != null)
-                return false;
-        } else if (!clusterId.equals(other.clusterId))
-            return false;
-        if (description == null) {
-            if (other.description != null)
-                return false;
-        } else if (!description.equals(other.description))
-            return false;
-        if (enforcing != other.enforcing)
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (positive != other.positive)
-            return false;
-        if (entityIds == null) {
-            if (other.entityIds != null)
-                return false;
-        } else if (!entityIds.equals(other.entityIds))
-            return false;
-        if (entityNames == null) {
-            if (other.entityNames != null)
-                return false;
-        } else if (!entityNames.equals(other.entityNames))
-            return false;
-        return true;
+        return Objects.equals(clusterId, other.clusterId)
+                && Objects.equals(description, other.description)
+                && enforcing == other.enforcing
+                && Objects.equals(id, other.id)
+                && Objects.equals(name, other.name)
+                && positive == other.positive
+                && Objects.equals(entityIds, other.entityIds)
+                && Objects.equals(entityNames, other.entityNames);
     }
 }

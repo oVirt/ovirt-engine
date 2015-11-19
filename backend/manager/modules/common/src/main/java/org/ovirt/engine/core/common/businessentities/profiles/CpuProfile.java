@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.profiles;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
@@ -29,27 +30,23 @@ public class CpuProfile extends ProfileBase implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((clusterId == null) ? 0 : clusterId.hashCode());
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                clusterId
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
+        }
+        if (!(obj instanceof CpuProfile)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         CpuProfile other = (CpuProfile) obj;
-        if (clusterId == null) {
-            if (other.clusterId != null)
-                return false;
-        } else if (!clusterId.equals(other.clusterId))
-            return false;
-        return true;
+        return super.equals(obj)
+                && Objects.equals(clusterId, other.clusterId);
     }
 
     @Override

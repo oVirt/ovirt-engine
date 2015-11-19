@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities.profiles;
 
+import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -85,48 +86,29 @@ public abstract class ProfileBase implements IVdcQueryable, BusinessEntity<Guid>
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 31;
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((profileType == null) ? 0 : profileType.hashCode());
-        result = prime * result + ((qosId == null) ? 0 : qosId.hashCode());
-        return result;
+        return Objects.hash(
+                description,
+                id,
+                name,
+                profileType,
+                qosId
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof ProfileBase)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         ProfileBase other = (ProfileBase) obj;
-        if (description == null) {
-            if (other.description != null)
-                return false;
-        } else if (!description.equals(other.description))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (profileType != other.profileType)
-            return false;
-        if (qosId == null) {
-            if (other.qosId != null)
-                return false;
-        } else if (!qosId.equals(other.qosId))
-            return false;
-        return true;
+        return Objects.equals(description, other.description)
+                && Objects.equals(id, other.id)
+                && Objects.equals(name, other.name)
+                && profileType == other.profileType
+                && Objects.equals(qosId, other.qosId);
     }
 
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {

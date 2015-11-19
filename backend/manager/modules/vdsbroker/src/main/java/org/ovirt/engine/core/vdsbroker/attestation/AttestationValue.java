@@ -36,21 +36,20 @@ public class AttestationValue {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((hostName == null) ? 0 : hostName.hashCode());
-        result = prime * result
-                + ((trustLevel == null) ? 0 : trustLevel.hashCode());
-        return result;
+        return Objects.hash(
+                hostName,
+                trustLevel
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null || (obj.getClass() != this.getClass()))
+        }
+        if (!(obj instanceof AttestationValue)) {
             return false;
+        }
         AttestationValue other = (AttestationValue) obj;
         return Objects.equals(hostName, other.hostName)
                 && Objects.equals(trustLevel, other.trustLevel);

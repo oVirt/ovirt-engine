@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Object which represents host per cpu statistics information
@@ -62,40 +63,29 @@ public class CpuStatistics implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + cpuId;
-        long temp;
-        temp = Double.doubleToLongBits(cpuIdle);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(cpuSys);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + cpuUsagePercent;
-        temp = Double.doubleToLongBits(cpuUser);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        return result;
+        return Objects.hash(
+                cpuId,
+                cpuIdle,
+                cpuSys,
+                cpuUsagePercent,
+                cpuUser
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof CpuStatistics)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         CpuStatistics other = (CpuStatistics) obj;
-        if (cpuId != other.cpuId)
-            return false;
-        if (Double.doubleToLongBits(cpuIdle) != Double.doubleToLongBits(other.cpuIdle))
-            return false;
-        if (Double.doubleToLongBits(cpuSys) != Double.doubleToLongBits(other.cpuSys))
-            return false;
-        if (cpuUsagePercent != other.cpuUsagePercent)
-            return false;
-        if (Double.doubleToLongBits(cpuUser) != Double.doubleToLongBits(other.cpuUser))
-            return false;
-        return true;
+        return cpuId == other.cpuId
+                && Objects.equals(cpuIdle, other.cpuIdle)
+                && Objects.equals(cpuSys, other.cpuSys)
+                && cpuUsagePercent == other.cpuUsagePercent
+                && Objects.equals(cpuUser, other.cpuUser);
     }
 
 }

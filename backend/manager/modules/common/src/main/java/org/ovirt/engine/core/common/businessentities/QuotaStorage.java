@@ -133,13 +133,12 @@ public class QuotaStorage implements IVdcQueryable  {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((quotaId == null) ? 0 : quotaId.hashCode());
-        result = prime * result + ((quotaStorageId == null) ? 0 : quotaStorageId.hashCode());
-        result = prime * result + ((storageId == null) ? 0 : storageId.hashCode());
-        result = prime * result + ((storageLimitGigaByte == null) ? 0 : storageLimitGigaByte.hashCode());
-        return result;
+        return Objects.hash(
+                quotaId,
+                quotaStorageId,
+                storageId,
+                storageLimitGigaByte
+        );
     }
 
     @Override
@@ -147,18 +146,15 @@ public class QuotaStorage implements IVdcQueryable  {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof QuotaStorage)) {
             return false;
         }
         QuotaStorage other = (QuotaStorage) obj;
-        return (Objects.equals(quotaId, other.quotaId)
+        return Objects.equals(quotaId, other.quotaId)
                 && Objects.equals(quotaStorageId, other.quotaStorageId)
                 && Objects.equals(storageId, other.storageId)
                 && Objects.equals(storageLimitGigaByteUsage, other.storageLimitGigaByteUsage)
-                && Objects.equals(storageLimitGigaByte, other.storageLimitGigaByte));
+                && Objects.equals(storageLimitGigaByte, other.storageLimitGigaByte);
     }
 
     /**

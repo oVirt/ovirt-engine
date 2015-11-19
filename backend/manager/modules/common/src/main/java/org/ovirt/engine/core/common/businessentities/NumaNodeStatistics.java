@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Object which represents a NUMA node statistics information
@@ -81,43 +82,31 @@ public class NumaNodeStatistics implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        long temp;
-        temp = Double.doubleToLongBits(cpuIdle);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(cpuSys);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + cpuUsagePercent;
-        temp = Double.doubleToLongBits(cpuUser);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + (int) (memFree ^ (memFree >>> 32));
-        result = prime * result + memUsagePercent;
-        return result;
+        return Objects.hash(
+                cpuIdle,
+                cpuSys,
+                cpuUsagePercent,
+                cpuUser,
+                memFree,
+                memUsagePercent
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof NumaNodeStatistics)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         NumaNodeStatistics other = (NumaNodeStatistics) obj;
-        if (Double.doubleToLongBits(cpuIdle) != Double.doubleToLongBits(other.cpuIdle))
-            return false;
-        if (Double.doubleToLongBits(cpuSys) != Double.doubleToLongBits(other.cpuSys))
-            return false;
-        if (cpuUsagePercent != other.cpuUsagePercent)
-            return false;
-        if (Double.doubleToLongBits(cpuUser) != Double.doubleToLongBits(other.cpuUser))
-            return false;
-        if (memFree != other.memFree)
-            return false;
-        if (memUsagePercent != other.memUsagePercent)
-            return false;
-        return true;
+        return Objects.equals(cpuIdle, other.cpuIdle)
+                && Objects.equals(cpuSys, other.cpuSys)
+                && cpuUsagePercent == other.cpuUsagePercent
+                && Objects.equals(cpuUser, other.cpuUser)
+                && memFree == other.memFree
+                && memUsagePercent == other.memUsagePercent;
     }
 
 }

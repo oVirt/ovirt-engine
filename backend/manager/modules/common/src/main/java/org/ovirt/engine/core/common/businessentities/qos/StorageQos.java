@@ -90,30 +90,33 @@ public class StorageQos extends QosBase implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        return super.equals(obj) &&
-                equalValues((StorageQos) obj);
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof StorageQos)) {
+            return false;
+        }
+        StorageQos other = (StorageQos) obj;
+        return super.equals(obj)
+                && Objects.equals(maxThroughput, other.maxThroughput)
+                && Objects.equals(maxReadThroughput, other.maxReadThroughput)
+                && Objects.equals(maxWriteThroughput, other.maxWriteThroughput)
+                && Objects.equals(maxIops, other.maxIops)
+                && Objects.equals(maxReadIops, other.maxReadIops)
+                && Objects.equals(maxWriteIops, other.maxWriteIops);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((maxIops == null) ? 0 : maxIops.hashCode());
-        result = prime * result + ((maxReadIops == null) ? 0 : maxReadIops.hashCode());
-        result = prime * result + ((maxReadThroughput == null) ? 0 : maxReadThroughput.hashCode());
-        result = prime * result + ((maxThroughput == null) ? 0 : maxThroughput.hashCode());
-        result = prime * result + ((maxWriteIops == null) ? 0 : maxWriteIops.hashCode());
-        result = prime * result + ((maxWriteThroughput == null) ? 0 : maxWriteThroughput.hashCode());
-        return result;
-    }
-
-    public boolean equalValues(StorageQos other) {
-        return Objects.equals(maxThroughput, other.getMaxThroughput())
-                && Objects.equals(maxReadThroughput, other.getMaxReadThroughput())
-                && Objects.equals(maxWriteThroughput, other.getMaxWriteThroughput())
-                && Objects.equals(maxIops, other.getMaxIops())
-                && Objects.equals(maxReadIops, other.getMaxReadIops())
-                && Objects.equals(maxWriteIops, other.getMaxWriteIops());
+        return Objects.hash(
+                super.hashCode(),
+                maxIops,
+                maxReadIops,
+                maxReadThroughput,
+                maxThroughput,
+                maxWriteIops,
+                maxWriteThroughput
+        );
     }
 
     @Override

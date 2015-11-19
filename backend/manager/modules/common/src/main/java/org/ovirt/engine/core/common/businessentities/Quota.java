@@ -343,21 +343,20 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((globalQuotaStorage == null) ? 0 : globalQuotaStorage.hashCode());
-        result = prime * result + ((globalQuotaVdsGroup == null) ? 0 : globalQuotaVdsGroup.hashCode());
-        result = prime * result + graceStoragePercentage;
-        result = prime * result + graceVdsGroupPercentage;
-        result = prime * result + ((quotaName == null) ? 0 : quotaName.hashCode());
-        result = prime * result + ((quotaStorageList == null) ? 0 : quotaStorageList.hashCode());
-        result = prime * result + ((quotaVdsGroupList == null) ? 0 : quotaVdsGroupList.hashCode());
-        result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
-        result = prime * result + thresholdStoragePercentage;
-        result = prime * result + thresholdVdsGroupPercentage;
-        return result;
+        return Objects.hash(
+                id,
+                description,
+                globalQuotaStorage,
+                globalQuotaVdsGroup,
+                graceStoragePercentage,
+                graceVdsGroupPercentage,
+                quotaName,
+                quotaStorageList,
+                quotaVdsGroupList,
+                storagePoolId,
+                thresholdStoragePercentage,
+                thresholdVdsGroupPercentage
+        );
     }
 
 
@@ -366,10 +365,7 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Quota)) {
             return false;
         }
         Quota other = (Quota) obj;

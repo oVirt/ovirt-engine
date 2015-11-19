@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.scheduling;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -113,55 +114,33 @@ public class PolicyUnit implements BusinessEntity<Guid>, IVdcQueryable, Nameable
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((policyUnitType == null) ? 0 : policyUnitType.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + (internal ? 1231 : 1237);
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((parameterRegExMap == null) ? 0 : parameterRegExMap.hashCode());
-        result = prime * result + (enabled ? 1231 : 1237);
-        return result;
+        return Objects.hash(
+                policyUnitType,
+                description,
+                id,
+                internal,
+                name,
+                parameterRegExMap,
+                enabled
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        PolicyUnit other = (PolicyUnit) obj;
-        if (description == null) {
-            if (other.description != null)
-                return false;
-        } else if (!description.equals(other.description))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (internal != other.internal)
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (parameterRegExMap == null) {
-            if (other.parameterRegExMap != null)
-                return false;
-        } else if (!parameterRegExMap.equals(other.parameterRegExMap))
-            return false;
-        if (policyUnitType != other.policyUnitType)
-            return false;
-        if (enabled != other.enabled) {
+        }
+        if (!(obj instanceof PolicyUnit)) {
             return false;
         }
-        return true;
+        PolicyUnit other = (PolicyUnit) obj;
+        return Objects.equals(description, other.description)
+                && Objects.equals(id, other.id)
+                && internal == other.internal
+                && Objects.equals(name, other.name)
+                && Objects.equals(parameterRegExMap, other.parameterRegExMap)
+                && policyUnitType == other.policyUnitType
+                && enabled == other.enabled;
     }
 
 }

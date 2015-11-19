@@ -26,20 +26,23 @@ public class CpuQos extends QosBase {
 
     @Override
     public boolean equals(Object obj) {
-        return super.equals(obj) &&
-                equalValues((CpuQos) obj);
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof CpuQos)) {
+            return false;
+        }
+        CpuQos other = (CpuQos) obj;
+        return super.equals(obj)
+                && Objects.equals(cpuLimit, other.cpuLimit);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((cpuLimit == null) ? 0 : cpuLimit.hashCode());
-        return result;
-    }
-
-    public boolean equalValues(CpuQos other) {
-        return Objects.equals(cpuLimit, other.getCpuLimit());
+        return Objects.hash(
+                super.hashCode(),
+                cpuLimit
+        );
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities.qos;
 
+import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -103,48 +104,29 @@ public class QosBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((qosType == null) ? 0 : qosType.hashCode());
-        result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
-        return result;
+        return Objects.hash(
+                description,
+                id,
+                name,
+                qosType,
+                storagePoolId
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof QosBase)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         QosBase other = (QosBase) obj;
-        if (description == null) {
-            if (other.description != null)
-                return false;
-        } else if (!description.equals(other.description))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (qosType != other.qosType)
-            return false;
-        if (storagePoolId == null) {
-            if (other.storagePoolId != null)
-                return false;
-        } else if (!storagePoolId.equals(other.storagePoolId))
-            return false;
-        return true;
+        return Objects.equals(description, other.description)
+                && Objects.equals(id, other.id)
+                && Objects.equals(name, other.name)
+                && qosType == other.qosType
+                && Objects.equals(storagePoolId, other.storagePoolId);
     }
 
 }
